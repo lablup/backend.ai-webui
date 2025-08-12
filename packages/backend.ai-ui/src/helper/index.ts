@@ -49,6 +49,19 @@ export const bytesToGB = (
 export type InputSizeUnit = '' | 'k' | 'm' | 'g' | 't' | 'p' | 'e';
 export type SizeUnit = InputSizeUnit;
 
+export const getDisplayUnitToInputSizeUnit = (
+  displayUnit: string | undefined,
+): InputSizeUnit => {
+  if (!displayUnit) return '';
+  const unit = displayUnit.toLowerCase();
+  if (['kib', 'ki'].includes(unit)) return 'k';
+  if (['mib', 'mi'].includes(unit)) return 'm';
+  if (['gib', 'gi'].includes(unit)) return 'g';
+  if (['tib', 'ti'].includes(unit)) return 't';
+  if (['pib', 'pi'].includes(unit)) return 'p';
+  if (['eib', 'ei'].includes(unit)) return 'e';
+  return '';
+};
 /**
  * Converts a value with a unit to a different unit or automatically selects the most appropriate unit.
  *

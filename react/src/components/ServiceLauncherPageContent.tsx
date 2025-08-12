@@ -6,6 +6,7 @@ import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   convertToBinaryUnit,
+  filterOutNullAndUndefined,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -49,6 +50,7 @@ import {
   theme,
   Tooltip,
   Tag,
+  Alert,
 } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -126,7 +128,7 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   modelMountDestination: string;
   modelDefinitionPath: string;
   mount_id_map: Record<string, string>;
-  mounts?: Array<string>;
+  mount_ids?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
 }
@@ -189,6 +191,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         }
         extra_mounts @since(version: "24.03.4") {
           row_id
+          name
         }
         image_object @since(version: "23.09.9") {
           name @deprecatedSince(version: "24.12.0")
@@ -322,7 +325,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
           extra_mounts: _.reduce(
-            values.mounts,
+            values.mount_ids,
             (acc, key: string) => {
               acc[key] = {
                 ...(values.mount_id_map[key] && {
@@ -526,7 +529,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     ),
                     values,
                   ),
-                  extra_mounts: _.map(values.mounts, (vfolder) => {
+                  extra_mounts: _.map(values.mount_ids, (vfolder) => {
                     return {
                       vfolder_id: vfolder,
                       ...(values.mount_id_map[vfolder] && {
@@ -723,9 +726,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
-        mounts: _.map(endpoint?.extra_mounts, (item) =>
+        mount_ids: _.map(endpoint?.extra_mounts, (item) =>
           item?.row_id?.replaceAll('-', ''),
         ),
+        // TODO: implement mount_id_map. Now, it's impossible to get mount_destination from backend
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
@@ -733,7 +737,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           JSON.parse(endpoint?.environ || '{}'),
           (value, variable) => ({ variable, value }),
         ),
-        // TODO: set mounts alias map according to extra_mounts if possible
       }
     : {
         replicas: 1,
@@ -749,6 +752,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           : _.get(formValuesFromQueryParams, 'vFolderID') || undefined,
         resourceGroup: currentGlobalResourceGroup,
         allocationPreset: 'auto-select',
+        // Initialize empty mount configuration for new services
+        mount_ids: [],
+        mount_id_map: {},
       };
 
   const mergedInitialValues = _.merge(
@@ -771,6 +777,17 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             style={{ flex: 1, maxWidth: 700 }}
             wrap="nowrap"
           >
+            {_.filter(
+              filterOutNullAndUndefined(endpoint?.extra_mounts),
+              (vf) => vf?.name && !vf?.name.startsWith('.'),
+            ).length > 0 && (
+              <Alert
+                message={t('modelService.ExtraMountsWarning')}
+                type="warning"
+                showIcon
+                style={{ marginBottom: token.marginMD }}
+              />
+            )}
             <Form.Provider
               onFormChange={(name, info) => {
                 // use OnFormChange instead of Form's onValuesChange,
@@ -916,7 +933,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               <VFolderTableFormItem
                                 rowKey={'id'}
                                 label={t('modelService.AdditionalMounts')}
-                                filter={(vf) =>
+                                rowFilter={(vf) =>
                                   vf.id !== getFieldValue('vFolderID') &&
                                   vf.status === 'ready' &&
                                   vf.usage_mode !== 'model' &&

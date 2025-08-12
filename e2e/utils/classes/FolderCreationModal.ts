@@ -122,9 +122,14 @@ export class FolderCreationModal {
 
   async getModelUsageModeRadio(): Promise<Locator> {
     const usageModeFormItem = await this.getUsageModeFormItem();
-    return usageModeFormItem.getByLabel('Model', {
+    return usageModeFormItem.getByLabel('Models', {
       exact: true,
     });
+  }
+
+  async getAutoMountUsageModeRadio(): Promise<Locator> {
+    const usageModeFormItem = await this.getUsageModeFormItem();
+    return usageModeFormItem.getByLabel('Auto Mount', { exact: true });
   }
 
   async getUserTypeRadio(): Promise<Locator> {
@@ -150,7 +155,7 @@ export class FolderCreationModal {
 
   async getReadOnlyPermissionRadio(): Promise<Locator> {
     const permissionFormItem = await this.getPermissionFormItem();
-    return permissionFormItem.getByLabel('Read Only', {
+    return permissionFormItem.getByLabel('Read only', {
       exact: true,
     });
   }

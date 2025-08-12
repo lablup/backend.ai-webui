@@ -1423,7 +1423,7 @@ const SessionLauncherPage = () => {
                       return (
                         <VFolderTableFormItem
                           rowKey={!!supportsMountById ? 'id' : 'name'}
-                          filter={(vfolder) => {
+                          rowFilter={(vfolder) => {
                             return (
                               vfolder.status === 'ready' &&
                               !vfolder.name?.startsWith('.')

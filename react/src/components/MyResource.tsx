@@ -1,7 +1,3 @@
-import {
-  processResourceValue,
-  UNLIMITED_VALUES,
-} from '../helper/resourceCardUtils';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -14,7 +10,8 @@ import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
-import { BAICardProps, convertToBinaryUnit } from 'backend.ai-ui';
+import { Typography } from 'antd';
+import { BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,34 +36,26 @@ const getResourceValue = (
         ? [resource, 'max']
         : ['accelerators', resource, 'max'],
     );
-    return processResourceValue(maxValue, resource);
+    return maxValue;
   };
   const totalValue = getTotalValue();
 
   const getCurrentValue = () => {
     if (type === 'usage') {
-      const value = _.get(checkPresetInfo?.keypair_using, resource);
-      return processResourceValue(value, resource);
+      return _.get(checkPresetInfo?.keypair_using, resource);
     }
-    const capacity = _.get(
+    return _.get(
       remainingWithoutResourceGroup,
       _.includes(['cpu', 'mem'], resource)
         ? resource
         : ['accelerators', resource],
     );
-    return processResourceValue(capacity, resource);
   };
   const currentValue = getCurrentValue();
-
-  const displayValue = type === 'usage' ? currentValue : totalValue;
 
   return {
     current: currentValue || 0,
     total: totalValue,
-    displayUnit:
-      resource === 'mem' && displayValue
-        ? convertToBinaryUnit(displayValue, 'auto')?.displayUnit
-        : undefined,
   };
 };
 
@@ -139,8 +128,14 @@ const MyResource: React.FC<MyResourceProps> = ({
   return (
     <BaseResourceItem
       {...props}
-      title={t('webui.menu.MyResources')}
-      tooltip="webui.menu.MyResourcesDescription"
+      title={
+        <BAIFlex gap={'xs'}>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            {t('webui.menu.MyResources')}
+          </Typography.Title>
+        </BAIFlex>
+      }
+      tooltip={t('webui.menu.MyResourcesDescription')}
       isRefetching={isRefetching || internalIsRefetching}
       displayType={type}
       onDisplayTypeChange={setType}
@@ -150,7 +145,6 @@ const MyResource: React.FC<MyResourceProps> = ({
       resourceSlotsDetails={resourceSlotsDetails}
       progressProps={{
         showProgress: true,
-        unlimitedValues: UNLIMITED_VALUES,
         steps: 12,
       }}
     />

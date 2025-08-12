@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定",
+    "SearchTableColumn": "テーブル列を検索します"
   }
 }

@@ -6,7 +6,11 @@ export interface PaginationInfoTextProps {
   total: number;
 }
 
-const PaginationInfoText = ({ start, end, total }: PaginationInfoTextProps) => {
+const BAIPaginationInfoText = ({
+  start,
+  end,
+  total,
+}: PaginationInfoTextProps) => {
   const { t } = useTranslation();
 
   return t('comp:PaginationInfoText.Total', {
@@ -16,4 +20,4 @@ const PaginationInfoText = ({ start, end, total }: PaginationInfoTextProps) => {
   });
 };
 
-export default PaginationInfoText;
+export default BAIPaginationInfoText;

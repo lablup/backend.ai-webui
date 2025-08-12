@@ -144,6 +144,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             key: 'name',
             title: t('data.folders.Name'),
             dataIndex: 'name',
+            required: true,
             render: (name, vfolder) => {
               return (
                 <BAIFlex align="center" gap="xs">

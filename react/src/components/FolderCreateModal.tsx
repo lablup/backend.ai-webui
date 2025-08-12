@@ -17,11 +17,13 @@ import {
   Skeleton,
   Switch,
   theme,
+  Tooltip,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
+import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -324,34 +326,18 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           </Suspense>
         </Form.Item>
         <Divider />
-        <Form.Item dependencies={['type', 'usage_mode']} noStyle>
-          {({ getFieldValue, getFieldError }) => {
-            const type = getFieldValue('type');
+        <Form.Item dependencies={['usage_mode']} noStyle>
+          {({ getFieldValue }) => {
             const usageMode = getFieldValue('usage_mode');
-            const hasError = getFieldError('type').length > 0;
-
             const shouldDisableProject =
               usageMode === 'model' &&
               currentProject?.name !== MODEL_STORE_PROJECT_NAME;
-
-            const helpText =
-              type === 'user' || hasError
-                ? undefined
-                : shouldDisableProject
-                  ? // To avoid flickering, we use the same help text as the error message.
-                    t(
-                      'data.folders.ChangeTheCurrentProjectToModelStoreOrSelectUserType',
-                    )
-                  : t('data.folders.ProjectFolderCreationHelp', {
-                      projectName: currentProject?.name,
-                    });
 
             return (
               <Form.Item
                 label={t('data.Type')}
                 name={'type'}
                 style={{ flex: 1, marginBottom: 0 }}
-                help={helpText}
                 rules={[
                   ({ getFieldValue }) => ({
                     validator(__, value) {
@@ -373,6 +359,21 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                       return Promise.resolve();
                     },
                   }),
+                  {
+                    warningOnly: true,
+                    validator: async (__, value) => {
+                      if (!shouldDisableProject && value === 'project') {
+                        return Promise.reject(
+                          new Error(
+                            t('data.folders.ProjectFolderCreationHelp', {
+                              projectName: currentProject?.name,
+                            }),
+                          ),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Radio.Group>
@@ -394,7 +395,20 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                       data-testid="project-type"
                       disabled={shouldDisableProject}
                     >
-                      {t('data.Project')}
+                      <Tooltip
+                        title={
+                          shouldDisableProject
+                            ? t(
+                                'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                              )
+                            : undefined
+                        }
+                      >
+                        <BAIFlex gap="xxs">
+                          {t('data.Project')}
+                          {shouldDisableProject && <TriangleAlertIcon />}
+                        </BAIFlex>
+                      </Tooltip>
                     </Radio>
                   ) : null}
                 </Radio.Group>

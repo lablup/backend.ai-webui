@@ -81,7 +81,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           model: values.vFolderID,
           model_version: 1, // FIXME: hardcoded. change it with option later
           extra_mounts: _.reduce(
-            values.mounts,
+            values.mount_ids,
             (acc, key: string) => {
               acc[key] = {
                 ...(values.mount_id_map[key] && {

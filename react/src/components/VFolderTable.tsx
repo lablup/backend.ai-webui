@@ -75,7 +75,7 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
   aliasBasePath?: string;
   aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
-  filter?: (vFolder: VFolder) => boolean;
+  rowFilter?: (vFolder: VFolder) => boolean;
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
@@ -89,7 +89,7 @@ export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
 export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 const VFolderTable: React.FC<VFolderTableProps> = ({
-  filter,
+  rowFilter,
   showAliasInput = false,
   selectedRowKeys: controlledSelectedRowKeys = [],
   onChangeSelectedRowKeys,
@@ -210,7 +210,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       },
     );
 
-  const filteredFolderList = useMemo(() => {
+  const mountableVolumesByPermission = useMemo(() => {
     const allowedVFolderHostsByDomain = JSON.parse(
       domain?.allowed_vfolder_hosts || '{}',
     );
@@ -228,48 +228,44 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       allowedVFolderHostsByKeypairResourcePolicy,
     );
     // only allow mount if volume permission has 'mount-in-session'
-    const mountAllowedVolumes = Object.keys(mergedVFolderPermissions).filter(
-      (volume) => mergedVFolderPermissions[volume].includes('mount-in-session'),
+    return Object.keys(mergedVFolderPermissions).filter((volume) =>
+      mergedVFolderPermissions[volume].includes('mount-in-session'),
     );
-    // Need to filter allFolderList from allowed vfolder
-    const filteredFolderListByPermission = allFolderList?.filter((folder) =>
-      mountAllowedVolumes.includes(folder.host),
-    );
+  }, [domain, group, keypair_resource_policy]);
 
-    return _.chain(filteredFolderListByPermission)
-      .filter(
+  const accessibleFoldersByCurrentProject = useMemo(() => {
+    return (
+      allFolderList?.filter(
         (folder) =>
           folder.ownership_type === 'user' ||
           !folder.group ||
           folder.group === currentProject.id,
-      )
-      .filter((vf) => (filter ? filter(vf) : true))
-      .value();
-  }, [
-    domain,
-    group,
-    keypair_resource_policy,
-    allFolderList,
-    currentProject.id,
-    filter,
-  ]);
+      ) || []
+    );
+  }, [allFolderList, currentProject.id]);
+
+  const mountableFoldersByPermission = useMemo(() => {
+    return accessibleFoldersByCurrentProject.filter((folder) =>
+      mountableVolumesByPermission.includes(folder.host),
+    );
+  }, [accessibleFoldersByCurrentProject, mountableVolumesByPermission]);
 
   useEffect(() => {
     // check selectedRowKeys are valid
     const invalidKeys = _.difference(
       selectedRowKeys,
-      filteredFolderList.map((vf) => getRowKey(vf)),
+      mountableFoldersByPermission.map((vf) => getRowKey(vf)),
     );
 
     onValidateSelectedRowKeys?.(
       invalidKeys,
-      _.filter(filteredFolderList, (vf) =>
+      _.filter(mountableFoldersByPermission, (vf) =>
         _.includes(selectedRowKeys, getRowKey(vf)),
       ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    filteredFolderList,
+    mountableFoldersByPermission,
     getRowKey,
     onValidateSelectedRowKeys,
     // Use JSON.stringify to compare array contents rather than reference
@@ -277,21 +273,21 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     JSON.stringify(selectedRowKeys),
   ]);
 
-  const autoMountedFolderNamesByPermission = useMemo(
+  const autoMountedFolderNames = useMemo(
     () =>
-      _.chain(filteredFolderList)
+      _.chain(mountableFoldersByPermission)
         .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
         .map((vf) => vf.name)
         .value(),
-    [filteredFolderList],
+    [mountableFoldersByPermission],
   );
 
   useEffect(() => {
     _.isFunction(onChangeAutoMountedFolders) &&
-      onChangeAutoMountedFolders(autoMountedFolderNamesByPermission);
+      onChangeAutoMountedFolders(autoMountedFolderNames);
     // Do not need to run when `autoMountedFolderNames` changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoMountedFolderNamesByPermission]);
+  }, [autoMountedFolderNames]);
 
   useEffect(() => {
     // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
@@ -303,14 +299,28 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [currentProject.id]);
 
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = _.chain(filteredFolderList)
-    .filter((vf) => {
-      if (selectedRowKeys.includes(getRowKey(vf))) {
-        return true;
-      }
-      return !searchKey || vf.name.includes(searchKey);
-    })
-    .value();
+  const displayingFolders = useMemo(() => {
+    return _.chain(mountableFoldersByPermission)
+      .filter((vf) => {
+        // Apply external filter for display
+        if (rowFilter && !rowFilter(vf)) {
+          return false;
+        }
+        // Always show selected items
+        if (selectedRowKeys.includes(getRowKey(vf))) {
+          return true;
+        }
+        // Apply search filter
+        return !searchKey || vf.name.includes(searchKey);
+      })
+      .value();
+  }, [
+    mountableFoldersByPermission,
+    rowFilter,
+    selectedRowKeys,
+    getRowKey,
+    searchKey,
+  ]);
 
   /**
    * Converts the input path to an aliased path based on the provided name and input.
@@ -456,7 +466,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                             if (
                               value &&
                               _.map(
-                                autoMountedFolderNamesByPermission,
+                                autoMountedFolderNames,
                                 // `n` is the name of the auto mounted folder. It cannot be empty.
                                 (n) => inputToAliasPath('', n),
                               ).includes(aliasPath)
@@ -658,12 +668,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           {...tableProps}
         />
       </Form>
-      {showAutoMountedFoldersSection &&
-      autoMountedFolderNamesByPermission.length > 0 ? (
+      {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
         <>
           <Descriptions size="small">
             <Descriptions.Item label={t('data.AutomountFolders')}>
-              {_.map(autoMountedFolderNamesByPermission, (name) => {
+              {_.map(autoMountedFolderNames, (name) => {
                 return <Tag key={name}>{name}</Tag>;
               })}
             </Descriptions.Item>

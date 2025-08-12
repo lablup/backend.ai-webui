@@ -1,5 +1,5 @@
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
-import UnmountAfterClose from './UnmountAfterClose';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import React from 'react';
 import { useQueryParam, StringParam } from 'use-query-params';
 
@@ -15,7 +15,7 @@ const FolderInvitationResponseModalOpener = () => {
   const { count } = useVFolderInvitationsValue();
 
   return (
-    <UnmountAfterClose>
+    <BAIUnmountAfterClose>
       <FolderInvitationResponseModal
         open={isInvitationOpen === 'true'}
         onRequestClose={(success) => {
@@ -24,7 +24,7 @@ const FolderInvitationResponseModalOpener = () => {
           }
         }}
       />
-    </UnmountAfterClose>
+    </BAIUnmountAfterClose>
   );
 };
 

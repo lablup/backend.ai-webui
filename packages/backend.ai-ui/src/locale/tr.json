@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Masa Ayarları",
+    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
+    "SearchTableColumn": "Arama Tablosu sütunları"
   }
 }

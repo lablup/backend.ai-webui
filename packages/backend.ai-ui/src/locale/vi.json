@@ -5,5 +5,10 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Cài đặt bảng",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SearchTableColumn": "Các cột bảng tìm kiếm"
   }
 }

@@ -3,12 +3,14 @@ import {
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import BAILink from './BAILink';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import { ColumnType } from 'antd/es/table';
-import { BAITable, BAITableProps } from 'backend.ai-ui';
+import ImageNodeSimpleTag from './ImageNodeSimpleTag';
+import { BAIColumnType, BAITable, BAITableProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +31,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   ...tableProps
 }) => {
   const { t } = useTranslation();
+  const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
 
   const sessions = useFragment(
     graphql`
@@ -37,11 +41,21 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         row_id @required(action: NONE)
         name
         status
+        agent_ids
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
+        kernel_nodes {
+          edges {
+            node {
+              image {
+                ...ImageNodeSimpleTagFragment
+              }
+            }
+          }
+        }
       }
     `,
     sessionsFrgmt,
@@ -50,7 +64,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   const filteredSessions = filterOutNullAndUndefined(sessions);
 
   const columns = _.map(
-    filterOutEmpty<ColumnType<SessionNodeInList>>([
+    filterOutEmpty<BAIColumnType<SessionNodeInList>>([
       {
         key: 'name',
         title: t('session.SessionName'),
@@ -59,7 +73,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return onClickSessionName ? (
             <BAILink
               type="hover"
-              onClick={(e) => {
+              onClick={() => {
                 onClickSessionName(session);
               }}
             >
@@ -70,12 +84,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           );
         },
         sorter: true,
+        required: true,
       },
       {
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
         render: (status: string, session) => {
+          // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
       },
@@ -94,6 +110,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       //       </BAIFlex>
       //     );
       //   },
+      //   defaultHidden: true,
       // },
       {
         key: 'accelerator',
@@ -123,6 +140,32 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return (
             <SessionReservation mode="simple-elapsed" sessionFrgmt={session} />
           );
+        },
+      },
+      {
+        key: 'environment',
+        title: t('session.launcher.Environments'),
+        defaultHidden: true,
+        render: (__, session) => {
+          return session.kernel_nodes?.edges?.[0]?.node?.image ? (
+            <ImageNodeSimpleTag
+              imageFrgmt={session.kernel_nodes.edges[0].node.image}
+              copyable={false}
+              withoutTag
+            />
+          ) : (
+            '-'
+          );
+        },
+      },
+      (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
+        key: 'agent',
+        title: t('session.Agent'),
+        defaultHidden: false,
+        render: (__, session) => {
+          return session?.agent_ids?.length
+            ? _.uniq(session.agent_ids).join(', ') || '-'
+            : '-';
         },
       },
     ]),

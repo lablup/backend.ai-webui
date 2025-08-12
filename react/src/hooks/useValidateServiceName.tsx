@@ -70,7 +70,7 @@ export const useValidateServiceName = (): Exclude<
             `,
             {
               projectID: currentProject.id,
-              filter: `name == "${value}"`,
+              filter: `lifecycle_stage != "destroyed" & name == "${value}"`,
               offset: 0,
               limit: 1,
             },

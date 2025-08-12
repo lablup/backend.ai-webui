@@ -2,7 +2,7 @@ import { theme } from 'antd';
 import React, { CSSProperties, PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
-type GapProp = GapSize | [GapSize, GapSize];
+type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
 
 export interface BAIFlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>,
@@ -30,10 +30,10 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
   ) => {
     const { token } = theme.useToken();
 
-    const getGapSize = (size: GapSize) => {
+    const getGapSize = (size: GapSize | undefined) => {
+      if (size === undefined) return '0px';
       return typeof size === 'string'
-        ? // @ts-ignore
-          token['size' + size.toUpperCase()]
+        ? (token as any)['size' + size.toUpperCase()]
         : size;
     };
 

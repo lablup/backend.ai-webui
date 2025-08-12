@@ -1,4 +1,3 @@
-import { convertToBinaryUnit } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -30,35 +29,20 @@ const getResourceValue = (
 ): ResourceValues => {
   const getCurrentValue = () => {
     if (type === 'usage') {
-      const value = _.get(
+      return _.get(
         checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
         resource,
       );
-
-      if (resource === 'mem') {
-        const converted = convertToBinaryUnit(value, 'auto');
-        return _.toNumber(converted?.numberFixed);
-      }
-
-      return _.toNumber(value);
     }
 
-    const remaining = _.get(
+    return _.get(
       checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining,
       resource,
     );
-    if (remaining === Number.MAX_SAFE_INTEGER) return Number.MAX_SAFE_INTEGER;
-
-    if (resource === 'mem') {
-      const converted = convertToBinaryUnit(remaining, 'auto');
-      return _.toNumber(converted?.numberFixed);
-    }
-
-    return _.toNumber(remaining);
   };
 
   return {
-    current: getCurrentValue(),
+    current: getCurrentValue() || 0,
   };
 };
 
@@ -124,6 +108,7 @@ const MyResourceWithinResourceGroup: React.FC<
         {t('webui.menu.MyResourcesIn')}
       </Typography.Title>
       <ResourceGroupSelectForCurrentProject
+        size="small"
         showSearch
         style={{ minWidth: 100 }}
         onChange={(v) => {
@@ -141,7 +126,7 @@ const MyResourceWithinResourceGroup: React.FC<
     <BaseResourceItem
       {...props}
       title={title}
-      tooltip="webui.menu.MyResourcesInResourceGroupDescription"
+      tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
       isRefetching={isRefetching || internalIsRefetching}
       displayType={displayType}
       onDisplayTypeChange={setDisplayType}

@@ -17,8 +17,8 @@ import SessionNodes from '../components/SessionNodes';
 import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
 import {
   INITIAL_FETCH_KEY,
+  useFetchKey,
   useSuspendedBackendaiClient,
-  useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -55,6 +55,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useCurrentUserRole } from 'src/hooks/backendai';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
@@ -80,6 +81,10 @@ const ComputeSessionListPage = () => {
     Array<SessionNode>
   >([]);
   const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
+
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ComputeSessionListPage',
+  );
 
   const {
     baiPaginationOption,
@@ -124,7 +129,7 @@ const ComputeSessionListPage = () => {
     return status === 'TERMINATED' || status === 'CANCELLED';
   };
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables: ComputeSessionListPageQuery$variables = useMemo(
     () => ({
@@ -136,6 +141,7 @@ const ComputeSessionListPage = () => {
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup:
         baiClient?._config?.hideAgents && userRole !== 'superadmin',
+      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
     }),
     [
       currentProject.id,
@@ -164,6 +170,7 @@ const ComputeSessionListPage = () => {
           $order: String
           $resourceGroup: String
           $skipTotalResourceWithinResourceGroup: Boolean!
+          $isSuperAdmin: Boolean!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -225,7 +232,7 @@ const ComputeSessionListPage = () => {
           ...TotalResourceWithinResourceGroupFragment
             @skip(if: $skipTotalResourceWithinResourceGroup)
             @alias
-            @arguments(resourceGroup: $resourceGroup)
+            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
         }
       `,
     deferredQueryVariables,
@@ -569,6 +576,10 @@ const ComputeSessionListPage = () => {
             }}
             onChangeOrder={(order) => {
               setQuery({ order }, 'replaceIn');
+            }}
+            tableSettings={{
+              columnOverrides: columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
             }}
           />
         </BAIFlex>
