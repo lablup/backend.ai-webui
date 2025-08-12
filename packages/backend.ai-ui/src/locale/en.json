@@ -35,7 +35,8 @@
       "FileUploadSizeLimit": "File size exceeds upload size limit."
     },
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
-    "DuplicatedFiles": "Overwrite Confirmation"
+    "DuplicatedFiles": "Overwrite Confirmation",
+    "DragAndDropDesc": "Drag and drop files to this area to upload."
   },
   "comp:BAITable": {
     "SettingTable": "Table Settings",

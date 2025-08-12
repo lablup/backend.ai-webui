@@ -35,7 +35,8 @@
       "FileUploadSizeLimit": "ファイルサイズはアップロードサイズの制限を超えています。"
     },
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
-    "DuplicatedFiles": "確認の上書き"
+    "DuplicatedFiles": "確認の上書き",
+    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。"
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "表示する列を選択します",

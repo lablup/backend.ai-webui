@@ -35,7 +35,8 @@
       "FileUploadSizeLimit": "La dimensione del file supera il limite di dimensione del caricamento."
     },
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
-    "DuplicatedFiles": "Sovrascrivere la conferma"
+    "DuplicatedFiles": "Sovrascrivere la conferma",
+    "DragAndDropDesc": "Trascina i file in quest'area da caricare."
   },
   "comp:BAITable": {
     "SettingTable": "Impostazioni della tabella",

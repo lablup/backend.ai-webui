@@ -5,6 +5,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import CreateDirectoryModal from './CreateDirectoryModal';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
+import { useUploadVFolderFiles } from './hooks';
 import {
   FileAddOutlined,
   FolderAddOutlined,
@@ -12,9 +13,8 @@ import {
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
+import { Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
-import _ from 'lodash';
 import { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,12 +36,12 @@ const ActionItems: React.FC<ActionItemsProps> = ({
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
-  const { targetVFolderId, currentPath } = use(FolderInfoContext);
+  const { targetVFolderId } = use(FolderInfoContext);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isUploading, { toggle: toggleUploading }] = useToggle(false);
   const uploadProcessingRef = useRef<string | null>(null);
+  const { upload } = useUploadVFolderFiles();
 
   const { data: vfolderInfo, isFetching } = useQuery({
     queryKey: ['vfolderInfo', targetVFolderId],
@@ -52,7 +52,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
     gcTime: 0,
   });
 
-  const handleUpload = async (fileList: RcFile[], currentPath: string) => {
+  const handleUpload = async (fileList: Array<RcFile>) => {
     // When uploading folder, ant design trigger `beforeUpload` for each file in the folder.
     // We need to ensure that the upload is processed only once for the entire batch.
     const batchId = fileList.map((f) => f.name + f.size).join('|');
@@ -63,42 +63,10 @@ const ActionItems: React.FC<ActionItemsProps> = ({
     uploadProcessingRef.current = batchId;
     toggleUploading();
 
-    try {
-      const existFilePromises = _.map(fileList, (file) => {
-        // Currently, backend.ai only supports finding existing files by using list_files API.
-        // This API throw an error if the file does not exist in the target vfolder.
-        // So, we need to catch the error and return undefined.
-        const searchPath = [
-          currentPath,
-          file.webkitRelativePath.split('/').slice(0, -1).join('/'),
-        ].join('/');
-        return baiClient.vfolder
-          .list_files(searchPath, targetVFolderId)
-          .then((files) => {
-            return _.find(files.items, { name: file.name });
-          })
-          .catch(() => {
-            return undefined;
-          });
-      });
-
-      await Promise.all(existFilePromises).then((res) => {
-        const result = _.filter(res, (item) => item !== undefined);
-        toggleUploading();
-        if (!_.isEmpty(result)) {
-          modal.confirm({
-            title: t('comp:FileExplorer.DuplicatedFiles'),
-            content: t('comp:FileExplorer.DuplicatedFilesDesc'),
-            onOk: () => {
-              onUpload(fileList, currentPath);
-            },
-          });
-        } else {
-          onUpload(fileList, currentPath);
-        }
-        uploadProcessingRef.current = null;
-      });
-    } catch (error) {}
+    upload(fileList, onUpload, () => {
+      uploadProcessingRef.current = null;
+      toggleUploading();
+    });
   };
 
   return (
@@ -138,7 +106,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
                 label: (
                   <Upload
                     beforeUpload={(_, fileList) => {
-                      handleUpload(fileList, currentPath);
+                      handleUpload(fileList);
                       return false; // Prevent default upload behavior
                     }}
                     showUploadList={false}
@@ -154,7 +122,7 @@ const ActionItems: React.FC<ActionItemsProps> = ({
                   <Upload
                     directory
                     beforeUpload={(_, fileList) => {
-                      handleUpload(fileList, currentPath);
+                      handleUpload(fileList);
                       return false;
                     }}
                     showUploadList={false}
