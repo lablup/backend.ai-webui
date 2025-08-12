@@ -1,0 +1,5 @@
+# Custom merge drivers for conflict resolution
+
+# Specifically target i18n translation files to avoid trailing comma conflicts
+resources/i18n/*.json merge=json
+packages/backend.ai-ui/src/locale/*.json merge=json
