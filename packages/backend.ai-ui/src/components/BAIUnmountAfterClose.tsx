@@ -1,9 +1,8 @@
-import { BAIModalProps } from './BAIModal';
 import { DrawerProps, ModalProps } from 'antd';
 import React, { useState, useLayoutEffect } from 'react';
 
-interface UnmountModalAfterCloseProps {
-  children: React.ReactElement<BAIModalProps> | React.ReactElement<ModalProps>;
+interface BAIUnmountModalAfterCloseProps {
+  children: React.ReactElement<ModalProps | DrawerProps>;
 }
 
 /**
@@ -17,7 +16,7 @@ interface UnmountModalAfterCloseProps {
  * The component intercepts the child's `afterClose` (for Modal) and `afterOpenChange` (for Drawer)
  * callbacks to update its internal state, while preserving any original callbacks provided.
  *
- * @param {UnmountModalAfterCloseProps} props - The props containing a single child element.
+ * @param {BAIUnmountModalAfterCloseProps} props - The props containing a single child element.
  * @returns {React.ReactElement | null} The cloned child element with enhanced unmounting logic, or null if unmounted.
  *
  * @example
@@ -25,7 +24,7 @@ interface UnmountModalAfterCloseProps {
  *   <Modal open={isOpen} afterClose={handleAfterClose} />
  * </UnmountAfterClose>
  */
-const UnmountAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
+const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   children,
 }) => {
   // Ensure there is only one child element
@@ -47,8 +46,14 @@ const UnmountAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
     return null;
   }
 
+  // Type guards to check if the element is a Modal or Drawer
+  const hasAfterClose = 'afterClose' in modalElement.props;
+  const hasAfterOpenChange = 'afterOpenChange' in modalElement.props;
+
   // Preserve the original afterClose callback if it exists
-  const originalAfterClose = modalElement.props.afterClose;
+  const originalAfterClose = hasAfterClose
+    ? (modalElement.props as ModalProps).afterClose
+    : undefined;
 
   // New handler to intercept afterClose
   const handleModalAfterClose: ModalProps['afterClose'] = (...args) => {
@@ -60,7 +65,10 @@ const UnmountAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
   };
 
   // Preserve the original afterOpenChange callback if it exists
-  const originalAfterOpenChange = modalElement.props.afterOpenChange;
+  const originalAfterOpenChange = hasAfterOpenChange
+    ? modalElement.props.afterOpenChange
+    : undefined;
+
   // New handler to intercept afterOpenChange
   const handleModalAfterOpenChange: DrawerProps['afterOpenChange'] = (open) => {
     if (originalAfterOpenChange) {
@@ -72,15 +80,15 @@ const UnmountAfterClose: React.FC<UnmountModalAfterCloseProps> = ({
     }
   };
 
-  // Clone the child element, keeping the open prop and replacing afterClose with the new handler
+  // Clone the child element with proper typing
   const clonedChild = React.cloneElement(modalElement, {
     // for Modal
-    afterClose: handleModalAfterClose,
+    ...(hasAfterClose && { afterClose: handleModalAfterClose }),
     // for Drawer
-    afterOpenChange: handleModalAfterOpenChange,
+    ...(hasAfterOpenChange && { afterOpenChange: handleModalAfterOpenChange }),
   });
 
   return clonedChild;
 };
 
-export default UnmountAfterClose;
+export default BAIUnmountAfterClose;
