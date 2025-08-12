@@ -230,23 +230,25 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
                 </BAIStatisticItemWrap>
               )}
             </BAIRowWrapWithDividers>
-            <BAIRowWrapWithDividers
-              rowGap={token.marginXL}
-              columnGap={token.marginXXL}
-              dividerColor={token.colorBorder}
-              dividerWidth={1}
-              style={{
-                backgroundColor: token.colorSuccessBg,
-                borderRadius: token.borderRadiusLG,
-                padding: token.padding,
-              }}
-            >
-              {_.map(visibleAccelerators, ({ key, resourceSlot, values }) => (
-                <BAIStatisticItemWrap key={key}>
-                  {renderResourceProgress(values, resourceSlot)}
-                </BAIStatisticItemWrap>
-              ))}
-            </BAIRowWrapWithDividers>
+            {visibleAccelerators.length > 0 && (
+              <BAIRowWrapWithDividers
+                rowGap={token.marginXL}
+                columnGap={token.marginXXL}
+                dividerColor={token.colorBorder}
+                dividerWidth={1}
+                style={{
+                  backgroundColor: token.colorSuccessBg,
+                  borderRadius: token.borderRadiusLG,
+                  padding: token.padding,
+                }}
+              >
+                {_.map(visibleAccelerators, ({ key, resourceSlot, values }) => (
+                  <BAIStatisticItemWrap key={key}>
+                    {renderResourceProgress(values, resourceSlot)}
+                  </BAIStatisticItemWrap>
+                ))}
+              </BAIRowWrapWithDividers>
+            )}
           </BAIFlex>
         )}
       </BAIFlex>
