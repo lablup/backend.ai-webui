@@ -111,7 +111,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     const items: Array<ItemType> = [
       {
         title: <HomeOutlined />,
-        href: '',
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -146,7 +145,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
       items.push({
         title: part,
-        href: '',
         onClick: () => {
           navigateToPath(pathToThisPoint);
           setSelectedItems([]);
@@ -272,6 +270,11 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
                 currentPath === '.' ? 0 : currentPath.split('/').length;
               return index <= currentDepth;
             })}
+            itemRender={(item) => (
+              <Typography.Link onClick={item.onClick}>
+                {item.title}
+              </Typography.Link>
+            )}
           />
           <ActionItems
             selectedItems={selectedItems}

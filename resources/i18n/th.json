@@ -259,6 +259,7 @@
     "NewFolder": "โฟลเดอร์ใหม่",
     "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
     "NoStorageDescriptionFound": "ไม่พบคำอธิบาย",
+    "NotInProject": "โฟลเดอร์นี้เป็นของโครงการที่แตกต่างกัน",
     "NumberOfFolders": "จำนวนโฟลเดอร์",
     "Permission": "สิทธิ์",
     "Pipeline": "โฟลเดอร์ไปป์ไลน์",

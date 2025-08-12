@@ -259,6 +259,7 @@
     "NewFolder": "Uusi kansio",
     "NewFolderName": "Uusi kansion nimi",
     "NoStorageDescriptionFound": "Ei kuvausta.",
+    "NotInProject": "Tämä kansio kuuluu toiseen projektiin.",
     "NumberOfFolders": "Kansioiden määrä",
     "Permission": "Lupa",
     "Pipeline": "Putkiston kansiot",
