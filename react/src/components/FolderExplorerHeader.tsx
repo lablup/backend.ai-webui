@@ -33,13 +33,23 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   );
 
   return (
-    <BAIFlex justify="between" gap={token.marginMD} style={{ width: '100%' }}>
-      <BAIFlex gap={token.marginMD} style={{ flex: 1 }}>
+    <BAIFlex
+      data-testid="folder-explorer-header"
+      justify="between"
+      gap={token.marginMD}
+      style={{ width: '100%' }}
+    >
+      <BAIFlex
+        data-testid="folder-explorer-title"
+        gap={token.marginMD}
+        style={{ flex: 1 }}
+      >
         <Suspense fallback={<Skeleton.Input active />}>
           <VFolderNameTitle vfolderNodeFrgmt={vfolderNode} />
         </Suspense>
       </BAIFlex>
       <BAIFlex
+        data-testid="folder-explorer-actions"
         justify="end"
         gap={token.marginSM}
         style={{
