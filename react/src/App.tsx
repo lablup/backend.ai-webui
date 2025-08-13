@@ -83,8 +83,11 @@ const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 
 // Deployment pages
+// const DeploymentListPage = React.lazy(
+//   () => import('./pages/Deployments/DeploymentListPage'),
+// );
 const DeploymentListPage = React.lazy(
-  () => import('./pages/Deployments/DeploymentListPage'),
+  () => import('./pages/DeploymentListPage'),
 );
 const DeploymentDetailPage = React.lazy(
   () => import('./pages/Deployments/DeploymentDetailPage'),
