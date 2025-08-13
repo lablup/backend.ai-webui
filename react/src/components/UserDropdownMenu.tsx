@@ -68,6 +68,7 @@ const UserDropdownMenu: React.FC<{
   ] = useTransition();
   const items: MenuProps['items'] = [
     {
+      'data-testid': 'dropdown-user-name',
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
       key: 'userFullName',
       icon: <UserOutlined />,
@@ -78,6 +79,7 @@ const UserDropdownMenu: React.FC<{
       },
     },
     {
+      'data-testid': 'dropdown-user-email',
       label: userInfo.email,
       key: 'userEmail',
       icon: <MailOutlined />,
@@ -90,6 +92,7 @@ const UserDropdownMenu: React.FC<{
       type: 'divider',
     },
     {
+      'data-testid': 'dropdown-user-role',
       label: userRole,
       key: 'userRole',
       icon: <SecurityScanOutlined />,
@@ -102,6 +105,7 @@ const UserDropdownMenu: React.FC<{
       type: 'divider',
     },
     {
+      'data-testid': 'dropdown-about-backend-ai',
       label: t('webui.menu.AboutBackendAI'),
       key: 'description',
       icon: <ExclamationCircleOutlined />,
@@ -110,6 +114,7 @@ const UserDropdownMenu: React.FC<{
       },
     },
     {
+      'data-testid': 'dropdown-my-account',
       label: t('webui.menu.MyAccount'),
       key: 'userProfileSetting',
       icon: isPendingInitializeSettingModal ? (
@@ -135,6 +140,7 @@ const UserDropdownMenu: React.FC<{
       },
     },
     {
+      'data-testid': 'dropdown-preferences',
       label: t('webui.menu.Preferences'),
       key: 'preferences',
       icon: <SettingOutlined />,
@@ -150,6 +156,7 @@ const UserDropdownMenu: React.FC<{
       },
     },
     {
+      'data-testid': 'dropdown-logs-errors',
       label: t('webui.menu.LogsErrors'),
       key: 'logs',
       icon: <FileTextOutlined />,
@@ -167,6 +174,7 @@ const UserDropdownMenu: React.FC<{
       onClick: () => toggleDownloadModal(),
     },
     {
+      'data-testid': 'dropdown-logout',
       label: t('webui.menu.LogOut'),
       key: 'logout',
       icon: <LogoutOutlined />,

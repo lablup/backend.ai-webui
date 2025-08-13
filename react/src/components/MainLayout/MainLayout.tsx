@@ -19,7 +19,7 @@ import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate, Outlet, useMatches } from 'react-router-dom';
+import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -57,6 +57,7 @@ const useStyle = createStyles(({ css, token }) => ({
 
 function MainLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
@@ -64,6 +65,11 @@ function MainLayout() {
   const matches = useMatches();
   // @ts-ignore
   const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
+
+  const getPageTestId = (path: string) => {
+    const cleanPath = path.replace(/^\//, '').replace(/\//g, '-');
+    return cleanPath ? `page-${cleanPath}` : 'page-root';
+  };
   const { styles } = useStyle();
 
   useEffect(() => {
@@ -256,7 +262,9 @@ function MainLayout() {
                     }}
                   />
                 )}
-                <Outlet />
+                <div data-testid={getPageTestId(location.pathname)}>
+                  <Outlet />
+                </div>
               </Suspense>
               {/* To match paddig to 16 (2+14) */}
               {/* </BAIFlex> */}
