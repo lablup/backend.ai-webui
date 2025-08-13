@@ -9,6 +9,7 @@ import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
+import WebTerminalGuideModal from './WebTerminalGuideModal';
 import { Tooltip, Button, theme } from 'antd';
 import {
   BAIAppIcon,
@@ -21,6 +22,7 @@ import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;
@@ -70,9 +72,12 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
   const [openLogModal, setOpenLogModal] = useState(false);
   const [openContainerCommitModal, setOpenContainerCommitModal] =
     useState(false);
+  const [openWebTerminalGuideModal, setOpenWebTerminalGuideModal] =
+    useState(false);
 
   const userInfo = useCurrentUserInfo();
   const isOwner = userInfo[0]?.uuid === session?.user_id;
+  const isVisible = useBAISettingUserState('terminal_guide');
 
   return (
     session && (
@@ -105,10 +110,18 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
             icon={<BAITerminalAppIcon />}
             onClick={() => {
               appLauncher.runTerminal(session?.row_id);
+              if (isVisible[0]) {
+                setOpenWebTerminalGuideModal(true);
+              }
             }}
           />
         </Tooltip>
+        <WebTerminalGuideModal
+          open={openWebTerminalGuideModal}
+          onRequestClose={() => setOpenWebTerminalGuideModal(false)}
+        />
         {/* Don't put this modal to end of the return array(<></>). */}
+
         <TerminateSessionModal
           sessionFrgmts={[session]}
           open={openTerminateModal}

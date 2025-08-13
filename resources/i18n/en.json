@@ -1926,7 +1926,7 @@
     "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
     "CopyGuideThree": "Now you can copy text from the terminal.",
     "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
-    "LearnMore": "Learn More &gt;"
+    "LearnMore": "Learn More >"
   },
   "webui": {
     "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",

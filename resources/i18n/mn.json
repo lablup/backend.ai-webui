@@ -1912,11 +1912,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
-    "CopyGuideFour": "Хулганаар гүйлгэхийг дахин асаахын тулд <code> Ctrl + B </code> дарж <code> гэж бичнэ үү: </code> дээр -g хулганаа тохируулаад <code> Enter a0088771d",
-    "CopyGuideOne": "<code> Ctrl + B </code> товчийг дарж tmux хяналтын горимд орно уу.",
+    "CopyGuideFour": "Хулганыг эргүүлэхийн тулд <code>Ctrl + B</code> <code>:set -g mouse on</code> дээр дарна уу.",
+    "CopyGuideOne": "Tmux Contrice горимд оруулахын тулд <code>Ctrl + B</code> товчийг дарна уу.",
     "CopyGuideThree": "Одоо та текстийг терминалаас хуулж болно.",
-    "CopyGuideTwo": "<code> гэж бичээд </code> унтраах -g хулганаа оруулаад <code> Enter </code> товчийг дар.",
-    "LearnMore": "Дэлгэрэнгүй үзэх &gt;"
+    "CopyGuideTwo": "<code>:set -g mouse off</code> -ийг <code>Enter</code> товчийг дарна уу.",
+    "LearnMore": "Илүү ихийг сур >"
   },
   "webui": {
     "AdminOnlyPage": "Танд энэ хуудсанд нэвтрэх эрх байхгүй байна. <br /> Хураангуй хуудсанд дахин чиглүүлэхийн тулд доорх товчийг дарна уу.",

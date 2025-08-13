@@ -1915,11 +1915,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
-    "CopyGuideFour": "要再次打开鼠标滚动，请按 <code> Ctrl + B </code> 并键入 <code> :set -g mouse on </code> 并按 a09d9160780dz709d91607dz70z70z70z70z70z1",
-    "CopyGuideOne": "按 <code> Ctrl + B </code> 键进入 tmux 控制模式。",
+    "CopyGuideFour": "要再次打开鼠标滚动，请按<code>Ctrl + B</code>，然后输入<<code>:set -g mouse on</code>上，然后按<code>Enter</code>键。",
+    "CopyGuideOne": "按<code>Ctrl + B</code>键输入TMUX控制模式。",
     "CopyGuideThree": "现在您可以从终端复制文本。",
-    "CopyGuideTwo": "输入 <code> :set -g mouse off </code> 并按 <code> 输入 </code> 键。",
-    "LearnMore": "了解更多信息 &gt;"
+    "CopyGuideTwo": "键入<code>:set -g mouse off</code>，然后按<code>Enter</code>键。",
+    "LearnMore": "了解更多 >"
   },
   "webui": {
     "AdminOnlyPage": "您无权访问此页面。 <br /> 单击下面的按钮重定向到摘要页面。",

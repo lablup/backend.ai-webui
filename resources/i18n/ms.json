@@ -1912,11 +1912,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",
-    "CopyGuideFour": "Untuk menghidupkan tetikus tetikus sekali lagi, Tekan <code> Ctrl + B </code> dan Ketik <code>: tetapkan -g tetikus pada </code> dan Tekan <code> Masukkan kekunci a0088771d5",
-    "CopyGuideOne": "Tekan kekunci <code> Ctrl + B </code> untuk memasuki mod kawalan tmux.",
+    "CopyGuideFour": "Untuk menghidupkan tatal tetikus sekali lagi, tekan <code>Ctrl + B</code> dan taip <code>:set -g mouse on</code> dan tekan <code>Enter</code> kekunci.",
+    "CopyGuideOne": "Tekan <code>Ctrl + B</code> kekunci untuk memasukkan mod kawalan TMUX.",
     "CopyGuideThree": "Sekarang anda boleh menyalin teks dari terminal.",
-    "CopyGuideTwo": "Ketik <code>: tetikus-g tetikus </code> dan Tekan <code> Masukkan Kekunci </code>.",
-    "LearnMore": "Ketahui Lebih Lanjut &gt;"
+    "CopyGuideTwo": "Taip <code>:set -g mouse off</code> dan tekan <code>Enter</code> kekunci.",
+    "LearnMore": "Ketahui lebih lanjut >"
   },
   "webui": {
     "AdminOnlyPage": "Anda tidak mempunyai kebenaran untuk mengakses halaman ini. <br /> Klik butang di bawah untuk mengalihkan ke halaman ringkasan.",

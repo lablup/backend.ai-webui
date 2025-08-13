@@ -1920,11 +1920,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
-    "CopyGuideFour": "원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 엔터키 입력",
+    "CopyGuideFour": "원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 <code>Enter</code>키 입력",
     "CopyGuideOne": "<code>Ctrl + B</code>를 입력하여 tmux의 제어 모드로 진입",
     "CopyGuideThree": "마우스로 드래그하여 터미널의 텍스트를 복사할 수 있습니다.",
-    "CopyGuideTwo": "<code>:set -g mouse off</code>를 입력하고 엔터키 입력",
-    "LearnMore": "더 알아보기 &gt;"
+    "CopyGuideTwo": "<code>:set -g mouse off</code>를 입력하고 <code>Enter</code> 키 입력",
+    "LearnMore": "더 알아보기 >"
   },
   "webui": {
     "AdminOnlyPage": "접근하려는 페이지는 관리자 권한이 필요합니다.<br /> 아래 버튼을 클릭하면 요약 페이지로 돌아갑니다.",

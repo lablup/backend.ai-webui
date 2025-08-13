@@ -1913,11 +1913,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
-    "CopyGuideFour": "Um das Scrollen mit der Maus wieder einzuschalten, drücken Sie <code> Strg + B </code> und geben Sie <code> :set -g mouse on </code> ein und drücken Sie <code> Geben Sie </code> ein.",
-    "CopyGuideOne": "Drücken Sie die Taste <code> Strg + B </code>, um in den tmux-Steuerungsmodus zu gelangen.",
+    "CopyGuideFour": "Um die Maus -Scroll erneut einzuschalten, drücken Sie <code>Ctrl + B</code> und geben Sie <code>:set -g mouse on</code> ein und drücken Sie <code> Enter </code> Taste eingeben.",
+    "CopyGuideOne": "Drücken Sie <code>Ctrl + B</code> Taste, um den TMUX -Steuermodus einzugeben.",
     "CopyGuideThree": "Jetzt können Sie Text aus dem Terminal kopieren.",
-    "CopyGuideTwo": "Geben Sie <code> :set -g mouse off </code> ein und drücken Sie <code> Geben Sie </code> ein.",
-    "LearnMore": "Weitere Informationen &gt;"
+    "CopyGuideTwo": "Geben Sie <code>:set -g mouse off</code> und drücken Sie <code>Enter</code> Taste eingeben.",
+    "LearnMore": "Erfahren Sie mehr >"
   },
   "webui": {
     "AdminOnlyPage": "Sie sind nicht berechtigt, auf diese Seite zuzugreifen. <br /> Klicken Sie auf die Schaltfläche unten, um zur Übersichtsseite weiterzuleiten.",

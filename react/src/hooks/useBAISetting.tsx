@@ -10,6 +10,7 @@ interface UserSettings {
   compact_sidebar?: boolean;
   preserve_login?: boolean;
   automatic_update_check?: boolean;
+  terminal_guide?: boolean;
   custom_ssh_port?: string;
   beta_feature?: boolean;
   last_window_close_time?: number;

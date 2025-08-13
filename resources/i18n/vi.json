@@ -1915,11 +1915,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
-    "CopyGuideFour": "Để bật lại tính năng cuộn chuột, Nhấn <code> Ctrl + B </code> và Nhập <code>: đặt -g chuột trên </code> và Nhấn <code> Nhập phím </code>.",
-    "CopyGuideOne": "Nhấn phím <code> Ctrl + B </code> để vào chế độ điều khiển tmux.",
+    "CopyGuideFour": "Để bật lại cuộn chuột, nhấn <code>Ctrl + B</code> và type <code>:set -g mouse on</code> và nhấn <code>Enter</code> Key.",
+    "CopyGuideOne": "Nhấn phím <code>Ctrl + B</code> để vào chế độ điều khiển TMUX.",
     "CopyGuideThree": "Bây giờ bạn có thể sao chép văn bản từ thiết bị đầu cuối.",
-    "CopyGuideTwo": "Gõ <code>: set -g mouse off </code> and Press <code> Enter </code> Key.",
-    "LearnMore": "Tìm hiểu thêm &gt;"
+    "CopyGuideTwo": "Loại <code>:set -g mouse off</code> và nhấn phím <code>Enter</code>.",
+    "LearnMore": "Tìm hiểu thêm >"
   },
   "webui": {
     "AdminOnlyPage": "Bạn không có quyền truy cập trang này. <br /> Nhấp vào nút bên dưới để chuyển hướng đến trang tóm tắt.",

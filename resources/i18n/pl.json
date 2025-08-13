@@ -1914,11 +1914,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
-    "CopyGuideFour": "Aby ponownie włączyć przewijanie myszy, naciśnij <code> Ctrl + B </code> i wpisz <code> :set -g mouse on </code> i naciśnij <code> Wprowadź klawisz </code>.",
-    "CopyGuideOne": "Naciśnij klawisz <code> Ctrl + B </code>, aby przejść do trybu sterowania tmux.",
+    "CopyGuideFour": "Aby ponownie włączyć przewijanie myszy, naciśnij <code>Ctrl + B</code> i wpisz <code>:set -g mouse on</code> i naciśnij klawisz <code>Enter</code>.",
+    "CopyGuideOne": "Naciśnij klawisz <code>Ctrl + B</code>, aby wprowadzić tryb sterowania TMUX.",
     "CopyGuideThree": "Teraz możesz skopiować tekst z terminala.",
-    "CopyGuideTwo": "Wpisz <code> :set -g mouse off </code> i naciśnij <code> Wprowadź klucz </code>.",
-    "LearnMore": "Dowiedz się więcej &gt;"
+    "CopyGuideTwo": "Wpisz <code>:set -g mouse off</code> i naciśnij klawisz <code>Enter</code>.",
+    "LearnMore": "Dowiedz się więcej >"
   },
   "webui": {
     "AdminOnlyPage": "Nie masz uprawnień dostępu do tej strony. <br /> Kliknij przycisk poniżej, aby przekierować na stronę podsumowania.",

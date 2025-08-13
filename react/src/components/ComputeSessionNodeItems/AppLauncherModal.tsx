@@ -170,6 +170,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
             </div>
           );
         })}
+
         {preOpenAppTemplate.length > 0 ? (
           <>
             <Typography.Title level={5} style={{ marginTop: 0 }}>
