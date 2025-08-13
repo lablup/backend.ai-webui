@@ -132,6 +132,9 @@
       }
     }
   },
+  "common": {
+    "OpenInNewTab": "Open in new tab"
+  },
   "credential": {
     "AccessKey": "Access Key",
     "AccessKeyOptional": "Access Key (optional)",
@@ -486,12 +489,16 @@
   },
   "deployment": {
     "Activate": "Activate",
+    "Active": "Active",
     "ActiveReplicas": "Active Replicas",
     "ActiveRevisions": "Active Revisions",
     "CheckDomainAvailability": "Check domain availability",
+    "ClusterSize": "Cluster Size",
     "CreateDeployment": "Create Deployment",
     "CreatedAt": "Created At",
+    "CreatedBy": "Created By",
     "CreatorEmail": "Creator Email",
+    "DefaultDeploymentStrategy": "Default Deployment Strategy",
     "DeploymentDetail": "Deployment Detail",
     "DeploymentInfo": "Deployment Info",
     "DeploymentList": "Deployment List",
@@ -501,6 +508,7 @@
     "DeploymentNamePattern": "Deployment name can only contain letters, numbers, hyphens, and underscores",
     "DeploymentNamePlaceholder": "Enter deployment name",
     "DeploymentNameRequired": "Deployment name is required",
+    "DeploymentStrategy": "Deployment Strategy",
     "Deployments": "Deployments",
     "Description": "Description",
     "DescriptionPlaceholder": "Enter description for this deployment/revision",
@@ -514,23 +522,32 @@
     "ExpertModeTooltip": "Expert mode allows direct configuration of all deployment settings",
     "Hibernate": "Hibernate",
     "ImageName": "Image Name",
+    "Inactive": "Inactive",
     "Mode": "Mode",
     "ModeRequired": "Mode selection is required",
     "ModeWarning": "Mode cannot be changed after creation",
     "ModeWarningDescription": "Please choose carefully as this setting is permanent",
+    "Name": "Name",
+    "NumberOfDesiredReplicas": "Number of Desired Replicas",
+    "Owner": "Owner",
+    "PreferredDomainName": "Preferred Domain Name",
+    "Public": "Public",
     "Replicas": "Replicas",
     "Resources": "Resources",
+    "RevisionName": "Revision Name",
     "Revisions": "Revisions",
     "SimpleMode": "Simple Mode",
     "SimpleModeDescription": "Preset based",
     "SimpleModeTooltip": "Simple mode uses predefined presets for easy deployment",
     "Status": "Status",
+    "Tags": "Tags",
     "TokensLastHour": "Tokens (Last Hour)",
     "TotalResources": "Total Resources",
     "TrafficRatio": "Traffic Ratio",
     "TrafficRatioEditDescription": "Total traffic ratio must equal 100%",
     "TrafficRatioEditWarning": "Editing traffic ratios",
-    "URL": "URL"
+    "URL": "URL",
+    "UpdatedAt": "Updated At"
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",

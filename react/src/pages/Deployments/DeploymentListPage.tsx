@@ -4,7 +4,6 @@ import DeploymentList from '../../components/Deployments/DeploymentList';
 import { useUpdatableState } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import { useDeferredQueryParams } from '../../hooks/useDeferredQueryParams';
-import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Typography } from 'antd';
 import { BAICard, BAIFlex, BAIPropertyFilter } from 'backend.ai-ui';
 import React, { useState } from 'react';
@@ -77,11 +76,7 @@ const DeploymentListPage: React.FC = () => {
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setIsCreateModalOpen(true)}
-            >
+            <Button type="primary" onClick={() => setIsCreateModalOpen(true)}>
               {t('deployment.CreateDeployment')}
             </Button>
           </BAIFlex>
