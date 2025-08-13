@@ -26,7 +26,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
@@ -92,6 +92,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<Service>>(null);
   const currentProject = useCurrentProjectValue();
@@ -208,7 +209,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               onRequestClose();
             },
             onError(e) {
-              message.error(e.message || t('dialog.ErrorOccurred'));
+              message.error(getErrorMessage(e));
             },
           },
         );
@@ -400,7 +401,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                     folderName: importResult?.folder?.name,
                     serviceName: importResult?.service?.name,
                   })
-              : importAndStartService?.error?.message
+              : getErrorMessage(importAndStartService?.error)
           }
           extra={
             importAndStartService?.isSuccess && (

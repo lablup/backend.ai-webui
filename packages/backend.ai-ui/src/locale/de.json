@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
     "SearchTableColumn": "Suchtabellenspalten"
   },
+  "error": {
+    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"

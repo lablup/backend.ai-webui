@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
     "SearchTableColumn": "Lajur jadual carian"
   },
+  "error": {
+    "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
