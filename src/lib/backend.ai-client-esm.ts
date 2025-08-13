@@ -3939,6 +3939,9 @@ class Resources {
     this.resources['atom-plus.device'] = {};
     this.resources['atom-plus.device'].total = 0;
     this.resources['atom-plus.device'].used = 0;
+    this.resources['atom-max.device'] = {};
+    this.resources['atom-max.device'].total = 0;
+    this.resources['atom-max.device'].used = 0;
     this.resources['gaudi2.device'] = {};
     this.resources['gaudi2.device'].total = 0;
     this.resources['gaudi2.device'].used = 0;
@@ -4085,6 +4088,16 @@ class Resources {
               this.resources['atom-plus.device'].used =
                 parseInt(this.resources['atom-plus.device'].used) +
                 Math.floor(Number(occupied_slots['atom-plus.device']));
+            }
+            if ('atom-max.device' in available_slots) {
+              this.resources['atom-max.device'].total =
+                parseInt(this.resources['atom-max.device'].total) +
+                Math.floor(Number(available_slots['atom-max.device']));
+            }
+            if ('atom-max.device' in occupied_slots) {
+              this.resources['atom-max.device'].used =
+                parseInt(this.resources['atom-max.device'].used) +
+                Math.floor(Number(occupied_slots['atom-max.device']));
             }
             if ('gaudi2.device' in available_slots) {
               this.resources['gaudi2.device'].total =

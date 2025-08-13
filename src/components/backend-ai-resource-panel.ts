@@ -80,6 +80,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({ type: Number }) atom_used = 0;
   @property({ type: Number }) atom_plus_total = 0;
   @property({ type: Number }) atom_plus_used = 0;
+  @property({ type: Number }) atom_max_total = 0;
+  @property({ type: Number }) atom_max_used = 0;
   @property({ type: Number }) gaudi2_total = 0;
   @property({ type: Number }) gaudi2_used = 0;
   @property({ type: Number }) warboy_total = 0;
@@ -348,6 +350,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.atom_plus = {};
     this.resources.atom_plus.total = 0;
     this.resources.atom_plus.used = 0;
+    this.resources.atom_max = {};
+    this.resources.atom_max.total = 0;
+    this.resources.atom_max.used = 0;
     this.resources.gaudi2 = {};
     this.resources.gaudi2.total = 0;
     this.resources.gaudi2.used = 0;
@@ -417,6 +422,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.atom_plus_total = this.resources['atom-plus.device'].total;
     }
+    if (isNaN(this.resources['atom-max.device'].total)) {
+      this.atom_max_total = 0;
+    } else {
+      this.atom_max_total = this.resources['atom-max.device'].total;
+    }
     if (isNaN(this.resources['gaudi2.device'].total)) {
       this.gaudi2_total = 0;
     } else {
@@ -444,6 +454,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.tpu_used = this.resources['tpu.device'].used;
     this.ipu_used = this.resources['ipu.device'].used;
     this.atom_used = this.resources['atom.device'].used;
+    this.atom_plus_used = this.resources['atom-plus.device'].used;
+    this.atom_max_used = this.resources['atom-max.device'].used;
     this.warboy_used = this.resources['warboy.device'].used;
     this.rngd_used = this.resources['rngd.device'].used;
     this.hyperaccel_lpu_used = this.resources['hyperaccel-lpu.device'].used;
@@ -708,6 +720,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                   this.ipu_total ||
                   this.atom_total ||
                   this.atom_plus_total ||
+                  this.atom_max_total ||
                   this.gaudi2_total ||
                   this.warboy_total ||
                   this.rngd_total ||
@@ -1027,6 +1040,49 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                                       <span class="percentage start-bar">
                                         ${this._prefixFormatWithoutTrailingZeros(
                                           this.atom_plus_used,
+                                          1,
+                                        ) + '%'}
+                                      </span>
+                                      <span class="percentage end-bar"></span>
+                                    </div>
+                                  </div>
+                                `
+                              : html``}
+                            ${this.atom_max_total
+                              ? html`
+                                  <div class="layout horizontal">
+                                    <div
+                                      class="layout vertical start-justified wrap"
+                                    >
+                                      <lablup-progress-bar
+                                        id="atom-max-usage-bar"
+                                        class="start"
+                                        progress="${this.atom_max_used / 100.0}"
+                                        description="${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_max_used,
+                                          2,
+                                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_max_total,
+                                          2,
+                                        )} ATOM Max ${_t(
+                                          'summary.ReservedShort',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                      <lablup-progress-bar
+                                        id="atom-max-usage-bar-2"
+                                        class="end"
+                                        progress="0"
+                                        description="${_t(
+                                          'summary.ATOMMaxEnabled',
+                                        )}."
+                                      ></lablup-progress-bar>
+                                    </div>
+                                    <div
+                                      class="layout vertical center center-justified"
+                                    >
+                                      <span class="percentage start-bar">
+                                        ${this._prefixFormatWithoutTrailingZeros(
+                                          this.atom_max_used,
                                           1,
                                         ) + '%'}
                                       </span>

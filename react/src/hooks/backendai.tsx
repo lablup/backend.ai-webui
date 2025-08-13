@@ -18,6 +18,7 @@ export const knownAcceleratorResourceSlotNames = [
   'ipu.device',
   'atom.device',
   'atom-plus.device',
+  'atom-max.device',
   'gaudi2.device',
   'warboy.device',
   'rngd.device',
