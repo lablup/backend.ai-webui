@@ -442,7 +442,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
               style={{
                 height: 330,
               }}
-              scroll={{ x: 'max-content' }}
+              scroll={{ x: 'max-content', y: 330 }}
             />
           </SortableContext>
         </DndContext>
