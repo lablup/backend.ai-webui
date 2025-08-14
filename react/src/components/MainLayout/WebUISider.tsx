@@ -577,6 +577,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 justify="center"
               >
                 <Typography.Link
+                  data-testid="button-terms-of-service"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -587,6 +588,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 </Typography.Link>
                 &nbsp;·&nbsp;
                 <Typography.Link
+                  data-testid="button-privacy-policy"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -597,6 +599,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 </Typography.Link>
                 &nbsp;·&nbsp;
                 <Typography.Link
+                  data-testid="button-about-backend-ai"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -609,6 +612,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   <>
                     &nbsp;·&nbsp;
                     <Typography.Link
+                      data-testid="button-leave-service"
                       type="secondary"
                       style={{ fontSize: 11 }}
                       onClick={toggleSignoutModal}

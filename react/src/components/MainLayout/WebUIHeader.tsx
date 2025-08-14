@@ -59,6 +59,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
 
   return (
     <BAIFlex
+      data-testid="webui-header"
       align="center"
       justify="between"
       direction="row"
@@ -71,7 +72,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
       }}
       className={styles.webuiHeader}
     >
-      <BAIFlex direction="row" gap={'sm'}>
+      <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
         <ReverseThemeProvider>
           {!gridBreakpoint.sm && (
             <Button
@@ -99,6 +100,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         </ReverseThemeProvider>
         <Suspense>
           <ProjectSelect
+            data-testid="selector-project"
             ghost
             popupMatchSelectWidth={false}
             style={{
@@ -131,7 +133,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
         {baiClient.supports('extend-login-session') &&
           baiClient._config.enableExtendLoginSession && (
             <Suspense>
-              <LoginSessionExtendButton />
+              <LoginSessionExtendButton data-testid="button-extend-login-session" />
               {gridBreakpoint.md && (
                 <Divider
                   type="vertical"
@@ -140,12 +142,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({
               )}
             </Suspense>
           )}
-        <BAINotificationButton />
+        <BAINotificationButton data-testid="button-notification" />
         <ReverseThemeProvider>
-          <WebUIThemeToggleButton />
-          <WEBUIHelpButton />
+          <WebUIThemeToggleButton data-testid="button-theme" />
+          <WEBUIHelpButton data-testid="button-help" />
         </ReverseThemeProvider>
         <UserDropdownMenu
+          data-testid="dropdown-user-menu"
           buttonRender={(btn) => (
             //  Add a `div` to resolve the Dropdown bug when the child is a `ConfigProvider`(ReverseThemeProvider).
             <div>

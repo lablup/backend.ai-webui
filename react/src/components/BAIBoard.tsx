@@ -116,7 +116,7 @@ const BAIBoard = <T extends BAIBoardDataType>({
             }}
             {...item}
           >
-            {item.data.content}
+            {item?.data?.content}
           </BoardItem>
         );
       }}

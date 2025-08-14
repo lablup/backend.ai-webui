@@ -136,6 +136,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
 
   return (
     <BAIModal
+      data-testid="folder-explorer"
       className={styles.baiModalHeader}
       centered
       width={'90%'}
