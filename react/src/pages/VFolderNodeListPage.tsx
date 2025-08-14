@@ -531,6 +531,18 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     key: 'permission',
                     propertyLabel: t('data.Permission'),
                     type: 'string',
+                    strictSelection: true,
+                    defaultOperator: '==',
+                    options: [
+                      {
+                        label: t('data.ReadOnly'),
+                        value: 'ro',
+                      },
+                      {
+                        label: t('data.ReadWrite'),
+                        value: 'rw',
+                      },
+                    ],
                   },
                 ]}
                 value={queryParams.filter || undefined}
