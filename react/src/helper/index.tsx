@@ -662,7 +662,7 @@ export function listenToBackgroundTask<
     onerror: (error) => {
       console.error('SSE error:', error);
       controller.abort();
-      throw error;
+      // Don't throw error here. If you throw error, it will not retry automatically.
     },
   });
 
