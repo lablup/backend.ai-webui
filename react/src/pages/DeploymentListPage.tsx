@@ -2,7 +2,7 @@ import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import DeploymentList from '../components/DeploymentList';
 import { mockDeployments } from '../components/TempMockData';
-import { useUpdatableState } from '../hooks';
+import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { PlusOutlined } from '@ant-design/icons';
@@ -11,15 +11,14 @@ import {
 } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, withDefault } from 'use-query-params';
 
 const DeploymentListPage: React.FC = () => {
   const { t } = useTranslation();
-  // const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [, setIsCreateModalOpen] = useState(false);
+  const webuiNavigate = useWebUINavigate();
 
   const { tablePaginationOption, setTablePaginationOption } =
     useBAIPaginationOptionStateOnSearchParam({
@@ -64,7 +63,7 @@ const DeploymentListPage: React.FC = () => {
             <Button
               type="primary"
               icon={<PlusOutlined />}
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => webuiNavigate('/deployment/start')}
             >
               {t('deployment.CreateDeployment')}
             </Button>
