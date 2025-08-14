@@ -1032,10 +1032,6 @@
   "pagination": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
-  "propertyFilter": {
-    "PlaceHolder": "搜索",
-    "ResetFilter": "重置过滤器"
-  },
   "registry": {
     "AddRegistry": "添加注册表",
     "ConfirmNoUserName": "未指定用户和密码，要保存吗？",

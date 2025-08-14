@@ -6,7 +6,6 @@ import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   convertToBinaryUnit,
-  filterOutNullAndUndefined,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -52,7 +51,7 @@ import {
   Tag,
   Alert,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';

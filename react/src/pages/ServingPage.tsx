@@ -1,18 +1,20 @@
 import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import BAIPropertyFilter, {
-  mergeFilterValues,
-} from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { filterOutEmpty } from '../helper';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { Button, Skeleton, theme } from 'antd';
-import { BAIFlex, BAICard } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAICard,
+  BAIPropertyFilter,
+  mergeFilterValues,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,7 +1,5 @@
 import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
-import BAIPropertyFilter from '../components/BAIPropertyFilter';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -13,7 +11,13 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAIFlex,
+  BAITable,
+  BAIPropertyFilter,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';

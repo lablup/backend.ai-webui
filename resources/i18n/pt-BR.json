@@ -1032,10 +1032,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} de {{total}} itens"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Pesquisar",
-    "ResetFilter": "Redefinir filtros"
-  },
   "registry": {
     "AddRegistry": "Adicionar registro",
     "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",

@@ -1,4 +1,3 @@
-import { filterOutEmpty } from '../../helper';
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
@@ -40,6 +39,7 @@ import {
 } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
+  filterOutEmpty,
   BAIEndpointsIcon,
   BAIExampleStartIcon,
   BAIModelStoreIcon,

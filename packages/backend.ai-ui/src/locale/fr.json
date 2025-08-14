@@ -10,5 +10,9 @@
     "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
     "SettingTable": "Paramètres de la table",
     "SearchTableColumn": "Colonnes de table de recherche"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Recherche",
+    "ResetFilter": "Réinitialiser les filtres"
   }
 }

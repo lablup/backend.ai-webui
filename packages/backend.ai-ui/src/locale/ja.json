@@ -10,5 +10,9 @@
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブル設定",
     "SearchTableColumn": "テーブル列を検索します"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "検索",
+    "ResetFilter": "フィルターをリセットする"
   }
 }

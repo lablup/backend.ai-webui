@@ -5,12 +5,7 @@ import {
 } from '../__generated__/CustomizedImageListQuery.graphql';
 import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedImageListUntagMutation.graphql';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  getImageFullName,
-  localeCompare,
-} from '../helper';
+import { getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -30,7 +25,12 @@ import { useToggle } from 'ahooks';
 import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAIFlex,
+  BAITable,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   PropsWithChildren,

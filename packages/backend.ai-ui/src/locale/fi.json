@@ -10,5 +10,9 @@
     "SettingTable": "Taulukon asetukset",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
     "SearchTableColumn": "Hakutaulukon sarakkeet"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Etsi",
+    "ResetFilter": "Nollaa suodattimet"
   }
 }

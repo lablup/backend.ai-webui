@@ -5,11 +5,7 @@ import {
   KeypairResourcePolicyListQuery$data,
 } from '../__generated__/KeypairResourcePolicyListQuery.graphql';
 import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
-import {
-  localeCompare,
-  numberSorterWithInfinityValue,
-  filterOutEmpty,
-} from '../helper';
+import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
@@ -30,7 +26,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAITable, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';

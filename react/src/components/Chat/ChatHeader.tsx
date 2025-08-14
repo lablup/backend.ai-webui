@@ -1,5 +1,4 @@
 import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
-import { filterOutEmpty } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -14,7 +13,7 @@ import {
   MoreOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import { isEmpty } from 'lodash';
 import {
   ScaleIcon,

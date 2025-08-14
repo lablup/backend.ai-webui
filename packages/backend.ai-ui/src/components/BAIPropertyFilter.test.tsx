@@ -1,4 +1,3 @@
-import '../../__test__/matchMedia.mock.js';
 import { parseFilterValue } from './BAIPropertyFilter';
 
 describe('parseFilterValue', () => {

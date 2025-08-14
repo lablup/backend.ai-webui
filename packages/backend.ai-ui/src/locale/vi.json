@@ -10,5 +10,9 @@
     "SettingTable": "Cài đặt bảng",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Các cột bảng tìm kiếm"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Tìm kiếm",
+    "ResetFilter": "Đặt lại bộ lọc"
   }
 }

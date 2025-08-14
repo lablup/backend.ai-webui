@@ -8,7 +8,6 @@ import {
   convertToBinaryUnit,
   convertToDecimalUnit,
   convertUnitValue,
-  filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
@@ -20,7 +19,6 @@ import AgentDetailModal from './AgentDetailModal';
 import AgentSettingModal from './AgentSettingModal';
 import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
-import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
 import DoubleTag from './DoubleTag';
 import { ResourceTypeIcon } from './ResourceNumber';
@@ -36,7 +34,12 @@ import { useToggle } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIFlex,
+  BAIPropertyFilter,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';

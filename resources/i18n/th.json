@@ -1021,10 +1021,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
-  "propertyFilter": {
-    "PlaceHolder": "ค้นหา",
-    "ResetFilter": "รีเซ็ตตัวกรอง"
-  },
   "registry": {
     "AddRegistry": "เพิ่มทะเบียน",
     "ConfirmNoUserName": "ไม่ได้ระบุชื่อผู้ใช้และรหัสผ่าน คุณต้องการบันทึกหรือไม่?",

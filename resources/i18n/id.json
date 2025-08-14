@@ -1030,10 +1030,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Pencarian",
-    "ResetFilter": "Setel ulang filter"
-  },
   "registry": {
     "AddRegistry": "Tambahkan Registri",
     "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",

@@ -10,5 +10,9 @@
     "SettingTable": "Хүснэгтийн тохиргоо",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Хайх",
+    "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
   }
 }

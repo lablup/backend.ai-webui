@@ -10,5 +10,9 @@
     "SettingTable": "Tabelleneinstellungen",
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
     "SearchTableColumn": "Suchtabellenspalten"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Suche",
+    "ResetFilter": "Filter zurücksetzen"
   }
 }

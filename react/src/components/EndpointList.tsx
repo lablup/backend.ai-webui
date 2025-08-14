@@ -2,11 +2,7 @@ import {
   EndpointListFragment$data,
   EndpointListFragment$key,
 } from '../__generated__/EndpointListFragment.graphql';
-import {
-  baiSignedRequestWithPromise,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-} from '../helper';
+import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -27,7 +23,13 @@ import {
   Tooltip,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import { BAITable, BAITableProps, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAITable,
+  BAITableProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';

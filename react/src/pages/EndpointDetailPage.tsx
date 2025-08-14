@@ -19,10 +19,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
-import {
-  baiSignedRequestWithPromise,
-  filterOutNullAndUndefined,
-} from '../helper';
+import { baiSignedRequestWithPromise } from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -59,7 +56,11 @@ import {
   theme,
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  filterOutNullAndUndefined,
+  BAIFlex,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
 import {

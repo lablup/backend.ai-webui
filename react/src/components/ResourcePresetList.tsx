@@ -4,11 +4,7 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  localeCompare,
-} from '../helper';
+import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
@@ -27,7 +23,12 @@ import {
   Typography,
   TableColumnsType,
 } from 'antd';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIFlex,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -3,6 +3,9 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
   convertToDecimalUnit,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  omitNullAndUndefinedFields,
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
@@ -334,5 +337,97 @@ describe('addNumberWithUnits', () => {
     expect(addNumberWithUnits('1m', '1 g', 'm')).toBe('1025m');
     expect(addNumberWithUnits('1 g', '1 t', 'g')).toBe('1025g');
     expect(addNumberWithUnits('1 t', '1p', 't')).toBe('1025t');
+  });
+});
+
+describe('filterOutEmpty', () => {
+  it('should filter out undefined, null, empty string, false, empty array, and empty object', () => {
+    const input = [undefined, null, '', false, [], {}, 'item1', 'item2'];
+    const output = filterOutEmpty(input);
+    expect(output).toEqual(['item1', 'item2']);
+  });
+
+  it('should return an empty array when all items are empty', () => {
+    const input = [undefined, null, '', false, [], {}];
+    const output = filterOutEmpty(input);
+    expect(output).toEqual([]);
+  });
+
+  it('should return the same array when no items are empty', () => {
+    const input = ['item1', 'item2', 'item3'];
+    const output = filterOutEmpty(input);
+    expect(output).toEqual(['item1', 'item2', 'item3']);
+  });
+});
+
+describe('filterOutNullAndUndefined', () => {
+  it('should filter out null and undefined values from array', () => {
+    const input = [{ id: 1 }, null, { id: 2 }, undefined, { id: 3 }];
+    const output = filterOutNullAndUndefined(input);
+    expect(output).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
+  });
+
+  it('should return empty array when input is null or undefined', () => {
+    expect(filterOutNullAndUndefined(null)).toEqual([]);
+    expect(filterOutNullAndUndefined(undefined)).toEqual([]);
+  });
+
+  it('should return empty array when all items are null or undefined', () => {
+    const input = [null, undefined, null, undefined];
+    const output = filterOutNullAndUndefined(input);
+    expect(output).toEqual([]);
+  });
+
+  it('should return the same array when no items are null or undefined', () => {
+    const input = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    const output = filterOutNullAndUndefined(input);
+    expect(output).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
+  });
+});
+
+describe('omitNullAndUndefinedFields', () => {
+  it('should omit null and undefined fields from object', () => {
+    const input = {
+      name: 'test',
+      value: null,
+      count: 10,
+      description: undefined,
+      active: true,
+    };
+    const output = omitNullAndUndefinedFields(input);
+    expect(output).toEqual({
+      name: 'test',
+      count: 10,
+      active: true,
+    });
+  });
+
+  it('should return empty object when all fields are null or undefined', () => {
+    const input = {
+      value: null,
+      description: undefined,
+    };
+    const output = omitNullAndUndefinedFields(input);
+    expect(output).toEqual({});
+  });
+
+  it('should return the same object when no fields are null or undefined', () => {
+    const input = {
+      name: 'test',
+      count: 10,
+      active: true,
+    };
+    const output = omitNullAndUndefinedFields(input);
+    expect(output).toEqual({
+      name: 'test',
+      count: 10,
+      active: true,
+    });
+  });
+
+  it('should handle empty object', () => {
+    const input = {};
+    const output = omitNullAndUndefinedFields(input);
+    expect(output).toEqual({});
   });
 });

@@ -1032,10 +1032,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} của {{Total}}"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Tìm kiếm",
-    "ResetFilter": "Đặt lại bộ lọc"
-  },
   "registry": {
     "AddRegistry": "Thêm sổ đăng ký",
     "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?",
