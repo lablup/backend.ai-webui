@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "아티팩트 가져오기",
+    "Pull": "가져오기",
+    "PulledVersionsAreExcluded": "가져온 버전들은 제외되었습니다.",
+    "Name": "이름",
+    "Type": "유형",
+    "Description": "설명",
+    "Source": "소스"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "행동",
+    "Size": "크기",
+    "Updated": "업데이트",
+    "Version": "버전",
+    "PullLatestVersion": "최신 버전을 가져옵니다"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "최신 버전",
+    "Name": "이름",
+    "Size": "크기",
+    "Status": "상태",
+    "Updated": "업데이트",
+    "Action": "행동",
+    "Version": "버전"
+  },
+  "general": {
+    "button": {
+      "Cancel": "취소"
+    }
   }
 }

@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無限"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "拉工子",
+    "Pull": "拉",
+    "PulledVersionsAreExcluded": "拉動版本被排除在外。",
+    "Name": "姓名",
+    "Type": "類型",
+    "Description": "描述",
+    "Source": "來源"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "行動",
+    "Size": "尺寸",
+    "Version": "版本",
+    "Updated": "更新",
+    "PullLatestVersion": "拉最新版本"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "姓名",
+    "LatestVersion": "最新版本",
+    "Size": "尺寸",
+    "Status": "地位",
+    "Updated": "更新",
+    "Action": "行動",
+    "Version": "版本"
+  },
+  "general": {
+    "button": {
+      "Cancel": "取消"
+    }
   }
 }

@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Олдворыг татах",
+    "Pull": "Татах",
+    "PulledVersionsAreExcluded": "Татсан хувилбарыг хассан болно.",
+    "Name": "Нэр",
+    "Type": "Маяг",
+    "Description": "Тодорхойлолт / төрөл анги",
+    "Source": "Язгуур"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Үйл ажиллагаа",
+    "Size": "Хэмжээ",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Version": "Таамаглал",
+    "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
+    "Name": "Нэр",
+    "Size": "Хэмжээ",
+    "Status": "Байдал",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Action": "Үйл ажиллагаа",
+    "Version": "Таамаглал"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Цуаах"
+    }
   }
 }

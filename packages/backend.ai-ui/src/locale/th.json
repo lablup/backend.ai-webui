@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "ดึงสิ่งประดิษฐ์",
+    "Pull": "ดึง",
+    "PulledVersionsAreExcluded": "ไม่รวมเวอร์ชันที่ดึงออกมา",
+    "Name": "ชื่อ",
+    "Type": "พิมพ์",
+    "Description": "คำอธิบาย",
+    "Source": "แหล่งที่มา"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "การกระทำ",
+    "Size": "ขนาด",
+    "Version": "รุ่น",
+    "Updated": "อัปเดต",
+    "PullLatestVersion": "ดึงเวอร์ชันล่าสุด"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "ชื่อ",
+    "LatestVersion": "เวอร์ชันล่าสุด",
+    "Size": "ขนาด",
+    "Status": "สถานะ",
+    "Updated": "อัปเดต",
+    "Action": "การกระทำ",
+    "Version": "รุ่น"
+  },
+  "general": {
+    "button": {
+      "Cancel": "ยกเลิก"
+    }
   }
 }

@@ -195,6 +195,21 @@ type ApproveArtifactPayload
 }
 
 """Added in 25.13.0"""
+"""Added in 25.13.0"""
+input ApproveArtifactInput
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevisionId: ID!
+}
+
+"""Added in 25.13.0"""
+type ApproveArtifactPayload
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevision: ArtifactRevision!
+}
+
+"""Added in 25.13.0"""
 type Artifact implements Node
   @join__implements(graph: STRAWBERRY, interface: "Node")
   @join__type(graph: STRAWBERRY)
@@ -209,8 +224,12 @@ type Artifact implements Node
   readonly: Boolean!
   revisions(filter: ArtifactRevisionFilter = null, orderBy: [ArtifactRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactRevisionConnection!
   updatedAt: DateTime
+  readonly: Boolean!
+  revisions(filter: ArtifactRevisionFilter = null, orderBy: [ArtifactRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactRevisionConnection!
+  updatedAt: DateTime
 }
 
+"""Added in 25.13.0"""
 """Added in 25.13.0"""
 type ArtifactConnection
   @join__type(graph: STRAWBERRY)
@@ -235,6 +254,7 @@ type ArtifactEdge
 }
 
 """Added in 25.13.0"""
+"""Added in 25.13.0"""
 input ArtifactFilter
   @join__type(graph: STRAWBERRY)
 {
@@ -245,9 +265,39 @@ input ArtifactFilter
   AND: [ArtifactFilter!] = null
   OR: [ArtifactFilter!] = null
   NOT: [ArtifactFilter!] = null
+  AND: [ArtifactFilter!] = null
+  OR: [ArtifactFilter!] = null
+  NOT: [ArtifactFilter!] = null
   DISTINCT: Boolean = null
 }
 
+"""Added in 25.13.0"""
+type ArtifactImportProgressUpdatedPayload
+  @join__type(graph: STRAWBERRY)
+{
+  artifactId: ID!
+  progress: Float!
+  status: ArtifactStatus!
+}
+
+"""Added in 25.13.0"""
+input ArtifactOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: ArtifactOrderField!
+  direction: OrderDirection! = ASC
+}
+
+enum ArtifactOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  TYPE @join__enumValue(graph: STRAWBERRY)
+  SIZE @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 25.13.0"""
+type ArtifactRevision implements Node
 """Added in 25.13.0"""
 type ArtifactImportProgressUpdatedPayload
   @join__type(graph: STRAWBERRY)
@@ -286,8 +336,15 @@ type ArtifactRevision implements Node
   size: ByteSize
   createdAt: DateTime
   updatedAt: DateTime
+  version: String!
+  readme: String
+  size: ByteSize
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
+"""Added in 25.13.0"""
+type ArtifactRevisionConnection
 """Added in 25.13.0"""
 type ArtifactRevisionConnection
   @join__type(graph: STRAWBERRY)
@@ -298,9 +355,12 @@ type ArtifactRevisionConnection
   """Contains the nodes in this connection"""
   edges: [ArtifactRevisionEdge!]!
   count: Int!
+  edges: [ArtifactRevisionEdge!]!
+  count: Int!
 }
 
 """An edge in a connection."""
+type ArtifactRevisionEdge
 type ArtifactRevisionEdge
   @join__type(graph: STRAWBERRY)
 {
@@ -309,8 +369,11 @@ type ArtifactRevisionEdge
 
   """The item at the end of the edge"""
   node: ArtifactRevision!
+  node: ArtifactRevision!
 }
 
+"""Added in 25.13.0"""
+input ArtifactRevisionFilter
 """Added in 25.13.0"""
 input ArtifactRevisionFilter
   @join__type(graph: STRAWBERRY)
@@ -326,19 +389,42 @@ input ArtifactRevisionFilter
 
 """Added in 25.13.0"""
 input ArtifactRevisionOrderBy
+  status: ArtifactRevisionStatusFilter = null
+  version: StringFilter = null
+  artifactId: ID = null
+  AND: [ArtifactRevisionFilter!] = null
+  OR: [ArtifactRevisionFilter!] = null
+  NOT: [ArtifactRevisionFilter!] = null
+  DISTINCT: Boolean = null
+}
+
+"""Added in 25.13.0"""
+input ArtifactRevisionOrderBy
   @join__type(graph: STRAWBERRY)
 {
+  field: ArtifactRevisionOrderField!
   field: ArtifactRevisionOrderField!
   direction: OrderDirection! = ASC
 }
 
 enum ArtifactRevisionOrderField
+enum ArtifactRevisionOrderField
   @join__type(graph: STRAWBERRY)
 {
+  VERSION @join__enumValue(graph: STRAWBERRY)
   VERSION @join__enumValue(graph: STRAWBERRY)
   SIZE @join__enumValue(graph: STRAWBERRY)
   CREATED_AT @join__enumValue(graph: STRAWBERRY)
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+  STATUS @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 25.13.0"""
+input ArtifactRevisionStatusFilter
+  @join__type(graph: STRAWBERRY)
+{
+  in: [ArtifactStatus!] = null
+  equals: ArtifactStatus = null
   STATUS @join__enumValue(graph: STRAWBERRY)
 }
 
@@ -354,9 +440,13 @@ enum ArtifactStatus
   @join__type(graph: STRAWBERRY)
 {
   SCANNED @join__enumValue(graph: STRAWBERRY)
+  SCANNED @join__enumValue(graph: STRAWBERRY)
   PULLING @join__enumValue(graph: STRAWBERRY)
   PULLED @join__enumValue(graph: STRAWBERRY)
+  PULLED @join__enumValue(graph: STRAWBERRY)
   VERIFYING @join__enumValue(graph: STRAWBERRY)
+  NEEDS_APPROVAL @join__enumValue(graph: STRAWBERRY)
+  AVAILABLE @join__enumValue(graph: STRAWBERRY)
   NEEDS_APPROVAL @join__enumValue(graph: STRAWBERRY)
   AVAILABLE @join__enumValue(graph: STRAWBERRY)
   FAILED @join__enumValue(graph: STRAWBERRY)
@@ -368,12 +458,22 @@ input ArtifactStatusChangedInput
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionIds: [ID!]!
+  REJECTED @join__enumValue(graph: STRAWBERRY)
 }
 
+"""Added in 25.13.0"""
+input ArtifactStatusChangedInput
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevisionIds: [ID!]!
+}
+
+"""Added in 25.13.0"""
 """Added in 25.13.0"""
 type ArtifactStatusChangedPayload
   @join__type(graph: STRAWBERRY)
 {
+  artifactRevision: ArtifactRevision!
   artifactRevision: ArtifactRevision!
 }
 
@@ -597,9 +697,17 @@ input CancelArtifactInput
   artifactRevisionId: ID!
 }
 
+"""Added in 25.13.0"""
+input CancelArtifactInput
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevisionId: ID!
+}
+
 type CancelImportArtifactPayload
   @join__type(graph: STRAWBERRY)
 {
+  artifactRevisionId: ID!
   artifactRevisionId: ID!
 }
 
@@ -1155,6 +1263,22 @@ type CreateHuggingFaceRegistryPayload
   huggingfaceRegistry: HuggingFaceRegistry!
 }
 
+"""Added in 25.13.0"""
+input CreateHuggingFaceRegistryInput
+  @join__type(graph: STRAWBERRY)
+{
+  url: String!
+  name: String!
+  token: String = null
+}
+
+"""Added in 25.13.0"""
+type CreateHuggingFaceRegistryPayload
+  @join__type(graph: STRAWBERRY)
+{
+  huggingfaceRegistry: HuggingFaceRegistry!
+}
+
 type CreateKeyPair
   @join__type(graph: GRAPHENE)
 {
@@ -1233,6 +1357,25 @@ type CreateNetwork
   ok: Boolean
   msg: String
   network: NetworkNode
+}
+
+"""Added in 25.13.0"""
+input CreateObjectStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  name: String!
+  host: String!
+  accessKey: String!
+  secretKey: String!
+  endpoint: String!
+  region: String!
+}
+
+"""Added in 25.13.0"""
+type CreateObjectStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  objectStorage: ObjectStorage!
 }
 
 """Added in 25.13.0"""
@@ -1384,11 +1527,16 @@ type DealiasImage
 
 """Added in 25.13.0"""
 input DeleteArtifactRevisionsInput
+"""Added in 25.13.0"""
+input DeleteArtifactRevisionsInput
   @join__type(graph: STRAWBERRY)
 {
   targets: [DeleteArtifactRevisionTarget!]!
+  targets: [DeleteArtifactRevisionTarget!]!
 }
 
+"""Added in 25.13.0"""
+type DeleteArtifactRevisionsPayload
 """Added in 25.13.0"""
 type DeleteArtifactRevisionsPayload
   @join__type(graph: STRAWBERRY)
@@ -1401,7 +1549,8 @@ input DeleteArtifactRevisionTarget
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionId: ID!
-  storageNamespaceId: ID!
+  storageId: ID!
+  bucketName: String!
 }
 
 """Deprecated since 24.09.0. use `DeleteContainerRegistryNode` instead"""
@@ -1471,6 +1620,20 @@ type DeleteHuggingFaceRegistryPayload
   id: ID!
 }
 
+"""Added in 25.13.0"""
+input DeleteHuggingFaceRegistryInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Added in 25.13.0"""
+type DeleteHuggingFaceRegistryPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
 type DeleteKeyPair
   @join__type(graph: GRAPHENE)
 {
@@ -1503,6 +1666,20 @@ type DeleteNetwork
 {
   ok: Boolean
   msg: String
+}
+
+"""Added in 25.13.0"""
+input DeleteObjectStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Added in 25.13.0"""
+type DeleteObjectStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
 }
 
 """Added in 25.13.0"""
@@ -1969,7 +2146,8 @@ input GetPresignedDownloadURLInput
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionId: ID!
-  storageNamespaceId: ID!
+  storageId: ID!
+  bucketName: String!
   key: String!
 }
 
@@ -1985,7 +2163,7 @@ input GetPresignedUploadURLInput
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionId: ID!
-  storageNamespaceId: ID!
+  bucketName: String!
   key: String!
   contentType: String = null
   expiration: Int = null
@@ -2109,6 +2287,41 @@ Added in 25.3.0. One of ['read_attribute', 'read_sensitive_attribute', 'update_a
 """
 scalar GroupPermissionField
   @join__type(graph: GRAPHENE)
+
+"""Added in 25.13.0"""
+type HuggingFaceRegistry implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  url: String!
+  name: String!
+  token: String
+}
+
+"""Added in 25.13.0"""
+type HuggingFaceRegistryConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [HuggingFaceRegistryEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type HuggingFaceRegistryEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: HuggingFaceRegistry!
+}
 
 """Added in 25.13.0"""
 type HuggingFaceRegistry implements Node
@@ -2304,16 +2517,23 @@ enum ImageType
 
 """Added in 25.13.0"""
 input ImportArtifactsInput
+"""Added in 25.13.0"""
+input ImportArtifactsInput
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionIds: [ID!]!
-  storageNamespaceId: ID!
+  storageId: ID!
+  bucketName: String!
 }
 
 """Added in 25.13.0"""
 type ImportArtifactsPayload
+"""Added in 25.13.0"""
+type ImportArtifactsPayload
   @join__type(graph: STRAWBERRY)
 {
+  artifactRevisions: ArtifactRevisionConnection!
+  taskIds: [UUID!]!
   artifactRevisions: ArtifactRevisionConnection!
   taskIds: [UUID!]!
 }
@@ -2345,6 +2565,7 @@ scalar join__FieldSet
 
 enum join__Graph {
   GRAPHENE @join__graph(name: "graphene", url: "http://host.docker.internal:8091/admin/gql")
+  STRAWBERRY @join__graph(name: "strawberry", url: "http://host.docker.internal:8091/admin/gql/strawberry")
   STRAWBERRY @join__graph(name: "strawberry", url: "http://host.docker.internal:8091/admin/gql/strawberry")
 }
 
@@ -3366,6 +3587,10 @@ input ModifyUserResourcePolicyInput
 All available GraphQL mutations.
 Type name changed from 'Mutations' to 'Mutation' in 25.13.0
 """
+"""
+All available GraphQL mutations.
+Type name changed from 'Mutations' to 'Mutation' in 25.13.0
+"""
 type Mutation
   @join__type(graph: GRAPHENE)
   @join__type(graph: STRAWBERRY)
@@ -3675,7 +3900,21 @@ type Mutation
   importArtifacts(input: ImportArtifactsInput!): ImportArtifactsPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
+
+  """Added in 25.13.0"""
+  scanArtifacts(input: ScanArtifactsInput!): ScanArtifactsPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  importArtifacts(input: ImportArtifactsInput!): ImportArtifactsPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
   updateArtifact(input: UpdateArtifactInput!): UpdateArtifactPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  deleteArtifactRevisions(input: DeleteArtifactRevisionsInput!): DeleteArtifactRevisionsPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  cancelImportArtifact(input: CancelArtifactInput!): CancelImportArtifactPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
   deleteArtifactRevisions(input: DeleteArtifactRevisionsInput!): DeleteArtifactRevisionsPayload! @join__field(graph: STRAWBERRY)
@@ -3686,6 +3925,42 @@ type Mutation
   updateModelDeployment(input: UpdateModelDeploymentInput!): UpdateModelDeploymentPayload! @join__field(graph: STRAWBERRY)
   deleteModelDeployment(input: DeleteModelDeploymentInput!): DeleteModelDeploymentPayload! @join__field(graph: STRAWBERRY)
   createModelRevision(input: CreateModelRevisionInput!): CreateModelRevisionPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  createObjectStorage(input: CreateObjectStorageInput!): CreateObjectStoragePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  updateObjectStorage(input: UpdateObjectStorageInput!): UpdateObjectStoragePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  deleteObjectStorage(input: DeleteObjectStorageInput!): DeleteObjectStoragePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  registerObjectStorageBucket(input: RegisterObjectStorageBucketInput!): RegisterObjectStorageBucketPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  unregisterObjectStorageBucket(input: UnregisterObjectStorageBucketInput!): UnregisterObjectStorageBucketPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  createHuggingfaceRegistry(input: CreateHuggingFaceRegistryInput!): CreateHuggingFaceRegistryPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  updateHuggingfaceRegistry(input: UpdateHuggingFaceRegistryInput!): UpdateHuggingFaceRegistryPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  deleteHuggingfaceRegistry(input: DeleteHuggingFaceRegistryInput!): DeleteHuggingFaceRegistryPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  getPresignedDownloadUrl(input: GetPresignedDownloadURLInput!): GetPresignedDownloadURLPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  getPresignedUploadUrl(input: GetPresignedUploadURLInput!): GetPresignedUploadURLPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  approveArtifactRevision(input: ApproveArtifactInput!): ApproveArtifactPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  rejectArtifactRevision(input: RejectArtifactInput!): RejectArtifactPayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
   createObjectStorage(input: CreateObjectStorageInput!): CreateObjectStoragePayload! @join__field(graph: STRAWBERRY)
@@ -3792,7 +4067,7 @@ type ObjectStorage implements Node
   secretKey: String!
   endpoint: String!
   region: String!
-  namespaces: [ObjectStorageNamespace!]!
+  meta: [ObjectStorageMeta!]!
 }
 
 """Added in 25.13.0"""
@@ -3819,7 +4094,7 @@ type ObjectStorageEdge
 }
 
 """Added in 25.13.0"""
-type ObjectStorageNamespace implements Node
+type ObjectStorageMeta implements Node
   @join__implements(graph: STRAWBERRY, interface: "Node")
   @join__type(graph: STRAWBERRY)
 {
@@ -4373,7 +4648,18 @@ type Query
   service_configs(services: [String]!, filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ServiceConfigConnection @join__field(graph: GRAPHENE)
 
   """Added in 25.13.0"""
+
+  """Added in 25.13.0"""
   artifact(id: ID!): Artifact @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  artifacts(filter: ArtifactFilter = null, orderBy: [ArtifactOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactConnection! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  artifactRevision(id: ID!): ArtifactRevision @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  artifactRevisions(filter: ArtifactRevisionFilter = null, orderBy: [ArtifactRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactRevisionConnection! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
   artifacts(filter: ArtifactFilter = null, orderBy: [ArtifactOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactConnection! @join__field(graph: STRAWBERRY)
@@ -4430,6 +4716,18 @@ type Query
 
   """Added in 25.13.0"""
   huggingfaceRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): HuggingFaceRegistryConnection! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  objectStorage(id: ID!): ObjectStorage @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  objectStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ObjectStorageConnection! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  huggingfaceRegistry(id: ID!): HuggingFaceRegistry @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  huggingfaceRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): HuggingFaceRegistryConnection! @join__field(graph: STRAWBERRY)
 }
 
 type QuotaDetails
@@ -4461,6 +4759,35 @@ type RawServiceConfig
 {
   config: JSONString!
   extraCliParameters: String
+}
+
+"""Added in 25.13.0"""
+input RegisterObjectStorageBucketInput
+  @join__type(graph: STRAWBERRY)
+{
+  storageId: UUID!
+  bucketName: String!
+}
+
+"""Added in 25.13.0"""
+type RegisterObjectStorageBucketPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+}
+
+"""Added in 25.13.0"""
+input RejectArtifactInput
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevisionId: ID!
+}
+
+"""Added in 25.13.0"""
+type RejectArtifactPayload
+  @join__type(graph: STRAWBERRY)
+{
+  artifactRevision: ArtifactRevision!
 }
 
 """Added in 25.13.0"""
@@ -4734,7 +5061,7 @@ input ScanArtifactsInput
   @join__type(graph: STRAWBERRY)
 {
   registryId: ID!
-  storageNamespaceId: ID!
+  storageId: ID!
   limit: Int!
   search: String = null
 }
@@ -4845,6 +5172,7 @@ type SetQuotaScope
 }
 
 """Added in 25.13.0"""
+"""Added in 25.13.0"""
 type SourceInfo
   @join__type(graph: STRAWBERRY)
 {
@@ -4903,6 +5231,11 @@ type Subscription
 
   """Added in 25.13.0"""
   artifactImportProgressUpdated(artifactRevisionId: ID!): ArtifactImportProgressUpdatedPayload!
+  """Added in 25.13.0"""
+  artifactStatusChanged(input: ArtifactStatusChangedInput!): ArtifactStatusChangedPayload!
+
+  """Added in 25.13.0"""
+  artifactImportProgressUpdated(artifactRevisionId: ID!): ArtifactImportProgressUpdatedPayload!
   deploymentStatusChanged(deploymentId: ID!): DeploymentStatusChangedPayload!
   replicaStatusChanged(revisionId: ID!): ReplicaStatusChangedPayload!
 }
@@ -4940,6 +5273,21 @@ type UnregisterObjectStorageBucketPayload
   id: UUID!
 }
 
+"""Added in 25.13.0"""
+input UnregisterObjectStorageBucketInput
+  @join__type(graph: STRAWBERRY)
+{
+  storageId: UUID!
+  bucketName: String!
+}
+
+"""Added in 25.13.0"""
+type UnregisterObjectStorageBucketPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+}
+
 type UnsetQuotaScope
   @join__type(graph: GRAPHENE)
 {
@@ -4960,13 +5308,16 @@ type UntagImageFromRegistry
 }
 
 """Added in 25.13.0"""
+"""Added in 25.13.0"""
 input UpdateArtifactInput
   @join__type(graph: STRAWBERRY)
 {
   artifactId: ID!
   readonly: Boolean
+  readonly: Boolean
 }
 
+"""Added in 25.13.0"""
 """Added in 25.13.0"""
 type UpdateArtifactPayload
   @join__type(graph: STRAWBERRY)
@@ -4980,6 +5331,23 @@ type UpdateContainerRegistryQuota
 {
   ok: Boolean
   msg: String
+}
+
+"""Added in 25.13.0"""
+input UpdateHuggingFaceRegistryInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  url: String
+  name: String
+  token: String
+}
+
+"""Added in 25.13.0"""
+type UpdateHuggingFaceRegistryPayload
+  @join__type(graph: STRAWBERRY)
+{
+  huggingfaceRegistry: HuggingFaceRegistry!
 }
 
 """Added in 25.13.0"""
@@ -5013,6 +5381,26 @@ type UpdateModelDeploymentPayload
   @join__type(graph: STRAWBERRY)
 {
   deployment: ModelDeployment
+}
+
+"""Added in 25.13.0"""
+input UpdateObjectStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  name: String
+  host: String
+  accessKey: String
+  secretKey: String
+  endpoint: String
+  region: String
+}
+
+"""Added in 25.13.0"""
+type UpdateObjectStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  objectStorage: ObjectStorage!
 }
 
 """Added in 25.13.0"""

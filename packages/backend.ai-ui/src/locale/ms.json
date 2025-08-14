@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tidak terhad"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Tarik artifak",
+    "Pull": "Tarik",
+    "PulledVersionsAreExcluded": "Versi yang ditarik dikecualikan.",
+    "Name": "Nama",
+    "Type": "Jenis",
+    "Description": "Penerangan",
+    "Source": "Sumber"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Tindakan",
+    "Size": "Saiz",
+    "Updated": "Dikemas kini",
+    "Version": "Versi",
+    "PullLatestVersion": "Tarik versi terkini"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Nama",
+    "LatestVersion": "Versi terkini",
+    "Size": "Saiz",
+    "Status": "Status",
+    "Updated": "Dikemas kini",
+    "Action": "Tindakan",
+    "Version": "Versi"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Batalkan"
+    }
   }
 }
