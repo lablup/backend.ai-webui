@@ -15,11 +15,13 @@ import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { DeploymentListPageQuery } from 'src/__generated__/DeploymentListPageQuery.graphql';
+import { useWebUINavigate } from 'src/hooks';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const DeploymentListPage: React.FC = () => {
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
 
   const { tablePaginationOption, setTablePaginationOption } =
     useBAIPaginationOptionStateOnSearchParam({
@@ -97,7 +99,12 @@ const DeploymentListPage: React.FC = () => {
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button type="primary">{t('deployment.CreateDeployment')}</Button>
+            <Button
+              type="primary"
+              onClick={() => webuiNavigate('/deployment/start')}
+            >
+              {t('deployment.CreateDeployment')}
+            </Button>
           </BAIFlex>
         }
         styles={{
