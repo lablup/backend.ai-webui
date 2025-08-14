@@ -1,0 +1,7 @@
+# Custom merge drivers for conflict resolution
+
+# JSON files - use custom merge driver to handle conflicts intelligently
+*.json merge=json
+
+# Specifically target i18n translation files to avoid trailing comma conflicts
+resources/i18n/*.json merge=json
