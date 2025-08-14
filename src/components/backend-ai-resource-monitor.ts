@@ -1169,6 +1169,76 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 `
               : html``}
+            ${this.total_slot.atom_max_device
+              ? html`
+                  <div class="layout horizontal center-justified monitor">
+                    <div
+                      class="layout vertical center center-justified resource-name"
+                    >
+                      <span class="gauge-name">ATOM Max</span>
+                    </div>
+                    <div class="layout vertical center-justified wrap">
+                      <lablup-progress-bar
+                        id="atom-max-usage-bar"
+                        class="start"
+                        progress="${this.used_resource_group_slot_percent
+                          .atom_max_device / 100.0}"
+                        description="${this._prefixFormatWithoutTrailingZeros(
+                          this.used_resource_group_slot.atom_max_device,
+                          2,
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                          this.total_resource_group_slot.atom_max_device,
+                          2,
+                        )} ATOM Max"
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar
+                        id="atom-max-usage-bar-2"
+                        class="end"
+                        progress="${this.used_slot_percent.atom_max_device /
+                        100.0}"
+                        buffer="${this.used_slot_percent.atom_max_device /
+                        100.0}"
+                        description="${this._prefixFormatWithoutTrailingZeros(
+                          this.used_slot.atom_max_device,
+                          2,
+                        )} / ${this._prefixFormatWithoutTrailingZeros(
+                          this.total_slot.atom_max_device,
+                          2,
+                        )} ATOM Max"
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span
+                        class="percentage
+                        start-bar
+                      "
+                      >
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_resource_group_slot_percent
+                              .atom_max_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                      <span
+                        class="percentage
+                        end-bar
+                      "
+                      >
+                        ${this._numberWithPostfix(
+                          this._prefixFormatWithoutTrailingZeros(
+                            this.used_slot_percent.atom_max_device,
+                            1,
+                          ),
+                          '%',
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                `
+              : html``}
             ${this.total_slot.gaudi2_device
               ? html`
                   <div class="layout horizontal center-justified monitor">
@@ -1858,6 +1928,98 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                               ${this._numberWithPostfix(
                                 this._prefixFormatWithoutTrailingZeros(
                                   this.total_project_slot.atom_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.atom_plus_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            ATOM+
+                          </span>
+                          <lablup-progress-bar
+                            id="atom-plus-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .atom_plus_device / 100.0}"
+                            description="${this.used_project_slot
+                              .atom_plus_device}/${this.total_project_slot
+                              .atom_plus_device === 'Infinity'
+                              ? '∞'
+                              : this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.atom_plus_device,
+                                  2,
+                                )} ATOM+"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.used_project_slot_percent
+                                    .atom_plus_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.atom_plus_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      `
+                    : html``}
+                  ${this.total_project_slot.atom_max_device
+                    ? html`
+                        <div class="layout horizontal">
+                          <span
+                            style="width:35px;margin-left:5px; margin-right:5px;"
+                          >
+                            ATOM Max
+                          </span>
+                          <lablup-progress-bar
+                            id="atom-max-project-usage-bar"
+                            class="end"
+                            progress="${this.used_project_slot_percent
+                              .atom_max_device / 100.0}"
+                            description="${this.used_project_slot
+                              .atom_max_device}/${this.total_project_slot
+                              .atom_max_device === 'Infinity'
+                              ? '∞'
+                              : this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.atom_max_device,
+                                  2,
+                                )} ATOM Max"
+                          ></lablup-progress-bar>
+                          <div class="layout vertical center center-justified">
+                            <span class="percentage start-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.used_project_slot_percent
+                                    .atom_max_device,
+                                  1,
+                                ),
+                                '%',
+                              )}
+                            </span>
+                            <span class="percentage end-bar">
+                              ${this._numberWithPostfix(
+                                this._prefixFormatWithoutTrailingZeros(
+                                  this.total_project_slot.atom_max_device,
                                   1,
                                 ),
                                 '%',

@@ -463,7 +463,10 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
               ?.unit || 'g';
           return (
             <BAIFlex direction="column" gap="xxs">
-              <BAIFlex justify="between" style={{ minWidth: 200 }}>
+              <BAIFlex
+                justify="between"
+                style={{ minWidth: 200, width: '100%' }}
+              >
                 <Typography.Text>
                   {mergedResourceSlots?.cpu?.human_readable_name}
                 </Typography.Text>
@@ -478,7 +481,10 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                   }
                 />
               </BAIFlex>
-              <BAIFlex justify="between" style={{ minWidth: 200 }}>
+              <BAIFlex
+                justify="between"
+                style={{ minWidth: 200, width: '100%' }}
+              >
                 <Typography.Text>
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Text>
@@ -508,7 +514,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                     <BAIFlex
                       key={statKey}
                       justify="between"
-                      style={{ minWidth: 200, width: 'min-content' }}
+                      style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
                     >
                       <Typography.Text>
@@ -549,7 +555,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                     <BAIFlex
                       key={statKey}
                       justify="between"
-                      style={{ minWidth: 200, width: 'min-content' }}
+                      style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
                     >
                       <Typography.Text>
@@ -843,6 +849,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           ) as ColumnType<AnyObject>[]
         }
+        resizable
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: agent_list?.total_count,
