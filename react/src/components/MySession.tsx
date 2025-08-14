@@ -23,7 +23,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-        fragment  MySessionQueryFragment on Queries
+        fragment  MySessionQueryFragment on Query
         @argumentDefinitions(
           projectId: { type: "UUID!" }
         ) 

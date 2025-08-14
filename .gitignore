@@ -161,3 +161,6 @@ CLAUDE.local.md
 .claude/settings.local.json
 
 .env.development.local
+
+# ignore merged schema
+data/merged_schema.graphql
