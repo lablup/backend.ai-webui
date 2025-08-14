@@ -338,6 +338,22 @@ type AgentResource
   free: JSON!
 }
 
+"""Added in 26.1.0. Configuration for the agent selection strategy"""
+type AgentSelectorConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Number of existing kernels already running on the same endpoint.
+  Used by the concentrated agent selection strategy when enforce_spreading_endpoint_replica is enabled.
+  
+  When enforce_spreading_endpoint_replica is true, inference service replicas are distributed
+  across different agents for improved fault tolerance. This count helps the scheduler
+  avoid placing new replicas on agents that already host replicas for the same endpoint,
+  ensuring better distribution of model serving workloads.
+  """
+  kernelCountsAtSameEndpoint: Int!
+}
+
 """Added in 25.15.0"""
 type AgentStats
   @join__type(graph: STRAWBERRY)
@@ -457,10 +473,10 @@ type AgentSystemInfo
   """
   List of compute plugin metadata supported by this agent.
   Each plugin represents a specific accelerator or resource type (e.g., CUDA).
-  Expressed as a JSON object where keys are plugin names and values contain
+  Entries contain plugin names and their associated metadata with
   plugin-specific configuration and capabilities.
   """
-  computePlugins: JSON!
+  computePlugins: ComputePlugins!
 }
 
 """Added in 26.1.0. Strawberry-based Agent type replacing AgentNode."""
@@ -1011,6 +1027,35 @@ type ArtifactVerificationResult
 }
 
 """
+Added in 26.1.0.
+
+A collection of metadata from an artifact verifier.
+Contains key-value pairs providing additional information about the verification.
+"""
+type ArtifactVerifierMetadata
+  @join__type(graph: STRAWBERRY)
+{
+  """List of metadata entries. Each entry contains a key-value pair."""
+  entries: [ArtifactVerifierMetadataEntry!]!
+}
+
+"""
+Added in 26.1.0.
+
+A single key-value entry representing metadata from an artifact verifier.
+Contains additional information about the verification process.
+"""
+type ArtifactVerifierMetadataEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The key identifier for this metadata entry."""
+  key: String!
+
+  """The value for this metadata entry."""
+  value: String!
+}
+
+"""
 Added in 25.17.0.
 
 Result from a single malware verifier containing scan results and metadata.
@@ -1036,8 +1081,8 @@ type ArtifactVerifierResult
   """Total number of files scanned"""
   scannedCount: Int!
 
-  """Additional metadata from the verifier"""
-  metadata: JSON!
+  """Added in 26.1.0. Additional metadata from the verifier."""
+  metadata: ArtifactVerifierMetadata!
 
   """Fatal error message if the verifier failed to complete"""
   error: String
@@ -1448,7 +1493,11 @@ input ClearImageCustomResourceLimitKey
   @join__type(graph: GRAPHENE)
 {
   image_canonical: String!
-  architecture: String! = "x86_64"
+
+  """
+  Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+  """
+  architecture: String = null
 }
 
 """Added in 25.6.0."""
@@ -1540,6 +1589,35 @@ type ComputeContainerList implements PaginatedList
 {
   items: [ComputeContainer]!
   total_count: Int!
+}
+
+"""
+Added in 26.1.0. A single compute plugin entry representing one plugin and its metadata.
+"""
+type ComputePluginEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Name of the compute plugin (e.g., 'cuda', 'rocm', 'tpu'). This identifier corresponds to the accelerator or resource type supported by the agent.
+  """
+  pluginName: String!
+
+  """
+  Plugin value string containing plugin-specific information. The content varies by plugin type and may include version or configuration details.
+  """
+  value: String!
+}
+
+"""
+Added in 26.1.0. A collection of compute plugins available on an agent. Each entry specifies a plugin name and its associated metadata.
+"""
+type ComputePlugins
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  List of compute plugins. Each entry contains a plugin name and its metadata. The list includes all accelerator and resource type plugins installed on the agent.
+  """
+  entries: [ComputePluginEntry!]!
 }
 
 type ComputeSession implements Item
@@ -2094,8 +2172,8 @@ input CreateNotificationChannelInput
 {
   name: String!
   description: String = null
-  channelType: NotificationChannelType! = WEBHOOK
-  config: WebhookConfigInput!
+  channelType: NotificationChannelType!
+  spec: NotificationChannelSpecInput!
   enabled: Boolean! = true
 }
 
@@ -2377,7 +2455,7 @@ input DelegateImportArtifactsInput
   """
   Options controlling import behavior such as forcing re-download. Added in 26.1.0.
   """
-  options: ImportArtifactsOptionsGQL! = {force: false}
+  options: ImportArtifactsOptionsGQL = null
 }
 
 """
@@ -2796,8 +2874,12 @@ input DeploymentHistoryFilter
 {
   id: UUIDFilter = null
   deploymentId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -3279,6 +3361,24 @@ input DomainUsageBucketOrderBy
   direction: OrderDirection! = DESC
 }
 
+"""Input for email message settings"""
+input EmailMessageInput
+  @join__type(graph: STRAWBERRY)
+{
+  fromEmail: String!
+  toEmails: [String!]!
+  subjectTemplate: String = null
+}
+
+"""Input for email notification channel configuration"""
+input EmailSpecInput
+  @join__type(graph: STRAWBERRY)
+{
+  smtp: SMTPConnectionInput!
+  message: EmailMessageInput!
+  auth: SMTPAuthInput = null
+}
+
 type Endpoint implements Item
   @join__implements(graph: GRAPHENE, interface: "Item")
   @join__type(graph: GRAPHENE)
@@ -3438,6 +3538,48 @@ type EndpointTokenList implements PaginatedList
 {
   items: [EndpointToken]!
   total_count: Int!
+}
+
+"""
+Added in 26.1.0. A single environment variable entry with name and value.
+"""
+type EnvironmentVariableEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """Environment variable name (e.g., CUDA_VISIBLE_DEVICES)."""
+  name: String!
+
+  """Environment variable value."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A single environment variable entry with name and value.
+"""
+input EnvironmentVariableEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Environment variable name (e.g., CUDA_VISIBLE_DEVICES)."""
+  name: String!
+
+  """Environment variable value."""
+  value: String!
+}
+
+"""Added in 26.1.0. A collection of environment variable entries."""
+type EnvironmentVariables
+  @join__type(graph: STRAWBERRY)
+{
+  """List of environment variable entries."""
+  entries: [EnvironmentVariableEntry!]!
+}
+
+"""Added in 26.1.0. A collection of environment variable entries."""
+input EnvironmentVariablesInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of environment variable entries."""
+  entries: [EnvironmentVariableEntryInput!]!
 }
 
 """Added in 24.03.4."""
@@ -3949,7 +4091,7 @@ input ImportArtifactsInput
   """
   Options controlling import behavior such as forcing re-download. Added in 26.1.0.
   """
-  options: ImportArtifactsOptionsGQL! = {force: false}
+  options: ImportArtifactsOptionsGQL = null
 }
 
 """
@@ -4479,16 +4621,8 @@ type ModelReplica implements Node
   """Traffic weight for load balancing between replicas."""
   weight: Int!
 
-  """
-  Detailed information about the routing node including error or success messages.
-  """
-  detail: JSON!
-
   """Timestamp when the replica was created."""
   createdAt: DateTime!
-
-  """Live statistics of the routing node (CPU utilization, etc.)."""
-  liveStat: JSON!
 
   """
   The session ID associated with the replica. This can be null right after replica creation.
@@ -4607,10 +4741,8 @@ type ModelRuntimeConfig
   """Framework-specific configuration in JSON format."""
   inferenceRuntimeConfig: JSON
 
-  """
-  Environment variables for the service, e.g. {"CUDA_VISIBLE_DEVICES": "0"}.
-  """
-  environ: JSON
+  """Environment variables for the service, e.g. CUDA_VISIBLE_DEVICES=0."""
+  environ: EnvironmentVariables
 }
 
 """Added in 25.19.0"""
@@ -4620,10 +4752,8 @@ input ModelRuntimeConfigInput
   runtimeVariant: String!
   inferenceRuntimeConfig: JSON = null
 
-  """
-  Environment variables for the service, e.g. {"CUDA_VISIBLE_DEVICES": "0"}
-  """
-  environ: JSON = null
+  """Environment variables for the service."""
+  environ: EnvironmentVariablesInput = null
 }
 
 """
@@ -5220,7 +5350,14 @@ type Mutation
   ): RescanImages @join__field(graph: GRAPHENE)
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage @join__field(graph: GRAPHENE)
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage @join__field(graph: GRAPHENE)
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
+  modify_image(
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    props: ModifyImageInput!
+    target: String!
+  ): ModifyImage @join__field(graph: GRAPHENE)
 
   """Added in 25.6.0"""
   clear_image_custom_resource_limit(key: ClearImageCustomResourceLimitKey!): ClearImageCustomResourceLimitPayload @join__field(graph: GRAPHENE)
@@ -5229,7 +5366,13 @@ type Mutation
   forget_image_by_id(image_id: String!): ForgetImageById @join__field(graph: GRAPHENE)
 
   """Deprecated since 25.4.0. Use `forget_image_by_id` instead."""
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
+  forget_image(
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    reference: String!
+  ): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
 
   """Added in 25.4.0"""
   purge_image_by_id(
@@ -5241,7 +5384,15 @@ type Mutation
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry @join__field(graph: GRAPHENE)
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage @join__field(graph: GRAPHENE)
+  alias_image(
+    alias: String!
+
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    target: String!
+  ): AliasImage @join__field(graph: GRAPHENE)
   dealias_image(alias: String!): DealiasImage @join__field(graph: GRAPHENE)
   clear_images(registry: String): ClearImages @join__field(graph: GRAPHENE)
 
@@ -5814,7 +5965,7 @@ type NotificationChannel implements Node
   name: String!
   description: String
   channelType: NotificationChannelType!
-  config: WebhookConfigGQL!
+  spec: NotificationChannelSpec!
   enabled: Boolean!
   createdAt: DateTime!
 }
@@ -5870,11 +6021,29 @@ enum NotificationChannelOrderField
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
+"""Interface for notification channel specifications"""
+interface NotificationChannelSpec
+  @join__type(graph: STRAWBERRY)
+{
+  channelType: NotificationChannelType!
+}
+
+"""
+Input for notification channel configuration. Exactly one of webhook or email must be set.
+"""
+input NotificationChannelSpecInput
+  @join__type(graph: STRAWBERRY)
+{
+  webhook: WebhookSpecInput
+  email: EmailSpecInput
+}
+
 """Notification channel types"""
 enum NotificationChannelType
   @join__type(graph: STRAWBERRY)
 {
   WEBHOOK @join__enumValue(graph: STRAWBERRY)
+  EMAIL @join__enumValue(graph: STRAWBERRY)
 }
 
 """Notification rule"""
@@ -6528,7 +6697,11 @@ type Query
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
   ): Image @join__field(graph: GRAPHENE)
   images(
     """
@@ -6719,7 +6892,7 @@ type Query
   """Added in 25.5.0."""
   total_resource_slot(
     """
-    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
+    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
     Default value is null.
     """
     statuses: [String] = null
@@ -7192,14 +7365,12 @@ type ResourceConfig
   @join__type(graph: STRAWBERRY)
 {
   """
-  JSON describing allocated resources. Example: {"cpu": "1", "mem": "1073741824", "cuda.device": "0"}.
+  Added in 26.1.0. Allocated compute resources including CPU, memory, and accelerators.
   """
-  resourceSlots: JSON!
+  resourceSlots: ResourceSlot!
 
-  """
-  Additional resource options such as shared memory. Example: {"shmem": "64m"}.
-  """
-  resourceOpts: JSON
+  """Added in 26.1.0. Additional resource options such as shared memory."""
+  resourceOpts: ResourceOpts
   resourceGroup: ScalingGroupNode!
 }
 
@@ -7209,15 +7380,13 @@ input ResourceConfigInput
 {
   resourceGroup: ResourceGroupInput!
 
-  """
-  Resources allocated for the deployment. Example: "resourceSlots": "{\"cpu\": \"1\", \"mem\": \"1073741824\", \"cuda.device\": \"0\"}"
-  """
-  resourceSlots: JSON!
+  """Added in 26.1.0. Resources allocated for the deployment."""
+  resourceSlots: ResourceSlotInput!
 
   """
-  Additional options for the resources. This is especially used for shared memory configurations. Example: "resourceOpts": "{\"shmem\": \"64m\"}"
+  Added in 26.1.0. Additional options for the resources such as shared memory.
   """
-  resourceOpts: JSON = null
+  resourceOpts: ResourceOptsInput = null
 }
 
 """Added in 25.19.0"""
@@ -7241,6 +7410,52 @@ input ResourceLimitInput
   key: String
   min: String
   max: String @deprecated(reason: "Deprecated since 25.14.0. The max slot limit validation has been removed as it was deemed obsolete.")
+}
+
+"""
+Added in 26.1.0. A collection of additional resource options for a deployment. Contains key-value pairs for resource configuration like shared memory.
+"""
+type ResourceOpts
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource option entries. Each entry contains a key-value pair."""
+  entries: [ResourceOptsEntry!]!
+}
+
+"""
+Added in 26.1.0. A single key-value entry representing a resource option. Contains additional resource configuration such as shared memory settings.
+"""
+type ResourceOptsEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The name of this resource option. Example: 'shmem'."""
+  name: String!
+
+  """The value for this resource option. Example: '64m'."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A single key-value entry representing a resource option.
+"""
+input ResourceOptsEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """The name of this resource option (e.g., 'shmem')."""
+  name: String!
+
+  """The value for this resource option (e.g., '64m')."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A collection of additional resource options for input.
+"""
+input ResourceOptsInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource option entries."""
+  entries: [ResourceOptsEntryInput!]!
 }
 
 type ResourcePreset
@@ -7285,6 +7500,29 @@ type ResourceSlotEntry
   Quantity of the resource as a decimal string to preserve precision. For 'cpu': number of cores (e.g., '2.0', '0.5'). For 'mem': bytes (e.g., '4294967296' for 4GB). For accelerators: device count or share fraction.
   """
   quantity: String!
+}
+
+"""
+Added in 26.1.0. A single entry representing one resource type and its allocated quantity.
+"""
+input ResourceSlotEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Resource type identifier (e.g., 'cpu', 'mem', 'cuda.device')."""
+  resourceType: String!
+
+  """Quantity of the resource as a decimal string."""
+  quantity: String!
+}
+
+"""
+Added in 26.1.0. A collection of compute resource allocations for input.
+"""
+input ResourceSlotInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource allocations."""
+  entries: [ResourceSlotEntryInput!]!
 }
 
 """
@@ -7446,8 +7684,12 @@ input RouteHistoryFilter
   id: UUIDFilter = null
   routeId: UUIDFilter = null
   deploymentId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -7601,20 +7843,6 @@ type ScalingGroupConnection
   count: Int
 }
 
-"""Added in 25.18.0. Driver configuration for resource allocation"""
-type ScalingGroupDriverConfig
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Agent resource driver implementation name.
-  'static' uses a predefined set of agents registered to this scaling group.
-  """
-  name: String!
-
-  """Driver-specific configuration options. Contents vary by driver type."""
-  options: JSON!
-}
-
 """
 Added in 24.12.0. A Relay edge containing a `ScalingGroup` and its cursor.
 """
@@ -7636,7 +7864,6 @@ input ScalingGroupFilter
   description: StringFilter = null
   isActive: Boolean = null
   isPublic: Boolean = null
-  driver: String = null
   scheduler: String = null
   useHostNetwork: Boolean = null
   AND: [ScalingGroupFilter!] = null
@@ -7760,7 +7987,7 @@ type ScalingGroupSchedulerOptions
   Contents depend on the scheduler implementation (fifo/lifo/drf).
   Used for advanced scheduling behavior customization.
   """
-  config: JSON!
+  config: SchedulerConfig!
 
   """
   Algorithm for selecting target agents when scheduling sessions.
@@ -7775,7 +8002,7 @@ type ScalingGroupSchedulerOptions
   Structure varies by strategy - for example,
   concentrated strategy may specify endpoint spreading rules.
   """
-  agentSelectorConfig: JSON!
+  agentSelectorConfig: AgentSelectorConfig!
 
   """
   Whether inference service replicas should be distributed across different agents
@@ -7866,12 +8093,6 @@ type ScalingGroupV2 implements Node
   (terminals, notebooks, web apps) through WebSocket proxy infrastructure.
   """
   network: ScalingGroupNetworkConfig!
-
-  """
-  Agent resource management driver determining how compute agents are provisioned
-  and registered to this scaling group (static registration vs dynamic provisioning).
-  """
-  driver: ScalingGroupDriverConfig!
 
   """
   Session scheduling configuration controlling queue management,
@@ -7971,6 +8192,17 @@ type ScanArtifactsPayload
   @join__type(graph: STRAWBERRY)
 {
   artifacts: [Artifact!]!
+}
+
+"""Added in 26.1.0. Scheduler-specific configuration options"""
+type SchedulerConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Number of scheduling retries to skip before attempting to schedule a session.
+  Used to prevent repeated scheduling attempts for sessions that previously failed.
+  """
+  numRetriesToSkip: Int!
 }
 
 """Added in 25.15.0. Scheduling event broadcast payload"""
@@ -8149,8 +8381,12 @@ input SessionSchedulingHistoryFilter
 {
   id: UUIDFilter = null
   sessionId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -8174,6 +8410,24 @@ type SetQuotaScope
   @join__type(graph: GRAPHENE)
 {
   quota_scope: QuotaScope
+}
+
+"""Input for SMTP authentication credentials"""
+input SMTPAuthInput
+  @join__type(graph: STRAWBERRY)
+{
+  username: String = null
+  password: String = null
+}
+
+"""Input for SMTP server connection settings"""
+input SMTPConnectionInput
+  @join__type(graph: STRAWBERRY)
+{
+  host: String!
+  port: Int!
+  useTls: Boolean! = true
+  timeout: Int! = 30
 }
 
 """
@@ -8534,7 +8788,7 @@ input UpdateNotificationChannelInput
   id: ID!
   name: String
   description: String
-  config: WebhookConfigInput
+  spec: NotificationChannelSpecInput
   enabled: Boolean
 }
 
@@ -9442,14 +9696,8 @@ type VirtualFolderPermissionList implements PaginatedList
   total_count: Int!
 }
 
-type WebhookConfigGQL
-  @join__type(graph: STRAWBERRY)
-{
-  url: String!
-}
-
 """Input for webhook configuration"""
-input WebhookConfigInput
+input WebhookSpecInput
   @join__type(graph: STRAWBERRY)
 {
   url: String!
