@@ -29,7 +29,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "Copiar todo"
+      "CopyAll": "Copiar todo",
+      "Cancel": "Cancelar"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Artefacto",
+    "Pull": "Jalar",
+    "PulledVersionsAreExcluded": "Se excluyen las versiones extraídas.",
+    "Name": "Nombre",
+    "Type": "Tipo",
+    "Description": "Descripción",
+    "Source": "Fuente"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Acción",
+    "Size": "Tamaño",
+    "Updated": "Actualizado",
+    "Version": "Versión",
+    "PullLatestVersion": "Tire de la última versión"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Última versión",
+    "Name": "Nombre",
+    "Size": "Tamaño",
+    "Status": "Estado",
+    "Updated": "Actualizado",
+    "Action": "Acción",
+    "Version": "Versión"
   }
 }

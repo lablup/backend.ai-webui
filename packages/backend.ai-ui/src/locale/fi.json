@@ -29,7 +29,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "Kopioida kaikki"
+      "CopyAll": "Kopioida kaikki",
+      "Cancel": "Peruuttaa"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Vetää artefakti",
+    "Pull": "Vedä",
+    "PulledVersionsAreExcluded": "Vedetyt versiot jätetään pois.",
+    "Name": "Nimi",
+    "Type": "Tyyppi",
+    "Description": "Kuvaus",
+    "Source": "Lähde"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Toiminta",
+    "Size": "Koko",
+    "Updated": "Päivitetty",
+    "Version": "Versio",
+    "PullLatestVersion": "Vedä uusin versio"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Uusin versio",
+    "Name": "Nimi",
+    "Size": "Koko",
+    "Status": "Status",
+    "Updated": "Päivitetty",
+    "Action": "Toiminta",
+    "Version": "Versio"
   }
 }

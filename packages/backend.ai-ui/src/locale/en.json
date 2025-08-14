@@ -1,5 +1,30 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Action",
+    "LatestVersion": "Latest Version",
+    "Name": "Name",
+    "Size": "Size",
+    "Status": "Status",
+    "Updated": "Updated",
+    "Version": "Version"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Action",
+    "PullLatestVersion": "Pull latest version",
+    "Size": "Size",
+    "Updated": "Updated",
+    "Version": "Version"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Description",
+    "Name": "Name",
+    "Pull": "Pull",
+    "PullArtifact": "Pull Artifact",
+    "PulledVersionsAreExcluded": "Pulled versions are excluded.",
+    "Source": "Source",
+    "Type": "Type"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",
     "ResetFilter": "Reset filters"
@@ -29,6 +54,7 @@
   },
   "general": {
     "button": {
+      "Cancel": "Cancel",
       "CopyAll": "Copy All"
     }
   }
