@@ -442,10 +442,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             if (_.includes(statKey, '_util')) {
               // core utilization
               liveStat[statKey as keyof typeof liveStat] = {
-                capacity:
-                  statKey === 'cuda_util'
-                    ? _.toFinite(parsedValue.node[statKey]['stats.max'])
-                    : _.toFinite(parsedValue.node[statKey].capacity),
+                capacity: _.toFinite(parsedValue.node[statKey].capacity) || 100,
                 current: _.toFinite(parsedValue.node[statKey].current),
                 ratio: _.toFinite(parsedValue.node[statKey].current) / 100 || 0,
               };
