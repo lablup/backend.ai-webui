@@ -125,18 +125,6 @@ const DeploymentCreateModal: React.FC<DeploymentCreateModalProps> = ({
               required: true,
               message: t('deployment.DeploymentNameRequired'),
             },
-            {
-              min: 3,
-              message: t('deployment.DeploymentNameMinLength'),
-            },
-            {
-              max: 50,
-              message: t('deployment.DeploymentNameMaxLength'),
-            },
-            {
-              pattern: /^[a-zA-Z0-9-_]+$/,
-              message: t('deployment.DeploymentNamePattern'),
-            },
           ]}
         >
           <Input placeholder={t('deployment.DeploymentNamePlaceholder')} />
