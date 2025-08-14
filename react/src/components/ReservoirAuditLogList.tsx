@@ -1,8 +1,7 @@
 import type { ReservoirAuditLog } from '../types/reservoir';
-import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIText from './BAIText';
 import { Tag, Typography } from 'antd';
-import { BAIFlex, BAITable } from 'backend.ai-ui';
+import { BAIPropertyFilter, BAIFlex, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';

@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Vetää artefakti"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Toiminta",
+    "Size": "Koko",
+    "Updated": "Päivitetty",
+    "Version": "Versio"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Uusin versio",
+    "Name": "Nimi",
+    "Size": "Koko",
+    "Status": "Status",
+    "Updated": "Päivitetty",
+    "Action": "Toiminta",
+    "Version": "Versio"
   }
 }

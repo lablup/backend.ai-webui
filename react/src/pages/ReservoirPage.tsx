@@ -1,38 +1,39 @@
-import BAIPropertyFilter from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import ReservoirArtifactDetail from '../components/ReservoirArtifactDetail';
-import ReservoirArtifactList from '../components/ReservoirArtifactList';
-import ReservoirAuditLogList from '../components/ReservoirAuditLogList';
-import { handleRowSelectionChange } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import type { ReservoirArtifact, ReservoirAuditLog } from '../types/reservoir';
+import type { ReservoirArtifact } from '../types/reservoir';
+import { theme, Col, Row, Statistic, Card } from 'antd';
 import {
-  Button,
-  Badge,
-  Typography,
-  theme,
-  Col,
-  Row,
-  Tooltip,
-  Statistic,
-  Card,
-  Skeleton,
-} from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+  BAIPropertyFilter,
+  BAICard,
+  BAIFlex,
+  BAIArtifactTable,
+  ArtifactRevisionForModal,
+  BAIImportArtifactModal,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import {
-  Trash2,
   CheckCircle,
   HardDrive,
   Activity,
   Calendar,
   DatabaseIcon,
 } from 'lucide-react';
-import React, { useState, useMemo, useRef, Suspense } from 'react';
+import React, {
+  useMemo,
+  useRef,
+  useDeferredValue,
+  useTransition,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  ReservoirPageQuery,
+  ReservoirPageQuery$variables,
+} from 'src/__generated__/ReservoirPageQuery.graphql';
+import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
 import { StringParam, withDefault, useQueryParam } from 'use-query-params';
 
 type TabKey = 'artifacts' | 'audit';
@@ -40,13 +41,15 @@ type TabKey = 'artifacts' | 'audit';
 const ReservoirPage: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { artifactId } = useParams<{ artifactId: string }>();
-  const [selectedArtifactList, setSelectedArtifactList] = useState<
-    Array<ReservoirArtifact>
-  >([]);
+
+  const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(
+    null,
+  );
+  const [selectedRevision, setSelectedRevision] =
+    useState<ArtifactRevisionForModal | null>(null);
 
   const {
-    // baiPaginationOption,
+    baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionStateOnSearchParam({
@@ -58,9 +61,9 @@ const ReservoirPage: React.FC = () => {
     order: withDefault(StringParam, '-updated_at'),
     filter: withDefault(StringParam, undefined),
     statusCategory: withDefault(StringParam, 'all'),
-    auditFilter: withDefault(StringParam, undefined),
-    auditOrder: withDefault(StringParam, '-timestamp'),
   });
+
+  // const queryVariables: ReservoirPageQuery$variables = useMemo(() => ({}));
 
   const [curTabKey, setCurTabKey] = useQueryParam(
     'tab',
@@ -82,93 +85,80 @@ const ReservoirPage: React.FC = () => {
     tablePaginationOption,
   };
 
-  const [, updateFetchKey] = useUpdatableState('initial-fetch');
-
-  // Mock audit log data
-  const mockAuditLogs: ReservoirAuditLog[] = useMemo(
-    () => [
-      {
-        id: '1',
-        artifactName: 'transformers',
-        artifactVersion: '4.30.0',
-        operation: 'pull',
-        modifier: 'john.doe@company.com',
-        timestamp: '2025-07-08T14:30:00Z',
-        status: 'success',
-        details: 'Successfully pulled transformers version 4.30.0',
-      },
-      {
-        id: '2',
-        artifactName: 'llama-2-7b-chat',
-        artifactVersion: '1.1.0',
-        operation: 'install',
-        modifier: 'jane.smith@company.com',
-        timestamp: '2025-07-08T10:15:00Z',
-        status: 'success',
-        details: 'Successfully installed llama-2-7b-chat version 1.1.0',
-      },
-      {
-        id: '3',
-        artifactName: 'pytorch-training',
-        artifactVersion: '2.0.0',
-        operation: 'pull',
-        modifier: 'system',
-        timestamp: '2025-07-08T09:00:00Z',
-        status: 'in_progress',
-        details: 'Pulling pytorch-training version 2.0.0 in progress',
-      },
-      {
-        id: '4',
-        artifactName: 'numpy',
-        artifactVersion: '1.25.0',
-        operation: 'uninstall',
-        modifier: 'admin@company.com',
-        timestamp: '2025-07-07T16:45:00Z',
-        status: 'success',
-        details: 'Successfully uninstalled numpy version 1.25.0',
-      },
-      {
-        id: '5',
-        artifactName: 'scikit-learn',
-        artifactVersion: '1.4.0',
-        operation: 'update',
-        modifier: 'bob.wilson@company.com',
-        timestamp: '2025-07-07T14:20:00Z',
-        status: 'failed',
-        details: 'Failed to update scikit-learn: dependency conflict',
-      },
-      {
-        id: '6',
-        artifactName: 'tensorflow-serving',
-        operation: 'verify',
-        modifier: 'system',
-        timestamp: '2025-07-07T08:30:00Z',
-        status: 'success',
-        details: 'All versions verified successfully',
-      },
-      {
-        id: '7',
-        artifactName: 'bert-base-uncased',
-        artifactVersion: '1.0.0',
-        operation: 'pull',
-        modifier: 'alice.johnson@company.com',
-        timestamp: '2025-07-06T18:00:00Z',
-        status: 'success',
-        details: 'Successfully pulled bert-base-uncased version 1.0.0',
-      },
-      {
-        id: '8',
-        artifactName: 'ubuntu-ml',
-        artifactVersion: '20.04',
-        operation: 'delete',
-        modifier: 'admin@company.com',
-        timestamp: '2025-07-06T12:15:00Z',
-        status: 'success',
-        details: 'Successfully deleted ubuntu-ml version 20.04',
-      },
-    ],
-    [],
+  const queryVariables: ReservoirPageQuery$variables = useMemo(
+    () => ({
+      offset: baiPaginationOption.offset,
+      limit: baiPaginationOption.limit,
+      order: [
+        {
+          field: 'NAME',
+          direction: 'DESC',
+        },
+      ],
+    }),
+    [baiPaginationOption.offset, baiPaginationOption.limit],
   );
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+
+  const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
+  const [isPendingTransition, startTransition] = useTransition();
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
+  // const [rescanArtifacts, isInflightRescanArtifacts] =
+  //   useMutation<ReservoirPageRescanArtifactsMutation>(graphql`
+  //     mutation ReservoirPageRescanArtifactsMutation(
+  //       $input: ScanArtifactsInput!
+  //     ) {
+  //       scanArtifacts(input: $input) {
+  //         artifacts {
+  //           id
+  //         }
+  //       }
+  //     }
+  //   `);
+
+  const queryRef = useLazyLoadQuery<ReservoirPageQuery>(
+    graphql`
+      query ReservoirPageQuery(
+        $order: [ArtifactOrderBy!]
+        $limit: Int
+        $offset: Int
+      ) {
+        artifacts(orderBy: $order, limit: $limit, offset: $offset) {
+          count
+          edges {
+            node {
+              id
+              ...BAIArtifactTableArtifactFragment
+              ...BAIImportArtifactModalArtifactFragment
+              revisions(
+                first: 1
+                orderBy: { field: VERSION, direction: DESC }
+              ) {
+                edges {
+                  node {
+                    id
+                    ...BAIImportArtifactModalArtifactRevisionFragment
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    deferredQueryVariables,
+    {
+      fetchKey:
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+    },
+  );
+
+  const { artifacts } = queryRef;
 
   // Mock data - in real implementation, this would come from API
   const mockArtifacts: ReservoirArtifact[] = useMemo(
@@ -407,95 +397,95 @@ const ReservoirPage: React.FC = () => {
   );
 
   // Helper function to parse property filter
-  const parsePropertyFilter = (filterString?: string) => {
-    if (!filterString) return null;
+  // const parsePropertyFilter = (filterString?: string) => {
+  //   if (!filterString) return null;
 
-    // Simple parser for "property == value" format
-    const match = filterString.match(/(\w+)\s*(==|!=|contains)\s*(.+)/);
-    if (match) {
-      const [, property, operator, value] = match;
-      return { property, operator, value: value.trim() };
-    }
-    return null;
-  };
+  //   // Simple parser for "property == value" format
+  //   const match = filterString.match(/(\w+)\s*(==|!=|contains)\s*(.+)/);
+  //   if (match) {
+  //     const [, property, operator, value] = match;
+  //     return { property, operator, value: value.trim() };
+  //   }
+  //   return null;
+  // };
 
   // Filter artifacts based on status category and property filters
-  const filteredArtifacts = useMemo(() => {
-    if (curTabKey !== 'artifacts') {
-      return []; // Return empty array for non-artifacts tabs
-    }
+  // const filteredArtifacts = useMemo(() => {
+  //   if (curTabKey !== 'artifacts') {
+  //     return []; // Return empty array for non-artifacts tabs
+  //   }
 
-    let filtered = mockArtifacts.filter((artifact) => {
-      switch (queryParams.statusCategory) {
-        case 'all':
-          return true; // Show all artifacts
-        case 'installed':
-          return ['verified', 'pulling', 'verifying'].includes(artifact.status);
-        case 'available':
-          return ['available'].includes(artifact.status);
-        default:
-          return true;
-      }
-    });
+  //   let filtered = mockArtifacts.filter((artifact) => {
+  //     switch (queryParams.statusCategory) {
+  //       case 'all':
+  //         return true; // Show all artifacts
+  //       case 'installed':
+  //         return ['verified', 'pulling', 'verifying'].includes(artifact.status);
+  //       case 'available':
+  //         return ['available'].includes(artifact.status);
+  //       default:
+  //         return true;
+  //     }
+  //   });
 
-    // Apply property filter if exists
-    const propertyFilter = parsePropertyFilter(queryParams.filter);
-    if (propertyFilter) {
-      filtered = filtered.filter((artifact) => {
-        const { property, operator, value } = propertyFilter;
+  //   // Apply property filter if exists
+  //   const propertyFilter = parsePropertyFilter(queryParams.filter);
+  //   if (propertyFilter) {
+  //     filtered = filtered.filter((artifact) => {
+  //       const { property, operator, value } = propertyFilter;
 
-        switch (property) {
-          case 'name':
-            if (operator === 'contains') {
-              return artifact.name.toLowerCase().includes(value.toLowerCase());
-            } else if (operator === '==') {
-              return artifact.name.toLowerCase() === value.toLowerCase();
-            }
-            break;
-          case 'type':
-            if (operator === '==') {
-              return artifact.type === value;
-            }
-            break;
-          case 'source':
-            if (operator === 'contains') {
-              return (
-                artifact.source?.toLowerCase().includes(value.toLowerCase()) ||
-                false
-              );
-            } else if (operator === '==') {
-              return artifact.source?.toLowerCase() === value.toLowerCase();
-            }
-            break;
-          case 'status':
-            if (operator === '==') {
-              return artifact.status === value;
-            }
-            break;
-          default:
-            return true;
-        }
-        return true;
-      });
-    }
+  //       switch (property) {
+  //         case 'name':
+  //           if (operator === 'contains') {
+  //             return artifact.name.toLowerCase().includes(value.toLowerCase());
+  //           } else if (operator === '==') {
+  //             return artifact.name.toLowerCase() === value.toLowerCase();
+  //           }
+  //           break;
+  //         case 'type':
+  //           if (operator === '==') {
+  //             return artifact.type === value;
+  //           }
+  //           break;
+  //         case 'source':
+  //           if (operator === 'contains') {
+  //             return (
+  //               artifact.source?.toLowerCase().includes(value.toLowerCase()) ||
+  //               false
+  //             );
+  //           } else if (operator === '==') {
+  //             return artifact.source?.toLowerCase() === value.toLowerCase();
+  //           }
+  //           break;
+  //         case 'status':
+  //           if (operator === '==') {
+  //             return artifact.status === value;
+  //           }
+  //           break;
+  //         default:
+  //           return true;
+  //       }
+  //       return true;
+  //     });
+  //   }
 
-    return filtered;
-  }, [
-    mockArtifacts,
-    curTabKey,
-    queryParams.statusCategory,
-    queryParams.filter,
-  ]);
+  //   return filtered;
+  // }, [
+  //   mockArtifacts,
+  //   curTabKey,
+  //   queryParams.statusCategory,
+  //   queryParams.filter,
+  // ]);
 
-  // Filter audit logs based on filter
-  const filteredAuditLogs = useMemo(() => {
-    if (curTabKey !== 'audit') {
-      return [];
-    }
-    // Add filter logic here if needed
-    return mockAuditLogs;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mockAuditLogs, curTabKey, queryParams.auditFilter]);
+  // // Filter audit logs based on filter
+  // const filteredAuditLogs = useMemo(() => {
+  //   if (curTabKey !== 'audit') {
+  //     return [];
+  //   }
+  //   // Add filter logic here if needed
+  //   return mockAuditLogs;
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [mockAuditLogs, curTabKey, queryParams.auditFilter]);
 
   // Count for badges and statistics
   const artifactCounts = useMemo(() => {
@@ -542,23 +532,13 @@ const ReservoirPage: React.FC = () => {
     };
   }, [mockArtifacts]);
 
-  // Find selected artifact based on URL parameter
-  const selectedArtifact = useMemo(() => {
-    if (!artifactId) return null;
-    return mockArtifacts.find((artifact) => artifact.id === artifactId) || null;
-  }, [artifactId, mockArtifacts]);
-
-  const handlePullArtifact = (artifactId: string, version?: string) => {
-    // Mock implementation - in real app, this would trigger an API call
-    console.log(
-      `Pulling artifact ${artifactId}${version ? ` version ${version}` : ''}`,
-    );
-    updateFetchKey(); // Trigger refresh
-  };
-
-  const isInstalledStatus = (status: ReservoirArtifact['status']) => {
-    return ['verified', 'pulling', 'verifying'].includes(status);
-  };
+  // const handlePullArtifact = (artifactId: string, version?: string) => {
+  //   // Mock implementation - in real app, this would trigger an API call
+  //   console.log(
+  //     `Pulling artifact ${artifactId}${version ? ` version ${version}` : ''}`,
+  //   );
+  //   updateFetchKey(); // Trigger refresh
+  // };
 
   const handleStatisticCardClick = (statusCategory: string) => {
     // Switch to artifacts tab if not already there
@@ -606,19 +586,8 @@ const ReservoirPage: React.FC = () => {
     }
 
     setTablePaginationOption({ current: 1 });
-    setSelectedArtifactList([]);
+    // setSelectedArtifactList([]);
   };
-
-  if (selectedArtifact) {
-    return (
-      <BAIFlex direction="column" align="stretch" gap={'md'}>
-        <ReservoirArtifactDetail
-          artifact={selectedArtifact}
-          onPull={handlePullArtifact}
-        />
-      </BAIFlex>
-    );
-  }
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
@@ -770,7 +739,6 @@ const ReservoirPage: React.FC = () => {
           </Card>
         </Col>
       </Row>
-
       <BAICard
         activeTabKey={curTabKey}
         onTabChange={(key) => {
@@ -783,38 +751,12 @@ const ReservoirPage: React.FC = () => {
           setTablePaginationOption(
             storedQuery.tablePaginationOption || { current: 1 },
           );
-          setSelectedArtifactList([]);
           setCurTabKey(key as TabKey);
         }}
         tabList={[
           {
             key: 'artifacts',
-            tab: (
-              <BAIFlex justify="center" gap={10}>
-                Reservoir Artifacts
-                {(artifactCounts.all || 0) > 0 && (
-                  <Badge
-                    count={artifactCounts.all}
-                    color={
-                      curTabKey === 'artifacts'
-                        ? token.colorPrimary
-                        : token.colorTextDisabled
-                    }
-                    size="small"
-                    showZero
-                    style={{
-                      paddingRight: token.paddingXS,
-                      paddingLeft: token.paddingXS,
-                      fontSize: 10,
-                    }}
-                  />
-                )}
-              </BAIFlex>
-            ),
-          },
-          {
-            key: 'audit',
-            tab: 'Audit Logs',
+            tab: t('reservoirPage.ReservoirArtifacts'),
           },
         ]}
         styles={{
@@ -829,6 +771,7 @@ const ReservoirPage: React.FC = () => {
               <BAIFlex
                 gap={'sm'}
                 align="start"
+                justify="between"
                 style={{
                   flexShrink: 1,
                 }}
@@ -840,7 +783,7 @@ const ReservoirPage: React.FC = () => {
                   onChange={(e) => {
                     setQuery({ statusCategory: e.target.value }, 'replaceIn');
                     setTablePaginationOption({ current: 1 });
-                    setSelectedArtifactList([]);
+                    // setSelectedArtifactList([]);
                   }}
                   options={[
                     {
@@ -900,61 +843,43 @@ const ReservoirPage: React.FC = () => {
                   onChange={(value) => {
                     setQuery({ filter: value }, 'replaceIn');
                     setTablePaginationOption({ current: 1 });
-                    setSelectedArtifactList([]);
+                    // setSelectedArtifactList([]);
                   }}
                 />
               </BAIFlex>
-              <BAIFlex gap={'sm'}>
-                {selectedArtifactList.length > 0 && (
-                  <>
-                    {t('general.NSelected', {
-                      count: selectedArtifactList.length,
-                    })}
-                    <Tooltip title="Remove Selected">
-                      <Button
-                        icon={<Trash2 size={16} color={token.colorError} />}
-                        onClick={() => {
-                          console.log('Removing selected artifacts');
-                          setSelectedArtifactList([]);
-                        }}
-                      />
-                    </Tooltip>
-                  </>
-                )}
-              </BAIFlex>
+              <BAIFetchKeyButton
+                value={fetchKey}
+                autoUpdateDelay={10_000}
+                loading={isPendingTransition}
+                onChange={() =>
+                  startTransition(() => {
+                    updateFetchKey();
+                    // rescanArtifacts({
+                    //   variables: {
+                    //     input: {
+                    //       storageId: 'fe878f09-06cc-4b91-9242-4c71015cce07',
+                    //       registryId: 'fe878f09-06cc-4b91-9242-4c71015cce05',
+                    //       limit: 100,
+                    //     },
+                    //   },
+                    // });
+                  })
+                }
+              />
             </BAIFlex>
-            <ReservoirArtifactList
-              artifacts={filteredArtifacts}
-              onPull={handlePullArtifact}
+            {/* <ReservoirArtifactList
+              artifactGroupsFrgmt={filterOutNullAndUndefined(
+                artifactGroups.edges.map((e) => e?.node),
+              )}
               type={
                 queryParams.statusCategory as 'all' | 'installed' | 'available'
               }
               order={queryParams.order}
-              loading={false}
-              rowSelection={{
-                type: 'checkbox',
-                preserveSelectedRowKeys: true,
-                getCheckboxProps: (record) => ({
-                  disabled: !isInstalledStatus(record.status),
-                }),
-                onChange: (selectedRowKeys) => {
-                  handleRowSelectionChange(
-                    selectedRowKeys,
-                    filteredArtifacts,
-                    setSelectedArtifactList,
-                  );
-                },
-                selectedRowKeys: _.map(selectedArtifactList, (i) => i.id),
-              }}
+              loading={isPendingTransition}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
                 current: tablePaginationOption.current,
                 total: filteredArtifacts.length,
-                showTotal: (total) => (
-                  <Typography.Text type="secondary">
-                    {t('general.TotalItems', { total: total })}
-                  </Typography.Text>
-                ),
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({ current, pageSize });
@@ -964,10 +889,49 @@ const ReservoirPage: React.FC = () => {
               onChangeOrder={(order) => {
                 setQuery({ order }, 'replaceIn');
               }}
+              onClickPull={(artifactId: string) => {
+                console.log(artifactId);
+                artifactGroups.edges.forEach((edge) =>
+                  edge.node.artifacts.edges.forEach((artifact) => {
+                    console.log(artifact.node.id);
+                    if (artifact.node.id === artifactId) {
+                      setSelectedVersion(artifact.node);
+                      return;
+                    }
+                  }),
+                );
+              }}
+            /> */}
+            <BAIArtifactTable
+              artifactFragment={artifacts.edges.map((edge) => edge.node)}
+              onClickPull={(artifactId: string, revisionId: string) => {
+                setSelectedArtifactId(artifactId);
+                artifacts.edges.forEach((artifact) =>
+                  artifact.node.revisions.edges.forEach((edge) => {
+                    if (edge.node.id === revisionId) {
+                      return setSelectedRevision(edge.node);
+                    }
+                  }),
+                );
+              }}
+              loading={isPendingTransition}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                current: tablePaginationOption.current,
+                total: artifacts.count,
+                onChange: (current, pageSize) => {
+                  startTransition(() => {
+                    if (_.isNumber(current) && _.isNumber(pageSize)) {
+                      setTablePaginationOption({ current, pageSize });
+                    }
+                  });
+                },
+              }}
             />
           </BAIFlex>
         ) : null}
-        {curTabKey === 'audit' ? (
+        {/* TODO: implement audit log for reservoir page */}
+        {/* {curTabKey === 'audit' ? (
           <Suspense fallback={<Skeleton active />}>
             <ReservoirAuditLogList
               auditLogs={filteredAuditLogs}
@@ -997,8 +961,28 @@ const ReservoirPage: React.FC = () => {
               }}
             />
           </Suspense>
-        ) : null}
+        ) : null} */}
       </BAICard>
+      <BAIImportArtifactModal
+        selectedArtifactFrgmt={
+          selectedArtifactId
+            ? artifacts.edges.find(
+                (edge) => edge.node.id === selectedArtifactId,
+              )!.node
+            : null
+        }
+        selectedArtifactRevisionFrgmt={
+          selectedRevision ? [selectedRevision] : []
+        }
+        onOk={() => {
+          setSelectedArtifactId(null);
+          setSelectedRevision(null);
+        }}
+        onCancel={() => {
+          setSelectedArtifactId(null);
+          setSelectedRevision(null);
+        }}
+      />
     </BAIFlex>
   );
 };

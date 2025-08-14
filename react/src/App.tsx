@@ -82,6 +82,9 @@ const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 const ReservoirPage = React.lazy(() => import('./pages/ReservoirPage'));
+const ReservoirArtifactDetailPage = React.lazy(
+  () => import('./pages/ReservoirArtifactDetailPage'),
+);
 
 interface CustomHandle {
   title?: string;
@@ -439,7 +442,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/reservoir',
-        handle: { labelKey: 'Reservoir' },
+        handle: { labelKey: 'webui.menu.Reservoir' },
         children: [
           {
             path: '',
@@ -464,7 +467,7 @@ const router = createBrowserRouter([
             element: (
               <BAIErrorBoundary>
                 <Suspense fallback={<Skeleton active />}>
-                  <ReservoirPage />
+                  <ReservoirArtifactDetailPage />
                 </Suspense>
               </BAIErrorBoundary>
             ),

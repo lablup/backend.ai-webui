@@ -1075,6 +1075,16 @@
     "Username": "Имя пользователя",
     "UsernameOptional": "Имя пользователя (необязательно)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Доступные версии",
+    "BasicInformation": "Основная информация",
+    "Description": "Описание",
+    "Name": "Имя",
+    "Registry": "Реестр",
+    "ReservoirArtifacts": "Артефакты водохранилища",
+    "Size": "Размер",
+    "Type": "Тип"
+  },
   "resourceGroup": {
     "Activate": "Активировать",
     "ActivateResourceGroup": "Активировать ресурсную группу",
@@ -1993,6 +2003,7 @@
       "PrivacyPolicy": "Политика конфиденциальности",
       "Project": "Проект",
       "Remaining": "Оставшийся",
+      "Reservoir": "Резервуар",
       "ResourcePolicy": "Ресурсная политика",
       "Resources": "Ресурсы",
       "Serving": "Обслуживание",

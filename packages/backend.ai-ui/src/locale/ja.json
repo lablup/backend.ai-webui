@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "アーティファクトを引っ張ります"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "アクション",
+    "Size": "サイズ",
+    "Updated": "更新",
+    "Version": "バージョン"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "最新バージョン",
+    "Name": "名前",
+    "Size": "サイズ",
+    "Status": "状態",
+    "Updated": "更新",
+    "Action": "アクション",
+    "Version": "バージョン"
   }
 }

@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Kéo tạo tác"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Hoạt động",
+    "Size": "Kích cỡ",
+    "Version": "Phiên bản",
+    "Updated": "Cập nhật"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Tên",
+    "LatestVersion": "Phiên bản mới nhất",
+    "Size": "Kích cỡ",
+    "Status": "Trạng thái",
+    "Updated": "Cập nhật",
+    "Action": "Hoạt động",
+    "Version": "Phiên bản"
   }
 }

@@ -1075,6 +1075,16 @@
     "Username": "用戶名",
     "UsernameOptional": "用戶名（可選）"
   },
+  "reservoirPage": {
+    "AvailableVersions": "可用版本",
+    "BasicInformation": "基本信息",
+    "Description": "描述",
+    "Name": "姓名",
+    "Registry": "註冊表",
+    "ReservoirArtifacts": "水庫工件",
+    "Size": "尺寸",
+    "Type": "類型"
+  },
   "resourceGroup": {
     "Activate": "啟用設定",
     "ActivateResourceGroup": "激活資源組",
@@ -1992,6 +2002,7 @@
       "PrivacyPolicy": "隱私政策",
       "Project": "項目",
       "Remaining": "其餘的",
+      "Reservoir": "水庫",
       "ResourcePolicy": "資源政策",
       "Resources": "資源",
       "Serving": "服务",

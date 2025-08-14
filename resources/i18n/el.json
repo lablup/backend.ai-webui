@@ -1072,6 +1072,16 @@
     "Username": "Όνομα χρήστη",
     "UsernameOptional": "Όνομα χρήστη (προαιρετικό)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Διαθέσιμες εκδόσεις",
+    "BasicInformation": "Βασικές πληροφορίες",
+    "Description": "Περιγραφή",
+    "Name": "Ονομα",
+    "Registry": "Αρχείο",
+    "ReservoirArtifacts": "Αντικείμενα δεξαμενής",
+    "Size": "Μέγεθος",
+    "Type": "Τύπος"
+  },
   "resourceGroup": {
     "Activate": "Δραστηριοποιώ",
     "ActivateResourceGroup": "Ενεργοποίηση ομάδας πόρων",
@@ -1988,6 +1998,7 @@
       "PrivacyPolicy": "Πολιτική απορρήτου",
       "Project": "Εργο",
       "Remaining": "Παραμένων",
+      "Reservoir": "Δεξαμενή",
       "ResourcePolicy": "Πολιτική Πόρων",
       "Resources": "Πόροι",
       "Serving": "Εξυπηρέτηση",

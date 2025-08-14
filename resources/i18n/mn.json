@@ -1074,6 +1074,16 @@
     "Username": "Хэрэглэгчийн нэр",
     "UsernameOptional": "Хэрэглэгчийн нэр (заавал биш)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Боломжтой хувилбар",
+    "BasicInformation": "Үндсэн мэдээлэл",
+    "Description": "Тодорхойлолт / төрөл анги",
+    "Name": "Нэр",
+    "Registry": "Шлах",
+    "ReservoirArtifacts": "Усан сангийн олдворууд",
+    "Size": "Хэмжээ",
+    "Type": "Маяг"
+  },
   "resourceGroup": {
     "Activate": "Идэвхжүүлэх",
     "ActivateResourceGroup": "Нөөцийн бүлгийг идэвхжүүлэх",
@@ -1991,6 +2001,7 @@
       "PrivacyPolicy": "Нууцлалын бодлого",
       "Project": "Төсөл",
       "Remaining": "Үлдсэн",
+      "Reservoir": "Дүрэмирсанир",
       "ResourcePolicy": "Нөөцийн бодлого",
       "Resources": "Нөөц",
       "Serving": "Үйлчилж байна",

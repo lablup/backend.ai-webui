@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Puxe artefato"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Ação",
+    "Size": "Tamanho",
+    "Updated": "Atualizado",
+    "Version": "Versão"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Nome",
+    "LatestVersion": "Versão mais recente",
+    "Size": "Tamanho",
+    "Status": "Status",
+    "Updated": "Atualizado",
+    "Action": "Ação",
+    "Version": "Versão"
   }
 }

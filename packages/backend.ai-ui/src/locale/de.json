@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Artefakt ziehen"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Aktion",
+    "Size": "Größe",
+    "Updated": "Aktualisiert",
+    "Version": "Version"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Neueste Version",
+    "Name": "Name",
+    "Size": "Größe",
+    "Status": "Status",
+    "Updated": "Aktualisiert",
+    "Action": "Aktion",
+    "Version": "Version"
   }
 }

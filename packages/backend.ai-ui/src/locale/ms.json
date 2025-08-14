@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Tarik artifak"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Tindakan",
+    "Size": "Saiz",
+    "Updated": "Dikemas kini",
+    "Version": "Versi"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Nama",
+    "LatestVersion": "Versi terkini",
+    "Size": "Saiz",
+    "Status": "Status",
+    "Updated": "Dikemas kini",
+    "Action": "Tindakan",
+    "Version": "Versi"
   }
 }
