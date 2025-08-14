@@ -4,16 +4,66 @@ import { Button, Card, CardProps, theme } from 'antd';
 import _ from 'lodash';
 import React, { cloneElement, isValidElement, ReactNode } from 'react';
 
+/**
+ * Props interface for BAICard component.
+ * Extends Ant Design Card props with additional Backend.AI-specific customizations.
+ */
 export interface BAICardProps extends Omit<CardProps, 'extra'> {
+  /** Visual status of the card affecting border color and extra button icons */
   status?: 'success' | 'error' | 'warning' | 'default';
+  /** Custom content to display in the header area */
   extra?: ReactNode;
+  /** Title for the extra button that appears in the header */
   extraButtonTitle?: string | ReactNode;
   /** Show header divider. Automatically enabled when tabList is specified */
   showDivider?: boolean;
+  /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
+  /** React ref for the card container */
   ref?: React.Ref<HTMLDivElement> | undefined;
 }
 
+/**
+ * BAICard component - Enhanced Ant Design Card with Backend.AI-specific features.
+ *
+ * Provides a flexible card interface with status-based styling, customizable headers,
+ * and integrated action buttons. Supports all standard Ant Design Card features
+ * while adding Backend.AI design system enhancements.
+ *
+ * @param props - BAICardProps configuration object
+ * @returns React functional component
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <BAICard title="Basic Card">
+ *   <p>Card content goes here</p>
+ * </BAICard>
+ *
+ * // With status and extra button
+ * <BAICard
+ *   title="Error Card"
+ *   status="error"
+ *   extraButtonTitle="Fix Error"
+ *   onClickExtraButton={() => handleError()}
+ * >
+ *   <p>Error details...</p>
+ * </BAICard>
+ *
+ * // With tabs
+ * <BAICard
+ *   title="Tabbed Card"
+ *   tabList={[
+ *     { key: 'tab1', label: 'Tab 1' },
+ *     { key: 'tab2', label: 'Tab 2' }
+ *   ]}
+ *   activeTabKey="tab1"
+ *   onTabChange={(key) => setActiveTab(key)}
+ * >
+ *   <p>Tab content...</p>
+ * </BAICard>
+ * ```
+ */
 const BAICard: React.FC<BAICardProps> = ({
   status = 'default',
   extraButtonTitle,
@@ -104,5 +154,7 @@ const BAICard: React.FC<BAICardProps> = ({
     />
   );
 };
+
+BAICard.displayName = 'BAICard';
 
 export default BAICard;

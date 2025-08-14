@@ -6,29 +6,136 @@ import { Button, Space, Typography } from 'antd';
 const meta: Meta<typeof BAICard> = {
   title: 'Components/BAICard',
   component: BAICard,
+  tags: ['autodocs'],
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: `
+**BAICard** is an enhanced version of Ant Design's Card component, specifically designed for Backend.AI applications. It provides additional features including:
+
+- **Status-based styling**: Visual indicators for success, error, warning, and default states
+- **Integrated action buttons**: Extra buttons with automatic icons based on status
+- **Enhanced header layout**: Flexible title and extra content arrangement
+- **Tab integration**: Built-in support for tabbed content
+- **Consistent design**: Follows Backend.AI design system guidelines
+
+The component extends all standard Ant Design Card properties while adding Backend.AI-specific enhancements for better user experience and visual consistency across the platform.
+
+## Props
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| status | \`'success' \\| 'error' \\| 'warning' \\| 'default'\` | \`'default'\` | Visual status affecting border color and extra button icons |
+| extra | \`ReactNode\` | - | Custom content to display in the header area |
+| extraButtonTitle | \`string \\| ReactNode\` | - | Title for the extra action button in the header |
+| showDivider | \`boolean\` | \`false\` | Show divider between header and body. Auto-enabled with tabs |
+| onClickExtraButton | \`() => void\` | - | Callback when extra button is clicked |
+        `,
+      },
+    },
   },
   argTypes: {
     status: {
       control: { type: 'select' },
       options: ['default', 'success', 'warning', 'error'],
+      description:
+        'Visual status affecting border color and extra button icons',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: ['default', 'small'],
+      description: 'Card size affecting padding and spacing',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
+    },
+    title: {
+      control: { type: 'text' },
+      description: 'Card title displayed in the header',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
+    extraButtonTitle: {
+      control: { type: 'text' },
+      description: 'Title for the extra action button in the header',
+      table: {
+        type: { summary: 'string | ReactNode' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
+      description: 'Shows loading spinner overlay',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     hoverable: {
       control: { type: 'boolean' },
+      description: 'Enable hover effects and pointer cursor',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     bordered: {
       control: { type: 'boolean' },
+      description: 'Show card border',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
     },
     showDivider: {
       control: { type: 'boolean' },
+      description:
+        'Show divider between header and body. Auto-enabled with tabs',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    onClickExtraButton: {
+      action: 'extraButtonClicked',
+      description: 'Callback when extra button is clicked',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    extra: {
+      control: false,
+      description: 'Custom content to display in the header area',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
+    children: {
+      control: false,
+      description: 'Card body content',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
+    style: {
+      control: false,
+      description: 'Custom CSS styles for the card',
+      table: {
+        type: { summary: 'CSSProperties' },
+      },
+    },
+    className: {
+      control: { type: 'text' },
+      description: 'Custom CSS class name',
+      table: {
+        type: { summary: 'string' },
+      },
     },
   },
 };
@@ -52,6 +159,14 @@ const sampleContent = (
 
 export const Default: Story = {
   name: 'Basic',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Basic card with title and content. This is the most common usage pattern.',
+      },
+    },
+  },
   args: {
     title: 'Default Card',
     children: sampleContent,
@@ -67,6 +182,14 @@ export const WithoutTitle: Story = {
 
 export const StatusVariants: Story = {
   name: 'StatusTypes',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Different status variants showing how border colors change based on the status prop. Each status provides different visual feedback to users.',
+      },
+    },
+  },
   render: () => (
     <BAIFlex direction="column" gap="md">
       <BAICard title="Default Status" status="default">
@@ -96,6 +219,14 @@ export const WithExtra: Story = {
 
 export const WithExtraButton: Story = {
   name: 'ExtraButton',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Card with an extra action button in the header. The button automatically gets appropriate icons based on the card status.',
+      },
+    },
+  },
   args: {
     title: 'Card with Extra Button',
     extraButtonTitle: 'Action',

@@ -80,7 +80,6 @@
     "@jest/expect": "30.0.0-beta.3",
     "@jest/globals": "30.0.0-beta.3",
     "@storybook/addon-docs": "^9.1.1",
-    "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^9.1.1",
     "@storybook/addon-onboarding": "^9.1.1",
