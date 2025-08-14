@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
 import { TFunction } from 'i18next';
 import _ from 'lodash';
+import { EnvVarFormListValue } from 'src/components/EnvVarFormList';
 
 export const newLineToBrElement = (
   text: string,
@@ -613,3 +614,47 @@ export function listenToBackgroundTask<
 
   return controller.abort.bind(controller);
 }
+
+export const getAIAcceleratorWithStringifiedKey = (resourceSlot: any) => {
+  if (Object.keys(resourceSlot).length <= 0) {
+    return undefined;
+  }
+  const keyName: string = Object.keys(resourceSlot)[0];
+  return {
+    acceleratorType: keyName,
+    accelerator:
+      typeof resourceSlot[keyName] === 'string'
+        ? keyName === 'cuda.shares'
+          ? parseFloat(resourceSlot[keyName])
+          : parseInt(resourceSlot[keyName])
+        : resourceSlot[keyName] || 0,
+  };
+};
+
+// Helper functions for cleaner code
+export const parseModelRuntimeConfig = (config: EnvVarFormListValue[]) => {
+  const parsed = _.isString(config)
+    ? _.attempt(() => JSON.parse(config || '{}')) || {}
+    : config || {};
+  return _.toPairs(parsed).map(([variable, value]) => ({
+    variable,
+    value: String(value),
+  }));
+};
+
+// Convert runtime config to JSON string for API
+export const serializeModelRuntimeConfig = (
+  config: EnvVarFormListValue[] | string | null | undefined,
+): string | undefined => {
+  if (!config) return undefined;
+  // Convert array format [{variable, value}] to object format {variable: value}
+  const obj = _.isArray(config)
+    ? _.fromPairs(
+        config.map((v: { variable: string; value: string }) => [
+          v.variable,
+          v.value,
+        ]),
+      )
+    : _.attempt(() => JSON.parse(config || '{}')) || {};
+  return obj ? JSON.stringify(obj) : undefined;
+};
