@@ -34,7 +34,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment RecentlyCreatedSessionFragment on Queries
+      fragment RecentlyCreatedSessionFragment on Query
       @argumentDefinitions(
         projectId: { type: "UUID!" }
       )

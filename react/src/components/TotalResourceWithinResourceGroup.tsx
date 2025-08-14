@@ -45,7 +45,7 @@ const TotalResourceWithinResourceGroup: React.FC<
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment TotalResourceWithinResourceGroupFragment on Queries
+      fragment TotalResourceWithinResourceGroupFragment on Query
       @argumentDefinitions(resourceGroup: { type: "String" }, isSuperAdmin: { type: "Boolean!" })
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
