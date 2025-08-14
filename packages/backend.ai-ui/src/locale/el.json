@@ -23,7 +23,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "Αντιγράψτε όλα"
+      "CopyAll": "Αντιγράψτε όλα",
+      "Cancel": "Ματαίωση"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Τραβήξτε το τεχνούργημα",
+    "Pull": "Τραβήξτε",
+    "PulledVersionsAreExcluded": "Οι εκδόσεις που τραβήχτηκαν εξαιρούνται.",
+    "Name": "Ονομα",
+    "Type": "Τύπος",
+    "Description": "Περιγραφή",
+    "Source": "Πηγή"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Δράση",
+    "Size": "Μέγεθος",
+    "Updated": "Ενημερωμένος",
+    "Version": "Εκδοχή",
+    "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Τελευταία έκδοση",
+    "Name": "Ονομα",
+    "Size": "Μέγεθος",
+    "Status": "Κατάσταση",
+    "Updated": "Ενημερωμένος",
+    "Action": "Δράση",
+    "Version": "Εκδοχή"
   }
 }

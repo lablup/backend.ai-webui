@@ -23,7 +23,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "Копировать все"
+      "CopyAll": "Копировать все",
+      "Cancel": "Отмена"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Вытащить артефакт",
+    "Pull": "Тянуть",
+    "PulledVersionsAreExcluded": "Вытянутые версии исключены.",
+    "Name": "Имя",
+    "Type": "Тип",
+    "Description": "Описание",
+    "Source": "Источник"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Действие",
+    "Size": "Размер",
+    "Updated": "Обновлено",
+    "Version": "Версия",
+    "PullLatestVersion": "Вытащите последнюю версию"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Имя",
+    "LatestVersion": "Последняя версия",
+    "Size": "Размер",
+    "Status": "Статус",
+    "Updated": "Обновлено",
+    "Action": "Действие",
+    "Version": "Версия"
   }
 }

@@ -23,7 +23,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "Sao chép tất cả"
+      "CopyAll": "Sao chép tất cả",
+      "Cancel": "Hủy bỏ"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Kéo tạo tác",
+    "Pull": "Sự lôi kéo",
+    "PulledVersionsAreExcluded": "Các phiên bản kéo được loại trừ.",
+    "Name": "Tên",
+    "Type": "Kiểu",
+    "Description": "Sự miêu tả",
+    "Source": "Nguồn"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Hoạt động",
+    "Size": "Kích cỡ",
+    "Version": "Phiên bản",
+    "Updated": "Cập nhật",
+    "PullLatestVersion": "Kéo phiên bản mới nhất"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Tên",
+    "LatestVersion": "Phiên bản mới nhất",
+    "Size": "Kích cỡ",
+    "Status": "Trạng thái",
+    "Updated": "Cập nhật",
+    "Action": "Hoạt động",
+    "Version": "Phiên bản"
   }
 }
