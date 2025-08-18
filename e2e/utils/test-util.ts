@@ -3,6 +3,8 @@ import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
+export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
+
 export async function login(
   page: Page,
   username: string,
@@ -86,6 +88,24 @@ export async function loginAsCreatedAccount(
   password: string,
 ) {
   await login(page, email, password, webServerEndpoint);
+}
+
+export async function loginAsVisualRegressionAdmin(page: Page) {
+  await login(
+    page,
+    userInfo.admin.email,
+    userInfo.admin.password,
+    visualRegressionWebserverEndpoint,
+  );
+}
+
+export async function loginAsVisualRegressionUser2(page: Page) {
+  await login(
+    page,
+    userInfo.user2.email,
+    userInfo.user2.password,
+    visualRegressionWebserverEndpoint,
+  );
 }
 
 export async function logout(page: Page) {
@@ -337,6 +357,7 @@ export async function deleteSession(page: Page, sessionName: string) {
  *
  * e.g. { "environments": { "showNonInstalledImages": "true" } }
  */
+
 export async function modifyConfigToml(
   page: Page,
   request: APIRequestContext,

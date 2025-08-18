@@ -12,7 +12,7 @@ test.describe.parallel('config.toml', () => {
     { tag: ['@session', '@summary', '@serving'] },
     async ({ page, request }) => {
       // modify config.toml to blocklist some menu items
-      let requestConfig = {
+      const requestConfig = {
         menu: {
           blocklist: 'summary, serving, job',
         },
