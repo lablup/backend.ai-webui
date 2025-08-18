@@ -854,6 +854,7 @@
           "color": "blue"
         }
       ]
+    }
   },
   "tagAlias": {
     "python": "Python",
@@ -966,7 +967,8 @@
     "ngc": "NVIDIA GPU Cloud",
     "ff": "Research Env.",
     "atom-orbit": "Orbit",
-    "vllm": "vLLM"
+    "vllm": "vLLM",
+    "mojo-max": "MAX (Mojo)"
   },
   "tagReplace": {
     "^(tf)([0-9.]*)$": "TensorFlow $2",
@@ -981,6 +983,7 @@
     "^ji(\\d)\\.(\\d+)$": "Julia $1.$2",
     "^tpuv(\\d+)$": "TPU:TPUv$1",
     "^alpine(\\d+)$": "Alpine Linux $1",
+    "^gromacs*$": "GROMACS",
     "^(customized)_.*$": "Customized",
     "^(-_)$": " "
   }
