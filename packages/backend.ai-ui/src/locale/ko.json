@@ -10,5 +10,9 @@
     "SettingTable": "표 설정",
     "SelectColumnToDisplay": "표시할 열 선택",
     "SearchTableColumn": "표시할 열 검색"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "검색",
+    "ResetFilter": "필터 초기화"
   }
 }

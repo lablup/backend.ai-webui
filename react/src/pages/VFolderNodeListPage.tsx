@@ -5,9 +5,6 @@ import {
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import BAIPropertyFilter, {
-  mergeFilterValues,
-} from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
@@ -16,11 +13,7 @@ import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumeP
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  handleRowSelectionChange,
-} from '../helper';
+import { handleRowSelectionChange } from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -42,11 +35,15 @@ import {
   Typography,
 } from 'antd';
 import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   BAIFlex,
   BAICard,
   BAINewFolderIcon,
   BAIRestoreIcon,
   BAITrashBinIcon,
+  BAIPropertyFilter,
+  mergeFilterValues,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {

@@ -1,12 +1,11 @@
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
-import { filterOutEmpty } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup from './TotalResourceWithinResourceGroup';
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Dropdown, MenuProps, Skeleton, theme } from 'antd';
-import { BAICard, BAICardProps } from 'backend.ai-ui';
+import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

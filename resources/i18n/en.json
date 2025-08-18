@@ -1037,10 +1037,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} of {{total}} items"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Search",
-    "ResetFilter": "Reset filters"
-  },
   "registry": {
     "AddRegistry": "Add Registry",
     "ConfirmNoUserName": "User and password not specified, would you like to save?",

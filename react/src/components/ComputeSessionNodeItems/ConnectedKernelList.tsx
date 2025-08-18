@@ -3,13 +3,18 @@ import {
   ConnectedKernelListFragment$key,
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import DoubleTag from '../DoubleTag';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
-import { BAITable, BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIFlex,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
 import { useState } from 'react';

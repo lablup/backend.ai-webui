@@ -35,7 +35,6 @@ import {
   formatDuration,
   generateRandomString,
   convertToBinaryUnit,
-  filterOutEmpty,
 } from '../helper';
 import {
   useSuspendedBackendaiClient,
@@ -81,7 +80,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';

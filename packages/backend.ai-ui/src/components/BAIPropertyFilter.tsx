@@ -1,4 +1,5 @@
 import { filterOutEmpty } from '../helper';
+import BAIFlex from './BAIFlex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
@@ -13,7 +14,6 @@ import {
   Tooltip,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   ComponentProps,
@@ -133,6 +133,70 @@ function combineFilters(filters: string[], operator: '&' | '|'): string {
   return filters.join(` ${operator} `);
 }
 
+/**
+ * BAIPropertyFilter component - Advanced property filtering interface for Backend.AI applications.
+ *
+ * Provides a sophisticated filtering interface for constructing complex filter queries with support for:
+ * - Multiple property types (string and boolean) with type-specific operators
+ * - Dynamic query building through a visual interface
+ * - Autocomplete support with predefined options and suggestions
+ * - Custom validation rules for property values
+ * - Backend.AI query filter minilang compatibility
+ *
+ * The component generates filter query strings compatible with Backend.AI's query system,
+ * enabling powerful data filtering capabilities across the platform.
+ *
+ * @param props - BAIPropertyFilterProps configuration object
+ * @returns React functional component
+ *
+ * @example
+ * ```tsx
+ * // Basic usage with string and boolean properties
+ * <BAIPropertyFilter
+ *   filterProperties={[
+ *     {
+ *       key: 'name',
+ *       propertyLabel: 'Name',
+ *       type: 'string',
+ *       defaultOperator: 'ilike',
+ *     },
+ *     {
+ *       key: 'active',
+ *       propertyLabel: 'Active Status',
+ *       type: 'boolean',
+ *     },
+ *   ]}
+ *   value="name ilike %test% & active == true"
+ *   onChange={(value) => setFilterValue(value)}
+ * />
+ *
+ * // With custom validation and options
+ * <BAIPropertyFilter
+ *   filterProperties={[
+ *     {
+ *       key: 'email',
+ *       propertyLabel: 'Email',
+ *       type: 'string',
+ *       rule: {
+ *         message: 'Please enter a valid email address',
+ *         validate: (value) => /\S+@\S+\.\S+/.test(value),
+ *       },
+ *     },
+ *     {
+ *       key: 'status',
+ *       propertyLabel: 'Status',
+ *       type: 'string',
+ *       options: [
+ *         { label: 'Active', value: 'active' },
+ *         { label: 'Inactive', value: 'inactive' },
+ *       ],
+ *       strictSelection: true,
+ *     },
+ *   ]}
+ *   onChange={handleFilterChange}
+ * />
+ * ```
+ */
 const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   filterProperties,
   value: propValue,
@@ -289,7 +353,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
                   : option.label?.toString().includes(search);
               },
             )}
-            placeholder={t('propertyFilter.PlaceHolder')}
+            placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
             onBlur={() => {
               setIsFocused(false);
             }}
@@ -323,7 +387,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             </Tag>
           ))}
           {filtersFromValue.length > 1 && (
-            <Tooltip title={t('propertyFilter.ResetFilter')}>
+            <Tooltip title={t('comp:BAIPropertyFilter.ResetFilter')}>
               <Button
                 size="small"
                 icon={
@@ -341,5 +405,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     </BAIFlex>
   );
 };
+
+BAIPropertyFilter.displayName = 'BAIPropertyFilter';
 
 export default BAIPropertyFilter;

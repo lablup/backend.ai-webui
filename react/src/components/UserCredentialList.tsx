@@ -5,10 +5,8 @@ import {
   UserCredentialListQuery,
   UserCredentialListQuery$data,
 } from '../__generated__/UserCredentialListQuery.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import BAIPropertyFilter from './BAIPropertyFilter';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
@@ -19,7 +17,13 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIFlex,
+  BAIPropertyFilter,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';

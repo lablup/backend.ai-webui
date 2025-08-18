@@ -10,5 +10,9 @@
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel",
     "SearchTableColumn": "Kolom Tabel Cari"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Pencarian",
+    "ResetFilter": "Setel ulang filter"
   }
 }

@@ -3,7 +3,6 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
-import { filterOutEmpty } from '../../helper';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
@@ -13,7 +12,7 @@ import { usePromiseTracker } from '../../usePromiseTracker';
 import BAIModal from '../BAIModal';
 import { Card, Checkbox, ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

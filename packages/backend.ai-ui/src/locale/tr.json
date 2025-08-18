@@ -10,5 +10,9 @@
     "SettingTable": "Masa Ayarları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SearchTableColumn": "Arama Tablosu sütunları"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Arama",
+    "ResetFilter": "Filtreleri sıfırla"
   }
 }

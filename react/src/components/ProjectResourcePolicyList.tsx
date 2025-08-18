@@ -6,8 +6,6 @@ import {
 import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 import {
   bytesToGB,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   localeCompare,
   numberSorterWithInfinityValue,
 } from '../helper';
@@ -25,7 +23,12 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIFlex,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';

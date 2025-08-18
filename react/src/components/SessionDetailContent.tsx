@@ -1,7 +1,6 @@
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
-import { filterOutNullAndUndefined } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -34,14 +33,15 @@ import {
   Typography,
 } from 'antd';
 import Title from 'antd/es/typography/Title';
-// import { graphql } from 'react-relay';
 import {
+  filterOutNullAndUndefined,
   BAISessionTypeTag,
   toGlobalId,
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   BAIFlex,
 } from 'backend.ai-ui';
+// import { graphql } from 'react-relay';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';

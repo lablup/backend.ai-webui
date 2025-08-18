@@ -10,5 +10,9 @@
     "SettingTable": "Tetapan Jadual",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
     "SearchTableColumn": "Lajur jadual carian"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Cari",
+    "ResetFilter": "Tetapkan semula penapis"
   }
 }

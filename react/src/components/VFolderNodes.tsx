@@ -2,7 +2,6 @@ import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
-import { filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -30,6 +29,7 @@ import {
   Typography,
 } from 'antd';
 import {
+  filterOutNullAndUndefined,
   BAIRestoreIcon,
   BAIShareAltIcon,
   BAITrashBinIcon,

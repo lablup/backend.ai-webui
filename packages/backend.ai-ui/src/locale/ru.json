@@ -10,5 +10,9 @@
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы",
     "SearchTableColumn": "Поиск таблицы столбцов"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Поиск",
+    "ResetFilter": "Сбросить фильтры"
   }
 }

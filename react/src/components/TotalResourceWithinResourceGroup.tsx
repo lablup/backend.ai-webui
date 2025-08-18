@@ -10,6 +10,7 @@ import BaseResourceItem, {
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { Typography } from 'antd';
 import {
+  filterOutNullAndUndefined,
   BAIFlex,
   BAICardProps,
   subNumberWithUnits,
@@ -26,7 +27,6 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { filterOutNullAndUndefined } from 'src/helper';
 
 interface TotalResourceWithinResourceGroupProps extends BAICardProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
@@ -45,7 +45,7 @@ const TotalResourceWithinResourceGroup: React.FC<
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment TotalResourceWithinResourceGroupFragment on Queries
+      fragment TotalResourceWithinResourceGroupFragment on Query
       @argumentDefinitions(resourceGroup: { type: "String" }, isSuperAdmin: { type: "Boolean!" })
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"

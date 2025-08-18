@@ -1,10 +1,10 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { filterOutNullAndUndefined } from '../helper';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import { theme } from 'antd';
 import {
+  filterOutNullAndUndefined,
   toLocalId,
   BAIFlex,
   BAIUnmountAfterClose,
@@ -34,7 +34,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment RecentlyCreatedSessionFragment on Queries
+      fragment RecentlyCreatedSessionFragment on Query
       @argumentDefinitions(
         projectId: { type: "UUID!" }
       )

@@ -1031,10 +1031,6 @@
   "pagination": {
     "Total": "{{start}}  -  {{end}} of {{attol}}アイテム"
   },
-  "propertyFilter": {
-    "PlaceHolder": "検索",
-    "ResetFilter": "フィルターをリセットする"
-  },
   "registry": {
     "AddRegistry": "レジストリを追加する",
     "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",

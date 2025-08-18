@@ -1031,10 +1031,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Поиск",
-    "ResetFilter": "Сбросить фильтры"
-  },
   "registry": {
     "AddRegistry": "Добавить реестр",
     "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",

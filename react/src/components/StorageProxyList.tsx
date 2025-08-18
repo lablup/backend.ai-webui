@@ -2,7 +2,6 @@ import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.gr
 import {
   convertToDecimalUnit,
   convertUnitValue,
-  filterOutNullAndUndefined,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
@@ -14,6 +13,7 @@ import DoubleTag from './DoubleTag';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
+  filterOutNullAndUndefined,
   BAICephIcon,
   BAIFlex,
   BAIPureStorageIcon,

@@ -1,7 +1,7 @@
 import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
 import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
-import { convertToDecimalUnit, filterOutEmpty } from '../helper';
+import { convertToDecimalUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -20,7 +20,12 @@ import {
   Typography,
   type DescriptionsProps,
 } from 'antd';
-import { BAIUserUnionIcon, toLocalId, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIUserUnionIcon,
+  toLocalId,
+  BAIFlex,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';

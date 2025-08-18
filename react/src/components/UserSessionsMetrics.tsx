@@ -1,5 +1,5 @@
 import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQuery.graphql';
-import { filterOutEmpty, newLineToBrElement } from '../helper';
+import { newLineToBrElement } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -7,7 +7,7 @@ import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionMetricGraph from './SessionMetricGraph';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';

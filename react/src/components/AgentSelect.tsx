@@ -1,11 +1,9 @@
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
-import { filterOutEmpty } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { mergeFilterValues } from './BAIPropertyFilter';
 import ResourceNumber from './ResourceNumber';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex, mergeFilterValues } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';

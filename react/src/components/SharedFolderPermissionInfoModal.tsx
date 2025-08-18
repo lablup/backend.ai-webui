@@ -2,7 +2,6 @@ import {
   SharedFolderPermissionInfoModalFragment$data,
   SharedFolderPermissionInfoModalFragment$key,
 } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
-import { filterOutNullAndUndefined } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -20,7 +19,12 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAITable, BAIUserUnionIcon, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutNullAndUndefined,
+  BAITable,
+  BAIUserUnionIcon,
+  BAIFlex,
+} from 'backend.ai-ui';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

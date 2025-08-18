@@ -6,15 +6,12 @@ import {
 import ActionItemContent from '../components/ActionItemContent';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAILink from '../components/BAILink';
-import BAIPropertyFilter, {
-  mergeFilterValues,
-} from '../components/BAIPropertyFilter';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes from '../components/SessionNodes';
-import { filterOutNullAndUndefined, handleRowSelectionChange } from '../helper';
+import { handleRowSelectionChange } from '../helper';
 import {
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -40,7 +37,14 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, BAICard, BAISessionsIcon } from 'backend.ai-ui';
+import {
+  filterOutNullAndUndefined,
+  BAIFlex,
+  BAICard,
+  BAISessionsIcon,
+  BAIPropertyFilter,
+  mergeFilterValues,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
 import {

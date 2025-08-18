@@ -1032,10 +1032,6 @@
   "pagination": {
     "Total": "{{start}} - {{total}} öğelerinin {{end}}"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Arama",
-    "ResetFilter": "Filtreleri sıfırla"
-  },
   "registry": {
     "AddRegistry": "Kayıt Ekle",
     "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",

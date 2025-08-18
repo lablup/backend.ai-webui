@@ -1031,10 +1031,6 @@
   "pagination": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Etsi",
-    "ResetFilter": "Nollaa suodattimet"
-  },
   "registry": {
     "AddRegistry": "Lisää rekisteri",
     "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",

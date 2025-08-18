@@ -352,22 +352,6 @@ export const offset_to_cursor = (offset: number): string => {
   return window.btoa(`arrayconnection:${offset}`);
 };
 
-/**
- * Filters out `null` and `undefined` values from an array of objects.
- *
- * @template T - The type of objects in the array.
- * @param arr - The array to filter, which may contain `null` or `undefined` values, or be itself `null` or `undefined`.
- * @returns A new array containing only the non-null and non-undefined objects from the input array.
- */
-export function filterOutNullAndUndefined<T extends { [key: string]: any }>(
-  arr: ReadonlyArray<T | null | undefined> | null | undefined,
-): T[] {
-  if (arr === null || arr === undefined) {
-    return [];
-  }
-  return arr.filter((item) => item !== null && item !== undefined);
-}
-
 export function parseValueWithUnit(str: string): [number, string | undefined] {
   const match = str?.match(/^(\d*\.?\d+)\s*([a-zA-Z%]*)$/);
   if (!match) {
@@ -429,28 +413,6 @@ export const numberSorterWithInfinityValue = (
   return transform(a) - transform(b);
 };
 
-/**
- * Filters out empty values from an array. An item is considered "empty" if it is:
- * - `undefined`
- * - `null`
- * - an empty string (`''`)
- * - `false`
- * - `true`
- * - any numbers
- * - an empty array (`[]`)
- * - an empty object (`{}`)
- *
- * Uses lodash's `isEmpty` function for the check.
- * Array-like values such as arguments objects, arrays, buffers, strings, or jQuery-like collections are considered empty if they have a length of 0. Similarly, maps and sets are considered empty if they have a
- *
- * @typeParam T - The type of the array elements to retain.
- * @param arr - The array to filter, which may contain empty values.
- * @returns A new array containing only the non-empty values of type `T`.
- */
-export const filterOutEmpty = <T,>(
-  arr: Array<T | undefined | null | '' | false | any[] | object>,
-): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;
-
 export const generateRandomString = (n = 3) => {
   let randNum = Math.floor(Math.random() * 52 * 52 * 52);
 
@@ -467,23 +429,6 @@ export const generateRandomString = (n = 3) => {
   }
 
   return randStr;
-};
-
-/**
- * Returns a shallow copy of the input object with all properties whose values are `null` or `undefined` omitted.
- *
- * @typeParam T - The type of the input object.
- * @param input - The object to omit `null` and `undefined` values from.
- * @returns A new object with the same properties as `input`, except those with `null` or `undefined` values.
- */
-export const omitNullAndUndefinedFields = <T extends Record<string, any>>(
-  input: T,
-): Partial<T> => {
-  return Object.fromEntries(
-    Object.entries(input).filter(
-      ([_, value]) => value !== null && value !== undefined,
-    ),
-  ) as Partial<T>;
 };
 
 export function formatToUUID(str: string) {

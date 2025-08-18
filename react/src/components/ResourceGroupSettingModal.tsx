@@ -2,7 +2,7 @@ import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated
 import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
-import { omitNullAndUndefinedFields, newLineToBrElement } from '../helper';
+import { newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
 import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
@@ -23,7 +23,7 @@ import {
   Tooltip,
   theme,
 } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { omitNullAndUndefinedFields, BAICard, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

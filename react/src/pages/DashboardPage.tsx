@@ -5,7 +5,6 @@ import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourc
 import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import TotalResourceWithinResourceGroup from '../components/TotalResourceWithinResourceGroup';
-import { filterOutEmpty } from '../helper';
 import {
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -18,6 +17,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useInterval } from '../hooks/useIntervalValue';
 import { Skeleton, theme } from 'antd';
+import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';

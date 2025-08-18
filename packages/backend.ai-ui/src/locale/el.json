@@ -10,5 +10,9 @@
     "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SettingTable": "Ρυθμίσεις πίνακα"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Αναζήτηση",
+    "ResetFilter": "Επαναφορά φίλτρων"
   }
 }

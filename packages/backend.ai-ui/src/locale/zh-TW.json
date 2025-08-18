@@ -10,5 +10,9 @@
     "SettingTable": "表設置",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜索表列"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "搜索",
+    "ResetFilter": "重置過濾器"
   }
 }

@@ -1031,10 +1031,6 @@
   "pagination": {
     "Total": "{{start}} - {{end}} {{total}} item"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Cari",
-    "ResetFilter": "Tetapkan semula penapis"
-  },
   "registry": {
     "AddRegistry": "Tambah Pendaftaran",
     "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",

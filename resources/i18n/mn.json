@@ -1030,10 +1030,6 @@
   "pagination": {
     "Total": "{{start}} - {{{End}} {{нийт}}}} зүйл"
   },
-  "propertyFilter": {
-    "PlaceHolder": "Хайх",
-    "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
-  },
   "registry": {
     "AddRegistry": "Бүртгэл нэмэх",
     "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
