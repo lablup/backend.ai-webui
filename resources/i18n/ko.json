@@ -1290,6 +1290,7 @@
     "ReadLess": "내용 접기",
     "ReadMore": "더 알아보기...",
     "RecentlyCreatedSessions": "최근 생성 세션",
+    "RecentlyCreatedSessionsTooltip": "현재 프로젝트에서 가장 최근에 생성된 실행 중인 세션 {{count}}개를 표시합니다",
     "RequestContainerCommit": "컨테이너 커밋하기",
     "Reservation": "예약시간",
     "ResourceGroup": "자원 그룹",

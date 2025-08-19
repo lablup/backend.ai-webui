@@ -1285,6 +1285,7 @@
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
     "RecentlyCreatedSessions": "最近作成されたセッション",
+    "RecentlyCreatedSessionsTooltip": "現在のプロジェクトで最近作成された実行中のセッション{{count}}件を表示します",
     "RequestContainerCommit": "コンテナをコミットする",
     "Reservation": "予約",
     "ResourceGroup": "リソースグループ",

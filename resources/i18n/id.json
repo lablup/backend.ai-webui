@@ -1284,6 +1284,7 @@
     "ReadLess": "Baca lebih sedikit",
     "ReadMore": "Baca Selengkapnya...",
     "RecentlyCreatedSessions": "Sesi yang baru dibuat",
+    "RecentlyCreatedSessionsTooltip": "Menampilkan {{count}} sesi yang sedang berjalan yang baru dibuat di proyek saat ini",
     "RequestContainerCommit": "Permintaan Komitmen Kontainer",
     "Reservation": "Reservasi",
     "ResourceGroup": "Grup Sumber Daya",

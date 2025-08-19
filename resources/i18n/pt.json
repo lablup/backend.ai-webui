@@ -1285,6 +1285,7 @@
     "ReadLess": "Ler menos",
     "ReadMore": "Ler mais...",
     "RecentlyCreatedSessions": "Sessões criadas recentemente",
+    "RecentlyCreatedSessionsTooltip": "Mostra as {{count}} sessões em execução criadas mais recentemente no projeto atual",
     "RequestContainerCommit": "Pedido de autorização do contentor",
     "Reservation": "Reserva",
     "ResourceGroup": "Grupo de Recursos",

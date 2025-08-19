@@ -1285,6 +1285,7 @@
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
     "RecentlyCreatedSessions": "Äskettäin loivat istunnot",
+    "RecentlyCreatedSessionsTooltip": "Näyttää {{count}} viimeisintä luotua käynnissä olevaa istuntoa nykyisessä projektissa",
     "RequestContainerCommit": "Pyyntö Container Commit",
     "Reservation": "Varaukset",
     "ResourceGroup": "Resurssiryhmä",

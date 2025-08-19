@@ -1286,6 +1286,7 @@
     "ReadLess": "Daha az oku",
     "ReadMore": "Daha Fazlasını Oku...",
     "RecentlyCreatedSessions": "Son zamanlarda oluşturulan oturumlar",
+    "RecentlyCreatedSessionsTooltip": "Geçerli projede en son oluşturulan {{count}} çalışan oturumu gösterir",
     "RequestContainerCommit": "Konteyner Taahhüdü İste",
     "Reservation": "Rezervasyon",
     "ResourceGroup": "Kaynak Grubu",

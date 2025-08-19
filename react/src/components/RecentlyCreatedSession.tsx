@@ -70,7 +70,9 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
       >
         <BAIBoardItemTitle
           title={t('session.RecentlyCreatedSessions')}
-          tooltip={t('session.RecentlyCreatedSessionsTooltip')}
+          tooltip={t('session.RecentlyCreatedSessionsTooltip', {
+            count: 5,
+          })}
           extra={
             <BAIFetchKeyButton
               size="small"

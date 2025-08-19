@@ -14,7 +14,7 @@ import { Typography } from 'antd';
 import { BAICardProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 interface MyResourceProps extends BAICardProps {
   fetchKey?: string;
@@ -135,7 +135,7 @@ const MyResource: React.FC<MyResourceProps> = ({
           </Typography.Title>
         </BAIFlex>
       }
-      tooltip={t('webui.menu.MyResourcesDescription')}
+      tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
       isRefetching={isRefetching || internalIsRefetching}
       displayType={type}
       onDisplayTypeChange={setType}

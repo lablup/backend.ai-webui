@@ -1291,6 +1291,7 @@
     "ReadLess": "Read less",
     "ReadMore": "Read More...",
     "RecentlyCreatedSessions": "Recently Created Sessions",
+    "RecentlyCreatedSessionsTooltip": "Shows the {{count}} most recently created running sessions in the current project",
     "RequestContainerCommit": "Request Container Commit",
     "Reservation": "Reservation",
     "ResourceGroup": "Resource Group",

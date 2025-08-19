@@ -1286,6 +1286,7 @@
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
     "RecentlyCreatedSessions": "最近创建了会议",
+    "RecentlyCreatedSessionsTooltip": "显示当前项目中最近创建的{{count}}个正在运行的会话",
     "RequestContainerCommit": "请求容器承诺",
     "Reservation": "预订",
     "ResourceGroup": "资源组",

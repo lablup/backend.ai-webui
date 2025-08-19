@@ -1282,6 +1282,7 @@
     "ReadLess": "Διαβάστε λιγότερα",
     "ReadMore": "Διαβάστε Περισσότερα...",
     "RecentlyCreatedSessions": "Πρόσφατα δημιουργήθηκαν συνεδρίες",
+    "RecentlyCreatedSessionsTooltip": "Εμφανίζει τις {{count}} πιο πρόσφατα δημιουργημένες εκτελούμενες συνεδρίες στο τρέχον έργο",
     "RequestContainerCommit": "Αίτηση δέσμευσης εμπορευματοκιβωτίου",
     "Reservation": "Κράτηση",
     "ResourceGroup": "Ομάδα πόρων",

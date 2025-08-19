@@ -1285,6 +1285,7 @@
     "ReadLess": "Читать далее",
     "ReadMore": "Читать далее...",
     "RecentlyCreatedSessions": "Недавно создал сессии",
+    "RecentlyCreatedSessionsTooltip": "Показывает {{count}} недавно созданных активных сессий в текущем проекте",
     "RequestContainerCommit": "Запрос контейнера Commit",
     "Reservation": "Бронирование",
     "ResourceGroup": "Группа ресурсов",

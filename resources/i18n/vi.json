@@ -1286,6 +1286,7 @@
     "ReadLess": "Đọc ít hơn",
     "ReadMore": "Đọc thêm...",
     "RecentlyCreatedSessions": "Phiên được tạo gần đây",
+    "RecentlyCreatedSessionsTooltip": "Hiển thị {{count}} phiên đang chạy được tạo gần đây nhất trong dự án hiện tại",
     "RequestContainerCommit": "Yêu cầu cam kết vùng chứa",
     "Reservation": "Dự phòng",
     "ResourceGroup": "Nhóm tài nguyên",

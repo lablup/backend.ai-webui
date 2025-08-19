@@ -1274,6 +1274,7 @@
     "ReadLess": "อ่านน้อยลง",
     "ReadMore": "อ่านเพิ่มเติม...",
     "RecentlyCreatedSessions": "เซสชันที่สร้างขึ้นเมื่อเร็ว ๆ นี้",
+    "RecentlyCreatedSessionsTooltip": "แสดง {{count}} เซสชันที่กำลังทำงานที่สร้างล่าสุดในโปรเจกต์ปัจจุบัน",
     "RequestContainerCommit": "ขอคอมมิตคอนเทนเนอร์",
     "Reservation": "การจอง",
     "ResourceGroup": "กลุ่มทรัพยากร",

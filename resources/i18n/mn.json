@@ -1283,6 +1283,7 @@
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
     "RecentlyCreatedSessions": "Саяхан бүтээсэн хуралдаанууд",
+    "RecentlyCreatedSessionsTooltip": "Одоогийн төсөлд хамгийн сүүлд үүсгэсэн ажиллаж байгаа {{count}} сессийг харуулна",
     "RequestContainerCommit": "Контейнерын үүрэг хүлээнэ үү",
     "Reservation": "Захиалга",
     "ResourceGroup": "Нөөцийн бүлэг",

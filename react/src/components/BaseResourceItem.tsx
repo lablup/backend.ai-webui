@@ -30,7 +30,7 @@ export interface AcceleratorSlotDetail {
 export interface BaseResourceItemProps {
   title: ReactNode | string;
   titleStyle?: React.CSSProperties;
-  tooltip?: string;
+  tooltip?: ReactNode;
   isRefetching?: boolean;
   displayType: 'usage' | 'remaining';
   onDisplayTypeChange: (type: 'usage' | 'remaining') => void;
