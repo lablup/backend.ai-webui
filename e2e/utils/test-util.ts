@@ -154,7 +154,8 @@ export async function verifyVFolder(
   await page.getByRole('tab', { name: statusTab }).click();
   await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
   await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('#rc_select_8');
+
+  const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
   await expect(
@@ -189,7 +190,7 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
   await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('#rc_select_8');
+  const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
   await page
@@ -197,7 +198,9 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
     .getByRole('button')
     .nth(1)
     .click();
-  await page.getByRole('button', { name: 'Move' }).click();
+  const moveButton = page.getByRole('button', { name: 'Move' });
+  await expect(moveButton).toBeVisible();
+  await moveButton.click();
   await removeSearchButton(page, folderName);
   await verifyVFolder(page, folderName, 'Trash');
 }
@@ -208,7 +211,7 @@ export async function deleteForeverAndVerifyFromTrash(
 ) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('tab', { name: 'Trash' }).click();
-  const searchInput = page.locator('#rc_select_8');
+  const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
   // Delete forever
@@ -284,7 +287,7 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await page.getByRole('tab', { name: 'Trash' }).click();
   await page.locator('#react-root').getByTitle('Name').click();
   await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('#rc_select_8');
+  const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   // Restore
   await page
