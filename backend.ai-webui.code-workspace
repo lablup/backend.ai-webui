@@ -16,5 +16,11 @@
     "files.exclude": {
       "packages/backend.ai-ui": true,
     },
+    "i18n-ally.regex.usageMatch": [
+      "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*\\{['\"`]({key})['\"`]\\}", // <Trans i18nKey={'key'}>
+      "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*['\"`]({key})['\"`]", // <Trans i18nKey="key">
+      "(?:^|[^\\w\\d])t\\s*\\(\\s*['\"`]({key})['\"`]", // t('key') / obj.t('key')
+      "(?:^|[^\\w\\d])_t\\s*\\(\\s*['\"`]({key})['\"`]", // _t('key') / obj._t('key') for Lit components
+    ],
   },
 }
