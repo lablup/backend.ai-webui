@@ -1914,11 +1914,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
-    "CopyGuideFour": "Untuk mengaktifkan scroll mouse lagi, Tekan <code>Ctrl + B</code> dan Ketik <code>:set -g mouse on</code> dan Tekan <code>Masukkan</code> kunci",
-    "CopyGuideOne": "Tekan tombol <code>Ctrl + B</code> untuk masuk ke mode kontrol tmux.",
+    "CopyGuideFour": "Untuk menyalakan gulir mouse lagi, tekan <code>Ctrl + B</code> dan ketik <code>:set -g mouse on</code> dan tekan <code>Enter</code> tombol.",
+    "CopyGuideOne": "Tekan <code>Ctrl + B</code> tombol untuk memasukkan mode kontrol TMUX.",
     "CopyGuideThree": "Sekarang Anda dapat menyalin teks dari terminal.",
-    "CopyGuideTwo": "Ketik <code>:set -g mouse off</code> dan Tekan <code>Masukkan</code> Kunci.",
-    "LearnMore": "Pelajari Lebih Lanjut &gt;"
+    "CopyGuideTwo": "Ketik <code>:set -g mouse off</code> dan tekan <code>Enter</code> tombol.",
+    "LearnMore": "Pelajari lebih lanjut >"
   },
   "webui": {
     "AdminOnlyPage": "Anda tidak memiliki izin untuk mengakses halaman ini. <br /> Klik tombol di bawah ini untuk diarahkan ulang ke halaman ringkasan.",

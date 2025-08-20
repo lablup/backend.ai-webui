@@ -1896,11 +1896,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "คำแนะนำการใช้งานเทอร์มินัลเว็บขั้นสูง: คัดลอกเนื้อหาเทอร์มินัล",
-    "CopyGuideFour": "หากต้องการเปิดการเลื่อนด้วยเมาส์อีกครั้ง กด <code>Ctrl + B</code> และพิมพ์ <code>:set -g mouse on</code> จากนั้นกด <code>Enter</code>",
-    "CopyGuideOne": "กด <code>Ctrl + B</code> เพื่อเข้าสู่โหมดควบคุม tmux",
+    "CopyGuideFour": "หากต้องการเปิดการเลื่อนเมาส์อีกครั้งกด <code>Ctrl + B</code> และพิมพ์ <code>:set -g mouse on</code> และกดปุ่ม <code>Enter</code>",
+    "CopyGuideOne": "กดปุ่ม <code>Ctrl + B</code> เพื่อเข้าสู่โหมดควบคุม TMUX",
     "CopyGuideThree": "ตอนนี้คุณสามารถคัดลอกข้อความจากเทอร์มินัลได้",
-    "CopyGuideTwo": "พิมพ์ <code>:set -g mouse off</code> และกด <code>Enter</code>",
-    "LearnMore": "เรียนรู้เพิ่มเติม &gt;"
+    "CopyGuideTwo": "พิมพ์ <code>:set -g mouse off</code> และกดปุ่ม <code>Enter</code>",
+    "LearnMore": "เรียนรู้เพิ่มเติม >"
   },
   "webui": {
     "AdminOnlyPage": "คุณไม่มีสิทธิ์เข้าถึงหน้านี้<br />คลิกปุ่มด้านล่างเพื่อกลับไปยังหน้าสรุป",

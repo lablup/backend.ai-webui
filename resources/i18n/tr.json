@@ -1915,11 +1915,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",
-    "CopyGuideFour": "Fare kaydırmayı tekrar açmak için, <code> Ctrl + B </code> tuşlarına basın ve </code> üzerinde <code> :set -g mouse yazın ve <code> tuşuna basın </code> anahtarını girin.",
-    "CopyGuideOne": "tmux kontrol moduna girmek için <code> Ctrl + B </code> tuşuna basın.",
+    "CopyGuideFour": "Fare kaydırmasını tekrar açmak için <code>Ctrl + B</code> tuşuna basın ve <code>:set -g mouse on</code> için -g fare type tuşuna basın ve <code>Enter</code> tuşuna basın.",
+    "CopyGuideOne": "TMUX kontrol moduna girmek için <code>Ctrl + B</code>tuşuna basın.",
     "CopyGuideThree": "Artık terminalden metin kopyalayabilirsiniz.",
-    "CopyGuideTwo": "<code> :set -g mouse off </code> yazın ve <code> tuşuna basın </code> Anahtarını girin.",
-    "LearnMore": "Daha Fazla Bilgi &gt;"
+    "CopyGuideTwo": "<code>:set -g mouse off</code> set ve <code>Enter</code> tuşuna basın.",
+    "LearnMore": "Daha fazla bilgi edinin >"
   },
   "webui": {
     "AdminOnlyPage": "Bu sayfaya erişim izniniz yok. <br /> Özet sayfasına yönlendirmek için aşağıdaki butona tıklayın.",

@@ -1915,11 +1915,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
-    "CopyGuideFour": "Para ativar a rolagem do mouse novamente, pressione <code> Ctrl + B </code> e digite <code>: set -g mouse em </code> e pressione <code> Digite a chave </code>.",
-    "CopyGuideOne": "Pressione <code> Ctrl + B </code> para entrar no modo de controle tmux.",
+    "CopyGuideFour": "Para ativar a rolagem do mouse novamente, pressione <code>Ctrl + B</code> e digite <code>:set -g mouse on</code> e pressione <code>Enter</code> tecla.",
+    "CopyGuideOne": "Pressione a tecla <code>Ctrl + B</code> para inserir o modo de controle do TMUX.",
     "CopyGuideThree": "Agora você pode copiar texto do terminal.",
-    "CopyGuideTwo": "Digite <code>: defina -g mouse off </code> e pressione <code> Digite a chave </code>.",
-    "LearnMore": "Saiba mais &gt;"
+    "CopyGuideTwo": "Tipo <code>:set -g mouse off</code> e pressione <code>Enter</code> Tecla.",
+    "LearnMore": "Saiba mais >"
   },
   "webui": {
     "AdminOnlyPage": "Você não tem permissão para acessar esta página. <br /> Clique no botão abaixo para redirecionar para a página de resumo.",

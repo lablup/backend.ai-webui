@@ -334,19 +334,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     );
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    // add WebTerminalGuide UI dynamically
-    this._createTerminalGuide();
-    // add DonotShowOption dynamically
-    this._createDonotShowOption();
     this.notification = globalThis.lablupNotification;
-    const checkbox = this.shadowRoot?.querySelector('#hide-guide');
-    checkbox?.addEventListener('change', (event) => {
-      if (!(event.target as Checkbox).checked) {
-        localStorage.setItem('backendaiwebui.terminalguide', 'true');
-      } else {
-        localStorage.setItem('backendaiwebui.terminalguide', 'false');
-      }
-    });
     document.addEventListener(
       'read-ssh-key-and-launch-ssh-dialog',
       (e: any) => {
@@ -951,12 +939,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._openTensorboardDialog();
       return;
     }
-    if (appName === 'ttyd') {
-      const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
-      if (!isVisible || isVisible === 'true') {
-        this._openTerminalGuideDialog();
-      }
-    }
+
     if (appName === 'vscode-desktop') {
       this._openVSCodeDesktopDialog();
       return;
@@ -1183,12 +1166,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._openTensorboardDialog();
       return;
     }
-    if (appName === 'ttyd') {
-      const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
-      if (!isVisible || isVisible === 'true') {
-        this._openTerminalGuideDialog();
-      }
-    }
+    // if (appName === 'ttyd') {
+    //   const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
+    //   if (!isVisible || isVisible === 'true') {
+    //     this._openTerminalGuideDialog();
+    //   }
+    // }
 
     if (
       typeof globalThis.backendaiwsproxy === 'undefined' ||
@@ -1404,10 +1387,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
-    const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
-    if (!isVisible || isVisible === 'true') {
-      this._openTerminalGuideDialog();
-    }
     if (
       globalThis.backendaiwsproxy == undefined ||
       globalThis.backendaiwsproxy == null
@@ -1545,34 +1524,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
-   * Open a guide for terminal
-   */
-  _openTerminalGuideDialog() {
-    this.terminalGuideDialog.show();
-  }
-
-  /**
-   * Dynamically add Do not show Option
-   */
-  _createDonotShowOption() {
-    const lastChild =
-      this.terminalGuideDialog.children[
-        this.terminalGuideDialog.children.length - 1
-      ];
-    const div: HTMLElement = document.createElement('div');
-    div.setAttribute('class', 'horizontal layout flex center');
-
-    const checkbox = document.createElement('mwc-checkbox');
-    checkbox.setAttribute('id', 'hide-guide');
-    const checkboxMsg = document.createElement('span');
-    checkboxMsg.innerHTML = `${_text('dialog.hide.DoNotShowThisAgain')}`;
-
-    div.appendChild(checkbox);
-    div.appendChild(checkboxMsg);
-    lastChild.appendChild(div);
-  }
-
-  /**
    * Adjust port number in range of the starting number of port to the last number of the port.
    *
    * @param {Event} e -
@@ -1597,56 +1548,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _adjustCustomSubdomain(e) {
     const subdomain = e.target.value;
     this.customSubdomain.value = subdomain;
-  }
-
-  /**
-   * Dynamically add Web Terminal Guide Carousel
-   */
-  _createTerminalGuide() {
-    const content = this.terminalGuideDialog.children[1];
-    const div: HTMLElement = document.createElement('div');
-    div.setAttribute('class', 'vertical layout flex');
-    let lang = globalThis.backendaioptions.get(
-      'language',
-      'default',
-      'general',
-    );
-    // if language is OS default, then link to English docs
-    if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
-      lang = 'en';
-    }
-    div.innerHTML = `
-      <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
-        <article class="slide vertical layout center">
-          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:none;">
-            <span class="keyboard">Ctrl</span>
-            <span class="keyboard invert">+</span>
-            <span class="keyboard one-key">B</span>
-          </span>
-          <p>${_text('webTerminalUsageGuide.CopyGuideOne')}</p>
-        </article>
-        <article class="slide vertical layout center">
-          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
-          <p>${_text('webTerminalUsageGuide.CopyGuideTwo')}</p>
-        </article>
-        <article class="slide vertical layout center">
-          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
-          <p>${_text('webTerminalUsageGuide.CopyGuideThree')}</p>
-        </article>
-        <article class="slide vertical layout center">
-          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-4.png);">
-            <span class="keyboard">Ctrl</span>
-            <span class="keyboard invert">+</span>
-            <span class="keyboard one-key">B</span>
-          </span>
-          <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
-            <a href="https://webui.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#advanced-web-terminal-usage"
-               target="_blank" style="width:100%;text-align:right;">
-              <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
-            </a>
-        </article>
-      </macro-carousel>`;
-    content.appendChild(div);
   }
 
   _toggleChkOpenToPublic() {

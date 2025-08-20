@@ -1914,11 +1914,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
-    "CopyGuideFour": "マウススクロールを再度オンにするには、<code> Ctrl + B </code>を押し、<code>：set -g mouse on </code>と入力し、<code>を押します。</code>キーを入力します。",
-    "CopyGuideOne": "<code> Ctrl + B </code>キーを押して、tmux制御モードに入ります。",
+    "CopyGuideFour": "再度マウススクロールをオンにするには、<code>Ctrl + B</code>を押し、</code>に-gマウスを設定し、</code> keyを入力します。キーを押します。",
+    "CopyGuideOne": "<code>Ctrl + B</code>キーを押して、tmux制御モードを入力します。",
     "CopyGuideThree": "これで、端末からテキストをコピーできます。",
-    "CopyGuideTwo": "<code>：set -g mouse off </code>と入力し、<code>を押します。</code>キーを入力します。",
-    "LearnMore": "詳細&gt;"
+    "CopyGuideTwo": "タイプ<code>:set -g mouse off</code>を設定し、<code>Enter</code> を入力します。キーを押します。",
+    "LearnMore": "詳細 >"
   },
   "webui": {
     "AdminOnlyPage": "このページにアクセスする権限がありません。 <br />下のボタンをクリックして、概要ページにリダイレクトします。",

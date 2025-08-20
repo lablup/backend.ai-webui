@@ -1915,11 +1915,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",
-    "CopyGuideFour": "Para volver a activar el desplazamiento del ratón, pulse <code>Ctrl + B</code> y escriba <code>:set -g mouse on</code> y pulse la tecla <code>Enter</code>.",
-    "CopyGuideOne": "Pulsa la tecla <code>Ctrl + B</code> para entrar en el modo de control tmux.",
+    "CopyGuideFour": "Para activar el desplazamiento del mouse nuevamente, presione <code>Ctrl + B</code> y escriba <code>:set -g mouse on</code> y presione <code>Enter</code> tecla.",
+    "CopyGuideOne": "Presione la tecla <code>Ctrl + B</code> para ingresar el modo de control TMUX.",
     "CopyGuideThree": "Ahora puedes copiar texto desde el terminal.",
-    "CopyGuideTwo": "Escriba <code>:set -g mouse off</code> y pulse la tecla <code>Enter</code>.",
-    "LearnMore": "Más información &gt;"
+    "CopyGuideTwo": "Escriba <code>: set -g mouse off </code> y presione la tecla <code>Enter</code>.",
+    "LearnMore": "Aprenda más >"
   },
   "webui": {
     "AdminOnlyPage": "No tiene permiso para acceder a esta página.<br />Haga clic en el botón de abajo para redirigir a la página de resumen.",

@@ -1912,11 +1912,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",
-    "CopyGuideFour": "Per riattivare lo scorrimento del mouse, premere <code> Ctrl + B </code> e digitare <code> :set -g mouse su </code> e premere <code> Invio a0088771d5.6b7z0",
-    "CopyGuideOne": "Premere il tasto <code> Ctrl + B </code> per accedere alla modalità di controllo tmux.",
+    "CopyGuideFour": "Per accendere nuovamente lo scorrimento del mouse, premere <code>Ctrl + B</code> e digitare <code>:set -g mouse on</code> e premere il tasto <code>Enter</code>.",
+    "CopyGuideOne": "Premere il tasto <code>Ctrl + B</code> per immettere la modalità di controllo TMUX.",
     "CopyGuideThree": "Ora puoi copiare il testo dal terminale.",
-    "CopyGuideTwo": "Digitare <code>: set -g mouse off </code> e premere <code> Immettere </code> Key.",
-    "LearnMore": "Ulteriori informazioni &gt;"
+    "CopyGuideTwo": "Digita <code>:set -g mouse off</code> e premere <code>Enter</code>.",
+    "LearnMore": "Scopri di più >"
   },
   "webui": {
     "AdminOnlyPage": "Non hai l'autorizzazione per accedere a questa pagina. <br /> Fare clic sul pulsante in basso per reindirizzare alla pagina di riepilogo.",

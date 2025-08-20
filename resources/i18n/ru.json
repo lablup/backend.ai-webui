@@ -1914,11 +1914,11 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
-    "CopyGuideFour": "Чтобы снова включить прокрутку мыши, нажмите <code> Ctrl + B </code> и введите <code>: установите -g мышь на </code> и нажмите <code> Введите a0088777z0a6.",
-    "CopyGuideOne": "Нажмите <code> Ctrl + B </code>, чтобы войти в режим управления tmux.",
+    "CopyGuideFour": "Чтобы снова включить прокрутку мыши, нажмите <code>Ctrl + B</code> и type <code>:set -g mouse on</code> и нажмите клавишу <code>Enter</code>.",
+    "CopyGuideOne": "Нажмите <code>Ctrl + B</code> Кладьбу для ввода режима управления TMUX.",
     "CopyGuideThree": "Теперь вы можете копировать текст из терминала.",
-    "CopyGuideTwo": "Введите <code>: set -g mouse off </code> и нажмите <code> Введите ключ </code>.",
-    "LearnMore": "Узнать больше &gt;"
+    "CopyGuideTwo": "Type <code>:set -g mouse off</code> и нажмите <code>Enter</code> клавишу.",
+    "LearnMore": "Узнайте больше >"
   },
   "webui": {
     "AdminOnlyPage": "У вас нет разрешения на доступ к этой странице. <br /> Нажмите кнопку ниже, чтобы перенаправить на страницу сводки.",
