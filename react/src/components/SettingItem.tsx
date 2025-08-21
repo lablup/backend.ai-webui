@@ -5,6 +5,7 @@ import _ from 'lodash';
 import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
+  'data-testid'?: string;
   type: 'custom' | 'checkbox' | 'select';
   title: string;
   description?: string | ReactElement;
@@ -27,6 +28,7 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 const SettingItem: React.FC<SettingItemProps> = ({
+  'data-testid': dataTestId,
   type,
   title,
   description,
@@ -41,7 +43,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
   const { styles } = useStyles();
 
   return (
-    <BAIFlex direction="column" align="start" gap={'xxs'}>
+    <BAIFlex
+      data-testid={dataTestId}
+      direction="column"
+      align="start"
+      gap={'xxs'}
+    >
       <BAIFlex direction="row" gap={'xxs'}>
         <Typography.Text
           strong

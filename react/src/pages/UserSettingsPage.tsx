@@ -90,9 +90,11 @@ const UserPreferencesPage = () => {
 
   const settingGroups: Array<SettingGroup> = [
     {
+      'data-testid': 'group-preferences',
       title: t('userSettings.Preferences'),
       settingItems: [
         {
+          'data-testid': 'items-desktop-notification',
           type: 'checkbox',
           title: t('userSettings.DesktopNotification'),
           description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
@@ -124,6 +126,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-use-compact-sidebar',
           type: 'checkbox',
           title: t('userSettings.UseCompactSidebar'),
           description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
@@ -135,6 +138,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-language-select',
           type: 'select',
           title: t('userSettings.Language'),
           description: t('userSettings.DescLanguage'),
@@ -180,6 +184,7 @@ const UserPreferencesPage = () => {
         ...[
           //@ts-ignore
           globalThis.isElectron && {
+            'data-testid': 'items-keep-login-session-information',
             type: 'checkbox',
             title: t('userSettings.KeepLoginSessionInformation'),
             description: (
@@ -194,6 +199,7 @@ const UserPreferencesPage = () => {
           },
         ].filter(Boolean),
         {
+          'data-testid': 'items-automatic-update-check',
           type: 'checkbox',
           title: t('userSettings.AutomaticUpdateCheck'),
           description: (
@@ -207,6 +213,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-auto-logout',
           type: 'checkbox',
           title: t('userSettings.AutoLogout'),
           description: t('userSettings.DescAutoLogout'),
@@ -218,6 +225,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-my-keypair-info',
           type: 'custom',
           title: t('userSettings.MyKeypairInfo'),
           description: t('userSettings.DescMyKeypairInfo'),
@@ -231,6 +239,7 @@ const UserPreferencesPage = () => {
           ),
         },
         {
+          'data-testid': 'items-ssh-keypair-management',
           type: 'custom',
           title: t('userSettings.SSHKeypairManagement'),
           description: t('userSettings.DescSSHKeypairManagement'),
@@ -246,9 +255,11 @@ const UserPreferencesPage = () => {
       ],
     },
     {
+      'data-testid': 'group-shell-environments',
       title: t('userSettings.ShellEnvironments'),
       settingItems: [
         {
+          'data-testid': 'items-edit-bootstrap-script',
           type: 'custom',
           title: t('userSettings.EditBootstrapScript'),
           children: (
@@ -264,6 +275,7 @@ const UserPreferencesPage = () => {
           ),
         },
         {
+          'data-testid': 'items-edit-user-config-script',
           type: 'custom',
           title: t('userSettings.EditUserConfigScript'),
           children: (
@@ -281,10 +293,12 @@ const UserPreferencesPage = () => {
       ],
     },
     {
+      'data-testid': 'group-experimental-features',
       title: t('userSettings.ExperimentalFeatures'),
       description: t('userSettings.ExperimentalFeaturesDesc'),
       settingItems: [
         {
+          'data-testid': 'items-experimental-neo-session-list',
           type: 'checkbox',
           title: t('userSettings.NEOSessionList'),
           description: t('general.Enabled'),
@@ -296,6 +310,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-experimental-ai-agents',
           type: 'checkbox',
           title: t('userSettings.AIAgents'),
           description: t('general.Enabled'),
@@ -307,6 +322,7 @@ const UserPreferencesPage = () => {
           },
         },
         {
+          'data-testid': 'items-experimental-dashboard',
           type: 'checkbox',
           title: t('webui.menu.Dashboard'),
           description: t('userSettings.DescExperimentalDashboard'),

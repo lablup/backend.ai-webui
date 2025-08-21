@@ -469,7 +469,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.General'),
                     value: 'general',
                   },
-                  {
+                  baiClient?._config?.fasttrackEndpoint && {
                     label: t('data.Pipeline'),
                     value: 'data',
                   },
