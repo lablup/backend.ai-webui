@@ -105,7 +105,6 @@ const BAIBoard = <T extends BAIBoardDataType>({
             className={classNames(
               styles.boardItems,
               !bordered && styles.disableBorder,
-              'jongeun',
             )}
             key={item.id}
             i18nStrings={{
