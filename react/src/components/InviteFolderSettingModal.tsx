@@ -163,7 +163,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      title={t('data.explorer.ModifyPermissions')}
+      title={t('data.explorer.ShareFolder')}
       onCancel={onRequestClose}
       style={{ minWidth: 550 }}
       destroyOnClose
