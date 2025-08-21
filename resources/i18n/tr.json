@@ -480,7 +480,8 @@
       "Status": "Durum",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
       "Used": "kullanılmış"
-    }
+    },
+    "NotInProject": "Bu klasör farklı bir projeye aittir."
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
@@ -637,18 +638,18 @@
     "Title": "Bir hata oluştu."
   },
   "explorer": {
+    "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "NoPermissions": "Bu klasöre erişmek için izin yok",
-    "ValueRequired": "DeğerGerekli",
-    "UploadingFile": "{{fileName}} ... yükleme ...",
-    "UploadFailedDesc": "Dosya yüklenirken bir hata oluştu.",
-    "UploadFailed": "{{fileName}} yüklenemedi.",
-    "UploadCompletedDesc": "Seçilen dosya başarıyla yüklendi.",
-    "UploadCompleted": "{{fileName}} Yükle Tamam",
     "ProcessingUpload": "Dosyanız yükleniyor. \nLütfen bekleyin.",
-    "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi."
+    "UploadCompleted": "{{fileName}} Yükle Tamam",
+    "UploadCompletedDesc": "Seçilen dosya başarıyla yüklendi.",
+    "UploadFailed": "{{fileName}} yüklenemedi.",
+    "UploadFailedDesc": "Dosya yüklenirken bir hata oluştu.",
+    "UploadingFile": "{{fileName}} ... yükleme ...",
+    "ValueRequired": "DeğerGerekli"
   },
   "general": {
     "AccessKey": "Erişim anahtarı",

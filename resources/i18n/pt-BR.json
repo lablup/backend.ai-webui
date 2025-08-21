@@ -480,7 +480,8 @@
       "Status": "Estado",
       "StatusOfSelectedHost": "Estado do anfitrião selecionado",
       "Used": "utilizado"
-    }
+    },
+    "NotInProject": "Esta pasta pertence a um projeto diferente."
   },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",
@@ -637,18 +638,18 @@
     "Title": "Ocorreu um erro."
   },
   "explorer": {
+    "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário.",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
-    "ValueRequired": "ValueRequired",
-    "UploadingFile": "Upload {{fileName}} ...",
-    "UploadFailedDesc": "Ocorreu um erro ao fazer upload do arquivo.",
-    "UploadFailed": "Falha ao fazer upload {{fileName}}.",
-    "UploadCompletedDesc": "O arquivo selecionado foi enviado com sucesso.",
-    "UploadCompleted": "{{fileName}} upload completo",
     "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
-    "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário."
+    "UploadCompleted": "{{fileName}} upload completo",
+    "UploadCompletedDesc": "O arquivo selecionado foi enviado com sucesso.",
+    "UploadFailed": "Falha ao fazer upload {{fileName}}.",
+    "UploadFailedDesc": "Ocorreu um erro ao fazer upload do arquivo.",
+    "UploadingFile": "Upload {{fileName}} ...",
+    "ValueRequired": "ValueRequired"
   },
   "general": {
     "AccessKey": "Chave de acesso",

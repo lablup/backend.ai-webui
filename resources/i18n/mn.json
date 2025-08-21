@@ -478,7 +478,8 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Сонгосон хостын төлөв",
       "Used": "ашигласан"
-    }
+    },
+    "NotInProject": "Энэ хавтас нь өөр төсөлд хамаарна."
   },
   "desktopNotification": {
     "NotSupported": "Энэ хөтөч нь мэдэгдлийг дэмждэггүй.",
@@ -635,18 +636,18 @@
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {
+    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
-    "ValueRequired": "Утга Шаардлагатай",
-    "UploadingFile": "Байршуулж буй {{fileName}} ...",
-    "UploadFailedDesc": "Файлыг байршуулах үед алдаа гарлаа.",
-    "UploadFailed": "{{fileName}} -ийг байршуулж чадсангүй.}.",
-    "UploadCompletedDesc": "Сонгосон файлыг амжилттай байршуулсан.",
-    "UploadCompleted": "{{fileName}}} байршуулах бүрэн",
     "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
-    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан."
+    "UploadCompleted": "{{fileName}}} байршуулах бүрэн",
+    "UploadCompletedDesc": "Сонгосон файлыг амжилттай байршуулсан.",
+    "UploadFailed": "{{fileName}} -ийг байршуулж чадсангүй.}.",
+    "UploadFailedDesc": "Файлыг байршуулах үед алдаа гарлаа.",
+    "UploadingFile": "Байршуулж буй {{fileName}} ...",
+    "ValueRequired": "Утга Шаардлагатай"
   },
   "general": {
     "AccessKey": "Нэвтрэх түлхүүр",

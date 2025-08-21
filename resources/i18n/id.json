@@ -479,7 +479,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Tuan Rumah Terpilih",
       "Used": "digunakan"
-    }
+    },
+    "NotInProject": "Folder ini milik proyek yang berbeda."
   },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
@@ -636,18 +637,18 @@
     "Title": "Telah terjadi kesalahan."
   },
   "explorer": {
+    "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna.",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "InputTooShort": "MasukanTerlaluPendek",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
-    "ValueRequired": "NilaiDiperlukan",
-    "UploadingFile": "Mengunggah {{fileName}} ...",
-    "UploadFailedDesc": "Terjadi kesalahan saat mengunggah file.",
-    "UploadFailed": "Gagal mengunggah {{fileName}}.",
-    "UploadCompletedDesc": "File yang dipilih berhasil diunggah.",
-    "UploadCompleted": "{{fileName}} Unggah Lengkap",
     "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
-    "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna."
+    "UploadCompleted": "{{fileName}} Unggah Lengkap",
+    "UploadCompletedDesc": "File yang dipilih berhasil diunggah.",
+    "UploadFailed": "Gagal mengunggah {{fileName}}.",
+    "UploadFailedDesc": "Terjadi kesalahan saat mengunggah file.",
+    "UploadingFile": "Mengunggah {{fileName}} ...",
+    "ValueRequired": "NilaiDiperlukan"
   },
   "general": {
     "AccessKey": "Kunci Akses",

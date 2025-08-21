@@ -480,7 +480,8 @@
       "Status": "Estado",
       "StatusOfSelectedHost": "Estado del host seleccionado",
       "Used": "usado"
-    }
+    },
+    "NotInProject": "Esta carpeta pertenece a un proyecto diferente."
   },
   "desktopNotification": {
     "NotSupported": "Este navegador no admite notificaciones.",
@@ -637,18 +638,18 @@
     "Title": "Se ha producido un error."
   },
   "explorer": {
+    "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario.",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "NoPermissions": "No hay permisos para acceder a esta carpeta",
-    "ValueRequired": "ValorRequerido",
-    "UploadingFile": "Carga {{fileName}} ...",
-    "UploadFailedDesc": "Se produjo un error al cargar el archivo.",
-    "UploadFailed": "No se pudo cargar {{fileName}}.",
-    "UploadCompletedDesc": "El archivo seleccionado se cargó correctamente.",
-    "UploadCompleted": "{{fileName}} cargar completo",
     "ProcessingUpload": "Se está cargando su archivo. \nEspere por favor.",
-    "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario."
+    "UploadCompleted": "{{fileName}} cargar completo",
+    "UploadCompletedDesc": "El archivo seleccionado se cargó correctamente.",
+    "UploadFailed": "No se pudo cargar {{fileName}}.",
+    "UploadFailedDesc": "Se produjo un error al cargar el archivo.",
+    "UploadingFile": "Carga {{fileName}} ...",
+    "ValueRequired": "ValorRequerido"
   },
   "general": {
     "AccessKey": "Clave de acceso",

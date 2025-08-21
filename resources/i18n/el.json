@@ -477,7 +477,8 @@
       "Status": "Κατάσταση",
       "StatusOfSelectedHost": "Κατάσταση του επιλεγμένου κεντρικού υπολογιστή",
       "Used": "χρησιμοποιημένο"
-    }
+    },
+    "NotInProject": "Αυτός ο φάκελος ανήκει σε ένα διαφορετικό έργο."
   },
   "desktopNotification": {
     "NotSupported": "Αυτό το πρόγραμμα περιήγησης δεν υποστηρίζει ειδοποιήσεις.",
@@ -633,18 +634,18 @@
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {
+    "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "NoPermissions": "Δεν υπάρχουν δικαιώματα πρόσβασης σε αυτόν τον φάκελο",
-    "ValueRequired": "Απαιτούμενη τιμή",
-    "UploadingFile": "Μεταφόρτωση {{fileName}} ...",
-    "UploadFailedDesc": "Παρουσιάστηκε σφάλμα κατά τη μεταφόρτωση του αρχείου.",
-    "UploadFailed": "Αποτυχία μεταφόρτωσης {{fileName}}.",
-    "UploadCompletedDesc": "Το επιλεγμένο αρχείο μεταφορτώθηκε με επιτυχία.",
-    "UploadCompleted": "{{fileName}} μεταφόρτωση ολοκληρωμένη",
     "ProcessingUpload": "Το αρχείο σας μεταφορτώνεται. \nΠεριμένετε.",
-    "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη."
+    "UploadCompleted": "{{fileName}} μεταφόρτωση ολοκληρωμένη",
+    "UploadCompletedDesc": "Το επιλεγμένο αρχείο μεταφορτώθηκε με επιτυχία.",
+    "UploadFailed": "Αποτυχία μεταφόρτωσης {{fileName}}.",
+    "UploadFailedDesc": "Παρουσιάστηκε σφάλμα κατά τη μεταφόρτωση του αρχείου.",
+    "UploadingFile": "Μεταφόρτωση {{fileName}} ...",
+    "ValueRequired": "Απαιτούμενη τιμή"
   },
   "general": {
     "AccessKey": "Κλειδί πρόσβασης",
