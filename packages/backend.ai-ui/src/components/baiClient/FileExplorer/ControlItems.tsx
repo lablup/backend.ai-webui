@@ -14,13 +14,13 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface ControlItemsProps {
-  ControlItemsFrgmt?: ControlItemsFragment$key | null;
+  controlItemsFrgmt?: ControlItemsFragment$key | null;
   selectedItem: VFolderFile;
   onClickDelete: () => void;
 }
 
 const ControlItems: React.FC<ControlItemsProps> = ({
-  ControlItemsFrgmt,
+  controlItemsFrgmt,
   selectedItem,
   onClickDelete,
 }) => {
@@ -32,17 +32,20 @@ const ControlItems: React.FC<ControlItemsProps> = ({
     useMergedAllowedStorageHostPermission();
   const baiClient = useConnectedBAIClient();
 
-  const currentVFolderHost = useFragment(
+  const virtualFolderNodeFrgmt = useFragment(
     graphql`
       fragment ControlItemsFragment on VirtualFolderNode {
+        permissions
         host @required(action: THROW)
       }
     `,
-    ControlItemsFrgmt,
+    controlItemsFrgmt,
   );
+  const hasWritePermission =
+    virtualFolderNodeFrgmt?.permissions?.includes('write_content');
 
   const enableDownload = _.includes(
-    unitedAllowedPermissionByVolume[currentVFolderHost?.host ?? ''],
+    unitedAllowedPermissionByVolume[virtualFolderNodeFrgmt?.host ?? ''],
     'download-file',
   );
 
@@ -110,6 +113,7 @@ const ControlItems: React.FC<ControlItemsProps> = ({
         type="text"
         size="small"
         icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+        disabled={!hasWritePermission}
         onClick={onClickDelete}
       />
     </BAIFlex>

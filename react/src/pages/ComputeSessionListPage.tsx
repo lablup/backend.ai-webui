@@ -5,7 +5,6 @@ import {
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
-import BAILink from '../components/BAILink';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
@@ -38,12 +37,13 @@ import {
   Typography,
 } from 'antd';
 import {
-  filterOutNullAndUndefined,
   BAIFlex,
   BAICard,
   BAISessionsIcon,
-  BAIPropertyFilter,
   mergeFilterValues,
+  BAILink,
+  BAIPropertyFilter,
+  filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
