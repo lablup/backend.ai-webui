@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Kaynak isteğiniz görüntünün gerektirdiği minimum değerden daha küçük. Daha fazla kaynak deneyin.",
     "TooManyLoginFailures": "Kısa süre içinde çok fazla oturum açma hatası oldu. Giriş bir süreliğine engellendi.",
     "UnauthorizedToken": "Yetkisiz belirteç. Lütfen belirtecinizi kontrol edin.",
+    "UnexpectedError": "Beklenmedik bir hata oluştu. \nSorun devam ederse lütfen daha sonra tekrar deneyin veya destekle iletişime geçin.",
     "UnknownError": "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin.",
     "UpdateError": "Güncelleme hatası",
     "UserHasNoGroup": "Kullanıcının grubu yok. Düzeltmek için lütfen yöneticiyle iletişime geçin.",

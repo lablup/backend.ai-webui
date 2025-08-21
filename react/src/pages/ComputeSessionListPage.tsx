@@ -44,6 +44,7 @@ import {
   BAISessionsIcon,
   BAIPropertyFilter,
   mergeFilterValues,
+  BAIAlertIconWithTooltip,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
@@ -55,6 +56,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -341,30 +343,49 @@ const ComputeSessionListPage = () => {
           </BAICard>
         </Col>
         <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
+          <ErrorBoundary
+            fallbackRender={() => {
+              return (
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  status="error"
+                  extra={
+                    <BAIAlertIconWithTooltip
+                      title={t('error.UnexpectedError')}
+                    />
+                  }
+                />
+              );
+            }}
+          >
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  loading
+                />
+              }
+            >
+              <ConfigurableResourceCard
                 style={{
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                loading
+                isRefetching={deferredFetchKey !== fetchKey}
+                fetchKey={deferredFetchKey}
+                queryRef={
+                  queryRef.TotalResourceWithinResourceGroupFragment ?? undefined
+                }
+                onResourceGroupChange={setCurrentResourceGroup}
               />
-            }
-          >
-            <ConfigurableResourceCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-              }}
-              isRefetching={deferredFetchKey !== fetchKey}
-              fetchKey={deferredFetchKey}
-              queryRef={
-                queryRef.TotalResourceWithinResourceGroupFragment ?? undefined
-              }
-              onResourceGroupChange={setCurrentResourceGroup}
-            />
-          </Suspense>
+            </Suspense>
+          </ErrorBoundary>
         </Col>
       </Row>
       <BAICard

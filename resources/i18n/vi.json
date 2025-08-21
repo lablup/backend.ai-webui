@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Yêu cầu tài nguyên của bạn nhỏ hơn mức tối thiểu mà hình ảnh yêu cầu. \nHãy thử nhiều tài nguyên hơn.",
     "TooManyLoginFailures": "Đã có quá nhiều lần đăng nhập thất bại trong một thời gian ngắn. \nĐăng nhập bị chặn trong một thời gian.",
     "UnauthorizedToken": "Mã thông báo trái phép. \nVui lòng kiểm tra mã thông báo của bạn.",
+    "UnexpectedError": "Một lỗi không mong muốn đã xảy ra. \nVui lòng thử lại sau hoặc liên hệ với hỗ trợ nếu vấn đề vẫn còn.",
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại.",
     "UpdateError": "Cập nhật lỗi",
     "UserHasNoGroup": "Người dùng không có nhóm. \nHãy liên hệ với quản trị viên để sửa nó.",

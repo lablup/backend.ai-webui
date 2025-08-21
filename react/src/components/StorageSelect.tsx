@@ -19,6 +19,15 @@ export type VolumeInfo = {
   };
   sftp_scaling_groups: string[];
 };
+
+interface VHostInfo {
+  default: string;
+  allowed: Array<string>;
+  volume_info?: {
+    [key: string]: VolumeInfo;
+  };
+}
+
 interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
   autoSelectType?: 'usage' | 'default';
   showUsageStatus?: boolean;
@@ -41,20 +50,7 @@ const StorageSelect: React.FC<Props> = ({
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: vhostInfo, isLoading: isLoadingVhostInfo } =
-    useSuspenseTanQuery<{
-      default: string;
-      allowed: Array<string>;
-      volume_info?: {
-        [key: string]: {
-          backend: string;
-          capabilities: string[];
-          usage: {
-            percentage: number;
-          };
-          sftp_scaling_groups: any[];
-        };
-      };
-    }>({
+    useSuspenseTanQuery<VHostInfo | null>({
       queryKey: ['vhostInfo'],
       queryFn: () => {
         return baiClient.vfolder.list_hosts();
@@ -69,7 +65,7 @@ const StorageSelect: React.FC<Props> = ({
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableState({ value: searchValue, onChange: onSearch });
   useEffect(() => {
-    if (!autoSelectType) return;
+    if (!autoSelectType || !vhostInfo) return; // Return early if vhostInfo is null
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
     if (autoSelectType === 'usage') {
       const lowestUsageHost = _.minBy(

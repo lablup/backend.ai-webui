@@ -620,6 +620,7 @@
     "SmallerResourceThenImageRequires": "Permintaan sumber daya Anda lebih kecil dari jumlah minimum yang dibutuhkan oleh gambar. Coba lebih banyak sumber daya.",
     "TooManyLoginFailures": "Terlalu banyak kegagalan login dalam waktu singkat. Login diblokir untuk sementara waktu.",
     "UnauthorizedToken": "Token tidak sah. Silakan periksa token Anda.",
+    "UnexpectedError": "Terjadi kesalahan yang tidak terduga. \nSilakan coba lagi nanti atau hubungi dukungan jika masalah tetap ada.",
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. Silakan coba lagi.",
     "UpdateError": "Galat pembaruan",
     "UserHasNoGroup": "Pengguna tidak memiliki grup. Silakan hubungi administrator untuk memperbaikinya.",

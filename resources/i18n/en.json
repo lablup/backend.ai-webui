@@ -625,6 +625,7 @@
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
     "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
     "UnauthorizedToken": "Unauthorized token. Please check your token.",
+    "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists.",
     "UnknownError": "An unknown error occurred. Please try again.",
     "UpdateError": "Update error",
     "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",

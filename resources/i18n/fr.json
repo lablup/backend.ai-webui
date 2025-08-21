@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Votre demande de ressources est inférieure au minimum requis par l'image. Essayez d'autres ressources.",
     "TooManyLoginFailures": "Il y a eu trop d'échecs de connexion en peu de temps. La connexion est bloquée pendant un certain temps.",
     "UnauthorizedToken": "Jeton non autorisé. Veuillez vérifier votre jeton.",
+    "UnexpectedError": "Une erreur inattendue s'est produite. \nVeuillez réessayer plus tard ou contacter le support si le problème persiste.",
     "UnknownError": "Une erreur inconnue s'est produite. Veuillez réessayer.",
     "UpdateError": "Erreur de mise à jour",
     "UserHasNoGroup": "L'utilisateur n'a pas de groupe. Veuillez contacter l'administrateur pour résoudre ce problème.",

@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Żądanie zasobów jest mniejsze niż minimum wymagane przez obraz. Spróbuj użyć więcej zasobów.",
     "TooManyLoginFailures": "Wystąpiło zbyt wiele błędów logowania w krótkim czasie. Logowanie jest przez pewien czas zablokowane.",
     "UnauthorizedToken": "Nieautoryzowany token. Sprawdź swój token.",
+    "UnexpectedError": "Wystąpił nieoczekiwany błąd. \nSpróbuj ponownie później lub skontaktuj się z wsparciem, jeśli problem będzie się utrzymywał.",
     "UnknownError": "Wystąpił nieznany błąd. Spróbuj ponownie.",
     "UpdateError": "Błąd aktualizacji",
     "UserHasNoGroup": "Użytkownik nie ma grupy. Skontaktuj się z administratorem, aby to naprawić.",

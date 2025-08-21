@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Resurssipyyntösi on pienempi kuin kuvan edellyttämä minimi. Kokeile lisää resursseja.",
     "TooManyLoginFailures": "Kirjautumishäiriöitä on ollut liian monta lyhyessä ajassa. Sisäänkirjautuminen on estetty jonkin aikaa.",
     "UnauthorizedToken": "Luvaton merkki. Tarkista tunnuksesi.",
+    "UnexpectedError": "Tapahtui odottamaton virhe. \nYritä myöhemmin uudelleen tai ota yhteyttä tukeen, jos ongelma jatkuu.",
     "UnknownError": "Tuntematon virhe tapahtui. Yritä uudelleen.",
     "UpdateError": "Päivitysvirhe",
     "UserHasNoGroup": "Käyttäjällä ei ole ryhmää. Ota yhteyttä ylläpitäjään sen korjaamiseksi.",

@@ -8,6 +8,19 @@ import { SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 
+interface ScalingGroupItem {
+  name: string;
+}
+
+interface VolumeInfo {
+  backend: string;
+  capabilities: string[];
+  usage: {
+    percentage: number;
+  };
+  sftp_scaling_groups?: string[];
+}
+
 interface ResourceGroupSelectProps extends BAISelectProps {
   projectName: string;
   autoSelectDefault?: boolean;
@@ -47,27 +60,19 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   );
 
   const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
-    [
-      {
-        scaling_groups: {
-          name: string;
-        }[];
-      },
-      {
-        allowed: string[];
-        default: string;
-        volume_info: {
-          [key: string]: {
-            backend: string;
-            capabilities: string[];
-            usage: {
-              percentage: number;
-            };
-            sftp_scaling_groups?: string[];
+    | [
+        {
+          scaling_groups: ScalingGroupItem[];
+        },
+        {
+          allowed: string[];
+          default: string;
+          volume_info: {
+            [key: string]: VolumeInfo;
           };
-        };
-      },
-    ]
+        },
+      ]
+    | null
   >({
     queryKey: ['ResourceGroupSelectQuery', projectName],
     queryFn: () => {
@@ -84,18 +89,18 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
         }),
       ]);
     },
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     fetchKey: fetchKey,
   });
 
   const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectQueryResult?.[1].volume_info,
+    resourceGroupSelectQueryResult?.[1]?.volume_info,
     (item) => item?.sftp_scaling_groups ?? [],
   );
 
   const resourceGroups = _.filter(
-    resourceGroupSelectQueryResult?.[0].scaling_groups,
-    (item) => {
+    resourceGroupSelectQueryResult?.[0]?.scaling_groups,
+    (item: ScalingGroupItem) => {
       if (_.includes(sftpResourceGroups, item.name)) {
         return false;
       }

@@ -4,6 +4,31 @@ import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
 import { useCallback, useEffect } from 'react';
 
+interface ScalingGroupItem {
+  name: string;
+}
+
+interface VHostVolumeInfo {
+  backend: string;
+  capabilities: string[];
+  usage: {
+    percentage: number;
+  };
+  sftp_scaling_groups?: string[];
+}
+
+interface VHostInfo {
+  allowed: string[];
+  default: string;
+  volume_info: {
+    [key: string]: VHostVolumeInfo;
+  };
+}
+
+interface ScalingGroupsResponse {
+  scaling_groups: ScalingGroupItem[];
+}
+
 const currentProjectAtom = atomWithDefault(() => {
   return {
     // @ts-ignore
@@ -22,7 +47,7 @@ const previousSelectedResourceGroupNameAtom = atom<string | null>(null);
 
 export const useCurrentResourceGroupValue = () => {
   useSuspendedBackendaiClient();
-  const { resourceGroups } = useAtomValue(resourceGroupsForCurrentProjectAtom);
+  const { resourceGroups } = useResourceGroupsForCurrentProject();
   const [prevSelectedRGName, setPrevSelectedRGName] = useAtom(
     previousSelectedResourceGroupNameAtom,
   );
@@ -68,31 +93,18 @@ const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
   const currentProject = get(currentProjectAtom);
   const [resourceGroups, vhostInfo] = await Promise.all([
     // @ts-ignore
-    globalThis.backendaiclient.scalingGroup.list(currentProject.name) as {
-      scaling_groups: {
-        name: string;
-      }[];
-    },
+    globalThis.backendaiclient.scalingGroup.list(
+      currentProject.name,
+    ) as ScalingGroupsResponse,
     // @ts-ignore
-    globalThis.backendaiclient.vfolder.list_hosts(currentProject.id) as {
-      allowed: string[];
-      default: string;
-      volume_info: {
-        [key: string]: {
-          backend: string;
-          capabilities: string[];
-          usage: {
-            percentage: number;
-          };
-          sftp_scaling_groups?: string[];
-        };
-      };
-    },
+    globalThis.backendaiclient.vfolder.list_hosts(
+      currentProject.id,
+    ) as VHostInfo,
   ]);
 
   const allSftpScalingGroups = _.uniq(
     _.flatten(
-      _.map(vhostInfo.volume_info, (volume) => volume.sftp_scaling_groups),
+      _.map(vhostInfo.volume_info, (volume) => volume?.sftp_scaling_groups),
     ),
   );
 

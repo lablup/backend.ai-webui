@@ -17,6 +17,7 @@ export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithStep
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithSteppedProgress';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
+export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

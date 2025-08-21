@@ -620,6 +620,7 @@
     "SmallerResourceThenImageRequires": "La richiesta di risorse è inferiore al minimo richiesto dall'immagine. Provare con altre risorse.",
     "TooManyLoginFailures": "Si sono verificati troppi errori di accesso in poco tempo. L'accesso è bloccato per un po'.",
     "UnauthorizedToken": "Token non autorizzato. Controllare il token.",
+    "UnexpectedError": "Si è verificato un errore imprevisto. \nRiprova più tardi o contatta il supporto se il problema persiste.",
     "UnknownError": "Si è verificato un errore sconosciuto. Si prega di riprovare.",
     "UpdateError": "Errore di aggiornamento",
     "UserHasNoGroup": "L'utente non ha un gruppo. Contattare l'amministratore per risolvere il problema.",

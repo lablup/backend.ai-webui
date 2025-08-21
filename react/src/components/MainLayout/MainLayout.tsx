@@ -19,6 +19,7 @@ import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useNavigate, Outlet, useMatches } from 'react-router-dom';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
@@ -219,14 +220,16 @@ function MainLayout() {
                 </div>
               </Suspense>
               {/* Non sticky Alert components */}
-              <Suspense>
+              <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
                 <BAIFlex
                   direction="column"
                   gap={'sm'}
                   align="stretch"
                   className={styles.alertWrapper}
                 >
-                  <NoResourceGroupAlert />
+                  <ErrorBoundary fallbackRender={() => null}>
+                    <NoResourceGroupAlert />
+                  </ErrorBoundary>
                   <PasswordChangeRequestAlert
                     showIcon
                     icon={undefined}

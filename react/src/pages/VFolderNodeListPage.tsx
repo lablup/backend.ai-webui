@@ -44,6 +44,7 @@ import {
   BAITrashBinIcon,
   BAIPropertyFilter,
   mergeFilterValues,
+  BAIAlertIconWithTooltip,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
@@ -54,6 +55,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
@@ -307,54 +309,94 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </BAICard>
         </Col>
         <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
+          <ErrorBoundary
+            fallbackRender={() => {
+              return (
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.StorageStatus')}
+                  status="error"
+                  extra={
+                    <BAIAlertIconWithTooltip
+                      title={t('error.UnexpectedError')}
+                    />
+                  }
+                />
+              );
+            }}
+          >
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.StorageStatus')}
+                  loading
+                />
+              }
+            >
+              <StorageStatusPanelCard
                 style={{
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                title={t('data.StorageStatus')}
-                loading
+                fetchKey={deferredFetchKey}
+                onRequestBadgeClick={() => {
+                  webuiNavigate({
+                    search: new URLSearchParams({
+                      invitation: 'true',
+                    }).toString(),
+                  });
+                }}
               />
-            }
-          >
-            <StorageStatusPanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-              }}
-              fetchKey={deferredFetchKey}
-              onRequestBadgeClick={() => {
-                webuiNavigate({
-                  search: new URLSearchParams({
-                    invitation: 'true',
-                  }).toString(),
-                });
-              }}
-            />
-          </Suspense>
+            </Suspense>
+          </ErrorBoundary>
         </Col>
         <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
-          <Suspense
-            fallback={
-              <BAICard
+          <ErrorBoundary
+            fallbackRender={() => {
+              return (
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.QuotaPerStorageVolume')}
+                  status="error"
+                  extra={
+                    <BAIAlertIconWithTooltip
+                      title={t('error.UnexpectedError')}
+                    />
+                  }
+                />
+              );
+            }}
+          >
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{
+                    width: '100%',
+                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
+                  }}
+                  title={t('data.QuotaPerStorageVolume')}
+                  loading
+                />
+              }
+            >
+              <QuotaPerStorageVolumePanelCard
                 style={{
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                title={t('data.QuotaPerStorageVolume')}
-                loading
               />
-            }
-          >
-            <QuotaPerStorageVolumePanelCard
-              style={{
-                width: '100%',
-                minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-              }}
-            />
-          </Suspense>
+            </Suspense>
+          </ErrorBoundary>
         </Col>
       </Row>
       <BAICard

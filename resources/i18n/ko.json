@@ -623,6 +623,7 @@
     "SmallerResourceThenImageRequires": "요청한 자원이 이미지가 요구하는 자원보다 적습니다. 자원을 보다 크게 해서 시도해보세요.",
     "TooManyLoginFailures": "너무 많은 로그인 시도가 있었습니다. 시간이 지난 후에 다시 시도해보세요.",
     "UnauthorizedToken": "인증 되지 않은 토큰입니다. 토큰을 확인해 주세요.",
+    "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요.",
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.",
     "UpdateError": "업데이트 에러",
     "UserHasNoGroup": "사용자가 어떤 그룹에도 속해있지 않습니다. 관리자에게 문의하세요.",

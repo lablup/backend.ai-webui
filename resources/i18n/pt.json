@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "O seu pedido de recursos é mais pequeno do que o mínimo exigido pela imagem. Tente mais recursos.",
     "TooManyLoginFailures": "Ocorreram demasiadas falhas de início de sessão num curto espaço de tempo. O início de sessão está bloqueado durante algum tempo.",
     "UnauthorizedToken": "Token não autorizado. Por favor, verifique o seu token.",
+    "UnexpectedError": "Ocorreu um erro inesperado. \nTente novamente mais tarde ou entre em contato com o suporte se o problema persistir.",
     "UnknownError": "Ocorreu um erro desconhecido. Por favor, tente novamente.",
     "UpdateError": "Erro de ATUALIZAÇÃO",
     "UserHasNoGroup": "O utilizador não tem grupo. Contacte o administrador para resolver o problema.",

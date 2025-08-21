@@ -620,6 +620,7 @@
     "SmallerResourceThenImageRequires": "リソース要求が画像に必要な最小値より小さい。より多くのリソースを試してください。",
     "TooManyLoginFailures": "短時間にログイン失敗が多すぎます。しばらくログインがブロックされます。",
     "UnauthorizedToken": "トークンが不正です。トークンを確認してください。",
+    "UnexpectedError": "予期しないエラーが発生しました。\n問題が続いている場合は、後でもう一度やり直すか、サポートに連絡してください。",
     "UnknownError": "不明なエラーが発生しました。もう一度お試しください。",
     "UpdateError": "更新エラー",
     "UserHasNoGroup": "ユーザーにグループがありません。管理者に連絡して修正してください。",

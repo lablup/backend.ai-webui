@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "您的资源请求小于图像要求的最小值。尝试更多资源。",
     "TooManyLoginFailures": "短时间内登录失败次数过多。登录被暂时阻止。",
     "UnauthorizedToken": "未经授权的令牌。请检查您的令牌。",
+    "UnexpectedError": "發生意外錯誤。如果問題持續下去，請稍後再試或聯繫支持。",
     "UnknownError": "出现未知错误。请重试。",
     "UpdateError": "更新錯誤",
     "UserHasNoGroup": "用户没有组。请联系管理员修复。",

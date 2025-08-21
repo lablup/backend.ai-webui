@@ -620,6 +620,7 @@
     "SmallerResourceThenImageRequires": "Permintaan sumber anda lebih kecil daripada minimum yang diperlukan oleh imej. \nCuba lebih banyak sumber.",
     "TooManyLoginFailures": "Terdapat terlalu banyak kegagalan log masuk dalam masa yang singkat. \nLog masuk disekat untuk seketika.",
     "UnauthorizedToken": "Token yang tidak dibenarkan. \nSila periksa token anda.",
+    "UnexpectedError": "Kesalahan yang tidak dijangka berlaku. \nCuba sebentar lagi atau hubungi sokongan jika masalah berterusan.",
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi.",
     "UpdateError": "Ralat kemas kini",
     "UserHasNoGroup": "Pengguna tidak mempunyai kumpulan. \nSila hubungi pentadbir untuk membetulkannya.",

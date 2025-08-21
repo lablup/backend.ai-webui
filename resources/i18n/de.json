@@ -621,6 +621,7 @@
     "SmallerResourceThenImageRequires": "Ihre Ressourcenanforderung ist kleiner als das für das Bild erforderliche Minimum. Versuchen Sie es mit mehr Ressourcen.",
     "TooManyLoginFailures": "Es gab zu viele Login-Fehler in kurzer Zeit. Die Anmeldung ist eine Zeit lang blockiert.",
     "UnauthorizedToken": "Nicht autorisierter Token. Bitte überprüfen Sie Ihr Token.",
+    "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "UpdateError": "Aktualisierungsfehler",
     "UserHasNoGroup": "Der Benutzer hat keine Gruppe. Bitte kontaktieren Sie den Administrator, um das Problem zu beheben.",
