@@ -80,7 +80,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     startRefreshTransition(() => {
       updateFetchKey();
     });
-  const { allSftpScalingGroups } = useResourceGroupsForCurrentProject();
+  const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
 
   const { agent_summary_list } = useLazyLoadQuery<AgentSummaryListQuery>(
     graphql`
@@ -127,7 +127,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   // Hide sFTP upload agents
   const filteredAgentSummaryList = _.filter(
     agent_summary_list?.items,
-    (item) => !_.includes(allSftpScalingGroups, item?.scaling_group),
+    (item) => !_.includes(sftpResourceGroups, item?.scaling_group),
   );
 
   const columns: ColumnsType<AgentSummary> = [

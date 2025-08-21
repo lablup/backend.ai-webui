@@ -50,7 +50,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
-  const { resourceGroups } = useResourceGroupsForCurrentProject();
+  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
   const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
 
   const searchProps: Pick<
@@ -68,7 +68,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
     <BAISelect
       defaultActiveFirstOption
       loading={isPendingLoading}
-      options={_.map(resourceGroups, (resourceGroup) => {
+      options={_.map(nonSftpResourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
       })}
       optionRender={(option) => {

@@ -47,22 +47,25 @@ const previousSelectedResourceGroupNameAtom = atom<string | null>(null);
 
 export const useCurrentResourceGroupValue = () => {
   useSuspendedBackendaiClient();
-  const { resourceGroups } = useResourceGroupsForCurrentProject();
+  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
   const [prevSelectedRGName, setPrevSelectedRGName] = useAtom(
     previousSelectedResourceGroupNameAtom,
   );
 
   let nextResourceGroupName: string | null = null;
-  if (resourceGroups.length === 0) {
+  if (
+    nonSftpResourceGroups === undefined ||
+    nonSftpResourceGroups.length === 0
+  ) {
     nextResourceGroupName = null;
   } else if (
-    _.some(resourceGroups, (item) => item.name === prevSelectedRGName)
+    _.some(nonSftpResourceGroups, (item) => item.name === prevSelectedRGName)
   ) {
     nextResourceGroupName = prevSelectedRGName;
   } else {
     const autoSelectedResourceGroup =
       // _.find(resourceGroups, (item) => item.name === 'default') ||
-      resourceGroups[0];
+      nonSftpResourceGroups[0];
     nextResourceGroupName = autoSelectedResourceGroup.name;
   }
 
@@ -91,30 +94,42 @@ export const useCurrentResourceGroupState = () => {
 const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
   // NOTE: cannot use hook inside atom
   const currentProject = get(currentProjectAtom);
-  const [resourceGroups, vhostInfo] = await Promise.all([
+  const [resourceGroupsResult, vhostInfoResult] = await Promise.allSettled([
     // @ts-ignore
     globalThis.backendaiclient.scalingGroup.list(
       currentProject.name,
-    ) as ScalingGroupsResponse,
+    ) as Promise<ScalingGroupsResponse>,
     // @ts-ignore
     globalThis.backendaiclient.vfolder.list_hosts(
       currentProject.id,
-    ) as VHostInfo,
+    ) as Promise<VHostInfo>,
   ]);
 
-  const allSftpScalingGroups = _.uniq(
-    _.flatten(
-      _.map(vhostInfo.volume_info, (volume) => volume?.sftp_scaling_groups),
-    ),
-  );
+  const resourceGroups =
+    resourceGroupsResult.status === 'fulfilled'
+      ? resourceGroupsResult.value
+      : undefined;
+  const vhostInfo =
+    vhostInfoResult.status === 'fulfilled' ? vhostInfoResult.value : undefined;
+
+  const sftpResourceGroups = vhostInfo
+    ? _.uniq(
+        _.flatten(
+          _.map(vhostInfo.volume_info, (volume) => volume?.sftp_scaling_groups),
+        ),
+      )
+    : undefined;
 
   return {
-    resourceGroups: _.filter(
-      resourceGroups.scaling_groups,
-      (rg) => !allSftpScalingGroups.includes(rg.name),
-    ),
+    nonSftpResourceGroups:
+      resourceGroups && vhostInfo && sftpResourceGroups
+        ? _.filter(
+            resourceGroups.scaling_groups,
+            (rg) => !sftpResourceGroups.includes(rg.name),
+          )
+        : resourceGroups?.scaling_groups || undefined,
     vhostInfo,
-    allSftpScalingGroups,
+    sftpResourceGroups,
   };
 });
 

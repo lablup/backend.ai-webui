@@ -115,7 +115,7 @@ export const useResourceLimitAndRemaining = ({
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
   const acceleratorSlots = _.omit(resourceSlots, ['cpu', 'mem', 'shmem']);
-  const { resourceGroups } = useResourceGroupsForCurrentProject();
+  const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
 
   const currentResourceGroupForLimit = useFragment(
     graphql`
@@ -152,7 +152,7 @@ export const useResourceLimitAndRemaining = ({
 
       if (
         currentResourceGroup &&
-        _.some(resourceGroups, (rg) => rg.name === currentResourceGroup)
+        _.some(nonSftpResourceGroups, (rg) => rg.name === currentResourceGroup)
       ) {
         params.scaling_group = currentResourceGroup;
       }
