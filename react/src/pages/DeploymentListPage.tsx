@@ -1,6 +1,6 @@
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import DeploymentList from '../components/DeploymentList';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
+import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { PlusOutlined } from '@ant-design/icons';
@@ -21,6 +21,7 @@ import { StringParam, withDefault } from 'use-query-params';
 
 const DeploymentListPage: React.FC = () => {
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
 
   const { tablePaginationOption, setTablePaginationOption } =
     useBAIPaginationOptionStateOnSearchParam({
@@ -98,7 +99,11 @@ const DeploymentListPage: React.FC = () => {
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button type="primary" icon={<PlusOutlined />}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => webuiNavigate('/deployment/start')}
+            >
               {t('deployment.CreateDeployment')}
             </Button>
           </BAIFlex>
