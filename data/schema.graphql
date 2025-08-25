@@ -41,6 +41,29 @@ type AccessToken implements Node
 }
 
 """Added in 25.13.0"""
+type AccessTokenConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [AccessTokenEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type AccessTokenEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: AccessToken!
+}
+
+"""Added in 25.13.0"""
 input AddModelRevisionInput
   @join__type(graph: STRAWBERRY)
 {
@@ -51,6 +74,7 @@ input AddModelRevisionInput
   image: ImageInput!
   modelRuntimeConfig: ModelRuntimeConfigInput!
   modelMountConfig: ModelMountConfigInput!
+  extraMounts: [ExtraVFolderMountInput!]
 }
 
 """Added in 25.13.0"""
@@ -1081,6 +1105,39 @@ type ContainerUtilizationMetricMetadata
   metric_names: [String]
 }
 
+input CreateAccessTokenInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Added in 25.13.0: The expiration timestamp of the access token."""
+  validUntil: DateTime!
+}
+
+type CreateAccessTokenPayload
+  @join__type(graph: STRAWBERRY)
+{
+  accessToken: AccessToken!
+}
+
+input CreateAutoScalingRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  modelDeploymentId: ID!
+  metricSource: AutoScalingMetricSource!
+  metricName: String!
+  minThreshold: Decimal
+  maxThreshold: Decimal
+  stepSize: Int!
+  timeWindow: Int!
+  minReplicas: Int
+  maxReplicas: Int
+}
+
+type CreateAutoScalingRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  autoScalingRule: AutoScalingRule!
+}
+
 """Deprecated since 24.09.0. use `CreateContainerRegistryNode` instead"""
 type CreateContainerRegistry
   @join__type(graph: GRAPHENE)
@@ -1475,6 +1532,18 @@ type DeleteArtifactPayload
   @join__type(graph: STRAWBERRY)
 {
   artifactRevisionId: ID!
+}
+
+input DeleteAutoScalingRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+type DeleteAutoScalingRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
 }
 
 """Deprecated since 24.09.0. use `DeleteContainerRegistryNode` instead"""
@@ -2029,6 +2098,39 @@ input ExtraMountInput
   Added in 24.03.4. Set permission of this mount. Should be one of (ro,rw,wd). Default is null
   """
   permission: String
+}
+
+type ExtraVFolderMount implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  mountDestination: String!
+  vfolder: VFolder!
+}
+
+"""Added in 25.13.0"""
+type ExtraVFolderMountConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ExtraVFolderMountEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type ExtraVFolderMountEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ExtraVFolderMount!
 }
 
 """Added in 25.13.0"""
@@ -2878,7 +2980,7 @@ type ModelDeploymentNetworkAccess
   endpointUrl: String
   preferredDomainName: String
   openToPublic: Boolean!
-  accessTokens: [AccessToken!]!
+  accessTokens: AccessTokenConnection!
 }
 
 """Added in 25.13.0"""
@@ -2955,7 +3057,7 @@ type ModelRevision implements Node
   resourceConfig: ResourceConfig!
   modelRuntimeConfig: ModelRuntimeConfig!
   modelMountConfig: ModelMountConfig!
-  extraMounts: [VFolder!]!
+  extraMounts: ExtraVFolderMountConnection!
   image: ImageDetail!
   createdAt: DateTime!
 }
@@ -3876,6 +3978,15 @@ type Mutation
   updateObjectStorage(input: UpdateObjectStorageInput!): UpdateObjectStoragePayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
+  createAutoScalingRule(input: CreateAutoScalingRuleInput!): CreateAutoScalingRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  updateAutoScalingRule(input: UpdateAutoScalingRuleInput!): UpdateAutoScalingRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  deleteAutoScalingRule(input: DeleteAutoScalingRuleInput!): DeleteAutoScalingRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
   deleteObjectStorage(input: DeleteObjectStorageInput!): DeleteObjectStoragePayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.13.0"""
@@ -3898,6 +4009,9 @@ type Mutation
 
   """Added in 25.13.0"""
   rejectArtifactRevision(input: RejectArtifactInput!): RejectArtifactPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.13.0"""
+  createAccessToken(input: CreateAccessTokenInput!): CreateAccessTokenPayload! @join__field(graph: STRAWBERRY)
 }
 
 """Added in 24.12.0."""
@@ -5113,6 +5227,26 @@ type UpdateArtifactPayload
   @join__type(graph: STRAWBERRY)
 {
   artifact: Artifact!
+}
+
+input UpdateAutoScalingRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  metricSource: AutoScalingMetricSource
+  metricName: String
+  minThreshold: Decimal
+  maxThreshold: Decimal
+  stepSize: Int
+  timeWindow: Int
+  minReplicas: Int
+  maxReplicas: Int
+}
+
+type UpdateAutoScalingRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  autoScalingRule: AutoScalingRule!
 }
 
 """Added in 25.3.0."""

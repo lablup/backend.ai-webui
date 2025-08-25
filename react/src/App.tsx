@@ -90,7 +90,7 @@ const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
 );
 const DeploymentDetailPage = React.lazy(
-  () => import('./pages/Deployments/DeploymentDetailPage'),
+  () => import('./pages/DeploymentDetailPage'),
 );
 const DeploymentLauncherPage = React.lazy(
   () => import('./pages/DeploymentLauncherPage'),
