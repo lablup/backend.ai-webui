@@ -157,10 +157,10 @@ const router = createBrowserRouter([
         path: '/summary',
         Component: () => {
           const location = useLocation();
-          const [experimentalDashboard] = useBAISettingUserState(
-            'experimental_dashboard',
+          const [isClassicDashboardPage] = useBAISettingUserState(
+            'classic_dashboard_page',
           );
-          return experimentalDashboard ? (
+          return !isClassicDashboardPage ? (
             <WebUINavigate to={'/dashboard' + location.search} replace />
           ) : null;
         },
@@ -171,10 +171,10 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Dashboard' },
         Component: () => {
           const location = useLocation();
-          const [experimentalDashboard] = useBAISettingUserState(
-            'experimental_dashboard',
+          const [isClassicDashboardPage] = useBAISettingUserState(
+            'classic_dashboard_page',
           );
-          return experimentalDashboard ? (
+          return !isClassicDashboardPage ? (
             <BAIErrorBoundary>
               <Suspense fallback={<Skeleton active />}>
                 <DashboardPage />
