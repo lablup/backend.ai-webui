@@ -2,11 +2,13 @@ import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderMo
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useSetBAINotification } from '../hooks/useBAINotification';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography, message } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import {
+  ESMClientErrorResponse,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,9 +27,8 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { upsertNotification } = useSetBAINotification();
   const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const vfolders = useFragment(
     graphql`
@@ -55,13 +56,12 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
       onCancel={() => onRequestClose?.(false)}
       onOk={() => {
         const promises = _.map(vfolders, (vfolder: VFolderType) =>
-          deleteMutation.mutateAsync(vfolder.id).catch((error) => {
-            upsertNotification({
-              message: painKiller.relieve(error?.title),
-              description: error?.description,
-              open: true,
-            });
-          }),
+          deleteMutation
+            .mutateAsync('')
+            .catch((error: ESMClientErrorResponse) => {
+              message.error(getErrorMessage(error));
+              return Promise.reject();
+            }),
         );
         Promise.allSettled(promises).then((results) => {
           const success = results.every(

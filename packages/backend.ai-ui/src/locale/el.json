@@ -11,6 +11,9 @@
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SettingTable": "Ρυθμίσεις πίνακα"
   },
+  "error": {
+    "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"

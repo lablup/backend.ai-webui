@@ -51,7 +51,12 @@ import {
   Tag,
   Alert,
 } from 'antd';
-import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  ErrorResponse,
+  filterOutNullAndUndefined,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -167,6 +172,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
+
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const endpoint = useFragment(
     graphql`
@@ -290,12 +297,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const mutationToCreateService = useTanMutation<
     unknown,
-    | {
-        message?: string;
-        title?: string;
-        description?: string;
-      }
-    | undefined,
+    ErrorResponse | undefined,
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
@@ -607,19 +609,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
-              if (error?.message) {
-                message.error(
-                  _.truncate(error?.message, {
-                    length: 200,
-                  }),
-                );
-              } else {
-                if (endpoint) {
-                  message.error(t('modelService.FailedToUpdateService'));
-                } else {
-                  message.error(t('modelService.FailedToStartService'));
-                }
-              }
+              let defaultErrorMessage = endpoint
+                ? t('modelService.FailedToUpdateService')
+                : t('modelService.FailedToStartService');
+              message.error(getErrorMessage(error, defaultErrorMessage));
             },
           });
         }

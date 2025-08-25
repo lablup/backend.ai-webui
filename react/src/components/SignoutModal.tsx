@@ -2,6 +2,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Form, Input, message, Alert, FormInstance } from 'antd';
+import { useErrorMessageResolver } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,6 +18,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
 }) => {
   const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [messageApi, contextHolder] = message.useMessage();
   const baiClient = useSuspendedBackendaiClient();
   const signoutMutation = useTanMutation({
@@ -38,10 +40,10 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
               const event = new CustomEvent('backend-ai-logout');
               document.dispatchEvent(event);
             },
-            onError: (e: any) => {
+            onError: (e) => {
               messageApi.open({
                 type: 'error',
-                content: e.message,
+                content: getErrorMessage(e),
               });
             },
           },

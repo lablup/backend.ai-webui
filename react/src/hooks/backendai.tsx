@@ -225,7 +225,7 @@ export const useCurrentUserInfo = () => {
                 full_name: newFullName,
               }));
             },
-            onError: (error: any) => {
+            onError: (error) => {
               options?.onError && options.onError(error);
             },
           },
@@ -243,7 +243,7 @@ export const useCurrentUserInfo = () => {
           onSuccess: () => {
             options?.onSuccess && options.onSuccess(undefined);
           },
-          onError: (error: any) => {
+          onError: (error) => {
             options?.onError && options.onError(error);
           },
         });
@@ -352,7 +352,7 @@ export const useVFolderInvitations = (fetchKey?: string) => {
             onSuccess: () => {
               options?.onSuccess?.(inv_id);
             },
-            onError: (error: any) => {
+            onError: (error) => {
               options?.onError?.(error);
             },
           },
@@ -365,7 +365,7 @@ export const useVFolderInvitations = (fetchKey?: string) => {
             onSuccess: () => {
               options?.onSuccess?.(inv_id);
             },
-            onError: (error: any) => {
+            onError: (error) => {
               options?.onError?.(error);
             },
           },

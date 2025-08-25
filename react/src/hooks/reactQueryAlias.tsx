@@ -1,3 +1,4 @@
+import type { ESMClientErrorResponse } from '../../../packages/backend.ai-ui/src/hooks/useErrorMessageResolver';
 import {
   type QueryKey,
   useQuery,
@@ -6,11 +7,23 @@ import {
   QueryObserver,
   useSuspenseQuery,
   UseSuspenseQueryOptions,
+  type UseMutationOptions,
+  type UseMutationResult,
 } from '@tanstack/react-query';
 import { useRef } from 'react';
 
 export const useTanQuery = useQuery;
-export const useTanMutation = useMutation;
+
+export const useTanMutation = <
+  TData = unknown,
+  TError = ESMClientErrorResponse,
+  TVariables = void,
+  TContext = unknown,
+>(
+  options: UseMutationOptions<TData, TError, TVariables, TContext>,
+): UseMutationResult<TData, TError, TVariables, TContext> => {
+  return useMutation<TData, TError, TVariables, TContext>(options);
+};
 
 /**
  * Custom hook that wraps the `useQuery` hook from `react-query` and enables suspense mode refetch using `fetchKey`.

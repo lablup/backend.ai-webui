@@ -76,7 +76,7 @@ export const useSetVFolderInvitations = () => {
           onSuccess: () => {
             options?.onSuccess?.(inv_id);
           },
-          onError: (error: any) => {
+          onError: (error) => {
             options?.onError?.(error);
           },
         },
@@ -89,7 +89,7 @@ export const useSetVFolderInvitations = () => {
           onSuccess: () => {
             options?.onSuccess?.(inv_id);
           },
-          onError: (error: any) => {
+          onError: (error) => {
             options?.onError?.(error);
           },
         },

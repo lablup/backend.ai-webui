@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
     "SearchTableColumn": "Wyszukaj kolumny tabeli"
   },
+  "error": {
+    "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
