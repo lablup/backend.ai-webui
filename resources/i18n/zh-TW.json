@@ -775,6 +775,8 @@
   "kernel": {
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
+    "Hostname": "主機名",
+    "Kernel": "核心",
     "KernelId": "內核ID",
     "Kernels": "內核",
     "Role": "角色",

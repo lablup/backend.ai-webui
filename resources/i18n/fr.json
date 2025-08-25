@@ -776,6 +776,8 @@
   "kernel": {
     "AgentId": "ID d'agent",
     "ContainerId": "ID de conteneur",
+    "Hostname": "Nom d'hôte",
+    "Kernel": "Noyau",
     "KernelId": "ID du noyau",
     "Kernels": "Graines",
     "Role": "Rôle",

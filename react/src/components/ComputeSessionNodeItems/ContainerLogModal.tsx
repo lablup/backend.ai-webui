@@ -46,6 +46,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               container_id
               cluster_idx
               cluster_role
+              cluster_hostname
             }
           }
         }
@@ -153,7 +154,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         gap={'sm'}
       >
         <BAIFlex gap="sm" wrap="wrap">
-          Kernel Role
+          {t('kernel.Kernel')}
           <BAISelect
             value={selectedKernelId}
             onChange={(value) => {
@@ -167,10 +168,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                 return {
                   label: (
                     <>
-                      {e?.node?.cluster_role}
-                      {e?.node?.cluster_role !== 'main'
-                        ? e?.node?.cluster_idx
-                        : ''}
+                      {e?.node?.cluster_hostname}
                       {userRole === 'admin' || userRole === 'superadmin' ? (
                         <Typography.Text
                           style={{

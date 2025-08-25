@@ -776,6 +776,8 @@
   "kernel": {
     "AgentId": "Agenttitunnus",
     "ContainerId": "Konttitunnus",
+    "Hostname": "Isäntänimi",
+    "Kernel": "Ytimen",
     "KernelId": "Ytimen tunnus",
     "Kernels": "Ytimet",
     "Role": "Rooli",
