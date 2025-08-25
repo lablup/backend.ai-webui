@@ -1542,6 +1542,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Dukungan Atom Max",
     "ATOMPlusSupport": "Dukungan ATOM+",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "Izinkan pendaftaran sisi agen",
@@ -1549,6 +1550,7 @@
     "Config": "Konfigurasi",
     "ConfigPerJobSchduler": "Pengaturan penjadwal",
     "ConfigPerJobSchdulerDescription": "Nilai dalam pengaturan penjadwal adalah default untuk digunakan ketika tidak ada pengaturan penjadwal di setiap grup sumber daya. Jika ada setelan khusus grup sumber daya, nilai ini akan diabaikan.",
+    "DescATOMMaxSupport": "Gunakan Rebellions ATOM Max Accelerator.",
     "DescATOMPlusSupport": "Gunakan akselerator ATOM+ Rebellions.",
     "DescATOMSupport": "Gunakan akselerator Rebellions ATOM",
     "DescAllowAgentSideRegistration": "Izinkan agen untuk mendaftarkan diri ke manajer. Gunakan hanya jika backend.ai cluster dikelola di lokasi yang aman.",
@@ -1592,6 +1594,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Dukungan GPU ROCm",
     "RegisterNewImagesFromRepo": "Daftarkan image baru dari repositori",
+    "RequireATOMMaxPlugin": "Memerlukan Plugin Backend.AI ATOM Max.",
     "RequireATOMPlugin": "Membutuhkan Plugin Backend.AI ATOM.",
     "RequireATOMPlusPlugin": "Membutuhkan Plugin Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Memerlukan Plugin Lapisan API CUDA Virtual Backend.AI.",
@@ -1756,6 +1759,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Diaktifkan",
+    "ATOMMaxEnabled": "Atom max npu diaktifkan",
     "ATOMPlusEnabled": "ATOM+ NPU Diaktifkan",
     "Accept": "Terima",
     "AcceptSharedVFolder": "Anda sekarang dapat mengakses folder: ",

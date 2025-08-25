@@ -1543,6 +1543,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Hỗ trợ Atom Max",
     "ATOMPlusSupport": "Hỗ trợ ATOM+",
     "ATOMSupport": "nguyên tử",
     "AllowAgentSideRegistration": "Cho phép đăng ký phía đại lý",
@@ -1550,6 +1551,7 @@
     "Config": "Cấu hình",
     "ConfigPerJobSchduler": "Cài đặt bộ lập lịch",
     "ConfigPerJobSchdulerDescription": "Các giá trị trong cài đặt bộ lập lịch là các giá trị mặc định được sử dụng khi không có cài đặt bộ lập lịch trong mỗi nhóm tài nguyên. Nếu có cài đặt dành riêng cho nhóm tài nguyên, giá trị này sẽ bị bỏ qua.",
+    "DescATOMMaxSupport": "Sử dụng Rebellions ATOM Max Accelerator.",
     "DescATOMPlusSupport": "Sử dụng máy gia tốc ATOM+ của Rebellions.",
     "DescATOMSupport": "Sử dụng máy gia tốc ATOM của Rebellions",
     "DescAllowAgentSideRegistration": "Cho phép đại lý đăng ký vào người quản lý. Chỉ sử dụng nếu cụm phụ trợ.ai được quản lý trên vị trí an toàn.",
@@ -1593,6 +1595,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Hỗ trợ GPU ROCm",
     "RegisterNewImagesFromRepo": "Đăng ký hình ảnh mới từ kho",
+    "RequireATOMMaxPlugin": "Yêu cầu Plugin Backend.AI ATOM Max.",
     "RequireATOMPlugin": "Yêu cầu Plugin Backend.AI ATOM.",
     "RequireATOMPlusPlugin": "Yêu cầu Plugin Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Yêu cầu Plugin lớp API CUDA ảo Backend.AI.",
@@ -1757,6 +1760,7 @@
   },
   "summary": {
     "ATOMEnabled": "Đã bật NPU ATOM",
+    "ATOMMaxEnabled": "Atom Max NPU được bật",
     "ATOMPlusEnabled": "Đã bật NPU ATOM+",
     "Accept": "Chấp nhận",
     "AcceptSharedVFolder": "Bây giờ bạn có thể truy cập thư mục:",

@@ -1542,6 +1542,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Atom Maxサポート",
     "ATOMPlusSupport": "アトムのサポート",
     "ATOMSupport": "ATOM対応",
     "AllowAgentSideRegistration": "エージェント側の登録を許可する",
@@ -1549,6 +1550,7 @@
     "Config": "構成",
     "ConfigPerJobSchduler": "スケジューラ設定",
     "ConfigPerJobSchdulerDescription": "スケジューラ設定の値は、各リソースグループにスケジューラ設定がない場合に使用するデフォルトです。リソースグループ固有の設定がある場合、この値は無視されます。",
+    "DescATOMMaxSupport": "Rebellions ATOM Max Acceleratorを使用します。",
     "DescATOMPlusSupport": "Rebellions ATOM+ アクセラレータを使用します。",
     "DescATOMSupport": "Rebellions ATOMアクセラレータを使用します。",
     "DescAllowAgentSideRegistration": "エージェントがマネージャーに登録できるようにします。 BackEnd.aiクラスターが安全な場所で管理されている場合にのみ使用します。",
@@ -1592,6 +1594,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCmGPUサポート",
     "RegisterNewImagesFromRepo": "リポジトリから新しい画像を登録する",
+    "RequireATOMMaxPlugin": "Backend.AI ATOM Max プラグインが必要です。",
     "RequireATOMPlugin": "Backend.AI ATOMプラグインが必要です。",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+プラグインが必要です。",
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA APILayerプラグインが必要です。",
@@ -1756,6 +1759,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU使用中",
+    "ATOMMaxEnabled": "Atom Max NPUが有効になっています",
     "ATOMPlusEnabled": "ATOM+ NPU 有効",
     "Accept": "受け入れる",
     "AcceptSharedVFolder": "これで、フォルダにアクセスできます。",

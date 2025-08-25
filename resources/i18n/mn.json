@@ -1541,6 +1541,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Атомын хамгийн их дэмжлэг",
     "ATOMPlusSupport": "ATOM+ дэмжлэг",
     "ATOMSupport": "АТОМ",
     "AllowAgentSideRegistration": "Агент талын бүртгэлийг зөвшөөрөх",
@@ -1548,6 +1549,7 @@
     "Config": "Тохиргоо",
     "ConfigPerJobSchduler": "Хуваарилагчийн тохиргоо",
     "ConfigPerJobSchdulerDescription": "Төлөвлөгчийн тохиргооны утга нь нөөцийн бүлэг тус бүрт хуваарилагчийн тохиргоо хийгдээгүй үед хэрэглэгддэг анхдагч утга юм. Хэрэв нөөцийн бүлэгт зориулсан тохиргоо байгаа бол энэ утгыг үл тоомсорлох болно.",
+    "DescATOMMaxSupport": "Rebellions ATOM Max Accelerator ашиглана уу.",
     "DescATOMPlusSupport": "Rebellions ATOM+ хурдасгуурыг ашигла.",
     "DescATOMSupport": "Rebellions ATOM хурдасгуурыг ашигла",
     "DescAllowAgentSideRegistration": "Агентийг менежер рүүгээ бүртгүүлэхийг зөвшөөрөх. ACASEND.AL CLUSER-ийг АЖИЛЛАГААНЫ ХУДАЛДАН АВАХ БОЛОМЖТОЙ.",
@@ -1590,6 +1592,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU дэмжлэг",
     "RegisterNewImagesFromRepo": "Агуулахаас шинэ зургуудыг бүртгүүлэх",
+    "RequireATOMMaxPlugin": "Backend.AI ATOM Max плагин шаардлагатай.",
     "RequireATOMPlugin": "Backend.AI ATOM Plugin шаардлагатай.",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ Plugin шаардлагатай.",
     "RequireFGPUPlugin": "Backend.AI виртуал CUDA API Layer Plugin шаарддаг.",
@@ -1754,6 +1757,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",
+    "ATOMMaxEnabled": "Атомын Max NPU идэвхжсэн",
     "ATOMPlusEnabled": "ATOM+ NPU-г идэвхжүүлсэн",
     "Accept": "Хүлээн зөвшөөрөх",
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",

@@ -1530,12 +1530,15 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "การสนับสนุน Atom Max",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "อนุญาตการลงทะเบียนฝั่งตัวแทน",
     "CUDAGPUdisabledByFGPUsupport": "ปิดใช้งานเนื่องจากระบบใช้ปลั๊กอิน Fractional GPU",
     "Config": "กำหนดค่า",
     "ConfigPerJobSchduler": "การตั้งค่าตัวจัดกำหนดการ",
     "ConfigPerJobSchdulerDescription": "ค่าในการตั้งค่าตัวจัดกำหนดการเป็นค่าเริ่มต้นที่จะใช้เมื่อไม่มีการตั้งค่าตัวจัดกำหนดการในแต่ละกลุ่มทรัพยากร หากมีการตั้งค่าเฉพาะสำหรับกลุ่มทรัพยากร ค่านี้จะถูกละเว้น",
+    "DescATOMMaxSupport": "ใช้ Rebellions ATOM Max Accelerator",
+    "DescATOMPlusSupport": "ใช้ Rebellions ATOM+ accelerator",
     "DescATOMSupport": "ใช้ตัวเร่งความเร็ว Rebellions ATOM",
     "DescAllowAgentSideRegistration": "อนุญาตให้ตัวแทนลงทะเบียนตัวเองไปยังผู้จัดการ ใช้เฉพาะในกรณีที่แบ็กเอนด์คลัสเตอร์ได้รับการจัดการในตำแหน่งที่ปลอดภัย",
     "DescCudaGPUSupport": "การสนับสนุน NVIDIA CUDA GPU ต้องใช้ backend.ai cuda ปลั๊กอิน",
@@ -1576,7 +1579,9 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "การสนับสนุน GPU ROCm",
     "RegisterNewImagesFromRepo": "ลงทะเบียนอิมเมจใหม่จากพื้นที่เก็บข้อมูล",
+    "RequireATOMMaxPlugin": "ต้องใช้ Plugin Backend.AI ATOM Max",
     "RequireATOMPlugin": "ต้องใช้ปลั๊กอิน Backend.AI ATOM",
+    "RequireATOMPlusPlugin": "ต้องใช้ปลั๊กอิน Backend.AI ATOM+",
     "RequireFGPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Virtual CUDA API Layer",
     "RequireHyperaccelLPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI Hyperaccel LPU",
     "RequireIPUPlugin": "ต้องใช้ปลั๊กอิน Backend.AI IPU",
@@ -1738,6 +1743,7 @@
   },
   "summary": {
     "ATOMEnabled": "เปิดใช้งาน ATOM NPU",
+    "ATOMMaxEnabled": "เปิดใช้งาน Atom Max NPU",
     "ATOMPlusEnabled": "เปิดใช้งาน ATOM+ NPU",
     "Accept": "ยอมรับ",
     "AcceptSharedVFolder": "ตอนนี้คุณสามารถเข้าถึงโฟลเดอร์ได้แล้ว: ",

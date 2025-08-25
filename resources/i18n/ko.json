@@ -1548,6 +1548,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "ATOM Max 지원",
     "ATOMPlusSupport": "ATOM+ 지원",
     "ATOMSupport": "ATOM 지원",
     "AllowAgentSideRegistration": "에이전트쪽으로부터의 등록 허용",
@@ -1555,6 +1556,7 @@
     "Config": "설정",
     "ConfigPerJobSchduler": "스케줄러 별 설정",
     "ConfigPerJobSchdulerDescription": "스케줄러 설정에서 지정한 값은 자원 그룹의 스케줄러 설정 값이 없을 경우 사용하는 기본 값입니다. 자원 그룹에 설정한 값이 있을 경우 이 값은 무시됩니다.",
+    "DescATOMMaxSupport": "Rebellions ATOM Max 가속기를 사용.",
     "DescATOMPlusSupport": "Rebellions ATOM+ 가속기를 사용.",
     "DescATOMSupport": "Rebellions ATOM 가속기를 사용합니다.",
     "DescAllowAgentSideRegistration": "매니저에 에이전트 자신을 등록하도록 허용합니다. Backend.AI 클러스터가 보안환경에서 동작 및 관리되고 있을 때만 사용하세요.",
@@ -1598,6 +1600,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU 지원",
     "RegisterNewImagesFromRepo": "새 계산환경 이미지를 저장소로부터 등록",
+    "RequireATOMMaxPlugin": "Backend.AI ATOM Max 플러그인이 필요합니다.",
     "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ 플러그인이 필요합니다.",
     "RequireFGPUPlugin": "Backend.AI Virtual CUDA API 층 플러그인이 필요합니다.",
@@ -1762,6 +1765,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU 사용중",
+    "ATOMMaxEnabled": "ATOM Max 지원",
     "ATOMPlusEnabled": "ATOM+ NPU 사용중",
     "Accept": "허용",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 이름: ",

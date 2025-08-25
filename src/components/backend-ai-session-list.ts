@@ -1183,6 +1183,11 @@ export default class BackendAISessionList extends BackendAIPage {
                 resourceSlots['atom-plus.device'],
               );
             }
+            if ('atom-max.device' in resourceSlots) {
+              sessions[objectKey].atom_max_slot = parseInt(
+                resourceSlots['atom-max.device'],
+              );
+            }
             if ('gaudi2.device' in resourceSlots) {
               sessions[objectKey].gaudi2_slot = parseInt(
                 resourceSlots['gaudi2.device'],
@@ -3584,6 +3589,16 @@ export default class BackendAISessionList extends BackendAIPage {
                     <span class="indicator">ATOM+</span>
                   `
                 : html``}
+              ${rowData.item.atom_max_slot
+                ? html`
+                    <img
+                      class="indicator-icon fg green"
+                      src="/resources/icons/rebel.svg"
+                    />
+                    <span>${rowData.item.atom_max_slot}</span>
+                    <span class="indicator">ATOM Max</span>
+                  `
+                : html``}
               ${rowData.item.warboy_slot
                 ? html`
                     <img
@@ -3621,6 +3636,7 @@ export default class BackendAISessionList extends BackendAIPage {
               !rowData.item.ipu_slot &&
               !rowData.item.atom_slot &&
               !rowData.item.atom_plus_slot &&
+              !rowData.item.atom_max_slot &&
               !rowData.item.gaudi2_slot &&
               !rowData.item.warboy_slot &&
               !rowData.item.rngd_slot &&
@@ -4060,6 +4076,66 @@ export default class BackendAISessionList extends BackendAIPage {
                       <lablup-progress-bar
                         class="usage"
                         progress="${rowData.item.live_stat?.atom_plus_mem
+                          ?.ratio}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.atom_max_slot &&
+            parseFloat(rowData.item.atom_max_slot) > 0
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM Max(util)
+                      ${rowData.item.live_stat?.atom_max_util
+                        ? (
+                            rowData.item.live_stat?.atom_max_util?.ratio * 100
+                          ).toFixed(1)
+                        : `-`}
+                      %
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item?.live_stat?.atom_max_util
+                          ?.current /
+                          rowData.item?.live_stat?.atom_max_util?.capacity ||
+                        0}"
+                        description=""
+                      ></lablup-progress-bar>
+                    </div>
+                  </div>
+                `
+              : html``}
+            ${rowData.item.atom_max_slot
+              ? html`
+                  <div class="vertical start-justified layout">
+                    <div class="usage-items">
+                      ATOM Max(mem)
+                      ${rowData.item.live_stat
+                        ? `${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                            BackendAISessionList.bytesToGiB(
+                              rowData.item.live_stat?.atom_max_mem?.current,
+                              2,
+                            ),
+                            2,
+                          )} /
+                      ${BackendAISessionList._prefixFormatWithoutTrailingZeros(
+                        BackendAISessionList.bytesToGiB(
+                          rowData.item.live_stat?.atom_max_mem?.capacity,
+                          2,
+                        ),
+                        2,
+                      )}`
+                        : `-`}
+                      GiB
+                    </div>
+                    <div class="horizontal start-justified center layout">
+                      <lablup-progress-bar
+                        class="usage"
+                        progress="${rowData.item.live_stat?.atom_max_mem
                           ?.ratio}"
                         description=""
                       ></lablup-progress-bar>

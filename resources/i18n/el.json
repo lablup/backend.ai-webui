@@ -1539,6 +1539,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Atom Max Υποστήριξη",
     "ATOMPlusSupport": "Υποστήριξη ATOM+",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "Να επιτρέπεται η εγγραφή από τον αντιπρόσωπο",
@@ -1546,6 +1547,7 @@
     "Config": "Διαμόρφωση",
     "ConfigPerJobSchduler": "Ρυθμίσεις προγραμματιστή",
     "ConfigPerJobSchdulerDescription": "Οι τιμές στη ρύθμιση χρονοπρογραμματισμού είναι οι προεπιλογές που θα χρησιμοποιηθούν όταν δεν υπάρχει ρύθμιση χρονοπρογραμματισμού σε κάθε ομάδα πόρων. Εάν υπάρχει μια ρύθμιση για συγκεκριμένη ομάδα πόρων, αυτή η τιμή θα αγνοηθεί.",
+    "DescATOMMaxSupport": "Χρησιμοποιήστε Rebellions ATOM Max Accelerator.",
     "DescATOMPlusSupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM+.",
     "DescATOMSupport": "Χρησιμοποιήστε τον επιταχυντή Rebellions ATOM",
     "DescAllowAgentSideRegistration": "Επιτρέψτε στον πράκτορα να εγγραφεί στον διαχειριστή. Χρησιμοποιήστε μόνο εάν το backend.ai cluster διαχειρίζεται σε ασφαλή τοποθεσία.",
@@ -1589,6 +1591,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Υποστήριξη ROCm GPU",
     "RegisterNewImagesFromRepo": "Καταχωρήστε νέες εικόνες από το αποθετήριο",
+    "RequireATOMMaxPlugin": "Απαιτεί το Backend.AI ATOM Max Plugin.",
     "RequireATOMPlugin": "Απαιτεί Backend.AI ATOM Plugin.",
     "RequireATOMPlusPlugin": "Απαιτεί πρόσθετο Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Απαιτείται Backend.AI Virtual CUDA API Layer Plugin.",
@@ -1753,6 +1756,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",
+    "ATOMMaxEnabled": "Atom Max NPU ενεργοποιημένη",
     "ATOMPlusEnabled": "Ενεργοποιημένο ATOM+ NPU",
     "Accept": "Αποδέχομαι",
     "AcceptSharedVFolder": "Τώρα μπορείτε να αποκτήσετε πρόσβαση σε φάκελο:",

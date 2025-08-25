@@ -1543,6 +1543,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Atom Max Desteği",
     "ATOMPlusSupport": "ATOM+ Desteği",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "Aracı tarafı kaydına izin ver",
@@ -1550,6 +1551,7 @@
     "Config": "yapılandırma",
     "ConfigPerJobSchduler": "Zamanlayıcı ayarları",
     "ConfigPerJobSchdulerDescription": "Zamanlayıcı ayarındaki değerler, her kaynak grubunda zamanlayıcı ayarı olmadığında kullanılacak varsayılan değerlerdir. Kaynak grubuna özel bir ayar varsa bu değer yok sayılır.",
+    "DescATOMMaxSupport": "Rebellions ATOM Max Accelerator kullanın.",
     "DescATOMPlusSupport": "Rebellions ATOM+ hızlandırıcısını kullanın.",
     "DescATOMSupport": "Rebellions ATOM hızlandırıcısını kullanın",
     "DescAllowAgentSideRegistration": "Temsilcinin kendisini yöneticiye kaydetmesine izin verin. Yalnızca Backend.Ai kümesi güvenli konumda yönetilirse kullanın.",
@@ -1593,6 +1595,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU desteği",
     "RegisterNewImagesFromRepo": "Depodan yeni görüntüler kaydet",
+    "RequireATOMMaxPlugin": "Backend.AI ATOM Max Eklentisi gereklidir.",
     "RequireATOMPlugin": "Backend.AI ATOM Eklentisi gerektirir.",
     "RequireATOMPlusPlugin": "Backend.AI ATOM+ Eklentisi gerektirir.",
     "RequireFGPUPlugin": "Backend.AI Sanal CUDA API Katmanı Eklentisi gerektirir.",
@@ -1757,6 +1760,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Etkin",
+    "ATOMMaxEnabled": "Atom Max NPU etkin",
     "ATOMPlusEnabled": "ATOM+ NPU Etkin",
     "Accept": "Kabul etmek",
     "AcceptSharedVFolder": "Artık klasöre erişebilirsiniz:",

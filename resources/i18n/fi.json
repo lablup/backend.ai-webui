@@ -1542,6 +1542,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Atom Max -tuki",
     "ATOMPlusSupport": "ATOM+-tuki",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "Salli agenttipuolen rekisteröinti",
@@ -1549,6 +1550,7 @@
     "Config": "Config",
     "ConfigPerJobSchduler": "Ajastimen asetukset",
     "ConfigPerJobSchdulerDescription": "Aikatauluttaja-asetuksen arvot ovat oletusarvoja, joita käytetään, kun kussakin resurssiryhmässä ei ole aikatauluttaja-asetusta. Jos resurssiryhmäkohtainen asetus on olemassa, tätä arvoa ei oteta huomioon.",
+    "DescATOMMaxSupport": "Käytä Rebellions ATOM Max -kiihdytin.",
     "DescATOMPlusSupport": "Käytä Rebellions ATOM+ -kiihdytintä.",
     "DescATOMSupport": "Käytä Rebellions ATOM-kiihdytintä",
     "DescAllowAgentSideRegistration": "Anna agentin rekisteröidä itsensä johtajalle. Käytä vain, jos backend.ai -klusteria hallitaan turvallisessa paikassa.",
@@ -1592,6 +1594,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU-tuki",
     "RegisterNewImagesFromRepo": "Rekisteröi uudet kuvat arkistosta",
+    "RequireATOMMaxPlugin": "Vaatii Backend.AI ATOM Max -lisäosan.",
     "RequireATOMPlugin": "Vaatii Backend.AI ATOM Pluginin.",
     "RequireATOMPlusPlugin": "Vaatii Backend.AI ATOM+ laajennuksen.",
     "RequireFGPUPlugin": "Vaatii Backend.AI Virtual CUDA API Layer -lisäosan.",
@@ -1756,6 +1759,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU käytössä",
+    "ATOMMaxEnabled": "Atom Max NPU käytössä",
     "ATOMPlusEnabled": "ATOM+ NPU käytössä",
     "Accept": "Hyväksy",
     "AcceptSharedVFolder": "Voit nyt käyttää kansiota:",

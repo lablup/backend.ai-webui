@@ -1543,6 +1543,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "原子最大支持",
     "ATOMPlusSupport": "ATOM+支持",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "允许代理端注册",
@@ -1550,6 +1551,7 @@
     "Config": "配置",
     "ConfigPerJobSchduler": "调度程序设置",
     "ConfigPerJobSchdulerDescription": "调度程序设置中的值是每个资源组中没有调度程序设置时使用的默认值。如果存在特定于资源组的设置，则该值将被忽略。",
+    "DescATOMMaxSupport": "使用 Rebellions ATOM Max 加速器。",
     "DescATOMPlusSupport": "使用 Rebellions ATOM+ 加速器。",
     "DescATOMSupport": "使用 Rebellions ATOM 加速器",
     "DescAllowAgentSideRegistration": "允许代理商向经理注册。仅当后端群集在安全位置管理时才使用。",
@@ -1593,6 +1595,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "ROCm GPU 支持",
     "RegisterNewImagesFromRepo": "从存储库注册新图像",
+    "RequireATOMMaxPlugin": "需要 Backend.AI ATOM Max 插件。",
     "RequireATOMPlugin": "需要 Backend.AI ATOM 插件。",
     "RequireATOMPlusPlugin": "需要 Backend.AI ATOM+ 插件。",
     "RequireFGPUPlugin": "需要 Backend.AI 虚拟 CUDA API 层插件。",
@@ -1757,6 +1760,7 @@
   },
   "summary": {
     "ATOMEnabled": "已启用 ATOM NPU",
+    "ATOMMaxEnabled": "Atom Max NPU启用",
     "ATOMPlusEnabled": "ATOM+ NPU 启用",
     "Accept": "接受",
     "AcceptSharedVFolder": "您现在可以访问文件夹：",

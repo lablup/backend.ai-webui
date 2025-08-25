@@ -1542,6 +1542,7 @@
     }
   },
   "settings": {
+    "ATOMMaxSupport": "Suporte Atom Max",
     "ATOMPlusSupport": "Suporte ATOM+",
     "ATOMSupport": "ATOM",
     "AllowAgentSideRegistration": "Permitir registro do lado do agente",
@@ -1549,6 +1550,7 @@
     "Config": "Config",
     "ConfigPerJobSchduler": "Configurações do agendador",
     "ConfigPerJobSchdulerDescription": "Os valores na configuração do planejador são os padrões a serem usados quando não há configuração do planejador em cada grupo de recursos. Se houver uma configuração específica do grupo de recursos, este valor será ignorado.",
+    "DescATOMMaxSupport": "Use Rebellions ATOM Max Accelerator.",
     "DescATOMPlusSupport": "Use o acelerador Rebellions ATOM+.",
     "DescATOMSupport": "Utilizar o acelerador ATOM da Rebellions",
     "DescAllowAgentSideRegistration": "Permitir que o agente se registre no gerente. Use somente se o cluster back -end.ai for gerenciado no local seguro.",
@@ -1592,6 +1594,7 @@
     "RNGDSupport": "RNGD",
     "ROCMGPUSupport": "Suporte para GPU ROCm",
     "RegisterNewImagesFromRepo": "Registre novas imagens do repositório",
+    "RequireATOMMaxPlugin": "Requer o Plugin Backend.AI ATOM Max.",
     "RequireATOMPlugin": "Requer o plug-in Backend.AI ATOM.",
     "RequireATOMPlusPlugin": "Requer plug-in Backend.AI ATOM+.",
     "RequireFGPUPlugin": "Requer Backend.AI Virtual CUDA API Layer Plugin.",
@@ -1756,6 +1759,7 @@
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ativado",
+    "ATOMMaxEnabled": "Atom Max NPU habilitado",
     "ATOMPlusEnabled": "ATOM+ NPU habilitado",
     "Accept": "Aceitar",
     "AcceptSharedVFolder": "Agora você pode acessar a pasta:",

@@ -28,6 +28,7 @@ const defaultConfigurationsSettings: BAIConfigurationsSetting = {
   ipu: false,
   atom: false,
   atom_plus: false,
+  atom_max: false,
   gaudi2: false,
   warboy: false,
   rngd: false,
@@ -50,6 +51,7 @@ interface BAIConfigurationsSetting {
   ipu: boolean;
   atom: boolean;
   atom_plus: boolean;
+  atom_max: boolean;
   gaudi2: boolean;
   warboy: boolean;
   rngd: boolean;
@@ -68,6 +70,7 @@ const resourcesSlots: {
   'ipu.device': 'ipu',
   'atom.device': 'atom',
   'atom-plus.device': 'atom_plus',
+  'atom-max.device': 'atom_max',
   'warboy.device': 'warboy',
   'rngd.device': 'rngd',
   'hyperaccel-lpu.device': 'hyperaccel_lpu',
@@ -299,6 +302,20 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.atom_plus,
           defaultValue: defaultConfigurationsSettings.atom_plus,
+          disabled: true,
+        },
+        {
+          type: 'checkbox',
+          title: t('settings.ATOMMaxSupport'),
+          description: (
+            <>
+              {t('settings.DescATOMMaxSupport')}
+              <br />
+              {t('settings.RequireATOMMaxPlugin')}
+            </>
+          ),
+          value: options.atom_max,
+          defaultValue: defaultConfigurationsSettings.atom_max,
           disabled: true,
         },
         {
