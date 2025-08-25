@@ -137,9 +137,10 @@ const DeploymentListPage: React.FC = () => {
                     propertyLabel: t('deployment.Status'),
                     type: 'enum',
                     options: [
-                      { label: 'Created', value: 'CREATED' },
-                      { label: 'Deploying', value: 'DEPLOYING' },
                       { label: 'Ready', value: 'READY' },
+                      { label: 'Pending', value: 'PENDING' },
+                      { label: 'Scaling', value: 'SCALING' },
+                      { label: 'Deploying', value: 'DEPLOYING' },
                       { label: 'Stopping', value: 'STOPPING' },
                       { label: 'Stopped', value: 'STOPPED' },
                     ],

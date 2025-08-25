@@ -1753,7 +1753,8 @@ Added in 25.13.0. This enum represents the deployment status of a model deployme
 enum DeploymentStatus
   @join__type(graph: STRAWBERRY)
 {
-  CREATED @join__enumValue(graph: STRAWBERRY)
+  PENDING @join__enumValue(graph: STRAWBERRY)
+  SCALING @join__enumValue(graph: STRAWBERRY)
   DEPLOYING @join__enumValue(graph: STRAWBERRY)
   READY @join__enumValue(graph: STRAWBERRY)
   STOPPING @join__enumValue(graph: STRAWBERRY)
@@ -2860,6 +2861,7 @@ enum LivenessStatus
   NOT_CHECKED @join__enumValue(graph: STRAWBERRY)
   HEALTHY @join__enumValue(graph: STRAWBERRY)
   UNHEALTHY @join__enumValue(graph: STRAWBERRY)
+  DEGRADED @join__enumValue(graph: STRAWBERRY)
 }
 
 """Added in 25.6.0. A pair of timestamp and value."""
@@ -4986,7 +4988,6 @@ type RoutingNode implements Node
   """The Globally Unique ID of this object"""
   id: ID!
   routingId: UUID!
-  endpointUrl: String!
   sessionId: UUID!
 
   """
