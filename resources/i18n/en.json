@@ -780,6 +780,8 @@
   "kernel": {
     "AgentId": "Agent ID",
     "ContainerId": "Container ID",
+    "Hostname": "Hostname",
+    "Kernel": "Kernel",
     "KernelId": "Kernel ID",
     "Kernels": "Kernels",
     "Role": "Role",

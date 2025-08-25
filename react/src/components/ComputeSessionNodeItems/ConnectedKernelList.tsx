@@ -66,7 +66,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       fragment ConnectedKernelListFragment on KernelNode @relay(plural: true) {
         id
         row_id
-        cluster_role
+        cluster_hostname
         status
         status_info
         agent_id
@@ -105,8 +105,8 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       ),
     },
     {
-      title: t('kernel.Role'),
-      dataIndex: 'cluster_role',
+      title: t('kernel.Hostname'),
+      dataIndex: 'cluster_hostname',
       render: (role) => <Tag>{role}</Tag>,
     },
     {

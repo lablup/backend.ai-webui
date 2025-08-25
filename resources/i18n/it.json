@@ -775,6 +775,8 @@
   "kernel": {
     "AgentId": "ID agente",
     "ContainerId": "ID contenitore",
+    "Hostname": "Nome host",
+    "Kernel": "Kernel",
     "KernelId": "Kernel ID",
     "Kernels": "Kernels",
     "Role": "Ruolo",

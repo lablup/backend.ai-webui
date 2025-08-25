@@ -774,6 +774,8 @@
   "kernel": {
     "AgentId": "Хийнний ID",
     "ContainerId": "Контейнер ID",
+    "Hostname": "Хотийнгуу нэр",
+    "Kernel": "Цөм",
     "KernelId": "Kernel ID",
     "Kernels": "Кернел",
     "Role": "Дүрэм",
