@@ -1,173 +1,534 @@
-import { PlusOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Card, Descriptions, Typography, Button, Table, Tag } from 'antd';
-import { ColumnType } from 'antd/lib/table';
-import { BAIFlex } from 'backend.ai-ui';
+import AccessTokenList from '../components/AccessTokenList';
+import DeploymentRevisionList from '../components/DeploymentRevisionList';
+import FlexActivityIndicator from '../components/FlexActivityIndicator';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import {
+  App,
+  Button,
+  Descriptions,
+  Tag,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type { DescriptionsProps } from 'antd';
+import {
+  BAICard,
+  BAIFlex,
+  filterOutNullAndUndefined,
+  toLocalId,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { ExternalLinkIcon } from 'lucide-react';
+import { Suspense, useState, useTransition } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import { useWebUINavigate } from 'src/hooks';
+import {
+  DeploymentDetailPageQuery,
+  DeploymentDetailPageQuery$data,
+} from 'src/__generated__/DeploymentDetailPageQuery.graphql';
+import { DeploymentDetailPageSetActiveRevisionMutation } from 'src/__generated__/DeploymentDetailPageSetActiveRevisionMutation.graphql';
+import { DeploymentDetailPageSyncReplicasMutation } from 'src/__generated__/DeploymentDetailPageSyncReplicasMutation.graphql';
+import DeploymentTokenGenerationModal from 'src/components/DeploymentTokenGenerationModal';
+import ReplicaList from 'src/components/ReplicaList';
+import RevisionCreationModal from 'src/components/RevisionCreationModal';
+import { useFetchKey } from 'src/hooks';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+
+const tabParam = withDefault(StringParam, 'revisionHistory');
+
+type RevisionNodeType = NonNullableNodeOnEdges<
+  NonNullable<DeploymentDetailPageQuery$data['deployment']>['revisionHistory']
+>;
 
 const DeploymentDetailPage: React.FC = () => {
   const { t } = useTranslation();
+  const { message, modal } = App.useApp();
+  const { token } = theme.useToken();
   const { deploymentId } = useParams<{ deploymentId: string }>();
-  const webuiNavigate = useWebUINavigate();
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const [selectedRevision, setSelectedRevision] =
+    useState<RevisionNodeType | null>(null);
+  const [isRevisionCreationModalOpen, { toggle: toggleRevisionCreationModal }] =
+    useToggle();
+  const [isTokenGenerationModalOpen, { toggle: toggleTokenGenerationModal }] =
+    useToggle();
 
-  // Get deployment data from mock data
-  // const deployment = mockDeployments.find((d) => d.id === deploymentId);
-  const deployment: any = undefined;
+  const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
+    graphql`
+      query DeploymentDetailPageQuery($deploymentId: ID!) {
+        deployment(id: $deploymentId) {
+          id
+          metadata {
+            name
+            status
+            createdAt
+            tags
+          }
+          networkAccess {
+            endpointUrl
+            openToPublic
+            accessTokens {
+              edges {
+                node {
+                  ...AccessTokenListFragment
+                }
+              }
+            }
+          }
+          defaultDeploymentStrategy {
+            type
+          }
+          revision {
+            id
+            name
+            modelRuntimeConfig {
+              runtimeVariant
+              inferenceRuntimeConfig
+              environ
+            }
+            createdAt
+          }
+          replicaState {
+            desiredReplicaCount
+            replicas {
+              edges {
+                node {
+                  id
+                  ...ReplicaListFragment
+                }
+              }
+            }
+          }
+          revision {
+            id
+          }
+          revisionHistory {
+            edges {
+              node {
+                id
+                name
+                ...DeploymentRevisionListFragment
+                ...RevisionCreationModalFragment
+              }
+            }
+          }
+          createdUser {
+            email
+          }
+        }
+      }
+    `,
+    { deploymentId: deploymentId || '' },
+    { fetchKey: fetchKey || undefined, fetchPolicy: 'store-and-network' },
+  );
 
-  if (!deployment) {
-    return <div>Deployment not found</div>;
-  }
+  const [commitSetCurrentRevision, isInFlightSetCurrentRevision] =
+    useMutation<DeploymentDetailPageSetActiveRevisionMutation>(graphql`
+      mutation DeploymentDetailPageSetActiveRevisionMutation(
+        $input: UpdateModelDeploymentInput!
+      ) {
+        updateModelDeployment(input: $input) {
+          deployment {
+            revision {
+              id
+            }
+          }
+        }
+      }
+    `);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'success';
-      case 'INACTIVE':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
+  const [commitSyncReplicas, isInFlightSyncReplicas] =
+    useMutation<DeploymentDetailPageSyncReplicasMutation>(graphql`
+      mutation DeploymentDetailPageSyncReplicasMutation(
+        $input: SyncReplicaInput!
+      ) {
+        syncReplicas(input: $input) {
+          ... on SyncReplicaPayload {
+            success
+          }
+        }
+      }
+    `);
 
-  const revisionColumns: ColumnType<any>[] = [
+  const deploymentInfoItems: DescriptionsProps['items'] = [
     {
-      title: t('deployment.RevisionNumber'),
-      dataIndex: 'name',
       key: 'name',
-      render: (name, row) => (
-        <Typography.Link
-          onClick={() =>
-            webuiNavigate(`/deployment/${deploymentId}/revision/${row.id}`)
+      label: t('deployment.DeploymentName'),
+      children: deployment?.metadata.name,
+    },
+    {
+      key: 'endpointUrl',
+      label: t('deployment.EndpointURL'),
+      children: deployment?.networkAccess?.endpointUrl ? (
+        <BAIFlex gap={'xxs'}>
+          <Typography.Text>
+            {deployment?.networkAccess?.endpointUrl}
+          </Typography.Text>
+          <Typography.Text
+            copyable={{ text: deployment?.networkAccess?.endpointUrl }}
+          />
+          <a
+            href={deployment?.networkAccess?.endpointUrl}
+            title=""
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Tooltip title={t('common.OpenInNewTab')}>
+              <ExternalLinkIcon />
+            </Tooltip>
+          </a>
+        </BAIFlex>
+      ) : (
+        '-'
+      ),
+    },
+    {
+      key: 'status',
+      label: t('deployment.Status'),
+      children: deployment?.metadata.status,
+    },
+    {
+      key: 'tags',
+      label: t('deployment.Tags'),
+      children: _.isEmpty(deployment?.metadata.tags) ? (
+        '-'
+      ) : (
+        <BAIFlex gap={'xxs'} wrap="wrap">
+          {_.map(deployment?.metadata.tags, (tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </BAIFlex>
+      ),
+    },
+    {
+      key: 'replicaCount',
+      label: t('deployment.NumberOfDesiredReplicas'),
+      children: deployment?.replicaState?.desiredReplicaCount || '-',
+    },
+    {
+      key: 'public',
+      label: t('deployment.Public'),
+      children: deployment?.networkAccess?.openToPublic ? (
+        <CheckOutlined style={{ color: token.colorSuccess }} />
+      ) : (
+        <CloseOutlined style={{ color: token.colorTextSecondary }} />
+      ),
+    },
+    {
+      key: 'defaultDeploymentStrategy',
+      label: t('deployment.DefaultDeploymentStrategy'),
+      children: (
+        <Tag
+          color={
+            deployment?.defaultDeploymentStrategy.type === 'ROLLING'
+              ? 'default'
+              : deployment?.defaultDeploymentStrategy.type === 'BLUE_GREEN'
+                ? 'blue'
+                : 'yellow'
           }
         >
-          {name}
-        </Typography.Link>
-      ),
-    },
-    {
-      title: t('deployment.ImageName'),
-      dataIndex: ['image', 'id'],
-      key: 'image',
-      render: (imageId) => <Typography.Text code>{imageId}</Typography.Text>,
-    },
-    {
-      title: t('deployment.RuntimeVariant'),
-      dataIndex: ['modelRuntimeConfig', 'runtimeVariant'],
-      key: 'runtimeVariant',
-      render: (variant) => <Tag color="blue">{variant}</Tag>,
-    },
-    {
-      title: t('deployment.MountDestination'),
-      dataIndex: ['modelMountConfig', 'mountDestination'],
-      key: 'mountDestination',
-    },
-    {
-      title: t('deployment.CreatedAt'),
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date) => dayjs(date).format('ll LT'),
-    },
-  ];
-
-  const descriptionsItems = [
-    {
-      label: t('deployment.DeploymentName'),
-      children: (
-        <Typography.Text copyable>{deployment.metadata.name}</Typography.Text>
-      ),
-    },
-    {
-      label: t('deployment.Domain'),
-      children: deployment.networkAccess.preferredDomainName,
-    },
-    {
-      label: t('deployment.URL'),
-      children: (
-        <Typography.Link
-          copyable
-          href={deployment.networkAccess.endpointUrl}
-          target="_blank"
-        >
-          {deployment.networkAccess.endpointUrl}
-        </Typography.Link>
-      ),
-    },
-    {
-      label: t('deployment.CreatorEmail'),
-      children: deployment.createdUser.email,
-    },
-    {
-      label: t('deployment.CreatedAt'),
-      children: dayjs(deployment.metadata.createdAt).format('ll LT'),
-    },
-    {
-      label: t('deployment.Status'),
-      children: (
-        <Tag color={getStatusColor(deployment.metadata.status)}>
-          {deployment.metadata.status}
+          {deployment?.defaultDeploymentStrategy.type}
         </Tag>
       ),
+    },
+    {
+      key: 'createdBy',
+      label: t('deployment.CreatedBy'),
+      children: (
+        <Typography.Text copyable={!!deployment?.createdUser?.email}>
+          {deployment?.createdUser?.email || '-'}
+        </Typography.Text>
+      ),
+    },
+    {
+      key: 'createdAt',
+      label: t('deployment.CreatedAt'),
+      children: dayjs(deployment?.metadata.createdAt).format('LLL'),
     },
   ];
 
   return (
-    <BAIFlex direction="column" align="stretch" gap="md">
-      <BAIFlex justify="between" align="center">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      {/* Header with title and refresh button */}
+      <BAIFlex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
-          {deployment.metadata.name}
+          {deployment?.metadata?.name || ''}
         </Typography.Title>
-        <BAIFlex gap="xs">
-          <Button icon={<ReloadOutlined />} />
+        <BAIFlex gap={'xxs'}>
+          <Tooltip title={t('button.Refresh')}>
+            <Button
+              loading={isPendingRefetch}
+              icon={<ReloadOutlined />}
+              onClick={() => {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
         </BAIFlex>
       </BAIFlex>
 
-      <Card
-        title={t('deployment.DeploymentInfo')}
-        extra={
-          <Button type="primary" icon={<EditOutlined />}>
-            {t('button.Edit')}
-          </Button>
-        }
-      >
+      {/* Deployment Info Card */}
+      <BAICard title={t('deployment.DeploymentInfo')}>
         <Descriptions
           bordered
-          column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-          items={descriptionsItems}
+          size="small"
+          column={{ xs: 1, sm: 2, md: 2, lg: 3, xl: 3, xxl: 3 }}
+          items={deploymentInfoItems}
         />
-      </Card>
+      </BAICard>
 
-      <Card
-        title={t('deployment.Revisions')}
-        extra={
-          <BAIFlex gap="xs">
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() =>
-                webuiNavigate(`/deployment/${deploymentId}/revision/create`)
-              }
-            >
-              {t('deployment.CreateRevision')}
-            </Button>
-          </BAIFlex>
-        }
+      {/* Tabbed Detail Card */}
+      <BAICard
+        activeTabKey={curTabKey}
+        onTabChange={setCurTabKey}
+        tabList={[
+          {
+            key: 'revisionHistory',
+            label: t('deployment.RevisionHistory'),
+          },
+          {
+            key: 'accessTokens',
+            label: t('deployment.AccessTokens'),
+          },
+          {
+            key: 'autoScalingRules',
+            label: t('deployment.AutoScalingRules'),
+          },
+          {
+            key: 'replicas',
+            label: t('deployment.Replicas'),
+          },
+        ]}
       >
-        <Table
-          rowKey="id"
-          columns={revisionColumns}
-          dataSource={_.map(
-            deployment?.revisionHistory?.edges,
-            (edge) => edge.node,
+        <Suspense
+          fallback={
+            <FlexActivityIndicator
+              style={{ height: 'calc(100vh - 145px)' }}
+              spinSize="large"
+            />
+          }
+        >
+          {curTabKey === 'revisionHistory' && (
+            <BAIFlex direction="column" align="stretch" gap="sm">
+              <BAIFlex direction="row" justify="end">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    toggleRevisionCreationModal();
+                  }}
+                >
+                  {t('deployment.CreateRevision')}
+                </Button>
+              </BAIFlex>
+              <DeploymentRevisionList
+                activeRevisionId={deployment?.revision?.id || ''}
+                revisionsFrgmt={_.map(
+                  deployment?.revisionHistory?.edges,
+                  (edge) => edge.node,
+                )}
+                onRevisionSelect={(revision, action) => {
+                  const foundRevision =
+                    _.find(
+                      deployment?.revisionHistory?.edges,
+                      (edge) => edge.node.id === revision.id,
+                    )?.node || null;
+
+                  if (action === 'createFrom') {
+                    setSelectedRevision(foundRevision);
+                    toggleRevisionCreationModal();
+                  } else if (action === 'setActive') {
+                    if (!foundRevision?.id) {
+                      message.error(t('message.FailedToUpdate'));
+                      return;
+                    }
+                    modal.confirm({
+                      title: t('deployment.SetAsActiveRevision'),
+                      content: (
+                        <Trans
+                          i18nKey="deployment.ConfirmUpdateActiveRevision"
+                          values={{ name: foundRevision?.name || '' }}
+                        />
+                      ),
+                      okButtonProps: {
+                        loading: isInFlightSetCurrentRevision,
+                      },
+                      onOk: () => {
+                        commitSetCurrentRevision({
+                          variables: {
+                            input: {
+                              activeRevisionId: toLocalId(foundRevision.id),
+                              id: deploymentId || '',
+                            },
+                          },
+                          onCompleted: (res, errors) => {
+                            const resultID =
+                              res?.updateModelDeployment?.deployment?.revision
+                                ?.id;
+                            if (
+                              _.isEmpty(resultID) ||
+                              resultID !== foundRevision.id
+                            ) {
+                              message.error(
+                                t('deployment.launcher.DeploymentUpdateFailed'),
+                              );
+                              return;
+                            }
+                            if (errors && errors.length > 0) {
+                              const errorMsgList = _.map(
+                                errors,
+                                (error) => error.message,
+                              );
+                              for (const error of errorMsgList) {
+                                message.error(error);
+                              }
+                            } else {
+                              message.success(t('message.SuccessfullyUpdated'));
+                              startRefetchTransition(() => {
+                                updateFetchKey();
+                              });
+                            }
+                          },
+                          onError: (err) => {
+                            message.error(
+                              err.message ||
+                                t('deployment.launcher.DeploymentUpdateFailed'),
+                            );
+                          },
+                        });
+                      },
+                    });
+                  }
+                }}
+              />
+            </BAIFlex>
           )}
-          pagination={false}
-          scroll={{ x: 'max-content' }}
-          bordered
+          {curTabKey === 'accessTokens' && (
+            <BAIFlex direction="column" align="stretch" gap="sm">
+              <BAIFlex direction="row" justify="end">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    toggleTokenGenerationModal();
+                  }}
+                >
+                  {t('deployment.GenerateToken')}
+                </Button>
+              </BAIFlex>
+              <BAIFlex direction="column" align="stretch" gap="sm">
+                <AccessTokenList
+                  accessTokensFrgmt={filterOutNullAndUndefined(
+                    _.map(
+                      deployment?.networkAccess?.accessTokens?.edges,
+                      (edge) => edge.node,
+                    ),
+                  )}
+                />
+              </BAIFlex>
+            </BAIFlex>
+          )}
+          {curTabKey === 'autoScalingRules' && (
+            <div>TODO: implement table or description</div>
+          )}
+          {curTabKey === 'replicas' && (
+            <BAIFlex direction="column" align="stretch" gap="sm">
+              <BAIFlex direction="row" justify="end">
+                <Button
+                  type="primary"
+                  loading={isInFlightSyncReplicas}
+                  onClick={() => {
+                    commitSyncReplicas({
+                      variables: {
+                        input: {
+                          modelDeploymentId: deploymentId || '',
+                        },
+                      },
+                      onCompleted: (res, errors) => {
+                        if (res?.syncReplicas?.success !== true) {
+                          message.error(t('deployment.SyncReplicasFailed'));
+                          return;
+                        }
+                        if (errors && errors.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error) => error.message,
+                          );
+                          for (const error of errorMsgList) {
+                            message.error(error);
+                          }
+                        } else {
+                          message.success(
+                            t('deployment.SyncReplicasRequested'),
+                          );
+                          startRefetchTransition(() => {
+                            updateFetchKey();
+                          });
+                        }
+                      },
+                      onError: (err) => {
+                        message.error(
+                          err.message || t('deployment.SyncReplicasFailed'),
+                        );
+                      },
+                    });
+                  }}
+                >
+                  {t('deployment.SyncReplicas')}
+                </Button>
+              </BAIFlex>
+              <BAIFlex direction="column" align="stretch" gap="sm">
+                <ReplicaList
+                  replicasFrgmt={filterOutNullAndUndefined(
+                    _.map(
+                      deployment?.replicaState?.replicas?.edges,
+                      (edge) => edge.node,
+                    ),
+                  )}
+                />
+              </BAIFlex>
+            </BAIFlex>
+          )}
+        </Suspense>
+      </BAICard>
+      <Suspense>
+        <RevisionCreationModal
+          open={isRevisionCreationModalOpen && !!deploymentId}
+          deploymentId={deploymentId || ''}
+          revisionFrgmt={selectedRevision}
+          onRequestClose={(success) => {
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+            setSelectedRevision(null);
+            toggleRevisionCreationModal();
+          }}
         />
-      </Card>
+      </Suspense>
+      <DeploymentTokenGenerationModal
+        open={isTokenGenerationModalOpen && !!deploymentId}
+        deploymentId={deploymentId || ''}
+        onRequestClose={(success) => {
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+          toggleTokenGenerationModal();
+        }}
+      />
     </BAIFlex>
   );
 };
