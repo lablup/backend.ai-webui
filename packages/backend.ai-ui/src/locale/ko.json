@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "인공물을 당기십시오"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "행동",
+    "Size": "크기",
+    "Updated": "업데이트",
+    "Version": "버전"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "최신 버전",
+    "Name": "이름",
+    "Size": "크기",
+    "Status": "상태",
+    "Updated": "업데이트",
+    "Action": "행동",
+    "Version": "버전"
   }
 }

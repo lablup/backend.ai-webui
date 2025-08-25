@@ -1065,6 +1065,16 @@
     "Username": "ชื่อผู้ใช้",
     "UsernameOptional": "ชื่อผู้ใช้ (ไม่บังคับ)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "เวอร์ชันที่มีอยู่",
+    "BasicInformation": "ข้อมูลพื้นฐาน",
+    "Description": "คำอธิบาย",
+    "Name": "ชื่อ",
+    "Registry": "การลงทะเบียน",
+    "ReservoirArtifacts": "สิ่งประดิษฐ์อ่างเก็บน้ำ",
+    "Size": "ขนาด",
+    "Type": "พิมพ์"
+  },
   "resourceGroup": {
     "Activate": "เปิดใช้งาน",
     "ActivateResourceGroup": "เปิดใช้งานกลุ่มทรัพยากร",
@@ -1975,6 +1985,7 @@
       "PrivacyPolicy": "นโยบายความเป็นส่วนตัว",
       "Project": "โครงการ",
       "Remaining": "ที่เหลืออยู่",
+      "Reservoir": "อ่างเก็บน้ำ",
       "ResourcePolicy": "นโยบายทรัพยากร",
       "Resources": "ทรัพยากร",
       "Serving": "การให้บริการ",

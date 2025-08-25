@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "拉工子"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "行動",
+    "Size": "尺寸",
+    "Version": "版本",
+    "Updated": "更新"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "姓名",
+    "LatestVersion": "最新版本",
+    "Size": "尺寸",
+    "Status": "地位",
+    "Updated": "更新",
+    "Action": "行動",
+    "Version": "版本"
   }
 }

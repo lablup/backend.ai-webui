@@ -74,7 +74,8 @@
     "react-i18next": "^15.4.1",
     "react-relay": "^20.1.0",
     "react-resizable": "^3.0.5",
-    "relay-runtime": "^20.1.0"
+    "relay-runtime": "^20.1.0",
+    "react-router-dom": "^6.30.0"
   },
   "devDependencies": {
     "@jest/expect": "30.0.0-beta.3",

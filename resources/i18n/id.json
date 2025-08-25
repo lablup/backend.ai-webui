@@ -1074,6 +1074,16 @@
     "Username": "Nama pengguna",
     "UsernameOptional": "Nama Pengguna (Opsional)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Versi yang tersedia",
+    "BasicInformation": "Informasi dasar",
+    "Description": "Keterangan",
+    "Name": "Nama",
+    "Registry": "Registri",
+    "ReservoirArtifacts": "Artefak reservoir",
+    "Size": "Ukuran",
+    "Type": "Jenis"
+  },
   "resourceGroup": {
     "Activate": "Mengaktifkan",
     "ActivateResourceGroup": "Aktifkan Grup Sumber Daya",
@@ -1993,6 +2003,7 @@
       "PrivacyPolicy": "Kebijakan Privasi",
       "Project": "Proyek",
       "Remaining": "Tersisa",
+      "Reservoir": "Waduk",
       "ResourcePolicy": "Kebijakan Sumber Daya",
       "Resources": "Sumber daya",
       "Serving": "Penyajian",

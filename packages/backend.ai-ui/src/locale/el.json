@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Τραβήξτε το τεχνούργημα"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Δράση",
+    "Size": "Μέγεθος",
+    "Updated": "Ενημερωμένος",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Τελευταία έκδοση",
+    "Name": "Ονομα",
+    "Size": "Μέγεθος",
+    "Status": "Κατάσταση",
+    "Updated": "Ενημερωμένος",
+    "Action": "Δράση",
+    "Version": "Εκδοχή"
   }
 }

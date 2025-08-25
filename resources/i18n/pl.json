@@ -1075,6 +1075,16 @@
     "Username": "Nazwa Użytkownika",
     "UsernameOptional": "Nazwa użytkownika (opcjonalnie)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Dostępne wersje",
+    "BasicInformation": "Podstawowe informacje",
+    "Description": "Opis",
+    "Name": "Nazwa",
+    "Registry": "Rejestr",
+    "ReservoirArtifacts": "Artefakty zbiornikowe",
+    "Size": "Rozmiar",
+    "Type": "Typ"
+  },
   "resourceGroup": {
     "Activate": "Aktywować",
     "ActivateResourceGroup": "Aktywuj grupę zasobów",
@@ -1993,6 +2003,7 @@
       "PrivacyPolicy": "Polityka prywatności",
       "Project": "Projekt",
       "Remaining": "Pozostały",
+      "Reservoir": "Zbiornik",
       "ResourcePolicy": "Polityka zasobów",
       "Resources": "Zasoby",
       "Serving": "Obsługa",

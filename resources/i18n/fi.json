@@ -1075,6 +1075,16 @@
     "Username": "Käyttäjätunnus",
     "UsernameOptional": "Käyttäjätunnus (valinnainen)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "Saatavilla olevat versiot",
+    "BasicInformation": "Perustiedot",
+    "Description": "Kuvaus",
+    "Name": "Nimi",
+    "Registry": "Rekisteröinti",
+    "ReservoirArtifacts": "Säiliön esineitä",
+    "Size": "Koko",
+    "Type": "Tyyppi"
+  },
   "resourceGroup": {
     "Activate": "Aktivoida",
     "ActivateResourceGroup": "Aktivoi resurssiryhmä",
@@ -1994,6 +2004,7 @@
       "PrivacyPolicy": "Tietosuojakäytäntö",
       "Project": "Hanke",
       "Remaining": "Jäljellä oleva",
+      "Reservoir": "Säiliö",
       "ResourcePolicy": "Resurssipolitiikka",
       "Resources": "Resurssit",
       "Serving": "Palvelevat",

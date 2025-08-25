@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Вытащить артефакт"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Действие",
+    "Size": "Размер",
+    "Updated": "Обновлено",
+    "Version": "Версия"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Имя",
+    "LatestVersion": "Последняя версия",
+    "Size": "Размер",
+    "Status": "Статус",
+    "Updated": "Обновлено",
+    "Action": "Действие",
+    "Version": "Версия"
   }
 }

@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Artefakt çekmek"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Aksiyon",
+    "Size": "Boyut",
+    "Version": "Versiyon",
+    "Updated": "Güncellenmiş"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "İsim",
+    "LatestVersion": "En son sürüm",
+    "Size": "Boyut",
+    "Status": "Durum",
+    "Updated": "Güncellenmiş",
+    "Action": "Aksiyon",
+    "Version": "Versiyon"
   }
 }

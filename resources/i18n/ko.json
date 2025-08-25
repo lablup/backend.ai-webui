@@ -1080,6 +1080,16 @@
     "Username": "사용자 이름",
     "UsernameOptional": "사용자 이름 (선택)"
   },
+  "reservoirPage": {
+    "AvailableVersions": "사용 가능한 버전",
+    "BasicInformation": "기본 정보",
+    "Description": "설명",
+    "Name": "이름",
+    "Registry": "기재",
+    "ReservoirArtifacts": "저수지 인공물",
+    "Size": "크기",
+    "Type": "유형"
+  },
   "resourceGroup": {
     "Activate": "활성화",
     "ActivateResourceGroup": "자원 그룹 활성화",
@@ -2000,6 +2010,7 @@
       "PrivacyPolicy": "개인정보 보호",
       "Project": "프로젝트",
       "Remaining": "가용량",
+      "Reservoir": "저수지",
       "ResourcePolicy": "자원 정책",
       "Resources": "자원",
       "Serving": "모델 서빙",

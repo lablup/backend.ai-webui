@@ -14,5 +14,23 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Олдворыг татах"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Үйл ажиллагаа",
+    "Size": "Хэмжээ",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Version": "Таамаглал"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
+    "Name": "Нэр",
+    "Size": "Хэмжээ",
+    "Status": "Байдал",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Action": "Үйл ажиллагаа",
+    "Version": "Таамаглал"
   }
 }
