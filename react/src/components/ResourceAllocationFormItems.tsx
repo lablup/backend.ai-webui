@@ -54,6 +54,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAlloca
       mem: '0g',
       shmem: '0g',
       accelerator: 0,
+      acceleratorType: '',
     },
     num_of_sessions: 1,
     cluster_mode: 'single-node',
@@ -707,7 +708,7 @@ const ResourceAllocationFormItems: React.FC<
                     <Form.Item
                       noStyle
                       shouldUpdate={(prev, next) =>
-                        prev.resource.shmem !== next.resource.shmem
+                        prev?.resource?.shmem !== next?.resource?.shmem
                       }
                     >
                       {() => {

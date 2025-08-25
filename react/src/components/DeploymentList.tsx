@@ -10,6 +10,7 @@ import {
   BAITableProps,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -188,7 +189,9 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         dataIndex: ['revision', 'name'],
         key: 'revisionName',
         render: (name, row) => (
-          <WebUILink to={`/deployment/revision/${row.id}`}>{name}</WebUILink>
+          <WebUILink to={`/deployment/revision/${toLocalId(row.id)}`}>
+            {name}
+          </WebUILink>
         ),
         defaultHidden: true,
       },
