@@ -1,0 +1,3 @@
+[merge "i18njson"]
+    name = custom merge driver for i18n JSON files using jq
+    driver = ./scripts/i18n-json-merge.sh %O %A %B %A
