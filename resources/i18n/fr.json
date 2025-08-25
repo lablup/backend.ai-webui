@@ -621,13 +621,13 @@
     "SmallerResourceThenImageRequires": "Votre demande de ressources est inférieure au minimum requis par l'image. Essayez d'autres ressources.",
     "TooManyLoginFailures": "Il y a eu trop d'échecs de connexion en peu de temps. La connexion est bloquée pendant un certain temps.",
     "UnauthorizedToken": "Jeton non autorisé. Veuillez vérifier votre jeton.",
-    "UnexpectedError": "Une erreur inattendue s'est produite. \nVeuillez réessayer plus tard ou contacter le support si le problème persiste.",
     "UnknownError": "Une erreur inconnue s'est produite. Veuillez réessayer.",
     "UpdateError": "Erreur de mise à jour",
     "UserHasNoGroup": "L'utilisateur n'a pas de groupe. Veuillez contacter l'administrateur pour résoudre ce problème.",
     "UserNameAlreadyExist": "Le nom d'utilisateur existe déjà. Il ne peut pas être dupliqué.",
     "VirtualFolderAlreadyExist": "Un dossier virtuel portant le même nom existe déjà. Supprimez votre propre dossier ou déclinez l'invitation.",
-    "WrongAPIServerAddress": "Mauvaise adresse du serveur API."
+    "WrongAPIServerAddress": "Mauvaise adresse du serveur API.",
+    "UnexpectedError": "Une erreur inattendue s'est produite. \nVeuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI.",
@@ -642,7 +642,14 @@
     "InputTooShort": "Entrée Trop Courte",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
-    "ValueRequired": "ValeurRequis"
+    "ValueRequired": "ValeurRequis",
+    "UploadingFile": "Téléchargement {{fileName}} ...",
+    "UploadFailedDesc": "Une erreur s'est produite lors du téléchargement du fichier.",
+    "UploadFailed": "Échec de la téléchargement {{fileName}}.",
+    "UploadCompletedDesc": "Le fichier sélectionné a été téléchargé avec succès.",
+    "UploadCompleted": "{{fileName}} téléchargement complet",
+    "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
+    "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur."
   },
   "general": {
     "AccessKey": "Clef d'accès",

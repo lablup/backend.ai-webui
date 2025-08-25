@@ -620,13 +620,13 @@
     "SmallerResourceThenImageRequires": "La richiesta di risorse è inferiore al minimo richiesto dall'immagine. Provare con altre risorse.",
     "TooManyLoginFailures": "Si sono verificati troppi errori di accesso in poco tempo. L'accesso è bloccato per un po'.",
     "UnauthorizedToken": "Token non autorizzato. Controllare il token.",
-    "UnexpectedError": "Si è verificato un errore imprevisto. \nRiprova più tardi o contatta il supporto se il problema persiste.",
     "UnknownError": "Si è verificato un errore sconosciuto. Si prega di riprovare.",
     "UpdateError": "Errore di aggiornamento",
     "UserHasNoGroup": "L'utente non ha un gruppo. Contattare l'amministratore per risolvere il problema.",
     "UserNameAlreadyExist": "Il nome utente esiste già. Non può essere duplicato.",
     "VirtualFolderAlreadyExist": "Esiste già una cartella virtuale con lo stesso nome. Eliminare la propria cartella o declinare l'invito.",
-    "WrongAPIServerAddress": "Indirizzo del server API errato."
+    "WrongAPIServerAddress": "Indirizzo del server API errato.",
+    "UnexpectedError": "Si è verificato un errore imprevisto. \nRiprova più tardi o contatta il supporto se il problema persiste."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "Questo blocco di errore viene visualizzato solo nell'ambiente di sviluppo WebUI.",
@@ -641,7 +641,14 @@
     "InputTooShort": "Inputtroppo corto",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "NoPermissions": "Nessuna autorizzazione per accedere a questa cartella",
-    "ValueRequired": "ValoreRichiesto"
+    "ValueRequired": "ValoreRichiesto",
+    "UploadingFile": "Caricamento {{fileName}} ...",
+    "UploadFailedDesc": "Si è verificato un errore durante il caricamento del file.",
+    "UploadFailed": "Impossibile caricare {{fileName}}.",
+    "UploadCompletedDesc": "Il file selezionato è stato caricato correttamente.",
+    "UploadCompleted": "{{fileName}} Carica completa",
+    "ProcessingUpload": "Il tuo file viene caricato. \nAttendere prego.",
+    "FileUploadCancelled": "Il caricamento del file è stato cancellato dalla richiesta dell'utente."
   },
   "general": {
     "AccessKey": "Chiave di accesso",

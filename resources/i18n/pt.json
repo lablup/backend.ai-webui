@@ -621,13 +621,13 @@
     "SmallerResourceThenImageRequires": "O seu pedido de recursos é mais pequeno do que o mínimo exigido pela imagem. Tente mais recursos.",
     "TooManyLoginFailures": "Ocorreram demasiadas falhas de início de sessão num curto espaço de tempo. O início de sessão está bloqueado durante algum tempo.",
     "UnauthorizedToken": "Token não autorizado. Por favor, verifique o seu token.",
-    "UnexpectedError": "Ocorreu um erro inesperado. \nTente novamente mais tarde ou entre em contato com o suporte se o problema persistir.",
     "UnknownError": "Ocorreu um erro desconhecido. Por favor, tente novamente.",
     "UpdateError": "Erro de ATUALIZAÇÃO",
     "UserHasNoGroup": "O utilizador não tem grupo. Contacte o administrador para resolver o problema.",
     "UserNameAlreadyExist": "O nome de utilizador já existe. Não pode ser duplicado.",
     "VirtualFolderAlreadyExist": "Já existe uma pasta virtual com o mesmo nome. Elimine a sua própria pasta ou recuse o convite.",
-    "WrongAPIServerAddress": "Endereço do servidor API incorreto."
+    "WrongAPIServerAddress": "Endereço do servidor API incorreto.",
+    "UnexpectedError": "Ocorreu um erro inesperado. \nTente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
   "errorBoundary": {
     "DisplayOnlyDevEnv": "Este bloco de erro é apresentado apenas no ambiente de desenvolvimento da WebUI.",
@@ -642,7 +642,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "UploadingFile": "Upload {{fileName}} ...",
+    "UploadFailedDesc": "Ocorreu um erro ao fazer upload do arquivo.",
+    "UploadFailed": "Falha ao fazer upload {{fileName}}.",
+    "UploadCompletedDesc": "O arquivo selecionado foi enviado com sucesso.",
+    "UploadCompleted": "{{fileName}} upload completo",
+    "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
+    "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário."
   },
   "general": {
     "AccessKey": "Chave de acesso",

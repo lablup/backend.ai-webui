@@ -15,9 +15,8 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import _ from 'lodash';
-import { use } from 'react';
+import { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as tus from 'tus-js-client';
 
 interface ExplorerActionControlsProps {
   selectedFiles: Array<VFolderFile>;
@@ -25,20 +24,24 @@ interface ExplorerActionControlsProps {
     success: boolean,
     modifiedItems?: Array<VFolderFile>,
   ) => void;
+  onUpload: (files: Array<RcFile>, currentPath: string) => void;
 }
 
 const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   selectedFiles,
   onRequestClose,
+  onUpload,
 }) => {
   const baiClient = useConnectedBAIClient();
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { modal } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
+  const [isUploading, { toggle: toggleUploading }] = useToggle(false);
+  const uploadProcessingRef = useRef<string | null>(null);
 
   const { data: vfolderInfo, isFetching } = useQuery({
     queryKey: ['vfolderInfo', targetVFolderId],
@@ -49,63 +52,50 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
     gcTime: 0,
   });
 
-  const handleUpload = (fileList: Array<RcFile>) => {
-    const maxUploadSize = baiClient?._config?.maxFileUploadSize;
-    if (
-      maxUploadSize > 0 &&
-      _.some(fileList, (file) => file.size > maxUploadSize)
-    ) {
-      message.error(t('comp:FileExplorer.error.FileUploadSizeLimit'));
+  const handleUpload = async (fileList: RcFile[], currentPath: string) => {
+    // When uploading folder, ant design trigger `beforeUpload` for each file in the folder.
+    // We need to ensure that the upload is processed only once for the entire batch.
+    const batchId = fileList.map((f) => f.name + f.size).join('|');
+    if (uploadProcessingRef.current === batchId) {
       return;
     }
 
-    // TODO: show confirmation modal before upload already existing files
-    // TODO: show progress during upload via using bai-notification
-    const uploadFiles: Array<Promise<tus.Upload>> = _.map(
-      fileList,
-      async (file) => {
-        const fullPath = _.join(
-          [currentPath, file.webkitRelativePath || file.name],
-          '/',
-        );
+    uploadProcessingRef.current = batchId;
+    toggleUploading();
 
-        try {
-          const url = await baiClient?.vfolder?.create_upload_session(
-            fullPath,
-            file,
-            targetVFolderId,
-          );
-          const upload = new tus.Upload(file, {
-            endpoint: url,
-            uploadUrl: url,
-            retryDelays: [0, 3000, 5000, 10000, 20000],
-            chunkSize: 15 * 1024 * 1024, // 15MB
-            metadata: {
-              filename: fullPath,
-              filetype: file.type,
-            },
-            // TODO: use baiNotification after notification migration to backend.ai-ui
-            onError: (err) => {},
-            onProgress: (bytesUploaded, bytesTotal) => {},
-            onSuccess: () => {
-              onRequestClose(true);
-            },
-          });
-          return upload;
-        } catch (err: any) {
-          if (err && err.message) {
-            message.error(err.message);
-          } else if (err && err.title) {
-            message.error(err.title);
-          }
-          return Promise.reject(err);
-        }
-      },
-    );
-    Promise.all(uploadFiles).then((uploads) => {
-      uploads.forEach((upload) => {
-        upload.start();
-      });
+    const existFilePromises = _.map(fileList, async (file) => {
+      // Currently, backend.ai only supports finding existing files by using list_files API.
+      // This API throw an error if the file does not exist in the target vfolder.
+      // So, we need to catch the error and return undefined.
+      const searchPath = [
+        currentPath,
+        file.webkitRelativePath.split('/').slice(0, -1).join('/'),
+      ].join('/');
+      return baiClient.vfolder
+        .list_files(searchPath, targetVFolderId)
+        .then((files) => {
+          return _.find(files.items, { name: file.name });
+        })
+        .catch(() => {
+          return undefined;
+        });
+    });
+
+    await Promise.all(existFilePromises).then((res) => {
+      const result = _.filter(res, (item) => item !== undefined);
+      toggleUploading();
+      if (!_.isEmpty(result)) {
+        modal.confirm({
+          title: t('comp:FileExplorer.DuplicatedFiles'),
+          content: t('comp:FileExplorer.DuplicatedFilesDesc'),
+          onOk: () => {
+            onUpload(fileList, currentPath);
+          },
+        });
+      } else {
+        onUpload(fileList, currentPath);
+      }
+      uploadProcessingRef.current = null;
     });
   };
 
@@ -146,7 +136,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 label: (
                   <Upload
                     beforeUpload={(_, fileList) => {
-                      handleUpload(fileList);
+                      handleUpload(fileList, currentPath);
                       return false; // Prevent default upload behavior
                     }}
                     showUploadList={false}
@@ -162,7 +152,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                   <Upload
                     directory
                     beforeUpload={(_, fileList) => {
-                      handleUpload(fileList);
+                      handleUpload(fileList, currentPath);
                       return false;
                     }}
                     showUploadList={false}
@@ -176,7 +166,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           }}
         >
           <Tooltip title={!lg && t('general.button.Upload')}>
-            <Button icon={<UploadOutlined />} onClick={() => {}}>
+            <Button icon={<UploadOutlined />} loading={isUploading}>
               {lg && t('general.button.Upload')}
             </Button>
           </Tooltip>

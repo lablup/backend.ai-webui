@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} z {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Ustawienia tabeli",
-    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
-    "SearchTableColumn": "Wyszukaj kolumny tabeli"
-  },
   "general": {
     "NSelected": "{{count}}",
     "button": {
@@ -38,7 +33,14 @@
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
     "error": {
       "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania."
-    }
+    },
+    "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
+    "DuplicatedFiles": "Nadpisz potwierdzenie"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Ustawienia tabeli",
+    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
+    "SearchTableColumn": "Wyszukaj kolumny tabeli"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
