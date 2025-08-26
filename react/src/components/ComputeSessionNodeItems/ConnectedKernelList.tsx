@@ -184,7 +184,6 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         dataSource={filterOutNullAndUndefined(kernelNodes)}
         style={{ width: '100%' }}
         // TODO: implement pagination when compute_session_node query supports pagination
-        pagination={false}
       />
 
       <BAIUnmountAfterClose>
