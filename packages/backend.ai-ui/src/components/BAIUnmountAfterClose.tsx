@@ -28,32 +28,26 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   children,
 }) => {
   // Ensure there is only one child element
-  const modalElement = React.Children.only(children);
-  const isModalOpen = modalElement.props.open;
+  const childElement = React.Children.only(children);
+  const isOpen = childElement.props.open;
 
   // Manage internal rendering state
-  const [isMount, setIsMount] = useState(isModalOpen);
+  const [isMount, setIsMount] = useState(isOpen);
 
   // Update internal state when the child's open prop becomes true
   useLayoutEffect(() => {
-    if (isModalOpen) {
+    if (isOpen) {
       setIsMount(true);
     }
-  }, [isModalOpen]);
+  }, [isOpen]);
 
   // Return null if the modal should not be rendered
   if (!isMount) {
     return null;
   }
 
-  // Type guards to check if the element is a Modal or Drawer
-  const hasAfterClose = 'afterClose' in modalElement.props;
-  const hasAfterOpenChange = 'afterOpenChange' in modalElement.props;
-
   // Preserve the original afterClose callback if it exists
-  const originalAfterClose = hasAfterClose
-    ? (modalElement.props as ModalProps).afterClose
-    : undefined;
+  const originalAfterClose = (childElement.props as ModalProps).afterClose;
 
   // New handler to intercept afterClose
   const handleModalAfterClose: ModalProps['afterClose'] = (...args) => {
@@ -65,9 +59,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   };
 
   // Preserve the original afterOpenChange callback if it exists
-  const originalAfterOpenChange = hasAfterOpenChange
-    ? modalElement.props.afterOpenChange
-    : undefined;
+  const originalAfterOpenChange = childElement.props.afterOpenChange;
 
   // New handler to intercept afterOpenChange
   const handleModalAfterOpenChange: DrawerProps['afterOpenChange'] = (open) => {
@@ -81,11 +73,11 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   };
 
   // Clone the child element with proper typing
-  const clonedChild = React.cloneElement(modalElement, {
+  const clonedChild = React.cloneElement(childElement, {
     // for Modal
-    ...(hasAfterClose && { afterClose: handleModalAfterClose }),
+    afterClose: handleModalAfterClose,
     // for Drawer
-    ...(hasAfterOpenChange && { afterOpenChange: handleModalAfterOpenChange }),
+    afterOpenChange: handleModalAfterOpenChange,
   });
 
   return clonedChild;
