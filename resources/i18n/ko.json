@@ -69,6 +69,7 @@
     "Threshold": "기준값"
   },
   "button": {
+    "Action": "작업",
     "Add": "추가",
     "Apply": "적용",
     "AutoRefresh": "자동 새로고침",

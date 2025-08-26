@@ -67,6 +67,7 @@
     "Threshold": "Kynnys"
   },
   "button": {
+    "Action": "Toiminta",
     "Add": "Lisää",
     "Apply": "Hae",
     "AutoRefresh": "Automaattinen päivitys",

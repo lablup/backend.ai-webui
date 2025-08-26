@@ -67,6 +67,7 @@
     "Threshold": "Ambang"
   },
   "button": {
+    "Action": "Tindakan",
     "Add": "Tambah",
     "Apply": "Mohon",
     "AutoRefresh": "Penyegaran automatik",

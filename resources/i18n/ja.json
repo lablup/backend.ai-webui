@@ -67,6 +67,7 @@
     "Threshold": "しきい値"
   },
   "button": {
+    "Action": "アクション",
     "Add": "追加",
     "Apply": "応募する",
     "AutoRefresh": "自動更新",

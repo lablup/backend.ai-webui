@@ -103,7 +103,7 @@ const DeploymentStrategyFormItem: React.FC = () => {
         }}
       </Form.Item>
       <Form.Item
-        name={['desiredReplicaCount']}
+        name={['replicaState', 'desiredReplicaCount']}
         label={t('deployment.NumberOfDesiredReplicas')}
         rules={[
           {
