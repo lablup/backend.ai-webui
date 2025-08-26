@@ -47,7 +47,7 @@ const ServingPage: React.FC = () => {
 
   const lifecycleStageFilter =
     queryParams.lifecycleStage === 'active'
-      ? `lifecycle_stage == "created" | lifecycle_stage == "destroying"`
+      ? `lifecycle_stage != "destroyed"`
       : `lifecycle_stage == "${queryParams.lifecycleStage}"`;
 
   const queryVariables = useMemo(
