@@ -65,7 +65,7 @@ const AccessTokenList: React.FC<AccessTokenListProps> = ({
     },
     {
       key: 'validUntil',
-      title: t('deployment.ExpiredDate'),
+      title: t('deployment.ExpirationDate'),
       dataIndex: 'validUntil',
       render: (value) => dayjs(value).format('LLL'),
     },
