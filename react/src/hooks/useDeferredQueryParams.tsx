@@ -1,7 +1,7 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
-import { useRef, useCallback, useMemo } from 'react';
+import { useRef, useCallback, useMemo, useEffect } from 'react';
 import {
   useQueryParams,
   QueryParamConfigMap,
@@ -10,6 +10,9 @@ import {
 } from 'use-query-params';
 
 const queryParamsAtom = atom<Record<string, any>>({});
+
+// Reference counting atom for thread-safe tracking of parameter key usage
+const paramRefCountAtom = atom<Map<string, number>>(new Map());
 
 /**
  * A custom hook that synchronizes URL search parameters with application state while handling React transitions.
@@ -42,6 +45,51 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
   paramConfigMap: QPCMap,
 ) {
   const [query, setQuery] = useQueryParams(paramConfigMap);
+  const setSharedQuery = useSetAtom(queryParamsAtom);
+  const setParamRefCount = useSetAtom(paramRefCountAtom);
+
+  const stringifiedParamConfigMap = useMemo(() => {
+    return JSON.stringify(paramConfigMap);
+  }, [paramConfigMap]);
+
+  // Reference counting based cleanup: only remove params when last component unmounts
+  useEffect(() => {
+    const keys = Object.keys(paramConfigMap);
+
+    // Mount: increase reference count for each key
+    setParamRefCount((prev) => {
+      const newMap = new Map(prev);
+      keys.forEach((key) => {
+        newMap.set(key, (newMap.get(key) || 0) + 1);
+      });
+      return newMap;
+    });
+
+    return () => {
+      // Unmount: decrease reference count and cleanup if necessary
+      setParamRefCount((prev) => {
+        const newMap = new Map(prev);
+        keys.forEach((key) => {
+          const currentCount = (newMap.get(key) || 0) - 1;
+
+          if (currentCount <= 0) {
+            // Last component using this key is unmounting, safe to cleanup
+            newMap.delete(key);
+            setSharedQuery((queryPrev) => {
+              const newState = { ...queryPrev };
+              delete newState[key];
+              return newState;
+            });
+          } else {
+            // Other components still using this key
+            newMap.set(key, currentCount);
+          }
+        });
+        return newMap;
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stringifiedParamConfigMap, setParamRefCount, setSharedQuery]);
 
   const isBeforeInitializingRef = useRef(true);
   const selectiveQueryAtom = useMemo(
@@ -67,11 +115,10 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(paramConfigMap)],
+    [stringifiedParamConfigMap],
   );
 
   let localQuery = useAtomValue(selectiveQueryAtom);
-  const setSharedQuery = useSetAtom(queryParamsAtom);
 
   const setDeferredQuery = useCallback(
     (
