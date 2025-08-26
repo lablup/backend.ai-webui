@@ -331,6 +331,7 @@ const BAITable = <RecordType extends object = any>({
           opacity: loading ? 0.7 : 1,
           transition: 'opacity 0.3s ease',
         }}
+        scroll={tableProps.scroll || { x: 'max-content' }}
         components={
           resizable
             ? _.merge(components || {}, {

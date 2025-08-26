@@ -1,16 +1,20 @@
 import AccessTokenList from '../components/AccessTokenList';
+import BAIConfirmModalWithInput from '../components/BAIConfirmModalWithInput';
 import DeploymentRevisionList from '../components/DeploymentRevisionList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import {
   CheckOutlined,
   CloseOutlined,
+  DownOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
+  Alert,
   App,
   Button,
   Descriptions,
+  Dropdown,
   Tag,
   theme,
   Tooltip,
@@ -30,12 +34,17 @@ import { Suspense, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import { DeploymentDetailPageDeleteMutation } from 'src/__generated__/DeploymentDetailPageDeleteMutation.graphql';
 import {
   DeploymentDetailPageQuery,
   DeploymentDetailPageQuery$data,
 } from 'src/__generated__/DeploymentDetailPageQuery.graphql';
+<<<<<<< HEAD
 import { DeploymentDetailPageSetActiveRevisionMutation } from 'src/__generated__/DeploymentDetailPageSetActiveRevisionMutation.graphql';
 import { DeploymentDetailPageSyncReplicasMutation } from 'src/__generated__/DeploymentDetailPageSyncReplicasMutation.graphql';
+=======
+import DeploymentModifyModal from 'src/components/DeploymentModifyModal';
+>>>>>>> cc7bb3933 (feat(FR-1407): add modify and delete action buttons for deployment detail page)
 import DeploymentTokenGenerationModal from 'src/components/DeploymentTokenGenerationModal';
 import ReplicaList from 'src/components/ReplicaList';
 import RevisionCreationModal from 'src/components/RevisionCreationModal';
@@ -62,12 +71,14 @@ const DeploymentDetailPage: React.FC = () => {
     useToggle();
   const [isTokenGenerationModalOpen, { toggle: toggleTokenGenerationModal }] =
     useToggle();
+  const [isModifyModalOpen, { toggle: toggleModifyModal }] = useToggle();
+  const [isDeleteModalOpen, { toggle: toggleDeleteModal }] = useToggle();
 
   const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
     graphql`
       query DeploymentDetailPageQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
-          id
+          id @required(action: THROW)
           metadata {
             name
             status
@@ -125,6 +136,7 @@ const DeploymentDetailPage: React.FC = () => {
           createdUser {
             email
           }
+          ...DeploymentModifyModalFragment
         }
       }
     `,
@@ -155,6 +167,19 @@ const DeploymentDetailPage: React.FC = () => {
         syncReplicas(input: $input) {
           ... on SyncReplicaPayload {
             success
+          }
+        }
+      }
+    `);
+
+  const [commitDeleteDeployment, isInFlightDeleteDeployment] =
+    useMutation<DeploymentDetailPageDeleteMutation>(graphql`
+      mutation DeploymentDetailPageDeleteMutation(
+        $input: DeleteModelDeploymentInput!
+      ) {
+        deleteModelDeployment(input: $input) {
+          deployment {
+            id
           }
         }
       }
@@ -264,7 +289,7 @@ const DeploymentDetailPage: React.FC = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {deployment?.metadata?.name || ''}
         </Typography.Title>
-        <BAIFlex gap={'xxs'}>
+        <BAIFlex gap={'xs'}>
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefetch}
@@ -276,6 +301,34 @@ const DeploymentDetailPage: React.FC = () => {
               }}
             />
           </Tooltip>
+          <Button
+            onClick={() => {
+              toggleModifyModal();
+            }}
+          >
+            {t('button.Edit')}
+          </Button>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: 'delete',
+                  label: t('button.Delete'),
+                  onClick: () => {
+                    toggleDeleteModal();
+                  },
+                },
+              ],
+            }}
+            trigger={['click']}
+          >
+            <Button>
+              <BAIFlex gap={'xxs'}>
+                {t('button.Action')}
+                <DownOutlined />
+              </BAIFlex>
+            </Button>
+          </Dropdown>
         </BAIFlex>
       </BAIFlex>
 
@@ -527,6 +580,85 @@ const DeploymentDetailPage: React.FC = () => {
             });
           }
           toggleTokenGenerationModal();
+        }}
+      />
+
+      <Suspense>
+        <DeploymentModifyModal
+          deploymentFrgmt={deployment}
+          open={isModifyModalOpen}
+          onRequestClose={(success) => {
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+            toggleModifyModal();
+          }}
+        />
+      </Suspense>
+
+      <BAIConfirmModalWithInput
+        open={isDeleteModalOpen}
+        onOk={() => {
+          commitDeleteDeployment({
+            variables: {
+              input: {
+                id: deploymentId || '',
+              },
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.deleteModelDeployment?.deployment?.id) {
+                message.error(t('message.FailedToDelete'));
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error);
+                }
+              } else {
+                message.success(t('message.SuccessfullyDeleted'));
+              }
+            },
+            onError: (err) => {
+              message.error(err.message || t('message.FailedToDelete'));
+            },
+          });
+          toggleDeleteModal();
+        }}
+        onCancel={() => {
+          toggleDeleteModal();
+        }}
+        confirmText={deployment?.metadata?.name ?? ''}
+        content={
+          <BAIFlex
+            direction="column"
+            gap="md"
+            align="stretch"
+            style={{ marginBottom: token.marginXS, width: '100%' }}
+          >
+            <Alert
+              type="warning"
+              message={t('dialog.warning.DeleteForeverDesc')}
+              style={{ width: '100%' }}
+            />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('deployment.TypeDeploymentNameToDelete')}
+              </Typography.Text>
+              (
+              <Typography.Text code>
+                {deployment?.metadata?.name}
+              </Typography.Text>
+              )
+            </BAIFlex>
+          </BAIFlex>
+        }
+        title={t('deployment.DeleteDeployment')}
+        okText={t('button.Delete')}
+        okButtonProps={{
+          loading: isInFlightDeleteDeployment,
         }}
       />
     </BAIFlex>
