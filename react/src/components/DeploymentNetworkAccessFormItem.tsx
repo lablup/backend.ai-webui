@@ -18,9 +18,7 @@ const DeploymentNetworkAccessFormItem: React.FC = () => {
         name={['networkAccess', 'preferredDomainName']}
         label={t('deployment.launcher.PreferredDomainName')}
       >
-        <Input
-          placeholder={t('deployment.launcher.PreferredDomainNamePlaceholder')}
-        />
+        <Input placeholder={'my-model.example.com'} />
       </Form.Item>
 
       <Form.Item
