@@ -1,9 +1,9 @@
-import { BAIImportArtifactModalArtifactFragment$key } from '../../__generated__/BAIImportArtifactModalArtifactFragment.graphql';
+import { BAIDeleteArtifactModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactModalArtifactFragment.graphql';
 import {
-  BAIImportArtifactModalArtifactRevisionFragment$data,
-  BAIImportArtifactModalArtifactRevisionFragment$key,
-} from '../../__generated__/BAIImportArtifactModalArtifactRevisionFragment.graphql';
-import { BAIImportArtifactModalImportArtifactsMutation } from '../../__generated__/BAIImportArtifactModalImportArtifactsMutation.graphql';
+  BAIDeleteArtifactModalArtifactRevisionFragment$data,
+  BAIDeleteArtifactModalArtifactRevisionFragment$key,
+} from '../../__generated__/BAIDeleteArtifactModalArtifactRevisionFragment.graphql';
+import { BAIDeleteArtifactModalCleanupVersionMutation } from '../../__generated__/BAIDeleteArtifactModalCleanupVersionMutation.graphql';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
@@ -16,50 +16,68 @@ import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, App, Modal, ModalProps, Tooltip } from 'antd';
+import { Alert, message, Modal, ModalProps, Tooltip } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
-  NonNullable<BAIImportArtifactModalArtifactRevisionFragment$data>[number];
+  NonNullable<BAIDeleteArtifactModalArtifactRevisionFragment$data>[number];
 
-export type BAIImportArtifactModalArtifactFragmentKey =
-  BAIImportArtifactModalArtifactFragment$key;
-export type BAIImportArtifactModalArtifactRevisionFragmentKey =
-  BAIImportArtifactModalArtifactRevisionFragment$key;
+export type BAIDeleteArtifactModalArtifactFragmentKey =
+  BAIDeleteArtifactModalArtifactFragment$key;
 
-export interface BAIImportArtifactModalProps
+export type BAIDeleteArtifactModalArtifactRevisionFragmentKey =
+  BAIDeleteArtifactModalArtifactRevisionFragment$key;
+
+export interface BAIDeleteArtifactModalProps
   extends Omit<ModalProps, 'onOk' | 'onCancel'> {
-  selectedArtifactFrgmt: BAIImportArtifactModalArtifactFragment$key | null;
-  selectedArtifactRevisionFrgmt: BAIImportArtifactModalArtifactRevisionFragment$key;
+  selectedArtifactFrgmt: BAIDeleteArtifactModalArtifactFragment$key | null;
+  selectedArtifactRevisionFrgmt: BAIDeleteArtifactModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
   onCancel: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
-const BAIImportArtifactModal = ({
+const BAIDeleteArtifactModal = ({
   selectedArtifactFrgmt,
   selectedArtifactRevisionFrgmt,
   onOk,
   onCancel,
   ...modalProps
-}: BAIImportArtifactModalProps) => {
+}: BAIDeleteArtifactModalProps) => {
   const { t } = useTranslation();
-  const { message } = App.useApp();
+
+  const [cleanupVersion, isInflightCleanupVersion] =
+    useMutation<BAIDeleteArtifactModalCleanupVersionMutation>(graphql`
+      mutation BAIDeleteArtifactModalCleanupVersionMutation(
+        $input: CleanupArtifactRevisionsInput!
+      ) {
+        cleanupArtifactRevisions(input: $input) {
+          artifactRevisions {
+            edges {
+              node {
+                status
+              }
+            }
+          }
+        }
+      }
+    `);
   const selectedArtifact =
-    useFragment<BAIImportArtifactModalArtifactFragment$key>(
+    useFragment<BAIDeleteArtifactModalArtifactFragment$key>(
       graphql`
-        fragment BAIImportArtifactModalArtifactFragment on Artifact {
+        fragment BAIDeleteArtifactModalArtifactFragment on Artifact {
           id
           ...BAIArtifactDescriptionsFragment
         }
       `,
       selectedArtifactFrgmt,
     );
+
   const selectedArtifactRevision =
-    useFragment<BAIImportArtifactModalArtifactRevisionFragment$key>(
+    useFragment<BAIDeleteArtifactModalArtifactRevisionFragment$key>(
       graphql`
-        fragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision
+        fragment BAIDeleteArtifactModalArtifactRevisionFragment on ArtifactRevision
         @relay(plural: true) {
           id
           version
@@ -70,44 +88,21 @@ const BAIImportArtifactModal = ({
       selectedArtifactRevisionFrgmt,
     );
 
-  const [importArtifacts, isInflightImportArtifacts] =
-    useMutation<BAIImportArtifactModalImportArtifactsMutation>(graphql`
-      mutation BAIImportArtifactModalImportArtifactsMutation(
-        $input: ImportArtifactsInput!
-      ) {
-        importArtifacts(input: $input) {
-          tasks {
-            taskId
-            artifactRevision {
-              version
-            }
-          }
-          artifactRevisions {
-            edges {
-              node {
-                id
-                status
-              }
-            }
-          }
-        }
-      }
-    `);
-
   const filteredSelectedRevisions = selectedArtifactRevision.filter(
-    (revision) => revision.status === 'SCANNED',
+    (revision) =>
+      revision.status !== 'PULLING' && revision.status !== 'SCANNED',
   );
 
   const columns: BAIColumnsType<ArtifactRevision> = [
     {
-      title: t('comp:BAIImportArtifactModal.Version'),
+      title: t('comp:BAIDeleteArtifactModal.Version'),
       dataIndex: 'version',
       key: 'version',
       render: (version: string) => <BAIText monospace>{version}</BAIText>,
       width: '50%',
     },
     {
-      title: t('comp:BAIImportArtifactModal.Size'),
+      title: t('comp:BAIDeleteArtifactModal.Size'),
       dataIndex: 'size',
       key: 'size',
       render: (size: string) => (
@@ -117,15 +112,13 @@ const BAIImportArtifactModal = ({
       ),
     },
   ];
-
   return (
     <BAIUnmountAfterClose>
       <Modal
-        title={t('comp:BAIImportArtifactModal.PullVersion')}
+        title={t('comp:BAIDeleteArtifactModal.RemoveVersions')}
         centered
         onOk={(e) => {
-          onOk(e);
-          importArtifacts({
+          cleanupVersion({
             variables: {
               input: {
                 artifactRevisionIds: filteredSelectedRevisions.map((revision) =>
@@ -135,17 +128,18 @@ const BAIImportArtifactModal = ({
             },
             onCompleted: (res, errors) => {
               if (errors && errors.length > 0) {
-                errors.forEach((err) =>
+                errors.forEach((err) => {
                   message.error(
                     err.message ??
-                      t('comp:BAIImportArtifactModal.FailedToPullVersions'),
-                  ),
-                );
+                      t('comp:BAIDeleteArtifactModal.FailedToRemoveVersions'),
+                  );
+                });
                 return;
               }
               message.success(
-                t('comp:BAIImportArtifactModal.SuccessFullyPulled', {
-                  count: res.importArtifacts.artifactRevisions.edges.length,
+                t('comp:BAIDeleteArtifactModal.SuccessFullyRemoved', {
+                  count:
+                    res.cleanupArtifactRevisions.artifactRevisions.edges.length,
                 }),
               );
               onOk(e);
@@ -153,7 +147,7 @@ const BAIImportArtifactModal = ({
             onError: (err) => {
               message.error(
                 err.message ??
-                  t('comp:BAIImportArtifactModal.FailedToPullVersions'),
+                  t('comp:BAIDeleteArtifactModal.FailedToRemoveVersions'),
               );
             },
           });
@@ -161,42 +155,43 @@ const BAIImportArtifactModal = ({
         onCancel={(e) => {
           onCancel(e);
         }}
-        okText={t('comp:BAIImportArtifactModal.Pull')}
+        okText={t('general.button.Remove')}
         cancelText={t('general.button.Cancel')}
         okButtonProps={{
-          loading: isInflightImportArtifacts,
+          danger: true,
+          loading: isInflightCleanupVersion,
           disabled:
-            isInflightImportArtifacts || _.isEmpty(filteredSelectedRevisions),
+            _.isEmpty(filteredSelectedRevisions) || isInflightCleanupVersion,
         }}
         {...modalProps}
       >
-        <BAIFlex direction="column" gap="md" align="stretch">
+        <BAIFlex direction="column" gap={'sm'} align="stretch">
           {filteredSelectedRevisions.length !==
-            selectedArtifactRevision.length && (
+          selectedArtifactRevision.length ? (
             <Alert
               icon={
                 <Tooltip
                   title={t(
-                    'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
+                    'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
                 >
                   <QuestionCircleFilled />
                 </Tooltip>
               }
               showIcon
-              message={t('comp:BAIImportArtifactModal.ExcludedVersions', {
+              message={t('comp:BAIDeleteArtifactModal.ExcludedVersions', {
                 count:
                   selectedArtifactRevision.length -
                   filteredSelectedRevisions.length,
               })}
             />
-          )}
+          ) : null}
           {selectedArtifact && (
             <BAIArtifactDescriptions artifactFrgmt={selectedArtifact} />
           )}
           <BAITable<ArtifactRevision>
             columns={filterOutEmpty(columns)}
-            dataSource={filterOutNullAndUndefined(filteredSelectedRevisions)}
+            dataSource={filterOutNullAndUndefined(selectedArtifactRevision)}
             pagination={{
               showSizeChanger: false,
             }}
@@ -207,4 +202,4 @@ const BAIImportArtifactModal = ({
   );
 };
 
-export default BAIImportArtifactModal;
+export default BAIDeleteArtifactModal;

@@ -34,20 +34,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Tirez l'artefact",
     "Pull": "Tirer",
-    "PulledVersionsAreExcluded": "Les versions tirées sont exclues.",
-    "Name": "Nom",
-    "Type": "Taper",
-    "Description": "Description",
-    "Source": "Source"
+    "PullVersion": "Version de traction",
+    "ExcludedVersions": "Les versions {{count}} sont exclues.",
+    "OnlySCANNEDVersionsCanBePulled": "Seules les versions numérisées peuvent être tirées.",
+    "Size": "Taille",
+    "Version": "Version",
+    "SuccessFullyPulled": "Pull demandé avec succès pour les versions {{count}}.",
+    "FailedToPullVersions": "N'a pas réussi à tirer des versions."
   },
   "comp:BAIArtifactTable": {
     "Action": "Action",
     "Size": "Taille",
     "Updated": "Mis à jour",
     "Version": "Version",
-    "PullLatestVersion": "Tirez la dernière version"
+    "PullLatestVersion": "Tirez la dernière version",
+    "Scanned": "Numérisé"
   },
   "comp:BAIArtifactRevisionTable": {
     "LatestVersion": "Dernière version",
@@ -55,7 +57,52 @@
     "Size": "Taille",
     "Status": "Statut",
     "Updated": "Mis à jour",
-    "Action": "Action",
+    "Version": "Version",
+    "Control": "Contrôle",
+    "PullThisVersion": "Tirez cette version",
+    "RemoveThisVersion": "Supprimer cette version"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Annuler",
+      "Remove": "Retirer",
+      "Close": "Fermer"
+    },
+    "TotalItems": "Éléments totaux {{total}}"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "Les versions {{count}} sont exclues.",
+    "RemoveVersions": "Supprimer les versions",
+    "SuccessFullyRemoved": "Suppression avec succès des versions {{count}}.",
+    "Version": "Version",
+    "Size": "Taille",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Seules les versions qui ne sont pas en tirant ou numérisées peuvent être supprimées.",
+    "FailedToRemoveVersions": "Échec de la suppression des versions."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Description",
+    "Name": "Nom",
+    "Source": "Source",
+    "Type": "Taper"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Annuler la traction",
+    "CancelingWillRestartThePulling": "L'annulation redémarrera le traction",
+    "FailedToCancelThePulling": "Échec de l'annulation de la traction.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} version annulée avec succès.",
+    "WARNING": "AVERTISSEMENT",
+    "YouAreAboutToCancelThisVersion": "Vous êtes sur le point d'annuler cette version",
+    "VersionIsPullingNow": "La version {{version}} tire maintenant."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Entrez un ID de modèle. (par exemple OpenAI / GPT-OSS-20B)",
+    "EnterAVersion": "Entrez une version. (par défaut: Main)",
+    "Failed to import model from hugging face": "Échec de l'importation du modèle à partir de l'étreinte",
+    "Import": "Importer",
+    "ModalDescription": "Importez un modèle à partir de l'étreinte Face en spécifiant l'ID et la version du modèle.",
+    "ModalTitle": "Importer à partir du visage étreint",
+    "ModelID": "ID de modèle",
+    "SuccessfullyImportedModelFromHuggingFace": "A demandé avec succès l'importation de modèle à partir de l'étreinte",
     "Version": "Version"
   }
 }

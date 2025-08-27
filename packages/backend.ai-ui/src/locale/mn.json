@@ -34,20 +34,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Олдворыг татах",
     "Pull": "Татах",
-    "PulledVersionsAreExcluded": "Татсан хувилбарыг хассан болно.",
-    "Name": "Нэр",
-    "Type": "Маяг",
-    "Description": "Тодорхойлолт / төрөл анги",
-    "Source": "Язгуур"
+    "PullVersion": "Хувилбарыг ашиглах",
+    "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
+    "OnlySCANNEDVersionsCanBePulled": "Зөвхөн сканнердсан хувилбарыг татаж авах боломжтой.",
+    "Size": "Хэмжээ",
+    "Version": "Таамаглал",
+    "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
+    "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй."
   },
   "comp:BAIArtifactTable": {
     "Action": "Үйл ажиллагаа",
     "Size": "Хэмжээ",
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал",
-    "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах"
+    "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах",
+    "Scanned": "Дээгэрсэн"
   },
   "comp:BAIArtifactRevisionTable": {
     "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
@@ -55,7 +57,52 @@
     "Size": "Хэмжээ",
     "Status": "Байдал",
     "Updated": "Шинэчилсэн цаг нь",
-    "Action": "Үйл ажиллагаа",
+    "Version": "Таамаглал",
+    "Control": "Удирдах",
+    "PullThisVersion": "Энэ хувилбарыг татаж",
+    "RemoveThisVersion": "Энэ хувилбарыг арилгах"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Цуаах",
+      "Remove": "Зөөх",
+      "Close": "Ойр дөхөм"
+    },
+    "TotalItems": "Нийт {{total}} зүйлүүд"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
+    "RemoveVersions": "Хувилбарыг устгах",
+    "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
+    "Version": "Таамаглал",
+    "Size": "Хэмжээ",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Зөвхөн татах, сканнердсан, сканнердах боломжгүй хувилбарыг арилгаж болно.",
+    "FailedToRemoveVersions": "Хувилбаруудыг арилгаж чадсангүй."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Тодорхойлолт / төрөл анги",
+    "Name": "Нэр",
+    "Source": "Язгуур",
+    "Type": "Маяг"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Татах",
+    "CancelingWillRestartThePulling": "Цуцлах нь татах ажлыг дахин эхлүүлэх болно",
+    "FailedToCancelThePulling": "Татаж авахаа цуцалж чадсангүй.",
+    "VersionPullCanceledSuccessfully": "Татах {{version}} хувилбар амжилттай цуцаллаа.",
+    "WARNING": "Анхааруулга",
+    "YouAreAboutToCancelThisVersion": "Та энэ хувилбарыг цуцлах гэж байна",
+    "VersionIsPullingNow": "{{version}} хувилбар нь одоо татаж байна."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Загварын ID-г оруулна уу. (e.g. overai / gpt-oss-20b)",
+    "EnterAVersion": "Хувилбарыг оруулна уу. (Үндсэн: Үндсэн)",
+    "Failed to import model from hugging face": "Нүүрээ тэвэрч авахаас загварыг импортлох боломжгүй байна",
+    "Import": "Импортлох",
+    "ModalDescription": "Загварын ID болон хувилбарыг зааж өгөх замаар нүүрээ тэвэрч, загварчлалыг импортлох.",
+    "ModalTitle": "Тэвэрч буй царайг импортлох",
+    "ModelID": "Загвар он",
+    "SuccessfullyImportedModelFromHuggingFace": "Нүүр царайг тэвэрч авахаас шууд импортлохыг хүссэн",
     "Version": "Таамаглал"
   }
 }

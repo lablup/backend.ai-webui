@@ -34,20 +34,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Τραβήξτε το τεχνούργημα",
     "Pull": "Τραβήξτε",
-    "PulledVersionsAreExcluded": "Οι εκδόσεις που τραβήχτηκαν εξαιρούνται.",
-    "Name": "Ονομα",
-    "Type": "Τύπος",
-    "Description": "Περιγραφή",
-    "Source": "Πηγή"
+    "PullVersion": "Εκδοχή έλξης",
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "OnlySCANNEDVersionsCanBePulled": "Μπορούν να τραβηχτούν μόνο οι σαρωμένες εκδόσεις.",
+    "Size": "Μέγεθος",
+    "Version": "Εκδοχή",
+    "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
+    "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις."
   },
   "comp:BAIArtifactTable": {
     "Action": "Δράση",
     "Size": "Μέγεθος",
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή",
-    "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση"
+    "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση",
+    "Scanned": "Σαρωμένος"
   },
   "comp:BAIArtifactRevisionTable": {
     "LatestVersion": "Τελευταία έκδοση",
@@ -55,7 +57,52 @@
     "Size": "Μέγεθος",
     "Status": "Κατάσταση",
     "Updated": "Ενημερωμένος",
-    "Action": "Δράση",
+    "Version": "Εκδοχή",
+    "Control": "Ελεγχος",
+    "PullThisVersion": "Τραβήξτε αυτήν την έκδοση",
+    "RemoveThisVersion": "Καταργήστε αυτήν την έκδοση"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Ματαίωση",
+      "Remove": "Αφαιρώ",
+      "Close": "Κοντά"
+    },
+    "TotalItems": "Σύνολο {{total}} στοιχεία"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "RemoveVersions": "Καταργήστε τις εκδόσεις",
+    "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
+    "Version": "Εκδοχή",
+    "Size": "Μέγεθος",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Μόνο εκδόσεις που δεν είναι σε τράβηγμα ή σαρωμένη μπορούν να αφαιρεθούν.",
+    "FailedToRemoveVersions": "Αποτυχία κατάργησης των εκδόσεων."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Περιγραφή",
+    "Name": "Ονομα",
+    "Source": "Πηγή",
+    "Type": "Τύπος"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Ακυρώσω",
+    "CancelingWillRestartThePulling": "Η ακύρωση θα επανεκκινήσει το τράβηγμα",
+    "FailedToCancelThePulling": "Απέτυχε να ακυρώσει το τράβηγμα.",
+    "VersionPullCanceledSuccessfully": "Τραβήξτε το {{version}} έκδοση ακυρώθηκε με επιτυχία.",
+    "WARNING": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ",
+    "YouAreAboutToCancelThisVersion": "Πρόκειται να ακυρώσετε αυτήν την έκδοση",
+    "VersionIsPullingNow": "{{version}} Έκδοση τραβά τώρα."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Εισαγάγετε ένα αναγνωριστικό μοντέλου. (π.χ. OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Εισαγάγετε μια έκδοση. (προεπιλογή: κύρια)",
+    "Failed to import model from hugging face": "Αποτυχία εισαγωγής μοντέλου από το πρόσωπο αγκάλιασμα",
+    "Import": "Εισαγωγή",
+    "ModalDescription": "Εισαγάγετε ένα μοντέλο από το αγκάλιασμα προσδιορίζοντας το αναγνωριστικό μοντέλου και την έκδοση.",
+    "ModalTitle": "Εισαγωγή από αγκαλιά πρόσωπο",
+    "ModelID": "Μοντέλο ταυτότητας",
+    "SuccessfullyImportedModelFromHuggingFace": "Ζήτησε επιτυχώς εισαγωγή μοντέλου από το αγκάλιασμα πρόσωπο",
     "Version": "Εκδοχή"
   }
 }
