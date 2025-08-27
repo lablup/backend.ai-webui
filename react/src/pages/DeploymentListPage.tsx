@@ -53,7 +53,7 @@ const DeploymentListPage: React.FC = () => {
   const deployments = useLazyLoadQuery<DeploymentListPageQuery>(
     graphql`
       query DeploymentListPageQuery($filter: DeploymentFilter, $first: Int) {
-        deployments(filter: $filter, first: $first) {
+        deployments(filter: $filter, first: $first) @since(version: "25.14.0") {
           edges {
             node {
               id
