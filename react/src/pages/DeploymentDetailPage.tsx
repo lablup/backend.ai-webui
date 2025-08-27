@@ -34,11 +34,14 @@ import { Suspense, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import { DeploymentDetailPageDeleteAutoScalingRuleMutation } from 'src/__generated__/DeploymentDetailPageDeleteAutoScalingRuleMutation.graphql';
 import { DeploymentDetailPageDeleteMutation } from 'src/__generated__/DeploymentDetailPageDeleteMutation.graphql';
 import {
   DeploymentDetailPageQuery,
   DeploymentDetailPageQuery$data,
 } from 'src/__generated__/DeploymentDetailPageQuery.graphql';
+import AutoScalingRuleList from 'src/components/AutoScalingRuleList';
+import AutoScalingRuleSettingModal from 'src/components/AutoScalingRuleSettingModal';
 import DeploymentModifyModal from 'src/components/DeploymentModifyModal';
 import DeploymentTokenGenerationModal from 'src/components/DeploymentTokenGenerationModal';
 import RevisionCreationModal from 'src/components/RevisionCreationModal';
@@ -52,6 +55,12 @@ type RevisionNodeType = NonNullableNodeOnEdges<
   NonNullable<DeploymentDetailPageQuery$data['deployment']>['revisionHistory']
 >;
 
+type AutoScalingRuleNodeType = NonNullable<
+  NonNullable<
+    NonNullable<DeploymentDetailPageQuery$data['deployment']>['scalingRule']
+  >['autoScalingRules']
+>[number];
+
 const DeploymentDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
@@ -62,12 +71,18 @@ const DeploymentDetailPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [selectedRevision, setSelectedRevision] =
     useState<RevisionNodeType | null>(null);
+  const [selectedAutoScalingRule, setSelectedAutoScalingRule] =
+    useState<AutoScalingRuleNodeType | null>(null);
   const [isRevisionCreationModalOpen, { toggle: toggleRevisionCreationModal }] =
     useToggle();
   const [isTokenGenerationModalOpen, { toggle: toggleTokenGenerationModal }] =
     useToggle();
   const [isModifyModalOpen, { toggle: toggleModifyModal }] = useToggle();
   const [isDeleteModalOpen, { toggle: toggleDeleteModal }] = useToggle();
+  const [
+    isSetAutoScalingRuleModalOpen,
+    { toggle: toggleSetAutoScalingRuleModal },
+  ] = useToggle();
 
   const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
     graphql`
@@ -93,16 +108,6 @@ const DeploymentDetailPage: React.FC = () => {
           }
           defaultDeploymentStrategy {
             type
-          }
-          revision {
-            id
-            name
-            modelRuntimeConfig {
-              runtimeVariant
-              inferenceRuntimeConfig
-              environ
-            }
-            createdAt
           }
           replicaState {
             desiredReplicaCount
@@ -135,6 +140,13 @@ const DeploymentDetailPage: React.FC = () => {
           }
           createdUser {
             email
+          }
+          scalingRule {
+            autoScalingRules {
+              id
+              ...AutoScalingRuleListFragment
+              ...AutoScalingRuleSettingModalFragment
+            }
           }
           ...DeploymentModifyModalFragment
         }
@@ -169,6 +181,17 @@ const DeploymentDetailPage: React.FC = () => {
           deployment {
             id
           }
+        }
+      }
+    `);
+
+  const [commitDeleteAutoScalingRule, isInFlightDeleteAutoScalingRule] =
+    useMutation<DeploymentDetailPageDeleteAutoScalingRuleMutation>(graphql`
+      mutation DeploymentDetailPageDeleteAutoScalingRuleMutation(
+        $input: DeleteAutoScalingRuleInput!
+      ) {
+        deleteAutoScalingRule(input: $input) {
+          id
         }
       }
     `);
@@ -480,7 +503,86 @@ const DeploymentDetailPage: React.FC = () => {
             </BAIFlex>
           )}
           {curTabKey === 'autoScalingRules' && (
-            <div>TODO: implement table or description</div>
+            <AutoScalingRuleList
+              autoScalingRulesFrgmt={deployment?.scalingRule?.autoScalingRules}
+              onRequestSettingAutoScalingRule={(record) => {
+                if (record) {
+                  setSelectedAutoScalingRule(
+                    _.find(
+                      deployment?.scalingRule?.autoScalingRules,
+                      (rule) => rule.id === record.id,
+                    ) || null,
+                  );
+                }
+                toggleSetAutoScalingRuleModal();
+              }}
+              onRequestDelete={(record) => {
+                if (!record?.id) {
+                  message.error(
+                    t('message.FailedToDelete', {
+                      name: t('deployment.AutoScalingRule'),
+                    }),
+                  );
+                  return;
+                }
+                modal.confirm({
+                  title: t('deployment.DeleteAutoScalingRule'),
+                  content: t('dialog.ask.DoYouWantToDeleteSomething', {
+                    name: record?.metricName || t('deployment.AutoScalingRule'),
+                  }),
+                  okButtonProps: {
+                    loading: isInFlightDeleteAutoScalingRule,
+                    danger: true,
+                  },
+                  okText: t('button.Delete'),
+                  onOk: () => {
+                    commitDeleteAutoScalingRule({
+                      variables: {
+                        input: {
+                          id: toLocalId(record.id),
+                        },
+                      },
+                      onCompleted: (res, errors) => {
+                        if (!res?.deleteAutoScalingRule?.id) {
+                          message.error(
+                            t('message.FailedToDelete', {
+                              name: t('deployment.AutoScalingRule'),
+                            }),
+                          );
+                          return;
+                        }
+                        if (errors && errors.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error) => error.message,
+                          );
+                          for (const error of errorMsgList) {
+                            message.error(error);
+                          }
+                        } else {
+                          message.success(
+                            t('message.SuccessfullyDeleted', {
+                              name: t('deployment.AutoScalingRule'),
+                            }),
+                          );
+                          startRefetchTransition(() => {
+                            updateFetchKey();
+                          });
+                        }
+                      },
+                      onError: (err) => {
+                        message.error(
+                          err.message ||
+                            t('message.FailedToDelete', {
+                              name: t('deployment.AutoScalingRule'),
+                            }),
+                        );
+                      },
+                    });
+                  },
+                });
+              }}
+            />
           )}
           {curTabKey === 'routes' && (
             <BAIFlex direction="column" align="stretch" gap="sm">
@@ -554,7 +656,22 @@ const DeploymentDetailPage: React.FC = () => {
           }}
         />
       </Suspense>
-
+      <Suspense>
+        <AutoScalingRuleSettingModal
+          open={isSetAutoScalingRuleModalOpen}
+          deploymentId={deploymentId}
+          autoScalingRuleFrgmt={selectedAutoScalingRule}
+          onRequestClose={(success) => {
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+            setSelectedAutoScalingRule(null);
+            toggleSetAutoScalingRuleModal();
+          }}
+        />
+      </Suspense>
       <BAIConfirmModalWithInput
         open={isDeleteModalOpen}
         onOk={() => {
@@ -566,7 +683,11 @@ const DeploymentDetailPage: React.FC = () => {
             },
             onCompleted: (res, errors) => {
               if (!res?.deleteModelDeployment?.deployment?.id) {
-                message.error(t('message.FailedToDelete'));
+                message.error(
+                  t('message.FailedToDelete', {
+                    name: t('deployment.AutoScalingRule'),
+                  }),
+                );
                 return;
               }
               if (errors && errors.length > 0) {
@@ -575,11 +696,20 @@ const DeploymentDetailPage: React.FC = () => {
                   message.error(error);
                 }
               } else {
-                message.success(t('message.SuccessfullyDeleted'));
+                message.success(
+                  t('message.SuccessfullyDeleted', {
+                    name: t('deployment.AutoScalingRule'),
+                  }),
+                );
               }
             },
             onError: (err) => {
-              message.error(err.message || t('message.FailedToDelete'));
+              message.error(
+                err.message ||
+                  t('message.FailedToDelete', {
+                    name: t('deployment.AutoScalingRule'),
+                  }),
+              );
             },
           });
           toggleDeleteModal();
