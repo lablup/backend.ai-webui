@@ -807,6 +807,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.14.0')) {
+      this._features['deployment'] = true;
+    }
   }
 
   /**
