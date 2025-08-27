@@ -16,6 +16,7 @@ import {
   InfoCircleOutlined,
   ApiOutlined,
   TeamOutlined,
+  DeploymentUnitOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
 import { MenuProps, theme, Typography } from 'antd';
@@ -67,6 +68,7 @@ export type MenuKeys =
   | 'agent-summary'
   | 'statistics'
   | 'pipeline'
+  | 'deployment'
   // adminMenu keys
   | 'credential'
   | 'environment'
@@ -138,6 +140,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
       group: 'workload',
+    },
+    !baiClient.supports('deployment') && {
+      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
+      icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
+      key: 'serving',
+      group: 'service',
+    },
+    baiClient.supports('deployment') && {
+      label: (
+        <WebUILink to="/deployment">{t('webui.menu.Deployment')}</WebUILink>
+      ),
+      icon: <DeploymentUnitOutlined style={{ color: token.colorPrimary }} />,
+      key: 'deployment',
+      group: 'service',
     },
     {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
