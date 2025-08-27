@@ -30,6 +30,7 @@ import {
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
+  mergeFilterValues,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
@@ -82,6 +83,11 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     });
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
 
+  const sftpExclusionFilter =
+    sftpResourceGroups && sftpResourceGroups.length > 0
+      ? `!(scaling_group in [${sftpResourceGroups.map((group) => `"${group}"`).join(', ')}])`
+      : undefined;
+
   const { agent_summary_list } = useLazyLoadQuery<AgentSummaryListQuery>(
     graphql`
       query AgentSummaryListQuery(
@@ -114,7 +120,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     {
       limit: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
-      filter: filterString,
+      filter: mergeFilterValues([filterString, sftpExclusionFilter]),
       order,
       status: selectedStatus,
     },
@@ -122,12 +128,6 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       fetchKey,
       fetchPolicy,
     },
-  );
-
-  // Hide sFTP upload agents
-  const filteredAgentSummaryList = _.filter(
-    agent_summary_list?.items,
-    (item) => !_.includes(sftpResourceGroups, item?.scaling_group),
   );
 
   const columns: ColumnsType<AgentSummary> = [
@@ -421,7 +421,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         bordered
         scroll={{ x: 'max-content' }}
         rowKey={'id'}
-        dataSource={filterOutNullAndUndefined(filteredAgentSummaryList)}
+        dataSource={filterOutNullAndUndefined(agent_summary_list?.items)}
         showSorterTooltip={false}
         columns={
           _.filter(
@@ -431,7 +431,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: filteredAgentSummaryList?.length || 0,
+          total: agent_summary_list?.total_count || 0,
           current: tablePaginationOption.current,
           onChange(page, pageSize) {
             startPageChangeTransition(() => {
