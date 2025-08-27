@@ -820,6 +820,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.12.0')) {
       this._features['reservoir'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.14.0')) {
+      this._features['deployment'] = true;
+    }
   }
 
   /**
