@@ -27,6 +27,7 @@ import {
   ApiOutlined,
   TeamOutlined,
   SafetyCertificateOutlined,
+  DeploymentUnitOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
 import { type MenuProps, theme, Typography } from 'antd';
@@ -78,6 +79,7 @@ export const VALID_MENU_KEYS = [
   'session',
   'job', // alias to session for backward compatibility
   'serving',
+  'deployment',
   'model-store',
   'ai-agent',
   'chat',
@@ -201,6 +203,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       'serving',
       'service',
     ),
+    baiClient.supports('deployment') &&
+      createMenuItem(
+        '/deployment',
+        t('webui.menu.Deployment'),
+        <DeploymentUnitOutlined style={{ color: token.colorPrimary }} />,
+        'deployment',
+        'service',
+      ),
     createMenuItem(
       '/model-store',
       t('data.ModelStore'),
