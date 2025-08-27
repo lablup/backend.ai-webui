@@ -19,20 +19,22 @@
     "Unlimited": "Sınırsız"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Artefakt çekmek",
     "Pull": "Çekmek",
-    "PulledVersionsAreExcluded": "Çekilen sürümler hariç tutulur.",
-    "Name": "İsim",
-    "Type": "Tip",
-    "Description": "Tanım",
-    "Source": "Kaynak"
+    "PullVersion": "Çekme sürümü",
+    "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
+    "OnlySCANNEDVersionsCanBePulled": "Yalnızca taranan sürümler çekilebilir.",
+    "Size": "Boyut",
+    "Version": "Versiyon",
+    "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
+    "FailedToPullVersions": "Sürümleri çekemedi."
   },
   "comp:BAIArtifactTable": {
     "Action": "Aksiyon",
     "Size": "Boyut",
     "Version": "Versiyon",
     "Updated": "Güncellenmiş",
-    "PullLatestVersion": "En son sürümü çekin"
+    "PullLatestVersion": "En son sürümü çekin",
+    "Scanned": "Taranmış"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "İsim",
@@ -40,12 +42,52 @@
     "Size": "Boyut",
     "Status": "Durum",
     "Updated": "Güncellenmiş",
-    "Action": "Aksiyon",
-    "Version": "Versiyon"
+    "Version": "Versiyon",
+    "Control": "Kontrol",
+    "PullThisVersion": "Bu sürümü çekin",
+    "RemoveThisVersion": "Bu sürümü kaldır"
   },
   "general": {
     "button": {
-      "Cancel": "İptal etmek"
-    }
+      "Cancel": "İptal etmek",
+      "Remove": "Kaldırmak",
+      "Close": "Kapalı"
+    },
+    "TotalItems": "Total {{total}} öğeleri"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
+    "RemoveVersions": "Sürümleri Kaldır",
+    "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
+    "Version": "Versiyon",
+    "Size": "Boyut",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Yalnızca çekme veya taranmayan sürümler kaldırılabilir.",
+    "FailedToRemoveVersions": "Sürümleri kaldırılamadı."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Tanım",
+    "Name": "İsim",
+    "Source": "Kaynak",
+    "Type": "Tip"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Çekmeyi iptal et",
+    "CancelingWillRestartThePulling": "İptal etme, çekmeyi yeniden başlatacak",
+    "FailedToCancelThePulling": "Çekmeyi iptal edemedi.",
+    "VersionPullCanceledSuccessfully": "{{version}} sürümünün çekilmesi başarıyla iptal edildi.",
+    "WARNING": "UYARI",
+    "YouAreAboutToCancelThisVersion": "Bu sürümü iptal etmek üzeresiniz",
+    "VersionIsPullingNow": "{{sürümversion} sürüm şimdi çekiliyor."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Bir model kimliği girin. (örn. Openai/GPT-OSS-20B)",
+    "EnterAVersion": "Bir sürüm girin. (Varsayılan: Main)",
+    "Failed to import model from hugging face": "Modelin sarılma yüzünden ithal edilemedi",
+    "Import": "İçe aktarmak",
+    "ModalDescription": "Model kimliğini ve sürümünü belirterek bir modeli kucaklamadan içe aktarın.",
+    "ModalTitle": "Sarılma Yüzünden İthalat",
+    "ModelID": "Model kimliği",
+    "SuccessfullyImportedModelFromHuggingFace": "Sarılma yüzünden başarılı bir şekilde model ithalatını istedi",
+    "Version": "Versiyon"
   }
 }

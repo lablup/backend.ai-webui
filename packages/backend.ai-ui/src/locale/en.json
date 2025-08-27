@@ -2,8 +2,11 @@
   "$schema": "../../i18n.schema.json",
   "general": {
     "button": {
-      "Cancel": "Cancel"
-    }
+      "Cancel": "Cancel",
+      "Remove": "Remove",
+      "Close": "Close"
+    },
+    "TotalItems": "Total {{total}} items"
   },
   "comp:BAITestButton": {
     "Test": "Test"
@@ -28,16 +31,27 @@
     "Action": "Action",
     "Size": "Size",
     "Updated": "Updated",
+    "Scanned": "Scanned",
     "PullLatestVersion": "Pull latest version"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Pull Artifact",
     "Pull": "Pull",
-    "PulledVersionsAreExcluded": "Pulled versions are excluded.",
-    "Name": "Name",
-    "Description": "Description",
-    "Type": "Type",
-    "Source": "Source"
+    "PullVersion": "Pull Version",
+    "ExcludedVersions": "{{count}} versions are excluded.",
+    "Version": "Version",
+    "Size": "Size",
+    "OnlySCANNEDVersionsCanBePulled": "Only SCANNED versions can be pulled.",
+    "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
+    "FailedToPullVersions": "Failed to pull versions."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "RemoveVersions": "Remove Versions",
+    "ExcludedVersions": "{{count}} versions are excluded.",
+    "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
+    "Version": "Version",
+    "Size": "Size",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Only versions that are not in PULLING or SCANNED can be removed.",
+    "FailedToRemoveVersions": "Failed to remove versions."
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "Name",
@@ -46,6 +60,34 @@
     "Size": "Size",
     "Updated": "Updated",
     "Version": "Version",
-    "Action": "Action"
+    "Control": "Control",
+    "PullThisVersion": "Pull this version",
+    "RemoveThisVersion": "Remove this version"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Name": "Name",
+    "Type": "Type",
+    "Source": "Source",
+    "Description": "Description"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Cancel Pull",
+    "YouAreAboutToCancelThisVersion": "You are about to cancel this version",
+    "WARNING": "WARNING",
+    "CancelingWillRestartThePulling": "Canceling will restart the pulling",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} version canceled successfully.",
+    "FailedToCancelThePulling": "Failed to cancel the pulling.",
+    "VersionIsPullingNow": "{{version}} version is pulling now."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "Import": "Import",
+    "Failed to import model from hugging face": "Failed to import model from hugging face",
+    "ModelID": "Model ID",
+    "Version": "Version",
+    "EnterAVersion": "Enter a version. (default: main)",
+    "EnterAModelID": "Enter a model ID. (e.g. openai/gpt-oss-20b)",
+    "SuccessfullyImportedModelFromHuggingFace": "Successfully requested import of model from Hugging Face",
+    "ModalDescription": "Import a model from Hugging Face by specifying the Model ID and Version.",
+    "ModalTitle": "Import From Hugging Face"
   }
 }

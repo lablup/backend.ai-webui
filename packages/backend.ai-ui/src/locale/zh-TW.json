@@ -19,20 +19,22 @@
     "Unlimited": "無限"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "拉工子",
     "Pull": "拉",
-    "PulledVersionsAreExcluded": "拉動版本被排除在外。",
-    "Name": "姓名",
-    "Type": "類型",
-    "Description": "描述",
-    "Source": "來源"
+    "PullVersion": "拉版本",
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "OnlySCANNEDVersionsCanBePulled": "只能拉出掃描版本。",
+    "Size": "尺寸",
+    "Version": "版本",
+    "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
+    "FailedToPullVersions": "未能拉動版本。"
   },
   "comp:BAIArtifactTable": {
     "Action": "行動",
     "Size": "尺寸",
     "Version": "版本",
     "Updated": "更新",
-    "PullLatestVersion": "拉最新版本"
+    "PullLatestVersion": "拉最新版本",
+    "Scanned": "掃描"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "姓名",
@@ -40,12 +42,52 @@
     "Size": "尺寸",
     "Status": "地位",
     "Updated": "更新",
-    "Action": "行動",
-    "Version": "版本"
+    "Version": "版本",
+    "Control": "控制",
+    "PullThisVersion": "拉這個版本",
+    "RemoveThisVersion": "刪除此版本"
   },
   "general": {
     "button": {
-      "Cancel": "取消"
-    }
+      "Cancel": "取消",
+      "Remove": "消除",
+      "Close": "關閉"
+    },
+    "TotalItems": "總計{{total}}項目"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "RemoveVersions": "刪除版本",
+    "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
+    "Version": "版本",
+    "Size": "尺寸",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "只能刪除不進行拉或掃描的版本。",
+    "FailedToRemoveVersions": "無法刪除版本。"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "描述",
+    "Name": "姓名",
+    "Source": "來源",
+    "Type": "類型"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "取消拉力",
+    "CancelingWillRestartThePulling": "取消將重新啟動拉動",
+    "FailedToCancelThePulling": "未能取消拉力。",
+    "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "您即將取消此版本",
+    "VersionIsPullingNow": "{{version}}版本現在正在拉動。"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "輸入模型ID。 （例如OpenAI/GPT-OSS-20B）",
+    "EnterAVersion": "輸入版本。（默認：main）",
+    "Failed to import model from hugging face": "無法從擁抱面孔中導入模型",
+    "Import": "進口",
+    "ModalDescription": "通過指定模型ID和版本來從擁抱面中導入模型。",
+    "ModalTitle": "從擁抱臉上進口",
+    "ModelID": "模型ID",
+    "SuccessfullyImportedModelFromHuggingFace": "成功要求從擁抱臉部進口模型",
+    "Version": "版本"
   }
 }
