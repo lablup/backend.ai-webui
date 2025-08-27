@@ -1,6 +1,7 @@
 import {
   AgentSummaryListQuery,
   AgentSummaryListQuery$data,
+  AgentSummaryListQuery$variables,
 } from '../__generated__/AgentSummaryListQuery.graphql';
 import {
   convertToBinaryUnit,
@@ -8,7 +9,7 @@ import {
 } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
@@ -19,7 +20,6 @@ import {
   CheckCircleOutlined,
   MinusCircleOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, TableProps, theme, Tooltip, Typography } from 'antd';
@@ -33,9 +33,17 @@ import {
   mergeFilterValues,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, {
+  useDeferredValue,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { useDeferredQueryParams } from 'src/hooks/useDeferredQueryParams';
+import { StringParam, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']
@@ -55,25 +63,22 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
-  const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
   const [isPendingRefresh, startRefreshTransition] = useTransition();
-  const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [selectedStatus, setSelectedStatus] = useState('ALIVE');
-  const [optimisticSelectedStatus, setOptimisticSelectedStatus] =
-    useState(selectedStatus);
-  const [isPendingFilter, startFilterTransition] = useTransition();
-
-  const [filterString, setFilterString] = useState<string>();
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
-  const [order, setOrder] = useState<string>();
+
+  const [queryParams, setQuery] = useDeferredQueryParams({
+    order: withDefault(StringParam, undefined),
+    filter: withDefault(StringParam, undefined),
+    status: withDefault(StringParam, 'ALIVE'),
+  });
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [fetchPolicy] = useState<FetchPolicy>('network-only');
@@ -87,6 +92,29 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     sftpResourceGroups && sftpResourceGroups.length > 0
       ? `!(scaling_group in [${sftpResourceGroups.map((group) => `"${group}"`).join(', ')}])`
       : undefined;
+
+  const queryVariables: AgentSummaryListQuery$variables = useMemo(
+    () => ({
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+      filter: mergeFilterValues([queryParams.filter, sftpExclusionFilter]),
+      order: queryParams.order,
+      status: queryParams.status,
+    }),
+    [
+      baiPaginationOption.limit,
+      baiPaginationOption.offset,
+      queryParams.filter,
+      queryParams.order,
+      queryParams.status,
+      sftpExclusionFilter,
+    ],
+  );
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.AgentSummaryList',
+  );
 
   const { agent_summary_list } = useLazyLoadQuery<AgentSummaryListQuery>(
     graphql`
@@ -117,13 +145,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         }
       }
     `,
-    {
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      filter: mergeFilterValues([filterString, sftpExclusionFilter]),
-      order,
-      status: selectedStatus,
-    },
+    deferredQueryVariables,
     {
       fetchKey,
       fetchPolicy,
@@ -363,15 +385,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                 value: 'TERMINATED',
               },
             ]}
-            value={
-              isPendingStatusFetch ? optimisticSelectedStatus : selectedStatus
-            }
+            value={queryParams.status}
             onChange={(e) => {
               const value = e.target.value;
-              setOptimisticSelectedStatus(value);
-              startStatusFetchTransition(() => {
-                setSelectedStatus(value);
-              });
+              setQuery({ status: value }, 'replaceIn');
             }}
           />
 
@@ -398,12 +415,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                 ],
               },
             ]}
-            value={filterString}
-            // loading={isPendingFilter}
+            value={queryParams.filter}
             onChange={(value) => {
-              startFilterTransition(() => {
-                setFilterString(value);
-              });
+              setQuery({ filter: value }, 'replaceIn');
+              setTablePaginationOption({ current: 1 });
             }}
           />
         </BAIFlex>
@@ -431,34 +446,22 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: agent_summary_list?.total_count || 0,
           current: tablePaginationOption.current,
-          onChange(page, pageSize) {
-            startPageChangeTransition(() => {
-              if (_.isNumber(page) && _.isNumber(pageSize)) {
-                setTablePaginationOption({
-                  current: page,
-                  pageSize,
-                });
-              }
-            });
+          total: agent_summary_list?.total_count ?? 0,
+          onChange(current, pageSize) {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({ current, pageSize });
+            }
           },
-          extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => {
-                toggleColumnSettingModal();
-              }}
-            />
-          ),
         }}
         onChangeOrder={(order) => {
-          startPageChangeTransition(() => {
-            setOrder(order);
-          });
+          setQuery({ order }, 'replaceIn');
         }}
-        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        loading={deferredQueryVariables !== queryVariables}
         {...tableProps}
       />
       <TableColumnsSettingModal
