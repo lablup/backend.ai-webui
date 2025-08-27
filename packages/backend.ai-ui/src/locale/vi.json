@@ -28,20 +28,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Kéo tạo tác",
     "Pull": "Sự lôi kéo",
-    "PulledVersionsAreExcluded": "Các phiên bản kéo được loại trừ.",
-    "Name": "Tên",
-    "Type": "Kiểu",
-    "Description": "Sự miêu tả",
-    "Source": "Nguồn"
+    "PullVersion": "Phiên bản kéo",
+    "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
+    "OnlySCANNEDVersionsCanBePulled": "Chỉ các phiên bản được quét mới có thể được kéo.",
+    "Size": "Kích cỡ",
+    "Version": "Phiên bản",
+    "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
+    "FailedToPullVersions": "Không thể kéo phiên bản."
   },
   "comp:BAIArtifactTable": {
     "Action": "Hoạt động",
     "Size": "Kích cỡ",
     "Version": "Phiên bản",
     "Updated": "Cập nhật",
-    "PullLatestVersion": "Kéo phiên bản mới nhất"
+    "PullLatestVersion": "Kéo phiên bản mới nhất",
+    "Scanned": "Quét"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "Tên",
@@ -49,7 +51,52 @@
     "Size": "Kích cỡ",
     "Status": "Trạng thái",
     "Updated": "Cập nhật",
-    "Action": "Hoạt động",
+    "Version": "Phiên bản",
+    "Control": "Điều khiển",
+    "PullThisVersion": "Kéo phiên bản này",
+    "RemoveThisVersion": "Xóa phiên bản này"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Hủy bỏ",
+      "Remove": "Di dời",
+      "Close": "Đóng"
+    },
+    "TotalItems": "Tổng số {{total}} các mục"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
+    "RemoveVersions": "Xóa các phiên bản",
+    "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
+    "Version": "Phiên bản",
+    "Size": "Kích cỡ",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Chỉ các phiên bản không kéo hoặc quét mới có thể được loại bỏ.",
+    "FailedToRemoveVersions": "Không thể loại bỏ các phiên bản."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Sự miêu tả",
+    "Name": "Tên",
+    "Source": "Nguồn",
+    "Type": "Kiểu"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Hủy kéo",
+    "CancelingWillRestartThePulling": "Hủy sẽ khởi động lại việc kéo",
+    "FailedToCancelThePulling": "Không thể hủy bỏ kéo.",
+    "VersionPullCanceledSuccessfully": "Kéo phiên bản {{version}} bị hủy thành công.",
+    "WARNING": "CẢNH BÁO",
+    "YouAreAboutToCancelThisVersion": "Bạn sắp hủy phiên bản này",
+    "VersionIsPullingNow": "{{version}} phiên bản hiện đang kéo."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Nhập ID mô hình. (ví dụ: OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Nhập một phiên bản. (Mặc định: Chính)",
+    "Failed to import model from hugging face": "Không thể nhập mô hình từ khuôn mặt ôm",
+    "Import": "Nhập khẩu",
+    "ModalDescription": "Nhập một mô hình từ Hugging Face bằng cách chỉ định ID mô hình và phiên bản.",
+    "ModalTitle": "Nhập khẩu từ khuôn mặt ôm",
+    "ModelID": "Mô hình ID",
+    "SuccessfullyImportedModelFromHuggingFace": "Yêu cầu nhập khẩu thành công mô hình từ khuôn mặt ôm",
     "Version": "Phiên bản"
   }
 }
