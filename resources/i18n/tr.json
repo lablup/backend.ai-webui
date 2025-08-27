@@ -776,6 +776,9 @@
   "kernel": {
     "AgentId": "Ajan kimliği",
     "ContainerId": "Konteyner kimliği",
+    "ContainerLogs": "Konteyner Günlükleri",
+    "Hostname": "Ana bilgisayar adı",
+    "Kernel": "Çekirdek",
     "KernelId": "Çekirdek kimliği",
     "Kernels": "Çekirdek",
     "Role": "Rol",

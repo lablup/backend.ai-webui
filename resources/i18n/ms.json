@@ -775,6 +775,9 @@
   "kernel": {
     "AgentId": "Id ejen",
     "ContainerId": "ID kontena",
+    "ContainerLogs": "Log kontena",
+    "Hostname": "Nama Host",
+    "Kernel": "Kernel",
     "KernelId": "ID Kernel",
     "Kernels": "Biji",
     "Role": "Peranan",

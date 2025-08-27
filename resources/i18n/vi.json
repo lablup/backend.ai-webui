@@ -776,6 +776,9 @@
   "kernel": {
     "AgentId": "Id đại lý",
     "ContainerId": "ID container",
+    "ContainerLogs": "Nhật ký container",
+    "Hostname": "Tên máy chủ",
+    "Kernel": "Kernel",
     "KernelId": "Kernel Id",
     "Kernels": "Hạt nhân",
     "Role": "Vai trò",

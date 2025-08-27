@@ -1,7 +1,6 @@
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useCurrentUserRole } from '../../hooks/backendai';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import BAIModal, { BAIModalProps } from '../BAIModal';
@@ -12,7 +11,7 @@ import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -28,7 +27,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
 }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
-  const userRole = useCurrentUserRole();
 
   const session = useFragment(
     graphql`
@@ -46,6 +44,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               container_id
               cluster_idx
               cluster_role
+              cluster_hostname
             }
           }
         }
@@ -61,14 +60,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       kernelNodes[0]?.row_id,
   );
 
-  useEffect(() => {
-    if (modalProps.open === false) {
-      setSelectedKernelId(undefined);
-    }
-  }, [modalProps.open]);
-
-  // Currently we can only fetch full logs
-  // const [logSize, setLogSize] = useState<100|'full'>('full');
   const {
     data: logs,
     refetch,
@@ -110,7 +101,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       title={
         <BAIFlex style={{ maxWidth: '100%' }} gap={'sm'}>
           <Typography.Title level={4} style={{ margin: 0, flexShrink: 0 }}>
-            Logs
+            {t('kernel.ContainerLogs')}
           </Typography.Title>
           {session ? (
             <>
@@ -153,7 +144,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         gap={'sm'}
       >
         <BAIFlex gap="sm" wrap="wrap">
-          Kernel Role
           <BAISelect
             value={selectedKernelId}
             onChange={(value) => {
@@ -167,21 +157,16 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                 return {
                   label: (
                     <>
-                      {e?.node?.cluster_role}
-                      {e?.node?.cluster_role !== 'main'
-                        ? e?.node?.cluster_idx
-                        : ''}
-                      {userRole === 'admin' || userRole === 'superadmin' ? (
-                        <Typography.Text
-                          style={{
-                            fontFamily: 'monospace',
-                            fontSize: token.fontSizeSM,
-                          }}
-                          type="secondary"
-                        >
-                          ({(e?.node?.row_id || '').substring(0, 5)})
-                        </Typography.Text>
-                      ) : null}
+                      {e?.node?.cluster_hostname}
+                      <Typography.Text
+                        style={{
+                          fontFamily: 'monospace',
+                          fontSize: token.fontSizeSM,
+                        }}
+                        type="secondary"
+                      >
+                        ({(e?.node?.row_id || '').substring(0, 5)})
+                      </Typography.Text>
                     </>
                   ),
                   value: e?.node?.row_id,

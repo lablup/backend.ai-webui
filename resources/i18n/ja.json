@@ -775,6 +775,9 @@
   "kernel": {
     "AgentId": "エージェントID",
     "ContainerId": "コンテナID",
+    "ContainerLogs": "コンテナログ",
+    "Hostname": "ホスト名",
+    "Kernel": "カーネル",
     "KernelId": "カーネルID",
     "Kernels": "カーネル",
     "Role": "役割",

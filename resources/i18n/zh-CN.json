@@ -776,6 +776,9 @@
   "kernel": {
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
+    "ContainerLogs": "容器日志",
+    "Hostname": "主机名",
+    "Kernel": "核心",
     "KernelId": "内核ID",
     "Kernels": "内核",
     "Role": "角色",

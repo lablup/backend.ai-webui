@@ -16,6 +16,7 @@ import {
   BAISessionLogIcon,
   BAITerminalAppIcon,
   BAITerminateIcon,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
@@ -125,13 +126,15 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
             }}
           />
         </Tooltip>
-        <ContainerLogModal
-          sessionFrgmt={session}
-          open={openLogModal}
-          onCancel={() => {
-            setOpenLogModal(false);
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <ContainerLogModal
+            sessionFrgmt={session}
+            open={openLogModal}
+            onCancel={() => {
+              setOpenLogModal(false);
+            }}
+          />
+        </BAIUnmountAfterClose>
         <Tooltip title={t('session.RequestContainerCommit')}>
           <Button
             disabled={

@@ -12,12 +12,11 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
-  BAIFlex,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -66,6 +65,8 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       fragment ConnectedKernelListFragment on KernelNode @relay(plural: true) {
         id
         row_id
+        cluster_hostname
+        cluster_idx
         cluster_role
         status
         status_info
@@ -78,36 +79,30 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
 
   const columns = filterOutEmpty<ColumnType<Kernel>>([
     {
-      title: t('kernel.KernelId'),
-      fixed: 'left',
-      dataIndex: 'row_id',
-      render: (row_id) => (
-        <>
-          <Typography.Text copyable ellipsis>
-            {row_id}
-          </Typography.Text>
-          <Tooltip title={t('session.SeeContainerLogs')}>
-            <Button
-              icon={<ScrollTextIcon />}
-              type="link"
-              onClick={() => {
-                setKernelIdForLogModal(row_id);
-              }}
-              style={{
-                width: 'auto',
-                height: 'auto',
-                marginInlineStart: token.marginXXS,
-                border: 'none',
-              }}
-            />
-          </Tooltip>
-        </>
-      ),
-    },
-    {
-      title: t('kernel.Role'),
-      dataIndex: 'cluster_role',
-      render: (role) => <Tag>{role}</Tag>,
+      title: t('kernel.Hostname'),
+      dataIndex: 'cluster_hostname',
+      render: (hostname, record) => {
+        return (
+          <>
+            <Typography.Text>{hostname}</Typography.Text>
+            <Tooltip title={t('session.SeeContainerLogs')}>
+              <Button
+                icon={<ScrollTextIcon />}
+                type="link"
+                onClick={() => {
+                  record.row_id && setKernelIdForLogModal(record.row_id);
+                }}
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                  marginInlineStart: token.marginXXS,
+                  border: 'none',
+                }}
+              />
+            </Tooltip>
+          </>
+        );
+      },
     },
     {
       title: t('kernel.Status'),
@@ -136,6 +131,23 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       },
     },
     {
+      title: t('kernel.AgentId'),
+      dataIndex: 'agent_id',
+      render: (id) => <Typography.Text copyable>{id}</Typography.Text>,
+    },
+    {
+      title: t('kernel.KernelId'),
+      fixed: 'left',
+      dataIndex: 'row_id',
+      render: (row_id) => (
+        <>
+          <Typography.Text copyable ellipsis>
+            {row_id}
+          </Typography.Text>
+        </>
+      ),
+    },
+    {
       title: t('kernel.ContainerId'),
       dataIndex: 'container_id',
       onCell: () => ({
@@ -150,15 +162,16 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           </Typography.Text>
         ),
     },
-    {
-      title: t('kernel.AgentId'),
-      dataIndex: 'agent_id',
-      render: (id) => <Typography.Text copyable>{id}</Typography.Text>,
-    },
   ]);
 
+  const sortedKernels = useMemo(() => {
+    return _.orderBy(filterOutNullAndUndefined(kernelNodes), [
+      'cluster_role',
+      'cluster_idx',
+    ] as Array<keyof Kernel>);
+  }, [kernelNodes]);
   return (
-    <BAIFlex direction="column" align="stretch" gap={'sm'}>
+    <>
       {/* TODO: implement filter when compute_session_node query supports filter */}
       {/* <BAIPropertyFilter
         filterProperties={[
@@ -181,9 +194,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         rowKey="id"
         scroll={{ x: 'max-content' }}
         columns={columns}
-        dataSource={filterOutNullAndUndefined(kernelNodes)}
-        style={{ width: '100%' }}
-        // TODO: implement pagination when compute_session_node query supports pagination
+        dataSource={sortedKernels} // TODO: implement pagination when compute_session_node query supports pagination
       />
 
       <BAIUnmountAfterClose>
@@ -196,7 +207,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
-    </BAIFlex>
+    </>
   );
 };
 

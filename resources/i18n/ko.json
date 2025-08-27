@@ -779,6 +779,9 @@
   "kernel": {
     "AgentId": "에이전트 ID",
     "ContainerId": "컨테이너 ID",
+    "ContainerLogs": "컨테이너 로그",
+    "Hostname": "호스트명",
+    "Kernel": "커널",
     "KernelId": "커널 ID",
     "Kernels": "커널",
     "Role": "역할",

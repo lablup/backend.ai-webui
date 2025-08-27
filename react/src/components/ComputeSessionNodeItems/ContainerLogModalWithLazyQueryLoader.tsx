@@ -1,6 +1,7 @@
 import { ContainerLogModalWithLazyQueryLoaderQuery } from '../../__generated__/ContainerLogModalWithLazyQueryLoaderQuery.graphql';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import ContainerLogModal from './ContainerLogModal';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const ContainerLogModalWithLazyQueryLoader: React.FC<{
@@ -32,14 +33,16 @@ const ContainerLogModalWithLazyQueryLoader: React.FC<{
     );
 
   return (
-    <ContainerLogModal
-      sessionFrgmt={compute_session_node || null}
-      open={open}
-      loading={loading}
-      onCancel={() => {
-        onRequestClose && onRequestClose();
-      }}
-    />
+    <BAIUnmountAfterClose>
+      <ContainerLogModal
+        sessionFrgmt={compute_session_node || null}
+        open={open}
+        loading={loading}
+        onCancel={() => {
+          onRequestClose && onRequestClose();
+        }}
+      />
+    </BAIUnmountAfterClose>
   );
 };
 

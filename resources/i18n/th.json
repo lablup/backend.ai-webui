@@ -765,6 +765,9 @@
   "kernel": {
     "AgentId": "ID ตัวแทน",
     "ContainerId": "ID คอนเทนเนอร์",
+    "ContainerLogs": "บันทึกคอนเทนเนอร์",
+    "Hostname": "ชื่อโฮสต์",
+    "Kernel": "เคอร์เนล",
     "KernelId": "ID เคอร์เนล",
     "Kernels": "เมล็ด",
     "Role": "บทบาท",
