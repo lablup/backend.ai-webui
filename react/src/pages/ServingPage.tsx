@@ -2,12 +2,16 @@ import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
 import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { useUpdatableState, useWebUINavigate } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import { Button, Skeleton, theme } from 'antd';
+import { Alert, Button, Skeleton, theme } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -27,6 +31,7 @@ const ServingPage: React.FC = () => {
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [queryParams, setQuery] = useDeferredQueryParams({
     order: withDefault(StringParam, '-created_at'),
@@ -100,6 +105,14 @@ const ServingPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
+      {baiClient.supports('deployment') && (
+        <Alert
+          message={t('serving.ServingSunsetDesc')}
+          showIcon
+          closable
+          type="warning"
+        />
+      )}
       <BAICard
         title={t('webui.menu.Serving')}
         extra={

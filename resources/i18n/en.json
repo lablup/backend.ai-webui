@@ -1499,6 +1499,9 @@
     "Variable": "Variable",
     "ViewAllHistory": "View All History"
   },
+  "serving": {
+    "ServingSunsetDesc": "This Serving page has been deprecated. For maintenance and troubleshooting, refer to the Deployment page."
+  },
   "session": {
     "Agent": "Agent",
     "AgentId": "Agent ID",

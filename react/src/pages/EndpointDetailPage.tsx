@@ -43,6 +43,7 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Card,
@@ -506,6 +507,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
+      {baiClient.supports('deployment') && (
+        <Alert
+          message={t('serving.ServingSunsetDesc')}
+          showIcon
+          closable
+          type="warning"
+        />
+      )}
       <BAIFlex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ''}
