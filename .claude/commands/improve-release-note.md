@@ -1,3 +1,7 @@
+---
+model: claude-sonnet-4-20250514
+---
+
 # Improve Release Note
 
 Improve GitHub release notes by fetching the specified release and formatting it according to the project's preferred markdown format with proper categorization.
