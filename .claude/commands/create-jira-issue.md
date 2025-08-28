@@ -1,10 +1,15 @@
+---
+description: Create a Jira issue for Git changes
+argument-hint: [stage, pr, branch, commit]
+model: claude-sonnet-4-20250514
+---
 
 # Create a Jira issue for Git Changes
 
 Create a Jira issue based on **Git changes** by following these instructions:
 
 ## Arguments
-This command accept"$ARGUMENTS" to specify the type of changes to analyze:
+This command accept $ARGUMENTS to specify the type of changes to analyze:
 - `stage` - Analyze staged changes
 - `pr` - Analyze changes in current graphite stack up to current branch
 - `branch` - Analyze all changes in current branch

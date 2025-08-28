@@ -1,3 +1,9 @@
+---
+description: Create a PR Stack and link to Jira issue.
+argument-hint: [FR-1234, https://lablup.atlassian.net/browse/FR-1234]
+model: claude-sonnet-4-20250514
+---
+
 # Create a PR Stack for Staged Changes
 
 Create a new graphite stack branch for currently staged changes, following the project's commit message patterns and workflow.
