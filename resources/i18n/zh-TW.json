@@ -1202,6 +1202,9 @@
     "SharedMemory": "共享內存",
     "Updated": "資源預設已更新"
   },
+  "scheduler": {
+    "PendingSessions": "等待會議"
+  },
   "session": {
     "Agent": "代理人",
     "AgentId": "代理ID",
@@ -1282,6 +1285,7 @@
     "OpenToPublicDesc": "啟用此選項允許網絡中的所有用戶訪問應用程序。<br /><br />\n對於訪問管理，請在“允許IP”字段中輸入特定的IP地址。<br /><br />\n將此字段留為空，將允許從所有IP地址訪問。<br /><br />\n考慮安全管理時，請考慮設置IP限制。",
     "Others": "其他",
     "PanelSettings": "面板設置",
+    "PendingPosition": "隊列位置",
     "PredicateChecks": "謂詞檢查",
     "Preparing": "正在準備...",
     "PreparingSession": "正在準備會議...",
@@ -2001,6 +2005,7 @@
       "Remaining": "其餘的",
       "ResourcePolicy": "資源政策",
       "Resources": "資源",
+      "Scheduler": "調度程序",
       "Serving": "服务",
       "Sessions": "會話",
       "Settings": "設置",

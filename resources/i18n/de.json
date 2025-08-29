@@ -1201,6 +1201,9 @@
     "SharedMemory": "Gemeinsamer Speicher",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
+  "scheduler": {
+    "PendingSessions": "Ausstehende Sitzungen"
+  },
   "session": {
     "Agent": "Agent",
     "AgentId": "Agenten -ID",
@@ -1282,6 +1285,7 @@
     "OpenToPublicDesc": "Durch die Aktivierung dieser Option ermöglicht der Anwendungszugriff für alle Benutzer im Netzwerk.<br /><br /> \nGeben Sie für die Zugriffsverwaltung bestimmte IP -Adressen in das Feld \"Zulässige IP\" ein.<br /><br /> \nWenn Sie dieses Feld leer verlassen, können Sie den Zugriff aus allen IP -Adressen ermöglichen.<br /><br /> \nErwägen Sie, IP -Beschränkungen bei Bedarf für das Sicherheitsmanagement festzulegen.",
     "Others": "Andere",
     "PanelSettings": "Paneleinstellungen",
+    "PendingPosition": "Warteschlangenposition",
     "PredicateChecks": "Prädikatüberprüfungen",
     "Preparing": "Vorbereitung...",
     "PreparingSession": "Sitzung vorbereiten...",
@@ -2001,6 +2005,7 @@
       "Remaining": "Übrig",
       "ResourcePolicy": "Ressourcenpolitik",
       "Resources": "Ressourcen",
+      "Scheduler": "Scheduler",
       "Serving": "Bedienung von",
       "Sessions": "Sitzungen",
       "Settings": "die Einstellungen",

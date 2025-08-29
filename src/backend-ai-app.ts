@@ -29,6 +29,7 @@ export const navigate =
         '/user',
         '/credential',
         '/environment',
+        '/scheduler',
         '/settings',
         '/maintenance',
         '/information',

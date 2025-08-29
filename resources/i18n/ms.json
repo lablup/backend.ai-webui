@@ -1202,6 +1202,9 @@
     "SharedMemory": "Memori bersama",
     "Updated": "Pratetap sumber dikemas kini"
   },
+  "scheduler": {
+    "PendingSessions": "Sesi yang belum selesai"
+  },
   "session": {
     "Agent": "Ejen",
     "AgentId": "Id ejen",
@@ -1283,6 +1286,7 @@
     "OpenToPublicDesc": "Membolehkan pilihan ini membolehkan akses aplikasi untuk semua pengguna dalam rangkaian.<br /><br /> \nUntuk pengurusan akses, masukkan alamat IP tertentu dalam medan 'IP yang dibenarkan'.<br /><br /> \nMeninggalkan medan ini kosong akan membenarkan akses dari semua alamat IP.<br /><br /> \nPertimbangkan menetapkan sekatan IP apabila perlu untuk pengurusan keselamatan.",
     "Others": "Yang lain",
     "PanelSettings": "Tetapan panel",
+    "PendingPosition": "Kedudukan giliran",
     "PredicateChecks": "Pemeriksaan predikat",
     "Preparing": "Menyiapkan ...",
     "PreparingSession": "Menyiapkan sesi ...",
@@ -2000,6 +2004,7 @@
       "Remaining": "Tinggal",
       "ResourcePolicy": "Dasar Sumber",
       "Resources": "Sumber",
+      "Scheduler": "Penjadual",
       "Serving": "Melayan",
       "Sessions": "Sesi",
       "Settings": "Tetapan",

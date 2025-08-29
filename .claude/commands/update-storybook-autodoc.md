@@ -1,3 +1,7 @@
+---
+model: claude-sonnet-4-20250514
+---
+
 # Update Storybook with Autodoc
 
 Update React components with comprehensive JSDoc documentation and enhanced Storybook stories with autodoc functionality.

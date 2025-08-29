@@ -1202,6 +1202,9 @@
     "SharedMemory": "Udostępniona pamięć",
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
+  "scheduler": {
+    "PendingSessions": "Oczekujące sesje"
+  },
   "session": {
     "Agent": "Agent",
     "AgentId": "Identyfikator agenta",
@@ -1283,6 +1286,7 @@
     "OpenToPublicDesc": "Włączenie tej opcji umożliwia dostęp do aplikacji dla wszystkich użytkowników w sieci.<br /><br /> \nW celu zarządzania dostępem wprowadź określone adresy IP w polu „dozwolone IP”.<br /><br /> \nOpuszczenie tego pola pustego pozwoli na dostęp ze wszystkich adresów IP.<br /><br /> \nW razie potrzeby rozważ ustawienie ograniczeń IP do zarządzania bezpieczeństwem.",
     "Others": "Inne",
     "PanelSettings": "Ustawienia panelowe",
+    "PendingPosition": "Pozycja kolejki",
     "PredicateChecks": "Kontrole predykatu",
     "Preparing": "Przygotowuję...",
     "PreparingSession": "Przygotowuję sesję...",
@@ -2002,6 +2006,7 @@
       "Remaining": "Pozostały",
       "ResourcePolicy": "Polityka zasobów",
       "Resources": "Zasoby",
+      "Scheduler": "Harmonogram",
       "Serving": "Obsługa",
       "Sessions": "Sesje",
       "Settings": "Ustawienia",

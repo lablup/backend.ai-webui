@@ -1,3 +1,7 @@
+---
+model: claude-sonnet-4-20250514
+---
+
 # Fill Out i18n Translations
 
 High-performance auto-translation of missing i18n keys using Claude AI for Backend.AI WebUI locale files based on git changes.

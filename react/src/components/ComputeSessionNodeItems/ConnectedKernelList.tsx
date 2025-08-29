@@ -133,7 +133,8 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
-      render: (id) => <Typography.Text copyable>{id}</Typography.Text>,
+      render: (id) =>
+        _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
     },
     {
       title: t('kernel.KernelId'),

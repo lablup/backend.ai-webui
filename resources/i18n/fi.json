@@ -1202,6 +1202,9 @@
     "SharedMemory": "Jaettu muisti",
     "Updated": "Resurssien esiasetus päivitetty"
   },
+  "scheduler": {
+    "PendingSessions": "Vireillä olevat istunnot"
+  },
   "session": {
     "Agent": "Agentti",
     "AgentId": "Agenttitunnus",
@@ -1283,6 +1286,7 @@
     "OpenToPublicDesc": "Tämän vaihtoehdon käyttöönotto mahdollistaa kaikille verkon käyttäjille sovellusten pääsyn.<br /><br /> \nSyötä pääsyn hallinta tietyt IP -osoitteet 'sallittu IP' -kenttään.<br /><br /> \nTämän kentän jättäminen tyhjiksi sallii pääsyn kaikista IP -osoitteista.<br /><br /> \nHarkitse IP -rajoitusten asettamista tarvittaessa turvallisuuden hallintaan.",
     "Others": "Muut",
     "PanelSettings": "Paneelin asetukset",
+    "PendingPosition": "Jonopaikka",
     "PredicateChecks": "Predikaatin tarkistukset",
     "Preparing": "Valmistautuminen...",
     "PreparingSession": "Istunnon valmistelu...",
@@ -2003,6 +2007,7 @@
       "Remaining": "Jäljellä oleva",
       "ResourcePolicy": "Resurssipolitiikka",
       "Resources": "Resurssit",
+      "Scheduler": "Aikataulu",
       "Serving": "Palvelevat",
       "Sessions": "Istunnot",
       "Settings": "Asetukset",

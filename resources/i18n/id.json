@@ -1201,6 +1201,9 @@
     "SharedMemory": "Memori bersama",
     "Updated": "Preset sumber daya diperbarui"
   },
+  "scheduler": {
+    "PendingSessions": "Sesi yang tertunda"
+  },
   "session": {
     "Agent": "Agen",
     "AgentId": "ID Agen",
@@ -1282,6 +1285,7 @@
     "OpenToPublicDesc": "Mengaktifkan opsi ini memungkinkan akses aplikasi untuk semua pengguna dalam jaringan.<br /><br /> \nUntuk manajemen akses, masukkan alamat IP tertentu di bidang 'IP yang diizinkan'.<br /><br /> \nMembiarkan bidang ini kosong akan memungkinkan akses dari semua alamat IP.<br /><br /> \nPertimbangkan untuk menetapkan pembatasan IP bila diperlukan untuk manajemen keamanan.",
     "Others": "Lainnya",
     "PanelSettings": "Pengaturan Panel",
+    "PendingPosition": "Posisi antrian",
     "PredicateChecks": "Pemeriksaan Predikat",
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -2002,6 +2006,7 @@
       "Remaining": "Tersisa",
       "ResourcePolicy": "Kebijakan Sumber Daya",
       "Resources": "Sumber daya",
+      "Scheduler": "Penjadwal",
       "Serving": "Penyajian",
       "Sessions": "Sesi",
       "Settings": "Pengaturan",

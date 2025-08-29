@@ -1203,6 +1203,9 @@
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },
+  "scheduler": {
+    "PendingSessions": "Bekleyen seanslar"
+  },
   "session": {
     "Agent": "Temsilci",
     "AgentId": "Ajan kimliği",
@@ -1284,6 +1287,7 @@
     "OpenToPublicDesc": "Bu seçeneğin etkinleştirilmesi, ağ içindeki tüm kullanıcılar için uygulama erişimine izin verir.<br /><br /> \nErişim yönetimi için 'izin verilen IP' alanına belirli IP adreslerini girin.<br /><br /> \nBu alanı boş bırakmak tüm IP adreslerinden erişime izin verecektir.<br /><br /> \nGüvenlik yönetimi için gerektiğinde IP kısıtlamaları ayarlamayı düşünün.",
     "Others": "Diğerleri",
     "PanelSettings": "Panel Ayarları",
+    "PendingPosition": "Kuyruk konumu",
     "PredicateChecks": "Yumurlamalı Çekler",
     "Preparing": "hazırlanıyor...",
     "PreparingSession": "Oturum hazırlanıyor...",
@@ -2003,6 +2007,7 @@
       "Remaining": "Geriye kalan",
       "ResourcePolicy": "Kaynak Politikası",
       "Resources": "Kaynaklar",
+      "Scheduler": "Zamanlayıcı",
       "Serving": "Servis",
       "Sessions": "Oturumlar",
       "Settings": "Ayarlar",

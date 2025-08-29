@@ -1,3 +1,7 @@
+---
+model: claude-sonnet-4-20250514
+---
+
 # Enhance Component Documentation
 
 Automatically enhance React component documentation with JSDoc comments, improved Storybook stories, and autodoc configuration.
