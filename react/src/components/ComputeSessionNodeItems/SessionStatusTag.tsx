@@ -8,6 +8,7 @@ import { Tag, Tooltip, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface SessionStatusTagProps {
@@ -46,6 +47,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   showInfo,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const session = useFragment(
     graphql`
@@ -54,29 +56,46 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         status
         status_info
         status_data
+        queue_position @since(version: "25.12.0")
       }
     `,
     sessionFrgmt,
   );
 
+  const displayQuePosition = _.isNumber(session?.queue_position)
+    ? session?.queue_position + 1
+    : undefined;
   return session ? (
     _.isEmpty(session.status_info) || !showInfo ? (
-      <Tooltip title={session.status_info}>
-        <Tag
-          color={
-            session.status ? _.get(statusTagColor, session.status) : undefined
-          }
-          icon={isTransitional(session) ? <LoadingOutlined spin /> : undefined}
-          // Comment out to match the legacy tag style temporarily
-          style={{
-            borderRadius: 11,
-            paddingLeft: token.paddingSM,
-            paddingRight: token.paddingSM,
-          }}
-        >
-          {session.status || ' '}
-        </Tag>
-      </Tooltip>
+      <BAIFlex wrap="nowrap">
+        <Tooltip title={session.status_info}>
+          <Tag
+            color={
+              session.status ? _.get(statusTagColor, session.status) : undefined
+            }
+            icon={
+              isTransitional(session) ? <LoadingOutlined spin /> : undefined
+            }
+            // Comment out to match the legacy tag style temporarily
+            style={{
+              borderRadius: 11,
+              paddingLeft: token.paddingSM,
+              paddingRight: token.paddingSM,
+            }}
+          >
+            {session.status || ' '}
+          </Tag>
+        </Tooltip>
+        {displayQuePosition ? (
+          <Tooltip title={t('session.PendingPosition')}>
+            <Tag
+              style={{
+                borderRadius: 11,
+              }}
+            >{`#${displayQuePosition}`}</Tag>
+          </Tooltip>
+        ) : null}
+      </BAIFlex>
     ) : (
       <BAIFlex>
         <Tag

@@ -1203,6 +1203,9 @@
     "SharedMemory": "Bộ nhớ chia sẻ",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
+  "scheduler": {
+    "PendingSessions": "Phiên đang chờ xử lý"
+  },
   "session": {
     "Agent": "Đặc vụ",
     "AgentId": "Id đại lý",
@@ -1284,6 +1287,7 @@
     "OpenToPublicDesc": "Kích hoạt tùy chọn này cho phép truy cập ứng dụng cho tất cả người dùng trong mạng.<br /><br /> \nĐể quản lý truy cập, hãy nhập các địa chỉ IP cụ thể trong trường 'IP được phép'.<br /><br /> \nĐể lại trường này trống sẽ cho phép truy cập từ tất cả các địa chỉ IP.<br /><br /> \nXem xét thiết lập các hạn chế IP khi cần thiết để quản lý bảo mật.",
     "Others": "Khác",
     "PanelSettings": "Cài đặt bảng điều khiển",
+    "PendingPosition": "Vị trí hàng đợi",
     "PredicateChecks": "Kiểm tra vị ngữ",
     "Preparing": "Đang chuẩn bị ...",
     "PreparingSession": "Đang chuẩn bị phiên ...",
@@ -2003,6 +2007,7 @@
       "Remaining": "Còn lại",
       "ResourcePolicy": "Chính sách tài nguyên",
       "Resources": "Tài nguyên",
+      "Scheduler": "Người lập lịch",
       "Serving": "Phục vụ",
       "Sessions": "Phiên",
       "Settings": "Cài đặt",

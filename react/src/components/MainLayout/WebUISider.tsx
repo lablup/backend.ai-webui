@@ -49,7 +49,12 @@ import {
   BAIFlex,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { BotMessageSquare, ExternalLinkIcon, LinkIcon } from 'lucide-react';
+import {
+  BotMessageSquare,
+  ExternalLinkIcon,
+  LinkIcon,
+  ClipboardClock,
+} from 'lucide-react';
 import React, { ReactNode, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -96,6 +101,7 @@ export type MenuKeys =
   // adminMenu keys
   | 'credential'
   | 'environment'
+  | 'scheduler'
   | 'resource-policy'
   // superAdminMenu keys
   | 'agent'
@@ -252,7 +258,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
   ]);
 
-  const adminMenu: MenuProps['items'] = [
+  const adminMenu: MenuProps['items'] = filterOutEmpty([
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
@@ -265,6 +271,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
     },
+    baiClient?.supports('pending-session-list') && {
+      label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
+      icon: <ClipboardClock style={{ color: token.colorInfo }} />,
+      key: 'scheduler',
+    },
     {
       label: (
         <WebUILink to="/resource-policy">
@@ -274,7 +285,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy',
     },
-  ];
+  ]);
 
   const superAdminMenu: MenuProps['items'] = [
     {

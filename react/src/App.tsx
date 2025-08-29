@@ -82,6 +82,8 @@ const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
 
+const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -425,6 +427,23 @@ const router = createBrowserRouter([
         path: '/environment',
         handle: { labelKey: 'webui.menu.Environments' },
         Component: EnvironmentPage,
+      },
+      {
+        path: '/scheduler',
+        handle: { labelKey: 'webui.menu.Scheduler' },
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('pending-session-list') ? (
+            <BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <SchedulerPage />
+                <SessionDetailAndContainerLogOpenerLegacy />
+              </Suspense>
+            </BAIErrorBoundary>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
+          );
+        },
       },
       {
         path: '/agent',

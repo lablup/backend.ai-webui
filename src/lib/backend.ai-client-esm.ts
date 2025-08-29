@@ -804,6 +804,10 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.12.0')) {
       this._features['mount-by-id'] = true;
     }
+    // TODO: 버전 25.13.0
+    if (this.isManagerVersionCompatibleWith('25.13.0')) {
+      this._features['pending-session-list'] = true;
+    }
   }
 
   /**

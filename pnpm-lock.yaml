@@ -566,7 +566,7 @@ importers:
         version: 7.0.1(@babel/plugin-syntax-flow@7.26.0(@babel/core@7.27.3))(@babel/plugin-transform-react-jsx@7.27.1(@babel/core@7.27.3))(eslint@8.57.1)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.4.1)(typescript@5.8.2)))(typescript@5.8.2)
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.8.2))(eslint@8.57.1)
+        version: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.1)
       eslint-plugin-react:
         specifier: ^7.37.4
         version: 7.37.4(eslint@8.57.1)
@@ -736,8 +736,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       lucide-react:
-        specifier: ^0.484.0
-        version: 0.484.0(react@19.0.0)
+        specifier: ^0.542.0
+        version: 0.542.0(react@19.0.0)
       markdown-to-jsx:
         specifier: ^7.7.4
         version: 7.7.4(react@19.0.0)
@@ -945,7 +945,7 @@ importers:
         version: 7.0.1(@babel/plugin-syntax-flow@7.26.0(@babel/core@7.27.3))(@babel/plugin-transform-react-jsx@7.27.1(@babel/core@7.27.3))(eslint@8.57.1)(jest@29.7.0(@types/node@20.17.10)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.10)(typescript@5.7.2)))(typescript@5.7.2)
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.5.4))(eslint@8.57.1)
+        version: 2.31.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)
       eslint-plugin-react:
         specifier: ^7.37.4
         version: 7.37.4(eslint@8.57.1)
@@ -1507,6 +1507,11 @@ packages:
 
   '@babel/parser@7.28.0':
     resolution: {integrity: sha512-jVZGvOxOuNSsuQuLRTh13nU0AogFlw32w/MT+LV6D3sP5WdbW61E77RnkbaO2dUvmPAYrBDJXGn5gGS6tH4j8g==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/parser@7.28.3':
+    resolution: {integrity: sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -2222,16 +2227,16 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  '@cloudscape-design/collection-hooks@1.0.66':
-    resolution: {integrity: sha512-H/fB626cM3gqanMyhzDE+nn1gPkldzp7TUm2nrXUCqIUlloOnJUAkFqbkDkihrv/XpWoyeW1YWfgyLpusrZjHg==}
+  '@cloudscape-design/collection-hooks@1.0.74':
+    resolution: {integrity: sha512-yAcD7vjFqbwqMCamUcKRXp403u8RcmC9izyPEYiWod9elt7x0GT1ypPyo9ZRyQuFrBsv2nwubBUrChcYaWooZw==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: '>=16.8.0'
+
+  '@cloudscape-design/component-toolkit@1.0.0-beta.117':
+    resolution: {integrity: sha512-BhlvVoLL+Qz92Y4K+Waq0VK4PGC3W8oj60lOWcSEvBUs6JRrvNQ2kIxpIPBMFo+v7Ii6enBZc/lsXwY8yTDdzQ==}
 
   '@cloudscape-design/component-toolkit@1.0.0-beta.80':
     resolution: {integrity: sha512-mdXl/r6633G80EKQfV8ZHSwXTnkyfRRpn93lTgTs/YozuHebcXw49YfzFg6LeGhkM9x2CBI4NzM3MjeNL+jSqw==}
-
-  '@cloudscape-design/component-toolkit@1.0.0-beta.91':
-    resolution: {integrity: sha512-CEsvWQgfK7T5mdYBYzJpKM1W4aZsv5jituL1ELsvVhiBPTxtAqEpxsajGS44G6GNnVw8VG1bfOQ+zfa+H8czXA==}
 
   '@cloudscape-design/components@3.0.838':
     resolution: {integrity: sha512-laH1urDup32ZTkZ//Y4XADz0meEOTIYFbpRXbKKX50JXyWBmileoDlIK2bO1AlONBIF5A9sXcPe4AAw2k3K4xA==}
@@ -2245,11 +2250,11 @@ packages:
   '@cloudscape-design/test-utils-core@1.0.45':
     resolution: {integrity: sha512-anfjI9Y1cM68tsJOIR9ULu0Qz9S4KV4lGfxaB+rJFsbRG87VvJkc1idZ5v0DgXlKfpJ6lMY3bMGI3s7fSY7LVQ==}
 
-  '@cloudscape-design/test-utils-core@1.0.54':
-    resolution: {integrity: sha512-EM/U5/t8D4yKwFYL2ltlyAoqIb+b0r1kNW0dMvMwphmYYC6z1Bunl7L9JcHYhhX8MYC+5l2A3LuzznK7+Os4Zg==}
+  '@cloudscape-design/test-utils-core@1.0.63':
+    resolution: {integrity: sha512-2w3y7gJ9LcaPjswe0SMr/lI6D/uwIDAS0+UDEYIkvecTlPhnowZJj1fazPuH1TFnN+r+y2EPXTKNwfGFAQJseA==}
 
-  '@cloudscape-design/theming-runtime@1.0.71':
-    resolution: {integrity: sha512-IXGJ2Y/9R9+qVasXZ7wfOa0uXJpabVYjtJFhgd6+71SXLueyfS1qonPepbDrnm6TbYPFtRKQWWRzzUYN2wVeGg==}
+  '@cloudscape-design/theming-runtime@1.0.82':
+    resolution: {integrity: sha512-YNpr4JZ5tJWjAcfH1JKAup2mZvIeA9YgPfaDpAE3DuD1sgaELb9yGGR+pMc2xWZMO2OEK3BPdZfLiXEWFaIBRg==}
 
   '@codemirror/autocomplete@6.18.3':
     resolution: {integrity: sha512-1dNIOmiM0z4BIBwxmxEfA1yoxh1MF/6KPBbh20a5vphGV0ictKlgQsbJs6D6SkR6iJpGbpwRsa6PFMNlg9T9pQ==}
@@ -2262,11 +2267,20 @@ packages:
   '@codemirror/commands@6.8.0':
     resolution: {integrity: sha512-q8VPEFaEP4ikSlt6ZxjB3zW72+7osfAYW9i8Zu943uqbKuz6utc1+F170hyLUCUltXORjQXRyYQNfkckzA/bPQ==}
 
+  '@codemirror/commands@6.8.1':
+    resolution: {integrity: sha512-KlGVYufHMQzxbdQONiLyGQDUW0itrLZwq3CcY7xpv9ZLRHqzkBSoteocBHtMCoY7/Ci4xhzSrToIeLg7FxHuaw==}
+
   '@codemirror/lang-angular@0.1.3':
     resolution: {integrity: sha512-xgeWGJQQl1LyStvndWtruUvb4SnBZDAu/gvFH/ZU+c0W25tQR8e5hq7WTwiIY2dNxnf+49mRiGI/9yxIwB6f5w==}
 
+  '@codemirror/lang-angular@0.1.4':
+    resolution: {integrity: sha512-oap+gsltb/fzdlTQWD6BFF4bSLKcDnlxDsLdePiJpCVNKWXSTAbiiQeYI3UmES+BLAdkmIC1WjyztC1pi/bX4g==}
+
   '@codemirror/lang-cpp@6.0.2':
     resolution: {integrity: sha512-6oYEYUKHvrnacXxWxYa6t4puTlbN3dgV662BDfSH8+MfjQjVmP697/KYTDOqpxgerkvoNm7q5wlFMBeX8ZMocg==}
+
+  '@codemirror/lang-cpp@6.0.3':
+    resolution: {integrity: sha512-URM26M3vunFFn9/sm6rzqrBzDgfWuDixp85uTY49wKudToc2jTHUrKIGGKs+QWND+YLofNNZpxcNGRynFJfvgA==}
 
   '@codemirror/lang-css@6.3.1':
     resolution: {integrity: sha512-kr5fwBGiGtmz6l0LSJIbno9QrifNMUusivHbnA1H6Dmqy4HZFte3UAICix1VuKo0lMPKQr2rqB+0BkKi/S3Ejg==}
@@ -2280,11 +2294,20 @@ packages:
   '@codemirror/lang-java@6.0.1':
     resolution: {integrity: sha512-OOnmhH67h97jHzCuFaIEspbmsT98fNdhVhmA3zCxW0cn7l8rChDhZtwiwJ/JOKXgfm4J+ELxQihxaI7bj7mJRg==}
 
+  '@codemirror/lang-java@6.0.2':
+    resolution: {integrity: sha512-m5Nt1mQ/cznJY7tMfQTJchmrjdjQ71IDs+55d1GAa8DGaB8JXWsVCkVT284C3RTASaY43YknrK2X3hPO/J3MOQ==}
+
   '@codemirror/lang-javascript@6.2.3':
     resolution: {integrity: sha512-8PR3vIWg7pSu7ur8A07pGiYHgy3hHj+mRYRCSG8q+mPIrl0F02rgpGv+DsQTHRTc30rydOsf5PZ7yjKFg2Ackw==}
 
+  '@codemirror/lang-javascript@6.2.4':
+    resolution: {integrity: sha512-0WVmhp1QOqZ4Rt6GlVGwKJN3KW7Xh4H2q8ZZNGZaP6lRdxXJzmjm4FqvmOojVj6khWJHIb9sp7U/72W7xQgqAA==}
+
   '@codemirror/lang-json@6.0.1':
     resolution: {integrity: sha512-+T1flHdgpqDDlJZ2Lkil/rLiRy684WMLc74xUnjJH48GQdfJo/pudlTRreZmKwzP8/tGdKf83wlbAdOCzlJOGQ==}
+
+  '@codemirror/lang-json@6.0.2':
+    resolution: {integrity: sha512-x2OtO+AvwEHrEwR0FyyPtfDUiloG3rnVTSZV1W8UteaLL8/MajQd8DpvUb2YVzC+/T18aSDv0H9mu+xw0EStoQ==}
 
   '@codemirror/lang-less@6.0.2':
     resolution: {integrity: sha512-EYdQTG22V+KUUk8Qq582g7FMnCZeEHsyuOJisHRft/mQ+ZSZ2w51NupvDUHiqtsOy7It5cHLPGfHQLpMh9bqpQ==}
@@ -2295,23 +2318,41 @@ packages:
   '@codemirror/lang-liquid@6.2.3':
     resolution: {integrity: sha512-yeN+nMSrf/lNii3FJxVVEGQwFG0/2eDyH6gNOj+TGCa0hlNO4bhQnoO5ISnd7JOG+7zTEcI/GOoyraisFVY7jQ==}
 
+  '@codemirror/lang-liquid@6.3.0':
+    resolution: {integrity: sha512-fY1YsUExcieXRTsCiwX/bQ9+PbCTA/Fumv7C7mTUZHoFkibfESnaXwpr2aKH6zZVwysEunsHHkaIpM/pl3xETQ==}
+
   '@codemirror/lang-markdown@6.3.2':
     resolution: {integrity: sha512-c/5MYinGbFxYl4itE9q/rgN/sMTjOr8XL5OWnC+EaRMLfCbVUmmubTJfdgpfcSS2SCaT7b+Q+xi3l6CgoE+BsA==}
+
+  '@codemirror/lang-markdown@6.3.4':
+    resolution: {integrity: sha512-fBm0BO03azXnTAsxhONDYHi/qWSI+uSEIpzKM7h/bkIc9fHnFp9y7KTMXKON0teNT97pFhc1a9DQTtWBYEZ7ug==}
 
   '@codemirror/lang-php@6.0.1':
     resolution: {integrity: sha512-ublojMdw/PNWa7qdN5TMsjmqkNuTBD3k6ndZ4Z0S25SBAiweFGyY68AS3xNcIOlb6DDFDvKlinLQ40vSLqf8xA==}
 
+  '@codemirror/lang-php@6.0.2':
+    resolution: {integrity: sha512-ZKy2v1n8Fc8oEXj0Th0PUMXzQJ0AIR6TaZU+PbDHExFwdu+guzOA4jmCHS1Nz4vbFezwD7LyBdDnddSJeScMCA==}
+
   '@codemirror/lang-python@6.1.7':
     resolution: {integrity: sha512-mZnFTsL4lW5p9ch8uKNKeRU3xGGxr1QpESLilfON2E3fQzOa/OygEMkaDvERvXDJWJA9U9oN/D4w0ZuUzNO4+g==}
 
+  '@codemirror/lang-python@6.2.1':
+    resolution: {integrity: sha512-IRjC8RUBhn9mGR9ywecNhB51yePWCGgvHfY1lWN/Mrp3cKuHr0isDKia+9HnvhiWNnMpbGhWrkhuWOc09exRyw==}
+
   '@codemirror/lang-rust@6.0.1':
     resolution: {integrity: sha512-344EMWFBzWArHWdZn/NcgkwMvZIWUR1GEBdwG8FEp++6o6vT6KL9V7vGs2ONsKxxFUPXKI0SPcWhyYyl2zPYxQ==}
+
+  '@codemirror/lang-rust@6.0.2':
+    resolution: {integrity: sha512-EZaGjCUegtiU7kSMvOfEZpaCReowEf3yNidYu7+vfuGTm9ow4mthAparY5hisJqOHmJowVH3Upu+eJlUji6qqA==}
 
   '@codemirror/lang-sass@6.0.2':
     resolution: {integrity: sha512-l/bdzIABvnTo1nzdY6U+kPAC51czYQcOErfzQ9zSm9D8GmNPD0WTW8st/CJwBTPLO8jlrbyvlSEcN20dc4iL0Q==}
 
   '@codemirror/lang-sql@6.8.0':
     resolution: {integrity: sha512-aGLmY4OwGqN3TdSx3h6QeA1NrvaYtF7kkoWR/+W7/JzB0gQtJ+VJxewlnE3+VImhA4WVlhmkJr109PefOOhjLg==}
+
+  '@codemirror/lang-sql@6.9.1':
+    resolution: {integrity: sha512-ecSk3gm/mlINcURMcvkCZmXgdzPSq8r/yfCtTB4vgqGGIbBC2IJIAy7GqYTy5pgBEooTVmHP2GZK6Z7h63CDGg==}
 
   '@codemirror/lang-vue@0.1.3':
     resolution: {integrity: sha512-QSKdtYTDRhEHCfo5zOShzxCmqKJvgGrZwDQSdbvCRJ5pRLWBS7pD/8e/tH44aVQT6FKm0t6RVNoSUWHOI5vNug==}
@@ -2330,6 +2371,9 @@ packages:
 
   '@codemirror/language@6.11.0':
     resolution: {integrity: sha512-A7+f++LodNNc1wGgoRDTt78cOwWm9KVezApgjOMp1W4hM0898nsqBXwF+sbePE7ZRcjN7Sa1Z5m2oN27XkmEjQ==}
+
+  '@codemirror/language@6.11.3':
+    resolution: {integrity: sha512-9HBM2XnwDj7fnu0551HkGdrUrrqmYq/WC5iv6nbY2WdicXdGbhR/gfbZOH73Aqj4351alY1+aoG9rCNfiwS1RA==}
 
   '@codemirror/legacy-modes@6.4.2':
     resolution: {integrity: sha512-HsvWu08gOIIk303eZQCal4H4t65O/qp1V4ul4zVa3MHK5FJ0gz3qz3O55FIkm+aQUcshUOjBx38t2hPiJwW5/g==}
@@ -3463,6 +3507,9 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
 
+  '@jridgewell/sourcemap-codec@1.5.5':
+    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
@@ -3491,11 +3538,14 @@ packages:
   '@lezer/cpp@1.1.2':
     resolution: {integrity: sha512-macwKtyeUO0EW86r3xWQCzOV9/CF8imJLpJlPv3sDY57cPGeUZ8gXWOWNlJr52TVByMV3PayFQCA5SHEERDmVQ==}
 
+  '@lezer/cpp@1.1.3':
+    resolution: {integrity: sha512-ykYvuFQKGsRi6IcE+/hCSGUhb/I4WPjd3ELhEblm2wS2cOznDFzO+ubK2c+ioysOnlZ3EduV+MVQFCPzAIoY3w==}
+
   '@lezer/css@1.1.11':
     resolution: {integrity: sha512-FuAnusbLBl1SEAtfN8NdShxYJiESKw9LAFysfea1T96jD3ydBn12oYjaSG1a04BQRIUd93/0D8e5CV1cUMkmQg==}
 
-  '@lezer/go@1.0.0':
-    resolution: {integrity: sha512-co9JfT3QqX1YkrMmourYw2Z8meGC50Ko4d54QEcQbEYpvdUvN4yb0NBZdn/9ertgvjsySxHsKzH3lbm3vqJ4Jw==}
+  '@lezer/go@1.0.1':
+    resolution: {integrity: sha512-xToRsYxwsgJNHTgNdStpcvmbVuKxTapV0dM0wey1geMMRc9aggoVyKgzYp41D2/vVOx+Ii4hmE206kvxIXBVXQ==}
 
   '@lezer/highlight@1.2.1':
     resolution: {integrity: sha512-Z5duk4RN/3zuVO7Jq0pGLJ3qynpxUVsh7IbUbGj88+uV2ApSAn6kWg2au3iJb+0Zi7kKtqffIESgNcRXWZWmSA==}
@@ -3512,6 +3562,9 @@ packages:
   '@lezer/json@1.0.2':
     resolution: {integrity: sha512-xHT2P4S5eeCYECyKNPhr4cbEL9tc8w83SPwRC373o9uEdrvGKTZoJVAGxpOsZckMlEh9W23Pc72ew918RWQOBQ==}
 
+  '@lezer/json@1.0.3':
+    resolution: {integrity: sha512-BP9KzdF9Y35PDpv04r0VeSTKDeox5vVr3efE7eBbx3r4s3oNLfunchejZhjArmeieBH+nVOpgIiBJpEAv8ilqQ==}
+
   '@lezer/lezer@1.1.2':
     resolution: {integrity: sha512-O8yw3CxPhzYHB1hvwbdozjnAslhhR8A5BH7vfEMof0xk3p+/DFDfZkA9Tde6J+88WgtwaHy4Sy6ThZSkaI0Evw==}
 
@@ -3521,11 +3574,20 @@ packages:
   '@lezer/markdown@1.4.2':
     resolution: {integrity: sha512-iYewCigG/517D0xJPQd7RGaCjZAFwROiH8T9h7OTtz0bRVtkxzFhGBFJ9JGKgBBs4uuo1cvxzyQ5iKhDLMcLUQ==}
 
+  '@lezer/markdown@1.4.3':
+    resolution: {integrity: sha512-kfw+2uMrQ/wy/+ONfrH83OkdFNM0ye5Xq96cLlaCy7h5UT9FO54DU4oRoIc0CSBh5NWmWuiIJA7NGLMJbQ+Oxg==}
+
   '@lezer/php@1.0.2':
     resolution: {integrity: sha512-GN7BnqtGRpFyeoKSEqxvGvhJQiI4zkgmYnDk/JIyc7H7Ifc1tkPnUn/R2R8meH3h/aBf5rzjvU8ZQoyiNDtDrA==}
 
+  '@lezer/php@1.0.4':
+    resolution: {integrity: sha512-D2dJ0t8Z28/G1guztRczMFvPDUqzeMLSQbdWQmaiHV7urc8NlEOnjYk9UrZ531OcLiRxD4Ihcbv7AsDpNKDRaQ==}
+
   '@lezer/python@1.1.16':
     resolution: {integrity: sha512-ievIWylIZA5rNgAyHgA06/Y76vMUISKaYL9WrtjU8rCTTEzyZYo2jz9ER2YBdnN6dxCyS7eaK4HJCzamoAMKZw==}
+
+  '@lezer/python@1.1.18':
+    resolution: {integrity: sha512-31FiUrU7z9+d/ElGQLJFXl+dKOdx0jALlP3KEOsGTex8mvj+SoE1FgItcHWK/axkxCHGUSpqIHt6JAWfWu9Rhg==}
 
   '@lezer/rust@1.0.2':
     resolution: {integrity: sha512-Lz5sIPBdF2FUXcWeCu1//ojFAZqzTQNRga0aYv6dYXqJqPfMdCAI0NzajWUd4Xijj1IKJLtjoXRPMvTKWBcqKg==}
@@ -6084,8 +6146,8 @@ packages:
   ace-builds@1.35.4:
     resolution: {integrity: sha512-r0KQclhZ/uk5a4zOqRYQkJuQuu4vFMiA6VTj54Tk4nI1TUR3iEMMppZkWbNoWEgWwv4ciDloObb9Rf4V55Qgjw==}
 
-  ace-builds@1.39.1:
-    resolution: {integrity: sha512-HcJbBzx8qY66t9gZo/sQu7pi0wO/CFLdYn1LxQO1WQTfIkMfyc7LRnBpsp/oNCSSU/LL83jXHN1fqyOTuIhUjg==}
+  ace-builds@1.43.2:
+    resolution: {integrity: sha512-3wzJUJX0RpMc03jo0V8Q3bSb/cKPnS7Nqqw8fVHsCCHweKMiTIxT3fP46EhjmVy6MCuxwP801ere+RW245phGw==}
 
   acorn-class-fields@0.3.7:
     resolution: {integrity: sha512-jdUWSFce0fuADUljmExz4TWpPkxmRW/ZCPRqeeUzbGf0vFUcpQYbyq52l75qGd0oSwwtAepeL6hgb/naRgvcKQ==}
@@ -7842,6 +7904,9 @@ packages:
 
   decimal.js@10.5.0:
     resolution: {integrity: sha512-8vDa8Qxvr/+d94hSh5P3IJwI5t8/c0KsMp+g8bNw9cY2icONa5aPfvKeieW1WlG0WQYwwhJ7mjui2xtiePQSXw==}
+
+  decimal.js@10.6.0:
+    resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
 
   decode-named-character-reference@1.0.2:
     resolution: {integrity: sha512-O8x12RzrUF8xyVcY0KJowWsmaJxQbmy0/EtnNtHRpsOcT7dFk5W598coHqBVpmWo1oQQfsCqfCmkZN5DJrZVdg==}
@@ -10968,6 +11033,11 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  lucide-react@0.542.0:
+    resolution: {integrity: sha512-w3hD8/SQB7+lzU2r4VdFyzzOzKnUjTZIF/MQJGSSvni7Llewni4vuViRppfRAa2guOsY5k4jZyxw/i9DQHv+dw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
@@ -10989,6 +11059,9 @@ packages:
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
+
+  magic-string@0.30.18:
+    resolution: {integrity: sha512-yi8swmWbO17qHhwIBNeeZxTceJMeBvWJaId6dyvTSOwTipqeHhMhOrz6513r1sOKnpvQ7zkhlG8tPrpilwTxHQ==}
 
   make-dir@3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
@@ -12413,6 +12486,10 @@ packages:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postcss@8.5.6:
+    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
+    engines: {node: ^10 || ^12 || >=14}
+
   postject@1.0.0-alpha.6:
     resolution: {integrity: sha512-b9Eb8h2eVqNE8edvKdwqkrY6O7kAwmI8kcnBv1NScolYJbo59XUF0noFq+lxbC1yN20bmC0WBEbDC5H/7ASb0A==}
     engines: {node: '>=14.0.0'}
@@ -12619,6 +12696,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qs@6.11.0:
@@ -13820,6 +13898,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -16532,6 +16611,11 @@ snapshots:
     dependencies:
       '@babel/types': 7.28.2
 
+  '@babel/parser@7.28.3':
+    dependencies:
+      '@babel/types': 7.28.2
+    optional: true
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.27.1(@babel/core@7.27.3)':
     dependencies:
       '@babel/core': 7.27.3
@@ -17652,31 +17736,31 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-  '@cloudscape-design/collection-hooks@1.0.66(react@19.0.0)':
+  '@cloudscape-design/collection-hooks@1.0.74(react@19.0.0)':
     dependencies:
       react: 19.0.0
+
+  '@cloudscape-design/component-toolkit@1.0.0-beta.117':
+    dependencies:
+      '@juggle/resize-observer': 3.4.0
+      tslib: 2.8.1
 
   '@cloudscape-design/component-toolkit@1.0.0-beta.80':
     dependencies:
       '@juggle/resize-observer': 3.4.0
       tslib: 2.8.1
 
-  '@cloudscape-design/component-toolkit@1.0.0-beta.91':
-    dependencies:
-      '@juggle/resize-observer': 3.4.0
-      tslib: 2.8.1
-
   '@cloudscape-design/components@3.0.838(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@cloudscape-design/collection-hooks': 1.0.66(react@19.0.0)
-      '@cloudscape-design/component-toolkit': 1.0.0-beta.91
-      '@cloudscape-design/test-utils-core': 1.0.54
-      '@cloudscape-design/theming-runtime': 1.0.71
+      '@cloudscape-design/collection-hooks': 1.0.74(react@19.0.0)
+      '@cloudscape-design/component-toolkit': 1.0.0-beta.117
+      '@cloudscape-design/test-utils-core': 1.0.63
+      '@cloudscape-design/theming-runtime': 1.0.82
       '@dnd-kit/core': 6.3.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@dnd-kit/sortable': 7.0.2(@dnd-kit/core@6.3.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       '@dnd-kit/utilities': 3.2.2(react@19.0.0)
       '@juggle/resize-observer': 3.4.0
-      ace-builds: 1.39.1
+      ace-builds: 1.43.2
       balanced-match: 1.0.2
       clsx: 1.2.1
       d3-shape: 1.3.7
@@ -17697,12 +17781,12 @@ snapshots:
       css-selector-tokenizer: 0.8.0
       css.escape: 1.5.1
 
-  '@cloudscape-design/test-utils-core@1.0.54':
+  '@cloudscape-design/test-utils-core@1.0.63':
     dependencies:
       css-selector-tokenizer: 0.8.0
       css.escape: 1.5.1
 
-  '@cloudscape-design/theming-runtime@1.0.71':
+  '@cloudscape-design/theming-runtime@1.0.82':
     dependencies:
       tslib: 2.8.1
 
@@ -17713,9 +17797,23 @@ snapshots:
       '@codemirror/view': 6.35.0
       '@lezer/common': 1.2.3
 
+  '@codemirror/autocomplete@6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+
   '@codemirror/commands@6.8.0':
     dependencies:
       '@codemirror/language': 6.11.0
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+
+  '@codemirror/commands@6.8.1':
+    dependencies:
+      '@codemirror/language': 6.11.3
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.35.0
       '@lezer/common': 1.2.3
@@ -17729,10 +17827,24 @@ snapshots:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@codemirror/lang-angular@0.1.4':
+    dependencies:
+      '@codemirror/lang-html': 6.4.9
+      '@codemirror/lang-javascript': 6.2.4
+      '@codemirror/language': 6.11.3
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
   '@codemirror/lang-cpp@6.0.2':
     dependencies:
       '@codemirror/language': 6.11.0
       '@lezer/cpp': 1.1.2
+
+  '@codemirror/lang-cpp@6.0.3':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@lezer/cpp': 1.1.3
 
   '@codemirror/lang-css@6.3.1(@codemirror/view@6.35.0)':
     dependencies:
@@ -17746,11 +17858,11 @@ snapshots:
 
   '@codemirror/lang-go@6.0.1(@codemirror/view@6.35.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
-      '@codemirror/language': 6.11.0
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/language': 6.11.3
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.3
-      '@lezer/go': 1.0.0
+      '@lezer/go': 1.0.1
     transitivePeerDependencies:
       - '@codemirror/view'
 
@@ -17771,6 +17883,11 @@ snapshots:
       '@codemirror/language': 6.11.0
       '@lezer/java': 1.1.3
 
+  '@codemirror/lang-java@6.0.2':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@lezer/java': 1.1.3
+
   '@codemirror/lang-javascript@6.2.3':
     dependencies:
       '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
@@ -17781,10 +17898,25 @@ snapshots:
       '@lezer/common': 1.2.3
       '@lezer/javascript': 1.4.19
 
+  '@codemirror/lang-javascript@6.2.4':
+    dependencies:
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/language': 6.11.3
+      '@codemirror/lint': 6.8.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+      '@lezer/javascript': 1.4.19
+
   '@codemirror/lang-json@6.0.1':
     dependencies:
       '@codemirror/language': 6.11.0
       '@lezer/json': 1.0.2
+
+  '@codemirror/lang-json@6.0.2':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@lezer/json': 1.0.3
 
   '@codemirror/lang-less@6.0.2(@codemirror/view@6.35.0)':
     dependencies:
@@ -17814,6 +17946,17 @@ snapshots:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@codemirror/lang-liquid@6.3.0':
+    dependencies:
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/lang-html': 6.4.9
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
   '@codemirror/lang-markdown@6.3.2':
     dependencies:
       '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
@@ -17824,6 +17967,16 @@ snapshots:
       '@lezer/common': 1.2.3
       '@lezer/markdown': 1.4.2
 
+  '@codemirror/lang-markdown@6.3.4':
+    dependencies:
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/lang-html': 6.4.9
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+      '@lezer/markdown': 1.4.3
+
   '@codemirror/lang-php@6.0.1':
     dependencies:
       '@codemirror/lang-html': 6.4.9
@@ -17831,6 +17984,14 @@ snapshots:
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.3
       '@lezer/php': 1.0.2
+
+  '@codemirror/lang-php@6.0.2':
+    dependencies:
+      '@codemirror/lang-html': 6.4.9
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.4.1
+      '@lezer/common': 1.2.3
+      '@lezer/php': 1.0.4
 
   '@codemirror/lang-python@6.1.7(@codemirror/view@6.35.0)':
     dependencies:
@@ -17842,9 +18003,24 @@ snapshots:
     transitivePeerDependencies:
       - '@codemirror/view'
 
+  '@codemirror/lang-python@6.2.1(@codemirror/view@6.35.0)':
+    dependencies:
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.4.1
+      '@lezer/common': 1.2.3
+      '@lezer/python': 1.1.18
+    transitivePeerDependencies:
+      - '@codemirror/view'
+
   '@codemirror/lang-rust@6.0.1':
     dependencies:
       '@codemirror/language': 6.11.0
+      '@lezer/rust': 1.0.2
+
+  '@codemirror/lang-rust@6.0.2':
+    dependencies:
+      '@codemirror/language': 6.11.3
       '@lezer/rust': 1.0.2
 
   '@codemirror/lang-sass@6.0.2(@codemirror/view@6.35.0)':
@@ -17861,6 +18037,17 @@ snapshots:
     dependencies:
       '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
       '@codemirror/language': 6.11.0
+      '@codemirror/state': 6.4.1
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+    transitivePeerDependencies:
+      - '@codemirror/view'
+
+  '@codemirror/lang-sql@6.9.1(@codemirror/view@6.35.0)':
+    dependencies:
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/language': 6.11.3
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
@@ -17895,8 +18082,8 @@ snapshots:
 
   '@codemirror/lang-yaml@6.1.2(@codemirror/view@6.35.0)':
     dependencies:
-      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
-      '@codemirror/language': 6.11.0
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/language': 6.11.3
       '@codemirror/state': 6.4.1
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
@@ -17907,27 +18094,27 @@ snapshots:
 
   '@codemirror/language-data@6.5.1(@codemirror/view@6.35.0)':
     dependencies:
-      '@codemirror/lang-angular': 0.1.3
-      '@codemirror/lang-cpp': 6.0.2
+      '@codemirror/lang-angular': 0.1.4
+      '@codemirror/lang-cpp': 6.0.3
       '@codemirror/lang-css': 6.3.1(@codemirror/view@6.35.0)
       '@codemirror/lang-go': 6.0.1(@codemirror/view@6.35.0)
       '@codemirror/lang-html': 6.4.9
-      '@codemirror/lang-java': 6.0.1
-      '@codemirror/lang-javascript': 6.2.3
-      '@codemirror/lang-json': 6.0.1
+      '@codemirror/lang-java': 6.0.2
+      '@codemirror/lang-javascript': 6.2.4
+      '@codemirror/lang-json': 6.0.2
       '@codemirror/lang-less': 6.0.2(@codemirror/view@6.35.0)
-      '@codemirror/lang-liquid': 6.2.3
-      '@codemirror/lang-markdown': 6.3.2
-      '@codemirror/lang-php': 6.0.1
-      '@codemirror/lang-python': 6.1.7(@codemirror/view@6.35.0)
-      '@codemirror/lang-rust': 6.0.1
+      '@codemirror/lang-liquid': 6.3.0
+      '@codemirror/lang-markdown': 6.3.4
+      '@codemirror/lang-php': 6.0.2
+      '@codemirror/lang-python': 6.2.1(@codemirror/view@6.35.0)
+      '@codemirror/lang-rust': 6.0.2
       '@codemirror/lang-sass': 6.0.2(@codemirror/view@6.35.0)
-      '@codemirror/lang-sql': 6.8.0(@codemirror/view@6.35.0)
+      '@codemirror/lang-sql': 6.9.1(@codemirror/view@6.35.0)
       '@codemirror/lang-vue': 0.1.3
       '@codemirror/lang-wast': 6.0.2
       '@codemirror/lang-xml': 6.1.0
       '@codemirror/lang-yaml': 6.1.2(@codemirror/view@6.35.0)
-      '@codemirror/language': 6.11.0
+      '@codemirror/language': 6.11.3
       '@codemirror/legacy-modes': 6.4.2
     transitivePeerDependencies:
       - '@codemirror/view'
@@ -17941,9 +18128,18 @@ snapshots:
       '@lezer/lr': 1.4.2
       style-mod: 4.1.2
 
+  '@codemirror/language@6.11.3':
+    dependencies:
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.35.0
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+      style-mod: 4.1.2
+
   '@codemirror/legacy-modes@6.4.2':
     dependencies:
-      '@codemirror/language': 6.11.0
+      '@codemirror/language': 6.11.3
 
   '@codemirror/lint@6.8.3':
     dependencies:
@@ -17961,7 +18157,7 @@ snapshots:
 
   '@codemirror/theme-one-dark@6.1.2':
     dependencies:
-      '@codemirror/language': 6.11.0
+      '@codemirror/language': 6.11.3
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.35.0
       '@lezer/highlight': 1.2.1
@@ -18663,7 +18859,7 @@ snapshots:
     dependencies:
       '@formatjs/fast-memoize': 2.2.7
       '@formatjs/intl-localematcher': 0.6.1
-      decimal.js: 10.5.0
+      decimal.js: 10.6.0
       tslib: 2.8.1
 
   '@formatjs/fast-memoize@2.2.7':
@@ -19414,6 +19610,9 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
+  '@jridgewell/sourcemap-codec@1.5.5':
+    optional: true
+
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
@@ -19447,13 +19646,19 @@ snapshots:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@lezer/cpp@1.1.3':
+    dependencies:
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
   '@lezer/css@1.1.11':
     dependencies:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
-  '@lezer/go@1.0.0':
+  '@lezer/go@1.0.1':
     dependencies:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
@@ -19487,6 +19692,12 @@ snapshots:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@lezer/json@1.0.3':
+    dependencies:
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
   '@lezer/lezer@1.1.2':
     dependencies:
       '@lezer/highlight': 1.2.1
@@ -19501,13 +19712,30 @@ snapshots:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
 
+  '@lezer/markdown@1.4.3':
+    dependencies:
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+
   '@lezer/php@1.0.2':
     dependencies:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
+  '@lezer/php@1.0.4':
+    dependencies:
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
   '@lezer/python@1.1.16':
+    dependencies:
+      '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
+  '@lezer/python@1.1.18':
     dependencies:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
@@ -23013,14 +23241,14 @@ snapshots:
 
   '@vue/compiler-sfc@3.5.13':
     dependencies:
-      '@babel/parser': 7.28.0
+      '@babel/parser': 7.28.3
       '@vue/compiler-core': 3.5.13
       '@vue/compiler-dom': 3.5.13
       '@vue/compiler-ssr': 3.5.13
       '@vue/shared': 3.5.13
       estree-walker: 2.0.2
-      magic-string: 0.30.17
-      postcss: 8.5.3
+      magic-string: 0.30.18
+      postcss: 8.5.6
       source-map-js: 1.2.1
     optional: true
 
@@ -23357,7 +23585,7 @@ snapshots:
 
   ace-builds@1.35.4: {}
 
-  ace-builds@1.39.1: {}
+  ace-builds@1.43.2: {}
 
   acorn-class-fields@0.3.7(acorn@8.12.1):
     dependencies:
@@ -24848,9 +25076,9 @@ snapshots:
 
   codemirror@6.0.1(@lezer/common@1.2.3):
     dependencies:
-      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.0)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
-      '@codemirror/commands': 6.8.0
-      '@codemirror/language': 6.11.0
+      '@codemirror/autocomplete': 6.18.3(@codemirror/language@6.11.3)(@codemirror/state@6.4.1)(@codemirror/view@6.35.0)(@lezer/common@1.2.3)
+      '@codemirror/commands': 6.8.1
+      '@codemirror/language': 6.11.3
       '@codemirror/lint': 6.8.3
       '@codemirror/search': 6.5.7
       '@codemirror/state': 6.4.1
@@ -25613,6 +25841,8 @@ snapshots:
   decimal.js-light@2.5.1: {}
 
   decimal.js@10.5.0: {}
+
+  decimal.js@10.6.0: {}
 
   decode-named-character-reference@1.0.2:
     dependencies:
@@ -30367,6 +30597,10 @@ snapshots:
     dependencies:
       react: 19.0.0
 
+  lucide-react@0.542.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
   lz-string@1.5.0: {}
 
   macro-carousel@1.0.0(focus-visible@4.1.5)(wicg-inert@3.1.2):
@@ -30389,6 +30623,11 @@ snapshots:
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  magic-string@0.30.18:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+    optional: true
 
   make-dir@3.1.0:
     dependencies:
@@ -32083,6 +32322,13 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  postcss@8.5.6:
+    dependencies:
+      nanoid: 3.3.11
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+    optional: true
 
   postject@1.0.0-alpha.6:
     dependencies:

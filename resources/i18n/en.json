@@ -1208,6 +1208,9 @@
     "SharedMemory": "Shared memory",
     "Updated": "Resource preset updated"
   },
+  "scheduler": {
+    "PendingSessions": "Pending Sessions"
+  },
   "session": {
     "Agent": "Agent",
     "AgentId": "Agent ID",
@@ -1289,6 +1292,7 @@
     "OpenToPublicDesc": "Enabling this option allows application access for all users within the network.<br /><br />   For access management, enter specific IP addresses in the 'Allowed IP' field. <br /><br />  Leaving this field empty will permit access from all IP addresses.<br /> <br /> Consider setting IP restrictions when necessary for security management.",
     "Others": "Others",
     "PanelSettings": "Panel Settings",
+    "PendingPosition": "Queue Position",
     "PredicateChecks": "Predicate Checks",
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -2010,6 +2014,7 @@
       "Remaining": "Remaining",
       "ResourcePolicy": "Resource Policy",
       "Resources": "Resources",
+      "Scheduler": "Scheduler",
       "Serving": "Serving",
       "Sessions": "Sessions",
       "Settings": "Settings",

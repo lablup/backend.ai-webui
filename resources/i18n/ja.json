@@ -1202,6 +1202,9 @@
     "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
   },
+  "scheduler": {
+    "PendingSessions": "保留中のセッション"
+  },
   "session": {
     "Agent": "エージェント",
     "AgentId": "エージェントID",
@@ -1283,6 +1286,7 @@
     "OpenToPublicDesc": "このオプションを有効にすることで、ネットワーク内のすべてのユーザーにアプリケーションにアクセスできます。<br /><br />\nアクセス管理の場合、「許可されたIP」フィールドに特定のIPアドレスを入力します。<br /><br />\nこのフィールドを空にすると、すべてのIPアドレスからのアクセスが可能になります。<br /><br />\nセキュリティ管理に必要な場合は、IP制限を設定することを検討してください。",
     "Others": "その他",
     "PanelSettings": "パネル設定",
+    "PendingPosition": "キュー位置",
     "PredicateChecks": "述語チェック",
     "Preparing": "準備...",
     "PreparingSession": "セッションの準備...",
@@ -2002,6 +2006,7 @@
       "Remaining": "残り",
       "ResourcePolicy": "リソースポリシー",
       "Resources": "リソース管理",
+      "Scheduler": "スケジューラ",
       "Serving": "モデルサービング",
       "Sessions": "セッション",
       "Settings": "設定",
