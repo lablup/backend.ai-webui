@@ -556,6 +556,9 @@
       "Used": "中古"
     }
   },
+  "deployment": {
+    "SelectDeployment": "选择部署"
+  },
   "desktopNotification": {
     "NotSupported": "该浏览器不支持通知。",
     "PermissionDenied": "您否认通知访问。\n要使用警报，请在浏览器设置中允许它。"

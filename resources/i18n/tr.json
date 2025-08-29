@@ -556,6 +556,9 @@
       "Used": "kullanılmış"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Dağıtım'ı seçin"
+  },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
     "PermissionDenied": "Bildirim erişimini reddettiniz. \nUyarıları kullanmak için lütfen tarayıcı ayarlarınıza izin verin."

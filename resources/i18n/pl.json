@@ -556,6 +556,9 @@
       "Used": "używany"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Wybierz wdrożenie"
+  },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
     "PermissionDenied": "Odmówiłeś dostępu do powiadomień. \nAby użyć alertów, pozwól temu w ustawieniach przeglądarki."

@@ -653,6 +653,7 @@
     "RoutesInfo": "Routes Info",
     "RoutingID": "Routing ID",
     "ScalingSettings": "Scaling Settings",
+    "SelectDeployment": "Select Deployment",
     "SessionID": "Session ID",
     "SetAsActiveRevision": "Set as active revision",
     "SetAutoScalingRule": "Set Auto Scaling Rule",
