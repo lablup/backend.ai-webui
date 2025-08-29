@@ -46,28 +46,25 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
   const { liveStat } = useSessionLiveStat(session);
 
-  const slots: {
+  const occupiedSlots: {
     [key in ResourceSlotName]?: string;
-  } = JSON.parse(
-    (mode === 'occupied' ? session.occupied_slots : session.requested_slots) ||
-      '{}',
-  );
+  } = JSON.parse(session.occupied_slots || '{}');
 
   if (type === 'cpu') {
     const displayPercent =
       (liveStat.cpu_util?.pct ? parseFloat(liveStat.cpu_util?.pct) : 0) /
-      parseFloat(slots.cpu ?? '1');
+      parseFloat(occupiedSlots.cpu ?? '1');
     const cpuUtilPercentNumber = liveStat.cpu_util?.pct
       ? parseFloat(liveStat.cpu_util.pct)
       : 0;
-    const maxPercent = parseFloat(slots.cpu ?? '1') * 100;
-    return slots.cpu ? (
+    const cpuOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1') * 100;
+    return occupiedSlots.cpu ? (
       <UsageBadge
         percent={displayPercent}
-        text={slots.cpu}
+        text={occupiedSlots.cpu}
         tooltip={{
           title: liveStat.cpu_util
-            ? `${cpuUtilPercentNumber.toFixed(1)}% / ${maxPercent}%`
+            ? `${cpuUtilPercentNumber.toFixed(1)}% / ${cpuOccupiedSlot}%`
             : undefined,
           placement: 'left',
         }}
@@ -76,7 +73,8 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
       '-'
     );
   } else if (type === 'mem') {
-    const mem = slots.mem ?? '-';
+    const mem = occupiedSlots.mem ?? '-';
+    const memOccupiedSlot = parseFloat(occupiedSlots.mem ?? '1');
     return mem === '-' ? (
       mem
     ) : (
@@ -86,7 +84,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
           // title: liveStat.mem ? `${liveStat.mem.pct} %` : undefined,
           title: displayMemoryUsage(
             liveStat.mem?.current,
-            liveStat.mem?.capacity,
+            memOccupiedSlot.toString(),
           ),
           placement: 'left',
         }}
@@ -94,7 +92,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
       />
     );
   } else if (type === 'accelerator') {
-    const occupiedAccelerators = _.omit(slots, ['cpu', 'mem']);
+    const occupiedAccelerators = _.omit(occupiedSlots, ['cpu', 'mem']);
 
     const filteredAccelerators = _.omitBy(
       occupiedAccelerators,

@@ -241,7 +241,13 @@ const SessionDetailContent: React.FC<{
           </Button.Group>
         </BAIFlex>
 
-        <Descriptions bordered column={md ? 2 : 1}>
+        <Descriptions
+          bordered
+          column={md ? 2 : 1}
+          labelStyle={{
+            wordBreak: 'keep-all',
+          }}
+        >
           <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
             <Typography.Text
               ellipsis
@@ -346,7 +352,12 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item
             label={
               <BAIFlex direction="column" align="start" gap={token.marginSM}>
-                <Typography.Text style={{ color: token.colorTextSecondary }}>
+                <Typography.Text
+                  style={{
+                    color: token.colorTextSecondary,
+                    wordBreak: 'keep-all',
+                  }}
+                >
                   {t('session.ResourceUsage')}
                 </Typography.Text>
                 <Select

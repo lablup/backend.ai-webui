@@ -48,12 +48,71 @@ export const useSessionLiveStat = (
     kernelFrgmt,
   );
 
-  const mainKernelNode = _.find(session?.kernel_nodes?.edges, (edge) => {
-    return edge?.node?.cluster_role === 'main';
-  })?.node;
+  // TODO: replace this with session live_stat after implementation
+  // Sum live_stat values across all kernel_nodes in client side for now.
   const liveStat: SessionLiveStats = useMemo(() => {
-    return JSON.parse(mainKernelNode?.live_stat ?? '{}');
-  }, [mainKernelNode?.live_stat]);
+    const edges = session?.kernel_nodes?.edges ?? [];
+    const statsList: SessionLiveStats[] = edges.map((edge) => {
+      return JSON.parse(edge?.node?.live_stat || '{}');
+    });
+    // Use lodash to merge and sum values
+    const allKeys: Array<keyof SessionLiveStats> = _.uniq(
+      _.flatMap(statsList, (stats) => _.keys(stats)),
+    );
+    const merged: SessionLiveStats = {};
+    allKeys.forEach((key) => {
+      // Gather all ResourceStatItem objects for this key, narrow type
+      const items = statsList
+        .map((stats) => stats[key])
+        .filter((item): item is ResourceStatItem => !!item);
+      if (items.length === 0) return;
+      // List of fields to sum
+      const sumFields = ['current', 'capacity'];
+      // List of fields to average
+      const avgFields = ['stats.max', 'stats.avg', 'stats.rate'];
+      // Sum numeric fields using lodash
+      const summed: ResourceStatItem = {} as ResourceStatItem;
+      sumFields.forEach((field) => {
+        summed[field] = String(
+          _.sumBy(items, (item) => Number(_.get(item, field) ?? '0')),
+        );
+      });
+      // Average numeric fields using lodash
+      avgFields.forEach((field) => {
+        summed[field] = String(
+          _.meanBy(items, (item) => Number(_.get(item, field) ?? '0')),
+        );
+      });
+      // Calculate pct as (current / capacity) * 100
+      const current = Number(summed.current ?? '0');
+      const capacity = Number(summed.capacity ?? '0');
+      summed.pct = capacity > 0 ? ((current / capacity) * 100).toFixed(2) : '0';
+      // Use the first non-empty unit_hint
+      summed.unit_hint = items.find((item) => item.unit_hint)?.unit_hint ?? '';
+      // Copy any other fields from the first item (if exists)
+      const firstItem = items[0];
+      if (firstItem) {
+        // Get all possible field paths including nested ones
+        const allFieldPaths = [
+          ...Object.keys(firstItem),
+          ...avgFields.filter((field) => _.has(firstItem, field)),
+        ];
+
+        allFieldPaths.forEach((field) => {
+          if (
+            !sumFields.includes(field) &&
+            !avgFields.includes(field) &&
+            field !== 'unit_hint' &&
+            field !== 'pct'
+          ) {
+            _.set(summed, field, _.get(firstItem, field) ?? '');
+          }
+        });
+      }
+      merged[key] = summed;
+    });
+    return merged;
+  }, [session?.kernel_nodes?.edges]);
 
   const sortedLiveStatArray = useMemo(
     () =>
