@@ -169,14 +169,18 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         title={mergedResourceSlots?.['mem']?.human_readable_name}
         percent={
           displayTarget === 'current'
-            ? sortedLiveStat?.mem?.pct || '0'
+            ? _.toString(
+                ((convertToBinaryUnit(sortedLiveStat?.mem?.current, 'g')
+                  ?.number ?? 0) /
+                  (convertToBinaryUnit(occupiedSlots?.mem, 'g')?.number || 1)) *
+                  100,
+              )
             : _.toString(
                 ((convertToBinaryUnit(
                   sortedLiveStat?.mem?.[displayTargetName],
                   'g',
                 )?.number ?? 0) /
-                  (convertToBinaryUnit(sortedLiveStat?.mem?.capacity, 'g')
-                    ?.number || 1)) *
+                  (convertToBinaryUnit(occupiedSlots?.mem, 'g')?.number || 1)) *
                   100,
               )
         }
