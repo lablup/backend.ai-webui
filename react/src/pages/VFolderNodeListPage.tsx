@@ -21,7 +21,7 @@ import {
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
+import { useTransitionSafeQueryParams } from '../hooks/useTransitionSafeQueryParams';
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import {
@@ -132,7 +132,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useTransitionSafeQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     statusCategory: withDefault(StringParam, 'active'),

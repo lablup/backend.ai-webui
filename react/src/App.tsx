@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+import { PageQueryParamAtomProvider } from './hooks/useTransitionSafeQueryParams';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import ModelStoreListPage from './pages/ModelStoreListPage';
@@ -98,7 +99,9 @@ const router = createBrowserRouter([
     errorElement: <ErrorView />,
     element: (
       <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <InteractiveLoginPage />
+        <PageQueryParamAtomProvider>
+          <InteractiveLoginPage />
+        </PageQueryParamAtomProvider>
       </QueryParamProvider>
     ),
   },
@@ -115,12 +118,14 @@ const router = createBrowserRouter([
           }
         }
       >
-        <MainLayout />
-        <RoutingEventHandler />
-        <Suspense fallback={null}>
-          <FolderExplorerOpener />
-          <FolderInvitationResponseModalOpener />
-        </Suspense>
+        <PageQueryParamAtomProvider>
+          <MainLayout />
+          <RoutingEventHandler />
+          <Suspense fallback={null}>
+            <FolderExplorerOpener />
+            <FolderInvitationResponseModalOpener />
+          </Suspense>
+        </PageQueryParamAtomProvider>
       </QueryParamProvider>
     ),
     children: [
