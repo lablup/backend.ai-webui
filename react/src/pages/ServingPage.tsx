@@ -6,7 +6,7 @@ import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
+import { useTransitionSafeQueryParams } from '../hooks/useTransitionSafeQueryParams';
 import { Button, Skeleton, theme } from 'antd';
 import {
   filterOutEmpty,
@@ -28,7 +28,7 @@ const ServingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useTransitionSafeQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
     lifecycleStage: withDefault(StringParam, 'active'),
