@@ -129,6 +129,9 @@ const SessionDetailContent: React.FC<{
         name
         project_id
         user_id
+        owner @since(version: "25.13.0") {
+          email
+        }
         resource_opts
         status
         status_data
@@ -250,7 +253,11 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
           {(userRole === 'admin' || userRole === 'superadmin') && (
             <Descriptions.Item label={t('credential.UserID')} span={md ? 2 : 1}>
-              {session.user_id ? (
+              {(() => {
+                const ownerEmail = session.owner?.email;
+                return ownerEmail ? (
+                  ownerEmail
+                ) : session.user_id ? (
                 <Suspense fallback={<Skeleton.Input size="small" active />}>
                   <UNSAFELazyUserEmailView uuid={session.user_id} />
                 </Suspense>
