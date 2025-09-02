@@ -253,11 +253,9 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
           {(userRole === 'admin' || userRole === 'superadmin') && (
             <Descriptions.Item label={t('credential.UserID')} span={md ? 2 : 1}>
-              {(() => {
-                const ownerEmail = session.owner?.email;
-                return ownerEmail ? (
-                  ownerEmail
-                ) : session.user_id ? (
+              {session.owner?.email ? (
+                session.owner.email
+              ) : session.user_id ? (
                 <Suspense fallback={<Skeleton.Input size="small" active />}>
                   <UNSAFELazyUserEmailView uuid={session.user_id} />
                 </Suspense>
