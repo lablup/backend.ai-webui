@@ -52,7 +52,8 @@ export interface NotificationState
     renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<unknown> | null;
   };
-  extraDescription?: string;
+  extraDescription?: string | null;
+  onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
 }
 

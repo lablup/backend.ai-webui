@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
-  "comp:BAITable": {
-    "SettingTable": "การตั้งค่าตาราง",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
-  },
   "general": {
     "NSelected": "{{count}} เลือก",
     "button": {
@@ -38,7 +33,14 @@
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
     "error": {
       "FileUploadSizeLimit": "ขนาดไฟล์เกินขีด จำกัด ขนาดการอัปโหลด"
-    }
+    },
+    "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
+    "DuplicatedFiles": "การยืนยันการเขียนทับ"
+  },
+  "comp:BAITable": {
+    "SettingTable": "การตั้งค่าตาราง",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",

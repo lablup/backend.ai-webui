@@ -22,6 +22,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
+import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { createContext, Suspense, useEffect, useMemo, useState } from 'react';
@@ -51,11 +52,13 @@ export const FolderInfoContext = createContext<{
 export interface BAIFileExplorerProps {
   vfolderNodeFrgmt?: BAIFileExplorerFragment$key | null;
   targetVFolderId: string;
+  onUpload: (files: Array<RcFile>, currentPath: string) => void;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   vfolderNodeFrgmt,
   targetVFolderId,
+  onUpload,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -241,6 +244,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           <Breadcrumb items={breadCrumbItems} />
           <ExplorerActionControls
             selectedFiles={selectedItems}
+            onUpload={(files, currentPath) => onUpload(files, currentPath)}
             onRequestClose={(
               success: boolean,
               modifiedItems?: Array<VFolderFile>,
