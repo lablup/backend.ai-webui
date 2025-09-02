@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Бүгдийг хуулбарлах",
-      "Cancel": "Цуаах"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Татах",
     "PullVersion": "Хувилбарыг ашиглах",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "Цуаах",
       "Remove": "Зөөх",
-      "Close": "Ойр дөхөм"
+      "Close": "Ойр дөхөм",
+      "CopyAll": "Бүгдийг хуулбарлах"
     },
     "TotalItems": "Нийт {{total}} зүйлүүд"
   },

@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Copie tudo",
-      "Cancel": "Cancelar"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Puxar",
     "PullVersion": "Pull versão",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "Cancelar",
       "Remove": "Remover",
-      "Close": "Fechar"
+      "Close": "Fechar",
+      "CopyAll": "Copie tudo"
     },
     "TotalItems": "Total {{total}} itens"
   },

@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
-  "general": {
-    "button": {
-      "CopyAll": "すべてをコピーします",
-      "Cancel": "キャンセル"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "引く",
     "PullVersion": "プルバージョン",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "キャンセル",
       "Remove": "取り除く",
-      "Close": "近い"
+      "Close": "近い",
+      "CopyAll": "すべてをコピーします"
     },
     "TotalItems": "Total {{total}}アイテム"
   },

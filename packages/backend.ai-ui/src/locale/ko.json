@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
-  "general": {
-    "button": {
-      "CopyAll": "모두 복사",
-      "Cancel": "취소"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "가져오기",
     "PullVersion": "버전 가져오기",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "취소",
       "Remove": "제거",
-      "Close": "닫기"
+      "Close": "닫기",
+      "CopyAll": "모두 복사"
     },
     "TotalItems": "총 {{total}} 항목"
   },

@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
-  "general": {
-    "button": {
-      "CopyAll": "複製全部",
-      "Cancel": "取消"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "拉",
     "PullVersion": "拉版本",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "取消",
       "Remove": "消除",
-      "Close": "關閉"
+      "Close": "關閉",
+      "CopyAll": "複製全部"
     },
     "TotalItems": "總計{{total}}項目"
   },

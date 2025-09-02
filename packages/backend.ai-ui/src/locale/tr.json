@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Hepsini kopyala",
-      "Cancel": "İptal etmek"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Çekmek",
     "PullVersion": "Çekme sürümü",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "İptal etmek",
       "Remove": "Kaldırmak",
-      "Close": "Kapalı"
+      "Close": "Kapalı",
+      "CopyAll": "Hepsini kopyala"
     },
     "TotalItems": "Total {{total}} öğeleri"
   },

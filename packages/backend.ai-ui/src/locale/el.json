@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Αντιγράψτε όλα",
-      "Cancel": "Ματαίωση"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Τραβήξτε",
     "PullVersion": "Εκδοχή έλξης",
@@ -65,6 +59,7 @@
   "general": {
     "button": {
       "Cancel": "Ματαίωση",
+      "CopyAll": "Αντιγράψτε όλα",
       "Remove": "Αφαιρώ",
       "Close": "Κοντά"
     },

@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
-  "general": {
-    "button": {
-      "CopyAll": "คัดลอกทั้งหมด",
-      "Cancel": "ยกเลิก"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "ดึง",
     "PullVersion": "Pull Version",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "ยกเลิก",
       "Remove": "ลบ",
-      "Close": "ปิด"
+      "Close": "ปิด",
+      "CopyAll": "คัดลอกทั้งหมด"
     },
     "TotalItems": "รวม {{total}} รายการ"
   },
