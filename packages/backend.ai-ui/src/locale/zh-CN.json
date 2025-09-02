@@ -35,7 +35,8 @@
       "FileUploadSizeLimit": "文件大小超过上传大小限制。"
     },
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
-    "DuplicatedFiles": "覆盖确认"
+    "DuplicatedFiles": "覆盖确认",
+    "DragAndDropDesc": "将文件拖到此区域上传。"
   },
   "comp:BAITable": {
     "SettingTable": "表设置",
