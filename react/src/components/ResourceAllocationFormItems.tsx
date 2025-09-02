@@ -407,6 +407,7 @@ const ResourceAllocationFormItems: React.FC<
           )?.numberUnit,
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
+        enabledAutomaticShmem: !preset?.shared_memory,
       });
       !preset?.shared_memory && runShmemAutomationRule(mem || '0g');
 
@@ -546,14 +547,7 @@ const ResourceAllocationFormItems: React.FC<
           />
         </Form.Item>
       ) : null}
-      <Card
-        style={{
-          marginBottom: token.margin,
-          display: baiClient._config.allowCustomResourceAllocation
-            ? 'block'
-            : 'none',
-        }}
-      >
+      <Card style={{ marginBottom: token.margin }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
             prev.allocationPreset !== cur.allocationPreset
@@ -567,6 +561,7 @@ const ResourceAllocationFormItems: React.FC<
                 {resourceSlotsInRG?.cpu && (
                   <Form.Item
                     name={['resource', 'cpu']}
+                    hidden={!baiClient._config.allowCustomResourceAllocation}
                     // initialValue={0}
                     label={
                       mergedResourceSlots?.cpu?.human_readable_name || 'CPU'
@@ -690,6 +685,7 @@ const ResourceAllocationFormItems: React.FC<
                       shouldUpdate={(prev, next) =>
                         prev.resource.shmem !== next.resource.shmem
                       }
+                      hidden={!baiClient._config.allowCustomResourceAllocation}
                     >
                       {() => {
                         return (
@@ -1041,6 +1037,17 @@ const ResourceAllocationFormItems: React.FC<
                                     style={{
                                       width: 200,
                                     }}
+                                    onChange={() => {
+                                      if (
+                                        baiClient._config
+                                          .allowCustomResourceAllocation
+                                      ) {
+                                        form.setFieldValue(
+                                          'allocationPreset',
+                                          'custom',
+                                        );
+                                      }
+                                    }}
                                   />
                                 </Form.Item>
                                 <Flex direction="row" gap="xs">
@@ -1061,6 +1068,15 @@ const ResourceAllocationFormItems: React.FC<
                                               'resource',
                                               'mem',
                                             ]) || '0g',
+                                          );
+                                        }
+                                        if (
+                                          baiClient._config
+                                            .allowCustomResourceAllocation
+                                        ) {
+                                          form.setFieldValue(
+                                            'allocationPreset',
+                                            'custom',
                                           );
                                         }
                                       }}
@@ -1109,6 +1125,7 @@ const ResourceAllocationFormItems: React.FC<
                       prev.cluster_size !== next.cluster_size
                     );
                   }}
+                  hidden={!baiClient._config.allowCustomResourceAllocation}
                 >
                   {({ getFieldValue }) => {
                     const currentAcceleratorType = getFieldValue([
