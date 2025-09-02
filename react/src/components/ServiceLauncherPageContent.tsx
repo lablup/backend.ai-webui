@@ -803,7 +803,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             <VFolderSelect
                               filter={(vf) =>
                                 vf.usage_mode === 'model' &&
-                                vf.status === 'ready'
+                                vf.status === 'ready' &&
+                                vf.ownership_type !== 'group'
                               }
                               valuePropName="id"
                               autoSelectDefault={
