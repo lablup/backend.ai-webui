@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
-  "general": {
-    "button": {
-      "CopyAll": "复制全部",
-      "Cancel": "取消"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "拉",
     "PullVersion": "拉版本",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "取消",
       "Remove": "消除",
-      "Close": "关闭"
+      "Close": "关闭",
+      "CopyAll": "复制全部"
     },
     "TotalItems": "总计{{total}}项目"
   },

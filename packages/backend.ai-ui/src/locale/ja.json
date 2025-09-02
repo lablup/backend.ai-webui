@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
-  "general": {
-    "button": {
-      "CopyAll": "すべてをコピーします",
-      "Cancel": "キャンセル"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "引く",
     "PullVersion": "プルバージョン",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "キャンセル",
       "Remove": "取り除く",
-      "Close": "近い"
+      "Close": "近い",
+      "CopyAll": "すべてをコピーします"
     },
     "TotalItems": "Total {{total}}アイテム"
   },

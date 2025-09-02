@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
-  "general": {
-    "button": {
-      "CopyAll": "คัดลอกทั้งหมด",
-      "Cancel": "ยกเลิก"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "ดึง",
     "PullVersion": "Pull Version",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "ยกเลิก",
       "Remove": "ลบ",
-      "Close": "ปิด"
+      "Close": "ปิด",
+      "CopyAll": "คัดลอกทั้งหมด"
     },
     "TotalItems": "รวม {{total}} รายการ"
   },

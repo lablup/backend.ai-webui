@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
-  "general": {
-    "button": {
-      "CopyAll": "Alle kopieren",
-      "Cancel": "Stornieren"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Ziehen",
     "PullVersion": "Pull -Version",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "Stornieren",
       "Remove": "Entfernen",
-      "Close": "Schließen"
+      "Close": "Schließen",
+      "CopyAll": "Alle kopieren"
     },
     "TotalItems": "Total {{total}} Elemente"
   },

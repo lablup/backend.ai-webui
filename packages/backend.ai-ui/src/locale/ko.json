@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
-  "general": {
-    "button": {
-      "CopyAll": "모두 복사",
-      "Cancel": "취소"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "가져오기",
     "PullVersion": "버전 가져오기",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "취소",
       "Remove": "제거",
-      "Close": "닫기"
+      "Close": "닫기",
+      "CopyAll": "모두 복사"
     },
     "TotalItems": "총 {{total}} 항목"
   },

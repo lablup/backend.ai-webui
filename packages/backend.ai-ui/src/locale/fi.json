@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
-  "general": {
-    "button": {
-      "CopyAll": "Kopioida kaikki",
-      "Cancel": "Peruuttaa"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Vedä",
     "PullVersion": "Vetää versio",
@@ -59,6 +53,7 @@
   "general": {
     "button": {
       "Cancel": "Peruuttaa",
+      "CopyAll": "Kopioida kaikki",
       "Remove": "Poistaa",
       "Close": "Lähellä"
     },
