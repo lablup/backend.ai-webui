@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無限"
   }
 }

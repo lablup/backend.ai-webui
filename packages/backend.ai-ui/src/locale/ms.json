@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tidak terhad"
   }
 }

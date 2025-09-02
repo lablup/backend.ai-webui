@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Sınırsız"
   }
 }

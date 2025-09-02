@@ -2,6 +2,7 @@ import { divideNumberWithUnits, parseValueWithUnit } from '../helper';
 import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip } from 'antd';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 // Use Intl.NumberFormat for grouping and up to 2 decimal places (trims trailing zeros)
 const numberFormatter = new Intl.NumberFormat('en-US', {
@@ -106,6 +107,7 @@ const BAIResourceWithSteppedProgress: React.FC<
   showProgress = true,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const { formattedCurrent, formattedTotal, currentUnit, totalUnit } =
     formatResourceValues(title, current, total, displayUnit, unlimitedValue);
@@ -136,17 +138,38 @@ const BAIResourceWithSteppedProgress: React.FC<
           marginBottom: 8,
         }}
       >
-        <Typography.Text
-          style={{
-            fontSize: 32,
-            lineHeight: '1em',
-            fontWeight: 700,
-            color: token.colorSuccess,
-          }}
-        >
-          {displayFormattedCurrent}
-        </Typography.Text>
-        {!_.isNaN(current) && <Typography.Text>{displayUnit}</Typography.Text>}
+        {displayFormattedCurrent === unlimitedValue ? (
+          <Typography.Text
+            style={{
+              fontSize: 32,
+              lineHeight: '1em',
+            }}
+          >
+            <Typography.Text
+              style={{
+                lineHeight: '1em',
+              }}
+            >
+              {t('comp:BAIResourceWithSteppedProgress.Unlimited')}
+            </Typography.Text>
+          </Typography.Text>
+        ) : (
+          <>
+            <Typography.Text
+              style={{
+                fontSize: 32,
+                lineHeight: '1em',
+                fontWeight: 700,
+                color: token.colorSuccess,
+              }}
+            >
+              {displayFormattedCurrent}
+            </Typography.Text>
+            {!_.isNaN(current) && (
+              <Typography.Text>{displayUnit}</Typography.Text>
+            )}
+          </>
+        )}
       </BAIFlex>
       {showProgress && (
         <Tooltip

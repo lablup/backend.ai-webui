@@ -147,6 +147,16 @@ const MyResource: React.FC<MyResourceProps> = ({
         showProgress: true,
         steps: 12,
       }}
+      typeOptions={[
+        {
+          value: 'usage',
+          label: t('webui.menu.Usage'),
+        },
+        {
+          value: 'remaining',
+          label: t('webui.menu.Limits'),
+        },
+      ]}
     />
   );
 };

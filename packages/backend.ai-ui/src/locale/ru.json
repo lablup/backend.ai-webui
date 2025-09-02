@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Неограниченный"
   }
 }

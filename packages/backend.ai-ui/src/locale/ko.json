@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "제한없음"
   }
 }

@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Nieograniczony"
   }
 }

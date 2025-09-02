@@ -33,6 +33,10 @@ export interface BaseResourceItemProps {
   tooltip?: ReactNode;
   isRefetching?: boolean;
   displayType: 'usage' | 'remaining';
+  typeOptions?: Array<{
+    label: string;
+    value: 'usage' | 'remaining';
+  }>;
   onDisplayTypeChange: (type: 'usage' | 'remaining') => void;
   onRefetch: () => void;
   getResourceValue: (resource: string) => ResourceValues;
@@ -65,6 +69,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
   resourceSlotsDetails,
   progressProps,
   extraActions,
+  typeOptions,
 }) => {
   const { showProgress = true, steps } = progressProps || {};
   const { t } = useTranslation();
@@ -110,7 +115,7 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
 
   const shouldShowCpu =
     _.get(resourceSlotsDetails, 'resourceSlotsInRG.cpu') &&
-    (_.isUndefined(cpuValues.total) || _.toInteger(cpuValues.total) > 0);
+(_.isUndefined(cpuValues.total) || (_.isNumber(cpuValues.total) && _.toNumber(cpuValues.total) > 0));
 
   const shouldShowMemory =
     _.get(resourceSlotsDetails, 'resourceSlotsInRG.mem') &&
@@ -121,7 +126,10 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
     acceleratorSlotsDetails,
     ({ resourceSlot, values }) =>
       resourceSlot &&
-      (_.isUndefined(values.total) || _.toInteger(values.total) > 0),
+      (
+        _.isUndefined(values.total) ||
+        (Number.isFinite(_.toNumber(values.total)) && _.toNumber(values.total) > 0)
+      ),
   );
 
   const isEmpty =
@@ -162,16 +170,18 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
           <BAIFlex direction="row" gap="sm">
             <Segmented
               size="small"
-              options={[
-                {
-                  label: t('webui.menu.Usage'),
-                  value: 'usage',
-                },
-                {
-                  label: t('webui.menu.Remaining'),
-                  value: 'remaining',
-                },
-              ]}
+              options={
+                typeOptions ?? [
+                  {
+                    label: t('webui.menu.Usage'),
+                    value: 'usage',
+                  },
+                  {
+                    label: t('webui.menu.Remaining'),
+                    value: 'remaining',
+                  },
+                ]
+              }
               value={displayType}
               onChange={(v) => onDisplayTypeChange(v as 'usage' | 'remaining')}
             />

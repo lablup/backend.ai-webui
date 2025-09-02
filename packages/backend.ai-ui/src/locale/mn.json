@@ -14,5 +14,8 @@
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Хязгааргүй"
   }
 }
