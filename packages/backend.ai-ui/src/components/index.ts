@@ -13,6 +13,19 @@ export type {
   BAIPropertyFilterProps,
   FilterProperty,
 } from './BAIPropertyFilter';
+export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
+export type {
+  StringFilter,
+  NumberFilter,
+  BooleanFilter,
+  EnumFilter,
+  BaseFilter,
+  GraphQLFilter,
+  FilterPropertyType,
+  FilterOperator,
+  FilterProperty as BAIGraphQLFilterProperty,
+  BAIGraphQLPropertyFilterProps,
+} from './BAIGraphQLPropertyFilter';
 export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithSteppedProgress';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithSteppedProgress';
