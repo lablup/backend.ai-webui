@@ -540,7 +540,7 @@ export default class BackendAISessionView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="vertical layout" style="gap:24px;">
+      <div data-testid="page-legacy-session" class="vertical layout" style="gap:24px;">
         <lablup-activity-panel
           title="${_t('summary.ResourceStatistics')}"
           elevation="1"
@@ -573,31 +573,37 @@ export default class BackendAISessionView extends BackendAIPage {
                 >
                   <mwc-tab-bar>
                     <mwc-tab
+                      data-testid="tab-running"
                       title="running"
                       label="${_t('session.Running')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
                     <mwc-tab
+                      data-testid="tab-interactive"
                       title="interactive"
                       label="${_t('session.Interactive')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
                     <mwc-tab
+                      data-testid="tab-batch"
                       title="batch"
                       label="${_t('session.Batch')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
                     <mwc-tab
+                      data-testid="tab-inference"
                       title="inference"
                       label="${_t('session.Inference')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
                     <mwc-tab
+                      data-testid="tab-upload-session"
                       title="system"
                       label="${_t('session.System')}"
                       @click="${(e) => this._showTab(e.target)}"
                     ></mwc-tab>
                     <mwc-tab
+                      data-testid="tab-finished"
                       title="finished"
                       label="${_t('session.Finished')}"
                       @click="${(e) => this._showTab(e.target)}"

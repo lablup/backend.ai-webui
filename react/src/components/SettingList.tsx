@@ -31,6 +31,7 @@ const useStyles = createStyles(({ css, token }) => ({
 }));
 
 export type SettingGroup = {
+  'data-testid': string;
   title: string;
   description?: ReactNode;
   settingItems: SettingItemProps[];
@@ -56,10 +57,12 @@ const TabTitle: React.FC<{
   );
 };
 
-const GroupSettingItems: React.FC<{
-  group: SettingGroup;
-  hideEmpty?: boolean;
-}> = ({ group, hideEmpty }) => {
+const GroupSettingItems: React.FC<
+  {
+    group: SettingGroup;
+    hideEmpty?: boolean;
+  } & React.HTMLAttributes<HTMLDivElement>
+> = ({ group, hideEmpty, ...props }) => {
   const { token } = theme.useToken();
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
@@ -69,6 +72,7 @@ const GroupSettingItems: React.FC<{
       style={{
         marginBottom: token.marginMD,
       }}
+      {...props}
     >
       <BAIFlex
         direction="column"
@@ -212,6 +216,7 @@ const SettingList: React.FC<SettingPageProps> = ({
                   ) > 0 ? (
                     _.map(filteredSettingGroups, (group) => (
                       <GroupSettingItems
+                        data-testid={group?.['data-testid']}
                         key={group.title}
                         group={group}
                         hideEmpty

@@ -88,12 +88,7 @@ export default class BackendAIDialog extends LitElement {
         }
 
         mwc-dialog > div.card > h3 {
-          background-color: var(
-            --header-background-color,
-            --token-colorBgElevated,
-            --general-dialog-background-color,
-            #ffffff
-          );
+          background-color: var(--token-colorBgElevated);
         }
 
         mwc-dialog.warning h3 {

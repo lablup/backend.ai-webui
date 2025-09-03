@@ -390,7 +390,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           >
             {!props.collapsed && (
               <Typography.Text type="secondary" ellipsis>
-                {aliasGroupNameMap[group as GroupName]}
+                {aliasGroupNameMap[group as GroupName] ?? group}
               </Typography.Text>
             )}
           </BAIFlex>
@@ -408,6 +408,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         'mlops',
         'metrics',
       ];
+      // @ts-ignore
+      // If a.name is not in order array, push it to the end.
+      if (!_.includes(order, a.name)) {
+        return 1;
+      }
       // @ts-ignore
       return order.indexOf(a.name) - order.indexOf(b.name);
     })
@@ -588,6 +593,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 justify="center"
               >
                 <Typography.Link
+                  data-testid="button-terms-of-service"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -598,6 +604,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 </Typography.Link>
                 &nbsp;·&nbsp;
                 <Typography.Link
+                  data-testid="button-privacy-policy"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -608,6 +615,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 </Typography.Link>
                 &nbsp;·&nbsp;
                 <Typography.Link
+                  data-testid="button-about-backend-ai"
                   type="secondary"
                   style={{ fontSize: 11 }}
                   onClick={() => {
@@ -620,6 +628,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   <>
                     &nbsp;·&nbsp;
                     <Typography.Link
+                      data-testid="button-leave-service"
                       type="secondary"
                       style={{ fontSize: 11 }}
                       onClick={toggleSignoutModal}

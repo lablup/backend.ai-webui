@@ -143,6 +143,7 @@ const ConfigurationsSettingList = () => {
 
   const settingGroupList: SettingGroup[] = [
     {
+      'data-testid': 'settings-general',
       title: t('settings.General'),
       settingItems: [
         {
@@ -187,6 +188,7 @@ const ConfigurationsSettingList = () => {
       ],
     },
     {
+      'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
         <Alert
@@ -225,6 +227,7 @@ const ConfigurationsSettingList = () => {
       ],
     },
     {
+      'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
         <Alert
