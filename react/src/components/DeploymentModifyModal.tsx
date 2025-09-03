@@ -90,7 +90,11 @@ const DeploymentModifyModal: React.FC<DeploymentModifyModalProps> = ({
         },
         onCompleted: (res, errors) => {
           if (!res?.updateModelDeployment?.deployment?.id) {
-            message.error(t('message.FailedToUpdate'));
+            message.error(
+              t('message.FailedToUpdate', {
+                name: t('deployment.launcher.Deployment'),
+              }),
+            );
             return;
           }
           if (errors && errors.length > 0) {
@@ -99,12 +103,21 @@ const DeploymentModifyModal: React.FC<DeploymentModifyModalProps> = ({
               message.error(error);
             }
           } else {
-            message.success(t('message.SuccessfullyUpdated'));
+            message.success(
+              t('message.SuccessfullyUpdated', {
+                name: t('deployment.launcher.Deployment'),
+              }),
+            );
             onRequestClose(true);
           }
         },
         onError: (err) => {
-          message.error(err.message || t('message.FailedToUpdate'));
+          message.error(
+            err.message ||
+              t('message.FailedToUpdate', {
+                name: t('deployment.launcher.Deployment'),
+              }),
+          );
         },
       });
     });
