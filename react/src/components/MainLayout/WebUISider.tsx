@@ -185,13 +185,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'job',
       group: 'workload',
     },
-    {
+    !baiClient.supports('deployment') && {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
       group: 'service',
     },
-    {
+    baiClient.supports('deployment') && {
       label: (
         <WebUILink to="/deployment">{t('webui.menu.Deployment')}</WebUILink>
       ),
