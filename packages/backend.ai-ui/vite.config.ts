@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => {
       }),
       dts({
         include: ['src/**/*'],
-        exclude: ['src/*/*/*.stories.ts', 'src/locale/*.json'],
+        exclude: ['**/*.{stories,test}.{ts,tsx}', 'src/locale/*.json'],
         rollupTypes: false,
         insertTypesEntry: true,
         compilerOptions: {

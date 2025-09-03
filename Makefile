@@ -8,7 +8,7 @@ site := $(or $(site),main)
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-KEYCHAIN_NAME := bai-build-$(shell uuidgen).keychain
+KEYCHAIN_NAME := bai-build-$(shell openssl rand -hex 16 | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{12})/\1-\2-\3-\4-\5/').keychain
 BAI_APP_SIGN_KEYCHAIN_FILE := $(shell mktemp -d)/keychain.p12
 BAI_APP_SIGN_KEYCHAIN =
 
@@ -47,6 +47,9 @@ versiontag:
 compile_keepversion:
 	@pnpm run build
 compile: versiontag
+	@if [ ! -f "./config.toml" ]; then \
+		cp config.toml.sample config.toml; \
+	fi
 	@pnpm run build
 compile_wsproxy:
 	@cd ./src/wsproxy; pnpm dlx webpack-cli --config webpack.config.js
@@ -196,6 +199,6 @@ build_docker: compile
 i18n:
 	@pnpm dlx i18next-scanner --config ./i18n.config.js
 clean:
-	@cd app;	rm -rf ./backend*; rm -rf ./Backend*
-	@cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app
+	@rm -rf ./app/backend*; rm -rf ./app/Backend*
+	@rm -rf ./build/unbundle ./build/bundle ./build/rollup ./build/electron-app
 	@rm -rf ./react/build
