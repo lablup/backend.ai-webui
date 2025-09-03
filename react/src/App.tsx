@@ -93,6 +93,9 @@ const DeploymentListPage = React.lazy(
 const DeploymentDetailPage = React.lazy(
   () => import('./pages/Deployments/DeploymentDetailPage'),
 );
+const DeploymentLauncherPage = React.lazy(
+  () => import('./pages/DeploymentLauncherPage'),
+);
 const RevisionCreatePage = React.lazy(
   () => import('./pages/Deployments/RevisionCreatePage'),
 );
@@ -337,6 +340,23 @@ const router = createBrowserRouter([
                 </BAIErrorBoundary>
               );
             },
+          },
+          {
+            path: '/deployment/start',
+            handle: { labelKey: 'deployment.launcher.CreateNewDeployment' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <DeploymentLauncherPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
           },
           {
             path: '/deployment/:deploymentId',
