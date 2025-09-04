@@ -136,8 +136,25 @@ interface FilterCondition {
 }
 
 const OPERATORS_BY_TYPE: Record<FilterPropertyType, FilterOperator[]> = {
-  string: ['equals', 'notEquals', 'contains', 'startsWith', 'endsWith', 'in', 'notIn'],
-  number: ['equals', 'notEquals', 'greaterThan', 'greaterOrEqual', 'lessThan', 'lessOrEqual', 'in', 'notIn'],
+  string: [
+    'equals',
+    'notEquals',
+    'contains',
+    'startsWith',
+    'endsWith',
+    'in',
+    'notIn',
+  ],
+  number: [
+    'equals',
+    'notEquals',
+    'greaterThan',
+    'greaterOrEqual',
+    'lessThan',
+    'lessOrEqual',
+    'in',
+    'notIn',
+  ],
   boolean: ['equals'],
   enum: ['equals', 'notEquals', 'in', 'notIn'],
 };
@@ -488,7 +505,9 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           options={propertyOptions}
           value={selectedProperty.key}
           onChange={(_value, options) => {
+            console.log(options);
             const property = _.castArray(options)[0].filter;
+            console.log(property);
             setSelectedProperty(property);
             const mode =
               property.valueMode ||

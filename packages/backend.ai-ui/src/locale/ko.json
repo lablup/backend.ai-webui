@@ -19,20 +19,22 @@
     "Unlimited": "제한없음"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "아티팩트 가져오기",
     "Pull": "가져오기",
-    "PulledVersionsAreExcluded": "가져온 버전들은 제외되었습니다.",
-    "Name": "이름",
-    "Type": "유형",
-    "Description": "설명",
-    "Source": "소스"
+    "PullVersion": "버전 가져오기",
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "OnlySCANNEDVersionsCanBePulled": "SCANNED인 버전만 가져올 수 있습니다.",
+    "Size": "크기",
+    "Version": "버전",
+    "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
+    "FailedToPullVersions": "버전을 가져오는데 실패했습니다."
   },
   "comp:BAIArtifactTable": {
     "Action": "행동",
     "Size": "크기",
     "Updated": "업데이트",
     "Version": "버전",
-    "PullLatestVersion": "최신 버전을 가져옵니다"
+    "PullLatestVersion": "최신 버전을 가져옵니다",
+    "Scanned": "스캔"
   },
   "comp:BAIArtifactRevisionTable": {
     "LatestVersion": "최신 버전",
@@ -40,12 +42,52 @@
     "Size": "크기",
     "Status": "상태",
     "Updated": "업데이트",
-    "Action": "행동",
-    "Version": "버전"
+    "Version": "버전",
+    "Control": "제어",
+    "PullThisVersion": "해당 버전 가져오기",
+    "RemoveThisVersion": "해당 버전 제거하기"
   },
   "general": {
     "button": {
-      "Cancel": "취소"
-    }
+      "Cancel": "취소",
+      "Remove": "제거",
+      "Close": "닫기"
+    },
+    "TotalItems": "총 {{total}} 항목"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "RemoveVersions": "목록에서 버전 제거하기",
+    "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
+    "Version": "버전",
+    "Size": "크기",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "SCANNED 또는 PULLING이 아닌 버전만 제거 가능합니다.",
+    "FailedToRemoveVersions": "버전을 제거하는데 실패했습니다."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "설명",
+    "Name": "이름",
+    "Source": "소스",
+    "Type": "유형"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "가져오기 취소",
+    "CancelingWillRestartThePulling": "취소하면 처음부터 가져옵니다.",
+    "FailedToCancelThePulling": "가져오기를 취소하는데 실패했습니다.",
+    "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 성공적으로 취소했습니다.",
+    "WARNING": "경고",
+    "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다",
+    "VersionIsPullingNow": "{{version}} 버전을 지금 가져오는 중입니다."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "모델 ID를 입력하십시오. (예 : OpenAI/GPT-SOSS-20B)",
+    "EnterAVersion": "버전을 입력하십시오. (기본값 : main)",
+    "Failed to import model from hugging face": "허깅 페이스에서 모델을 가져오는데 실패했습니다.",
+    "Import": "가져오기",
+    "ModalDescription": "특정 모델 ID와 버전을 통해 허깅 페이스에서 모델을 가져옵니다.",
+    "ModalTitle": "허깅 페이스에서 가져오기",
+    "ModelID": "모델 ID",
+    "SuccessfullyImportedModelFromHuggingFace": "허깅 페이스에서 모델 가져오기 요청을 성공적으로 보냈습니다.",
+    "Version": "버전"
   }
 }

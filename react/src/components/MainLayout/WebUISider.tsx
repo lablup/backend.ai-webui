@@ -54,6 +54,7 @@ import {
   ExternalLinkIcon,
   LinkIcon,
   ClipboardClock,
+  PackagePlus,
 } from 'lucide-react';
 import React, { ReactNode, useContext, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -286,9 +287,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy',
     },
-    {
+    baiClient?.supports('reservoir') && {
       label: <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>,
-      icon: <HddOutlined style={{ color: token.colorInfo }} />,
+      icon: <PackagePlus style={{ color: token.colorInfo }} />,
       key: 'reservoir',
     },
   ]);

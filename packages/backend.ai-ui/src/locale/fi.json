@@ -19,20 +19,22 @@
     "Unlimited": "Rajoittamaton"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Vetää artefakti",
     "Pull": "Vedä",
-    "PulledVersionsAreExcluded": "Vedetyt versiot jätetään pois.",
-    "Name": "Nimi",
-    "Type": "Tyyppi",
-    "Description": "Kuvaus",
-    "Source": "Lähde"
+    "PullVersion": "Vetää versio",
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "OnlySCANNEDVersionsCanBePulled": "Vain skannatut versiot voidaan vetää.",
+    "Size": "Koko",
+    "Version": "Versio",
+    "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
+    "FailedToPullVersions": "Versioiden vetäminen epäonnistui."
   },
   "comp:BAIArtifactTable": {
     "Action": "Toiminta",
     "Size": "Koko",
     "Updated": "Päivitetty",
     "Version": "Versio",
-    "PullLatestVersion": "Vedä uusin versio"
+    "PullLatestVersion": "Vedä uusin versio",
+    "Scanned": "Skannattu"
   },
   "comp:BAIArtifactRevisionTable": {
     "LatestVersion": "Uusin versio",
@@ -40,12 +42,52 @@
     "Size": "Koko",
     "Status": "Status",
     "Updated": "Päivitetty",
-    "Action": "Toiminta",
-    "Version": "Versio"
+    "Version": "Versio",
+    "Control": "Hallinta",
+    "PullThisVersion": "Vedä tämä versio",
+    "RemoveThisVersion": "Poista tämä versio"
   },
   "general": {
     "button": {
-      "Cancel": "Peruuttaa"
-    }
+      "Cancel": "Peruuttaa",
+      "Remove": "Poistaa",
+      "Close": "Lähellä"
+    },
+    "TotalItems": "Yhteensä {{total}} kohteet"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "RemoveVersions": "Poista versiot",
+    "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
+    "Version": "Versio",
+    "Size": "Koko",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Vain versiot, jotka eivät ole vetämisessä tai skannattuna, voidaan poistaa.",
+    "FailedToRemoveVersions": "Versioiden poistaminen epäonnistui."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Kuvaus",
+    "Name": "Nimi",
+    "Source": "Lähde",
+    "Type": "Tyyppi"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Peruuta veto",
+    "CancelingWillRestartThePulling": "Peruuttaminen käynnistää vetämisen uudelleen",
+    "FailedToCancelThePulling": "Vedämisen peruuttaminen epäonnistui.",
+    "VersionPullCanceledSuccessfully": "{{version}} versio peruutettu onnistuneesti.",
+    "WARNING": "VAROITUS",
+    "YouAreAboutToCancelThisVersion": "Olet peruuttanut tämän version",
+    "VersionIsPullingNow": "{{version}} versio vetää nyt."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Syötä mallitunnus. (esim. OpenAi/GPT-OSS-20b)",
+    "EnterAVersion": "Kirjoita versio. (Oletus: Main)",
+    "Failed to import model from hugging face": "Mallin tuonti epäonnistui kasvojen halaamisesta",
+    "Import": "Tuoda",
+    "ModalDescription": "Tuo malli halaamisesta kasvoista määrittelemällä mallitunnus ja versio.",
+    "ModalTitle": "Tuo halaus kasvoista",
+    "ModelID": "Mallitunnus",
+    "SuccessfullyImportedModelFromHuggingFace": "Onnistuneesti pyydetty mallin tuonti halaamisesta",
+    "Version": "Versio"
   }
 }

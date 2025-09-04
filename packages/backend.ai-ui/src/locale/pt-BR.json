@@ -19,20 +19,22 @@
     "Unlimited": "Ilimitado"
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Puxe artefato",
     "Pull": "Puxar",
-    "PulledVersionsAreExcluded": "As versões puxadas são excluídas.",
-    "Name": "Nome",
-    "Type": "Tipo",
-    "Description": "Descrição",
-    "Source": "Fonte"
+    "PullVersion": "Pull versão",
+    "ExcludedVersions": "{{count}} versões são excluídas.",
+    "OnlySCANNEDVersionsCanBePulled": "Somente versões digitalizadas podem ser puxadas.",
+    "Size": "Tamanho",
+    "Version": "Versão",
+    "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
+    "FailedToPullVersions": "Falhou em puxar versões."
   },
   "comp:BAIArtifactTable": {
     "Action": "Ação",
     "Size": "Tamanho",
     "Updated": "Atualizado",
     "Version": "Versão",
-    "PullLatestVersion": "Puxe a versão mais recente"
+    "PullLatestVersion": "Puxe a versão mais recente",
+    "Scanned": "Digitalizado"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "Nome",
@@ -40,12 +42,52 @@
     "Size": "Tamanho",
     "Status": "Status",
     "Updated": "Atualizado",
-    "Action": "Ação",
-    "Version": "Versão"
+    "Version": "Versão",
+    "Control": "Controlar",
+    "PullThisVersion": "Puxe esta versão",
+    "RemoveThisVersion": "Remova esta versão"
   },
   "general": {
     "button": {
-      "Cancel": "Cancelar"
-    }
+      "Cancel": "Cancelar",
+      "Remove": "Remover",
+      "Close": "Fechar"
+    },
+    "TotalItems": "Total {{total}} itens"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versões são excluídas.",
+    "RemoveVersions": "Remover versões",
+    "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
+    "Version": "Versão",
+    "Size": "Tamanho",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Somente versões que não estão em puxar ou digitalizadas podem ser removidas.",
+    "FailedToRemoveVersions": "Falha ao remover versões."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Descrição",
+    "Name": "Nome",
+    "Source": "Fonte",
+    "Type": "Tipo"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Cancelar puxar",
+    "CancelingWillRestartThePulling": "Cancelar irá reiniciar o puxão",
+    "FailedToCancelThePulling": "Falhou em cancelar a tração.",
+    "VersionPullCanceledSuccessfully": "Pull da versão {{version}} cancelada com sucesso.",
+    "WARNING": "AVISO",
+    "YouAreAboutToCancelThisVersion": "Você está prestes a cancelar esta versão",
+    "VersionIsPullingNow": "{{version}} A versão está puxando agora."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Digite um ID de modelo. (por exemplo, OpenAI/GPT-20B)",
+    "EnterAVersion": "Digite uma versão. (Padrão: Main)",
+    "Failed to import model from hugging face": "Falhou ao importar o modelo de abraçar o rosto",
+    "Import": "Importar",
+    "ModalDescription": "Importe um modelo de abraçar o rosto especificando o ID e a versão do modelo.",
+    "ModalTitle": "Importar de abraçar o rosto",
+    "ModelID": "ID do modelo",
+    "SuccessfullyImportedModelFromHuggingFace": "Solicitou com sucesso a importação do modelo de abraçar o rosto",
+    "Version": "Versão"
   }
 }

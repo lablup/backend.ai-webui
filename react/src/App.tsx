@@ -466,7 +466,8 @@ const router = createBrowserRouter([
           {
             path: '',
             Component: () => {
-              return (
+              const baiClient = useSuspendedBackendaiClient();
+              return baiClient?.supports('reservoir') ? (
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={
@@ -478,19 +479,26 @@ const router = createBrowserRouter([
                     <ReservoirPage />
                   </Suspense>
                 </BAIErrorBoundary>
+              ) : (
+                <WebUINavigate to={'/error'} replace />
               );
             },
           },
           {
             path: '/reservoir/:artifactId',
-            element: (
-              <BAIErrorBoundary>
-                <Suspense fallback={<Skeleton active />}>
-                  <ReservoirArtifactDetailPage />
-                </Suspense>
-              </BAIErrorBoundary>
-            ),
-            handle: { labelKey: 'Artifact Details' },
+            Component: () => {
+              const baiClient = useSuspendedBackendaiClient();
+              return baiClient?.supports('reservoir') ? (
+                <BAIErrorBoundary>
+                  <Suspense fallback={<Skeleton active />}>
+                    <ReservoirArtifactDetailPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              ) : (
+                <WebUINavigate to={'/error'} replace />
+              );
+            },
+            handle: { labelKey: 'webui.menu.ArtifactDetails' },
           },
         ],
       },
