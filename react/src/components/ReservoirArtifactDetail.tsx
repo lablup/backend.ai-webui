@@ -22,7 +22,7 @@ import {
   Divider,
   theme,
 } from 'antd';
-import { Flex } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ArrowLeft, Download, Info, CheckCircle } from 'lucide-react';
@@ -88,7 +88,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
 
   return (
     <div>
-      <Flex align="center" style={{ marginBottom: token.marginLG }}>
+      <BAIFlex align="center" style={{ marginBottom: token.marginLG }}>
         <Button
           type="text"
           icon={<ArrowLeft size={18} />}
@@ -98,7 +98,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
           type="vertical"
           style={{ marginLeft: 0, marginRight: token.marginMD }}
         />
-        <Flex align="center" gap="xs">
+        <BAIFlex align="center" gap="xs">
           <Title level={3} style={{ margin: 0 }}>
             {artifact.name}
           </Title>
@@ -112,8 +112,8 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
           >
             {artifact.status.toUpperCase()}
           </Tag>
-        </Flex>
-      </Flex>
+        </BAIFlex>
+      </BAIFlex>
 
       {renderPullingProgress()}
 
@@ -214,7 +214,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
                 key: 'version',
                 render: (version: string, record: any) => (
                   <div>
-                    <Flex align="center" gap="xs">
+                    <BAIFlex align="center" gap="xs">
                       <BAIText strong>{version}</BAIText>
                       {record.isLatest && <Tag color="blue">LATEST</Tag>}
                       {record.isInstalled && (
@@ -222,7 +222,7 @@ const ReservoirArtifactDetail: React.FC<ReservoirArtifactDetailProps> = ({
                           INSTALLED
                         </Tag>
                       )}
-                    </Flex>
+                    </BAIFlex>
                     {record.checksum && (
                       <Typography.Text
                         type="secondary"
