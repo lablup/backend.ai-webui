@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
     "WsproxyAddress": "Endereço do servidor WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Limite",
+    "RemainingNumber": "RMaining",
+    "UsingNumber": "Usando"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",
     "AllowedHosts": "Hosts permitidos",

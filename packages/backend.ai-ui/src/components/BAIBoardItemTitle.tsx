@@ -34,7 +34,7 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
       gap="xs"
       wrap="wrap"
     >
-      <BAIFlex gap={'xs'} align="center">
+      <BAIFlex gap={'xs'} align="center" wrap="wrap">
         {typeof title === 'string' ? (
           <Typography.Title level={5} style={{ margin: 0 }}>
             {title}

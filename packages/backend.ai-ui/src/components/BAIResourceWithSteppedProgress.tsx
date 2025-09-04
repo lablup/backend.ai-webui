@@ -31,8 +31,8 @@ const calculateCurrentPosition = (
     return total !== undefined &&
       typeof current === 'string' &&
       typeof total === 'string'
-      ? Number(divideNumberWithUnits(current, total) || 0) * steps
-      : (Number(current) / Number(total || 1)) * steps;
+      ? Number(divideNumberWithUnits(current, total, '') || 0) * steps
+      : (Number(current) * steps) / Number(total || 1);
   }
 };
 
@@ -177,10 +177,8 @@ const BAIResourceWithSteppedProgress: React.FC<
         >
           <BAIFlex direction="row" gap={2}>
             {_.map(_.range(steps), (i) => {
-              const currentPosition = calculateCurrentPosition(
-                current,
-                total,
-                steps,
+              const currentPosition = Math.round(
+                calculateCurrentPosition(current, total, steps),
               );
               return (
                 <BAIFlex
@@ -194,7 +192,7 @@ const BAIResourceWithSteppedProgress: React.FC<
                         ? token.colorSuccess
                         : token.colorTextDisabled,
                   }}
-                />
+                ></BAIFlex>
               );
             })}
           </BAIFlex>

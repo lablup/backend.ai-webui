@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",
     "WsproxyAddress": "Адрес WSProxy-сервера"
   },
+  "resourcePanel": {
+    "Limit": "Предел",
+    "RemainingNumber": "Rmaing",
+    "UsingNumber": "С использованием"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
     "AllowedHosts": "Разрешенные хосты",

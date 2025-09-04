@@ -13,14 +13,16 @@
     "i18n-ally.enabledFrameworks": ["react", "custom"],
     "i18n-ally.keystyle": "nested",
     "i18n-ally.dirStructure": "auto",
-    "files.exclude": {
-      "packages/backend.ai-ui": true,
-    },
+    "i18n-ally.displayLanguage": "en",
+    "i18n-ally.sourceLanguage": "en",
     "i18n-ally.regex.usageMatch": [
       "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*\\{['\"`]({key})['\"`]\\}", // <Trans i18nKey={'key'}>
       "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*['\"`]({key})['\"`]", // <Trans i18nKey="key">
       "(?:^|[^\\w\\d])t\\s*\\(\\s*['\"`]({key})['\"`]", // t('key') / obj.t('key')
       "(?:^|[^\\w\\d])_t\\s*\\(\\s*['\"`]({key})['\"`]", // _t('key') / obj._t('key') for Lit components
     ],
+    "files.exclude": {
+      "packages/backend.ai-ui": true,
+    },
   },
 }

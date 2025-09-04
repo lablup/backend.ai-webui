@@ -1122,6 +1122,11 @@
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
     "WsproxyAddress": "Địa chỉ máy chủ WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Giới hạn",
+    "RemainingNumber": "Rmaining",
+    "UsingNumber": "Sử dụng"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",
     "AllowedHosts": "Máy chủ được phép",
