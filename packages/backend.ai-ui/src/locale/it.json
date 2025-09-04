@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimitato"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Tirare artefatto",
+    "Pull": "Tiro",
+    "PulledVersionsAreExcluded": "Le versioni tirate sono escluse.",
+    "Name": "Nome",
+    "Type": "Tipo",
+    "Description": "Descrizione",
+    "Source": "Fonte"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Azione",
+    "Size": "Misurare",
+    "Updated": "Aggiornato",
+    "Version": "Versione",
+    "PullLatestVersion": "Estrarre l'ultima versione"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "Ultima versione",
+    "Name": "Nome",
+    "Size": "Misurare",
+    "Status": "Stato",
+    "Updated": "Aggiornato",
+    "Action": "Azione",
+    "Version": "Versione"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Cancellare"
+    }
   }
 }

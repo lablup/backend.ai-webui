@@ -1,5 +1,10 @@
 {
   "$schema": "../../i18n.schema.json",
+  "general": {
+    "button": {
+      "Cancel": "Cancel"
+    }
+  },
   "comp:BAITestButton": {
     "Test": "Test"
   },
@@ -17,5 +22,30 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
+  },
+  "comp:BAIArtifactTable": {
+    "Version": "Version",
+    "Action": "Action",
+    "Size": "Size",
+    "Updated": "Updated",
+    "PullLatestVersion": "Pull latest version"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Pull Artifact",
+    "Pull": "Pull",
+    "PulledVersionsAreExcluded": "Pulled versions are excluded.",
+    "Name": "Name",
+    "Description": "Description",
+    "Type": "Type",
+    "Source": "Source"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "Name",
+    "Status": "Status",
+    "LatestVersion": "Latest Version",
+    "Size": "Size",
+    "Updated": "Updated",
+    "Version": "Version",
+    "Action": "Action"
   }
 }

@@ -17,5 +17,35 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "Artefakt çekmek",
+    "Pull": "Çekmek",
+    "PulledVersionsAreExcluded": "Çekilen sürümler hariç tutulur.",
+    "Name": "İsim",
+    "Type": "Tip",
+    "Description": "Tanım",
+    "Source": "Kaynak"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Aksiyon",
+    "Size": "Boyut",
+    "Version": "Versiyon",
+    "Updated": "Güncellenmiş",
+    "PullLatestVersion": "En son sürümü çekin"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "İsim",
+    "LatestVersion": "En son sürüm",
+    "Size": "Boyut",
+    "Status": "Durum",
+    "Updated": "Güncellenmiş",
+    "Action": "Aksiyon",
+    "Version": "Versiyon"
+  },
+  "general": {
+    "button": {
+      "Cancel": "İptal etmek"
+    }
   }
 }
