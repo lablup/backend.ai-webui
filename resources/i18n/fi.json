@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
     "WsproxyAddress": "WSProxy-palvelimen osoite"
   },
+  "resourcePanel": {
+    "Limit": "Rajoittaa",
+    "RemainingNumber": "Rmmitys",
+    "UsingNumber": "Käyttäminen"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",
     "AllowedHosts": "Sallitut isännät",

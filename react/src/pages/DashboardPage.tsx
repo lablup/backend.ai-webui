@@ -32,7 +32,8 @@ const DashboardPage: React.FC = () => {
   const userRole = useCurrentUserRole();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
+    useTransition();
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('dashboard_board_items');
@@ -47,13 +48,18 @@ const DashboardPage: React.FC = () => {
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
+        $agentNodeFilter: String!
       ) {
         ...MySessionQueryFragment @arguments(projectId: $projectId)
         ...RecentlyCreatedSessionFragment @arguments(projectId: $projectId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $skipTotalResourceWithinResourceGroup)
           @alias
-          @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
+          @arguments(
+            resourceGroup: $resourceGroup
+            isSuperAdmin: $isSuperAdmin
+            agentNodeFilter: $agentNodeFilter
+          )
       }
     `,
     {
@@ -61,6 +67,7 @@ const DashboardPage: React.FC = () => {
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
     },
     {
       fetchPolicy:
@@ -70,7 +77,7 @@ const DashboardPage: React.FC = () => {
   );
 
   useInterval(() => {
-    startRefetchTransition(() => {
+    startIntervalRefetchTransition(() => {
       updateFetchKey();
     });
   }, 15_000);
@@ -91,7 +98,10 @@ const DashboardPage: React.FC = () => {
               <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
-            <MySession queryRef={queryRef} isRefetching={isPendingRefetch} />
+            <MySession
+              queryRef={queryRef}
+              isRefetching={isPendingIntervalRefetch}
+            />
           </Suspense>
         ),
       },
@@ -106,7 +116,10 @@ const DashboardPage: React.FC = () => {
       },
       data: {
         content: (
-          <MyResource fetchKey={fetchKey} isRefetching={isPendingRefetch} />
+          <MyResource
+            fetchKey={fetchKey}
+            refetching={isPendingIntervalRefetch}
+          />
         ),
       },
     },
@@ -122,7 +135,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <MyResourceWithinResourceGroup
             fetchKey={fetchKey}
-            isRefetching={isPendingRefetch}
+            refetching={isPendingIntervalRefetch}
           />
         ),
       },
@@ -139,7 +152,7 @@ const DashboardPage: React.FC = () => {
         content: queryRef.TotalResourceWithinResourceGroupFragment && (
           <TotalResourceWithinResourceGroup
             queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
-            isRefetching={isPendingRefetch}
+            refetching={isPendingIntervalRefetch}
           />
         ),
       },
@@ -156,7 +169,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <RecentlyCreatedSession
             queryRef={queryRef}
-            isRefetching={isPendingRefetch}
+            isRefetching={isPendingIntervalRefetch}
           />
         ),
       },

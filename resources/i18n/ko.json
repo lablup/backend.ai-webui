@@ -1126,6 +1126,11 @@
     "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",
     "WsproxyAddress": "WSProxy 서버 주소"
   },
+  "resourcePanel": {
+    "Limit": "허용량",
+    "RemainingNumber": "가용량",
+    "UsingNumber": "사용량"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
     "AllowedHosts": "허용된 호스트",

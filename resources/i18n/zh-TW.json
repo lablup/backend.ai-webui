@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "輸入要刪除的資源組名稱",
     "WsproxyAddress": "WSProxy 服务器地址"
   },
+  "resourcePanel": {
+    "Limit": "限制",
+    "RemainingNumber": "rming",
+    "UsingNumber": "使用"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
     "AllowedHosts": "允許的主機",

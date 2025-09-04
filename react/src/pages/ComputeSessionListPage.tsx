@@ -148,6 +148,7 @@ const ComputeSessionListPage = () => {
       skipTotalResourceWithinResourceGroup:
         baiClient?._config?.hideAgents && userRole !== 'superadmin',
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
     }),
     [
       currentProject.id,
@@ -177,6 +178,7 @@ const ComputeSessionListPage = () => {
           $resourceGroup: String
           $skipTotalResourceWithinResourceGroup: Boolean!
           $isSuperAdmin: Boolean!
+          $agentNodeFilter: String!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -238,7 +240,7 @@ const ComputeSessionListPage = () => {
           ...TotalResourceWithinResourceGroupFragment
             @skip(if: $skipTotalResourceWithinResourceGroup)
             @alias
-            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
+            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin, agentNodeFilter: $agentNodeFilter) 
         }
       `,
     deferredQueryVariables,
@@ -309,39 +311,37 @@ const ComputeSessionListPage = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row
-        gutter={[16, 16]}
-        align={'stretch'}
-        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
-      >
-        <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
-          <BAICard
-            style={{
-              width: '100%',
-              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-            }}
-          >
-            <ActionItemContent
-              title={
-                <Typography.Text
-                  style={{
-                    maxWidth: lg ? 120 : undefined,
-                    wordBreak: 'keep-all',
-                  }}
-                >
-                  {t('start.CreateASession')}
-                </Typography.Text>
-              }
-              buttonText={t('start.button.StartSession')}
-              icon={<BAISessionsIcon />}
-              type="simple"
-              to={'/session/start'}
+      <Row gutter={[16, 16]} align={'stretch'}>
+        {lg && (
+          <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
+            <BAICard
               style={{
-                height: '100%',
+                width: '100%',
               }}
-            />
-          </BAICard>
-        </Col>
+            >
+              <ActionItemContent
+                title={
+                  <Typography.Text
+                    style={{
+                      maxWidth: lg ? 120 : undefined,
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {t('start.CreateASession')}
+                  </Typography.Text>
+                }
+                buttonText={t('start.button.StartSession')}
+                icon={<BAISessionsIcon />}
+                type="simple"
+                to={'/session/start'}
+                style={{
+                  height: '100%',
+                }}
+              />
+            </BAICard>
+          </Col>
+        )}
+
         <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
           <ErrorBoundary
             fallbackRender={() => {
@@ -349,7 +349,6 @@ const ComputeSessionListPage = () => {
                 <BAICard
                   style={{
                     width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
                   status="error"
                   extra={
@@ -366,7 +365,6 @@ const ComputeSessionListPage = () => {
                 <BAICard
                   style={{
                     width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
                   loading
                 />
