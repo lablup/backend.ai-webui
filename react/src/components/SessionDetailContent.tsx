@@ -41,6 +41,7 @@ import {
   useMemoizedJSONParse,
   BAIFlex,
 } from 'backend.ai-ui';
+import { BAISessionAgentIds } from 'backend.ai-ui/components/fragments/BAISessionAgentIds';
 // import { graphql } from 'react-relay';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
@@ -174,6 +175,7 @@ const SessionDetailContent: React.FC<{
         ...SessionStatusDetailModalFragment
         ...AppLauncherModalFragment
         ...MountedVFolderLinksFragment
+        ...BAISessionAgentIdsFragment
       }
     `,
     (internalLoadedSession as SessionDetailContentFragment$key) || sessionFrgmt,
@@ -310,7 +312,7 @@ const SessionDetailContent: React.FC<{
             </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Agent')}>
-            {_.uniq(session.agent_ids).join(', ') || '-'}
+            <BAISessionAgentIds sessionFrgmt={session} />
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Reservation')} span={md ? 2 : 1}>
             <BAIFlex gap={'xs'} wrap={'wrap'}>

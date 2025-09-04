@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Агент"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Бүгдийг хуулбарлах"
+    }
   }
 }

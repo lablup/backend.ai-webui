@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "실행노드"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "모두 복사"
+    }
   }
 }

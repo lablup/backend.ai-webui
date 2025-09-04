@@ -16,6 +16,7 @@ import {
   BAITable,
   BAITableProps,
 } from 'backend.ai-ui';
+import { BAISessionAgentIds } from 'backend.ai-ui/components/fragments/BAISessionAgentIds';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +53,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
+        ...BAISessionAgentIdsFragment
         kernel_nodes {
           edges {
             node {
@@ -167,11 +169,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'agent',
         title: t('session.Agent'),
         defaultHidden: false,
-        render: (__, session) => {
-          return session?.agent_ids?.length
-            ? _.uniq(session.agent_ids).join(', ') || '-'
-            : '-';
-        },
+        render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
     ]),
     (column) => {

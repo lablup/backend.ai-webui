@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Ajan"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Hepsini kopyala"
+    }
   }
 }

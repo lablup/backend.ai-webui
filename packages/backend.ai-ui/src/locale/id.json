@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tak terbatas"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agen"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Salin semua"
+    }
   }
 }

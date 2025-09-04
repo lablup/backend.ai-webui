@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Μέσο"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Αντιγράψτε όλα"
+    }
   }
 }

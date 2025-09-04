@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Không giới hạn"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Đại lý"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Sao chép tất cả"
+    }
   }
 }

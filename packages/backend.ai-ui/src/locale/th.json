@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "ตัวแทน"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "คัดลอกทั้งหมด"
+    }
   }
 }

@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "エージェント"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "すべてをコピーします"
+    }
   }
 }

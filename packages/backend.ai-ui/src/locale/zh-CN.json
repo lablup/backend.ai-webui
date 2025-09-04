@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "无限"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "代理人"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "复制全部"
+    }
   }
 }

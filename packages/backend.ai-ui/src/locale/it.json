@@ -17,5 +17,13 @@
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimitato"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agente"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Copia tutto"
+    }
   }
 }
