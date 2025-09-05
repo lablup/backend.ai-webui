@@ -15,7 +15,7 @@ import {
   Switch,
   message,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, ESMClientErrorResponse } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -65,7 +65,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       bgtask_id: string;
       id: string;
     },
-    { type?: string; title?: string; message?: string },
+    ESMClientErrorResponse,
     {
       input: any;
       name: string;
@@ -122,7 +122,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                   },
                   onError(error) {
                     if (
-                      error.message?.includes(
+                      error.msg?.includes(
                         'The virtual folder already exists with the same name',
                       )
                     ) {
@@ -131,9 +131,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                         help: t('modelStore.FolderAlreadyExists'),
                       });
                     } else {
-                      const messageStr = painKiller.relieve(
-                        error?.message || '',
-                      );
+                      const messageStr = painKiller.relieve(error?.msg || '');
                       message.error({
                         content: messageStr,
                       });

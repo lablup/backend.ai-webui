@@ -11,6 +11,9 @@
     "SettingTable": "Configurações da tabela",
     "SearchTableColumn": "Pesquisar colunas da tabela"
   },
+  "error": {
+    "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"

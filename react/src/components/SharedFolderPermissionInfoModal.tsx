@@ -5,7 +5,6 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
@@ -24,6 +23,7 @@ import {
   BAITable,
   BAIUserUnionIcon,
   BAIFlex,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -42,9 +42,9 @@ const SharedFolderPermissionInfoModal: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
 
   const vfolder = useFragment(
     graphql`
@@ -157,10 +157,7 @@ const SharedFolderPermissionInfoModal: React.FC<
                                 onRequestClose(true);
                               },
                               onError: (err) => {
-                                message.error(
-                                  painKiller.relieve(err?.message) ||
-                                    t('general.ErrorOccurred'),
-                                );
+                                message.error(getErrorMessage(err));
                                 onRequestClose();
                               },
                             },

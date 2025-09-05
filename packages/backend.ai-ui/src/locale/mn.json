@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх"
   },
+  "error": {
+    "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"

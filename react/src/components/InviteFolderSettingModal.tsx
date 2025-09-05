@@ -1,7 +1,6 @@
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -17,7 +16,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAITable, BAIFlex } from 'backend.ai-ui';
+import { BAITable, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +45,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const inviteFormRef = useRef<FormInstance>(null);
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const painKiller = usePainKiller();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { token } = theme.useToken();
 
   const {
@@ -126,10 +125,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 );
                 return;
               }
-              message.error(
-                painKiller.relieve(err?.message) ||
-                  t('data.invitation.FolderSharingNotAvailableToUser'),
-              );
+              message.error(getErrorMessage(err));
             },
           },
         );
@@ -150,10 +146,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
           refetch();
         },
         onError: (err) => {
-          message.error(
-            painKiller.relieve(err?.message) ||
-              t('data.permission.FailedToModifyPermission'),
-          );
+          message.error(getErrorMessage(err));
         },
       },
     );

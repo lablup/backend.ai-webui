@@ -6,7 +6,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { usePainKiller } from '../hooks/usePainKiller';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import BAISelect from './BAISelect';
 import BAITag from './BAITag';
@@ -25,6 +24,7 @@ import {
   BAIUserUnionIcon,
   toLocalId,
   BAIFlex,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -49,10 +49,10 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const relayEnv = useRelayEnvironment();
   const currentProject = useCurrentProjectValue();
-  const painKiller = usePainKiller();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
 
@@ -197,8 +197,8 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
                   ).toPromise();
                   onRequestRefresh?.();
                 },
-                onError: (error: { message: string }) => {
-                  message.error(painKiller.relieve(error?.message));
+                onError: (error) => {
+                  message.error(getErrorMessage(error));
                 },
               },
             );
