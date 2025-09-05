@@ -1120,6 +1120,11 @@
     "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
     "WsproxyAddress": "WSProxy серверийн хаяг"
   },
+  "resourcePanel": {
+    "Limit": "Хязгаар",
+    "RemainingNumber": "Rmaining",
+    "UsingNumber": "Ашиглаж"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
     "AllowedHosts": "Зөвшөөрөгдсөн хостууд",

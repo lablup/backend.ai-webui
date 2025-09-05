@@ -1111,6 +1111,11 @@
     "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ",
     "WsproxyAddress": "ที่อยู่เซิร์ฟเวอร์ WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "จำกัด",
+    "RemainingNumber": "Rmailing",
+    "UsingNumber": "โดยใช้"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "คุณกำลังจะลบนโยบายทรัพยากรนี้: ",
     "AllowedHosts": "โฮสต์ที่อนุญาต",

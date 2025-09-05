@@ -301,11 +301,15 @@ export function subNumberWithUnits(
   )?.value;
 }
 
-export function divideNumberWithUnits(size1: string, size2: string) {
+export function divideNumberWithUnits(
+  size1: string,
+  size2: string,
+  targetUnit: InputSizeUnit = 'm',
+) {
   const num1 = convertToBinaryUnit(size1, '')?.number || 0;
   const num2 = convertToBinaryUnit(size2, '')?.number || 0;
   if (num2 === 0) return undefined; // Avoid division by zero
-  return convertToBinaryUnit(num1 / num2, '')?.value;
+  return convertToBinaryUnit(num1 / num2, targetUnit)?.value;
 }
 
 export const toGlobalId = (type: string, id: string): string => {

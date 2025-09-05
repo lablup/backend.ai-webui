@@ -1118,6 +1118,11 @@
     "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
     "WsproxyAddress": "Διεύθυνση διακομιστή WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Οριο",
+    "RemainingNumber": "Ριψοκίνδυνος",
+    "UsingNumber": "Χρήση"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
     "AllowedHosts": "Επιτρεπόμενοι οικοδεσπότες",

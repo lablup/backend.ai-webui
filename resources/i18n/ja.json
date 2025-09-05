@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
     "WsproxyAddress": "WSProxy サーバアドレス"
   },
+  "resourcePanel": {
+    "Limit": "制限",
+    "RemainingNumber": "rmaining",
+    "UsingNumber": "使用"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
     "AllowedHosts": "許可されたホスト",

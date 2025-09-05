@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",
     "WsproxyAddress": "Alamat Pelayan WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Had",
+    "RemainingNumber": "Rmaining",
+    "UsingNumber": "Menggunakan"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",
     "AllowedHosts": "Tuan rumah yang dibenarkan",

@@ -98,7 +98,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       fetchKey,
       isRefetching,
       style: { border: 'none', ...props.style },
-      extraActions: settingsButton,
+      extra: settingsButton,
       onResourceGroupChange,
       titleStyle: {
         paddingLeft: 0,

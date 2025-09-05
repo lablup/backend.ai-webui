@@ -1122,6 +1122,11 @@
     "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
     "WsproxyAddress": "WSProxy Sunucu Adresi"
   },
+  "resourcePanel": {
+    "Limit": "Sınırlamak",
+    "RemainingNumber": "Zırhlı",
+    "UsingNumber": "Kullanma"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",
     "AllowedHosts": "İzin verilen ana bilgisayarlar",
