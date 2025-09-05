@@ -24,7 +24,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
+import { useTransitionSafeQueryParams } from '../hooks/useTransitionSafeQueryParams';
 import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
 import { useUpdateEffect } from 'ahooks';
 import {
@@ -101,7 +101,7 @@ const ComputeSessionListPage = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useTransitionSafeQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     type: withDefault(StringParam, 'all'),
