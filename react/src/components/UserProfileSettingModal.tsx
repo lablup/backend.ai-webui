@@ -136,7 +136,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
         confirmLoading={userInfo.isPendingMutation}
         onOk={() => onSubmit()}
         centered
-        destroyOnClose
+        destroyOnHidden
         title={t('webui.menu.MyAccountInformation')}
       >
         <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>

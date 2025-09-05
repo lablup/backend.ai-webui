@@ -246,7 +246,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               huggingFaceModelInfo.data?.pipeline_tag !== 'text-generation'),
         }}
         onCancel={onRequestClose}
-        destroyOnClose
+        destroyOnHidden
         {...baiModalProps}
       >
         <Form
