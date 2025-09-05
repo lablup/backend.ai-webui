@@ -53,9 +53,6 @@
       "import/no-duplicates": "error"
     }
   },
-  "dependencies": {
-    "react-copy-to-clipboard": "^5.1.0"
-  },
   "peerDependencies": {
     "@ant-design/icons": "^5.6.1",
     "antd": "^5.24.5",
@@ -79,7 +76,8 @@
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "lucide-react": "^0.484.0",
-    "react-resizable": "^3.0.5"
+    "react-resizable": "^3.0.5",
+    "react-copy-to-clipboard": "^5.1.0"
   },
   "devDependencies": {
     "@jest/expect": "30.0.0-beta.3",

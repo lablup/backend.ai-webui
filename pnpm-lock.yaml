@@ -491,6 +491,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.0.0
+      react-copy-to-clipboard:
+        specifier: ^5.1.0
+        version: 5.1.0(react@19.0.0)
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)

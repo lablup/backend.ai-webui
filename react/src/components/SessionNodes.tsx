@@ -15,8 +15,8 @@ import {
   BAIColumnType,
   BAITable,
   BAITableProps,
+  BAISessionAgentIds,
 } from 'backend.ai-ui';
-import { BAISessionAgentIds } from 'backend.ai-ui/components/fragments/BAISessionAgentIds';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

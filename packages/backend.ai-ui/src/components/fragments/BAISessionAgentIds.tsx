@@ -13,7 +13,7 @@ interface BAISessionAgentIdsProps {
   maxInline?: number; // New prop to control max inline display
   emptyText?: string; // New prop for empty state text
 }
-export const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
+const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
   sessionFrgmt,
   maxInline = 3,
   emptyText = '-',
@@ -79,3 +79,5 @@ export const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
     </span>
   );
 };
+
+export default BAISessionAgentIds;

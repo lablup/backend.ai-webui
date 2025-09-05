@@ -40,8 +40,8 @@ import {
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   BAIFlex,
+  BAISessionAgentIds,
 } from 'backend.ai-ui';
-import { BAISessionAgentIds } from 'backend.ai-ui/components/fragments/BAISessionAgentIds';
 // import { graphql } from 'react-relay';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
