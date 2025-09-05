@@ -34,4 +34,5 @@ export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
+export * from './baiClient';
 export * from './unsafe';

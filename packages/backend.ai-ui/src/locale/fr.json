@@ -11,6 +11,35 @@
     "SettingTable": "Paramètres de la table",
     "SearchTableColumn": "Colonnes de table de recherche"
   },
+  "general": {
+    "NSelected": "{{count}} sélectionné",
+    "button": {
+      "Delete": "Supprimer",
+      "Create": "Créer",
+      "Upload": "Télécharger"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
+    "DeleteSelectedItemsDialog": "Supprimer la confirmation",
+    "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
+    "FolderCreatedSuccessfully": "Dossier créé avec succès.",
+    "CreateANewFolder": "Créer un nouveau dossier",
+    "FolderName": "Nom du dossier",
+    "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
+    "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",
+    "Name": "Nom",
+    "Size": "Taille",
+    "CreatedAt": "Créé à",
+    "ModifiedAt": "Modifié à",
+    "Controls": "Commandes",
+    "UploadFiles": "Télécharger des fichiers",
+    "UploadFolder": "Dossier de téléchargement",
+    "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
+    "error": {
+      "FileUploadSizeLimit": "La taille du fichier dépasse la limite de taille de téléchargement."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",
     "ResetFilter": "Réinitialiser les filtres"
