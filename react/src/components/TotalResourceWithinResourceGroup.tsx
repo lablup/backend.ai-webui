@@ -4,10 +4,6 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import BaseResourceItem, {
-  AcceleratorSlotDetail,
-  ResourceValues,
-} from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme, Typography } from 'antd';
@@ -17,10 +13,12 @@ import {
   subNumberWithUnits,
   addNumberWithUnits,
   BAIBoardItemTitle,
+  ResourceStatistics,
+  convertToBinaryUnit,
+  getDisplayUnitToInputSizeUnit,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
-  useCallback,
   useMemo,
   useState,
   useTransition,
@@ -30,6 +28,13 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+
+const convertToNumber = (value: any): number => {
+  if (value === null || value === undefined || value === 'Infinity') {
+    return Number.POSITIVE_INFINITY;
+  }
+  return Number(value) || 0;
+};
 
 interface TotalResourceWithinResourceGroupProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
@@ -112,111 +117,159 @@ const TotalResourceWithinResourceGroup: React.FC<
     }
   }, [deferredSelectedResourceGroup, refetch, userRole]);
 
-  const getResourceValue = (
-    type: TotalResourceWithinResourceGroupProps['displayType'],
-    resource: string,
-    totalOccupied: number,
-    totalAvailable: number,
-  ): ResourceValues => {
-    const getCurrentValue = () => {
-      if (type === 'using') {
-        return totalOccupied;
+  const resourceData = useMemo(() => {
+    const agents = _.isEqual(userRole, 'superadmin')
+      ? _.map(data.agent_nodes?.edges, 'node')
+      : data.agent_summary_list?.items || [];
+
+    const totalOccupiedSlots: Record<string, number> = {};
+    const totalAvailableSlots: Record<string, number> = {};
+
+    _.forEach(filterOutNullAndUndefined(agents), (agent) => {
+      let occupiedSlots;
+      let availableSlots;
+
+      try {
+        occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
+        availableSlots = JSON.parse(agent.available_slots || '{}');
+      } catch (e) {
+        return;
       }
-      const remaining = subNumberWithUnits(
-        _.toString(totalAvailable),
-        _.toString(totalOccupied),
-        '',
-      );
-      return remaining;
-    };
 
-    const getTotalValue = () => {
-      return totalAvailable;
-    };
+      if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
 
-    return {
-      current: getCurrentValue() || 0,
-      total: getTotalValue(),
-    };
-  };
-
-  const { acceleratorSlotsDetails, totalOccupiedSlots, totalAvailableSlots } =
-    useMemo(() => {
-      const agents = _.isEqual(userRole, 'superadmin')
-        ? _.map(data.agent_nodes?.edges, 'node')
-        : data.agent_summary_list?.items || [];
-
-      const totalOccupiedSlots: Record<string, number> = {};
-      const totalAvailableSlots: Record<string, number> = {};
-
-      _.forEach(filterOutNullAndUndefined(agents), (agent) => {
-        let occupiedSlots;
-        let availableSlots;
-
-        try {
-          occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-          availableSlots = JSON.parse(agent.available_slots || '{}');
-        } catch (e) {
-          return;
-        }
-
-        if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
-
-        _.forEach(occupiedSlots, (value, key) => {
-          totalOccupiedSlots[key] = _.toNumber(
-            addNumberWithUnits(
-              _.toString(_.get(totalOccupiedSlots, key, 0)),
-              _.toString(value),
-              '',
-            ),
-          );
-        });
-
-        _.forEach(availableSlots, (value, key) => {
-          totalAvailableSlots[key] = _.toNumber(
-            addNumberWithUnits(
-              _.toString(_.get(totalAvailableSlots, key, 0)),
-              _.toString(value),
-              '',
-            ),
-          );
-        });
+      _.forEach(occupiedSlots, (value, key) => {
+        totalOccupiedSlots[key] = _.toNumber(
+          addNumberWithUnits(
+            _.toString(_.get(totalOccupiedSlots, key, 0)),
+            _.toString(value),
+            '',
+          ),
+        );
       });
 
-      const accelerators: AcceleratorSlotDetail[] = _.chain(
-        resourceSlotsDetails?.resourceSlotsInRG,
-      )
-        .omit(['cpu', 'mem'])
-        .map((resourceSlot, key) => ({
-          key,
-          resourceSlot,
-          values: getResourceValue(
-            displayType,
-            key,
-            totalOccupiedSlots[key] || 0,
-            totalAvailableSlots[key] || 0,
+      _.forEach(availableSlots, (value, key) => {
+        totalAvailableSlots[key] = _.toNumber(
+          addNumberWithUnits(
+            _.toString(_.get(totalAvailableSlots, key, 0)),
+            _.toString(value),
+            '',
           ),
-        }))
-        .filter((item) => Boolean(item.resourceSlot))
-        .value() as AcceleratorSlotDetail[];
+        );
+      });
+    });
 
-      return {
-        acceleratorSlotsDetails: accelerators,
-        totalOccupiedSlots,
-        totalAvailableSlots,
-      };
-    }, [data, displayType, resourceSlotsDetails, userRole]);
+    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
+    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
 
-  const getResourceValueForCard = useCallback(
-    (resource: string) =>
-      getResourceValue(
-        displayType,
-        resource,
-        totalOccupiedSlots[resource] || 0,
-        totalAvailableSlots[resource] || 0,
-      ),
-    [displayType, totalOccupiedSlots, totalAvailableSlots],
-  );
+    // Helper function to process memory values
+    const processMemoryValue = (value: any, displayUnit: string): number => {
+      const numValue = convertToNumber(value);
+      if (isFinite(numValue) && displayUnit && memSlot?.slot_name === 'ram') {
+        const converted = convertToBinaryUnit(
+          value,
+          getDisplayUnitToInputSizeUnit(displayUnit),
+        );
+        return converted?.number || numValue;
+      }
+      return numValue;
+    };
+
+    const cpuData = cpuSlot
+      ? {
+          using: {
+            current: convertToNumber(totalOccupiedSlots['cpu'] || 0),
+            total: convertToNumber(totalAvailableSlots['cpu'] || 0),
+          },
+          remaining: {
+            current: convertToNumber(
+              subNumberWithUnits(
+                _.toString(totalAvailableSlots['cpu'] || 0),
+                _.toString(totalOccupiedSlots['cpu'] || 0),
+                '',
+              ),
+            ),
+            total: convertToNumber(totalAvailableSlots['cpu'] || 0),
+          },
+          metadata: {
+            title: cpuSlot.human_readable_name,
+            displayUnit: cpuSlot.display_unit,
+          },
+        }
+      : null;
+
+    const memoryData = memSlot
+      ? {
+          using: {
+            current: processMemoryValue(
+              totalOccupiedSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              totalAvailableSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+          },
+          remaining: {
+            current: processMemoryValue(
+              subNumberWithUnits(
+                _.toString(totalAvailableSlots['mem'] || 0),
+                _.toString(totalOccupiedSlots['mem'] || 0),
+                '',
+              ),
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              totalAvailableSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+          },
+          metadata: {
+            title: memSlot.human_readable_name,
+            displayUnit: memSlot.display_unit,
+          },
+        }
+      : null;
+
+    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
+      .omit(['cpu', 'mem'])
+      .map((resourceSlot, key) => {
+        if (!resourceSlot) return null;
+
+        const processAcceleratorValue = (value: any): number => {
+          return convertToNumber(value);
+        };
+
+        const occupied = totalOccupiedSlots[key] || 0;
+        const available = totalAvailableSlots[key] || 0;
+        const remaining = subNumberWithUnits(
+          _.toString(available),
+          _.toString(occupied),
+          '',
+        );
+
+        return {
+          key,
+          using: {
+            current: processAcceleratorValue(occupied),
+            total: processAcceleratorValue(available),
+          },
+          remaining: {
+            current: processAcceleratorValue(remaining),
+            total: processAcceleratorValue(available),
+          },
+          metadata: {
+            title: resourceSlot.human_readable_name,
+            displayUnit: resourceSlot.display_unit,
+          },
+        };
+      })
+      .compact()
+      .filter((item) => !!(item.using.current || item.using.total))
+      .value();
+
+    return { cpu: cpuData, memory: memoryData, accelerators };
+  }, [data, resourceSlotsDetails, userRole]);
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
@@ -302,15 +355,10 @@ const TotalResourceWithinResourceGroup: React.FC<
         }
       />
 
-      <BaseResourceItem
-        {...props}
-        getResourceValue={getResourceValueForCard}
-        acceleratorSlotsDetails={acceleratorSlotsDetails}
-        resourceSlotsDetails={resourceSlotsDetails}
-        progressProps={{
-          showProgress: true,
-          steps: 12,
-        }}
+      <ResourceStatistics
+        resourceData={resourceData}
+        displayType={displayType}
+        showProgress={true}
       />
     </BAIFlex>
   );

@@ -82,7 +82,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { data: resourceSlotsInRG } = useTanQuery<{
-    [key: string]: ResourceSlotDetail | undefined;
+    [key in ResourceSlotName]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
