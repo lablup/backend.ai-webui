@@ -42,7 +42,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useDeferredQueryParams } from 'src/hooks/useDeferredQueryParams';
+import { useTransitionSafeQueryParams } from 'src/hooks/useTransitionSafeQueryParams';
 import { StringParam, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
@@ -74,7 +74,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     pageSize: 20,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useTransitionSafeQueryParams({
     order: withDefault(StringParam, undefined),
     filter: withDefault(StringParam, undefined),
     status: withDefault(StringParam, 'ALIVE'),

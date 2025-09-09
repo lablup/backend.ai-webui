@@ -1,6 +1,6 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import { useDeferredQueryParams } from './useDeferredQueryParams';
+import { useTransitionSafeQueryParams } from './useTransitionSafeQueryParams';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -342,7 +342,7 @@ export const useBAIPaginationOptionState = (
 export const useBAIPaginationOptionStateOnSearchParam = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
-  const [options, setOptions] = useDeferredQueryParams({
+  const [options, setOptions] = useTransitionSafeQueryParams({
     current: NumberParam,
     pageSize: NumberParam,
   });
