@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "テスト"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
-  },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定",
-    "SearchTableColumn": "テーブル列を検索します"
-  },
-  "error": {
-    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
@@ -21,12 +7,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "無制限"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "テーブル列を検索します",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定"
+  },
+  "comp:BAITestButton": {
+    "Test": "テスト"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+  },
+  "error": {
+    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
+  },
   "general": {
     "button": {
       "CopyAll": "すべてをコピーします"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "無制限"
   }
 }

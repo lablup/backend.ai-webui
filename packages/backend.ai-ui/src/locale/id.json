@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "tes"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel",
-    "SearchTableColumn": "Kolom Tabel Cari"
-  },
-  "error": {
-    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
@@ -21,12 +7,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tak terbatas"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Kolom Tabel Cari",
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel"
+  },
+  "comp:BAITestButton": {
+    "Test": "tes"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
   "general": {
     "button": {
       "CopyAll": "Salin semua"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tak terbatas"
   }
 }
