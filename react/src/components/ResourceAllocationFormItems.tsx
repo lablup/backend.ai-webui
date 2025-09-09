@@ -936,7 +936,9 @@ const ResourceAllocationFormItems: React.FC<
                                       token.colorSuccessBorderHover,
                                   }}
                                 ></div>
-                                Application MEM {appMemUnitResult?.value}
+                                {t('session.launcher.ApplicationMemory', {
+                                  value: appMemUnitResult?.value,
+                                })}
                               </BAIFlex>
                               <BAIFlex gap={'xxs'}>
                                 <div
@@ -948,7 +950,9 @@ const ResourceAllocationFormItems: React.FC<
                                   }}
                                 ></div>
                                 {getFieldValue('enabledAutomaticShmem') &&
-                                  `SHMEM ${shmemUnitResult?.value}`}
+                                  t('session.launcher.SharedMemory', {
+                                    value: shmemUnitResult?.value,
+                                  })}
                                 <Form.Item
                                   noStyle
                                   name={['resource', 'shmem']}

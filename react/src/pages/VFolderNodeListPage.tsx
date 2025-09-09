@@ -293,6 +293,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   style={{
                     maxWidth: lg ? 120 : undefined,
                     wordBreak: 'keep-all',
+                    overflowWrap: 'break-word',
                   }}
                 >
                   {t('data.CreateFolderAndUploadFiles')}

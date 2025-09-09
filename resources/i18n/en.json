@@ -1204,7 +1204,6 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
-    "SharedMemory": "Shared memory",
     "Updated": "Resource preset updated"
   },
   "scheduler": {
@@ -1368,6 +1367,7 @@
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "AgentNode": "Agent ",
       "AllocateNode": "Cluster mode",
+      "ApplicationMemory": "Application MEM {{value}}",
       "Architecture": "Architecture",
       "AutoSelect": "Auto Select",
       "AutoSharedMemoryTooltip": "You can automatically select or manually enter the shared memory size within the allocated memory.",
@@ -1518,8 +1518,7 @@
       "SetPreopenPorts": "Preopen Ports (optional)",
       "SetSessionOwner": "Session owner",
       "SettingUpProxyForApp": "Setting up proxy for the app...",
-      "SharedMemory": "Shared Memory",
-      "SharedMemoryAbbr": "SHMEM",
+      "SharedMemory": "Shared Memory (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",
       "SingleNode": "Single Node",
       "SkipToConfirmAndLaunch": "Skip to review",
