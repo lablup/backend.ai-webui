@@ -8,11 +8,13 @@ import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
-import { BAIFlex, BAIBoardItemTitle, ResourceStatistics } from 'backend.ai-ui';
 import {
+  BAIFlex,
+  BAIBoardItemTitle,
+  ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-} from 'backend.ai-ui/components/ResourceStatistics';
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

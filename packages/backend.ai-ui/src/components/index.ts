@@ -30,6 +30,7 @@ export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export { default as BAIStatistic } from './BAIStatistic';
 export type { BAIStatisticProps } from './BAIStatistic';
 export { default as ResourceStatistics } from './ResourceStatistics';
+export { processMemoryValue, convertToNumber } from './ResourceStatistics';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
 export * from './Table';

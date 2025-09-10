@@ -4,11 +4,13 @@ import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemain
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme } from 'antd';
-import { BAIBoardItemTitle, BAIFlex, ResourceStatistics } from 'backend.ai-ui';
 import {
+  BAIBoardItemTitle,
+  BAIFlex,
+  ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-} from 'backend.ai-ui/components/ResourceStatistics';
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';

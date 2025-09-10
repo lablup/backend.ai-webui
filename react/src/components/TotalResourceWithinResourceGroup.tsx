@@ -14,11 +14,9 @@ import {
   addNumberWithUnits,
   BAIBoardItemTitle,
   ResourceStatistics,
-} from 'backend.ai-ui';
-import {
   convertToNumber,
   processMemoryValue,
-} from 'backend.ai-ui/components/ResourceStatistics';
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import {
   useMemo,

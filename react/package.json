@@ -104,7 +104,16 @@
       "import/no-duplicates": "error",
       "relay/graphql-syntax": "off",
       "relay/unused-fields": "off",
-      "relay/must-colocate-fragment-spreads": "off"
+      "relay/must-colocate-fragment-spreads": "off",
+      "no-restricted-imports": [
+        "error",
+        {
+          "patterns": [
+            "backend.ai-ui/*",
+            "!backend.ai-ui/dist"
+          ]
+        }
+      ]
     }
   },
   "browserslist": {
