@@ -6,23 +6,29 @@ import {
   ResourceAllocation,
   useResourceLimitAndRemaining,
 } from '../hooks/useResourceLimitAndRemaining';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
-import { Typography } from 'antd';
-import { BAICardProps, BAIFlex } from 'backend.ai-ui';
+import { useControllableValue } from 'ahooks';
+import { Segmented, theme, Typography } from 'antd';
+import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useFetchKey } from 'src/hooks';
 
-interface MyResourceProps extends BAICardProps {
+interface MyResourceProps {
   fetchKey?: string;
-  isRefetching?: boolean;
+  refetching?: boolean;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
 
 const getResourceValue = (
-  type: 'usage' | 'remaining',
+  type: MyResourceProps['displayType'],
   resource: string,
   checkPresetInfo: ResourceAllocation | null,
   remainingWithoutResourceGroup: RemainingSlots,
@@ -41,7 +47,7 @@ const getResourceValue = (
   const totalValue = getTotalValue();
 
   const getCurrentValue = () => {
-    if (type === 'usage') {
+    if (type === 'using') {
       return _.get(checkPresetInfo?.keypair_using, resource);
     }
     return _.get(
@@ -61,28 +67,36 @@ const getResourceValue = (
 
 const MyResource: React.FC<MyResourceProps> = ({
   fetchKey,
-  isRefetching,
+  refetching,
+  extra,
   ...props
 }) => {
   const { t } = useTranslation();
-
+  const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();
+
+  const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
+  const [isPending, startTransition] = useTransition();
   const [
     {
       checkPresetInfo,
       resourceLimitsWithoutResourceGroup,
       remainingWithoutResourceGroup,
-      isRefetching: internalIsRefetching,
     },
-    { refetch },
   ] = useResourceLimitAndRemaining({
     currentProjectName: currentProject.name,
     ignorePerContainerConfig: true,
-    fetchKey,
+    fetchKey: `${fetchKey}${internalFetchKey}`,
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'remaining'>('usage');
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<MyResourceProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'using',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
   const acceleratorSlotsDetails = useMemo(() => {
     return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
@@ -91,7 +105,7 @@ const MyResource: React.FC<MyResourceProps> = ({
         key,
         resourceSlot,
         values: getResourceValue(
-          type,
+          displayType,
           key,
           checkPresetInfo ?? null,
           remainingWithoutResourceGroup,
@@ -102,7 +116,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       .value() as AcceleratorSlotDetail[];
   }, [
     resourceSlotsDetails,
-    type,
+    displayType,
     checkPresetInfo,
     remainingWithoutResourceGroup,
     resourceLimitsWithoutResourceGroup,
@@ -111,14 +125,14 @@ const MyResource: React.FC<MyResourceProps> = ({
   const getResourceValueForCard = useCallback(
     (resource: string) =>
       getResourceValue(
-        type,
+        displayType,
         resource,
         checkPresetInfo ?? null,
         remainingWithoutResourceGroup,
         resourceLimitsWithoutResourceGroup,
       ),
     [
-      type,
+      displayType,
       checkPresetInfo,
       remainingWithoutResourceGroup,
       resourceLimitsWithoutResourceGroup,
@@ -126,38 +140,70 @@ const MyResource: React.FC<MyResourceProps> = ({
   );
 
   return (
-    <BaseResourceItem
-      {...props}
-      title={
-        <BAIFlex gap={'xs'}>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('webui.menu.MyResources')}
-          </Typography.Title>
-        </BAIFlex>
-      }
-      tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
-      isRefetching={isRefetching || internalIsRefetching}
-      displayType={type}
-      onDisplayTypeChange={setType}
-      onRefetch={refetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: true,
-        steps: 12,
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
       }}
-      typeOptions={[
-        {
-          value: 'usage',
-          label: t('webui.menu.Usage'),
-        },
-        {
-          value: 'remaining',
-          label: t('webui.menu.Limits'),
-        },
-      ]}
-    />
+    >
+      <BAIBoardItemTitle
+        title={
+          <Typography.Text
+            style={{
+              fontSize: token.fontSizeHeading5,
+              fontWeight: token.fontWeightStrong,
+            }}
+          >
+            {t('webui.menu.MyResources')}
+          </Typography.Text>
+        }
+        tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
+        extra={
+          <BAIFlex gap={'xs'}>
+            <Segmented<Exclude<MyResourceProps['displayType'], undefined>>
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  value: 'remaining',
+                  label: t('resourcePanel.Limit'),
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPending || refetching}
+              value=""
+              onChange={() => {
+                startTransition(() => {
+                  updateInternalFetchKey();
+                });
+              }}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+      <BaseResourceItem
+        {...props}
+        getResourceValue={getResourceValueForCard}
+        acceleratorSlotsDetails={acceleratorSlotsDetails}
+        resourceSlotsDetails={resourceSlotsDetails}
+        progressProps={{
+          showProgress: true,
+          steps: 12,
+        }}
+      />
+    </BAIFlex>
   );
 };
 

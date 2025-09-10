@@ -4,31 +4,44 @@ import {
   ResourceAllocation,
   useResourceLimitAndRemaining,
 } from '../hooks/useResourceLimitAndRemaining';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { Typography } from 'antd';
-import { BAIFlex, BAICardProps } from 'backend.ai-ui';
+import { useControllableValue } from 'ahooks';
+import { Segmented, theme, Typography } from 'antd';
+import { BAIFlex, BAIBoardItemTitle } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFetchKey } from 'src/hooks';
 
-interface MyResourceWithinResourceGroupProps extends BAICardProps {
+interface MyResourceWithinResourceGroupProps {
   fetchKey?: string;
-  isRefetching?: boolean;
+  refetching?: boolean;
   onResourceGroupChange?: (resourceGroup: string) => void;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
 
 const getResourceValue = (
-  type: 'usage' | 'remaining',
+  type: MyResourceWithinResourceGroupProps['displayType'],
   resource: string,
   checkPresetInfo: ResourceAllocation | null,
   resourceGroup: string,
 ): ResourceValues => {
   const getCurrentValue = () => {
-    if (type === 'usage') {
+    if (type === 'using') {
       return _.get(
         checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
         resource,
@@ -48,26 +61,32 @@ const getResourceValue = (
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, isRefetching, onResourceGroupChange, ...props }) => {
+> = ({ fetchKey, refetching, onResourceGroupChange, extra, ...props }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
+  const [isPending, startTransition] = useTransition();
 
-  const [{ checkPresetInfo, isRefetching: internalIsRefetching }, { refetch }] =
-    useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
-      currentResourceGroup: deferredSelectedResourceGroup || 'default',
-      fetchKey,
-    });
+  const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
+    currentProjectName: currentProject.name,
+    currentResourceGroup: deferredSelectedResourceGroup || 'default',
+    fetchKey: `${fetchKey}${internalFetchKey}`,
+  });
 
   const resourceSlotsDetails = useResourceSlotsDetails(
     deferredSelectedResourceGroup || 'default',
   );
-  const [displayType, setDisplayType] = useState<'usage' | 'remaining'>(
-    'usage',
-  );
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'remaining',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
   const acceleratorSlotsDetails = useMemo(() => {
     return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
@@ -102,42 +121,89 @@ const MyResourceWithinResourceGroup: React.FC<
     [displayType, checkPresetInfo, deferredSelectedResourceGroup],
   );
 
-  const title = (
-    <BAIFlex gap={'xs'}>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {t('webui.menu.MyResourcesIn')}
-      </Typography.Title>
-      <ResourceGroupSelectForCurrentProject
-        size="small"
-        showSearch
-        style={{ minWidth: 100 }}
-        onChange={(v) => {
-          setSelectedResourceGroup(v);
-          onResourceGroupChange?.(v);
+  return (
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
+      }}
+    >
+      <BAIBoardItemTitle
+        title={
+          <>
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeHeading5,
+                fontWeight: token.fontWeightStrong,
+              }}
+            >
+              {t('webui.menu.MyResourcesIn')}
+            </Typography.Text>
+            <ResourceGroupSelectForCurrentProject
+              size="small"
+              showSearch
+              onChange={(v) => {
+                setSelectedResourceGroup(v);
+                onResourceGroupChange?.(v);
+              }}
+              loading={selectedResourceGroup !== deferredSelectedResourceGroup}
+              popupMatchSelectWidth={false}
+              tooltip={t('general.ResourceGroup')}
+            />
+          </>
+        }
+        tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
+        extra={
+          <BAIFlex gap={'xs'}>
+            <Segmented<
+              Exclude<
+                MyResourceWithinResourceGroupProps['displayType'],
+                undefined
+              >
+            >
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  label: t('resourcePanel.RemainingNumber'),
+                  value: 'remaining',
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => v && setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPending || refetching}
+              value=""
+              onChange={() => {
+                startTransition(() => {
+                  updateInternalFetchKey();
+                });
+              }}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+
+      <BaseResourceItem
+        {...props}
+        getResourceValue={getResourceValueForCard}
+        acceleratorSlotsDetails={acceleratorSlotsDetails}
+        resourceSlotsDetails={resourceSlotsDetails}
+        progressProps={{
+          showProgress: false,
         }}
-        loading={selectedResourceGroup !== deferredSelectedResourceGroup}
-        popupMatchSelectWidth={false}
-        tooltip={t('general.ResourceGroup')}
       />
     </BAIFlex>
-  );
-
-  return (
-    <BaseResourceItem
-      {...props}
-      title={title}
-      tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
-      isRefetching={isRefetching || internalIsRefetching}
-      displayType={displayType}
-      onDisplayTypeChange={setDisplayType}
-      onRefetch={refetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: false,
-      }}
-    />
   );
 };
 

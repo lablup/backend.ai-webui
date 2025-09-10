@@ -1,6 +1,5 @@
 import { ResourceSlotDetail } from '../hooks/backendai';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
-import { Empty, Segmented, theme, Typography } from 'antd';
+import { Empty, theme } from 'antd';
 import {
   BAIFlex,
   BAIResourceWithSteppedProgress,
@@ -9,7 +8,6 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
   getDisplayUnitToInputSizeUnit,
-  BAIBoardItemTitle,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode } from 'react';
@@ -28,17 +26,6 @@ export interface AcceleratorSlotDetail {
 }
 
 export interface BaseResourceItemProps {
-  title: ReactNode | string;
-  titleStyle?: React.CSSProperties;
-  tooltip?: ReactNode;
-  isRefetching?: boolean;
-  displayType: 'usage' | 'remaining';
-  typeOptions?: Array<{
-    label: string;
-    value: 'usage' | 'remaining';
-  }>;
-  onDisplayTypeChange: (type: 'usage' | 'remaining') => void;
-  onRefetch: () => void;
   getResourceValue: (resource: string) => ResourceValues;
   acceleratorSlotsDetails: AcceleratorSlotDetail[];
   resourceSlotsDetails: any;
@@ -57,19 +44,10 @@ const replaceUnlimitedValues = (value: string | number | undefined) => {
 };
 
 const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
-  title,
-  titleStyle,
-  tooltip,
-  isRefetching,
-  displayType,
-  onDisplayTypeChange,
-  onRefetch,
   getResourceValue,
   acceleratorSlotsDetails,
   resourceSlotsDetails,
   progressProps,
-  extraActions,
-  typeOptions,
 }) => {
   const { showProgress = true, steps } = progressProps || {};
   const { t } = useTranslation();
@@ -115,7 +93,8 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
 
   const shouldShowCpu =
     _.get(resourceSlotsDetails, 'resourceSlotsInRG.cpu') &&
-(_.isUndefined(cpuValues.total) || (_.isNumber(cpuValues.total) && _.toNumber(cpuValues.total) > 0));
+    (_.isUndefined(cpuValues.total) ||
+      (_.isNumber(cpuValues.total) && _.toNumber(cpuValues.total) > 0));
 
   const shouldShowMemory =
     _.get(resourceSlotsDetails, 'resourceSlotsInRG.mem') &&
@@ -126,10 +105,9 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
     acceleratorSlotsDetails,
     ({ resourceSlot, values }) =>
       resourceSlot &&
-      (
-        _.isUndefined(values.total) ||
-        (Number.isFinite(_.toNumber(values.total)) && _.toNumber(values.total) > 0)
-      ),
+      (_.isUndefined(values.total) ||
+        (Number.isFinite(_.toNumber(values.total)) &&
+          _.toNumber(values.total) > 0)),
   );
 
   const isEmpty =
@@ -140,128 +118,62 @@ const BaseResourceItem: React.FC<BaseResourceItemProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingLeft: token.paddingXL,
-        paddingRight: token.paddingXL,
-        height: '100%',
+        flex: 1,
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
-      {/* Fixed Title Section */}
-      <BAIBoardItemTitle
-        style={{
-          paddingBlock: token.paddingMD,
-          flexShrink: 0,
-          position: 'sticky',
-          top: 0,
-          backgroundColor: token.colorBgContainer,
-          zIndex: 1,
-          ...titleStyle,
-        }}
-        title={
-          typeof title === 'string' ? (
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              {title}
-            </Typography.Title>
-          ) : (
-            title
-          )
-        }
-        tooltip={tooltip}
-        extra={
-          <BAIFlex direction="row" gap="sm">
-            <Segmented
-              size="small"
-              options={
-                typeOptions ?? [
-                  {
-                    label: t('webui.menu.Usage'),
-                    value: 'usage',
-                  },
-                  {
-                    label: t('webui.menu.Remaining'),
-                    value: 'remaining',
-                  },
-                ]
-              }
-              value={displayType}
-              onChange={(v) => onDisplayTypeChange(v as 'usage' | 'remaining')}
-            />
-            <BAIFetchKeyButton
-              size="small"
-              loading={isRefetching}
-              value=""
-              onChange={onRefetch}
-              type="text"
-              style={{
-                backgroundColor: 'transparent',
-              }}
-            />
-            {extraActions}
-          </BAIFlex>
-        }
-      />
+      {isEmpty ? (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t('statistics.prometheus.NoMetricsToDisplay')}
+        />
+      ) : (
+        <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
+          <BAIRowWrapWithDividers
+            rowGap={token.marginXL}
+            columnGap={token.marginXXL}
+            dividerWidth={1}
+          >
+            {shouldShowCpu && (
+              <BAIStatisticItemWrap>
+                {renderResourceProgress(
+                  cpuValues,
+                  resourceSlotsDetails.resourceSlotsInRG['cpu'],
+                )}
+              </BAIStatisticItemWrap>
+            )}
 
-      {/* Scrollable Content Section */}
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-        }}
-      >
-        {isEmpty ? (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('statistics.prometheus.NoMetricsToDisplay')}
-          />
-        ) : (
-          <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
+            {shouldShowMemory && (
+              <BAIStatisticItemWrap>
+                {renderResourceProgress(
+                  memValues,
+                  resourceSlotsDetails.resourceSlotsInRG['mem'],
+                )}
+              </BAIStatisticItemWrap>
+            )}
+          </BAIRowWrapWithDividers>
+          {visibleAccelerators.length > 0 && (
             <BAIRowWrapWithDividers
               rowGap={token.marginXL}
               columnGap={token.marginXXL}
+              dividerColor={token.colorBorder}
               dividerWidth={1}
+              style={{
+                backgroundColor: token.colorSuccessBg,
+                borderRadius: token.borderRadiusLG,
+                padding: token.padding,
+              }}
             >
-              {shouldShowCpu && (
-                <BAIStatisticItemWrap>
-                  {renderResourceProgress(
-                    cpuValues,
-                    resourceSlotsDetails.resourceSlotsInRG['cpu'],
-                  )}
+              {_.map(visibleAccelerators, ({ key, resourceSlot, values }) => (
+                <BAIStatisticItemWrap key={key}>
+                  {renderResourceProgress(values, resourceSlot)}
                 </BAIStatisticItemWrap>
-              )}
-
-              {shouldShowMemory && (
-                <BAIStatisticItemWrap>
-                  {renderResourceProgress(
-                    memValues,
-                    resourceSlotsDetails.resourceSlotsInRG['mem'],
-                  )}
-                </BAIStatisticItemWrap>
-              )}
+              ))}
             </BAIRowWrapWithDividers>
-            {visibleAccelerators.length > 0 && (
-              <BAIRowWrapWithDividers
-                rowGap={token.marginXL}
-                columnGap={token.marginXXL}
-                dividerColor={token.colorBorder}
-                dividerWidth={1}
-                style={{
-                  backgroundColor: token.colorSuccessBg,
-                  borderRadius: token.borderRadiusLG,
-                  padding: token.padding,
-                }}
-              >
-                {_.map(visibleAccelerators, ({ key, resourceSlot, values }) => (
-                  <BAIStatisticItemWrap key={key}>
-                    {renderResourceProgress(values, resourceSlot)}
-                  </BAIStatisticItemWrap>
-                ))}
-              </BAIRowWrapWithDividers>
-            )}
-          </BAIFlex>
-        )}
-      </BAIFlex>
+          )}
+        </BAIFlex>
+      )}
     </BAIFlex>
   );
 };
@@ -275,10 +187,11 @@ export const BAIStatisticItemWrap: React.FC<React.PropsWithChildren> = ({
     <BAIFlex direction="row" align="stretch">
       <BAIFlex
         justify="start"
-        align="center"
+        align="start"
         style={{
           overflow: 'break-word',
           minWidth: 82,
+          minHeight: 84,
         }}
       >
         {children}

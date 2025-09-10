@@ -1122,6 +1122,11 @@
     "TypeResourceGroupNameToDelete": "Geben Sie den Namen der zu löschenden Ressourcengruppe ein",
     "WsproxyAddress": "WSProxy-Server-Adresse"
   },
+  "resourcePanel": {
+    "Limit": "Limit",
+    "RemainingNumber": "RMINING",
+    "UsingNumber": "Verwendung"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",
     "AllowedHosts": "Zulässige Gastgeber",

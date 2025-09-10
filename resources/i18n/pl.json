@@ -1121,6 +1121,11 @@
     "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
     "WsproxyAddress": "Adres serwera WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Limit",
+    "RemainingNumber": "Rmaring",
+    "UsingNumber": "Używając"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",
     "AllowedHosts": "Dozwolone hosty",

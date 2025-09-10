@@ -1120,6 +1120,11 @@
     "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
     "WsproxyAddress": "Alamat Server WSProxy"
   },
+  "resourcePanel": {
+    "Limit": "Membatasi",
+    "RemainingNumber": "Rmaining",
+    "UsingNumber": "Menggunakan"
+  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
     "AllowedHosts": "Host yang diizinkan",

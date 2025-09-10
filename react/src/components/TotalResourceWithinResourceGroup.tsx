@@ -3,18 +3,20 @@ import {
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BaseResourceItem, {
   AcceleratorSlotDetail,
   ResourceValues,
 } from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { Typography } from 'antd';
+import { useControllableValue } from 'ahooks';
+import { Segmented, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIFlex,
-  BAICardProps,
   subNumberWithUnits,
   addNumberWithUnits,
+  BAIBoardItemTitle,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
@@ -24,29 +26,38 @@ import {
   useTransition,
   useDeferredValue,
   useEffect,
+  ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-interface TotalResourceWithinResourceGroupProps extends BAICardProps {
+interface TotalResourceWithinResourceGroupProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
-  isRefetching?: boolean;
+  refetching?: boolean;
   onResourceGroupChange?: (resourceGroup: string) => void;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, isRefetching, onResourceGroupChange, ...props }) => {
+> = ({ queryRef, refetching, onResourceGroupChange, extra, ...props }) => {
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
   const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
   const userRole = useCurrentUserRole();
+  const { token } = theme.useToken();
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Query
-      @argumentDefinitions(resourceGroup: { type: "String" }, isSuperAdmin: { type: "Boolean!" })
+      @argumentDefinitions(
+        resourceGroup: { type: "String" }
+        isSuperAdmin: { type: "Boolean!" }
+        agentNodeFilter: { type: "String" }
+      )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
       ) {
@@ -66,9 +77,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(
-          filter: "schedulable == true & status == \"ALIVE\""
-        ) @include(if: $isSuperAdmin) {
+        agent_nodes(filter: $agentNodeFilter) @include(if: $isSuperAdmin) {
           edges {
             node {
               id
@@ -86,7 +95,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   );
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'remaining'>('usage');
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'remaining',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
   useEffect(() => {
     if (deferredSelectedResourceGroup) {
@@ -98,13 +113,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   }, [deferredSelectedResourceGroup, refetch, userRole]);
 
   const getResourceValue = (
-    type: 'usage' | 'remaining',
+    type: TotalResourceWithinResourceGroupProps['displayType'],
     resource: string,
     totalOccupied: number,
     totalAvailable: number,
   ): ResourceValues => {
     const getCurrentValue = () => {
-      if (type === 'usage') {
+      if (type === 'using') {
         return totalOccupied;
       }
       const remaining = subNumberWithUnits(
@@ -176,7 +191,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           key,
           resourceSlot,
           values: getResourceValue(
-            type,
+            displayType,
             key,
             totalOccupiedSlots[key] || 0,
             totalAvailableSlots[key] || 0,
@@ -190,37 +205,17 @@ const TotalResourceWithinResourceGroup: React.FC<
         totalOccupiedSlots,
         totalAvailableSlots,
       };
-    }, [data, type, resourceSlotsDetails, userRole]);
+    }, [data, displayType, resourceSlotsDetails, userRole]);
 
   const getResourceValueForCard = useCallback(
     (resource: string) =>
       getResourceValue(
-        type,
+        displayType,
         resource,
         totalOccupiedSlots[resource] || 0,
         totalAvailableSlots[resource] || 0,
       ),
-    [type, totalOccupiedSlots, totalAvailableSlots],
-  );
-
-  const title = (
-    <BAIFlex gap={'xs'}>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {t('webui.menu.TotalResourcesIn')}
-      </Typography.Title>
-      <ResourceGroupSelectForCurrentProject
-        size="small"
-        showSearch
-        style={{ minWidth: 100 }}
-        onChange={(v) => {
-          setSelectedResourceGroup(v);
-          onResourceGroupChange?.(v);
-        }}
-        loading={selectedResourceGroup !== deferredSelectedResourceGroup}
-        popupMatchSelectWidth={false}
-        tooltip={t('general.ResourceGroup')}
-      />
-    </BAIFlex>
+    [displayType, totalOccupiedSlots, totalAvailableSlots],
   );
 
   const handleRefetch = () => {
@@ -238,22 +233,86 @@ const TotalResourceWithinResourceGroup: React.FC<
   };
 
   return (
-    <BaseResourceItem
-      {...props}
-      title={title}
-      tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
-      isRefetching={isRefetching || isPendingRefetch}
-      displayType={type}
-      onDisplayTypeChange={setType}
-      onRefetch={handleRefetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: true,
-        steps: 12,
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
       }}
-    />
+    >
+      <BAIBoardItemTitle
+        title={
+          <BAIFlex gap={'xs'} wrap="wrap">
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeHeading5,
+                fontWeight: token.fontWeightStrong,
+              }}
+            >
+              {t('webui.menu.TotalResourcesIn')}
+            </Typography.Text>
+            <ResourceGroupSelectForCurrentProject
+              size="small"
+              showSearch
+              style={{ minWidth: 100 }}
+              onChange={(v) => {
+                setSelectedResourceGroup(v);
+                onResourceGroupChange?.(v);
+              }}
+              loading={selectedResourceGroup !== deferredSelectedResourceGroup}
+              popupMatchSelectWidth={false}
+              tooltip={t('general.ResourceGroup')}
+            />
+          </BAIFlex>
+        }
+        tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
+        extra={
+          <BAIFlex gap={'xs'} wrap="wrap">
+            <Segmented<
+              Exclude<
+                TotalResourceWithinResourceGroupProps['displayType'],
+                undefined
+              >
+            >
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  value: 'remaining',
+                  label: t('resourcePanel.RemainingNumber'),
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPendingRefetch || refetching}
+              value=""
+              onChange={handleRefetch}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+
+      <BaseResourceItem
+        {...props}
+        getResourceValue={getResourceValueForCard}
+        acceleratorSlotsDetails={acceleratorSlotsDetails}
+        resourceSlotsDetails={resourceSlotsDetails}
+        progressProps={{
+          showProgress: true,
+          steps: 12,
+        }}
+      />
+    </BAIFlex>
   );
 };
 
