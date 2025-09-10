@@ -28,20 +28,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Вытащить артефакт",
     "Pull": "Тянуть",
-    "PulledVersionsAreExcluded": "Вытянутые версии исключены.",
-    "Name": "Имя",
-    "Type": "Тип",
-    "Description": "Описание",
-    "Source": "Источник"
+    "PullVersion": "Потянуть версию",
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "OnlySCANNEDVersionsCanBePulled": "Только отсканированные версии можно вытащить.",
+    "Size": "Размер",
+    "Version": "Версия",
+    "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
+    "FailedToPullVersions": "Не удалось вытащить версии."
   },
   "comp:BAIArtifactTable": {
     "Action": "Действие",
     "Size": "Размер",
     "Updated": "Обновлено",
     "Version": "Версия",
-    "PullLatestVersion": "Вытащите последнюю версию"
+    "PullLatestVersion": "Вытащите последнюю версию",
+    "Scanned": "Сканируется"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "Имя",
@@ -49,7 +51,52 @@
     "Size": "Размер",
     "Status": "Статус",
     "Updated": "Обновлено",
-    "Action": "Действие",
+    "Version": "Версия",
+    "Control": "Контроль",
+    "PullThisVersion": "Вытащите эту версию",
+    "RemoveThisVersion": "Удалить эту версию"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Отмена",
+      "Remove": "Удалять",
+      "Close": "Закрывать"
+    },
+    "TotalItems": "Total {{total}} элементы"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "RemoveVersions": "Удалить версии",
+    "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
+    "Version": "Версия",
+    "Size": "Размер",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Только версии, которые не притягивают или отсканируют, могут быть удалены.",
+    "FailedToRemoveVersions": "Не удалось удалить версии."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Описание",
+    "Name": "Имя",
+    "Source": "Источник",
+    "Type": "Тип"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Отменить тяну",
+    "CancelingWillRestartThePulling": "Отмена возобновит тягу",
+    "FailedToCancelThePulling": "Не удалось отменить тягу.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} версия отменена успешно.",
+    "WARNING": "ПРЕДУПРЕЖДЕНИЕ",
+    "YouAreAboutToCancelThisVersion": "Вы собираетесь отменить эту версию",
+    "VersionIsPullingNow": "{{version}} версия сейчас тянет."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Введите идентификатор модели. (например, OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Введите версию. (по умолчанию: главное)",
+    "Failed to import model from hugging face": "Не удалось импортировать модель от обнимающего лица",
+    "Import": "Импорт",
+    "ModalDescription": "Импортируйте модель от обнимающего лица, указав идентификатор модели и версию.",
+    "ModalTitle": "Импорт от обнимающегося лица",
+    "ModelID": "Идентификатор модели",
+    "SuccessfullyImportedModelFromHuggingFace": "Успешно запросил импорт модели от обнимающегося лица",
     "Version": "Версия"
   }
 }

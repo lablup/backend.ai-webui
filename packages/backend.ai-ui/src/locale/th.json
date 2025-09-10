@@ -28,20 +28,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "ดึงสิ่งประดิษฐ์",
     "Pull": "ดึง",
-    "PulledVersionsAreExcluded": "ไม่รวมเวอร์ชันที่ดึงออกมา",
-    "Name": "ชื่อ",
-    "Type": "พิมพ์",
-    "Description": "คำอธิบาย",
-    "Source": "แหล่งที่มา"
+    "PullVersion": "Pull Version",
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "OnlySCANNEDVersionsCanBePulled": "สามารถดึงรุ่นสแกนได้เท่านั้น",
+    "Size": "ขนาด",
+    "Version": "รุ่น",
+    "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
+    "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้"
   },
   "comp:BAIArtifactTable": {
     "Action": "การกระทำ",
     "Size": "ขนาด",
     "Version": "รุ่น",
     "Updated": "อัปเดต",
-    "PullLatestVersion": "ดึงเวอร์ชันล่าสุด"
+    "PullLatestVersion": "ดึงเวอร์ชันล่าสุด",
+    "Scanned": "สแกน"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "ชื่อ",
@@ -49,7 +51,52 @@
     "Size": "ขนาด",
     "Status": "สถานะ",
     "Updated": "อัปเดต",
-    "Action": "การกระทำ",
+    "Version": "รุ่น",
+    "Control": "ควบคุม",
+    "PullThisVersion": "ดึงเวอร์ชันนี้",
+    "RemoveThisVersion": "ลบเวอร์ชันนี้"
+  },
+  "general": {
+    "button": {
+      "Cancel": "ยกเลิก",
+      "Remove": "ลบ",
+      "Close": "ปิด"
+    },
+    "TotalItems": "รวม {{total}} รายการ"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "RemoveVersions": "ลบเวอร์ชัน",
+    "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
+    "Version": "รุ่น",
+    "Size": "ขนาด",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "เฉพาะเวอร์ชันที่ไม่ได้อยู่ในการดึงหรือสแกนเท่านั้น",
+    "FailedToRemoveVersions": "ไม่สามารถลบเวอร์ชันได้"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "คำอธิบาย",
+    "Name": "ชื่อ",
+    "Source": "แหล่งที่มา",
+    "Type": "พิมพ์"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "ยกเลิกการดึง",
+    "CancelingWillRestartThePulling": "การยกเลิกจะรีสตาร์ทการดึง",
+    "FailedToCancelThePulling": "ล้มเหลวในการยกเลิกการดึง",
+    "VersionPullCanceledSuccessfully": "ดึง {{version}} ยกเลิกเวอร์ชันสำเร็จ",
+    "WARNING": "คำเตือน",
+    "YouAreAboutToCancelThisVersion": "คุณกำลังจะยกเลิกเวอร์ชันนี้",
+    "VersionIsPullingNow": "{{version}} เวอร์ชันกำลังดึงอยู่ในขณะนี้"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "ป้อนรหัสรุ่น (เช่น OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "ป้อนเวอร์ชัน (ค่าเริ่มต้น: หลัก)",
+    "Failed to import model from hugging face": "ไม่สามารถนำเข้าโมเดลจากการกอดใบหน้า",
+    "Import": "นำเข้า",
+    "ModalDescription": "นำเข้าโมเดลจากการกอดใบหน้าโดยการระบุ ID รุ่นและเวอร์ชัน",
+    "ModalTitle": "นำเข้าจากการกอดใบหน้า",
+    "ModelID": "ID รุ่น",
+    "SuccessfullyImportedModelFromHuggingFace": "ร้องขอการนำเข้าโมเดลจากการกอดอย่างประสบความสำเร็จ",
     "Version": "รุ่น"
   }
 }

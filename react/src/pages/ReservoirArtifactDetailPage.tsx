@@ -1,15 +1,19 @@
-import { getTypeColor, getTypeIcon } from '../utils/reservoir';
-import { Button, Typography, Descriptions, Tag, theme, Tooltip } from 'antd';
+import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {
+  BAIArtifactRevisionDeleteButton,
+  BAIArtifactRevisionDownloadButton,
   BAIArtifactRevisionTable,
+  BAIArtifactTypeTag,
   BAICard,
+  BAIDeleteArtifactModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIImportArtifactModal,
   BAIPullingArtifactRevisionAlert,
-  BAITrashBinIcon,
+  convertToDecimalUnit,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
+import { BAIDeleteArtifactModalArtifactRevisionFragment$key } from 'backend.ai-ui/__generated__/BAIDeleteArtifactModalArtifactRevisionFragment.graphql';
 import { BAIImportArtifactModalArtifactRevisionFragment$key } from 'backend.ai-ui/__generated__/BAIImportArtifactModalArtifactRevisionFragment.graphql';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -21,6 +25,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 import {
   ReservoirArtifactDetailPageQuery,
+  ReservoirArtifactDetailPageQuery$data,
   ReservoirArtifactDetailPageQuery$variables,
 } from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
 import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
@@ -34,6 +39,10 @@ dayjs.extend(relativeTime);
 
 const { Title, Text, Paragraph } = Typography;
 
+type RevisionNode = NonNullable<
+  ReservoirArtifactDetailPageQuery$data['artifact']
+>['revisions']['edges'][number]['node'];
+
 const ReservoirArtifactDetailPage = () => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
@@ -45,14 +54,13 @@ const ReservoirArtifactDetailPage = () => {
   const [selectedRevisionIdList, setSelectedRevisionIdList] = useState<
     {
       id: string;
-      data: BAIImportArtifactModalArtifactRevisionFragment$key;
+      data: RevisionNode;
     }[]
   >([]);
+  const [selectedDeleteRevisions, setSelectedDeleteRevisions] =
+    useState<BAIDeleteArtifactModalArtifactRevisionFragment$key>([]);
   const [selectedRevisions, setSelectedRevisions] =
     useState<BAIImportArtifactModalArtifactRevisionFragment$key>([]);
-  const [selectedRevision, setSelectedRevision] =
-    useState<BAIImportArtifactModalArtifactRevisionFragment$key>([]);
-
   const [queryParams, setQuery] = useDeferredQueryParams({
     filter: withDefault(JsonParam, {}),
   });
@@ -95,7 +103,7 @@ const ReservoirArtifactDetailPage = () => {
         artifact(id: $id) {
           id
           name
-          type
+          ...BAIArtifactTypeTagFragment
           description
           registry {
             name
@@ -144,12 +152,17 @@ const ReservoirArtifactDetailPage = () => {
             edges {
               node {
                 id
+                status
                 ...BAIArtifactRevisionTableArtifactRevisionFragment
                 ...BAIImportArtifactModalArtifactRevisionFragment
+                ...BAIDeleteArtifactModalArtifactRevisionFragment
+                ...BAIArtifactRevisionDeleteButtonFragment
+                ...BAIArtifactRevisionDownloadButtonFragment
               }
             }
           }
           ...BAIImportArtifactModalArtifactFragment
+          ...BAIDeleteArtifactModalArtifactFragment
         }
       }
     `,
@@ -180,10 +193,7 @@ const ReservoirArtifactDetailPage = () => {
           <Title level={3} style={{ margin: 0 }}>
             {artifact?.name}
           </Title>
-          <Tag color={getTypeColor(artifact?.type ?? '')} style={{ margin: 0 }}>
-            {getTypeIcon(artifact?.type ?? '', 18)}&nbsp;
-            {artifact?.type ?? ''.toUpperCase()}
-          </Tag>
+          {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
         </BAIFlex>
         <BAIFetchKeyButton
           value={fetchKey}
@@ -204,6 +214,9 @@ const ReservoirArtifactDetailPage = () => {
             <BAIPullingArtifactRevisionAlert
               key={frgmt.id}
               pullingArtifactRevisionFrgmt={frgmt}
+              onOk={() => {
+                updateFetchKey();
+              }}
             />
           ))}
         </BAIFlex>
@@ -218,11 +231,15 @@ const ReservoirArtifactDetailPage = () => {
             icon={<Download size={16} />}
             onClick={() => {
               if (!latestArtifact) return;
-              setSelectedRevision([latestArtifact]);
+              setSelectedRevisions([latestArtifact]);
             }}
             disabled={!latestArtifact || latestArtifact.status !== 'SCANNED'}
           >
-            {`Pull latest(${latestArtifact?.version}) version`}
+            {latestArtifact
+              ? t('reservoirPage.PullLatestVersion', {
+                  version: latestArtifact.version,
+                })
+              : 'N/A'}
           </Button>
         }
         style={{ marginBottom: token.marginMD }}
@@ -232,14 +249,14 @@ const ReservoirArtifactDetailPage = () => {
             {artifact?.name}
           </Descriptions.Item>
           <Descriptions.Item label={t('reservoirPage.Type')}>
-            <Tag color={getTypeColor(artifact?.type ?? '')}>
-              {getTypeIcon(artifact?.type ?? '')}&nbsp;
-              {artifact?.type.toUpperCase()}
-            </Tag>
+            {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
           </Descriptions.Item>
           <Descriptions.Item label={t('reservoirPage.Size')}>
             <BAIText monospace>
-              {/* {convertToDecimalUnit(latestArtifact?.size, 'auto')?.displayValue} */}
+              {latestArtifact?.size
+                ? convertToDecimalUnit(latestArtifact.size, 'auto')
+                    ?.displayValue
+                : 'N/A'}
             </BAIText>
           </Descriptions.Item>
           <Descriptions.Item label={t('reservoirPage.Source')}>
@@ -268,9 +285,11 @@ const ReservoirArtifactDetailPage = () => {
               : 'N/A'}
           </Descriptions.Item>
           <Descriptions.Item label={t('reservoirPage.Description')} span={2}>
-            <Paragraph>
-              {artifact?.description || 'No description available'}
-            </Paragraph>
+            {artifact?.description ? (
+              <Paragraph>{artifact.description}</Paragraph>
+            ) : (
+              'N/A'
+            )}
           </Descriptions.Item>
         </Descriptions>
       </BAICard>
@@ -290,14 +309,15 @@ const ReservoirArtifactDetailPage = () => {
             <BAIGraphQLPropertyFilter
               combinationMode="AND"
               onChange={(value) => {
+                console.log('filter changed: ', value);
                 startTransition(() => {
                   setQuery({ filter: value ?? {} }, 'replaceIn');
                 });
               }}
               filterProperties={[
                 {
-                  fixedOperator: 'eq',
-                  propertyLabel: 'Status',
+                  fixedOperator: 'equals',
+                  propertyLabel: t('reservoirPage.Status'),
                   key: 'status',
                   type: 'enum',
                   options: [
@@ -337,12 +357,12 @@ const ReservoirArtifactDetailPage = () => {
                 },
                 {
                   fixedOperator: 'contains',
-                  propertyLabel: 'Version',
+                  propertyLabel: t('reservoirPage.Version'),
                   key: 'version',
                   type: 'string',
                 },
                 {
-                  propertyLabel: 'Artifact ID',
+                  propertyLabel: t('reservoirPage.ArtifactID'),
                   key: 'artifactId',
                   valueMode: 'scalar',
                   type: 'string',
@@ -352,23 +372,31 @@ const ReservoirArtifactDetailPage = () => {
             {selectedRevisionIdList.length > 0 ? (
               <BAIFlex gap={'xs'}>
                 <Text>{selectedRevisionIdList.length} selected</Text>
-                <Tooltip title="Delete selected versions">
-                  <Button
-                    style={{
-                      color: token.colorError,
-                      borderColor: token.colorBorder,
-                    }}
-                    type="text"
-                    icon={<BAITrashBinIcon />}
-                  />
-                </Tooltip>
-                <Tooltip title="Pull selected versions">
-                  <Button
-                    type="primary"
-                    icon={<Download size={16} />}
+                <Tooltip title={t('reservoirPage.PullSelectedVersions')}>
+                  <BAIArtifactRevisionDownloadButton
+                    revisionsFrgmt={selectedRevisionIdList.flatMap(
+                      (arr) => arr.data,
+                    )}
                     onClick={() => {
                       if (!artifact) return;
                       setSelectedRevisions(
+                        selectedRevisionIdList.flatMap((arr) => arr.data),
+                      );
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title={t('reservoirPage.RemoveSelectedVersions')}>
+                  <BAIArtifactRevisionDeleteButton
+                    revisionsFrgmt={selectedRevisionIdList.flatMap(
+                      (arr) => arr.data,
+                    )}
+                    style={{
+                      borderColor: token.colorBorder,
+                      backgroundColor: token.colorBgContainer,
+                    }}
+                    onClick={() => {
+                      if (!artifact) return;
+                      setSelectedDeleteRevisions(
                         selectedRevisionIdList.flatMap((arr) => arr.data),
                       );
                     }}
@@ -386,7 +414,14 @@ const ReservoirArtifactDetailPage = () => {
             onClickDownload={(revisionId: string) => {
               artifact?.revisions.edges.forEach((edge) => {
                 if (edge.node.id === revisionId) {
-                  return setSelectedRevision([edge.node]);
+                  return setSelectedRevisions([edge.node]);
+                }
+              });
+            }}
+            onClickDelete={(revisionId: string) => {
+              artifact?.revisions.edges.forEach((edge) => {
+                if (edge.node.id === revisionId) {
+                  return setSelectedDeleteRevisions([edge.node]);
                 }
               });
             }}
@@ -414,14 +449,17 @@ const ReservoirArtifactDetailPage = () => {
                   return;
                 }
                 if (!artifact) return;
+
                 const selectedNode = artifact.revisions.edges.find(
                   (e) => e.node.id === record.id,
                 )?.node;
+
                 if (!selectedNode) return;
+
                 setSelectedRevisionIdList((prev) => {
                   const _filtered = prev.filter((v) => v.id !== record.id);
                   if (_filtered.length === prev.length) {
-                    return [...prev, { id: record.id, data: [selectedNode] }];
+                    return [...prev, { id: record.id, data: selectedNode }];
                   } else {
                     return _filtered;
                   }
@@ -432,8 +470,10 @@ const ReservoirArtifactDetailPage = () => {
               type: 'checkbox',
               onChange: (keys) => {
                 if (!artifact) return;
+
                 const revisions = artifact.revisions;
                 const revisionsIds = revisions.edges.map((e) => e.node.id);
+
                 setSelectedRevisionIdList((prev) => {
                   const _filtered = prev.filter(
                     (v) => !revisionsIds.includes(v.id),
@@ -442,7 +482,7 @@ const ReservoirArtifactDetailPage = () => {
                     .filter((e) => keys.includes(e.node.id))
                     .map((arr) => ({
                       id: arr.node.id,
-                      data: [arr.node],
+                      data: arr.node,
                     }));
                   return _filtered.concat(_selected);
                 });
@@ -482,21 +522,22 @@ const ReservoirArtifactDetailPage = () => {
         open={!!artifact && !_.isEmpty(selectedRevisions)}
         onOk={() => {
           setSelectedRevisions([]);
+          updateFetchKey();
         }}
         onCancel={() => {
           setSelectedRevisions([]);
         }}
       />
-      <BAIImportArtifactModal
+      <BAIDeleteArtifactModal
         selectedArtifactFrgmt={artifact ?? null}
-        selectedArtifactRevisionFrgmt={selectedRevision}
-        open={!!artifact && !_.isEmpty(selectedRevision)}
+        selectedArtifactRevisionFrgmt={selectedDeleteRevisions}
         onOk={() => {
-          setSelectedRevision([]);
+          setSelectedDeleteRevisions([]);
         }}
         onCancel={() => {
-          setSelectedRevision([]);
+          setSelectedDeleteRevisions([]);
         }}
+        open={!!artifact && !_.isEmpty(selectedDeleteRevisions)}
       />
     </div>
   );
