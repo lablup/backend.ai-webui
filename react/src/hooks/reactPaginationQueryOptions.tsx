@@ -1,6 +1,5 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import { useDeferredQueryParams } from './useDeferredQueryParams';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -15,6 +14,7 @@ import {
   ObjectParam,
   StringParam,
   useQueryParams,
+  withDefault,
 } from 'use-query-params';
 
 export type SorterInterface = Pick<SorterResult<any>, 'field' | 'order'>;
@@ -342,14 +342,11 @@ export const useBAIPaginationOptionState = (
 export const useBAIPaginationOptionStateOnSearchParam = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
-  const [options, setOptions] = useDeferredQueryParams({
-    current: NumberParam,
-    pageSize: NumberParam,
+  const [{ pageSize, current }, setOptions] = useQueryParams({
+    current: withDefault(NumberParam, initialOptions.current),
+    pageSize: withDefault(NumberParam, initialOptions.pageSize),
   });
 
-  const mergeOptions = _.merge(initialOptions, options);
-
-  const { pageSize, current } = mergeOptions;
   const memoizedOptions = useMemo<{
     baiPaginationOption: BAIPaginationOption;
     tablePaginationOption: AntdBasicPaginationOption;

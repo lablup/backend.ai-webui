@@ -16,7 +16,6 @@ import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
 import { useUpdateEffect } from 'ahooks';
 import {
@@ -53,7 +52,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
@@ -87,7 +86,7 @@ const ComputeSessionListPage = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     type: withDefault(StringParam, 'all'),
@@ -219,8 +218,7 @@ const ComputeSessionListPage = () => {
         deferredFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
-      fetchKey:
-        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+      fetchKey: deferredFetchKey,
     },
   );
 

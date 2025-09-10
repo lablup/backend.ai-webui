@@ -6,7 +6,6 @@ import { useUpdatableState, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { Button, Skeleton, theme } from 'antd';
 import {
   filterOutEmpty,
@@ -19,7 +18,7 @@ import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const ServingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +27,7 @@ const ServingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
     lifecycleStage: withDefault(StringParam, 'active'),

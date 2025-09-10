@@ -76,8 +76,7 @@ const PendingSessionNodeList: React.FC = () => {
       `,
       deferredQueryVariables,
       {
-        fetchKey:
-          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+        fetchKey: deferredFetchKey,
         fetchPolicy:
           deferredFetchKey === INITIAL_FETCH_KEY
             ? 'store-and-network'

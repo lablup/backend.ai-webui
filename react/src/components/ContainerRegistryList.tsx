@@ -4,8 +4,12 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import {
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
@@ -41,9 +45,10 @@ import {
   BAIPropertyFilter,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useState, useTransition } from 'react';
+import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
@@ -57,26 +62,46 @@ const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [isPendingReload, startReloadTransition] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const painKiller = usePainKiller();
   const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
-  const [isPendingFilter, startFilterTransition] = useTransition();
-  const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [filterString, setFilterString] = useState<string>();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    filter: withDefault(StringParam, undefined),
+    order: withDefault(StringParam, undefined),
+  });
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
-  const [order, setOrder] = useState<string>();
+
+  const queryVariables = useMemo(
+    () => ({
+      domain: baiClient._config.domainName,
+      filter: queryParams.filter,
+      order: queryParams.order,
+      first: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+    }),
+    [
+      baiClient._config.domainName,
+      queryParams.filter,
+      queryParams.order,
+      baiPaginationOption.limit,
+      baiPaginationOption.offset,
+    ],
+  );
+
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { container_registry_nodes, domain } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
@@ -117,17 +142,13 @@ const ContainerRegistryList: React.FC<{
           }
         }
       `,
-      {
-        domain: baiClient._config.domainName,
-        filter: filterString,
-        order,
-        first: baiPaginationOption.limit,
-        offset: baiPaginationOption.offset,
-      },
+      deferredQueryVariables,
       {
         fetchPolicy:
-          fetchKey === 'first' ? 'store-and-network' : 'network-only',
-        fetchKey,
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+        fetchKey: deferredFetchKey,
       },
     );
   const containerRegistries = _.map(container_registry_nodes?.edges, 'node');
@@ -288,12 +309,14 @@ const ContainerRegistryList: React.FC<{
         return (
           <Switch
             checked={
-              inFlightHostName === record.id + fetchKey ? !isEnabled : isEnabled
+              inFlightHostName === record.id + deferredFetchKey
+                ? !isEnabled
+                : isEnabled
             }
-            disabled={isPendingReload || isInFlightDomainMutation}
+            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
             loading={
-              (isPendingReload || isInFlightDomainMutation) &&
-              inFlightHostName === record.id + fetchKey
+              (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
+              inFlightHostName === record.id + deferredFetchKey
             }
             onChange={(isOn) => {
               if (!_.isString(record.registry_name)) return;
@@ -309,7 +332,7 @@ const ContainerRegistryList: React.FC<{
                 );
               }
 
-              setInFlightHostName(record.id + fetchKey);
+              setInFlightHostName(record.id + deferredFetchKey);
               commitDomainMutation({
                 variables: {
                   domain: baiClient._config.domainName,
@@ -329,9 +352,7 @@ const ContainerRegistryList: React.FC<{
                       message.error(error);
                     }
                   } else {
-                    startReloadTransition(() => {
-                      updateFetchKey();
-                    });
+                    updateFetchKey();
                   }
 
                   message.success({
@@ -424,22 +445,18 @@ const ContainerRegistryList: React.FC<{
               type: 'string',
             },
           ]}
-          value={filterString}
+          value={queryParams.filter}
           onChange={(value) => {
-            startFilterTransition(() => {
-              setFilterString(value);
-            });
+            setQueryParams({ filter: value }, 'replaceIn');
           }}
         />
         <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={isPendingReload}
+              loading={deferredFetchKey !== fetchKey}
               icon={<ReloadOutlined />}
               onClick={() => {
-                startReloadTransition(() => {
-                  updateFetchKey();
-                });
+                updateFetchKey();
               }}
             />
           </Tooltip>
@@ -463,14 +480,12 @@ const ContainerRegistryList: React.FC<{
           total: container_registry_nodes?.count ?? 0,
           current: tablePaginationOption.current,
           onChange(current, pageSize) {
-            startPageChangeTransition(() => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({
-                  current,
-                  pageSize,
-                });
-              }
-            });
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            }
           },
           extraContent: (
             <Button
@@ -483,11 +498,12 @@ const ContainerRegistryList: React.FC<{
           ),
         }}
         onChangeOrder={(order) => {
-          startPageChangeTransition(() => {
-            setOrder(order);
-          });
+          setQueryParams({ order }, 'replaceIn');
         }}
-        loading={isPendingPageChange || isPendingFilter}
+        loading={
+          deferredQueryVariables !== queryVariables ||
+          deferredFetchKey !== fetchKey
+        }
         dataSource={filterOutNullAndUndefined(containerRegistries)}
         columns={
           _.filter(
@@ -551,9 +567,7 @@ const ContainerRegistryList: React.FC<{
                     content: t('dialog.ErrorOccurred'),
                   });
                 } else {
-                  startReloadTransition(() => {
-                    updateFetchKey();
-                  });
+                  updateFetchKey();
                   message.success({
                     key: 'registry-deleted',
                     content: t('registry.RegistrySuccessfullyDeleted'),
