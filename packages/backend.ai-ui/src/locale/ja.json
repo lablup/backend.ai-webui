@@ -23,7 +23,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "すべてをコピーします"
+      "CopyAll": "すべてをコピーします",
+      "Cancel": "キャンセル"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "アーティファクトを引っ張ります",
+    "Pull": "引く",
+    "PulledVersionsAreExcluded": "プルバージョンは除外されます。",
+    "Name": "名前",
+    "Type": "タイプ",
+    "Description": "説明",
+    "Source": "ソース"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "アクション",
+    "Size": "サイズ",
+    "Updated": "更新",
+    "Version": "バージョン",
+    "PullLatestVersion": "最新バージョンをプルします"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "LatestVersion": "最新バージョン",
+    "Name": "名前",
+    "Size": "サイズ",
+    "Status": "状態",
+    "Updated": "更新",
+    "Action": "アクション",
+    "Version": "バージョン"
   }
 }

@@ -23,7 +23,33 @@
   },
   "general": {
     "button": {
-      "CopyAll": "复制全部"
+      "CopyAll": "复制全部",
+      "Cancel": "取消"
     }
+  },
+  "comp:BAIImportArtifactModal": {
+    "PullArtifact": "拉工子",
+    "Pull": "拉",
+    "PulledVersionsAreExcluded": "拉动版本被排除在外。",
+    "Name": "姓名",
+    "Type": "类型",
+    "Description": "描述",
+    "Source": "来源"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "行动",
+    "Size": "尺寸",
+    "Version": "版本",
+    "Updated": "更新",
+    "PullLatestVersion": "拉最新版本"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Name": "姓名",
+    "LatestVersion": "最新版本",
+    "Size": "尺寸",
+    "Status": "地位",
+    "Updated": "更新",
+    "Action": "行动",
+    "Version": "版本"
   }
 }
