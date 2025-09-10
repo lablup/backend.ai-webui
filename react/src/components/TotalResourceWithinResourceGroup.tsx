@@ -4,7 +4,7 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme, Typography } from 'antd';
 import {
@@ -272,7 +272,7 @@ const TotalResourceWithinResourceGroup: React.FC<
             >
               {t('webui.menu.TotalResourcesIn')}
             </Typography.Text>
-            <ResourceGroupSelectForCurrentProject
+            <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
               style={{ minWidth: 100 }}

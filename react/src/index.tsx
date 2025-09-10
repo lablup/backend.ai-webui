@@ -1,7 +1,7 @@
 import App from './App';
 import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
-import ResourceGroupSelectForCurrentProject from './components/ResourceGroupSelectForCurrentProject';
+import SharedResourceGroupSelectForCurrentProject from './components/SharedResourceGroupSelectForCurrentProject';
 import SourceCodeViewer from './components/SourceCodeViewer';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
@@ -164,7 +164,7 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
       style={{ minWidth: 200, maxWidth: 310 }}
     >
       {t('session.launcher.ResourceGroup')}
-      <ResourceGroupSelectForCurrentProject
+      <SharedResourceGroupSelectForCurrentProject
         size="large"
         showSearch
         disabled={currentResourceGroupByProject !== props.value}
@@ -172,7 +172,7 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
           !_.isEmpty(currentResourceGroupByProject) &&
           currentResourceGroupByProject !== props.value
         }
-        onChange={(value) => {
+        onChangeInTransition={(value) => {
           // setValue(value);
           props.dispatchEvent('change', value);
         }}

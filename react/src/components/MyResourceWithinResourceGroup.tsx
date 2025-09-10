@@ -5,7 +5,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import { BAIFlex, BAIBoardItemTitle, ResourceStatistics } from 'backend.ai-ui';
@@ -169,7 +169,7 @@ const MyResourceWithinResourceGroup: React.FC<
             >
               {t('webui.menu.MyResourcesIn')}
             </Typography.Text>
-            <ResourceGroupSelectForCurrentProject
+            <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
               loading={currentResourceGroup !== deferredCurrentResourceGroup}
