@@ -1,4 +1,3 @@
-import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
@@ -9,6 +8,11 @@ import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+import { ConfigurableResourceCardQuery } from 'src/__generated__/ConfigurableResourceCardQuery.graphql';
+import { useSuspendedBackendaiClient } from 'src/hooks';
+import { useCurrentUserRole } from 'src/hooks/backendai';
+import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 export type ResourcePanelType =
   | 'MyResource'
@@ -17,16 +21,10 @@ export type ResourcePanelType =
 
 interface ConfigurableResourceCardProps extends BAICardProps {
   fetchKey?: string;
-  isRefetching?: boolean;
-  queryRef?: TotalResourceWithinResourceGroupFragment$key;
-  onResourceGroupChange?: (resourceGroup: string) => void;
 }
 
 const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   fetchKey,
-  isRefetching,
-  queryRef,
-  onResourceGroupChange,
   ...props
 }) => {
   const { token } = theme.useToken();
@@ -34,6 +32,40 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const [selectedPanelType, setSelectedPanelType] = useBAISettingUserState(
     'resource_panel_type',
   );
+  const baiClient = useSuspendedBackendaiClient();
+  const userRole = useCurrentUserRole();
+
+  const currentResourceGroup = useCurrentResourceGroupValue();
+
+  const isHiddenAgents =
+    baiClient?._config?.hideAgents && userRole !== 'superadmin';
+
+  const queryRefForTotalResource =
+    useLazyLoadQuery<ConfigurableResourceCardQuery>(
+      graphql`
+        query ConfigurableResourceCardQuery(
+          $resourceGroup: String
+          $isSuperAdmin: Boolean!
+          $agentNodeFilter: String!
+        ) {
+          ...TotalResourceWithinResourceGroupFragment
+            @arguments(
+              resourceGroup: $resourceGroup
+              isSuperAdmin: $isSuperAdmin
+              agentNodeFilter: $agentNodeFilter
+            )
+        }
+      `,
+      {
+        resourceGroup: currentResourceGroup || 'default',
+        isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+        agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      },
+      {
+        fetchPolicy: isHiddenAgents ? 'store-only' : 'network-only',
+        fetchKey: fetchKey,
+      },
+    );
 
   const currentPanelType: ResourcePanelType = selectedPanelType || 'MyResource';
 
@@ -46,14 +78,17 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       label: t('webui.menu.MyResourcesInResourceGroup'),
       value: 'MyResourceWithinResourceGroup' as ResourcePanelType,
     },
-    queryRef && {
+    !isHiddenAgents && {
       label: t('webui.menu.TotalResourcesInResourceGroup'),
       value: 'TotalResourceWithinResourceGroup' as ResourcePanelType,
     },
   ]);
 
   useEffect(() => {
-    if (!queryRef && currentPanelType === 'TotalResourceWithinResourceGroup') {
+    if (
+      isHiddenAgents &&
+      currentPanelType === 'TotalResourceWithinResourceGroup'
+    ) {
       setSelectedPanelType('MyResource');
     }
     // fallback to MyResource if TotalResourceWithinResourceGroup is not available
@@ -96,10 +131,8 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const renderResourcePanel = () => {
     const commonProps = {
       fetchKey,
-      isRefetching,
       style: { border: 'none', ...props.style },
       extra: settingsButton,
-      onResourceGroupChange,
       titleStyle: {
         paddingLeft: 0,
       },
@@ -111,10 +144,10 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
         return <MyResourceWithinResourceGroup {...commonProps} />;
       case 'TotalResourceWithinResourceGroup':
         return (
-          queryRef && (
+          !isHiddenAgents && (
             <TotalResourceWithinResourceGroup
               {...commonProps}
-              queryRef={queryRef}
+              queryRef={queryRefForTotalResource}
             />
           )
         );

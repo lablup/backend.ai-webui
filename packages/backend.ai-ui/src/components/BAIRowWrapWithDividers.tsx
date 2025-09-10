@@ -23,8 +23,8 @@ export interface BAIRowWrapWithDividersProps {
 const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
   children,
   wrap = true,
-  rowGap = 0,
-  columnGap = 0,
+  rowGap,
+  columnGap,
   dividerWidth = 1,
   dividerColor,
   dividerInset = 0,
@@ -33,6 +33,8 @@ const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
   className,
 }) => {
   const { token } = theme.useToken();
+  rowGap = rowGap ?? token.marginXL;
+  columnGap = columnGap ?? token.marginXXL;
   const color = dividerColor ?? token.colorBorderSecondary;
 
   const containerRef = useRef<HTMLDivElement>(null);

@@ -15,9 +15,6 @@
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "제한없음"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "모두 복사"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "제한없음"
   }
 }

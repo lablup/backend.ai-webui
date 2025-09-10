@@ -12,18 +12,10 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupState,
-} from '../hooks/useCurrentProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
 import { useUpdateEffect } from 'ahooks';
@@ -60,7 +52,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, withDefault } from 'use-query-params';
 
@@ -72,12 +63,7 @@ type SessionNode = NonNullableNodeOnEdges<
 const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
-  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  const userRole = useCurrentUserRole();
-
-  const [currentResourceGroup, setCurrentResourceGroup] =
-    useCurrentResourceGroupState();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -144,11 +130,6 @@ const ComputeSessionListPage = () => {
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
       order: queryParams.order,
-      resourceGroup: currentResourceGroup || 'default',
-      skipTotalResourceWithinResourceGroup:
-        baiClient?._config?.hideAgents && userRole !== 'superadmin',
-      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
     }),
     [
       currentProject.id,
@@ -158,9 +139,6 @@ const ComputeSessionListPage = () => {
       queryParams.filter,
       typeFilter,
       queryParams.order,
-      currentResourceGroup,
-      baiClient?._config?.hideAgents,
-      userRole,
     ],
   );
 
@@ -175,10 +153,6 @@ const ComputeSessionListPage = () => {
           $offset: Int = 0
           $filter: String
           $order: String
-          $resourceGroup: String
-          $skipTotalResourceWithinResourceGroup: Boolean!
-          $isSuperAdmin: Boolean!
-          $agentNodeFilter: String!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -237,10 +211,6 @@ const ComputeSessionListPage = () => {
           ) {
             count
           }
-          ...TotalResourceWithinResourceGroupFragment
-            @skip(if: $skipTotalResourceWithinResourceGroup)
-            @alias
-            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin, agentNodeFilter: $agentNodeFilter) 
         }
       `,
     deferredQueryVariables,
@@ -375,12 +345,7 @@ const ComputeSessionListPage = () => {
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                isRefetching={deferredFetchKey !== fetchKey}
                 fetchKey={deferredFetchKey}
-                queryRef={
-                  queryRef.TotalResourceWithinResourceGroupFragment ?? undefined
-                }
-                onResourceGroupChange={setCurrentResourceGroup}
               />
             </Suspense>
           </ErrorBoundary>

@@ -15,9 +15,7 @@
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Tidak terhad"
-  },
+
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
   },
@@ -25,5 +23,8 @@
     "button": {
       "CopyAll": "Salin semua"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tidak terhad"
   }
 }

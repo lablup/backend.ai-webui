@@ -1,84 +1,51 @@
-import { useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import {
-  ResourceAllocation,
-  useResourceLimitAndRemaining,
-} from '../hooks/useResourceLimitAndRemaining';
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
+import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import BaseResourceItem, {
-  AcceleratorSlotDetail,
-  ResourceValues,
-} from './BaseResourceItem';
 import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
-import { Segmented, theme, Typography } from 'antd';
-import { BAIFlex, BAIBoardItemTitle } from 'backend.ai-ui';
-import _ from 'lodash';
+import { Segmented, Skeleton, theme, Typography } from 'antd';
+import { BAIFlex, BAIBoardItemTitle, ResourceStatistics } from 'backend.ai-ui';
 import {
-  ReactNode,
-  useCallback,
-  useDeferredValue,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+  convertToNumber,
+  processMemoryValue,
+} from 'backend.ai-ui/components/ResourceStatistics';
+import _ from 'lodash';
+import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFetchKey } from 'src/hooks';
 
 interface MyResourceWithinResourceGroupProps {
   fetchKey?: string;
   refetching?: boolean;
-  onResourceGroupChange?: (resourceGroup: string) => void;
   displayType?: 'using' | 'remaining';
   onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
   extra?: ReactNode;
 }
 
-const getResourceValue = (
-  type: MyResourceWithinResourceGroupProps['displayType'],
-  resource: string,
-  checkPresetInfo: ResourceAllocation | null,
-  resourceGroup: string,
-): ResourceValues => {
-  const getCurrentValue = () => {
-    if (type === 'using') {
-      return _.get(
-        checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
-        resource,
-      );
-    }
-
-    return _.get(
-      checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining,
-      resource,
-    );
-  };
-
-  return {
-    current: getCurrentValue() || 0,
-  };
-};
-
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, refetching, onResourceGroupChange, extra, ...props }) => {
+> = ({ fetchKey, refetching, extra, ...props }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
-  const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const currentResourceGroup = useCurrentResourceGroupValue();
+  const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
 
   const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
     currentProjectName: currentProject.name,
-    currentResourceGroup: deferredSelectedResourceGroup || 'default',
+    currentResourceGroup: deferredCurrentResourceGroup || 'default',
     fetchKey: `${fetchKey}${internalFetchKey}`,
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails(
-    deferredSelectedResourceGroup || 'default',
+    deferredCurrentResourceGroup || 'default',
   );
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
@@ -88,38 +55,99 @@ const MyResourceWithinResourceGroup: React.FC<
     defaultValuePropName: 'defaultDisplayType',
   });
 
-  const acceleratorSlotsDetails = useMemo(() => {
-    return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => ({
-        key,
-        resourceSlot,
-        values: getResourceValue(
-          displayType,
-          key,
-          checkPresetInfo ?? null,
-          deferredSelectedResourceGroup || 'default',
-        ),
-      }))
-      .filter((item) => Boolean(item.resourceSlot))
-      .value() as AcceleratorSlotDetail[];
-  }, [
-    resourceSlotsDetails,
-    displayType,
-    checkPresetInfo,
-    deferredSelectedResourceGroup,
-  ]);
+  const resourceData = useMemo(() => {
+    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
+    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
+    const resourceGroup = deferredCurrentResourceGroup || 'default';
 
-  const getResourceValueForCard = useCallback(
-    (resource: string) =>
-      getResourceValue(
-        displayType,
-        resource,
-        checkPresetInfo ?? null,
-        deferredSelectedResourceGroup || 'default',
-      ),
-    [displayType, checkPresetInfo, deferredSelectedResourceGroup],
-  );
+    const cpuData = cpuSlot
+      ? {
+          using: {
+            current: convertToNumber(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.cpu,
+            ),
+            total: undefined, // No total for resource group view
+          },
+          remaining: {
+            current: convertToNumber(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.cpu,
+            ),
+            total: undefined,
+          },
+          metadata: {
+            title: cpuSlot.human_readable_name,
+            displayUnit: cpuSlot.display_unit,
+          },
+        }
+      : null;
+
+    const memoryData = memSlot
+      ? {
+          using: {
+            current: processMemoryValue(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.mem,
+              memSlot.display_unit,
+            ),
+            total: undefined,
+          },
+          remaining: {
+            current: processMemoryValue(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.mem,
+              memSlot.display_unit,
+            ),
+            total: undefined,
+          },
+          metadata: {
+            title: memSlot.human_readable_name,
+            displayUnit: memSlot.display_unit,
+          },
+        }
+      : null;
+
+    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
+      .omit(['cpu', 'mem'])
+      .map((resourceSlot, key) => {
+        if (!resourceSlot) return null;
+
+        const usingCurrent = convertToNumber(
+          checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.[
+            key as ResourceSlotName
+          ],
+        );
+        const remainingCurrent = convertToNumber(
+          checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.[
+            key as ResourceSlotName
+          ],
+        );
+
+        // Filter out if both using and remaining have no values
+        if (
+          (usingCurrent === 0 || !isFinite(usingCurrent)) &&
+          (remainingCurrent === 0 || !isFinite(remainingCurrent))
+        )
+          return null;
+
+        return {
+          key,
+          using: {
+            current: usingCurrent,
+            total: undefined,
+          },
+          remaining: {
+            current: remainingCurrent,
+            total: undefined,
+          },
+          metadata: {
+            title: resourceSlot.human_readable_name,
+            displayUnit: resourceSlot.display_unit,
+          },
+        };
+      })
+      .compact()
+      .value();
+
+    return { cpu: cpuData, memory: memoryData, accelerators };
+  }, [checkPresetInfo, resourceSlotsDetails, deferredCurrentResourceGroup]);
 
   return (
     <BAIFlex
@@ -144,11 +172,7 @@ const MyResourceWithinResourceGroup: React.FC<
             <ResourceGroupSelectForCurrentProject
               size="small"
               showSearch
-              onChange={(v) => {
-                setSelectedResourceGroup(v);
-                onResourceGroupChange?.(v);
-              }}
-              loading={selectedResourceGroup !== deferredSelectedResourceGroup}
+              loading={currentResourceGroup !== deferredCurrentResourceGroup}
               popupMatchSelectWidth={false}
               tooltip={t('general.ResourceGroup')}
             />
@@ -193,16 +217,15 @@ const MyResourceWithinResourceGroup: React.FC<
           </BAIFlex>
         }
       />
-
-      <BaseResourceItem
-        {...props}
-        getResourceValue={getResourceValueForCard}
-        acceleratorSlotsDetails={acceleratorSlotsDetails}
-        resourceSlotsDetails={resourceSlotsDetails}
-        progressProps={{
-          showProgress: false,
-        }}
-      />
+      {resourceSlotsDetails.isLoading ? (
+        <Skeleton active />
+      ) : (
+        <ResourceStatistics
+          resourceData={resourceData}
+          displayType={displayType}
+          showProgress={false}
+        />
+      )}
     </BAIFlex>
   );
 };

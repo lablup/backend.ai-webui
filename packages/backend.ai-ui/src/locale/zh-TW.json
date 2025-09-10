@@ -15,9 +15,7 @@
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "無限"
-  },
+
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -25,5 +23,8 @@
     "button": {
       "CopyAll": "複製全部"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無限"
   }
 }

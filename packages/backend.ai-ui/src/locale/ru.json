@@ -15,9 +15,7 @@
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Неограниченный"
-  },
+
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -25,5 +23,8 @@
     "button": {
       "CopyAll": "Копировать все"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Неограниченный"
   }
 }

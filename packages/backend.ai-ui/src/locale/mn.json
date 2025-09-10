@@ -15,9 +15,6 @@
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Хязгааргүй"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "Бүгдийг хуулбарлах"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Хязгааргүй"
   }
 }

@@ -15,9 +15,7 @@
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Sınırsız"
-  },
+
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
@@ -25,5 +23,8 @@
     "button": {
       "CopyAll": "Hepsini kopyala"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Sınırsız"
   }
 }

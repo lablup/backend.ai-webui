@@ -15,9 +15,6 @@
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Tak terbatas"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "Salin semua"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tak terbatas"
   }
 }

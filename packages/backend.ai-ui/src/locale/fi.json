@@ -15,9 +15,6 @@
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Rajoittamaton"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "Kopioida kaikki"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Rajoittamaton"
   }
 }

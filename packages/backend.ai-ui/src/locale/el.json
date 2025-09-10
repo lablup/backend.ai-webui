@@ -15,9 +15,6 @@
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Απεριόριστος"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "Αντιγράψτε όλα"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Απεριόριστος"
   }
 }

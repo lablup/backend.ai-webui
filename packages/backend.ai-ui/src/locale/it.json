@@ -15,9 +15,6 @@
     "PlaceHolder": "Ricerca",
     "ResetFilter": "Reimposta i filtri"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "Illimitato"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "Copia tutto"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Illimitato"
   }
 }

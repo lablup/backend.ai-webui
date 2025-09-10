@@ -15,9 +15,6 @@
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "無制限"
-  },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
@@ -25,5 +22,8 @@
     "button": {
       "CopyAll": "すべてをコピーします"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無制限"
   }
 }

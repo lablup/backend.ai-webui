@@ -15,9 +15,7 @@
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
   },
-  "comp:BAIResourceWithSteppedProgress": {
-    "Unlimited": "ไม่ จำกัด"
-  },
+
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -25,5 +23,8 @@
     "button": {
       "CopyAll": "คัดลอกทั้งหมด"
     }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "ไม่ จำกัด"
   }
 }
