@@ -19,9 +19,7 @@ import {
   useUpdatableState,
   useWebUINavigate,
 } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import {
@@ -58,8 +56,9 @@ import React, {
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
@@ -132,7 +131,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     statusCategory: withDefault(StringParam, 'active'),
@@ -146,12 +145,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     queryParams,
     tablePaginationOption,
   };
-
-  const statusFilter =
-    queryParams.statusCategory === 'active' ||
-    queryParams.statusCategory === undefined
-      ? FILTER_BY_STATUS_CATEGORY['active']
-      : FILTER_BY_STATUS_CATEGORY['deleted'];
 
   function getUsageModeFilter(mode: string) {
     switch (mode) {
@@ -175,23 +168,28 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     () => ({
       projectId: currentProject.id,
       offset: baiPaginationOption.offset,
-      first: baiPaginationOption.first ?? 20,
+      first: baiPaginationOption.first,
       filter: mergeFilterValues([
-        statusFilter,
+        queryParams.statusCategory === 'active' ||
+        queryParams.statusCategory === undefined
+          ? FILTER_BY_STATUS_CATEGORY['active']
+          : FILTER_BY_STATUS_CATEGORY['deleted'],
         queryParams.filter,
         usageModeFilter,
       ]),
       order: queryParams.order,
       permission: 'read_attribute',
+      filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
+      filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
     }),
     [
       currentProject.id,
       baiPaginationOption.offset,
       baiPaginationOption.first,
-      statusFilter,
+      queryParams.statusCategory,
       queryParams.filter,
-      usageModeFilter,
       queryParams.order,
+      usageModeFilter,
     ],
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -258,11 +256,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           }
         }
       `,
-      {
-        ...deferredQueryVariables,
-        filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
-        filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
-      },
+      deferredQueryVariables,
       {
         fetchPolicy:
           deferredFetchKey === 'initial-fetch'
@@ -293,6 +287,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   style={{
                     maxWidth: lg ? 120 : undefined,
                     wordBreak: 'keep-all',
+                    overflowWrap: 'break-word',
                   }}
                 >
                   {t('data.CreateFolderAndUploadFiles')}
@@ -511,7 +506,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     label: t('data.General'),
                     value: 'general',
                   },
-                  {
+                  baiClient?._config?.fasttrackEndpoint && {
                     label: t('data.Pipeline'),
                     value: 'data',
                   },

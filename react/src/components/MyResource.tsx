@@ -1,153 +1,206 @@
-import { useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
+import { useControllableValue } from 'ahooks';
+import { Segmented, theme } from 'antd';
 import {
-  MergedResourceLimits,
-  RemainingSlots,
-  ResourceAllocation,
-  useResourceLimitAndRemaining,
-} from '../hooks/useResourceLimitAndRemaining';
-import BaseResourceItem, {
-  AcceleratorSlotDetail,
-  ResourceValues,
-} from './BaseResourceItem';
-import { Typography } from 'antd';
-import { BAICardProps, BAIFlex } from 'backend.ai-ui';
+  BAIBoardItemTitle,
+  BAIFlex,
+  ResourceStatistics,
+  convertToNumber,
+  processMemoryValue,
+} from 'backend.ai-ui';
 import _ from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useFetchKey } from 'src/hooks';
 
-interface MyResourceProps extends BAICardProps {
+interface MyResourceProps {
   fetchKey?: string;
-  isRefetching?: boolean;
+  refetching?: boolean;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
-
-const getResourceValue = (
-  type: 'usage' | 'remaining',
-  resource: string,
-  checkPresetInfo: ResourceAllocation | null,
-  remainingWithoutResourceGroup: RemainingSlots,
-  resourceLimitsWithoutResourceGroup: MergedResourceLimits,
-): ResourceValues => {
-  const getTotalValue = () => {
-    let maxValue;
-    maxValue = _.get(
-      resourceLimitsWithoutResourceGroup,
-      _.includes(['cpu', 'mem'], resource)
-        ? [resource, 'max']
-        : ['accelerators', resource, 'max'],
-    );
-    return maxValue;
-  };
-  const totalValue = getTotalValue();
-
-  const getCurrentValue = () => {
-    if (type === 'usage') {
-      return _.get(checkPresetInfo?.keypair_using, resource);
-    }
-    return _.get(
-      remainingWithoutResourceGroup,
-      _.includes(['cpu', 'mem'], resource)
-        ? resource
-        : ['accelerators', resource],
-    );
-  };
-  const currentValue = getCurrentValue();
-
-  return {
-    current: currentValue || 0,
-    total: totalValue,
-  };
-};
 
 const MyResource: React.FC<MyResourceProps> = ({
   fetchKey,
-  isRefetching,
+  refetching,
+  extra,
   ...props
 }) => {
   const { t } = useTranslation();
-
+  const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();
+
+  const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
+  const [isPending, startTransition] = useTransition();
   const [
     {
       checkPresetInfo,
       resourceLimitsWithoutResourceGroup,
       remainingWithoutResourceGroup,
-      isRefetching: internalIsRefetching,
     },
-    { refetch },
   ] = useResourceLimitAndRemaining({
     currentProjectName: currentProject.name,
     ignorePerContainerConfig: true,
-    fetchKey,
+    fetchKey: `${fetchKey}${internalFetchKey}`,
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'remaining'>('usage');
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<MyResourceProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'using',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
-  const acceleratorSlotsDetails = useMemo(() => {
-    return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
+  const resourceData = useMemo(() => {
+    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
+    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
+
+    // Helper function to process memory values
+
+    const cpuData = cpuSlot
+      ? {
+          using: {
+            current: convertToNumber(checkPresetInfo?.keypair_using.cpu),
+            total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
+          },
+          remaining: {
+            current: convertToNumber(remainingWithoutResourceGroup.cpu),
+            total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
+          },
+          metadata: {
+            title: cpuSlot.human_readable_name,
+            displayUnit: cpuSlot.display_unit,
+          },
+        }
+      : null;
+
+    const memoryData = memSlot
+      ? {
+          using: {
+            current: processMemoryValue(
+              checkPresetInfo?.keypair_using.mem,
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              resourceLimitsWithoutResourceGroup.mem?.max,
+              memSlot.display_unit,
+            ),
+          },
+          remaining: {
+            current: processMemoryValue(
+              remainingWithoutResourceGroup.mem,
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              resourceLimitsWithoutResourceGroup.mem?.max,
+              memSlot.display_unit,
+            ),
+          },
+          metadata: {
+            title: memSlot.human_readable_name,
+            displayUnit: memSlot.display_unit,
+          },
+        }
+      : null;
+
+    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
       .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => ({
-        key,
-        resourceSlot,
-        values: getResourceValue(
-          type,
+      .map((resourceSlot, key) => {
+        if (!resourceSlot) return null;
+
+        return {
           key,
-          checkPresetInfo ?? null,
-          remainingWithoutResourceGroup,
-          resourceLimitsWithoutResourceGroup,
-        ),
-      }))
-      .filter((item) => Boolean(item.resourceSlot))
-      .value() as AcceleratorSlotDetail[];
+          using: {
+            current: convertToNumber(
+              checkPresetInfo?.keypair_using[key as ResourceSlotName],
+            ),
+            total: convertToNumber(
+              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+            ),
+          },
+          remaining: {
+            current: convertToNumber(
+              remainingWithoutResourceGroup.accelerators[key],
+            ),
+            total: convertToNumber(
+              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+            ),
+          },
+          metadata: {
+            title: resourceSlot.human_readable_name,
+            displayUnit: resourceSlot.display_unit,
+          },
+        };
+      })
+      .compact()
+      .value();
+
+    return { cpu: cpuData, memory: memoryData, accelerators };
   }, [
-    resourceSlotsDetails,
-    type,
     checkPresetInfo,
     remainingWithoutResourceGroup,
     resourceLimitsWithoutResourceGroup,
+    resourceSlotsDetails,
   ]);
 
-  const getResourceValueForCard = useCallback(
-    (resource: string) =>
-      getResourceValue(
-        type,
-        resource,
-        checkPresetInfo ?? null,
-        remainingWithoutResourceGroup,
-        resourceLimitsWithoutResourceGroup,
-      ),
-    [
-      type,
-      checkPresetInfo,
-      remainingWithoutResourceGroup,
-      resourceLimitsWithoutResourceGroup,
-    ],
-  );
-
   return (
-    <BaseResourceItem
-      {...props}
-      title={
-        <BAIFlex gap={'xs'}>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('webui.menu.MyResources')}
-          </Typography.Title>
-        </BAIFlex>
-      }
-      tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
-      isRefetching={isRefetching || internalIsRefetching}
-      displayType={type}
-      onDisplayTypeChange={setType}
-      onRefetch={refetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: true,
-        steps: 12,
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
       }}
-    />
+    >
+      <BAIBoardItemTitle
+        title={t('webui.menu.MyResources')}
+        tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
+        extra={
+          <BAIFlex gap={'xs'}>
+            <Segmented<Exclude<MyResourceProps['displayType'], undefined>>
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  value: 'remaining',
+                  label: t('resourcePanel.Limit'),
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPending || refetching}
+              value=""
+              onChange={() => {
+                startTransition(() => {
+                  updateInternalFetchKey();
+                });
+              }}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+
+      <ResourceStatistics
+        resourceData={resourceData}
+        displayType={displayType}
+        showProgress={true}
+      />
+    </BAIFlex>
   );
 };
 

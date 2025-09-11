@@ -11,8 +11,23 @@
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SearchTableColumn": "Các cột bảng tìm kiếm"
   },
+  "error": {
+    "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
+  },
+
+  "comp:BAISessionAgentIds": {
+    "Agent": "Đại lý"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Sao chép tất cả"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Không giới hạn"
   }
 }

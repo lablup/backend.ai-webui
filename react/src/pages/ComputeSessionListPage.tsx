@@ -12,19 +12,10 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAINotificationState } from '../hooks/useBAINotification';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupState,
-} from '../hooks/useCurrentProject';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
 import { useUpdateEffect } from 'ahooks';
 import {
@@ -60,9 +51,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
 type SessionNode = NonNullableNodeOnEdges<
@@ -72,12 +62,7 @@ type SessionNode = NonNullableNodeOnEdges<
 const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
-  const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  const userRole = useCurrentUserRole();
-
-  const [currentResourceGroup, setCurrentResourceGroup] =
-    useCurrentResourceGroupState();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -101,7 +86,7 @@ const ComputeSessionListPage = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: withDefault(StringParam, undefined),
     type: withDefault(StringParam, 'all'),
@@ -144,10 +129,6 @@ const ComputeSessionListPage = () => {
       first: baiPaginationOption.first,
       filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
       order: queryParams.order,
-      resourceGroup: currentResourceGroup || 'default',
-      skipTotalResourceWithinResourceGroup:
-        baiClient?._config?.hideAgents && userRole !== 'superadmin',
-      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
     }),
     [
       currentProject.id,
@@ -157,9 +138,6 @@ const ComputeSessionListPage = () => {
       queryParams.filter,
       typeFilter,
       queryParams.order,
-      currentResourceGroup,
-      baiClient?._config?.hideAgents,
-      userRole,
     ],
   );
 
@@ -174,9 +152,6 @@ const ComputeSessionListPage = () => {
           $offset: Int = 0
           $filter: String
           $order: String
-          $resourceGroup: String
-          $skipTotalResourceWithinResourceGroup: Boolean!
-          $isSuperAdmin: Boolean!
         ) {
           compute_session_nodes(
             project_id: $projectId
@@ -235,10 +210,6 @@ const ComputeSessionListPage = () => {
           ) {
             count
           }
-          ...TotalResourceWithinResourceGroupFragment
-            @skip(if: $skipTotalResourceWithinResourceGroup)
-            @alias
-            @arguments(resourceGroup: $resourceGroup, isSuperAdmin: $isSuperAdmin)
         }
       `,
     deferredQueryVariables,
@@ -247,8 +218,7 @@ const ComputeSessionListPage = () => {
         deferredFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
-      fetchKey:
-        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+      fetchKey: deferredFetchKey,
     },
   );
 
@@ -309,39 +279,37 @@ const ComputeSessionListPage = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row
-        gutter={[16, 16]}
-        align={'stretch'}
-        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
-      >
-        <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
-          <BAICard
-            style={{
-              width: '100%',
-              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-            }}
-          >
-            <ActionItemContent
-              title={
-                <Typography.Text
-                  style={{
-                    maxWidth: lg ? 120 : undefined,
-                    wordBreak: 'keep-all',
-                  }}
-                >
-                  {t('start.CreateASession')}
-                </Typography.Text>
-              }
-              buttonText={t('start.button.StartSession')}
-              icon={<BAISessionsIcon />}
-              type="simple"
-              to={'/session/start'}
+      <Row gutter={[16, 16]} align={'stretch'}>
+        {lg && (
+          <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
+            <BAICard
               style={{
-                height: '100%',
+                width: '100%',
               }}
-            />
-          </BAICard>
-        </Col>
+            >
+              <ActionItemContent
+                title={
+                  <Typography.Text
+                    style={{
+                      maxWidth: lg ? 120 : undefined,
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {t('start.CreateASession')}
+                  </Typography.Text>
+                }
+                buttonText={t('start.button.StartSession')}
+                icon={<BAISessionsIcon />}
+                type="simple"
+                to={'/session/start'}
+                style={{
+                  height: '100%',
+                }}
+              />
+            </BAICard>
+          </Col>
+        )}
+
         <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
           <ErrorBoundary
             fallbackRender={() => {
@@ -349,7 +317,6 @@ const ComputeSessionListPage = () => {
                 <BAICard
                   style={{
                     width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
                   status="error"
                   extra={
@@ -366,7 +333,6 @@ const ComputeSessionListPage = () => {
                 <BAICard
                   style={{
                     width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
                   loading
                 />
@@ -377,12 +343,7 @@ const ComputeSessionListPage = () => {
                   width: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
-                isRefetching={deferredFetchKey !== fetchKey}
                 fetchKey={deferredFetchKey}
-                queryRef={
-                  queryRef.TotalResourceWithinResourceGroupFragment ?? undefined
-                }
-                onResourceGroupChange={setCurrentResourceGroup}
               />
             </Suspense>
           </ErrorBoundary>

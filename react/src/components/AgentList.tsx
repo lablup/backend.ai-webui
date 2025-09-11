@@ -10,9 +10,13 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import {
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
@@ -42,9 +46,10 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
@@ -64,31 +69,42 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const baiClient = useSuspendedBackendaiClient();
-  const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
-  const [isPendingRefresh, startRefreshTransition] = useTransition();
-  const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [selectedStatus, setSelectedStatus] = useState('ALIVE');
-  const [optimisticSelectedStatus, setOptimisticSelectedStatus] =
-    useState(selectedStatus);
-  const [isPendingFilter, startFilterTransition] = useTransition();
-
-  const [filterString, setFilterString] = useState<string>();
+  const [queryParams, setQueryParams] = useQueryParams({
+    status: withDefault(StringParam, 'ALIVE'),
+    filter: withDefault(StringParam, undefined),
+    order: withDefault(StringParam, undefined),
+  });
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
-  const [order, setOrder] = useState<string>();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const updateFetchKeyInTransition = () =>
-    startRefreshTransition(() => {
-      updateFetchKey();
-    });
+  const [fetchKey, updateFetchKey] = useFetchKey();
+
+  const queryVariables = useMemo(
+    () => ({
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+      filter: queryParams.filter,
+      order: queryParams.order,
+      status: queryParams.status,
+    }),
+    [
+      baiPaginationOption.limit,
+      baiPaginationOption.offset,
+      queryParams.filter,
+      queryParams.order,
+      queryParams.status,
+    ],
+  );
+
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { agent_list } = useLazyLoadQuery<AgentListQuery>(
     graphql`
@@ -131,16 +147,13 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         }
       }
     `,
+    deferredQueryVariables,
     {
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      filter: filterString,
-      order,
-      status: selectedStatus,
-    },
-    {
-      fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
     },
   );
 
@@ -775,15 +788,9 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 value: 'TERMINATED',
               },
             ]}
-            value={
-              isPendingStatusFetch ? optimisticSelectedStatus : selectedStatus
-            }
+            value={queryParams.status}
             onChange={(e) => {
-              const value = e.target.value;
-              setOptimisticSelectedStatus(value);
-              startStatusFetchTransition(() => {
-                setSelectedStatus(value);
-              });
+              setQueryParams({ status: e.target.value }, 'replaceIn');
             }}
           />
 
@@ -815,20 +822,17 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
                 ],
               },
             ]}
-            value={filterString}
-            // loading={isPendingFilter}
+            value={queryParams.filter}
             onChange={(value) => {
-              startFilterTransition(() => {
-                setFilterString(value);
-              });
+              setQueryParams({ filter: value }, 'replaceIn');
             }}
           />
         </BAIFlex>
         <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={isPendingRefresh}
-              onClick={() => updateFetchKeyInTransition()}
+              loading={deferredFetchKey !== fetchKey}
+              onClick={() => updateFetchKey()}
               icon={<ReloadOutlined />}
             ></Button>
           </Tooltip>
@@ -861,22 +865,21 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
             />
           ),
           onChange(current, pageSize) {
-            startPageChangeTransition(() => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({
-                  current,
-                  pageSize,
-                });
-              }
-            });
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            }
           },
         }}
         onChangeOrder={(order) => {
-          startPageChangeTransition(() => {
-            setOrder(order);
-          });
+          setQueryParams({ order }, 'replaceIn');
         }}
-        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
+        loading={
+          deferredQueryVariables !== queryVariables ||
+          deferredFetchKey !== fetchKey
+        }
         {...tableProps}
       />
       <AgentDetailModal
@@ -889,7 +892,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
         open={!!currentSettingAgent}
         onRequestClose={(success) => {
           if (success) {
-            updateFetchKeyInTransition();
+            updateFetchKey();
           }
           setCurrentSettingAgent(null);
         }}

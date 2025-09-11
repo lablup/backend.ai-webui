@@ -13,14 +13,21 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, Layout, theme } from 'antd';
+import { App, Layout, LayoutProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
-import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useNavigate, Outlet, useMatches } from 'react-router-dom';
+import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
 export type PluginPage = {
@@ -123,7 +130,7 @@ function MainLayout() {
   }, [navigate]);
 
   return (
-    <Layout>
+    <LayoutWithPageTestId>
       <CSSTokenVariables />
       <style>
         {`
@@ -269,9 +276,18 @@ function MainLayout() {
           </BAIFlex>
         </BAIContentWithDrawerArea>
       </Layout>
-    </Layout>
+    </LayoutWithPageTestId>
   );
 }
+
+const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
+  const location = useLocation();
+  const pageTest = useMemo(() => {
+    const cleanPath = location.pathname.replace(/^\//, '').replace(/\//g, '-');
+    return cleanPath ? `page-${cleanPath}` : 'page-root';
+  }, [location.pathname]);
+  return <Layout {...props} data-testid={pageTest} />;
+};
 
 export const NotificationForAnonymous = () => {
   const app = App.useApp();

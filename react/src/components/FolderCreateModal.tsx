@@ -21,7 +21,11 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  ESMClientErrorResponse,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef } from 'react';
@@ -106,6 +110,8 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
+  const { getErrorMessage } = useErrorMessageResolver();
+
   const { data: allowedTypes, isFetching: isFetchingAllowedTypes } =
     useTanQuery({
       queryKey: ['allowedTypes', modalProps.open],
@@ -116,7 +122,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
   const mutationToCreateFolder = useTanMutation<
     FolderCreationResponse,
-    { message?: string },
+    ESMClientErrorResponse,
     FolderCreateFormItemsType
   >({
     mutationFn: (values) => {
@@ -179,7 +185,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             onRequestClose(result);
           },
           onError: (error) => {
-            message.error(error.message);
+            message.error(getErrorMessage(error));
           },
         });
       })

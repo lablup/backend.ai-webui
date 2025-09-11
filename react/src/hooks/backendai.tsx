@@ -81,8 +81,8 @@ export type ResourceSlotDetail = {
 export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { data: resourceSlotsInRG } = useTanQuery<{
-    [key: string]: ResourceSlotDetail | undefined;
+  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
+    [key in ResourceSlotName]: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
     queryFn: () => {
@@ -119,6 +119,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
       [deviceMetadata, resourceSlotsInRG],
     ),
     refresh: useCallback(() => checkUpdate(), [checkUpdate]),
+    isLoading,
   };
 };
 

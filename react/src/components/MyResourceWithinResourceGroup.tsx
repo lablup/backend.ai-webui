@@ -1,143 +1,234 @@
-import { useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import {
-  ResourceAllocation,
-  useResourceLimitAndRemaining,
-} from '../hooks/useResourceLimitAndRemaining';
-import BaseResourceItem, {
-  AcceleratorSlotDetail,
-  ResourceValues,
-} from './BaseResourceItem';
-import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { Typography } from 'antd';
-import { BAIFlex, BAICardProps } from 'backend.ai-ui';
+  useCurrentProjectValue,
+  useCurrentResourceGroupValue,
+} from '../hooks/useCurrentProject';
+import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { useControllableValue } from 'ahooks';
+import { Segmented, Skeleton, theme, Typography } from 'antd';
+import {
+  BAIFlex,
+  BAIBoardItemTitle,
+  ResourceStatistics,
+  convertToNumber,
+  processMemoryValue,
+} from 'backend.ai-ui';
 import _ from 'lodash';
-import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFetchKey } from 'src/hooks';
 
-interface MyResourceWithinResourceGroupProps extends BAICardProps {
+interface MyResourceWithinResourceGroupProps {
   fetchKey?: string;
-  isRefetching?: boolean;
-  onResourceGroupChange?: (resourceGroup: string) => void;
+  refetching?: boolean;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
-
-const getResourceValue = (
-  type: 'usage' | 'remaining',
-  resource: string,
-  checkPresetInfo: ResourceAllocation | null,
-  resourceGroup: string,
-): ResourceValues => {
-  const getCurrentValue = () => {
-    if (type === 'usage') {
-      return _.get(
-        checkPresetInfo?.scaling_groups?.[resourceGroup]?.using,
-        resource,
-      );
-    }
-
-    return _.get(
-      checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining,
-      resource,
-    );
-  };
-
-  return {
-    current: getCurrentValue() || 0,
-  };
-};
 
 const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
-> = ({ fetchKey, isRefetching, onResourceGroupChange, ...props }) => {
+> = ({ fetchKey, refetching, extra, ...props }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
-  const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const currentResourceGroup = useCurrentResourceGroupValue();
+  const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
+  const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
+  const [isPending, startTransition] = useTransition();
 
-  const [{ checkPresetInfo, isRefetching: internalIsRefetching }, { refetch }] =
-    useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
-      currentResourceGroup: deferredSelectedResourceGroup || 'default',
-      fetchKey,
-    });
+  const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
+    currentProjectName: currentProject.name,
+    currentResourceGroup: deferredCurrentResourceGroup || 'default',
+    fetchKey: `${fetchKey}${internalFetchKey}`,
+  });
 
   const resourceSlotsDetails = useResourceSlotsDetails(
-    deferredSelectedResourceGroup || 'default',
+    deferredCurrentResourceGroup || 'default',
   );
-  const [displayType, setDisplayType] = useState<'usage' | 'remaining'>(
-    'usage',
-  );
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'remaining',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
-  const acceleratorSlotsDetails = useMemo(() => {
-    return _.chain(resourceSlotsDetails?.resourceSlotsInRG)
+  const resourceData = useMemo(() => {
+    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
+    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
+    const resourceGroup = deferredCurrentResourceGroup || 'default';
+
+    const cpuData = cpuSlot
+      ? {
+          using: {
+            current: convertToNumber(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.cpu,
+            ),
+            total: undefined, // No total for resource group view
+          },
+          remaining: {
+            current: convertToNumber(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.cpu,
+            ),
+            total: undefined,
+          },
+          metadata: {
+            title: cpuSlot.human_readable_name,
+            displayUnit: cpuSlot.display_unit,
+          },
+        }
+      : null;
+
+    const memoryData = memSlot
+      ? {
+          using: {
+            current: processMemoryValue(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.mem,
+              memSlot.display_unit,
+            ),
+            total: undefined,
+          },
+          remaining: {
+            current: processMemoryValue(
+              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.mem,
+              memSlot.display_unit,
+            ),
+            total: undefined,
+          },
+          metadata: {
+            title: memSlot.human_readable_name,
+            displayUnit: memSlot.display_unit,
+          },
+        }
+      : null;
+
+    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
       .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => ({
-        key,
-        resourceSlot,
-        values: getResourceValue(
-          displayType,
+      .map((resourceSlot, key) => {
+        if (!resourceSlot) return null;
+
+        const usingCurrent = convertToNumber(
+          checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.[
+            key as ResourceSlotName
+          ],
+        );
+        const remainingCurrent = convertToNumber(
+          checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.[
+            key as ResourceSlotName
+          ],
+        );
+
+        // Filter out if both using and remaining have no values
+        if (
+          (usingCurrent === 0 || !isFinite(usingCurrent)) &&
+          (remainingCurrent === 0 || !isFinite(remainingCurrent))
+        )
+          return null;
+
+        return {
           key,
-          checkPresetInfo ?? null,
-          deferredSelectedResourceGroup || 'default',
-        ),
-      }))
-      .filter((item) => Boolean(item.resourceSlot))
-      .value() as AcceleratorSlotDetail[];
-  }, [
-    resourceSlotsDetails,
-    displayType,
-    checkPresetInfo,
-    deferredSelectedResourceGroup,
-  ]);
+          using: {
+            current: usingCurrent,
+            total: undefined,
+          },
+          remaining: {
+            current: remainingCurrent,
+            total: undefined,
+          },
+          metadata: {
+            title: resourceSlot.human_readable_name,
+            displayUnit: resourceSlot.display_unit,
+          },
+        };
+      })
+      .compact()
+      .value();
 
-  const getResourceValueForCard = useCallback(
-    (resource: string) =>
-      getResourceValue(
-        displayType,
-        resource,
-        checkPresetInfo ?? null,
-        deferredSelectedResourceGroup || 'default',
-      ),
-    [displayType, checkPresetInfo, deferredSelectedResourceGroup],
-  );
-
-  const title = (
-    <BAIFlex gap={'xs'}>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {t('webui.menu.MyResourcesIn')}
-      </Typography.Title>
-      <ResourceGroupSelectForCurrentProject
-        size="small"
-        showSearch
-        style={{ minWidth: 100 }}
-        onChange={(v) => {
-          setSelectedResourceGroup(v);
-          onResourceGroupChange?.(v);
-        }}
-        loading={selectedResourceGroup !== deferredSelectedResourceGroup}
-        popupMatchSelectWidth={false}
-        tooltip={t('general.ResourceGroup')}
-      />
-    </BAIFlex>
-  );
+    return { cpu: cpuData, memory: memoryData, accelerators };
+  }, [checkPresetInfo, resourceSlotsDetails, deferredCurrentResourceGroup]);
 
   return (
-    <BaseResourceItem
-      {...props}
-      title={title}
-      tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
-      isRefetching={isRefetching || internalIsRefetching}
-      displayType={displayType}
-      onDisplayTypeChange={setDisplayType}
-      onRefetch={refetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: false,
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
       }}
-    />
+    >
+      <BAIBoardItemTitle
+        title={
+          <>
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeHeading5,
+                fontWeight: token.fontWeightStrong,
+              }}
+            >
+              {t('webui.menu.MyResourcesIn')}
+            </Typography.Text>
+            <SharedResourceGroupSelectForCurrentProject
+              size="small"
+              showSearch
+              loading={currentResourceGroup !== deferredCurrentResourceGroup}
+              popupMatchSelectWidth={false}
+              tooltip={t('general.ResourceGroup')}
+            />
+          </>
+        }
+        tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
+        extra={
+          <BAIFlex gap={'xs'}>
+            <Segmented<
+              Exclude<
+                MyResourceWithinResourceGroupProps['displayType'],
+                undefined
+              >
+            >
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  label: t('resourcePanel.RemainingNumber'),
+                  value: 'remaining',
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => v && setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPending || refetching}
+              value=""
+              onChange={() => {
+                startTransition(() => {
+                  updateInternalFetchKey();
+                });
+              }}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+      {resourceSlotsDetails.isLoading ? (
+        <Skeleton active />
+      ) : (
+        <ResourceStatistics
+          resourceData={resourceData}
+          displayType={displayType}
+          showProgress={false}
+        />
+      )}
+    </BAIFlex>
   );
 };
 

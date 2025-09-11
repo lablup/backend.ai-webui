@@ -1,6 +1,6 @@
 import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
-import { useUpdatableState } from '../hooks';
+import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
@@ -17,29 +17,33 @@ import {
   BAIFlex,
   BAITable,
   BAIPropertyFilter,
+  mergeFilterValues,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, {
+  useState,
+  useTransition,
+  useDeferredValue,
+  useMemo,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 interface UserNodeListProps {}
 
 const UserNodeList: React.FC<UserNodeListProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [isPendingRefresh, startRefreshTransition] = useTransition();
-  const [isPendingFilter, startFilterTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [filterString, setFilterString] = useState<string>();
-  const [order, setOrder] = useState<string | undefined>('-created_at');
-  const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [isPendingStatusFetch, startStatusFetchTransition] = useTransition();
-  const [activeFilter, setActiveFilter] = useState<
-    'status == "active"' | 'status != "active"'
-  >('status == "active"');
+  const [fetchKey, updateFetchKey] = useFetchKey();
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    filter: withDefault(StringParam, undefined),
+    order: withDefault(StringParam, '-created_at'),
+    status: withDefault(StringParam, 'active'),
+  });
   const { message } = App.useApp();
 
   const [emailForInfoModal, setEmailForInfoModal] = useState<string | null>(
@@ -64,6 +68,29 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
   });
 
   const [pendingUserId, setPendingUserId] = useState<string>();
+
+  const queryVariables = useMemo(() => {
+    const statusFilter =
+      queryParams.status === 'active'
+        ? 'status == "active"'
+        : 'status != "active"';
+
+    return {
+      first: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
+      filter: mergeFilterValues([queryParams.filter, statusFilter]),
+      order: queryParams.order,
+    };
+  }, [
+    baiPaginationOption.limit,
+    baiPaginationOption.offset,
+    queryParams.filter,
+    queryParams.status,
+    queryParams.order,
+  ]);
+
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { user_nodes } = useLazyLoadQuery<UserNodeListQuery>(
     graphql`
@@ -95,18 +122,13 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
         }
       }
     `,
+    deferredQueryVariables,
     {
-      first: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      filter: [filterString, activeFilter]
-        .filter(Boolean)
-        .map((x) => `(${x})`)
-        .join(' & '),
-      order,
-    },
-    {
-      fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
     },
   );
 
@@ -128,26 +150,22 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
           <BAIRadioGroup
-            value={activeFilter}
+            value={queryParams.status}
             onChange={(e) => {
-              startStatusFetchTransition(() => {
-                setActiveFilter(e.target?.value);
-                // to page 1
-                setTablePaginationOption({
-                  current: 1,
-                  pageSize: tablePaginationOption.pageSize,
-                });
+              setQueryParams({ status: e.target.value }, 'replaceIn');
+              setTablePaginationOption({
+                current: 1,
               });
             }}
             optionType="button"
             options={[
               {
                 label: 'Active',
-                value: 'status == "active"',
+                value: 'active',
               },
               {
                 label: 'Inactive',
-                value: 'status != "active"',
+                value: 'inactive',
               },
             ]}
           />
@@ -194,23 +212,18 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                 type: 'string',
               },
             ]}
-            value={filterString}
-            loading={isPendingFilter}
+            value={queryParams.filter}
             onChange={(value) => {
-              startFilterTransition(() => {
-                setFilterString(value);
-              });
+              setQueryParams({ filter: value }, 'replaceIn');
             }}
           />
         </BAIFlex>
         <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={isPendingRefresh}
+              loading={deferredFetchKey !== fetchKey}
               onClick={() => {
-                startRefreshTransition(() => {
-                  updateFetchKey();
-                });
+                updateFetchKey();
               }}
               icon={<ReloadOutlined />}
             ></Button>
@@ -261,7 +274,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
             sorter: true,
             defaultSortOrder: 'descend',
           },
-          activeFilter === 'status != "active"' && {
+          queryParams.status !== 'active' && {
             key: 'status',
             title: t('credential.Status'),
             dataIndex: 'status',
@@ -331,9 +344,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                             message.success(
                               t('credential.StatusUpdatedSuccessfully'),
                             );
-                            startRefreshTransition(() => {
-                              updateFetchKey();
-                            });
+                            updateFetchKey();
                           },
                           onError: (error) => {
                             message.error(error?.message);
@@ -368,22 +379,21 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           current: tablePaginationOption.current,
           style: { marginRight: token.marginXS },
           onChange: (current, pageSize) => {
-            startPageChangeTransition(() => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({
-                  current,
-                  pageSize,
-                });
-              }
-            });
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            }
           },
         }}
         onChangeOrder={(nextOrder) => {
-          startPageChangeTransition(() => {
-            setOrder(nextOrder);
-          });
+          setQueryParams({ order: nextOrder }, 'replaceIn');
         }}
-        loading={isPendingPageChange || isPendingStatusFetch || isPendingFilter}
+        loading={
+          deferredQueryVariables !== queryVariables ||
+          deferredFetchKey !== fetchKey
+        }
       />
       <UserInfoModal
         userEmail={emailForInfoModal || ''}
@@ -403,9 +413,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
           setEmailForSettingModal(null);
           setOpenCreateModal(false);
           if (success) {
-            startRefreshTransition(() => {
-              updateFetchKey();
-            });
+            updateFetchKey();
           }
         }}
       />

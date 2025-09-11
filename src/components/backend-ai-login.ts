@@ -2362,7 +2362,7 @@ export default class BackendAILogin extends BackendAIPage {
                 <div
                   id="additional-action-area"
                   class="layout horizontal"
-                  style="align-items: flex-end;"
+                  style="align-items: flex-end; gap: 10px;"
                 >
                   ${this.signup_support
                     ? html`
@@ -2377,11 +2377,6 @@ export default class BackendAILogin extends BackendAIPage {
                             @click="${() => this._showSignupDialog()}"
                           ></mwc-button>
                         </div>
-                      `
-                    : html``}
-                  ${this.signup_support && this.allowAnonymousChangePassword
-                    ? html`
-                        <span class="flex"></span>
                       `
                     : html``}
                   ${this.allowAnonymousChangePassword

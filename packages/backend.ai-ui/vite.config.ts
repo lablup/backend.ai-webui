@@ -44,14 +44,8 @@ export default defineConfig(({ mode }) => {
           'relay-runtime',
           'antd',
           'antd-style',
-          'ahooks',
-          'lodash',
           'graphql',
-          'classnames',
-          '@dnd-kit/core',
-          '@dnd-kit/modifiers',
-          '@dnd-kit/sortable',
-          '@dnd-kit/utilities',
+          // implementation deps are bundled
         ],
       },
       sourcemap: true,
@@ -66,7 +60,7 @@ export default defineConfig(({ mode }) => {
       }),
       dts({
         include: ['src/**/*'],
-        exclude: ['src/*/*/*.stories.ts', 'src/locale/*.json'],
+        exclude: ['**/*.{stories,test}.{ts,tsx}', 'src/locale/*.json'],
         rollupTypes: false,
         insertTypesEntry: true,
         compilerOptions: {

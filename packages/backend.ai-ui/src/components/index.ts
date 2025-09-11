@@ -13,9 +13,24 @@ export type {
   BAIPropertyFilterProps,
   FilterProperty,
 } from './BAIPropertyFilter';
-export { default as BAIResourceWithSteppedProgress } from './BAIResourceWithSteppedProgress';
+export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
+export type {
+  StringFilter,
+  NumberFilter,
+  BooleanFilter,
+  EnumFilter,
+  BaseFilter,
+  GraphQLFilter,
+  FilterPropertyType,
+  FilterOperator,
+  FilterProperty as BAIGraphQLFilterProperty,
+  BAIGraphQLPropertyFilterProps,
+} from './BAIGraphQLPropertyFilter';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
-export type { BAIResourceWithSteppedProgressProps } from './BAIResourceWithSteppedProgress';
+export { default as BAIStatistic } from './BAIStatistic';
+export type { BAIStatisticProps } from './BAIStatistic';
+export { default as ResourceStatistics } from './ResourceStatistics';
+export { processMemoryValue, convertToNumber } from './ResourceStatistics';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
 export * from './Table';

@@ -1,6 +1,6 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
-import { BAITableColumnOverrideRecord } from 'backend.ai-ui/components/Table/BAITable';
+import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 

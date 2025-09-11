@@ -11,8 +11,22 @@
     "SettingTable": "テーブル設定",
     "SearchTableColumn": "テーブル列を検索します"
   },
+  "error": {
+    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "エージェント"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "すべてをコピーします"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無制限"
   }
 }

@@ -3,50 +3,58 @@ import {
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
-import BaseResourceItem, {
-  AcceleratorSlotDetail,
-  ResourceValues,
-} from './BaseResourceItem';
-import ResourceGroupSelectForCurrentProject from './ResourceGroupSelectForCurrentProject';
-import { Typography } from 'antd';
+import BAIFetchKeyButton from './BAIFetchKeyButton';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { useControllableValue } from 'ahooks';
+import { Segmented, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIFlex,
-  BAICardProps,
   subNumberWithUnits,
   addNumberWithUnits,
+  BAIBoardItemTitle,
+  ResourceStatistics,
+  convertToNumber,
+  processMemoryValue,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
-  useCallback,
   useMemo,
-  useState,
   useTransition,
   useDeferredValue,
   useEffect,
+  ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
-interface TotalResourceWithinResourceGroupProps extends BAICardProps {
+interface TotalResourceWithinResourceGroupProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
-  isRefetching?: boolean;
-  onResourceGroupChange?: (resourceGroup: string) => void;
+  refetching?: boolean;
+  displayType?: 'using' | 'remaining';
+  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  extra?: ReactNode;
 }
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
-> = ({ queryRef, isRefetching, onResourceGroupChange, ...props }) => {
+> = ({ queryRef, refetching, extra, ...props }) => {
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
+  const currentResourceGroup = useCurrentResourceGroupValue();
+  const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
+  const { token } = theme.useToken();
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Query
-      @argumentDefinitions(resourceGroup: { type: "String" }, isSuperAdmin: { type: "Boolean!" })
+      @argumentDefinitions(
+        resourceGroup: { type: "String" }
+        isSuperAdmin: { type: "Boolean!" }
+        agentNodeFilter: { type: "String" }
+      )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
       ) {
@@ -66,9 +74,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(
-          filter: "schedulable == true & status == \"ALIVE\""
-        ) @include(if: $isSuperAdmin) {
+        agent_nodes(filter: $agentNodeFilter) @include(if: $isSuperAdmin) {
           edges {
             node {
               id
@@ -86,7 +92,13 @@ const TotalResourceWithinResourceGroup: React.FC<
   );
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [type, setType] = useState<'usage' | 'remaining'>('usage');
+  const [displayType, setDisplayType] = useControllableValue<
+    Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
+  >(props, {
+    defaultValue: 'remaining',
+    trigger: 'onDisplayTypeChange',
+    defaultValuePropName: 'defaultDisplayType',
+  });
 
   useEffect(() => {
     if (deferredSelectedResourceGroup) {
@@ -97,163 +109,232 @@ const TotalResourceWithinResourceGroup: React.FC<
     }
   }, [deferredSelectedResourceGroup, refetch, userRole]);
 
-  const getResourceValue = (
-    type: 'usage' | 'remaining',
-    resource: string,
-    totalOccupied: number,
-    totalAvailable: number,
-  ): ResourceValues => {
-    const getCurrentValue = () => {
-      if (type === 'usage') {
-        return totalOccupied;
+  const resourceData = useMemo(() => {
+    const agents = _.isEqual(userRole, 'superadmin')
+      ? _.map(data.agent_nodes?.edges, 'node')
+      : data.agent_summary_list?.items || [];
+
+    const totalOccupiedSlots: Record<string, number> = {};
+    const totalAvailableSlots: Record<string, number> = {};
+
+    _.forEach(filterOutNullAndUndefined(agents), (agent) => {
+      let occupiedSlots;
+      let availableSlots;
+
+      try {
+        occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
+        availableSlots = JSON.parse(agent.available_slots || '{}');
+      } catch (e) {
+        return;
       }
-      const remaining = subNumberWithUnits(
-        _.toString(totalAvailable),
-        _.toString(totalOccupied),
-        '',
-      );
-      return remaining;
-    };
 
-    const getTotalValue = () => {
-      return totalAvailable;
-    };
+      if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
 
-    return {
-      current: getCurrentValue() || 0,
-      total: getTotalValue(),
-    };
-  };
-
-  const { acceleratorSlotsDetails, totalOccupiedSlots, totalAvailableSlots } =
-    useMemo(() => {
-      const agents = _.isEqual(userRole, 'superadmin')
-        ? _.map(data.agent_nodes?.edges, 'node')
-        : data.agent_summary_list?.items || [];
-
-      const totalOccupiedSlots: Record<string, number> = {};
-      const totalAvailableSlots: Record<string, number> = {};
-
-      _.forEach(filterOutNullAndUndefined(agents), (agent) => {
-        let occupiedSlots;
-        let availableSlots;
-
-        try {
-          occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-          availableSlots = JSON.parse(agent.available_slots || '{}');
-        } catch (e) {
-          return;
-        }
-
-        if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
-
-        _.forEach(occupiedSlots, (value, key) => {
-          totalOccupiedSlots[key] = _.toNumber(
-            addNumberWithUnits(
-              _.toString(_.get(totalOccupiedSlots, key, 0)),
-              _.toString(value),
-              '',
-            ),
-          );
-        });
-
-        _.forEach(availableSlots, (value, key) => {
-          totalAvailableSlots[key] = _.toNumber(
-            addNumberWithUnits(
-              _.toString(_.get(totalAvailableSlots, key, 0)),
-              _.toString(value),
-              '',
-            ),
-          );
-        });
+      _.forEach(occupiedSlots, (value, key) => {
+        totalOccupiedSlots[key] = _.toNumber(
+          addNumberWithUnits(
+            _.toString(_.get(totalOccupiedSlots, key, 0)),
+            _.toString(value),
+            '',
+          ),
+        );
       });
 
-      const accelerators: AcceleratorSlotDetail[] = _.chain(
-        resourceSlotsDetails?.resourceSlotsInRG,
-      )
-        .omit(['cpu', 'mem'])
-        .map((resourceSlot, key) => ({
-          key,
-          resourceSlot,
-          values: getResourceValue(
-            type,
-            key,
-            totalOccupiedSlots[key] || 0,
-            totalAvailableSlots[key] || 0,
+      _.forEach(availableSlots, (value, key) => {
+        totalAvailableSlots[key] = _.toNumber(
+          addNumberWithUnits(
+            _.toString(_.get(totalAvailableSlots, key, 0)),
+            _.toString(value),
+            '',
           ),
-        }))
-        .filter((item) => Boolean(item.resourceSlot))
-        .value() as AcceleratorSlotDetail[];
-
-      return {
-        acceleratorSlotsDetails: accelerators,
-        totalOccupiedSlots,
-        totalAvailableSlots,
-      };
-    }, [data, type, resourceSlotsDetails, userRole]);
-
-  const getResourceValueForCard = useCallback(
-    (resource: string) =>
-      getResourceValue(
-        type,
-        resource,
-        totalOccupiedSlots[resource] || 0,
-        totalAvailableSlots[resource] || 0,
-      ),
-    [type, totalOccupiedSlots, totalAvailableSlots],
-  );
-
-  const title = (
-    <BAIFlex gap={'xs'}>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        {t('webui.menu.TotalResourcesIn')}
-      </Typography.Title>
-      <ResourceGroupSelectForCurrentProject
-        size="small"
-        showSearch
-        style={{ minWidth: 100 }}
-        onChange={(v) => {
-          setSelectedResourceGroup(v);
-          onResourceGroupChange?.(v);
-        }}
-        loading={selectedResourceGroup !== deferredSelectedResourceGroup}
-        popupMatchSelectWidth={false}
-        tooltip={t('general.ResourceGroup')}
-      />
-    </BAIFlex>
-  );
-
-  const handleRefetch = () => {
-    startRefetchTransition(() => {
-      refetch(
-        {
-          resourceGroup: deferredSelectedResourceGroup,
-          isSuperAdmin: _.isEqual(userRole, 'superadmin'),
-        },
-        {
-          fetchPolicy: 'network-only',
-        },
-      );
+        );
+      });
     });
-  };
+
+    const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
+    const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
+
+    const cpuData = cpuSlot
+      ? {
+          using: {
+            current: convertToNumber(totalOccupiedSlots['cpu'] || 0),
+            total: convertToNumber(totalAvailableSlots['cpu'] || 0),
+          },
+          remaining: {
+            current: convertToNumber(
+              subNumberWithUnits(
+                _.toString(totalAvailableSlots['cpu'] || 0),
+                _.toString(totalOccupiedSlots['cpu'] || 0),
+                '',
+              ),
+            ),
+            total: convertToNumber(totalAvailableSlots['cpu'] || 0),
+          },
+          metadata: {
+            title: cpuSlot.human_readable_name,
+            displayUnit: cpuSlot.display_unit,
+          },
+        }
+      : null;
+
+    const memoryData = memSlot
+      ? {
+          using: {
+            current: processMemoryValue(
+              totalOccupiedSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              totalAvailableSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+          },
+          remaining: {
+            current: processMemoryValue(
+              subNumberWithUnits(
+                _.toString(totalAvailableSlots['mem'] || 0),
+                _.toString(totalOccupiedSlots['mem'] || 0),
+                '',
+              ),
+              memSlot.display_unit,
+            ),
+            total: processMemoryValue(
+              totalAvailableSlots['mem'] || 0,
+              memSlot.display_unit,
+            ),
+          },
+          metadata: {
+            title: memSlot.human_readable_name,
+            displayUnit: memSlot.display_unit,
+          },
+        }
+      : null;
+
+    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
+      .omit(['cpu', 'mem'])
+      .map((resourceSlot, key) => {
+        if (!resourceSlot) return null;
+
+        const processAcceleratorValue = (value: any): number => {
+          return convertToNumber(value);
+        };
+
+        const occupied = totalOccupiedSlots[key] || 0;
+        const available = totalAvailableSlots[key] || 0;
+        const remaining = subNumberWithUnits(
+          _.toString(available),
+          _.toString(occupied),
+          '',
+        );
+
+        return {
+          key,
+          using: {
+            current: processAcceleratorValue(occupied),
+            total: processAcceleratorValue(available),
+          },
+          remaining: {
+            current: processAcceleratorValue(remaining),
+            total: processAcceleratorValue(available),
+          },
+          metadata: {
+            title: resourceSlot.human_readable_name,
+            displayUnit: resourceSlot.display_unit,
+          },
+        };
+      })
+      .compact()
+      .filter((item) => !!(item.using.current || item.using.total))
+      .value();
+
+    return { cpu: cpuData, memory: memoryData, accelerators };
+  }, [data, resourceSlotsDetails, userRole]);
 
   return (
-    <BaseResourceItem
-      {...props}
-      title={title}
-      tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
-      isRefetching={isRefetching || isPendingRefetch}
-      displayType={type}
-      onDisplayTypeChange={setType}
-      onRefetch={handleRefetch}
-      getResourceValue={getResourceValueForCard}
-      acceleratorSlotsDetails={acceleratorSlotsDetails}
-      resourceSlotsDetails={resourceSlotsDetails}
-      progressProps={{
-        showProgress: true,
-        steps: 12,
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{
+        paddingInline: token.paddingXL,
+        paddingBottom: token.padding,
       }}
-    />
+    >
+      <BAIBoardItemTitle
+        title={
+          <BAIFlex gap={'xs'} wrap="wrap">
+            <Typography.Text
+              style={{
+                fontSize: token.fontSizeHeading5,
+                fontWeight: token.fontWeightStrong,
+              }}
+            >
+              {t('webui.menu.TotalResourcesIn')}
+            </Typography.Text>
+            <SharedResourceGroupSelectForCurrentProject
+              size="small"
+              showSearch
+              style={{ minWidth: 100 }}
+              loading={currentResourceGroup !== deferredSelectedResourceGroup}
+              popupMatchSelectWidth={false}
+              tooltip={t('general.ResourceGroup')}
+            />
+          </BAIFlex>
+        }
+        tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
+        extra={
+          <BAIFlex gap={'xs'} wrap="wrap">
+            <Segmented<
+              Exclude<
+                TotalResourceWithinResourceGroupProps['displayType'],
+                undefined
+              >
+            >
+              size="small"
+              options={[
+                {
+                  label: t('resourcePanel.UsingNumber'),
+                  value: 'using',
+                },
+                {
+                  value: 'remaining',
+                  label: t('resourcePanel.RemainingNumber'),
+                },
+              ]}
+              value={displayType}
+              onChange={(v) => setDisplayType(v)}
+            />
+            <BAIFetchKeyButton
+              size="small"
+              loading={isPendingRefetch || refetching}
+              value=""
+              onChange={() => {
+                // Handle local refetching
+                startRefetchTransition(() => {
+                  refetch(
+                    {
+                      resourceGroup: deferredSelectedResourceGroup,
+                      isSuperAdmin: _.isEqual(userRole, 'superadmin'),
+                    },
+                    {
+                      fetchPolicy: 'network-only',
+                    },
+                  );
+                });
+              }}
+              variant="link"
+              color="default"
+            />
+            {extra}
+          </BAIFlex>
+        }
+      />
+
+      <ResourceStatistics
+        resourceData={resourceData}
+        displayType={displayType}
+        showProgress={true}
+      />
+    </BAIFlex>
   );
 };
 

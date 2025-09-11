@@ -3,7 +3,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, ESMClientErrorResponse } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,9 +29,7 @@ const EndpointTokenGenerationModal: React.FC<
 
   const mutationToGenerateToken = useTanMutation<
     unknown,
-    {
-      message?: string;
-    },
+    ESMClientErrorResponse,
     EndpointTokenGenerationInput
   >({
     mutationFn: (values) => {
@@ -61,7 +59,7 @@ const EndpointTokenGenerationModal: React.FC<
             onRequestClose(true);
           },
           onError: (err) => {
-            if (err?.message?.includes('valid_until is older than now')) {
+            if (err?.msg?.includes('valid_until is older than now')) {
               message.error(t('modelService.TokenExpiredDateError'));
               return;
             } else {

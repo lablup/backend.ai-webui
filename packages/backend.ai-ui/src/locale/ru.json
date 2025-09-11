@@ -11,8 +11,23 @@
     "SettingTable": "Настройки таблицы",
     "SearchTableColumn": "Поиск таблицы столбцов"
   },
+  "error": {
+    "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
+  },
+
+  "comp:BAISessionAgentIds": {
+    "Agent": "Агент"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Копировать все"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Неограниченный"
   }
 }

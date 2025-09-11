@@ -5,6 +5,7 @@ export type {
   BAIColumnsType,
   BAITableSettings,
   BAITableColumnOverrideItem,
+  BAITableColumnOverrideRecord,
 } from './BAITable';
 export {
   isColumnVisible,

@@ -5,7 +5,7 @@ import BAICodeEditor from './BAICodeEditor';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { DeleteOutlined } from '@ant-design/icons';
 import { App, Button, Dropdown, Form, Select, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const app = App.useApp();
+  const { message, modal } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [rcfileNames, setRcfileNames] = useState<string>('.bashrc');
   const [script, setScript] = useState<string>('');
   const [userConfigScript, setUserConfigScript] = useState<
@@ -114,16 +115,16 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   const saveScript = ({ closeAfter = true } = {}) => {
     if (shellInfo === 'bootstrap') {
       if (!script) {
-        app.message.error(t('userSettings.BootstrapScriptEmpty'));
+        message.error(t('userSettings.BootstrapScriptEmpty'));
         return;
       }
       updateBootStrapScriptMutation.mutate(script, {
         onSuccess: (result) => {
-          app.message.success(t('userSettings.BootstrapScriptUpdated'));
+          message.success(t('userSettings.BootstrapScriptUpdated'));
           closeAfter && onRequestClose();
         },
-        onError: (error: any) => {
-          app.message.error(error.message);
+        onError: (error) => {
+          message.error(getErrorMessage(error));
           console.error(error);
         },
       });
@@ -134,30 +135,30 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       if (existValidator) {
         updateUserConfigScriptMutation.mutate(script, {
           onSuccess: (result) => {
-            app.message.success(t('userSettings.DescScriptUpdated'));
+            message.success(t('userSettings.DescScriptUpdated'));
             if (closeAfter) {
               onRequestClose();
             } else {
               fetchScript();
             }
           },
-          onError: (error: any) => {
-            app.message.error(t('userSettings.DescNewUserConfigFileCreated'));
+          onError: (error) => {
+            message.error(getErrorMessage(error));
             console.error(error);
           },
         });
       } else {
         createUserConfigScriptMutation.mutate(script, {
           onSuccess: (result) => {
-            app.message.success(t('userSettings.DescScriptCreated'));
+            message.success(t('userSettings.DescScriptCreated'));
             if (closeAfter) {
               onRequestClose();
             } else {
               fetchScript();
             }
           },
-          onError: (error: any) => {
-            app.message.error(t('userSettings.DescNewUserConfigFileCreated'));
+          onError: (error) => {
+            message.error(getErrorMessage(error));
             console.error(error);
           },
         });
@@ -169,11 +170,11 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     if (shellInfo === 'bootstrap') {
       updateBootStrapScriptMutation.mutate('', {
         onSuccess: (result) => {
-          app.message.success(t('userSettings.BootstrapScriptDeleted'));
+          message.success(t('userSettings.BootstrapScriptDeleted'));
           onRequestClose();
         },
-        onError: (error: any) => {
-          app.message.error(error.message);
+        onError: (error) => {
+          message.error(getErrorMessage(error));
           console.error(error);
         },
       });
@@ -181,13 +182,13 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     if (shellInfo === 'userconfig') {
       deleteUserConfigScriptMutation.mutate(undefined, {
         onSuccess: (result) => {
-          app.message.success(
+          message.success(
             `${t('userSettings.DescScriptDeleted')}${rcfileNames}`,
           );
           onRequestClose();
         },
-        onError: (error: any) => {
-          app.message.error(error.message);
+        onError: (error) => {
+          message.error(getErrorMessage(error));
           console.error(error);
         },
       });
@@ -217,7 +218,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                     key: 'reset',
                     label: t('button.Reset'),
                     onClick: () => {
-                      app.modal.confirm({
+                      modal.confirm({
                         title: t('dialog.title.LetsDouble-Check'),
                         content: t('dialog.ask.DoYouWantToResetChanges'),
                         onOk: () => {
@@ -235,7 +236,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                 ],
               }}
               onClick={() => {
-                app.modal.confirm({
+                modal.confirm({
                   title: t('dialog.title.LetsDouble-Check'),
                   content: t('dialog.ask.DoYouWantToDeleteSomething', {
                     name:

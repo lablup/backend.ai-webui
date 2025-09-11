@@ -511,9 +511,15 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="item" elevation="1" class="vertical layout center flex">
+      <div
+        data-testid="legacy-summary-page"
+        class="item"
+        elevation="1"
+        class="vertical layout center flex"
+      >
         <div class="horizontal wrap layout" style="gap:24px;">
           <lablup-activity-panel
+            data-testid="panel-resource-statistics"
             title="${_t('summary.ResourceStatistics')}"
             elevation="1"
             narrow
@@ -530,6 +536,7 @@ export default class BackendAISummary extends BackendAIPage {
             </div>
           </lablup-activity-panel>
           <backend-ai-resource-panel
+            data-testid="panel-resource"
             id="resource-panel"
             ?active="${this.active === true}"
             height="500"
@@ -538,6 +545,7 @@ export default class BackendAISummary extends BackendAIPage {
           <!-- Vertical container for the two 245px panels -->
           <div class="vertical layout" style="gap:10px;">
             <lablup-activity-panel
+              data-testid="panel-invitation"
               title="${_t('summary.Invitation')}"
               elevation="1"
               narrow
@@ -618,6 +626,7 @@ export default class BackendAISummary extends BackendAIPage {
             ${!globalThis.isElectron && this.allowAppDownloadPanel
               ? html`
                   <lablup-activity-panel
+                    data-testid="panel-download-desktop-app"
                     title="${_t('summary.DownloadWebUIApp')}"
                     elevation=""
                     height="245"

@@ -11,8 +11,22 @@
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
     "SearchTableColumn": "Suchtabellenspalten"
   },
+  "error": {
+    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agent"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Alle kopieren"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Unbegrenzt"
   }
 }

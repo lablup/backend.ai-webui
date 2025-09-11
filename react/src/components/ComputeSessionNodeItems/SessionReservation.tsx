@@ -2,6 +2,7 @@ import { SessionReservationFragment$key } from '../../__generated__/SessionReser
 import { formatDurationAsDays } from '../../helper';
 import BAIIntervalView from '../BAIIntervalView';
 import DoubleTag from '../DoubleTag';
+import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,9 +25,12 @@ const SessionReservation: React.FC<{
     sessionFrgmt,
   );
 
+  const formattedCreatedAt = dayjs(session.created_at).format('lll');
   return (
     <>
-      {mode !== 'simple-elapsed' && dayjs(session.created_at).format('lll')}
+      {mode !== 'simple-elapsed' && (
+        <Typography.Text>{formattedCreatedAt}</Typography.Text>
+      )}
       <BAIIntervalView
         key={session.id}
         callback={() => {
@@ -38,7 +42,9 @@ const SessionReservation: React.FC<{
         delay={1000}
         render={(intervalValue) =>
           mode === 'simple-elapsed' ? (
-            intervalValue
+            <Typography.Text title={formattedCreatedAt || ''}>
+              {intervalValue}
+            </Typography.Text>
           ) : (
             <DoubleTag
               values={[

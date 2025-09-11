@@ -7,7 +7,7 @@ import {
   convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useUpdatableState } from '../hooks';
+import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
@@ -33,17 +33,11 @@ import {
   mergeFilterValues,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, {
-  useDeferredValue,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useDeferredQueryParams } from 'src/hooks/useDeferredQueryParams';
-import { StringParam, withDefault } from 'use-query-params';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']
@@ -63,7 +57,6 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
-  const [isPendingRefresh, startRefreshTransition] = useTransition();
 
   const {
     baiPaginationOption,
@@ -74,18 +67,13 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     pageSize: 20,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, undefined),
     filter: withDefault(StringParam, undefined),
     status: withDefault(StringParam, 'ALIVE'),
   });
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [fetchPolicy] = useState<FetchPolicy>('network-only');
-  const updateFetchKeyInTransition = () =>
-    startRefreshTransition(() => {
-      updateFetchKey();
-    });
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
 
   const sftpExclusionFilter =
@@ -111,6 +99,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     ],
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentSummaryList',
@@ -147,8 +136,11 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     `,
     deferredQueryVariables,
     {
-      fetchKey,
-      fetchPolicy,
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
     },
   );
 
@@ -425,8 +417,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={isPendingRefresh}
-              onClick={() => updateFetchKeyInTransition()}
+              loading={deferredFetchKey !== fetchKey}
+              onClick={() => updateFetchKey()}
               icon={<ReloadOutlined />}
             ></Button>
           </Tooltip>

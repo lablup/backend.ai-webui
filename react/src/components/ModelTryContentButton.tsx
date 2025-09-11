@@ -23,6 +23,7 @@ import {
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
 import { Button } from 'antd';
+import { ESMClientErrorResponse } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -133,7 +134,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       bgtask_id: string;
       id: string;
     },
-    { type?: string; title?: string; message?: string },
+    ESMClientErrorResponse,
     {
       input: any;
       name: string;

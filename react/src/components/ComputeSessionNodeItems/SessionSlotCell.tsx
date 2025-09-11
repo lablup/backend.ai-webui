@@ -155,6 +155,7 @@ const UsageBadge: React.FC<UsageBadgeProps> = ({
             border: '1px solid',
             borderColor: token.colorTextDisabled,
             backgroundColor: 'transparent',
+            flexWrap: 'nowrap',
           },
         },
       }

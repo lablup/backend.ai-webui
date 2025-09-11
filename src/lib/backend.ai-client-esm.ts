@@ -324,6 +324,8 @@ class Client {
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
+    let errorCode = '';
+    let traceback = '';
     let resp, body, requestTimer, requestTimerForSoftTimeout;
     let isSoftTimeoutTriggered = false;
     try {
@@ -384,6 +386,8 @@ class Client {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
+        errorCode = body?.error_code;
+        traceback = body?.traceback;
       } else if (!rawFile && contentType?.startsWith('text/')) {
         body = await resp.text();
       } else {
@@ -495,8 +499,10 @@ class Client {
         statusCode: resp.status,
         statusText: resp.statusText,
         title: errorTitle,
-        message: errorMsg,
+        msg: errorMsg,
         description: errorDesc,
+        error_code: errorCode,
+        traceback: traceback,
       };
     }
 
@@ -804,7 +810,6 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.12.0')) {
       this._features['mount-by-id'] = true;
     }
-    // TODO: 버전 25.13.0
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
     }

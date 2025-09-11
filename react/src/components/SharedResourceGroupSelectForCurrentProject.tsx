@@ -8,22 +8,24 @@ import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { SelectProps } from 'antd';
 import _ from 'lodash';
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 
 interface ResourceGroupSelectForCurrentProjectProps
   extends Omit<
     BAISelectProps,
-    'defaultValue' | 'value' | 'allowClear' | 'onClear'
+    'defaultValue' | 'value' | 'allowClear' | 'onClear' | 'onChange'
   > {
-  // filter?: (projectName: string) => boolean;
+  onChangeInTransition?: BAISelectProps['onChange'];
 }
 
-const ResourceGroupSelectForCurrentProject: React.FC<
+const SharedResourceGroupSelectForCurrentProject: React.FC<
   ResourceGroupSelectForCurrentProjectProps
 > = ({
   // filter,
   searchValue,
   onSearch,
+  onChangeInTransition,
+  loading,
   ...selectProps
 }) => {
   useSuspendedBackendaiClient(); // To make sure the client is ready
@@ -34,20 +36,6 @@ const ResourceGroupSelectForCurrentProject: React.FC<
     });
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
-
-  // The onChange event should be triggered in useEffect
-  // because the value is controlled by global state,
-  // and the change of the value does not trigger the onChange event.
-  useEffect(
-    () => {
-      selectProps.onChange?.(currentResourceGroup, {
-        value: currentResourceGroup,
-        label: currentResourceGroup,
-      });
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentResourceGroup],
-  );
 
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
@@ -67,7 +55,7 @@ const ResourceGroupSelectForCurrentProject: React.FC<
   return (
     <BAISelect
       defaultActiveFirstOption
-      loading={isPendingLoading}
+      loading={isPendingLoading || loading}
       options={_.map(nonSftpResourceGroups, (resourceGroup) => {
         return { value: resourceGroup.name, label: resourceGroup.name };
       })}
@@ -82,14 +70,15 @@ const ResourceGroupSelectForCurrentProject: React.FC<
       {...selectProps}
       disabled={isPendingLoading}
       value={isPendingLoading ? optimisticValue : currentResourceGroup}
-      onChange={(value) => {
+      onChange={(value, option) => {
         setOptimisticValue(value);
         startLoadingTransition(() => {
           setCurrentResourceGroup(value);
+          onChangeInTransition?.(value, option);
         });
       }}
     />
   );
 };
 
-export default ResourceGroupSelectForCurrentProject;
+export default SharedResourceGroupSelectForCurrentProject;

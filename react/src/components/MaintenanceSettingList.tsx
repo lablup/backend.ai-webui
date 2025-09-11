@@ -81,6 +81,7 @@ const MaintenanceSettingList = () => {
 
   const settingGroupList: Array<SettingGroup> = [
     {
+      'data-testid': 'maintenance-fix',
       title: t('maintenance.Fix'),
       settingItems: [
         {
@@ -102,6 +103,7 @@ const MaintenanceSettingList = () => {
       ],
     },
     {
+      'data-testid': 'maintenance-images',
       title: t('maintenance.ImagesEnvironment'),
       settingItems: [
         {

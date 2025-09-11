@@ -11,8 +11,22 @@
     "SettingTable": "Pengaturan Tabel",
     "SearchTableColumn": "Kolom Tabel Cari"
   },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agen"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Salin semua"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tak terbatas"
   }
 }

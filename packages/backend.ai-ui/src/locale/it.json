@@ -11,8 +11,22 @@
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SearchTableColumn": "Colonne della tabella di ricerca"
   },
+  "error": {
+    "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Ricerca",
     "ResetFilter": "Reimposta i filtri"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agente"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Copia tutto"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Illimitato"
   }
 }

@@ -15,6 +15,7 @@ import {
   BAIColumnType,
   BAITable,
   BAITableProps,
+  BAISessionAgentIds,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
@@ -52,6 +53,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionSlotCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
+        ...BAISessionAgentIdsFragment
         kernel_nodes {
           edges {
             node {
@@ -60,6 +62,9 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
               }
             }
           }
+        }
+        owner @since(version: "25.13.0") {
+          email
         }
       }
     `,
@@ -167,12 +172,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'agent',
         title: t('session.Agent'),
         defaultHidden: false,
-        render: (__, session) => {
-          return session?.agent_ids?.length
-            ? _.uniq(session.agent_ids).join(', ') || '-'
-            : '-';
-        },
+        render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
+      userRole === 'superadmin' &&
+        baiClient.isManagerVersionCompatibleWith('25.13.0') && {
+          key: 'owner',
+          title: t('session.launcher.OwnerEmail'),
+          defaultHidden: false,
+          render: (__, session) => session.owner?.email || '-',
+        },
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;

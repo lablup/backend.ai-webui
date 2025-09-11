@@ -4,8 +4,9 @@ import { UserCredentialListModifyMutation } from '../__generated__/UserCredentia
 import {
   UserCredentialListQuery,
   UserCredentialListQuery$data,
+  UserCredentialListQuery$variables,
 } from '../__generated__/UserCredentialListQuery.graphql';
-import { useUpdatableState } from '../hooks';
+import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -27,10 +28,15 @@ import {
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { StringParam, useQueryParam } from 'use-query-params';
+import {
+  StringParam,
+  useQueryParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 
 type Keypair = NonNullable<
   NonNullable<UserCredentialListQuery$data['keypair_list']>['items'][number]
@@ -50,19 +56,18 @@ const UserCredentialList: React.FC = () => {
   }, [action, setAction]);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
-  const [order, setOrder] = useState<string | undefined>(undefined);
-  const [filterString, setFilterString] = useState<string>();
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    activeType: withDefault(StringParam, 'active'),
+    order: withDefault(StringParam, undefined),
+    filter: withDefault(StringParam, undefined),
+  });
+
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
   const [openUserKeypairSettingModal, setOpenUserKeypairSettingModal] =
     useState(false);
   const [keypairInfoModalFrgmt, setKeypairInfoModalFrgmt] = useState<any>(null);
-
-  const [isPendingRefresh, startRefreshTransition] = useTransition();
-  const [isActiveTypePending, startActiveTypeTransition] = useTransition();
-  const [isPendingPageChange, startPageChangeTransition] = useTransition();
-  const [isPendingFilter, startFilterTransition] = useTransition();
   const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
     useTransition();
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
@@ -76,6 +81,16 @@ const UserCredentialList: React.FC = () => {
     current: 1,
     pageSize: 20,
   });
+
+  const queryVariables: UserCredentialListQuery$variables = {
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    is_active: queryParams.activeType === 'active',
+    filter: queryParams.filter,
+    order: queryParams.order,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { keypair_list } = useLazyLoadQuery<UserCredentialListQuery>(
     graphql`
@@ -115,14 +130,14 @@ const UserCredentialList: React.FC = () => {
         }
       }
     `,
+    deferredQueryVariables,
     {
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      is_active: activeType === 'active',
-      filter: filterString,
-      order,
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
     },
-    { fetchKey, fetchPolicy: 'network-only' },
   );
 
   const [commitModifyKeypair, isInFlightCommitModifyKeypair] =
@@ -153,14 +168,12 @@ const UserCredentialList: React.FC = () => {
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex gap={'sm'} align="start">
           <BAIRadioGroup
-            value={activeType}
+            value={queryParams.activeType}
             onChange={(value) => {
-              startActiveTypeTransition(() => {
-                setActiveType(value.target.value);
-                setTablePaginationOption({
-                  current: 1,
-                  pageSize: tablePaginationOption.pageSize,
-                });
+              setQueryParams({ activeType: value.target.value }, 'replaceIn');
+              setTablePaginationOption({
+                current: 1,
+                pageSize: tablePaginationOption.pageSize,
               });
             }}
             optionType="button"
@@ -210,23 +223,18 @@ const UserCredentialList: React.FC = () => {
                 type: 'string',
               },
             ]}
-            value={filterString}
-            loading={isPendingFilter}
+            value={queryParams.filter}
             onChange={(value) => {
-              startFilterTransition(() => {
-                setFilterString(value);
-              });
+              setQueryParams({ filter: value }, 'replaceIn');
             }}
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={isPendingRefresh}
+              loading={deferredFetchKey !== fetchKey}
               onClick={() => {
-                startRefreshTransition(() => {
-                  updateFetchKey();
-                });
+                updateFetchKey();
               }}
               icon={<ReloadOutlined />}
             />
@@ -245,12 +253,7 @@ const UserCredentialList: React.FC = () => {
       <BAITable<Keypair>
         rowKey={'id'}
         scroll={{ x: 'max-content' }}
-        loading={
-          isActiveTypePending ||
-          isPendingRefresh ||
-          isPendingPageChange ||
-          isPendingFilter
-        }
+        loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         columns={filterOutEmpty([
           {
@@ -392,7 +395,7 @@ const UserCredentialList: React.FC = () => {
                       });
                     }}
                   />
-                  {activeType === 'inactive' && (
+                  {queryParams.activeType === 'inactive' && (
                     <Tooltip title={t('credential.Activate')}>
                       <Popconfirm
                         title={t('credential.ActivateCredential')}
@@ -417,9 +420,7 @@ const UserCredentialList: React.FC = () => {
                                   'credential.KeypairStatusUpdatedSuccessfully',
                                 ),
                               );
-                              startRefreshTransition(() => {
-                                updateFetchKey();
-                              });
+                              updateFetchKey();
                             },
                             onError: (error) => {
                               message.error(error?.message);
@@ -432,7 +433,7 @@ const UserCredentialList: React.FC = () => {
                       </Popconfirm>
                     </Tooltip>
                   )}
-                  {activeType === 'active' ? (
+                  {queryParams.activeType === 'active' ? (
                     <Tooltip title={t('credential.Deactivate')}>
                       <Popconfirm
                         title={t('credential.DeactivateCredential')}
@@ -461,9 +462,7 @@ const UserCredentialList: React.FC = () => {
                                   'credential.KeypairStatusUpdatedSuccessfully',
                                 ),
                               );
-                              startRefreshTransition(() => {
-                                updateFetchKey();
-                              });
+                              updateFetchKey();
                             },
                             onError: (error) => {
                               message.error(error?.message);
@@ -511,9 +510,7 @@ const UserCredentialList: React.FC = () => {
                                 message.success(
                                   t('credential.KeypairSuccessfullyDeleted'),
                                 );
-                                startRefreshTransition(() => {
-                                  updateFetchKey();
-                                });
+                                updateFetchKey();
                               },
                               onError: (error) => {
                                 message.error(error?.message);
@@ -541,20 +538,16 @@ const UserCredentialList: React.FC = () => {
           current: tablePaginationOption.current,
           // TODO: need to set more options to export CSV in current page's data
           onChange(current, pageSize) {
-            startPageChangeTransition(() => {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({
-                  current,
-                  pageSize,
-                });
-              }
-            });
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({
+                current,
+                pageSize,
+              });
+            }
           },
         }}
         onChangeOrder={(nextOrder) => {
-          startPageChangeTransition(() => {
-            setOrder(nextOrder);
-          });
+          setQueryParams({ order: nextOrder }, 'replaceIn');
         }}
       />
       <KeypairInfoModal
@@ -577,9 +570,7 @@ const UserCredentialList: React.FC = () => {
           setKeypairSettingModalFrgmt(null);
           setOpenUserKeypairSettingModal(false);
           if (success) {
-            startRefreshTransition(() => {
-              updateFetchKey();
-            });
+            updateFetchKey();
           }
         }}
       />

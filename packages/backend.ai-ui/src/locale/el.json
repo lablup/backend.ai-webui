@@ -11,8 +11,22 @@
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SettingTable": "Ρυθμίσεις πίνακα"
   },
+  "error": {
+    "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Μέσο"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Αντιγράψτε όλα"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Απεριόριστος"
   }
 }

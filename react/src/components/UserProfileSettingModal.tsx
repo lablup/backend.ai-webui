@@ -22,6 +22,7 @@ import {
   Spin,
   FormInstance,
 } from 'antd';
+import { useErrorMessageResolver } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
@@ -59,7 +60,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
   const baiClient = useSuspendedBackendaiClient();
   const userRole = useCurrentUserRole();
   const [userInfo, userMutations] = useCurrentUserInfo();
-  // const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const { user } = usePreloadedQuery(UserProfileQuery, queryRef);
 
@@ -258,8 +259,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
                                   false,
                                 );
                               },
-                              onError: (error: any) => {
-                                message.error(error.message);
+                              onError: (error) => {
+                                message.error(getErrorMessage(error));
                               },
                             });
                           },

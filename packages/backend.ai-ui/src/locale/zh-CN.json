@@ -11,8 +11,23 @@
     "SelectColumnToDisplay": "选择要显示的列",
     "SearchTableColumn": "搜索表列"
   },
+  "error": {
+    "UnknownError": "发生了未知错误。\n请重试。"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置过滤器"
+  },
+
+  "comp:BAISessionAgentIds": {
+    "Agent": "代理人"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "复制全部"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "无限"
   }
 }

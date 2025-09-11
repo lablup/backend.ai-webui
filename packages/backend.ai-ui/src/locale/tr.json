@@ -11,8 +11,23 @@
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SearchTableColumn": "Arama Tablosu sütunları"
   },
+  "error": {
+    "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
+  },
+
+  "comp:BAISessionAgentIds": {
+    "Agent": "Ajan"
+  },
+  "general": {
+    "button": {
+      "CopyAll": "Hepsini kopyala"
+    }
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Sınırsız"
   }
 }

@@ -1,13 +1,12 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "25.14.0-rc.3",
+  "version": "25.14.0-alpha.0",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
   "main": "main.js",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "@vanillawc/wc-codemirror": "^2.1.0",
     "markty": "^0.0.4",

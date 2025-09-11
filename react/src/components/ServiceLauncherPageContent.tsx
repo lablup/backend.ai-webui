@@ -51,7 +51,12 @@ import {
   Tag,
   Alert,
 } from 'antd';
-import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  ESMClientErrorResponse,
+  filterOutNullAndUndefined,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -168,6 +173,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
 
+  const { getErrorMessage } = useErrorMessageResolver();
+
   const endpoint = useFragment(
     graphql`
       fragment ServiceLauncherPageContentFragment on Endpoint {
@@ -274,28 +281,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     };
   };
 
-  const legacyMutationToUpdateService = useTanMutation({
-    mutationFn: (values: ServiceLauncherFormValue) => {
-      const body = {
-        to: values.replicas,
-      };
-      return baiSignedRequestWithPromise({
-        method: 'POST',
-        url: `/services/${endpoint?.endpoint_id}/scale`,
-        body,
-        client: baiClient,
-      });
-    },
-  });
-
   const mutationToCreateService = useTanMutation<
     unknown,
-    | {
-        message?: string;
-        title?: string;
-        description?: string;
-      }
-    | undefined,
+    ESMClientErrorResponse | undefined,
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
@@ -492,108 +480,91 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       .validateFields()
       .then((values) => {
         if (endpoint) {
-          if (baiClient.supports('modify-endpoint')) {
-            const mutationVariables: ServiceLauncherPageContentModifyMutation['variables'] =
-              {
-                endpoint_id: endpoint?.endpoint_id || '',
-                props: {
-                  resource_slots: JSON.stringify({
-                    cpu: values.resource.cpu,
-                    mem: values.resource.mem,
-                    ...(values.resource.accelerator > 0
-                      ? {
-                          [values.resource.acceleratorType]:
-                            values.resource.accelerator,
-                        }
-                      : undefined),
-                  }),
-                  resource_opts: JSON.stringify({
-                    shmem: values.resource.shmem,
-                  }),
-                  // FIXME: temporarily convert cluster mode string according to server-side type
-                  cluster_mode:
-                    'single-node' === values.cluster_mode
-                      ? 'SINGLE_NODE'
-                      : 'MULTI_NODE',
-                  cluster_size: values.cluster_size,
-                  ...(baiClient.supports('replicas')
-                    ? { replicas: values.replicas }
-                    : {
-                        desired_session_count: values.replicas,
-                      }),
-                  ...getImageInfoFromInputInEditing(
-                    checkManualImageAllowed(
-                      baiClient._config.allow_manual_image_name_for_session,
-                      values.environments?.manual,
-                    ),
-                    values,
-                  ),
-                  extra_mounts: _.map(values.mount_ids, (vfolder) => {
-                    return {
-                      vfolder_id: vfolder,
-                      ...(values.mount_id_map[vfolder] && {
-                        mount_destination: values.mount_id_map[vfolder],
-                      }),
-                    };
-                  }),
-                  name: values.serviceName,
-                  resource_group: values.resourceGroup,
-                  model_definition_path: values.modelDefinitionPath,
-                  runtime_variant: values.runtimeVariant,
-                },
-              };
-            const newEnvirons: { [key: string]: string } = {};
-            if (values.envvars) {
-              values.envvars.forEach(
-                (v) => (newEnvirons[v.variable] = v.value),
-              );
-            }
-            mutationVariables.props.environ = JSON.stringify(newEnvirons);
-            commitModifyEndpoint({
-              variables: mutationVariables,
-              onCompleted: (res, errors) => {
-                if (!res.modify_endpoint?.ok) {
-                  message.error(res.modify_endpoint?.msg);
-                  return;
-                }
-                if (errors && errors?.length > 0) {
-                  const errorMsgList = _.map(errors, (error) => error.message);
-                  for (const error of errorMsgList) {
-                    message.error(error);
-                  }
-                } else {
-                  const updatedEndpoint = res.modify_endpoint?.endpoint;
-                  message.success(
-                    t('modelService.ServiceUpdated', {
-                      name: updatedEndpoint?.name,
+          const mutationVariables: ServiceLauncherPageContentModifyMutation['variables'] =
+            {
+              endpoint_id: endpoint?.endpoint_id || '',
+              props: {
+                resource_slots: JSON.stringify({
+                  cpu: values.resource.cpu,
+                  mem: values.resource.mem,
+                  ...(values.resource.accelerator > 0
+                    ? {
+                        [values.resource.acceleratorType]:
+                          values.resource.accelerator,
+                      }
+                    : undefined),
+                }),
+                resource_opts: JSON.stringify({
+                  shmem: values.resource.shmem,
+                }),
+                // FIXME: temporarily convert cluster mode string according to server-side type
+                cluster_mode:
+                  'single-node' === values.cluster_mode
+                    ? 'SINGLE_NODE'
+                    : 'MULTI_NODE',
+                cluster_size: values.cluster_size,
+                ...(baiClient.supports('replicas')
+                  ? { replicas: values.replicas }
+                  : {
+                      desired_session_count: values.replicas,
                     }),
-                  );
-                  webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
-                }
+                ...getImageInfoFromInputInEditing(
+                  checkManualImageAllowed(
+                    baiClient._config.allow_manual_image_name_for_session,
+                    values.environments?.manual,
+                  ),
+                  values,
+                ),
+                extra_mounts: _.map(values.mount_ids, (vfolder) => {
+                  return {
+                    vfolder_id: vfolder,
+                    ...(values.mount_id_map[vfolder] && {
+                      mount_destination: values.mount_id_map[vfolder],
+                    }),
+                  };
+                }),
+                name: values.serviceName,
+                resource_group: values.resourceGroup,
+                model_definition_path: values.modelDefinitionPath,
+                runtime_variant: values.runtimeVariant,
               },
-              onError: (error) => {
-                if (error.message) {
-                  message.error(error.message);
-                } else {
-                  message.error(t('modelService.FailedToUpdateService'));
-                }
-              },
-            });
-          } else {
-            legacyMutationToUpdateService.mutate(values, {
-              onSuccess: () => {
+            };
+          const newEnvirons: { [key: string]: string } = {};
+          if (values.envvars) {
+            values.envvars.forEach((v) => (newEnvirons[v.variable] = v.value));
+          }
+          mutationVariables.props.environ = JSON.stringify(newEnvirons);
+          commitModifyEndpoint({
+            variables: mutationVariables,
+            onCompleted: (res, errors) => {
+              if (res.modify_endpoint?.ok) {
+                const updatedEndpoint = res.modify_endpoint?.endpoint;
                 message.success(
                   t('modelService.ServiceUpdated', {
-                    name: endpoint.name, // FIXME: temporally get name from endpoint, not input value
+                    name: updatedEndpoint?.name,
                   }),
                 );
                 webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
-              },
-              onError: (error) => {
+                return;
+              }
+
+              if (res.modify_endpoint?.msg) {
+                message.error(res.modify_endpoint?.msg);
+              } else if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error);
+                }
+              }
+            },
+            onError: (error) => {
+              if (error.message) {
+                message.error(error.message);
+              } else {
                 message.error(t('modelService.FailedToUpdateService'));
-              },
-            });
-          }
+              }
+            },
+          });
         } else {
           // create service
           mutationToCreateService.mutate(values, {
@@ -607,19 +578,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
-              if (error?.message) {
-                message.error(
-                  _.truncate(error?.message, {
-                    length: 200,
-                  }),
-                );
-              } else {
-                if (endpoint) {
-                  message.error(t('modelService.FailedToUpdateService'));
-                } else {
-                  message.error(t('modelService.FailedToStartService'));
-                }
-              }
+              let defaultErrorMessage = endpoint
+                ? t('modelService.FailedToUpdateService')
+                : t('modelService.FailedToStartService');
+              message.error(getErrorMessage(error, defaultErrorMessage));
             },
           });
         }
@@ -834,7 +796,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             <VFolderSelect
                               filter={(vf) =>
                                 vf.usage_mode === 'model' &&
-                                vf.status === 'ready'
+                                vf.status === 'ready' &&
+                                vf.ownership_type !== 'group'
                               }
                               valuePropName="id"
                               autoSelectDefault={
