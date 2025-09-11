@@ -1,4 +1,3 @@
-import { FolderExplorerQuery } from '../__generated__/FolderExplorerQuery.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
@@ -16,6 +15,7 @@ import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { FolderExplorerQuery } from 'src/__generated__/FolderExplorerQuery.graphql';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -59,6 +59,12 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
     }
   }, [uploadStatus, refetch]);
 
+  useEffect(() => {
+    if (uploadStatus && _.isEmpty(uploadStatus.pending)) {
+      refetch();
+    }
+  }, [uploadStatus, refetch]);
+
   const { vfolder_node } = useLazyLoadQuery<FolderExplorerQuery>(
     graphql`
       query FolderExplorerQuery($vfolderGlobalId: String!) {
@@ -70,6 +76,9 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
           ...BAIFileExplorerFragment
+          ...FileItemControlsFragment
+          ...ExplorerActionControlsFragment
+          ...EditableNameFragment
         }
       }
     `,
@@ -126,7 +135,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           }}
           layout={xl ? 'horizontal' : 'vertical'}
         >
-          <Splitter.Panel resizable={false} max={'60%'}>
+          <Splitter.Panel resizable={false} defaultSize={'60%'}>
             <BAIFlex direction="column" align="stretch">
               {vfolder_node?.unmanaged_path ? (
                 <Alert

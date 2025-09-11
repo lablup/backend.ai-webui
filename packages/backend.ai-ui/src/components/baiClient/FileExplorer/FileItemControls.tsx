@@ -35,13 +35,15 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
   const vFolderNode = useFragment(
     graphql`
       fragment FileItemControlsFragment on VirtualFolderNode {
+        permissions
         host @required(action: THROW)
       }
     `,
     vfolderNodeFrgmt,
   );
-
-  const enableDownload = _.includes(
+  const hasDeletePermission =
+    vFolderNode?.permissions?.includes('delete_content');
+  const hasDownloadPermission = _.includes(
     unitedAllowedPermissionByVolume[vFolderNode?.host ?? ''],
     'download-file',
   );
@@ -102,7 +104,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         type="text"
         size="small"
         icon={<DownloadIcon color={token.colorInfo} />}
-        disabled={!enableDownload || downloadFileMutation.isPending}
+        disabled={!hasDownloadPermission || downloadFileMutation.isPending}
         loading={downloadFileMutation.isPending}
         onClick={(e) => {
           e.stopPropagation();
@@ -113,6 +115,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         type="text"
         size="small"
         icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+        disabled={!hasDeletePermission}
         onClick={(e) => {
           e.stopPropagation();
           onClickDelete();
