@@ -39,7 +39,8 @@
       "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
     },
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
-    "DuplicatedFiles": "Üzerine Yazın Onay"
+    "DuplicatedFiles": "Üzerine Yazın Onay",
+    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın."
   },
   "comp:BAITable": {
     "SettingTable": "Masa Ayarları",
