@@ -14,17 +14,42 @@
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Menghapus",
+      "Create": "Membuat",
+      "Upload": "Mengunggah",
+      "CopyAll": "Salin semua"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "Name": "Nama",
+    "Size": "Ukuran",
+    "CreatedAt": "Dibuat di",
+    "ModifiedAt": "Dimodifikasi di",
+    "Controls": "Kontrol",
+    "UploadFiles": "Unggah file",
+    "UploadFolder": "Unggah folder",
+    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "error": {
+      "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
-  },
-  "general": {
-    "button": {
-      "CopyAll": "Salin semua"
-    }
   },
   "comp:BAIStatistic": {
     "Unlimited": "Tak terbatas"

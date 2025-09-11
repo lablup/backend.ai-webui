@@ -14,6 +14,36 @@
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
+  "general": {
+    "NSelected": "{{count}} выбрал",
+    "button": {
+      "Delete": "Удалить",
+      "Create": "Создавать",
+      "Upload": "Загрузить",
+      "CopyAll": "Копировать все"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
+    "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
+    "FolderCreatedSuccessfully": "Папка создана успешно.",
+    "CreateANewFolder": "Создать новую папку",
+    "FolderName": "Имя папки",
+    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+    "Name": "Имя",
+    "Size": "Размер",
+    "CreatedAt": "Создан в",
+    "ModifiedAt": "Модифицирован в",
+    "Controls": "Управление",
+    "UploadFiles": "Загрузить файлы",
+    "UploadFolder": "Загрузить папку",
+    "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "error": {
+      "FileUploadSizeLimit": "Размер файла превышает ограничение размера загрузки."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
@@ -21,11 +51,6 @@
 
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
-  },
-  "general": {
-    "button": {
-      "CopyAll": "Копировать все"
-    }
   },
   "comp:BAIStatistic": {
     "Unlimited": "Неограниченный"

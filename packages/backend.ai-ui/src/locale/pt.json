@@ -14,6 +14,36 @@
   "error": {
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
+  "general": {
+    "NSelected": "{{count}} selecionado",
+    "button": {
+      "Delete": "Excluir",
+      "Create": "Criar",
+      "Upload": "Carregar",
+      "CopyAll": "Copie tudo"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
+    "DeleteSelectedItemsDialog": "Excluir confirmação",
+    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
+    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
+    "CreateANewFolder": "Crie uma nova pasta",
+    "FolderName": "Nome da pasta",
+    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
+    "Name": "Nome",
+    "Size": "Tamanho",
+    "CreatedAt": "Criado em",
+    "ModifiedAt": "Modificado em",
+    "Controls": "Controles",
+    "UploadFiles": "Faça o upload de arquivos",
+    "UploadFolder": "Faça o upload da pasta",
+    "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "error": {
+      "FileUploadSizeLimit": "O tamanho do arquivo excede o limite de tamanho de upload."
+    }
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
@@ -21,11 +51,6 @@
 
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
-  },
-  "general": {
-    "button": {
-      "CopyAll": "Copie tudo"
-    }
   },
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
