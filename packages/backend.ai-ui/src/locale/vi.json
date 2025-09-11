@@ -21,12 +21,6 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
-  "general": {
-    "button": {
-      "CopyAll": "Sao chép tất cả",
-      "Cancel": "Hủy bỏ"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Sự lôi kéo",
     "PullVersion": "Phiên bản kéo",
@@ -60,7 +54,8 @@
     "button": {
       "Cancel": "Hủy bỏ",
       "Remove": "Di dời",
-      "Close": "Đóng"
+      "Close": "Đóng",
+      "CopyAll": "Sao chép tất cả"
     },
     "TotalItems": "Tổng số {{total}} các mục"
   },
