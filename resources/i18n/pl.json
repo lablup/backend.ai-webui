@@ -479,7 +479,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status wybranego hosta",
       "Used": "używany"
-    }
+    },
+    "NotInProject": "Ten folder należy do innego projektu."
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
