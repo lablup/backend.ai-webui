@@ -39,11 +39,11 @@ let es6Path;
 let electronPath;
 let mainIndex;
 if (process.env.serveMode == 'dev') {
-  ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-  versions = require('./version');
-  es6Path = npjoin(__dirname, 'build/electron-app/app'); // ES6 module loader with custom protocol
-  electronPath = npjoin(__dirname, 'build/electron-app');
-  mainIndex = 'build/electron-app/app/index.html';
+  ProxyManager = require(path.join(__dirname, 'app/wsproxy/wsproxy.js'));
+  versions = require(path.join(__dirname, 'app/version'));
+  es6Path = npjoin(__dirname, 'app'); // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname);
+  mainIndex = 'app/index.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
