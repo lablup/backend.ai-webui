@@ -11,6 +11,9 @@
     "SettingTable": "Paramètres de la table",
     "SearchTableColumn": "Colonnes de table de recherche"
   },
+  "error": {
+    "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",
     "ResetFilter": "Réinitialiser les filtres"

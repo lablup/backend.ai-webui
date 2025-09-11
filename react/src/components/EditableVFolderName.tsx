@@ -4,14 +4,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { usePainKiller } from '../hooks/usePainKiller';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAILink from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { theme, Form, Input, App } from 'antd';
 import Text, { TextProps } from 'antd/es/typography/Text';
 import Title, { TitleProps } from 'antd/es/typography/Title';
-import { toLocalId } from 'backend.ai-ui';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -67,11 +66,11 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
     },
   });
   const relayEnv = useRelayEnvironment();
-  const painKiller = usePainKiller();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -157,7 +156,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 },
                 onError: (error) => {
                   onEditEnd?.();
-                  message.error(painKiller.relieve(error?.message));
+                  message.error(getErrorMessage(error));
                   setOptimisticName(vfolder.name);
                 },
               },

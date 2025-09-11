@@ -3,10 +3,9 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { usePainKiller } from '../hooks/usePainKiller';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography, message } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,8 +25,8 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
 
   const vfolders = useFragment(
     graphql`
@@ -56,10 +55,11 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
         const promises = _.map(vfolders, (vfolder: VFolderType) =>
           restoreMutation.mutateAsync(vfolder.id).catch((error) => {
             upsertNotification({
-              message: painKiller.relieve(error?.title),
+              message: getErrorMessage(error),
               description: error?.description,
               open: true,
             });
+            return Promise.reject(error);
           }),
         );
         Promise.allSettled(promises).then((results) => {

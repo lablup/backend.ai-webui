@@ -7,7 +7,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { usePainKiller } from '../hooks/usePainKiller';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAILink from './BAILink';
@@ -38,6 +37,7 @@ import {
   BAITableProps,
   BAIFlex,
   toLocalId,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -76,13 +76,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { message } = App.useApp();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
   const [currentUser] = useCurrentUserInfo();
   const [hoveredColumn, setHoveredColumn] = useState<string | null>();
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const [currentVFolder, setCurrentVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -275,7 +275,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                             },
                             onError: (error) => {
                               upsertNotification({
-                                description: painKiller.relieve(error?.message),
+                                description: getErrorMessage(error),
                                 open: true,
                               });
                             },
@@ -300,7 +300,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                           },
                           onError: (error) => {
                             upsertNotification({
-                              description: painKiller.relieve(error?.message),
+                              description: getErrorMessage(error),
                               open: true,
                             });
                           },
@@ -454,7 +454,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             },
             onError: (error) => {
               upsertNotification({
-                description: painKiller.relieve(error?.message),
+                description: getErrorMessage(error),
                 open: true,
               });
             },

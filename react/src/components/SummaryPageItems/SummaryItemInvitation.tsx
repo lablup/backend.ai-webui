@@ -8,13 +8,14 @@ import {
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
 import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const SummaryItemInvitation: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const app = App.useApp();
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -106,15 +107,13 @@ const SummaryItemInvitation: React.FC = () => {
                     terminateInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
                         refetch();
-                        app.message.success(
+                        message.success(
                           t('summary.DeclineSharedVFolder') +
                             invitation.vfolder_name,
                         );
                       },
-                      onError(error: any) {
-                        app.message.error(
-                          error.message || t('dialog.ErrorOccurred'),
-                        );
+                      onError(error) {
+                        message.error(getErrorMessage(error));
                       },
                     })
                   }
@@ -136,14 +135,14 @@ const SummaryItemInvitation: React.FC = () => {
                     acceptInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
                         refetch();
-                        app.message.success(
+                        message.success(
                           t('summary.AcceptSharedVFolder') +
                             invitation.vfolder_name,
                         );
                       },
-                      onError(error: any) {
-                        app.message.error(
-                          error.message || t('dialog.ErrorOccurred'),
+                      onError(error) {
+                        message.error(
+                          getErrorMessage(error) || t('dialog.ErrorOccurred'),
                         );
                       },
                     })

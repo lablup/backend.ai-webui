@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SearchTableColumn": "搜索表列"
   },
+  "error": {
+    "UnknownError": "發生了未知錯誤。請重試。"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"

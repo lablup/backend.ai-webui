@@ -15,7 +15,11 @@ import {
 import ValidationStatusTag from './ValidationStatusTag';
 import { AnsiUp } from 'ansi_up';
 import { App, Tag, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  ESMClientErrorResponse,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
@@ -37,6 +41,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [validationStatus, setValidationStatus] = useState('');
   const [containerLogSummary, setContainerLogSummary] = useState('');
   const [validationTime, setValidationTime] = useState('Before validation');
@@ -55,9 +60,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
 
   const mutationsToValidateService = useTanMutation<
     unknown,
-    {
-      message?: string;
-    },
+    ESMClientErrorResponse,
     ServiceLauncherFormValue
   >({
     mutationFn: (values) => {
@@ -183,9 +186,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
       })
       .catch((error) => {
         message.error(
-          error?.message
-            ? _.truncate(error?.message, { length: 200 })
-            : t('modelService.FormValidationFailed'),
+          getErrorMessage(error) || t('modelService.FormValidationFailed'),
         );
       })
       .finally(() => {

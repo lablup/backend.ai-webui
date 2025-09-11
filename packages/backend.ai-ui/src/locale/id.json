@@ -11,6 +11,9 @@
     "SettingTable": "Pengaturan Tabel",
     "SearchTableColumn": "Kolom Tabel Cari"
   },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"

@@ -11,6 +11,9 @@
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
     "SearchTableColumn": "Hakutaulukon sarakkeet"
   },
+  "error": {
+    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
