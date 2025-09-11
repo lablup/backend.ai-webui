@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
-  "comp:BAITable": {
-    "SettingTable": "Tetapan Jadual",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SearchTableColumn": "Lajur jadual carian"
-  },
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
@@ -42,7 +37,14 @@
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
     "error": {
       "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
-    }
+    },
+    "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
+    "DuplicatedFiles": "Pengesahan Pengesahan"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Tetapan Jadual",
+    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
+    "SearchTableColumn": "Lajur jadual carian"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
