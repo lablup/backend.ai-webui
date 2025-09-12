@@ -499,7 +499,7 @@ class Client {
         statusCode: resp.status,
         statusText: resp.statusText,
         title: errorTitle,
-        msg: errorMsg,
+        message: errorMsg,
         description: errorDesc,
         error_code: errorCode,
         traceback: traceback,

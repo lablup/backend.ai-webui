@@ -1647,9 +1647,9 @@ export default class BackendAISessionList extends BackendAIPage {
           this.workDialog.show();
         })
         .catch((err) => {
-          if (err && err.message) {
+          if (err && err.msg) {
             this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
+            this.notification.detail = err.msg;
             this.notification.show(true, err);
           } else if (err && err.title) {
             this.notification.text = PainKiller.relieve(err.title);
