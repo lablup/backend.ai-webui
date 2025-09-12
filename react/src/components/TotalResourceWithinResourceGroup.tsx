@@ -27,6 +27,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+import { useSuspendedBackendaiClient } from 'src/hooks';
 import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 interface TotalResourceWithinResourceGroupProps {
@@ -36,6 +37,18 @@ interface TotalResourceWithinResourceGroupProps {
   onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
   extra?: ReactNode;
 }
+
+export const useIsAvailableTotalResourceWithinResourceGroup = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  const userRole = useCurrentUserRole();
+  const isHiddenAgents = !!baiClient?._config?.hideAgents;
+
+  // Superadmin users can use `agent_nodes` if available, even when hideAgents is true.
+  // The GraphQL `agent_nodes` field is only available from v24.12.0. If hideAgents is false, `agent_summary_list` can be used instead.
+  return userRole === 'superadmin'
+    ? baiClient.isManagerVersionCompatibleWith('24.12.0') || !isHiddenAgents
+    : !isHiddenAgents;
+};
 
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
@@ -47,7 +60,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   const userRole = useCurrentUserRole();
   const { token } = theme.useToken();
 
-  const [data, refetch] = useRefetchableFragment(
+  const [{ agent_nodes, agent_summary_list }, refetch] = useRefetchableFragment(
     graphql`
       fragment TotalResourceWithinResourceGroupFragment on Query
       @argumentDefinitions(
@@ -74,7 +87,9 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(filter: $agentNodeFilter) @include(if: $isSuperAdmin) {
+        agent_nodes(filter: $agentNodeFilter)
+          @include(if: $isSuperAdmin)
+          @since(version: "24.12.0") {
           edges {
             node {
               id
@@ -110,9 +125,9 @@ const TotalResourceWithinResourceGroup: React.FC<
   }, [deferredSelectedResourceGroup, refetch, userRole]);
 
   const resourceData = useMemo(() => {
-    const agents = _.isEqual(userRole, 'superadmin')
-      ? _.map(data.agent_nodes?.edges, 'node')
-      : data.agent_summary_list?.items || [];
+    const agents = agent_nodes
+      ? _.map(agent_nodes?.edges, 'node')
+      : agent_summary_list?.items || [];
 
     const totalOccupiedSlots: Record<string, number> = {};
     const totalAvailableSlots: Record<string, number> = {};
@@ -248,7 +263,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       .value();
 
     return { cpu: cpuData, memory: memoryData, accelerators };
-  }, [data, resourceSlotsDetails, userRole]);
+  }, [agent_nodes, agent_summary_list, resourceSlotsDetails]);
 
   return (
     <BAIFlex
