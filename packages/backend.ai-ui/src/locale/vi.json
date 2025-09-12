@@ -18,7 +18,6 @@
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Không giới hạn"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Không có dữ liệu tài nguyên có sẵn."
   }
 }

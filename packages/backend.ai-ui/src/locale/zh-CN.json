@@ -18,7 +18,6 @@
     "PlaceHolder": "搜索",
     "ResetFilter": "重置过滤器"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "无限"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "没有可用的资源数据。"
   }
 }

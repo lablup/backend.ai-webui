@@ -18,7 +18,6 @@
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Sınırsız"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Kaynak verileri yok."
   }
 }
