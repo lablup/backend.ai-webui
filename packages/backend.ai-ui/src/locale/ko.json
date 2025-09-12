@@ -28,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "제한없음"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "표시할 리소스 데이터가 없습니다."
   }
 }

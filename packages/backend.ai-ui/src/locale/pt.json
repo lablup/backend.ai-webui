@@ -18,7 +18,6 @@
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Nenhum dado de recurso disponível."
   }
 }

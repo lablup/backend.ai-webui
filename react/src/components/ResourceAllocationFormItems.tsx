@@ -790,7 +790,12 @@ const ResourceAllocationFormItems: React.FC<
                                       ),
                                     );
                                   }
-                                  if (showRemainingWarning) {
+                                  // Show remaining warning only when remaining.mem is a valid number
+                                  if (
+                                    showRemainingWarning &&
+                                    _.isNumber(remaining.mem) &&
+                                    !_.isNaN(remaining.mem)
+                                  ) {
                                     if (
                                       !_.isElement(value) &&
                                       resourceLimits.mem &&

@@ -28,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Rajoittamaton"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Resurssitietoja ei ole käytettävissä."
   }
 }

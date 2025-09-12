@@ -18,7 +18,6 @@
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Неограниченный"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Нет данных о ресурсах."
   }
 }

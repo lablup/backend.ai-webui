@@ -28,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "Хязгааргүй"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "Нөөцийн өгөгдөл байхгүй байна."
   }
 }

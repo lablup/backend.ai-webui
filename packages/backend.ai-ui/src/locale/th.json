@@ -18,7 +18,6 @@
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -29,5 +28,8 @@
   },
   "comp:BAIStatistic": {
     "Unlimited": "ไม่ จำกัด"
+  },
+  "resourcePanel": {
+    "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   }
 }
