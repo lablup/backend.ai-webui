@@ -1,4 +1,5 @@
 import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
+import { Big } from 'big.js';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -53,7 +54,12 @@ export const useSessionLiveStat = (
   const liveStat: SessionLiveStats = useMemo(() => {
     const edges = session?.kernel_nodes?.edges ?? [];
     const statsList: SessionLiveStats[] = edges.map((edge) => {
-      return JSON.parse(edge?.node?.live_stat || '{}');
+      try {
+        return JSON.parse(edge?.node?.live_stat || '{}');
+      } catch (e) {
+        console.error('Failed to parse live_stat:', e);
+        return {};
+      }
     });
     // Use lodash to merge and sum values
     const allKeys: Array<keyof SessionLiveStats> = _.uniq(
@@ -70,23 +76,40 @@ export const useSessionLiveStat = (
       const sumFields = ['current', 'capacity'];
       // List of fields to average
       const avgFields = ['stats.max', 'stats.avg', 'stats.rate'];
-      // Sum numeric fields using lodash
+      // Sum numeric fields using Big.js for better precision
       const summed: ResourceStatItem = {} as ResourceStatItem;
       sumFields.forEach((field) => {
-        summed[field] = String(
-          _.sumBy(items, (item) => Number(_.get(item, field) ?? '0')),
-        );
+        const sum = items.reduce((acc, item) => {
+          const value = _.get(item, field) ?? '0';
+          try {
+            return acc.plus(new Big(value));
+          } catch (e) {
+            console.error(`Failed to parse value for ${field}:`, value, e);
+            return acc;
+          }
+        }, new Big(0));
+        summed[field] = sum.toString();
       });
-      // Average numeric fields using lodash
+      // Average numeric fields using Big.js
       avgFields.forEach((field) => {
-        summed[field] = String(
-          _.meanBy(items, (item) => Number(_.get(item, field) ?? '0')),
-        );
+        const sum = items.reduce((acc, item) => {
+          const value = _.get(item, field) ?? '0';
+          try {
+            return acc.plus(new Big(value));
+          } catch (e) {
+            console.error(`Failed to parse value for ${field}:`, value, e);
+            return acc;
+          }
+        }, new Big(0));
+        const avg = items.length > 0 ? sum.div(items.length) : new Big(0);
+        summed[field] = avg.toString();
       });
-      // Calculate pct as (current / capacity) * 100
-      const current = Number(summed.current ?? '0');
-      const capacity = Number(summed.capacity ?? '0');
-      summed.pct = capacity > 0 ? ((current / capacity) * 100).toFixed(2) : '0';
+      // Calculate pct as (current / capacity) * 100 using Big.js
+      const current = new Big(summed.current ?? '0');
+      const capacity = new Big(summed.capacity ?? '0');
+      summed.pct = capacity.gt(0)
+        ? current.div(capacity).times(100).toFixed(2)
+        : '0';
       // Use the first non-empty unit_hint
       summed.unit_hint = items.find((item) => item.unit_hint)?.unit_hint ?? '';
       // Copy any other fields from the first item (if exists)
