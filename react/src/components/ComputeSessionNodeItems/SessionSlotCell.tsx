@@ -23,12 +23,10 @@ import { graphql, useFragment } from 'react-relay';
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;
   type: 'cpu' | 'mem' | 'accelerator';
-  mode?: 'occupied' | 'requested';
 }
 const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
   type,
   sessionFrgmt,
-  mode = 'requested',
 }) => {
   const { mergedResourceSlots } = useResourceSlotsDetails('');
   const session = useFragment(
