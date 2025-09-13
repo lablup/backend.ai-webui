@@ -2,56 +2,79 @@ import { ModelTryContentButtonVFolderFragment$key } from '../__generated__/Model
 import { ModelTryContentButtonVFolderNodeListQuery } from '../__generated__/ModelTryContentButtonVFolderNodeListQuery.graphql';
 import {
   baiSignedRequestWithPromise,
-  compareNumberWithUnits,
   generateRandomString,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
+  INITIAL_FETCH_KEY,
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { useSetBAINotification } from '../hooks/useBAINotification';
+import {
+  useSetBAINotification,
+  NotificationStateForOnChange,
+} from '../hooks/useBAINotification';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { ModelCard } from '../hooks/useModelCardMetadata';
+import { FileItem } from './FolderExplorer';
 import {
   ServiceCreateType,
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
-import { Button } from 'antd';
-import { ESMClientErrorResponse } from 'backend.ai-ui';
+import { PlayCircleOutlined } from '@ant-design/icons';
+import { App, Button, Tooltip } from 'antd';
+import {
+  toLocalId,
+  compareNumberWithUnits,
+  ESMClientErrorResponse,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { useCurrentUserRole } from 'src/hooks/backendai';
 
 interface ModelTryContentButtonProps {
   modelStorageHost?: string;
-  modelCardMetadata?: ModelCard | null;
   modelName?: string;
-  title?: string;
   vfolderNode: ModelTryContentButtonVFolderFragment$key | null;
+}
+
+interface CloneVFolderInput {
+  permission: string;
+  target_host?: string;
+  target_name: string;
+  usage_mode: string;
+  cloneable?: boolean;
+}
+
+interface CloneResponse {
+  bgtask_id: string;
+  id: string;
+}
+
+interface ServiceResult {
+  endpoint_id?: string;
 }
 
 const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   modelName,
-  modelCardMetadata,
   modelStorageHost,
   vfolderNode,
-  title,
 }) => {
   const { t } = useTranslation();
-  // const { token } = theme.useToken();
+  const { message, modal } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
+  const userRole = useCurrentUserRole();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
-  const [fetchKey] = useUpdatableState('first');
+  const [fetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const { upsertNotification } = useSetBAINotification();
 
   const { vfolder_nodes } =
@@ -81,11 +104,12 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       `,
       {
         projectId: currentProject.id,
-        filter: `usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${modelName ? ` & name ilike "%${modelName}%"` : ''}`,
+        filter: `usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${modelName ? ` & name like "%${modelName}%"` : ''}`,
         permission: 'read_attribute',
       },
       {
-        fetchPolicy: 'network-only',
+        fetchPolicy:
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
         fetchKey,
       },
     );
@@ -103,11 +127,42 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       vfolderNode,
     );
 
-  console.log('ModelTryContentButton Debug:', {
-    currentProject: currentProject,
-    modelName: modelName,
-    vfolder_nodes: vfolder_nodes,
+  // Get the first available vfolder from the query results
+  const availableVFolder = vfolder_nodes?.edges?.[0]?.node;
+
+  // Check if definition files exist using query
+  const { data: folderFiles } = useSuspenseTanQuery<Array<FileItem>>({
+    queryKey: [
+      'ModelTryContentButton',
+      'folderFiles',
+      availableVFolder?.row_id || modelStoreVFolder?.row_id,
+    ],
+    queryFn: () => {
+      const folderId = availableVFolder?.row_id || modelStoreVFolder?.row_id;
+      if (!folderId) {
+        return [];
+      }
+      return baiClient.vfolder
+        .list_files('.', folderId)
+        .then((res: { items: Array<FileItem> }) => {
+          return res.items || [];
+        });
+    },
+    staleTime: 1000,
   });
+
+  // Check if required definition files exist in the folder files
+  const hasModelDefinition = _.some(
+    folderFiles,
+    (file: { name?: string }) => file?.name === 'model-definition.yaml',
+  );
+  const hasServiceDefinition = _.some(
+    folderFiles,
+    (file: { name?: string }) => file?.name === 'service-definition.toml',
+  );
+
+  // Both files are required for the button to be enabled
+  const definitionFilesExist = hasModelDefinition && hasServiceDefinition;
 
   /* FIXME: need to check if the modelStorageHost is accessible & cloneable
   const { data: accessibleStorageHostList } = useSuspenseTanQuery({
@@ -130,48 +185,26 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   */
 
   const mutationToClone = useTanMutation<
-    {
-      bgtask_id: string;
-      id: string;
-    },
+    CloneResponse,
     ESMClientErrorResponse,
     {
-      input: any;
+      input: CloneVFolderInput;
       name: string;
     }
   >({
-    // @ts-ignore
-    mutationFn: ({ input, name }: { input: any; name: string }) => {
+    mutationFn: ({
+      input,
+      name,
+    }: {
+      input: CloneVFolderInput;
+      name: string;
+    }) => {
       return baiClient.vfolder.clone(input, name);
     },
   });
 
-  //@ts-ignore
-  const { data: availableRuntimes } = useSuspenseTanQuery<{
-    runtimes: { name: string; human_readable_name: string }[];
-  }>({
-    queryKey: ['baiClient.modelService.runtime.list'],
-    //@ts-ignore
-    queryFn: () => {
-      return baiClient.isManagerVersionCompatibleWith('24.03.5')
-        ? baiRequestWithPromise({
-            method: 'GET',
-            url: `/services/_/runtimes`,
-          })
-        : Promise.resolve({
-            runtimes: _.map(availableRuntimes?.runtimes, (runtime) => {
-              return {
-                value: runtime.name,
-                label: runtime.human_readable_name,
-              };
-            }),
-          });
-    },
-    staleTime: 1000,
-  });
-
   const mutationToCreateService = useTanMutation<
-    unknown,
+    ServiceResult,
     {
       message?: string;
     },
@@ -182,6 +215,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       if (values.envvars) {
         values.envvars.forEach((v) => (environ[v.variable] = v.value));
       }
+      // These fields are replaced with contents from service-definition.toml
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.replicas,
@@ -237,33 +271,115 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
     return {
       serviceName: `${modelName}-${generateRandomString(4)}`,
       replicas: 1,
-      environments: modelCardMetadata?.environments || {
+      environments: {
         environment: '',
         version: '',
         image: null,
       },
-      runtimeVariant: modelCardMetadata?.runtimeVariant || 'custom',
+      runtimeVariant: 'vllm',
       cluster_size: 1,
       cluster_mode: 'single-node',
       openToPublic: true,
       resourceGroup: currentResourceGroupByProject as string,
-      resource: modelCardMetadata?.resource || {
+      resource: {
         cpu: 4,
         mem: '32g',
         accelerator: 10,
         acceleratorType: 'cuda.shares',
         shmem: '1g',
       },
-      vFolderID: vfolderID, // TODO: add cloned folder result
+      vFolderID: vfolderID,
       modelMountDestination: '/models',
       modelDefinitionPath: '',
       mount_id_map: {},
-      envvars: modelCardMetadata?.envvars || [],
+      envvars: [],
       enabledAutomaticShmem: false,
     };
   };
 
-  const cloneOrCreateModelService = (runtimeVariant: string) => {
+  // Helper function to create service notification
+  const createServiceNotification = (
+    result: ServiceResult,
+    modelId: string,
+  ) => {
+    upsertNotification({
+      key: result?.endpoint_id,
+      open: true,
+      message: t('modelService.StartingModelService'),
+      description: null,
+      duration: 0,
+      backgroundTask: {
+        promise: new Promise<void>((resolve, reject) => {
+          let progress = 0;
+          const interval = setInterval(async () => {
+            try {
+              progress += _.random(2, 5);
+              upsertNotification({
+                key: result?.endpoint_id,
+                backgroundTask: {
+                  status: 'pending',
+                  percent: progress > 100 ? 100 : progress,
+                },
+              });
+              const routingStatus = await baiRequestWithPromise({
+                method: 'GET',
+                url: `/services/${result?.endpoint_id}`,
+              });
+              if (routingStatus.active_routes.length > 0) {
+                clearInterval(interval);
+                return resolve();
+              }
+              if (progress >= 100) {
+                throw new Error(t('modelService.ModelServiceFailedToStart'));
+              }
+            } catch (error) {
+              clearInterval(interval);
+              return reject();
+            }
+          }, 5000);
+        }),
+        onChange: {
+          pending: {
+            message: t('modelService.StartingModelService'),
+            description: null,
+          },
+          resolved: {
+            duration: 0,
+            open: true,
+            key: result?.endpoint_id,
+            backgroundTask: {
+              status: 'resolved',
+              percent: 100,
+            },
+            message: t('modelService.StartingModelService'),
+            description: null,
+            to: `/chat?${new URLSearchParams({
+              endpointId: result?.endpoint_id ?? '',
+              modelId: modelId,
+            }).toString()}`,
+            toText: t('modelService.PlayYourModelNow'),
+          },
+          rejected: {
+            duration: 0,
+            key: result?.endpoint_id,
+            backgroundTask: {
+              status: 'rejected',
+              percent: 99,
+            },
+            message: t('modelService.StartingModelService'),
+            description: null,
+            to: `/serving/${result?.endpoint_id}`,
+            toText: t('modelService.GoToServiceDetailPage'),
+          },
+        },
+        status: 'pending',
+        percent: 0,
+      },
+    });
+  };
+
+  // Main function to handle folder clone or service creation
+  const cloneOrCreateModelService = async (runtimeVariant: string) => {
     let modelId = 'vllm-model';
     switch (runtimeVariant) {
       case 'vllm':
@@ -276,13 +392,31 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         modelId = 'custom';
         break;
     }
-    if (!vfolder_nodes || vfolder_nodes.edges.length === 0) {
+
+    const randomTargetName = `${modelName}-${generateRandomString(4)}`;
+
+    if (!availableVFolder) {
+      // No similar folder found - need to clone
+      const confirmed = await modal.confirm({
+        title: t('modelStore.CloneRequired'),
+        content: (
+          <Trans
+            i18nKey={t('modelService.CloneModelFolderConfirm', {
+              folderName: randomTargetName,
+            })}
+          />
+        ),
+      });
+
+      if (!confirmed) return;
+
+      // Clone the model folder
       mutationToClone.mutate(
         {
           input: {
             permission: 'wd', // write-delete permission
             target_host: modelStorageHost, // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: `${modelCardMetadata?.serviceName || modelName}`, // TODO: add suffix to avoid name conflict
+            target_name: randomTargetName,
             usage_mode: 'model',
           },
           name: modelStoreVFolder?.row_id ?? '', // TODO: set the name of the cloned folder
@@ -290,11 +424,12 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         {
           onSuccess: (data) => {
             upsertNotification({
-              key: `modelStore.clone. + ${modelName}-1`,
+              key: `modelStore.clone.${randomTargetName}`,
               open: true,
+              message: t('data.folders.FolderClonePending'),
               onClose: () => {
                 upsertNotification({
-                  key: `modelStore.clone. + ${modelName}-1`,
+                  key: `modelStore.clone.${randomTargetName}`,
                   open: false,
                   backgroundTask: {
                     percent: 0,
@@ -304,102 +439,42 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                   toText: '',
                 });
               },
-              extraDescription: '(1 / 2)',
               backgroundTask: {
                 status: 'pending',
                 percent: 50,
                 taskId: data.bgtask_id,
                 onChange: {
                   pending: t('data.folders.DownloadingModel'),
-                  resolved: (cloneData: any, _notification: any) => {
+                  resolved: (
+                    __,
+                    _notification: NotificationStateForOnChange,
+                  ) => {
+                    const clonedFolderId = data?.id; // Use the original clone response ID
+
+                    if (!clonedFolderId) {
+                      message.error(t('data.folders.FolderCloneFailed'));
+                      return {
+                        key: data?.bgtask_id,
+                        backgroundTask: {
+                          status: 'rejected',
+                          percent: 0,
+                        },
+                      };
+                    }
+
                     mutationToCreateService.mutate(
                       getServiceInputByModelNameAndVFolderId(
-                        modelCardMetadata?.serviceName ?? '',
-                        cloneData?.id || data?.id,
+                        modelName ?? '',
+                        clonedFolderId,
                       ),
                       {
-                        onSuccess: (result: any) => {
-                          upsertNotification({
-                            key: result?.endpoint_id,
-                            open: true,
-                            message: t('modelService.StartingModelService'),
-                            duration: 0,
-                            backgroundTask: {
-                              promise: new Promise<void>((resolve, reject) => {
-                                let progress = 0;
-                                const interval = setInterval(async () => {
-                                  try {
-                                    progress += _.random(2, 5);
-                                    upsertNotification({
-                                      key: result?.endpoint_id,
-                                      backgroundTask: {
-                                        status: 'pending',
-                                        percent:
-                                          progress > 100 ? 100 : progress,
-                                      },
-                                    });
-                                    const routingStatus =
-                                      await baiRequestWithPromise({
-                                        method: 'GET',
-                                        url: `/services/${result?.endpoint_id}`,
-                                      });
-                                    if (
-                                      routingStatus.active_routes.length > 0
-                                    ) {
-                                      clearInterval(interval);
-                                      return resolve();
-                                    }
-                                    if (progress >= 100) {
-                                      throw new Error(
-                                        t(
-                                          'modelService.ModelServiceFailedToStart',
-                                        ),
-                                      );
-                                    }
-                                  } catch (error) {
-                                    clearInterval(interval);
-                                    return reject();
-                                  }
-                                }, 5000);
-                              }),
-                              status: 'pending',
-                              percent: 0,
-                              onChange: {
-                                pending: t('modelService.StartingModelService'),
-                                resolved: (_data, _notification) => ({
-                                  open: true,
-                                  duration: 0,
-                                  key: result?.endpoint_id,
-                                  backgroundTask: {
-                                    status: 'resolved',
-                                    percent: 100,
-                                  },
-                                  message: '',
-                                  to: `/chat?${new URLSearchParams({
-                                    endpointId: result?.endpoint_id ?? '',
-                                    modelId: 'vllm-model',
-                                  }).toString()}`,
-                                  toText: t('modelService.PlayYourModelNow'),
-                                }),
-                                rejected: (_data, _notification) => ({
-                                  key: result?.endpoint_id,
-                                  duration: 0,
-                                  backgroundTask: {
-                                    status: 'rejected',
-                                    percent: 99,
-                                  },
-                                  message: '',
-                                  to: `/serving/${result?.endpoint_id}`,
-                                  toText: t(
-                                    'modelService.GoToServiceDetailPage',
-                                  ),
-                                }),
-                              },
-                            },
-                          });
+                        onSuccess: (result: ServiceResult) => {
+                          createServiceNotification(result, modelId);
                         },
                         onError: () => {
-                          // TODO: show a notification to go to service detail page
+                          message.error(
+                            t('modelService.ModelServiceFailedToStart'),
+                          );
                         },
                       },
                     );
@@ -411,7 +486,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                         status: 'resolved',
                         percent: 100,
                       },
-                      message: '',
+                      message: null,
                       to: `/chat?${new URLSearchParams({
                         endpointId: data?.bgtask_id ?? '',
                         modelId: 'vllm-model',
@@ -425,96 +500,36 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
             });
           },
           onError: () => {
-            // TODO: show a notification for clone error
+            message.error(t('data.folders.FolderCloneFailed'));
           },
         },
       );
     } else {
-      const availableVFolder = vfolder_nodes.edges[0]?.node;
+      // Similar folder exists - skip cloning and directly create service
+      const confirmed = await modal.confirm({
+        title: t('modelService.FolderExists'),
+        content: t('modelService.UseExistingFolderConfirm', {
+          folderName: availableVFolder.name,
+        }),
+      });
+
+      if (!confirmed) {
+        message.error(t('modelService.ModelServiceCreationHasBeenCanceled'));
+        return;
+      }
+
+      // Create service with existing folder (skip cloning)
       mutationToCreateService.mutate(
         getServiceInputByModelNameAndVFolderId(
-          modelCardMetadata?.serviceName ?? '',
-          availableVFolder?.id || '',
+          modelName ?? '',
+          toLocalId(availableVFolder?.id) || '',
         ),
         {
-          onSuccess: (result: any) => {
-            upsertNotification({
-              key: result?.endpoint_id,
-              open: true,
-              message: t('modelService.StartingModelService'),
-              duration: 0,
-              backgroundTask: {
-                promise: new Promise<void>((resolve, reject) => {
-                  let progress = 0;
-                  const interval = setInterval(async () => {
-                    try {
-                      progress += _.random(2, 5);
-                      upsertNotification({
-                        key: result?.endpoint_id,
-                        backgroundTask: {
-                          status: 'pending',
-                          percent: progress > 100 ? 100 : progress,
-                        },
-                      });
-                      const routingStatus = await baiRequestWithPromise({
-                        method: 'GET',
-                        url: `/services/${result?.endpoint_id}`,
-                      });
-                      if (routingStatus.active_routes.length > 0) {
-                        clearInterval(interval);
-                        return resolve();
-                      }
-                      if (progress >= 100) {
-                        throw new Error(
-                          t('modelService.ModelServiceFailedToStart'),
-                        );
-                      }
-                    } catch (error) {
-                      clearInterval(interval);
-                      return reject();
-                    }
-                  }, 5000);
-                }),
-                onChange: {
-                  pending: t('modelService.StartingModelService'),
-                  resolved: (_data, _notification) => {
-                    return {
-                      duration: 0,
-                      open: true,
-                      key: result?.endpoint_id,
-                      backgroundTask: {
-                        status: 'resolved',
-                        percent: 100,
-                      },
-                      message: '',
-                      to: `/chat?${new URLSearchParams({
-                        endpointId: result?.endpoint_id ?? '',
-                        modelId: modelId,
-                      }).toString()}`, // PATH to playground page
-                      toText: t('modelService.PlayYourModelNow'),
-                    };
-                  },
-                  rejected: (_data, _notification) => {
-                    return {
-                      duration: 0,
-                      key: result?.endpoint_id,
-                      backgroundTask: {
-                        status: 'rejected',
-                        percent: 99,
-                      },
-                      message: '',
-                      to: `/serving/${result?.endpoint_id}`,
-                      toText: t('modelService.GoToServiceDetailPage'),
-                    };
-                  },
-                },
-                status: 'pending',
-                percent: 0,
-              },
-            });
+          onSuccess: (result: ServiceResult) => {
+            createServiceNotification(result, modelId);
           },
           onError: () => {
-            // TODO: show a notification to go to service detail page
+            message.error(t('modelService.ModelServiceFailedToStart'));
           },
         },
       );
@@ -522,19 +537,33 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   };
 
   return (
-    <Button
-      type="primary"
-      onClick={() => {
-        cloneOrCreateModelService(
-          modelCardMetadata?.runtimeVariant || 'custom',
-        );
-      }}
-      style={{
-        width: 'auto',
-      }}
+    <Tooltip
+      title={
+        !definitionFilesExist
+          ? userRole === 'user'
+            ? t('modelService.ServiceConfigurationNotValid')
+            : !hasModelDefinition && !hasServiceDefinition
+              ? t('modelService.BothDefinitionFilesRequired')
+              : !hasModelDefinition
+                ? t('modelService.ModelDefinitionRequired')
+                : t('modelService.ServiceDefinitionRequired')
+          : ''
+      }
     >
-      {t('modelService.RunThisModel')}
-    </Button>
+      <Button
+        type="primary"
+        disabled={!definitionFilesExist}
+        onClick={() => {
+          cloneOrCreateModelService('vllm');
+        }}
+        style={{
+          width: 'auto',
+        }}
+        icon={<PlayCircleOutlined />}
+      >
+        {t('modelService.RunThisModel')}
+      </Button>
+    </Tooltip>
   );
 };
 
