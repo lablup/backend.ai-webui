@@ -80,6 +80,8 @@
     "react-copy-to-clipboard": "^5.1.0"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "prettier-plugin-sort-json": "^4.1.1",
     "@jest/expect": "30.0.0-beta.3",
     "@jest/globals": "30.0.0-beta.3",
     "@storybook/addon-docs": "^9.1.1",

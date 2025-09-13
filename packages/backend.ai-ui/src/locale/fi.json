@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "testi"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Taulukon asetukset",
-    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
-    "SearchTableColumn": "Hakutaulukon sarakkeet"
-  },
-  "error": {
-    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
@@ -21,12 +7,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Rajoittamaton"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Hakutaulukon sarakkeet",
+    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
+    "SettingTable": "Taulukon asetukset"
+  },
+  "comp:BAITestButton": {
+    "Test": "testi"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
+  "error": {
+    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
+  },
   "general": {
     "button": {
       "CopyAll": "Kopioida kaikki"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Rajoittamaton"
   }
 }

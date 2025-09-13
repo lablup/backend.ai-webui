@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "ทดสอบ"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
-  },
-  "comp:BAITable": {
-    "SettingTable": "การตั้งค่าตาราง",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
-  },
-  "error": {
-    "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
@@ -22,12 +8,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "ไม่ จำกัด"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SettingTable": "การตั้งค่าตาราง"
+  },
+  "comp:BAITestButton": {
+    "Test": "ทดสอบ"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "error": {
+    "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
+  },
   "general": {
     "button": {
       "CopyAll": "คัดลอกทั้งหมด"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "ไม่ จำกัด"
   }
 }

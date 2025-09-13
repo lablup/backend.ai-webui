@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Masa Ayarları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SearchTableColumn": "Arama Tablosu sütunları"
-  },
-  "error": {
-    "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
@@ -22,12 +8,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Sınırsız"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Arama Tablosu sütunları",
+    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
+    "SettingTable": "Masa Ayarları"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
+  },
+  "error": {
+    "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
+  },
   "general": {
     "button": {
       "CopyAll": "Hepsini kopyala"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Sınırsız"
   }
 }
