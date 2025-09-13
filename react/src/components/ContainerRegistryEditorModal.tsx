@@ -197,7 +197,7 @@ const ContainerRegistryEditorModal: React.FC<
           .catch(() => {});
       }}
       {...modalProps}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         ref={formRef}

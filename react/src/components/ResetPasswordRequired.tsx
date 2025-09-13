@@ -91,7 +91,7 @@ const ResetPasswordRequired = () => {
       maskClosable={false}
       footer={null}
       width={450}
-      destroyOnClose={true}
+      destroyOnHidden={true}
       forceRender
     >
       <BAIFlex

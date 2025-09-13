@@ -122,7 +122,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       width={450}
       onCancel={onRequestClose}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       {...modalProps}
     >
       <BAIFlex direction="column" gap={'md'} align="stretch">

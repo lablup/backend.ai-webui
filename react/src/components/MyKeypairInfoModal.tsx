@@ -60,7 +60,7 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
       title={t('userSettings.MyKeypairInfo')}
       centered
       onCancel={onRequestClose}
-      destroyOnClose
+      destroyOnHidden
       width={'auto'}
       footer={[
         <Button
