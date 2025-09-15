@@ -4,12 +4,10 @@ import MyResource from '../components/MyResource';
 import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
 import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
-import TotalResourceWithinResourceGroup from '../components/TotalResourceWithinResourceGroup';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import TotalResourceWithinResourceGroup, {
+  useIsAvailableTotalResourceWithinResourceGroup,
+} from '../components/TotalResourceWithinResourceGroup';
+import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -24,7 +22,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const DashboardPage: React.FC = () => {
-  const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
@@ -38,8 +35,8 @@ const DashboardPage: React.FC = () => {
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('dashboard_board_items');
 
-  const skipTotalResourceWithinResourceGroup =
-    baiClient?._config?.hideAgents && userRole !== 'superadmin';
+  const isAvailableTotalResourcePanel =
+    useIsAvailableTotalResourceWithinResourceGroup();
 
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
@@ -65,7 +62,7 @@ const DashboardPage: React.FC = () => {
     {
       projectId: currentProject.id,
       resourceGroup: currentResourceGroup || 'default',
-      skipTotalResourceWithinResourceGroup,
+      skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
     },
@@ -140,7 +137,7 @@ const DashboardPage: React.FC = () => {
         ),
       },
     },
-    !skipTotalResourceWithinResourceGroup && {
+    isAvailableTotalResourcePanel && {
       id: 'totalResourceWithinResourceGroup',
       rowSpan: 2,
       columnSpan: 2,

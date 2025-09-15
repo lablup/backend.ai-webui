@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "δοκιμή"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
-  },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
-    "SettingTable": "Ρυθμίσεις πίνακα"
-  },
-  "error": {
-    "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
@@ -21,12 +7,29 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Απεριόριστος"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
+    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
+    "SettingTable": "Ρυθμίσεις πίνακα"
+  },
+  "comp:BAITestButton": {
+    "Test": "δοκιμή"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
+  },
+  "error": {
+    "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
+  },
   "general": {
     "button": {
       "CopyAll": "Αντιγράψτε όλα"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Απεριόριστος"
   }
 }

@@ -71,7 +71,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
     return (
       <Empty
         image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t('resourcePanel.NoResourcesAvailable') || ''}
+        description={t('comp:ResourceStatistics.NoResourcesData') || ''}
       />
     );
   }

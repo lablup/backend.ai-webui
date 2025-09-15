@@ -59,7 +59,7 @@ const EndpointTokenGenerationModal: React.FC<
             onRequestClose(true);
           },
           onError: (err) => {
-            if (err?.msg?.includes('valid_until is older than now')) {
+            if (err?.message?.includes('valid_until is older than now')) {
               message.error(t('modelService.TokenExpiredDateError'));
               return;
             } else {

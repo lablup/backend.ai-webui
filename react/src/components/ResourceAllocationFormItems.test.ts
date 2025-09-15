@@ -5,7 +5,6 @@ import {
 } from '../hooks/useResourceLimitAndRemaining';
 import { Image } from './ImageEnvironmentSelectFormItems';
 import { getAllocatablePresetNames } from './ResourceAllocationFormItems';
-import _ from 'lodash';
 
 describe('getAllocatablePresetNames', () => {
   const presets: Array<ResourcePreset> = [

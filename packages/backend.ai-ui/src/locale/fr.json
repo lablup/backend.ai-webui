@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} des éléments {{total}}"
-  },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
-    "SettingTable": "Paramètres de la table",
-    "SearchTableColumn": "Colonnes de table de recherche"
-  },
-  "error": {
-    "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",
     "ResetFilter": "Réinitialiser les filtres"
@@ -21,12 +7,29 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Illimité"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Colonnes de table de recherche",
+    "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
+    "SettingTable": "Paramètres de la table"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} des éléments {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Aucune données de ressources disponibles"
+  },
+  "error": {
+    "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
+  },
   "general": {
     "button": {
       "CopyAll": "Copier tout"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Illimité"
   }
 }

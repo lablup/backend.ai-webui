@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} von {{total}} Elementen"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Tabelleneinstellungen",
-    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SearchTableColumn": "Suchtabellenspalten"
-  },
-  "error": {
-    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"
@@ -21,12 +7,29 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Unbegrenzt"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Suchtabellenspalten",
+    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
+    "SettingTable": "Tabelleneinstellungen"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} von {{total}} Elementen"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Keine Ressourcendaten verfügbar"
+  },
+  "error": {
+    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
+  },
   "general": {
     "button": {
       "CopyAll": "Alle kopieren"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Unbegrenzt"
   }
 }

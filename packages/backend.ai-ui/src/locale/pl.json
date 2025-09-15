@@ -1,33 +1,35 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Wyszukiwanie",
+    "ResetFilter": "Zresetuj filtry"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agent"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Nieograniczony"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Wyszukaj kolumny tabeli",
+    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
+    "SettingTable": "Ustawienia tabeli"
+  },
   "comp:BAITestButton": {
     "Test": "test"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} z {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Ustawienia tabeli",
-    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
-    "SearchTableColumn": "Wyszukaj kolumny tabeli"
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Brak danych dotyczących zasobów"
   },
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
-  },
-  "comp:BAIPropertyFilter": {
-    "PlaceHolder": "Wyszukiwanie",
-    "ResetFilter": "Zresetuj filtry"
-  },
-
-  "comp:BAISessionAgentIds": {
-    "Agent": "Agent"
   },
   "general": {
     "button": {
       "CopyAll": "Kopiuj wszystko"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Nieograniczony"
   }
 }

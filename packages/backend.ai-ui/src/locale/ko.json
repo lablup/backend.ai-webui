@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "테스트"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
-  "comp:BAITable": {
-    "SettingTable": "표 설정",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SearchTableColumn": "표시할 열 검색"
-  },
-  "error": {
-    "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
@@ -21,12 +7,29 @@
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "제한없음"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "표시할 열 검색",
+    "SelectColumnToDisplay": "표시할 열 선택",
+    "SettingTable": "표 설정"
+  },
+  "comp:BAITestButton": {
+    "Test": "테스트"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "표시할 리소스 데이터가 없습니다"
+  },
+  "error": {
+    "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
+  },
   "general": {
     "button": {
       "CopyAll": "모두 복사"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "제한없음"
   }
 }

@@ -1,33 +1,35 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Tìm kiếm",
+    "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Đại lý"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Không giới hạn"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Các cột bảng tìm kiếm",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SettingTable": "Cài đặt bảng"
+  },
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
   },
-  "comp:BAITable": {
-    "SettingTable": "Cài đặt bảng",
-    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
-    "SearchTableColumn": "Các cột bảng tìm kiếm"
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
-  },
-  "comp:BAIPropertyFilter": {
-    "PlaceHolder": "Tìm kiếm",
-    "ResetFilter": "Đặt lại bộ lọc"
-  },
-
-  "comp:BAISessionAgentIds": {
-    "Agent": "Đại lý"
   },
   "general": {
     "button": {
       "CopyAll": "Sao chép tất cả"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Không giới hạn"
   }
 }

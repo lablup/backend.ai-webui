@@ -1,33 +1,35 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Поиск",
+    "ResetFilter": "Сбросить фильтры"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Агент"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Неограниченный"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Поиск таблицы столбцов",
+    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
+    "SettingTable": "Настройки таблицы"
+  },
   "comp:BAITestButton": {
     "Test": "тест"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы",
-    "SearchTableColumn": "Поиск таблицы столбцов"
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Недоступные данные о ресурсах"
   },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
-  },
-  "comp:BAIPropertyFilter": {
-    "PlaceHolder": "Поиск",
-    "ResetFilter": "Сбросить фильтры"
-  },
-
-  "comp:BAISessionAgentIds": {
-    "Agent": "Агент"
   },
   "general": {
     "button": {
       "CopyAll": "Копировать все"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Неограниченный"
   }
 }

@@ -1,7 +1,9 @@
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
-import TotalResourceWithinResourceGroup from './TotalResourceWithinResourceGroup';
+import TotalResourceWithinResourceGroup, {
+  useIsAvailableTotalResourceWithinResourceGroup,
+} from './TotalResourceWithinResourceGroup';
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Dropdown, MenuProps, Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
@@ -10,7 +12,6 @@ import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { ConfigurableResourceCardQuery } from 'src/__generated__/ConfigurableResourceCardQuery.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
@@ -32,13 +33,11 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   const [selectedPanelType, setSelectedPanelType] = useBAISettingUserState(
     'resource_panel_type',
   );
-  const baiClient = useSuspendedBackendaiClient();
   const userRole = useCurrentUserRole();
 
+  const isAvailableTotalResourcePanel =
+    useIsAvailableTotalResourceWithinResourceGroup();
   const currentResourceGroup = useCurrentResourceGroupValue();
-
-  const isHiddenAgents =
-    baiClient?._config?.hideAgents && userRole !== 'superadmin';
 
   const queryRefForTotalResource =
     useLazyLoadQuery<ConfigurableResourceCardQuery>(
@@ -62,7 +61,10 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
         agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
       },
       {
-        fetchPolicy: isHiddenAgents ? 'store-only' : 'network-only',
+        // if TotalResourceWithinResourceGroup is not available, do not fetch the query
+        fetchPolicy: isAvailableTotalResourcePanel
+          ? 'network-only'
+          : 'store-only',
         fetchKey: fetchKey,
       },
     );
@@ -78,7 +80,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       label: t('webui.menu.MyResourcesInResourceGroup'),
       value: 'MyResourceWithinResourceGroup' as ResourcePanelType,
     },
-    !isHiddenAgents && {
+    isAvailableTotalResourcePanel && {
       label: t('webui.menu.TotalResourcesInResourceGroup'),
       value: 'TotalResourceWithinResourceGroup' as ResourcePanelType,
     },
@@ -86,7 +88,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
 
   useEffect(() => {
     if (
-      isHiddenAgents &&
+      !isAvailableTotalResourcePanel &&
       currentPanelType === 'TotalResourceWithinResourceGroup'
     ) {
       setSelectedPanelType('MyResource');
@@ -144,7 +146,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
         return <MyResourceWithinResourceGroup {...commonProps} />;
       case 'TotalResourceWithinResourceGroup':
         return (
-          !isHiddenAgents && (
+          isAvailableTotalResourcePanel && (
             <TotalResourceWithinResourceGroup
               {...commonProps}
               queryRef={queryRefForTotalResource}

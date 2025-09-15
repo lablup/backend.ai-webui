@@ -125,7 +125,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                   },
                   onError(error) {
                     if (
-                      error.msg?.includes(
+                      error.message?.includes(
                         'The virtual folder already exists with the same name',
                       )
                     ) {

@@ -1,33 +1,35 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "搜索",
+    "ResetFilter": "重置過濾器"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "代理人"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無限"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "搜索表列",
+    "SelectColumnToDisplay": "選擇要顯示的列",
+    "SettingTable": "表設置"
+  },
   "comp:BAITestButton": {
     "Test": "測試"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}項目"
   },
-  "comp:BAITable": {
-    "SettingTable": "表設置",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SearchTableColumn": "搜索表列"
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "沒有可用的資源數據"
   },
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
-  },
-  "comp:BAIPropertyFilter": {
-    "PlaceHolder": "搜索",
-    "ResetFilter": "重置過濾器"
-  },
-
-  "comp:BAISessionAgentIds": {
-    "Agent": "代理人"
   },
   "general": {
     "button": {
       "CopyAll": "複製全部"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "無限"
   }
 }

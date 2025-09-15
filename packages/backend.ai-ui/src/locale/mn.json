@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "турших"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Хүснэгтийн тохиргоо",
-    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SearchTableColumn": "Хүснэгтийн баганыг хайх"
-  },
-  "error": {
-    "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
@@ -21,12 +7,29 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Хязгааргүй"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Хүснэгтийн баганыг хайх",
+    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
+    "SettingTable": "Хүснэгтийн тохиргоо"
+  },
+  "comp:BAITestButton": {
+    "Test": "турших"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
+  },
+  "error": {
+    "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
+  },
   "general": {
     "button": {
       "CopyAll": "Бүгдийг хуулбарлах"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Хязгааргүй"
   }
 }

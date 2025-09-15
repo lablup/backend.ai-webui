@@ -1,33 +1,35 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Cari",
+    "ResetFilter": "Tetapkan semula penapis"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Ejen"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tidak terhad"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Lajur jadual carian",
+    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
+    "SettingTable": "Tetapan Jadual"
+  },
   "comp:BAITestButton": {
     "Test": "ujian"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
-  "comp:BAITable": {
-    "SettingTable": "Tetapan Jadual",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SearchTableColumn": "Lajur jadual carian"
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Tiada data sumber tersedia"
   },
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
-  },
-  "comp:BAIPropertyFilter": {
-    "PlaceHolder": "Cari",
-    "ResetFilter": "Tetapkan semula penapis"
-  },
-
-  "comp:BAISessionAgentIds": {
-    "Agent": "Ejen"
   },
   "general": {
     "button": {
       "CopyAll": "Salin semua"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tidak terhad"
   }
 }

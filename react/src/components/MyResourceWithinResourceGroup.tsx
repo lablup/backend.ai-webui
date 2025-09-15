@@ -36,18 +36,20 @@ const MyResourceWithinResourceGroup: React.FC<
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
-  const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
+  const deferredCurrentResourceGroup = useDeferredValue(
+    currentResourceGroup || 'default',
+  );
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
 
   const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
     currentProjectName: currentProject.name,
-    currentResourceGroup: deferredCurrentResourceGroup || 'default',
+    currentResourceGroup: deferredCurrentResourceGroup,
     fetchKey: `${fetchKey}${internalFetchKey}`,
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails(
-    deferredCurrentResourceGroup || 'default',
+    deferredCurrentResourceGroup,
   );
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
@@ -60,66 +62,84 @@ const MyResourceWithinResourceGroup: React.FC<
   const resourceData = useMemo(() => {
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
-    const resourceGroup = deferredCurrentResourceGroup || 'default';
+    const cpuData =
+      cpuSlot &&
+      !_.isUndefined(
+        checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]?.using
+          ?.cpu,
+      )
+        ? {
+            using: {
+              current: convertToNumber(
+                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                  ?.using?.cpu,
+              ),
+              total: undefined, // No total for resource group view
+            },
+            remaining: {
+              current: convertToNumber(
+                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                  ?.remaining?.cpu,
+              ),
+              total: undefined,
+            },
+            metadata: {
+              title: cpuSlot.human_readable_name,
+              displayUnit: cpuSlot.display_unit,
+            },
+          }
+        : null;
 
-    const cpuData = cpuSlot
-      ? {
-          using: {
-            current: convertToNumber(
-              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.cpu,
-            ),
-            total: undefined, // No total for resource group view
-          },
-          remaining: {
-            current: convertToNumber(
-              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.cpu,
-            ),
-            total: undefined,
-          },
-          metadata: {
-            title: cpuSlot.human_readable_name,
-            displayUnit: cpuSlot.display_unit,
-          },
-        }
-      : null;
-
-    const memoryData = memSlot
-      ? {
-          using: {
-            current: processMemoryValue(
-              checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.mem,
-              memSlot.display_unit,
-            ),
-            total: undefined,
-          },
-          remaining: {
-            current: processMemoryValue(
-              checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.mem,
-              memSlot.display_unit,
-            ),
-            total: undefined,
-          },
-          metadata: {
-            title: memSlot.human_readable_name,
-            displayUnit: memSlot.display_unit,
-          },
-        }
-      : null;
+    const memoryData =
+      memSlot &&
+      !_.isUndefined(
+        checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]?.using
+          ?.mem,
+      )
+        ? {
+            using: {
+              current: processMemoryValue(
+                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                  ?.using?.mem,
+                memSlot.display_unit,
+              ),
+              total: undefined,
+            },
+            remaining: {
+              current: processMemoryValue(
+                checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                  ?.remaining?.mem,
+                memSlot.display_unit,
+              ),
+              total: undefined,
+            },
+            metadata: {
+              title: memSlot.human_readable_name,
+              displayUnit: memSlot.display_unit,
+            },
+          }
+        : null;
 
     const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
       .omit(['cpu', 'mem'])
       .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+        if (
+          !resourceSlot ||
+          _.isUndefined(
+            checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+              ?.using?.[key as ResourceSlotName],
+          )
+        )
+          return null;
 
+        // TODO: convertToNumber should not handle `undefined` as Infinity.
         const usingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[resourceGroup]?.using?.[
-            key as ResourceSlotName
-          ],
+          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+            ?.using?.[key as ResourceSlotName],
         );
         const remainingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[resourceGroup]?.remaining?.[
-            key as ResourceSlotName
-          ],
+          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+            ?.remaining?.[key as ResourceSlotName],
         );
 
         // Filter out if both using and remaining have no values

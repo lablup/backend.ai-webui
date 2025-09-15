@@ -19,7 +19,7 @@ export type ESMClientErrorResponse = {
   statusCode: number;
   statusText: string;
   title: string;
-  msg: string;
+  message: string;
   description: string;
   error_code?: string;
   traceback?: string;
@@ -41,8 +41,11 @@ const useErrorMessageResolver = () => {
     let errorMsg = defaultMessage || t('error.UnknownError');
     if (!error) return errorMsg;
 
-    if (error?.msg) {
-      errorMsg = !_.includes(error?.msg, 'Traceback') ? error.msg : errorMsg;
+    if (error?.msg || error?.message) {
+      const integratedErrorMsg = error?.msg || error?.message || '';
+      errorMsg = !_.includes(integratedErrorMsg, 'Traceback')
+        ? integratedErrorMsg
+        : errorMsg;
     } else if (error.title) {
       errorMsg = error.title;
     }

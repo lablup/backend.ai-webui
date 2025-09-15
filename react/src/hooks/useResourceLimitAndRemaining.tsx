@@ -66,10 +66,10 @@ export type ResourceSlots = {
 };
 
 export type RemainingSlots = {
-  cpu: number;
-  mem: number;
+  cpu?: number;
+  mem?: number;
   accelerators: {
-    [key: string]: number;
+    [key: string]: number | undefined;
   };
 };
 
@@ -262,19 +262,17 @@ export const useResourceLimitAndRemaining = ({
                   ?.min || '0',
               ),
             ]),
-            max: _.min(
-              _.compact([
-                ignorePerContainerConfig
-                  ? undefined
-                  : baiClient._config.maxCPUCoresPerContainer,
-                limitParser(checkPresetInfo?.keypair_limits.cpu),
-                limitParser(checkPresetInfo?.group_limits.cpu),
-                includeResourceGroupLimits
-                  ? limitParser(currentResourceGroupSlotLimits.cpu)
-                  : undefined,
-                // resourceGroupResourceSize?.cpu,
-              ]),
-            ),
+            max: _.min([
+              ignorePerContainerConfig
+                ? undefined
+                : baiClient._config.maxCPUCoresPerContainer,
+              limitParser(checkPresetInfo?.keypair_limits.cpu),
+              limitParser(checkPresetInfo?.group_limits.cpu),
+              includeResourceGroupLimits
+                ? limitParser(currentResourceGroupSlotLimits.cpu)
+                : undefined,
+              // resourceGroupResourceSize?.cpu,
+            ]),
           },
     mem:
       resourceSlots?.mem === undefined
@@ -294,32 +292,31 @@ export const useResourceLimitAndRemaining = ({
               ),
             max: (() => {
               // handled by 'g(GiB)' unit
-              const minValue = _.min(
-                _.compact([
-                  ignorePerContainerConfig
-                    ? undefined
-                    : baiClient._config.maxMemoryPerContainer,
-                  limitParser(checkPresetInfo?.keypair_limits.mem) &&
-                    convertToBinaryUnit(
-                      limitParser(checkPresetInfo?.keypair_limits.mem) + '',
-                      'g',
-                    )?.number,
-                  limitParser(checkPresetInfo?.group_limits.mem) &&
-                    convertToBinaryUnit(
-                      limitParser(checkPresetInfo?.group_limits.mem) + '',
-                      'g',
-                    )?.number,
-                  includeResourceGroupLimits &&
-                    limitParser(currentResourceGroupSlotLimits.mem) &&
+              const minValue = _.min([
+                ignorePerContainerConfig
+                  ? undefined
+                  : baiClient._config.maxMemoryPerContainer,
+                limitParser(checkPresetInfo?.keypair_limits.mem) &&
+                  convertToBinaryUnit(
+                    limitParser(checkPresetInfo?.keypair_limits.mem) + '',
+                    'g',
+                  )?.number,
+                limitParser(checkPresetInfo?.group_limits.mem) &&
+                  convertToBinaryUnit(
+                    limitParser(checkPresetInfo?.group_limits.mem) + '',
+                    'g',
+                  )?.number,
+                includeResourceGroupLimits
+                  ? limitParser(currentResourceGroupSlotLimits.mem) &&
                     convertToBinaryUnit(
                       limitParser(currentResourceGroupSlotLimits.mem) + '',
                       'g',
-                    )?.number,
-                  // scaling group all mem (using + remaining), string type
-                  // resourceGroupResourceSize?.mem &&
-                  //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
-                ]),
-              );
+                    )?.number
+                  : undefined,
+                // scaling group all mem (using + remaining), string type
+                // resourceGroupResourceSize?.mem &&
+                //   iSizeToSize(resourceGroupResourceSize?.mem + '', 'g')?.number,
+              ]);
               return minValue !== undefined ? minValue + 'g' : undefined;
             })(),
           },
@@ -340,24 +337,20 @@ export const useResourceLimitAndRemaining = ({
               },
             )?.min || '0',
           ),
-          max: _.min(
-            _.compact([
-              ignorePerContainerConfig ? undefined : perContainerLimit || 8,
-              limitParser(
-                checkPresetInfo?.keypair_limits[key as ResourceSlotName],
-              ),
-              limitParser(
-                checkPresetInfo?.group_limits[key as ResourceSlotName],
-              ),
-              includeResourceGroupLimits
-                ? limitParser(
-                    currentResourceGroupSlotLimits[key as ResourceSlotName],
-                  )
-                : undefined,
-              // scaling group all cpu (using + remaining), string type
-              // resourceGroupResourceSize.accelerators[key],
-            ]),
-          ),
+          max: _.min([
+            ignorePerContainerConfig ? undefined : perContainerLimit || 8,
+            limitParser(
+              checkPresetInfo?.keypair_limits[key as ResourceSlotName],
+            ),
+            limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
+            includeResourceGroupLimits
+              ? limitParser(
+                  currentResourceGroupSlotLimits[key as ResourceSlotName],
+                )
+              : undefined,
+            // scaling group all cpu (using + remaining), string type
+            // resourceGroupResourceSize.accelerators[key],
+          ]),
         };
         return result;
       },
@@ -376,7 +369,7 @@ export const useResourceLimitAndRemaining = ({
     accelerators: _.reduce(
       acceleratorSlots,
       (result, value, key) => {
-        const remainingValues = _.compact([
+        result[key] = _.min([
           _.toNumber(
             checkPresetInfo?.keypair_remaining[key as ResourceSlotName],
           ),
@@ -389,31 +382,24 @@ export const useResourceLimitAndRemaining = ({
               )
             : undefined,
         ]);
-        result[key] = _.min(remainingValues) ?? Number.MAX_SAFE_INTEGER;
         return result;
       },
       {} as RemainingSlots['accelerators'],
     ),
-    cpu: (() => {
-      const remainingValues = _.compact([
-        limitParser(checkPresetInfo?.keypair_remaining.cpu),
-        limitParser(checkPresetInfo?.group_remaining.cpu),
-        includeScalingGroupRemaining
-          ? limitParser(checkPresetInfo?.scaling_group_remaining.cpu)
-          : undefined,
-      ]);
-      return _.min(remainingValues) ?? Number.MAX_SAFE_INTEGER;
-    })(),
-    mem: (() => {
-      const remainingValues = _.compact([
-        limitParser(checkPresetInfo?.keypair_remaining.mem),
-        limitParser(checkPresetInfo?.group_remaining.mem),
-        includeScalingGroupRemaining
-          ? limitParser(checkPresetInfo?.scaling_group_remaining.mem)
-          : undefined,
-      ]);
-      return _.min(remainingValues) ?? Number.MAX_SAFE_INTEGER;
-    })(),
+    cpu: _.min([
+      limitParser(checkPresetInfo?.keypair_remaining.cpu),
+      limitParser(checkPresetInfo?.group_remaining.cpu),
+      includeScalingGroupRemaining
+        ? limitParser(checkPresetInfo?.scaling_group_remaining.cpu)
+        : undefined,
+    ]),
+    mem: _.min([
+      limitParser(checkPresetInfo?.keypair_remaining.mem),
+      limitParser(checkPresetInfo?.group_remaining.mem),
+      includeScalingGroupRemaining
+        ? limitParser(checkPresetInfo?.scaling_group_remaining.mem)
+        : undefined,
+    ]),
   });
 
   const remaining = createRemainingSlots(true);
