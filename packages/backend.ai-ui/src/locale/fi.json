@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
+  },
   "error": {
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },

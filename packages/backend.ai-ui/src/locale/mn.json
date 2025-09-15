@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
+  },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },

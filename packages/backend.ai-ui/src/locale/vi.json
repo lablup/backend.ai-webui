@@ -4,7 +4,6 @@
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."

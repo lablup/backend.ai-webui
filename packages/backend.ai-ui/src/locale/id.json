@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
+  },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },

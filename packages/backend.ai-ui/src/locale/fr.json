@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} des éléments {{total}}"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Aucune données de ressources disponibles"
+  },
   "error": {
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },

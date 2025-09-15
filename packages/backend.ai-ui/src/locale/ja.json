@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "利用可能なリソースデータはありません"
+  },
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },

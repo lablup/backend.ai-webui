@@ -21,6 +21,9 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
+  },
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },

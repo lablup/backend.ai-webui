@@ -4,7 +4,6 @@
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Недоступные данные о ресурсах"
   },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."

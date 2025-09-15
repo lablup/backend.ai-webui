@@ -4,7 +4,6 @@
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Kaynak verisi yok"
   },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."

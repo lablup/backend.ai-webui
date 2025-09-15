@@ -4,7 +4,6 @@
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Tiada data sumber tersedia"
   },
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."

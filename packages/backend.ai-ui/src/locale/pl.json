@@ -4,7 +4,6 @@
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} z {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Brak danych dotyczących zasobów"
   },
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."

@@ -4,7 +4,6 @@
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   },
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"

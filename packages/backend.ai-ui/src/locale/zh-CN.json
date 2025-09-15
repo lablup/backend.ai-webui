@@ -4,7 +4,6 @@
     "PlaceHolder": "搜索",
     "ResetFilter": "重置过滤器"
   },
-
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -21,6 +20,9 @@
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "没有可用的资源数据"
   },
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
