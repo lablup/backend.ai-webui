@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} z {{total}}"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Ustawienia tabeli",
-    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
-    "SearchTableColumn": "Wyszukaj kolumny tabeli"
-  },
-  "error": {
-    "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
@@ -22,12 +8,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Nieograniczony"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Wyszukaj kolumny tabeli",
+    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
+    "SettingTable": "Ustawienia tabeli"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} z {{total}}"
+  },
+  "error": {
+    "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
+  },
   "general": {
     "button": {
       "CopyAll": "Kopiuj wszystko"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Nieograniczony"
   }
 }

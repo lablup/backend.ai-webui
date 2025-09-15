@@ -1,19 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} di {{total}} elementi"
-  },
-  "comp:BAITable": {
-    "SettingTable": "Impostazioni della tabella",
-    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
-    "SearchTableColumn": "Colonne della tabella di ricerca"
-  },
-  "error": {
-    "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
-  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Ricerca",
     "ResetFilter": "Reimposta i filtri"
@@ -21,12 +7,26 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
+  "comp:BAIStatistic": {
+    "Unlimited": "Illimitato"
+  },
+  "comp:BAITable": {
+    "SearchTableColumn": "Colonne della tabella di ricerca",
+    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
+    "SettingTable": "Impostazioni della tabella"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} di {{total}} elementi"
+  },
+  "error": {
+    "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
+  },
   "general": {
     "button": {
       "CopyAll": "Copia tutto"
     }
-  },
-  "comp:BAIStatistic": {
-    "Unlimited": "Illimitato"
   }
 }
