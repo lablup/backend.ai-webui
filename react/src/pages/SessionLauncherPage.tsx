@@ -31,7 +31,6 @@ import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import {
-  compareNumberWithUnits,
   formatDuration,
   generateRandomString,
   convertToBinaryUnit,
@@ -521,11 +520,7 @@ const SessionLauncherPage = () => {
                 ? values.owner.project
                 : values.resourceGroup,
               resource_opts: {
-                shmem:
-                  compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-                  compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                    ? '1g'
-                    : values.resource.shmem,
+                shmem: values.resource.shmem,
                 // allow_fractional_resource_fragmentation can be added here if needed
               },
 
