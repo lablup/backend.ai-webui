@@ -34,20 +34,22 @@
     }
   },
   "comp:BAIImportArtifactModal": {
-    "PullArtifact": "Tarik artifak",
     "Pull": "Tarik",
-    "PulledVersionsAreExcluded": "Versi yang ditarik dikecualikan.",
-    "Name": "Nama",
-    "Type": "Jenis",
-    "Description": "Penerangan",
-    "Source": "Sumber"
+    "PullVersion": "Tarik versi",
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "OnlySCANNEDVersionsCanBePulled": "Hanya versi yang diimbas boleh ditarik.",
+    "Size": "Saiz",
+    "Version": "Versi",
+    "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
+    "FailedToPullVersions": "Gagal menarik versi."
   },
   "comp:BAIArtifactTable": {
     "Action": "Tindakan",
     "Size": "Saiz",
     "Updated": "Dikemas kini",
     "Version": "Versi",
-    "PullLatestVersion": "Tarik versi terkini"
+    "PullLatestVersion": "Tarik versi terkini",
+    "Scanned": "Diimbas"
   },
   "comp:BAIArtifactRevisionTable": {
     "Name": "Nama",
@@ -55,7 +57,52 @@
     "Size": "Saiz",
     "Status": "Status",
     "Updated": "Dikemas kini",
-    "Action": "Tindakan",
+    "Version": "Versi",
+    "Control": "Kawalan",
+    "PullThisVersion": "Tarik versi ini",
+    "RemoveThisVersion": "Keluarkan versi ini"
+  },
+  "general": {
+    "button": {
+      "Cancel": "Batalkan",
+      "Remove": "Keluarkan",
+      "Close": "Tutup"
+    },
+    "TotalItems": "Jumlah {{total}} item"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "RemoveVersions": "Keluarkan versi",
+    "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
+    "Version": "Versi",
+    "Size": "Saiz",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Hanya versi yang tidak menarik atau diimbas boleh dikeluarkan.",
+    "FailedToRemoveVersions": "Gagal mengeluarkan versi."
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Penerangan",
+    "Name": "Nama",
+    "Source": "Sumber",
+    "Type": "Jenis"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Batalkan tarik",
+    "CancelingWillRestartThePulling": "Membatalkan akan memulakan semula menarik",
+    "FailedToCancelThePulling": "Gagal membatalkan menarik.",
+    "VersionPullCanceledSuccessfully": "Tarik versi {{version}} dibatalkan dengan jayanya.",
+    "WARNING": "Amaran",
+    "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini",
+    "VersionIsPullingNow": "{{version}} Versi sedang menarik sekarang."
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Masukkan ID Model. (mis. OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Masukkan versi. (Lalai: Utama)",
+    "Failed to import model from hugging face": "Gagal mengimport model daripada memeluk muka",
+    "Import": "Import",
+    "ModalDescription": "Import model dari memeluk muka dengan menentukan ID dan versi model.",
+    "ModalTitle": "Import dari muka yang memeluk",
+    "ModelID": "ID Model",
+    "SuccessfullyImportedModelFromHuggingFace": "Berjaya meminta import model dari memeluk muka",
     "Version": "Versi"
   }
 }
