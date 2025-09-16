@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Salin semua",
-      "Cancel": "Batalkan"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Tarik",
     "PullVersion": "Tarik versi",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "Batalkan",
       "Remove": "Keluarkan",
-      "Close": "Tutup"
+      "Close": "Tutup",
+      "CopyAll": "Salin semua"
     },
     "TotalItems": "Jumlah {{total}} item"
   },

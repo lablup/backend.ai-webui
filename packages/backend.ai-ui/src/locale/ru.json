@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Копировать все",
-      "Cancel": "Отмена"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Тянуть",
     "PullVersion": "Потянуть версию",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "Отмена",
       "Remove": "Удалять",
-      "Close": "Закрывать"
+      "Close": "Закрывать",
+      "CopyAll": "Копировать все"
     },
     "TotalItems": "Total {{total}} элементы"
   },

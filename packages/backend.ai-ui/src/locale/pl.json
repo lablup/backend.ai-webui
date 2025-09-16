@@ -27,12 +27,6 @@
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
-  "general": {
-    "button": {
-      "CopyAll": "Kopiuj wszystko",
-      "Cancel": "Anulować"
-    }
-  },
   "comp:BAIImportArtifactModal": {
     "Pull": "Ciągnąć",
     "PullVersion": "Wersja Pull",
@@ -66,7 +60,8 @@
     "button": {
       "Cancel": "Anulować",
       "Remove": "Usunąć",
-      "Close": "Zamknąć"
+      "Close": "Zamknąć",
+      "CopyAll": "Kopiuj wszystko"
     },
     "TotalItems": "Total {{total}}"
   },
