@@ -31,7 +31,6 @@ import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import {
-  compareNumberWithUnits,
   formatDuration,
   generateRandomString,
   convertBinarySizeUnit,
