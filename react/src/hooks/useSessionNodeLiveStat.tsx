@@ -1,4 +1,5 @@
 import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
+import { Big } from 'big.js';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -48,12 +49,93 @@ export const useSessionLiveStat = (
     kernelFrgmt,
   );
 
-  const mainKernelNode = _.find(session?.kernel_nodes?.edges, (edge) => {
-    return edge?.node?.cluster_role === 'main';
-  })?.node;
+  // TODO: replace this with session live_stat after implementation
+  // Sum live_stat values across all kernel_nodes in client side for now.
   const liveStat: SessionLiveStats = useMemo(() => {
-    return JSON.parse(mainKernelNode?.live_stat ?? '{}');
-  }, [mainKernelNode?.live_stat]);
+    const edges = session?.kernel_nodes?.edges ?? [];
+    const statsList: SessionLiveStats[] = edges.map((edge) => {
+      try {
+        return JSON.parse(edge?.node?.live_stat || '{}');
+      } catch (e) {
+        console.error('Failed to parse live_stat:', e);
+        return {};
+      }
+    });
+    // Use lodash to merge and sum values
+    const allKeys: Array<keyof SessionLiveStats> = _.uniq(
+      _.flatMap(statsList, (stats) => _.keys(stats)),
+    );
+    const merged: SessionLiveStats = {};
+    allKeys.forEach((key) => {
+      // Gather all ResourceStatItem objects for this key, narrow type
+      const items = statsList
+        .map((stats) => stats[key])
+        .filter((item): item is ResourceStatItem => !!item);
+      if (items.length === 0) return;
+      // List of fields to sum
+      const sumFields = ['current', 'capacity'];
+      // List of fields to average
+      const avgFields = ['stats.max', 'stats.avg', 'stats.rate'];
+      // Sum numeric fields using Big.js for better precision
+      const summed: ResourceStatItem = {} as ResourceStatItem;
+      sumFields.forEach((field) => {
+        const sum = items.reduce((acc, item) => {
+          const value = _.get(item, field) ?? '0';
+          try {
+            return acc.plus(new Big(value));
+          } catch (e) {
+            console.error(`Failed to parse value for ${field}:`, value, e);
+            return acc;
+          }
+        }, new Big(0));
+        summed[field] = sum.toString();
+      });
+      // Average numeric fields using Big.js
+      avgFields.forEach((field) => {
+        const sum = items.reduce((acc, item) => {
+          const value = _.get(item, field) ?? '0';
+          try {
+            return acc.plus(new Big(value));
+          } catch (e) {
+            console.error(`Failed to parse value for ${field}:`, value, e);
+            return acc;
+          }
+        }, new Big(0));
+        const avg = items.length > 0 ? sum.div(items.length) : new Big(0);
+        summed[field] = avg.toString();
+      });
+      // Calculate pct as (current / capacity) * 100 using Big.js
+      const current = new Big(summed.current ?? '0');
+      const capacity = new Big(summed.capacity ?? '0');
+      summed.pct = capacity.gt(0)
+        ? current.div(capacity).times(100).toFixed(2)
+        : '0';
+      // Use the first non-empty unit_hint
+      summed.unit_hint = items.find((item) => item.unit_hint)?.unit_hint ?? '';
+      // Copy any other fields from the first item (if exists)
+      const firstItem = items[0];
+      if (firstItem) {
+        // Get all possible field paths including nested ones
+        const allFieldPaths = [
+          ...Object.keys(firstItem),
+          ...avgFields.filter((field) => _.has(firstItem, field)),
+        ];
+
+        allFieldPaths.forEach((field) => {
+          if (
+            !sumFields.includes(field) &&
+            !avgFields.includes(field) &&
+            field !== 'unit_hint' &&
+            field !== 'pct'
+          ) {
+            _.set(summed, field, _.get(firstItem, field) ?? '');
+          }
+        });
+      }
+      merged[key] = summed;
+    });
+    return merged;
+  }, [session?.kernel_nodes?.edges]);
 
   const sortedLiveStatArray = useMemo(
     () =>
