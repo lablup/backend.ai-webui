@@ -24,7 +24,7 @@ const RenderPrivacyPolicyHtml = () => {
   }, [selectedLanguage, defaultLanguage]);
 
   const { data } = useSuspenseTanQuery({
-    queryKey: ['termsOfService', language],
+    queryKey: ['privacyPolicy', language],
     staleTime: 1000 * 60 * 30,
     gcTime: 1000 * 60 * 60,
     queryFn: () =>
