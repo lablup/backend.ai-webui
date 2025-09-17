@@ -487,11 +487,7 @@ const SessionLauncherPage = () => {
             maxWaitSeconds: 15,
             cpu: values.resource.cpu,
             mem: values.resource.mem,
-            shmem:
-              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-              compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                ? '1g'
-                : values.resource.shmem,
+            shmem: values.resource.shmem,
             ...(values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:

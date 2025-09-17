@@ -408,7 +408,7 @@ const ResourceAllocationFormItems: React.FC<
           cpu: parseInt(slots?.cpu || '0') || 0,
         },
       });
-      runShmemAutomationRule(mem || '0g');
+      !preset?.shared_memory && runShmemAutomationRule(mem || '0g');
 
       form
         .validateFields(['resource'], {
@@ -937,113 +937,112 @@ const ResourceAllocationFormItems: React.FC<
                                   }}
                                 ></div>
 
-                                {getFieldValue('enabledAutomaticShmem') ? (
-                                  `SHMEM ${shmemUnitResult?.numberUnit.toLowerCase()}`
-                                ) : (
-                                  <Form.Item
-                                    noStyle
-                                    name={['resource', 'shmem']}
-                                    // initialValue={'0g'}
-                                    // label={t('session.launcher.SharedMemory')}
-                                    hidden={form.getFieldValue(
-                                      'enabledAutomaticShmem',
-                                    )}
-                                    tooltip={
-                                      <Trans
-                                        i18nKey={
-                                          'session.launcher.DescSharedMemory'
-                                        }
-                                      />
-                                    }
-                                    dependencies={[['resource', 'mem']]}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: t('general.ValueRequired', {
-                                          name: t(
-                                            'session.launcher.SharedMemory',
-                                          ),
-                                        }),
-                                      },
-                                      {
-                                        warningOnly: true,
-                                        validator: async (
-                                          rule,
-                                          value: string,
-                                        ) => {
-                                          const applicationMem =
-                                            appMemUnitResult?.numberUnit;
-                                          const shmem = value;
+                                {/* This Form item should be hidden instead of unmounted because the shmem value is set even when `enabledAutomaticShmem` is true. */}
+                                {getFieldValue('enabledAutomaticShmem')
+                                  ? `SHMEM ${shmemUnitResult?.numberUnit.toLowerCase()}`
+                                  : null}
 
-                                          if (
-                                            _.isEmpty(applicationMem) ||
-                                            _.isEmpty(shmem)
-                                          ) {
-                                            return Promise.resolve();
-                                          }
-
-                                          if (
-                                            (convertBinarySizeUnit(
-                                              applicationMem,
-                                              'M',
-                                            )?.number || 0) <
-                                            (convertBinarySizeUnit(shmem, 'M')
-                                              ?.number || 0) *
-                                              2
-                                          ) {
-                                            throw t(
-                                              'session.launcher.SHMEMShouldBeLessThanHalfOfAppMemory',
-                                            );
-                                          } else {
-                                            return Promise.resolve();
-                                          }
-                                        },
-                                      },
-
-                                      {
-                                        validator: async (
-                                          rule,
-                                          value: string,
-                                        ) => {
-                                          if (
-                                            _.isEmpty(
-                                              getFieldValue('resource')?.mem,
-                                            ) ||
-                                            _.isEmpty(value) ||
-                                            compareNumberWithUnits(
-                                              getFieldValue('resource')?.mem,
-                                              value,
-                                            ) >= 0
-                                          ) {
-                                            return Promise.resolve();
-                                          } else {
-                                            throw t(
-                                              'resourcePreset.SHMEMShouldBeSmallerThanMemory',
-                                            );
-                                          }
-                                        },
-                                      },
-                                    ]}
-                                  >
-                                    <DynamicUnitInputNumber
-                                      // shmem max is mem max
-                                      // min={resourceLimits.shmem?.min}
-                                      min={resourceLimits.shmem?.min}
-                                      size="small"
-                                      // max={resourceLimits.mem?.max || '0g'}
-                                      addonBefore={'SHM'}
-                                      max={
-                                        form.getFieldValue([
-                                          'resource',
-                                          'mem',
-                                        ]) || '0g'
+                                <Form.Item
+                                  noStyle
+                                  name={['resource', 'shmem']}
+                                  // initialValue={'0g'}
+                                  // label={t('session.launcher.SharedMemory')}
+                                  hidden={form.getFieldValue(
+                                    'enabledAutomaticShmem',
+                                  )}
+                                  tooltip={
+                                    <Trans
+                                      i18nKey={
+                                        'session.launcher.DescSharedMemory'
                                       }
-                                      style={{
-                                        width: 200,
-                                      }}
                                     />
-                                  </Form.Item>
-                                )}
+                                  }
+                                  dependencies={[['resource', 'mem']]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: t('general.ValueRequired', {
+                                        name: t(
+                                          'session.launcher.SharedMemory',
+                                        ),
+                                      }),
+                                    },
+                                    {
+                                      warningOnly: true,
+                                      validator: async (
+                                        rule,
+                                        value: string,
+                                      ) => {
+                                        const applicationMem =
+                                          appMemUnitResult?.numberUnit;
+                                        const shmem = value;
+
+                                        if (
+                                          _.isEmpty(applicationMem) ||
+                                          _.isEmpty(shmem)
+                                        ) {
+                                          return Promise.resolve();
+                                        }
+
+                                        if (
+                                          (convertBinarySizeUnit(
+                                            applicationMem,
+                                            'M',
+                                          )?.number || 0) <
+                                          (convertBinarySizeUnit(shmem, 'M')
+                                            ?.number || 0) *
+                                            2
+                                        ) {
+                                          throw t(
+                                            'session.launcher.SHMEMShouldBeLessThanHalfOfAppMemory',
+                                          );
+                                        } else {
+                                          return Promise.resolve();
+                                        }
+                                      },
+                                    },
+
+                                    {
+                                      validator: async (
+                                        rule,
+                                        value: string,
+                                      ) => {
+                                        if (
+                                          _.isEmpty(
+                                            getFieldValue('resource')?.mem,
+                                          ) ||
+                                          _.isEmpty(value) ||
+                                          compareNumberWithUnits(
+                                            getFieldValue('resource')?.mem,
+                                            value,
+                                          ) >= 0
+                                        ) {
+                                          return Promise.resolve();
+                                        } else {
+                                          throw t(
+                                            'resourcePreset.SHMEMShouldBeSmallerThanMemory',
+                                          );
+                                        }
+                                      },
+                                    },
+                                  ]}
+                                >
+                                  <DynamicUnitInputNumber
+                                    // shmem max is mem max
+                                    // min={resourceLimits.shmem?.min}
+                                    min={resourceLimits.shmem?.min}
+                                    size="small"
+                                    // max={resourceLimits.mem?.max || '0g'}
+                                    addonBefore={'SHM'}
+                                    max={
+                                      form.getFieldValue(['resource', 'mem']) ||
+                                      '0g'
+                                    }
+                                    style={{
+                                      width: 200,
+                                    }}
+                                  />
+                                </Form.Item>
                                 <Flex direction="row" gap="xs">
                                   <Form.Item
                                     noStyle
