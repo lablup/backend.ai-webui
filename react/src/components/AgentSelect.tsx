@@ -9,7 +9,7 @@ import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'options'> {
   autoSelectDefault?: boolean;
   fetchKey?: string;
   resourceGroup?: string | null;
@@ -122,9 +122,6 @@ const AgentSelect: React.FC<Props> = ({
     : undefined;
   return (
     <Select
-      onChange={(value, option) => {
-        setValue(value, option);
-      }}
       loading={searchStr !== deferredSearchStr}
       filterOption={false}
       showSearch
@@ -132,9 +129,26 @@ const AgentSelect: React.FC<Props> = ({
       onSearch={(v) => {
         setSearchStr(v);
       }}
-      {...selectProps}
-      value={value}
       options={filterOutEmpty([autoSelectIfMatch, ...agentOptions])}
+      //override props.onChange and props.value, it is handled by useControllableValue
+      {..._.omit(selectProps, ['value', 'onChange'])}
+      onChange={(value: unknown, option) => {
+        if (
+          selectProps.mode === 'multiple' &&
+          _.isArray(value) &&
+          _.isArray(option)
+        ) {
+          if (_.last(value) === 'auto' || value.length === 0) {
+            value = ['auto'];
+            option = _.last(option);
+          } else if (value[0] === 'auto' && value.length > 1) {
+            value = value.slice(1);
+            option = option.slice(1);
+          }
+        }
+        setValue(value, option);
+      }}
+      value={value}
     />
   );
 };

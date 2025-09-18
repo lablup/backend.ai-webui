@@ -46,7 +46,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAlloca
     cluster_mode: 'single-node',
     cluster_size: 1,
     enabledAutomaticShmem: true,
-    agent: 'auto',
+    agent: ['auto'],
   };
 
 export const isMinOversMaxValue = (min: number, max: number) => {
@@ -67,7 +67,7 @@ export interface ResourceAllocationFormValue {
   cluster_size: number;
   enabledAutomaticShmem: boolean;
   allocationPreset?: string;
-  agent?: string;
+  agent?: string[] | string;
 }
 
 export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -95,6 +95,7 @@ const ResourceAllocationFormItems: React.FC<
   const { token } = theme.useToken();
 
   const baiClient = useSuspendedBackendaiClient();
+  const supportMultiAgents = baiClient.supports('multi-agents');
 
   const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
@@ -1225,7 +1226,15 @@ const ResourceAllocationFormItems: React.FC<
         <Form.Item
           label={t('session.launcher.SelectAgent')}
           required
-          tooltip={<Trans i18nKey={'session.launcher.DescSelectAgent'} />}
+          tooltip={
+            <Trans
+              i18nKey={
+                supportMultiAgents
+                  ? 'session.launcher.DescSelectAgent'
+                  : 'session.launcher.DescSelectAgentBefore2516'
+              }
+            />
+          }
         >
           <BAIFlex gap={'xs'}>
             <Suspense>
@@ -1233,14 +1242,24 @@ const ResourceAllocationFormItems: React.FC<
                 <AgentSelect
                   resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
+                  mode={supportMultiAgents ? 'multiple' : undefined}
+                  labelRender={
+                    supportMultiAgents
+                      ? ({ label, value }) => {
+                          return value === 'auto' ? label : value;
+                        }
+                      : undefined
+                  }
                   onChange={(value) => {
-                    if (value !== 'auto') {
+                    if (
+                      !supportMultiAgents &&
+                      !_.isEqual(_.castArray(value), ['auto'])
+                    ) {
                       form.setFieldsValue({
                         cluster_mode: 'single-node',
                         cluster_size: 1,
                       });
                     }
-                    // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
                   }}
                 ></AgentSelect>
               </Form.Item>
@@ -1286,7 +1305,12 @@ const ResourceAllocationFormItems: React.FC<
                       onChange={() => {
                         form.validateFields().catch(() => {});
                       }}
-                      disabled={getFieldValue('agent') !== 'auto'}
+                      disabled={
+                        !supportMultiAgents &&
+                        !_.isEqual(_.castArray(getFieldValue('agent')), [
+                          'auto',
+                        ])
+                      }
                     >
                       <Radio.Button value="single-node">
                         {t('session.launcher.SingleNode')}
@@ -1351,7 +1375,11 @@ const ResourceAllocationFormItems: React.FC<
                             }
                             disabled={
                               derivedClusterSizeMaxLimit === 1 ||
-                              getFieldValue('agent') !== 'auto'
+                              (!supportMultiAgents &&
+                                !_.isEqual(
+                                  _.castArray(getFieldValue('agent')),
+                                  ['auto'],
+                                ))
                             }
                             sliderProps={{
                               marks: {
