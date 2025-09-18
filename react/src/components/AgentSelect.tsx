@@ -9,7 +9,7 @@ import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'options'> {
   autoSelectDefault?: boolean;
   fetchKey?: string;
   resourceGroup?: string | null;
@@ -122,8 +122,17 @@ const AgentSelect: React.FC<Props> = ({
     : undefined;
   return (
     <Select
-      onChange={(value, option) => {
+      onChange={(value: unknown, option) => {
+        if (Array.isArray(value)) {
+          // multi-mode
+          if (value[value.length - 1] === 'auto' || value.length === 0) {
+            value = ['auto'];
+          } else if (value[0] === 'auto' && value.length > 1) {
+            value = value.slice(1);
+          }
+        }
         setValue(value, option);
+        selectProps.onChange?.(value, option);
       }}
       loading={searchStr !== deferredSearchStr}
       filterOption={false}
@@ -132,7 +141,7 @@ const AgentSelect: React.FC<Props> = ({
       onSearch={(v) => {
         setSearchStr(v);
       }}
-      {...selectProps}
+      {..._.omit(selectProps, ['onChange'])}
       value={value}
       options={filterOutEmpty([autoSelectIfMatch, ...agentOptions])}
     />
