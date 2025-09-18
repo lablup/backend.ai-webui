@@ -43,7 +43,7 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
 
   // Calculate progress position
   const calculateProgress = (): number => {
-    if (!showProgress || total === undefined) return 0;
+    if (!showProgress || total === undefined || total === Infinity) return 0;
     if (!_.isFinite(current) || !isFinite(total) || total === 0)
       return progressSteps;
     return _.isUndefined(current)
