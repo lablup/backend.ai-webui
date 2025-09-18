@@ -57,21 +57,31 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   const isSupportBaseImageName = baiClient.supports('base-image-name');
 
   return isSupportBaseImageName ? (
-    <>
-      <ImageMetaIcon
-        image={fullName}
+    <BAIFlex direction="row" gap={'xs'} wrap="wrap">
+      <ImageMetaIcon image={fullName} />
+      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
+      <Divider
+        type="vertical"
         style={{
-          marginRight: token.marginXS,
+          marginInline: 0,
         }}
       />
-      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
-      <Divider type="vertical" />
       <Typography.Text>{image.version}</Typography.Text>
-      <Divider type="vertical" />
+      <Divider
+        type="vertical"
+        style={{
+          marginInline: 0,
+        }}
+      />
       <Typography.Text>{image.architecture}</Typography.Text>
       {withoutTag ? null : (
         <>
-          <Divider type="vertical" />
+          <Divider
+            type="vertical"
+            style={{
+              marginInline: 0,
+            }}
+          />
           {_.map(image.tags, (tag, index) => {
             if (!tag) return null;
             const isCustomized = tag.key && _.includes(tag.key, 'customized_');
@@ -106,6 +116,9 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
               <Tag
                 key={`${tag.key}-${index}`}
                 color={isCustomized ? 'cyan' : 'blue'}
+                style={{
+                  marginRight: 0,
+                }}
               >
                 {aliasedTag}
               </Tag>
@@ -121,7 +134,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
           }}
         />
       )}
-    </>
+    </BAIFlex>
   ) : (
     <BAIFlex direction="row" gap={'xs'}>
       <ImageMetaIcon image={legacyFullImageString || null} />
