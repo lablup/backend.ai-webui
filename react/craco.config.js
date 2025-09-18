@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
 
 const {
   getLoader,
@@ -15,6 +16,11 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 
 module.exports = {
   devServer: (devServerConfig, { env, paths }) => {
+    devServerConfig.static = {
+      directory: path.join(__dirname, '../'),
+      publicPath: '/',
+    };
+
     devServerConfig.watchFiles = {
       paths: [
         '../index.html',
@@ -24,15 +30,15 @@ module.exports = {
         '../resources/**/*',
       ],
     };
-    
+
     // Override deprecated middleware options with setupMiddlewares
     const originalOnBefore = devServerConfig.onBeforeSetupMiddleware;
     const originalOnAfter = devServerConfig.onAfterSetupMiddleware;
-    
+
     if (originalOnBefore || originalOnAfter) {
       delete devServerConfig.onBeforeSetupMiddleware;
       delete devServerConfig.onAfterSetupMiddleware;
-      
+
       devServerConfig.setupMiddlewares = (middlewares, devServer) => {
         if (originalOnBefore) {
           originalOnBefore(devServer);
@@ -43,7 +49,7 @@ module.exports = {
         return middlewares;
       };
     }
-    
+
     return devServerConfig;
   },
   babel: {
@@ -165,9 +171,17 @@ module.exports = {
       webpackConfig.plugins = webpackConfig.plugins.map((plugin) => {
         if (plugin.constructor.name === 'HtmlWebpackPlugin') {
           if (env === 'development') {
+            const content = fs.readFileSync(webuiIndexHtml, {
+              encoding: 'utf-8',
+            });
+
             plugin = new HtmlWebpackPlugin({
               inject: true,
               template: webuiIndexHtml,
+              templateContent: content.replace(
+                '// DEV_JS_INJECTING',
+                'globalThis.process = {env: {NODE_ENV: "development"}};',
+              ),
             });
           } else {
             plugin = new HtmlWebpackPlugin({
