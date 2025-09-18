@@ -129,7 +129,11 @@ const loadPage =
         if (typeof globalThis.backendaiPages !== 'undefined') {
           for (const item of globalThis.backendaiPages) {
             if ('url' in item) {
-              import('./plugins/' + item.url + '.js');
+              const path =
+                process.env.NODE_ENV === 'development'
+                  ? './plugins/'
+                  : '../plugins/';
+              import(path + item.url + '.js');
             }
           }
           break;
