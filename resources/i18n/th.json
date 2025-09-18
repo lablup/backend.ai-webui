@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "สามารถปิดการใช้งาน 2FA ของผู้ใช้อื่นได้เท่านั้น",
     "Allocation": "การจัดสรร",
     "Association": "การเชื่อมโยง",
+    "BeforeVerification": "ก่อนการตรวจสอบ",
     "ConcurrentSessions": "เซสชันพร้อมกัน",
     "Create": "สร้าง",
     "CreatePolicy": "สร้างนโยบาย",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "ปิดใช้งานข้อมูลรับรอง",
     "DeactivateUser": "ปิดการใช้งานผู้ใช้",
     "DeleteCredential": "ลบข้อมูลรับรอง",
+    "Deleted": "ถูกลบออก",
     "DescActiveUser": "ผู้ใช้ที่ใช้งานอยู่?",
     "DescRequirePasswordChange": "ต้องการเปลี่ยนรหัสผ่านหรือไม่?",
     "Description": "คำอธิบาย",
@@ -634,6 +636,7 @@
   },
   "general": {
     "AccessKey": "คีย์การเข้าถึง",
+    "Active": "คล่องแคล่ว",
     "Add": "เพิ่ม",
     "Advanced": "ขั้นสูง",
     "All": "ทั้งหมด",
@@ -651,6 +654,7 @@
     "General": "ทั่วไป",
     "Image": "อิมเมจ",
     "InProgress": "อยู่ระหว่างดำเนินการ",
+    "Inactive": "ไม่ทำงาน",
     "InvalidJSONFormat": "รูปแบบ JSON ไม่ถูกต้อง",
     "LastUpdated": "อัปเดตล่าสุด",
     "Manual": "คู่มือ",
@@ -890,6 +894,7 @@
     "64chars": "(สูงสุด 64 ตัวอักษร)"
   },
   "modelService": {
+    "Active": "คล่องแคล่ว",
     "Active/Total": "ใช้งาน/ทั้งหมด",
     "AddRules": "เพิ่มกฎ",
     "AdditionalMounts": "การเมาท์เพิ่มเติม",
@@ -903,6 +908,7 @@
     "CreatedAt": "สร้างเมื่อ",
     "CurrentTime": "เวลาปัจจุบัน",
     "DesiredSessionCount": "จำนวนเซสชันที่ต้องการ",
+    "Destroyed": "ถูกทำลาย",
     "EditModelService": "แก้ไขบริการโมเดล",
     "EndpointId": "รหัสจุดสิ้นสุด",
     "EndpointName": "ชื่อจุดสิ้นสุด",

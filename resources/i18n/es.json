@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Sólo es posible desactivar 2FA de otros usuarios.",
     "Allocation": "Asignación",
     "Association": "Asociación",
+    "BeforeVerification": "Antes de la verificación",
     "ConcurrentSessions": "Sesiones simultáneas",
     "Create": "Cree",
     "CreatePolicy": "Crear política",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Desactivar credencial",
     "DeactivateUser": "Desactivar usuario",
     "DeleteCredential": "Eliminar credencial",
+    "Deleted": "Eliminado",
     "DescActiveUser": "¿Usuario activo?",
     "DescRequirePasswordChange": "¿Requerir cambio de contraseña?",
     "Description": "Descripción",
@@ -645,6 +647,7 @@
   },
   "general": {
     "AccessKey": "Clave de acceso",
+    "Active": "Activo",
     "Add": "Añadir",
     "Advanced": "Avanzado",
     "All": "Todos",
@@ -662,6 +665,7 @@
     "General": "General",
     "Image": "Imagen",
     "InProgress": "En curso",
+    "Inactive": "Inactivo",
     "InvalidJSONFormat": "Formato JSON no válido.",
     "LastUpdated": "Última actualización",
     "Manual": "Manual",
@@ -901,6 +905,7 @@
     "64chars": "(máximo 64 caracteres)"
   },
   "modelService": {
+    "Active": "Activo",
     "Active/Total": "Activo/Total",
     "AddRules": "Agregar reglas",
     "AdditionalMounts": "Montajes adicionales",
@@ -914,6 +919,7 @@
     "CreatedAt": "Creado en",
     "CurrentTime": "Hora actual",
     "DesiredSessionCount": "Recuento de sesiones deseado",
+    "Destroyed": "Destruido",
     "EditModelService": "Editar modelo de servicio",
     "EndpointId": "ID de punto final",
     "EndpointName": "Nombre del punto final",

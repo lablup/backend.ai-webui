@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Возможно только отключение 2FA для других пользователей.",
     "Allocation": "Распределение",
     "Association": "Ассоциация",
+    "BeforeVerification": "Перед проверкой",
     "ConcurrentSessions": "Параллельные сеансы",
     "Create": "Создавать",
     "CreatePolicy": "Создать политику",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Деактивировать учетные данные",
     "DeactivateUser": "Деактивировать пользователя",
     "DeleteCredential": "Удалить учетные данные",
+    "Deleted": "Удален",
     "DescActiveUser": "Активный пользователь?",
     "DescRequirePasswordChange": "Требовать смены пароля?",
     "Description": "Описание",
@@ -644,6 +646,7 @@
   },
   "general": {
     "AccessKey": "Ключ доступа",
+    "Active": "Активный",
     "Add": "Добавлять",
     "Advanced": "Продвинутый",
     "All": "Все",
@@ -661,6 +664,7 @@
     "General": "Общие сведения",
     "Image": "Изображение",
     "InProgress": "В процессе",
+    "Inactive": "Неактивный",
     "InvalidJSONFormat": "Неверный формат JSON.",
     "LastUpdated": "Последнее обновление",
     "Manual": "Руководство",
@@ -900,6 +904,7 @@
     "64chars": "(максимум 64 символа)"
   },
   "modelService": {
+    "Active": "Активный",
     "Active/Total": "Активный/Всего",
     "AddRules": "Добавить правила",
     "AdditionalMounts": "Дополнительные крепления",
@@ -913,6 +918,7 @@
     "CreatedAt": "Создано в",
     "CurrentTime": "Текущее время",
     "DesiredSessionCount": "Желаемое количество сеансов",
+    "Destroyed": "Уничтожен",
     "EditModelService": "Редактирование модели сервиса",
     "EndpointId": "Идентификатор конечной точки",
     "EndpointName": "Имя конечной точки",
