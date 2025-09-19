@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "ทดสอบ"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "comp:BAITable": {
+    "SettingTable": "การตั้งค่าตาราง",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
+  },
+  "error": {
+    "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
+  },
+  "general": {
+    "NSelected": "{{count}} เลือก",
+    "button": {
+      "Delete": "ลบ",
+      "Create": "สร้าง",
+      "Upload": "อัพโหลด",
+      "CopyAll": "คัดลอกทั้งหมด"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
+    "DeleteSelectedItemsDialog": "ลบการยืนยัน",
+    "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
+    "FolderCreatedSuccessfully": "โฟลเดอร์สร้างสำเร็จ",
+    "CreateANewFolder": "สร้างโฟลเดอร์ใหม่",
+    "FolderName": "ชื่อโฟลเดอร์",
+    "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "MaxFolderNameLength": "ชื่อโฟลเดอร์ต้องเป็น 255 อักขระหรือน้อยกว่า",
+    "Name": "ชื่อ",
+    "Size": "ขนาด",
+    "CreatedAt": "สร้างขึ้นที่",
+    "ModifiedAt": "ดัดแปลงที่",
+    "Controls": "การควบคุม",
+    "UploadFiles": "อัปโหลดไฟล์",
+    "UploadFolder": "โฟลเดอร์อัปโหลด",
+    "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "error": {
+      "FileUploadSizeLimit": "ขนาดไฟล์เกินขีด จำกัด ขนาดการอัปโหลด"
+    },
+    "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
+    "DuplicatedFiles": "การยืนยันการเขียนทับ"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "ไม่ จำกัด"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SettingTable": "การตั้งค่าตาราง"
-  },
-  "comp:BAITestButton": {
-    "Test": "ทดสอบ"
-  },
-  "comp:FileExplorer": {
-    "Controls": "การควบคุม",
-    "CreateANewFolder": "สร้างโฟลเดอร์ใหม่",
-    "CreatedAt": "สร้างขึ้นที่",
-    "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
-    "DeleteSelectedItemsDialog": "ลบการยืนยัน",
-    "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
-    "FolderCreatedSuccessfully": "โฟลเดอร์สร้างสำเร็จ",
-    "FolderName": "ชื่อโฟลเดอร์",
-    "MaxFolderNameLength": "ชื่อโฟลเดอร์ต้องเป็น 255 อักขระหรือน้อยกว่า",
-    "ModifiedAt": "ดัดแปลงที่",
-    "Name": "ชื่อ",
-    "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
-    "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
-    "Size": "ขนาด",
-    "UploadFiles": "อัปโหลดไฟล์",
-    "UploadFolder": "โฟลเดอร์อัปโหลด",
-    "error": {
-      "FileUploadSizeLimit": "ขนาดไฟล์เกินขีด จำกัด ขนาดการอัปโหลด"
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
-  },
-  "error": {
-    "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
-  },
-  "general": {
-    "NSelected": "{{count}} เลือก",
-    "button": {
-      "CopyAll": "คัดลอกทั้งหมด",
-      "Create": "สร้าง",
-      "Delete": "ลบ",
-      "Upload": "อัพโหลด"
-    }
   }
 }
