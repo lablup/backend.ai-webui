@@ -49,8 +49,17 @@ type UserRole = {
   [key: string]: string[];
 };
 const permissionRangeOfRoleChanges: UserRole = {
-  superadmin: ['superadmin', 'admin', 'user', 'monitor'],
-  admin: ['admin', 'user', 'monitor'],
+  superadmin: [
+    'superadmin',
+    // 'admin',
+    'user',
+    //  'monitor'
+  ],
+  admin: [
+    // 'admin',
+    'user',
+    // 'monitor'
+  ],
 };
 
 interface UserSettingModalProps extends BAIModalProps {
