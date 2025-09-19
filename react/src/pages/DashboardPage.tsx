@@ -177,22 +177,31 @@ const DashboardPage: React.FC = () => {
   // and thus not displayed on screen.
   // Opted-out items should also be stored separately in localStorage, and newly added items
   // should be included in initialBoardItems.
-  const mergedBoardItems = filterOutEmpty(
-    _.map(initialBoardItems, (item) => {
-      const updatedItem = _.find(
+  const newlyAddedItems = _.filter(
+    initialBoardItems,
+    (item) =>
+      !_.find(
         localStorageBoardItems,
         (itemInStorage) => itemInStorage.id === item.id,
-      );
-      return { ...item, ...updatedItem };
+      ),
+  );
+  const localstorageBoardItemsWithData = filterOutEmpty(
+    _.map(localStorageBoardItems, (item) => {
+      const matchedData = _.find(
+        initialBoardItems,
+        (initialItem) => initialItem.id === item.id,
+      )?.data;
+      return matchedData ? { ...item, data: matchedData } : undefined;
     }),
   );
+  const boardItems = [...localstorageBoardItemsWithData, ...newlyAddedItems];
 
   return (
     <BAIBoard
       movable
       resizable
       bordered
-      items={mergedBoardItems}
+      items={boardItems}
       onItemsChange={(event) => {
         const changedItems = [...event.detail.items];
         setLocalStorageBoardItems(
