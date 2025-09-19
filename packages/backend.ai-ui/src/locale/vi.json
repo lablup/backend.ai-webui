@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:FileExplorer": {
+    "Controls": "Kiểm soát",
+    "CreateANewFolder": "Tạo một thư mục mới",
+    "CreatedAt": "Được tạo ra tại",
+    "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
+    "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
+    "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
+    "FolderName": "Tên thư mục",
+    "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
+    "ModifiedAt": "Sửa đổi tại",
+    "Name": "Tên",
+    "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
+    "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
+    "Size": "Kích cỡ",
+    "UploadFiles": "Tải lên tệp",
+    "UploadFolder": "Tải lên thư mục",
+    "error": {
+      "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
   "general": {
+    "NSelected": "{{count}} Đã chọn",
     "button": {
-      "CopyAll": "Sao chép tất cả"
+      "CopyAll": "Sao chép tất cả",
+      "Create": "Tạo nên",
+      "Delete": "Xóa bỏ",
+      "Upload": "Tải lên"
     }
   }
 }

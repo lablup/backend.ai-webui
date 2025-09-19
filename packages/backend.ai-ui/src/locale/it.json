@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Controlli",
+    "CreateANewFolder": "Crea una nuova cartella",
+    "CreatedAt": "Creato a",
+    "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
+    "DeleteSelectedItemsDialog": "Elimina la conferma",
+    "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
+    "FolderCreatedSuccessfully": "Cartella creata correttamente.",
+    "FolderName": "Nome della cartella",
+    "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",
+    "ModifiedAt": "Modificato a",
+    "Name": "Nome",
+    "PleaseEnterAFolderName": "Immettere il nome della cartella.",
+    "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
+    "Size": "Misurare",
+    "UploadFiles": "Carica file",
+    "UploadFolder": "Caricamento Carica",
+    "error": {
+      "FileUploadSizeLimit": "La dimensione del file supera il limite di dimensione del caricamento."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} di {{total}} elementi"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
   "general": {
+    "NSelected": "{{count}} selezionato",
     "button": {
-      "CopyAll": "Copia tutto"
+      "CopyAll": "Copia tutto",
+      "Create": "Creare",
+      "Delete": "Eliminare",
+      "Upload": "Caricamento"
     }
   }
 }

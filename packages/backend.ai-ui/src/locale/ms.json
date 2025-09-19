@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "ujian"
   },
+  "comp:FileExplorer": {
+    "Controls": "Kawalan",
+    "CreateANewFolder": "Buat folder baru",
+    "CreatedAt": "Dicipta di",
+    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
+    "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
+    "FolderName": "Nama folder",
+    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+    "ModifiedAt": "Diubahsuai di",
+    "Name": "Nama",
+    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
+    "Size": "Saiz",
+    "UploadFiles": "Memuat naik fail",
+    "UploadFolder": "Muat naik folder",
+    "error": {
+      "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
   "general": {
+    "NSelected": "{{count}} dipilih",
     "button": {
-      "CopyAll": "Salin semua"
+      "CopyAll": "Salin semua",
+      "Create": "Buat",
+      "Delete": "Padam",
+      "Upload": "Muat naik"
     }
   }
 }

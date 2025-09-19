@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "测试"
   },
+  "comp:FileExplorer": {
+    "Controls": "控件",
+    "CreateANewFolder": "创建一个新文件夹",
+    "CreatedAt": "创建在",
+    "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
+    "DeleteSelectedItemsDialog": "删除确认",
+    "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "FolderCreatedSuccessfully": "文件夹成功创建了。",
+    "FolderName": "文件夹名称",
+    "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
+    "ModifiedAt": "修改为",
+    "Name": "姓名",
+    "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
+    "Size": "尺寸",
+    "UploadFiles": "上传文件",
+    "UploadFolder": "上传文件夹",
+    "error": {
+      "FileUploadSizeLimit": "文件大小超过上传大小限制。"
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "发生了未知错误。\n请重试。"
   },
   "general": {
+    "NSelected": "{{count}}选择",
     "button": {
-      "CopyAll": "复制全部"
+      "CopyAll": "复制全部",
+      "Create": "创造",
+      "Delete": "删除",
+      "Upload": "上传"
     }
   }
 }

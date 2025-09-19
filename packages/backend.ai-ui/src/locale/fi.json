@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:FileExplorer": {
+    "Controls": "Hallintalaitteet",
+    "CreateANewFolder": "Luo uusi kansio",
+    "CreatedAt": "Luotu jhk",
+    "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
+    "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
+    "FolderName": "Kansionimi",
+    "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
+    "ModifiedAt": "Muutettu",
+    "Name": "Nimi",
+    "PleaseEnterAFolderName": "Anna kansionimi.",
+    "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
+    "Size": "Koko",
+    "UploadFiles": "Lähetä tiedostot",
+    "UploadFolder": "Lataa kansio",
+    "error": {
+      "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
   "general": {
+    "NSelected": "{{count}} valittu",
     "button": {
-      "CopyAll": "Kopioida kaikki"
+      "CopyAll": "Kopioida kaikki",
+      "Create": "Luoda",
+      "Delete": "Poistaa",
+      "Upload": "Ladata"
     }
   }
 }

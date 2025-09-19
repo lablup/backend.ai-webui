@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "тест"
   },
+  "comp:FileExplorer": {
+    "Controls": "Управление",
+    "CreateANewFolder": "Создать новую папку",
+    "CreatedAt": "Создан в",
+    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
+    "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "FolderCreatedSuccessfully": "Папка создана успешно.",
+    "FolderName": "Имя папки",
+    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+    "ModifiedAt": "Модифицирован в",
+    "Name": "Имя",
+    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
+    "Size": "Размер",
+    "UploadFiles": "Загрузить файлы",
+    "UploadFolder": "Загрузить папку",
+    "error": {
+      "FileUploadSizeLimit": "Размер файла превышает ограничение размера загрузки."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
   "general": {
+    "NSelected": "{{count}} выбрал",
     "button": {
-      "CopyAll": "Копировать все"
+      "CopyAll": "Копировать все",
+      "Create": "Создавать",
+      "Delete": "Удалить",
+      "Upload": "Загрузить"
     }
   }
 }

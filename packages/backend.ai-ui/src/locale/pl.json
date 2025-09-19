@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Sterownica",
+    "CreateANewFolder": "Utwórz nowy folder",
+    "CreatedAt": "Utworzony w",
+    "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
+    "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
+    "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
+    "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
+    "FolderName": "Nazwa folderu",
+    "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
+    "ModifiedAt": "Zmodyfikowany przy",
+    "Name": "Nazwa",
+    "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
+    "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
+    "Size": "Rozmiar",
+    "UploadFiles": "Prześlij pliki",
+    "UploadFolder": "Folder przesyłania",
+    "error": {
+      "FileUploadSizeLimit": "Rozmiar pliku przekracza limit rozmiaru przesyłania."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} z {{total}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
   "general": {
+    "NSelected": "{{count}}",
     "button": {
-      "CopyAll": "Kopiuj wszystko"
+      "CopyAll": "Kopiuj wszystko",
+      "Create": "Tworzyć",
+      "Delete": "Usuwać",
+      "Upload": "Wgrywać"
     }
   }
 }

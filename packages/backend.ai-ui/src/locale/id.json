@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "tes"
   },
+  "comp:FileExplorer": {
+    "Controls": "Kontrol",
+    "CreateANewFolder": "Buat folder baru",
+    "CreatedAt": "Dibuat di",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "FolderName": "Nama folder",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "ModifiedAt": "Dimodifikasi di",
+    "Name": "Nama",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "Size": "Ukuran",
+    "UploadFiles": "Unggah file",
+    "UploadFolder": "Unggah folder",
+    "error": {
+      "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
   "general": {
+    "NSelected": "{{count}} dipilih",
     "button": {
-      "CopyAll": "Salin semua"
+      "CopyAll": "Salin semua",
+      "Create": "Membuat",
+      "Delete": "Menghapus",
+      "Upload": "Mengunggah"
     }
   }
 }
