@@ -105,7 +105,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     const items: Array<ItemType> = [
       {
         title: <HomeOutlined />,
-        href: '',
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -142,7 +141,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
       items.push({
         title: part,
-        href: '',
         onClick: () => {
           navigateToPath(navigatePath);
           setSelectedItems([]);
@@ -244,7 +242,14 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       <BAIFlex direction="column" align="stretch" gap="md">
         <BAIFlex align="center" justify="between">
-          <Breadcrumb items={breadCrumbItems} />
+          <Breadcrumb
+            items={breadCrumbItems}
+            itemRender={(item) => (
+              <Typography.Link onClick={item.onClick}>
+                {item.title}
+              </Typography.Link>
+            )}
+          />
           <ExplorerActionControls
             selectedFiles={selectedItems}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
