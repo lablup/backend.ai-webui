@@ -192,18 +192,18 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                     label: 'superadmin',
                     value: 'superadmin',
                   },
-                  {
-                    label: 'admin',
-                    value: 'admin',
-                  },
+                  // {
+                  //   label: 'admin',
+                  //   value: 'admin',
+                  // },
                   {
                     label: 'user',
                     value: 'user',
                   },
-                  {
-                    label: 'monitor',
-                    value: 'monitor',
-                  },
+                  // {
+                  //   label: 'monitor',
+                  //   value: 'monitor',
+                  // },
                 ],
               },
               {
