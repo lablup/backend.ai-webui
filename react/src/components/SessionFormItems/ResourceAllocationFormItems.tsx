@@ -46,7 +46,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAlloca
     cluster_mode: 'single-node',
     cluster_size: 1,
     enabledAutomaticShmem: true,
-    agent: 'auto',
+    agent: ['auto'],
   };
 
 export const isMinOversMaxValue = (min: number, max: number) => {
@@ -67,7 +67,7 @@ export interface ResourceAllocationFormValue {
   cluster_size: number;
   enabledAutomaticShmem: boolean;
   allocationPreset?: string;
-  agent?: string;
+  agent?: string[] | string;
 }
 
 export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
@@ -1229,14 +1229,15 @@ const ResourceAllocationFormItems: React.FC<
                 <AgentSelect
                   resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
-                  onChange={(value, option) => {
-                    if (value !== 'auto') {
-                      form.setFieldsValue({
-                        cluster_mode: 'single-node',
-                        cluster_size: 1,
-                      });
-                    }
-                    // TODO: set cluster mode to single node and cluster size to 1 when agent value is not "auto"
+                  {...{
+                    mode: baiClient.supports('multi-agents')
+                      ? 'multiple'
+                      : undefined,
+                    labelRender: baiClient.supports('multi-agents')
+                      ? ({ label, value }) => {
+                          return value === 'auto' ? label : value;
+                        }
+                      : undefined,
                   }}
                 ></AgentSelect>
               </Form.Item>
@@ -1282,7 +1283,6 @@ const ResourceAllocationFormItems: React.FC<
                       onChange={(e) => {
                         form.validateFields().catch(() => {});
                       }}
-                      disabled={getFieldValue('agent') !== 'auto'}
                     >
                       <Radio.Button value="single-node">
                         {t('session.launcher.SingleNode')}
@@ -1345,10 +1345,7 @@ const ResourceAllocationFormItems: React.FC<
                                 ? derivedClusterSizeMaxLimit
                                 : undefined
                             }
-                            disabled={
-                              derivedClusterSizeMaxLimit === 1 ||
-                              getFieldValue('agent') !== 'auto'
-                            }
+                            disabled={derivedClusterSizeMaxLimit === 1}
                             sliderProps={{
                               marks: {
                                 1: '1',
