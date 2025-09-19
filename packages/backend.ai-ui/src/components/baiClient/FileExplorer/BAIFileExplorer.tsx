@@ -58,6 +58,7 @@ export interface BAIFileExplorerProps {
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   tableProps?: Partial<BAITableProps<VFolderFile>>;
   style?: React.CSSProperties;
+  fileDropContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -66,6 +67,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   fetchKey,
   onUpload,
   tableProps,
+  fileDropContainerRef,
   style,
 }) => {
   const { t } = useTranslation();
@@ -282,6 +284,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       {isDragMode && (
         <DragAndDrop
+          portalContainer={fileDropContainerRef?.current || undefined}
           onUpload={(files, currentPath) => onUpload(files, currentPath)}
         />
       )}

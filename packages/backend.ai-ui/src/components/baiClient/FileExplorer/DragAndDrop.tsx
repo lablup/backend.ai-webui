@@ -1,39 +1,34 @@
 import { useUploadVFolderFiles } from './hooks';
 import { InboxOutlined } from '@ant-design/icons';
 import { theme, Typography, Upload } from 'antd';
-import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import { useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-
-const useStyles = createStyles(({ css }) => ({
-  dragger: css`
-    height: 100% !important;
-  `,
-}));
 
 interface DragAndDropProps {
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  /** Optional container element for portal rendering */
+  portalContainer?: HTMLElement | null;
 }
 
-const DragAndDrop: React.FC<DragAndDropProps> = ({ onUpload }) => {
+const DragAndDrop: React.FC<DragAndDropProps> = ({
+  onUpload,
+  portalContainer,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { uploadFiles } = useUploadVFolderFiles();
   const lastFileListRef = useRef<Array<RcFile>>([]);
 
-  return (
+  const overlay = (
     <Upload.Dragger
-      className={styles.dragger}
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        inset: 0,
         zIndex: token.zIndexPopupBase + 1,
         backdropFilter: 'blur(4px)',
+        borderWidth: 3,
       }}
       multiple
       directory
@@ -54,6 +49,8 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({ onUpload }) => {
       </Typography.Text>
     </Upload.Dragger>
   );
+
+  return portalContainer ? createPortal(overlay, portalContainer) : overlay;
 };
 
 export default DragAndDrop;

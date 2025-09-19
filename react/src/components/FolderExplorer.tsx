@@ -48,6 +48,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
   const { uploadStatus, uploadFiles } = useFileUploadManager(vfolderID);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const currentProject = useCurrentProjectValue();
+  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (uploadStatus && _.isEmpty(uploadStatus.pending)) {
@@ -99,6 +100,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
       style={{
         paddingBottom: xl ? token.paddingLG : 0,
       }}
+      fileDropContainerRef={bodyRef}
     />
   ) : null;
 
@@ -121,11 +123,17 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
       title={
         vfolder_node ? (
           <FolderExplorerHeader
+            titleStyle={{
+              zIndex: token.zIndexPopupBase + 2,
+            }}
             vfolderNodeFrgmt={vfolder_node}
             folderExplorerRef={folderExplorerRef}
           />
         ) : null
       }
+      bodyProps={{
+        ref: bodyRef,
+      }}
       onCancel={() => {
         onRequestClose();
       }}

@@ -9,11 +9,13 @@ import { graphql, useFragment } from 'react-relay';
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
   folderExplorerRef: LegacyRef<HTMLDivElement>;
+  titleStyle?: React.CSSProperties;
 }
 
 const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   vfolderNodeFrgmt,
   folderExplorerRef,
+  titleStyle,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -42,7 +44,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
       <BAIFlex
         data-testid="folder-explorer-title"
         gap={token.marginMD}
-        style={{ flex: 1 }}
+        style={{ flex: 1, ...titleStyle }}
       >
         <Suspense fallback={<Skeleton.Input active />}>
           <VFolderNameTitle vfolderNodeFrgmt={vfolderNode} />
