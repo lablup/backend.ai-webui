@@ -457,11 +457,11 @@ const ComputeSessionListPage = () => {
                 }}
                 options={[
                   {
-                    label: 'Running',
+                    label: t('session.Running'),
                     value: 'running',
                   },
                   {
-                    label: 'Finished',
+                    label: t('session.Finished'),
                     value: 'finished',
                   },
                 ]}

@@ -139,6 +139,7 @@
     "AdminCanOnlyRemoveTotp": "Hanya menonaktifkan 2FA pengguna lain yang dapat dilakukan.",
     "Allocation": "Alokasi",
     "Association": "Asosiasi",
+    "BeforeVerification": "Sebelum verifikasi",
     "ConcurrentSessions": "Sesi Serentak",
     "Create": "Buat",
     "CreatePolicy": "Buat Kebijakan",
@@ -152,6 +153,7 @@
     "DeactivateCredential": "Nonaktifkan kredensial",
     "DeactivateUser": "Nonaktifkan pengguna",
     "DeleteCredential": "Hapus kredensial",
+    "Deleted": "Dihapus",
     "DescActiveUser": "Pengguna aktif?",
     "DescRequirePasswordChange": "Perlu perubahan kata sandi?",
     "Description": "Deskripsi",
@@ -644,6 +646,7 @@
   },
   "general": {
     "AccessKey": "Kunci Akses",
+    "Active": "Aktif",
     "Add": "Tambah",
     "Advanced": "Lanjutan",
     "All": "Semua",
@@ -661,6 +664,7 @@
     "General": "Umum",
     "Image": "Gambar",
     "InProgress": "Sedang Berlangsung",
+    "Inactive": "Tidak aktif",
     "InvalidJSONFormat": "Format JSON tidak valid.",
     "LastUpdated": "Terakhir diperbarui",
     "Manual": "Manual",
@@ -900,6 +904,7 @@
     "64chars": "(maksimum 64 karakter)"
   },
   "modelService": {
+    "Active": "Aktif",
     "Active/Total": "Aktif/Total",
     "AddRules": "Tambahkan aturan",
     "AdditionalMounts": "Pemasangan Tambahan",
@@ -912,6 +917,7 @@
     "CreatedAt": "Dibuat di",
     "CurrentTime": "Waktu saat ini",
     "DesiredSessionCount": "Jumlah Sesi yang Diinginkan",
+    "Destroyed": "Hancur",
     "EditModelService": "Layanan Edit Model",
     "EndpointId": "ID titik akhir",
     "EndpointName": "Nama Titik Akhir",

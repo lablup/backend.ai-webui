@@ -35,16 +35,6 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
 
-type UserStatus = {
-  [key: string]: string;
-};
-const userStatus: UserStatus = {
-  active: 'Active',
-  inactive: 'Inactive',
-  'before-verification': 'Before Verification',
-  deleted: 'Deleted',
-};
-
 type UserRole = {
   [key: string]: string[];
 };
@@ -396,12 +386,24 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         </Form.Item>
         <Form.Item name="status" label={t('credential.UserStatus')}>
           <Select
-            options={_.map(userStatus, (value, key) => {
-              return {
-                value: key,
-                label: value,
-              };
-            })}
+            options={[
+              {
+                value: 'active',
+                label: t('general.Active'),
+              },
+              {
+                value: 'inactive',
+                label: t('general.Inactive'),
+              },
+              {
+                value: 'before-verification',
+                label: t('credential.BeforeVerification'),
+              },
+              {
+                value: 'deleted',
+                label: t('credential.Deleted'),
+              },
+            ]}
           />
         </Form.Item>
         {!!currentUserRole &&
