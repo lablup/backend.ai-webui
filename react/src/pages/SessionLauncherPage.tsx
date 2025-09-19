@@ -12,11 +12,11 @@ import PortSelectFormItem, {
   PortSelectFormValues,
   transformPortValuesToNumbers,
 } from '../components/PortSelectFormItem';
+import ResourceNumber from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
-} from '../components/ResourceAllocationFormItems';
-import ResourceNumber from '../components/ResourceNumber';
+} from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';

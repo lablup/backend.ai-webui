@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '.';
 import { useResourceLimitAndRemainingFragment$key } from '../__generated__/useResourceLimitAndRemainingFragment.graphql';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
-import { AUTOMATIC_DEFAULT_SHMEM } from '../components/ResourceAllocationFormItems';
+import { AUTOMATIC_DEFAULT_SHMEM } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';

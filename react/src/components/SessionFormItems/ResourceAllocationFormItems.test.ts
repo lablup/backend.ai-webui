@@ -1,9 +1,9 @@
-import '../../__test__/matchMedia.mock.js';
+import '../../../__test__/matchMedia.mock.js';
 import {
   MergedResourceLimits,
   ResourcePreset,
-} from '../hooks/useResourceLimitAndRemaining';
-import { Image } from './ImageEnvironmentSelectFormItems';
+} from '../../hooks/useResourceLimitAndRemaining';
+import { Image } from '../ImageEnvironmentSelectFormItems';
 import { getAllocatablePresetNames } from './ResourceAllocationFormItems';
 
 describe('getAllocatablePresetNames', () => {
