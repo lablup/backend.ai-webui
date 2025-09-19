@@ -163,15 +163,9 @@ const ResourceAllocationFormItems: React.FC<
   );
 
   // When undefined, it means that the resourceSlots are not loaded yet.
-  const acceleratorSlots = resourceSlotsInRG
+  const acceleratorSlotsInRG = resourceSlotsInRG
     ? _.omitBy(resourceSlotsInRG, (value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-
-        if (
-          !resourceLimits.accelerators[key]?.max ||
-          resourceLimits.accelerators[key]?.max === 0
-        )
-          return true;
         return false;
       })
     : undefined;
@@ -187,23 +181,34 @@ const ResourceAllocationFormItems: React.FC<
     [currentImage],
   );
 
-  // Disable accelerator input when there is no accelerator slot or no accelerator required in the selected image
-  // TODO: use `supported_accelerators` information from the image instead of `currentImageAcceleratorLimits` (FR-55)
-  const isAcceleratorInputDisabled =
-    (!_.isUndefined(acceleratorSlots) && _.isEmpty(acceleratorSlots)) ||
-    (currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length === 0 &&
-      _.isEmpty(currentEnvironmentManual));
+  // Get supported accelerator types in resource group by image
+  const supportedAcceleratorTypesInRGByImage = useMemo(() => {
+    return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
+      // '*' means all types of accelerators are supported
+      return (
+        _.includes(currentImage?.supported_accelerators, '*') ||
+        (currentImage?.supported_accelerators?.length === 1 &&
+          currentImage.supported_accelerators[0] === '') || // Before BA-2358, manage can return '' instead of '*'
+        _.some(
+          currentImage?.supported_accelerators,
+          (accPrefix) =>
+            accPrefix &&
+            acceleratorTypeName.split('.')[0].startsWith(accPrefix),
+        ) ||
+        !_.isEmpty(currentEnvironmentManual) // if manual image input is not empty, allow user to input any accelerator type
+      );
+    });
+  }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (isAcceleratorInputDisabled) {
+    if (supportedAcceleratorTypesInRGByImage.length === 0) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
         },
       });
     }
-  }, [isAcceleratorInputDisabled, form]);
+  }, [supportedAcceleratorTypesInRGByImage, form]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
@@ -226,9 +231,9 @@ const ResourceAllocationFormItems: React.FC<
     ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
-    const nextAcceleratorType = acceleratorSlots?.[currentAcceleratorType]
+    const nextAcceleratorType = acceleratorSlotsInRG?.[currentAcceleratorType]
       ? currentAcceleratorType
-      : _.keys(acceleratorSlots)[0];
+      : _.first(_.keys(acceleratorSlotsInRG));
 
     form.setFieldsValue({
       resource: {
@@ -360,7 +365,7 @@ const ResourceAllocationFormItems: React.FC<
 
       // Select the first matched AI accelerator type and value
       const firstMatchedAcceleratorType = _.find(
-        _.keys(acceleratorSlots),
+        _.keys(acceleratorSlotsInRG),
         (value) => acceleratorObj[value] !== undefined,
       );
 
@@ -1066,12 +1071,16 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
-                              open: isAcceleratorInputDisabled
-                                ? false
-                                : undefined,
+                              open:
+                                supportedAcceleratorTypesInRGByImage.length ===
+                                0
+                                  ? false
+                                  : undefined,
                             },
                           }}
-                          disabled={isAcceleratorInputDisabled}
+                          disabled={
+                            supportedAcceleratorTypesInRGByImage.length === 0
+                          }
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
@@ -1086,35 +1095,36 @@ const ResourceAllocationFormItems: React.FC<
                               <Form.Item
                                 noStyle
                                 name={['resource', 'acceleratorType']}
-                                initialValue={_.keys(acceleratorSlots)[0]}
-                                hidden={isAcceleratorInputDisabled}
+                                initialValue={_.first(
+                                  _.keys(acceleratorSlotsInRG),
+                                )}
+                                hidden={
+                                  supportedAcceleratorTypesInRGByImage.length ===
+                                  0
+                                }
                               >
                                 <BAISelect
                                   autoSelectOption
                                   tabIndex={-1}
                                   // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                   suffixIcon={
-                                    _.size(acceleratorSlots) > 1
+                                    _.size(acceleratorSlotsInRG) > 1
                                       ? undefined
                                       : null
                                   }
                                   popupMatchSelectWidth={false}
                                   options={_.map(
-                                    acceleratorSlots,
+                                    acceleratorSlotsInRG,
                                     (value, name) => {
                                       return {
                                         value: name,
                                         label:
                                           mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
-                                        disabled:
-                                          currentImageAcceleratorLimits &&
-                                          currentImageAcceleratorLimits.length >
-                                            0 &&
-                                          !_.find(
-                                            currentImageAcceleratorLimits,
-                                            (limit) => limit?.key === name,
-                                          ),
+                                        disabled: !_.includes(
+                                          supportedAcceleratorTypesInRGByImage,
+                                          name,
+                                        ),
                                       };
                                     },
                                   )}

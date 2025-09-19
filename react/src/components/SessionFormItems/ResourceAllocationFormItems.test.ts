@@ -49,6 +49,7 @@ describe('getAllocatablePresetNames', () => {
     base_image_name: undefined,
     tags: undefined,
     version: undefined,
+    supported_accelerators: undefined,
   };
 
   it('should return presets when currentImage has accelerator limits', () => {

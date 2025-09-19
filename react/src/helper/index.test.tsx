@@ -166,6 +166,7 @@ describe('getImageFullName', () => {
           },
         ],
         base_image_name: 'def/training',
+        supported_accelerators: undefined,
         tags: [
           {
             key: 'py3',
@@ -223,6 +224,7 @@ describe('getImageFullName', () => {
           },
         ],
         base_image_name: 'def/training',
+        supported_accelerators: undefined,
         tags: [
           {
             key: 'py3',
@@ -281,6 +283,7 @@ describe('getImageFullName', () => {
           },
         ],
         base_image_name: 'def/training',
+        supported_accelerators: undefined,
         tags: [
           {
             key: 'py3',
