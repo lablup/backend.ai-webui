@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
-  "comp:BAITable": {
-    "SettingTable": "表设置",
-    "SelectColumnToDisplay": "选择要显示的列",
-    "SearchTableColumn": "搜索表列"
-  },
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "文件大小超过上传大小限制。"
     },
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
-    "DuplicatedFiles": "覆盖确认"
+    "DuplicatedFiles": "覆盖确认",
+    "DragAndDropDesc": "将文件拖到此区域上传。"
+  },
+  "comp:BAITable": {
+    "SettingTable": "表设置",
+    "SelectColumnToDisplay": "选择要显示的列",
+    "SearchTableColumn": "搜索表列"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",

@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}項目"
   },
-  "comp:BAITable": {
-    "SettingTable": "表設置",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SearchTableColumn": "搜索表列"
-  },
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "文件大小超過上傳大小限制。"
     },
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
-    "DuplicatedFiles": "覆蓋確認"
+    "DuplicatedFiles": "覆蓋確認",
+    "DragAndDropDesc": "將文件拖到此區域上傳。"
+  },
+  "comp:BAITable": {
+    "SettingTable": "表設置",
+    "SelectColumnToDisplay": "選擇要顯示的列",
+    "SearchTableColumn": "搜索表列"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",

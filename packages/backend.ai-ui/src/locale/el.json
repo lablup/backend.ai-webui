@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
-    "SettingTable": "Ρυθμίσεις πίνακα"
-  },
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Το μέγεθος του αρχείου υπερβαίνει το όριο μεγέθους μεταφόρτωσης."
     },
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",
-    "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης"
+    "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
+    "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση."
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
+    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
+    "SettingTable": "Ρυθμίσεις πίνακα"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",

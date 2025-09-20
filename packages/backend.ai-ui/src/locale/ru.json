@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы",
-    "SearchTableColumn": "Поиск таблицы столбцов"
-  },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Размер файла превышает ограничение размера загрузки."
     },
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
-    "DuplicatedFiles": "Перезаписать подтверждение"
+    "DuplicatedFiles": "Перезаписать подтверждение",
+    "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить."
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
+    "SettingTable": "Настройки таблицы",
+    "SearchTableColumn": "Поиск таблицы столбцов"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",

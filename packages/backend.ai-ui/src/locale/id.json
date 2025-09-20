@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel",
-    "SearchTableColumn": "Kolom Tabel Cari"
-  },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
     },
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
-    "DuplicatedFiles": "Timpa konfirmasi"
+    "DuplicatedFiles": "Timpa konfirmasi",
+    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah."
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel",
+    "SearchTableColumn": "Kolom Tabel Cari"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",

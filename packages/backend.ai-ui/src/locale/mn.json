@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
   },
-  "comp:BAITable": {
-    "SettingTable": "Хүснэгтийн тохиргоо",
-    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SearchTableColumn": "Хүснэгтийн баганыг хайх"
-  },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Файлын хэмжээ байршуулах хэмжээнээс хэтэрсэн байна."
     },
     "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
-    "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих"
+    "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
+    "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Хүснэгтийн тохиргоо",
+    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
+    "SearchTableColumn": "Хүснэгтийн баганыг хайх"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
