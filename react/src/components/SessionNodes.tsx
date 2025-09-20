@@ -4,7 +4,6 @@ import {
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import BAILink from './BAILink';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
@@ -16,6 +15,7 @@ import {
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
+  BAILink,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';

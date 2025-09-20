@@ -185,6 +185,12 @@ export type BackendAIClient = {
       fs: object,
       name?: string,
     ) => Promise<any>;
+    rename_file: (
+      target_path: string,
+      new_name: string,
+      targetFolder: string,
+      is_dir: boolean,
+    ) => Promise<any>;
   };
   supports: (feature: string) => boolean;
   [key: string]: any;

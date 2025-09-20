@@ -36,11 +36,15 @@
     "UploadFolder": "上传文件夹",
     "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
     "error": {
-      "FileUploadSizeLimit": "文件大小超过上传大小限制。"
+      "FileNameRequired": "请输入文件或文件夹名称。",
+      "DuplicatedName": "此名称已经在使用中。\n请输入其他名称。"
     },
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
     "DuplicatedFiles": "覆盖确认",
-    "DragAndDropDesc": "将文件拖到此区域上传。"
+    "DragAndDropDesc": "将文件拖到此区域上传。",
+    "ChangeFileExtensionDesc": "更改文件扩展名可能会导致文件变得无法使用或不正确打开。\n你想继续吗？",
+    "ChangeFileExtension": "更改文件扩展名",
+    "RenameSuccess": "该名称已成功更改。"
   },
   "comp:BAITable": {
     "SettingTable": "表设置",
