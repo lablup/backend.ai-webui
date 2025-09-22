@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Chỉ có thể vô hiệu hóa 2FA của người dùng khác.",
     "Allocation": "Phân bổ",
     "Association": "Hiệp hội",
+    "BeforeVerification": "Trước khi xác minh",
     "ConcurrentSessions": "Phiên đồng thời",
     "Create": "Tạo nên",
     "CreatePolicy": "Tạo chính sách",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Vô hiệu hóa thông tin xác thực",
     "DeactivateUser": "Vô hiệu hóa người dùng",
     "DeleteCredential": "Xóa thông tin xác thực",
+    "Deleted": "Đã xóa",
     "DescActiveUser": "Người dùng đang hoạt động?",
     "DescRequirePasswordChange": "Yêu cầu thay đổi mật khẩu?",
     "Description": "Sự miêu tả",
@@ -645,6 +647,7 @@
   },
   "general": {
     "AccessKey": "Khóa truy cập",
+    "Active": "Tích cực",
     "Add": "Thêm vào",
     "Advanced": "Nâng cao",
     "All": "toàn bộ",
@@ -662,6 +665,7 @@
     "General": "Tổng quan",
     "Image": "Hình ảnh",
     "InProgress": "Đang tiến hành",
+    "Inactive": "Không hoạt động",
     "InvalidJSONFormat": "Định dạng JSON không chính xác.",
     "LastUpdated": "Cập nhật lần cuối",
     "Manual": "Thủ công",
@@ -901,6 +905,7 @@
     "64chars": "(tối đa 64 ký tự)"
   },
   "modelService": {
+    "Active": "Tích cực",
     "Active/Total": "Đang hoạt động/Tổng cộng",
     "AddRules": "Thêm quy tắc",
     "AdditionalMounts": "Gắn kết bổ sung",
@@ -914,6 +919,7 @@
     "CreatedAt": "Được tạo tại",
     "CurrentTime": "Thời điểm hiện tại",
     "DesiredSessionCount": "Số phiên mong muốn",
+    "Destroyed": "Bị phá hủy",
     "EditModelService": "Chỉnh sửa dịch vụ mẫu",
     "EndpointId": "ID điểm cuối",
     "EndpointName": "Tên điểm cuối",

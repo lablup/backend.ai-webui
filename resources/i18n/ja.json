@@ -139,6 +139,7 @@
     "AdminCanOnlyRemoveTotp": "他のユーザーの二重認証は解除のみ可能です。",
     "Allocation": "割り当て",
     "Association": "協会",
+    "BeforeVerification": "確認前",
     "ConcurrentSessions": "同時セッション",
     "Create": "作成する",
     "CreatePolicy": "ポリシーを作成する",
@@ -152,6 +153,7 @@
     "DeactivateCredential": "資格情報を非アクティブ化する",
     "DeactivateUser": "ユーザーを非アクティブ化する",
     "DeleteCredential": "資格情報の削除",
+    "Deleted": "削除されました",
     "DescActiveUser": "アクティブユーザー？",
     "DescRequirePasswordChange": "パスワードの変更が必要ですか？",
     "Description": "説明",
@@ -644,6 +646,7 @@
   },
   "general": {
     "AccessKey": "アクセスキー",
+    "Active": "アクティブ",
     "Add": "追加",
     "Advanced": "高度な",
     "All": "全体",
@@ -661,6 +664,7 @@
     "General": "一般",
     "Image": "画像",
     "InProgress": "進行中",
+    "Inactive": "非アクティブ",
     "InvalidJSONFormat": "JSON形式が間違っています。",
     "LastUpdated": "最終更新日",
     "Manual": "マニュアル",
@@ -900,6 +904,7 @@
     "64chars": "（最大64文字）"
   },
   "modelService": {
+    "Active": "アクティブ",
     "Active/Total": "アクティブ/全体",
     "AddRules": "ルールを追加します",
     "AdditionalMounts": "追加のマウント",
@@ -913,6 +918,7 @@
     "CreatedAt": "作成時間",
     "CurrentTime": "現在時刻",
     "DesiredSessionCount": "希望のセッション数",
+    "Destroyed": "破壊された",
     "EditModelService": "モデルサービスの修正",
     "EndpointId": "エンドポイントID",
     "EndpointName": "エンドポイント名",

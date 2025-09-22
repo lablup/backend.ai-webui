@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "只能禁用其他用户的 2FA。",
     "Allocation": "分配",
     "Association": "協會",
+    "BeforeVerification": "驗證之前",
     "ConcurrentSessions": "並發會話",
     "Create": "創造",
     "CreatePolicy": "創建策略",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "停用憑證",
     "DeactivateUser": "停用用戶",
     "DeleteCredential": "刪除憑證",
+    "Deleted": "刪除",
     "DescActiveUser": "活躍用戶？",
     "DescRequirePasswordChange": "需要修改密碼嗎？",
     "Description": "描述",
@@ -644,6 +646,7 @@
   },
   "general": {
     "AccessKey": "訪問密鑰",
+    "Active": "積極的",
     "Add": "添加",
     "Advanced": "先進的",
     "All": "全部",
@@ -661,6 +664,7 @@
     "General": "一般情况",
     "Image": "影像",
     "InProgress": "进行中",
+    "Inactive": "不活動",
     "InvalidJSONFormat": "JSON 格式无效。",
     "LastUpdated": "最后更新",
     "Manual": "手册",
@@ -900,6 +904,7 @@
     "64chars": "（最多 64 個字符）"
   },
   "modelService": {
+    "Active": "積極的",
     "Active/Total": "活动/总数",
     "AddRules": "添加規則",
     "AdditionalMounts": "附加安裝座",
@@ -914,6 +919,7 @@
     "CurrentTime": "当前时间",
     "DesiredRoutingCount": "所需的路由计数",
     "DesiredSessionCount": "希望的会话次数",
+    "Destroyed": "被摧毀",
     "EditModelService": "编辑模型服务",
     "EndpointId": "端点 ID",
     "EndpointName": "端点名称",

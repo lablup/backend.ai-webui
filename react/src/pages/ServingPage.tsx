@@ -151,11 +151,11 @@ const ServingPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: 'Active',
+                    label: t('modelService.Active'),
                     value: 'active',
                   },
                   {
-                    label: 'Destroyed',
+                    label: t('modelService.Destroyed'),
                     value: 'destroyed',
                   },
                 ]}

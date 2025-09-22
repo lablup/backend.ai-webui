@@ -160,11 +160,11 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
             optionType="button"
             options={[
               {
-                label: 'Active',
+                label: t('general.Active'),
                 value: 'active',
               },
               {
-                label: 'Inactive',
+                label: t('general.Inactive'),
                 value: 'inactive',
               },
             ]}

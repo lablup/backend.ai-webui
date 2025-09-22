@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Vain muiden käyttäjien 2FA:n poistaminen käytöstä on mahdollista.",
     "Allocation": "Jakaminen",
     "Association": "Yhdistys",
+    "BeforeVerification": "Ennen varmuutta",
     "ConcurrentSessions": "Samanaikaiset istunnot",
     "Create": "Luo",
     "CreatePolicy": "Luo politiikka",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Poista kirjautumistiedot käytöstä",
     "DeactivateUser": "Poista käyttäjä käytöstä",
     "DeleteCredential": "Poista kirjautumistiedot",
+    "Deleted": "Poistettu",
     "DescActiveUser": "Aktiivinen käyttäjä?",
     "DescRequirePasswordChange": "Vaadi salasanan vaihtamista?",
     "Description": "Kuvaus",
@@ -645,6 +647,7 @@
   },
   "general": {
     "AccessKey": "Access Key",
+    "Active": "Aktiivinen",
     "Add": "Lisää",
     "Advanced": "Edistynyt",
     "All": "Kaikki",
@@ -662,6 +665,7 @@
     "General": "Yleistä",
     "Image": "Kuva",
     "InProgress": "Käynnissä",
+    "Inactive": "Passiivinen",
     "InvalidJSONFormat": "Väärä JSON-muoto.",
     "LastUpdated": "Viimeksi päivitetty",
     "Manual": "Manuaalinen",
@@ -901,6 +905,7 @@
     "64chars": "(enintään 64 merkkiä)"
   },
   "modelService": {
+    "Active": "Aktiivinen",
     "Active/Total": "Aktiivinen/Kokonaismäärä",
     "AddRules": "Lisää sääntöjä",
     "AdditionalMounts": "Lisäkiinnikkeet",
@@ -913,6 +918,7 @@
     "CreatedAt": "Created at",
     "CurrentTime": "Nykyinen aika",
     "DesiredSessionCount": "Haluttu istunnon määrä",
+    "Destroyed": "Tuhottu",
     "EditModelService": "Muokkaa mallipalvelua",
     "EndpointId": "Päätepisteen tunnus",
     "EndpointName": "Päätepisteen nimi",

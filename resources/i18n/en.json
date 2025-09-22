@@ -142,6 +142,7 @@
     "AdminCanOnlyRemoveTotp": "Only disabling 2FA of other users is possible.",
     "Allocation": "Allocation",
     "Association": "Association",
+    "BeforeVerification": "Before Verification",
     "ConcurrentSessions": "Concurrent Sessions",
     "Create": "Create",
     "CreatePolicy": "Create Policy",
@@ -155,6 +156,7 @@
     "DeactivateCredential": "Deactivate credential",
     "DeactivateUser": "Deactivate user",
     "DeleteCredential": "Delete credential",
+    "Deleted": "Deleted",
     "DescActiveUser": "Active user?",
     "DescRequirePasswordChange": "Require password change?",
     "Description": "Description",
@@ -649,6 +651,7 @@
   },
   "general": {
     "AccessKey": "Access Key",
+    "Active": "Active",
     "Add": "Add",
     "Advanced": "Advanced",
     "All": "All",
@@ -666,6 +669,7 @@
     "General": "General",
     "Image": "Image",
     "InProgress": "In progress",
+    "Inactive": "Inactive",
     "InvalidJSONFormat": "Invalid JSON format.",
     "LastUpdated": "Last Updated",
     "Manual": "Manual",
@@ -905,6 +909,7 @@
     "64chars": "(maximum 64 chars)"
   },
   "modelService": {
+    "Active": "Active",
     "Active/Total": "Active/Total",
     "AddRules": "Add Rules",
     "AdditionalMounts": "Additional Mounts",
@@ -918,6 +923,7 @@
     "CreatedAt": "Created At",
     "CurrentTime": "Current time",
     "DesiredSessionCount": "Desired Session Count",
+    "Destroyed": "Destroyed",
     "EditModelService": "Edit Model Service",
     "EndpointId": "Endpoint ID",
     "EndpointName": "Endpoint Name",

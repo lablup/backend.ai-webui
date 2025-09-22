@@ -139,6 +139,7 @@
     "AdminCanOnlyRemoveTotp": "Зөвхөн бусад хэрэглэгчдийн 2FA-г идэвхгүй болгох боломжтой.",
     "Allocation": "Хуваарилалт",
     "Association": "Холбоо",
+    "BeforeVerification": "Баталгаажуулахаас өмнө",
     "ConcurrentSessions": "Зэрэгцээ Session-үүд",
     "Create": "Үүсгэх",
     "CreatePolicy": "Бодлого үүсгэх",
@@ -152,6 +153,7 @@
     "DeactivateCredential": "Итгэмжлэх жуух бичгийг идэвхгүй болгох",
     "DeactivateUser": "Хэрэглэгчийг идэвхгүй болгох",
     "DeleteCredential": "Итгэмжлэлийг устгах",
+    "Deleted": "Устгасан",
     "DescActiveUser": "Идэвхтэй хэрэглэгч үү?",
     "DescRequirePasswordChange": "Нууц үгээ өөрчлөх шаардлагатай юу?",
     "Description": "Тодорхойлолт",
@@ -643,6 +645,7 @@
   },
   "general": {
     "AccessKey": "Нэвтрэх түлхүүр",
+    "Active": "Идэвхтэй",
     "Add": "Нэмэх",
     "Advanced": "Дэвшилтэт",
     "All": "бүхэлд нь",
@@ -660,6 +663,7 @@
     "General": "Генерал",
     "Image": "Зураг",
     "InProgress": "Ажиллаж байна",
+    "Inactive": "Идэвхгүй",
     "InvalidJSONFormat": "Буруу JSON формат.",
     "LastUpdated": "Өнөөхээр нь онуулсан өдөр",
     "Manual": "Гарын авлага",
@@ -899,6 +903,7 @@
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)"
   },
   "modelService": {
+    "Active": "Идэвхтэй",
     "Active/Total": "Идэвхтэй/Нийт",
     "AddRules": "Дүрмийг нэмэх",
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
@@ -912,6 +917,7 @@
     "CreatedAt": "Үүсгэсэн",
     "CurrentTime": "Одоогийн цаг",
     "DesiredSessionCount": "Хүссэн хуралдааны тоо",
+    "Destroyed": "Сүйрсэн",
     "EditModelService": "Загварын үйлчилгээг засах",
     "EndpointId": "Төгсгөлийн цэгийн ID",
     "EndpointName": "Төгсгөлийн цэгийн нэр",

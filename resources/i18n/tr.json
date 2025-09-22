@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Yalnızca diğer kullanıcıların 2FA'sını devre dışı bırakmak mümkündür.",
     "Allocation": "Tahsis",
     "Association": "bağlantı",
+    "BeforeVerification": "Doğrulamadan önce",
     "ConcurrentSessions": "Birleşen oturumlar",
     "Create": "Oluşturmak",
     "CreatePolicy": "İlke Oluştur",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Kimlik bilgilerini devre dışı bırak",
     "DeactivateUser": "Kullanıcıyı devre dışı bırak",
     "DeleteCredential": "Kimlik bilgisini sil",
+    "Deleted": "Silinmiş",
     "DescActiveUser": "Aktif kullanıcı?",
     "DescRequirePasswordChange": "Şifre değişikliği gerekiyor mu?",
     "Description": "Açıklama",
@@ -645,6 +647,7 @@
   },
   "general": {
     "AccessKey": "Erişim anahtarı",
+    "Active": "Aktif",
     "Add": "Ekle",
     "Advanced": "ileri",
     "All": "Tümü",
@@ -662,6 +665,7 @@
     "General": "Genel",
     "Image": "Resim",
     "InProgress": "Devam Ediyor",
+    "Inactive": "Aktif olmayan",
     "InvalidJSONFormat": "Geçersiz JSON biçimi.",
     "LastUpdated": "Son Güncelleme",
     "Manual": "El Kitabı",
@@ -901,6 +905,7 @@
     "64chars": "(maksimum 64 karakter)"
   },
   "modelService": {
+    "Active": "Aktif",
     "Active/Total": "Aktif/Toplam",
     "AddRules": "Kurallar Ekle",
     "AdditionalMounts": "Ek Montajlar",
@@ -914,6 +919,7 @@
     "CreatedAt": "Şu Adreste Oluşturuldu",
     "CurrentTime": "Geçerli saat",
     "DesiredSessionCount": "İstenen Oturum Sayısı",
+    "Destroyed": "Yok edilmiş",
     "EditModelService": "Model Hizmetini Düzenle",
     "EndpointId": "Uç Nokta Kimliği",
     "EndpointName": "Uç Nokta Adı",

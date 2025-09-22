@@ -140,6 +140,7 @@
     "AdminCanOnlyRemoveTotp": "Είναι δυνατή μόνο η απενεργοποίηση της 2FA άλλων χρηστών.",
     "Allocation": "Κατανομή",
     "Association": "Σχέση",
+    "BeforeVerification": "Πριν από την επαλήθευση",
     "ConcurrentSessions": "Ταυτόχρονες συνεδρίες",
     "Create": "Δημιουργώ",
     "CreatePolicy": "Δημιουργία πολιτικής",
@@ -153,6 +154,7 @@
     "DeactivateCredential": "Απενεργοποίηση διαπιστευτηρίων",
     "DeactivateUser": "Απενεργοποίηση χρήστη",
     "DeleteCredential": "Διαγραφή διαπιστευτηρίων",
+    "Deleted": "Διαγραμμένος",
     "DescActiveUser": "Ενεργός χρήστης;",
     "DescRequirePasswordChange": "Απαιτείται αλλαγή κωδικού πρόσβασης;",
     "Description": "Περιγραφή",
@@ -641,6 +643,7 @@
   },
   "general": {
     "AccessKey": "Κλειδί πρόσβασης",
+    "Active": "Ενεργός",
     "Add": "Προσθήκη",
     "Advanced": "Προχωρημένος",
     "All": "Όλα",
@@ -658,6 +661,7 @@
     "General": "Γενικά",
     "Image": "Εικόνα",
     "InProgress": "Σε εξέλιξη",
+    "Inactive": "Αδρανής",
     "InvalidJSONFormat": "Μη έγκυρη μορφή JSON.",
     "LastUpdated": "Τελευταία ενημέρωση",
     "Manual": "Χειροκίνητο",
@@ -897,6 +901,7 @@
     "64chars": "(έως 64 χαρακτήρες)"
   },
   "modelService": {
+    "Active": "Ενεργός",
     "Active/Total": "Ενεργό/Σύνολο",
     "AddRules": "Προσθέστε κανόνες",
     "AdditionalMounts": "Πρόσθετες βάσεις",
@@ -910,6 +915,7 @@
     "CreatedAt": "Δημιουργήθηκε στο",
     "CurrentTime": "Τρέχουσα ώρα",
     "DesiredSessionCount": "Επιθυμητός αριθμός συνόδων",
+    "Destroyed": "Καταστράφηκε",
     "EditModelService": "Επεξεργασία υπηρεσίας μοντέλου",
     "EndpointId": "Αναγνωριστικό τελικού σημείου",
     "EndpointName": "Όνομα τελικού σημείου",
