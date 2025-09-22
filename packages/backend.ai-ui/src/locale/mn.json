@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:FileExplorer": {
+    "Controls": "Удирдлага",
+    "CreateANewFolder": "Шинэ хавтас үүсгэх",
+    "CreatedAt": "Бүтэмж дээр бүтсэн",
+    "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
+    "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
+    "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
+    "FolderName": "Хөдөлгөөний нэр",
+    "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
+    "ModifiedAt": "Өөрчлөгдсөн",
+    "Name": "Нэр",
+    "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
+    "Size": "Хэмжээ",
+    "UploadFiles": "Файл байршуулах",
+    "UploadFolder": "Фолдерыг байршуулах",
+    "error": {
+      "FileUploadSizeLimit": "Файлын хэмжээ байршуулах хэмжээнээс хэтэрсэн байна."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
   "general": {
+    "NSelected": "{{count}} сонгогдсон",
     "button": {
-      "CopyAll": "Бүгдийг хуулбарлах"
+      "CopyAll": "Бүгдийг хуулбарлах",
+      "Create": "Шуүгиан дэгдээх",
+      "Delete": "Эдгээх",
+      "Upload": "Байршуулах"
     }
   }
 }

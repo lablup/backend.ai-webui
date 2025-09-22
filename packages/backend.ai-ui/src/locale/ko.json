@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "테스트"
   },
+  "comp:FileExplorer": {
+    "Controls": "제어",
+    "CreateANewFolder": "새 폴더 생성",
+    "CreatedAt": "생성일",
+    "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
+    "DeleteSelectedItemsDialog": "삭제 확인",
+    "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
+    "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
+    "FolderName": "폴더 이름",
+    "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",
+    "ModifiedAt": "수정일",
+    "Name": "이름",
+    "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
+    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
+    "Size": "크기",
+    "UploadFiles": "파일 업로드",
+    "UploadFolder": "폴더 업로드",
+    "error": {
+      "FileUploadSizeLimit": "업로드 가능한 단일 파일 사이즈 제한을 초과했습니다."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
   "general": {
+    "NSelected": "{{count}}개 선택됨",
     "button": {
-      "CopyAll": "모두 복사"
+      "CopyAll": "모두 복사",
+      "Create": "생성",
+      "Delete": "삭제",
+      "Upload": "업로드"
     }
   }
 }

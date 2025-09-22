@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:FileExplorer": {
+    "Controls": "Χειριστήρια",
+    "CreateANewFolder": "Δημιουργήστε ένα νέο φάκελο",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
+    "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
+    "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "FolderCreatedSuccessfully": "Ο φάκελος δημιούργησε με επιτυχία.",
+    "FolderName": "Όνομα φακέλου",
+    "MaxFolderNameLength": "Το όνομα του φακέλου πρέπει να είναι 255 χαρακτήρες ή λιγότερο.",
+    "ModifiedAt": "Τροποποιημένος",
+    "Name": "Ονομα",
+    "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
+    "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
+    "Size": "Μέγεθος",
+    "UploadFiles": "Μεταφόρτωση αρχείων",
+    "UploadFolder": "Μεταφορτωμένος φάκελος",
+    "error": {
+      "FileUploadSizeLimit": "Το μέγεθος του αρχείου υπερβαίνει το όριο μεγέθους μεταφόρτωσης."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
   "general": {
+    "NSelected": "{{count}} Επιλεγμένη",
     "button": {
-      "CopyAll": "Αντιγράψτε όλα"
+      "CopyAll": "Αντιγράψτε όλα",
+      "Create": "Δημιουργώ",
+      "Delete": "Διαγράφω",
+      "Upload": "Μεταφορτώσω"
     }
   }
 }

@@ -33,6 +33,7 @@ export function useMemoizedJSONParse<T = any>(
   }, [jsonString, fallbackValue]);
 }
 
+export { useMergedAllowedStorageHostPermission } from './useMergedAllowedStorageHostPermission';
 export { default as useErrorMessageResolver } from './useErrorMessageResolver';
 export { default as useViewer } from './useViewer';
 export type { ErrorResponse } from './useErrorMessageResolver';

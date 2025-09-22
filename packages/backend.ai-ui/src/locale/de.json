@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Kontrollen",
+    "CreateANewFolder": "Erstellen Sie einen neuen Ordner",
+    "CreatedAt": "Erstellt at",
+    "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
+    "DeleteSelectedItemsDialog": "Bestätigung löschen",
+    "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
+    "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
+    "FolderName": "Ordner Name",
+    "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",
+    "ModifiedAt": "Modifiziert bei",
+    "Name": "Name",
+    "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
+    "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
+    "Size": "Größe",
+    "UploadFiles": "Dateien hochladen",
+    "UploadFolder": "Ordner hochladen",
+    "error": {
+      "FileUploadSizeLimit": "Die Dateigröße überschreitet die Hochladungsgrenze."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} von {{total}} Elementen"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
   "general": {
+    "NSelected": "{{count}} ausgewählt",
     "button": {
-      "CopyAll": "Alle kopieren"
+      "CopyAll": "Alle kopieren",
+      "Create": "Erstellen",
+      "Delete": "Löschen",
+      "Upload": "Hochladen"
     }
   }
 }

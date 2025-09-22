@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Kontroller",
+    "CreateANewFolder": "Yeni bir klasör oluşturun",
+    "CreatedAt": "Yaratılmış",
+    "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
+    "DeleteSelectedItemsDialog": "Onay Sil",
+    "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
+    "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
+    "FolderName": "Klasör adı",
+    "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
+    "ModifiedAt": "Değiştirildi",
+    "Name": "İsim",
+    "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
+    "Size": "Boyut",
+    "UploadFiles": "Dosyaları Yükle",
+    "UploadFolder": "Klasörü Yükle",
+    "error": {
+      "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
   "general": {
+    "NSelected": "{{count}} seçildi",
     "button": {
-      "CopyAll": "Hepsini kopyala"
+      "CopyAll": "Hepsini kopyala",
+      "Create": "Yaratmak",
+      "Delete": "Silmek",
+      "Upload": "Yüklemek"
     }
   }
 }

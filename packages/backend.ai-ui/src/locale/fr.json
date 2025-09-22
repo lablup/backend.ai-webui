@@ -18,6 +18,27 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:FileExplorer": {
+    "Controls": "Commandes",
+    "CreateANewFolder": "Créer un nouveau dossier",
+    "CreatedAt": "Créé à",
+    "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
+    "DeleteSelectedItemsDialog": "Supprimer la confirmation",
+    "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
+    "FolderCreatedSuccessfully": "Dossier créé avec succès.",
+    "FolderName": "Nom du dossier",
+    "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",
+    "ModifiedAt": "Modifié à",
+    "Name": "Nom",
+    "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
+    "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
+    "Size": "Taille",
+    "UploadFiles": "Télécharger des fichiers",
+    "UploadFolder": "Dossier de téléchargement",
+    "error": {
+      "FileUploadSizeLimit": "La taille du fichier dépasse la limite de taille de téléchargement."
+    }
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} des éléments {{total}}"
   },
@@ -28,8 +49,12 @@
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
   "general": {
+    "NSelected": "{{count}} sélectionné",
     "button": {
-      "CopyAll": "Copier tout"
+      "CopyAll": "Copier tout",
+      "Create": "Créer",
+      "Delete": "Supprimer",
+      "Upload": "Télécharger"
     }
   }
 }

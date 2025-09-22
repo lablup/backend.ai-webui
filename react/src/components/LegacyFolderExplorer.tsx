@@ -1,13 +1,12 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import FolderExplorerActions from './FolderExplorerActions';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { toGlobalId, BAIFlex } from 'backend.ai-ui';
-import { useEffect, useRef, useState } from 'react';
+import { BAIFileExplorer, BAIFlex, toGlobalId } from 'backend.ai-ui';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -41,8 +40,8 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   const { xl } = Grid.useBreakpoint();
 
   const { t } = useTranslation();
-  const [isWritable, setIsWritable] = useState<boolean>(false);
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+  // const [isWritable, setIsWritable] = useState<boolean>(false);
+  // const [isSelected, setIsSelected] = useState<boolean>(false);
   // TODO: Events are sent and received as normal,
   // but the Lit Element is not rendered and the values inside are not available but ref is available.
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
@@ -51,11 +50,11 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
   useSuspendedBackendaiClient();
   useEffect(() => {
     const handleConnected = (e: any) => {
-      setIsWritable(e.detail || false);
+      // setIsWritable(e.detail || false);
     };
 
     const handleColumnSelected = (e: any) => {
-      setIsSelected(e.detail || false);
+      // setIsSelected(e.detail || false);
     };
 
     document.addEventListener('folderExplorer:connected', handleConnected);
@@ -84,6 +83,7 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
+          ...BAIFileExplorerFragment
         }
       }
     `,
@@ -108,18 +108,22 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         />
       ) : !hasNoPermissions ? (
         <>
-          <FolderExplorerActions
+          <BAIFileExplorer
+            vfolderNodeFrgmt={vfolder_node}
+            targetVFolderId={vfolderID}
+          />
+          {/* <FolderExplorerActions
             isSelected={isSelected}
             isWritable={isWritable}
             folderExplorerRef={folderExplorerRef}
             size={xl ? 'default' : 'small'}
-          />
+          /> */}
           {/* @ts-ignore */}
-          <backend-ai-folder-explorer
+          {/* <backend-ai-folder-explorer
             ref={folderExplorerRef}
             active
             vfolderID={vfolderID}
-          />
+          /> */}
         </>
       ) : null}
     </BAIFlex>
@@ -165,26 +169,23 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         <Alert message={t('explorer.NoPermissions')} type="error" showIcon />
       ) : null}
       {vfolder_node ? (
-        xl ? (
-          <Splitter
-            style={{
-              gap: token.size,
-              alignSelf: 'stretch',
-            }}
-          >
-            <Splitter.Panel resizable={false}>
-              {legacyFolderExplorerPane}
-            </Splitter.Panel>
-            <Splitter.Panel defaultSize={500} min={300} max={'40%'}>
-              {vfolderDescription}
-            </Splitter.Panel>
-          </Splitter>
-        ) : (
-          <BAIFlex direction="column" align="stretch" gap={'md'}>
+        <Splitter
+          // Force re-render component when xl breakpoint changes to reset panel sizes
+          // This ensures defaultSize is recalculated based on current screen size
+          key={xl ? 'large' : 'small'}
+          style={{
+            gap: token.size,
+            maxHeight: 'calc(100vh - 220px)',
+          }}
+          layout={xl ? 'horizontal' : 'vertical'}
+        >
+          <Splitter.Panel resizable={false} max={'60%'}>
             {legacyFolderExplorerPane}
+          </Splitter.Panel>
+          <Splitter.Panel defaultSize={xl ? 500 : 300} min={300} max={'40%'}>
             {vfolderDescription}
-          </BAIFlex>
-        )
+          </Splitter.Panel>
+        </Splitter>
       ) : null}
     </BAIModal>
   );
