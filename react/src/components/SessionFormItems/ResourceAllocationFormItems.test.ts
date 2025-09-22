@@ -1,9 +1,9 @@
-import '../../__test__/matchMedia.mock.js';
+import '../../../__test__/matchMedia.mock.js';
 import {
   MergedResourceLimits,
   ResourcePreset,
-} from '../hooks/useResourceLimitAndRemaining';
-import { Image } from './ImageEnvironmentSelectFormItems';
+} from '../../hooks/useResourceLimitAndRemaining';
+import { Image } from '../ImageEnvironmentSelectFormItems';
 import { getAllocatablePresetNames } from './ResourceAllocationFormItems';
 
 describe('getAllocatablePresetNames', () => {
@@ -49,6 +49,7 @@ describe('getAllocatablePresetNames', () => {
     base_image_name: undefined,
     tags: undefined,
     version: undefined,
+    supported_accelerators: undefined,
   };
 
   it('should return presets when currentImage has accelerator limits', () => {

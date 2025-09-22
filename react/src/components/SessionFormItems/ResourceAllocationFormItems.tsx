@@ -1,45 +1,32 @@
-import { ResourceAllocationFormItemsQuery } from '../__generated__/ResourceAllocationFormItemsQuery.graphql';
+import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
   convertToBinaryUnit,
-} from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEventNotStable } from '../hooks/useEventNotStable';
+} from '../../helper';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../../hooks';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
+import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
+import { useEventNotStable } from '../../hooks/useEventNotStable';
 import {
   MergedResourceLimits,
   ResourcePreset,
   useResourceLimitAndRemaining,
-} from '../hooks/useResourceLimitAndRemaining';
-import AgentSelect from './AgentSelect';
-import BAISelect from './BAISelect';
-import DynamicUnitInputNumber from './DynamicUnitInputNumber';
-import DynamicUnitInputNumberWithSlider from './DynamicUnitInputNumberWithSlider';
+} from '../../hooks/useResourceLimitAndRemaining';
+import AgentSelect from '../AgentSelect';
+import BAISelect from '../BAISelect';
+import DynamicUnitInputNumberWithSlider from '../DynamicUnitInputNumberWithSlider';
 import {
   Image,
   ImageEnvironmentFormInput,
-} from './ImageEnvironmentSelectFormItems';
-import InputNumberWithSlider from './InputNumberWithSlider';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import ResourceGroupSelect from './ResourceGroupSelect';
-import ResourcePresetSelect from './ResourcePresetSelect';
+} from '../ImageEnvironmentSelectFormItems';
+import InputNumberWithSlider from '../InputNumberWithSlider';
+import ResourceGroupSelect from '../ResourceGroupSelect';
+import ResourcePresetSelect from '../ResourcePresetSelect';
+import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Card,
-  Col,
-  ConfigProvider,
-  Divider,
-  Form,
-  Radio,
-  Row,
-  Slider,
-  Switch,
-  theme,
-} from 'antd';
+import { Button, Card, Col, Divider, Form, Radio, Row, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
@@ -83,7 +70,7 @@ export interface ResourceAllocationFormValue {
   agent?: string;
 }
 
-type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
+export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
@@ -176,15 +163,9 @@ const ResourceAllocationFormItems: React.FC<
   );
 
   // When undefined, it means that the resourceSlots are not loaded yet.
-  const acceleratorSlots = resourceSlotsInRG
+  const acceleratorSlotsInRG = resourceSlotsInRG
     ? _.omitBy(resourceSlotsInRG, (value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
-
-        if (
-          !resourceLimits.accelerators[key]?.max ||
-          resourceLimits.accelerators[key]?.max === 0
-        )
-          return true;
         return false;
       })
     : undefined;
@@ -200,23 +181,34 @@ const ResourceAllocationFormItems: React.FC<
     [currentImage],
   );
 
-  // Disable accelerator input when there is no accelerator slot or no accelerator required in the selected image
-  // TODO: use `supported_accelerators` information from the image instead of `currentImageAcceleratorLimits` (FR-55)
-  const isAcceleratorInputDisabled =
-    (!_.isUndefined(acceleratorSlots) && _.isEmpty(acceleratorSlots)) ||
-    (currentImageAcceleratorLimits &&
-      currentImageAcceleratorLimits.length === 0 &&
-      _.isEmpty(currentEnvironmentManual));
+  // Get supported accelerator types in resource group by image
+  const supportedAcceleratorTypesInRGByImage = useMemo(() => {
+    return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
+      // '*' means all types of accelerators are supported
+      return (
+        _.includes(currentImage?.supported_accelerators, '*') ||
+        (currentImage?.supported_accelerators?.length === 1 &&
+          currentImage.supported_accelerators[0] === '') || // Before BA-2358, manage can return '' instead of '*'
+        _.some(
+          currentImage?.supported_accelerators,
+          (accPrefix) =>
+            accPrefix &&
+            acceleratorTypeName.split('.')[0].startsWith(accPrefix),
+        ) ||
+        !_.isEmpty(currentEnvironmentManual) // if manual image input is not empty, allow user to input any accelerator type
+      );
+    });
+  }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (isAcceleratorInputDisabled) {
+    if (supportedAcceleratorTypesInRGByImage.length === 0) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
         },
       });
     }
-  }, [isAcceleratorInputDisabled, form]);
+  }, [supportedAcceleratorTypesInRGByImage, form]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
@@ -239,9 +231,9 @@ const ResourceAllocationFormItems: React.FC<
     ]);
     // If the current accelerator type is not available,
     // change accelerator type to the first supported accelerator
-    const nextAcceleratorType = acceleratorSlots?.[currentAcceleratorType]
+    const nextAcceleratorType = acceleratorSlotsInRG?.[currentAcceleratorType]
       ? currentAcceleratorType
-      : _.keys(acceleratorSlots)[0];
+      : _.first(_.keys(acceleratorSlotsInRG));
 
     form.setFieldsValue({
       resource: {
@@ -373,7 +365,7 @@ const ResourceAllocationFormItems: React.FC<
 
       // Select the first matched AI accelerator type and value
       const firstMatchedAcceleratorType = _.find(
-        _.keys(acceleratorSlots),
+        _.keys(acceleratorSlotsInRG),
         (value) => acceleratorObj[value] !== undefined,
       );
 
@@ -850,286 +842,24 @@ const ResourceAllocationFormItems: React.FC<
                         );
                       }}
                     </Form.Item>
-                    <Form.Item
-                      noStyle
-                      dependencies={[
-                        ['resource', 'mem'],
-                        ['resource', 'shmem'],
-                        ['enabledAutomaticShmem'],
-                      ]}
-                    >
-                      {({ getFieldValue }) => {
-                        const mem = getFieldValue(['resource', 'mem']) || '0g';
-                        const shmem =
-                          getFieldValue(['resource', 'shmem']) || '0g';
-                        const memUnitResult = convertToBinaryUnit(
-                          mem,
-                          'auto',
-                          2,
-                        );
-                        const shmemUnitResult = convertToBinaryUnit(
-                          shmem,
-                          'auto',
-                          2,
-                        );
-                        const appMemUnitResult = convertToBinaryUnit(
-                          _.max([
-                            0,
-                            (convertToBinaryUnit(mem, 'm')?.number || 0) -
-                              (convertToBinaryUnit(shmem, 'm')?.number || 0),
-                          ]) + 'm',
-                          memUnitResult?.unit || '',
-                        );
-
-                        return (
-                          <BAIFlex direction="column" align="stretch" gap="xs">
-                            <BAIFlex direction="row" gap={'sm'}>
-                              <ConfigProvider
-                                theme={{
-                                  components: {
-                                    Slider: {
-                                      railBg: token.colorWarningBorderHover,
-                                      railHoverBg:
-                                        token.colorWarningBorderHover,
-                                      trackBg: token.colorSuccessBorderHover,
-
-                                      trackHoverBg:
-                                        token.colorSuccessBorderHover,
-                                      railSize: token.fontSize,
-                                    },
-                                  },
-                                }}
-                              >
-                                <Slider
-                                  style={{
-                                    flex: 1,
-                                    margin: 0,
-                                    cursor: 'default',
-                                    padding: 0,
-                                  }}
-                                  styles={{
-                                    handle: {
-                                      display: 'none',
-                                      top: 2,
-                                    },
-                                    root: {
-                                      height: '1em',
-                                    },
-                                  }}
-                                  step={0.001}
-                                  value={appMemUnitResult?.number}
-                                  // Set to 1 to fix UI update issue where slider doesn't rerender when both value and max are 0
-                                  max={memUnitResult?.number || 1}
-                                />
-                              </ConfigProvider>
-                            </BAIFlex>
-                            <BAIFlex
-                              direction="row"
-                              gap={'xxs'}
-                              justify="between"
-                              wrap="wrap"
-                              style={{
-                                minHeight: token.controlHeightSM,
-                              }}
-                            >
-                              <BAIFlex gap={'xxs'}>
-                                <div
-                                  style={{
-                                    height: token.fontSize,
-                                    width: token.fontSize,
-                                    backgroundColor:
-                                      token.colorSuccessBorderHover,
-                                  }}
-                                ></div>
-                                {t('session.launcher.ApplicationMemory', {
-                                  value: appMemUnitResult?.value,
-                                })}
-                              </BAIFlex>
-                              <BAIFlex gap={'xxs'}>
-                                <div
-                                  style={{
-                                    height: token.fontSize,
-                                    width: token.fontSize,
-                                    backgroundColor:
-                                      token.colorWarningBorderHover,
-                                  }}
-                                ></div>
-                                {getFieldValue('enabledAutomaticShmem') &&
-                                  t('session.launcher.SharedMemory', {
-                                    value: shmemUnitResult?.value,
-                                  })}
-                                <Form.Item
-                                  noStyle
-                                  name={['resource', 'shmem']}
-                                  // initialValue={'0g'}
-                                  // label={t('session.launcher.SharedMemory')}
-                                  hidden={form.getFieldValue(
-                                    'enabledAutomaticShmem',
-                                  )}
-                                  dependencies={[['resource', 'mem']]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: t('general.ValueRequired', {
-                                        name: t(
-                                          'session.launcher.SharedMemory',
-                                        ),
-                                      }),
-                                    },
-                                    {
-                                      warningOnly: true,
-                                      validator: async (
-                                        rule,
-                                        value: string,
-                                      ) => {
-                                        const applicationMem =
-                                          appMemUnitResult?.value;
-                                        const shmem = value;
-
-                                        if (
-                                          _.isEmpty(applicationMem) ||
-                                          _.isEmpty(shmem)
-                                        ) {
-                                          return Promise.resolve();
-                                        }
-
-                                        if (
-                                          (convertToBinaryUnit(
-                                            applicationMem,
-                                            'm',
-                                          )?.number || 0) <
-                                          (convertToBinaryUnit(shmem, 'm')
-                                            ?.number || 0) *
-                                            2
-                                        ) {
-                                          throw t(
-                                            'session.launcher.SHMEMShouldBeLessThanHalfOfAppMemory',
-                                          );
-                                        } else {
-                                          return Promise.resolve();
-                                        }
-                                      },
-                                    },
-                                    {
-                                      validator: async (
-                                        rule,
-                                        value: string,
-                                      ) => {
-                                        if (
-                                          _.isEmpty(
-                                            getFieldValue('resource')?.mem,
-                                          ) ||
-                                          _.isEmpty(value) ||
-                                          compareNumberWithUnits(
-                                            getFieldValue('resource')?.mem,
-                                            value,
-                                          ) >= 0
-                                        ) {
-                                          return Promise.resolve();
-                                        } else {
-                                          throw t(
-                                            'resourcePreset.SHMEMShouldBeSmallerThanMemory',
-                                          );
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <DynamicUnitInputNumber
-                                    // shmem max is mem max
-                                    // min={resourceLimits.shmem?.min}
-                                    min={resourceLimits.shmem?.min}
-                                    size="small"
-                                    // max={resourceLimits.mem?.max || '0g'}
-                                    addonBefore={'SHM'}
-                                    max={
-                                      form.getFieldValue(['resource', 'mem']) ||
-                                      '0g'
-                                    }
-                                    style={{
-                                      width: 200,
-                                    }}
-                                    onChange={() => {
-                                      if (
-                                        baiClient._config
-                                          .allowCustomResourceAllocation
-                                      ) {
-                                        form.setFieldValue(
-                                          'allocationPreset',
-                                          'custom',
-                                        );
-                                      }
-                                    }}
-                                  />
-                                </Form.Item>
-                                <BAIFlex direction="row" gap="xs">
-                                  <Form.Item
-                                    noStyle
-                                    name={'enabledAutomaticShmem'}
-                                    valuePropName="checked"
-                                  >
-                                    <Switch
-                                      size="small"
-                                      title="auto"
-                                      checkedChildren={t('general.Auto')}
-                                      unCheckedChildren={t('general.Manual')}
-                                      onChange={(checked) => {
-                                        if (checked) {
-                                          runShmemAutomationRule(
-                                            form.getFieldValue([
-                                              'resource',
-                                              'mem',
-                                            ]) || '0g',
-                                          );
-                                        }
-                                        if (
-                                          baiClient._config
-                                            .allowCustomResourceAllocation
-                                        ) {
-                                          form.setFieldValue(
-                                            'allocationPreset',
-                                            'custom',
-                                          );
-                                        }
-                                      }}
-                                    />
-                                  </Form.Item>
-                                  <QuestionIconWithTooltip
-                                    title={
-                                      <BAIFlex direction="column">
-                                        {t(
-                                          'session.launcher.AutoSharedMemoryTooltip',
-                                        )}
-                                        <Divider
-                                          style={{
-                                            margin: 0,
-                                            marginBlock: token.marginSM,
-                                            backgroundColor:
-                                              token.colorBorderSecondary,
-                                          }}
-                                        />
-                                        <Trans
-                                          i18nKey={
-                                            'session.launcher.DescSharedMemory'
-                                          }
-                                        />
-                                        <br />
-                                        <br />
-                                        <Trans
-                                          i18nKey={
-                                            'session.launcher.DescSharedMemoryContext'
-                                          }
-                                        />
-                                      </BAIFlex>
-                                    }
-                                  />
-                                </BAIFlex>
-                              </BAIFlex>
-                            </BAIFlex>
-                          </BAIFlex>
-                        );
+                    <SharedMemoryFormItems
+                      min={resourceLimits.shmem?.min}
+                      onChangeResourceShmem={() => {
+                        if (baiClient._config.allowCustomResourceAllocation) {
+                          form.setFieldValue('allocationPreset', 'custom');
+                        }
                       }}
-                    </Form.Item>
+                      onChangeAutomaticShmem={(checked) => {
+                        if (checked) {
+                          runShmemAutomationRule(
+                            form.getFieldValue(['resource', 'mem']) || '0g',
+                          );
+                        }
+                        if (baiClient._config.allowCustomResourceAllocation) {
+                          form.setFieldValue('allocationPreset', 'custom');
+                        }
+                      }}
+                    />
                   </Form.Item>
                 )}
 
@@ -1341,12 +1071,16 @@ const ResourceAllocationFormItems: React.FC<
                               formatter: (value = 0) => {
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
-                              open: isAcceleratorInputDisabled
-                                ? false
-                                : undefined,
+                              open:
+                                supportedAcceleratorTypesInRGByImage.length ===
+                                0
+                                  ? false
+                                  : undefined,
                             },
                           }}
-                          disabled={isAcceleratorInputDisabled}
+                          disabled={
+                            supportedAcceleratorTypesInRGByImage.length === 0
+                          }
                           min={0}
                           max={
                             resourceLimits.accelerators[currentAcceleratorType]
@@ -1361,35 +1095,36 @@ const ResourceAllocationFormItems: React.FC<
                               <Form.Item
                                 noStyle
                                 name={['resource', 'acceleratorType']}
-                                initialValue={_.keys(acceleratorSlots)[0]}
-                                hidden={isAcceleratorInputDisabled}
+                                initialValue={_.first(
+                                  _.keys(acceleratorSlotsInRG),
+                                )}
+                                hidden={
+                                  supportedAcceleratorTypesInRGByImage.length ===
+                                  0
+                                }
                               >
                                 <BAISelect
                                   autoSelectOption
                                   tabIndex={-1}
                                   // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                   suffixIcon={
-                                    _.size(acceleratorSlots) > 1
+                                    _.size(acceleratorSlotsInRG) > 1
                                       ? undefined
                                       : null
                                   }
                                   popupMatchSelectWidth={false}
                                   options={_.map(
-                                    acceleratorSlots,
+                                    acceleratorSlotsInRG,
                                     (value, name) => {
                                       return {
                                         value: name,
                                         label:
                                           mergedResourceSlots?.[name]
                                             ?.display_unit || 'UNIT',
-                                        disabled:
-                                          currentImageAcceleratorLimits &&
-                                          currentImageAcceleratorLimits.length >
-                                            0 &&
-                                          !_.find(
-                                            currentImageAcceleratorLimits,
-                                            (limit) => limit?.key === name,
-                                          ),
+                                        disabled: !_.includes(
+                                          supportedAcceleratorTypesInRGByImage,
+                                          name,
+                                        ),
                                       };
                                     },
                                   )}
