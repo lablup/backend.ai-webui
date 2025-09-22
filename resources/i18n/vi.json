@@ -481,7 +481,8 @@
       "Status": "Trạng thái",
       "StatusOfSelectedHost": "Trạng thái của máy chủ được chọn",
       "Used": "đã sử dụng"
-    }
+    },
+    "NotInProject": "Thư mục này thuộc về một dự án khác."
   },
   "desktopNotification": {
     "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",

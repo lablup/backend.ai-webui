@@ -481,7 +481,8 @@
       "Status": "Estado",
       "StatusOfSelectedHost": "Estado do anfitrião selecionado",
       "Used": "utilizado"
-    }
+    },
+    "NotInProject": "Esta pasta pertence a um projeto diferente."
   },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",

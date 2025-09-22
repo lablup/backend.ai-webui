@@ -72,7 +72,8 @@
     "typescript": "^5.7.2",
     "use-query-params": "^2.2.1",
     "uuid": "^9.0.1",
-    "web-vitals": "^3.5.2"
+    "web-vitals": "^3.5.2",
+    "tus-js-client": "^4.1.0"
   },
   "scripts": {
     "start": "craco start",

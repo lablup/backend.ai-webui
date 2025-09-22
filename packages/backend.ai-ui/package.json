@@ -55,6 +55,8 @@
   },
   "peerDependencies": {
     "@ant-design/icons": "^5.6.1",
+    "@tanstack/react-query": "^5.69.0",
+    "ahooks": "^3.8.4",
     "antd": "^5.24.5",
     "antd-style": "^3.7.1",
     "graphql": "^16.10.0",
@@ -77,10 +79,11 @@
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "lucide-react": "^0.484.0",
+    "relay-runtime": "^20.1.0",
     "react-resizable": "^3.0.5",
     "react-copy-to-clipboard": "^5.1.0",
-    "tus-js-client": "^4.1.0",
-    "@tanstack/react-query": "^5.69.0"
+    "@tanstack/react-query": "^5.69.0",
+    "use-query-params": "^2.2.1"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
@@ -116,7 +119,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "storybook": "^9.1.1",
     "ts-jest": "^29.2.5",
-    "tus-js-client": "^4.1.0",
     "typescript": "^5.7.2",
     "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.4",

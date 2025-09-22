@@ -480,7 +480,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Hos Terpilih",
       "Used": "digunakan"
-    }
+    },
+    "NotInProject": "Folder ini tergolong dalam projek yang berbeza."
   },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",

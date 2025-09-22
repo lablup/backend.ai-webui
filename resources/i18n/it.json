@@ -480,7 +480,8 @@
       "Status": "Stato",
       "StatusOfSelectedHost": "Stato dell'host selezionato",
       "Used": "usato"
-    }
+    },
+    "NotInProject": "Questa cartella appartiene a un progetto diverso."
   },
   "desktopNotification": {
     "NotSupported": "Questo browser non supporta le notifiche.",

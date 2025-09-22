@@ -481,7 +481,8 @@
       "Status": "Statut",
       "StatusOfSelectedHost": "Statut de l'hôte sélectionné",
       "Used": "utilisé"
-    }
+    },
+    "NotInProject": "Ce dossier appartient à un autre projet."
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
@@ -639,18 +640,18 @@
     "Title": "Une erreur s'est produite."
   },
   "explorer": {
+    "FileInProgress": "Téléchargement '{{fileName}}' ...",
+    "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
+    "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "InputTooShort": "Entrée Trop Courte",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
-    "ValueRequired": "ValeurRequis",
-    "FileInProgress": "Téléchargement '{{fileName}}' ...",
-    "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
-    "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
     "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
     "SuccessfullyUploadedToFolder": "Fichiers téléchargés avec succès dans le dossier '{{folderName}}'",
     "UploadFailed": "Le téléchargement a échoué dans '{{folderName}}'",
-    "UploadToFolder": "Téléchargement sur '{{folderName}}'"
+    "UploadToFolder": "Téléchargement sur '{{folderName}}'",
+    "ValueRequired": "ValeurRequis"
   },
   "general": {
     "AccessKey": "Clef d'accès",

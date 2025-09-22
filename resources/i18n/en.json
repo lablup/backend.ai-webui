@@ -483,7 +483,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Of Selected Host",
       "Used": "used"
-    }
+    },
+    "NotInProject": "This folder belongs to a different project."
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",
@@ -643,18 +644,18 @@
     "Title": "An error has occurred."
   },
   "explorer": {
+    "FileInProgress": "Uploading '{{fileName}}'...",
+    "FileUploadCancelled": "The file upload was canceled by user request.",
+    "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
-    "ValueRequired": "ValueRequired",
-    "FileInProgress": "Uploading '{{fileName}}'...",
-    "FileUploadCancelled": "The file upload was canceled by user request.",
-    "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "ProcessingUpload": "Your file is being uploaded. Please wait.",
     "SuccessfullyUploadedToFolder": "Files uploaded successfully in folder '{{folderName}}'",
     "UploadFailed": "Upload failed in '{{folderName}}'",
-    "UploadToFolder": "Uploading to '{{folderName}}'"
+    "UploadToFolder": "Uploading to '{{folderName}}'",
+    "ValueRequired": "ValueRequired"
   },
   "general": {
     "AccessKey": "Access Key",

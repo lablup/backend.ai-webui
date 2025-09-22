@@ -481,7 +481,8 @@
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
       "Used": "中古"
-    }
+    },
+    "NotInProject": "该文件夹属于另一个项目。"
   },
   "desktopNotification": {
     "NotSupported": "该浏览器不支持通知。",

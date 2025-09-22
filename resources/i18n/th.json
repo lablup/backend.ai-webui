@@ -475,7 +475,8 @@
       "Status": "สถานะ",
       "StatusOfSelectedHost": "สถานะของโฮสต์ที่เลือก",
       "Used": "ใช้แล้ว"
-    }
+    },
+    "NotInProject": "โฟลเดอร์นี้เป็นของโครงการที่แตกต่างกัน"
   },
   "desktopNotification": {
     "NotSupported": "เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน",

@@ -481,7 +481,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status wybranego hosta",
       "Used": "używany"
-    }
+    },
+    "NotInProject": "Ten folder należy do innego projektu."
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
@@ -639,17 +640,17 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
-    "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
-    "InputTooShort": "Wejście zbyt krótkie",
-    "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
-    "ValueRequired": "Wymagana wartość",
     "FileInProgress": "Przesyłanie „{{fileName}}” ...",
     "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
+    "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
+    "InputTooShort": "Wejście zbyt krótkie",
+    "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
     "SuccessfullyUploadedToFolder": "Pliki przesłane pomyślnie w folderze '{{folderName}}'",
     "UploadFailed": "Przesyłanie nie powiodło się w '{{folderName}}' '",
-    "UploadToFolder": "Przesyłanie do „{{folderName}}”"
+    "UploadToFolder": "Przesyłanie do „{{folderName}}”",
+    "ValueRequired": "Wymagana wartość"
   },
   "general": {
     "AccessKey": "Klucz dostępu",

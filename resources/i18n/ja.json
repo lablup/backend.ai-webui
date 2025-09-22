@@ -480,7 +480,8 @@
       "Status": "状態",
       "StatusOfSelectedHost": "選択したホストの状態",
       "Used": "使用中"
-    }
+    },
+    "NotInProject": "このフォルダーは別のプロジェクトに属します。"
   },
   "desktopNotification": {
     "NotSupported": "このブラウザは通知をサポートしていません。",

@@ -482,7 +482,8 @@
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
       "Used": "用過的"
-    }
+    },
+    "NotInProject": "該文件夾屬於另一個項目。"
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",

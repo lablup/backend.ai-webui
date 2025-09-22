@@ -483,7 +483,8 @@
       "Status": "상태",
       "StatusOfSelectedHost": "선택한 호스트 상태",
       "Used": "사용중"
-    }
+    },
+    "NotInProject": "이 폴더는 다른 프로젝트에 속해 있습니다."
   },
   "desktopNotification": {
     "NotSupported": "현재 브라우저에서는 알림 기능을 지원하지 않습니다. ",

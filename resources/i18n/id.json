@@ -480,7 +480,8 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Tuan Rumah Terpilih",
       "Used": "digunakan"
-    }
+    },
+    "NotInProject": "Folder ini milik proyek yang berbeda."
   },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",

@@ -2,18 +2,20 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParam } from 'use-query-params';
 
-const LegacyFolderExplorer = React.lazy(() => import('./LegacyFolderExplorer'));
+const FolderExplorer = React.lazy(() => import('./FolderExplorer'));
 
 const FolderExplorerOpener = () => {
   const [folderId, setFolderId] = useQueryParam('folder', StringParam);
+  const [, setCurrentPath] = useQueryParam('path', StringParam);
   const normalizedFolderId = folderId?.replaceAll('-', '');
 
   return (
-    <LegacyFolderExplorer
+    <FolderExplorer
       vfolderID={normalizedFolderId || ''}
       open={!!normalizedFolderId}
       onRequestClose={() => {
         setFolderId(null, 'replaceIn');
+        setCurrentPath(null, 'replaceIn');
       }}
       destroyOnClose
     />
