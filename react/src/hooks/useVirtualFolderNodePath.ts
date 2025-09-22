@@ -41,8 +41,8 @@ export const useVirtualFolderPath = (
   const vfolderId = toLocalId(vfolderNode?.id);
   const vfolderIdPrefix1 = vfolderId.slice(0, 2);
   const vfolderIdPrefix2 = vfolderId.slice(2, 4);
-  const vfolderIdRest = [vfolderId.slice(4)];
-  const vfolderPath = `${quotaScopeIdWithoutType}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest}`;
+  const vfolderIdRest = vfolderId.slice(4);
+  const vfolderPath = `${quotaScopeIdWithoutType.replaceAll('-', '')}/${vfolderIdPrefix1}/${vfolderIdPrefix2}/${vfolderIdRest.replaceAll('-', '')}`;
 
   return {
     quotaScopeType,

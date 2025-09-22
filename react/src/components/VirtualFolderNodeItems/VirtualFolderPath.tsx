@@ -40,7 +40,9 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
           }}
           style={{ fontSize: '0.9em' }}
         >
-          {_.truncate(quotaScopeIdWithoutType, { length: 15 })}
+          {_.truncate(quotaScopeIdWithoutType.replaceAll('-', ''), {
+            length: 15,
+          })}
         </BAIText>
         <BAIText
           type="secondary"
@@ -75,7 +77,7 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
             }}
             style={{ fontSize: '0.9em' }}
           >
-            {_.truncate(vfolderIdRest.join(''), { length: 7 })}
+            {_.truncate(vfolderIdRest.replaceAll('-', ''), { length: 7 })}
           </BAIText>
         </BAIFlex>
         <BAIText
