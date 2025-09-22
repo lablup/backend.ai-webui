@@ -79,14 +79,16 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex, toGlobalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
+import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+import { SessionLauncherPageAfterCreationQuery } from 'src/__generated__/SessionLauncherPageAfterCreationQuery.graphql';
 import {
   JsonParam,
   NumberParam,
@@ -199,7 +201,8 @@ export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
 const SessionLauncherPage = () => {
   const app = App.useApp();
-  let sessionMode: SessionMode = 'normal';
+
+  const relayEnv = useRelayEnvironment();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
@@ -253,7 +256,8 @@ const SessionLauncherPage = () => {
       step: currentStep,
       formValues: formValuesFromQueryParams,
       redirectTo,
-      appOption: appOptionFromQueryParams,
+      // TODO: handle appOption to launch app with specific options
+      // appOption: appOptionFromQueryParams,
     },
     setQuery,
   ] = useQueryParams({
@@ -455,6 +459,7 @@ const SessionLauncherPage = () => {
           kernelName,
           architecture,
           resources: {
+            enqueueOnly: true,
             // Project and domain settings
             group_name: values.owner?.enabled
               ? values.owner.project
@@ -599,127 +604,64 @@ const SessionLauncherPage = () => {
         );
         // After sending a create request, navigate to job page and set current resource group
         setCurrentGlobalResourceGroup(values.resourceGroup);
-        const backupTo = window.location.pathname + window.location.search;
-        webuiNavigate(redirectTo || '/job');
-        upsertNotification({
-          key: SESSION_LAUNCHER_NOTI_PREFIX + sessionName,
-          backgroundTask: {
-            promise: Promise.all(sessionPromises),
-            status: 'pending',
-            onChange: {
-              pending: t('session.PreparingSession'),
-              resolved: t('eduapi.ComputeSessionPrepared'),
-            },
-          },
-          duration: 0,
-          message: t('general.Session') + ': ' + sessionName,
-          open: true,
-        });
 
         pushSessionHistory({
           params: usedSearchParams,
           name: sessionName,
         });
 
-        await Promise.all(sessionPromises)
-          .then(
-            ([firstSession]: Array<{
-              kernelId?: string;
-              sessionId: string;
-              sessionName: string;
-              servicePorts: Array<{ name: string }>;
-            }>) => {
-              // After the session is created, add a "See Details" button to navigate to the session page.
-              upsertNotification({
-                key: 'session-launcher:' + sessionName,
-                to: {
-                  pathname: '/session',
-                  search: new URLSearchParams({
-                    sessionDetail: firstSession.sessionId,
-                  }).toString(),
-                },
-              });
-              if (
-                values.num_of_sessions === 1 &&
-                values.sessionType !== 'batch'
-              ) {
-                const res = firstSession;
-                let appOptions: AppOption = _.cloneDeep(
-                  appOptionFromQueryParams,
-                );
-                if ('kernelId' in res) {
-                  // API v4
-                  appOptions = _.extend(appOptions, {
-                    'session-name': res.kernelId,
-                    'access-key': '',
-                    mode: sessionMode,
-                    // mode: this.mode,
-                  });
-                } else {
-                  // API >= v5
-                  appOptions = _.extend(appOptions, {
-                    'session-uuid': res.sessionId,
-                    'session-name': res.sessionName,
-                    'access-key': '',
-                    mode: sessionMode,
-                    // mode: this.mode,
-                  });
-                }
-                const service_info = res.servicePorts;
-                if (Array.isArray(service_info) === true) {
-                  appOptions['app-services'] = service_info.map(
-                    (a: { name: string }) => a.name,
-                  );
-                } else {
-                  appOptions['app-services'] = [];
-                }
-                // TODO: support import and inference
-                // if (sessionMode === 'import') {
-                //   appOptions['runtime'] = 'jupyter';
-                //   appOptions['filename'] = this.importFilename;
-                // }
-                // if (sessionMode === 'inference') {
-                //   appOptions['runtime'] = appOptions['app-services'].find(
-                //     (element: any) => !['ttyd', 'sshd'].includes(element),
-                //   );
-                // }
+        await Promise.allSettled(sessionPromises)
+          .then(async (sessionCreations) => {
+            // sessionCreations has failed
+            if (_.every(sessionCreations, { status: 'rejected' })) {
+            } else {
+              // If at least one session creation is successful, navigate to job page and show success notifications
+              webuiNavigate(redirectTo || '/job');
 
-                // only launch app when it has valid service ports
-                if (service_info.length > 0) {
-                  // @ts-ignore
-                  globalThis.appLauncher.showLauncher(appOptions);
+              _.map(sessionCreations, async (creation) => {
+                if (creation.status === 'fulfilled') {
+                  const session = creation.value as {
+                    kernelId?: string;
+                    sessionId: string;
+                    sessionName: string;
+                    servicePorts: Array<{ name: string }>;
+                  };
+                  const queryResult =
+                    await fetchQuery<SessionLauncherPageAfterCreationQuery>(
+                      relayEnv,
+                      graphql`
+                        query SessionLauncherPageAfterCreationQuery(
+                          $id: GlobalIDField!
+                        ) {
+                          compute_session_node(id: $id) {
+                            ...BAINodeNotificationItemFragment
+                          }
+                        }
+                      `,
+                      {
+                        id: toGlobalId('ComputeSessionNode', session.sessionId),
+                      },
+                    )
+                      .toPromise()
+                      .catch(() => null);
+
+                  const createdSession =
+                    queryResult?.compute_session_node ?? null;
+
+                  if (createdSession) {
+                    upsertNotification({
+                      key: `${SESSION_LAUNCHER_NOTI_PREFIX}${session.sessionId}`,
+                      node: createdSession,
+                      open: true,
+                      duration: 0,
+                    });
+                  }
                 }
-              }
-            },
-          )
+              });
+            }
+          })
           .catch(() => {
-            upsertNotification({
-              key: 'session-launcher:' + sessionName,
-              to: backupTo,
-              toText: t('button.Edit'),
-            });
-            // this.metadata_updating = false;
-            // console.log(err);
-            // if (err && err.message) {
-            //   this.notification.text = PainKiller.relieve(err.message);
-            //   if (err.description) {
-            //     this.notification.text = PainKiller.relieve(err.description);
-            //   } else {
-            //     this.notification.detail = err.message;
-            //   }
-            //   this.notification.show(true, err);
-            // } else if (err && err.title) {
-            //   this.notification.text = PainKiller.relieve(err.title);
-            //   this.notification.show(true, err);
-            // }
-            // const event = new CustomEvent('backend-ai-session-list-refreshed', {
-            //   detail: 'running',
-            // });
-            // document.dispatchEvent(event);
-            // this.launchButton.disabled = false;
-            // this.launchButtonMessageTextContent = _text(
-            //   'session.launcher.ConfirmAndLaunch',
-            // );
+            // Handle failed session creations
           });
       })
       .catch((e) => {
@@ -777,7 +719,6 @@ const SessionLauncherPage = () => {
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={(name, info) => {
-              // console.log('###', name, info);
               // use OnFormChange instead of Form's onValuesChange,
               // because onValuesChange will not be triggered when form is changed programmatically
               syncFormToURLWithDebounce();

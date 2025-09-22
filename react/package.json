@@ -28,7 +28,7 @@
     "ahooks": "^3.8.4",
     "ai": "^4.3.15",
     "ansi_up": "^6.0.2",
-    "antd": "^5.24.9",
+    "antd": "^5.27.4",
     "antd-style": "^3.7.1",
     "backend.ai-ui": "workspace:*",
     "big.js": "^7.0.1",

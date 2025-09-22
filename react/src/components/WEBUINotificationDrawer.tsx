@@ -1,6 +1,7 @@
 import { useWebUINavigate } from '../hooks';
 import { useBAINotificationState } from '../hooks/useBAINotification';
-import BAINotificationItem from './BAINotificationItem';
+import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
+import BAINodeNotificationItem from './BAINodeNotificationItem';
 import { MoreOutlined } from '@ant-design/icons';
 import {
   Drawer,
@@ -125,16 +126,23 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           </BAIFlex>
         }
         rowKey={(item) => item.key}
-        renderItem={(item) => (
-          <BAINotificationItem
-            notification={item}
-            onClickAction={(e) => {
-              item.to && webuiNavigate(item.to);
-              drawerProps.onClose && drawerProps.onClose(e);
-            }}
-            showDate
-          />
-        )}
+        renderItem={(item) =>
+          item.node ? (
+            <BAINodeNotificationItem
+              notification={item}
+              nodeFrgmt={item.node || null}
+              showDate
+            />
+          ) : (
+            <BAIGeneralNotificationItem
+              notification={item}
+              onClickAction={(e) => {
+                item.to && webuiNavigate(item.to);
+              }}
+              showDate
+            />
+          )
+        }
       />
     </Drawer>
   );
