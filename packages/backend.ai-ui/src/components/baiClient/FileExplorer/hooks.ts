@@ -1,10 +1,15 @@
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
+import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { App } from 'antd';
+import { RcFile } from 'antd/es/upload';
+import _ from 'lodash';
+import { use, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-export const useSearchVFolderFiles = (vfolder: string) => {
+export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   const baiClient = useConnectedBAIClient();
   const [currentPath, setCurrentPath] = useState<string>('.');
   const [, setCurrentPathParam] = useQueryParam(
@@ -46,7 +51,7 @@ export const useSearchVFolderFiles = (vfolder: string) => {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ['searchVFolderFiles', vfolder, currentPath],
+    queryKey: ['searchVFolderFiles', vfolder, currentPath, fetchKey],
     queryFn: () =>
       baiClient.vfolder.list_files(currentPath, vfolder).then((res) => {
         setDirectoryTree((prev) => ({
@@ -70,5 +75,52 @@ export const useSearchVFolderFiles = (vfolder: string) => {
     navigateToPath,
     refetch,
     isFetching,
+  };
+};
+
+export const useUploadVFolderFiles = () => {
+  const { t } = useTranslation();
+  const { modal } = App.useApp();
+  const { targetVFolderId, currentPath } = use(FolderInfoContext);
+  const baiClient = useConnectedBAIClient();
+
+  const uploadFiles = async (
+    fileList: Array<RcFile>,
+    onUpload: (files: Array<RcFile>, currentPath: string) => void,
+    afterUpload?: () => void,
+  ) => {
+    // Currently, backend.ai only supports finding existing files by using list_files API.
+    // This API throw an error if the file does not exist in the target vfolder.
+    // So, we need to catch the error and return undefined.
+    const uploadFolderName = fileList[0].webkitRelativePath.split('/')[0];
+
+    const duplicateCheckResult = await baiClient.vfolder
+      .list_files(currentPath, targetVFolderId)
+      .then((files) => {
+        if (uploadFolderName) {
+          return _.some(files.items, (f) => f.name === uploadFolderName);
+        } else {
+          return _.some(files.items, (f) => f.name === fileList[0].name);
+        }
+      })
+      .catch(() => undefined);
+
+    if (duplicateCheckResult) {
+      modal.confirm({
+        title: t('comp:FileExplorer.DuplicatedFiles'),
+        content: t('comp:FileExplorer.DuplicatedFilesDesc'),
+        onOk: () => {
+          onUpload(fileList, currentPath);
+          afterUpload?.();
+        },
+      });
+    } else {
+      onUpload(fileList, currentPath);
+      afterUpload?.();
+    }
+  };
+
+  return {
+    uploadFiles,
   };
 };

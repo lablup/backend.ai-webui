@@ -3,19 +3,15 @@ import BAIModal, { BAIModalProps } from './BAIModal';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
-import { Alert, Grid, Splitter, theme } from 'antd';
+import { Alert, Divider, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
-import {
-  BAIFileExplorer,
-  BAIFlex,
-  toGlobalId,
-  useSearchVFolderFiles,
-} from 'backend.ai-ui';
+import { BAIFileExplorer, BAIFlex, toGlobalId } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useFetchKey } from 'src/hooks';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -50,14 +46,15 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
   const { styles } = useStyles();
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
   const { uploadStatus, uploadFiles } = useFileUploadManager(vfolderID);
-  const { refetch } = useSearchVFolderFiles(vfolderID);
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const currentProject = useCurrentProjectValue();
+  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (uploadStatus && _.isEmpty(uploadStatus.pending)) {
-      refetch();
+      updateFetchKey();
     }
-  }, [uploadStatus, refetch]);
+  }, [uploadStatus, updateFetchKey]);
 
   const { vfolder_node } = useLazyLoadQuery<FolderExplorerQuery>(
     graphql`
@@ -82,6 +79,40 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
+  const fileExplorerElement = vfolder_node?.unmanaged_path ? (
+    <Alert
+      message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
+      showIcon
+    />
+  ) : !hasNoPermissions ? (
+    <BAIFileExplorer
+      vfolderNodeFrgmt={vfolder_node}
+      targetVFolderId={vfolderID}
+      fetchKey={fetchKey}
+      onUpload={(files: RcFile[], currentPath: string) => {
+        uploadFiles(files, vfolderID, currentPath);
+      }}
+      tableProps={{
+        scroll: xl
+          ? { x: 'max-content' }
+          : { x: 'max-content', y: 'calc(100vh - 400px)' },
+      }}
+      style={{
+        paddingBottom: xl ? token.paddingLG : 0,
+      }}
+      fileDropContainerRef={bodyRef}
+    />
+  ) : null;
+
+  const vFolderDescriptionElement = vfolder_node ? (
+    <VFolderNodeDescription
+      vfolderNodeFrgmt={vfolder_node}
+      onRequestRefresh={() => {
+        folderExplorerRef.current?._fetchVFolder();
+      }}
+    />
+  ) : null;
+
   return (
     <BAIModal
       className={styles.baiModalHeader}
@@ -92,11 +123,17 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
       title={
         vfolder_node ? (
           <FolderExplorerHeader
+            titleStyle={{
+              zIndex: token.zIndexPopupBase + 2,
+            }}
             vfolderNodeFrgmt={vfolder_node}
             folderExplorerRef={folderExplorerRef}
           />
         ) : null
       }
+      bodyProps={{
+        ref: bodyRef,
+      }}
       onCancel={() => {
         onRequestClose();
       }}
@@ -116,45 +153,35 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           <Alert message={t('data.NotInProject')} type="warning" showIcon />
         ) : null}
 
-        <Splitter
-          // Force re-render component when xl breakpoint changes to reset panel sizes
-          // This ensures defaultSize is recalculated based on current screen size
-          key={xl ? 'large' : 'small'}
-          style={{
-            gap: token.size,
-            maxHeight: 'calc(100vh - 220px)',
-          }}
-          layout={xl ? 'horizontal' : 'vertical'}
-        >
-          <Splitter.Panel resizable={false} max={'60%'}>
-            <BAIFlex direction="column" align="stretch">
-              {vfolder_node?.unmanaged_path ? (
-                <Alert
-                  message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
-                  showIcon
-                />
-              ) : !hasNoPermissions ? (
-                <BAIFileExplorer
-                  vfolderNodeFrgmt={vfolder_node}
-                  targetVFolderId={vfolderID}
-                  onUpload={(files: RcFile[], currentPath: string) => {
-                    uploadFiles(files, vfolderID, currentPath);
-                  }}
-                />
-              ) : null}
-            </BAIFlex>
-          </Splitter.Panel>
-          <Splitter.Panel defaultSize={xl ? 500 : 300} min={300} max={'40%'}>
-            {vfolder_node ? (
-              <VFolderNodeDescription
-                vfolderNodeFrgmt={vfolder_node}
-                onRequestRefresh={() => {
-                  folderExplorerRef.current?._fetchVFolder();
-                }}
-              />
-            ) : null}
-          </Splitter.Panel>
-        </Splitter>
+        {xl ? (
+          <Splitter
+            // Force re-render component when xl breakpoint changes to reset panel sizes
+            // This ensures defaultSize is recalculated based on current screen size
+            key={xl ? 'large' : 'small'}
+            style={{
+              gap: token.size,
+              // maxHeight: 'calc(100vh - 220px)',
+            }}
+            layout={xl ? 'horizontal' : 'vertical'}
+          >
+            <Splitter.Panel resizable={false}>
+              {fileExplorerElement}
+            </Splitter.Panel>
+            <Splitter.Panel defaultSize={500}>
+              {vFolderDescriptionElement}
+            </Splitter.Panel>
+          </Splitter>
+        ) : (
+          <BAIFlex direction="column" align="stretch">
+            {fileExplorerElement}
+            <Divider
+              style={{
+                borderColor: token.colorBorderSecondary,
+              }}
+            />
+            {vFolderDescriptionElement}
+          </BAIFlex>
+        )}
       </BAIFlex>
     </BAIModal>
   );

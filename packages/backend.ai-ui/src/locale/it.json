@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} di {{total}} elementi"
   },
-  "comp:BAITable": {
-    "SettingTable": "Impostazioni della tabella",
-    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
-    "SearchTableColumn": "Colonne della tabella di ricerca"
-  },
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "La dimensione del file supera il limite di dimensione del caricamento."
     },
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
-    "DuplicatedFiles": "Sovrascrivere la conferma"
+    "DuplicatedFiles": "Sovrascrivere la conferma",
+    "DragAndDropDesc": "Trascina i file in quest'area da caricare."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Impostazioni della tabella",
+    "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
+    "SearchTableColumn": "Colonne della tabella di ricerca"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Ricerca",

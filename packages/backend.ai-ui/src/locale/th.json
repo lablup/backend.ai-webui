@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
-  "comp:BAITable": {
-    "SettingTable": "การตั้งค่าตาราง",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
-  },
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "ขนาดไฟล์เกินขีด จำกัด ขนาดการอัปโหลด"
     },
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
-    "DuplicatedFiles": "การยืนยันการเขียนทับ"
+    "DuplicatedFiles": "การยืนยันการเขียนทับ",
+    "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด"
+  },
+  "comp:BAITable": {
+    "SettingTable": "การตั้งค่าตาราง",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",

@@ -6,11 +6,6 @@
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} von {{total}} Elementen"
   },
-  "comp:BAITable": {
-    "SettingTable": "Tabelleneinstellungen",
-    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SearchTableColumn": "Suchtabellenspalten"
-  },
   "error": {
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
@@ -44,7 +39,13 @@
       "FileUploadSizeLimit": "Die Dateigröße überschreitet die Hochladungsgrenze."
     },
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
-    "DuplicatedFiles": "Überschreibung der Bestätigung"
+    "DuplicatedFiles": "Überschreibung der Bestätigung",
+    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen."
+  },
+  "comp:BAITable": {
+    "SettingTable": "Tabelleneinstellungen",
+    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
+    "SearchTableColumn": "Suchtabellenspalten"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
