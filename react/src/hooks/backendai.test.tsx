@@ -1,6 +1,7 @@
-// import json
 import deviceMetadata from '../../../resources/device_metadata.json';
+// import json
 import schema from '../../../resources/device_metadata.schema.json';
+import '../../__test__/matchMedia.mock.js';
 import {
   knownAcceleratorResourceSlotNames,
   baseResourceSlotNames,

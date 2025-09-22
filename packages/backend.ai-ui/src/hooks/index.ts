@@ -34,5 +34,6 @@ export function useMemoizedJSONParse<T = any>(
 }
 
 export { default as useErrorMessageResolver } from './useErrorMessageResolver';
+export { default as useViewer } from './useViewer';
 export type { ErrorResponse } from './useErrorMessageResolver';
 export type { ESMClientErrorResponse } from './useErrorMessageResolver';

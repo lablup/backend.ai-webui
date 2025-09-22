@@ -4,6 +4,7 @@ export interface BAIClient {
   // Example:
   // request: (endpoint: string, options?: RequestInit) => Promise<any>;
   // Add more methods as needed based on the actual Backend.AI client API
+  isManagerVersionCompatibleWith: (version: string) => boolean;
   vfolder: {
     list_files: (path: string, id: string) => Promise<any>;
   };

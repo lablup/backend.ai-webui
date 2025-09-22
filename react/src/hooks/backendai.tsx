@@ -5,6 +5,7 @@ import {
   useTanMutation,
   useTanQuery,
 } from './reactQueryAlias';
+import { useViewer } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -256,6 +257,9 @@ export const useCurrentUserInfo = () => {
 export const useCurrentUserRole = () => {
   const [userInfo] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
+
+  const { decodedUserRole } = useViewer();
+
   const { data: roleData } = useTanQuery<{
     user: {
       role: 'superadmin' | 'admin' | 'user' | 'monitor';
@@ -266,10 +270,10 @@ export const useCurrentUserRole = () => {
       return baiClient.user.get(userInfo.email, ['role']);
     },
     staleTime: Infinity,
+    enabled: decodedUserRole === null,
   });
-  const userRole = roleData?.user.role;
 
-  return userRole;
+  return decodedUserRole ?? roleData?.user.role;
 };
 
 export const useTOTPSupported = () => {
