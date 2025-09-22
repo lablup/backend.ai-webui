@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "tes"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:BAITable": {
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel",
+    "SearchTableColumn": "Kolom Tabel Cari"
+  },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Menghapus",
+      "Create": "Membuat",
+      "Upload": "Mengunggah",
+      "CopyAll": "Salin semua"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "Name": "Nama",
+    "Size": "Ukuran",
+    "CreatedAt": "Dibuat di",
+    "ModifiedAt": "Dimodifikasi di",
+    "Controls": "Kontrol",
+    "UploadFiles": "Unggah file",
+    "UploadFolder": "Unggah folder",
+    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "error": {
+      "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
+    },
+    "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "DuplicatedFiles": "Timpa konfirmasi"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Tak terbatas"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Kolom Tabel Cari",
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel"
-  },
-  "comp:BAITestButton": {
-    "Test": "tes"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Kontrol",
-    "CreateANewFolder": "Buat folder baru",
-    "CreatedAt": "Dibuat di",
-    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
-    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
-    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
-    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
-    "FolderName": "Nama folder",
-    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
-    "ModifiedAt": "Dimodifikasi di",
-    "Name": "Nama",
-    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
-    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
-    "Size": "Ukuran",
-    "UploadFiles": "Unggah file",
-    "UploadFolder": "Unggah folder",
-    "error": {
-      "FileUploadSizeLimit": "Ukuran file melebihi batas ukuran unggahan."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
-  },
-  "error": {
-    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
-  },
-  "general": {
-    "NSelected": "{{count}} dipilih",
-    "button": {
-      "CopyAll": "Salin semua",
-      "Create": "Membuat",
-      "Delete": "Menghapus",
-      "Upload": "Mengunggah"
-    }
   }
 }

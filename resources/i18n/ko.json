@@ -641,10 +641,17 @@
     "Title": "에러가 발생했습니다."
   },
   "explorer": {
+    "FileInProgress": "'{{fileName}}' 파일 업로드 중...",
+    "FileUploadCancelled": "사용자 요청에 따라 파일 업로드가 취소되었습니다.",
+    "FileUploadFailed": "'{{folderName}}' 폴더에서 일부 파일 업로드에 실패했습니다. ",
     "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "InputTooShort": "입력값이 너무 짧습니다.",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged 폴더는 파일 탐색기를 지원하지 않습니다.",
     "NoPermissions": "이 폴더에 접근할 권한이 없습니다",
+    "ProcessingUpload": "파일을 업로드하는 중입니다. 잠시만 기다려주세요.",
+    "SuccessfullyUploadedToFolder": "'{{folderName}}' 폴더에 파일 업로드가 완료되었습니다. ",
+    "UploadFailed": "'{{folderName}}'에 업로드 실패",
+    "UploadToFolder": "'{{folderName}}'에 업로드 중",
     "ValueRequired": "값이 필요합니다."
   },
   "general": {

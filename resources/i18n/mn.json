@@ -641,7 +641,14 @@
     "InputTooShort": "Хэт богино байна",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
-    "ValueRequired": "Утга Шаардлагатай"
+    "ValueRequired": "Утга Шаардлагатай",
+    "FileInProgress": "Файлуудыг '{{fileName}}}' ...",
+    "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
+    "FileUploadFailed": "'{{folderName}}' Файлд файл байршуулж чадсангүй.",
+    "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
+    "SuccessfullyUploadedToFolder": "Файлууд '{{folderName}}' хавтасанд амжилттай байршуулсан файлууд.",
+    "UploadFailed": "'{{folderName}} -д бүтэлгүйтсэн.",
+    "UploadToFolder": "'{{folderName}}' руу байршуулж байна."
   },
   "general": {
     "AccessKey": "Нэвтрэх түлхүүр",

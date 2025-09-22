@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "kiểm tra"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} của {{total}}"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Cài đặt bảng",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SearchTableColumn": "Các cột bảng tìm kiếm"
+  },
+  "error": {
+    "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
+  },
+  "general": {
+    "NSelected": "{{count}} Đã chọn",
+    "button": {
+      "Delete": "Xóa bỏ",
+      "Create": "Tạo nên",
+      "Upload": "Tải lên",
+      "CopyAll": "Sao chép tất cả"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
+    "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
+    "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
+    "CreateANewFolder": "Tạo một thư mục mới",
+    "FolderName": "Tên thư mục",
+    "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
+    "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
+    "Name": "Tên",
+    "Size": "Kích cỡ",
+    "CreatedAt": "Được tạo ra tại",
+    "ModifiedAt": "Sửa đổi tại",
+    "Controls": "Kiểm soát",
+    "UploadFiles": "Tải lên tệp",
+    "UploadFolder": "Tải lên thư mục",
+    "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
+    "error": {
+      "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
+    },
+    "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
+    "DuplicatedFiles": "Ghi đè xác nhận"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Không giới hạn"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Các cột bảng tìm kiếm",
-    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
-    "SettingTable": "Cài đặt bảng"
-  },
-  "comp:BAITestButton": {
-    "Test": "kiểm tra"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Kiểm soát",
-    "CreateANewFolder": "Tạo một thư mục mới",
-    "CreatedAt": "Được tạo ra tại",
-    "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
-    "DeleteSelectedItemsDialog": "Xóa xác nhận",
-    "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
-    "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
-    "FolderName": "Tên thư mục",
-    "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
-    "ModifiedAt": "Sửa đổi tại",
-    "Name": "Tên",
-    "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
-    "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
-    "Size": "Kích cỡ",
-    "UploadFiles": "Tải lên tệp",
-    "UploadFolder": "Tải lên thư mục",
-    "error": {
-      "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} của {{total}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
-  },
-  "error": {
-    "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
-  },
-  "general": {
-    "NSelected": "{{count}} Đã chọn",
-    "button": {
-      "CopyAll": "Sao chép tất cả",
-      "Create": "Tạo nên",
-      "Delete": "Xóa bỏ",
-      "Upload": "Tải lên"
-    }
   }
 }

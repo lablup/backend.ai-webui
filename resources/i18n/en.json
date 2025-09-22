@@ -647,7 +647,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "FileInProgress": "Uploading '{{fileName}}'...",
+    "FileUploadCancelled": "The file upload was canceled by user request.",
+    "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
+    "ProcessingUpload": "Your file is being uploaded. Please wait.",
+    "SuccessfullyUploadedToFolder": "Files uploaded successfully in folder '{{folderName}}'",
+    "UploadFailed": "Upload failed in '{{folderName}}'",
+    "UploadToFolder": "Uploading to '{{folderName}}'"
   },
   "general": {
     "AccessKey": "Access Key",
@@ -1215,8 +1222,8 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
-    "SharedMemory": "Shared Memory",
-    "Updated": "Resource preset updated"
+    "Updated": "Resource preset updated",
+    "SharedMemory": "Shared Memory"
   },
   "scheduler": {
     "PendingSessions": "Pending Sessions"

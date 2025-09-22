@@ -638,10 +638,17 @@
     "Title": "Ralat telah berlaku."
   },
   "explorer": {
+    "FileInProgress": "Memuat naik '{{fileName}}' ...",
+    "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna.",
+    "FileUploadFailed": "Gagal memuat naik beberapa fail dalam folder '{{folderName}}'.",
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
     "NoPermissions": "Tiada kebenaran untuk mengakses folder ini",
+    "ProcessingUpload": "Fail anda sedang dimuat naik. \nTolong tunggu.",
+    "SuccessfullyUploadedToFolder": "Fail yang dimuat naik dengan jayanya dalam folder '{{folderName}}'",
+    "UploadFailed": "Muat naik gagal dalam '{{folderName}}'",
+    "UploadToFolder": "Memuat naik ke '{{folderName}}'",
     "ValueRequired": "Nilai Diperlukan"
   },
   "general": {

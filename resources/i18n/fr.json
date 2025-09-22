@@ -643,7 +643,14 @@
     "InputTooShort": "Entrée Trop Courte",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
-    "ValueRequired": "ValeurRequis"
+    "ValueRequired": "ValeurRequis",
+    "FileInProgress": "Téléchargement '{{fileName}}' ...",
+    "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
+    "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
+    "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
+    "SuccessfullyUploadedToFolder": "Fichiers téléchargés avec succès dans le dossier '{{folderName}}'",
+    "UploadFailed": "Le téléchargement a échoué dans '{{folderName}}'",
+    "UploadToFolder": "Téléchargement sur '{{folderName}}'"
   },
   "general": {
     "AccessKey": "Clef d'accès",

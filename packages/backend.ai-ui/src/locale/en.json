@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "Test"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} of {{total}} items"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Table Settings",
+    "SelectColumnToDisplay": "Select columns to display",
+    "SearchTableColumn": "Search table columns"
+  },
+  "error": {
+    "UnknownError": "An unknown error occurred. Please try again."
+  },
+  "general": {
+    "NSelected": "{{count}} selected",
+    "button": {
+      "Delete": "Delete",
+      "Create": "Create",
+      "Upload": "Upload",
+      "CopyAll": "Copy All"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
+    "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
+    "FolderCreatedSuccessfully": "Folder created successfully.",
+    "CreateANewFolder": "Create a new folder",
+    "FolderName": "Folder Name",
+    "PleaseEnterAFolderName": "Please enter the folder name.",
+    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+    "Name": "Name",
+    "Size": "Size",
+    "CreatedAt": "Created At",
+    "ModifiedAt": "Modified At",
+    "Controls": "Controls",
+    "UploadFiles": "Upload Files",
+    "UploadFolder": "Upload Folder",
+    "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "error": {
+      "FileUploadSizeLimit": "File size exceeds upload size limit."
+    },
+    "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
+    "DuplicatedFiles": "Overwrite Confirmation"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",
     "ResetFilter": "Reset filters"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Unlimited"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Search table columns",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SettingTable": "Table Settings"
-  },
-  "comp:BAITestButton": {
-    "Test": "Test"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Controls",
-    "CreateANewFolder": "Create a new folder",
-    "CreatedAt": "Created At",
-    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
-    "DeleteSelectedItemsDialog": "Delete Confirmation",
-    "DownloadStarted": "File \"{{fileName}}\" download has started.",
-    "FolderCreatedSuccessfully": "Folder created successfully.",
-    "FolderName": "Folder Name",
-    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
-    "ModifiedAt": "Modified At",
-    "Name": "Name",
-    "PleaseEnterAFolderName": "Please enter the folder name.",
-    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
-    "Size": "Size",
-    "UploadFiles": "Upload Files",
-    "UploadFolder": "Upload Folder",
-    "error": {
-      "FileUploadSizeLimit": "File size exceeds upload size limit."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
-  },
-  "error": {
-    "UnknownError": "An unknown error occurred. Please try again."
-  },
-  "general": {
-    "NSelected": "{{count}} selected",
-    "button": {
-      "CopyAll": "Copy All",
-      "Create": "Create",
-      "Delete": "Delete",
-      "Upload": "Upload"
-    }
   }
 }

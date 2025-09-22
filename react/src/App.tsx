@@ -54,6 +54,9 @@ const FolderExplorerOpener = React.lazy(
 const FolderInvitationResponseModalOpener = React.lazy(
   () => import('./components/FolderInvitationResponseModalOpener'),
 );
+const FileUploadManager = React.lazy(
+  () => import('./components/FileUploadManager'),
+);
 const ServiceLauncherCreatePage = React.lazy(
   () => import('./components/ServiceLauncherPageContent'),
 );
@@ -120,6 +123,7 @@ const router = createBrowserRouter([
         <Suspense>
           <FolderExplorerOpener />
           <FolderInvitationResponseModalOpener />
+          <FileUploadManager />
         </Suspense>
       </QueryParamProvider>
     ),

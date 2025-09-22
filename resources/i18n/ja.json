@@ -638,10 +638,17 @@
     "Title": "エラーが発生しました。"
   },
   "explorer": {
+    "FileInProgress": "'{{fileName}}'のアップロード...",
+    "FileUploadCancelled": "ファイルのアップロードは、ユーザーリクエストによってキャンセルされました。",
+    "FileUploadFailed": "Folder '{{folderName}}'にいくつかのファイルをアップロードできませんでした。",
     "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "NoPermissions": "このフォルダーにアクセスする権限はありません",
+    "ProcessingUpload": "ファイルがアップロードされています。\nお待ちください。",
+    "SuccessfullyUploadedToFolder": "FilesがFolder '{{folderName}}'に正常にアップロードされました '",
+    "UploadFailed": "'{{folderName}}'で故障したアップロード",
+    "UploadToFolder": "'{{folderName}}にアップロードする",
     "ValueRequired": "ValueRequired"
   },
   "general": {

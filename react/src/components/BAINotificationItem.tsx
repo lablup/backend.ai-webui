@@ -4,7 +4,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Card, List, Progress, Typography, theme } from 'antd';
+import { Button, Card, List, Progress, Typography, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -38,6 +38,7 @@ const BAINotificationItem: React.FC<{
     ) : notification.type === 'success' ? (
       <CheckCircleOutlined style={{ color: token.colorSuccess }} />
     ) : null);
+
   return (
     <List.Item>
       <BAIFlex direction="column" align="stretch" gap={'xxs'}>
@@ -83,7 +84,14 @@ const BAINotificationItem: React.FC<{
               </Typography.Link>
             </BAIFlex>
           ) : null}
-          {notification.extraDescription ? (
+          {notification?.onCancel ? (
+            <BAIFlex>
+              <Button type="link" onClick={notification.onCancel}>
+                {t('button.Cancel')}
+              </Button>
+            </BAIFlex>
+          ) : null}
+          {notification.extraDescription && !notification?.onCancel ? (
             <BAIFlex>
               <Typography.Link
                 onClick={(e) => {

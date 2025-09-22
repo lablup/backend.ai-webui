@@ -635,10 +635,17 @@
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {
+    "FileInProgress": "Μεταφόρτωση '{{fileName}}' ...",
+    "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
+    "FileUploadFailed": "Απέτυχε να ανεβάσει κάποια αρχεία στο φάκελο '{{folderName}}'.",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "NoPermissions": "Δεν υπάρχουν δικαιώματα πρόσβασης σε αυτόν τον φάκελο",
+    "ProcessingUpload": "Το αρχείο σας μεταφορτώνεται. \nΠεριμένετε.",
+    "SuccessfullyUploadedToFolder": "Αρχεία που μεταφορτώθηκαν με επιτυχία στο φάκελο '{{folderName}}'",
+    "UploadFailed": "Η μεταφόρτωση απέτυχε στο '{{folderName}}'",
+    "UploadToFolder": "Μεταφόρτωση στο '{{folderName}}'",
     "ValueRequired": "Απαιτούμενη τιμή"
   },
   "general": {

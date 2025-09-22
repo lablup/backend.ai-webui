@@ -638,10 +638,17 @@
     "Title": "Telah terjadi kesalahan."
   },
   "explorer": {
+    "FileInProgress": "Mengunggah '{{fileName}}' ...",
+    "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna.",
+    "FileUploadFailed": "Gagal mengunggah beberapa file di folder '{{folderName}}'.",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "InputTooShort": "MasukanTerlaluPendek",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
+    "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
+    "SuccessfullyUploadedToFolder": "File berhasil diunggah di folder '{{folderName}}'",
+    "UploadFailed": "Unggah gagal di '{{folderName}}'",
+    "UploadToFolder": "Mengunggah ke '{{folderName}}'",
     "ValueRequired": "NilaiDiperlukan"
   },
   "general": {

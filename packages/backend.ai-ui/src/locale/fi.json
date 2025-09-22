@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "testi"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Taulukon asetukset",
+    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
+    "SearchTableColumn": "Hakutaulukon sarakkeet"
+  },
+  "error": {
+    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
+  },
+  "general": {
+    "NSelected": "{{count}} valittu",
+    "button": {
+      "Delete": "Poistaa",
+      "Create": "Luoda",
+      "Upload": "Ladata",
+      "CopyAll": "Kopioida kaikki"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
+    "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
+    "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
+    "CreateANewFolder": "Luo uusi kansio",
+    "FolderName": "Kansionimi",
+    "PleaseEnterAFolderName": "Anna kansionimi.",
+    "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
+    "Name": "Nimi",
+    "Size": "Koko",
+    "CreatedAt": "Luotu jhk",
+    "ModifiedAt": "Muutettu",
+    "Controls": "Hallintalaitteet",
+    "UploadFiles": "Lähetä tiedostot",
+    "UploadFolder": "Lataa kansio",
+    "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "error": {
+      "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
+    },
+    "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
+    "DuplicatedFiles": "Korvata vahvistus"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Rajoittamaton"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Hakutaulukon sarakkeet",
-    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
-    "SettingTable": "Taulukon asetukset"
-  },
-  "comp:BAITestButton": {
-    "Test": "testi"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Hallintalaitteet",
-    "CreateANewFolder": "Luo uusi kansio",
-    "CreatedAt": "Luotu jhk",
-    "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
-    "DeleteSelectedItemsDialog": "Poista vahvistus",
-    "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
-    "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
-    "FolderName": "Kansionimi",
-    "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
-    "ModifiedAt": "Muutettu",
-    "Name": "Nimi",
-    "PleaseEnterAFolderName": "Anna kansionimi.",
-    "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
-    "Size": "Koko",
-    "UploadFiles": "Lähetä tiedostot",
-    "UploadFolder": "Lataa kansio",
-    "error": {
-      "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
-  },
-  "error": {
-    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
-  },
-  "general": {
-    "NSelected": "{{count}} valittu",
-    "button": {
-      "CopyAll": "Kopioida kaikki",
-      "Create": "Luoda",
-      "Delete": "Poistaa",
-      "Upload": "Ladata"
-    }
   }
 }

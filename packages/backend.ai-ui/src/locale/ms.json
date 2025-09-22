@@ -1,5 +1,51 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAITestButton": {
+    "Test": "ujian"
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:BAITable": {
+    "SettingTable": "Tetapan Jadual",
+    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
+    "SearchTableColumn": "Lajur jadual carian"
+  },
+  "error": {
+    "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "Delete": "Padam",
+      "Create": "Buat",
+      "Upload": "Muat naik",
+      "CopyAll": "Salin semua"
+    }
+  },
+  "comp:FileExplorer": {
+    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
+    "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
+    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
+    "CreateANewFolder": "Buat folder baru",
+    "FolderName": "Nama folder",
+    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+    "Name": "Nama",
+    "Size": "Saiz",
+    "CreatedAt": "Dicipta di",
+    "ModifiedAt": "Diubahsuai di",
+    "Controls": "Kawalan",
+    "UploadFiles": "Memuat naik fail",
+    "UploadFolder": "Muat naik folder",
+    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "error": {
+      "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
+    },
+    "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
+    "DuplicatedFiles": "Pengesahan Pengesahan"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
@@ -10,51 +56,7 @@
   "comp:BAIStatistic": {
     "Unlimited": "Tidak terhad"
   },
-  "comp:BAITable": {
-    "SearchTableColumn": "Lajur jadual carian",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SettingTable": "Tetapan Jadual"
-  },
-  "comp:BAITestButton": {
-    "Test": "ujian"
-  },
-  "comp:FileExplorer": {
-    "Controls": "Kawalan",
-    "CreateANewFolder": "Buat folder baru",
-    "CreatedAt": "Dicipta di",
-    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
-    "DeleteSelectedItemsDialog": "Padam pengesahan",
-    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
-    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
-    "FolderName": "Nama folder",
-    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
-    "ModifiedAt": "Diubahsuai di",
-    "Name": "Nama",
-    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
-    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
-    "Size": "Saiz",
-    "UploadFiles": "Memuat naik fail",
-    "UploadFolder": "Muat naik folder",
-    "error": {
-      "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
-    }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
-  },
-  "error": {
-    "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
-  },
-  "general": {
-    "NSelected": "{{count}} dipilih",
-    "button": {
-      "CopyAll": "Salin semua",
-      "Create": "Buat",
-      "Delete": "Padam",
-      "Upload": "Muat naik"
-    }
   }
 }

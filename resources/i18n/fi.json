@@ -643,7 +643,14 @@
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
-    "ValueRequired": "ValueRequired"
+    "ValueRequired": "ValueRequired",
+    "FileInProgress": "Lataaminen '{{fileName}}' ...",
+    "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
+    "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
+    "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
+    "SuccessfullyUploadedToFolder": "Tiedostot ladataan onnistuneesti kansioon '{{folderName}}'",
+    "UploadFailed": "Lähettäminen epäonnistui '{{folderName}}'",
+    "UploadToFolder": "Lataaminen '{{folderName}}'"
   },
   "general": {
     "AccessKey": "Access Key",
