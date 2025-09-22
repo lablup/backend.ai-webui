@@ -94,25 +94,32 @@ const FileUploadManager: React.FC = () => {
             pending: t('explorer.ProcessingUpload'),
           },
         },
-        duration: 3,
+        duration: 0,
       });
 
       startFunctions.forEach((startFunction) => {
         queue.add(async () => {
           await startFunction({
             onProgress: (bytesUploaded, bytesTotal, fileName) => {
-              upsertNotification({
-                key: 'upload:' + vFolderId,
-                open: false,
-                backgroundTask: {
-                  status: 'pending',
-                  percent: Math.round((bytesUploaded / bytesTotal) * 100) - 1,
-                  onChange: {
-                    pending: t('explorer.FileInProgress', {
-                      fileName: fileName,
-                    }),
+              setUploadStatus((prev) => {
+                const remainingFiles = prev[vFolderId]?.pending || [];
+                upsertNotification({
+                  key: 'upload:' + vFolderId,
+                  message: `${t('explorer.UploadToFolder', {
+                    folderName: vFolderName,
+                  })}${remainingFiles.length > 1 ? ` (${remainingFiles.length})` : ''}`,
+                  backgroundTask: {
+                    status: 'pending',
+                    percent: Math.round((bytesUploaded / bytesTotal) * 100) - 1,
+                    onChange: {
+                      pending: t('explorer.FileInProgress', {
+                        fileName: fileName,
+                      }),
+                    },
                   },
-                },
+                });
+
+                return prev;
               });
             },
           })
@@ -183,7 +190,15 @@ const FileUploadManager: React.FC = () => {
               resolved: ' ',
             },
           },
+          duration: 3,
         });
+        setUploadStatus((prev) => ({
+          ...prev,
+          [vFolderId]: {
+            ...prev[vFolderId],
+            completed: [],
+          },
+        }));
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

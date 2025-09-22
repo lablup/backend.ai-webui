@@ -35,12 +35,11 @@
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
-    "error": {
-      "FileUploadSizeLimit": "Dosya boyutu yükleme boyutu sınırını aşar."
-    },
+    "error": {},
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
     "DuplicatedFiles": "Üzerine Yazın Onay",
-    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın."
+    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
+    "RenameSuccess": "İsim başarıyla değiştirildi."
   },
   "comp:BAITable": {
     "SettingTable": "Masa Ayarları",

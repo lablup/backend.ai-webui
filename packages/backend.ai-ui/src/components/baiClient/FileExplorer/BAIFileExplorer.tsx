@@ -11,37 +11,20 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
+import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
-import { FileOutlined, FolderOutlined, HomeOutlined } from '@ant-design/icons';
-import {
-  Breadcrumb,
-  Skeleton,
-  TableColumnsType,
-  theme,
-  Typography,
-} from 'antd';
-import { createStyles } from 'antd-style';
+import { FolderOutlined } from '@ant-design/icons';
+import { Breadcrumb, Skeleton, TableColumnsType, Typography } from 'antd';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { HouseIcon } from 'lucide-react';
 import { createContext, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-
-const useStyles = createStyles(({ css, token }) => ({
-  hover: css`
-    text-decoration: none;
-    /* color: ${token.colorLink}; */
-
-    &:hover {
-      /* color: ${token.colorLinkHover}; */
-      text-decoration: underline;
-    }
-  `,
-}));
 
 export const FolderInfoContext = createContext<{
   targetVFolderId: string;
@@ -71,8 +54,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   style,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { styles } = useStyles();
   const [isDragMode, setIsDragMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
@@ -103,50 +84,21 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const vFolderNode = useFragment(
     graphql`
       fragment BAIFileExplorerFragment on VirtualFolderNode {
+        permissions
         ...FileItemControlsFragment
+        ...ExplorerActionControlsFragment
+        ...EditableFileNameFragment
       }
     `,
     vfolderNodeFrgmt,
   );
-
-  useEffect(() => {
-    const handleDragEnter = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragMode(true);
-    };
-    const handleDragLeave = (e: DragEvent) => {
-      e.preventDefault();
-      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
-        setIsDragMode(false);
-      }
-    };
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-    };
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragMode(false);
-    };
-
-    document.addEventListener('dragenter', handleDragEnter);
-    document.addEventListener('dragleave', handleDragLeave);
-    document.addEventListener('dragover', handleDragOver);
-    document.addEventListener('drop', handleDrop);
-
-    return () => {
-      document.removeEventListener('dragenter', handleDragEnter);
-      document.removeEventListener('dragleave', handleDragLeave);
-      document.removeEventListener('dragover', handleDragOver);
-      document.removeEventListener('drop', handleDrop);
-    };
-  }, []);
 
   const breadCrumbItems: Array<ItemType> = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
 
     const items: Array<ItemType> = [
       {
-        title: <HomeOutlined />,
+        title: <HouseIcon />,
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -201,48 +153,29 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a.name, b.name),
-      fixed: 'left',
-      render: (name, record) =>
-        record?.type === 'DIRECTORY' ? (
-          // FIXME: need to implement BAILink into backend.ai-ui and use it here
-          <Typography.Link
-            className={styles.hover}
-            onClick={(e) => {
-              e.stopPropagation();
+      render: (name, record) => (
+        <EditableFileName
+          vfolderNodeFrgmt={vFolderNode}
+          fileInfo={record}
+          existingFiles={fetchedFilesCache}
+          onEndEdit={() => {
+            refetch();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            const targetEl = e.target as HTMLElement;
+            if (targetEl.closest('button')) return;
+            if (record.type === 'DIRECTORY') {
               navigateDown(name);
               setSelectedItems([]);
-            }}
-            style={{ display: 'block', width: 'fit-content' }} // To prevent conflicts with the click event of onRow.
-          >
-            <BAIFlex gap="xs">
-              <FolderOutlined />
-              <Typography.Text
-                ellipsis={{
-                  tooltip: name,
-                }}
-                style={{ maxWidth: 200, color: token.colorLink }}
-              >
-                {name}
-              </Typography.Text>
-            </BAIFlex>
-          </Typography.Link>
-        ) : (
-          <BAIFlex gap="xs">
-            <FileOutlined />
-            <Typography.Text
-              ellipsis={{
-                tooltip: name,
-              }}
-              style={{ maxWidth: 200 }}
-            >
-              {name}
-            </Typography.Text>
-          </BAIFlex>
-        ),
+            }
+          }}
+        />
+      ),
     },
     {
       title: t('comp:FileExplorer.Controls'),
-      fixed: 'left',
+      width: 80,
       render: (_, record) => {
         return (
           <Suspense fallback={<Skeleton.Button size="small" active />}>
@@ -284,6 +217,38 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     },
   ]);
 
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(true);
+    };
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
+        setIsDragMode(false);
+      }
+    };
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(false);
+    };
+
+    document.addEventListener('dragenter', handleDragEnter);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
+
+    return () => {
+      document.removeEventListener('dragenter', handleDragEnter);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       {isDragMode && (
@@ -309,6 +274,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             )}
           />
           <ExplorerActionControls
+            vFolderNodeFrgmt={vFolderNode}
             selectedFiles={selectedItems}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
             onRequestClose={(

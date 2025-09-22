@@ -36,11 +36,15 @@
     "UploadFolder": "Carpeta de carga",
     "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
     "error": {
-      "FileUploadSizeLimit": "El tamaño del archivo excede el límite de tamaño de carga."
+      "FileNameRequired": "Ingrese un nombre de archivo o carpeta.",
+      "DuplicatedName": "Este nombre ya está en uso. \nIngrese un nombre diferente."
     },
     "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
     "DuplicatedFiles": "Confirmación de sobrescribencia",
-    "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar."
+    "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar.",
+    "ChangeFileExtensionDesc": "Cambiar la extensión del archivo puede hacer que el archivo se vuelva inutilizable o se abra incorrectamente. \n¿Quieres continuar?",
+    "ChangeFileExtension": "Cambiar la extensión del archivo",
+    "RenameSuccess": "El nombre ha sido cambiado con éxito."
   },
   "comp:BAITable": {
     "SettingTable": "Configuración de tabla",

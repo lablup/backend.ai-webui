@@ -36,11 +36,15 @@
     "UploadFolder": "Dossier de téléchargement",
     "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
     "error": {
-      "FileUploadSizeLimit": "La taille du fichier dépasse la limite de taille de téléchargement."
+      "FileNameRequired": "Veuillez saisir un fichier ou un nom de dossier.",
+      "DuplicatedName": "Ce nom est déjà utilisé. \nVeuillez saisir un autre nom."
     },
     "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
     "DuplicatedFiles": "Écran de confirmation",
-    "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger."
+    "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
+    "ChangeFileExtensionDesc": "La modification de l'extension du fichier peut faire en sorte que le fichier devienne inutilisable ou s'ouvre incorrectement. \nVoulez-vous continuer?",
+    "ChangeFileExtension": "Modifier l'extension du fichier",
+    "RenameSuccess": "Le nom a été modifié avec succès."
   },
   "comp:BAITable": {
     "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",

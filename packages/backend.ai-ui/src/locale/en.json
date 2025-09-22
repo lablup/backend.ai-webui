@@ -36,11 +36,15 @@
     "UploadFolder": "Upload Folder",
     "DownloadStarted": "File \"{{fileName}}\" download has started.",
     "error": {
-      "FileUploadSizeLimit": "File size exceeds upload size limit."
+      "FileNameRequired": "Please enter a file or folder name.",
+      "DuplicatedName": "This name is already in use. Please enter a different name."
     },
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
     "DuplicatedFiles": "Overwrite Confirmation",
-    "DragAndDropDesc": "Drag and drop files to this area to upload."
+    "DragAndDropDesc": "Drag and drop files to this area to upload.",
+    "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",
+    "ChangeFileExtension": "Change File Extension",
+    "RenameSuccess": "The name has been successfully changed."
   },
   "comp:BAITable": {
     "SettingTable": "Table Settings",

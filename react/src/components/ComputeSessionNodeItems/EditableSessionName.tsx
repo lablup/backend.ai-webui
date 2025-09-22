@@ -5,9 +5,7 @@ import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-import { theme, Form, Input, App } from 'antd';
-import Text, { TextProps } from 'antd/es/typography/Text';
-import Title, { TitleProps } from 'antd/es/typography/Title';
+import { theme, Form, Input, App, GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,12 +19,18 @@ import {
 type EditableSessionNameProps = {
   sessionFrgmt: EditableSessionNameFragment$key;
 } & (
-  | ({ component?: typeof Text } & Omit<TextProps, 'children'>)
-  | ({ component: typeof Title } & Omit<TitleProps, 'children'>)
+  | ({ component?: typeof Typography.Text } & Omit<
+      GetProps<typeof Typography.Text>,
+      'children'
+    >)
+  | ({ component: typeof Typography.Title } & Omit<
+      GetProps<typeof Typography.Title>,
+      'children'
+    >)
 );
 
 const EditableSessionName: React.FC<EditableSessionNameProps> = ({
-  component: Component = Text,
+  component: Component = Typography.Text,
   sessionFrgmt,
   editable: editableOfProps,
   style,

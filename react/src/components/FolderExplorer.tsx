@@ -1,4 +1,3 @@
-import { FolderExplorerQuery } from '../__generated__/FolderExplorerQuery.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
@@ -11,6 +10,7 @@ import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { FolderExplorerQuery } from 'src/__generated__/FolderExplorerQuery.graphql';
 import { useFetchKey } from 'src/hooks';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 
@@ -67,6 +67,8 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
           ...BAIFileExplorerFragment
+          ...FileItemControlsFragment
+          ...ExplorerActionControlsFragment
         }
       }
     `,

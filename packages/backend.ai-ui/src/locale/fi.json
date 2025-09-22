@@ -36,11 +36,15 @@
     "UploadFolder": "Lataa kansio",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
     "error": {
-      "FileUploadSizeLimit": "Tiedoston koko ylittää lähetyskoon rajan."
+      "FileNameRequired": "Anna tiedoston tai kansionimi.",
+      "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi."
     },
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "DuplicatedFiles": "Korvata vahvistus",
-    "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi."
+    "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
+    "ChangeFileExtensionDesc": "Tiedoston laajennuksen muuttaminen voi aiheuttaa tiedoston käyttökelvottoman tai avoimen väärin. \nHaluatko edetä?",
+    "ChangeFileExtension": "Vaihda tiedoston laajennus",
+    "RenameSuccess": "Nimi on muutettu onnistuneesti."
   },
   "comp:BAITable": {
     "SettingTable": "Taulukon asetukset",

@@ -1,8 +1,7 @@
 import BAIFlex from './BAIFlex';
-import { describe, expect, test, jest } from '@jest/globals';
+import { describe, test, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 
 // Mock antd's theme hook
 jest.mock('antd', () => ({
@@ -56,6 +55,7 @@ describe('BAIFlex', () => {
         </div>
       </BAIFlex>,
     );
+
     expect(screen.getByTestId('firstChildComponent')).toBeInTheDocument();
     expect(screen.getByTestId('secondChildComponent')).toBeInTheDocument();
     expect(screen.getByTestId('nestedChildComponent')).toBeInTheDocument();

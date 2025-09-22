@@ -36,11 +36,15 @@
     "UploadFolder": "Tải lên thư mục",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
     "error": {
-      "FileUploadSizeLimit": "Kích thước tệp vượt quá giới hạn kích thước tải lên."
+      "FileNameRequired": "Vui lòng nhập tên tệp hoặc thư mục.",
+      "DuplicatedName": "Tên này đã được sử dụng. \nVui lòng nhập một tên khác."
     },
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
     "DuplicatedFiles": "Ghi đè xác nhận",
-    "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên."
+    "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
+    "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
+    "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
+    "RenameSuccess": "Tên đã được thay đổi thành công."
   },
   "comp:BAITable": {
     "SettingTable": "Cài đặt bảng",

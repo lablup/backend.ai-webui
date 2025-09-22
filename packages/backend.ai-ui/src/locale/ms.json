@@ -36,11 +36,15 @@
     "UploadFolder": "Muat naik folder",
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
     "error": {
-      "FileUploadSizeLimit": "Saiz fail melebihi had saiz muat naik."
+      "FileNameRequired": "Sila masukkan fail atau nama folder.",
+      "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza."
     },
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "DuplicatedFiles": "Pengesahan Pengesahan",
-    "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik."
+    "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
+    "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
+    "ChangeFileExtension": "Tukar Sambungan Fail",
+    "RenameSuccess": "Nama telah berjaya diubah."
   },
   "comp:BAITable": {
     "SettingTable": "Tetapan Jadual",

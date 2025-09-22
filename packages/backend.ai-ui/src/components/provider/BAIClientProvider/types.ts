@@ -34,6 +34,12 @@ export interface BAIClient {
       fs: object,
       name: string,
     ) => Promise<any>;
+    rename_file: (
+      target_path: string,
+      new_name: string,
+      targetFolder: string,
+      is_dir: boolean,
+    ) => Promise<any>;
   };
   current_group_id: () => string;
   current_group: string;

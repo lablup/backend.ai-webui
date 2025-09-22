@@ -5,12 +5,9 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import BAILink from './BAILink';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { theme, Form, Input, App } from 'antd';
-import Text, { TextProps } from 'antd/es/typography/Text';
-import Title, { TitleProps } from 'antd/es/typography/Title';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import { theme, Form, Input, App, GetProps, Typography } from 'antd';
+import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -29,12 +26,18 @@ type EditableVFolderNameProps = {
   onEditEnd?: () => void;
   onEditStart?: () => void;
 } & (
-  | ({ component?: typeof Text } & Omit<TextProps, 'children'>)
-  | ({ component: typeof Title } & Omit<TitleProps, 'children'>)
+  | ({ component?: typeof Typography.Text } & Omit<
+      GetProps<typeof Typography.Text>,
+      'children'
+    >)
+  | ({ component: typeof Typography.Title } & Omit<
+      GetProps<typeof Typography.Title>,
+      'children'
+    >)
 );
 
 const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
-  component: Component = Text,
+  component: Component = Typography.Text,
   vfolderFrgmt,
   editable: editableOfProps,
   style,
