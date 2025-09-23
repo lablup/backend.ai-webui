@@ -151,9 +151,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   <VFolderNodeIdenticon
                     vfolderNodeIdenticonFrgmt={vfolder}
                     style={{
-                      width: token.size,
-                      height: token.size,
-                      borderRadius: token.borderRadiusSM,
+                      fontSize: token.fontSizeHeading5,
                     }}
                   />
                   {vfolder?.id === hoveredColumn ? (
@@ -171,7 +169,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       onEditStart={() => {
                         setEditingColumn(vfolder?.id);
                       }}
-                      existingNames={_.compact(_.map(filteredVFolders, 'name'))}
                     />
                   ) : (
                     <BAILink

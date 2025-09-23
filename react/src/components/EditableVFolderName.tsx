@@ -6,7 +6,15 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { theme, Form, Input, App, GetProps, Typography } from 'antd';
+import {
+  theme,
+  Form,
+  Input,
+  App,
+  GetProps,
+  Typography,
+  InputProps,
+} from 'antd';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
@@ -23,6 +31,7 @@ type EditableVFolderNameProps = {
   vfolderFrgmt: EditableVFolderNameFragment$key;
   enableLink?: boolean;
   existingNames?: Array<string>;
+  inputProps?: InputProps;
   onEditEnd?: () => void;
   onEditStart?: () => void;
 } & (
@@ -45,6 +54,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
   existingNames,
   onEditEnd,
   onEditStart,
+  inputProps,
   ...otherProps
 }) => {
   const vfolder = useFragment(
@@ -105,6 +115,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                     onEditEnd?.();
                   },
                   triggerType: ['icon'],
+                  ...(!_.isBoolean(editableOfProps) ? editableOfProps : {}),
                 }
               : false
           }
@@ -114,6 +125,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
               ? token.colorTextTertiary
               : style?.color,
           }}
+          title={vfolder.name || undefined}
           {...otherProps}
         >
           {enableLink && !isEditing && (
@@ -132,6 +144,9 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
         <Form
           onFinish={(values) => {
             setIsEditing(false);
+            if (values.vfolderName === vfolder.name) {
+              return;
+            }
             setOptimisticName(values.vfolderName);
             renameMutation.mutate(
               {
@@ -159,7 +174,16 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 },
                 onError: (error) => {
                   onEditEnd?.();
-                  message.error(getErrorMessage(error));
+                  const errorMessage = getErrorMessage(error);
+                  if (
+                    errorMessage.includes(
+                      'One of your accessible vfolders already has the name you requested.',
+                    )
+                  ) {
+                    message.error(t('data.FolderAlreadyExists'));
+                  } else {
+                    message.error(errorMessage);
+                  }
                   setOptimisticName(vfolder.name);
                 },
               },
@@ -188,14 +212,15 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                 pattern: /^[a-zA-Z0-9-_.]+$/,
                 message: t('data.AllowsLettersNumbersAnd-_Dot'),
               },
-              {
-                validator: (__, value) => {
-                  if (_.includes(existingNames, value)) {
-                    return Promise.reject(t('data.FolderAlreadyExists'));
-                  }
-                  return Promise.resolve();
-                },
-              },
+              // TODO: (Priority low) implement async validator to check existing folder names
+              // {
+              //   validator: (__, value) => {
+              //     if (_.includes(existingNames, value)) {
+              //       return Promise.reject(t('data.FolderAlreadyExists'));
+              //     }
+              //     return Promise.resolve();
+              //   },
+              // },
             ]}
             style={{
               margin: 0,
@@ -219,6 +244,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                   onEditEnd?.();
                 }
               }}
+              {...inputProps}
             />
           </Form.Item>
         </Form>

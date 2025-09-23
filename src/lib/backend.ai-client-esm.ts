@@ -499,6 +499,10 @@ class Client {
         statusCode: resp.status,
         statusText: resp.statusText,
         title: errorTitle,
+        // `msg` field was introduced in v24.09.0
+        msg: resp.msg,
+        // `message` is deprecated, but it is kept for backward compatibility.
+        // use `msg` field instead.
         message: errorMsg,
         description: errorDesc,
         error_code: errorCode,

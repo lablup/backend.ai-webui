@@ -41,6 +41,7 @@ const useErrorMessageResolver = () => {
     let errorMsg = defaultMessage || t('error.UnknownError');
     if (!error) return errorMsg;
 
+    // Prioritize `msg` or `message`(deprecated) field if available.
     if (error?.msg || error?.message) {
       const integratedErrorMsg = error?.msg || error?.message || '';
       errorMsg = !_.includes(integratedErrorMsg, 'Traceback')

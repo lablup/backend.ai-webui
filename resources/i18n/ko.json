@@ -240,9 +240,9 @@
     "EnterDifferentValue": "기존 파일 또는 폴더 이름과 다른 값을 입력해 주세요. 변경하려는 폴더 이름에 공백문자가 있는지 확인해 주세요.",
     "ExistingFolderName": "기존 폴더 이름",
     "FileAndFolderNameRequired": "파일 및 폴더 이름이 필요합니다.",
-    "FolderAlreadyExists": "다음 폴더는 이미 존재합니다.",
+    "FolderAlreadyExists": "같은 이름의 폴더가 이미 존재합니다.",
     "FolderInfo": "폴더 정보",
-    "FolderNameRequired": "폴더 이름은 필수 입력입니다.",
+    "FolderNameRequired": "폴더 이름을 입력해주세요.",
     "FolderNameTooLong": "폴더 이름은 64자 이하로 입력하세요",
     "FolderToCopy": "복사할 폴더 이름",
     "Foldername": "폴더 이름",
@@ -263,6 +263,7 @@
     "NewFolder": "새 폴더",
     "NewFolderName": "새 폴더 이름",
     "NoStorageDescriptionFound": "별도 설명이 없습니다.",
+    "NotInProject": "이 폴더는 다른 프로젝트에 속해 있습니다.",
     "NumberOfFolders": "폴더 개수",
     "Permission": "권한",
     "Pipeline": "파이프라인",
@@ -483,8 +484,7 @@
       "Status": "상태",
       "StatusOfSelectedHost": "선택한 호스트 상태",
       "Used": "사용중"
-    },
-    "NotInProject": "이 폴더는 다른 프로젝트에 속해 있습니다."
+    }
   },
   "desktopNotification": {
     "NotSupported": "현재 브라우저에서는 알림 기능을 지원하지 않습니다. ",

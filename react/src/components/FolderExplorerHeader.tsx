@@ -1,8 +1,9 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
-import VFolderNameTitle from './VFolderNameTitle';
-import { Button, Tooltip, Image, Skeleton, Grid, theme } from 'antd';
+import EditableVFolderName from './EditableVFolderName';
+import VFolderNodeIdenticon from './VFolderNodeIdenticon';
+import { Button, Tooltip, Image, Grid, theme, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { LegacyRef, Suspense } from 'react';
+import React, { LegacyRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -29,6 +30,8 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         permission
         unmanaged_path @since(version: "25.04.0")
         ...VFolderNameTitleNodeFragment
+        ...VFolderNodeIdenticonFragment
+        ...EditableVFolderNameFragment
       }
     `,
     vfolderNodeFrgmt,
@@ -43,20 +46,52 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
     >
       <BAIFlex
         data-testid="folder-explorer-title"
-        gap={token.marginMD}
+        gap={'xs'}
         style={{ flex: 1, ...titleStyle }}
       >
-        <Suspense fallback={<Skeleton.Input active />}>
-          <VFolderNameTitle vfolderNodeFrgmt={vfolderNode} />
-        </Suspense>
+        {vfolderNode ? (
+          <VFolderNodeIdenticon
+            vfolderNodeIdenticonFrgmt={vfolderNode}
+            style={{
+              fontSize: token.fontSizeHeading4,
+            }}
+          />
+        ) : (
+          <BAIFlex
+            style={{
+              borderColor: token.colorBorderSecondary,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              width: token.fontSizeHeading3,
+              height: token.fontSizeHeading3,
+              borderRadius: token.borderRadius,
+            }}
+          />
+        )}
+        {vfolderNode && (
+          <EditableVFolderName
+            vfolderFrgmt={vfolderNode}
+            enableLink={false}
+            component={Typography.Title}
+            level={3}
+            style={{
+              margin: 0,
+              width: '100%',
+            }}
+            ellipsis
+            editable={{
+              triggerType: ['icon', 'text'],
+            }}
+            inputProps={{
+              size: 'large',
+            }}
+          />
+        )}
       </BAIFlex>
       <BAIFlex
         data-testid="folder-explorer-actions"
         justify="end"
         gap={token.marginSM}
-        style={{
-          flex: lg ? 2 : 1,
-        }}
       >
         {!vfolderNode?.unmanaged_path ? (
           <>
