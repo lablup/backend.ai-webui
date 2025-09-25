@@ -2436,7 +2436,7 @@ export default class BackendAISessionList extends BackendAIPage {
               ${passedCount + ` Passed`}
             </span>
             <mwc-list>
-              ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
+              ${tmpSessionStatus.scheduler.failed_predicates?.map((item) => {
                 return html`
                   ${item.name === 'reserved_time'
                     ? html`
