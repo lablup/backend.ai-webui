@@ -52,6 +52,7 @@ const BAIMenu: React.FC<BAIMenuProps> = ({ collapsed, ...props }) => {
           backgroundColor: 'transparent',
           borderRight: 'none',
           // paddingRight: 4,
+          userSelect: 'none',
         }}
         // mode=""
         {...props}
