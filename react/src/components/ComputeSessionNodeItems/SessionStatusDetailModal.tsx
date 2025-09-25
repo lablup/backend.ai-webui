@@ -2,8 +2,7 @@ import { SessionStatusDetailModalFragment$key } from '../../__generated__/Sessio
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import BAIModal from '../BAIModal';
-import DoubleTag from '../DoubleTag';
-import { statusTagColor } from './SessionStatusTag';
+import SessionStatusTag from './SessionStatusTag';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -80,6 +79,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
         status_info
         status_data
         starts_at
+        ...SessionStatusTagFragment
       }
     `,
     sessionFrgmt,
@@ -91,24 +91,13 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
       title={
         <>
           {t('session.StatusInfo')}
-          <DoubleTag
-            values={[
-              {
-                label: session.status ?? '',
-                color: session.status
-                  ? _.get(statusTagColor, session.status)
-                  : undefined,
-                style: { fontWeight: 'normal' },
-              },
-              {
-                label: _.split(session.status_info, ' ')[0] ?? '',
-                color: session.status_info
-                  ? _.get(statusInfoTagColor, session.status_info)
-                  : undefined,
-                style: { borderStyle: 'dashed', fontWeight: 'normal' },
-              },
-            ]}
-          />
+          <span style={{ fontWeight: 'normal' }}>
+            <SessionStatusTag
+              sessionFrgmt={session}
+              showInfo
+              showQueuePosition={false}
+            />
+          </span>
         </>
       }
       footer={null}
