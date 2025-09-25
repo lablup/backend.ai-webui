@@ -42,6 +42,7 @@ export interface BAIImportArtifactModalProps
     }[],
   ) => void;
   onCancel: (e: React.MouseEvent<HTMLElement>) => void;
+  connectionIds?: string[];
 }
 
 const BAIImportArtifactModal = ({
@@ -49,6 +50,7 @@ const BAIImportArtifactModal = ({
   selectedArtifactRevisionFrgmt,
   onOk,
   onCancel,
+  connectionIds,
   ...modalProps
 }: BAIImportArtifactModalProps) => {
   const { t } = useTranslation();
@@ -81,6 +83,7 @@ const BAIImportArtifactModal = ({
     useMutation<BAIImportArtifactModalImportArtifactsMutation>(graphql`
       mutation BAIImportArtifactModalImportArtifactsMutation(
         $input: ImportArtifactsInput!
+        $connectionIds: [ID!]!
       ) {
         importArtifacts(input: $input) {
           tasks {
@@ -90,7 +93,7 @@ const BAIImportArtifactModal = ({
             }
           }
           artifactRevisions {
-            edges {
+            edges @appendEdge(connections: $connectionIds) {
               node {
                 id
                 status
@@ -138,6 +141,7 @@ const BAIImportArtifactModal = ({
                   toLocalId(revision.id),
                 ),
               },
+              connectionIds: connectionIds ?? [],
             },
             onCompleted: (res, errors) => {
               if (errors && errors.length > 0) {

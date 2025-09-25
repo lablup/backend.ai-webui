@@ -116,9 +116,15 @@ const ReservoirArtifactDetailPage = () => {
           }
           updatedAt
           pullingArtifactRevisions: revisions(
+            first: null
+            last: null
             filter: { status: { equals: PULLING } }
             orderBy: { field: VERSION, direction: DESC }
-          ) {
+          )
+            @connection(
+              key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
+            ) {
+            __id
             count
             edges {
               node {
@@ -518,6 +524,9 @@ const ReservoirArtifactDetailPage = () => {
         selectedArtifactFrgmt={artifact ?? null}
         selectedArtifactRevisionFrgmt={selectedRevisions}
         open={!!artifact && !_.isEmpty(selectedRevisions)}
+        connectionIds={
+          artifact ? [artifact.pullingArtifactRevisions.__id] : undefined
+        }
         onOk={(_e, tasks) => {
           setSelectedRevisions([]);
           tasks.forEach((task) => {
@@ -546,7 +555,6 @@ const ReservoirArtifactDetailPage = () => {
               },
             });
           });
-          updateFetchKey();
         }}
         onCancel={() => {
           setSelectedRevisions([]);
