@@ -1,9 +1,9 @@
-import { BAIDeleteArtifactModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactModalArtifactFragment.graphql';
+import { BAIDeleteArtifactRevisionsModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactFragment.graphql';
 import {
-  BAIDeleteArtifactModalArtifactRevisionFragment$data,
-  BAIDeleteArtifactModalArtifactRevisionFragment$key,
-} from '../../__generated__/BAIDeleteArtifactModalArtifactRevisionFragment.graphql';
-import { BAIDeleteArtifactModalCleanupVersionMutation } from '../../__generated__/BAIDeleteArtifactModalCleanupVersionMutation.graphql';
+  BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$data,
+  BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key,
+} from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactRevisionFragment.graphql';
+import { BAIDeleteArtifactRevisionsModalCleanupVersionMutation } from '../../__generated__/BAIDeleteArtifactRevisionsModalCleanupVersionMutation.graphql';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
@@ -22,34 +22,34 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
-  NonNullable<BAIDeleteArtifactModalArtifactRevisionFragment$data>[number];
+  NonNullable<BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$data>[number];
 
-export type BAIDeleteArtifactModalArtifactFragmentKey =
-  BAIDeleteArtifactModalArtifactFragment$key;
+export type BAIDeleteArtifactRevisionsModalArtifactFragmentKey =
+  BAIDeleteArtifactRevisionsModalArtifactFragment$key;
 
-export type BAIDeleteArtifactModalArtifactRevisionFragmentKey =
-  BAIDeleteArtifactModalArtifactRevisionFragment$key;
+export type BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey =
+  BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
 
-export interface BAIDeleteArtifactModalProps
+export interface BAIDeleteArtifactRevisionsModalProps
   extends Omit<ModalProps, 'onOk' | 'onCancel'> {
-  selectedArtifactFrgmt: BAIDeleteArtifactModalArtifactFragment$key | null;
-  selectedArtifactRevisionFrgmt: BAIDeleteArtifactModalArtifactRevisionFragment$key;
+  selectedArtifactFrgmt: BAIDeleteArtifactRevisionsModalArtifactFragment$key | null;
+  selectedArtifactRevisionFrgmt: BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
   onCancel: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
-const BAIDeleteArtifactModal = ({
+const BAIDeleteArtifactRevisionsModal = ({
   selectedArtifactFrgmt,
   selectedArtifactRevisionFrgmt,
   onOk,
   onCancel,
   ...modalProps
-}: BAIDeleteArtifactModalProps) => {
+}: BAIDeleteArtifactRevisionsModalProps) => {
   const { t } = useTranslation();
 
   const [cleanupVersion, isInflightCleanupVersion] =
-    useMutation<BAIDeleteArtifactModalCleanupVersionMutation>(graphql`
-      mutation BAIDeleteArtifactModalCleanupVersionMutation(
+    useMutation<BAIDeleteArtifactRevisionsModalCleanupVersionMutation>(graphql`
+      mutation BAIDeleteArtifactRevisionsModalCleanupVersionMutation(
         $input: CleanupArtifactRevisionsInput!
       ) {
         cleanupArtifactRevisions(input: $input) {
@@ -64,9 +64,9 @@ const BAIDeleteArtifactModal = ({
       }
     `);
   const selectedArtifact =
-    useFragment<BAIDeleteArtifactModalArtifactFragment$key>(
+    useFragment<BAIDeleteArtifactRevisionsModalArtifactFragment$key>(
       graphql`
-        fragment BAIDeleteArtifactModalArtifactFragment on Artifact {
+        fragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {
           id
           ...BAIArtifactDescriptionsFragment
         }
@@ -75,9 +75,9 @@ const BAIDeleteArtifactModal = ({
     );
 
   const selectedArtifactRevision =
-    useFragment<BAIDeleteArtifactModalArtifactRevisionFragment$key>(
+    useFragment<BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key>(
       graphql`
-        fragment BAIDeleteArtifactModalArtifactRevisionFragment on ArtifactRevision
+        fragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision
         @relay(plural: true) {
           id
           version
@@ -202,4 +202,4 @@ const BAIDeleteArtifactModal = ({
   );
 };
 
-export default BAIDeleteArtifactModal;
+export default BAIDeleteArtifactRevisionsModal;

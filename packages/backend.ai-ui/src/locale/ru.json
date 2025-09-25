@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Активировать",
+    "ActivateArtifacts": "Активируйте артефакты",
+    "AreYouSureYouWantToActivateOne": "Вы уверены, что хотите активировать {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Вы уверены, что хотите активировать {{count}} артефакты?",
+    "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
+    "SuccessfullyActivated": "Успешно активированные артефакты."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Описание",
     "Name": "Имя",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Действие",
+    "Activate": "Активировать",
+    "Controls": "Управление",
+    "Deactivate": "Деактивировать",
     "PullLatestVersion": "Вытащите последнюю версию",
     "Scanned": "Сканируется",
     "Size": "Размер",
     "Updated": "Обновлено",
     "Version": "Версия"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
+    "Deactivate": "Деактивировать",
+    "DeactivateArtifacts": "Деактивируйте артефакты",
+    "FailedToDeactivateArtifacts": "Не удалось деактивировать артефакты.",
+    "SuccessfullyDeactivated": "Успешно деактивированные артефакты."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} версии исключены.",

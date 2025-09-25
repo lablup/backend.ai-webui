@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "활성화",
+    "ActivateArtifacts": "아티팩트를 활성화",
+    "AreYouSureYouWantToActivateOne": "{{name}}을 활성화 하시겠습니까?",
+    "AreYouSureYouWantToActivateSome": "{{count}}개의 아티팩트를 활성화 하시겠습니까?",
+    "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
+    "SuccessfullyActivated": "성공적으로 아티팩트를 활성화했습니다."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "설명",
     "Name": "이름",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "행동",
+    "Activate": "활성화",
+    "Controls": "제어",
+    "Deactivate": "비활성화",
     "PullLatestVersion": "최신 버전을 가져옵니다",
     "Scanned": "스캔",
     "Size": "크기",
     "Updated": "업데이트",
     "Version": "버전"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "{{name}}를 비활성화 하시겠습니까?",
+    "AreYouSureYouWantToDeactivateSome": "{{count}}개의 아티팩트를 비활성화 하시겠습니까?",
+    "Deactivate": "비활성화",
+    "DeactivateArtifacts": "아티팩트 비활성화",
+    "FailedToDeactivateArtifacts": "아티팩트를 비활성화하는 데 실패했습니다.",
+    "SuccessfullyDeactivated": "아티팩트를 성공적으로 비활성화했습니다."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",

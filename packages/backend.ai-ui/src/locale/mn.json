@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Идэвхжүүлэх",
+    "ActivateArtifacts": "Олдворуудыг идэвхжүүлэх",
+    "AreYouSureYouWantToActivateOne": "Та {{name}} идэвхжүүлэхийг хүсч байна уу?",
+    "AreYouSureYouWantToActivateSome": "Та {{count}} олдворуудыг идэвхжүүлэхийг хүсч байна уу?",
+    "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
+    "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Тодорхойлолт / төрөл анги",
     "Name": "Нэр",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Үйл ажиллагаа",
+    "Activate": "Идэвхжүүлэх",
+    "Controls": "Удирдлага",
+    "Deactivate": "Идэвхгүй болгох",
     "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах",
     "Scanned": "Дээгэрсэн",
     "Size": "Хэмжээ",
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
+    "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",
+    "Deactivate": "Идэвхгүй болгох",
+    "DeactivateArtifacts": "Олдворуудыг идэвхгүй болгох",
+    "FailedToDeactivateArtifacts": "Олдворуудыг идэвхгүй болгож чадсангүй.",
+    "SuccessfullyDeactivated": "Олдворыг амжилттай идэвхгүй болгосон."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",

@@ -261,6 +261,7 @@
     "NewFolder": "Nova pasta",
     "NewFolderName": "Novo nome da pasta",
     "NoStorageDescriptionFound": "Sem descrição.",
+    "NotInProject": "Esta pasta pertence a um projeto diferente.",
     "NumberOfFolders": "Número de pastas",
     "Permission": "Permissão",
     "Pipeline": "Pastas de pipelines",
@@ -481,8 +482,7 @@
       "Status": "Estado",
       "StatusOfSelectedHost": "Estado do anfitrião selecionado",
       "Used": "utilizado"
-    },
-    "NotInProject": "Esta pasta pertence a um projeto diferente."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",
@@ -1093,10 +1093,14 @@
     "UsernameOptional": "Nome de usuário (opcional)"
   },
   "reservoirPage": {
+    "Activate": "Ativar",
+    "Active": "Ativo",
     "ArtifactID": "Id de artefato",
     "BasicInformation": "Informações básicas",
+    "Deactivate": "Desativar",
     "Description": "Descrição",
     "FromHuggingFace": "De abraçar o rosto",
+    "Inactive": "Inativo",
     "LastUpdated": "Última atualização",
     "Name": "Nome",
     "PullLatestVersion": "Puxe a versão mais recente ({{version}})",

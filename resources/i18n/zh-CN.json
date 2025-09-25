@@ -261,6 +261,7 @@
     "NewFolder": "新建文件夹",
     "NewFolderName": "新文件夹名称",
     "NoStorageDescriptionFound": "没有说明。",
+    "NotInProject": "该文件夹属于另一个项目。",
     "NumberOfFolders": "文件夹数量",
     "Permission": "允许",
     "Pipeline": "管道文件夹",
@@ -481,8 +482,7 @@
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
       "Used": "中古"
-    },
-    "NotInProject": "该文件夹属于另一个项目。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "该浏览器不支持通知。",
@@ -1093,10 +1093,14 @@
     "UsernameOptional": "用户名（可选）"
   },
   "reservoirPage": {
+    "Activate": "激活",
+    "Active": "积极的",
     "ArtifactID": "文物ID",
     "BasicInformation": "基本信息",
+    "Deactivate": "停用",
     "Description": "描述",
     "FromHuggingFace": "从拥抱脸",
+    "Inactive": "不活动",
     "LastUpdated": "最后更新",
     "Name": "姓名",
     "PullLatestVersion": "拉最新（{{version}}）版本",

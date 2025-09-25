@@ -261,6 +261,7 @@
     "NewFolder": "Новая папка",
     "NewFolderName": "Новое имя папки",
     "NoStorageDescriptionFound": "Нет описания.",
+    "NotInProject": "Эта папка принадлежит другому проекту.",
     "NumberOfFolders": "Количество папок",
     "Permission": "Разрешение",
     "Pipeline": "Трубопроводные папки",
@@ -481,8 +482,7 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Статус выбранного хоста",
       "Used": "используется"
-    },
-    "NotInProject": "Эта папка принадлежит другому проекту."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Этот браузер не поддерживает уведомления.",
@@ -1092,10 +1092,14 @@
     "UsernameOptional": "Имя пользователя (необязательно)"
   },
   "reservoirPage": {
+    "Activate": "Активировать",
+    "Active": "Активный",
     "ArtifactID": "Идентификатор артефакта",
     "BasicInformation": "Основная информация",
+    "Deactivate": "Деактивировать",
     "Description": "Описание",
     "FromHuggingFace": "От обнимающего лица",
+    "Inactive": "Неактивный",
     "LastUpdated": "Последнее обновлено",
     "Name": "Имя",
     "PullLatestVersion": "Вытащите последнюю версию ({{version}})",

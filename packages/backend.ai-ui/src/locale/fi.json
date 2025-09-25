@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Aktivoida",
+    "ActivateArtifacts": "Aktivoida esineitä",
+    "AreYouSureYouWantToActivateOne": "Oletko varma, että haluat aktivoida {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Oletko varma, että haluat aktivoida {{count}} esineitä?",
+    "FailedToActivateArtifacts": "Artefaktien aktivointi epäonnistui.",
+    "SuccessfullyActivated": "Onnistuneesti aktivoidut esineet."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Kuvaus",
     "Name": "Nimi",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Toiminta",
+    "Activate": "Aktivoida",
+    "Controls": "Hallintalaitteet",
+    "Deactivate": "Deaktivoida",
     "PullLatestVersion": "Vedä uusin versio",
     "Scanned": "Skannattu",
     "Size": "Koko",
     "Updated": "Päivitetty",
     "Version": "Versio"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
+    "Deactivate": "Deaktivoida",
+    "DeactivateArtifacts": "Deaktivoida esineitä",
+    "FailedToDeactivateArtifacts": "Esineiden deaktivointi epäonnistui.",
+    "SuccessfullyDeactivated": "Deaktivoidut esineet onnistuneesti."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} versiot jätetään pois.",

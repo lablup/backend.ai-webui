@@ -5,8 +5,8 @@ import {
   BAIArtifactRevisionTable,
   BAIArtifactTypeTag,
   BAICard,
-  BAIDeleteArtifactModal,
-  BAIDeleteArtifactModalArtifactRevisionFragmentKey,
+  BAIDeleteArtifactRevisionsModal,
+  BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIImportArtifactModal,
@@ -33,8 +33,7 @@ import BAIText from 'src/components/BAIText';
 import { INITIAL_FETCH_KEY, useUpdatableState } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useDeferredQueryParams } from 'src/hooks/useDeferredQueryParams';
-import { JsonParam, withDefault } from 'use-query-params';
+import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
 
 dayjs.extend(relativeTime);
 
@@ -59,12 +58,13 @@ const ReservoirArtifactDetailPage = () => {
     }[]
   >([]);
   const [selectedDeleteRevisions, setSelectedDeleteRevisions] =
-    useState<BAIDeleteArtifactModalArtifactRevisionFragmentKey>([]);
+    useState<BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey>([]);
   const [selectedRevisions, setSelectedRevisions] =
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     filter: withDefault(JsonParam, {}),
   });
+  const jsonStringFilter = JSON.stringify(queryParams.filter);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -79,14 +79,14 @@ const ReservoirArtifactDetailPage = () => {
       id: artifactId ?? '',
       offset: baiPaginationOption.offset,
       limit: baiPaginationOption.limit,
-      filter: queryParams.filter,
+      filter: JSON.parse(jsonStringFilter || '{}'),
     }),
 
     [
       artifactId,
       baiPaginationOption.limit,
       baiPaginationOption.offset,
-      queryParams.filter,
+      jsonStringFilter,
     ],
   );
 
@@ -162,14 +162,14 @@ const ReservoirArtifactDetailPage = () => {
                 status
                 ...BAIArtifactRevisionTableArtifactRevisionFragment
                 ...BAIImportArtifactModalArtifactRevisionFragment
-                ...BAIDeleteArtifactModalArtifactRevisionFragment
+                ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment
                 ...BAIArtifactRevisionDeleteButtonFragment
                 ...BAIArtifactRevisionDownloadButtonFragment
               }
             }
           }
           ...BAIImportArtifactModalArtifactFragment
-          ...BAIDeleteArtifactModalArtifactFragment
+          ...BAIDeleteArtifactRevisionsModalArtifactFragment
         }
       }
     `,
@@ -560,7 +560,7 @@ const ReservoirArtifactDetailPage = () => {
           setSelectedRevisions([]);
         }}
       />
-      <BAIDeleteArtifactModal
+      <BAIDeleteArtifactRevisionsModal
         selectedArtifactFrgmt={artifact ?? null}
         selectedArtifactRevisionFrgmt={selectedDeleteRevisions}
         onOk={() => {

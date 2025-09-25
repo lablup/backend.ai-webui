@@ -261,6 +261,7 @@
     "NewFolder": "Yeni dosya",
     "NewFolderName": "Yeni klasör adı",
     "NoStorageDescriptionFound": "Açıklama yok.",
+    "NotInProject": "Bu klasör farklı bir projeye aittir.",
     "NumberOfFolders": "Klasör sayısı",
     "Permission": "izin",
     "Pipeline": "Boru Hattı Klasörleri",
@@ -481,8 +482,7 @@
       "Status": "Durum",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
       "Used": "kullanılmış"
-    },
-    "NotInProject": "Bu klasör farklı bir projeye aittir."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
@@ -1093,10 +1093,14 @@
     "UsernameOptional": "Kullanıcı adı (İsteğe bağlı)"
   },
   "reservoirPage": {
+    "Activate": "Etkinleştirmek",
+    "Active": "Aktif",
     "ArtifactID": "Artefakt kimliği",
     "BasicInformation": "Temel Bilgi",
+    "Deactivate": "Devre dışı bırakmak",
     "Description": "Tanım",
     "FromHuggingFace": "Sarılma Yüzünden",
+    "Inactive": "Aktif olmayan",
     "LastUpdated": "Son güncellendi",
     "Name": "İsim",
     "PullLatestVersion": "En son ({{version}}) sürümü çekin",

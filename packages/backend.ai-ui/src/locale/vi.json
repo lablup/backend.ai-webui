@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Kích hoạt",
+    "ActivateArtifacts": "Kích hoạt hiện vật",
+    "AreYouSureYouWantToActivateOne": "Bạn có chắc là bạn muốn kích hoạt {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Bạn có chắc là bạn muốn kích hoạt {{count}} Artifacts không?",
+    "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
+    "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Sự miêu tả",
     "Name": "Tên",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Hoạt động",
+    "Activate": "Kích hoạt",
+    "Controls": "Kiểm soát",
+    "Deactivate": "Vô hiệu hóa",
     "PullLatestVersion": "Kéo phiên bản mới nhất",
     "Scanned": "Quét",
     "Size": "Kích cỡ",
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
+    "Deactivate": "Vô hiệu hóa",
+    "DeactivateArtifacts": "Vô hiệu hóa tạo tác",
+    "FailedToDeactivateArtifacts": "Không thể hủy kích hoạt các tạo tác.",
+    "SuccessfullyDeactivated": "Thành công vô hiệu hóa các tạo tác."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",

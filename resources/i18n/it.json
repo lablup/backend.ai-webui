@@ -260,6 +260,7 @@
     "NewFolder": "Nuova cartella",
     "NewFolderName": "Nuovo nome della cartella",
     "NoStorageDescriptionFound": "Nessuna descrizione.",
+    "NotInProject": "Questa cartella appartiene a un progetto diverso.",
     "NumberOfFolders": "Numero di cartelle",
     "Permission": "Autorizzazione",
     "Pipeline": "Cartelle della pipeline",
@@ -480,8 +481,7 @@
       "Status": "Stato",
       "StatusOfSelectedHost": "Stato dell'host selezionato",
       "Used": "usato"
-    },
-    "NotInProject": "Questa cartella appartiene a un progetto diverso."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Questo browser non supporta le notifiche.",
@@ -1091,10 +1091,14 @@
     "UsernameOptional": "Nome utente (facoltativo)"
   },
   "reservoirPage": {
+    "Activate": "Attivare",
+    "Active": "Attivo",
     "ArtifactID": "ID artefatto",
     "BasicInformation": "Informazioni di base",
+    "Deactivate": "Disattivare",
     "Description": "Descrizione",
     "FromHuggingFace": "Dal viso abbracciato",
+    "Inactive": "Inattivo",
     "LastUpdated": "Ultimo aggiornamento",
     "Name": "Nome",
     "PullLatestVersion": "Pull ultime ({{version}}) versione",

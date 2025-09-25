@@ -1097,10 +1097,14 @@
     "UsernameOptional": "사용자 이름 (선택)"
   },
   "reservoirPage": {
+    "Activate": "활성화",
+    "Active": "활성",
     "ArtifactID": "아티팩트 ID",
     "BasicInformation": "기본 정보",
+    "Deactivate": "비활성화",
     "Description": "설명",
     "FromHuggingFace": "허깅 페이스로부터",
+    "Inactive": "비활성",
     "LastUpdated": "마지막 업데이트",
     "Name": "이름",
     "PullLatestVersion": "최신 ({{version}}) 버전을 가져옵니다",

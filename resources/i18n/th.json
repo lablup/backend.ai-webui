@@ -261,6 +261,7 @@
     "NewFolder": "โฟลเดอร์ใหม่",
     "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
     "NoStorageDescriptionFound": "ไม่พบคำอธิบาย",
+    "NotInProject": "โฟลเดอร์นี้เป็นของโครงการที่แตกต่างกัน",
     "NumberOfFolders": "จำนวนโฟลเดอร์",
     "Permission": "สิทธิ์",
     "Pipeline": "โฟลเดอร์ไปป์ไลน์",
@@ -475,8 +476,7 @@
       "Status": "สถานะ",
       "StatusOfSelectedHost": "สถานะของโฮสต์ที่เลือก",
       "Used": "ใช้แล้ว"
-    },
-    "NotInProject": "โฟลเดอร์นี้เป็นของโครงการที่แตกต่างกัน"
+    }
   },
   "desktopNotification": {
     "NotSupported": "เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน",
@@ -1082,10 +1082,14 @@
     "UsernameOptional": "ชื่อผู้ใช้ (ไม่บังคับ)"
   },
   "reservoirPage": {
+    "Activate": "เปิดใช้งาน",
+    "Active": "คล่องแคล่ว",
     "ArtifactID": "ID สิ่งประดิษฐ์",
     "BasicInformation": "ข้อมูลพื้นฐาน",
+    "Deactivate": "ปิดใช้งาน",
     "Description": "คำอธิบาย",
     "FromHuggingFace": "จากการกอดใบหน้า",
+    "Inactive": "ไม่ทำงาน",
     "LastUpdated": "อัปเดตล่าสุด",
     "Name": "ชื่อ",
     "PullLatestVersion": "ดึงเวอร์ชันล่าสุด ({{version}})",

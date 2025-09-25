@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Etkinleştirmek",
+    "ActivateArtifacts": "Eserleri etkinleştirin",
+    "AreYouSureYouWantToActivateOne": "{{name}} etkinleştirmek istediğinizden emin misiniz?",
+    "AreYouSureYouWantToActivateSome": "{{count}} artefaktları etkinleştirmek istediğinizden emin misiniz?",
+    "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
+    "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Tanım",
     "Name": "İsim",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Aksiyon",
+    "Activate": "Etkinleştirmek",
+    "Controls": "Kontroller",
+    "Deactivate": "Devre dışı bırakmak",
     "PullLatestVersion": "En son sürümü çekin",
     "Scanned": "Taranmış",
     "Size": "Boyut",
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "{{name}} 'ı devre dışı bırakmak istediğinizden emin misiniz?",
+    "AreYouSureYouWantToDeactivateSome": "{{count}} artefaktları devre dışı bırakmak istediğinizden emin misiniz?",
+    "Deactivate": "Devre dışı bırakmak",
+    "DeactivateArtifacts": "Artefaktları devre dışı bırak",
+    "FailedToDeactivateArtifacts": "Eserleri devre dışı bırakamadı.",
+    "SuccessfullyDeactivated": "Başarıyla devre dışı bırakıldı."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",

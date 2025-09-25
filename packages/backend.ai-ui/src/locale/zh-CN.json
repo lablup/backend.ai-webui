@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "激活",
+    "ActivateArtifacts": "激活工件",
+    "AreYouSureYouWantToActivateOne": "您确定要激活{{name}}吗？",
+    "AreYouSureYouWantToActivateSome": "您确定要激活{{count}}伪像吗？",
+    "FailedToActivateArtifacts": "未能激活伪影。",
+    "SuccessfullyActivated": "成功激活的工件。"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "描述",
     "Name": "姓名",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "行动",
+    "Activate": "激活",
+    "Controls": "控件",
+    "Deactivate": "停用",
     "PullLatestVersion": "拉最新版本",
     "Scanned": "扫描",
     "Size": "尺寸",
     "Updated": "更新",
     "Version": "版本"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "您确定要停用{{name}}吗？",
+    "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",
+    "Deactivate": "停用",
+    "DeactivateArtifacts": "停用伪影",
+    "FailedToDeactivateArtifacts": "未能停用伪影。",
+    "SuccessfullyDeactivated": "成功停用的伪影。"
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",

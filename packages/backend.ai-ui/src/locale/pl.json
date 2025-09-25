@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Aktywować",
+    "ActivateArtifacts": "Aktywuj artefakty",
+    "AreYouSureYouWantToActivateOne": "Czy na pewno chcesz aktywować {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Czy na pewno chcesz aktywować artefakty {{count}}?",
+    "FailedToActivateArtifacts": "Nie udało się aktywować artefaktów.",
+    "SuccessfullyActivated": "Pomyślnie aktywowane artefakty."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Opis",
     "Name": "Nazwa",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Działanie",
+    "Activate": "Aktywować",
+    "Controls": "Sterownica",
+    "Deactivate": "Dezaktywować",
     "PullLatestVersion": "Wyciągnij najnowszą wersję",
     "Scanned": "Zeskanowany",
     "Size": "Rozmiar",
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Czy na pewno chcesz dezaktywować {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Czy na pewno chcesz dezaktywować {{count}} artefakty?",
+    "Deactivate": "Dezaktywować",
+    "DeactivateArtifacts": "Dezaktywowane artefakty",
+    "FailedToDeactivateArtifacts": "Nie udało się dezaktywować artefaktów.",
+    "SuccessfullyDeactivated": "Skutecznie dezaktywowane artefakty."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} wersje są wykluczone.",
@@ -129,7 +148,6 @@
       "Create": "Tworzyć",
       "Delete": "Usuwać",
       "Remove": "Usunąć",
-
       "Upload": "Wgrywać"
     }
   }

@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Mengaktifkan",
+    "ActivateArtifacts": "Aktifkan artefak",
+    "AreYouSureYouWantToActivateOne": "Anda yakin ingin mengaktifkan {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
+    "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
+    "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Keterangan",
     "Name": "Nama",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Tindakan",
+    "Activate": "Mengaktifkan",
+    "Controls": "Kontrol",
+    "Deactivate": "Menonaktifkan",
     "PullLatestVersion": "Tarik versi terbaru",
     "Scanned": "Dipindai",
     "Size": "Ukuran",
     "Updated": "Diperbarui",
     "Version": "Versi"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
+    "Deactivate": "Menonaktifkan",
+    "DeactivateArtifacts": "Nonaktifkan artefak",
+    "FailedToDeactivateArtifacts": "Gagal menonaktifkan artefak.",
+    "SuccessfullyDeactivated": "Berhasil menonaktifkan artefak."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",

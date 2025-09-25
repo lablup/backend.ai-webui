@@ -260,6 +260,7 @@
     "NewFolder": "Folder baru",
     "NewFolderName": "Nama folder baru",
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
+    "NotInProject": "Folder ini milik proyek yang berbeda.",
     "NumberOfFolders": "Jumlah folder",
     "Permission": "Izin",
     "Pipeline": "Folder Pipa",
@@ -480,8 +481,7 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Tuan Rumah Terpilih",
       "Used": "digunakan"
-    },
-    "NotInProject": "Folder ini milik proyek yang berbeda."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
@@ -1091,10 +1091,14 @@
     "UsernameOptional": "Nama Pengguna (Opsional)"
   },
   "reservoirPage": {
+    "Activate": "Mengaktifkan",
+    "Active": "Aktif",
     "ArtifactID": "ID Artefak",
     "BasicInformation": "Informasi dasar",
+    "Deactivate": "Menonaktifkan",
     "Description": "Keterangan",
     "FromHuggingFace": "Dari wajah memeluk",
+    "Inactive": "Tidak aktif",
     "LastUpdated": "Terakhir diperbarui",
     "Name": "Nama",
     "PullLatestVersion": "Tarik versi terbaru ({{{version}})",

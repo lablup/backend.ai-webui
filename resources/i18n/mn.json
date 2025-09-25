@@ -260,6 +260,7 @@
     "NewFolder": "Шинэ хавтас",
     "NewFolderName": "Шинэ фолдерын нэр",
     "NoStorageDescriptionFound": "Тайлбар алга.",
+    "NotInProject": "Энэ хавтас нь өөр төсөлд хамаарна.",
     "NumberOfFolders": "Фолдеруудын тоо",
     "Permission": "Зөвшөөрөл",
     "Pipeline": "Дамжуулах хоолойн хавтас",
@@ -479,8 +480,7 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Сонгосон хостын төлөв",
       "Used": "ашигласан"
-    },
-    "NotInProject": "Энэ хавтас нь өөр төсөлд хамаарна."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Энэ хөтөч нь мэдэгдлийг дэмждэггүй.",
@@ -1091,10 +1091,14 @@
     "UsernameOptional": "Хэрэглэгчийн нэр (заавал биш)"
   },
   "reservoirPage": {
+    "Activate": "Идэвхжүүлэх",
+    "Active": "Идэвхтэй",
     "ArtifactID": "Artifact ID",
     "BasicInformation": "Үндсэн мэдээлэл",
+    "Deactivate": "Идэвхгүй болгох",
     "Description": "Тодорхойлолт / төрөл анги",
     "FromHuggingFace": "Тэвэрч буй нүүрнээс",
+    "Inactive": "Идэвхгүй",
     "LastUpdated": "Өнөөхээр нь онуулсан өдөр",
     "Name": "Нэр",
     "PullLatestVersion": "СУРГАЛТЫН СУРГАЛТ ({{version}}) хувилбар",

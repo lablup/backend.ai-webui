@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Δραστηριοποιώ",
+    "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
+    "AreYouSureYouWantToActivateOne": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{name}};",
+    "AreYouSureYouWantToActivateSome": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{count}} τεχνουργήματα;",
+    "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
+    "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Περιγραφή",
     "Name": "Ονομα",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Δράση",
+    "Activate": "Δραστηριοποιώ",
+    "Controls": "Χειριστήρια",
+    "Deactivate": "Απενεργοποιούμαι",
     "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση",
     "Scanned": "Σαρωμένος",
     "Size": "Μέγεθος",
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
+    "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
+    "Deactivate": "Απενεργοποιούμαι",
+    "DeactivateArtifacts": "Απενεργοποιημένα αντικείμενα",
+    "FailedToDeactivateArtifacts": "Απέτυχε να απενεργοποιήσει τα τεχνουργήματα.",
+    "SuccessfullyDeactivated": "Επιτυχώς απενεργοποιημένα αντικείμενα."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",

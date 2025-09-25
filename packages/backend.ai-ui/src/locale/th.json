@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "เปิดใช้งาน",
+    "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
+    "AreYouSureYouWantToActivateOne": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{name}}?",
+    "AreYouSureYouWantToActivateSome": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{count}} สิ่งประดิษฐ์?",
+    "FailedToActivateArtifacts": "ไม่สามารถเปิดใช้งานสิ่งประดิษฐ์ได้",
+    "SuccessfullyActivated": "สิ่งประดิษฐ์ที่เปิดใช้งานสำเร็จ"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "คำอธิบาย",
     "Name": "ชื่อ",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "การกระทำ",
+    "Activate": "เปิดใช้งาน",
+    "Controls": "การควบคุม",
+    "Deactivate": "ปิดใช้งาน",
     "PullLatestVersion": "ดึงเวอร์ชันล่าสุด",
     "Scanned": "สแกน",
     "Size": "ขนาด",
     "Updated": "อัปเดต",
     "Version": "รุ่น"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateArtifacts": "ปิดการใช้งานสิ่งประดิษฐ์",
+    "FailedToDeactivateArtifacts": "ล้มเหลวในการปิดการใช้งานสิ่งประดิษฐ์",
+    "SuccessfullyDeactivated": "ปิดการใช้งานสิ่งประดิษฐ์สำเร็จ"
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",

@@ -261,6 +261,7 @@
     "NewFolder": "Nouveau dossier",
     "NewFolderName": "Nouveau nom de dossier",
     "NoStorageDescriptionFound": "Pas de description.",
+    "NotInProject": "Ce dossier appartient à un autre projet.",
     "NumberOfFolders": "Nombre de dossiers",
     "Permission": "Autorisation",
     "Pipeline": "Dossiers du pipeline",
@@ -481,8 +482,7 @@
       "Status": "Statut",
       "StatusOfSelectedHost": "Statut de l'hôte sélectionné",
       "Used": "utilisé"
-    },
-    "NotInProject": "Ce dossier appartient à un autre projet."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
@@ -1093,10 +1093,14 @@
     "UsernameOptional": "Nom d'utilisateur (facultatif)"
   },
   "reservoirPage": {
+    "Activate": "Activer",
+    "Active": "Actif",
     "ArtifactID": "ID d'artefact",
     "BasicInformation": "Informations de base",
+    "Deactivate": "Désactiver",
     "Description": "Description",
     "FromHuggingFace": "De l'étreinte",
+    "Inactive": "Inactif",
     "LastUpdated": "Dernière mise à jour",
     "Name": "Nom",
     "PullLatestVersion": "Tirez la version ({{version}})",

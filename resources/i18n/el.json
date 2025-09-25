@@ -1090,10 +1090,14 @@
     "UsernameOptional": "Όνομα χρήστη (προαιρετικό)"
   },
   "reservoirPage": {
+    "Activate": "Δραστηριοποιώ",
+    "Active": "Ενεργός",
     "ArtifactID": "Αναγνωριστικό τεχνούργου",
     "BasicInformation": "Βασικές πληροφορίες",
+    "Deactivate": "Απενεργοποιούμαι",
     "Description": "Περιγραφή",
     "FromHuggingFace": "Από το αγκάλιασμα",
+    "Inactive": "Αδρανής",
     "LastUpdated": "Τελευταία ενημερωμένη",
     "Name": "Ονομα",
     "PullLatestVersion": "Τραβήξτε το τελευταίο ({{version}}) έκδοση",

@@ -261,6 +261,7 @@
     "NewFolder": "Nowy folder",
     "NewFolderName": "Nowa nazwa folderu",
     "NoStorageDescriptionFound": "Bez opisu.",
+    "NotInProject": "Ten folder należy do innego projektu.",
     "NumberOfFolders": "Liczba folderów",
     "Permission": "Pozwolenie",
     "Pipeline": "Foldery rurociągów",
@@ -481,8 +482,7 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status wybranego hosta",
       "Used": "używany"
-    },
-    "NotInProject": "Ten folder należy do innego projektu."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
@@ -1092,10 +1092,14 @@
     "UsernameOptional": "Nazwa użytkownika (opcjonalnie)"
   },
   "reservoirPage": {
+    "Activate": "Aktywować",
+    "Active": "Aktywny",
     "ArtifactID": "Identyfikator artefaktu",
     "BasicInformation": "Podstawowe informacje",
+    "Deactivate": "Dezaktywować",
     "Description": "Opis",
     "FromHuggingFace": "Od przytulania twarzy",
+    "Inactive": "Nieaktywny",
     "LastUpdated": "Ostatnia aktualizacja",
     "Name": "Nazwa",
     "PullLatestVersion": "Pull najnowszy ({{version}}) wersja",

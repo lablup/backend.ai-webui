@@ -263,6 +263,7 @@
     "NewFolder": "New Folder",
     "NewFolderName": "New folder name",
     "NoStorageDescriptionFound": "No description.",
+    "NotInProject": "This folder belongs to a different project.",
     "NumberOfFolders": "Number of folders",
     "Permission": "Permission",
     "Pipeline": "Pipeline",
@@ -483,8 +484,7 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Of Selected Host",
       "Used": "used"
-    },
-    "NotInProject": "This folder belongs to a different project."
+    }
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",
@@ -1098,10 +1098,14 @@
     "UsernameOptional": "Username (Optional)"
   },
   "reservoirPage": {
+    "Activate": "Activate",
+    "Active": "Active",
     "ArtifactID": "Artifact ID",
     "BasicInformation": "Basic Information",
+    "Deactivate": "Deactivate",
     "Description": "Description",
     "FromHuggingFace": "From Hugging Face",
+    "Inactive": "Inactive",
     "LastUpdated": "Last Updated",
     "Name": "Name",
     "PullLatestVersion": "Pull Latest({{version}}) version",
@@ -1242,8 +1246,8 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
-    "Updated": "Resource preset updated",
-    "SharedMemory": "Shared Memory"
+    "SharedMemory": "Shared Memory",
+    "Updated": "Resource preset updated"
   },
   "scheduler": {
     "PendingSessions": "Pending Sessions"

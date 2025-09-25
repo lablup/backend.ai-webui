@@ -260,6 +260,7 @@
     "NewFolder": "Fail baharu",
     "NewFolderName": "Nama folder baharu",
     "NoStorageDescriptionFound": "Tiada deskripsi.",
+    "NotInProject": "Folder ini tergolong dalam projek yang berbeza.",
     "NumberOfFolders": "Bilangan folder",
     "Permission": "Kebenaran",
     "Pipeline": "Folder Saluran Paip",
@@ -480,8 +481,7 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status Hos Terpilih",
       "Used": "digunakan"
-    },
-    "NotInProject": "Folder ini tergolong dalam projek yang berbeza."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",
@@ -1092,10 +1092,14 @@
     "UsernameOptional": "Nama Pengguna (Pilihan)"
   },
   "reservoirPage": {
+    "Activate": "Aktifkan",
+    "Active": "Aktif",
     "ArtifactID": "ID Artifak",
     "BasicInformation": "Maklumat asas",
+    "Deactivate": "Menyahaktifkan",
     "Description": "Penerangan",
     "FromHuggingFace": "Dari memeluk muka",
+    "Inactive": "Tidak aktif",
     "LastUpdated": "Dikemas kini terakhir",
     "Name": "Nama",
     "PullLatestVersion": "Tarik versi terkini ({{version}})",

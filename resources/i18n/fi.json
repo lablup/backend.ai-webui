@@ -261,6 +261,7 @@
     "NewFolder": "Uusi kansio",
     "NewFolderName": "Uusi kansion nimi",
     "NoStorageDescriptionFound": "Ei kuvausta.",
+    "NotInProject": "Tämä kansio kuuluu toiseen projektiin.",
     "NumberOfFolders": "Kansioiden määrä",
     "Permission": "Lupa",
     "Pipeline": "Putkiston kansiot",
@@ -481,8 +482,7 @@
       "Status": "Tila",
       "StatusOfSelectedHost": "Valitun isännän tila",
       "Used": "käytetty"
-    },
-    "NotInProject": "Tämä kansio kuuluu toiseen projektiin."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",
@@ -1092,10 +1092,14 @@
     "UsernameOptional": "Käyttäjätunnus (valinnainen)"
   },
   "reservoirPage": {
+    "Activate": "Aktivoida",
+    "Active": "Aktiivinen",
     "ArtifactID": "Artefaktitunnus",
     "BasicInformation": "Perustiedot",
+    "Deactivate": "Deaktivoida",
     "Description": "Kuvaus",
     "FromHuggingFace": "Halaamasta kasvoista",
+    "Inactive": "Passiivinen",
     "LastUpdated": "Viimeksi päivitetty",
     "Name": "Nimi",
     "PullLatestVersion": "Vedä uusin ({{version}}) versio",

@@ -17,12 +17,12 @@ export { default as BAIBucketSelect } from './BAIBucketSelect';
 export type { BAIBucketSelectProps } from './BAIBucketSelect';
 export { default as BAIPullingArtifactRevisionAlert } from './BAIPullingArtifactRevisionAlert';
 export type { BAIPullingArtifactRevisionAlertProps } from './BAIPullingArtifactRevisionAlert';
-export { default as BAIDeleteArtifactModal } from './BAIDeleteArtifactModal';
+export { default as BAIDeleteArtifactRevisionsModal } from './BAIDeleteArtifactRevisionsModal';
 export type {
-  BAIDeleteArtifactModalProps,
-  BAIDeleteArtifactModalArtifactFragmentKey,
-  BAIDeleteArtifactModalArtifactRevisionFragmentKey,
-} from './BAIDeleteArtifactModal';
+  BAIDeleteArtifactRevisionsModalProps,
+  BAIDeleteArtifactRevisionsModalArtifactFragmentKey,
+  BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey,
+} from './BAIDeleteArtifactRevisionsModal';
 export { default as BAIArtifactTypeTag } from './BAIArtifactTypeTag';
 export type { BAIArtifactTypeTagProps } from './BAIArtifactTypeTag';
 export { default as BAIArtifactStatusTag } from './BAIArtifactStatusTag';
@@ -33,3 +33,13 @@ export { default as BAIArtifactRevisionDownloadButton } from './BAIArtifactRevis
 export type { BAIArtifactRevisionDownloadButtonProps } from './BAIArtifactRevisionDownloadButton';
 export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisionDeleteButton';
 export type { BAIArtifactRevisionDeleteButtonProps } from './BAIArtifactRevisionDeleteButton';
+export { default as BAIDeactivateArtifactsModal } from './BAIDeactivateArtifactsModal';
+export type {
+  BAIDeactivateArtifactsModalProps,
+  BAIDeactivateArtifactsModalArtifactsFragmentKey,
+} from './BAIDeactivateArtifactsModal';
+export { default as BAIActivateArtifactsModal } from './BAIActivateArtifactsModal';
+export type {
+  BAIActivateArtifactsModalProps,
+  BAIActivateArtifactsModalArtifactsFragmentKey,
+} from './BAIActivateArtifactsModal';

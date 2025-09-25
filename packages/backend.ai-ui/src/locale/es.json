@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Activar",
+    "ActivateArtifacts": "Activar artefactos",
+    "AreYouSureYouWantToActivateOne": "¿Estás seguro de que quieres activar {{name}}?",
+    "AreYouSureYouWantToActivateSome": "¿Estás seguro de que quieres activar {{count}} artefactos?",
+    "FailedToActivateArtifacts": "No se pudo activar artefactos.",
+    "SuccessfullyActivated": "Artefactos activados con éxito."
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Descripción",
     "Name": "Nombre",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "Acción",
+    "Activate": "Activar",
+    "Controls": "Control",
+    "Deactivate": "Desactivar",
     "PullLatestVersion": "Tire de la última versión",
     "Scanned": "Escaneado",
     "Size": "Tamaño",
     "Updated": "Actualizado",
     "Version": "Versión"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "¿Estás seguro de que quieres desactivar {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "¿Estás seguro de que quieres desactivar {{count}} artefactos?",
+    "Deactivate": "Desactivar",
+    "DeactivateArtifacts": "Desactivar artefactos",
+    "FailedToDeactivateArtifacts": "No se pudo desactivar los artefactos.",
+    "SuccessfullyDeactivated": "Artefactos desactivados con éxito."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "Las versiones {{count}} están excluidas.",

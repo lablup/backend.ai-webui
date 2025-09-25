@@ -260,6 +260,7 @@
     "NewFolder": "新しいフォルダ",
     "NewFolderName": "新しいフォルダ名",
     "NoStorageDescriptionFound": "説明はありません。",
+    "NotInProject": "このフォルダーは別のプロジェクトに属します。",
     "NumberOfFolders": "フォルダ数",
     "Permission": "アクセス権限",
     "Pipeline": "パイプラインフォルダ",
@@ -480,8 +481,7 @@
       "Status": "状態",
       "StatusOfSelectedHost": "選択したホストの状態",
       "Used": "使用中"
-    },
-    "NotInProject": "このフォルダーは別のプロジェクトに属します。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "このブラウザは通知をサポートしていません。",
@@ -1092,10 +1092,14 @@
     "UsernameOptional": "ユーザー名（オプション）"
   },
   "reservoirPage": {
+    "Activate": "活性化",
+    "Active": "アクティブ",
     "ArtifactID": "アーティファクトID",
     "BasicInformation": "基本情報",
+    "Deactivate": "無効にします",
     "Description": "説明",
     "FromHuggingFace": "顔を抱き締めることから",
+    "Inactive": "非アクティブ",
     "LastUpdated": "最後に更新されました",
     "Name": "名前",
     "PullLatestVersion": "最新の（{{version}}）バージョンをプルします",

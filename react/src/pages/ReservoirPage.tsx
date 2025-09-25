@@ -1,8 +1,16 @@
 import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
 import { useToggle } from 'ahooks';
-import { theme, Col, Row, Statistic, Card, Button } from 'antd';
+import {
+  theme,
+  Col,
+  Row,
+  Statistic,
+  Card,
+  Button,
+  Tooltip,
+  Typography,
+} from 'antd';
 import {
   BAICard,
   BAIFlex,
@@ -14,20 +22,39 @@ import {
   toLocalId,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
+  BAIDeactivateArtifactsModalArtifactsFragmentKey,
+  BAIDeactivateArtifactsModal,
+  BAIActivateArtifactsModalArtifactsFragmentKey,
+  BAIActivateArtifactsModal,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Brain } from 'lucide-react';
+import { BanIcon, Brain, UndoIcon } from 'lucide-react';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useNavigate } from 'react-router-dom';
 import {
   ReservoirPageQuery,
+  ReservoirPageQuery$data,
   ReservoirPageQuery$variables,
 } from 'src/__generated__/ReservoirPageQuery.graphql';
 import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
+import BAIRadioGroup from 'src/components/BAIRadioGroup';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { withDefault, JsonParam } from 'use-query-params';
+import {
+  withDefault,
+  JsonParam,
+  StringParam,
+  useQueryParams,
+} from 'use-query-params';
+
+const getStatusFilter = (status: string) => {
+  return { availability: [status] };
+};
+
+type ArtifactNode = NonNullable<
+  ReservoirPageQuery$data['artifacts']
+>['edges'][number]['node'];
 
 const ReservoirPage: React.FC = () => {
   const { t } = useTranslation();
@@ -35,6 +62,16 @@ const ReservoirPage: React.FC = () => {
   const navigate = useNavigate();
   const { upsertNotification } = useSetBAINotification();
 
+  const [selectedArtifactIdList, setSelectedArtifactIdList] = useState<
+    {
+      id: string;
+      data: ArtifactNode;
+    }[]
+  >([]);
+  const [selectedArtifacts, setSelectedArtifacts] =
+    useState<BAIDeactivateArtifactsModalArtifactsFragmentKey>([]);
+  const [selectedRestoreArtifacts, setSelectedRestoreArtifacts] =
+    useState<BAIActivateArtifactsModalArtifactsFragmentKey>([]);
   const [selectedArtifact, setSelectedArtifact] =
     useState<BAIImportArtifactModalArtifactFragmentKey | null>(null);
   const [selectedRevision, setSelectedRevision] =
@@ -51,9 +88,11 @@ const ReservoirPage: React.FC = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useDeferredQueryParams({
+  const [queryParams, setQuery] = useQueryParams({
     filter: withDefault(JsonParam, {}),
+    mode: withDefault(StringParam, 'ALIVE'),
   });
+  const jsonStringFilter = JSON.stringify(queryParams.filter);
 
   const queryVariables: ReservoirPageQuery$variables = useMemo(
     () => ({
@@ -65,9 +104,18 @@ const ReservoirPage: React.FC = () => {
           direction: 'DESC',
         },
       ],
-      filter: queryParams.filter,
+      filter: _.merge(
+        {},
+        JSON.parse(jsonStringFilter || '{}'),
+        getStatusFilter(queryParams.mode),
+      ),
     }),
-    [baiPaginationOption.offset, baiPaginationOption.limit, queryParams.filter],
+    [
+      baiPaginationOption.offset,
+      baiPaginationOption.limit,
+      jsonStringFilter,
+      queryParams.mode,
+    ],
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -99,6 +147,13 @@ const ReservoirPage: React.FC = () => {
           name
           type
         }
+        total: artifacts(
+          limit: 0
+          offset: 0
+          filter: { availability: [ALIVE, DELETED] }
+        ) {
+          count
+        }
         artifacts(
           orderBy: $order
           limit: $limit
@@ -111,6 +166,8 @@ const ReservoirPage: React.FC = () => {
               id
               ...BAIArtifactTableArtifactFragment
               ...BAIImportArtifactModalArtifactFragment
+              ...BAIDeactivateArtifactsModalArtifactsFragment
+              ...BAIActivateArtifactsModalArtifactsFragment
               revisions(
                 first: 1
                 orderBy: { field: VERSION, direction: DESC }
@@ -138,9 +195,10 @@ const ReservoirPage: React.FC = () => {
     },
   );
 
-  const { artifacts, defaultArtifactRegistry } = queryRef;
+  const { artifacts, defaultArtifactRegistry, total } = queryRef;
   const isAvailableUsingHuggingFace =
     defaultArtifactRegistry?.type === 'HUGGINGFACE';
+  const mode = queryParams.mode;
 
   // TODO: implement when reservoir supports other types
   // const typeFilterGenerator = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
@@ -165,7 +223,7 @@ const ReservoirPage: React.FC = () => {
           >
             <Statistic
               title="MODEL"
-              value={artifacts.count}
+              value={total.count}
               prefix={<Brain size={16} />}
               valueStyle={{
                 color: token.colorPrimary,
@@ -193,12 +251,32 @@ const ReservoirPage: React.FC = () => {
             <BAIFlex
               gap={'sm'}
               align="start"
-              justify="between"
               style={{
                 flexShrink: 1,
               }}
               wrap="wrap"
             >
+              <BAIRadioGroup
+                optionType="button"
+                options={[
+                  {
+                    label: t('reservoirPage.Active'),
+                    value: 'ALIVE',
+                  },
+                  {
+                    label: t('reservoirPage.Inactive'),
+                    value: 'DELETED',
+                  },
+                ]}
+                value={queryParams.mode}
+                onChange={(e) => {
+                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setTablePaginationOption({ current: 1 });
+                  setSelectedArtifactIdList([]);
+                  setSelectedArtifacts([]);
+                  setSelectedRestoreArtifacts([]);
+                }}
+              />
               <BAIGraphQLPropertyFilter
                 combinationMode="AND"
                 onChange={(value) => {
@@ -228,6 +306,41 @@ const ReservoirPage: React.FC = () => {
               />
             </BAIFlex>
             <BAIFlex gap={'sm'} align="center">
+              {selectedArtifactIdList.length > 0 && (
+                <BAIFlex gap="xs">
+                  <Typography.Text>
+                    {t('general.NSelected', {
+                      count: selectedArtifactIdList.length,
+                    })}
+                  </Typography.Text>
+                  <Tooltip
+                    title={
+                      mode === 'ALIVE'
+                        ? t('reservoirPage.Deactivate')
+                        : t('reservoirPage.Activate')
+                    }
+                  >
+                    <Button
+                      icon={mode === 'ALIVE' ? <BanIcon /> : <UndoIcon />}
+                      style={{
+                        color:
+                          mode === 'ALIVE' ? token.colorError : token.colorInfo,
+                      }}
+                      onClick={() => {
+                        if (mode === 'ALIVE') {
+                          setSelectedArtifacts(
+                            selectedArtifactIdList.flatMap((arr) => arr.data),
+                          );
+                        } else {
+                          setSelectedRestoreArtifacts(
+                            selectedArtifactIdList.flatMap((arr) => arr.data),
+                          );
+                        }
+                      }}
+                    />
+                  </Tooltip>
+                </BAIFlex>
+              )}
               <BAIFetchKeyButton
                 value={fetchKey}
                 autoUpdateDelay={10_000}
@@ -276,6 +389,41 @@ const ReservoirPage: React.FC = () => {
                   return;
                 }
               });
+            }}
+            onClickDelete={(artifactId: string) => {
+              artifacts.edges.forEach((edge) => {
+                if (edge.node.id === artifactId) {
+                  setSelectedArtifacts([edge.node]);
+                  return;
+                }
+              });
+            }}
+            onClickRestore={(artifactId: string) => {
+              artifacts.edges.forEach((edge) => {
+                if (edge.node.id === artifactId) {
+                  setSelectedRestoreArtifacts([edge.node]);
+                  return;
+                }
+              });
+            }}
+            rowSelection={{
+              type: 'checkbox',
+              onChange: (keys) => {
+                const artifactIdList = artifacts.edges.map((e) => e.node.id);
+                setSelectedArtifactIdList((prev) => {
+                  const _filtered = prev.filter(
+                    (v) => !artifactIdList.includes(v.id),
+                  );
+                  const _selected = artifacts.edges
+                    .filter((e) => keys.includes(e.node.id))
+                    .map((arr) => ({
+                      id: arr.node.id,
+                      data: arr.node,
+                    }));
+                  return _filtered.concat(_selected);
+                });
+              },
+              selectedRowKeys: selectedArtifactIdList.map((v) => v.id),
             }}
             loading={deferredQueryVariables !== queryVariables}
             pagination={{
@@ -369,6 +517,26 @@ const ReservoirPage: React.FC = () => {
           navigate(`/reservoir/${toLocalId(artifactId)}`);
         }}
         onCancel={toggleOpenHuggingFaceModal}
+      />
+      <BAIDeactivateArtifactsModal
+        open={!!selectedArtifacts.length}
+        selectedArtifactsFragment={selectedArtifacts}
+        onCancel={() => setSelectedArtifacts([])}
+        onOk={() => {
+          updateFetchKey();
+          setSelectedArtifacts([]);
+          setSelectedArtifactIdList([]);
+        }}
+      />
+      <BAIActivateArtifactsModal
+        open={!!selectedRestoreArtifacts.length}
+        selectedArtifactsFragment={selectedRestoreArtifacts}
+        onCancel={() => setSelectedRestoreArtifacts([])}
+        onOk={() => {
+          updateFetchKey();
+          setSelectedRestoreArtifacts([]);
+          setSelectedArtifactIdList([]);
+        }}
       />
     </BAIFlex>
   );

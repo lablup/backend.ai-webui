@@ -1,5 +1,13 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "活性化",
+    "ActivateArtifacts": "アーティファクトをアクティブにします",
+    "AreYouSureYouWantToActivateOne": "{{name}}をアクティブにしたいですか？",
+    "AreYouSureYouWantToActivateSome": "{{count}}アーティファクトをアクティブにしたいですか？",
+    "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
+    "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "説明",
     "Name": "名前",
@@ -19,11 +27,22 @@
   },
   "comp:BAIArtifactTable": {
     "Action": "アクション",
+    "Activate": "活性化",
+    "Controls": "コントロール",
+    "Deactivate": "無効にします",
     "PullLatestVersion": "最新バージョンをプルします",
     "Scanned": "スキャン",
     "Size": "サイズ",
     "Updated": "更新",
     "Version": "バージョン"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "{{name}}を無効にしたいですか？",
+    "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
+    "Deactivate": "無効にします",
+    "DeactivateArtifacts": "アーティファクトを無効にします",
+    "FailedToDeactivateArtifacts": "アーティファクトを非アクティブ化できませんでした。",
+    "SuccessfullyDeactivated": "正常に非アクティブ化されたアーティファクト。"
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}}バージョンは除外されます。",

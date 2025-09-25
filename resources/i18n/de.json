@@ -261,6 +261,7 @@
     "NewFolder": "Neuer Ordner",
     "NewFolderName": "Neuer Ordnername",
     "NoStorageDescriptionFound": "Keine Beschreibung.",
+    "NotInProject": "Dieser Ordner gehört zu einem anderen Projekt.",
     "NumberOfFolders": "Anzahl von Ordnern",
     "Permission": "Genehmigung",
     "Pipeline": "Pipeline",
@@ -481,8 +482,7 @@
       "Status": "Status",
       "StatusOfSelectedHost": "Status des ausgewählten Hosts",
       "Used": "gebraucht"
-    },
-    "NotInProject": "Dieser Ordner gehört zu einem anderen Projekt."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",
@@ -1093,10 +1093,14 @@
     "UsernameOptional": "Benutzername (optional)"
   },
   "reservoirPage": {
+    "Activate": "Aktivieren",
+    "Active": "Aktiv",
     "ArtifactID": "Artefakt -ID",
     "BasicInformation": "Grundinformationen",
+    "Deactivate": "Deaktivieren",
     "Description": "Beschreibung",
     "FromHuggingFace": "Vom umarmen Gesicht",
+    "Inactive": "Inaktiv",
     "LastUpdated": "Zuletzt aktualisiert",
     "Name": "Name",
     "PullLatestVersion": "Pull lasting ({{version}}) Version",

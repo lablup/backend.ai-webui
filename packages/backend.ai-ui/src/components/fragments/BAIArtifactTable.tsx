@@ -16,11 +16,11 @@ import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButt
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
 import { SyncOutlined } from '@ant-design/icons';
-import { TableColumnsType, theme, Typography } from 'antd';
+import { Button, TableColumnsType, theme, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
-import { Package, Container, Brain } from 'lucide-react';
+import { Package, Container, Brain, BanIcon, UndoIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -77,11 +77,15 @@ export interface BAIArtifactTableProps
   extends Omit<BAITableProps<Artifact>, 'dataSource' | 'columns' | 'rowKey'> {
   artifactFragment: BAIArtifactTableArtifactFragment$key;
   onClickPull: (artifactId: string, revisionId: string) => void;
+  onClickDelete: (artifactId: string) => void;
+  onClickRestore: (artifactId: string) => void;
 }
 
 const BAIArtifactTable = ({
   artifactFragment,
   onClickPull,
+  onClickDelete,
+  onClickRestore,
   ...tableProps
 }: BAIArtifactTableProps) => {
   const { token } = theme.useToken();
@@ -97,6 +101,7 @@ const BAIArtifactTable = ({
         description
         updatedAt
         scannedAt
+        availability
         ...BAIArtifactTypeTagFragment
         latestVersion: revisions(
           first: 1
@@ -125,9 +130,9 @@ const BAIArtifactTable = ({
       key: 'name',
       render: (name: string, record: Artifact) => {
         return (
-          <BAIFlex direction="column" align="start">
+          <BAIFlex direction="column" align="start" wrap="wrap">
             <BAIFlex gap={'xs'}>
-              <BAILink to={'/reservoir/' + toLocalId(record.id)}>
+              <BAILink to={'/reservoir/' + toLocalId(record.id)} style={{}}>
                 {name}
               </BAILink>
               <BAIArtifactTypeTag artifactTypeFrgmt={record} />
@@ -143,7 +148,42 @@ const BAIArtifactTable = ({
           </BAIFlex>
         );
       },
-      width: '30%',
+    },
+    {
+      title: t('comp:BAIArtifactTable.Controls'),
+      key: 'controls',
+      render: (record: Artifact) => {
+        const availability = record.availability;
+        if (availability === 'ALIVE') {
+          return (
+            <Button
+              title={t('comp:BAIArtifactTable.Deactivate')}
+              size="small"
+              type="text"
+              style={{
+                color: token.colorError,
+                background: token.colorErrorBg,
+              }}
+              icon={<BanIcon />}
+              onClick={() => onClickDelete(record.id)}
+            />
+          );
+        } else if (availability === 'DELETED') {
+          return (
+            <Button
+              title={t('comp:BAIArtifactTable.Activate')}
+              size="small"
+              type="text"
+              icon={<UndoIcon />}
+              style={{
+                color: token.colorInfo,
+                background: token.colorInfoBg,
+              }}
+              onClick={() => onClickRestore(record.id)}
+            />
+          );
+        }
+      },
     },
     {
       title: t('comp:BAIArtifactRevisionTable.LatestVersion'),
@@ -163,6 +203,7 @@ const BAIArtifactTable = ({
                 <BAIArtifactRevisionDownloadButton
                   title={t('comp:BAIArtifactTable.PullLatestVersion')}
                   revisionsFrgmt={[latestVersion]}
+                  disabled={record.availability !== 'ALIVE'}
                   size="small"
                   onClick={() => onClickPull(record.id, latestVersion.id)}
                 />
@@ -171,7 +212,6 @@ const BAIArtifactTable = ({
           </BAIFlex>
         );
       },
-      width: '25%',
     },
     {
       title: t('comp:BAIArtifactRevisionTable.Size'),
@@ -187,7 +227,6 @@ const BAIArtifactTable = ({
           </BAIText>
         );
       },
-      width: '15%',
     },
     {
       title: t('comp:BAIArtifactTable.Scanned'),
@@ -203,7 +242,6 @@ const BAIArtifactTable = ({
           </Typography.Text>
         );
       },
-      width: '15%',
     },
     {
       title: t('comp:BAIArtifactRevisionTable.Updated'),
@@ -219,7 +257,6 @@ const BAIArtifactTable = ({
           </Typography.Text>
         );
       },
-      width: '15%',
     },
   ];
 
