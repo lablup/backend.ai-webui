@@ -122,7 +122,6 @@
   "general": {
     "NSelected": "{{count}}",
     "TotalItems": "Total {{total}}",
-
     "button": {
       "Cancel": "Anulować",
       "Close": "Zamknąć",
@@ -130,6 +129,7 @@
       "Create": "Tworzyć",
       "Delete": "Usuwać",
       "Remove": "Usunąć",
+
       "Upload": "Wgrywać"
     }
   }

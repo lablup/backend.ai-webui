@@ -32,6 +32,7 @@ import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
 import BAIText from 'src/components/BAIText';
 import { INITIAL_FETCH_KEY, useUpdatableState } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { useDeferredQueryParams } from 'src/hooks/useDeferredQueryParams';
 import { JsonParam, withDefault } from 'use-query-params';
 
@@ -46,6 +47,7 @@ type RevisionNode = NonNullable<
 const ReservoirArtifactDetailPage = () => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const { upsertNotification } = useSetBAINotification();
 
   const { artifactId } = useParams<{ artifactId: string }>();
 
@@ -516,8 +518,34 @@ const ReservoirArtifactDetailPage = () => {
         selectedArtifactFrgmt={artifact ?? null}
         selectedArtifactRevisionFrgmt={selectedRevisions}
         open={!!artifact && !_.isEmpty(selectedRevisions)}
-        onOk={() => {
+        onOk={(_e, tasks) => {
           setSelectedRevisions([]);
+          tasks.forEach((task) => {
+            upsertNotification({
+              message: `Pulling artifact version: ${task.version}`,
+              open: true,
+              duration: 0,
+              backgroundTask: {
+                status: 'pending',
+                taskId: task.taskId,
+                promise: null,
+                percent: 0,
+                onChange: {
+                  resolved: (_data, _notification) => {
+                    return {
+                      type: 'success',
+                      message: `Successfully pulled artifact version: ${task.version}`,
+                      toText: 'Go to Artifact',
+                      to: `/reservoir/${task.artifact_id}`,
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return 'Failed to pull artifact versions: ';
+                  },
+                },
+              },
+            });
+          });
           updateFetchKey();
         }}
         onCancel={() => {

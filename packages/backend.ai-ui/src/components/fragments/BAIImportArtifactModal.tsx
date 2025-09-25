@@ -33,7 +33,14 @@ export interface BAIImportArtifactModalProps
   extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   selectedArtifactFrgmt: BAIImportArtifactModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIImportArtifactModalArtifactRevisionFragment$key;
-  onOk: (e: React.MouseEvent<HTMLElement>) => void;
+  onOk: (
+    e: React.MouseEvent<HTMLElement>,
+    tasks: {
+      taskId: string;
+      version: string;
+      artifact_id: string;
+    }[],
+  ) => void;
   onCancel: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
@@ -124,7 +131,6 @@ const BAIImportArtifactModal = ({
         title={t('comp:BAIImportArtifactModal.PullVersion')}
         centered
         onOk={(e) => {
-          onOk(e);
           importArtifacts({
             variables: {
               input: {
@@ -148,7 +154,14 @@ const BAIImportArtifactModal = ({
                   count: res.importArtifacts.artifactRevisions.edges.length,
                 }),
               );
-              onOk(e);
+              onOk(
+                e,
+                res.importArtifacts.tasks.map((task) => ({
+                  taskId: task.taskId,
+                  version: task.artifactRevision.version,
+                  artifact_id: toLocalId(selectedArtifact!.id),
+                })),
+              );
             },
             onError: (err) => {
               message.error(

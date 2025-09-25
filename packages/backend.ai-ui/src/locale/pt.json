@@ -17,6 +17,7 @@
     "Updated": "Atualizado",
     "Version": "Versão"
   },
+
   "comp:BAIArtifactTable": {
     "Action": "Ação",
     "PullLatestVersion": "Puxe a versão mais recente",
@@ -122,7 +123,6 @@
   "general": {
     "NSelected": "{{count}} selecionado",
     "TotalItems": "Total {{total}} itens",
-
     "button": {
       "Cancel": "Cancelar",
       "Close": "Fechar",

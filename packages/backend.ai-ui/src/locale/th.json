@@ -122,7 +122,6 @@
   "general": {
     "NSelected": "{{count}} เลือก",
     "TotalItems": "รวม {{total}} รายการ",
-
     "button": {
       "Cancel": "ยกเลิก",
       "Close": "ปิด",

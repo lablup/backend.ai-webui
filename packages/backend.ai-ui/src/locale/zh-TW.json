@@ -17,6 +17,7 @@
     "Updated": "更新",
     "Version": "版本"
   },
+
   "comp:BAIArtifactTable": {
     "Action": "行動",
     "PullLatestVersion": "拉最新版本",

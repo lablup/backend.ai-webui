@@ -26,12 +26,14 @@ import {
   ReservoirPageQuery$variables,
 } from 'src/__generated__/ReservoirPageQuery.graphql';
 import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { withDefault, JsonParam } from 'use-query-params';
 
 const ReservoirPage: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const navigate = useNavigate();
+  const { upsertNotification } = useSetBAINotification();
 
   const [selectedArtifact, setSelectedArtifact] =
     useState<BAIImportArtifactModalArtifactFragmentKey | null>(null);
@@ -325,9 +327,35 @@ const ReservoirPage: React.FC = () => {
         selectedArtifactFrgmt={selectedArtifact}
         selectedArtifactRevisionFrgmt={selectedRevision}
         open={!!selectedArtifact && !_.isEmpty(selectedRevision)}
-        onOk={() => {
+        onOk={(_e, tasks) => {
           setSelectedArtifact(null);
           setSelectedRevision([]);
+          tasks.forEach((task) => {
+            upsertNotification({
+              message: `Pulling artifact version: ${task.version}`,
+              open: true,
+              duration: 0,
+              backgroundTask: {
+                status: 'pending',
+                taskId: task.taskId,
+                promise: null,
+                percent: 0,
+                onChange: {
+                  resolved: (_data, _notification) => {
+                    return {
+                      type: 'success',
+                      message: `Successfully pulled artifact version: ${task.version}`,
+                      toText: 'Go to Artifact',
+                      to: `/reservoir/${task.artifact_id}`,
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return 'Failed to pull artifact versions: ';
+                  },
+                },
+              },
+            });
+          });
         }}
         onCancel={() => {
           setSelectedArtifact(null);
