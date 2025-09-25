@@ -1091,6 +1091,18 @@
     "Username": "Nama pengguna",
     "UsernameOptional": "Nama Pengguna (Pilihan)"
   },
+  "reservoirPage": {
+    "BasicInformation": "Maklumat asas",
+    "Description": "Penerangan",
+    "LastUpdated": "Dikemas kini terakhir",
+    "Name": "Nama",
+    "Registry": "Pendaftaran",
+    "ReservoirArtifacts": "Artifak Reservoir",
+    "Size": "Saiz",
+    "Source": "Sumber",
+    "Type": "Jenis",
+    "VersionList": "Senarai yang ada"
+  },
   "resourceGroup": {
     "Activate": "Aktifkan",
     "ActivateResourceGroup": "Aktifkan kumpulan sumber",
@@ -2022,6 +2034,7 @@
       "PrivacyPolicy": "Dasar Privasi",
       "Project": "Projek",
       "Remaining": "Tinggal",
+      "Reservoir": "Takungan",
       "ResourcePolicy": "Dasar Sumber",
       "Resources": "Sumber",
       "Scheduler": "Penjadual",

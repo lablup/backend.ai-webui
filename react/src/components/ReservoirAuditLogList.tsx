@@ -1,7 +1,6 @@
-import type { ReservoirAuditLog } from '../types/reservoir';
 import BAIText from './BAIText';
 import { Tag, Typography } from 'antd';
-import { BAIFlex, BAIPropertyFilter, BAITable } from 'backend.ai-ui';
+import { BAIPropertyFilter, BAIFlex, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
@@ -9,7 +8,7 @@ import React from 'react';
 // import { useTranslation } from 'react-i18next';
 
 interface ReservoirAuditLogListProps {
-  auditLogs: ReservoirAuditLog[];
+  auditLogs: any[];
   loading?: boolean;
   filterValue?: string;
   onFilterChange?: (value: string) => void;

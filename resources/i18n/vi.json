@@ -1092,6 +1092,18 @@
     "Username": "tên tài khoản",
     "UsernameOptional": "Tên người dùng (Tùy chọn)"
   },
+  "reservoirPage": {
+    "BasicInformation": "Thông tin cơ bản",
+    "Description": "Sự miêu tả",
+    "LastUpdated": "Cập nhật lần cuối",
+    "Name": "Tên",
+    "Registry": "Đăng ký",
+    "ReservoirArtifacts": "Cổ vật hồ chứa",
+    "Size": "Kích cỡ",
+    "Source": "Nguồn",
+    "Type": "Kiểu",
+    "VersionList": "Danh sách có sẵn"
+  },
   "resourceGroup": {
     "Activate": "Kích hoạt",
     "ActivateResourceGroup": "Kích hoạt nhóm tài nguyên",
@@ -2025,6 +2037,7 @@
       "PrivacyPolicy": "Chính sách bảo mật",
       "Project": "Dự án",
       "Remaining": "Còn lại",
+      "Reservoir": "Hồ chứa",
       "ResourcePolicy": "Chính sách tài nguyên",
       "Resources": "Tài nguyên",
       "Scheduler": "Người lập lịch",

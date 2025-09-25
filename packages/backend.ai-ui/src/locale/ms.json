@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "ujian"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
-  "error": {
-    "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
-  },
-  "general": {
-    "NSelected": "{{count}} dipilih",
-    "button": {
-      "Delete": "Padam",
-      "Create": "Buat",
-      "Upload": "Muat naik",
-      "CopyAll": "Salin semua"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
-    "DeleteSelectedItemsDialog": "Padam pengesahan",
-    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
-    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
-    "CreateANewFolder": "Buat folder baru",
-    "FolderName": "Nama folder",
-    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
-    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Tindakan",
+    "LatestVersion": "Versi terkini",
     "Name": "Nama",
     "Size": "Saiz",
-    "CreatedAt": "Dicipta di",
-    "ModifiedAt": "Diubahsuai di",
-    "Controls": "Kawalan",
-    "UploadFiles": "Memuat naik fail",
-    "UploadFolder": "Muat naik folder",
-    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
-    "error": {
-      "FileNameRequired": "Sila masukkan fail atau nama folder.",
-      "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza."
-    },
-    "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
-    "DuplicatedFiles": "Pengesahan Pengesahan",
-    "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
-    "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
-    "ChangeFileExtension": "Tukar Sambungan Fail",
-    "RenameSuccess": "Nama telah berjaya diubah."
+    "Status": "Status",
+    "Updated": "Dikemas kini",
+    "Version": "Versi"
   },
-  "comp:BAITable": {
-    "SettingTable": "Tetapan Jadual",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SearchTableColumn": "Lajur jadual carian"
+  "comp:BAIArtifactTable": {
+    "Action": "Tindakan",
+    "PullLatestVersion": "Tarik versi terkini",
+    "Size": "Saiz",
+    "Updated": "Dikemas kini",
+    "Version": "Versi"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Penerangan",
+    "Name": "Nama",
+    "Pull": "Tarik",
+    "PullArtifact": "Tarik artifak",
+    "PulledVersionsAreExcluded": "Versi yang ditarik dikecualikan.",
+    "Source": "Sumber",
+    "Type": "Jenis"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Tidak terhad"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Lajur jadual carian",
+    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
+    "SettingTable": "Tetapan Jadual"
+  },
+  "comp:BAITestButton": {
+    "Test": "ujian"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Tukar Sambungan Fail",
+    "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
+    "Controls": "Kawalan",
+    "CreateANewFolder": "Buat folder baru",
+    "CreatedAt": "Dicipta di",
+    "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
+    "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
+    "DuplicatedFiles": "Pengesahan Pengesahan",
+    "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
+    "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
+    "FolderName": "Nama folder",
+    "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
+    "ModifiedAt": "Diubahsuai di",
+    "Name": "Nama",
+    "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "RenameSuccess": "Nama telah berjaya diubah.",
+    "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
+    "Size": "Saiz",
+    "UploadFiles": "Memuat naik fail",
+    "UploadFolder": "Muat naik folder",
+    "error": {
+      "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza.",
+      "FileNameRequired": "Sila masukkan fail atau nama folder."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
+  },
+  "error": {
+    "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "button": {
+      "CopyAll": "Salin semua",
+      "Create": "Buat",
+      "Delete": "Padam",
+      "Upload": "Muat naik"
+    }
   }
 }

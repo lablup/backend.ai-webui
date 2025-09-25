@@ -1,50 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
-  },
-  "error": {
-    "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
-  },
-  "general": {
-    "NSelected": "{{count}} seçildi",
-    "button": {
-      "Delete": "Silmek",
-      "Create": "Yaratmak",
-      "Upload": "Yüklemek",
-      "CopyAll": "Hepsini kopyala"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
-    "DeleteSelectedItemsDialog": "Onay Sil",
-    "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
-    "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
-    "CreateANewFolder": "Yeni bir klasör oluşturun",
-    "FolderName": "Klasör adı",
-    "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
-    "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Aksiyon",
+    "LatestVersion": "En son sürüm",
     "Name": "İsim",
     "Size": "Boyut",
-    "CreatedAt": "Yaratılmış",
-    "ModifiedAt": "Değiştirildi",
-    "Controls": "Kontroller",
-    "UploadFiles": "Dosyaları Yükle",
-    "UploadFolder": "Klasörü Yükle",
-    "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
-    "error": {},
-    "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
-    "DuplicatedFiles": "Üzerine Yazın Onay",
-    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
-    "RenameSuccess": "İsim başarıyla değiştirildi."
+    "Status": "Durum",
+    "Updated": "Güncellenmiş",
+    "Version": "Versiyon"
   },
-  "comp:BAITable": {
-    "SettingTable": "Masa Ayarları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SearchTableColumn": "Arama Tablosu sütunları"
+  "comp:BAIArtifactTable": {
+    "Action": "Aksiyon",
+    "PullLatestVersion": "En son sürümü çekin",
+    "Size": "Boyut",
+    "Updated": "Güncellenmiş",
+    "Version": "Versiyon"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Tanım",
+    "Name": "İsim",
+    "Pull": "Çekmek",
+    "PullArtifact": "Artefakt çekmek",
+    "PulledVersionsAreExcluded": "Çekilen sürümler hariç tutulur.",
+    "Source": "Kaynak",
+    "Type": "Tip"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
@@ -56,7 +35,53 @@
   "comp:BAIStatistic": {
     "Unlimited": "Sınırsız"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Arama Tablosu sütunları",
+    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
+    "SettingTable": "Masa Ayarları"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:FileExplorer": {
+    "Controls": "Kontroller",
+    "CreateANewFolder": "Yeni bir klasör oluşturun",
+    "CreatedAt": "Yaratılmış",
+    "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
+    "DeleteSelectedItemsDialog": "Onay Sil",
+    "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
+    "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
+    "DuplicatedFiles": "Üzerine Yazın Onay",
+    "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
+    "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
+    "FolderName": "Klasör adı",
+    "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
+    "ModifiedAt": "Değiştirildi",
+    "Name": "İsim",
+    "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "RenameSuccess": "İsim başarıyla değiştirildi.",
+    "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
+    "Size": "Boyut",
+    "UploadFiles": "Dosyaları Yükle",
+    "UploadFolder": "Klasörü Yükle",
+    "error": {}
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
+  },
+  "error": {
+    "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
+  },
+  "general": {
+    "NSelected": "{{count}} seçildi",
+    "button": {
+      "CopyAll": "Hepsini kopyala",
+      "Create": "Yaratmak",
+      "Delete": "Silmek",
+      "Upload": "Yüklemek"
+    }
   }
 }

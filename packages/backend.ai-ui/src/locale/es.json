@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "prueba"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} elementos"
-  },
-  "error": {
-    "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
-  },
-  "general": {
-    "NSelected": "{{count}} seleccionado",
-    "button": {
-      "Delete": "Borrar",
-      "Create": "Crear",
-      "Upload": "Subir",
-      "CopyAll": "Copiar todo"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
-    "DeleteSelectedItemsDialog": "Eliminar confirmación",
-    "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
-    "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
-    "CreateANewFolder": "Crea una nueva carpeta",
-    "FolderName": "Nombre de carpeta",
-    "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
-    "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Acción",
+    "LatestVersion": "Última versión",
     "Name": "Nombre",
     "Size": "Tamaño",
-    "CreatedAt": "Creado a",
-    "ModifiedAt": "Modificado en",
-    "Controls": "Control",
-    "UploadFiles": "Cargar archivos",
-    "UploadFolder": "Carpeta de carga",
-    "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
-    "error": {
-      "FileNameRequired": "Ingrese un nombre de archivo o carpeta.",
-      "DuplicatedName": "Este nombre ya está en uso. \nIngrese un nombre diferente."
-    },
-    "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
-    "DuplicatedFiles": "Confirmación de sobrescribencia",
-    "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar.",
-    "ChangeFileExtensionDesc": "Cambiar la extensión del archivo puede hacer que el archivo se vuelva inutilizable o se abra incorrectamente. \n¿Quieres continuar?",
-    "ChangeFileExtension": "Cambiar la extensión del archivo",
-    "RenameSuccess": "El nombre ha sido cambiado con éxito."
+    "Status": "Estado",
+    "Updated": "Actualizado",
+    "Version": "Versión"
   },
-  "comp:BAITable": {
-    "SettingTable": "Configuración de tabla",
-    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
-    "SearchTableColumn": "Columnas de la tabla de búsqueda"
+  "comp:BAIArtifactTable": {
+    "Action": "Acción",
+    "PullLatestVersion": "Tire de la última versión",
+    "Size": "Tamaño",
+    "Updated": "Actualizado",
+    "Version": "Versión"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Descripción",
+    "Name": "Nombre",
+    "Pull": "Jalar",
+    "PullArtifact": "Artefacto",
+    "PulledVersionsAreExcluded": "Se excluyen las versiones extraídas.",
+    "Source": "Fuente",
+    "Type": "Tipo"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Columnas de la tabla de búsqueda",
+    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
+    "SettingTable": "Configuración de tabla"
+  },
+  "comp:BAITestButton": {
+    "Test": "prueba"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Cambiar la extensión del archivo",
+    "ChangeFileExtensionDesc": "Cambiar la extensión del archivo puede hacer que el archivo se vuelva inutilizable o se abra incorrectamente. \n¿Quieres continuar?",
+    "Controls": "Control",
+    "CreateANewFolder": "Crea una nueva carpeta",
+    "CreatedAt": "Creado a",
+    "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
+    "DeleteSelectedItemsDialog": "Eliminar confirmación",
+    "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
+    "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar.",
+    "DuplicatedFiles": "Confirmación de sobrescribencia",
+    "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
+    "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
+    "FolderName": "Nombre de carpeta",
+    "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
+    "ModifiedAt": "Modificado en",
+    "Name": "Nombre",
+    "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
+    "RenameSuccess": "El nombre ha sido cambiado con éxito.",
+    "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
+    "Size": "Tamaño",
+    "UploadFiles": "Cargar archivos",
+    "UploadFolder": "Carpeta de carga",
+    "error": {
+      "DuplicatedName": "Este nombre ya está en uso. \nIngrese un nombre diferente.",
+      "FileNameRequired": "Ingrese un nombre de archivo o carpeta."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} de {{total}} elementos"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No hay datos de recursos disponibles"
+  },
+  "error": {
+    "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
+  },
+  "general": {
+    "NSelected": "{{count}} seleccionado",
+    "button": {
+      "CopyAll": "Copiar todo",
+      "Create": "Crear",
+      "Delete": "Borrar",
+      "Upload": "Subir"
+    }
   }
 }

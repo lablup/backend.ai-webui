@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} des éléments {{total}}"
-  },
-  "error": {
-    "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
-  },
-  "general": {
-    "NSelected": "{{count}} sélectionné",
-    "button": {
-      "Delete": "Supprimer",
-      "Create": "Créer",
-      "Upload": "Télécharger",
-      "CopyAll": "Copier tout"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
-    "DeleteSelectedItemsDialog": "Supprimer la confirmation",
-    "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
-    "FolderCreatedSuccessfully": "Dossier créé avec succès.",
-    "CreateANewFolder": "Créer un nouveau dossier",
-    "FolderName": "Nom du dossier",
-    "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
-    "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Action",
+    "LatestVersion": "Dernière version",
     "Name": "Nom",
     "Size": "Taille",
-    "CreatedAt": "Créé à",
-    "ModifiedAt": "Modifié à",
-    "Controls": "Commandes",
-    "UploadFiles": "Télécharger des fichiers",
-    "UploadFolder": "Dossier de téléchargement",
-    "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
-    "error": {
-      "FileNameRequired": "Veuillez saisir un fichier ou un nom de dossier.",
-      "DuplicatedName": "Ce nom est déjà utilisé. \nVeuillez saisir un autre nom."
-    },
-    "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
-    "DuplicatedFiles": "Écran de confirmation",
-    "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
-    "ChangeFileExtensionDesc": "La modification de l'extension du fichier peut faire en sorte que le fichier devienne inutilisable ou s'ouvre incorrectement. \nVoulez-vous continuer?",
-    "ChangeFileExtension": "Modifier l'extension du fichier",
-    "RenameSuccess": "Le nom a été modifié avec succès."
+    "Status": "Statut",
+    "Updated": "Mis à jour",
+    "Version": "Version"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
-    "SettingTable": "Paramètres de la table",
-    "SearchTableColumn": "Colonnes de table de recherche"
+  "comp:BAIArtifactTable": {
+    "Action": "Action",
+    "PullLatestVersion": "Tirez la dernière version",
+    "Size": "Taille",
+    "Updated": "Mis à jour",
+    "Version": "Version"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Description",
+    "Name": "Nom",
+    "Pull": "Tirer",
+    "PullArtifact": "Tirez l'artefact",
+    "PulledVersionsAreExcluded": "Les versions tirées sont exclues.",
+    "Source": "Source",
+    "Type": "Taper"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Illimité"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Colonnes de table de recherche",
+    "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
+    "SettingTable": "Paramètres de la table"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Modifier l'extension du fichier",
+    "ChangeFileExtensionDesc": "La modification de l'extension du fichier peut faire en sorte que le fichier devienne inutilisable ou s'ouvre incorrectement. \nVoulez-vous continuer?",
+    "Controls": "Commandes",
+    "CreateANewFolder": "Créer un nouveau dossier",
+    "CreatedAt": "Créé à",
+    "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
+    "DeleteSelectedItemsDialog": "Supprimer la confirmation",
+    "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
+    "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
+    "DuplicatedFiles": "Écran de confirmation",
+    "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
+    "FolderCreatedSuccessfully": "Dossier créé avec succès.",
+    "FolderName": "Nom du dossier",
+    "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",
+    "ModifiedAt": "Modifié à",
+    "Name": "Nom",
+    "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
+    "RenameSuccess": "Le nom a été modifié avec succès.",
+    "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
+    "Size": "Taille",
+    "UploadFiles": "Télécharger des fichiers",
+    "UploadFolder": "Dossier de téléchargement",
+    "error": {
+      "DuplicatedName": "Ce nom est déjà utilisé. \nVeuillez saisir un autre nom.",
+      "FileNameRequired": "Veuillez saisir un fichier ou un nom de dossier."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} des éléments {{total}}"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Aucune données de ressources disponibles"
+  },
+  "error": {
+    "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
+  },
+  "general": {
+    "NSelected": "{{count}} sélectionné",
+    "button": {
+      "CopyAll": "Copier tout",
+      "Create": "Créer",
+      "Delete": "Supprimer",
+      "Upload": "Télécharger"
+    }
   }
 }

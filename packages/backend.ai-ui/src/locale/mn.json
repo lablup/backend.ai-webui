@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "турших"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
-  },
-  "error": {
-    "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
-  },
-  "general": {
-    "NSelected": "{{count}} сонгогдсон",
-    "button": {
-      "Delete": "Эдгээх",
-      "Create": "Шуүгиан дэгдээх",
-      "Upload": "Байршуулах",
-      "CopyAll": "Бүгдийг хуулбарлах"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
-    "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
-    "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
-    "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
-    "CreateANewFolder": "Шинэ хавтас үүсгэх",
-    "FolderName": "Хөдөлгөөний нэр",
-    "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
-    "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Үйл ажиллагаа",
+    "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
     "Name": "Нэр",
     "Size": "Хэмжээ",
-    "CreatedAt": "Бүтэмж дээр бүтсэн",
-    "ModifiedAt": "Өөрчлөгдсөн",
-    "Controls": "Удирдлага",
-    "UploadFiles": "Файл байршуулах",
-    "UploadFolder": "Фолдерыг байршуулах",
-    "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
-    "error": {
-      "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу.",
-      "DuplicatedName": "Энэ нэр аль хэдийн ашиглагдаж байна. \nӨөр нэр оруулна уу."
-    },
-    "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
-    "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
-    "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
-    "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
-    "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
-    "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна."
+    "Status": "Байдал",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Version": "Таамаглал"
   },
-  "comp:BAITable": {
-    "SettingTable": "Хүснэгтийн тохиргоо",
-    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SearchTableColumn": "Хүснэгтийн баганыг хайх"
+  "comp:BAIArtifactTable": {
+    "Action": "Үйл ажиллагаа",
+    "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах",
+    "Size": "Хэмжээ",
+    "Updated": "Шинэчилсэн цаг нь",
+    "Version": "Таамаглал"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Тодорхойлолт / төрөл анги",
+    "Name": "Нэр",
+    "Pull": "Татах",
+    "PullArtifact": "Олдворыг татах",
+    "PulledVersionsAreExcluded": "Татсан хувилбарыг хассан болно.",
+    "Source": "Язгуур",
+    "Type": "Маяг"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Хязгааргүй"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Хүснэгтийн баганыг хайх",
+    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
+    "SettingTable": "Хүснэгтийн тохиргоо"
+  },
+  "comp:BAITestButton": {
+    "Test": "турших"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
+    "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
+    "Controls": "Удирдлага",
+    "CreateANewFolder": "Шинэ хавтас үүсгэх",
+    "CreatedAt": "Бүтэмж дээр бүтсэн",
+    "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
+    "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
+    "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
+    "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
+    "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
+    "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
+    "FolderName": "Хөдөлгөөний нэр",
+    "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
+    "ModifiedAt": "Өөрчлөгдсөн",
+    "Name": "Нэр",
+    "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
+    "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
+    "Size": "Хэмжээ",
+    "UploadFiles": "Файл байршуулах",
+    "UploadFolder": "Фолдерыг байршуулах",
+    "error": {
+      "DuplicatedName": "Энэ нэр аль хэдийн ашиглагдаж байна. \nӨөр нэр оруулна уу.",
+      "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
+  },
+  "error": {
+    "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
+  },
+  "general": {
+    "NSelected": "{{count}} сонгогдсон",
+    "button": {
+      "CopyAll": "Бүгдийг хуулбарлах",
+      "Create": "Шуүгиан дэгдээх",
+      "Delete": "Эдгээх",
+      "Upload": "Байршуулах"
+    }
   }
 }

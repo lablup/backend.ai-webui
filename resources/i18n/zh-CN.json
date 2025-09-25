@@ -1092,6 +1092,18 @@
     "Username": "用户名",
     "UsernameOptional": "用户名（可选）"
   },
+  "reservoirPage": {
+    "BasicInformation": "基本信息",
+    "Description": "描述",
+    "LastUpdated": "最后更新",
+    "Name": "姓名",
+    "Registry": "注册表",
+    "ReservoirArtifacts": "水库工件",
+    "Size": "尺寸",
+    "Source": "来源",
+    "Type": "类型",
+    "VersionList": "可用列表"
+  },
   "resourceGroup": {
     "Activate": "激活",
     "ActivateResourceGroup": "激活资源组",
@@ -2025,6 +2037,7 @@
       "PrivacyPolicy": "隐私政策",
       "Project": "项目",
       "Remaining": "其余的",
+      "Reservoir": "水库",
       "ResourcePolicy": "资源政策",
       "Resources": "资源",
       "Scheduler": "调度程序",

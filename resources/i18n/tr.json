@@ -1092,6 +1092,18 @@
     "Username": "Kullanıcı adı",
     "UsernameOptional": "Kullanıcı adı (İsteğe bağlı)"
   },
+  "reservoirPage": {
+    "BasicInformation": "Temel Bilgi",
+    "Description": "Tanım",
+    "LastUpdated": "Son güncellendi",
+    "Name": "İsim",
+    "Registry": "Sicil",
+    "ReservoirArtifacts": "Rezervuar eserleri",
+    "Size": "Boyut",
+    "Source": "Kaynak",
+    "Type": "Tip",
+    "VersionList": "Mevcut liste"
+  },
   "resourceGroup": {
     "Activate": "Etkinleştirmek",
     "ActivateResourceGroup": "Kaynak Grubunu Etkinleştir",
@@ -2025,6 +2037,7 @@
       "PrivacyPolicy": "Gizlilik Politikası",
       "Project": "Proje",
       "Remaining": "Geriye kalan",
+      "Reservoir": "Rezervuar",
       "ResourcePolicy": "Kaynak Politikası",
       "Resources": "Kaynaklar",
       "Scheduler": "Zamanlayıcı",

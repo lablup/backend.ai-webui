@@ -35,7 +35,10 @@ export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
 export { default as BAILink } from './BAILink';
 export type { BAILinkProps } from './BAILink';
-
+export { default as BAIBackButton } from './BAIBackButton';
+export type { BAIBackButtonProps } from './BAIBackButton';
+export { default as BAIText } from './BAIText';
+export type { BAITextProps } from './BAIText';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

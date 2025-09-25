@@ -1097,6 +1097,18 @@
     "Username": "Username",
     "UsernameOptional": "Username (Optional)"
   },
+  "reservoirPage": {
+    "BasicInformation": "Basic Information",
+    "Description": "Description",
+    "LastUpdated": "Last Updated",
+    "Name": "Name",
+    "Registry": "Registry",
+    "ReservoirArtifacts": "Reservoir Artifacts",
+    "Size": "Size",
+    "Source": "Source",
+    "Type": "Type",
+    "VersionList": "Available List"
+  },
   "resourceGroup": {
     "Activate": "Activate",
     "ActivateResourceGroup": "Activate resource group",
@@ -2031,6 +2043,7 @@
       "PrivacyPolicy": "Privacy Policy",
       "Project": "Project",
       "Remaining": "Remaining",
+      "Reservoir": "Reservoir",
       "ResourcePolicy": "Resource Policy",
       "Resources": "Resources",
       "Scheduler": "Scheduler",

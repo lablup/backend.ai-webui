@@ -39,6 +39,7 @@ export default defineConfig(({ mode }) => {
         external: [
           'react',
           'react-dom',
+          'react-router-dom',
           'i18next',
           'react-i18next',
           'relay-runtime',

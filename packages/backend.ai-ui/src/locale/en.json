@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "Test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
-  },
-  "error": {
-    "UnknownError": "An unknown error occurred. Please try again."
-  },
-  "general": {
-    "NSelected": "{{count}} selected",
-    "button": {
-      "Delete": "Delete",
-      "Create": "Create",
-      "Upload": "Upload",
-      "CopyAll": "Copy All"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
-    "DeleteSelectedItemsDialog": "Delete Confirmation",
-    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
-    "FolderCreatedSuccessfully": "Folder created successfully.",
-    "CreateANewFolder": "Create a new folder",
-    "FolderName": "Folder Name",
-    "PleaseEnterAFolderName": "Please enter the folder name.",
-    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Action",
+    "LatestVersion": "Latest Version",
     "Name": "Name",
     "Size": "Size",
-    "CreatedAt": "Created At",
-    "ModifiedAt": "Modified At",
-    "Controls": "Controls",
-    "UploadFiles": "Upload Files",
-    "UploadFolder": "Upload Folder",
-    "DownloadStarted": "File \"{{fileName}}\" download has started.",
-    "error": {
-      "FileNameRequired": "Please enter a file or folder name.",
-      "DuplicatedName": "This name is already in use. Please enter a different name."
-    },
-    "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
-    "DuplicatedFiles": "Overwrite Confirmation",
-    "DragAndDropDesc": "Drag and drop files to this area to upload.",
-    "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",
-    "ChangeFileExtension": "Change File Extension",
-    "RenameSuccess": "The name has been successfully changed."
+    "Status": "Status",
+    "Updated": "Updated",
+    "Version": "Version"
   },
-  "comp:BAITable": {
-    "SettingTable": "Table Settings",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SearchTableColumn": "Search table columns"
+  "comp:BAIArtifactTable": {
+    "Action": "Action",
+    "PullLatestVersion": "Pull latest version",
+    "Size": "Size",
+    "Updated": "Updated",
+    "Version": "Version"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Description",
+    "Name": "Name",
+    "Pull": "Pull",
+    "PullArtifact": "Pull Artifact",
+    "PulledVersionsAreExcluded": "Pulled versions are excluded.",
+    "Source": "Source",
+    "Type": "Type"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Unlimited"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Search table columns",
+    "SelectColumnToDisplay": "Select columns to display",
+    "SettingTable": "Table Settings"
+  },
+  "comp:BAITestButton": {
+    "Test": "Test"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Change File Extension",
+    "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",
+    "Controls": "Controls",
+    "CreateANewFolder": "Create a new folder",
+    "CreatedAt": "Created At",
+    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
+    "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "DragAndDropDesc": "Drag and drop files to this area to upload.",
+    "DuplicatedFiles": "Overwrite Confirmation",
+    "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
+    "FolderCreatedSuccessfully": "Folder created successfully.",
+    "FolderName": "Folder Name",
+    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+    "ModifiedAt": "Modified At",
+    "Name": "Name",
+    "PleaseEnterAFolderName": "Please enter the folder name.",
+    "RenameSuccess": "The name has been successfully changed.",
+    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
+    "Size": "Size",
+    "UploadFiles": "Upload Files",
+    "UploadFolder": "Upload Folder",
+    "error": {
+      "DuplicatedName": "This name is already in use. Please enter a different name.",
+      "FileNameRequired": "Please enter a file or folder name."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} of {{total}} items"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
+  },
+  "error": {
+    "UnknownError": "An unknown error occurred. Please try again."
+  },
+  "general": {
+    "NSelected": "{{count}} selected",
+    "button": {
+      "CopyAll": "Copy All",
+      "Create": "Create",
+      "Delete": "Delete",
+      "Upload": "Upload"
+    }
   }
 }

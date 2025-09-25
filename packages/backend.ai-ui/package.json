@@ -65,7 +65,8 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.1",
     "react-relay": "^20.1.0",
-    "relay-runtime": "^20.1.0"
+    "relay-runtime": "^20.1.0",
+    "react-router-dom": "^6.30.0"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",

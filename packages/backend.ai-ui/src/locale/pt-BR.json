@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "teste"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} itens"
-  },
-  "error": {
-    "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
-  },
-  "general": {
-    "NSelected": "{{count}} selecionado",
-    "button": {
-      "Delete": "Excluir",
-      "Create": "Criar",
-      "Upload": "Carregar",
-      "CopyAll": "Copie tudo"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
-    "DeleteSelectedItemsDialog": "Excluir confirmação",
-    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
-    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
-    "CreateANewFolder": "Crie uma nova pasta",
-    "FolderName": "Nome da pasta",
-    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
-    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Ação",
+    "LatestVersion": "Versão mais recente",
     "Name": "Nome",
     "Size": "Tamanho",
-    "CreatedAt": "Criado em",
-    "ModifiedAt": "Modificado em",
-    "Controls": "Controles",
-    "UploadFiles": "Faça o upload de arquivos",
-    "UploadFolder": "Faça o upload da pasta",
-    "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
-    "error": {
-      "FileNameRequired": "Por favor, insira um nome de arquivo ou pasta.",
-      "DuplicatedName": "Este nome já está em uso. \nPor favor, insira um nome diferente."
-    },
-    "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
-    "DuplicatedFiles": "Substituição de substituição",
-    "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
-    "ChangeFileExtensionDesc": "Alterar a extensão do arquivo pode fazer com que o arquivo se torne inutilizável ou aberto incorretamente. \nVocê quer prosseguir?",
-    "ChangeFileExtension": "Alterar a extensão do arquivo",
-    "RenameSuccess": "O nome foi alterado com sucesso."
+    "Status": "Status",
+    "Updated": "Atualizado",
+    "Version": "Versão"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Selecione colunas para exibir",
-    "SettingTable": "Configurações da tabela",
-    "SearchTableColumn": "Pesquisar colunas da tabela"
+  "comp:BAIArtifactTable": {
+    "Action": "Ação",
+    "PullLatestVersion": "Puxe a versão mais recente",
+    "Size": "Tamanho",
+    "Updated": "Atualizado",
+    "Version": "Versão"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Descrição",
+    "Name": "Nome",
+    "Pull": "Puxar",
+    "PullArtifact": "Puxe artefato",
+    "PulledVersionsAreExcluded": "As versões puxadas são excluídas.",
+    "Source": "Fonte",
+    "Type": "Tipo"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Pesquisar colunas da tabela",
+    "SelectColumnToDisplay": "Selecione colunas para exibir",
+    "SettingTable": "Configurações da tabela"
+  },
+  "comp:BAITestButton": {
+    "Test": "teste"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Alterar a extensão do arquivo",
+    "ChangeFileExtensionDesc": "Alterar a extensão do arquivo pode fazer com que o arquivo se torne inutilizável ou aberto incorretamente. \nVocê quer prosseguir?",
+    "Controls": "Controles",
+    "CreateANewFolder": "Crie uma nova pasta",
+    "CreatedAt": "Criado em",
+    "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
+    "DeleteSelectedItemsDialog": "Excluir confirmação",
+    "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
+    "DuplicatedFiles": "Substituição de substituição",
+    "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
+    "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
+    "FolderName": "Nome da pasta",
+    "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
+    "ModifiedAt": "Modificado em",
+    "Name": "Nome",
+    "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "RenameSuccess": "O nome foi alterado com sucesso.",
+    "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
+    "Size": "Tamanho",
+    "UploadFiles": "Faça o upload de arquivos",
+    "UploadFolder": "Faça o upload da pasta",
+    "error": {
+      "DuplicatedName": "Este nome já está em uso. \nPor favor, insira um nome diferente.",
+      "FileNameRequired": "Por favor, insira um nome de arquivo ou pasta."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} de {{total}} itens"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Sem dados de recurso disponíveis"
+  },
+  "error": {
+    "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
+  },
+  "general": {
+    "NSelected": "{{count}} selecionado",
+    "button": {
+      "CopyAll": "Copie tudo",
+      "Create": "Criar",
+      "Delete": "Excluir",
+      "Upload": "Carregar"
+    }
   }
 }

@@ -1090,6 +1090,18 @@
     "Username": "Nome utente",
     "UsernameOptional": "Nome utente (facoltativo)"
   },
+  "reservoirPage": {
+    "BasicInformation": "Informazioni di base",
+    "Description": "Descrizione",
+    "LastUpdated": "Ultimo aggiornamento",
+    "Name": "Nome",
+    "Registry": "Registro",
+    "ReservoirArtifacts": "Artefatti del serbatoio",
+    "Size": "Misurare",
+    "Source": "Fonte",
+    "Type": "Tipo",
+    "VersionList": "Elenco disponibile"
+  },
   "resourceGroup": {
     "Activate": "Attivare",
     "ActivateResourceGroup": "Attiva il gruppo di risorse",
@@ -2022,6 +2034,7 @@
       "PrivacyPolicy": "politica sulla riservatezza",
       "Project": "Progetto",
       "Remaining": "Rimanente",
+      "Reservoir": "Serbatoio",
       "ResourcePolicy": "Politica delle risorse",
       "Resources": "risorse",
       "Scheduler": "Scheduler",

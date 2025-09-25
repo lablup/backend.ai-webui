@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "тест"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
-  },
-  "error": {
-    "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
-  },
-  "general": {
-    "NSelected": "{{count}} выбрал",
-    "button": {
-      "Delete": "Удалить",
-      "Create": "Создавать",
-      "Upload": "Загрузить",
-      "CopyAll": "Копировать все"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
-    "DeleteSelectedItemsDialog": "Удалить подтверждение",
-    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
-    "FolderCreatedSuccessfully": "Папка создана успешно.",
-    "CreateANewFolder": "Создать новую папку",
-    "FolderName": "Имя папки",
-    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
-    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Действие",
+    "LatestVersion": "Последняя версия",
     "Name": "Имя",
     "Size": "Размер",
-    "CreatedAt": "Создан в",
-    "ModifiedAt": "Модифицирован в",
-    "Controls": "Управление",
-    "UploadFiles": "Загрузить файлы",
-    "UploadFolder": "Загрузить папку",
-    "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
-    "error": {
-      "FileNameRequired": "Пожалуйста, введите имя файла или папки.",
-      "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя."
-    },
-    "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
-    "DuplicatedFiles": "Перезаписать подтверждение",
-    "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
-    "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
-    "ChangeFileExtension": "Изменить расширение файла",
-    "RenameSuccess": "Имя было успешно изменено."
+    "Status": "Статус",
+    "Updated": "Обновлено",
+    "Version": "Версия"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы",
-    "SearchTableColumn": "Поиск таблицы столбцов"
+  "comp:BAIArtifactTable": {
+    "Action": "Действие",
+    "PullLatestVersion": "Вытащите последнюю версию",
+    "Size": "Размер",
+    "Updated": "Обновлено",
+    "Version": "Версия"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Описание",
+    "Name": "Имя",
+    "Pull": "Тянуть",
+    "PullArtifact": "Вытащить артефакт",
+    "PulledVersionsAreExcluded": "Вытянутые версии исключены.",
+    "Source": "Источник",
+    "Type": "Тип"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Неограниченный"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Поиск таблицы столбцов",
+    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
+    "SettingTable": "Настройки таблицы"
+  },
+  "comp:BAITestButton": {
+    "Test": "тест"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Изменить расширение файла",
+    "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
+    "Controls": "Управление",
+    "CreateANewFolder": "Создать новую папку",
+    "CreatedAt": "Создан в",
+    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
+    "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
+    "DuplicatedFiles": "Перезаписать подтверждение",
+    "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
+    "FolderCreatedSuccessfully": "Папка создана успешно.",
+    "FolderName": "Имя папки",
+    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+    "ModifiedAt": "Модифицирован в",
+    "Name": "Имя",
+    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "RenameSuccess": "Имя было успешно изменено.",
+    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
+    "Size": "Размер",
+    "UploadFiles": "Загрузить файлы",
+    "UploadFolder": "Загрузить папку",
+    "error": {
+      "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя.",
+      "FileNameRequired": "Пожалуйста, введите имя файла или папки."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} of {{total}} элементы"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
+  },
+  "error": {
+    "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
+  },
+  "general": {
+    "NSelected": "{{count}} выбрал",
+    "button": {
+      "CopyAll": "Копировать все",
+      "Create": "Создавать",
+      "Delete": "Удалить",
+      "Upload": "Загрузить"
+    }
   }
 }

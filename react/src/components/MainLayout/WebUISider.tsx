@@ -287,7 +287,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'resource-policy',
     },
     {
-      label: <WebUILink to="/reservoir">Reservoir</WebUILink>,
+      label: <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'reservoir',
     },

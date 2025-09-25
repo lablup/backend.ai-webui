@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "테스트"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
-  "error": {
-    "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
-  },
-  "general": {
-    "NSelected": "{{count}}개 선택됨",
-    "button": {
-      "Delete": "삭제",
-      "Create": "생성",
-      "Upload": "업로드",
-      "CopyAll": "모두 복사"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
-    "DeleteSelectedItemsDialog": "삭제 확인",
-    "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
-    "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
-    "CreateANewFolder": "새 폴더 생성",
-    "FolderName": "폴더 이름",
-    "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
-    "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "행동",
+    "LatestVersion": "최신 버전",
     "Name": "이름",
     "Size": "크기",
-    "CreatedAt": "생성일",
-    "ModifiedAt": "수정일",
-    "Controls": "제어",
-    "UploadFiles": "파일 업로드",
-    "UploadFolder": "폴더 업로드",
-    "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
-    "error": {
-      "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요.",
-      "DuplicatedName": "중복된 이름이 있습니다. 다른 이름을 입력해주세요."
-    },
-    "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
-    "DuplicatedFiles": "덮어쓰기 확인",
-    "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요.",
-    "ChangeFileExtensionDesc": "파일 확장자를 변경하면 파일이 사용 불가능해지거나 올바르게 열리지 않을 수 있습니다. 계속하시겠습니까?",
-    "ChangeFileExtension": "파일 확장자 변경",
-    "RenameSuccess": "이름이 성공적으로 변경되었습니다."
+    "Status": "상태",
+    "Updated": "업데이트",
+    "Version": "버전"
   },
-  "comp:BAITable": {
-    "SettingTable": "표 설정",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SearchTableColumn": "표시할 열 검색"
+  "comp:BAIArtifactTable": {
+    "Action": "행동",
+    "PullLatestVersion": "최신 버전을 가져옵니다",
+    "Size": "크기",
+    "Updated": "업데이트",
+    "Version": "버전"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "설명",
+    "Name": "이름",
+    "Pull": "가져오기",
+    "PullArtifact": "아티팩트 가져오기",
+    "PulledVersionsAreExcluded": "가져온 버전들은 제외되었습니다.",
+    "Source": "소스",
+    "Type": "유형"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "제한없음"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "표시할 열 검색",
+    "SelectColumnToDisplay": "표시할 열 선택",
+    "SettingTable": "표 설정"
+  },
+  "comp:BAITestButton": {
+    "Test": "테스트"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "파일 확장자 변경",
+    "ChangeFileExtensionDesc": "파일 확장자를 변경하면 파일이 사용 불가능해지거나 올바르게 열리지 않을 수 있습니다. 계속하시겠습니까?",
+    "Controls": "제어",
+    "CreateANewFolder": "새 폴더 생성",
+    "CreatedAt": "생성일",
+    "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
+    "DeleteSelectedItemsDialog": "삭제 확인",
+    "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
+    "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요.",
+    "DuplicatedFiles": "덮어쓰기 확인",
+    "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
+    "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
+    "FolderName": "폴더 이름",
+    "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",
+    "ModifiedAt": "수정일",
+    "Name": "이름",
+    "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
+    "RenameSuccess": "이름이 성공적으로 변경되었습니다.",
+    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
+    "Size": "크기",
+    "UploadFiles": "파일 업로드",
+    "UploadFolder": "폴더 업로드",
+    "error": {
+      "DuplicatedName": "중복된 이름이 있습니다. 다른 이름을 입력해주세요.",
+      "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
+  },
+  "error": {
+    "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  "general": {
+    "NSelected": "{{count}}개 선택됨",
+    "button": {
+      "CopyAll": "모두 복사",
+      "Create": "생성",
+      "Delete": "삭제",
+      "Upload": "업로드"
+    }
   }
 }

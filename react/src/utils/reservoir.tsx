@@ -1,27 +1,23 @@
-import type { ReservoirArtifact } from '../types/reservoir';
 import { SyncOutlined } from '@ant-design/icons';
 import { Package, Container, Brain } from 'lucide-react';
-import React from 'react';
 
-export const getStatusColor = (status: ReservoirArtifact['status']) => {
-  switch (status) {
-    case 'verified':
-      return 'success';
+export const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
     case 'pulling':
       return 'processing';
     case 'verifying':
       return 'warning';
     case 'available':
       return 'default';
-    case 'error':
+    case 'failed':
       return 'error';
     default:
       return 'default';
   }
 };
 
-export const getStatusIcon = (status: ReservoirArtifact['status']) => {
-  switch (status) {
+export const getStatusIcon = (status: string) => {
+  switch (status.toLowerCase()) {
     case 'pulling':
     case 'verifying':
       return <SyncOutlined spin />;
@@ -30,7 +26,7 @@ export const getStatusIcon = (status: ReservoirArtifact['status']) => {
   }
 };
 
-export const getTypeColor = (type: ReservoirArtifact['type']) => {
+export const getTypeColor = (type: string) => {
   switch (type) {
     case 'model':
       return 'blue';
@@ -43,17 +39,14 @@ export const getTypeColor = (type: ReservoirArtifact['type']) => {
   }
 };
 
-export const getTypeIcon = (
-  type: ReservoirArtifact['type'],
-  size: number = 16,
-) => {
+export const getTypeIcon = (type: string, size: number = 16) => {
   const colorMap = {
     model: '#1677ff',
     package: '#52c41a',
     image: '#fa8c16',
   };
 
-  switch (type) {
+  switch (type.toLowerCase()) {
     case 'model':
       return <Brain size={size} color={colorMap.model} />;
     case 'package':

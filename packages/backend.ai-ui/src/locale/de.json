@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} von {{total}} Elementen"
-  },
-  "error": {
-    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
-  },
-  "general": {
-    "NSelected": "{{count}} ausgewählt",
-    "button": {
-      "Delete": "Löschen",
-      "Create": "Erstellen",
-      "Upload": "Hochladen",
-      "CopyAll": "Alle kopieren"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
-    "DeleteSelectedItemsDialog": "Bestätigung löschen",
-    "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
-    "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
-    "CreateANewFolder": "Erstellen Sie einen neuen Ordner",
-    "FolderName": "Ordner Name",
-    "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
-    "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Aktion",
+    "LatestVersion": "Neueste Version",
     "Name": "Name",
     "Size": "Größe",
-    "CreatedAt": "Erstellt at",
-    "ModifiedAt": "Modifiziert bei",
-    "Controls": "Kontrollen",
-    "UploadFiles": "Dateien hochladen",
-    "UploadFolder": "Ordner hochladen",
-    "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
-    "error": {
-      "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein.",
-      "DuplicatedName": "Dieser Name ist bereits verwendet. \nBitte geben Sie einen anderen Namen ein."
-    },
-    "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
-    "DuplicatedFiles": "Überschreibung der Bestätigung",
-    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
-    "ChangeFileExtensionDesc": "Das Ändern der Dateierweiterung kann dazu führen, dass die Datei unbrauchbar oder falsch geöffnet wird. \nMöchten Sie fortfahren?",
-    "ChangeFileExtension": "Dateierweiterung ändern",
-    "RenameSuccess": "Der Name wurde erfolgreich geändert."
+    "Status": "Status",
+    "Updated": "Aktualisiert",
+    "Version": "Version"
   },
-  "comp:BAITable": {
-    "SettingTable": "Tabelleneinstellungen",
-    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SearchTableColumn": "Suchtabellenspalten"
+  "comp:BAIArtifactTable": {
+    "Action": "Aktion",
+    "PullLatestVersion": "Die neueste Version ziehen",
+    "Size": "Größe",
+    "Updated": "Aktualisiert",
+    "Version": "Version"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Beschreibung",
+    "Name": "Name",
+    "Pull": "Ziehen",
+    "PullArtifact": "Artefakt ziehen",
+    "PulledVersionsAreExcluded": "Ziehversionen sind ausgeschlossen.",
+    "Source": "Quelle",
+    "Type": "Typ"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Unbegrenzt"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Suchtabellenspalten",
+    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
+    "SettingTable": "Tabelleneinstellungen"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Dateierweiterung ändern",
+    "ChangeFileExtensionDesc": "Das Ändern der Dateierweiterung kann dazu führen, dass die Datei unbrauchbar oder falsch geöffnet wird. \nMöchten Sie fortfahren?",
+    "Controls": "Kontrollen",
+    "CreateANewFolder": "Erstellen Sie einen neuen Ordner",
+    "CreatedAt": "Erstellt at",
+    "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
+    "DeleteSelectedItemsDialog": "Bestätigung löschen",
+    "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
+    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
+    "DuplicatedFiles": "Überschreibung der Bestätigung",
+    "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
+    "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
+    "FolderName": "Ordner Name",
+    "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",
+    "ModifiedAt": "Modifiziert bei",
+    "Name": "Name",
+    "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
+    "RenameSuccess": "Der Name wurde erfolgreich geändert.",
+    "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
+    "Size": "Größe",
+    "UploadFiles": "Dateien hochladen",
+    "UploadFolder": "Ordner hochladen",
+    "error": {
+      "DuplicatedName": "Dieser Name ist bereits verwendet. \nBitte geben Sie einen anderen Namen ein.",
+      "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} von {{total}} Elementen"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Keine Ressourcendaten verfügbar"
+  },
+  "error": {
+    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
+  },
+  "general": {
+    "NSelected": "{{count}} ausgewählt",
+    "button": {
+      "CopyAll": "Alle kopieren",
+      "Create": "Erstellen",
+      "Delete": "Löschen",
+      "Upload": "Hochladen"
+    }
   }
 }

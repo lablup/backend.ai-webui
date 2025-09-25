@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "test"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} z {{total}}"
-  },
-  "error": {
-    "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
-  },
-  "general": {
-    "NSelected": "{{count}}",
-    "button": {
-      "Delete": "Usuwać",
-      "Create": "Tworzyć",
-      "Upload": "Wgrywać",
-      "CopyAll": "Kopiuj wszystko"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
-    "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
-    "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
-    "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
-    "CreateANewFolder": "Utwórz nowy folder",
-    "FolderName": "Nazwa folderu",
-    "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
-    "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "Działanie",
+    "LatestVersion": "Najnowsza wersja",
     "Name": "Nazwa",
     "Size": "Rozmiar",
-    "CreatedAt": "Utworzony w",
-    "ModifiedAt": "Zmodyfikowany przy",
-    "Controls": "Sterownica",
-    "UploadFiles": "Prześlij pliki",
-    "UploadFolder": "Folder przesyłania",
-    "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
-    "error": {
-      "FileNameRequired": "Wprowadź nazwę pliku lub folderu.",
-      "DuplicatedName": "Ta nazwa jest już używana. \nWprowadź inną nazwę."
-    },
-    "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
-    "DuplicatedFiles": "Nadpisz potwierdzenie",
-    "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
-    "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
-    "ChangeFileExtension": "Zmień rozszerzenie pliku",
-    "RenameSuccess": "Nazwa została pomyślnie zmieniona."
+    "Status": "Status",
+    "Updated": "Zaktualizowane",
+    "Version": "Wersja"
   },
-  "comp:BAITable": {
-    "SettingTable": "Ustawienia tabeli",
-    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
-    "SearchTableColumn": "Wyszukaj kolumny tabeli"
+  "comp:BAIArtifactTable": {
+    "Action": "Działanie",
+    "PullLatestVersion": "Wyciągnij najnowszą wersję",
+    "Size": "Rozmiar",
+    "Updated": "Zaktualizowane",
+    "Version": "Wersja"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "Opis",
+    "Name": "Nazwa",
+    "Pull": "Ciągnąć",
+    "PullArtifact": "Wyciągnij artefakt",
+    "PulledVersionsAreExcluded": "Wyciągnięte wersje są wykluczone.",
+    "Source": "Źródło",
+    "Type": "Typ"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "Nieograniczony"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "Wyszukaj kolumny tabeli",
+    "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
+    "SettingTable": "Ustawienia tabeli"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Zmień rozszerzenie pliku",
+    "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
+    "Controls": "Sterownica",
+    "CreateANewFolder": "Utwórz nowy folder",
+    "CreatedAt": "Utworzony w",
+    "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
+    "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
+    "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
+    "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
+    "DuplicatedFiles": "Nadpisz potwierdzenie",
+    "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
+    "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
+    "FolderName": "Nazwa folderu",
+    "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
+    "ModifiedAt": "Zmodyfikowany przy",
+    "Name": "Nazwa",
+    "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
+    "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
+    "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
+    "Size": "Rozmiar",
+    "UploadFiles": "Prześlij pliki",
+    "UploadFolder": "Folder przesyłania",
+    "error": {
+      "DuplicatedName": "Ta nazwa jest już używana. \nWprowadź inną nazwę.",
+      "FileNameRequired": "Wprowadź nazwę pliku lub folderu."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} z {{total}}"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Brak danych dotyczących zasobów"
+  },
+  "error": {
+    "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
+  },
+  "general": {
+    "NSelected": "{{count}}",
+    "button": {
+      "CopyAll": "Kopiuj wszystko",
+      "Create": "Tworzyć",
+      "Delete": "Usuwać",
+      "Upload": "Wgrywać"
+    }
   }
 }

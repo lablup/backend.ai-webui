@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "測試"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} {{total}}項目"
-  },
-  "error": {
-    "UnknownError": "發生了未知錯誤。請重試。"
-  },
-  "general": {
-    "NSelected": "{{count}}選擇",
-    "button": {
-      "Delete": "刪除",
-      "Create": "創造",
-      "Upload": "上傳",
-      "CopyAll": "複製全部"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
-    "DeleteSelectedItemsDialog": "刪除確認",
-    "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
-    "FolderCreatedSuccessfully": "文件夾成功創建了。",
-    "CreateANewFolder": "創建一個新文件夾",
-    "FolderName": "文件夾名稱",
-    "PleaseEnterAFolderName": "請輸入文件夾名稱。",
-    "MaxFolderNameLength": "文件夾名稱必須為255個字符或更小。",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "行動",
+    "LatestVersion": "最新版本",
     "Name": "姓名",
     "Size": "尺寸",
-    "CreatedAt": "創建在",
-    "ModifiedAt": "修改為",
-    "Controls": "控件",
-    "UploadFiles": "上傳文件",
-    "UploadFolder": "上傳文件夾",
-    "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
-    "error": {
-      "FileNameRequired": "請輸入文件或文件夾名稱。",
-      "DuplicatedName": "此名稱已經在使用中。請輸入其他名稱。"
-    },
-    "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
-    "DuplicatedFiles": "覆蓋確認",
-    "DragAndDropDesc": "將文件拖到此區域上傳。",
-    "ChangeFileExtensionDesc": "更改文件擴展名可能會導致文件變得無法使用或不正確打開。你想繼續嗎？",
-    "ChangeFileExtension": "更改文件擴展名",
-    "RenameSuccess": "該名稱已成功更改。"
+    "Status": "地位",
+    "Updated": "更新",
+    "Version": "版本"
   },
-  "comp:BAITable": {
-    "SettingTable": "表設置",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SearchTableColumn": "搜索表列"
+  "comp:BAIArtifactTable": {
+    "Action": "行動",
+    "PullLatestVersion": "拉最新版本",
+    "Size": "尺寸",
+    "Updated": "更新",
+    "Version": "版本"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "描述",
+    "Name": "姓名",
+    "Pull": "拉",
+    "PullArtifact": "拉工子",
+    "PulledVersionsAreExcluded": "拉動版本被排除在外。",
+    "Source": "來源",
+    "Type": "類型"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "無限"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "搜索表列",
+    "SelectColumnToDisplay": "選擇要顯示的列",
+    "SettingTable": "表設置"
+  },
+  "comp:BAITestButton": {
+    "Test": "測試"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "更改文件擴展名",
+    "ChangeFileExtensionDesc": "更改文件擴展名可能會導致文件變得無法使用或不正確打開。你想繼續嗎？",
+    "Controls": "控件",
+    "CreateANewFolder": "創建一個新文件夾",
+    "CreatedAt": "創建在",
+    "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
+    "DeleteSelectedItemsDialog": "刪除確認",
+    "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
+    "DragAndDropDesc": "將文件拖到此區域上傳。",
+    "DuplicatedFiles": "覆蓋確認",
+    "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
+    "FolderCreatedSuccessfully": "文件夾成功創建了。",
+    "FolderName": "文件夾名稱",
+    "MaxFolderNameLength": "文件夾名稱必須為255個字符或更小。",
+    "ModifiedAt": "修改為",
+    "Name": "姓名",
+    "PleaseEnterAFolderName": "請輸入文件夾名稱。",
+    "RenameSuccess": "該名稱已成功更改。",
+    "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
+    "Size": "尺寸",
+    "UploadFiles": "上傳文件",
+    "UploadFolder": "上傳文件夾",
+    "error": {
+      "DuplicatedName": "此名稱已經在使用中。請輸入其他名稱。",
+      "FileNameRequired": "請輸入文件或文件夾名稱。"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} {{total}}項目"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
+  },
+  "error": {
+    "UnknownError": "發生了未知錯誤。請重試。"
+  },
+  "general": {
+    "NSelected": "{{count}}選擇",
+    "button": {
+      "CopyAll": "複製全部",
+      "Create": "創造",
+      "Delete": "刪除",
+      "Upload": "上傳"
+    }
   }
 }

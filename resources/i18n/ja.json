@@ -1091,6 +1091,18 @@
     "Username": "ユーザー名",
     "UsernameOptional": "ユーザー名（オプション）"
   },
+  "reservoirPage": {
+    "BasicInformation": "基本情報",
+    "Description": "説明",
+    "LastUpdated": "最後に更新されました",
+    "Name": "名前",
+    "Registry": "レジストリ",
+    "ReservoirArtifacts": "貯水池アーティファクト",
+    "Size": "サイズ",
+    "Source": "ソース",
+    "Type": "タイプ",
+    "VersionList": "利用可能なリスト"
+  },
   "resourceGroup": {
     "Activate": "活性化",
     "ActivateResourceGroup": "リソースグループをアクティブにします",
@@ -2024,6 +2036,7 @@
       "PrivacyPolicy": "個人情報保護方針",
       "Project": "プロジェクト",
       "Remaining": "残り",
+      "Reservoir": "貯水池",
       "ResourcePolicy": "リソースポリシー",
       "Resources": "リソース管理",
       "Scheduler": "スケジューラ",

@@ -1,55 +1,29 @@
 {
   "$schema": "../../i18n.schema.json",
-  "comp:BAITestButton": {
-    "Test": "テスト"
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
-  },
-  "error": {
-    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
-  },
-  "general": {
-    "NSelected": "{{count}}選択",
-    "button": {
-      "Delete": "消去",
-      "Create": "作成する",
-      "Upload": "アップロード",
-      "CopyAll": "すべてをコピーします"
-    }
-  },
-  "comp:FileExplorer": {
-    "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
-    "DeleteSelectedItemsDialog": "確認を削除します",
-    "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
-    "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
-    "CreateANewFolder": "新しいフォルダーを作成します",
-    "FolderName": "フォルダー名",
-    "PleaseEnterAFolderName": "フォルダー名を入力してください。",
-    "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
+  "comp:BAIArtifactRevisionTable": {
+    "Action": "アクション",
+    "LatestVersion": "最新バージョン",
     "Name": "名前",
     "Size": "サイズ",
-    "CreatedAt": "で作成されました",
-    "ModifiedAt": "で変更されました",
-    "Controls": "コントロール",
-    "UploadFiles": "ファイルをアップロードします",
-    "UploadFolder": "フォルダーをアップロードします",
-    "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
-    "error": {
-      "FileNameRequired": "ファイルまたはフォルダー名を入力してください。",
-      "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。"
-    },
-    "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
-    "DuplicatedFiles": "確認の上書き",
-    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
-    "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
-    "ChangeFileExtension": "ファイル拡張子を変更します",
-    "RenameSuccess": "名前は正常に変更されました。"
+    "Status": "状態",
+    "Updated": "更新",
+    "Version": "バージョン"
   },
-  "comp:BAITable": {
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定",
-    "SearchTableColumn": "テーブル列を検索します"
+  "comp:BAIArtifactTable": {
+    "Action": "アクション",
+    "PullLatestVersion": "最新バージョンをプルします",
+    "Size": "サイズ",
+    "Updated": "更新",
+    "Version": "バージョン"
+  },
+  "comp:BAIImportArtifactModal": {
+    "Description": "説明",
+    "Name": "名前",
+    "Pull": "引く",
+    "PullArtifact": "アーティファクトを引っ張ります",
+    "PulledVersionsAreExcluded": "プルバージョンは除外されます。",
+    "Source": "ソース",
+    "Type": "タイプ"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
@@ -61,7 +35,58 @@
   "comp:BAIStatistic": {
     "Unlimited": "無制限"
   },
+  "comp:BAITable": {
+    "SearchTableColumn": "テーブル列を検索します",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定"
+  },
+  "comp:BAITestButton": {
+    "Test": "テスト"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "ファイル拡張子を変更します",
+    "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
+    "Controls": "コントロール",
+    "CreateANewFolder": "新しいフォルダーを作成します",
+    "CreatedAt": "で作成されました",
+    "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
+    "DeleteSelectedItemsDialog": "確認を削除します",
+    "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
+    "DuplicatedFiles": "確認の上書き",
+    "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
+    "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
+    "FolderName": "フォルダー名",
+    "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
+    "ModifiedAt": "で変更されました",
+    "Name": "名前",
+    "PleaseEnterAFolderName": "フォルダー名を入力してください。",
+    "RenameSuccess": "名前は正常に変更されました。",
+    "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
+    "Size": "サイズ",
+    "UploadFiles": "ファイルをアップロードします",
+    "UploadFolder": "フォルダーをアップロードします",
+    "error": {
+      "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
+      "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
+  },
+  "error": {
+    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
+  },
+  "general": {
+    "NSelected": "{{count}}選択",
+    "button": {
+      "CopyAll": "すべてをコピーします",
+      "Create": "作成する",
+      "Delete": "消去",
+      "Upload": "アップロード"
+    }
   }
 }

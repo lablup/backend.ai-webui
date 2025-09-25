@@ -1096,6 +1096,18 @@
     "Username": "사용자 이름",
     "UsernameOptional": "사용자 이름 (선택)"
   },
+  "reservoirPage": {
+    "BasicInformation": "기본 정보",
+    "Description": "설명",
+    "LastUpdated": "마지막 업데이트",
+    "Name": "이름",
+    "Registry": "레지스트리",
+    "ReservoirArtifacts": "리저버 아티팩트",
+    "Size": "크기",
+    "Source": "소스",
+    "Type": "유형",
+    "VersionList": "버전 목록"
+  },
   "resourceGroup": {
     "Activate": "활성화",
     "ActivateResourceGroup": "자원 그룹 활성화",
@@ -2030,6 +2042,7 @@
       "PrivacyPolicy": "개인정보 보호",
       "Project": "프로젝트",
       "Remaining": "가용량",
+      "Reservoir": "리저버",
       "ResourcePolicy": "자원 정책",
       "Resources": "자원",
       "Scheduler": "스케쥴러",
