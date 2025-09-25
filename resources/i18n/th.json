@@ -1082,15 +1082,22 @@
     "UsernameOptional": "ชื่อผู้ใช้ (ไม่บังคับ)"
   },
   "reservoirPage": {
+    "ArtifactID": "ID สิ่งประดิษฐ์",
     "BasicInformation": "ข้อมูลพื้นฐาน",
     "Description": "คำอธิบาย",
+    "FromHuggingFace": "จากการกอดใบหน้า",
     "LastUpdated": "อัปเดตล่าสุด",
     "Name": "ชื่อ",
+    "PullLatestVersion": "ดึงเวอร์ชันล่าสุด ({{version}})",
+    "PullSelectedVersions": "ดึงเวอร์ชันที่เลือก",
     "Registry": "การลงทะเบียน",
+    "RemoveSelectedVersions": "ลบเวอร์ชันที่เลือก",
     "ReservoirArtifacts": "สิ่งประดิษฐ์อ่างเก็บน้ำ",
     "Size": "ขนาด",
     "Source": "แหล่งที่มา",
+    "Status": "สถานะ",
     "Type": "พิมพ์",
+    "Version": "รุ่น",
     "VersionList": "รายการที่มีอยู่"
   },
   "resourceGroup": {
@@ -1963,6 +1970,7 @@
       "Administration": "การจัดการระบบ",
       "AgentSummary": "สรุปตัวแทน",
       "Architecture": "สถาปัตยกรรม",
+      "ArtifactDetails": "รายละเอียดสิ่งประดิษฐ์",
       "Cancel": "ยกเลิก",
       "ChangePassword": "เปลี่ยนรหัสผ่าน",
       "Chat": "แชท",

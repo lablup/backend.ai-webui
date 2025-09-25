@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "설명",
+    "Name": "이름",
+    "Source": "소스",
+    "Type": "유형"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "행동",
+    "Control": "제어",
     "LatestVersion": "최신 버전",
     "Name": "이름",
+    "PullThisVersion": "해당 버전 가져오기",
+    "RemoveThisVersion": "해당 버전 제거하기",
     "Size": "크기",
     "Status": "상태",
     "Updated": "업데이트",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "행동",
     "PullLatestVersion": "최신 버전을 가져옵니다",
+    "Scanned": "스캔",
     "Size": "크기",
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "FailedToRemoveVersions": "버전을 제거하는데 실패했습니다.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "SCANNED 또는 PULLING이 아닌 버전만 제거 가능합니다.",
+    "RemoveVersions": "목록에서 버전 제거하기",
+    "Size": "크기",
+    "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
+    "Version": "버전"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "설명",
-    "Name": "이름",
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "FailedToPullVersions": "버전을 가져오는데 실패했습니다.",
+    "OnlySCANNEDVersionsCanBePulled": "SCANNED인 버전만 가져올 수 있습니다.",
     "Pull": "가져오기",
-    "PullArtifact": "아티팩트 가져오기",
-    "PulledVersionsAreExcluded": "가져온 버전들은 제외되었습니다.",
-    "Source": "소스",
-    "Type": "유형"
+    "PullVersion": "버전 가져오기",
+    "Size": "크기",
+    "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
+    "Version": "버전"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "모델 ID를 입력하십시오. (예 : OpenAI/GPT-SOSS-20B)",
+    "EnterAVersion": "버전을 입력하십시오. (기본값 : main)",
+    "Failed to import model from hugging face": "허깅 페이스에서 모델을 가져오는데 실패했습니다.",
+    "Import": "가져오기",
+    "ModalDescription": "특정 모델 ID와 버전을 통해 허깅 페이스에서 모델을 가져옵니다.",
+    "ModalTitle": "허깅 페이스에서 가져오기",
+    "ModelID": "모델 ID",
+    "SuccessfullyImportedModelFromHuggingFace": "허깅 페이스에서 모델 가져오기 요청을 성공적으로 보냈습니다.",
+    "Version": "버전"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "가져오기 취소",
+    "CancelingWillRestartThePulling": "취소하면 처음부터 가져옵니다.",
+    "FailedToCancelThePulling": "가져오기를 취소하는데 실패했습니다.",
+    "VersionIsPullingNow": "{{version}} 버전을 지금 가져오는 중입니다.",
+    "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 성공적으로 취소했습니다.",
+    "WARNING": "경고",
+    "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}}개 선택됨",
+    "TotalItems": "총 {{total}} 항목",
     "button": {
+      "Cancel": "취소",
+      "Close": "닫기",
       "CopyAll": "모두 복사",
       "Create": "생성",
       "Delete": "삭제",
+      "Remove": "제거",
+
       "Upload": "업로드"
     }
   }

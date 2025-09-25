@@ -817,6 +817,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.12.0')) {
+      this._features['reservoir'] = true;
+    }
   }
 
   /**

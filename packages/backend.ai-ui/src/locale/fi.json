@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Kuvaus",
+    "Name": "Nimi",
+    "Source": "Lähde",
+    "Type": "Tyyppi"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Toiminta",
+    "Control": "Hallinta",
     "LatestVersion": "Uusin versio",
     "Name": "Nimi",
+    "PullThisVersion": "Vedä tämä versio",
+    "RemoveThisVersion": "Poista tämä versio",
     "Size": "Koko",
     "Status": "Status",
     "Updated": "Päivitetty",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Toiminta",
     "PullLatestVersion": "Vedä uusin versio",
+    "Scanned": "Skannattu",
     "Size": "Koko",
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "FailedToRemoveVersions": "Versioiden poistaminen epäonnistui.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Vain versiot, jotka eivät ole vetämisessä tai skannattuna, voidaan poistaa.",
+    "RemoveVersions": "Poista versiot",
+    "Size": "Koko",
+    "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
+    "Version": "Versio"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Kuvaus",
-    "Name": "Nimi",
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",
+    "OnlySCANNEDVersionsCanBePulled": "Vain skannatut versiot voidaan vetää.",
     "Pull": "Vedä",
-    "PullArtifact": "Vetää artefakti",
-    "PulledVersionsAreExcluded": "Vedetyt versiot jätetään pois.",
-    "Source": "Lähde",
-    "Type": "Tyyppi"
+    "PullVersion": "Vetää versio",
+    "Size": "Koko",
+    "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
+    "Version": "Versio"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Syötä mallitunnus. (esim. OpenAi/GPT-OSS-20b)",
+    "EnterAVersion": "Kirjoita versio. (Oletus: Main)",
+    "Failed to import model from hugging face": "Mallin tuonti epäonnistui kasvojen halaamisesta",
+    "Import": "Tuoda",
+    "ModalDescription": "Tuo malli halaamisesta kasvoista määrittelemällä mallitunnus ja versio.",
+    "ModalTitle": "Tuo halaus kasvoista",
+    "ModelID": "Mallitunnus",
+    "SuccessfullyImportedModelFromHuggingFace": "Onnistuneesti pyydetty mallin tuonti halaamisesta",
+    "Version": "Versio"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Peruuta veto",
+    "CancelingWillRestartThePulling": "Peruuttaminen käynnistää vetämisen uudelleen",
+    "FailedToCancelThePulling": "Vedämisen peruuttaminen epäonnistui.",
+    "VersionIsPullingNow": "{{version}} versio vetää nyt.",
+    "VersionPullCanceledSuccessfully": "{{version}} versio peruutettu onnistuneesti.",
+    "WARNING": "VAROITUS",
+    "YouAreAboutToCancelThisVersion": "Olet peruuttanut tämän version"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}} valittu",
+    "TotalItems": "Yhteensä {{total}} kohteet",
     "button": {
+      "Cancel": "Peruuttaa",
+      "Close": "Lähellä",
       "CopyAll": "Kopioida kaikki",
       "Create": "Luoda",
       "Delete": "Poistaa",
+      "Remove": "Poistaa",
       "Upload": "Ladata"
     }
   }

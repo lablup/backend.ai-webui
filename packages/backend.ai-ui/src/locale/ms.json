@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Penerangan",
+    "Name": "Nama",
+    "Source": "Sumber",
+    "Type": "Jenis"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Tindakan",
+    "Control": "Kawalan",
     "LatestVersion": "Versi terkini",
     "Name": "Nama",
+    "PullThisVersion": "Tarik versi ini",
+    "RemoveThisVersion": "Keluarkan versi ini",
     "Size": "Saiz",
     "Status": "Status",
     "Updated": "Dikemas kini",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Tindakan",
     "PullLatestVersion": "Tarik versi terkini",
+    "Scanned": "Diimbas",
     "Size": "Saiz",
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToRemoveVersions": "Gagal mengeluarkan versi.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Hanya versi yang tidak menarik atau diimbas boleh dikeluarkan.",
+    "RemoveVersions": "Keluarkan versi",
+    "Size": "Saiz",
+    "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
+    "Version": "Versi"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Penerangan",
-    "Name": "Nama",
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToPullVersions": "Gagal menarik versi.",
+    "OnlySCANNEDVersionsCanBePulled": "Hanya versi yang diimbas boleh ditarik.",
     "Pull": "Tarik",
-    "PullArtifact": "Tarik artifak",
-    "PulledVersionsAreExcluded": "Versi yang ditarik dikecualikan.",
-    "Source": "Sumber",
-    "Type": "Jenis"
+    "PullVersion": "Tarik versi",
+    "Size": "Saiz",
+    "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
+    "Version": "Versi"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Masukkan ID Model. (mis. OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Masukkan versi. (Lalai: Utama)",
+    "Failed to import model from hugging face": "Gagal mengimport model daripada memeluk muka",
+    "Import": "Import",
+    "ModalDescription": "Import model dari memeluk muka dengan menentukan ID dan versi model.",
+    "ModalTitle": "Import dari muka yang memeluk",
+    "ModelID": "ID Model",
+    "SuccessfullyImportedModelFromHuggingFace": "Berjaya meminta import model dari memeluk muka",
+    "Version": "Versi"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",
     "ResetFilter": "Tetapkan semula penapis"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Batalkan tarik",
+    "CancelingWillRestartThePulling": "Membatalkan akan memulakan semula menarik",
+    "FailedToCancelThePulling": "Gagal membatalkan menarik.",
+    "VersionIsPullingNow": "{{version}} Versi sedang menarik sekarang.",
+    "VersionPullCanceledSuccessfully": "Tarik versi {{version}} dibatalkan dengan jayanya.",
+    "WARNING": "Amaran",
+    "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}} dipilih",
+    "TotalItems": "Jumlah {{total}} item",
+
     "button": {
+      "Cancel": "Batalkan",
+      "Close": "Tutup",
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",
+      "Remove": "Keluarkan",
       "Upload": "Muat naik"
     }
   }

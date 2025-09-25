@@ -1092,15 +1092,22 @@
     "UsernameOptional": "Имя пользователя (необязательно)"
   },
   "reservoirPage": {
+    "ArtifactID": "Идентификатор артефакта",
     "BasicInformation": "Основная информация",
     "Description": "Описание",
+    "FromHuggingFace": "От обнимающего лица",
     "LastUpdated": "Последнее обновлено",
     "Name": "Имя",
+    "PullLatestVersion": "Вытащите последнюю версию ({{version}})",
+    "PullSelectedVersions": "Вытащите выбранные версии",
     "Registry": "Реестр",
+    "RemoveSelectedVersions": "Удалить выбранные версии",
     "ReservoirArtifacts": "Артефакты водохранилища",
     "Size": "Размер",
     "Source": "Источник",
+    "Status": "Статус",
     "Type": "Тип",
+    "Version": "Версия",
     "VersionList": "Доступный список"
   },
   "resourceGroup": {
@@ -1979,6 +1986,7 @@
       "Administration": "Администрация",
       "AgentSummary": "Резюме агента",
       "Architecture": "Архитектура",
+      "ArtifactDetails": "Детали артефакта",
       "Cancel": "Отмена",
       "ChangePassword": "Изменить пароль",
       "Chat": "Чат",

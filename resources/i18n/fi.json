@@ -1092,15 +1092,22 @@
     "UsernameOptional": "Käyttäjätunnus (valinnainen)"
   },
   "reservoirPage": {
+    "ArtifactID": "Artefaktitunnus",
     "BasicInformation": "Perustiedot",
     "Description": "Kuvaus",
+    "FromHuggingFace": "Halaamasta kasvoista",
     "LastUpdated": "Viimeksi päivitetty",
     "Name": "Nimi",
+    "PullLatestVersion": "Vedä uusin ({{version}}) versio",
+    "PullSelectedVersions": "Vedä valittuja versioita",
     "Registry": "Rekisteröinti",
+    "RemoveSelectedVersions": "Poista valitut versiot",
     "ReservoirArtifacts": "Säiliön esineitä",
     "Size": "Koko",
     "Source": "Lähde",
+    "Status": "Status",
     "Type": "Tyyppi",
+    "Version": "Versio",
     "VersionList": "Käytettävissä oleva luettelo"
   },
   "resourceGroup": {
@@ -1979,6 +1986,7 @@
       "Administration": "Hallinto",
       "AgentSummary": "Agentin yhteenveto",
       "Architecture": "Arkkitehtuuri",
+      "ArtifactDetails": "Esineiden yksityiskohdat",
       "Cancel": "Peruuta",
       "ChangePassword": "Vaihda salasana",
       "Chat": "Chat",

@@ -1091,15 +1091,22 @@
     "UsernameOptional": "Nama Pengguna (Opsional)"
   },
   "reservoirPage": {
+    "ArtifactID": "ID Artefak",
     "BasicInformation": "Informasi dasar",
     "Description": "Keterangan",
+    "FromHuggingFace": "Dari wajah memeluk",
     "LastUpdated": "Terakhir diperbarui",
     "Name": "Nama",
+    "PullLatestVersion": "Tarik versi terbaru ({{{version}})",
+    "PullSelectedVersions": "Tarik versi yang dipilih",
     "Registry": "Registri",
+    "RemoveSelectedVersions": "Hapus versi yang dipilih",
     "ReservoirArtifacts": "Artefak reservoir",
     "Size": "Ukuran",
     "Source": "Sumber",
+    "Status": "Status",
     "Type": "Jenis",
+    "Version": "Versi",
     "VersionList": "Daftar yang tersedia"
   },
   "resourceGroup": {
@@ -1979,6 +1986,7 @@
       "Administration": "Administrasi",
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Arsitektur",
+      "ArtifactDetails": "Detail Artefak",
       "Cancel": "Batal",
       "ChangePassword": "Ganti kata sandi",
       "Chat": "Mengobrol",

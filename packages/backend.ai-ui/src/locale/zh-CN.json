@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "描述",
+    "Name": "姓名",
+    "Source": "来源",
+    "Type": "类型"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "行动",
+    "Control": "控制",
     "LatestVersion": "最新版本",
     "Name": "姓名",
+    "PullThisVersion": "拉这个版本",
+    "RemoveThisVersion": "删除此版本",
     "Size": "尺寸",
     "Status": "地位",
     "Updated": "更新",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "行动",
     "PullLatestVersion": "拉最新版本",
+    "Scanned": "扫描",
     "Size": "尺寸",
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToRemoveVersions": "无法删除版本。",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "只能删除不进行拉或扫描的版本。",
+    "RemoveVersions": "删除版本",
+    "Size": "尺寸",
+    "SuccessFullyRemoved": "成功删除了{{count}}版本。",
+    "Version": "版本"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "描述",
-    "Name": "姓名",
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToPullVersions": "未能拉动版本。",
+    "OnlySCANNEDVersionsCanBePulled": "只能拉出扫描版本。",
     "Pull": "拉",
-    "PullArtifact": "拉工子",
-    "PulledVersionsAreExcluded": "拉动版本被排除在外。",
-    "Source": "来源",
-    "Type": "类型"
+    "PullVersion": "拉版本",
+    "Size": "尺寸",
+    "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
+    "Version": "版本"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "输入模型ID。 （例如OpenAI/GPT-OSS-20B）",
+    "EnterAVersion": "输入版本。（默认：main）",
+    "Failed to import model from hugging face": "无法从拥抱面孔中导入模型",
+    "Import": "进口",
+    "ModalDescription": "通过指定模型ID和版本来从拥抱面中导入模型。",
+    "ModalTitle": "从拥抱脸上进口",
+    "ModelID": "模型ID",
+    "SuccessfullyImportedModelFromHuggingFace": "成功要求从拥抱脸部进口模型",
+    "Version": "版本"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置过滤器"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "取消拉力",
+    "CancelingWillRestartThePulling": "取消将重新启动拉动",
+    "FailedToCancelThePulling": "未能取消拉力。",
+    "VersionIsPullingNow": "{{version}}版本现在正在拉动。",
+    "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "您即将取消此版本"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}}选择",
+    "TotalItems": "总计{{total}}项目",
+
     "button": {
+      "Cancel": "取消",
+      "Close": "关闭",
       "CopyAll": "复制全部",
       "Create": "创造",
       "Delete": "删除",
+      "Remove": "消除",
       "Upload": "上传"
     }
   }

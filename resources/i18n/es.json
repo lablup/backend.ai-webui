@@ -1093,15 +1093,22 @@
     "UsernameOptional": "Nombre de usuario (opcional)"
   },
   "reservoirPage": {
+    "ArtifactID": "ID de artefacto",
     "BasicInformation": "Información básica",
     "Description": "Descripción",
+    "FromHuggingFace": "De la cara abrazada",
     "LastUpdated": "Última actualización",
     "Name": "Nombre",
+    "PullLatestVersion": "Pull Last ({{version}}) versión",
+    "PullSelectedVersions": "Tire de versiones seleccionadas",
     "Registry": "Registro",
+    "RemoveSelectedVersions": "Eliminar versiones seleccionadas",
     "ReservoirArtifacts": "Artefactos de embalse",
     "Size": "Tamaño",
     "Source": "Fuente",
+    "Status": "Estado",
     "Type": "Tipo",
+    "Version": "Versión",
     "VersionList": "Lista disponible"
   },
   "resourceGroup": {
@@ -1980,6 +1987,7 @@
       "Administration": "Administración",
       "AgentSummary": "Resumen del agente",
       "Architecture": "Arquitectura",
+      "ArtifactDetails": "Detalles de artefactos",
       "Cancel": "Cancelar",
       "ChangePassword": "Cambiar contraseña",
       "Chat": "Chat",

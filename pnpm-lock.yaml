@@ -482,6 +482,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      graphql:
+        specifier: ^16.10.0
+        version: 16.10.0
       i18next:
         specifier: ^24.2.3
         version: 24.2.3(typescript@5.8.2)
@@ -570,6 +573,9 @@ importers:
       '@types/react-resizable':
         specifier: ^3.0.8
         version: 3.0.8
+      '@types/relay-runtime':
+        specifier: ^19.0.2
+        version: 19.0.2
       '@types/relay-test-utils':
         specifier: ^19.0.0
         version: 19.0.0
@@ -594,9 +600,6 @@ importers:
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
-      graphql:
-        specifier: ^16.10.0
-        version: 16.10.0
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.4.1)(typescript@5.8.2))

@@ -136,8 +136,25 @@ interface FilterCondition {
 }
 
 const OPERATORS_BY_TYPE: Record<FilterPropertyType, FilterOperator[]> = {
-  string: ['equals', 'notEquals', 'contains', 'startsWith', 'endsWith', 'in', 'notIn'],
-  number: ['equals', 'notEquals', 'greaterThan', 'greaterOrEqual', 'lessThan', 'lessOrEqual', 'in', 'notIn'],
+  string: [
+    'equals',
+    'notEquals',
+    'contains',
+    'startsWith',
+    'endsWith',
+    'in',
+    'notIn',
+  ],
+  number: [
+    'equals',
+    'notEquals',
+    'greaterThan',
+    'greaterOrEqual',
+    'lessThan',
+    'lessOrEqual',
+    'in',
+    'notIn',
+  ],
   boolean: ['equals'],
   enum: ['equals', 'notEquals', 'in', 'notIn'],
 };

@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Tanım",
+    "Name": "İsim",
+    "Source": "Kaynak",
+    "Type": "Tip"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Aksiyon",
+    "Control": "Kontrol",
     "LatestVersion": "En son sürüm",
     "Name": "İsim",
+    "PullThisVersion": "Bu sürümü çekin",
+    "RemoveThisVersion": "Bu sürümü kaldır",
     "Size": "Boyut",
     "Status": "Durum",
     "Updated": "Güncellenmiş",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Aksiyon",
     "PullLatestVersion": "En son sürümü çekin",
+    "Scanned": "Taranmış",
     "Size": "Boyut",
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
+    "FailedToRemoveVersions": "Sürümleri kaldırılamadı.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Yalnızca çekme veya taranmayan sürümler kaldırılabilir.",
+    "RemoveVersions": "Sürümleri Kaldır",
+    "Size": "Boyut",
+    "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
+    "Version": "Versiyon"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Tanım",
-    "Name": "İsim",
+    "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
+    "FailedToPullVersions": "Sürümleri çekemedi.",
+    "OnlySCANNEDVersionsCanBePulled": "Yalnızca taranan sürümler çekilebilir.",
     "Pull": "Çekmek",
-    "PullArtifact": "Artefakt çekmek",
-    "PulledVersionsAreExcluded": "Çekilen sürümler hariç tutulur.",
-    "Source": "Kaynak",
-    "Type": "Tip"
+    "PullVersion": "Çekme sürümü",
+    "Size": "Boyut",
+    "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
+    "Version": "Versiyon"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Bir model kimliği girin. (örn. Openai/GPT-OSS-20B)",
+    "EnterAVersion": "Bir sürüm girin. (Varsayılan: Main)",
+    "Failed to import model from hugging face": "Modelin sarılma yüzünden ithal edilemedi",
+    "Import": "İçe aktarmak",
+    "ModalDescription": "Model kimliğini ve sürümünü belirterek bir modeli kucaklamadan içe aktarın.",
+    "ModalTitle": "Sarılma Yüzünden İthalat",
+    "ModelID": "Model kimliği",
+    "SuccessfullyImportedModelFromHuggingFace": "Sarılma yüzünden başarılı bir şekilde model ithalatını istedi",
+    "Version": "Versiyon"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Çekmeyi iptal et",
+    "CancelingWillRestartThePulling": "İptal etme, çekmeyi yeniden başlatacak",
+    "FailedToCancelThePulling": "Çekmeyi iptal edemedi.",
+    "VersionIsPullingNow": "{{sürümversion} sürüm şimdi çekiliyor.",
+    "VersionPullCanceledSuccessfully": "{{version}} sürümünün çekilmesi başarıyla iptal edildi.",
+    "WARNING": "UYARI",
+    "YouAreAboutToCancelThisVersion": "Bu sürümü iptal etmek üzeresiniz"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
@@ -77,10 +116,15 @@
   },
   "general": {
     "NSelected": "{{count}} seçildi",
+    "TotalItems": "Total {{total}} öğeleri",
+
     "button": {
+      "Cancel": "İptal etmek",
+      "Close": "Kapalı",
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",
+      "Remove": "Kaldırmak",
       "Upload": "Yüklemek"
     }
   }

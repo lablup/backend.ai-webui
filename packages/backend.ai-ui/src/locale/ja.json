@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "説明",
+    "Name": "名前",
+    "Source": "ソース",
+    "Type": "タイプ"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "アクション",
+    "Control": "コントロール",
     "LatestVersion": "最新バージョン",
     "Name": "名前",
+    "PullThisVersion": "このバージョンをプルします",
+    "RemoveThisVersion": "このバージョンを削除します",
     "Size": "サイズ",
     "Status": "状態",
     "Updated": "更新",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "アクション",
     "PullLatestVersion": "最新バージョンをプルします",
+    "Scanned": "スキャン",
     "Size": "サイズ",
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}バージョンは除外されます。",
+    "FailedToRemoveVersions": "バージョンの削除に失敗しました。",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "引っ張ったりスキャンしたりしないバージョンのみを削除できます。",
+    "RemoveVersions": "バージョンを削除します",
+    "Size": "サイズ",
+    "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
+    "Version": "バージョン"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "説明",
-    "Name": "名前",
+    "ExcludedVersions": "{{count}}バージョンは除外されます。",
+    "FailedToPullVersions": "バージョンを引くことができませんでした。",
+    "OnlySCANNEDVersionsCanBePulled": "スキャンされたバージョンのみを引くことができます。",
     "Pull": "引く",
-    "PullArtifact": "アーティファクトを引っ張ります",
-    "PulledVersionsAreExcluded": "プルバージョンは除外されます。",
-    "Source": "ソース",
-    "Type": "タイプ"
+    "PullVersion": "プルバージョン",
+    "Size": "サイズ",
+    "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
+    "Version": "バージョン"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "モデルIDを入力します。 （例：openai/gpt-oss-20b）",
+    "EnterAVersion": "バージョンを入力します。 （デフォルト：メイン）",
+    "Failed to import model from hugging face": "顔を抱きしめてモデルをインポートできませんでした",
+    "Import": "インポート",
+    "ModalDescription": "モデルIDとバージョンを指定することにより、顔を抱きしめることからモデルをインポートします。",
+    "ModalTitle": "抱きしめる顔からのインポート",
+    "ModelID": "モデルID",
+    "SuccessfullyImportedModelFromHuggingFace": "抱き合った顔からモデルのインポートを正常にリクエストしました",
+    "Version": "バージョン"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "キャンセルプル",
+    "CancelingWillRestartThePulling": "キャンセルすると、引っ張りが再開されます",
+    "FailedToCancelThePulling": "引っ張りをキャンセルできませんでした。",
+    "VersionIsPullingNow": "{{version}}バージョンは今プルされています。",
+    "VersionPullCanceledSuccessfully": "{{version}}バージョンのプルは正常にキャンセルされました。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "このバージョンをキャンセルしようとしています"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}}選択",
+    "TotalItems": "Total {{total}}アイテム",
     "button": {
+      "Cancel": "キャンセル",
+      "Close": "近い",
       "CopyAll": "すべてをコピーします",
       "Create": "作成する",
       "Delete": "消去",
+      "Remove": "取り除く",
       "Upload": "アップロード"
     }
   }

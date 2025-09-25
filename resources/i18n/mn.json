@@ -1091,15 +1091,22 @@
     "UsernameOptional": "Хэрэглэгчийн нэр (заавал биш)"
   },
   "reservoirPage": {
+    "ArtifactID": "Artifact ID",
     "BasicInformation": "Үндсэн мэдээлэл",
     "Description": "Тодорхойлолт / төрөл анги",
+    "FromHuggingFace": "Тэвэрч буй нүүрнээс",
     "LastUpdated": "Өнөөхээр нь онуулсан өдөр",
     "Name": "Нэр",
+    "PullLatestVersion": "СУРГАЛТЫН СУРГАЛТ ({{version}}) хувилбар",
+    "PullSelectedVersions": "Сонгосон хувилбарыг татаж аваарай",
     "Registry": "Шлах",
+    "RemoveSelectedVersions": "Сонгосон хувилбаруудыг устгана уу",
     "ReservoirArtifacts": "Усан сангийн олдворууд",
     "Size": "Хэмжээ",
     "Source": "Язгуур",
+    "Status": "Байдал",
     "Type": "Маяг",
+    "Version": "Таамаглал",
     "VersionList": "Боломжийн дугаар"
   },
   "resourceGroup": {
@@ -1977,6 +1984,7 @@
       "Administration": "Админ",
       "AgentSummary": "Агентын хураангуй",
       "Architecture": "Уран барилгач",
+      "ArtifactDetails": "Олдворын дэлгэрэнгүй",
       "Cancel": "Цуцлах",
       "ChangePassword": "Нууц үгээ солих",
       "Chat": "Яриа хөрөө",

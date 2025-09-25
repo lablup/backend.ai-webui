@@ -1093,15 +1093,22 @@
     "UsernameOptional": "Kullanıcı adı (İsteğe bağlı)"
   },
   "reservoirPage": {
+    "ArtifactID": "Artefakt kimliği",
     "BasicInformation": "Temel Bilgi",
     "Description": "Tanım",
+    "FromHuggingFace": "Sarılma Yüzünden",
     "LastUpdated": "Son güncellendi",
     "Name": "İsim",
+    "PullLatestVersion": "En son ({{version}}) sürümü çekin",
+    "PullSelectedVersions": "Seçilen sürümleri çekin",
     "Registry": "Sicil",
+    "RemoveSelectedVersions": "Seçilen sürümleri kaldırın",
     "ReservoirArtifacts": "Rezervuar eserleri",
     "Size": "Boyut",
     "Source": "Kaynak",
+    "Status": "Durum",
     "Type": "Tip",
+    "Version": "Versiyon",
     "VersionList": "Mevcut liste"
   },
   "resourceGroup": {
@@ -1980,6 +1987,7 @@
       "Administration": "yönetim",
       "AgentSummary": "Temsilci Özeti",
       "Architecture": "Mimarlık",
+      "ArtifactDetails": "Eser detayları",
       "Cancel": "İptal etmek",
       "ChangePassword": "Şifre değiştir",
       "Chat": "Sohbet",

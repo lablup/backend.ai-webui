@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Descripción",
+    "Name": "Nombre",
+    "Source": "Fuente",
+    "Type": "Tipo"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Acción",
+    "Control": "Control",
     "LatestVersion": "Última versión",
     "Name": "Nombre",
+    "PullThisVersion": "Tire de esta versión",
+    "RemoveThisVersion": "Eliminar esta versión",
     "Size": "Tamaño",
     "Status": "Estado",
     "Updated": "Actualizado",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Acción",
     "PullLatestVersion": "Tire de la última versión",
+    "Scanned": "Escaneado",
     "Size": "Tamaño",
     "Updated": "Actualizado",
     "Version": "Versión"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "Las versiones {{count}} están excluidas.",
+    "FailedToRemoveVersions": "No se pudo eliminar las versiones.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Solo se pueden eliminar las versiones que no están en tirar o escanear.",
+    "RemoveVersions": "Eliminar versiones",
+    "Size": "Tamaño",
+    "SuccessFullyRemoved": "Las versiones {{count}} eliminadas con éxito.",
+    "Version": "Versión"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Descripción",
-    "Name": "Nombre",
+    "ExcludedVersions": "Las versiones {{count}} están excluidas.",
+    "FailedToPullVersions": "No se pudo tirar de versiones.",
+    "OnlySCANNEDVersionsCanBePulled": "Solo se pueden extraer versiones escaneadas.",
     "Pull": "Jalar",
-    "PullArtifact": "Artefacto",
-    "PulledVersionsAreExcluded": "Se excluyen las versiones extraídas.",
-    "Source": "Fuente",
-    "Type": "Tipo"
+    "PullVersion": "Versión",
+    "Size": "Tamaño",
+    "SuccessFullyPulled": "Solicitud solicitada con éxito para las versiones {{count}}.",
+    "Version": "Versión"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Ingrese una ID de modelo. (por ejemplo, OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Ingrese una versión. (predeterminado: principal)",
+    "Failed to import model from hugging face": "No se pudo importar el modelo de la cara abrazada",
+    "Import": "Importar",
+    "ModalDescription": "Importar un modelo de abrazar la cara especificando el ID y la versión del modelo.",
+    "ModalTitle": "Importar de la cara abrazada",
+    "ModelID": "ID de modelo",
+    "SuccessfullyImportedModelFromHuggingFace": "Solicitado con éxito la importación de modelo de abrazo de la cara",
+    "Version": "Versión"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",
     "ResetFilter": "Restablecer filtros"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Cancelar pull",
+    "CancelingWillRestartThePulling": "Cancelar reiniciará la tracción",
+    "FailedToCancelThePulling": "No se pudo cancelar la tracción.",
+    "VersionIsPullingNow": "{{version}} La versión está tirando ahora.",
+    "VersionPullCanceledSuccessfully": "Pull de la versión {{version}} cancelada correctamente.",
+    "WARNING": "ADVERTENCIA",
+    "YouAreAboutToCancelThisVersion": "Estás a punto de cancelar esta versión"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}} seleccionado",
+    "TotalItems": "Total {{total}} elementos",
     "button": {
+      "Cancel": "Cancelar",
+      "Close": "Cerca",
       "CopyAll": "Copiar todo",
       "Create": "Crear",
       "Delete": "Borrar",
+      "Remove": "Eliminar",
       "Upload": "Subir"
     }
   }

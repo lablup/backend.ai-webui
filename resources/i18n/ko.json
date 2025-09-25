@@ -1097,15 +1097,22 @@
     "UsernameOptional": "사용자 이름 (선택)"
   },
   "reservoirPage": {
+    "ArtifactID": "아티팩트 ID",
     "BasicInformation": "기본 정보",
     "Description": "설명",
+    "FromHuggingFace": "허깅 페이스로부터",
     "LastUpdated": "마지막 업데이트",
     "Name": "이름",
+    "PullLatestVersion": "최신 ({{version}}) 버전을 가져옵니다",
+    "PullSelectedVersions": "선택한 버전 가져오기",
     "Registry": "레지스트리",
+    "RemoveSelectedVersions": "선택한 버전 제거하기",
     "ReservoirArtifacts": "리저버 아티팩트",
     "Size": "크기",
     "Source": "소스",
+    "Status": "상태",
     "Type": "유형",
+    "Version": "버전",
     "VersionList": "버전 목록"
   },
   "resourceGroup": {
@@ -1985,6 +1992,7 @@
       "Administration": "관리",
       "AgentSummary": "자원 요약",
       "Architecture": "\b운영체제",
+      "ArtifactDetails": "아티팩트 상세",
       "Cancel": "취소",
       "ChangePassword": "비밀번호 변경",
       "Chat": "채팅",

@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Тодорхойлолт / төрөл анги",
+    "Name": "Нэр",
+    "Source": "Язгуур",
+    "Type": "Маяг"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Үйл ажиллагаа",
+    "Control": "Удирдах",
     "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
     "Name": "Нэр",
+    "PullThisVersion": "Энэ хувилбарыг татаж",
+    "RemoveThisVersion": "Энэ хувилбарыг арилгах",
     "Size": "Хэмжээ",
     "Status": "Байдал",
     "Updated": "Шинэчилсэн цаг нь",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Үйл ажиллагаа",
     "PullLatestVersion": "Хамгийн сүүлийн хувилбарыг татах",
+    "Scanned": "Дээгэрсэн",
     "Size": "Хэмжээ",
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
+    "FailedToRemoveVersions": "Хувилбаруудыг арилгаж чадсангүй.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Зөвхөн татах, сканнердсан, сканнердах боломжгүй хувилбарыг арилгаж болно.",
+    "RemoveVersions": "Хувилбарыг устгах",
+    "Size": "Хэмжээ",
+    "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
+    "Version": "Таамаглал"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Тодорхойлолт / төрөл анги",
-    "Name": "Нэр",
+    "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
+    "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй.",
+    "OnlySCANNEDVersionsCanBePulled": "Зөвхөн сканнердсан хувилбарыг татаж авах боломжтой.",
     "Pull": "Татах",
-    "PullArtifact": "Олдворыг татах",
-    "PulledVersionsAreExcluded": "Татсан хувилбарыг хассан болно.",
-    "Source": "Язгуур",
-    "Type": "Маяг"
+    "PullVersion": "Хувилбарыг ашиглах",
+    "Size": "Хэмжээ",
+    "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
+    "Version": "Таамаглал"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Загварын ID-г оруулна уу. (e.g. overai / gpt-oss-20b)",
+    "EnterAVersion": "Хувилбарыг оруулна уу. (Үндсэн: Үндсэн)",
+    "Failed to import model from hugging face": "Нүүрээ тэвэрч авахаас загварыг импортлох боломжгүй байна",
+    "Import": "Импортлох",
+    "ModalDescription": "Загварын ID болон хувилбарыг зааж өгөх замаар нүүрээ тэвэрч, загварчлалыг импортлох.",
+    "ModalTitle": "Тэвэрч буй царайг импортлох",
+    "ModelID": "Загвар он",
+    "SuccessfullyImportedModelFromHuggingFace": "Нүүр царайг тэвэрч авахаас шууд импортлохыг хүссэн",
+    "Version": "Таамаглал"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Татах",
+    "CancelingWillRestartThePulling": "Цуцлах нь татах ажлыг дахин эхлүүлэх болно",
+    "FailedToCancelThePulling": "Татаж авахаа цуцалж чадсангүй.",
+    "VersionIsPullingNow": "{{version}} хувилбар нь одоо татаж байна.",
+    "VersionPullCanceledSuccessfully": "Татах {{version}} хувилбар амжилттай цуцаллаа.",
+    "WARNING": "Анхааруулга",
+    "YouAreAboutToCancelThisVersion": "Та энэ хувилбарыг цуцлах гэж байна"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}} сонгогдсон",
+    "TotalItems": "Нийт {{total}} зүйлүүд",
     "button": {
+      "Cancel": "Цуаах",
+      "Close": "Ойр дөхөм",
       "CopyAll": "Бүгдийг хуулбарлах",
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",
+      "Remove": "Зөөх",
       "Upload": "Байршуулах"
     }
   }

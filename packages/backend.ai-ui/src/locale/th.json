@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "คำอธิบาย",
+    "Name": "ชื่อ",
+    "Source": "แหล่งที่มา",
+    "Type": "พิมพ์"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "การกระทำ",
+    "Control": "ควบคุม",
     "LatestVersion": "เวอร์ชันล่าสุด",
     "Name": "ชื่อ",
+    "PullThisVersion": "ดึงเวอร์ชันนี้",
+    "RemoveThisVersion": "ลบเวอร์ชันนี้",
     "Size": "ขนาด",
     "Status": "สถานะ",
     "Updated": "อัปเดต",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "การกระทำ",
     "PullLatestVersion": "ดึงเวอร์ชันล่าสุด",
+    "Scanned": "สแกน",
     "Size": "ขนาด",
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "FailedToRemoveVersions": "ไม่สามารถลบเวอร์ชันได้",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "เฉพาะเวอร์ชันที่ไม่ได้อยู่ในการดึงหรือสแกนเท่านั้น",
+    "RemoveVersions": "ลบเวอร์ชัน",
+    "Size": "ขนาด",
+    "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
+    "Version": "รุ่น"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "คำอธิบาย",
-    "Name": "ชื่อ",
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",
+    "OnlySCANNEDVersionsCanBePulled": "สามารถดึงรุ่นสแกนได้เท่านั้น",
     "Pull": "ดึง",
-    "PullArtifact": "ดึงสิ่งประดิษฐ์",
-    "PulledVersionsAreExcluded": "ไม่รวมเวอร์ชันที่ดึงออกมา",
-    "Source": "แหล่งที่มา",
-    "Type": "พิมพ์"
+    "PullVersion": "Pull Version",
+    "Size": "ขนาด",
+    "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
+    "Version": "รุ่น"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "ป้อนรหัสรุ่น (เช่น OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "ป้อนเวอร์ชัน (ค่าเริ่มต้น: หลัก)",
+    "Failed to import model from hugging face": "ไม่สามารถนำเข้าโมเดลจากการกอดใบหน้า",
+    "Import": "นำเข้า",
+    "ModalDescription": "นำเข้าโมเดลจากการกอดใบหน้าโดยการระบุ ID รุ่นและเวอร์ชัน",
+    "ModalTitle": "นำเข้าจากการกอดใบหน้า",
+    "ModelID": "ID รุ่น",
+    "SuccessfullyImportedModelFromHuggingFace": "ร้องขอการนำเข้าโมเดลจากการกอดอย่างประสบความสำเร็จ",
+    "Version": "รุ่น"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "ยกเลิกการดึง",
+    "CancelingWillRestartThePulling": "การยกเลิกจะรีสตาร์ทการดึง",
+    "FailedToCancelThePulling": "ล้มเหลวในการยกเลิกการดึง",
+    "VersionIsPullingNow": "{{version}} เวอร์ชันกำลังดึงอยู่ในขณะนี้",
+    "VersionPullCanceledSuccessfully": "ดึง {{version}} ยกเลิกเวอร์ชันสำเร็จ",
+    "WARNING": "คำเตือน",
+    "YouAreAboutToCancelThisVersion": "คุณกำลังจะยกเลิกเวอร์ชันนี้"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}} เลือก",
+    "TotalItems": "รวม {{total}} รายการ",
+
     "button": {
+      "Cancel": "ยกเลิก",
+      "Close": "ปิด",
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",
+      "Remove": "ลบ",
       "Upload": "อัพโหลด"
     }
   }

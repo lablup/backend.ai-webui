@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Opis",
+    "Name": "Nazwa",
+    "Source": "Źródło",
+    "Type": "Typ"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Działanie",
+    "Control": "Kontrola",
     "LatestVersion": "Najnowsza wersja",
     "Name": "Nazwa",
+    "PullThisVersion": "Pociągnij tę wersję",
+    "RemoveThisVersion": "Usuń tę wersję",
     "Size": "Rozmiar",
     "Status": "Status",
     "Updated": "Zaktualizowane",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Działanie",
     "PullLatestVersion": "Wyciągnij najnowszą wersję",
+    "Scanned": "Zeskanowany",
     "Size": "Rozmiar",
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} wersje są wykluczone.",
+    "FailedToRemoveVersions": "Nie udało się usunąć wersji.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Tylko wersje, które nie są w ciągnięciu lub skanowane, można usunąć.",
+    "RemoveVersions": "Usuń wersje",
+    "Size": "Rozmiar",
+    "SuccessFullyRemoved": "Pomyślnie usunięte wersje {{count}}.",
+    "Version": "Wersja"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Opis",
-    "Name": "Nazwa",
+    "ExcludedVersions": "{{count}} wersje są wykluczone.",
+    "FailedToPullVersions": "Nie udało się wyciągnąć wersji.",
+    "OnlySCANNEDVersionsCanBePulled": "Można wyciągnąć tylko zeskanowane wersje.",
     "Pull": "Ciągnąć",
-    "PullArtifact": "Wyciągnij artefakt",
-    "PulledVersionsAreExcluded": "Wyciągnięte wersje są wykluczone.",
-    "Source": "Źródło",
-    "Type": "Typ"
+    "PullVersion": "Wersja Pull",
+    "Size": "Rozmiar",
+    "SuccessFullyPulled": "Pomyślnie żądane Pull dla wersji {{count}}.",
+    "Version": "Wersja"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Wprowadź identyfikator modelu. (np. Openai/GPT-ASS-20B)",
+    "EnterAVersion": "Wprowadź wersję. (Domyślnie: Main)",
+    "Failed to import model from hugging face": "Nie udało się zaimportować modelu z przytulania twarzy",
+    "Import": "Import",
+    "ModalDescription": "Zaimportuj model z przytulania twarzy, określając identyfikator modelu i wersję.",
+    "ModalTitle": "Importuj z przytulania twarzy",
+    "ModelID": "Identyfikator modelu",
+    "SuccessfullyImportedModelFromHuggingFace": "Pomyślnie zażądał importu modelu z przytulania twarzy",
+    "Version": "Wersja"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Anuluj Pull",
+    "CancelingWillRestartThePulling": "Anulowanie ponownie uruchomi ciągnięcie",
+    "FailedToCancelThePulling": "Nie udało się anulować ciągnięcia.",
+    "VersionIsPullingNow": "{{version}} Wersja jest teraz ciągnąca.",
+    "VersionPullCanceledSuccessfully": "Pobranie wersji {{version}} anulowano pomyślnie.",
+    "WARNING": "OSTRZEŻENIE",
+    "YouAreAboutToCancelThisVersion": "Masz zamiar anulować tę wersję"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}}",
+    "TotalItems": "Total {{total}}",
+
     "button": {
+      "Cancel": "Anulować",
+      "Close": "Zamknąć",
       "CopyAll": "Kopiuj wszystko",
       "Create": "Tworzyć",
       "Delete": "Usuwać",
+      "Remove": "Usunąć",
       "Upload": "Wgrywać"
     }
   }

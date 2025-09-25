@@ -1098,15 +1098,22 @@
     "UsernameOptional": "Username (Optional)"
   },
   "reservoirPage": {
+    "ArtifactID": "Artifact ID",
     "BasicInformation": "Basic Information",
     "Description": "Description",
+    "FromHuggingFace": "From Hugging Face",
     "LastUpdated": "Last Updated",
     "Name": "Name",
+    "PullLatestVersion": "Pull Latest({{version}}) version",
+    "PullSelectedVersions": "Pull Selected Versions",
     "Registry": "Registry",
+    "RemoveSelectedVersions": "Remove Selected Versions",
     "ReservoirArtifacts": "Reservoir Artifacts",
     "Size": "Size",
     "Source": "Source",
+    "Status": "Status",
     "Type": "Type",
+    "Version": "Version",
     "VersionList": "Available List"
   },
   "resourceGroup": {
@@ -1987,6 +1994,7 @@
       "Administration": "Administration",
       "AgentSummary": "Agent Summary",
       "Architecture": "Architecture",
+      "ArtifactDetails": "Artifact Details",
       "Cancel": "Cancel",
       "ChangePassword": "Change Password",
       "Chat": "Chat",

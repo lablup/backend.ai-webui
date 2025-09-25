@@ -8,10 +8,12 @@ import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
-import { Button, Tag } from 'antd';
+import BAIArtifactRevisionDeleteButton from './BAIArtifactRevisionDeleteButton';
+import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
+import BAIArtifactStatusTag from './BAIArtifactStatusTag';
+import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -28,6 +30,7 @@ export interface BAIArtifactRevisionTableProps
   > {
   artifactRevisionFrgmt: BAIArtifactRevisionTableArtifactRevisionFragment$key;
   onClickDownload: (revisionId: string) => void;
+  onClickDelete: (revisionId: string) => void;
   latestRevisionFrgmt:
     | BAIArtifactRevisionTableLatestRevisionFragment$key
     | null
@@ -38,6 +41,7 @@ const BAIArtifactRevisionTable = ({
   artifactRevisionFrgmt,
   onClickDownload,
   latestRevisionFrgmt,
+  onClickDelete,
   ...tableProps
 }: BAIArtifactRevisionTableProps) => {
   const { t } = useTranslation();
@@ -52,6 +56,9 @@ const BAIArtifactRevisionTable = ({
           size
           status
           updatedAt
+          ...BAIArtifactStatusTagFragment
+          ...BAIArtifactRevisionDownloadButtonFragment
+          ...BAIArtifactRevisionDeleteButtonFragment
         }
       `,
       artifactRevisionFrgmt,
@@ -91,34 +98,38 @@ const BAIArtifactRevisionTable = ({
       dataIndex: 'status',
       key: 'status',
       width: '15%',
-      render: (value: string) => {
-        return <BAITag>{value}</BAITag>;
+      render: (_value: string, record: ArtifactRevision) => {
+        return <BAIArtifactStatusTag artifactRevisionFrgmt={record} />;
       },
     },
     {
-      title: t('comp:BAIArtifactRevisionTable.Action'),
+      title: t('comp:BAIArtifactRevisionTable.Control'),
       key: 'action',
       width: '15%',
       render: (_, record: ArtifactRevision) => {
         const status = record.status;
-        const isDownloadable = status === 'SCANNED';
         const isLoading = status === 'PULLING' || status === 'VERIFYING';
 
         return (
-          <Button
-            icon={<Download size={16} />}
-            type={'primary'}
-            size="small"
-            onClick={() => {
-              if (isDownloadable) {
+          <BAIFlex gap={'xs'}>
+            <BAIArtifactRevisionDownloadButton
+              size="small"
+              title={t('comp:BAIArtifactRevisionTable.PullThisVersion')}
+              revisionsFrgmt={[record]}
+              loading={isLoading}
+              onClick={() => {
                 onClickDownload(record.id);
-              }
-            }}
-            disabled={isLoading || !isDownloadable}
-            loading={isLoading}
-          >
-            Pull
-          </Button>
+              }}
+            />
+            <BAIArtifactRevisionDeleteButton
+              size="small"
+              title={t('comp:BAIArtifactRevisionTable.RemoveThisVersion')}
+              revisionsFrgmt={[record]}
+              onClick={() => {
+                onClickDelete(record.id);
+              }}
+            />
+          </BAIFlex>
         );
       },
     },
@@ -141,11 +152,14 @@ const BAIArtifactRevisionTable = ({
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       width: '15%',
-      render: (updated_at: string) => (
-        <BAIText type="secondary" title={dayjs(updated_at).toString()}>
-          {dayjs(updated_at).fromNow()}
-        </BAIText>
-      ),
+      render: (updated_at: string) =>
+        updated_at ? (
+          <BAIText type="secondary" title={dayjs(updated_at).toString()}>
+            {dayjs(updated_at).fromNow()}
+          </BAIText>
+        ) : (
+          'N/A'
+        ),
     },
   ];
 

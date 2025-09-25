@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Περιγραφή",
+    "Name": "Ονομα",
+    "Source": "Πηγή",
+    "Type": "Τύπος"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Δράση",
+    "Control": "Ελεγχος",
     "LatestVersion": "Τελευταία έκδοση",
     "Name": "Ονομα",
+    "PullThisVersion": "Τραβήξτε αυτήν την έκδοση",
+    "RemoveThisVersion": "Καταργήστε αυτήν την έκδοση",
     "Size": "Μέγεθος",
     "Status": "Κατάσταση",
     "Updated": "Ενημερωμένος",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Δράση",
     "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση",
+    "Scanned": "Σαρωμένος",
     "Size": "Μέγεθος",
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "FailedToRemoveVersions": "Αποτυχία κατάργησης των εκδόσεων.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Μόνο εκδόσεις που δεν είναι σε τράβηγμα ή σαρωμένη μπορούν να αφαιρεθούν.",
+    "RemoveVersions": "Καταργήστε τις εκδόσεις",
+    "Size": "Μέγεθος",
+    "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
+    "Version": "Εκδοχή"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Περιγραφή",
-    "Name": "Ονομα",
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",
+    "OnlySCANNEDVersionsCanBePulled": "Μπορούν να τραβηχτούν μόνο οι σαρωμένες εκδόσεις.",
     "Pull": "Τραβήξτε",
-    "PullArtifact": "Τραβήξτε το τεχνούργημα",
-    "PulledVersionsAreExcluded": "Οι εκδόσεις που τραβήχτηκαν εξαιρούνται.",
-    "Source": "Πηγή",
-    "Type": "Τύπος"
+    "PullVersion": "Εκδοχή έλξης",
+    "Size": "Μέγεθος",
+    "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Εισαγάγετε ένα αναγνωριστικό μοντέλου. (π.χ. OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Εισαγάγετε μια έκδοση. (προεπιλογή: κύρια)",
+    "Failed to import model from hugging face": "Αποτυχία εισαγωγής μοντέλου από το πρόσωπο αγκάλιασμα",
+    "Import": "Εισαγωγή",
+    "ModalDescription": "Εισαγάγετε ένα μοντέλο από το αγκάλιασμα προσδιορίζοντας το αναγνωριστικό μοντέλου και την έκδοση.",
+    "ModalTitle": "Εισαγωγή από αγκαλιά πρόσωπο",
+    "ModelID": "Μοντέλο ταυτότητας",
+    "SuccessfullyImportedModelFromHuggingFace": "Ζήτησε επιτυχώς εισαγωγή μοντέλου από το αγκάλιασμα πρόσωπο",
+    "Version": "Εκδοχή"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Ακυρώσω",
+    "CancelingWillRestartThePulling": "Η ακύρωση θα επανεκκινήσει το τράβηγμα",
+    "FailedToCancelThePulling": "Απέτυχε να ακυρώσει το τράβηγμα.",
+    "VersionIsPullingNow": "{{version}} Έκδοση τραβά τώρα.",
+    "VersionPullCanceledSuccessfully": "Τραβήξτε το {{version}} έκδοση ακυρώθηκε με επιτυχία.",
+    "WARNING": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ",
+    "YouAreAboutToCancelThisVersion": "Πρόκειται να ακυρώσετε αυτήν την έκδοση"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}} Επιλεγμένη",
+    "TotalItems": "Σύνολο {{total}} στοιχεία",
     "button": {
+      "Cancel": "Ματαίωση",
+      "Close": "Κοντά",
       "CopyAll": "Αντιγράψτε όλα",
       "Create": "Δημιουργώ",
       "Delete": "Διαγράφω",
+      "Remove": "Αφαιρώ",
       "Upload": "Μεταφορτώσω"
     }
   }

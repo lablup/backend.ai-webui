@@ -1093,15 +1093,22 @@
     "UsernameOptional": "Tên người dùng (Tùy chọn)"
   },
   "reservoirPage": {
+    "ArtifactID": "Id cổ vật",
     "BasicInformation": "Thông tin cơ bản",
     "Description": "Sự miêu tả",
+    "FromHuggingFace": "Từ khuôn mặt ôm",
     "LastUpdated": "Cập nhật lần cuối",
     "Name": "Tên",
+    "PullLatestVersion": "Kéo phiên bản mới nhất ({{version}})",
+    "PullSelectedVersions": "Kéo các phiên bản được chọn",
     "Registry": "Đăng ký",
+    "RemoveSelectedVersions": "Xóa các phiên bản đã chọn",
     "ReservoirArtifacts": "Cổ vật hồ chứa",
     "Size": "Kích cỡ",
     "Source": "Nguồn",
+    "Status": "Trạng thái",
     "Type": "Kiểu",
+    "Version": "Phiên bản",
     "VersionList": "Danh sách có sẵn"
   },
   "resourceGroup": {
@@ -1980,6 +1987,7 @@
       "Administration": "Hành chính",
       "AgentSummary": "Tóm tắt đại lý",
       "Architecture": "Ngành kiến ​​​​trúc",
+      "ArtifactDetails": "Chi tiết tạo tác",
       "Cancel": "Huỷ bỏ",
       "ChangePassword": "Đổi mật khẩu",
       "Chat": "Trò chuyện",

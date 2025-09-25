@@ -12,7 +12,7 @@ export function manipulateGraphQLQueryWithClientDirectives(
   // Optionally normalize fragment type conditions from Query to Queries
   let newAst = ast;
   // Since the super graph, the query type has been changed from Queries to Query
-  const shouldConvertFragmentTypeToQueries = isNotCompatibleWith('25.13.0');
+  const shouldConvertFragmentTypeToQueries = isNotCompatibleWith('25.14.0');
   if (shouldConvertFragmentTypeToQueries) {
     function normalizeFragmentTypeCondition(node: any) {
       if (!node.typeCondition) return;

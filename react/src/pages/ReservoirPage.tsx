@@ -1,19 +1,22 @@
 import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useDeferredQueryParams } from '../hooks/useDeferredQueryParams';
-import { theme, Col, Row, Statistic, Card } from 'antd';
+import { useToggle } from 'ahooks';
+import { theme, Col, Row, Statistic, Card, Button } from 'antd';
 import {
   BAICard,
   BAIFlex,
   BAIArtifactTable,
   BAIImportArtifactModal,
   BAIGraphQLPropertyFilter,
+  BAIImportFromHuggingFaceModal,
+  BAIHuggingFaceIcon,
   toLocalId,
-  BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAIImportArtifactModalArtifactFragmentKey,
+  BAIImportArtifactModalArtifactRevisionFragmentKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Package, Brain, Container } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -34,6 +37,8 @@ const ReservoirPage: React.FC = () => {
     useState<BAIImportArtifactModalArtifactFragmentKey | null>(null);
   const [selectedRevision, setSelectedRevision] =
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
+  const [openHuggingFaceModal, { toggle: toggleOpenHuggingFaceModal }] =
+    useToggle();
 
   const {
     baiPaginationOption,
@@ -48,15 +53,13 @@ const ReservoirPage: React.FC = () => {
     filter: withDefault(JsonParam, {}),
   });
 
-  // const queryVariables: ReservoirPageQuery$variables = useMemo(() => ({}));
-
   const queryVariables: ReservoirPageQuery$variables = useMemo(
     () => ({
       offset: baiPaginationOption.offset,
       limit: baiPaginationOption.limit,
       order: [
         {
-          field: 'NAME',
+          field: 'UPDATED_AT',
           direction: 'DESC',
         },
       ],
@@ -90,6 +93,10 @@ const ReservoirPage: React.FC = () => {
         $offset: Int!
         $filter: ArtifactFilter!
       ) {
+        defaultArtifactRegistry(artifactType: MODEL) {
+          name
+          type
+        }
         artifacts(
           orderBy: $order
           limit: $limit
@@ -129,15 +136,17 @@ const ReservoirPage: React.FC = () => {
     },
   );
 
-  const { artifacts } = queryRef;
+  const { artifacts, defaultArtifactRegistry } = queryRef;
+  const isAvailableUsingHuggingFace =
+    defaultArtifactRegistry?.type === 'HUGGINGFACE';
 
-  const typeFilterGenerator = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
-    return { type: { eq: type } };
-  };
-
-  const handleStatisticCardClick = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
-    setQuery({ filter: typeFilterGenerator(type) }, 'replaceIn');
-  };
+  // TODO: implement when reservoir supports other types
+  // const typeFilterGenerator = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
+  //   return { type: { eq: type } };
+  // };
+  // const handleStatisticCardClick = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
+  //   setQuery({ filter: typeFilterGenerator(type) }, 'replaceIn');
+  // };
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
@@ -147,93 +156,17 @@ const ReservoirPage: React.FC = () => {
             size="small"
             variant="borderless"
             hoverable
-            onClick={() => handleStatisticCardClick('MODEL')}
             style={{
               cursor: 'pointer',
-              border:
-                queryParams.filter === typeFilterGenerator('MODEL')
-                  ? `1px solid ${token.colorPrimary}`
-                  : `1px solid ${token.colorBorder}`,
-              backgroundColor:
-                queryParams.filter === typeFilterGenerator('MODEL')
-                  ? token.colorPrimaryBg
-                  : undefined,
-              transition: 'all 0.2s ease',
+              border: `1px solid ${token.colorPrimary}`,
             }}
           >
             <Statistic
               title="MODEL"
-              value={0}
+              value={artifacts.count}
               prefix={<Brain size={16} />}
               valueStyle={{
-                color:
-                  queryParams.filter === typeFilterGenerator('MODEL')
-                    ? token.colorPrimary
-                    : undefined,
-              }}
-            />
-          </Card>
-        </Col>
-        <Col xs={12} sm={8} lg={6} xl={4}>
-          <Card
-            size="small"
-            variant="borderless"
-            hoverable
-            onClick={() => handleStatisticCardClick('IMAGE')}
-            style={{
-              cursor: 'pointer',
-              border:
-                queryParams.filter === typeFilterGenerator('IMAGE')
-                  ? `1px solid ${token.colorPrimary}`
-                  : `1px solid ${token.colorBorder}`,
-              backgroundColor:
-                queryParams.filter === typeFilterGenerator('IMAGE')
-                  ? token.colorPrimaryBg
-                  : undefined,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <Statistic
-              title="IMAGE"
-              value={0}
-              prefix={<Container />}
-              valueStyle={{
-                color:
-                  queryParams.filter === typeFilterGenerator('IMAGE')
-                    ? token.colorPrimary
-                    : undefined,
-              }}
-            />
-          </Card>
-        </Col>
-        <Col xs={12} sm={8} lg={6} xl={4}>
-          <Card
-            size="small"
-            variant="borderless"
-            hoverable
-            onClick={() => handleStatisticCardClick('PACKAGE')}
-            style={{
-              cursor: 'pointer',
-              border:
-                queryParams.filter === typeFilterGenerator('PACKAGE')
-                  ? `1px solid ${token.colorPrimary}`
-                  : `1px solid ${token.colorBorder}`,
-              backgroundColor:
-                queryParams.filter === typeFilterGenerator('PACKAGE')
-                  ? token.colorPrimaryBg
-                  : undefined,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            <Statistic
-              title="PACKAGE"
-              value={0}
-              prefix={<Package />}
-              valueStyle={{
-                color:
-                  queryParams.filter === typeFilterGenerator('PACKAGE')
-                    ? token.colorPrimary
-                    : undefined,
+                color: token.colorPrimary,
               }}
             />
           </Card>
@@ -272,63 +205,59 @@ const ReservoirPage: React.FC = () => {
                 value={queryParams.filter}
                 filterProperties={[
                   {
-                    fixedOperator: 'eq',
-                    key: 'type',
-                    propertyLabel: 'Type',
-                    type: 'enum',
-                    options: [
-                      {
-                        label: 'Model',
-                        value: 'MODEL',
-                      },
-                      {
-                        label: 'Package',
-                        value: 'PACKAGE',
-                      },
-                      {
-                        label: 'Image',
-                        value: 'IMAGE',
-                      },
-                    ],
+                    fixedOperator: 'contains',
+                    key: 'name',
+                    propertyLabel: t('reservoirPage.Name'),
+                    type: 'string',
                   },
                   {
                     fixedOperator: 'contains',
-                    key: 'name',
-                    propertyLabel: 'Name',
-                    type: 'string',
-                  },
-                  {
-                    fixedOperator: 'eq',
                     key: 'source',
-                    propertyLabel: 'Source',
+                    propertyLabel: t('reservoirPage.Source'),
                     type: 'string',
                   },
                   {
-                    fixedOperator: 'eq',
+                    fixedOperator: 'contains',
                     key: 'registry',
-                    propertyLabel: 'Registry',
+                    propertyLabel: t('reservoirPage.Registry'),
                     type: 'string',
                   },
                 ]}
               />
             </BAIFlex>
-            <BAIFetchKeyButton
-              value={fetchKey}
-              autoUpdateDelay={10_000}
-              loading={deferredFetchKey !== fetchKey}
-              onChange={() => {
-                updateFetchKey();
-                // rescanArtifacts({
-                //   variables: {
-                //     input: {
-                //       storageId: 'fe878f09-06cc-4b91-9242-4c71015cce07',
-                //       registryId: 'fe878f09-06cc-4b91-9242-4c71015cce05',
-                //       limit: 100,
-                //     },
-                //   },
-                // });
-              }}
-            />
+            <BAIFlex gap={'sm'} align="center">
+              <BAIFetchKeyButton
+                value={fetchKey}
+                autoUpdateDelay={10_000}
+                loading={deferredFetchKey !== fetchKey}
+                onChange={() => {
+                  updateFetchKey();
+                  // rescanArtifacts({
+                  //   variables: {
+                  //     input: {
+                  //       registryId: 'fe878f09-06cc-4b91-9242-4c71015cce05',
+                  //       limit: 100,
+                  //     },
+                  //   },
+                  // });
+                }}
+              />
+              {isAvailableUsingHuggingFace && (
+                <Button
+                  type="primary"
+                  icon={
+                    <BAIHuggingFaceIcon
+                      style={{
+                        fontSize: '1.5em',
+                      }}
+                    />
+                  }
+                  onClick={() => toggleOpenHuggingFaceModal()}
+                >
+                  {t('reservoirPage.FromHuggingFace')}
+                </Button>
+              )}
+            </BAIFlex>
           </BAIFlex>
           <BAIArtifactTable
             artifactFragment={artifacts.edges.map((edge) => edge.node)}
@@ -357,16 +286,6 @@ const ReservoirPage: React.FC = () => {
                 }
               },
             }}
-            onRow={(record) => ({
-              onClick: (event) => {
-                event.stopPropagation();
-                const target = event.target as HTMLElement;
-                if (target.closest('button') || target.closest('a')) {
-                  return;
-                }
-                navigate(`/reservoir/${toLocalId(record.id)}`);
-              },
-            })}
           />
         </BAIFlex>
         {/* TODO: implement audit log for reservoir page */}
@@ -414,6 +333,14 @@ const ReservoirPage: React.FC = () => {
           setSelectedArtifact(null);
           setSelectedRevision([]);
         }}
+      />
+      <BAIImportFromHuggingFaceModal
+        open={openHuggingFaceModal}
+        onOk={(_e, artifactId) => {
+          toggleOpenHuggingFaceModal();
+          navigate(`/reservoir/${toLocalId(artifactId)}`);
+        }}
+        onCancel={toggleOpenHuggingFaceModal}
       />
     </BAIFlex>
   );

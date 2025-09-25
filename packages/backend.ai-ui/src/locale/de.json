@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Beschreibung",
+    "Name": "Name",
+    "Source": "Quelle",
+    "Type": "Typ"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Aktion",
+    "Control": "Kontrolle",
     "LatestVersion": "Neueste Version",
     "Name": "Name",
+    "PullThisVersion": "Ziehen Sie diese Version",
+    "RemoveThisVersion": "Entfernen Sie diese Version",
     "Size": "Größe",
     "Status": "Status",
     "Updated": "Aktualisiert",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Aktion",
     "PullLatestVersion": "Die neueste Version ziehen",
+    "Scanned": "Gescannt",
     "Size": "Größe",
     "Updated": "Aktualisiert",
     "Version": "Version"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
+    "FailedToRemoveVersions": "Versionen nicht entfernen.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Es können nur Versionen entfernt werden, die nicht im Ziehen oder beim Durchsuchen sind.",
+    "RemoveVersions": "Versionen entfernen",
+    "Size": "Größe",
+    "SuccessFullyRemoved": "Erfolgreich entfernt {{count}} Versionen.",
+    "Version": "Version"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Beschreibung",
-    "Name": "Name",
+    "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
+    "FailedToPullVersions": "Versäumte, Versionen zu ziehen.",
+    "OnlySCANNEDVersionsCanBePulled": "Es können nur gescannte Versionen gezogen werden.",
     "Pull": "Ziehen",
-    "PullArtifact": "Artefakt ziehen",
-    "PulledVersionsAreExcluded": "Ziehversionen sind ausgeschlossen.",
-    "Source": "Quelle",
-    "Type": "Typ"
+    "PullVersion": "Pull -Version",
+    "Size": "Größe",
+    "SuccessFullyPulled": "Erfolgreich angeforderte Pull für {{count}} -Versionen.",
+    "Version": "Version"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Geben Sie eine Modell -ID ein. (z. B. OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Geben Sie eine Version ein. (Standard: Haupt)",
+    "Failed to import model from hugging face": "Versäumte das Importieren von Modellen aus dem Umarmen des Gesichts",
+    "Import": "Import",
+    "ModalDescription": "Importieren Sie ein Modell aus dem Umarmen, indem Sie die Modell -ID und Version angeben.",
+    "ModalTitle": "Importieren vom umarmen Gesicht",
+    "ModelID": "Modell ID",
+    "SuccessfullyImportedModelFromHuggingFace": "Erfolgreich angeforderte Import von Modell aus dem Umarmen Gesicht",
+    "Version": "Version"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Zivil ziehen",
+    "CancelingWillRestartThePulling": "Das Abbrechen startet das Ziehen neu",
+    "FailedToCancelThePulling": "Das Ziehen versäumte es, das Ziehen abzubrechen.",
+    "VersionIsPullingNow": "{{version}} Version zieht jetzt.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} Version erfolgreich abgebrochen.",
+    "WARNING": "WARNUNG",
+    "YouAreAboutToCancelThisVersion": "Sie sind kurz davor, diese Version abzusagen"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
@@ -82,10 +121,14 @@
   },
   "general": {
     "NSelected": "{{count}} ausgewählt",
+    "TotalItems": "Total {{total}} Elemente",
     "button": {
+      "Cancel": "Stornieren",
+      "Close": "Schließen",
       "CopyAll": "Alle kopieren",
       "Create": "Erstellen",
       "Delete": "Löschen",
+      "Remove": "Entfernen",
       "Upload": "Hochladen"
     }
   }

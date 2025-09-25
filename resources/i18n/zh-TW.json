@@ -1092,15 +1092,22 @@
     "UsernameOptional": "用戶名（可選）"
   },
   "reservoirPage": {
+    "ArtifactID": "文物ID",
     "BasicInformation": "基本信息",
     "Description": "描述",
+    "FromHuggingFace": "從擁抱臉",
     "LastUpdated": "最後更新",
     "Name": "姓名",
+    "PullLatestVersion": "拉最新（{{version}}）版本",
+    "PullSelectedVersions": "拉選定的版本",
     "Registry": "註冊表",
+    "RemoveSelectedVersions": "刪除選定的版本",
     "ReservoirArtifacts": "水庫工件",
     "Size": "尺寸",
     "Source": "來源",
+    "Status": "地位",
     "Type": "類型",
+    "Version": "版本",
     "VersionList": "可用列表"
   },
   "resourceGroup": {
@@ -1978,6 +1985,7 @@
       "Administration": "行政",
       "AgentSummary": "代理摘要",
       "Architecture": "建築學",
+      "ArtifactDetails": "文物細節",
       "Cancel": "取消",
       "ChangePassword": "更改密碼",
       "Chat": "聊天",

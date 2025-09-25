@@ -10,22 +10,17 @@ import {
 } from '../../helper';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAITable, BAITableProps } from '../Table';
+import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
+import BAIArtifactStatusTag from './BAIArtifactStatusTag';
+import BAIArtifactTypeTag from './BAIArtifactTypeTag';
 import { SyncOutlined } from '@ant-design/icons';
-import {
-  Button,
-  TableColumnsType,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { TableColumnsType, theme, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
-import { Package, Container, Brain, Download } from 'lucide-react';
+import { Package, Container, Brain } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -56,19 +51,6 @@ export const getStatusIcon = (status: string) => {
   }
 };
 
-export const getTypeColor = (type: string) => {
-  switch (type) {
-    case 'model':
-      return 'blue';
-    case 'package':
-      return 'green';
-    case 'image':
-      return 'orange';
-    default:
-      return 'default';
-  }
-};
-
 export const getTypeIcon = (type: string, size: number = 16) => {
   const colorMap = {
     model: '#1677ff',
@@ -88,9 +70,8 @@ export const getTypeIcon = (type: string, size: number = 16) => {
   }
 };
 
-export type Artifact = NonNullable<
-  NonNullable<BAIArtifactTableArtifactFragment$data>[number]
->;
+export type Artifact =
+  NonNullable<BAIArtifactTableArtifactFragment$data>[number];
 
 export interface BAIArtifactTableProps
   extends Omit<BAITableProps<Artifact>, 'dataSource' | 'columns' | 'rowKey'> {
@@ -98,7 +79,7 @@ export interface BAIArtifactTableProps
   onClickPull: (artifactId: string, revisionId: string) => void;
 }
 
-const BAIArtifactRevisionTable = ({
+const BAIArtifactTable = ({
   artifactFragment,
   onClickPull,
   ...tableProps
@@ -115,7 +96,8 @@ const BAIArtifactRevisionTable = ({
         name
         description
         updatedAt
-        type
+        scannedAt
+        ...BAIArtifactTypeTagFragment
         latestVersion: revisions(
           first: 1
           orderBy: { field: VERSION, direction: DESC }
@@ -126,6 +108,8 @@ const BAIArtifactRevisionTable = ({
               version
               size
               status
+              ...BAIArtifactStatusTagFragment
+              ...BAIArtifactRevisionDownloadButtonFragment
             }
           }
         }
@@ -146,10 +130,7 @@ const BAIArtifactRevisionTable = ({
               <BAILink to={'/reservoir/' + toLocalId(record.id)}>
                 {name}
               </BAILink>
-              <Tag>
-                {getTypeIcon(record.type, 14)}&nbsp;
-                {record.type.toUpperCase()}
-              </Tag>
+              <BAIArtifactTypeTag artifactTypeFrgmt={record} />
             </BAIFlex>
             {record.description && (
               <Typography.Text
@@ -162,7 +143,7 @@ const BAIArtifactRevisionTable = ({
           </BAIFlex>
         );
       },
-      width: '45%',
+      width: '30%',
     },
     {
       title: t('comp:BAIArtifactRevisionTable.LatestVersion'),
@@ -177,20 +158,14 @@ const BAIArtifactRevisionTable = ({
           <BAIFlex gap={'xs'} wrap="wrap" align="center">
             <BAIText monospace>{latestVersion.version}</BAIText>
             <BAIFlex>
-              <BAITag>{latestVersion.status.toUpperCase()}</BAITag>
+              <BAIArtifactStatusTag artifactRevisionFrgmt={latestVersion} />
               {latestVersion.status === 'SCANNED' ? (
-                <Tooltip title={t('comp:BAIArtifactTable.PullLatestVersion')}>
-                  <Button
-                    type="primary"
-                    size="small"
-                    icon={
-                      <Download
-                        size={16}
-                        onClick={() => onClickPull(record.id, latestVersion.id)}
-                      />
-                    }
-                  />
-                </Tooltip>
+                <BAIArtifactRevisionDownloadButton
+                  title={t('comp:BAIArtifactTable.PullLatestVersion')}
+                  revisionsFrgmt={[latestVersion]}
+                  size="small"
+                  onClick={() => onClickPull(record.id, latestVersion.id)}
+                />
               ) : null}
             </BAIFlex>
           </BAIFlex>
@@ -215,6 +190,22 @@ const BAIArtifactRevisionTable = ({
       width: '15%',
     },
     {
+      title: t('comp:BAIArtifactTable.Scanned'),
+      dataIndex: 'scannedAt',
+      key: 'scanned_at',
+      render: (value: string) => {
+        if (!value || _.isEmpty(value))
+          return <Typography.Text type="secondary">N/A</Typography.Text>;
+
+        return (
+          <Typography.Text type="secondary">
+            {dayjs(value).fromNow()}
+          </Typography.Text>
+        );
+      },
+      width: '15%',
+    },
+    {
       title: t('comp:BAIArtifactRevisionTable.Updated'),
       dataIndex: 'updatedAt',
       key: 'updated_at',
@@ -223,7 +214,7 @@ const BAIArtifactRevisionTable = ({
           return <Typography.Text type="secondary">N/A</Typography.Text>;
 
         return (
-          <Typography.Text type="secondary" title={dayjs(value).toString()}>
+          <Typography.Text type="secondary">
             {dayjs(value).fromNow()}
           </Typography.Text>
         );
@@ -243,4 +234,4 @@ const BAIArtifactRevisionTable = ({
   );
 };
 
-export default BAIArtifactRevisionTable;
+export default BAIArtifactTable;

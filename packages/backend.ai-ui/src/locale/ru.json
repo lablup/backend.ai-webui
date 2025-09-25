@@ -1,9 +1,17 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Описание",
+    "Name": "Имя",
+    "Source": "Источник",
+    "Type": "Тип"
+  },
   "comp:BAIArtifactRevisionTable": {
-    "Action": "Действие",
+    "Control": "Контроль",
     "LatestVersion": "Последняя версия",
     "Name": "Имя",
+    "PullThisVersion": "Вытащите эту версию",
+    "RemoveThisVersion": "Удалить эту версию",
     "Size": "Размер",
     "Status": "Статус",
     "Updated": "Обновлено",
@@ -12,22 +20,53 @@
   "comp:BAIArtifactTable": {
     "Action": "Действие",
     "PullLatestVersion": "Вытащите последнюю версию",
+    "Scanned": "Сканируется",
     "Size": "Размер",
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "FailedToRemoveVersions": "Не удалось удалить версии.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Только версии, которые не притягивают или отсканируют, могут быть удалены.",
+    "RemoveVersions": "Удалить версии",
+    "Size": "Размер",
+    "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
+    "Version": "Версия"
+  },
   "comp:BAIImportArtifactModal": {
-    "Description": "Описание",
-    "Name": "Имя",
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "FailedToPullVersions": "Не удалось вытащить версии.",
+    "OnlySCANNEDVersionsCanBePulled": "Только отсканированные версии можно вытащить.",
     "Pull": "Тянуть",
-    "PullArtifact": "Вытащить артефакт",
-    "PulledVersionsAreExcluded": "Вытянутые версии исключены.",
-    "Source": "Источник",
-    "Type": "Тип"
+    "PullVersion": "Потянуть версию",
+    "Size": "Размер",
+    "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
+    "Version": "Версия"
+  },
+  "comp:BAIImportFromHuggingFaceModal": {
+    "EnterAModelID": "Введите идентификатор модели. (например, OpenAI/GPT-OSS-20B)",
+    "EnterAVersion": "Введите версию. (по умолчанию: главное)",
+    "Failed to import model from hugging face": "Не удалось импортировать модель от обнимающего лица",
+    "Import": "Импорт",
+    "ModalDescription": "Импортируйте модель от обнимающего лица, указав идентификатор модели и версию.",
+    "ModalTitle": "Импорт от обнимающегося лица",
+    "ModelID": "Идентификатор модели",
+    "SuccessfullyImportedModelFromHuggingFace": "Успешно запросил импорт модели от обнимающегося лица",
+    "Version": "Версия"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Отменить тяну",
+    "CancelingWillRestartThePulling": "Отмена возобновит тягу",
+    "FailedToCancelThePulling": "Не удалось отменить тягу.",
+    "VersionIsPullingNow": "{{version}} версия сейчас тянет.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} версия отменена успешно.",
+    "WARNING": "ПРЕДУПРЕЖДЕНИЕ",
+    "YouAreAboutToCancelThisVersion": "Вы собираетесь отменить эту версию"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
@@ -82,10 +121,15 @@
   },
   "general": {
     "NSelected": "{{count}} выбрал",
+    "TotalItems": "Total {{total}} элементы",
+
     "button": {
+      "Cancel": "Отмена",
+      "Close": "Закрывать",
       "CopyAll": "Копировать все",
       "Create": "Создавать",
       "Delete": "Удалить",
+      "Remove": "Удалять",
       "Upload": "Загрузить"
     }
   }
