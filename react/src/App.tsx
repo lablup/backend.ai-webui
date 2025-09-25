@@ -84,6 +84,7 @@ const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
 const AIAgentPage = React.lazy(() => import('./pages/AIAgentPage'));
+const ReservoirPage = React.lazy(() => import('./pages/ReservoirPage'));
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 
@@ -458,6 +459,41 @@ const router = createBrowserRouter([
         path: '/resource-policy',
         handle: { labelKey: 'webui.menu.ResourcePolicy' },
         Component: ResourcePolicyPage,
+      },
+      {
+        path: '/reservoir',
+        handle: { labelKey: 'Reservoir' },
+        children: [
+          {
+            path: '',
+            Component: () => {
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                        <Skeleton active />
+                      </BAIFlex>
+                    }
+                  >
+                    <ReservoirPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+          },
+          {
+            path: '/reservoir/:artifactId',
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <ReservoirPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: { labelKey: 'Artifact Details' },
+          },
+        ],
       },
       {
         path: '/settings',
