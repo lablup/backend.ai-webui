@@ -817,6 +817,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.15.0')) {
+      this._features['multi-agents'] = true;
+    }
   }
 
   /**
