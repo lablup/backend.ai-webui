@@ -144,6 +144,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) enableExtendLoginSession = false;
   @property({ type: Boolean }) enableModelFolders = true;
   @property({ type: Boolean }) showNonInstalledImages = false;
+  @property({ type: Boolean }) enableReservoir = false;
   @property({ type: Boolean }) enableInteractiveLoginAccountSwitch = true;
   @property({ type: String }) eduAppNamePrefix;
   @property({ type: String }) pluginPages;
@@ -866,6 +867,12 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'boolean',
       defaultValue: true,
       value: generalConfig?.enableModelFolders,
+    } as ConfigValueObject) as boolean;
+    // Enable reservoir feature
+    this.enableReservoir = this._getConfigValueByExists(generalConfig, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: generalConfig?.enableReservoir,
     } as ConfigValueObject) as boolean;
   }
 
@@ -1937,6 +1944,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.inactiveList = this.inactiveList;
         globalThis.backendaiclient._config.allowSignout = this.allow_signout;
         globalThis.backendaiclient.ready = true;
+        globalThis.backendaiclient._config.enableReservoir =
+          this.enableReservoir;
         if (
           this.endpoints.indexOf(
             globalThis.backendaiclient._config.endpoint as string,

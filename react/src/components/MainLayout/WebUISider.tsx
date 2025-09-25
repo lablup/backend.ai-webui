@@ -287,11 +287,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy',
     },
-    baiClient?.supports('reservoir') && {
-      label: <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>,
-      icon: <PackagePlus style={{ color: token.colorInfo }} />,
-      key: 'reservoir',
-    },
+    baiClient?.supports('reservoir') &&
+      baiClient?._config.enableReservoir && {
+        label: (
+          <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>
+        ),
+        icon: <PackagePlus style={{ color: token.colorInfo }} />,
+        key: 'reservoir',
+      },
   ]);
 
   const superAdminMenu: MenuProps['items'] = [

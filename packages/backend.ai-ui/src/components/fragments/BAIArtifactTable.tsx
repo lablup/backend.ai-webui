@@ -159,11 +159,9 @@ const BAIArtifactTable = ({
             <Button
               title={t('comp:BAIArtifactTable.Deactivate')}
               size="small"
-              type="text"
-              style={{
-                color: token.colorError,
-                background: token.colorErrorBg,
-              }}
+              // type="text"
+              color={'red'}
+              variant="filled"
               icon={<BanIcon />}
               onClick={() => onClickDelete(record.id)}
             />
@@ -173,12 +171,10 @@ const BAIArtifactTable = ({
             <Button
               title={t('comp:BAIArtifactTable.Activate')}
               size="small"
-              type="text"
+              color="blue"
+              variant="filled"
+              // type="text"
               icon={<UndoIcon />}
-              style={{
-                color: token.colorInfo,
-                background: token.colorInfoBg,
-              }}
               onClick={() => onClickRestore(record.id)}
             />
           );

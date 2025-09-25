@@ -605,6 +605,7 @@ type BackendAIConfig = {
   showNonInstalledImages: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
   isDirectorySizeVisible: boolean;
+  enableReservoir: boolean;
   debug: boolean;
   [key: string]: any;
 };
