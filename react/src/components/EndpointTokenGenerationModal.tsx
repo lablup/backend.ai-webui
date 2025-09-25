@@ -2,8 +2,8 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIModal, { BAIModalProps } from './BAIModal';
-import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
-import { BAIFlex, ESMClientErrorResponse } from 'backend.ai-ui';
+import { DatePicker, Form, FormInstance, message, Select } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,15 @@ const EndpointTokenGenerationModal: React.FC<
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     formRef.current?.validateFields().then((values) => {
-      const validUntil = values.datetime.unix();
+      let validUntil: number;
+
+      if (values.expiryOption === 'custom') {
+        validUntil = values.datetime.unix();
+      } else {
+        const daysToAdd = parseInt(values.expiryOption.replace('days', ''));
+        validUntil = dayjs().add(daysToAdd, 'day').unix();
+      }
+
       mutationToGenerateToken.mutate(
         {
           valid_until: validUntil,
@@ -91,48 +99,72 @@ const EndpointTokenGenerationModal: React.FC<
       <Form
         ref={formRef}
         preserve={false}
-        labelCol={{ span: 10 }}
+        labelCol={{ span: 12 }}
         initialValues={{
-          datetime: dayjs().add(24, 'hour'),
+          expiryOption: '7days',
+          datetime: dayjs().add(7, 'day'),
         }}
         validateTrigger={['onChange', 'onBlur']}
         style={{ maxWidth: 500 }}
       >
         <BAIFlex direction="column" gap="sm" align="stretch">
-          <Alert
-            type="info"
-            showIcon
-            message={t('modelService.TokenExpiredDateHelp')}
-          />
           <BAIFlex direction="row" align="stretch" justify="around">
             <Form.Item
-              name="datetime"
+              name="expiryOption"
               label={t('modelService.ExpiredDate')}
               rules={[
                 {
-                  type: 'object' as const,
                   required: true,
                   message: t('modelService.PleaseSelectTime'),
                 },
-                () => ({
-                  validator(_, value) {
-                    if (value.isAfter(dayjs())) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(t('modelService.TokenExpiredDateError')),
-                    );
-                  },
-                }),
               ]}
             >
-              <DatePicker
-                showTime
-                format="YYYY-MM-DD HH:mm:ss"
+              <Select
                 style={{ width: 200 }}
+                options={[
+                  { value: '7days', label: t('general.Days', { num: 7 }) },
+                  { value: '30days', label: t('general.Days', { num: 30 }) },
+                  { value: '90days', label: t('general.Days', { num: 90 }) },
+                  { value: 'custom', label: t('modelService.Custom') },
+                ]}
               />
             </Form.Item>
           </BAIFlex>
+          <Form.Item dependencies={['expiryOption']} noStyle>
+            {({ getFieldValue }) =>
+              getFieldValue('expiryOption') === 'custom' ? (
+                <BAIFlex direction="row" align="stretch" justify="around">
+                  <Form.Item
+                    name="datetime"
+                    label={t('modelService.CustomExpirationDate')}
+                    rules={[
+                      {
+                        type: 'object' as const,
+                        required: true,
+                        message: t('modelService.PleaseSelectTime'),
+                      },
+                      () => ({
+                        validator(_, value) {
+                          if (value && value.isAfter(dayjs())) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(t('modelService.TokenExpiredDateError')),
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <DatePicker
+                      showTime
+                      format="YYYY-MM-DD HH:mm:ss"
+                      style={{ width: 200 }}
+                    />
+                  </Form.Item>
+                </BAIFlex>
+              ) : null
+            }
+          </Form.Item>
         </BAIFlex>
         {/* <BAIFlex direction="row" align="stretch" justify="end">
           <Tag style={{height: 30}}>{t('modelService.CurrentTime')}</Tag>
