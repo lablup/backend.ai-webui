@@ -168,6 +168,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                             type={key}
                             value={slot}
                             hideTooltip
+                            opts={
+                              key === 'mem' && preset?.shared_memory
+                                ? { shmem: preset?.shared_memory }
+                                : {}
+                            }
                           />
                         );
                       },
