@@ -786,6 +786,7 @@ class Client {
       this._features['max_network_count'] = true;
       this._features['replicas'] = true;
       this._features['base-image-name'] = true;
+      this._features['agent-nodes-query'] = true;
     }
     if (this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])) {
       this._features['vfolder-id-based'] = true;
