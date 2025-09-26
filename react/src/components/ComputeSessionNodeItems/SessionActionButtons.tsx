@@ -8,8 +8,9 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
+import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
+import { Tooltip, Button, theme, Space, ButtonProps, Image } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
@@ -49,7 +50,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const appLauncher = useBackendAIAppLauncher();
   const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
@@ -67,15 +67,20 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         ...ContainerLogModalFragment
         ...ContainerCommitModalFragment
         ...AppLauncherModalFragment
+        ...SFTPConnectionInfoModalFragment
+        ...useBackendAIAppLauncherFragment
       }
     `,
     sessionFrgmt,
   );
+  const appLauncher = useBackendAIAppLauncher(session);
 
   const [openAppLauncherModal, setOpenAppLauncherModal] = useState(false);
   const [openTerminateModal, setOpenTerminateModal] = useState(false);
   const [openLogModal, setOpenLogModal] = useState(false);
   const [openContainerCommitModal, setOpenContainerCommitModal] =
+    useState(false);
+  const [openSFTPConnectionInfoModal, setOpenSFTPConnectionInfoModal] =
     useState(false);
 
   const userInfo = useCurrentUserInfo();
@@ -121,7 +126,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
               }
               icon={<BAITerminalAppIcon />}
               onClick={() => {
-                appLauncher.runTerminal(session?.row_id);
+                appLauncher.runTerminal();
               }}
             />
           </Tooltip>
@@ -151,6 +156,35 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           open={openLogModal}
           onCancel={() => {
             setOpenLogModal(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
+
+      {session.type === 'system' && (
+        <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
+          <Button
+            disabled={!isActive(session) || !isOwner}
+            size={size}
+            icon={
+              <Image
+                width="18px"
+                src="/resources/icons/sftp.png"
+                alt="SSH / SFTP"
+                preview={false}
+              />
+            }
+            onClick={() => {
+              setOpenSFTPConnectionInfoModal(true);
+            }}
+          />
+        </Tooltip>
+      )}
+      <BAIUnmountAfterClose>
+        <SFTPConnectionInfoModal
+          sessionFrgmt={session}
+          open={openSFTPConnectionInfoModal}
+          onCancel={() => {
+            setOpenSFTPConnectionInfoModal(false);
           }}
         />
       </BAIUnmountAfterClose>

@@ -8,7 +8,7 @@ import CodeMirror, {
 interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
   value?: string;
   onChange?: (value: string) => void;
-  language: LanguageName;
+  language?: LanguageName;
   editable?: boolean;
   showLineNumbers?: boolean;
   lineWrapping?: boolean;
