@@ -1254,6 +1254,7 @@
     "PendingSessions": "Sesi yang tertunda"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Agen",
     "AgentId": "ID Agen",
     "Agents": "Agen",

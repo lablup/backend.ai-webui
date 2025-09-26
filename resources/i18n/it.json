@@ -1253,6 +1253,7 @@
     "PendingSessions": "Sessioni in sospeso"
   },
   "session": {
+    "ActiveSessions": "Sessioni attive",
     "Agent": "Agente",
     "AgentId": "ID agente",
     "Agents": "Agenti",

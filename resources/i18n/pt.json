@@ -1255,6 +1255,7 @@
     "PendingSessions": "Sessões pendentes"
   },
   "session": {
+    "ActiveSessions": "Sessões ativas",
     "Agent": "Agente",
     "AgentId": "ID do agente",
     "Agents": "Agentes",

@@ -1253,6 +1253,7 @@
     "PendingSessions": "Εκκρεμείς συνεδρίες"
   },
   "session": {
+    "ActiveSessions": "Ενεργές συνεδρίες",
     "Agent": "Μέσο",
     "AgentId": "Αναγνωριστικό πράκτορα",
     "Agents": "Πράκτορες",

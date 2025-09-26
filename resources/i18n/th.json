@@ -1245,6 +1245,7 @@
     "PendingSessions": "รอการประชุม"
   },
   "session": {
+    "ActiveSessions": "เซสชันที่ใช้งานอยู่",
     "Agent": "ตัวแทน",
     "AgentId": "ID ตัวแทน",
     "Agents": "ตัวแทน",

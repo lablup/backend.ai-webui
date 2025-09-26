@@ -1255,6 +1255,7 @@
     "PendingSessions": "Vireillä olevat istunnot"
   },
   "session": {
+    "ActiveSessions": "Aktiiviset istunnot",
     "Agent": "Agentti",
     "AgentId": "Agenttitunnus",
     "Agents": "Agentit",

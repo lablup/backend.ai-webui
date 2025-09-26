@@ -1256,6 +1256,7 @@
     "PendingSessions": "Phiên đang chờ xử lý"
   },
   "session": {
+    "ActiveSessions": "Phiên hoạt động",
     "Agent": "Đặc vụ",
     "AgentId": "Id đại lý",
     "Agents": "Đại lý",
