@@ -184,6 +184,14 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
             {vFolderDescriptionElement}
           </BAIFlex>
         )}
+        <div style={{ display: 'none' }}>
+          {/* @ts-ignore  TODO: delete below after https://lablup.atlassian.net/browse/FR-1150 */}
+          <backend-ai-folder-explorer
+            ref={folderExplorerRef}
+            active
+            vfolderID={vfolderID}
+          />
+        </div>
       </BAIFlex>
     </BAIModal>
   );

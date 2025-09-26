@@ -1536,7 +1536,11 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       preferredImage['tag'];
 
     resources.config = {};
-    resources.config.mounts = [this.vfolderName];
+    if (globalThis.backendaiclient.supports('mount-by-id')) {
+      resources.config.mount_ids = [this.vfolderID];
+    } else {
+      resources.config.mounts = [this.vfolderName];
+    }
     resources.config.resources = {
       cpu: 1,
       mem: this.minimumResource.mem + 'g',
@@ -1676,7 +1680,13 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       resources.domain = globalThis.backendaiclient._config.domainName;
       resources.type = 'system';
       resources.config = {};
-      resources.config.mounts = [this.vfolderName];
+
+      if (globalThis.backendaiclient.supports('mount-by-id')) {
+        resources.config.mount_ids = [this.vfolderID];
+      } else {
+        resources.config.mounts = [this.vfolderName];
+      }
+
       resources.config.scaling_group =
         this.volumeInfo[this.vhost]?.sftp_scaling_groups[0] || '';
       resources.config.resources = {

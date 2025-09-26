@@ -154,6 +154,7 @@ export interface SessionResources {
       allow_fractional_resource_fragmentation?: boolean;
     };
     mounts?: string[];
+    mount_ids?: string[];
     mount_map?: {
       [key: string]: string;
     };
