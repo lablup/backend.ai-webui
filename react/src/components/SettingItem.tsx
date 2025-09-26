@@ -1,4 +1,12 @@
-import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
+import {
+  Badge,
+  Checkbox,
+  Select,
+  type SelectProps,
+  Switch,
+  Typography,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -6,7 +14,7 @@ import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
   'data-testid'?: string;
-  type: 'custom' | 'checkbox' | 'select';
+  type: 'custom' | 'checkbox' | 'select' | 'switch';
   title: string;
   description?: string | ReactElement;
   children?: ReactNode;
@@ -94,7 +102,13 @@ const SettingItem: React.FC<SettingItemProps> = ({
               ...selectProps?.style,
             }}
             {..._.omit(selectProps, ['style'])}
-          ></Select>
+          />
+        </>
+      )}
+      {type === 'switch' && (
+        <>
+          {description}
+          <Switch checked={value} onChange={onChange} />
         </>
       )}
     </BAIFlex>
