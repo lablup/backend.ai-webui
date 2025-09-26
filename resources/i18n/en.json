@@ -1104,6 +1104,12 @@
     "Username": "Username",
     "UsernameOptional": "Username (Optional)"
   },
+  "reservedResources": {
+    "Free": "Free",
+    "Reserved": "Reserved",
+    "ReservedResources": "Reserved Resources",
+    "ReservedResourcesDescription": "This panel shows all reserved resources across all agents in the system. The values represent the total used resources by all active sessions."
+  },
   "reservoirPage": {
     "Activate": "Activate",
     "Active": "Active",
@@ -1129,7 +1135,7 @@
     "SuccessFullyPulledArtifact": "Successfully pulled artifact {{name}}: {{version}}",
     "Type": "Type",
     "Version": "Version",
-    "VersionList": "Available List"
+    "VersionList": "Available List "
   },
   "resourceGroup": {
     "Activate": "Activate",
