@@ -230,6 +230,7 @@ const SessionDetailContent: React.FC<{
             level={3}
             style={{
               margin: 0,
+              lineHeight: '1.6em',
               color: ['TERMINATED', 'CANCELLED'].includes(session.status || '')
                 ? token.colorTextTertiary
                 : undefined,
@@ -238,9 +239,7 @@ const SessionDetailContent: React.FC<{
               !['TERMINATED', 'CANCELLED'].includes(session.status || '')
             }
           />
-          <Button.Group size="large">
-            <SessionActionButtons sessionFrgmt={session} />
-          </Button.Group>
+          <SessionActionButtons size={'large'} compact sessionFrgmt={session} />
         </BAIFlex>
 
         <Descriptions

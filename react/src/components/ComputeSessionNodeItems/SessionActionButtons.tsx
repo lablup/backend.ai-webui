@@ -9,7 +9,7 @@ import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { Tooltip, Button, theme } from 'antd';
+import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
@@ -19,12 +19,14 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Suspense, useState } from 'react';
+import React, { Suspense, useState, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;
+  size?: ButtonProps['size'];
+  compact?: boolean;
 }
 
 const isActive = (session: SessionActionButtonsFragment$data) => {
@@ -34,13 +36,17 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
 };
 const isAppSupported = (session: SessionActionButtonsFragment$data) => {
   return (
-    ['batch', 'interactive', 'inference', 'system', 'running'].includes(
+    ['batch', 'interactive', 'inference', 'running'].includes(
       session?.type || '',
     ) && !_.isEmpty(JSON.parse(session?.service_ports ?? '{}'))
   );
 };
 
-const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
+const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
+  sessionFrgmt,
+  compact,
+  size,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const appLauncher = useBackendAIAppLauncher();
@@ -63,7 +69,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
         ...AppLauncherModalFragment
       }
     `,
-    props.sessionFrgmt,
+    sessionFrgmt,
   );
 
   const [openAppLauncherModal, setOpenAppLauncherModal] = useState(false);
@@ -75,102 +81,123 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
   const userInfo = useCurrentUserInfo();
   const isOwner = userInfo[0]?.uuid === session?.user_id;
 
-  return (
-    session && (
-      <>
-        <Tooltip title={t('session.SeeAppDialog')}>
-          <Button
-            disabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
-            icon={<BAIAppIcon />}
-            onClick={() => {
-              setOpenAppLauncherModal(true);
-            }}
-          />
-        </Tooltip>
-        <Suspense fallback={null}>
-          <AppLauncherModal
-            sessionFrgmt={session}
-            open={openAppLauncherModal}
+  const Wrapper: React.FC<PropsWithChildren> = ({ children }) => {
+    return compact ? (
+      <Space.Compact>{children}</Space.Compact>
+    ) : (
+      <>{children}</>
+    );
+  };
+  return session ? (
+    <Wrapper>
+      {session.type !== 'system' && (
+        <>
+          <Tooltip title={t('session.SeeAppDialog')}>
+            <Button
+              size={size}
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
+              }
+              icon={<BAIAppIcon />}
+              onClick={() => {
+                setOpenAppLauncherModal(true);
+              }}
+            />
+          </Tooltip>
+          <Suspense fallback={null}>
+            <AppLauncherModal
+              sessionFrgmt={session}
+              open={openAppLauncherModal}
+              onRequestClose={() => {
+                setOpenAppLauncherModal(false);
+              }}
+            />
+          </Suspense>
+          <Tooltip title={t('session.ExecuteTerminalApp')}>
+            <Button
+              size={size}
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
+              }
+              icon={<BAITerminalAppIcon />}
+              onClick={() => {
+                appLauncher.runTerminal(session?.row_id);
+              }}
+            />
+          </Tooltip>
+          {/* Don't put this modal to end of the return array(<></>). */}
+          <TerminateSessionModal
+            sessionFrgmts={[session]}
+            open={openTerminateModal}
             onRequestClose={() => {
-              setOpenAppLauncherModal(false);
+              setOpenTerminateModal(false);
             }}
           />
-        </Suspense>
-        <Tooltip title={t('session.ExecuteTerminalApp')}>
-          <Button
-            disabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
-            icon={<BAITerminalAppIcon />}
-            onClick={() => {
-              appLauncher.runTerminal(session?.row_id);
-            }}
-          />
-        </Tooltip>
-        {/* Don't put this modal to end of the return array(<></>). */}
-        <TerminateSessionModal
-          sessionFrgmts={[session]}
-          open={openTerminateModal}
-          onRequestClose={() => {
-            setOpenTerminateModal(false);
+        </>
+      )}
+
+      <Tooltip title={t('session.SeeContainerLogs')}>
+        <Button
+          size={size}
+          icon={<BAISessionLogIcon />}
+          onClick={() => {
+            setOpenLogModal(true);
           }}
         />
-
-        <Tooltip title={t('session.SeeContainerLogs')}>
-          <Button
-            icon={<BAISessionLogIcon />}
-            onClick={() => {
-              setOpenLogModal(true);
-            }}
-          />
-        </Tooltip>
-        <BAIUnmountAfterClose>
-          <ContainerLogModal
-            sessionFrgmt={session}
-            open={openLogModal}
-            onCancel={() => {
-              setOpenLogModal(false);
-            }}
-          />
-        </BAIUnmountAfterClose>
-        <Tooltip title={t('session.RequestContainerCommit')}>
-          <Button
-            disabled={
-              !baiClient._config.enableContainerCommit ||
-              session.type === 'system' ||
-              !isActive(session) ||
-              !isOwner
-            }
-            icon={<BAIContainerCommitIcon />}
-            onClick={() => {
-              setOpenContainerCommitModal(true);
-            }}
-          />
-        </Tooltip>
-        <ContainerCommitModal
+      </Tooltip>
+      <BAIUnmountAfterClose>
+        <ContainerLogModal
           sessionFrgmt={session}
-          open={openContainerCommitModal}
-          onRequestClose={() => setOpenContainerCommitModal(false)}
+          open={openLogModal}
+          onCancel={() => {
+            setOpenLogModal(false);
+          }}
         />
-        <Tooltip title={t('session.TerminateSession')}>
-          <Button
-            disabled={!isActive(session)}
-            icon={
-              <BAITerminateIcon
-                style={{
-                  color: isActive(session) ? token.colorError : undefined,
-                }}
-              />
-            }
-            onClick={() => {
-              setOpenTerminateModal(true);
-            }}
+      </BAIUnmountAfterClose>
+
+      {session.type !== 'system' && (
+        <>
+          <Tooltip title={t('session.RequestContainerCommit')}>
+            <Button
+              size={size}
+              disabled={
+                !baiClient._config.enableContainerCommit ||
+                session.type === 'system' ||
+                !isActive(session) ||
+                !isOwner
+              }
+              icon={<BAIContainerCommitIcon />}
+              onClick={() => {
+                setOpenContainerCommitModal(true);
+              }}
+            />
+          </Tooltip>
+          <ContainerCommitModal
+            sessionFrgmt={session}
+            open={openContainerCommitModal}
+            onRequestClose={() => setOpenContainerCommitModal(false)}
           />
-        </Tooltip>
-      </>
-    )
+        </>
+      )}
+      <Tooltip title={t('session.TerminateSession')}>
+        <Button
+          size={size}
+          disabled={!isActive(session)}
+          icon={
+            <BAITerminateIcon
+              style={{
+                color: isActive(session) ? token.colorError : undefined,
+              }}
+            />
+          }
+          onClick={() => {
+            setOpenTerminateModal(true);
+          }}
+        />
+      </Tooltip>
+    </Wrapper>
+  ) : (
+    []
   );
 };
 
