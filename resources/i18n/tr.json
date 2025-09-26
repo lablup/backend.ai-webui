@@ -1248,6 +1248,7 @@
     "PendingSessions": "Bekleyen seanslar"
   },
   "session": {
+    "ActiveSessions": "Aktif Oturumlar",
     "Agent": "Temsilci",
     "AgentId": "Ajan kimliği",
     "Agents": "Temsilciler",
@@ -1988,6 +1989,7 @@
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "AIAgents": "Yapay Zeka Ajanları",
       "AboutBackendAI": "Backend.AI hakkında",
+      "AdminDashboard": "Yönetici Gösterge Tablosu",
       "Administration": "yönetim",
       "AgentSummary": "Temsilci Özeti",
       "Architecture": "Mimarlık",

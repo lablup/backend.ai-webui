@@ -1096,6 +1096,10 @@
     "Username": "사용자 이름",
     "UsernameOptional": "사용자 이름 (선택)"
   },
+  "reservedResources": {
+    "ReservedResources": "점유 자원 현황",
+    "ReservedResourcesDescription": "이 패널은 시스템 전체 에이전트에서 점유된 모든 자원 현황을 보여줍니다. 모든 활성 세션이 점유한 총 자원량을 나타냅니다."
+  },
   "reservoirPage": {
     "Activate": "활성화",
     "Active": "활성",
@@ -1252,6 +1256,7 @@
     "PendingSessions": "대기 세션"
   },
   "session": {
+    "ActiveSessions": "활성 세션",
     "Agent": "실행 노드",
     "AgentId": "에이전트 ID",
     "Agents": "실행 노드",
@@ -1993,6 +1998,7 @@
       "AIAccelerator": "AI 가속기",
       "AIAgents": "AI 에이전트",
       "AboutBackendAI": "Backend.AI에 대하여",
+      "AdminDashboard": "관리자 대시보드",
       "Administration": "관리",
       "AgentSummary": "자원 요약",
       "Architecture": "\b운영체제",

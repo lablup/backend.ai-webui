@@ -1247,6 +1247,7 @@
     "PendingSessions": "Sesi yang belum selesai"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Ejen",
     "AgentId": "Id ejen",
     "Agents": "ejen",
@@ -1985,6 +1986,7 @@
       "AIAccelerator": "Pemecut AI",
       "AIAgents": "Ejen AI",
       "AboutBackendAI": "Mengenai Backend.AI",
+      "AdminDashboard": "Papan pemuka admin",
       "Administration": "Pentadbiran",
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Seni bina",

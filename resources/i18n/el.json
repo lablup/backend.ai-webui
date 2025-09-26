@@ -1245,6 +1245,7 @@
     "PendingSessions": "Εκκρεμείς συνεδρίες"
   },
   "session": {
+    "ActiveSessions": "Ενεργές συνεδρίες",
     "Agent": "Μέσο",
     "AgentId": "Αναγνωριστικό πράκτορα",
     "Agents": "Πράκτορες",
@@ -1984,6 +1985,7 @@
       "AIAccelerator": "Επιταχυντής AI",
       "AIAgents": "Πράκτορες AI",
       "AboutBackendAI": "Σχετικά με το Backend.AI",
+      "AdminDashboard": "Πίνακας ελέγχου διαχειριστή",
       "Administration": "Διαχείριση",
       "AgentSummary": "Περίληψη πράκτορα",
       "Architecture": "Αρχιτεκτονική",

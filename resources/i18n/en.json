@@ -1097,6 +1097,12 @@
     "Username": "Username",
     "UsernameOptional": "Username (Optional)"
   },
+  "reservedResources": {
+    "Free": "Free",
+    "Reserved": "Reserved",
+    "ReservedResources": "Reserved Resources",
+    "ReservedResourcesDescription": "This panel shows all reserved resources across all agents in the system. The values represent the total used resources by all active sessions."
+  },
   "reservoirPage": {
     "Activate": "Activate",
     "Active": "Active",
@@ -1118,7 +1124,7 @@
     "Status": "Status",
     "Type": "Type",
     "Version": "Version",
-    "VersionList": "Available List"
+    "VersionList": "Available List "
   },
   "resourceGroup": {
     "Activate": "Activate",
@@ -1253,6 +1259,7 @@
     "PendingSessions": "Pending Sessions"
   },
   "session": {
+    "ActiveSessions": "Active Sessions",
     "Agent": "Agent",
     "AgentId": "Agent ID",
     "Agents": "Agents",
@@ -1995,6 +2002,7 @@
       "AIAccelerator": "AI Accelerator",
       "AIAgents": "AI Agents",
       "AboutBackendAI": "About Backend.AI",
+      "AdminDashboard": "Admin Dashboard",
       "Administration": "Administration",
       "AgentSummary": "Agent Summary",
       "Architecture": "Architecture",

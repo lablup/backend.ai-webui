@@ -1247,6 +1247,7 @@
     "PendingSessions": "保留中のセッション"
   },
   "session": {
+    "ActiveSessions": "アクティブセッション",
     "Agent": "エージェント",
     "AgentId": "エージェントID",
     "Agents": "エージェント",
@@ -1987,6 +1988,7 @@
       "AIAccelerator": "AIアクセラレータ",
       "AIAgents": "AIエージェント",
       "AboutBackendAI": "Backend.AIについて",
+      "AdminDashboard": "管理ダッシュボード",
       "Administration": "管理",
       "AgentSummary": "リソース概要",
       "Architecture": "建築",
