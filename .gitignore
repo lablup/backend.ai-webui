@@ -61,6 +61,8 @@ typings/
 
 # dotenv environment variables file
 .env
+.env.local
+react/.env.local
 
 # dotenv environment variables file for playwright test
 /e2e/envs/*
@@ -87,6 +89,10 @@ app
 config.ini
 config.toml
 configs/*.toml
+
+# model card metadata
+resources/model_card_metadata.json
+
 # webpack
 dist
 
@@ -144,3 +150,21 @@ yarn.lock
 /playwright/.cache/
 
 /e2e/screenshots/*
+
+*.code-workspace
+!backend.ai-webui.code-workspace
+
+# ignore temporary files
+guides-for-ai-temp
+CLAUDE.local.md
+
+.claude/settings.local.json
+
+.env.development.local
+
+# ignore merged schema
+data/merged_schema.graphql
+
+# webui release download temp directories
+temp-webui-*
+backend.ai-webui-bundle-*.zip
