@@ -183,6 +183,9 @@ const ResourceAllocationFormItems: React.FC<
 
   // Get supported accelerator types in resource group by image
   const supportedAcceleratorTypesInRGByImage = useMemo(() => {
+    if (_.isUndefined(acceleratorSlotsInRG) || _.isNil(currentImage)) {
+      return undefined;
+    }
     return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
       // '*' means all types of accelerators are supported
       return (
@@ -201,7 +204,7 @@ const ResourceAllocationFormItems: React.FC<
   }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (supportedAcceleratorTypesInRGByImage.length === 0) {
+    if (supportedAcceleratorTypesInRGByImage?.length === 0) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
@@ -1072,14 +1075,14 @@ const ResourceAllocationFormItems: React.FC<
                                 return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
                               },
                               open:
-                                supportedAcceleratorTypesInRGByImage.length ===
+                                supportedAcceleratorTypesInRGByImage?.length ===
                                 0
                                   ? false
                                   : undefined,
                             },
                           }}
                           disabled={
-                            supportedAcceleratorTypesInRGByImage.length === 0
+                            supportedAcceleratorTypesInRGByImage?.length === 0
                           }
                           min={0}
                           max={
@@ -1099,7 +1102,7 @@ const ResourceAllocationFormItems: React.FC<
                                   _.keys(acceleratorSlotsInRG),
                                 )}
                                 hidden={
-                                  supportedAcceleratorTypesInRGByImage.length ===
+                                  supportedAcceleratorTypesInRGByImage?.length ===
                                   0
                                 }
                               >
