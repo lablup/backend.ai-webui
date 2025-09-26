@@ -816,6 +816,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
+      this._features['endpoint-lifecycle-ready-stage'] = true;
     }
   }
 
