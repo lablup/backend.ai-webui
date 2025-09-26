@@ -1237,6 +1237,7 @@
     "PendingSessions": "รอการประชุม"
   },
   "session": {
+    "ActiveSessions": "เซสชันที่ใช้งานอยู่",
     "Agent": "ตัวแทน",
     "AgentId": "ID ตัวแทน",
     "Agents": "ตัวแทน",
@@ -1971,6 +1972,7 @@
       "AIAccelerator": "ตัวเร่ง AI",
       "AIAgents": "ตัวแทน AI",
       "AboutBackendAI": "เกี่ยวกับ Backend.AI",
+      "AdminDashboard": "แดชบอร์ดผู้ดูแลระบบ",
       "Administration": "การจัดการระบบ",
       "AgentSummary": "สรุปตัวแทน",
       "Architecture": "สถาปัตยกรรม",

@@ -35,6 +35,9 @@ const EndpointDetailPage = React.lazy(
 );
 const StartPage = React.lazy(() => import('./pages/StartPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const AdminDashboardPage = React.lazy(
+  () => import('./pages/AdminDashboardPage'),
+);
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
@@ -538,6 +541,25 @@ const router = createBrowserRouter([
         path: '/usersettings',
         handle: { labelKey: 'webui.menu.Settings&Logs' },
         Component: UserSettingsPage,
+      },
+      {
+        path: '/admin-dashboard',
+        handle: { labelKey: 'webui.menu.AdminDashboard' },
+        Component: () => {
+          const location = useLocation();
+          const [experimentalDashboard] = useBAISettingUserState(
+            'experimental_dashboard',
+          );
+          return experimentalDashboard ? (
+            <BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <AdminDashboardPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          ) : (
+            <WebUINavigate to={'/summary' + location.search} replace />
+          );
+        },
       },
       {
         path: '/credential',

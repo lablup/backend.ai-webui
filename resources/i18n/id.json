@@ -1246,6 +1246,7 @@
     "PendingSessions": "Sesi yang tertunda"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Agen",
     "AgentId": "ID Agen",
     "Agents": "Agen",
@@ -1987,6 +1988,7 @@
       "AIAccelerator": "Akselerator AI",
       "AIAgents": "Agen AI",
       "AboutBackendAI": "Tentang Backend.AI",
+      "AdminDashboard": "Dasbor Admin",
       "Administration": "Administrasi",
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Arsitektur",

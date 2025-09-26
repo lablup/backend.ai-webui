@@ -1247,6 +1247,7 @@
     "PendingSessions": "Vireillä olevat istunnot"
   },
   "session": {
+    "ActiveSessions": "Aktiiviset istunnot",
     "Agent": "Agentti",
     "AgentId": "Agenttitunnus",
     "Agents": "Agentit",
@@ -1987,6 +1988,7 @@
       "AIAccelerator": "AI-kiihdyttämö",
       "AIAgents": "AI-agentit",
       "AboutBackendAI": "Tietoja Backend.AI:sta",
+      "AdminDashboard": "Järjestelmänvalvojan kojelauta",
       "Administration": "Hallinto",
       "AgentSummary": "Agentin yhteenveto",
       "Architecture": "Arkkitehtuuri",

@@ -66,7 +66,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       @argumentDefinitions(
         resourceGroup: { type: "String" }
         isSuperAdmin: { type: "Boolean!" }
-        agentNodeFilter: { type: "String" }
+        agentNodeFilter: { type: "String!" }
       )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
@@ -88,8 +88,8 @@ const TotalResourceWithinResourceGroup: React.FC<
           total_count
         }
         agent_nodes(filter: $agentNodeFilter)
-          @include(if: $isSuperAdmin)
-          @since(version: "24.12.0") {
+          @since(version: "24.12.0")
+          @include(if: $isSuperAdmin) {
           edges {
             node {
               id

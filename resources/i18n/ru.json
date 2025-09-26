@@ -1247,6 +1247,7 @@
     "PendingSessions": "В ожидании сессий"
   },
   "session": {
+    "ActiveSessions": "Активные сеансы",
     "Agent": "Агент",
     "AgentId": "Идентификатор агента",
     "Agents": "Агенты",
@@ -1987,6 +1988,7 @@
       "AIAccelerator": "Ускоритель искусственного интеллекта",
       "AIAgents": "Агенты искусственного интеллекта",
       "AboutBackendAI": "О Backend.AI",
+      "AdminDashboard": "Административная панель",
       "Administration": "Администрация",
       "AgentSummary": "Резюме агента",
       "Architecture": "Архитектура",

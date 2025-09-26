@@ -14,9 +14,14 @@ import { graphql, useRefetchableFragment } from 'react-relay';
 interface MySessionProps {
   queryRef: MySessionQueryFragment$key;
   isRefetching?: boolean;
+  title?: string;
 }
 
-const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
+const MySession: React.FC<MySessionProps> = ({
+  queryRef,
+  isRefetching,
+  title,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -25,34 +30,34 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
     graphql`
         fragment  MySessionQueryFragment on Query
         @argumentDefinitions(
-          projectId: { type: "UUID!" }
+          scopeId: { type: "ScopeField" }
         ) 
         @refetchable(queryName: "MySessionQueryFragmentRefetchQuery") {
           myInteractive: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myBatch: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myInference: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myUpload: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
@@ -79,7 +84,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
     >
       {/* Fixed Title Section */}
       <BAIBoardItemTitle
-        title={t('session.MySessions')}
+        title={title || t('session.MySessions')}
         extra={
           <BAIFetchKeyButton
             loading={isPendingRefetch || isRefetching}

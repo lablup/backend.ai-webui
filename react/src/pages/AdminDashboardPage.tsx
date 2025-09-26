@@ -1,13 +1,16 @@
-import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
+import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
-import MyResource from '../components/MyResource';
-import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
 import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
+import ReservedResources from '../components/ReservedResources';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
+import {
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -18,15 +21,18 @@ import { Skeleton, theme } from 'antd';
 import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
-const DashboardPage: React.FC = () => {
+const AdminDashboardPage: React.FC = () => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
@@ -38,14 +44,15 @@ const DashboardPage: React.FC = () => {
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
 
-  const queryRef = useLazyLoadQuery<DashboardPageQuery>(
+  const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
-      query DashboardPageQuery(
+      query AdminDashboardPageQuery(
         $scopeId: ScopeField
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $reservedResourceFilter: String!
       ) {
         ...MySessionQueryFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -57,6 +64,8 @@ const DashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
+        ...ReservedResourcesFragment
+          @arguments(reservedResourceFilter: $reservedResourceFilter)
       }
     `,
     {
@@ -65,6 +74,7 @@ const DashboardPage: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      reservedResourceFilter: 'schedulable == true & status == "ALIVE"',
     },
     {
       fetchPolicy:
@@ -81,7 +91,7 @@ const DashboardPage: React.FC = () => {
 
   const initialBoardItems: Array<BAIBoardItem> = filterOutEmpty([
     {
-      id: 'mySession',
+      id: 'activeSessions',
       rowSpan: 2,
       columnSpan: 2,
       definition: {
@@ -98,42 +108,9 @@ const DashboardPage: React.FC = () => {
             <MySession
               queryRef={queryRef}
               isRefetching={isPendingIntervalRefetch}
+              title={t('session.ActiveSessions')}
             />
           </Suspense>
-        ),
-      },
-    },
-    {
-      id: 'myResource',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <MyResource
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
-        ),
-      },
-    },
-    {
-      id: 'myResourceWithinResourceGroup',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <MyResourceWithinResourceGroup
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
         ),
       },
     },
@@ -151,6 +128,29 @@ const DashboardPage: React.FC = () => {
             queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
             refetching={isPendingIntervalRefetch}
           />
+        ),
+      },
+    },
+    baiClient.supports('agent-nodes-query') && {
+      id: 'reservedResources',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
+      data: {
+        content: (
+          <Suspense
+            fallback={
+              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+            }
+          >
+            <ReservedResources
+              queryRef={queryRef}
+              refetching={isPendingIntervalRefetch}
+            />
+          </Suspense>
         ),
       },
     },
@@ -203,4 +203,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage;
+export default AdminDashboardPage;

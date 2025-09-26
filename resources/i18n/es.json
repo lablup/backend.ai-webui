@@ -1248,6 +1248,7 @@
     "PendingSessions": "Sesiones pendientes"
   },
   "session": {
+    "ActiveSessions": "Sesiones activas",
     "Agent": "Agente",
     "AgentId": "ID de agente",
     "Agents": "Agentes",
@@ -1988,6 +1989,7 @@
       "AIAccelerator": "Acelerador de IA",
       "AIAgents": "Agentes de IA",
       "AboutBackendAI": "Acerca de Backend.AI",
+      "AdminDashboard": "Tablero de administración",
       "Administration": "Administración",
       "AgentSummary": "Resumen del agente",
       "Architecture": "Arquitectura",

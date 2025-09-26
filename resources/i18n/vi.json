@@ -1248,6 +1248,7 @@
     "PendingSessions": "Phiên đang chờ xử lý"
   },
   "session": {
+    "ActiveSessions": "Phiên hoạt động",
     "Agent": "Đặc vụ",
     "AgentId": "Id đại lý",
     "Agents": "Đại lý",
@@ -1988,6 +1989,7 @@
       "AIAccelerator": "Máy gia tốc AI",
       "AIAgents": "Đại lý AI",
       "AboutBackendAI": "Giới thiệu về Backend.AI",
+      "AdminDashboard": "Bảng điều khiển quản trị viên",
       "Administration": "Hành chính",
       "AgentSummary": "Tóm tắt đại lý",
       "Architecture": "Ngành kiến ​​​​trúc",
