@@ -11,6 +11,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
+import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -92,7 +93,7 @@ const UserPreferencesPage = () => {
     {
       'data-testid': 'group-preferences',
       title: t('userSettings.Preferences'),
-      settingItems: [
+      settingItems: filterOutEmpty([
         {
           'data-testid': 'items-desktop-notification',
           type: 'checkbox',
@@ -181,23 +182,20 @@ const UserPreferencesPage = () => {
             console.log(globalThis.backendaioptions.get('selected_language'));
           },
         },
-        ...[
+        globalThis.isElectron && {
+          'data-testid': 'items-keep-login-session-information',
+          type: 'checkbox',
+          title: t('userSettings.KeepLoginSessionInformation'),
+          description: (
+            <Trans i18nKey="userSettings.DescKeepLoginSessionInformation" />
+          ),
+          defaultValue: false,
           //@ts-ignore
-          globalThis.isElectron && {
-            'data-testid': 'items-keep-login-session-information',
-            type: 'checkbox',
-            title: t('userSettings.KeepLoginSessionInformation'),
-            description: (
-              <Trans i18nKey="userSettings.DescKeepLoginSessionInformation" />
-            ),
-            defaultValue: false,
-            //@ts-ignore
-            value: preserveLogin,
-            onChange: (e: any) => {
-              setPreserveLogin(e.target.checked);
-            },
+          value: preserveLogin,
+          onChange: (e: any) => {
+            setPreserveLogin(e.target.checked);
           },
-        ].filter(Boolean),
+        },
         {
           'data-testid': 'items-automatic-update-check',
           type: 'checkbox',
@@ -252,7 +250,7 @@ const UserPreferencesPage = () => {
             </Button>
           ),
         },
-      ],
+      ]),
     },
     {
       'data-testid': 'group-shell-environments',
