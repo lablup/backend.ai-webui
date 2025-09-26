@@ -1,0 +1,3 @@
+[merge "json-i18n"]
+  name = i18n JSON 3-way merge (sorted, conflict on same path)
+  driver = node scripts/i18n-merge-driver.js %O %A %B
