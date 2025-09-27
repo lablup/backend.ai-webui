@@ -1,7 +1,7 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import useControllableState from '../hooks/useControllableState';
 import { usePrevious } from 'ahooks';
-import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
+import { InputNumber, InputNumberProps, Select, theme, Typography } from 'antd';
 import _ from 'lodash';
 import React, { RefObject, useEffect, useRef } from 'react';
 
@@ -30,6 +30,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   roundStep,
   ...inputNumberProps
 }) => {
+  const { token } = theme.useToken();
   const [value, setValue] = useControllableState<string | null | undefined>(
     inputNumberProps,
     {
@@ -149,6 +150,9 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
             label: (
               <Typography.Text
                 style={{
+                  color: ref.current?.disabled
+                    ? token.colorTextDisabled
+                    : token.colorText,
                   fontFamily:
                     "'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace",
                 }}
