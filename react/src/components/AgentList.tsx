@@ -10,11 +10,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -34,7 +30,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
+import { useControllableValue, useToggle } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
@@ -43,6 +39,7 @@ import {
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
+  BAIFlexProps,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -55,9 +52,16 @@ type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
 
 interface AgentListProps {
   tableProps?: Omit<TableProps, 'dataSource'>;
+  headerProps?: BAIFlexProps;
+  fetchKey?: string;
+  onChangeFetchKey?: (key: string) => void;
 }
 
-const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
+const AgentList: React.FC<AgentListProps> = ({
+  tableProps,
+  headerProps,
+  ...otherProps
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -84,7 +88,11 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
     pageSize: 10,
   });
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
+  const [fetchKey, setFetchKey] = useControllableValue(otherProps, {
+    valuePropName: 'fetchKey',
+    trigger: 'onChangeFetchKey',
+    defaultValue: INITIAL_FETCH_KEY,
+  });
 
   const queryVariables = useMemo(
     () => ({
@@ -105,6 +113,10 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const updateFetchKey = () => {
+    setFetchKey(() => new Date().toISOString());
+  };
 
   const { agent_list } = useLazyLoadQuery<AgentListQuery>(
     graphql`
@@ -769,7 +781,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="between" align="start" wrap="wrap">
+      <BAIFlex justify="between" align="start" wrap="wrap" {...headerProps}>
         <BAIFlex
           direction="row"
           gap={'sm'}

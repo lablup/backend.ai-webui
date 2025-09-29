@@ -25,6 +25,7 @@ interface UserSettings {
   experimental_dashboard?: boolean;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
