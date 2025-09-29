@@ -96,7 +96,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     () => new Set(hiddenButtonKeys ?? []),
     [hiddenButtonKeys],
   );
-  const isVisible = (key: SessionActionButtonKey) => !hiddenButtons.has(key);
+  const isVisible = (key: SessionActionButtonKey) => {
+    // If system session, hide not applicable buttons
+    if (
+      ['appLauncher', 'terminal', 'containerCommit'].includes(key) &&
+      session?.type === 'system'
+    ) {
+      return false;
+    }
+
+    // If containerCommit feature is disabled in the config, hide the button
+    if (!baiClient._config.enableContainerCommit && key === 'containerCommit') {
+      return false;
+    }
+    return !hiddenButtons.has(key);
+  };
 
   const Wrapper: React.FC<PropsWithChildren> = ({ children }) => {
     return compact ? (
@@ -106,90 +120,70 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     );
   };
 
-  // size가 small이면 tooltip 대신에 button의 title로 대체
+  // When size is 'small', use the button's title attribute instead of a Tooltip
   const isButtonTitleMode = size === 'small';
-  const shouldRenderNonSystemActions =
-    session?.type !== 'system' &&
-    (['appLauncher', 'terminal', 'terminate'] as SessionActionButtonKey[]).some(
-      isVisible,
-    );
+
   return session ? (
     <Wrapper>
-      {shouldRenderNonSystemActions && (
+      {isVisible('appLauncher') && (
         <>
-          {isVisible('appLauncher') && (
-            <>
-              <Tooltip
-                title={
-                  isButtonTitleMode ? undefined : t('session.SeeAppDialog')
-                }
-              >
-                <Button
-                  size={size}
-                  type="primary"
-                  disabled={
-                    !isAppSupported(session) || !isActive(session) || !isOwner
-                    // !isAppSupported(session) ||
-                    // session.status !== 'RUNNING' ||
-                    // !isOwner
-                  }
-                  icon={<BAIAppIcon />}
-                  onClick={() => {
-                    onAction?.('appLauncher');
-                    setOpenAppLauncherModal(true);
-                  }}
-                  title={
-                    isButtonTitleMode ? t('session.SeeAppDialog') : undefined
-                  }
-                />
-              </Tooltip>
-              <Suspense fallback={null}>
-                <AppLauncherModal
-                  sessionFrgmt={session}
-                  open={openAppLauncherModal}
-                  onRequestClose={() => {
-                    setOpenAppLauncherModal(false);
-                  }}
-                />
-              </Suspense>
-            </>
-          )}
-          {isVisible('terminal') && (
-            <Tooltip
-              title={
-                isButtonTitleMode ? undefined : t('session.ExecuteTerminalApp')
+          <Tooltip
+            title={isButtonTitleMode ? undefined : t('session.SeeAppDialog')}
+          >
+            <Button
+              size={size}
+              type="primary"
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
               }
-            >
-              <Button
-                size={size}
-                disabled={
-                  !isAppSupported(session) || !isActive(session) || !isOwner
-                }
-                icon={<BAITerminalAppIcon />}
-                onClick={() => {
-                  onAction?.('terminal');
-                  appLauncher.runTerminal(session?.row_id);
-                }}
-                title={
-                  isButtonTitleMode
-                    ? t('session.ExecuteTerminalApp')
-                    : undefined
-                }
-              />
-            </Tooltip>
-          )}
-          {isVisible('terminate') && (
-            <>
-              {/* Don't put this modal to end of the return array(<></>). */}
-              <TerminateSessionModal
-                sessionFrgmts={[session]}
-                open={openTerminateModal}
-                onRequestClose={() => {
-                  setOpenTerminateModal(false);
-                }}
-              />
-            </>
-          )}
+              icon={<BAIAppIcon />}
+              onClick={() => {
+                onAction?.('appLauncher');
+                setOpenAppLauncherModal(true);
+              }}
+              title={isButtonTitleMode ? t('session.SeeAppDialog') : undefined}
+            />
+          </Tooltip>
+          <Suspense fallback={null}>
+            <AppLauncherModal
+              sessionFrgmt={session}
+              open={openAppLauncherModal}
+              onRequestClose={() => {
+                setOpenAppLauncherModal(false);
+              }}
+            />
+          </Suspense>
+        </>
+      )}
+      {isVisible('terminal') && (
+        <>
+          <Tooltip
+            title={
+              isButtonTitleMode ? undefined : t('session.ExecuteTerminalApp')
+            }
+          >
+            <Button
+              size={size}
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
+              }
+              icon={<BAITerminalAppIcon />}
+              onClick={() => {
+                onAction?.('terminal');
+                appLauncher.runTerminal(session?.row_id);
+              }}
+              title={
+                isButtonTitleMode ? t('session.ExecuteTerminalApp') : undefined
+              }
+            />
+          </Tooltip>
+          <TerminateSessionModal
+            sessionFrgmts={[session]}
+            open={openTerminateModal}
+            onRequestClose={() => {
+              setOpenTerminateModal(false);
+            }}
+          />
         </>
       )}
 
@@ -224,7 +218,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         </>
       )}
 
-      {session.type !== 'system' && isVisible('containerCommit') && (
+      {isVisible('containerCommit') && (
         <>
           <Tooltip
             title={
@@ -235,12 +229,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              disabled={
-                !baiClient._config.enableContainerCommit ||
-                session.type === 'system' ||
-                !isActive(session) ||
-                !isOwner
-              }
+              disabled={!isActive(session) || !isOwner}
               icon={<BAIContainerCommitIcon />}
               onClick={() => {
                 onAction?.('containerCommit');
