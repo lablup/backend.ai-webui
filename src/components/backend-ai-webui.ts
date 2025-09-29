@@ -3,7 +3,6 @@
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { navigate } from '../backend-ai-app';
-// import '../lib/backend.ai-client-esm';
 import { default as TabCount } from '../lib/TabCounter';
 import {
   IronFlex,
@@ -142,6 +141,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) availablePages = [
     'start',
     'dashboard',
+    'admin-dashboard',
     'summary',
     'verify-email',
     'change-password',
@@ -174,7 +174,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'model-store',
     'scheduler',
     'reservoir',
-  ]; // temporally block pipeline from available pages 'pipeline', 'pipeline-job'
+  ];
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
     'credential',
@@ -183,6 +183,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'resource-policy',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
+    'admin-dashboard',
     'agent',
     'storage-settings',
     'settings',

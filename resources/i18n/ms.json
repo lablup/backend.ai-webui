@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Ejen aktif",
+    "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan At-a-Glance semua ejen yang sedang berjalan dalam sistem."
+  },
   "agent": {
     "Agent": "Ejen",
     "AgentSetting": "Tetapan Agen",
@@ -1254,6 +1258,7 @@
     "PendingSessions": "Sesi yang belum selesai"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Ejen",
     "AgentId": "Id ejen",
     "Agents": "ejen",
@@ -2003,6 +2008,7 @@
       "AIAccelerator": "Pemecut AI",
       "AIAgents": "Ejen AI",
       "AboutBackendAI": "Mengenai Backend.AI",
+      "AdminDashboard": "Papan pemuka admin",
       "Administration": "Pentadbiran",
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Seni bina",

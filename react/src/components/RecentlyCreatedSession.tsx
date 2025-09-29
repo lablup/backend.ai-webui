@@ -36,14 +36,14 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
     graphql`
       fragment RecentlyCreatedSessionFragment on Query
       @argumentDefinitions(
-        projectId: { type: "UUID!" }
+        scopeId: { type: "ScopeField" }
       )
       @refetchable(queryName: "RecentlyCreatedSessionRefetchQuery") {
         compute_session_nodes(
           first: 5
           order: "-created_at"
           filter: "status == \"running\""
-          project_id: $projectId
+          scope_id: $scopeId
         ) {
           edges {
             node {

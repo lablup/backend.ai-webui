@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Ενεργοί πράκτορες",
+    "ActiveAgentsTooltip": "Δείχνει μια επισκόπηση όλων των παραγόντων που εκτελούνται σήμερα στο σύστημα."
+  },
   "agent": {
     "Agent": "Πράκτορας",
     "AgentSetting": "Ρυθμίσεις πράκτορα",
@@ -1252,6 +1256,7 @@
     "PendingSessions": "Εκκρεμείς συνεδρίες"
   },
   "session": {
+    "ActiveSessions": "Ενεργές συνεδρίες",
     "Agent": "Μέσο",
     "AgentId": "Αναγνωριστικό πράκτορα",
     "Agents": "Πράκτορες",
@@ -2001,6 +2006,7 @@
       "AIAccelerator": "Επιταχυντής AI",
       "AIAgents": "Πράκτορες AI",
       "AboutBackendAI": "Σχετικά με το Backend.AI",
+      "AdminDashboard": "Πίνακας ελέγχου διαχειριστή",
       "Administration": "Διαχείριση",
       "AgentSummary": "Περίληψη πράκτορα",
       "Architecture": "Αρχιτεκτονική",

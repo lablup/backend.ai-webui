@@ -1,4 +1,3 @@
-import { MySessionQueryFragment$key } from '../__generated__/MySessionQueryFragment.graphql';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIPanelItem from './BAIPanelItem';
 import { theme } from 'antd';
@@ -10,49 +9,55 @@ import {
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+import { SessionCountDashboardItemQueryFragment$key } from 'src/__generated__/SessionCountDashboardItemQueryFragment.graphql';
 
 interface MySessionProps {
-  queryRef: MySessionQueryFragment$key;
+  queryRef: SessionCountDashboardItemQueryFragment$key;
   isRefetching?: boolean;
+  title?: string;
 }
 
-const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
+const SessionCountDashboardItem: React.FC<MySessionProps> = ({
+  queryRef,
+  isRefetching,
+  title,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-        fragment  MySessionQueryFragment on Query
+        fragment  SessionCountDashboardItemQueryFragment on Query
         @argumentDefinitions(
-          projectId: { type: "UUID!" }
+          scopeId: { type: "ScopeField" }
         ) 
-        @refetchable(queryName: "MySessionQueryFragmentRefetchQuery") {
+        @refetchable(queryName: "SessionCountDashboardItemQueryFragmentRefetchQuery") {
           myInteractive: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myBatch: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myInference: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
           myUpload: compute_session_nodes(
             first: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-            project_id: $projectId
+            scope_id: $scopeId
           ) {
             count
           }
@@ -79,7 +84,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
     >
       {/* Fixed Title Section */}
       <BAIBoardItemTitle
-        title={t('session.MySessions')}
+        title={title}
         extra={
           <BAIFetchKeyButton
             loading={isPendingRefetch || isRefetching}
@@ -135,4 +140,4 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
   );
 };
 
-export default MySession;
+export default SessionCountDashboardItem;
