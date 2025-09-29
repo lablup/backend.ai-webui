@@ -228,6 +228,10 @@
       "json",
       "node"
     ],
-    "rootDir": "src"
+    "rootDir": "./",
+    "roots": [
+      "scripts",
+      "src"
+    ]
   }
 }
