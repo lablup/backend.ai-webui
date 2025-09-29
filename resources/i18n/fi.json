@@ -50,6 +50,7 @@
     "Threshold": "Kynnys"
   },
   "button": {
+    "Action": "Toiminta",
     "Add": "Lisää",
     "Apply": "Hae",
     "Cancel": "Peruuta",
