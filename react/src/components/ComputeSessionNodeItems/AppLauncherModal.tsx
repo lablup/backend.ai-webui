@@ -51,6 +51,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       fragment AppLauncherModalFragment on ComputeSessionNode {
         id
         row_id
+        name
         service_ports
         access_key
       }
@@ -118,7 +119,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
 
   return (
     <BAIModal
-      title={t('session.appLauncher.App')}
+      title={`${t('session.appLauncher.App')}: ${session?.name ?? ''}`}
       width={450}
       onCancel={onRequestClose}
       footer={null}

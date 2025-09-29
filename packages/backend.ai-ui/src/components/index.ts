@@ -43,6 +43,14 @@ export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
 export { default as BAIImportFromHuggingFaceModal } from './BAIImportFromHuggingFaceModal';
 export type { BAIImportFromHuggingFaceModalProps } from './BAIImportFromHuggingFaceModal';
+export {
+  default as BAINotificationItem,
+  NotificationItemTemplate,
+} from './BAINotificationItem';
+export type {
+  NotificationItemTemplateProps,
+  NotificationItemTemplateStyles,
+} from './BAINotificationItem';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

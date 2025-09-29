@@ -104,32 +104,36 @@ const router = createBrowserRouter([
     path: '/interactive-login',
     errorElement: <ErrorView />,
     element: (
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <InteractiveLoginPage />
-      </QueryParamProvider>
+      <DefaultProvidersForReactRoot>
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <InteractiveLoginPage />
+        </QueryParamProvider>
+      </DefaultProvidersForReactRoot>
     ),
   },
   {
     path: '/',
     errorElement: <ErrorView />,
     element: (
-      <QueryParamProvider
-        adapter={ReactRouter6Adapter}
-        options={
-          {
-            // searchStringToObject: queryString.parse,
-            // objectToSearchString: queryString.stringify,
+      <DefaultProvidersForReactRoot>
+        <QueryParamProvider
+          adapter={ReactRouter6Adapter}
+          options={
+            {
+              // searchStringToObject: queryString.parse,
+              // objectToSearchString: queryString.stringify,
+            }
           }
-        }
-      >
-        <MainLayout />
-        <RoutingEventHandler />
-        <Suspense>
-          <FolderExplorerOpener />
-          <FolderInvitationResponseModalOpener />
-          <FileUploadManager />
-        </Suspense>
-      </QueryParamProvider>
+        >
+          <MainLayout />
+          <RoutingEventHandler />
+          <Suspense>
+            <FolderExplorerOpener />
+            <FolderInvitationResponseModalOpener />
+            <FileUploadManager />
+          </Suspense>
+        </QueryParamProvider>
+      </DefaultProvidersForReactRoot>
     ),
     children: [
       {
@@ -584,11 +588,7 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = () => {
-  return (
-    <DefaultProvidersForReactRoot>
-      <RouterProvider router={router} />
-    </DefaultProvidersForReactRoot>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

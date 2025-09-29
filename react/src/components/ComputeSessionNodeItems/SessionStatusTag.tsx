@@ -15,6 +15,7 @@ interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
   showInfo?: boolean;
   showQueuePosition?: boolean;
+  showTooltip?: boolean;
 }
 export const statusTagColor = {
   //prepare
@@ -47,6 +48,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
   showInfo,
   showQueuePosition = true,
+  showTooltip = true,
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
@@ -71,7 +73,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   return session ? (
     _.isEmpty(session.status_info) || !showInfo ? (
       <BAIFlex wrap="nowrap">
-        <Tooltip title={session.status_info}>
+        <Tooltip title={showTooltip ? session.status_info : undefined}>
           <Tag
             color={
               session.status ? _.get(statusTagColor, session.status) : undefined

@@ -1,25 +1,70 @@
 import { NotificationState } from '../hooks/useBAINotification';
+import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Card, List, Progress, Typography, theme } from 'antd';
+import { Card, List, Progress, Typography, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FolderIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery, useRefetchableFragment } from 'react-relay';
+import { BAISessionNotificationItemQuery } from 'src/__generated__/BAISessionNotificationItemQuery.graphql';
+import { BAISessionNotificationItem_session$key } from 'src/__generated__/BAISessionNotificationItem_session.graphql';
+import { useFetchKey } from 'src/hooks';
 
-const BAINotificationItem: React.FC<{
+const BAISessionNotificationItem: React.FC<{
   notification: NotificationState;
   onClickAction?: (
     e: React.MouseEvent,
     notification: NotificationState,
   ) => void;
   showDate?: boolean;
-}> = ({ notification, onClickAction, showDate }) => {
+  sessionFrgmt?: BAISessionNotificationItem_session$key | null;
+  sessionId?: string;
+}> = ({ notification, onClickAction, showDate, sessionFrgmt, sessionId }) => {
+  const [
+    fetchKey,
+    //  updateFetchKey
+  ] = useFetchKey();
+  const sessionQueryRef = useLazyLoadQuery<BAISessionNotificationItemQuery>(
+    graphql`
+      query BAISessionNotificationItemQuery($sessionId: GlobalIDField!) {
+        compute_session_node(id: $sessionId) {
+          id
+          status
+          ...BAISessionNotificationItem_session
+        }
+      }
+    `,
+    { sessionId: sessionId! },
+    {
+      fetchPolicy:
+        sessionId && !sessionFrgmt ? 'store-or-network' : 'store-only',
+      fetchKey,
+    },
+  );
+  const [session] = useRefetchableFragment(
+    graphql`
+      fragment BAISessionNotificationItem_session on ComputeSessionNode
+      @refetchable(queryName: "BAISessionNotificationItemSessionRefetchQuery") {
+        status
+        ...SessionActionButtonsFragment
+      }
+    `,
+    sessionFrgmt ||
+      (sessionQueryRef.compute_session_node as BAISessionNotificationItem_session$key),
+  );
+
+  // const reFetchSession = () => {
+  //   //TODO: use refetch of useRefetchableFragment after node(id:) works
+  //   updateFetchKey();
+  // };
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
@@ -38,10 +83,12 @@ const BAINotificationItem: React.FC<{
     ) : notification.type === 'success' ? (
       <CheckCircleOutlined style={{ color: token.colorSuccess }} />
     ) : null);
-
   return (
     <List.Item>
       <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+        {session.status}
+        <SessionActionButtons sessionFrgmt={session} />
+        {/* <Button onClick={() => reFetchSession()}>Refetch</Button> */}
         <BAIFlex
           direction="row"
           align="start"
@@ -84,14 +131,7 @@ const BAINotificationItem: React.FC<{
               </Typography.Link>
             </BAIFlex>
           ) : null}
-          {notification?.onCancel ? (
-            <BAIFlex>
-              <Button type="link" onClick={notification.onCancel}>
-                {t('button.Cancel')}
-              </Button>
-            </BAIFlex>
-          ) : null}
-          {notification.extraDescription && !notification?.onCancel ? (
+          {notification.extraDescription ? (
             <BAIFlex>
               <Typography.Link
                 onClick={(e) => {
@@ -150,4 +190,4 @@ const BAINotificationItem: React.FC<{
   );
 };
 
-export default BAINotificationItem;
+export default BAISessionNotificationItem;

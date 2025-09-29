@@ -13,10 +13,7 @@ import SessionNodes from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
 import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAINotificationState } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { SESSION_LAUNCHER_NOTI_PREFIX } from './SessionLauncherPage';
-import { useUpdateEffect } from 'ahooks';
 import {
   Badge,
   Button,
@@ -39,14 +36,7 @@ import {
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
-import {
-  Suspense,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Suspense, useDeferredValue, useMemo, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -224,58 +214,6 @@ const ComputeSessionListPage = () => {
 
   const { compute_session_nodes, ...sessionCounts } = queryRef;
   const { lg } = Grid.useBreakpoint();
-
-  const [notifications] = useBAINotificationState();
-
-  const sessionNotifications = _.filter(notifications, (n) =>
-    _.startsWith(n.key.toString(), SESSION_LAUNCHER_NOTI_PREFIX),
-  );
-
-  const pendingSessionNames = _.filter(
-    sessionNotifications,
-    (n) => n.backgroundTask?.status === 'pending',
-  ).map((notifications) =>
-    notifications.key.toString().replace(SESSION_LAUNCHER_NOTI_PREFIX, ''),
-  );
-
-  const resolvedSessionNames = _.filter(
-    sessionNotifications,
-    (n) => n.backgroundTask?.status === 'resolved',
-  ).map((notifications) =>
-    notifications.key.toString().replace(SESSION_LAUNCHER_NOTI_PREFIX, ''),
-  );
-
-  // Monkey patch to show pending sessions in the list immediately when navigating to this page
-  // before receiving the response after session creation request
-  // TODO: Remove this effect when the session creation API response right after creation
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null;
-    if (queryParams.type === 'all' && pendingSessionNames.length > 0) {
-      if (
-        !_.some(compute_session_nodes?.edges, (e) => {
-          return e?.node.name && pendingSessionNames.includes(e.node.name);
-        })
-      ) {
-        timeoutId = setTimeout(() => {
-          updateFetchKey();
-        }, 500);
-      }
-    }
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(pendingSessionNames), queryParams.type]);
-
-  // Update fetch key when session creation notifications are resolved
-  // TODO: Remove this effect when the session creation API supports bg_task or GraphQL subscriptions
-  useUpdateEffect(() => {
-    if (resolvedSessionNames.length > 0) {
-      updateFetchKey();
-    }
-  }, [resolvedSessionNames.length, updateFetchKey]);
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>

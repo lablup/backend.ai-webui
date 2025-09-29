@@ -1,17 +1,28 @@
 import { useWebUINavigate } from '.';
-import BAINotificationItem from '../components/BAINotificationItem';
+import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
 import { App } from 'antd';
+import { createStyles } from 'antd-style';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import _ from 'lodash';
 import { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';
+import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
+import BAINodeNotificationItem from 'src/components/BAINodeNotificationItem';
 import { v4 as uuidv4 } from 'uuid';
 
 const _activeNotificationKeys: Key[] = [];
+
+const useStyle = createStyles(({ css }) => ({
+  notificationItem: css`
+    .ant-notification-notice-description {
+      margin-top: 0 !important;
+    }
+  `,
+}));
 
 export interface NotificationState
   extends Omit<ArgsProps, 'placement' | 'key' | 'icon'> {
@@ -22,6 +33,7 @@ export interface NotificationState
   to?: To;
   open?: boolean;
   icon?: 'folder';
+  node?: BAINodeNotificationItemFragment$key;
   backgroundTask?: {
     taskId?: string;
     percent?: number;
@@ -274,6 +286,7 @@ export const useSetBAINotification = () => {
   const { t } = useTranslation();
 
   const webuiNavigate = useWebUINavigate();
+  const { styles } = useStyle();
 
   const destroyAllNotifications = useCallback(() => {
     _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
@@ -371,8 +384,14 @@ export const useSetBAINotification = () => {
             type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem
             placement: 'bottomRight',
             message: undefined,
-            description: (
-              <BAINotificationItem
+            className: styles.notificationItem,
+            description: newNotification.node ? (
+              <BAINodeNotificationItem
+                notification={newNotification}
+                nodeFrgmt={newNotification.node}
+              />
+            ) : (
+              <BAIGeneralNotificationItem
                 notification={newNotification}
                 onClickAction={() => {
                   if (newNotification.to) {
