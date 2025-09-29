@@ -1967,6 +1967,10 @@
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna"
   },
+  "validation": {
+    "SluggedString": "Gunakan huruf kecil, angka, dan pemisah '.', '_', '-'.",
+    "SluggedStringTrailing": "Pemisah '.', '_', Dan '-' tidak dapat muncul di akhir string."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
     "CopyGuideFour": "Untuk mengaktifkan scroll mouse lagi, Tekan <code>Ctrl + B</code> dan Ketik <code>:set -g mouse on</code> dan Tekan <code>Masukkan</code> kunci",

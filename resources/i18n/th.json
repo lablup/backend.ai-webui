@@ -1951,6 +1951,10 @@
     "UseSystemSetting": "ใช้การตั้งค่าระบบ",
     "UserConfigScript": "สคริปต์การกำหนดค่าผู้ใช้"
   },
+  "validation": {
+    "SluggedString": "ใช้ตัวอักษรตัวพิมพ์เล็กตัวเลขและตัวคั่น '.', '_', '-'",
+    "SluggedStringTrailing": "ตัวคั่น '.', '_', และ '-' ไม่สามารถปรากฏขึ้นที่ส่วนท้ายของสตริง"
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "คำแนะนำการใช้งานเทอร์มินัลเว็บขั้นสูง: คัดลอกเนื้อหาเทอร์มินัล",
     "CopyGuideFour": "หากต้องการเปิดการเลื่อนด้วยเมาส์อีกครั้ง กด <code>Ctrl + B</code> และพิมพ์ <code>:set -g mouse on</code> จากนั้นกด <code>Enter</code>",

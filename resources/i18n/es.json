@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "Usar configuración del sistema",
     "UserConfigScript": "Script de configuración de usuario"
   },
+  "validation": {
+    "SluggedString": "Use letras, números y separadores en minúsculas '.', '_', '-'.",
+    "SluggedStringTrailing": "Los separadores '.', '_' Y '-' no pueden aparecer al final de la cadena."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",
     "CopyGuideFour": "Para volver a activar el desplazamiento del ratón, pulse <code>Ctrl + B</code> y escriba <code>:set -g mouse on</code> y pulse la tecla <code>Enter</code>.",

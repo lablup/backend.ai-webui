@@ -1095,7 +1095,18 @@
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "UpdatingRegistryInfo": "Updating registry information...",
     "Username": "Username",
-    "UsernameOptional": "Username (Optional)"
+    "UsernameOptional": "Username (Optional)",
+    "validation": {
+      "DockerProjectMinLength": "Docker Hub project name must be at least 2 characters long.",
+      "DockerProjectName": "Use lowercase letters, numbers, and separators '-', '_'.",
+      "ECRProjectLength": "ECR project name cannot exceed 256 characters.",
+      "ECRProjectName": "Use lowercase letters, numbers, and separators '.', '_', '-', '/' (no consecutive separators).",
+      "ECRProjectStartLetter": "ECR project name must start with a lowercase letter.",
+      "ECRPublicProjectLength": "ECR Public project name cannot exceed 205 characters.",
+      "GitHubProjectName": "GitHub project name must start with a lowercase letter or number and can contain '-', '_', '/'.",
+      "GitLabProjectName": "GitLab project name must start with a lowercase letter or number and can contain '.', '_', '-', '/'.",
+      "HarborProjectLength": "Harbor project name must be between 2 and 255 characters."
+    }
   },
   "reservoirPage": {
     "Activate": "Activate",
@@ -1974,6 +1985,10 @@
     "UseCompactSidebar": "Use Compact Sidebar by default",
     "UseSystemSetting": "Use System Setting",
     "UserConfigScript": "User Config Script"
+  },
+  "validation": {
+    "SluggedString": "Use lowercase letters, numbers, and separators '.', '_', '-'.",
+    "SluggedStringTrailing": "The separators '.', '_', and '-' cannot appear at the end of the string."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

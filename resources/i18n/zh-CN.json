@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "使用系统设置",
     "UserConfigScript": "用户配置脚本"
   },
+  "validation": {
+    "SluggedString": "使用小写字母，数字和分离器'。'，'_'，' - '。",
+    "SluggedStringTrailing": "分离器'。'，'_'和' - 不能出现在字符串的末尾。"
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
     "CopyGuideFour": "要再次打开鼠标滚动，请按 <code> Ctrl + B </code> 并键入 <code> :set -g mouse on </code> 并按 a09d9160780dz709d91607dz70z70z70z70z70z1",

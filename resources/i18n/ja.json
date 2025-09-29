@@ -1967,6 +1967,10 @@
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト"
   },
+  "validation": {
+    "SluggedString": "小文字、数字、セパレーター '、'、 '_'、 ' - 'を使用します。",
+    "SluggedStringTrailing": "セパレーター '。'、 '_'、および ' - 'は、文字列の最後に表示されません。"
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
     "CopyGuideFour": "マウススクロールを再度オンにするには、<code> Ctrl + B </code>を押し、<code>：set -g mouse on </code>と入力し、<code>を押します。</code>キーを入力します。",

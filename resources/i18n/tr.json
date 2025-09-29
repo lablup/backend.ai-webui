@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "Sistem Ayarını Kullan",
     "UserConfigScript": "Kullanıcı yapılandırma komut dosyası"
   },
+  "validation": {
+    "SluggedString": "Küçük harf, sayılar ve ayırıcılar kullanın '.', '_', '-'.",
+    "SluggedStringTrailing": "Ayırıcılar '', '_' ve '-' dizenin sonunda görünemez."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",
     "CopyGuideFour": "Fare kaydırmayı tekrar açmak için, <code> Ctrl + B </code> tuşlarına basın ve </code> üzerinde <code> :set -g mouse yazın ve <code> tuşuna basın </code> anahtarını girin.",

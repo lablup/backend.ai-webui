@@ -1967,6 +1967,10 @@
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "UserConfigScript": "Käyttäjän määrityskomentosarja"
   },
+  "validation": {
+    "SluggedString": "Käytä pieniä kirjaimia, numeroita ja erottimia '.', '_', '-'.",
+    "SluggedStringTrailing": "Erottimet '.', '_' Ja '-' ei voi näkyä merkkijonon lopussa."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
     "CopyGuideFour": "Voit ottaa hiiren vierityksen uudelleen käyttöön painamalla <code>Ctrl + B</koodi> ja kirjoittamalla <code>:set -g mouse on</koodi> ja painamalla <code>Enter</koodi>.",

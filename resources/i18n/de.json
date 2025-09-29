@@ -1966,6 +1966,10 @@
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "UserConfigScript": "Benutzerkonfigurationsskript"
   },
+  "validation": {
+    "SluggedString": "Verwenden Sie Kleinbuchstaben, Zahlen und Separatoren '.', '_', '-'.",
+    "SluggedStringTrailing": "Die Separatoren '.', '_' Und '-' können am Ende der Zeichenfolge nicht erscheinen."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
     "CopyGuideFour": "Um das Scrollen mit der Maus wieder einzuschalten, drücken Sie <code> Strg + B </code> und geben Sie <code> :set -g mouse on </code> ein und drücken Sie <code> Geben Sie </code> ein.",

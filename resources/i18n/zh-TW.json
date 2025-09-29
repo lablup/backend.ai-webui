@@ -1966,6 +1966,10 @@
     "UseSystemSetting": "使用系統設定",
     "UserConfigScript": "用戶配置腳本"
   },
+  "validation": {
+    "SluggedString": "使用小寫字母，數字和分離器'。 '，'_'，' - '。",
+    "SluggedStringTrailing": "分離器'。 '，'_'和' - 不能出現在字符串的末尾。"
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",
     "CopyGuideFour": "要再次打開鼠標滾動，請按 <code> Ctrl + B </code> 並鍵入 <code> :set -g mouse on </code> 並按 a09d9160780dz709d91607dz70z70z70z70z70z1",

@@ -1973,6 +1973,10 @@
     "UseSystemSetting": "시스템 설정 사용",
     "UserConfigScript": "사용자 환경 스크립트"
   },
+  "validation": {
+    "SluggedString": "알파벳 소문자, 숫자, '.', '_', '-' 조합으로 입력해 주세요.",
+    "SluggedStringTrailing": "'.', '_', '-'는 문자열의 마지막에 올 수 없습니다."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
     "CopyGuideFour": "원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 엔터키 입력",

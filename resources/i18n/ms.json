@@ -1965,6 +1965,10 @@
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna"
   },
+  "validation": {
+    "SluggedString": "Gunakan huruf kecil, nombor, dan pemisah '.', '_', '-'.",
+    "SluggedStringTrailing": "Pemisah '.', '_', Dan '-' tidak boleh muncul pada akhir rentetan."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",
     "CopyGuideFour": "Untuk menghidupkan tetikus tetikus sekali lagi, Tekan <code> Ctrl + B </code> dan Ketik <code>: tetapkan -g tetikus pada </code> dan Tekan <code> Masukkan kekunci a0088771d5",

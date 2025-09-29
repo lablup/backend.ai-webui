@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "Usar configuração do sistema",
     "UserConfigScript": "Script de configuração do usuário"
   },
+  "validation": {
+    "SluggedString": "Use letras minúsculas, números e separadores '.', '_', '-'.",
+    "SluggedStringTrailing": "Os separadores '.', '_' E '-' não podem aparecer no final da string."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
     "CopyGuideFour": "Para ativar a rolagem do mouse novamente, pressione <code> Ctrl + B </code> e digite <code>: set -g mouse em </code> e pressione <code> Digite a chave </code>.",

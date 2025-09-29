@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "UserConfigScript": "Tập lệnh cấu hình người dùng"
   },
+  "validation": {
+    "SluggedString": "Sử dụng các chữ cái, số và dấu phân cách '.', '_', '-'.",
+    "SluggedStringTrailing": "Các dấu phân cách '.', '_' Và '-' không thể xuất hiện ở cuối chuỗi."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
     "CopyGuideFour": "Để bật lại tính năng cuộn chuột, Nhấn <code> Ctrl + B </code> và Nhập <code>: đặt -g chuột trên </code> và Nhấn <code> Nhập phím </code>.",

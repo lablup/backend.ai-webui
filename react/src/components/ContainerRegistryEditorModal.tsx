@@ -396,6 +396,143 @@ const ContainerRegistryEditorModal: React.FC<
                     max: 255,
                     message: t('maxLength.255chars'),
                   },
+                  {
+                    validator: (_, value) => {
+                      if (value) {
+                        const registryType = getFieldValue('type');
+
+                        // Registry-specific validation patterns
+                        switch (registryType) {
+                          case 'docker':
+                            // Docker Hub: lowercase, numbers, hyphens, underscores, minimum 2 chars
+                            if (value.length < 2) {
+                              return Promise.reject(
+                                t('registry.validation.DockerProjectMinLength'),
+                              );
+                            }
+                            const dockerPattern = /^[a-z0-9_-]+$/;
+                            if (!dockerPattern.test(value)) {
+                              return Promise.reject(
+                                t('registry.validation.DockerProjectName'),
+                              );
+                            }
+                            break;
+
+                          case 'harbor':
+                          case 'harbor2':
+                            // Harbor: 2-255 chars, lowercase/numbers, separators not consecutive
+                            if (value.length < 2 || value.length > 255) {
+                              return Promise.reject(
+                                t('registry.validation.HarborProjectLength'),
+                              );
+                            }
+                            const harborPattern =
+                              /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+                            if (!harborPattern.test(value)) {
+                              if (/[._-]$/.test(value)) {
+                                return Promise.reject(
+                                  t('validation.SluggedStringTrailing'),
+                                );
+                              } else {
+                                return Promise.reject(
+                                  t('validation.SluggedString'),
+                                );
+                              }
+                            }
+                            break;
+
+                          case 'github':
+                            // GitHub Container Registry: owner/repo format, lowercase, hyphens, underscores, slashes
+                            const githubPattern = /^[a-z0-9][a-z0-9_/-]*$/;
+                            if (!githubPattern.test(value)) {
+                              return Promise.reject(
+                                t('registry.validation.GitHubProjectName'),
+                              );
+                            }
+                            break;
+
+                          case 'gitlab':
+                            // GitLab Container Registry: namespace/project format, no segment limit
+                            const gitlabPattern = /^[a-z0-9][a-z0-9._/-]*$/;
+                            if (!gitlabPattern.test(value)) {
+                              return Promise.reject(
+                                t('registry.validation.GitLabProjectName'),
+                              );
+                            }
+                            break;
+
+                          case 'ecr':
+                            // AWS ECR Private: starts with letter, max 256 chars, no consecutive separators
+                            if (value.length > 256) {
+                              return Promise.reject(
+                                t('registry.validation.ECRProjectLength'),
+                              );
+                            }
+                            if (!/^[a-z]/.test(value)) {
+                              return Promise.reject(
+                                t('registry.validation.ECRProjectStartLetter'),
+                              );
+                            }
+                            const ecrPattern = /^[a-z][a-z0-9._/-]*$/;
+                            const hasConsecutiveSeparators = /[._/-]{2,}/.test(
+                              value,
+                            );
+                            if (
+                              !ecrPattern.test(value) ||
+                              hasConsecutiveSeparators
+                            ) {
+                              return Promise.reject(
+                                t('registry.validation.ECRProjectName'),
+                              );
+                            }
+                            break;
+
+                          case 'ecr-public':
+                            // AWS ECR Public: starts with letter, max 205 chars, no consecutive separators
+                            if (value.length > 205) {
+                              return Promise.reject(
+                                t('registry.validation.ECRPublicProjectLength'),
+                              );
+                            }
+                            if (!/^[a-z]/.test(value)) {
+                              return Promise.reject(
+                                t('registry.validation.ECRProjectStartLetter'),
+                              );
+                            }
+                            const ecrPublicPattern = /^[a-z][a-z0-9._/-]*$/;
+                            const hasConsecutiveSeparatorsPublic =
+                              /[._/-]{2,}/.test(value);
+                            if (
+                              !ecrPublicPattern.test(value) ||
+                              hasConsecutiveSeparatorsPublic
+                            ) {
+                              return Promise.reject(
+                                t('registry.validation.ECRProjectName'),
+                              );
+                            }
+                            break;
+
+                          default:
+                            // Fallback to Harbor pattern for unknown types
+                            const defaultPattern =
+                              /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+                            if (!defaultPattern.test(value)) {
+                              if (/[._-]$/.test(value)) {
+                                return Promise.reject(
+                                  t('validation.SluggedStringTrailing'),
+                                );
+                              } else {
+                                return Promise.reject(
+                                  t('validation.SluggedString'),
+                                );
+                              }
+                            }
+                            break;
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Input allowClear />

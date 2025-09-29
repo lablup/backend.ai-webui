@@ -1968,6 +1968,10 @@
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur"
   },
+  "validation": {
+    "SluggedString": "Utilisez des lettres, des chiffres et des séparateurs minuscules '.', '_', '-'.",
+    "SluggedStringTrailing": "Les séparateurs '.', '_' Et '-' ne peuvent pas apparaître à la fin de la chaîne."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
     "CopyGuideFour": "Pour réactiver le défilement de la souris, appuyez sur <code> Ctrl + B </code> et tapez <code> : set -g mouse on </code> et appuyez sur <code> Entrez la touche </code>.",

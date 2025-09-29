@@ -1967,6 +1967,10 @@
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika"
   },
+  "validation": {
+    "SluggedString": "Użyj małych liter, liczb i separatorów „.”, „_”, „-”.",
+    "SluggedStringTrailing": "Separatory „.”, „_” I '-' nie mogą pojawić się na końcu ciągu."
+  },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
     "CopyGuideFour": "Aby ponownie włączyć przewijanie myszy, naciśnij <code> Ctrl + B </code> i wpisz <code> :set -g mouse on </code> i naciśnij <code> Wprowadź klawisz </code>.",
