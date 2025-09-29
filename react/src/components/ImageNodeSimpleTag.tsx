@@ -104,18 +104,18 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
                 values={[
                   {
                     label: tagAlias(tag.key),
-                    color: isCustomized ? 'cyan' : 'blue',
+                    color: isCustomized ? 'cyan' : undefined,
                   },
                   {
                     label: tagValue,
-                    color: isCustomized ? 'cyan' : 'blue',
+                    color: isCustomized ? 'cyan' : undefined,
                   },
                 ]}
               />
             ) : (
               <Tag
                 key={`${tag.key}-${index}`}
-                color={isCustomized ? 'cyan' : 'blue'}
+                color={isCustomized ? 'cyan' : undefined}
                 style={{
                   marginRight: 0,
                 }}

@@ -102,7 +102,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'status',
         render: (status: string, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
-          return <SessionStatusTag sessionFrgmt={session} showInfo />;
+          return <SessionStatusTag sessionFrgmt={session} />;
         },
       },
       // This column will be added back when the session list column setting ui is ready

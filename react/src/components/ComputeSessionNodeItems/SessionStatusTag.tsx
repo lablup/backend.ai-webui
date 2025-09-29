@@ -23,10 +23,10 @@ export const statusTagColor = {
   PREPARED: 'blue',
   CREATING: 'blue',
   PULLING: 'blue',
+  PENDING: 'blue',
+  SCHEDULED: 'blue',
   //running
   RUNNING: 'green',
-  PENDING: 'green',
-  SCHEDULED: 'green',
   //error
   ERROR: 'red',
   //finished return undefined

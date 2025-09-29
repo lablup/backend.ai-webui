@@ -5,9 +5,9 @@ import React from 'react';
 import { useFragment, graphql } from 'react-relay';
 
 const typeTagColor = {
-  INTERACTIVE: 'green',
-  BATCH: 'darkgreen',
-  INFERENCE: 'blue',
+  INTERACTIVE: 'geekblue',
+  BATCH: 'cyan',
+  INFERENCE: 'purple',
 };
 
 export interface BAISessionTypeTagProps {
