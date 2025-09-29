@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Aktiiviset edustajat",
+    "ActiveAgentsTooltip": "Näyttää A-A-silmän yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
+  },
   "agent": {
     "Agent": "Agentti",
     "AgentSetting": "Agentin asetukset",
@@ -1993,6 +1997,7 @@
       "AIAccelerator": "AI-kiihdyttämö",
       "AIAgents": "AI-agentit",
       "AboutBackendAI": "Tietoja Backend.AI:sta",
+      "AdminDashboard": "Järjestelmänvalvojan kojelauta",
       "Administration": "Hallinto",
       "AgentSummary": "Agentin yhteenveto",
       "Architecture": "Arkkitehtuuri",

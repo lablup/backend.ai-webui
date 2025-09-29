@@ -299,6 +299,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const superAdminMenu: MenuProps['items'] = [
     {
+      label: (
+        <WebUILink to="/admin-dashboard">
+          {t('webui.menu.AdminDashboard')}
+        </WebUILink>
+      ),
+      icon: <DashboardOutlined style={{ color: token.colorInfo }} />,
+      key: 'admin-dashboard',
+    },
+    {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent',

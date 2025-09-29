@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Активные агенты",
+    "ActiveAgentsTooltip": "Показывает обзор всех агентов, работающих в настоящее время в системе."
+  },
   "agent": {
     "Agent": "Агент",
     "AgentSetting": "Настройки агента",
@@ -1993,6 +1997,7 @@
       "AIAccelerator": "Ускоритель искусственного интеллекта",
       "AIAgents": "Агенты искусственного интеллекта",
       "AboutBackendAI": "О Backend.AI",
+      "AdminDashboard": "Административная панель",
       "Administration": "Администрация",
       "AgentSummary": "Резюме агента",
       "Architecture": "Архитектура",

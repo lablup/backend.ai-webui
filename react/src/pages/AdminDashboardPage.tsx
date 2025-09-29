@@ -1,7 +1,5 @@
-import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
+import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
-import MyResource from '../components/MyResource';
-import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
 import MySession from '../components/MySession';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import TotalResourceWithinResourceGroup, {
@@ -18,11 +16,14 @@ import { Skeleton, theme } from 'antd';
 import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import ActiveAgents from 'src/components/ActiveAgents';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
-const DashboardPage: React.FC = () => {
+const AdminDashboardPage: React.FC = () => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
@@ -38,9 +39,9 @@ const DashboardPage: React.FC = () => {
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
 
-  const queryRef = useLazyLoadQuery<DashboardPageQuery>(
+  const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
-      query DashboardPageQuery(
+      query AdminDashboardPageQuery(
         $scopeId: ScopeField
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
@@ -77,11 +78,11 @@ const DashboardPage: React.FC = () => {
     startIntervalRefetchTransition(() => {
       updateFetchKey();
     });
-  }, 15_000);
+  }, 30_000);
 
   const initialBoardItems: Array<BAIBoardItem> = filterOutEmpty([
     {
-      id: 'mySession',
+      id: 'activeSessions',
       rowSpan: 2,
       columnSpan: 2,
       definition: {
@@ -98,42 +99,9 @@ const DashboardPage: React.FC = () => {
             <MySession
               queryRef={queryRef}
               isRefetching={isPendingIntervalRefetch}
+              title={t('session.ActiveSessions')}
             />
           </Suspense>
-        ),
-      },
-    },
-    {
-      id: 'myResource',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <MyResource
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
-        ),
-      },
-    },
-    {
-      id: 'myResourceWithinResourceGroup',
-      rowSpan: 2,
-      columnSpan: 2,
-      definition: {
-        minRowSpan: 2,
-        minColumnSpan: 2,
-      },
-      data: {
-        content: (
-          <MyResourceWithinResourceGroup
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
         ),
       },
     },
@@ -151,6 +119,29 @@ const DashboardPage: React.FC = () => {
             queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
             refetching={isPendingIntervalRefetch}
           />
+        ),
+      },
+    },
+    {
+      id: 'activeAgents',
+      rowSpan: 4,
+      columnSpan: 4,
+      definition: {
+        minRowSpan: 3,
+        minColumnSpan: 4,
+      },
+      data: {
+        content: (
+          <Suspense
+            fallback={
+              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+            }
+          >
+            <ActiveAgents
+              fetchKey={fetchKey}
+              onChangeFetchKey={() => updateFetchKey()}
+            />
+          </Suspense>
         ),
       },
     },
@@ -195,7 +186,6 @@ const DashboardPage: React.FC = () => {
     }),
   );
   const boardItems = [...localstorageBoardItemsWithData, ...newlyAddedItems];
-
   return (
     <BAIBoard
       movable
@@ -212,4 +202,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage;
+export default AdminDashboardPage;

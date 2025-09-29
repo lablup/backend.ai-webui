@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Active Agents",
+    "ActiveAgentsTooltip": "Shows an at-a-glance overview of all agents currently running in the system."
+  },
   "agent": {
     "Agent": "Agent",
     "AgentSetting": "Agent Settings",
@@ -1113,7 +1117,6 @@
     "PullLatestVersion": "Pull Latest({{version}}) version",
     "PullSelectedVersions": "Pull Selected Versions",
     "PullingArtifact": "Pulling artifact {{name}}: {{version}}",
-
     "Registry": "Registry",
     "RemoveSelectedVersions": "Remove Selected Versions",
     "ReservoirArtifacts": "Reservoir Artifacts",
@@ -1121,7 +1124,6 @@
     "Source": "Source",
     "Status": "Status",
     "SuccessFullyPulledArtifact": "Successfully pulled artifact {{name}}: {{version}}",
-
     "Type": "Type",
     "Version": "Version",
     "VersionList": "Available List"
@@ -2003,6 +2005,7 @@
       "AIAccelerator": "AI Accelerator",
       "AIAgents": "AI Agents",
       "AboutBackendAI": "About Backend.AI",
+      "AdminDashboard": "Admin Dashboard",
       "Administration": "Administration",
       "AgentSummary": "Agent Summary",
       "Architecture": "Architecture",

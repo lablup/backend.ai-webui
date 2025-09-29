@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "アクティブなエージェント",
+    "ActiveAgentsTooltip": "現在システムで実行されているすべてのエージェントの概要を示しています。"
+  },
   "agent": {
     "Agent": "代理店",
     "AgentSetting": "エージェント設定",
@@ -1993,6 +1997,7 @@
       "AIAccelerator": "AIアクセラレータ",
       "AIAgents": "AIエージェント",
       "AboutBackendAI": "Backend.AIについて",
+      "AdminDashboard": "管理ダッシュボード",
       "Administration": "管理",
       "AgentSummary": "リソース概要",
       "Architecture": "建築",

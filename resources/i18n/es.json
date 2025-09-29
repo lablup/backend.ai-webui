@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Agentes activos",
+    "ActiveAgentsTooltip": "Muestra una descripción general de At-A-Glance de todos los agentes que actualmente se ejecutan en el sistema."
+  },
   "agent": {
     "Agent": "Agente",
     "AgentSetting": "Configuración del agente",
@@ -1994,6 +1998,7 @@
       "AIAccelerator": "Acelerador de IA",
       "AIAgents": "Agentes de IA",
       "AboutBackendAI": "Acerca de Backend.AI",
+      "AdminDashboard": "Tablero de administración",
       "Administration": "Administración",
       "AgentSummary": "Resumen del agente",
       "Architecture": "Arquitectura",
