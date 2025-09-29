@@ -408,8 +408,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         children: items,
       };
     })
+    .flatten()
     .sort((a, b) => {
-      const order: Array<GroupName> = [
+      const groupOrder: Array<GroupName | undefined> = [
+        undefined,
         'none',
         'storage',
         'workload',
@@ -418,15 +420,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         'mlops',
         'metrics',
       ];
-      // @ts-ignore
-      // If a.name is not in order array, push it to the end.
-      if (!_.includes(order, a.name)) {
-        return 1;
-      }
-      // @ts-ignore
-      return order.indexOf(a.name) - order.indexOf(b.name);
+
+      // if item is not group type, place it at the beginning
+      // if item is group type but not in the groupOrder, place it at the end
+      const getWeight = (item: any) => {
+        if (item?.type !== 'group') return -1; // non-group items first
+        const idx = groupOrder.indexOf(item.name as GroupName | undefined);
+        return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
+      };
+
+      return getWeight(a) - getWeight(b);
     })
-    .flatten()
     .value();
 
   return (
