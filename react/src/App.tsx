@@ -88,6 +88,9 @@ const ReservoirArtifactDetailPage = React.lazy(
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 // Deployment pages
+// const DeploymentListPage = React.lazy(
+//   () => import('./pages/Deployments/DeploymentListPage'),
+// );
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
 );
@@ -520,49 +523,6 @@ const router = createBrowserRouter([
         path: '/resource-policy',
         handle: { labelKey: 'webui.menu.ResourcePolicy' },
         Component: ResourcePolicyPage,
-      },
-      {
-        path: '/reservoir',
-        handle: { labelKey: 'webui.menu.Reservoir' },
-        children: [
-          {
-            path: '',
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <BAIErrorBoundary>
-                  <Suspense
-                    fallback={
-                      <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                        <Skeleton active />
-                      </BAIFlex>
-                    }
-                  >
-                    <ReservoirPage />
-                  </Suspense>
-                </BAIErrorBoundary>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
-          },
-          {
-            path: '/reservoir/:artifactId',
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <BAIErrorBoundary>
-                  <Suspense fallback={<Skeleton active />}>
-                    <ReservoirArtifactDetailPage />
-                  </Suspense>
-                </BAIErrorBoundary>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
-            handle: { labelKey: 'webui.menu.ArtifactDetails' },
-          },
-        ],
       },
       {
         path: '/settings',

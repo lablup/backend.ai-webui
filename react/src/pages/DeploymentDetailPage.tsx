@@ -89,7 +89,7 @@ const DeploymentDetailPage: React.FC = () => {
   const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
     graphql`
       query DeploymentDetailPageQuery($deploymentId: ID!) {
-        deployment(id: $deploymentId) {
+        deployment(id: $deploymentId) @since(version: "25.14.0") {
           id @required(action: THROW)
           metadata {
             name

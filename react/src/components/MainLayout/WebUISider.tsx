@@ -19,6 +19,7 @@ import {
   CloudUploadOutlined,
   ControlOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
   FileDoneOutlined,
   HddOutlined,
   InfoCircleOutlined,
@@ -185,10 +186,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'job',
       group: 'workload',
     },
-    {
+    !baiClient.supports('deployment') && {
       label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
       icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
       key: 'serving',
+      group: 'service',
+    },
+    baiClient.supports('deployment') && {
+      label: (
+        <WebUILink to="/deployment">{t('webui.menu.Deployment')}</WebUILink>
+      ),
+      icon: <DeploymentUnitOutlined style={{ color: token.colorPrimary }} />,
+      key: 'deployment',
       group: 'service',
     },
     {
