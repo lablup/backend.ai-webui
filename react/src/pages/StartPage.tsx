@@ -51,7 +51,7 @@ const StartPage: React.FC = () => {
     });
   }, [count, t, upsertNotification]);
 
-  const defaultBoardItem = filterOutEmpty<StartPageBoardItem>([
+  const initialBoardItems = filterOutEmpty<StartPageBoardItem>([
     {
       id: 'createFolder',
       requiredMenuKey: 'data',
@@ -142,22 +142,28 @@ const StartPage: React.FC = () => {
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('start_page_board_items');
 
-  const initialBoardItems = localStorageBoardItems
-    ? filterOutEmpty<StartPageBoardItem>(
-        _.map(localStorageBoardItems, (item) => {
-          const initialItem = _.find(
-            defaultBoardItem,
-            (defaultItem) => defaultItem.id === item.id,
-          );
-          return initialItem ? { ...item, data: initialItem.data } : null;
-        }),
-      )
-    : defaultBoardItem;
-
-  const [boardItems, setBoardItems] =
-    useState<_.Omit<StartPageBoardItem, 'requiredMenuKey'>[]>(
-      initialBoardItems,
-    );
+  // TODO: Issue occurs when newly added items in new webui version are not saved in localStorage
+  // and thus not displayed on screen.
+  // Opted-out items should also be stored separately in localStorage, and newly added items
+  // should be included in initialBoardItems.
+  const newlyAddedItems = _.filter(
+    initialBoardItems,
+    (item) =>
+      !_.find(
+        localStorageBoardItems,
+        (itemInStorage) => itemInStorage.id === item.id,
+      ),
+  );
+  const localstorageBoardItemsWithData = filterOutEmpty(
+    _.map(localStorageBoardItems, (item) => {
+      const matchedData = _.find(
+        initialBoardItems,
+        (initialItem) => initialItem.id === item.id,
+      )?.data;
+      return matchedData ? { ...item, data: matchedData } : undefined;
+    }),
+  );
+  const boardItems = [...localstorageBoardItemsWithData, ...newlyAddedItems];
 
   return (
     <BAIFlex direction="column" gap={'md'} align="stretch">
@@ -168,7 +174,6 @@ const StartPage: React.FC = () => {
         onItemsChange={(event) => {
           // use spread operator to ignore readonly type error
           const changedItems = [...event.detail.items];
-          setBoardItems(changedItems);
           setLocalStorageBoardItems(
             _.map(changedItems, (item) => _.omit(item, 'data')),
           );
