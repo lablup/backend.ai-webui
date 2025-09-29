@@ -259,6 +259,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   ]);
 
   const adminMenu: MenuProps['items'] = filterOutEmpty([
+    // WARN: Currently only superadmins can access AdminDashboardPage.
+    // To place the Admin Dashboard menu item at the top of adminMenu,
+    // add it to adminMenu instead of superAdminMenu:
+    currentUserRole === 'superadmin' && {
+      label: (
+        <WebUILink to="/admin-dashboard">
+          {t('webui.menu.AdminDashboard')}
+        </WebUILink>
+      ),
+      icon: <DashboardOutlined style={{ color: token.colorInfo }} />,
+      key: 'admin-dashboard',
+    },
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,

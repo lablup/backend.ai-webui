@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "活性代理",
+    "ActiveAgentsTooltip": "顯示了當前在系統中運行的所有代理的AT-A-Glance概述。"
+  },
   "agent": {
     "Agent": "代理",
     "AgentSetting": "代理设置",
@@ -1254,6 +1258,7 @@
     "PendingSessions": "等待會議"
   },
   "session": {
+    "ActiveSessions": "活動會話",
     "Agent": "代理人",
     "AgentId": "代理ID",
     "Agents": "代理商",
@@ -2003,6 +2008,7 @@
       "AIAccelerator": "人工智能加速器",
       "AIAgents": "人工智能代理",
       "AboutBackendAI": "關於後端.AI",
+      "AdminDashboard": "管理儀表板",
       "Administration": "行政",
       "AgentSummary": "代理摘要",
       "Architecture": "建築學",

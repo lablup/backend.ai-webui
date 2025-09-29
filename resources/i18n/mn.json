@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Идэвхтэй агентууд",
+    "ActiveAgentsTooltip": "Системд ажиллаж байгаа бүх агентуудын AT-GLACE-ийн тоймыг харуулна."
+  },
   "agent": {
     "Agent": "Агент",
     "AgentSetting": "Агент тохиргоо",
@@ -1252,6 +1256,7 @@
     "PendingSessions": "Хүлээгдэж буй хуралдаанууд"
   },
   "session": {
+    "ActiveSessions": "Идэвхтэй сешнүүд",
     "Agent": "Агент",
     "AgentId": "Хийнний ID",
     "Agents": "Агентууд",
@@ -2002,6 +2007,7 @@
       "AIAccelerator": "AI хурдасгуур",
       "AIAgents": "AI агентууд",
       "AboutBackendAI": "Backend.AI-ийн тухай",
+      "AdminDashboard": "Админ хяналтын самбар",
       "Administration": "Админ",
       "AgentSummary": "Агентын хураангуй",
       "Architecture": "Уран барилгач",
