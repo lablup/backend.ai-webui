@@ -65,7 +65,6 @@ const BAISessionNotificationItem: React.FC<{
   //   updateFetchKey();
   // };
 
-  console.log('#session', sessionId);
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
