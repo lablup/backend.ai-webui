@@ -1255,6 +1255,7 @@
     "PendingSessions": "保留中のセッション"
   },
   "session": {
+    "ActiveSessions": "アクティブセッション",
     "Agent": "エージェント",
     "AgentId": "エージェントID",
     "Agents": "エージェント",

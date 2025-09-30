@@ -1255,6 +1255,7 @@
     "PendingSessions": "Sesi yang belum selesai"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Ejen",
     "AgentId": "Id ejen",
     "Agents": "ejen",

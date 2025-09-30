@@ -1254,6 +1254,7 @@
     "PendingSessions": "Ausstehende Sitzungen"
   },
   "session": {
+    "ActiveSessions": "Aktive Sitzungen",
     "Agent": "Agent",
     "AgentId": "Agenten -ID",
     "Agents": "Agenten",

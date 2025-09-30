@@ -9,7 +9,6 @@ import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
-import AdminDashboardPage from './pages/AdminDashboardPage';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import ModelStoreListPage from './pages/ModelStoreListPage';
@@ -36,6 +35,9 @@ const EndpointDetailPage = React.lazy(
 );
 const StartPage = React.lazy(() => import('./pages/StartPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const AdminDashboardPage = React.lazy(
+  () => import('./pages/AdminDashboardPage'),
+);
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
 const StorageHostSettingPage = React.lazy(
