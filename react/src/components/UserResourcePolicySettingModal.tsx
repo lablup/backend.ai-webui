@@ -217,7 +217,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       <Form
         ref={formRef}
         layout="vertical"
-        requiredMark="optional"
         initialValues={initialValues}
         preserve={false}
       >

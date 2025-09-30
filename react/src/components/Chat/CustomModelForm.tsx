@@ -57,7 +57,6 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         ref={formRef}
         layout="horizontal"
         size="small"
-        requiredMark="optional"
         style={{ flex: 1 }}
         key={endpointUrl}
         initialValues={{

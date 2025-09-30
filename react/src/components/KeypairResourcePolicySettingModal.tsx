@@ -304,7 +304,6 @@ const KeypairResourcePolicySettingModal: React.FC<
         requiredMark={false}
         ref={formRef}
         layout="vertical"
-        // requiredMark="optional"
         initialValues={initialValues}
         preserve={false}
       >

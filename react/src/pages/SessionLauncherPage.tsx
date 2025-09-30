@@ -727,7 +727,6 @@ const SessionLauncherPage = () => {
             <Form
               form={form}
               layout="vertical"
-              requiredMark="optional"
               initialValues={mergedInitialValues}
             >
               <SessionLauncherFormIncompatibleValueChecker form={form} />

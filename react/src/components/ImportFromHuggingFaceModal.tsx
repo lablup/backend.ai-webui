@@ -250,12 +250,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         destroyOnClose
         {...baiModalProps}
       >
-        <Form
-          ref={formRef}
-          preserve={false}
-          layout="vertical"
-          requiredMark="optional"
-        >
+        <Form ref={formRef} preserve={false} layout="vertical">
           <Form.Item label="Hugging Face URL" required>
             <Space.Compact style={{ width: '100%' }}>
               <Form.Item

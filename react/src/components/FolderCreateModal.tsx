@@ -49,10 +49,6 @@ const useStyles = createStyles(({ css }) => ({
       align-items: start;
       padding-left: var(--token-paddingSM);
     }
-    .ant-form-item .ant-form-item-label > label {
-      flex-direction: row-reverse !important;
-      gap: var(--token-paddingXS);
-    }
     .ant-form-item-control {
       padding-right: var(--token-paddingSM);
     }

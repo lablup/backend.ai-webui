@@ -762,7 +762,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 layout="vertical"
                 labelCol={{ span: 12 }}
                 initialValues={mergedInitialValues}
-                requiredMark="optional"
               >
                 <BAIFlex direction="column" gap={'md'} align="stretch">
                   <Card>

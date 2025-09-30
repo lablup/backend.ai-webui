@@ -251,7 +251,6 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
       <Form
         ref={formRef}
         layout={'vertical'}
-        requiredMark={'optional'}
         initialValues={
           autoScalingRule
             ? {

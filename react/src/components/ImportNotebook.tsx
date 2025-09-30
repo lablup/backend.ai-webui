@@ -23,7 +23,7 @@ const ImportNotebook: React.FC<FormProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
   useSuspendedBackendaiClient();
   return (
-    <Form ref={formRef} layout="inline" requiredMark="optional" {...props}>
+    <Form ref={formRef} layout="inline" {...props}>
       <Form.Item
         name="url"
         label={t('import.NotebookURL')}

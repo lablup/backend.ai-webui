@@ -166,7 +166,6 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         <Form
           ref={inviteFormRef}
           initialValues={{ name: undefined, permission: 'ro' }}
-          requiredMark={false}
         >
           <Descriptions title={t('data.folders.InviteUsers')}>
             <Descriptions.Item>
@@ -202,6 +201,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                   name="permission"
                   label={t('data.Permission')}
                   style={{ marginBottom: 0 }}
+                  required
                 >
                   <Select
                     options={[

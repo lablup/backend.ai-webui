@@ -205,7 +205,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         layout="vertical"
         autoComplete="off"
         initialValues={{ apps: servicePorts }}
-        requiredMark={false}
       >
         <BAIFlex direction="column">
           <Form.List name="apps">
@@ -247,6 +246,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                         {...field}
                         name={[field.name, 'port']}
                         noStyle
+                        required
                         rules={[
                           {
                             validator: (rules, rawValue) => {

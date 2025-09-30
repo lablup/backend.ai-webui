@@ -256,6 +256,9 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           : theme.defaultAlgorithm,
                       }}
                       clientPromise={backendaiClientPromise}
+                      form={{
+                        requiredMark: 'optional',
+                      }}
                       anonymousClientFactory={createAnonymousBackendaiClient}
                     >
                       <App {...commonAppProps}>
@@ -356,6 +359,9 @@ export const DefaultProvidersForReactRoot: React.FC<
               csp={{ nonce: globalThis.baiNonce }}
               clientPromise={backendaiClientPromise}
               anonymousClientFactory={createAnonymousBackendaiClient}
+              form={{
+                requiredMark: 'optional',
+              }}
             >
               <App {...commonAppProps}>
                 {/* <StyleProvider container={shadowRoot} cache={cache}> */}

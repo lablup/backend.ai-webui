@@ -202,7 +202,6 @@ const ContainerRegistryEditorModal: React.FC<
       <Form
         ref={formRef}
         layout="vertical"
-        requiredMark="optional"
         initialValues={
           containerRegistry
             ? {

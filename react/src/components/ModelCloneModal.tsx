@@ -150,7 +150,6 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
         <Form
           ref={formRef}
           layout="vertical"
-          requiredMark="optional"
           initialValues={{
             permission: 'rw',
             // project: currentProject.id,

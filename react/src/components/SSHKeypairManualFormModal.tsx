@@ -45,12 +45,7 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
       destroyOnClose={true}
       {...baiModalProps}
     >
-      <Form
-        ref={formRef}
-        preserve={false}
-        layout="vertical"
-        requiredMark="optional"
-      >
+      <Form ref={formRef} preserve={false} layout="vertical">
         <Form.Item
           name="pubkey"
           label={

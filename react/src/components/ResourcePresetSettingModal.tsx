@@ -226,7 +226,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       <Form
         ref={formRef}
         layout="vertical"
-        // requiredMark="optional"
         preserve={false}
         initialValues={
           resourcePreset
@@ -296,7 +295,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             />
           </Form.Item>
         )}
-        <Form.Item label={t('resourcePreset.ResourcePreset')}>
+        <Form.Item label={t('resourcePreset.ResourcePreset')} required>
           <Row gutter={16}>
             {_.map(
               _.chunk(_.keys(resourceSlots), 2),
