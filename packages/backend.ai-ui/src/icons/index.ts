@@ -39,3 +39,4 @@ export { default as BAIURLStartIcon } from './BAIURLStartIcon';
 export { default as BAIUserOutlinedIcon } from './BAIUserOutlinedIcon';
 export { default as BAIUserUnionIcon } from './BAIUserUnionIcon';
 export { default as BAIHuggingFaceIcon } from './BAIHuggingFaceIcon';
+export { default as BAISftpIcon } from './BAISftpIcon';

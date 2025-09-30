@@ -8,12 +8,14 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
+import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
   BAISessionLogIcon,
+  BAISftpIcon,
   BAITerminalAppIcon,
   BAITerminateIcon,
   BAIUnmountAfterClose,
@@ -28,6 +30,7 @@ type SessionActionButtonKey =
   | 'terminal'
   | 'logs'
   | 'containerCommit'
+  | 'sftp'
   | 'terminate';
 
 interface SessionActionButtonsProps {
@@ -60,7 +63,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const appLauncher = useBackendAIAppLauncher();
   const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
@@ -78,15 +80,20 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         ...ContainerLogModalFragment
         ...ContainerCommitModalFragment
         ...AppLauncherModalFragment
+        ...SFTPConnectionInfoModalFragment
+        ...useBackendAIAppLauncherFragment
       }
     `,
     sessionFrgmt,
   );
+  const appLauncher = useBackendAIAppLauncher(session);
 
   const [openAppLauncherModal, setOpenAppLauncherModal] = useState(false);
   const [openTerminateModal, setOpenTerminateModal] = useState(false);
   const [openLogModal, setOpenLogModal] = useState(false);
   const [openContainerCommitModal, setOpenContainerCommitModal] =
+    useState(false);
+  const [openSFTPConnectionInfoModal, setOpenSFTPConnectionInfoModal] =
     useState(false);
 
   const userInfo = useCurrentUserInfo();
@@ -102,6 +109,11 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
       ['appLauncher', 'terminal', 'containerCommit'].includes(key) &&
       session?.type === 'system'
     ) {
+      return false;
+    }
+
+    // sftp button is only for system sessions
+    if (key === 'sftp' && session?.type !== 'system') {
       return false;
     }
 
@@ -149,6 +161,19 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             </Tooltip>
           </>
         )}
+        {isVisible('sftp') && (
+          <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
+            <Button
+              type="primary"
+              disabled={!isActive(session) || !isOwner}
+              size={size}
+              icon={<BAISftpIcon />}
+              onClick={() => {
+                setOpenSFTPConnectionInfoModal(true);
+              }}
+            />
+          </Tooltip>
+        )}
         {isVisible('terminal') && (
           <>
             <Tooltip
@@ -164,7 +189,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 icon={<BAITerminalAppIcon />}
                 onClick={() => {
                   onAction?.('terminal');
-                  appLauncher.runTerminal(session?.row_id);
+                  appLauncher.runTerminal();
                 }}
                 title={
                   isButtonTitleMode
@@ -175,7 +200,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             </Tooltip>
           </>
         )}
-
         {isVisible('logs') && (
           <Tooltip
             title={
@@ -195,7 +219,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             />
           </Tooltip>
         )}
-
         {isVisible('containerCommit') && (
           <Tooltip
             title={
@@ -275,6 +298,17 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             open={openContainerCommitModal}
             onRequestClose={() => setOpenContainerCommitModal(false)}
           />
+        )}
+        {isVisible('sftp') && (
+          <BAIUnmountAfterClose>
+            <SFTPConnectionInfoModal
+              sessionFrgmt={session}
+              open={openSFTPConnectionInfoModal}
+              onCancel={() => {
+                setOpenSFTPConnectionInfoModal(false);
+              }}
+            />
+          </BAIUnmountAfterClose>
         )}
         {isVisible('terminate') && (
           <TerminateSessionModal

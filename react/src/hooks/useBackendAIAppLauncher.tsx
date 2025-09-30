@@ -1,12 +1,25 @@
-export const useBackendAIAppLauncher = () => {
-  // This is not use any React hooks, so it's not a React hook.
-  // But keep it here for the future refactoring.
+import { graphql, useFragment } from 'react-relay';
+import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
+
+export const useBackendAIAppLauncher = (
+  sessionFrgmt?: useBackendAIAppLauncherFragment$key | null,
+) => {
+  // TODO: migrate backend-ai-app-launcher features to this hook using fragment data.
+  const session = useFragment(
+    graphql`
+      fragment useBackendAIAppLauncherFragment on ComputeSessionNode {
+        row_id @required(action: NONE)
+        vfolder_mounts
+      }
+    `,
+    sessionFrgmt,
+  );
 
   // @ts-ignore
   return {
-    runTerminal: (sessionId: string) => {
+    runTerminal: () => {
       // @ts-ignore
-      globalThis.appLauncher.runTerminal(sessionId);
+      globalThis.appLauncher.runTerminal(session.row_id);
     },
     showLauncher: (params: {
       'session-uuid'?: string;
