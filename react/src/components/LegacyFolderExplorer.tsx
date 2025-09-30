@@ -1,5 +1,4 @@
 import { LegacyFolderExplorerQuery } from '../__generated__/LegacyFolderExplorerQuery.graphql';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
@@ -7,6 +6,8 @@ import { Alert, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
+  BAIModal,
+  BAIModalProps,
   BAIFileExplorer,
   BAIFlex,
   toGlobalId,

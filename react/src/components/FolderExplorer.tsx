@@ -1,11 +1,16 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Divider, Grid, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
-import { BAIFileExplorer, BAIFlex, toGlobalId } from 'backend.ai-ui';
+import {
+  BAIFileExplorer,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  toGlobalId,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,11 +19,10 @@ import { FolderExplorerQuery } from 'src/__generated__/FolderExplorerQuery.graph
 import { useFetchKey } from 'src/hooks';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 
-const useStyles = createStyles(({ token, css }) => ({
+const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`
     .ant-modal-title {
       width: 100%;
-      margin-right: ${token.marginXXL}px;
     }
   `,
 }));

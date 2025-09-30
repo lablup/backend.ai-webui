@@ -9,7 +9,6 @@ import {
 } from '../__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   Form,
@@ -20,7 +19,7 @@ import {
   theme,
   FormInstance,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

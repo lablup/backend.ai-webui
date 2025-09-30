@@ -1,8 +1,7 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Alert } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

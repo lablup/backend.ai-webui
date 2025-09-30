@@ -1,9 +1,8 @@
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

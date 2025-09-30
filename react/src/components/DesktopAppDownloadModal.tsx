@@ -1,8 +1,7 @@
 import { useAppDownloadMap } from '../hooks';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Select, Button, Descriptions, Tooltip } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,9 +1,13 @@
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
-import { BAIFlex, ESMClientErrorResponse } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  ESMClientErrorResponse,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

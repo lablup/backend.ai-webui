@@ -1,8 +1,8 @@
 import { QuotaSettingModalFragment$key } from '../__generated__/QuotaSettingModalFragment.graphql';
 import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModalSetMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Form, FormInstance, Input, message } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';

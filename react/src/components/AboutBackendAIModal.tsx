@@ -1,9 +1,8 @@
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography } from 'antd';
-import { BAILink } from 'backend.ai-ui';
+import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
 
 interface AboutBackendAIModalProps extends BAIModalProps {
   onRequestClose: () => void;

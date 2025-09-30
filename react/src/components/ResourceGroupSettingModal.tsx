@@ -4,7 +4,6 @@ import { ResourceGroupSettingModalFragment$key } from '../__generated__/Resource
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
-import BAIModal from './BAIModal';
 import DomainSelector from './DomainSelector';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -23,7 +22,12 @@ import {
   Tooltip,
   theme,
 } from 'antd';
-import { omitNullAndUndefinedFields, BAICard, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIModal,
+  omitNullAndUndefinedFields,
+  BAICard,
+  BAIFlex,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

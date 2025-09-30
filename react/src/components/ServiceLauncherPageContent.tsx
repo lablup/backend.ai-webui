@@ -17,7 +17,6 @@ import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
-import BAIModal, { DEFAULT_BAI_MODAL_Z_INDEX } from './BAIModal';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
@@ -52,6 +51,7 @@ import {
   Alert,
 } from 'antd';
 import {
+  BAIModal,
   BAIFlex,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
@@ -1065,7 +1065,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAIModal
-        zIndex={DEFAULT_BAI_MODAL_Z_INDEX + 1}
         width={1000}
         title={t('modelService.ValidationInfo')}
         open={isOpenServiceValidationModal}

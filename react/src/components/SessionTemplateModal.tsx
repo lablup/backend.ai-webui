@@ -8,12 +8,17 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import ImageMetaIcon from './ImageMetaIcon';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAITable, BAIFlex, BAILink } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAITable,
+  BAIFlex,
+  BAILink,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PinIcon } from 'lucide-react';

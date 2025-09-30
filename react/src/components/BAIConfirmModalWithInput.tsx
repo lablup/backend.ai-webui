@@ -1,7 +1,6 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

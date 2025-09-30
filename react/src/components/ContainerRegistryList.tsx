@@ -13,7 +13,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
-import BAIModal from './BAIModal';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -43,6 +42,7 @@ import {
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
+  BAIModal,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useDeferredValue, useMemo } from 'react';

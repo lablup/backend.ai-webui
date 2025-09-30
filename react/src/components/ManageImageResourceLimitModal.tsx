@@ -5,9 +5,9 @@ import {
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import { App, Form, FormInstance, message, InputNumber, Row, Col } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';

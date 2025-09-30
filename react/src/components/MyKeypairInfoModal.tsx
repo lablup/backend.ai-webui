@@ -6,9 +6,8 @@ import { MyKeypairInfoModalQuery } from '../__generated__/MyKeypairInfoModalQuer
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Button, Table, Typography, Tag } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

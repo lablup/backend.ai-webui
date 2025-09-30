@@ -2,7 +2,6 @@ import { ModelCloneModalVFolderFragment$key } from '../__generated__/ModelCloneM
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import StorageSelect from './StorageSelect';
 import {
   Alert,
@@ -18,6 +17,8 @@ import {
   BAIFlex,
   ESMClientErrorResponse,
   useErrorMessageResolver,
+  BAIModal,
+  BAIModalProps,
 } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

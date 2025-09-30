@@ -1,7 +1,7 @@
 import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

@@ -12,7 +12,6 @@ import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import AllowedHostNamesSelect from './AllowedHostNamesSelect';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -30,7 +29,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -4,11 +4,10 @@ import {
   useSetVFolderInvitations,
   useVFolderInvitationsValue,
 } from '../hooks/useVFolderInvitations';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { FolderOutlined } from '@ant-design/icons';
 import { List, Button, Typography, theme, Descriptions, App } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 

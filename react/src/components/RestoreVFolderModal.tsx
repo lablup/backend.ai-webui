@@ -3,9 +3,13 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography, message } from 'antd';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

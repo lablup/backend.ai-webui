@@ -1,7 +1,6 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 // import ModelTryContentButton from './ModelTryContentButton';
@@ -19,7 +18,7 @@ import {
   theme,
   Skeleton,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';

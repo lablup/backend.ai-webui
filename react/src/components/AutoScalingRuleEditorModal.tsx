@@ -7,7 +7,6 @@ import {
 import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { AutoScalingRuleEditorModalModifyMutation } from '../__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import {
   App,
   AutoComplete,
@@ -20,7 +19,7 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

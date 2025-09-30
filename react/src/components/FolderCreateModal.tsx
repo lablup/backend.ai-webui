@@ -4,7 +4,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
@@ -23,6 +22,8 @@ import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
   BAIFlex,
+  BAIModal,
+  BAIModalProps,
   ESMClientErrorResponse,
   useErrorMessageResolver,
 } from 'backend.ai-ui';

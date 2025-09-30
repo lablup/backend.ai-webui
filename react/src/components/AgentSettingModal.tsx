@@ -3,8 +3,8 @@ import {
   AgentSettingModalFragment$key,
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { App, Form, FormInstance, Switch } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';

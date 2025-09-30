@@ -51,6 +51,8 @@ export type {
   NotificationItemTemplateProps,
   NotificationItemTemplateStyles,
 } from './BAINotificationItem';
+export { default as BAIModal } from './BAIModal';
+export type { BAIModalProps } from './BAIModal';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

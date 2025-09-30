@@ -1,7 +1,6 @@
 import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
-import BAIModal, { BAIModalProps } from '../BAIModal';
 import {
   Descriptions,
   Divider,
@@ -10,7 +9,7 @@ import {
   Input,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

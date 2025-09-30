@@ -64,6 +64,7 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
 
       return tempTxt;
     });
+
     const flexStyle: CSSProperties = {
       display: 'flex',
       flexDirection: direction,

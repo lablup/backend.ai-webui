@@ -14,7 +14,6 @@ import {
 } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelector from './UserResourcePolicySelector';
 import { ExclamationCircleFilled } from '@ant-design/icons';
@@ -30,6 +29,7 @@ import {
   App,
   theme,
 } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

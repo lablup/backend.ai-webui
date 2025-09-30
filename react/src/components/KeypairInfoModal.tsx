@@ -1,8 +1,7 @@
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import BAIModal from './BAIModal';
 import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';

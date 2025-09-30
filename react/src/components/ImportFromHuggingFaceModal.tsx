@@ -3,7 +3,6 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -26,7 +25,12 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';

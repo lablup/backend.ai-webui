@@ -1,8 +1,11 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Form, Input, message, Alert, FormInstance } from 'antd';
-import { useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

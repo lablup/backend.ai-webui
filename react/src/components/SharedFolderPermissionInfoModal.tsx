@@ -5,7 +5,6 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
 import {
@@ -19,6 +18,8 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIModal,
+  BAIModalProps,
   filterOutNullAndUndefined,
   BAITable,
   BAIUserUnionIcon,

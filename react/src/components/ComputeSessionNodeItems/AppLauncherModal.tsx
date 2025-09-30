@@ -5,7 +5,6 @@ import {
   TemplateItem,
   useSuspendedFilteredAppTemplate,
 } from '../../hooks/useSuspendedFilteredAppTemplate';
-import BAIModal from '../BAIModal';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -21,7 +20,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';

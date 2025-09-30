@@ -1,6 +1,5 @@
-import BAIModal from './BAIModal';
 import { ModalProps, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface IdleCheckDescriptionModalProps extends ModalProps {}

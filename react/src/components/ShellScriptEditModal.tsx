@@ -2,10 +2,14 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { DeleteOutlined } from '@ant-design/icons';
 import { App, Button, Dropdown, Form, Select, Typography } from 'antd';
-import { BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

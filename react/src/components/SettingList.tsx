@@ -1,4 +1,3 @@
-import BAIModal from './BAIModal';
 import SettingItem, { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -14,7 +13,7 @@ import {
   theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

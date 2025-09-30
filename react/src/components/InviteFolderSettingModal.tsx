@@ -1,7 +1,6 @@
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
@@ -16,7 +15,13 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAITable, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAITable,
+  BAIFlex,
+  useErrorMessageResolver,
+  BAIModalProps,
+  BAIModal,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,11 +1,15 @@
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import ResourceNumber from './ResourceNumber';
 import { Descriptions, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAIModalProps,
+  BAIModal,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';

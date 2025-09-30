@@ -1,7 +1,6 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import {
   QRCode,
   Typography,
@@ -12,7 +11,7 @@ import {
   Spin,
   FormInstance,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

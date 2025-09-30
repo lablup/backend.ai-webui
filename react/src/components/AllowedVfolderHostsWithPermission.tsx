@@ -1,9 +1,8 @@
 import { AllowedVfolderHostsWithPermissionFragment$key } from '../__generated__/AllowedVfolderHostsWithPermissionFragment.graphql';
 import { AllowedVfolderHostsWithPermissionQuery } from '../__generated__/AllowedVfolderHostsWithPermissionQuery.graphql';
-import BAIModal from './BAIModal';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
 import { Badge, theme } from 'antd';
-import { BAITable, BAIFlex, BAILink } from 'backend.ai-ui';
+import { BAITable, BAIFlex, BAILink, BAIModal } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,5 @@
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import BAIModal from './BAIModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
@@ -13,7 +12,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';

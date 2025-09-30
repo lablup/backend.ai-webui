@@ -6,7 +6,6 @@ import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettin
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal from './BAIModal';
 import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
@@ -22,7 +21,7 @@ import {
   Spin,
   FormInstance,
 } from 'antd';
-import { useErrorMessageResolver } from 'backend.ai-ui';
+import { BAIModal, useErrorMessageResolver } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreloadedQuery, usePreloadedQuery } from 'react-relay';

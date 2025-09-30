@@ -2,9 +2,13 @@ import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderMo
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Typography, message } from 'antd';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

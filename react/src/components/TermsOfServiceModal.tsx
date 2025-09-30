@@ -1,7 +1,7 @@
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { Skeleton } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
