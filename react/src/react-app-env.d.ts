@@ -10,9 +10,27 @@ type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
   ? A
   : never;
 
-//TODO: fix this declaration for globalThis. It's not working.
-declare global {
+declare module globalThis {
   var isDarkMode: boolean;
+  var isElectron: boolean;
+  var electronInitialHref: string;
+  var appLauncher: {
+    showLauncher?: (sessionId: {
+      'session-name'?: string;
+      'session-uuid'?: string;
+      'access-key'?: string;
+      mode?: SessionMode;
+      'app-services'?: Array<string>;
+      runtime?: string;
+      filename?: string;
+    }) => void;
+    forceUseV1Proxy?: {
+      checked: boolean;
+    };
+    forceUseV2Proxy?: {
+      checked: boolean;
+    };
+  };
 }
 
 type DeepPartial<T> = {
