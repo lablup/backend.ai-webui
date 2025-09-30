@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
 
 const {
   getLoader,
@@ -165,9 +166,17 @@ module.exports = {
       webpackConfig.plugins = webpackConfig.plugins.map((plugin) => {
         if (plugin.constructor.name === 'HtmlWebpackPlugin') {
           if (env === 'development') {
+            const content = fs.readFileSync(webuiIndexHtml, {
+              encoding: 'utf-8',
+            });
+
             plugin = new HtmlWebpackPlugin({
               inject: true,
               template: webuiIndexHtml,
+              templateContent: content.replace(
+                '// DEV_JS_INJECTING',
+                'globalThis.process = {env: {NODE_ENV: "development"}};',
+              ),
             });
           } else {
             plugin = new HtmlWebpackPlugin({
