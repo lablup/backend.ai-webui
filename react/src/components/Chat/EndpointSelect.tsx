@@ -3,6 +3,7 @@ import {
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
@@ -25,15 +26,26 @@ export interface EndpointSelectProps
   lifecycleStageFilter?: LifecycleStage[];
 }
 
-type LifecycleStage = 'created' | 'destroying' | 'destroyed';
+type LifecycleStage =
+  | 'pending'
+  | 'created' // Deprecated, use READY instead from 25.13.0
+  | 'scaling'
+  | 'ready'
+  | 'destroying'
+  | 'destroyed';
 
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
-  lifecycleStageFilter = ['created'],
+  lifecycleStageFilter = ['ready', 'created'],
   loading,
   ...selectPropsWithoutLoading
 }) => {
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  lifecycleStageFilter = baiClient.supports('endpoint-lifecycle-ready-stage')
+    ? ['ready', 'created']
+    : ['created'];
+
   const [controllableValue, setControllableValue] = useControllableValue<
     string | undefined
   >(selectPropsWithoutLoading);

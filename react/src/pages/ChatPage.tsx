@@ -7,7 +7,7 @@ import {
   useHistory,
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
@@ -41,6 +41,8 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 function useDefaultEndpointId() {
+  const baiClient = useSuspendedBackendaiClient();
+
   const { endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
       query ChatPageQuery($filter: String) {
@@ -52,7 +54,9 @@ function useDefaultEndpointId() {
       }
     `,
     {
-      filter: 'lifecycle_stage == "created"',
+      filter: baiClient.supports('endpoint-lifecycle-ready-stage')
+        ? 'lifecycle_stage == "ready" | lifecycle_stage == "created"'
+        : 'lifecycle_stage == "created"',
     },
   );
 
