@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Đa",
+    "SingleNodeShort": "Đơn"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Không giới hạn"
   },

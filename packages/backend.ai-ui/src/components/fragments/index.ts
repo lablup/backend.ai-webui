@@ -34,6 +34,7 @@ export type { BAIArtifactRevisionDownloadButtonProps } from './BAIArtifactRevisi
 export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisionDeleteButton';
 export type { BAIArtifactRevisionDeleteButtonProps } from './BAIArtifactRevisionDeleteButton';
 export { default as BAIDeactivateArtifactsModal } from './BAIDeactivateArtifactsModal';
+export { default as BAISessionClusterMode } from './BAISessionClusterMode';
 export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,

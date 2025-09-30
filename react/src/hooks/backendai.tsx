@@ -254,6 +254,8 @@ export const useCurrentUserInfo = () => {
   ] as const;
 };
 
+type UserRole = 'superadmin' | 'admin' | 'user' | 'monitor';
+
 export const useCurrentUserRole = () => {
   const [userInfo] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
@@ -262,7 +264,7 @@ export const useCurrentUserRole = () => {
 
   const { data: roleData } = useTanQuery<{
     user: {
-      role: 'superadmin' | 'admin' | 'user' | 'monitor';
+      role: UserRole;
     };
   }>({
     queryKey: ['getUserRole', userInfo.email],
@@ -273,7 +275,7 @@ export const useCurrentUserRole = () => {
     enabled: decodedUserRole === null,
   });
 
-  return decodedUserRole ?? roleData?.user.role;
+  return (decodedUserRole ?? roleData?.user.role) as UserRole;
 };
 
 export const useTOTPSupported = () => {

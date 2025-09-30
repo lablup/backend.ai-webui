@@ -33,6 +33,7 @@ import {
   mergeFilterValues,
   BAIAlertIconWithTooltip,
   filterOutNullAndUndefined,
+  filterOutEmpty,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
@@ -41,6 +42,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
@@ -53,6 +55,7 @@ const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
+  const userRole = useCurrentUserRole();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -405,13 +408,30 @@ const ComputeSessionListPage = () => {
                 ]}
               />
               <BAIPropertyFilter
-                filterProperties={[
+                filterProperties={filterOutEmpty([
                   {
                     key: 'name',
                     propertyLabel: t('session.SessionName'),
                     type: 'string',
                   },
-                ]}
+                  {
+                    key: 'scaling_group',
+                    propertyLabel: t('session.ResourceGroup'),
+                    type: 'string',
+                  },
+                  {
+                    key: 'agent_ids',
+                    propertyLabel: t('session.Agent'),
+                    type: 'string',
+                  },
+                  (userRole === 'superadmin' ||
+                    userRole === 'admin' ||
+                    userRole === 'monitor') && {
+                    key: 'user_email',
+                    propertyLabel: t('session.launcher.OwnerEmail'),
+                    type: 'string',
+                  },
+                ])}
                 value={queryParams.filter}
                 onChange={(value) => {
                   setQuery({ filter: value }, 'replaceIn');
@@ -498,6 +518,7 @@ const ComputeSessionListPage = () => {
                 }
               },
             }}
+            sortDirections={['ascend', 'descend', 'ascend']}
             onChangeOrder={(order) => {
               setQuery({ order }, 'replaceIn');
             }}

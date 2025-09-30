@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "หลาย",
+    "SingleNodeShort": "เดี่ยว"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "ไม่ จำกัด"
   },

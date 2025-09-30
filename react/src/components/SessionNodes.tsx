@@ -16,7 +16,10 @@ import {
   BAITableProps,
   BAISessionAgentIds,
   BAILink,
+  BAISessionTypeTag,
+  BAISessionClusterMode,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,6 +50,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         row_id @required(action: NONE)
         name
         status
+        type
         agent_ids
         ...SessionStatusTagFragment
         ...SessionReservationFragment
@@ -54,6 +58,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
         ...BAISessionAgentIdsFragment
+        ...BAISessionTypeTagFragment
+        ...BAISessionClusterModeFragment
         kernel_nodes {
           edges {
             node {
@@ -63,6 +69,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
             }
           }
         }
+        created_at
+        scaling_group
         owner @since(version: "25.13.0") {
           email
         }
@@ -95,12 +103,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         },
         sorter: true,
         required: true,
+        fixed: 'left',
       },
       {
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
-        render: (status: string, session) => {
+        render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
@@ -168,10 +177,47 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           );
         },
       },
+      {
+        key: 'resourceGroup',
+        dataIndex: 'scaling_group',
+        title: t('session.ResourceGroup'),
+        defaultHidden: true,
+        sorter: true,
+        render: (__, session) =>
+          session.scaling_group ? session.scaling_group : '-',
+      },
+      {
+        key: 'type',
+        dataIndex: 'type',
+        title: t('session.SessionType'),
+        defaultHidden: true,
+        sorter: true,
+        render: (__, session) => <BAISessionTypeTag sessionFrgmt={session} />,
+      },
+      {
+        key: 'cluster_mode',
+        dataIndex: 'cluster_mode',
+        title: t('session.ClusterMode'),
+        defaultHidden: true,
+        sorter: true,
+        render: (__, session) => (
+          <BAISessionClusterMode sessionFrgmt={session} />
+        ),
+      },
+      {
+        key: 'created_at',
+        dataIndex: 'created_at',
+        title: t('session.CreatedAt'),
+        defaultHidden: true,
+        sorter: true,
+        render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
+      },
       (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
         key: 'agent',
+        dataIndex: 'agent_ids',
         title: t('session.Agent'),
         defaultHidden: false,
+        sorter: true,
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
       userRole === 'superadmin' &&

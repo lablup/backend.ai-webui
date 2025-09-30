@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Moni-",
+    "SingleNodeShort": "Yksittäinen"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Rajoittamaton"
   },

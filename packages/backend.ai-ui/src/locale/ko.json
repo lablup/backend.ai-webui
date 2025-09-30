@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "다중",
+    "SingleNodeShort": "단일"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "제한없음"
   },

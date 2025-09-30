@@ -89,6 +89,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Multi",
+    "SingleNodeShort": "Solteiro"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },

@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Çok",
+    "SingleNodeShort": "Bekar"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Sınırsız"
   },

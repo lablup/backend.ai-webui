@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Πολλαπλών",
+    "SingleNodeShort": "Μονόκλινο"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Απεριόριστος"
   },

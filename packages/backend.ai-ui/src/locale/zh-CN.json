@@ -90,6 +90,10 @@
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "多",
+    "SingleNodeShort": "单节点"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "无限"
   },
