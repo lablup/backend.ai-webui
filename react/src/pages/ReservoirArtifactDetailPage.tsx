@@ -531,7 +531,11 @@ const ReservoirArtifactDetailPage = () => {
           setSelectedRevisions([]);
           tasks.forEach((task) => {
             upsertNotification({
-              message: `Pulling artifact version: ${task.version}`,
+              message: t('reservoirPage.PullingArtifact', {
+                name: task.artifact.name,
+                version: task.version,
+              }),
+              type: 'info',
               open: true,
               duration: 0,
               backgroundTask: {
@@ -543,13 +547,20 @@ const ReservoirArtifactDetailPage = () => {
                   resolved: (_data, _notification) => {
                     return {
                       type: 'success',
-                      message: `Successfully pulled artifact version: ${task.version}`,
-                      toText: 'Go to Artifact',
-                      to: `/reservoir/${task.artifact_id}`,
+                      message: t('reservoirPage.SuccessFullyPulledArtifact', {
+                        name: task.artifact.name,
+                        version: task.version,
+                      }),
+                      showIcon: true,
+                      toText: t('reservoirPage.GoToArtifact'),
+                      to: `/reservoir/${task.artifact.id}`,
                     };
                   },
                   rejected: (_data, _notification) => {
-                    return 'Failed to pull artifact versions: ';
+                    return t('reservoirPage.FailedToPullArtifact', {
+                      name: task.artifact.name,
+                      version: task.version,
+                    });
                   },
                 },
               },

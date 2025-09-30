@@ -38,7 +38,10 @@ export interface BAIImportArtifactModalProps
     tasks: {
       taskId: string;
       version: string;
-      artifact_id: string;
+      artifact: {
+        id: string;
+        name: string;
+      };
     }[],
   ) => void;
   onCancel: (e: React.MouseEvent<HTMLElement>) => void;
@@ -59,7 +62,8 @@ const BAIImportArtifactModal = ({
     useFragment<BAIImportArtifactModalArtifactFragment$key>(
       graphql`
         fragment BAIImportArtifactModalArtifactFragment on Artifact {
-          id
+          id @required(action: THROW)
+          name @required(action: THROW)
           ...BAIArtifactDescriptionsFragment
         }
       `,
@@ -163,7 +167,10 @@ const BAIImportArtifactModal = ({
                 res.importArtifacts.tasks.map((task) => ({
                   taskId: task.taskId,
                   version: task.artifactRevision.version,
-                  artifact_id: toLocalId(selectedArtifact!.id),
+                  artifact: {
+                    id: toLocalId(selectedArtifact?.id ?? ''),
+                    name: selectedArtifact?.name ?? '',
+                  },
                 })),
               );
             },
