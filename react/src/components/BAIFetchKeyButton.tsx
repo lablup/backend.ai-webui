@@ -16,6 +16,7 @@ interface BAIAutoRefetchButtonProps
   size?: ButtonProps['size'];
   onChange: (fetchKey: string) => void;
   hidden?: boolean;
+  pauseWhenHidden?: boolean;
 }
 const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   value,
@@ -26,6 +27,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   size,
   hidden,
   lastLoadTime: lastLoadTimeProp,
+  pauseWhenHidden = true,
   ...buttonProps
 }) => {
   const { t } = useTranslation();
@@ -65,6 +67,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
     },
     showLastLoadTime ? 5_000 : null,
     lastLoadTime.toISOString(),
+    pauseWhenHidden,
   );
 
   // remember when loading is done to display when the last fetch was done
@@ -80,6 +83,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
     },
     // only start auto-updating after the previous loading is false(done).
     loading ? null : autoUpdateDelay,
+    pauseWhenHidden,
   );
 
   const tooltipTitle = showLastLoadTime ? loadTimeMessage : undefined;
