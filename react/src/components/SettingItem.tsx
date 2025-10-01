@@ -4,6 +4,7 @@ import {
   Select,
   type SelectProps,
   Switch,
+  type SwitchProps,
   Typography,
   theme,
 } from 'antd';
@@ -21,7 +22,19 @@ export interface SettingItemProps {
   defaultValue?: any;
   value?: any;
   setValue?: (value: any) => void;
-  selectProps?: Omit<SelectProps, 'value' | 'onChange' | 'defaultValue'>;
+  selectProps?: Omit<
+    SelectProps,
+    'value' | 'onChange' | 'defaultValue' | 'disabled'
+  >;
+  switchProps?: Omit<
+    SwitchProps,
+    | 'value'
+    | 'checked'
+    | 'onChange'
+    | 'defaultValue'
+    | 'defaultChecked'
+    | 'disabled'
+  >;
   onChange?: (value: any) => void;
   disabled?: boolean;
 }
@@ -44,6 +57,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   defaultValue,
   value,
   selectProps,
+  switchProps,
   onChange,
   disabled,
 }) => {
@@ -108,7 +122,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
       {type === 'switch' && (
         <>
           {description}
-          <Switch checked={value} onChange={onChange} />
+          <Switch
+            checked={value}
+            onChange={onChange}
+            disabled={disabled}
+            {...switchProps}
+          />
         </>
       )}
     </BAIFlex>
