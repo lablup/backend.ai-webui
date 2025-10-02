@@ -1,4 +1,13 @@
-import { Badge, Checkbox, Select, SelectProps, Typography, theme } from 'antd';
+import {
+  Badge,
+  Checkbox,
+  Select,
+  type SelectProps,
+  Switch,
+  type SwitchProps,
+  Typography,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -6,14 +15,26 @@ import React, { ReactElement, ReactNode } from 'react';
 
 export interface SettingItemProps {
   'data-testid'?: string;
-  type: 'custom' | 'checkbox' | 'select';
+  type: 'custom' | 'checkbox' | 'select' | 'switch';
   title: string;
   description?: string | ReactElement;
   children?: ReactNode;
   defaultValue?: any;
   value?: any;
   setValue?: (value: any) => void;
-  selectProps?: Omit<SelectProps, 'value' | 'onChange' | 'defaultValue'>;
+  selectProps?: Omit<
+    SelectProps,
+    'value' | 'onChange' | 'defaultValue' | 'disabled'
+  >;
+  switchProps?: Omit<
+    SwitchProps,
+    | 'value'
+    | 'checked'
+    | 'onChange'
+    | 'defaultValue'
+    | 'defaultChecked'
+    | 'disabled'
+  >;
   onChange?: (value: any) => void;
   disabled?: boolean;
 }
@@ -36,6 +57,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   defaultValue,
   value,
   selectProps,
+  switchProps,
   onChange,
   disabled,
 }) => {
@@ -94,7 +116,18 @@ const SettingItem: React.FC<SettingItemProps> = ({
               ...selectProps?.style,
             }}
             {..._.omit(selectProps, ['style'])}
-          ></Select>
+          />
+        </>
+      )}
+      {type === 'switch' && (
+        <>
+          {description}
+          <Switch
+            checked={value}
+            onChange={onChange}
+            disabled={disabled}
+            {...switchProps}
+          />
         </>
       )}
     </BAIFlex>
