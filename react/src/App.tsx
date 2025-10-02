@@ -9,6 +9,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import ModelStoreListPage from './pages/ModelStoreListPage';
@@ -542,6 +543,19 @@ const router = createBrowserRouter([
         path: '/usersettings',
         handle: { labelKey: 'webui.menu.Settings&Logs' },
         Component: UserSettingsPage,
+      },
+      {
+        path: '/admin-dashboard',
+        handle: { labelKey: 'webui.menu.AdminDashboard' },
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <AdminDashboardPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
       },
       {
         path: '/credential',
