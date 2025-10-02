@@ -355,8 +355,10 @@ const UserPreferencesPage = () => {
             label: t('userSettings.Logs'),
           },
         ]}
-        bodyStyle={{
-          padding: 0,
+        styles={{
+          body: {
+            padding: 0,
+          },
         }}
       >
         {curTabKey === 'general' && (
