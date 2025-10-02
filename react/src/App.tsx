@@ -204,15 +204,15 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Sessions' },
         Component: () => {
           const location = useLocation();
-          const [experimentalNeoSessionList] = useBAISettingUserState(
-            'experimental_neo_session_list',
+          const [classic_session_list] = useBAISettingUserState(
+            'classic_session_list',
           );
-          return experimentalNeoSessionList ? (
-            <WebUINavigate to={'/session' + location.search} replace />
-          ) : (
+          return classic_session_list ? (
             <BAIErrorBoundary>
               <SessionDetailAndContainerLogOpenerLegacy />
             </BAIErrorBoundary>
+          ) : (
+            <WebUINavigate to={'/session' + location.search} replace />
           );
         },
       },
@@ -224,13 +224,13 @@ const router = createBrowserRouter([
             path: '',
             Component: () => {
               const location = useLocation();
-              const [experimentalNeoSessionList] = useBAISettingUserState(
-                'experimental_neo_session_list',
+              const [classicSessionList] = useBAISettingUserState(
+                'classic_session_list',
               );
 
               useSuspendedBackendaiClient();
 
-              return experimentalNeoSessionList ? (
+              return !classicSessionList ? (
                 <BAIErrorBoundary>
                   <Suspense
                     fallback={

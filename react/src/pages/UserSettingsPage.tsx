@@ -46,8 +46,9 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
-  const [experimentalNeoSessionList, setExperimentalNeoSessionList] =
-    useBAISettingUserState('experimental_neo_session_list');
+  const [classicSessionList, setClassicSessionList] = useBAISettingUserState(
+    'classic_session_list',
+  );
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
   const [experimentalDashboard, setExperimentalDashboard] =
@@ -288,22 +289,29 @@ const UserPreferencesPage = () => {
       ],
     },
     {
-      'data-testid': 'group-experimental-features',
-      title: t('userSettings.ExperimentalFeatures'),
-      description: t('userSettings.ExperimentalFeaturesDesc'),
+      'data-testid': 'group-classic-features',
+      title: t('userSettings.BackToClassicFeatures'),
+      description: t('userSettings.BackToClassicFeaturesDesc'),
       settingItems: [
         {
           'data-testid': 'items-experimental-neo-session-list',
           type: 'checkbox',
-          title: t('userSettings.NEOSessionList'),
+          title: t('userSettings.ClassicSessionList'),
           description: t('general.Enabled'),
           defaultValue: false,
-          value: experimentalNeoSessionList,
-          setValue: setExperimentalNeoSessionList,
+          value: classicSessionList,
+          setValue: setClassicSessionList,
           onChange: (e) => {
-            setExperimentalNeoSessionList(e.target.checked);
+            setClassicSessionList(e.target.checked);
           },
         },
+      ],
+    },
+    {
+      'data-testid': 'group-experimental-features',
+      title: t('userSettings.ExperimentalFeatures'),
+      description: t('userSettings.ExperimentalFeaturesDesc'),
+      settingItems: [
         {
           'data-testid': 'items-experimental-ai-agents',
           type: 'checkbox',

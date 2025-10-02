@@ -18,7 +18,6 @@ interface UserSettings {
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
-  experimental_neo_session_list?: boolean;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
@@ -31,6 +30,8 @@ interface UserSettings {
     | 'TotalResourceWithinResourceGroup';
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
+
+  classic_session_list?: boolean; // `experimental_neo_session_list` has been replaced with `classic_session_list`
 }
 
 export type SessionHistory = {
