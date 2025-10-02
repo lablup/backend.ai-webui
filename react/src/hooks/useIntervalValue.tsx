@@ -17,45 +17,39 @@ export function useInterval(
     typeof document === 'undefined' ? true : !document.hidden,
   );
 
+  // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback;
-  });
+  }, [callback]);
 
-  // Handle page visibility changes
+  // Handle page visibility changes if pauseWhenHidden is true
   useEffect(() => {
+    // If pauseWhenHidden is false or we're not in a browser environment, do nothing
     if (!pauseWhenHidden || typeof window === 'undefined') return;
-
-    const handleVisibilityChange = () => {
-      const visible = !document.hidden;
-      setIsPageVisible((prev) => {
-        if (delay !== null && !prev && visible) {
-          // Execute callback immediately when page becomes visible again
-          savedCallback.current?.();
-        }
-        return visible;
-      });
+    const handler = () => {
+      const isVisibleNow = !document.hidden;
+      setIsPageVisible(isVisibleNow);
+      if (isVisibleNow && delay !== null) {
+        savedCallback.current?.();
+      }
     };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
   }, [pauseWhenHidden, delay]);
 
+  // Determine the effective delay based on page visibility
+  const effectiveDelay = pauseWhenHidden && !isPageVisible ? null : delay;
+
+  // Set up the interval
   useEffect(() => {
     function tick() {
       savedCallback.current?.();
     }
-
-    if (delay !== null) {
-      // Only check visibility if pauseWhenHidden is enabled
-      if (!pauseWhenHidden || isPageVisible) {
-        let id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
+    if (effectiveDelay !== null) {
+      let id = setInterval(tick, effectiveDelay);
+      return () => clearInterval(id);
     }
-  }, [delay, pauseWhenHidden, isPageVisible]);
+  }, [effectiveDelay]);
 }
 
 /**
