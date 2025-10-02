@@ -265,15 +265,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                         <StyleProvider container={shadowRoot} cache={cache}>
                           <Suspense fallback="">
                             <BrowserRouter>
-                              <QueryParamProvider
-                                adapter={ReactRouter6Adapter}
-                                options={
-                                  {
-                                    // searchStringToObject: queryString.parse,
-                                    // objectToSearchString: queryString.stringify,
-                                  }
-                                }
-                              >
+                              <QueryParamProvider adapter={ReactRouter6Adapter}>
                                 <RoutingEventHandler />
                                 {children}
                               </QueryParamProvider>
@@ -363,16 +355,18 @@ export const DefaultProvidersForReactRoot: React.FC<
                 requiredMark: 'optional',
               }}
             >
-              <App {...commonAppProps}>
-                {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                <Suspense>
-                  {/* <BrowserRouter> */}
-                  {/* <RoutingEventHandler /> */}
-                  {children}
-                  {/* </BrowserRouter> */}
-                </Suspense>
-                {/* </StyleProvider> */}
-              </App>
+              <QueryParamProvider adapter={ReactRouter6Adapter}>
+                <App {...commonAppProps}>
+                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                  <Suspense>
+                    {/* <BrowserRouter> */}
+                    {/* <RoutingEventHandler /> */}
+                    {children}
+                    {/* </BrowserRouter> */}
+                  </Suspense>
+                  {/* </StyleProvider> */}
+                </App>
+              </QueryParamProvider>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
