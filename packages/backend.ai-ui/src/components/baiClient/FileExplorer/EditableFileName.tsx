@@ -1,4 +1,3 @@
-import { EditableFileNameFragment$key } from '../../../__generated__/EditableFileNameFragment.graphql';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -12,7 +11,6 @@ import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
 
 interface ServerError extends Error {
   title?: string;
@@ -39,7 +37,6 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 type EditableNameProps = {
-  vfolderNodeFrgmt?: EditableFileNameFragment$key | null;
   fileInfo: VFolderFile;
   existingFiles: Array<VFolderFile>;
   onEndEdit?: () => void;
@@ -56,9 +53,9 @@ type EditableNameProps = {
 );
 
 const EditableFileName: React.FC<EditableNameProps> = ({
-  vfolderNodeFrgmt,
   fileInfo,
   existingFiles,
+  disabled = false,
   onEndEdit,
   onStartEdit,
   component: Component = Typography.Text,
@@ -95,17 +92,6 @@ const EditableFileName: React.FC<EditableNameProps> = ({
     },
   });
 
-  const vFolderNode = useFragment(
-    graphql`
-      fragment EditableFileNameFragment on VirtualFolderNode {
-        permissions
-      }
-    `,
-    vfolderNodeFrgmt,
-  );
-  const hasWritePermission =
-    vFolderNode?.permissions?.includes('write_content');
-
   // filter existing file names but exclude the current file name
   const existingFileNames = existingFiles
     .filter((file) => file.name !== fileInfo.name)
@@ -123,7 +109,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
       {!isEditing || isPendingRenamingAndRefreshing ? (
         <Component
           editable={
-            hasWritePermission && !isPendingRenamingAndRefreshing
+            !disabled && !isPendingRenamingAndRefreshing
               ? {
                   onStart: () => {
                     setIsEditing(true);
@@ -136,7 +122,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
                 }
               : false
           }
-          className={hasWritePermission ? styles.hoverEdit : undefined}
+          className={!disabled ? styles.hoverEdit : undefined}
           style={style}
           {...props}
         >

@@ -73,7 +73,6 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
-          ...BAIFileExplorerFragment
         }
       }
     `,
@@ -97,7 +96,6 @@ const LegacyFolderExplorer: React.FC<LegacyFolderExplorerProps> = ({
         />
       ) : !hasNoPermissions ? (
         <BAIFileExplorer
-          vfolderNodeFrgmt={vfolder_node}
           targetVFolderId={vfolderID}
           onUpload={(files: RcFile[], currentPath: string) => {
             uploadFiles(files, vfolderID, currentPath);

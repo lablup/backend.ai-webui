@@ -1,4 +1,3 @@
-import { BAIFileExplorerFragment$key } from '../../../__generated__/BAIFileExplorerFragment.graphql';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
@@ -24,7 +23,6 @@ import _ from 'lodash';
 import { HouseIcon } from 'lucide-react';
 import { createContext, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
 
 export const FolderInfoContext = createContext<{
   targetVFolderId: string;
@@ -35,22 +33,26 @@ export const FolderInfoContext = createContext<{
 });
 
 export interface BAIFileExplorerProps {
-  vfolderNodeFrgmt?: BAIFileExplorerFragment$key | null;
   targetVFolderId: string;
   fetchKey?: string;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   tableProps?: Partial<BAITableProps<VFolderFile>>;
   style?: React.CSSProperties;
   fileDropContainerRef?: React.RefObject<HTMLDivElement | null>;
+  enableDownload?: boolean;
+  enableDelete?: boolean;
+  enableWrite?: boolean;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
-  vfolderNodeFrgmt,
   targetVFolderId,
   fetchKey,
   onUpload,
   tableProps,
   fileDropContainerRef,
+  enableDownload = false,
+  enableDelete = false,
+  enableWrite = false,
   style,
 }) => {
   const { t } = useTranslation();
@@ -80,18 +82,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       setFetchedFilesCache(files.items);
     }
   }, [files]);
-
-  const vFolderNode = useFragment(
-    graphql`
-      fragment BAIFileExplorerFragment on VirtualFolderNode {
-        permissions
-        ...FileItemControlsFragment
-        ...ExplorerActionControlsFragment
-        ...EditableFileNameFragment
-      }
-    `,
-    vfolderNodeFrgmt,
-  );
 
   const breadCrumbItems: Array<ItemType> = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
@@ -155,9 +145,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       sorter: (a, b) => localeCompare(a.name, b.name),
       render: (name, record) => (
         <EditableFileName
-          vfolderNodeFrgmt={vFolderNode}
           fileInfo={record}
           existingFiles={fetchedFilesCache}
+          disabled={!enableWrite}
           onEndEdit={() => {
             refetch();
           }}
@@ -180,11 +170,12 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         return (
           <Suspense fallback={<Skeleton.Button size="small" active />}>
             <FileItemControls
-              vfolderNodeFrgmt={vFolderNode}
               selectedItem={record}
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
+              enableDownload={enableDownload}
+              enableDelete={enableDelete}
             />
           </Suspense>
         );
@@ -274,8 +265,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             )}
           />
           <ExplorerActionControls
-            vFolderNodeFrgmt={vFolderNode}
             selectedFiles={selectedItems}
+            enableDelete={enableDelete}
+            enableWrite={enableWrite}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
             onRequestClose={(
               success: boolean,

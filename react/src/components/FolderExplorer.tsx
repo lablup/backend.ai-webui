@@ -16,8 +16,13 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { FolderExplorerQuery } from 'src/__generated__/FolderExplorerQuery.graphql';
-import { useFetchKey } from 'src/hooks';
+import {
+  useCurrentDomainValue,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from 'src/hooks';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
+import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
 const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`
@@ -51,7 +56,16 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
   const { uploadStatus, uploadFiles } = useFileUploadManager(vfolderID);
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  const currentUserAccessKey = baiClient?._config?.accessKey;
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      currentProject.id,
+      currentUserAccessKey,
+    );
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -66,13 +80,12 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
         vfolder_node(id: $vfolderGlobalId) {
           group
           unmanaged_path @since(version: "25.04.0")
+          permissions
+          host
 
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
-          ...BAIFileExplorerFragment
-          ...FileItemControlsFragment
-          ...ExplorerActionControlsFragment
         }
       }
     `,
@@ -82,6 +95,18 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
     },
   );
 
+  const hasDownloadContentPermission = _.includes(
+    unitedAllowedPermissionByVolume[vfolder_node?.host ?? ''],
+    'download-file',
+  );
+  const hasDeleteContentPermission = _.includes(
+    vfolder_node?.permissions,
+    'delete_content',
+  );
+  const hasWriteContentPermission = _.includes(
+    vfolder_node?.permissions,
+    'write_content',
+  );
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
@@ -92,12 +117,14 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
     />
   ) : !hasNoPermissions ? (
     <BAIFileExplorer
-      vfolderNodeFrgmt={vfolder_node}
       targetVFolderId={vfolderID}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
         uploadFiles(files, vfolderID, currentPath);
       }}
+      enableDownload={hasDownloadContentPermission}
+      enableDelete={hasDeleteContentPermission}
+      enableWrite={hasWriteContentPermission}
       tableProps={{
         scroll: xl
           ? { x: 'max-content' }
