@@ -83,10 +83,7 @@
     "lucide-react": "^0.484.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-draggable": "^4.4.6",
-    "react-resizable": "^3.0.5",
-    "react-router-dom": "^6.30.0",
-    "relay-runtime": "^20.1.0",
-    "use-query-params": "^2.2.1"
+    "react-resizable": "^3.0.5"
   },
   "devDependencies": {
     "@jest/expect": "30.0.0-beta.3",

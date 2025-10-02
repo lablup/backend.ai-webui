@@ -1,15 +1,15 @@
-import { useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery } from '../__generated__/useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery.graphql';
-import { useMergedAllowedStorageHostPermission_KeypairQuery } from '../__generated__/useMergedAllowedStorageHostPermission_KeypairQuery.graphql';
-import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { useSuspendedBackendaiClient } from '.';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery } from 'src/__generated__/useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery.graphql';
+import { useMergedAllowedStorageHostPermission_KeypairQuery } from 'src/__generated__/useMergedAllowedStorageHostPermission_KeypairQuery.graphql';
 
-export const useMergedAllowedStorageHostPermission = () => {
-  const baiClient = useConnectedBAIClient();
-  const userAccessKey = baiClient?.accessKey;
-  const domainName = baiClient?._config?.domainName;
-  const projectId = baiClient?.current_group_id();
-
+export const useMergedAllowedStorageHostPermission = (
+  domain: string,
+  projectId: string,
+  userAccessKey: string,
+) => {
+  const baiClient = useSuspendedBackendaiClient();
   const { keypair } =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
       graphql`
@@ -24,7 +24,7 @@ export const useMergedAllowedStorageHostPermission = () => {
         }
       `,
       {
-        domainName,
+        domainName: domain,
         accessKey: userAccessKey,
       },
       {
@@ -51,7 +51,7 @@ export const useMergedAllowedStorageHostPermission = () => {
         }
       `,
       {
-        domainName,
+        domainName: domain,
         projectId,
         resourcePolicyName: keypair?.resource_policy,
       },

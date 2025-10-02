@@ -1,18 +1,11 @@
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Alert, DatePicker, Form, FormInstance, message } from 'antd';
-import {
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
-  ESMClientErrorResponse,
-} from 'backend.ai-ui';
+import { FormInstance, message, Form, Select, DatePicker } from 'antd';
+import { BAIModalProps, ESMClientErrorResponse, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-
-// import { graphql, useFragment } from "react-relay";
 
 interface EndpointTokenGenerationModalProps
   extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
@@ -24,12 +17,16 @@ interface EndpointTokenGenerationInput {
   valid_until?: number; // Unix epoch time
 }
 
+type FormValue = {
+  expiryOption: 7 | 30 | 90 | 'custom';
+  datetime: dayjs.Dayjs;
+};
 const EndpointTokenGenerationModal: React.FC<
   EndpointTokenGenerationModalProps
 > = ({ onRequestClose, onCancel, endpoint_id, ...baiModalProps }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const formRef = useRef<FormInstance>(null);
+  const formRef = useRef<FormInstance<FormValue> | null>(null);
 
   const mutationToGenerateToken = useTanMutation<
     unknown,
@@ -52,7 +49,15 @@ const EndpointTokenGenerationModal: React.FC<
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     formRef.current?.validateFields().then((values) => {
-      const validUntil = values.datetime.unix();
+      let validUntil: number;
+
+      if (values.expiryOption === 'custom') {
+        validUntil = values.datetime.unix();
+      } else {
+        const daysToAdd = values.expiryOption;
+        validUntil = dayjs().add(daysToAdd, 'day').unix();
+      }
+
       mutationToGenerateToken.mutate(
         {
           valid_until: validUntil,
@@ -91,27 +96,53 @@ const EndpointTokenGenerationModal: React.FC<
       confirmLoading={mutationToGenerateToken.isPending}
       centered
       title={t('modelService.GenerateNewToken')}
+      width={400}
     >
       <Form
         ref={formRef}
-        preserve={false}
-        labelCol={{ span: 10 }}
         initialValues={{
-          datetime: dayjs().add(24, 'hour'),
+          expiryOption: 7,
+          datetime: dayjs().add(7, 'day'),
         }}
         validateTrigger={['onChange', 'onBlur']}
-        style={{ maxWidth: 500 }}
+        layout="vertical"
+        style={{ justifyItems: 'center' }}
       >
-        <BAIFlex direction="column" gap="sm" align="stretch">
-          <Alert
-            type="info"
-            showIcon
-            message={t('modelService.TokenExpiredDateHelp')}
+        <Form.Item
+          name="expiryOption"
+          label={t('modelService.ExpiredDate')}
+          rules={[
+            {
+              required: true,
+              message: t('modelService.PleaseSelectTime'),
+            },
+          ]}
+        >
+          <Select<FormValue['expiryOption']>
+            style={{ width: 200 }}
+            options={[
+              { value: 7, label: t('general.Days', { num: 7 }) },
+              { value: 30, label: t('general.Days', { num: 30 }) },
+              { value: 90, label: t('general.Days', { num: 90 }) },
+              { value: 'custom', label: t('modelService.Custom') },
+            ]}
+            onChange={(value) => {
+              // For the convenience of users, set the default date to 7, 30, or 90 days later when not custom
+              if (value !== 'custom') {
+                formRef.current?.setFieldValue(
+                  'datetime',
+                  dayjs().add(value, 'day'),
+                );
+              }
+            }}
           />
-          <BAIFlex direction="row" align="stretch" justify="around">
+        </Form.Item>
+        <Form.Item dependencies={['expiryOption']} noStyle>
+          {({ getFieldValue }) => (
             <Form.Item
               name="datetime"
-              label={t('modelService.ExpiredDate')}
+              hidden={getFieldValue('expiryOption') !== 'custom'}
+              label={t('modelService.CustomExpirationDate')}
               rules={[
                 {
                   type: 'object' as const,
@@ -120,7 +151,7 @@ const EndpointTokenGenerationModal: React.FC<
                 },
                 () => ({
                   validator(_, value) {
-                    if (value.isAfter(dayjs())) {
+                    if (value && value.isAfter(dayjs())) {
                       return Promise.resolve();
                     }
                     return Promise.reject(
@@ -136,12 +167,8 @@ const EndpointTokenGenerationModal: React.FC<
                 style={{ width: 200 }}
               />
             </Form.Item>
-          </BAIFlex>
-        </BAIFlex>
-        {/* <BAIFlex direction="row" align="stretch" justify="end">
-          <Tag style={{height: 30}}>{t('modelService.CurrentTime')}</Tag>
-          <TimeContainer></TimeContainer>
-        </BAIFlex> */}
+          )}
+        </Form.Item>
       </Form>
     </BAIModal>
   );

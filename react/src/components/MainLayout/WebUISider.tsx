@@ -147,9 +147,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const gridBreakpoint = Grid.useBreakpoint();
   const primaryColors = usePrimaryColors();
 
-  const [experimentalNeoSessionList] = useBAISettingUserState(
-    'experimental_neo_session_list',
-  );
+  const [classic_session_list] = useBAISettingUserState('classic_session_list');
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
@@ -177,7 +175,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     },
     {
       label: (
-        <WebUILink to={experimentalNeoSessionList ? '/session' : '/job'}>
+        <WebUILink to={classic_session_list ? '/job' : '/session'}>
           {t('webui.menu.Sessions')}
         </WebUILink>
       ),

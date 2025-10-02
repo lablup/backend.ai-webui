@@ -7,15 +7,10 @@ import { RcFile } from 'antd/es/upload';
 import _ from 'lodash';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   const baiClient = useConnectedBAIClient();
   const [currentPath, setCurrentPath] = useState<string>('.');
-  const [, setCurrentPathParam] = useQueryParam(
-    'path',
-    withDefault(StringParam, '.'),
-  );
   const [directoryTree, setDirectoryTree] = useState<
     Record<string, Array<VFolderFile>>
   >({});
@@ -24,26 +19,19 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
     const newPath =
       currentPath === '.' ? folderName : `${currentPath}/${folderName}`;
     setCurrentPath(newPath);
-    setCurrentPathParam(newPath);
   };
 
   const navigateUp = () => {
     const pathParts = currentPath.split('/');
     if (pathParts.length > 1) {
-      const newPath = pathParts.join('/');
       pathParts.pop();
+      const newPath = pathParts.join('/');
       setCurrentPath(newPath || '.');
-      newPath === '.'
-        ? setCurrentPathParam(null, 'replaceIn')
-        : setCurrentPathParam(newPath);
     }
   };
 
   const navigateToPath = (path: string) => {
     setCurrentPath(path);
-    path === '.'
-      ? setCurrentPathParam(null, 'replaceIn')
-      : setCurrentPathParam(path);
   };
 
   const {

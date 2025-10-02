@@ -1,4 +1,3 @@
-import { ExplorerActionControlsFragment$key } from '../../../__generated__/ExplorerActionControlsFragment.graphql';
 import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
@@ -16,7 +15,6 @@ import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
 
 const useStyles = createStyles(({ css }) => ({
   upload: css`
@@ -33,19 +31,21 @@ const useStyles = createStyles(({ css }) => ({
 
 interface ExplorerActionControlsProps {
   selectedFiles: Array<VFolderFile>;
-  vFolderNodeFrgmt?: ExplorerActionControlsFragment$key | null;
   onRequestClose: (
     success: boolean,
     modifiedItems?: Array<VFolderFile>,
   ) => void;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  enableDelete?: boolean;
+  enableWrite?: boolean;
 }
 
 const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   selectedFiles,
-  vFolderNodeFrgmt,
   onRequestClose,
   onUpload,
+  enableDelete = false,
+  enableWrite = false,
 }) => {
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
@@ -55,20 +55,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const lastFileListRef = useRef<Array<RcFile>>([]);
-
-  const virtualFolderNodeFrgmt = useFragment(
-    graphql`
-      fragment ExplorerActionControlsFragment on VirtualFolderNode {
-        permissions
-      }
-    `,
-    vFolderNodeFrgmt,
-  );
-
-  const hasWritePermission =
-    virtualFolderNodeFrgmt?.permissions?.includes('write_content');
-  const hasDeletePermission =
-    virtualFolderNodeFrgmt?.permissions?.includes('delete_content');
 
   return (
     <BAIFlex gap="xs">
@@ -80,7 +66,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             })}
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
-                disabled={!hasDeletePermission}
+                disabled={!enableDelete}
                 icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
                 onClick={() => {
                   toggleDeleteModal();
@@ -91,7 +77,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
         <Tooltip title={!lg && t('general.button.Create')}>
           <Button
-            disabled={!hasWritePermission}
+            disabled={!enableWrite}
             icon={<FolderAddOutlined />}
             onClick={() => {
               toggleCreateModal();
@@ -101,7 +87,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           </Button>
         </Tooltip>
         <Dropdown
-          disabled={!hasWritePermission}
+          disabled={!enableWrite}
           dropdownRender={() => {
             return (
               <BAIFlex

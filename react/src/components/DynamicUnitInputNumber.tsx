@@ -144,11 +144,13 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
               setValue(`0${unit}`);
             }
           }}
+          disabled={inputNumberProps.disabled}
           options={_.map(units, (unit) => ({
             value: unit,
             label: (
               <Typography.Text
                 style={{
+                  color: 'inherit',
                   fontFamily:
                     "'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace",
                 }}
