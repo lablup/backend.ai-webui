@@ -92,7 +92,7 @@ const OverlayNetworkSettingModal = ({
         }
       }}
       cancelText={t('button.Cancel')}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
         <Form.Item label="MTU" tooltip={t('settings.MTUDescription')} required>

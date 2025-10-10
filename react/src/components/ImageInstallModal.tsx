@@ -164,7 +164,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   return (
     <BAIModal
       {...modalProps}
-      destroyOnClose
+      destroyOnHidden
       maskClosable={false}
       onCancel={() => onRequestClose()}
       title={t('environment.CheckImageInstallation')}

@@ -62,7 +62,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
     <BAIModal
       title={t('table.SettingTable')}
       open={open}
-      destroyOnClose
+      destroyOnHidden
       centered
       onOk={() => {
         formRef.current

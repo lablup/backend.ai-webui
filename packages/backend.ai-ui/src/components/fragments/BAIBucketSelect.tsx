@@ -23,7 +23,7 @@ const BAIBucketSelect = ({
     selectProps,
     {
       valuePropName: 'open',
-      trigger: 'onDropdownVisibleChange',
+      trigger: 'onOpenChange',
     },
   );
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
@@ -122,7 +122,7 @@ const BAIBucketSelect = ({
       {...selectProps}
       endReached={() => loadNext()}
       open={controllableOpen}
-      onDropdownVisibleChange={setControllableOpen}
+      onOpenChange={setControllableOpen}
       notFoundContent={
         _.isUndefined(paginationData) ? (
           <Skeleton.Input active size="small" block />

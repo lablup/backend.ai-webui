@@ -103,7 +103,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       }
       centered
       onCancel={onRequestClose}
-      destroyOnClose
+      destroyOnHidden
       width={
         _.isEmpty(model_card?.readme) || _.isEmpty(model_card?.description)
           ? 800
@@ -343,12 +343,14 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       style={{
                         width: '100%',
                       }}
-                      bodyStyle={{
-                        padding: token.paddingLG,
-                        overflowBlock: 'scroll',
-                        overflowY: 'auto',
-                        height: '300px',
-                        minHeight: 200,
+                      styles={{
+                        body: {
+                          padding: token.paddingLG,
+                          overflowBlock: 'scroll',
+                          overflowY: 'auto',
+                          height: '300px',
+                          minHeight: 200,
+                        },
                       }}
                     >
                       <Markdown>{model_card?.readme || ''}</Markdown>

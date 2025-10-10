@@ -151,7 +151,7 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
       className={styles.baiModalHeader}
       width={'90%'}
       centered
-      destroyOnClose
+      destroyOnHidden
       footer={null}
       title={
         vfolder_node ? (

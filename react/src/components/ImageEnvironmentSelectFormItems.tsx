@@ -595,7 +595,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 // autoClearSearchValue
                 optionFilterProp="filterValue"
                 // optionLabelProp="label"
-                dropdownRender={(menu) => (
+                popupRender={(menu) => (
                   <>
                     <BAIFlex
                       style={{

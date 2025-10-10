@@ -545,7 +545,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             ref={autoCompleteRef}
             value={search}
             open={isOpenAutoComplete}
-            onDropdownVisibleChange={setIsOpenAutoComplete}
+            onOpenChange={setIsOpenAutoComplete}
             onSelect={addCondition}
             onChange={(value) => {
               setIsValid(true);

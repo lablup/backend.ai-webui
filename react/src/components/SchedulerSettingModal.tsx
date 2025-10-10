@@ -91,7 +91,7 @@ const SchedulerSettingModal = ({
       okButtonProps={{
         type: 'primary',
       }}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
         <Form.Item

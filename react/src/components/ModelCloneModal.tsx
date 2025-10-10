@@ -83,7 +83,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnClose
+      destroyOnHidden
       {...props}
       okText={t('button.Clone')}
       confirmLoading={mutationToClone.isPending}

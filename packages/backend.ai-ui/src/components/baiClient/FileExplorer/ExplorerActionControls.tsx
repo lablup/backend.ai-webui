@@ -88,7 +88,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         </Tooltip>
         <Dropdown
           disabled={!enableWrite}
-          dropdownRender={() => {
+          popupRender={() => {
             return (
               <BAIFlex
                 align="start"
@@ -139,7 +139,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         </Dropdown>
       </BAIFlex>
       <DeleteSelectedItemsModal
-        destroyOnClose
+        destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
         onRequestClose={(success: boolean) => {
@@ -150,7 +150,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateDirectoryModal
-        destroyOnClose
+        destroyOnHidden
         open={openCreateModal}
         onRequestClose={(success: boolean) => {
           if (success) {

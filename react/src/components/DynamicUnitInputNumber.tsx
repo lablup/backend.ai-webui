@@ -138,7 +138,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
           onChange={(newUnit) => {
             setValue(`${numValue}${newUnit}`);
           }}
-          onDropdownVisibleChange={(open) => {
+          onOpenChange={(open) => {
             // A null or undefined value doesn't have a unit info, so we need to set the value before setting the unit.
             if ((open && value === null) || value === undefined) {
               setValue(`0${unit}`);

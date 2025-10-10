@@ -17,7 +17,7 @@ const FolderExplorerOpener = () => {
         setFolderId(null, 'replaceIn');
         setCurrentPath(null, 'replaceIn');
       }}
-      destroyOnClose
+      destroyOnHidden
     />
   );
 };

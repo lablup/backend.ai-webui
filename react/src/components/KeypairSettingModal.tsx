@@ -74,7 +74,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
           : t('credential.AddCredential')
       }
       width={500}
-      destroyOnClose
+      destroyOnHidden
       onOk={() => {
         formRef.current
           ?.validateFields()

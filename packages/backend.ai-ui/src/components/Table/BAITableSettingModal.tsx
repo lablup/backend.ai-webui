@@ -357,7 +357,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
   return (
     <Modal
       title={t('comp:BAITable.SettingTable')}
-      destroyOnClose
+      destroyOnHidden
       centered
       width={500}
       onOk={() => {

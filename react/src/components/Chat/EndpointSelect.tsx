@@ -53,7 +53,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     selectPropsWithoutLoading,
     {
       valuePropName: 'open',
-      trigger: 'onDropdownVisibleChange',
+      trigger: 'onOpenChange',
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);
@@ -217,7 +217,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
         loadNext();
       }}
       open={controllableOpen}
-      onDropdownVisibleChange={setControllableOpen}
+      onOpenChange={setControllableOpen}
       notFoundContent={
         _.isUndefined(paginationData) ? (
           // For the first loading options

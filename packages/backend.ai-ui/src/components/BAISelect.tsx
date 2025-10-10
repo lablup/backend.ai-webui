@@ -133,12 +133,12 @@ function BAISelect<
           if (atBottomStateChange || endReached) handlePopupScroll(e);
           selectProps.onPopupScroll?.(e);
         }}
-        dropdownRender={
+        popupRender={
           footer
             ? (menu) => {
-                // Process with custom dropdownRender if provided
-                // const renderedMenu = selectProps.dropdownRender
-                //   ? selectProps.dropdownRender(menu)
+                // Process with custom popupRender if provided
+                // const renderedMenu = selectProps.popupRender
+                //   ? selectProps.popupRender(menu)
                 //   : menu;
 
                 return (

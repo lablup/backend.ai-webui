@@ -164,7 +164,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
       title={t('data.explorer.ShareFolder')}
       onCancel={onRequestClose}
       style={{ minWidth: 550 }}
-      destroyOnClose
+      destroyOnHidden
       footer={null}
     >
       <BAIFlex direction="column" gap="xl" align="stretch">

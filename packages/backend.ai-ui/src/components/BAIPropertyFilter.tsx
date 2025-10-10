@@ -352,7 +352,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             ref={autoCompleteRef}
             value={search}
             open={isOpenAutoComplete}
-            onDropdownVisibleChange={setIsOpenAutoComplete}
+            onOpenChange={setIsOpenAutoComplete}
             onSelect={onSearch}
             onChange={(value) => {
               setIsValid(true);

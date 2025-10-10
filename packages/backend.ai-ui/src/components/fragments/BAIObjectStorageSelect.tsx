@@ -24,7 +24,7 @@ const BAIObjectStorageSelect = ({
     selectPropsWithoutLoading,
     {
       valuePropName: 'open',
-      trigger: 'onDropdownVisibleChange',
+      trigger: 'onOpenChange',
     },
   );
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
@@ -102,7 +102,7 @@ const BAIObjectStorageSelect = ({
       {...selectPropsWithoutLoading}
       endReached={() => loadNext()}
       open={controllableOpen}
-      onDropdownVisibleChange={setControllableOpen}
+      onOpenChange={setControllableOpen}
       notFoundContent={
         _.isUndefined(paginationData) ? (
           <Skeleton.Input active size="small" block />

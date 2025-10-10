@@ -285,7 +285,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       }
-      destroyOnClose
+      destroyOnHidden
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
