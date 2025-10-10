@@ -1,13 +1,14 @@
+import BAIFlex from './BAIFlex';
+import BAIModal, { BAIModalProps } from './BAIModal';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Typography } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
-interface BAIConfirmModalWithInputProps
+export interface BAIConfirmModalWithInputProps
   extends Omit<BAIModalProps, 'icon' | 'okButtonProps'> {
   confirmText: string;
   content: React.ReactNode;
@@ -59,7 +60,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         danger: true,
       }}
     >
-      <BAIFlex direction="column" justify="start" align="start">
+      <BAIFlex direction="column" justify="start" align="stretch">
         {content}
         <Form form={form} style={{ width: '100%' }} preserve={false}>
           <Form.Item
@@ -67,7 +68,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
             rules={[
               {
                 required: true,
-                message: t('dialog.PleaseTypeToConfirm', {
+                message: t('general.modal.PleaseTypeToConfirm', {
                   confirmText,
                 }),
                 validator: (_, value) => {

@@ -125,6 +125,8 @@
     "RenameSuccess": "O nome foi alterado com sucesso.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
+    "TypeDeleteToConfirm": "Digite 'Excluir' para confirmar.",
+    "TypeFolderNameToDelete": "Digite a pasta ou o nome do arquivo para excluir.",
     "UploadFiles": "Faça o upload de arquivos",
     "UploadFolder": "Faça o upload da pasta",
     "error": {
@@ -152,6 +154,11 @@
       "Delete": "Excluir",
       "Remove": "Remover",
       "Upload": "Carregar"
+    },
+    "modal": {
+      "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos permanentemente e não serão restaurados.",
+      "ItemSelectedWithCount": "{{count}} itens selecionados.",
+      "PleaseTypeToConfirm": "Digite {{ confirmText }} para confirmar."
     }
   }
 }

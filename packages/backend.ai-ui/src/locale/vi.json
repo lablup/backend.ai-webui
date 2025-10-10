@@ -126,6 +126,8 @@
     "RenameSuccess": "Tên đã được thay đổi thành công.",
     "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
     "Size": "Kích cỡ",
+    "TypeDeleteToConfirm": "Nhập 'Xóa bỏ' để xác nhận.",
+    "TypeFolderNameToDelete": "Gõ tên thư mục hoặc file cần xóa.",
     "UploadFiles": "Tải lên tệp",
     "UploadFolder": "Tải lên thư mục",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Xóa bỏ",
       "Remove": "Di dời",
       "Upload": "Tải lên"
+    },
+    "modal": {
+      "DeleteForeverDesc": "CẢNH BÁO: Các mục đã chọn sẽ bị xóa vĩnh viễn và không được khôi phục.",
+      "ItemSelectedWithCount": "Đã chọn {{count}} mục.",
+      "PleaseTypeToConfirm": "Vui lòng nhập {{ confirmText }} để xác nhận."
     }
   }
 }

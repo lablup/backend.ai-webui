@@ -53,6 +53,8 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
+export { default as BAIConfirmModalWithInput } from './BAIConfirmModalWithInput';
+export type { BAIConfirmModalWithInputProps } from './BAIConfirmModalWithInput';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

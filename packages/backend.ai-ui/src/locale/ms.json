@@ -126,6 +126,8 @@
     "RenameSuccess": "Nama telah berjaya diubah.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
+    "TypeDeleteToConfirm": "Taipkan 'Padam' untuk mengesahkan.",
+    "TypeFolderNameToDelete": "Taipkan folder atau nama fail untuk memadam.",
     "UploadFiles": "Memuat naik fail",
     "UploadFolder": "Muat naik folder",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Padam",
       "Remove": "Keluarkan",
       "Upload": "Muat naik"
+    },
+    "modal": {
+      "DeleteForeverDesc": "Amaran: Item terpilih akan dipadamkan selama -lamanya dan tidak akan dipulihkan.",
+      "ItemSelectedWithCount": "{{Count}} Item dipilih.",
+      "PleaseTypeToConfirm": "Sila taipkan {{ confirmText }} untuk mengesahkan."
     }
   }
 }

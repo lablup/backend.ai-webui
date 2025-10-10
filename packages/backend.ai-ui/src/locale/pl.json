@@ -126,6 +126,8 @@
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
     "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
     "Size": "Rozmiar",
+    "TypeDeleteToConfirm": "Wpisz „Usuwać”, aby potwierdzić.",
+    "TypeFolderNameToDelete": "Wpisz nazwę folderu lub pliku do usunięcia.",
     "UploadFiles": "Prześlij pliki",
     "UploadFolder": "Folder przesyłania",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Usuwać",
       "Remove": "Usunąć",
       "Upload": "Wgrywać"
+    },
+    "modal": {
+      "DeleteForeverDesc": "OSTRZEŻENIE: Wybrane elementy zostaną usunięte na zawsze i nie zostaną przywrócone.",
+      "ItemSelectedWithCount": "Wybrano {{count}} elementów.",
+      "PleaseTypeToConfirm": "Wpisz {{ confirmText }}, aby potwierdzić."
     }
   }
 }

@@ -126,6 +126,8 @@
     "RenameSuccess": "이름이 성공적으로 변경되었습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
     "Size": "크기",
+    "TypeDeleteToConfirm": "확인을 위해 '삭제'를 입력하세요.",
+    "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 또는 파일 이름을 입력하세요.",
     "UploadFiles": "파일 업로드",
     "UploadFolder": "폴더 업로드",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "삭제",
       "Remove": "제거",
       "Upload": "업로드"
+    },
+    "modal": {
+      "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다.",
+      "ItemSelectedWithCount": "{{count}}개 선택됨.",
+      "PleaseTypeToConfirm": "{{ confirmText }}를 입력하십시오."
     }
   }
 }

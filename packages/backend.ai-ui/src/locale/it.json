@@ -126,6 +126,8 @@
     "RenameSuccess": "Il nome è stato cambiato con successo.",
     "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
     "Size": "Misurare",
+    "TypeDeleteToConfirm": "Digita \"Eliminare\" per confermare.",
+    "TypeFolderNameToDelete": "Digitare il nome della cartella o del file da eliminare.",
     "UploadFiles": "Carica file",
     "UploadFolder": "Caricamento Carica",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Eliminare",
       "Remove": "Rimuovere",
       "Upload": "Caricamento"
+    },
+    "modal": {
+      "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non verranno ripristinati.",
+      "ItemSelectedWithCount": "{{count}} elementi selezionati.",
+      "PleaseTypeToConfirm": "Digita {{ confirmText }} per confermare."
     }
   }
 }

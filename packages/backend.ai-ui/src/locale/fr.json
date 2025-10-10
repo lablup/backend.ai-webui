@@ -126,6 +126,8 @@
     "RenameSuccess": "Le nom a été modifié avec succès.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
+    "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
+    "TypeFolderNameToDelete": "Tapez le nom du dossier ou du fichier à supprimer.",
     "UploadFiles": "Télécharger des fichiers",
     "UploadFolder": "Dossier de téléchargement",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Supprimer",
       "Remove": "Retirer",
       "Upload": "Télécharger"
+    },
+    "modal": {
+      "DeleteForeverDesc": "AVERTISSEMENT : les éléments sélectionnés seront supprimés définitivement et ne seront pas restaurés.",
+      "ItemSelectedWithCount": "{{count}} éléments sélectionnés.",
+      "PleaseTypeToConfirm": "Veuillez saisir {{ confirmText }} pour confirmer."
     }
   }
 }

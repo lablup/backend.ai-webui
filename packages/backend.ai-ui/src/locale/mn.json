@@ -126,6 +126,8 @@
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
+    "TypeDeleteToConfirm": "Баталгаажуулахын тулд 'Эдгээх' гэж бичнэ үү.",
+    "TypeFolderNameToDelete": "Устгахын тулд хавтас эсвэл файлын нэрийг оруулна уу.",
     "UploadFiles": "Файл байршуулах",
     "UploadFolder": "Фолдерыг байршуулах",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Эдгээх",
       "Remove": "Зөөх",
       "Upload": "Байршуулах"
+    },
+    "modal": {
+      "DeleteForeverDesc": "АНХААРУУЛГА: Сонгосон зүйлийг үүрд устгах болно, сэргээгдэхгүй.",
+      "ItemSelectedWithCount": "{{тоолох}} сонгосон зүйлс.",
+      "PleaseTypeToConfirm": "Баталгаажуулахын тулд {{ confirmText }} оруулна уу."
     }
   }
 }

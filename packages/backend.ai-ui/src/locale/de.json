@@ -126,6 +126,8 @@
     "RenameSuccess": "Der Name wurde erfolgreich geändert.",
     "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
     "Size": "Größe",
+    "TypeDeleteToConfirm": "Geben Sie zur Bestätigung „Löschen“ ein.",
+    "TypeFolderNameToDelete": "Geben Sie den Namen des zu löschenden Ordners oder der Datei ein.",
     "UploadFiles": "Dateien hochladen",
     "UploadFolder": "Ordner hochladen",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Löschen",
       "Remove": "Entfernen",
       "Upload": "Hochladen"
+    },
+    "modal": {
+      "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden endgültig gelöscht und nicht wiederhergestellt.",
+      "ItemSelectedWithCount": "{{count}} Elemente ausgewählt.",
+      "PleaseTypeToConfirm": "Bitte geben Sie zur Bestätigung {{ confirmText }} ein."
     }
   }
 }

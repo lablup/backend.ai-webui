@@ -126,6 +126,8 @@
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
+    "TypeDeleteToConfirm": "พิมพ์ 'ลบ' เพื่อยืนยัน",
+    "TypeFolderNameToDelete": "พิมพ์โฟลเดอร์หรือชื่อไฟล์ที่จะลบ.",
     "UploadFiles": "อัปโหลดไฟล์",
     "UploadFolder": "โฟลเดอร์อัปโหลด",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "ลบ",
       "Remove": "ลบ",
       "Upload": "อัพโหลด"
+    },
+    "modal": {
+      "DeleteForeverDesc": "คำเตือน: รายการที่เลือกจะถูกลบถาวรและไม่สามารถกู้คืนได้",
+      "ItemSelectedWithCount": "เลือกแล้ว {{count}} รายการ",
+      "PleaseTypeToConfirm": "กรุณาพิมพ์ {{ confirmText }} เพื่อยืนยัน"
     }
   }
 }
