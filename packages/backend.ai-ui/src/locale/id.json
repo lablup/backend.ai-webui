@@ -126,6 +126,8 @@
     "RenameSuccess": "Namanya telah berhasil diubah.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
+    "TypeDeleteToConfirm": "Ketik 'Menghapus' untuk mengonfirmasi.",
+    "TypeFolderNameToDelete": "Ketik folder atau nama file yang ingin dihapus.",
     "UploadFiles": "Unggah file",
     "UploadFolder": "Unggah folder",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Menghapus",
       "Remove": "Menghapus",
       "Upload": "Mengunggah"
+    },
+    "modal": {
+      "DeleteForeverDesc": "PERINGATAN: Item yang dipilih akan dihapus selamanya dan tidak dapat dipulihkan.",
+      "ItemSelectedWithCount": "{{count}} item dipilih.",
+      "PleaseTypeToConfirm": "Silakan ketik {{ confirmText }} untuk mengonfirmasi."
     }
   }
 }

@@ -126,6 +126,8 @@
     "RenameSuccess": "Имя было успешно изменено.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
+    "TypeDeleteToConfirm": "Введите «Удалить» для подтверждения.",
+    "TypeFolderNameToDelete": "Введите папку или имя файла для удаления.",
     "UploadFiles": "Загрузить файлы",
     "UploadFolder": "Загрузить папку",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Удалить",
       "Remove": "Удалять",
       "Upload": "Загрузить"
+    },
+    "modal": {
+      "DeleteForeverDesc": "ВНИМАНИЕ: выбранные элементы будут удалены навсегда и не будут восстановлены.",
+      "ItemSelectedWithCount": "Выбрано {{count}} элементов.",
+      "PleaseTypeToConfirm": "Пожалуйста, введите {{ confirmText }} для подтверждения."
     }
   }
 }

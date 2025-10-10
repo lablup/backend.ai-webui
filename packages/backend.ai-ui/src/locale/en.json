@@ -129,6 +129,8 @@
     "RenameSuccess": "The name has been successfully changed.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
+    "TypeDeleteToConfirm": "Type 'Delete' to confirm.",
+    "TypeFolderNameToDelete": "Type folder or file name to delete.",
     "UploadFiles": "Upload Files",
     "UploadFolder": "Upload Folder",
     "error": {
@@ -156,6 +158,11 @@
       "Delete": "Delete",
       "Remove": "Remove",
       "Upload": "Upload"
+    },
+    "modal": {
+      "DeleteForeverDesc": "WARNING: Selected items will be deleted forever and won't be restored.",
+      "ItemSelectedWithCount": "{{count}} items selected.",
+      "PleaseTypeToConfirm": "Please type {{ confirmText }} to confirm."
     }
   }
 }

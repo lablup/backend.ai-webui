@@ -126,6 +126,8 @@
     "RenameSuccess": "名前は正常に変更されました。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
+    "TypeDeleteToConfirm": "「消去」と入力して確認します。",
+    "TypeFolderNameToDelete": "削除するフォルダーまたはファイル名を入力します.",
     "UploadFiles": "ファイルをアップロードします",
     "UploadFolder": "フォルダーをアップロードします",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "消去",
       "Remove": "取り除く",
       "Upload": "アップロード"
+    },
+    "modal": {
+      "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元されません。",
+      "ItemSelectedWithCount": "{{count}} 個のアイテムが選択されました。",
+      "PleaseTypeToConfirm": "確認するには、「{{ confirmText }}」と入力してください。"
     }
   }
 }

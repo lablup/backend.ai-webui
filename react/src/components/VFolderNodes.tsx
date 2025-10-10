@@ -8,7 +8,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAITag from './BAITag';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -38,6 +37,7 @@ import {
   toLocalId,
   useErrorMessageResolver,
   BAILink,
+  BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';

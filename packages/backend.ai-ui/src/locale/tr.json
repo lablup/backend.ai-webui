@@ -124,6 +124,8 @@
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
+    "TypeDeleteToConfirm": "Onaylamak için 'Silmek' yazın.",
+    "TypeFolderNameToDelete": "Silinecek klasör veya dosya adını yazın.",
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
     "error": {}
@@ -148,6 +150,11 @@
       "Delete": "Silmek",
       "Remove": "Kaldırmak",
       "Upload": "Yüklemek"
+    },
+    "modal": {
+      "DeleteForeverDesc": "UYARI: Seçilen öğeler kalıcı olarak silinecek ve geri yüklenmeyecektir.",
+      "ItemSelectedWithCount": "{{count}} öğe seçildi.",
+      "PleaseTypeToConfirm": "Lütfen onaylamak için {{ confirmText }} yazın."
     }
   }
 }

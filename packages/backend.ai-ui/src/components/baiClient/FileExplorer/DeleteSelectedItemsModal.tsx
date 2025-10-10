@@ -1,9 +1,10 @@
+import BAIConfirmModalWithInput from '../../BAIConfirmModalWithInput';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { App, Modal, ModalProps, theme, Typography } from 'antd';
+import { Alert, App, ModalProps, theme, Typography } from 'antd';
 import _ from 'lodash';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,42 +65,63 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   };
 
   return (
-    <Modal
+    <BAIConfirmModalWithInput
       title={t('comp:FileExplorer.DeleteSelectedItemsDialog')}
-      onCancel={() => onRequestClose(false)}
       okText={t('general.button.Delete')}
       okButtonProps={{ danger: true, loading: deleteFilesMutation.isPending }}
       onOk={handleDelete}
+      onCancel={() => onRequestClose(false)}
+      confirmText={
+        selectedFiles.length > 1
+          ? t('general.button.Delete')
+          : selectedFiles[0]?.name
+      }
+      content={
+        <BAIFlex align="stretch" direction="column" gap="md">
+          <Alert
+            type="warning"
+            message={t('general.modal.DeleteForeverDesc')}
+          />
+          {selectedFiles.length > 1 ? (
+            <BAIFlex gap="sm" direction="column" align="stretch">
+              <Typography.Text strong>
+                {t('general.modal.ItemSelectedWithCount', {
+                  count: selectedFiles.length,
+                })}
+              </Typography.Text>
+              <BAIFlex
+                direction="column"
+                align="stretch"
+                style={{ maxHeight: 200, overflowY: 'auto' }}
+              >
+                {_.map(selectedFiles, (item) => (
+                  <Typography.Text
+                    code
+                    key={item.name + item.created}
+                    style={{ width: '100%', wordBreak: 'keep-all' }}
+                  >
+                    {item.name}
+                  </Typography.Text>
+                ))}
+              </BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('comp:FileExplorer.TypeDeleteToConfirm')}
+              </Typography.Text>
+            </BAIFlex>
+          ) : (
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('comp:FileExplorer.TypeFolderNameToDelete')}
+                <Typography.Text code style={{ wordBreak: 'keep-all' }}>
+                  {selectedFiles[0]?.name}
+                </Typography.Text>
+              </Typography.Text>
+            </BAIFlex>
+          )}
+        </BAIFlex>
+      }
       {...modalProps}
-      width={400}
-    >
-      <BAIFlex align="stretch" direction="column" gap="md">
-        <Typography.Text>
-          {t('comp:FileExplorer.DeleteSelectedItemDesc')}
-        </Typography.Text>
-        <div
-          style={{
-            marginLeft: token.sizeMD,
-            marginRight: token.sizeMD,
-            textAlign: 'center',
-          }}
-        >
-          {_.map(selectedFiles, (item) => (
-            <Typography.Text
-              mark
-              key={item.name + item.created}
-              style={{
-                wordBreak: 'break-all',
-                display: 'inline',
-                marginRight: token.marginSM,
-              }}
-            >
-              {item.name}
-            </Typography.Text>
-          ))}
-        </div>
-      </BAIFlex>
-    </Modal>
+    />
   );
 };
 

@@ -126,6 +126,8 @@
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
+    "TypeDeleteToConfirm": "Kirjoita 'Poistaa' vahvistaaksesi.",
+    "TypeFolderNameToDelete": "Kirjoita kansio tai tiedostonimi poistaaksesi.",
     "UploadFiles": "Lähetä tiedostot",
     "UploadFolder": "Lataa kansio",
     "error": {
@@ -153,6 +155,11 @@
       "Delete": "Poistaa",
       "Remove": "Poistaa",
       "Upload": "Ladata"
+    },
+    "modal": {
+      "DeleteForeverDesc": "Varoitus: Valitut esineet poistetaan ikuisesti eikä niitä palauteta.",
+      "ItemSelectedWithCount": "{{count}} valitut kohteet.",
+      "PleaseTypeToConfirm": "Kirjoita {{ confirmText }} vahvistaaksesi."
     }
   }
 }
