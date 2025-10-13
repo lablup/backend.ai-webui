@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "活性代理",
-    "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的AT-A-Glance概述。"
+    "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的一目了然概述。"
   },
   "agent": {
     "Agent": "代理",

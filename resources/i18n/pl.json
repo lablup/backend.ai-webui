@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "Aktywni agenci",
-    "ActiveAgentsTooltip": "Pokazuje przegląd AT-a-glance wszystkich agentów obecnie działających w systemie."
+    "ActiveAgentsTooltip": "Pokazuje przegląd w skrócie wszystkich agentów obecnie działających w systemie."
   },
   "agent": {
     "Agent": "Agent",
