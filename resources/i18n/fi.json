@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "Aktiiviset edustajat",
-    "ActiveAgentsTooltip": "Näyttää A-A-silmän yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
+    "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
   },
   "agent": {
     "Agent": "Agentti",
