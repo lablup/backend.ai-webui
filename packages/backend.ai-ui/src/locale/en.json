@@ -153,9 +153,11 @@
     "button": {
       "Cancel": "Cancel",
       "Close": "Close",
+      "Collapse": "Collapse",
       "CopyAll": "Copy All",
       "Create": "Create",
       "Delete": "Delete",
+      "Expand": "Expand",
       "Remove": "Remove",
       "Upload": "Upload"
     },

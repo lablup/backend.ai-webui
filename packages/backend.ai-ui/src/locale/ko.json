@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "취소",
       "Close": "닫기",
+      "Collapse": "접기",
       "CopyAll": "모두 복사",
       "Create": "생성",
       "Delete": "삭제",
+      "Expand": "펼치기",
       "Remove": "제거",
       "Upload": "업로드"
     },
