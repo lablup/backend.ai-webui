@@ -31,6 +31,13 @@
     "Terminated": "Terminated",
     "Utilization": "Utilization"
   },
+  "agentStats": {
+    "AgentStats": "Agent Statistics",
+    "AgentStatsDescription": "This panel shows all used resources across all agents in the system. The values represent the total used resources by all active sessions.",
+    "Free": "Free",
+    "Used": "Used",
+    "UsedResources": "Used Resources"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Add Auto Scaling Rule",
     "Comparator": "Comparator",
@@ -1103,12 +1110,6 @@
     "UpdatingRegistryInfo": "Updating registry information...",
     "Username": "Username",
     "UsernameOptional": "Username (Optional)"
-  },
-  "reservedResources": {
-    "Free": "Free",
-    "Reserved": "Reserved",
-    "ReservedResources": "Reserved Resources",
-    "ReservedResourcesDescription": "This panel shows all reserved resources across all agents in the system. The values represent the total used resources by all active sessions."
   },
   "reservoirPage": {
     "Activate": "Activate",

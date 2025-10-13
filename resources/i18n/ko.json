@@ -1103,10 +1103,6 @@
     "Username": "사용자 이름",
     "UsernameOptional": "사용자 이름 (선택)"
   },
-  "reservedResources": {
-    "ReservedResources": "점유 자원 현황",
-    "ReservedResourcesDescription": "이 패널은 시스템 전체 에이전트에서 점유된 모든 자원 현황을 보여줍니다. 모든 활성 세션이 점유한 총 자원량을 나타냅니다."
-  },
   "reservoirPage": {
     "Activate": "활성화",
     "Active": "활성",
