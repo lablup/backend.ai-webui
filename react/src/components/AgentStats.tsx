@@ -1,10 +1,8 @@
-import { ReservedResourcesFragment$key } from '../__generated__/ReservedResourcesFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
-  filterOutNullAndUndefined,
   BAIFlex,
   BAIBoardItemTitle,
   ResourceStatistics,
@@ -15,18 +13,19 @@ import _ from 'lodash';
 import { useMemo, useTransition, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+import { AgentStatsFragment$key } from 'src/__generated__/AgentStatsFragment.graphql';
 
-interface ReservedResourcesProps {
-  queryRef: ReservedResourcesFragment$key;
-  refetching?: boolean;
-  displayType?: 'reserved' | 'free';
-  onDisplayTypeChange?: (type: 'reserved' | 'free') => void;
+interface AgentStatsProps {
+  queryRef: AgentStatsFragment$key;
+  isRefetching?: boolean;
+  displayType?: 'used' | 'free';
+  onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
-const ReservedResources: React.FC<ReservedResourcesProps> = ({
+const AgentStats: React.FC<AgentStatsProps> = ({
   queryRef,
-  refetching,
+  isRefetching,
   extra,
   ...props
 }) => {
@@ -36,31 +35,23 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [displayType, setDisplayType] = useControllableValue<
-    Exclude<ReservedResourcesProps['displayType'], undefined>
+    Exclude<AgentStatsProps['displayType'], undefined>
   >(props, {
-    defaultValue: 'reserved',
+    defaultValue: 'used',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
 
-  const [{ reservedResourceAgentNodes }, refetch] = useRefetchableFragment(
+  const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment ReservedResourcesFragment on Query
-      @argumentDefinitions(reservedResourceFilter: { type: "String" })
-      @refetchable(queryName: "ReservedResourcesFragmentRefetchQuery") {
-        reservedResourceAgentNodes: agent_nodes(
-          filter: $reservedResourceFilter
-        ) @since(version: "24.12.0") {
-          edges {
-            node {
-              id
-              status
-              available_slots
-              occupied_slots
-              scaling_group
-            }
+      fragment AgentStatsFragment on Query
+      @refetchable(queryName: "AgentStatsRefetchQuery") {
+        agentStats @since(version: "25.15.0") {
+          totalResource {
+            free
+            used
+            capacity
           }
-          count
         }
       }
     `,
@@ -69,51 +60,27 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
 
   const resourceSlotsDetails = useResourceSlotsDetails();
 
-  const reservedResourceData = useMemo(() => {
-    const agents = reservedResourceAgentNodes
-      ? _.map(reservedResourceAgentNodes?.edges, 'node')
-      : [];
+  const agentStatsData = useMemo(() => {
+    const totalResource = data.agentStats.totalResource;
+    if (!totalResource) {
+      return { cpu: null, memory: null, accelerators: [] };
+    }
 
-    const used: Record<string, number> = {};
-    const capacity: Record<string, number> = {};
-
-    // TODO: Use backend API to get total reserved resources directly after available in the backend.
-
-    _.forEach(filterOutNullAndUndefined(agents), (agent) => {
-      let occupiedSlots;
-      let availableSlots;
-
-      try {
-        occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
-        availableSlots = JSON.parse(agent.available_slots || '{}');
-      } catch (e) {
-        return;
-      }
-
-      if (_.isError(occupiedSlots) || _.isError(availableSlots)) return;
-
-      _.forEach(occupiedSlots, (value, key) => {
-        used[key] = (used[key] || 0) + Number(value);
-      });
-
-      _.forEach(availableSlots, (value, key) => {
-        capacity[key] = (capacity[key] || 0) + Number(value);
-      });
-    });
+    const free = totalResource.free as Record<string, number>;
+    const used = totalResource.used as Record<string, number>;
+    const capacity = totalResource.capacity as Record<string, number>;
 
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
 
     const cpuData = cpuSlot
       ? {
-          using: {
+          used: {
             current: convertToNumber(used['cpu'] || 0),
             total: convertToNumber(capacity['cpu'] || 0),
           },
-          remaining: {
-            current: convertToNumber(
-              (capacity['cpu'] || 0) - (used['cpu'] || 0),
-            ),
+          free: {
+            current: convertToNumber(free['cpu'] || 0),
             total: convertToNumber(capacity['cpu'] || 0),
           },
           metadata: {
@@ -125,18 +92,15 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
 
     const memoryData = memSlot
       ? {
-          using: {
+          used: {
             current: processMemoryValue(used['mem'] || 0, memSlot.display_unit),
             total: processMemoryValue(
               capacity['mem'] || 0,
               memSlot.display_unit,
             ),
           },
-          remaining: {
-            current: processMemoryValue(
-              (capacity['mem'] || 0) - (used['mem'] || 0),
-              memSlot.display_unit,
-            ),
+          free: {
+            current: processMemoryValue(free['mem'] || 0, memSlot.display_unit),
             total: processMemoryValue(
               capacity['mem'] || 0,
               memSlot.display_unit,
@@ -154,22 +118,19 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
       .map((resourceSlot, key) => {
         if (!resourceSlot) return null;
 
-        const processAcceleratorValue = (value: any): number => {
-          return convertToNumber(value);
-        };
-
-        const occupied = used[key] || 0;
-        const available = capacity[key] || 0;
+        const freeValue = free[key] || 0;
+        const usedValue = used[key] || 0;
+        const capacityValue = capacity[key] || 0;
 
         return {
           key,
-          using: {
-            current: processAcceleratorValue(occupied),
-            total: processAcceleratorValue(available),
+          used: {
+            current: convertToNumber(usedValue),
+            total: convertToNumber(capacityValue),
           },
-          remaining: {
-            current: processAcceleratorValue(available - occupied),
-            total: processAcceleratorValue(available),
+          free: {
+            current: convertToNumber(freeValue),
+            total: convertToNumber(capacityValue),
           },
           metadata: {
             title: resourceSlot.human_readable_name,
@@ -178,11 +139,11 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
         };
       })
       .compact()
-      .filter((item) => !!(item.using.current || item.using.total))
+      .filter((item) => !!(item.used.current || item.used.total))
       .value();
 
     return { cpu: cpuData, memory: memoryData, accelerators };
-  }, [reservedResourceAgentNodes, resourceSlotsDetails]);
+  }, [data, resourceSlotsDetails]);
 
   return (
     <BAIFlex
@@ -201,24 +162,22 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
               fontWeight: token.fontWeightStrong,
             }}
           >
-            {t('reservedResources.ReservedResources')}
+            {t('agentStats.AgentStats')}
           </Typography.Text>
         }
-        tooltip={t('reservedResources.ReservedResourcesDescription')}
+        tooltip={t('agentStats.AgentStatsDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<
-              Exclude<ReservedResourcesProps['displayType'], undefined>
-            >
+            <Segmented<Exclude<AgentStatsProps['displayType'], undefined>>
               size="small"
               options={[
                 {
-                  label: t('reservedResources.Reserved'),
-                  value: 'reserved',
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
                 {
                   value: 'free',
-                  label: t('reservedResources.Free'),
+                  label: t('dashboard.Free'),
                 },
               ]}
               value={displayType}
@@ -226,7 +185,7 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
             />
             <BAIFetchKeyButton
               size="small"
-              loading={isPendingRefetch || refetching}
+              loading={isPendingRefetch || isRefetching}
               value=""
               onChange={() => {
                 startRefetchTransition(() => {
@@ -238,8 +197,10 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
                   );
                 });
               }}
-              variant="link"
-              color="default"
+              type="text"
+              style={{
+                backgroundColor: 'transparent',
+              }}
             />
             {extra}
           </BAIFlex>
@@ -249,8 +210,8 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
         <Skeleton active />
       ) : (
         <ResourceStatistics
-          resourceData={reservedResourceData}
-          displayType={displayType === 'reserved' ? 'using' : 'remaining'}
+          resourceData={agentStatsData}
+          displayType={displayType === 'used' ? 'used' : 'free'}
           showProgress={true}
         />
       )}
@@ -258,4 +219,4 @@ const ReservedResources: React.FC<ReservedResourcesProps> = ({
   );
 };
 
-export default ReservedResources;
+export default AgentStats;

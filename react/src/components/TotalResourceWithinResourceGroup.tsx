@@ -33,8 +33,8 @@ import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 interface TotalResourceWithinResourceGroupProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
   refetching?: boolean;
-  displayType?: 'using' | 'remaining';
-  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  displayType?: 'used' | 'free';
+  onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
@@ -110,7 +110,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
-    defaultValue: 'remaining',
+    defaultValue: 'free',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -171,11 +171,11 @@ const TotalResourceWithinResourceGroup: React.FC<
 
     const cpuData = cpuSlot
       ? {
-          using: {
+          used: {
             current: convertToNumber(totalOccupiedSlots['cpu'] || 0),
             total: convertToNumber(totalAvailableSlots['cpu'] || 0),
           },
-          remaining: {
+          free: {
             current: convertToNumber(
               subNumberWithUnits(
                 _.toString(totalAvailableSlots['cpu'] || 0),
@@ -194,7 +194,7 @@ const TotalResourceWithinResourceGroup: React.FC<
 
     const memoryData = memSlot
       ? {
-          using: {
+          used: {
             current: processMemoryValue(
               totalOccupiedSlots['mem'] || 0,
               memSlot.display_unit,
@@ -204,7 +204,7 @@ const TotalResourceWithinResourceGroup: React.FC<
               memSlot.display_unit,
             ),
           },
-          remaining: {
+          free: {
             current: processMemoryValue(
               subNumberWithUnits(
                 _.toString(totalAvailableSlots['mem'] || 0),
@@ -244,11 +244,11 @@ const TotalResourceWithinResourceGroup: React.FC<
 
         return {
           key,
-          using: {
+          used: {
             current: processAcceleratorValue(occupied),
             total: processAcceleratorValue(available),
           },
-          remaining: {
+          free: {
             current: processAcceleratorValue(remaining),
             total: processAcceleratorValue(available),
           },
@@ -259,7 +259,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         };
       })
       .compact()
-      .filter((item) => !!(item.using.current || item.using.total))
+      .filter((item) => !!(item.used.current || item.used.total))
       .value();
 
     return { cpu: cpuData, memory: memoryData, accelerators };
@@ -307,12 +307,12 @@ const TotalResourceWithinResourceGroup: React.FC<
               size="small"
               options={[
                 {
-                  label: t('resourcePanel.UsingNumber'),
-                  value: 'using',
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
                 {
-                  value: 'remaining',
-                  label: t('resourcePanel.RemainingNumber'),
+                  label: t('dashboard.Free'),
+                  value: 'free',
                 },
               ]}
               value={displayType}

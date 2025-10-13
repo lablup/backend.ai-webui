@@ -19,8 +19,8 @@ import { useFetchKey } from 'src/hooks';
 interface MyResourceProps {
   fetchKey?: string;
   refetching?: boolean;
-  displayType?: 'using' | 'remaining';
-  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  displayType?: 'used';
+  onDisplayTypeChange?: (type: 'used') => void;
   extra?: ReactNode;
 }
 
@@ -52,7 +52,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<MyResourceProps['displayType'], undefined>
   >(props, {
-    defaultValue: 'using',
+    defaultValue: 'used',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -65,11 +65,11 @@ const MyResource: React.FC<MyResourceProps> = ({
 
     const cpuData = cpuSlot
       ? {
-          using: {
+          used: {
             current: convertToNumber(checkPresetInfo?.keypair_using.cpu),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
-          remaining: {
+          free: {
             current: convertToNumber(remainingWithoutResourceGroup.cpu),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
@@ -82,7 +82,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 
     const memoryData = memSlot
       ? {
-          using: {
+          used: {
             current: processMemoryValue(
               checkPresetInfo?.keypair_using.mem,
               memSlot.display_unit,
@@ -92,7 +92,7 @@ const MyResource: React.FC<MyResourceProps> = ({
               memSlot.display_unit,
             ),
           },
-          remaining: {
+          free: {
             current: processMemoryValue(
               remainingWithoutResourceGroup.mem,
               memSlot.display_unit,
@@ -116,7 +116,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 
         return {
           key,
-          using: {
+          used: {
             current: convertToNumber(
               checkPresetInfo?.keypair_using[key as ResourceSlotName],
             ),
@@ -124,7 +124,7 @@ const MyResource: React.FC<MyResourceProps> = ({
               resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
             ),
           },
-          remaining: {
+          free: {
             current: convertToNumber(
               remainingWithoutResourceGroup.accelerators[key],
             ),
@@ -167,12 +167,8 @@ const MyResource: React.FC<MyResourceProps> = ({
               size="small"
               options={[
                 {
-                  label: t('resourcePanel.UsingNumber'),
-                  value: 'using',
-                },
-                {
-                  value: 'remaining',
-                  label: t('resourcePanel.Limit'),
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
               ]}
               value={displayType}

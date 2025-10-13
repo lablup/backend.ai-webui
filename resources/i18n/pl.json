@@ -31,6 +31,10 @@
     "Terminated": "Zakończony",
     "Utilization": "Wykorzystanie"
   },
+  "agentStats": {
+    "AgentStats": "Statystyki agentów",
+    "AgentStatsDescription": "Ten panel pokazuje wszystkie wykorzystane zasoby wszystkich agentów w systemie. \nWartości reprezentują całkowite zasoby wykorzystane przez wszystkie aktywne sesje."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Dodaj regułę automatycznego skalowania",
     "Comparator": "Komparator",
@@ -217,6 +221,10 @@
     "Users": "Użytkownicy",
     "WarningLessRateLimit": "Jeśli wartość Rate Limit jest niska, operacje API, takie jak logowanie, mogą zostać zablokowane.",
     "YouAreAboutToDeleteCredential": "Zamierzasz usunąć dane uwierzytelniające tego użytkownika:"
+  },
+  "dashboard": {
+    "Free": "Bezpłatny",
+    "Used": "Używany"
   },
   "data": {
     "Active": "Aktywny",
@@ -1169,11 +1177,6 @@
     "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
     "WsproxyAddress": "Adres serwera WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Limit",
-    "RemainingNumber": "Rmaring",
-    "UsingNumber": "Używając"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",
     "AllowedHosts": "Dozwolone hosty",
@@ -2051,10 +2054,10 @@
       "MyAccountInformation": "Zmień informacje o użytkowniku",
       "MyEnvironments": "Moje Środowiska",
       "MyResources": "Mój całkowity limit zasobów",
-      "MyResourcesDescription": "<p>Ten panel pokazuje całkowite wykorzystanie zasobów i limity we wszystkich projektach i grupach zasobów.</p><p>Gdy stosowanych jest wiele limitów (domena, projekt lub para kluczy), do obliczeń używany jest najbardziej restrykcyjny limit.</p>",
+      "MyResourcesDescription": "<p>Ten panel wyświetla całkowitą liczbę aktualnie używanych i wolnych zasobów we wszystkich projektach i grupach zasobów.</p><p>W przypadku zastosowania wielu limitów (takich jak domena, projekt lub para kluczy) do obliczeń używany jest najbardziej restrykcyjny limit wolnych zasobów.</p>",
       "MyResourcesIn": "Moje zasoby",
       "MyResourcesInResourceGroup": "Moje zasoby w grupie zasobów",
-      "MyResourcesInResourceGroupDescription": "Ten panel pokazuje twoje bieżące wykorzystanie i pozostanie w wybranej grupie zasobów.",
+      "MyResourcesInResourceGroupDescription": "Ten panel pokazuje, ile zasobów wykorzystałeś i ile jest wolnych w wybranej grupie zasobów Twojego bieżącego projektu.",
       "NewPassword": "Nowe hasło",
       "NewPasswordAgain": "Powtórz nowe hasło)",
       "NewPasswordCannotBeSame": "Wprowadź hasło, które różni się od aktualnego hasła.",
@@ -2087,7 +2090,7 @@
       "TermsOfService": "Warunki usługi",
       "TotalResourcesIn": "Całkowite zasoby w",
       "TotalResourcesInResourceGroup": "Całkowite zasoby w grupie zasobów",
-      "TotalResourcesInResourceGroupDescription": "Ten panel pokazuje całkowite wykorzystane i pozostałe zasoby. \nWartości są obliczane przez dodanie użycia i pozostałych ilości wszystkich agentów za pomocą wybranej grupy zasobów.",
+      "TotalResourcesInResourceGroupDescription": "Ten panel pokazuje całkowitą liczbę wykorzystanych i wolnych zasobów w wybranej grupie zasobów. \nWartości obliczane są poprzez zsumowanie wykorzystanych i wolnych ilości wszystkich środków korzystających z danej grupy.",
       "TotpActivated": "Włączone 2FA",
       "Update": "Aktualizacja",
       "Usage": "Stosowanie",

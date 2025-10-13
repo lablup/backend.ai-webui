@@ -1,5 +1,6 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
+import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import { theme } from 'antd';
@@ -94,6 +95,9 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
               }}
             />
           }
+          style={{
+            zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT - 1,
+          }}
         />
 
         {/* Scrollable Content Section */}

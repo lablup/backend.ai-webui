@@ -31,6 +31,10 @@
     "Terminated": "Ditamatkan",
     "Utilization": "Penggunaan"
   },
+  "agentStats": {
+    "AgentStats": "Statistik Ejen",
+    "AgentStatsDescription": "Panel ini menunjukkan semua sumber yang digunakan di semua ejen dalam sistem. \nNilai mewakili jumlah sumber yang digunakan oleh semua sesi aktif."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan peraturan penskalaan automatik",
     "Comparator": "Komparator",
@@ -216,6 +220,10 @@
     "Users": "Pengguna",
     "WarningLessRateLimit": "Jika nilai Had Kadar adalah kecil, operasi API seperti log masuk mungkin disekat.",
     "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:"
+  },
+  "dashboard": {
+    "Free": "Percuma",
+    "Used": "Digunakan"
   },
   "data": {
     "Active": "Aktif",
@@ -1169,11 +1177,6 @@
     "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",
     "WsproxyAddress": "Alamat Pelayan WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Had",
-    "RemainingNumber": "Rmaining",
-    "UsingNumber": "Menggunakan"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",
     "AllowedHosts": "Tuan rumah yang dibenarkan",
@@ -2050,10 +2053,10 @@
       "MyAccountInformation": "Tukar Maklumat Pengguna",
       "MyEnvironments": "Persekitaran Saya",
       "MyResources": "Had jumlah sumber saya",
-      "MyResourcesDescription": "<p>Panel ini menunjukkan jumlah penggunaan sumber dan had di semua projek dan kumpulan sumber.</p><p>Apabila beberapa had digunakan (seperti domain, projek, atau pasangan kunci), had yang paling ketat digunakan untuk pengiraan.</p>",
+      "MyResourcesDescription": "<p> Panel ini memaparkan jumlah sumber anda yang digunakan dan percuma di semua projek dan kumpulan sumber. </P> <p> Apabila beberapa had digunakan (seperti domain, projek, atau keypair), pengiraan menggunakan had sumber bebas yang paling ketat. </P>",
       "MyResourcesIn": "Sumber saya di",
       "MyResourcesInResourceGroup": "Sumber saya dalam kumpulan sumber",
-      "MyResourcesInResourceGroupDescription": "Panel ini menunjukkan penggunaan sumber saya sekarang dan tinggal di kumpulan sumber yang dipilih.",
+      "MyResourcesInResourceGroupDescription": "Panel ini menunjukkan berapa banyak sumber yang anda gunakan dan berapa banyak yang percuma dalam kumpulan sumber yang dipilih dalam projek semasa anda.",
       "NewPassword": "Kata laluan baharu",
       "NewPasswordAgain": "Kata laluan baru (sekali lagi)",
       "NewPasswordCannotBeSame": "Sila masukkan kata laluan yang berbeza daripada kata laluan semasa anda.",
@@ -2086,7 +2089,7 @@
       "TermsOfService": "Syarat Perkhidmatan",
       "TotalResourcesIn": "Jumlah sumber dalam",
       "TotalResourcesInResourceGroup": "Jumlah sumber dalam kumpulan sumber",
-      "TotalResourcesInResourceGroupDescription": "Panel ini menunjukkan jumlah sumber yang digunakan dan baki. \nNilai dikira dengan menambah penggunaan dan baki jumlah semua ejen menggunakan kumpulan sumber yang dipilih.",
+      "TotalResourcesInResourceGroupDescription": "Panel ini menunjukkan jumlah sumber yang digunakan dan percuma dalam kumpulan sumber yang dipilih. \nNilai -nilai dikira dengan menjumlahkan jumlah yang digunakan dan bebas dari semua ejen menggunakan kumpulan itu.",
       "TotpActivated": "2FA Didayakan",
       "Update": "Kemas kini",
       "Usage": "Penggunaan",
