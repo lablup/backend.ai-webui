@@ -29,7 +29,7 @@ const UserCredentialsPage: React.FC = () => {
       onTabChange={(key) =>
         navigate({
           pathname: '/credential',
-          search: `?tab=${key}`,
+          search: new URLSearchParams({ tab: key }).toString(),
         })
       }
       tabList={tabItems}
