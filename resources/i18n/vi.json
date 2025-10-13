@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "Đại lý tích cực",
-    "ActiveAgentsTooltip": "Hiển thị tổng quan AT-A-GLANCE của tất cả các tác nhân hiện đang chạy trong hệ thống."
+    "ActiveAgentsTooltip": "Hiển thị tổng quan at-a-glance của tất cả các tác nhân hiện đang chạy trong hệ thống."
   },
   "agent": {
     "Agent": "Đại lý",

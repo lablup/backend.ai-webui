@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "Идэвхтэй агентууд",
-    "ActiveAgentsTooltip": "Системд ажиллаж байгаа бүх агентуудын AT-GLACE-ийн тоймыг харуулна."
+    "ActiveAgentsTooltip": "Системд ажиллаж байгаа бүх агентуудын тоймыг нэг дор харуулна."
   },
   "agent": {
     "Agent": "Агент",

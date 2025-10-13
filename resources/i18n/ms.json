@@ -2,7 +2,7 @@
   "$schema": "../i18n.schema.json",
   "activeAgent": {
     "ActiveAgents": "Ejen aktif",
-    "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan At-a-Glance semua ejen yang sedang berjalan dalam sistem."
+    "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan sepintas lalu semua ejen yang sedang berjalan dalam sistem."
   },
   "agent": {
     "Agent": "Ejen",
