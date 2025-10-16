@@ -21,7 +21,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useState, PropsWithChildren } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -52,6 +52,13 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
       session?.type || '',
     ) && !_.isEmpty(JSON.parse(session?.service_ports ?? '{}'))
   );
+};
+
+const Wrapper: React.FC<{ compact?: boolean; children?: React.ReactNode }> = ({
+  children,
+  compact,
+}) => {
+  return compact ? <Space.Compact>{children}</Space.Compact> : <>{children}</>;
 };
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
@@ -124,20 +131,12 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     return !hiddenButtons.has(key);
   };
 
-  const Wrapper: React.FC<PropsWithChildren> = ({ children }) => {
-    return compact ? (
-      <Space.Compact>{children}</Space.Compact>
-    ) : (
-      <>{children}</>
-    );
-  };
-
   // When size is 'small', use the button's title attribute instead of a Tooltip
   const isButtonTitleMode = size === 'small';
 
   return session ? (
     <>
-      <Wrapper>
+      <Wrapper compact={compact}>
         {isVisible('appLauncher') && (
           <>
             <Tooltip
