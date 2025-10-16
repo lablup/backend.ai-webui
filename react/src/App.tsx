@@ -26,8 +26,6 @@ import {
   createBrowserRouter,
   useLocation,
 } from 'react-router-dom';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 const Information = React.lazy(() => import('./components/Information'));
 const EndpointDetailPage = React.lazy(
@@ -105,9 +103,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorView />,
     element: (
       <DefaultProvidersForReactRoot>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <InteractiveLoginPage />
-        </QueryParamProvider>
+        <InteractiveLoginPage />
       </DefaultProvidersForReactRoot>
     ),
   },
@@ -116,23 +112,13 @@ const router = createBrowserRouter([
     errorElement: <ErrorView />,
     element: (
       <DefaultProvidersForReactRoot>
-        <QueryParamProvider
-          adapter={ReactRouter6Adapter}
-          options={
-            {
-              // searchStringToObject: queryString.parse,
-              // objectToSearchString: queryString.stringify,
-            }
-          }
-        >
-          <MainLayout />
-          <RoutingEventHandler />
-          <Suspense>
-            <FolderExplorerOpener />
-            <FolderInvitationResponseModalOpener />
-            <FileUploadManager />
-          </Suspense>
-        </QueryParamProvider>
+        <MainLayout />
+        <RoutingEventHandler />
+        <Suspense>
+          <FolderExplorerOpener />
+          <FolderInvitationResponseModalOpener />
+          <FileUploadManager />
+        </Suspense>
       </DefaultProvidersForReactRoot>
     ),
     children: [

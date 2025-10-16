@@ -103,5 +103,5 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
   },
 );
 
-BAIFlex.displayName = 'Flex';
+BAIFlex.displayName = 'BAIFlex';
 export default BAIFlex;

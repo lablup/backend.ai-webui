@@ -1,4 +1,22 @@
 {
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/.mcp.json",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/pnpm-lock.yaml",
+    "**/.turbo/**",
+    "**/.next/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/*.min.*",
+    "**/coverage/**",
+    "**/public/**",
+    "**/report.json"
+  ],
   "words": [
     "ahooks",
     "Antd",
