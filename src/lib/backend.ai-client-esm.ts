@@ -821,6 +821,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.12.0')) {
       this._features['reservoir'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.15.0')) {
+      this._features['agent-stats'] = true;
+    }
   }
 
   /**

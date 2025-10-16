@@ -31,6 +31,10 @@
     "Terminated": "已終止",
     "Utilization": "利用率"
   },
+  "agentStats": {
+    "AgentStats": "代理統計",
+    "AgentStatsDescription": "此面板顯示系統中所有代理的所有已使用資源。這些值表示所有活動會話使用的總資源。"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自動縮放規則",
     "Comparator": "比較器",
@@ -217,6 +221,10 @@
     "Users": "用戶",
     "WarningLessRateLimit": "如果速率限制值较小，可能会阻止登录等 API 操作。",
     "YouAreAboutToDeleteCredential": "您將要刪除該使用者的憑證："
+  },
+  "dashboard": {
+    "Free": "自由的",
+    "Used": "用過的"
   },
   "data": {
     "Active": "積極的",
@@ -1169,11 +1177,6 @@
     "TypeResourceGroupNameToDelete": "輸入要刪除的資源組名稱",
     "WsproxyAddress": "WSProxy 服务器地址"
   },
-  "resourcePanel": {
-    "Limit": "限制",
-    "RemainingNumber": "rming",
-    "UsingNumber": "使用"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
     "AllowedHosts": "允許的主機",
@@ -2050,10 +2053,10 @@
       "MyAccountInformation": "更改用戶信息",
       "MyEnvironments": "我的環境",
       "MyResources": "我的總資源限制",
-      "MyResourcesDescription": "<p>此面板顯示所有專案和資源群組的總資源使用量和限制。</p><p>當應用多個限制（如網域、專案或金鑰對）時，將根據最嚴格的限制進行計算。</p>",
+      "MyResourcesDescription": "<p>此面板顯示您當前在所有項目和資源組中使用和免費的總資源。 </p><p>應用多個限制（例如域、項目或密鑰對）時，計算將使用最嚴格的免費資源限制。 </p>",
       "MyResourcesIn": "我的資源",
       "MyResourcesInResourceGroup": "我在資源組中的資源",
-      "MyResourcesInResourceGroupDescription": "該面板顯示您當前的我的資源使用情況，並保留在選定的資源組中。",
+      "MyResourcesInResourceGroupDescription": "此面板顯示您當前項目的所選資源組中已使用了多少資源以及有多少可用資源。",
       "NewPassword": "新密碼",
       "NewPasswordAgain": "確認新密碼）",
       "NewPasswordCannotBeSame": "请输入与当前密码不同的密码。",
@@ -2086,7 +2089,7 @@
       "TermsOfService": "服務條款",
       "TotalResourcesIn": "總資源中",
       "TotalResourcesInResourceGroup": "資源組的總資源",
-      "TotalResourcesInResourceGroupDescription": "該面板顯示了使用的總和剩餘資源。這些值是通過使用所選資源組添加所有代理的使用量和剩餘數量來計算的。",
+      "TotalResourcesInResourceGroupDescription": "此面板顯示所選資源組中已用資源和可用資源的總數。這些值是通過將使用該組的所有代理的已用量和可用量相加來計算的。",
       "TotpActivated": "已启用 2FA",
       "Update": "更新",
       "Usage": "用法",

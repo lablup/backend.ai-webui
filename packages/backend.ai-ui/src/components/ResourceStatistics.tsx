@@ -8,26 +8,26 @@ import { useTranslation } from 'react-i18next';
 
 interface ResourceData {
   cpu: {
-    using: { current: number; total?: number };
-    remaining: { current: number; total?: number };
+    used: { current: number; total?: number };
+    free: { current: number; total?: number };
     metadata: { title: string; displayUnit: string };
   } | null;
   memory: {
-    using: { current: number; total?: number };
-    remaining: { current: number; total?: number };
+    used: { current: number; total?: number };
+    free: { current: number; total?: number };
     metadata: { title: string; displayUnit: string };
   } | null;
   accelerators: Array<{
     key: string;
-    using: { current: number; total?: number };
-    remaining: { current: number; total?: number };
+    used: { current: number; total?: number };
+    free: { current: number; total?: number };
     metadata: { title: string; displayUnit: string };
   }>;
 }
 
 interface ResourceStatisticsProps {
   resourceData: ResourceData;
-  displayType: 'using' | 'remaining';
+  displayType: 'used' | 'free';
   showProgress?: boolean;
   precision?: number;
   progressSteps?: number;

@@ -31,6 +31,10 @@
     "Terminated": "Beendet",
     "Utilization": "Inanspruchnahme"
   },
+  "agentStats": {
+    "AgentStats": "Agentenstatistik",
+    "AgentStatsDescription": "In diesem Bereich werden alle verwendeten Ressourcen aller Agenten im System angezeigt. \nDie Werte stellen die insgesamt genutzten Ressourcen aller aktiven Sitzungen dar."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Automatische Skalierungsregel hinzufügen",
     "Comparator": "Vergleicher",
@@ -217,6 +221,10 @@
     "Users": "Benutzer",
     "WarningLessRateLimit": "Wenn der Wert für das Ratenlimit klein ist, können API-Vorgänge wie die Anmeldung blockiert werden.",
     "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:"
+  },
+  "dashboard": {
+    "Free": "Frei",
+    "Used": "Gebraucht"
   },
   "data": {
     "Active": "Aktiv",
@@ -1170,11 +1178,6 @@
     "TypeResourceGroupNameToDelete": "Geben Sie den Namen der zu löschenden Ressourcengruppe ein",
     "WsproxyAddress": "WSProxy-Server-Adresse"
   },
-  "resourcePanel": {
-    "Limit": "Limit",
-    "RemainingNumber": "RMINING",
-    "UsingNumber": "Verwendung"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",
     "AllowedHosts": "Zulässige Gastgeber",
@@ -2050,10 +2053,10 @@
       "MyAccountInformation": "Benutzerinformationen ändern",
       "MyEnvironments": "Meine Umgebungen",
       "MyResources": "Meine Gesamtressourcengrenze",
-      "MyResourcesDescription": "<p>Dieses Panel zeigt Ihre gesamte Ressourcennutzung und Limits über alle Projekte und Ressourcengruppen hinweg.</p><p>Wenn mehrere Limits angewendet werden (wie Domain, Projekt oder Keypair), wird das restriktivste Limit für die Berechnung verwendet.</p>",
+      "MyResourcesDescription": "<p>In diesem Bereich werden die gesamten derzeit genutzten und freien Ressourcen aller Projekte und Ressourcengruppen angezeigt.</p><p>Wenn mehrere Grenzwerte angewendet werden (z. B. Domäne, Projekt oder Schlüsselpaar), verwendet die Berechnung den restriktivsten Grenzwert für freie Ressourcen.</p>",
       "MyResourcesIn": "Meine Ressourcen in",
       "MyResourcesInResourceGroup": "Meine Ressourcen in der Ressourcengruppe",
-      "MyResourcesInResourceGroupDescription": "Dieses Panel zeigt Ihre aktuelle Ressourcenverwendung und verbleibt in der ausgewählten Ressourcengruppe.",
+      "MyResourcesInResourceGroupDescription": "In diesem Bereich wird angezeigt, wie viel Ressource Sie verbraucht haben und wie viel in der ausgewählten Ressourcengruppe Ihres aktuellen Projekts noch frei ist.",
       "NewPassword": "Neues Kennwort",
       "NewPasswordAgain": "Neues Passwort nochmal)",
       "NewPasswordCannotBeSame": "Bitte geben Sie ein Passwort ein, das sich von Ihrem aktuellen Passwort unterscheidet.",
@@ -2086,7 +2089,7 @@
       "TermsOfService": "Nutzungsbedingungen",
       "TotalResourcesIn": "Gesamtressourcen in",
       "TotalResourcesInResourceGroup": "Gesamtressourcen in der Ressourcengruppe",
-      "TotalResourcesInResourceGroupDescription": "Dieses Panel zeigt die verwendeten und verbleibenden Ressourcen. \nDie Werte werden berechnet, indem die Verwendung und die verbleibenden Mengen aller Agenten mithilfe der ausgewählten Ressourcengruppe addiert werden.",
+      "TotalResourcesInResourceGroupDescription": "In diesem Bereich werden die insgesamt genutzten und freien Ressourcen in der ausgewählten Ressourcengruppe angezeigt. \nDie Werte werden berechnet, indem die verwendeten und freien Mengen aller Agenten, die diese Gruppe verwenden, summiert werden.",
       "TotpActivated": "2FA Aktiviert",
       "Update": "Aktualisieren",
       "Usage": "Verwendung",

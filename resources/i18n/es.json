@@ -31,6 +31,10 @@
     "Terminated": "Terminado",
     "Utilization": "Utilización"
   },
+  "agentStats": {
+    "AgentStats": "Estadísticas del agente",
+    "AgentStatsDescription": "Este panel muestra todos los recursos utilizados en todos los agentes del sistema. \nLos valores representan el total de recursos utilizados por todas las sesiones activas."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Agregar regla de escala automática",
     "Comparator": "Comparador",
@@ -217,6 +221,10 @@
     "Users": "Usuarios",
     "WarningLessRateLimit": "Si el valor de Rate Limit es pequeño, es posible que se bloqueen operaciones de la API como el inicio de sesión.",
     "YouAreAboutToDeleteCredential": "Estás a punto de eliminar la credencial de este usuario:"
+  },
+  "dashboard": {
+    "Free": "Gratis",
+    "Used": "Usado"
   },
   "data": {
     "Active": "Activo",
@@ -1170,11 +1178,6 @@
     "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar",
     "WsproxyAddress": "Dirección del servidor WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Límite",
-    "RemainingNumber": "Gemelo",
-    "UsingNumber": "Usando"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Está a punto de eliminar esta política de recursos:",
     "AllowedHosts": "Hosts permitidos",
@@ -2052,10 +2055,10 @@
       "MyAccountInformation": "Información de mi cuenta",
       "MyEnvironments": "Mis ambientes",
       "MyResources": "Mi límite de recursos totales",
-      "MyResourcesDescription": "<p>Este panel muestra el uso total de recursos y límites en todos los proyectos y grupos de recursos.</p><p>Cuando se aplican múltiples límites (como dominio, proyecto o par de claves), se utiliza el límite más restrictivo para el cálculo.</p>",
+      "MyResourcesDescription": "<p>Este panel muestra el total de recursos actualmente utilizados y gratuitos en todos los proyectos y grupos de recursos.</p><p>Cuando se aplican varios límites (como dominio, proyecto o par de claves), el cálculo utiliza el límite de recursos gratuitos más restrictivo.</p>",
       "MyResourcesIn": "Mis recursos en",
       "MyResourcesInResourceGroup": "Mis recursos en el grupo de recursos",
-      "MyResourcesInResourceGroupDescription": "Este panel muestra su uso actual de mi recursos y restante en el grupo de recursos seleccionado.",
+      "MyResourcesInResourceGroupDescription": "Este panel muestra cuánto recurso ha utilizado y cuánto está libre en el grupo de recursos seleccionado de su proyecto actual.",
       "NewPassword": "Nueva contraseña",
       "NewPasswordAgain": "Nueva contraseña (otra vez)",
       "NewPasswordCannotBeSame": "Introduzca una contraseña distinta de la actual.",
@@ -2088,7 +2091,7 @@
       "TermsOfService": "Condiciones de uso",
       "TotalResourcesIn": "Recursos totales en",
       "TotalResourcesInResourceGroup": "Recursos totales en el grupo de recursos",
-      "TotalResourcesInResourceGroupDescription": "Este panel muestra el total de recursos utilizados y restantes. \nLos valores se calculan agregando el uso y las cantidades restantes de todos los agentes utilizando el grupo de recursos seleccionado.",
+      "TotalResourcesInResourceGroupDescription": "Este panel muestra el total de recursos utilizados y libres en el grupo de recursos seleccionado. \nLos valores se calculan sumando las cantidades utilizadas y gratuitas de todos los agentes que utilizan ese grupo.",
       "TotpActivated": "2FA Activado",
       "Update": "Actualización",
       "Usage": "Uso",
