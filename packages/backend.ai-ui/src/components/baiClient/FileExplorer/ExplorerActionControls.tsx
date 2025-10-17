@@ -103,9 +103,13 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <Upload
                   beforeUpload={(_, fileList) => {
-                    uploadFiles(fileList, onUpload);
+                    if (fileList !== lastFileListRef.current) {
+                      uploadFiles(fileList, onUpload);
+                    }
+                    lastFileListRef.current = fileList;
                     return false; // Prevent default upload behavior
                   }}
+                  multiple
                   showUploadList={false}
                 >
                   <Button type="text" icon={<FileAddOutlined />}>
