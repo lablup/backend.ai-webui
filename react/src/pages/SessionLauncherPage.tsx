@@ -549,16 +549,37 @@ const SessionLauncherPage = () => {
               preopen_ports: transformPortValuesToNumbers(values.ports),
 
               // Agent selection (optional)
-              ...(baiClient.supports('agent-select') &&
-              !baiClient?._config?.hideAgents &&
-              values.agent !== 'auto'
-                ? {
-                    // Filter out undefined values
-                    agent_list: [values.agent].filter(
-                      (agent): agent is string => !!agent,
+              ...(() => {
+                if (values.agent === undefined) return {};
+
+                const agents = _.castArray(values.agent);
+
+                if (
+                  !baiClient.supports('agent-select') ||
+                  baiClient?._config?.hideAgents ||
+                  _.isEqual(agents, ['auto']) ||
+                  agents.length === 0
+                ) {
+                  return {};
+                }
+
+                if (
+                  !baiClient.supports('multi-agents') &&
+                  values.cluster_mode === 'multi-node'
+                ) {
+                  // The server now requires agents equivalent to the cluster size.
+                  return {
+                    agent_list: Array.from(
+                      { length: values.cluster_size },
+                      () => agents[0],
                     ),
-                  }
-                : undefined),
+                  };
+                }
+
+                return {
+                  agent_list: _.filter(agents, (item) => !!item),
+                };
+              })(),
             },
           },
         };
@@ -1546,7 +1567,7 @@ const SessionLauncherPage = () => {
                   command: undefined,
                   scheduleDate: undefined,
                 },
-                agent: 'auto', // Add the missing 'agent' property
+                agent: ['auto'], // Add the missing 'agent' property
               } as SessionLauncherFormData,
               formValue,
             );
