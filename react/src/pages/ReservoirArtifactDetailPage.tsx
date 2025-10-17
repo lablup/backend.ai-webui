@@ -14,6 +14,7 @@ import {
   BAIPullingArtifactRevisionAlert,
   convertToDecimalUnit,
   filterOutNullAndUndefined,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -29,7 +30,6 @@ import {
   ReservoirArtifactDetailPageQuery$variables,
 } from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
 import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
-import BAIText from 'src/components/BAIText';
 import { INITIAL_FETCH_KEY, useUpdatableState } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';

@@ -1,8 +1,7 @@
 import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
-import BAIText from '../BAIText';
 import { theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIText } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
