@@ -3,7 +3,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import FolderCreateModal from './FolderCreateModal';
@@ -112,7 +112,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useControllableState<
+  const [selectedRowKeys, setSelectedRowKeys] = useControllableState_deprecated<
     VFolderKey[]
   >(
     {
@@ -129,7 +129,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
-  const [aliasMap, setAliasMap] = useControllableState<AliasMap>(
+  const [aliasMap, setAliasMap] = useControllableState_deprecated<AliasMap>(
     {
       value: controlledAliasMap,
       onChange: onChangeAliasMap,

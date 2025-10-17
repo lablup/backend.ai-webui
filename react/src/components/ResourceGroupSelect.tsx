@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { SelectProps } from 'antd';
@@ -39,13 +39,13 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState<string>({
+    useControllableState_deprecated<string>({
       value: searchValue,
       onChange: onSearch,
     });
 
   const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
-    useControllableState(selectProps);
+    useControllableState_deprecated(selectProps);
   const [isPendingChangeTransition, startChangeTransition] = useTransition();
 
   const [optimisticValue, setOptimisticValue] = useState();

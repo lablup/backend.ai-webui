@@ -1,6 +1,5 @@
 import { BigNumber } from './big-number';
 import { expect } from '@jest/globals';
-import '@jest/globals';
 import Big from 'big.js';
 
 declare module '@jest/expect' {

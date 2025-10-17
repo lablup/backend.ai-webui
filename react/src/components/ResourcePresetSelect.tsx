@@ -5,7 +5,7 @@ import {
 import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import ResourceNumber from './ResourceNumber';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
@@ -56,7 +56,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const { token } = theme.useToken();
   const [isPendingUpdate, _startTransition] = useTransition();
   const [controllableValue, setControllableValue] =
-    useControllableState(selectProps);
+    useControllableState_deprecated(selectProps);
   const updateFetchKeyUnderTransition = () => {
     _startTransition(() => {
       updateFetchKeyThrottled();

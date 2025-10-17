@@ -1,6 +1,6 @@
 import { KeypairResourcePolicySelectorQuery } from '../__generated__/KeypairResourcePolicySelectorQuery.graphql';
 import { localeCompare } from '../helper';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ const KeypairResourcePolicySelector: React.FC<
   KeypairResourcePolicySelectorProps
 > = ({ ...selectProps }) => {
   const { t } = useTranslation();
-  const [value, setValue] = useControllableState<string>({
+  const [value, setValue] = useControllableState_deprecated<string>({
     value: selectProps.value,
     onChange: selectProps.onChange,
   });

@@ -1,11 +1,13 @@
-/* eslint-disable testing-library/render-result-naming-convention */
-import useControllableState, { Options, Props } from './useControllableState';
+import useControllableState_deprecated, {
+  Options,
+  Props,
+} from './useControllableState';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 describe('useControllableState', () => {
   const setUp = (props?: Props, options?: Options<any>): any =>
-    renderHook(() => useControllableState(props, options));
+    renderHook(() => useControllableState_deprecated(props, options));
 
   it('defaultValue should work', () => {
     const hook = setUp({ defaultValue: 1 });
@@ -88,7 +90,7 @@ describe('useControllableState', () => {
       },
       onChange: () => {},
     };
-    const hook = renderHook(() => useControllableState(props));
+    const hook = renderHook(() => useControllableState_deprecated(props));
     const [v] = hook.result.current;
     expect(v.foo).toBe(123);
   });

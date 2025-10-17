@@ -1,4 +1,4 @@
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { Slider, SliderSingleProps } from 'antd';
 import _, { isNumber } from 'lodash';
 import React from 'react';
@@ -15,7 +15,7 @@ interface NonLinearSliderProps
   steps: StepType[];
   value?: number | string;
   defaultValue?: number | string;
-  showAllMarkLabels?: boolean;
+  // showAllMarkLabels?: boolean;
   onChange?: (value: number | string, label: string) => void;
 }
 const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
@@ -35,11 +35,13 @@ const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
     return step;
   });
 
-  const [controlledValue, setControlledValue] = useControllableState({
-    value,
-    defaultValue: defaultValue ?? normalizedSteps[0]?.value,
-    onChange,
-  });
+  const [controlledValue, setControlledValue] = useControllableState_deprecated(
+    {
+      value,
+      defaultValue: defaultValue ?? normalizedSteps[0]?.value,
+      onChange,
+    },
+  );
 
   const isFirstAndLast = (index: number) =>
     index === 0 || index === normalizedSteps.length - 1;

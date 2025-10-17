@@ -22,14 +22,14 @@ export interface StandardProps<T> {
  * However if the value is undefined, the component is treated as an uncontrolled component
  */
 
-function useControllableState<T = any>(
+function useControllableState_deprecated<T = any>(
   props: StandardProps<T>,
 ): [T, (v: SetStateAction<T>) => void];
-function useControllableState<T = any>(
+function useControllableState_deprecated<T = any>(
   props?: Props,
   options?: Options<T>,
 ): [T, (v: SetStateAction<T>, ...args: any[]) => void];
-function useControllableState<T = any>(
+function useControllableState_deprecated<T = any>(
   props: Props = {},
   options: Options<T> = {},
 ) {
@@ -82,7 +82,7 @@ function useControllableState<T = any>(
   return [stateRef.current, useMemoizedFn(setState)] as const;
 }
 
-export default useControllableState;
+export default useControllableState_deprecated;
 
 type noop = (this: any, ...args: any[]) => any;
 

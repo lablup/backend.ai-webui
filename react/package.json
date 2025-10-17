@@ -82,7 +82,7 @@
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
     "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'pnpm run relay --watch'",
-    "lint": "eslint ./src '../resources/i18n/*.json' '../resources/device_metadata.json' --ignore-pattern '*.test.*' --max-warnings=0",
+    "lint": "eslint ./src '../resources/i18n/*.json' '../resources/device_metadata.json' --max-warnings=0",
     "format": "pnpm dlx prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "pnpm dlx prettier --write './src/**/*.{js,jsx,ts,tsx}'",
     "storybook": "storybook dev -p 6006",

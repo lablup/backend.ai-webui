@@ -1,4 +1,4 @@
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { loadLanguage, LanguageName } from '@uiw/codemirror-extensions-langs';
 import CodeMirror, {
   ReactCodeMirrorProps,
@@ -23,7 +23,7 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   lineWrapping = false,
   ...CodeMirrorProps
 }) => {
-  const [script, setScript] = useControllableState<string>({
+  const [script, setScript] = useControllableState_deprecated<string>({
     defaultValue: '',
     value,
     onChange,

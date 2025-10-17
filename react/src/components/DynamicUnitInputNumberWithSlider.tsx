@@ -4,7 +4,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import DynamicUnitInputNumber, {
   DynamicUnitInputNumberProps,
 } from './DynamicUnitInputNumber';
@@ -34,12 +34,11 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   step = 0.05,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableState<string | undefined | null>(
-    otherProps,
-    {
-      defaultValue: '0g',
-    },
-  );
+  const [value, setValue] = useControllableState_deprecated<
+    string | undefined | null
+  >(otherProps, {
+    defaultValue: '0g',
+  });
   const { token } = theme.useToken();
   const minGiB = useMemo(() => convertToBinaryUnit(min, 'g', 2), [min]);
   const maxGiB = useMemo(() => convertToBinaryUnit(max, 'g', 2), [max]);

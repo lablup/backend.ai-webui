@@ -1,7 +1,7 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -55,7 +55,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { generateFolderPath } = useFolderExplorerOpener();
   const { t } = useTranslation();
-  const [value, setValue] = useControllableState(selectProps);
+  const [value, setValue] = useControllableState_deprecated(selectProps);
   const [key, checkUpdate] = useUpdatableState('first');
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(

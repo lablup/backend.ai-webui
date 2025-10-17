@@ -1,5 +1,5 @@
 import { useUpdatableState } from '../hooks';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import { BAIFlex } from 'backend.ai-ui';
@@ -33,7 +33,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   inputContainerMinWidth,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableState(otherProps);
+  const [value, setValue] = useControllableState_deprecated(otherProps);
   const inputRef = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!allowNegative) {

@@ -1,4 +1,4 @@
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, ButtonProps, Tooltip } from 'antd';
@@ -19,7 +19,6 @@ interface BAIAutoRefetchButtonProps
   pauseWhenHidden?: boolean;
 }
 const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
-  value: _value,
   loading,
   onChange,
   showLastLoadTime,
@@ -31,7 +30,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   ...buttonProps
 }) => {
   const { t } = useTranslation();
-  const [lastLoadTime, setLastLoadTime] = useControllableState(
+  const [lastLoadTime, setLastLoadTime] = useControllableState_deprecated(
     {
       value: lastLoadTimeProp,
     },

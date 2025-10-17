@@ -84,10 +84,9 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           item !== null && item?.key === 'ai.backend.service-ports',
       );
       if (servicePortsIdx !== -1) {
-        // eslint-disable-next-line
-        servicePorts = image?.labels[servicePortsIdx]
-          ?.value!?.split(',')
-          .map((e: string): ServicePort => {
+        const rawValue = image.labels[servicePortsIdx]?.value;
+        if (rawValue) {
+          servicePorts = rawValue.split(',').map((e: string): ServicePort => {
             const sp = e.split(':');
             return {
               app: sp[0],
@@ -95,6 +94,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
               port: Number(sp[2]),
             };
           });
+        }
       }
     }
     return servicePorts;

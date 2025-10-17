@@ -1,5 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
@@ -30,7 +30,7 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
 }) => {
   useSuspendedBackendaiClient(); // To make sure the client is ready
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState<string>({
+    useControllableState_deprecated<string>({
       value: searchValue,
       onChange: onSearch,
     });

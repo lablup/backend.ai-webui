@@ -21,16 +21,17 @@ export const useBackendAIAppLauncher = (
       // @ts-ignore
       globalThis.appLauncher.runTerminal(session.row_id);
     },
-    showLauncher: (_params: {
-      'session-uuid'?: string;
-      'access-key'?: string;
-      'app-services'?: string;
-      mode?: string;
-      'app-services-option'?: string;
-      'service-ports'?: string;
-      runtime?: string;
-      filename?: string;
-      arguments?: string;
-    }) => {},
+    // TODO: implement below function
+    // showLauncher: (params: {
+    //   'session-uuid'?: string;
+    //   'access-key'?: string;
+    //   'app-services'?: string;
+    //   mode?: string;
+    //   'app-services-option'?: string;
+    //   'service-ports'?: string;
+    //   runtime?: string;
+    //   filename?: string;
+    //   arguments?: string;
+    // }) => {},
   };
 };

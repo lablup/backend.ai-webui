@@ -1,5 +1,5 @@
 import { useUpdatableState } from '../hooks';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
@@ -21,9 +21,12 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   // onChange,
   ...inputNumberProps
 }) => {
-  const [value, setValue] = useControllableState<number>(inputNumberProps, {
-    defaultValue: dynamicSteps[0],
-  });
+  const [value, setValue] = useControllableState_deprecated<number>(
+    inputNumberProps,
+    {
+      defaultValue: dynamicSteps[0],
+    },
+  );
 
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
   const [key, updateKey] = useUpdatableState('first');

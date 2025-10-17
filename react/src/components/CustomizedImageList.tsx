@@ -40,7 +40,7 @@ export type CommittedImage = NonNullable<
   CustomizedImageListQuery$data['customized_images']
 >[number];
 
-const CustomizedImageList = () => {
+const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();

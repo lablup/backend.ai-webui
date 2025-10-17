@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/render-result-naming-convention */
 import { useBackendAIImageMetaData } from '.';
 import { getImageFullName } from '../helper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

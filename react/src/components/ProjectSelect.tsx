@@ -1,7 +1,7 @@
 import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import _ from 'lodash';
 import React from 'react';
@@ -33,7 +33,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const blockList = baiClient?._config?.blockList ?? null;
 
-  const [value, setValue] = useControllableState(selectProps);
+  const [value, setValue] = useControllableState_deprecated(selectProps);
   const userRole = useCurrentUserRole();
   const { groups, user } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`

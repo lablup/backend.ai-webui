@@ -1,7 +1,7 @@
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { Badge, Tooltip } from 'antd';
@@ -57,13 +57,14 @@ const StorageSelect: React.FC<Props> = ({
       },
     });
 
-  const [controllableState, setControllableState] = useControllableState({
-    value,
-    onChange,
-    defaultValue,
-  });
+  const [controllableState, setControllableState] =
+    useControllableState_deprecated({
+      value,
+      onChange,
+      defaultValue,
+    });
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState({ value: searchValue, onChange: onSearch });
+    useControllableState_deprecated({ value: searchValue, onChange: onSearch });
   useEffect(() => {
     if (!autoSelectType || !vhostInfo) return; // Return early if vhostInfo is null
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';

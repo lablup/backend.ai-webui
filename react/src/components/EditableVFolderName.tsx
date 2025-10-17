@@ -30,7 +30,6 @@ import {
 type EditableVFolderNameProps = {
   vfolderFrgmt: EditableVFolderNameFragment$key;
   enableLink?: boolean;
-  existingNames?: Array<string>;
   inputProps?: InputProps;
   onEditEnd?: () => void;
   onEditStart?: () => void;

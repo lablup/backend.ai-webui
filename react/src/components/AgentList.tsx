@@ -46,7 +46,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useState, useDeferredValue, useMemo } from 'react';
+import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
@@ -88,22 +88,13 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const queryVariables = useMemo(
-    () => ({
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      filter: queryParams.filter,
-      order: queryParams.order,
-      status: queryParams.status,
-    }),
-    [
-      baiPaginationOption.limit,
-      baiPaginationOption.offset,
-      queryParams.filter,
-      queryParams.order,
-      queryParams.status,
-    ],
-  );
+  const queryVariables = {
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    filter: queryParams.filter,
+    order: queryParams.order,
+    status: queryParams.status,
+  };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);

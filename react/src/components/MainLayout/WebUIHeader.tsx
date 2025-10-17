@@ -34,7 +34,6 @@ const useStyles = createStyles(({ css }) => ({
 
 export interface WebUIHeaderProps extends BAIFlexProps {
   onClickMenuIcon?: () => void;
-  containerElement?: HTMLDivElement | null;
 }
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {

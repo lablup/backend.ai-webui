@@ -1,5 +1,5 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
-import useControllableState from '../hooks/useControllableState';
+import useControllableState_deprecated from '../hooks/useControllableState';
 import { usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
@@ -30,12 +30,11 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   roundStep,
   ...inputNumberProps
 }) => {
-  const [value, setValue] = useControllableState<string | null | undefined>(
-    inputNumberProps,
-    {
-      defaultValue: '0g',
-    },
-  );
+  const [value, setValue] = useControllableState_deprecated<
+    string | null | undefined
+  >(inputNumberProps, {
+    defaultValue: '0g',
+  });
   const [numValue, _unitFromValue] =
     value === null || value === undefined
       ? [null, null]

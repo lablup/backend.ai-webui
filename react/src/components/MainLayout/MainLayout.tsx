@@ -218,7 +218,6 @@ function MainLayout() {
                 >
                   <WebUIHeader
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                    containerElement={contentScrollFlexRef.current}
                   />
                   {/* sticky Alert components with banner props */}
                   <Suspense fallback={null}>
