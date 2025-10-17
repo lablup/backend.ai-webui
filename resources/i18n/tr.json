@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Aktif ajanlar",
+    "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
+  },
   "agent": {
     "Agent": "Ajan",
     "AgentSetting": "Temsilci Ayarları",
@@ -1255,6 +1259,7 @@
     "PendingSessions": "Bekleyen seanslar"
   },
   "session": {
+    "ActiveSessions": "Aktif oturumlar",
     "Agent": "Temsilci",
     "AgentId": "Ajan kimliği",
     "Agents": "Temsilciler",
@@ -2005,6 +2010,7 @@
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "AIAgents": "Yapay Zeka Ajanları",
       "AboutBackendAI": "Backend.AI hakkında",
+      "AdminDashboard": "Yönetici Gösterge Tablosu",
       "Administration": "yönetim",
       "AgentSummary": "Temsilci Özeti",
       "Architecture": "Mimarlık",

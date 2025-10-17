@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Agen aktif",
+    "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
+  },
   "agent": {
     "Agent": "Agen",
     "AgentSetting": "Pengaturan Agen",
@@ -1253,6 +1257,7 @@
     "PendingSessions": "Sesi yang tertunda"
   },
   "session": {
+    "ActiveSessions": "Sesi aktif",
     "Agent": "Agen",
     "AgentId": "ID Agen",
     "Agents": "Agen",
@@ -2004,6 +2009,7 @@
       "AIAccelerator": "Akselerator AI",
       "AIAgents": "Agen AI",
       "AboutBackendAI": "Tentang Backend.AI",
+      "AdminDashboard": "Dasbor Admin",
       "Administration": "Administrasi",
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Arsitektur",
