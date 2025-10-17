@@ -3,16 +3,10 @@ import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import { useUpdateEffect } from 'ahooks';
 import { BAIFlex, BAILink, BAINotificationItem } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  fetchQuery,
-  graphql,
-  useFragment,
-  useRelayEnvironment,
-} from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 import { BAIComputeSessionNodeNotificationItemFragment$key } from 'src/__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
-import { BAIComputeSessionNodeNotificationItemRefreshQuery } from 'src/__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
 import {
   NotificationState,
   useSetBAINotification,
@@ -27,11 +21,15 @@ interface BAINodeNotificationItemProps {
 const BAIComputeSessionNodeNotificationItem: React.FC<
   BAINodeNotificationItemProps
 > = ({ sessionFrgmt, showDate, notification }) => {
-  const { destroyNotification } = useSetBAINotification();
+  'use memo';
+  const { destroyNotification, upsertNotification } = useSetBAINotification();
   const { t } = useTranslation();
-  const node = useFragment(
+  const [node, refetch] = useRefetchableFragment(
     graphql`
-      fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {
+      fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode
+      @refetchable(
+        queryName: "BAIComputeSessionNodeNotificationItemFragment_RefetchQuery"
+      ) {
         row_id
         id
         name
@@ -43,23 +41,22 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     sessionFrgmt,
   );
 
-  // TODO: delete this when Status subscription is implemented
-  const [delay, setDelay] = useState<number | null>(null);
-  UNSAFE_useAutoRefreshInterval(node?.id || '', delay);
+  const closeNotificationWithProgress = useEffectEvent(() => {
+    if (notification.open) {
+      upsertNotification({
+        key: notification.key,
+        pauseOnHover: true,
+        showProgress: true,
+        duration: 10,
+      });
+    }
+  });
+
   useEffect(() => {
-    if (
-      !node?.status ||
-      node?.status === 'TERMINATED' ||
-      node?.status === 'CANCELLED'
-    ) {
-      setDelay(null);
-    } else if (node?.status === 'RUNNING') {
-      setDelay(15000);
-    } else {
-      setDelay(3000);
+    if (node?.status === 'RUNNING') {
+      closeNotificationWithProgress();
     }
   }, [node?.status]);
-  // ---
 
   useUpdateEffect(() => {
     if (node?.status === 'TERMINATED' || node?.status === 'CANCELLED') {
@@ -68,6 +65,22 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
       }, 3000);
     }
   }, [node?.status]);
+
+  const delay = ['TERMINATED', 'CANCELLED', null, undefined].includes(
+    node?.status,
+  )
+    ? null
+    : node?.status === 'RUNNING'
+      ? 15000
+      : 3000;
+  useInterval(() => {
+    refetch(
+      {},
+      {
+        fetchPolicy: 'store-and-network',
+      },
+    );
+  }, delay);
 
   return (
     node && (
@@ -117,27 +130,3 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
 };
 
 export default BAIComputeSessionNodeNotificationItem;
-
-const UNSAFE_useAutoRefreshInterval = (
-  sessionId: string,
-  delay: number | null,
-) => {
-  // const [delay, setDelay] = useState<number|null>(3000);
-  const relayEnv = useRelayEnvironment();
-
-  useInterval(() => {
-    fetchQuery<BAIComputeSessionNodeNotificationItemRefreshQuery>(
-      relayEnv,
-      graphql`
-        query BAIComputeSessionNodeNotificationItemRefreshQuery(
-          $id: GlobalIDField!
-        ) {
-          compute_session_node(id: $id) {
-            ...BAINodeNotificationItemFragment
-          }
-        }
-      `,
-      { id: sessionId },
-    ).toPromise();
-  }, delay);
-};
