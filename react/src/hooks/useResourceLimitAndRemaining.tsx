@@ -209,7 +209,7 @@ export const useResourceLimitAndRemaining = ({
         : undefined,
     accelerators: _.reduce(
       acceleratorSlots,
-      (result, value, key) => {
+      (result, _value, key) => {
         result[key] =
           !_.isEmpty(
             // @ts-ignore
@@ -242,7 +242,7 @@ export const useResourceLimitAndRemaining = ({
   };
   const perContainerConfigs = useMemo(
     () =>
-      _.omitBy(baiClient._config, (value, key) => {
+      _.omitBy(baiClient._config, (_value, key) => {
         return !maxPerContainerRegex.test(key);
       }),
     [baiClient._config],
@@ -322,9 +322,9 @@ export const useResourceLimitAndRemaining = ({
           },
     accelerators: _.reduce(
       acceleratorSlots,
-      (result, value, key) => {
+      (result, _value, key) => {
         const perContainerLimit =
-          _.find(perContainerConfigs, (configValue, configName) => {
+          _.find(perContainerConfigs, (_configValue, configName) => {
             return isMatchingMaxPerContainer(configName, key);
           }) ?? baiClient._config['cuda.device']; // FIXME: temporally `cuda.device` config, when undefined
 
@@ -368,7 +368,7 @@ export const useResourceLimitAndRemaining = ({
   ): RemainingSlots => ({
     accelerators: _.reduce(
       acceleratorSlots,
-      (result, value, key) => {
+      (result, _value, key) => {
         result[key] = _.min([
           _.toNumber(
             checkPresetInfo?.keypair_remaining[key as ResourceSlotName],

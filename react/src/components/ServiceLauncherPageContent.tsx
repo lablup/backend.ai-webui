@@ -578,7 +578,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
-              let defaultErrorMessage = endpoint
+              const defaultErrorMessage = endpoint
                 ? t('modelService.FailedToUpdateService')
                 : t('modelService.FailedToStartService');
               message.error(getErrorMessage(error, defaultErrorMessage));
@@ -750,7 +750,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               />
             )}
             <Form.Provider
-              onFormChange={(name, info) => {
+              onFormChange={() => {
                 // use OnFormChange instead of Form's onValuesChange,
                 // because onValuesChange will not be triggered when form is changed programmatically
                 syncFormToURLWithDebounce();
@@ -771,7 +771,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           label={t('modelService.ServiceName')}
                           name="serviceName"
                           validateDebounce={500}
-                          rules={!!endpoint ? [] : validationRules}
+                          rules={endpoint ? [] : validationRules}
                         >
                           <Input disabled={!!endpoint} />
                         </Form.Item>

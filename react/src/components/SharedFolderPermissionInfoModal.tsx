@@ -130,7 +130,7 @@ const SharedFolderPermissionInfoModal: React.FC<
                 {
                   key: 'permissions',
                   title: t('data.folders.MountPermission'),
-                  render: (perm: string, vfolder) => {
+                  render: (_perm: string, vfolder) => {
                     return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
                   },
                 },

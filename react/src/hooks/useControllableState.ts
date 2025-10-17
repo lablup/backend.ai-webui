@@ -108,6 +108,7 @@ function useMemoizedFn<T extends noop>(fn: T) {
 
   const memoizedFn = useRef<PickFunction<T>>(null);
   if (!memoizedFn.current) {
+    // eslint-disable-next-line react-hooks/unsupported-syntax
     memoizedFn.current = function (this, ...args) {
       return fnRef.current.apply(this, args);
     };
@@ -119,5 +120,6 @@ function useMemoizedFn<T extends noop>(fn: T) {
 function useUpdate() {
   const [, setState] = useState({});
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   return useCallback(() => setState({}), []);
 }

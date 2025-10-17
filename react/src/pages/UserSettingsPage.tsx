@@ -103,7 +103,7 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: desktopNotification,
           setValue: setDesktopNotification,
-          onChange: (e) => {
+          onChange: (e: any) => {
             setDesktopNotification(e.target.checked);
 
             // Request permission for desktop notifications
@@ -135,7 +135,7 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: compactSidebar,
           setValue: setCompactSidebar,
-          onChange: (e) => {
+          onChange: (e: any) => {
             setCompactSidebar(e.target.checked);
           },
         },
@@ -170,7 +170,7 @@ const UserPreferencesPage = () => {
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
           setValue: setSelectedLanguage,
-          onChange: (value) => {
+          onChange: (value: any) => {
             setSelectedLanguage(value);
             const event = new CustomEvent('language-changed', {
               detail: {
@@ -204,7 +204,7 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
           setValue: setAutoAutomaticUpdateCheck,
-          onChange: (e) => {
+          onChange: (e: any) => {
             setAutoAutomaticUpdateCheck(e.target.checked);
           },
         },
@@ -216,7 +216,7 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: autoLogout,
           setValue: setAutoLogout,
-          onChange: (e) => {
+          onChange: (e: any) => {
             setAutoLogout(e.target.checked);
           },
         },

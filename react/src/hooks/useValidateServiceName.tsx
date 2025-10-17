@@ -26,7 +26,7 @@ export const useValidateServiceName = (): Exclude<
         type: 'string',
       },
       {
-        validator(f: RuleObject, value: string) {
+        validator(_f: RuleObject, value: string) {
           if (_.isEmpty(value)) {
             return Promise.resolve();
           }
@@ -47,7 +47,7 @@ export const useValidateServiceName = (): Exclude<
         },
       },
       {
-        validator: async (f: RuleObject, value: string) => {
+        validator: async (_f: RuleObject, value: string) => {
           if (!value) return Promise.resolve();
           return fetchQuery<useValidateServiceNameQuery>(
             relayEvn,
@@ -76,7 +76,7 @@ export const useValidateServiceName = (): Exclude<
             },
           )
             .toPromise()
-            .catch((err: any) => {
+            .catch(() => {
               // ignore network error
               return Promise.resolve();
             })

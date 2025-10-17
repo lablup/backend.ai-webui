@@ -67,7 +67,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run ESLint on React
-        run: pnpm  eslint ./src --ignore-pattern '*.test.*' --max-warnings=0
+        run: pnpm run lint
       - name: run relay-compiler
         run: pnpm run relay
       - name: Jest report

@@ -63,7 +63,7 @@ const BAIActivateArtifactsModal = ({
                 artifactIds: selectedArtifacts.map((a) => toLocalId(a.id)),
               },
             },
-            onCompleted: (res, errors) => {
+            onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 errors.forEach((err) =>
                   message.error(

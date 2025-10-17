@@ -48,15 +48,8 @@ const UserCredentialList: React.FC = () => {
   const { message, modal } = App.useApp();
 
   const [action, setAction] = useQueryParam('action', StringParam);
-  useEffect(() => {
-    if (action === 'add') {
-      setOpenUserKeypairSettingModal(true);
-      setAction(undefined);
-    }
-  }, [action, setAction]);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
-
   const [queryParams, setQueryParams] = useQueryParams({
     activeType: withDefault(StringParam, 'active'),
     order: withDefault(StringParam, undefined),
@@ -163,6 +156,15 @@ const UserCredentialList: React.FC = () => {
       }
     `);
 
+  useEffect(() => {
+    if (action === 'add') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpenUserKeypairSettingModal(true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAction(undefined);
+    }
+  }, [action, setAction]);
+
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
@@ -263,7 +265,7 @@ const UserCredentialList: React.FC = () => {
             fixed: 'left',
             sorter: true,
             // TODO: user_id field in keypair_list is used as user's email, but sorting is done by email field
-            render: (value, record) => {
+            render: (_value, record) => {
               return record.user_id;
             },
           },
@@ -368,7 +370,7 @@ const UserCredentialList: React.FC = () => {
             key: 'control',
             title: t('general.Control'),
             fixed: 'right',
-            render: (value, record) => {
+            render: (_value, record) => {
               return (
                 <BAIFlex gap={token.marginXS}>
                   <Button

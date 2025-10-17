@@ -134,7 +134,7 @@ const BAISessionNotificationItem: React.FC<{
           {notification.extraDescription ? (
             <BAIFlex>
               <Typography.Link
-                onClick={(e) => {
+                onClick={() => {
                   // onClickAction && onClickAction(e, notification);
                   setShowExtraDescription(!showExtraDescription);
                 }}

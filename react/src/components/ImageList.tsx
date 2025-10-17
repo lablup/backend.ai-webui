@@ -140,7 +140,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0)
             );
           },
-          render: (text, row) =>
+          render: (_text, row) =>
             row?.id && installingImages.includes(row.id) ? (
               <Tag color="gold">
                 <TextHighlighter keyword={imageSearch}>
@@ -286,7 +286,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               getBaseImage(getImageFullName(a) || ''),
               getBaseImage(getImageFullName(b) || ''),
             ),
-          render: (text, row) => (
+          render: (_text, row) => (
             <TextHighlighter keyword={imageSearch}>
               {tagAlias(getBaseImage(getImageFullName(row) || ''))}
             </TextHighlighter>
@@ -301,7 +301,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               getBaseVersion(getImageFullName(a) || ''),
               getBaseVersion(getImageFullName(b) || ''),
             ),
-          render: (text, row) => (
+          render: (_text, row) => (
             <TextHighlighter keyword={imageSearch}>
               {getBaseVersion(getImageFullName(row) || '')}
             </TextHighlighter>
@@ -325,7 +325,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           dataIndex: 'digest',
           key: 'digest',
           sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
-          render: (text, row) => (
+          render: (_text, row) => (
             <Typography.Text
               ellipsis={{ tooltip: true }}
               style={{ maxWidth: 200 }}
@@ -340,7 +340,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           title: t('environment.ResourceLimit'),
           dataIndex: 'resource_limits',
           key: 'resource_limits',
-          render: (text, row) => (
+          render: (_text, row) => (
             <BAIFlex direction="row" gap="xxs">
               {row?.resource_limits?.map((resource_limit) => (
                 <ResourceNumber
@@ -358,7 +358,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           key: 'control',
           dataIndex: 'control',
           fixed: 'right',
-          render: (text, row) => (
+          render: (_text, row) => (
             <BAIFlex
               direction="row"
               align="stretch"
@@ -577,7 +577,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             selectedRowKeys: selectedRows.map((row) => row.id) as Key[],
           }}
           onRow={(record) => ({
-            onClick: (e) => {
+            onClick: () => {
               // selected or deselect row
               if (selectedRows.find((row) => row.id === record.id)) {
                 setSelectedRows((rows) =>

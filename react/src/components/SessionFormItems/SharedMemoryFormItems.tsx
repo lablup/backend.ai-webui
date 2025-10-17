@@ -141,7 +141,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                     },
                     {
                       warningOnly: true,
-                      validator: async (rule, value: string) => {
+                      validator: async (_rule, value: string) => {
                         const applicationMem = appMemUnitResult?.value;
                         const shmem = value;
 
@@ -163,7 +163,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                       },
                     },
                     {
-                      validator: async (rule, value: string) => {
+                      validator: async (_rule, value: string) => {
                         if (
                           _.isEmpty(getFieldValue(['resource', 'mem'])) ||
                           _.isEmpty(value) ||

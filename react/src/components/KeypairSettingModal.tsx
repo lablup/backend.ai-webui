@@ -125,7 +125,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 });
           })
-          .catch((error) => {});
+          .catch(() => {});
       }}
       okButtonProps={{
         loading: isInFlightCommitCreateKeypair || isInFlightCommitModifyKeypair,
@@ -182,7 +182,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   max: 50000,
                 },
                 {
-                  validator(rule, value, callback) {
+                  validator(_rule, value) {
                     if (value <= 100) {
                       return Promise.reject(
                         t('credential.WarningLessRateLimit'),

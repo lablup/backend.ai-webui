@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface AutoScalingRuleEditorModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
+  extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
   endpoint_id: string;
   autoScalingRuleFrgmt?: AutoScalingRuleEditorModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
@@ -52,7 +52,7 @@ export const COMPARATOR_LABELS = {
 };
 
 const METRIC_NAMES_MAP: Partial<{
-  [key in AutoScalingMetricSource]: Array<String>;
+  [key in AutoScalingMetricSource]: Array<string>;
 }> = {
   KERNEL: ['cpu_util', 'mem', 'net_rx', 'net_tx'],
   INFERENCE_FRAMEWORK: [],
@@ -60,7 +60,6 @@ const METRIC_NAMES_MAP: Partial<{
 
 const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   onRequestClose,
-  onCancel,
   endpoint_id,
   autoScalingRuleFrgmt,
   ...baiModalProps
@@ -68,7 +67,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
 
-  const [nameOptions, setNameOptions] = useState<Array<String>>(
+  const [nameOptions, setNameOptions] = useState<Array<string>>(
     METRIC_NAMES_MAP.KERNEL || [],
   );
 

@@ -20,7 +20,7 @@ import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = createStyles(({ css, token }) => ({
+const useStyles = createStyles(({ css }) => ({
   webuiHeader: css`
     &,
     & .draggable {
@@ -37,10 +37,7 @@ export interface WebUIHeaderProps extends BAIFlexProps {
   containerElement?: HTMLDivElement | null;
 }
 
-const WebUIHeader: React.FC<WebUIHeaderProps> = ({
-  onClickMenuIcon,
-  containerElement,
-}) => {
+const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();

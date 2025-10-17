@@ -145,7 +145,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Name'),
             dataIndex: 'name',
             required: true,
-            render: (name, vfolder) => {
+            render: (_name, vfolder) => {
               return (
                 <BAIFlex align="center" gap="xs">
                   <VFolderNodeIdenticon
@@ -262,7 +262,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         }
                         onClick={() => {
                           restoreMutation.mutate(vfolder?.id, {
-                            onSuccess: (result, variables) => {
+                            onSuccess: (_result, variables) => {
                               onRequestChange?.(variables);
                               message.success(
                                 t('data.folders.FolderRestored', {
@@ -287,7 +287,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       title={t('data.folders.MoveToTrash')}
                       onConfirm={() => {
                         deleteMutation.mutate(vfolder?.id, {
-                          onSuccess: (result, variables) => {
+                          onSuccess: (_result, variables) => {
                             onRequestChange?.(variables);
                             message.success(
                               t('data.folders.MovedToTrashBin', {
@@ -419,7 +419,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           {
             key: 'permissions',
             title: t('data.folders.MountPermission'),
-            render: (perm: string, vfolder) => {
+            render: (_perm: string, vfolder) => {
               return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
             },
           },

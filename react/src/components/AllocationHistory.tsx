@@ -19,7 +19,7 @@ const AllocationHistory: React.FC = () => {
 
   const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
-  let periodOptions: Array<{
+  const periodOptions: Array<{
     label: string;
     value: Period;
   }> = [

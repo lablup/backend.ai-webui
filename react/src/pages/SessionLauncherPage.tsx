@@ -327,7 +327,7 @@ const SessionLauncherPage = () => {
 
   useEffect(() => {
     if (!_.isEmpty(formValuesFromQueryParams)) {
-      form.validateFields().catch((e) => {});
+      form.validateFields().catch(() => {});
     }
     // Run this memo only for the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -391,7 +391,7 @@ const SessionLauncherPage = () => {
     if (currentStep === steps.length - 1) {
       form
         .validateFields()
-        .catch((error) => {})
+        .catch(() => {})
         .finally(() => setFinalStepLastValidateTime());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -445,7 +445,7 @@ const SessionLauncherPage = () => {
         // If manual image is selected, use it as kernelName
         const imageFullName =
           values.environments.manual || values.environments.version;
-        let [kernelName, architecture] = imageFullName
+        const [kernelName, architecture] = imageFullName
           ? imageFullName.split('@')
           : ['', ''];
 
@@ -718,7 +718,7 @@ const SessionLauncherPage = () => {
           </BAIFlex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
-            onFormChange={(name, info) => {
+            onFormChange={() => {
               // use OnFormChange instead of Form's onValuesChange,
               // because onValuesChange will not be triggered when form is changed programmatically
               syncFormToURLWithDebounce();
@@ -945,7 +945,7 @@ const SessionLauncherPage = () => {
                                                 {
                                                   // required: true,
                                                   validator: async (
-                                                    rule,
+                                                    _rule,
                                                     value,
                                                   ) => {
                                                     if (
@@ -1350,13 +1350,13 @@ const SessionLauncherPage = () => {
                       const ownerInfo = getFieldValue('owner');
                       const isValidOwner =
                         ownerInfo?.enabled &&
-                        _.every(_.omit(ownerInfo, 'enabled'), (key, value) => {
+                        _.every(_.omit(ownerInfo, 'enabled'), (key) => {
                           return key !== undefined;
                         });
 
                       return (
                         <VFolderTableFormItem
-                          rowKey={!!supportsMountById ? 'id' : 'name'}
+                          rowKey={supportsMountById ? 'id' : 'name'}
                           rowFilter={(vfolder) => {
                             return (
                               vfolder.status === 'ready' &&

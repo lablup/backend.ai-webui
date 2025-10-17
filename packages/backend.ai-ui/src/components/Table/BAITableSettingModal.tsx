@@ -103,6 +103,7 @@ const RowContext = React.createContext<RowContextProps>({});
  * @param disabled - Whether the drag handle should be disabled
  */
 const DragHandle: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
+  'use memo';
   const { setActivatorNodeRef, listeners } = useContext(RowContext);
   const { token } = theme.useToken();
   return (
@@ -134,6 +135,8 @@ interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
  * @param props - Row props including data-row-key
  */
 const Row: React.FC<RowProps> = (props) => {
+  'use memo';
+
   const {
     attributes,
     listeners,
@@ -201,6 +204,8 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
   disableSorter,
   ...modalProps
 }) => {
+  'use memo';
+
   const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -269,8 +274,10 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(orderedOptions);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(columnOptions);
     }
   }, [columnOptions, initialColumnOrder]);

@@ -5,15 +5,19 @@
 // }
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
   ? A
   : never;
 
 declare module globalThis {
+  // eslint-disable-next-line no-var
   var isDarkMode: boolean;
+  // eslint-disable-next-line no-var
   var isElectron: boolean;
+  // eslint-disable-next-line no-var
   var electronInitialHref: string;
+  // eslint-disable-next-line no-var
   var appLauncher: {
     showLauncher?: (sessionId: {
       'session-name'?: string;
@@ -46,6 +50,7 @@ type DeepPartial<T> = {
 type SelectivePartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
 
 type OptionalFieldsOnly<T> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   [K in keyof T as {} extends Pick<T, K> ? K : never]?: T[K];
 };
 

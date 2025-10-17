@@ -155,7 +155,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   new CustomEvent('backend-ai-session-list-refreshed'),
                 );
               },
-              onError: (err) => {
+              onError: () => {
                 // if the session name is not changed, do not show error
                 if (session.name !== values.sessionName) {
                   message.error(t('session.FailToRenameSession'));

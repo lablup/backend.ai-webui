@@ -285,7 +285,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               message: t('data.FolderNameTooLong'),
             },
             ({ getFieldValue }) => ({
-              validator(rule, value) {
+              validator(_rule, value) {
                 if (_.isEmpty(value)) {
                   return Promise.reject(
                     new Error(t('data.FolderNameRequired')),

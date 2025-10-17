@@ -331,7 +331,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                       },
                     ]}
                   />
-                  {!!model_card?.readme ? (
+                  {model_card?.readme ? (
                     <Card
                       size="small"
                       title={

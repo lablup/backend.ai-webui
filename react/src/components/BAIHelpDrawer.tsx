@@ -12,6 +12,21 @@ interface BAIHelpDrawerProps extends DrawerProps {
   matchingKey?: string;
 }
 
+const ExternalContentDisplay = ({ url }: { url: string }) => {
+  return (
+    <iframe
+      src={url}
+      title="External content"
+      style={{
+        width: '100%',
+        height: '100%',
+        border: '0px',
+      }}
+      allow="fullscreen"
+    />
+  );
+};
+
 const BAIHelpDrawer: React.FC<BAIHelpDrawerProps> = ({
   manualURL,
   URLMatchingTable = {},
@@ -22,21 +37,6 @@ const BAIHelpDrawer: React.FC<BAIHelpDrawerProps> = ({
 
   const URL =
     manualURL + (matchingKey ? URLMatchingTable[matchingKey] || '' : '');
-
-  const ExternalContentDisplay = () => {
-    return (
-      <iframe
-        src={URL}
-        title="External content"
-        style={{
-          width: '100%',
-          height: '100%',
-          border: '0px',
-        }}
-        allow="fullscreen"
-      />
-    );
-  };
 
   return (
     <Drawer
@@ -56,7 +56,7 @@ const BAIHelpDrawer: React.FC<BAIHelpDrawerProps> = ({
       }}
       {...props}
     >
-      <ExternalContentDisplay />
+      <ExternalContentDisplay url={URL} />
     </Drawer>
   );
 };

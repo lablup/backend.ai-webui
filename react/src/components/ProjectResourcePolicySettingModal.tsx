@@ -120,7 +120,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     projectResourcePolicy?.max_quota_scope_size,
   ]);
 
-  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+  const handleOk = () => {
     return formRef?.current
       ?.validateFields()
       .then((values) => {

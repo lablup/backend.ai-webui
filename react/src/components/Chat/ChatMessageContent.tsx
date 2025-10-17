@@ -172,7 +172,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
 
     const renderCode = useCallback(
       (props: any) => {
-        const { children, className, node, ref, ...rest } = props;
+        const { children, className, node, ref: _ref, ...rest } = props;
         const match = /language-(\w+)/.exec(className || '');
         const content = String(children ?? '').replace(/\n$/, '');
         const { token } = theme.useToken();
@@ -249,7 +249,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
       [isStreaming, styles.codeBlock],
     );
 
-    const renderParagraph = useCallback(({ node, ...props }: any) => {
+    const renderParagraph = useCallback(({ node: _node, ...props }: any) => {
       return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
     }, []);
 

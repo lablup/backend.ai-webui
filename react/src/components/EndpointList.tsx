@@ -152,7 +152,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
       title: t('modelService.Controls'),
       dataIndex: 'controls',
       key: 'controls',
-      render: (text, row) => (
+      render: (_text, row) => (
         <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
@@ -226,7 +226,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
                           );
                         }
                       },
-                      onError: (err) => {
+                      onError: () => {
                         message.error(
                           t('modelService.FailedToTerminateService'),
                         );
@@ -242,7 +242,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
     {
       title: t('modelService.Status'),
       key: 'status',
-      render: (text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+      render: (_text, row) => <EndpointStatusTag endpointFrgmt={row} />,
     },
     baiClient.is_admin && {
       title: t('modelService.Owner'),
@@ -291,7 +291,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
       ),
       // dataIndex: "active_route_count",
       key: 'routingCount',
-      render: (text, row) => {
+      render: (_text, row) => {
         return (
           _.filter(row.routings, (r) => r?.status === 'HEALTHY').length +
           ' / ' +
@@ -303,7 +303,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
     {
       title: t('modelService.Public'),
       key: 'public',
-      render: (text, row) =>
+      render: (_text, row) =>
         row.open_to_public ? (
           <CheckOutlined style={{ color: token.colorSuccess }} />
         ) : (

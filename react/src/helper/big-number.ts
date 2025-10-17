@@ -1,6 +1,7 @@
 import { generateDisplayValues, InputSizeUnit, SizeUnit } from '.';
 import { Big, type BigSource } from 'big.js';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BigNumber {
   export function isInvalidNumber(value: unknown): boolean {
     if (typeof value === 'number') {

@@ -7,7 +7,10 @@ import Markdown from 'markdown-to-jsx';
 import React from 'react';
 
 interface Props extends BAIAlertProps {}
-const AnnouncementAlert: React.FC<Props> = ({ style, ...otherProps }) => {
+const AnnouncementAlert: React.FC<Props> = ({
+  style: _style,
+  ...otherProps
+}) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { data: announcement } = useSuspenseTanQuery({

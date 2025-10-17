@@ -70,7 +70,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
     minGiB?.number > maxGiB?.number;
 
   const filterOutInvalidMarks = (marks: SliderMarks) => {
-    return _.omitBy({ ...marks }, (option, key) => {
+    return _.omitBy({ ...marks }, (_option, key) => {
       const markNumber = parseFloat(key);
       return (
         minGiB &&
@@ -213,7 +213,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
                   },
                 }),
               // extra: remaining mark code should be located before max mark code to prevent overlapping when it is same value
-              ..._.omitBy(extraMarks, (option, key) => {
+              ..._.omitBy(extraMarks, (_option, key) => {
                 return _.isNumber(maxGiB?.number)
                   ? _.parseInt(key) > (maxGiB?.number as number)
                   : false;

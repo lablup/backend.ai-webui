@@ -206,7 +206,7 @@ const KeypairResourcePolicySettingModal: React.FC<
             }),
           );
 
-        const { name, ...restValues } = values;
+        const { _name, ...restValues } = values;
         const props:
           | CreateKeyPairResourcePolicyInput
           | ModifyKeyPairResourcePolicyInput = {
@@ -221,7 +221,7 @@ const KeypairResourcePolicySettingModal: React.FC<
               name: values?.name,
               props: props as CreateKeyPairResourcePolicyInput,
             },
-            onCompleted: (res, errors) => {
+            onCompleted: (res) => {
               if (
                 !res?.create_keypair_resource_policy?.ok &&
                 res.create_keypair_resource_policy?.msg

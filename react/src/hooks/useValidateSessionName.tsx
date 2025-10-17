@@ -24,7 +24,7 @@ export const useValidateSessionName = (
         message: t('session.validation.SessionNameTooLong64'),
       },
       {
-        validator(f: RuleObject, value: string) {
+        validator(_f: RuleObject, value: string) {
           if (_.isEmpty(value)) {
             return Promise.resolve();
           }
@@ -49,7 +49,7 @@ export const useValidateSessionName = (
         },
       },
       {
-        validator: async (f: RuleObject, value: string) => {
+        validator: async (_f: RuleObject, value: string) => {
           if (value === currentName || !value) {
             return Promise.resolve();
           }
@@ -71,7 +71,7 @@ export const useValidateSessionName = (
             },
           )
             .toPromise()
-            .catch((err: any) => {
+            .catch(() => {
               // ignore network error
               return;
             })

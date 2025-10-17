@@ -21,7 +21,7 @@ export const useBackendAIAppLauncher = (
       // @ts-ignore
       globalThis.appLauncher.runTerminal(session.row_id);
     },
-    showLauncher: (params: {
+    showLauncher: (_params: {
       'session-uuid'?: string;
       'access-key'?: string;
       'app-services'?: string;

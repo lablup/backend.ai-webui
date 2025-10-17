@@ -42,7 +42,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
     right: 0,
   }); //draggable space
   const draggleRef = useRef<HTMLDivElement>(null);
-  const handleDrag = (e: DraggableEvent, uiData: DraggableData) => {
+  const handleDrag = (_e: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement; //browserWidth, browserHeight
     const targetRect = draggleRef.current?.getBoundingClientRect(); //Modal size and viewport
     if (!targetRect) {

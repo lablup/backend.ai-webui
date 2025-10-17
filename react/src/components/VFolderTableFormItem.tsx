@@ -43,7 +43,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         name={'mount_id_map'}
         rules={[
           {
-            validator(rule, map) {
+            validator(_rule, map) {
               const arr = _.chain(form.getFieldValue('mount_ids'))
                 .reduce((result, name) => {
                   result[name] = map[name] || '/home/work/' + name;
@@ -118,7 +118,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
               );
               form.setFieldValue(
                 'mount_id_map',
-                _.omitBy(form.getFieldValue('mount_id_map'), (alias, key) =>
+                _.omitBy(form.getFieldValue('mount_id_map'), (_alias, key) =>
                   invalidKeys.includes(key),
                 ),
               );

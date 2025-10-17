@@ -168,7 +168,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
           onFinish={(values) => {
             setIsEditing(false);
             setOptimisticName(values.newName);
-            let variables = {
+            const variables = {
               target_path: _.join([currentPath, fileInfo?.name], '/'),
               new_name: values.newName,
               targetFolder: targetVFolderId,

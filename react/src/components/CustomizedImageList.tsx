@@ -32,12 +32,7 @@ import {
   BAITable,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, {
-  PropsWithChildren,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -45,7 +40,7 @@ export type CommittedImage = NonNullable<
   CustomizedImageListQuery$data['customized_images']
 >[number];
 
-const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
+const CustomizedImageList = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -285,7 +280,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('environment.Tags'),
       key: 'tags',
       dataIndex: 'tags',
-      render: (text: Array<{ key: string; value: string }>, row) => (
+      render: (_text: Array<{ key: string; value: string }>, row) => (
         <AliasedImageDoubleTags
           imageFrgmt={row}
           highlightKeyword={imageSearch}
@@ -312,7 +307,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           getBaseVersion(getImageFullName(a) || ''),
           getBaseVersion(getImageFullName(b) || ''),
         ),
-      render: (text, row) => (
+      render: (_text, row) => (
         <TextHighlighter keyword={imageSearch}>
           {getBaseVersion(getImageFullName(row) || '')}
         </TextHighlighter>
@@ -327,7 +322,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
           getBaseImage(getImageFullName(a) || ''),
           getBaseImage(getImageFullName(b) || ''),
         ),
-      render: (text, row) => (
+      render: (_text, row) => (
         <TextHighlighter keyword={imageSearch}>
           {tagAlias(getBaseImage(getImageFullName(row) || ''))}
         </TextHighlighter>
@@ -361,7 +356,7 @@ const CustomizedImageList: React.FC<PropsWithChildren> = ({ children }) => {
       title: t('general.Control'),
       key: 'control',
       fixed: 'right',
-      render: (text, row) => (
+      render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
           <Popconfirm
             title={t('dialog.ask.DoYouWantToProceed')}

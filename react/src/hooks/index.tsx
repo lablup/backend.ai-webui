@@ -452,7 +452,7 @@ export const useBackendAIImageMetaData = () => {
         if (!_.isUndefined(tags[1])) {
           baseImage = tags[1];
         }
-        let baseImageArr = [];
+        const baseImageArr = [];
         if (!_.isUndefined(baseImage)) {
           baseImageArr.push(metadata?.tagAlias[baseImage] || baseImage);
         }
@@ -489,7 +489,7 @@ export const useBackendAIImageMetaData = () => {
         return [];
       },
       getArchitecture: (imageName: string) => {
-        let [, architecture] = imageName ? imageName.split('@') : ['', ''];
+        const [, architecture] = imageName ? imageName.split('@') : ['', ''];
         return architecture;
       },
       tagAlias: (tag: string) => {

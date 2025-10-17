@@ -297,7 +297,7 @@ const BAITable = <RecordType extends object = any>({
               onHeaderCell: (column: ColumnType<RecordType>) => {
                 return {
                   width: column.width,
-                  onResize: (e, { size }) => {
+                  onResize: (_e, { size }) => {
                     setResizedColumnWidths((prev) => ({
                       ...prev,
                       [columnKeyOrIndexKey(column, index)]: size.width,
@@ -342,7 +342,7 @@ const BAITable = <RecordType extends object = any>({
         }
         columns={mergedColumns}
         {...tableProps}
-        onChange={(pagination, filters, sorter) => {
+        onChange={(_pagination, _filters, sorter) => {
           if (onChangeOrder) {
             const nextOrder = transformSorterToOrderString(sorter);
             if (nextOrder !== order) {

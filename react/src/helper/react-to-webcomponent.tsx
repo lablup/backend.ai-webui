@@ -70,7 +70,7 @@ export default function reactToWebComponent(
       this.reactRoot.unmount();
     }
 
-    attributeChangedCallback(name: any, oldValue: any, newValue: any) {
+    attributeChangedCallback(name: any, _oldValue: any, newValue: any) {
       if (this.isConnected) {
         //re-render react component when attribute changes
         if (name === 'value') {

@@ -25,7 +25,6 @@ export interface ProjectSelectProps extends BAISelectProps {
 const ProjectSelect: React.FC<ProjectSelectProps> = ({
   onSelectProject,
   domain,
-  autoClearSearchValue,
   disableDefaultFilter,
   ...selectProps
 }) => {

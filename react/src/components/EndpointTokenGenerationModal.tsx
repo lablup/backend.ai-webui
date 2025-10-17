@@ -8,7 +8,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface EndpointTokenGenerationModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
+  extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
   endpoint_id: string;
   onRequestClose: (success?: boolean) => void;
 }
@@ -23,7 +23,7 @@ type FormValue = {
 };
 const EndpointTokenGenerationModal: React.FC<
   EndpointTokenGenerationModalProps
-> = ({ onRequestClose, onCancel, endpoint_id, ...baiModalProps }) => {
+> = ({ onRequestClose, endpoint_id, ...baiModalProps }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<FormValue> | null>(null);
@@ -47,7 +47,7 @@ const EndpointTokenGenerationModal: React.FC<
   });
 
   // Apply any operation after clicking OK button
-  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+  const handleOk = () => {
     formRef.current?.validateFields().then((values) => {
       let validUntil: number;
 

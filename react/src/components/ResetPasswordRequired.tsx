@@ -70,10 +70,10 @@ const ResetPasswordRequired = () => {
           new_password: values.newPassword,
         },
         {
-          onSuccess(data, variables, context) {
+          onSuccess() {
             dispatchEvent('ok', null);
           },
-          onError(error, variables, context) {},
+          onError() {},
         },
       );
     });

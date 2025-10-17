@@ -107,7 +107,7 @@ customElements.define(
   }),
 );
 
-const SourceCodeViewerInWebComponent = (props: ReactWebComponentProps) => {
+const SourceCodeViewerInWebComponent = (_props: ReactWebComponentProps) => {
   const {
     parsedValue: { children, language, wordWrap } = {
       children: '',
@@ -237,7 +237,7 @@ customElements.define(
   }),
 );
 
-const ReservationTimeCounter = (props: ReactWebComponentProps) => {
+const ReservationTimeCounter = (_props: ReactWebComponentProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 

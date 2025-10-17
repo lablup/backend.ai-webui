@@ -84,6 +84,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           item !== null && item?.key === 'ai.backend.service-ports',
       );
       if (servicePortsIdx !== -1) {
+        // eslint-disable-next-line
         servicePorts = image?.labels[servicePortsIdx]
           ?.value!?.split(',')
           .map((e: string): ServicePort => {
@@ -146,7 +147,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
               }
               return;
             },
-            onError: (err) => {
+            onError: () => {
               message.error(t('dialog.ErrorOccurred'));
             },
           });
@@ -171,7 +172,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           commitRequest();
         }
       })
-      .catch((e) => {});
+      .catch(() => {});
   };
 
   return (
@@ -248,7 +249,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                         required
                         rules={[
                           {
-                            validator: (rules, rawValue) => {
+                            validator: (_rules, rawValue) => {
                               const value =
                                 _.isUndefined(rawValue) || rawValue === ''
                                   ? NaN
@@ -274,7 +275,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                             },
                           },
                           {
-                            validator: (rule, value) => {
+                            validator: (_rule, value) => {
                               const apps =
                                 formRef.current?.getFieldValue('apps');
                               if (

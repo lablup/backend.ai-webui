@@ -163,7 +163,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       title: t('general.Control'),
       fixed: 'right',
       key: 'control',
-      render: (text: any, row: UserResourcePolicies) => (
+      render: (_text: any, row: UserResourcePolicies) => (
         <BAIFlex direction="row" align="stretch">
           <Button
             type="text"

@@ -37,6 +37,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   // Update internal state when the child's open prop becomes true
   useLayoutEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsMount(true);
     }
   }, [isOpen]);

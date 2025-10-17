@@ -118,7 +118,7 @@ export function useDeferredQueryParams<QPCMap extends QueryParamConfigMap>(
     [stringifiedParamConfigMap],
   );
 
-  let localQuery = useAtomValue(selectiveQueryAtom);
+  const localQuery = useAtomValue(selectiveQueryAtom);
 
   const setDeferredQuery = useCallback(
     (

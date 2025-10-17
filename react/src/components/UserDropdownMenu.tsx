@@ -122,7 +122,7 @@ const UserDropdownMenu: React.FC<{
       ) : (
         <LockOutlined />
       ),
-      onClick: (e) => {
+      onClick: () => {
         startInitializeSettingModalTransition(() => {
           loadUserProfileSettingQuery(
             {

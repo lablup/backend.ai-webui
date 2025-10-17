@@ -270,7 +270,7 @@ export const useFileUploadManager = (vFolderId: string) => {
   ) => {
     if (!validateUploadRequest(files, vfolderId)) return;
 
-    let uploadFileNames: Array<string> = [];
+    const uploadFileNames: Array<string> = [];
     const startUploadFunctionMap = _.map(files, (file) => {
       uploadFileNames.push(file.webkitRelativePath || file.name);
       return async (callbacks?: {

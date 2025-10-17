@@ -25,7 +25,6 @@ const QuotaScopeCard: React.FC<Props> = ({
   quotaScopeFrgmt,
   showAddButtonWhenEmpty,
   onClickEdit,
-  ...props
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();

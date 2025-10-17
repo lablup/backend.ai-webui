@@ -150,7 +150,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       key: 'id',
       dataIndex: 'id',
       fixed: 'left',
-      render: (value, record) => {
+      render: (value) => {
         return (
           <BAIFlex direction="column" align="start">
             <Typography.Text>{value}</Typography.Text>
@@ -167,7 +167,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     {
       title: t('agent.Allocation'),
       key: 'allocation',
-      render: (value, record) => {
+      render: (_value, record) => {
         const parsedOccupiedSlots: {
           [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.occupied_slots || '{}');
@@ -178,7 +178,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           <BAIFlex direction="column" gap="xxs">
             {_.map(
               parsedAvailableSlots,
-              (value: string | number, key: ResourceSlotName) => {
+              (_value: string | number, key: ResourceSlotName) => {
                 if (key === 'cpu') {
                   const cpuPercent = _.toFinite(
                     (_.toNumber(parsedOccupiedSlots.cpu) /

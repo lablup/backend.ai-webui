@@ -147,7 +147,7 @@ const SessionLauncherPreview: React.FC<{
             form.getFieldValue(
               'envvars',
             ) as SessionLauncherFormValue['envvars'],
-            (v, idx) => {
+            (_v, idx) => {
               return (
                 form.getFieldError(['envvars', idx, 'variable']).length > 0 ||
                 form.getFieldError(['envvars', idx, 'value']).length > 0
@@ -380,7 +380,7 @@ const SessionLauncherPreview: React.FC<{
         title={t('session.launcher.ResourceAllocation')}
         showDivider
         status={
-          _.some(form.getFieldValue('resource'), (v, key) => {
+          _.some(form.getFieldValue('resource'), (_v, key) => {
             return (
               // @ts-ignore
               form.getFieldError(['resource', key]).length > 0
@@ -409,7 +409,7 @@ const SessionLauncherPreview: React.FC<{
         <BAIFlex direction="column" align="stretch">
           {_.some(
             form.getFieldValue('resource'),
-            (v, key: keyof SessionLauncherFormValue['resource']) => {
+            (_v, key: keyof SessionLauncherFormValue['resource']) => {
               return (
                 // @ts-ignore
                 form.getFieldWarning(['resource', key]).length > 0

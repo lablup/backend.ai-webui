@@ -164,7 +164,7 @@ const ResourceAllocationFormItems: React.FC<
 
   // When undefined, it means that the resourceSlots are not loaded yet.
   const acceleratorSlotsInRG = resourceSlotsInRG
-    ? _.omitBy(resourceSlotsInRG, (value, key) => {
+    ? _.omitBy(resourceSlotsInRG, (_value, key) => {
         if (['cpu', 'mem', 'shmem'].includes(key)) return true;
         return false;
       })
@@ -530,7 +530,7 @@ const ResourceAllocationFormItems: React.FC<
             showMinimumRequired={
               baiClient._config.allowCustomResourceAllocation
             }
-            onChange={(value, options) => {
+            onChange={(value) => {
               switch (value) {
                 case 'custom':
                   break;
@@ -538,7 +538,7 @@ const ResourceAllocationFormItems: React.FC<
                   form.setFieldValue('enabledAutomaticShmem', true);
                   // updating resource fields based on preset is handled in useEffect because it has another dependency(image).
                   break;
-                default:
+                default: {
                   // Check if the selected preset has a specific shmem setting
                   const selectedPreset = _.find(
                     checkPresetInfo?.presets,
@@ -552,6 +552,7 @@ const ResourceAllocationFormItems: React.FC<
                   form.setFieldValue('enabledAutomaticShmem', !hasPresetShmem);
                   updateResourceFieldsBasedOnPreset(value);
                   break;
+                }
               }
             }}
             allocatablePresetNames={allocatablePresetNames}
@@ -566,7 +567,7 @@ const ResourceAllocationFormItems: React.FC<
           }
           noStyle
         >
-          {({ getFieldValue }) => {
+          {() => {
             return (
               // getFieldValue('allocationPreset') === 'custom' && (
               <>
@@ -598,7 +599,7 @@ const ResourceAllocationFormItems: React.FC<
                       },
                       {
                         warningOnly: true,
-                        validator: async (rule, value: number) => {
+                        validator: async (_rule, value: number) => {
                           if (
                             _.isNumber(resourceLimits.cpu?.min) &&
                             _.isNumber(resourceLimits.cpu?.max) &&
@@ -713,7 +714,7 @@ const ResourceAllocationFormItems: React.FC<
                                 }),
                               },
                               {
-                                validator: async (rule, value: string) => {
+                                validator: async (_rule, value: string) => {
                                   if (
                                     _.isString(value) &&
                                     resourceLimits.mem?.max &&
@@ -743,7 +744,7 @@ const ResourceAllocationFormItems: React.FC<
                               },
                               {
                                 // TODO: min of mem should be shmem + image's mem limit??
-                                validator: async (rule, value: string) => {
+                                validator: async (_rule, value: string) => {
                                   // const memMinPlusShmem =
                                   //   addNumberWithUnits(
                                   //     resourceLimits.mem?.min,
@@ -772,7 +773,7 @@ const ResourceAllocationFormItems: React.FC<
                               },
                               {
                                 warningOnly: true,
-                                validator: async (rule, value: string) => {
+                                validator: async (_rule, value: string) => {
                                   if (
                                     compareNumberWithUnits(
                                       resourceLimits.mem?.min as string,
@@ -951,7 +952,7 @@ const ResourceAllocationFormItems: React.FC<
                             ]?.max,
                           },
                           {
-                            validator: async (rule: any, value: number) => {
+                            validator: async (_rule: any, value: number) => {
                               if (
                                 _.endsWith(currentAcceleratorType, 'shares') &&
                                 form.getFieldValue('cluster_size') >= 2 &&
@@ -968,7 +969,7 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           },
                           {
-                            validator: async (rule: any, value: number) => {
+                            validator: async (_rule: any, value: number) => {
                               if (
                                 _.isNumber(currentAcceleratorStep) &&
                                 ![0, currentAcceleratorStep].includes(
@@ -990,7 +991,7 @@ const ResourceAllocationFormItems: React.FC<
                           },
                           {
                             warningOnly: true,
-                            validator: async (rule: any, value: number) => {
+                            validator: async (_rule: any, value: number) => {
                               if (
                                 _.isNumber(
                                   resourceLimits.accelerators[
@@ -1118,7 +1119,7 @@ const ResourceAllocationFormItems: React.FC<
                                   popupMatchSelectWidth={false}
                                   options={_.map(
                                     acceleratorSlotsInRG,
-                                    (value, name) => {
+                                    (_value, name) => {
                                       return {
                                         value: name,
                                         label:
@@ -1170,7 +1171,7 @@ const ResourceAllocationFormItems: React.FC<
                     },
                     {
                       warningOnly: true,
-                      validator: async (rule, value: number) => {
+                      validator: async (_rule, value: number) => {
                         if (showRemainingWarning) {
                           if (
                             sessionSliderLimitAndRemaining &&
@@ -1232,7 +1233,7 @@ const ResourceAllocationFormItems: React.FC<
                 <AgentSelect
                   resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
-                  onChange={(value, option) => {
+                  onChange={(value) => {
                     if (value !== 'auto') {
                       form.setFieldsValue({
                         cluster_mode: 'single-node',
@@ -1282,7 +1283,7 @@ const ResourceAllocationFormItems: React.FC<
                   {/* <Col xs={24} lg={12}> */}
                   <Form.Item name={'cluster_mode'} required>
                     <Radio.Group
-                      onChange={(e) => {
+                      onChange={() => {
                         form.validateFields().catch(() => {});
                       }}
                       disabled={getFieldValue('agent') !== 'auto'}
@@ -1319,7 +1320,7 @@ const ResourceAllocationFormItems: React.FC<
                           rules={[
                             {
                               warningOnly: true,
-                              validator: async (rule, value: number) => {
+                              validator: async (_rule, value: number) => {
                                 if (showRemainingWarning) {
                                   const minCPU = _.min([
                                     remaining.cpu,
@@ -1441,7 +1442,7 @@ export const getAllocatablePresetNames = (
 
     // Check if all resource slots in the preset are less than or equal to resourceLimits
     // Be careful with the type of values in resourceLimits, they are string or number
-    return _.every(preset.resource_slots, (value, key) => {
+    return _.every(preset.resource_slots, (_value, key) => {
       if (key === 'mem') {
         // if mem resource limit is not defined, it is UNLIMITED
         const isNoLimit = typeof resourceLimits[key]?.max !== 'string';
@@ -1479,7 +1480,7 @@ export const getAllocatablePresetNames = (
   const byImageAcceleratorLimits = _.filter(presets, (preset) => {
     const acceleratorResourceOfPreset = _.omitBy(
       preset.resource_slots,
-      (value, key) => {
+      (_value, key) => {
         if (['mem', 'cpu', 'shmem'].includes(key)) return true;
       },
     );

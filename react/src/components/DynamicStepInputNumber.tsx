@@ -44,7 +44,7 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
         setValue(newValue);
       }}
       step={0}
-      onStep={(afterStepValue, info) => {
+      onStep={(_afterStepValue, info) => {
         const index = _.sortedIndex(_.sortBy(dynamicSteps), value);
         let nextIndex: number;
         if (info.type === 'up') {

@@ -83,7 +83,7 @@ export type FilterOperator =
   | 'in'
   | 'notIn'
   // Allow custom operators
-  | (string & {});
+  | (string & NonNullable<unknown>);
 
 type BaseFilterProperty = {
   key: string;
@@ -325,7 +325,6 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   value: propValue,
   onChange: propOnChange,
   defaultValue,
-  loading,
   combinationMode = 'AND',
   ...containerProps
 }) => {

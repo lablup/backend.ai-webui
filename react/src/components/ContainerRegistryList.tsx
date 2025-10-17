@@ -301,7 +301,7 @@ const ContainerRegistryList: React.FC<{
     {
       key: 'enabled',
       title: t('general.Enabled'),
-      render: (value, record) => {
+      render: (_value, record) => {
         const isEnabled = _.includes(
           domain?.allowed_docker_registries,
           record.registry_name,
@@ -371,7 +371,7 @@ const ContainerRegistryList: React.FC<{
     {
       title: t('general.Control'),
       fixed: 'right',
-      render(value, record, index) {
+      render(_value, record) {
         return (
           <BAIFlex>
             <Tooltip title={t('button.Edit')}>
@@ -559,7 +559,7 @@ const ContainerRegistryList: React.FC<{
               variables: {
                 id: deletingRegistry.id,
               },
-              onCompleted: (res, error) => {
+              onCompleted: (_res, error) => {
                 if (error) {
                   setDeletingRegistry(null);
                   message.error({
@@ -575,7 +575,7 @@ const ContainerRegistryList: React.FC<{
                   setDeletingRegistry(null);
                 }
               },
-              onError: (error) => {
+              onError: () => {
                 message.error({
                   key: 'registry-deletion-failed',
                   content: t('dialog.ErrorOccurred'),

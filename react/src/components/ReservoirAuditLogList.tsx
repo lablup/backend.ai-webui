@@ -29,8 +29,6 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
   filterValue,
   onFilterChange,
   pagination,
-  order,
-  onChangeOrder,
 }) => {
   // const { t } = useTranslation();
 

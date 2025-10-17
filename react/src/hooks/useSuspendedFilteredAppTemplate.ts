@@ -37,7 +37,6 @@ export const useSuspendedFilteredAppTemplate = (
 
   const baiClient = useSuspendedBackendaiClient();
   const allowTCPApps =
-    // @ts-ignore
     globalThis.isElectron || baiClient._config.allowNonAuthTCP;
 
   const preOpenAppList = _.filter(
@@ -67,7 +66,7 @@ export const useSuspendedFilteredAppTemplate = (
     (app) =>
       !_.includes(preOpenAppList, app) && !_.includes(inferenceAppList, app),
   );
-  let baseAppTemplate = _.chain(baseAppList)
+  const baseAppTemplate = _.chain(baseAppList)
     .map((app) => {
       const template = _.find(
         _.flatten(Object.values(appTemplate)),

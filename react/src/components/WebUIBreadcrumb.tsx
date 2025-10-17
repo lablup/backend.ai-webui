@@ -46,7 +46,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
                 !_.isEmpty(match?.handle?.title)
               );
             })
-            .map((match, index) => {
+            .map((match) => {
               return {
                 key: match.id,
                 href:
@@ -73,7 +73,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
             title: ' ',
           },
         ]}
-        itemRender={(currentRoute, params, items, paths) => {
+        itemRender={(currentRoute, _params, items) => {
           const isLast =
             currentRoute?.key === items[items.length - 2]?.key ||
             currentRoute?.key === 'dummy_tail';

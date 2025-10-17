@@ -62,7 +62,7 @@ const TOTPActivateModalWithToken = () => {
   }, [open, mutate, totp_registration_token]);
 
   const mutationToActivateTotp = useTanMutation<
-    {},
+    NonNullable<unknown>,
     null,
     {
       registration_token: string;

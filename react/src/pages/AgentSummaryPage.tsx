@@ -11,7 +11,7 @@ interface ResourcesPageProps {}
 
 const tabParam = withDefault(StringParam, 'agent-summary');
 
-const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
+const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
     updateType: 'replace',

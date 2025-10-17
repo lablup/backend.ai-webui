@@ -21,10 +21,7 @@ module.exports = {
   plugins: ['@babel/plugin-syntax-import-attributes'],
   overrides: [
     {
-      include: [
-        './src/**/*',
-        path.resolve(__dirname, 'src/**/*')
-      ], // include only react/src folder
+      include: ['./src/**/*', path.resolve(__dirname, 'src/**/*')], // include only react/src folder
       plugins: [
         [
           'relay',
@@ -37,7 +34,7 @@ module.exports = {
     {
       include: [
         '../packages/backend.ai-ui/src/**/*',
-        path.resolve(__dirname, '../packages/backend.ai-ui/src/**/*')
+        path.resolve(__dirname, '../packages/backend.ai-ui/src/**/*'),
       ], // include only backend.ai-ui/src folder
       plugins: [
         [

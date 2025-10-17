@@ -85,10 +85,10 @@ const SessionInfoCell: React.FC<{
         if (session.name === name) return;
         setOptimisticName(name);
         mutation.mutate(name, {
-          onSuccess: (result) => {
+          onSuccess: () => {
             onRename && onRename();
           },
-          onError: (error) => {
+          onError: () => {
             setOptimisticName(session.name);
           },
         });
@@ -118,7 +118,7 @@ const SessionInfoCell: React.FC<{
               message: t('session.validation.EnterValidSessionName'),
             },
             () => ({
-              validator(form, value) {
+              validator(_form, value) {
                 if (
                   _.without(sessionNameList, session.name).includes(
                     String(value),

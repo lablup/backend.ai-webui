@@ -376,7 +376,7 @@ export const omitNullAndUndefinedFields = <T extends Record<string, any>>(
 ): Partial<T> => {
   return Object.fromEntries(
     Object.entries(input).filter(
-      ([_, value]) => value !== null && value !== undefined,
+      ([, value]) => value !== null && value !== undefined,
     ),
   ) as Partial<T>;
 };

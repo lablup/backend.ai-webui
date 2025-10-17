@@ -133,7 +133,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           // value: 'preset1',
           label: 'Preset',
           // @ts-ignore
-          options: _.map(resourcePresets, (preset, index) => {
+          options: _.map(resourcePresets, (preset) => {
             const slotsInfo: {
               [key in ResourceSlotName]: string;
             } = JSON.parse(preset?.resource_slots || '{}');
@@ -156,7 +156,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                     }
                   >
                     {_.map(
-                      _.omitBy(slotsInfo, (slot, key) =>
+                      _.omitBy(slotsInfo, (_slot, key) =>
                         _.isEmpty(resourceSlots[key as ResourceSlotName]),
                       ),
                       (slot, key) => {

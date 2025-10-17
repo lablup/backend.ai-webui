@@ -187,7 +187,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                 value: 'full',
               },
             ]}
-            onChange={(value) => { 
+            onChange={(value) => {
               setLogSize(value);
               if(value!=='full'){
                 resetPreviousLineNumber();

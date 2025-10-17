@@ -19,7 +19,7 @@ interface BAIAutoRefetchButtonProps
   pauseWhenHidden?: boolean;
 }
 const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
-  value,
+  value: _value,
   loading,
   onChange,
   showLastLoadTime,
@@ -45,6 +45,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayLoading(true);
 
       return () => {

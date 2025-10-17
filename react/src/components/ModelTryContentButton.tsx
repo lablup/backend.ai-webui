@@ -42,7 +42,6 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   modelCardMetadata,
   modelStorageHost,
   vfolderNode,
-  title,
 }) => {
   const { t } = useTranslation();
   // const { token } = theme.useToken();

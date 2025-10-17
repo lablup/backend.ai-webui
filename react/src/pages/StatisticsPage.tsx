@@ -11,7 +11,7 @@ interface ResourcesPageProps {}
 
 const tabParam = withDefault(StringParam, 'allocation-history');
 
-const ResourcesPage: React.FC<ResourcesPageProps> = (props) => {
+const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();

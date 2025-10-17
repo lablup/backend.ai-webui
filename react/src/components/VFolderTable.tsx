@@ -437,7 +437,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         },
                         {
                           type: 'string',
-                          validator: async (rule, value) => {
+                          validator: async (_rule, value) => {
                             if (
                               value &&
                               _.some(
@@ -457,7 +457,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         },
                         {
                           type: 'string',
-                          validator: async (rule, value) => {
+                          validator: async (_rule, value) => {
                             const aliasPath = inputToAliasPath(
                               getRowKey(record),
                               value,
@@ -568,7 +568,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       title: t('data.Permission'),
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
-      render: (value, row) => {
+      render: (_value, row) => {
         return <VFolderPermissionTag permission={row.permission} />;
       },
     },
@@ -576,7 +576,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       title: t('data.Created'),
       dataIndex: 'created_at',
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (value, record) => dayjs(value).format('L'),
+      render: (value) => dayjs(value).format('L'),
       defaultSortOrder: 'descend',
     },
     // {
@@ -645,7 +645,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           showSorterTooltip={false}
           columns={columns}
           dataSource={displayingFolders}
-          onRow={(record, rowIndex) => {
+          onRow={(record) => {
             return {
               onClick: (event) => {
                 const target = event.target as HTMLElement;

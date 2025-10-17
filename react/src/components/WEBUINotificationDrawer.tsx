@@ -136,7 +136,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
           ) : (
             <BAIGeneralNotificationItem
               notification={item}
-              onClickAction={(e) => {
+              onClickAction={() => {
                 item.to && webuiNavigate(item.to);
               }}
               showDate

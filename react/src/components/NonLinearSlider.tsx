@@ -23,7 +23,6 @@ const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
   defaultValue,
   onChange,
   steps,
-  showAllMarkLabels,
   ...sliderProps
 }) => {
   const normalizedSteps = steps.map((step) => {

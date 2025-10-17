@@ -18,7 +18,7 @@ import _ from 'lodash';
 import { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = createStyles(({ css, token }) => ({
+const useStyles = createStyles(({ css }) => ({
   TabStyles: css`
     .ant-tabs-tab-active {
       font-weight: var(--token-fontWeightSuperStrong, 700);

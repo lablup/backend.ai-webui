@@ -9,8 +9,7 @@
     "plugin:wc/recommended",
     "plugin:lit-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:wc/best-practice",
-    "plugin:storybook/recommended"
+    "plugin:wc/best-practice"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -19,41 +18,34 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": "tsconfig.json",
+    "project": [
+      "tsconfig.json",
+      "react/tsconfig.json",
+      "packages/backend.ai-ui/tsconfig.json"
+    ],
     "extraFileExtensions": [".json"]
   },
-  "plugins": [
-    "@typescript-eslint",
-    "lit-a11y",
-    "wc",
-    "react-hooks",
-    "json-schema-validator"
-  ],
+  "plugins": ["@typescript-eslint", "lit-a11y", "wc", "json-schema-validator"],
   "rules": {
     "object-curly-spacing": "off",
+    "curly": "off",
     "operator-linebreak": "off",
     "indent": "off",
-    "no-unused-vars": "off",
     "no-undef": "off",
     "no-constant-condition": "off",
     "no-inner-declarations": "off",
     "no-irregular-whitespace": "off",
     "max-len": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "require-jsdoc": "off",
+    "valid-jsdoc": "off",
     "camelcase": "off",
     "no-empty": "off",
     "no-empty-function": "off",
     "no-invalid-this": "off",
     "wc/guard-super-call": "off",
     "lit-a11y/alt-text": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": [
-      "warn",
-      {
-        "additionalHooks": "useRecoilCallback"
-      }
-    ],
     "spaced-comment": "off",
     "quotes": "off",
     "quote-props": "off",
@@ -65,5 +57,10 @@
       "parser": "jsonc-eslint-parser",
       "extends": ["plugin:json-schema-validator/recommended"]
     }
-  ]
+  ],
+  "settings": {
+    "react": {
+      "version": "19.2"
+    }
+  }
 }

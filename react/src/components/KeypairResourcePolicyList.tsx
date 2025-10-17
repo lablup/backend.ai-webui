@@ -113,7 +113,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       title: t('resourcePolicy.ResourcePolicy'),
       dataIndex: 'total_resource_slots',
       key: 'total_resource_slots',
-      render: (text, row) => (
+      render: (_text, row) => (
         <BAIFlex gap={'xxs'}>
           {!_.isEmpty(JSON.parse(row?.total_resource_slots || '{}'))
             ? _.map(
@@ -221,7 +221,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       title: t('general.Control'),
       key: 'control',
       fixed: 'right',
-      render: (text, row) => (
+      render: (_text, row) => (
         <BAIFlex direction="row" align="stretch">
           <Button
             type="text"

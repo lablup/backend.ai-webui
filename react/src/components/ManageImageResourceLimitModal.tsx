@@ -108,7 +108,7 @@ const ManageImageResourceLimitModal: React.FC<
             onRequestClose(true);
           }
         },
-        onError: (err) => {
+        onError: () => {
           message.error(t('dialog.ErrorOccurred'));
         },
       });

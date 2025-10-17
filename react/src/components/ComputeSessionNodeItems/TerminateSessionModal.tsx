@@ -97,7 +97,6 @@ const getWSProxyVersion = async (
     if (globalThis.appLauncher?.forceUseV1Proxy?.checked) return 'v1';
     else if (globalThis.appLauncher?.forceUseV2Proxy?.checked) return 'v2';
   }
-
   if (globalThis.isElectron) {
     return 'v1';
   }
@@ -289,7 +288,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
           },
         );
         promises.map(trackPromise);
-        Promise.allSettled(promises).then((results) => {
+        Promise.allSettled(promises).then(() => {
           setIsForce(false);
           onRequestClose(true);
           // TODO: remove below code after session list migration to React

@@ -164,7 +164,7 @@ const StorageProxyList = () => {
       title: t('agent.Resources'),
       key: 'usage',
       dataIndex: 'usage',
-      render: (value, record) => {
+      render: (value) => {
         const usage = JSON.parse(value);
         const ratio =
           usage?.capacity_bytes > 0
@@ -222,7 +222,7 @@ const StorageProxyList = () => {
       key: 'control',
       width: 100,
       fixed: 'right',
-      render: (value, record) => {
+      render: (_value, record) => {
         let perfMetricDisabled;
         try {
           const performanceMetric = JSON.parse(

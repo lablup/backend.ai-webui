@@ -36,7 +36,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [shrinkControlSize, setShrinkControlSize] = useState<boolean>(true);
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useResizeObserver(containerRef.current, ({ contentRect }) => {
     setShrinkControlSize(contentRect.width < 480);
   });

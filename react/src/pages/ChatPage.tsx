@@ -240,7 +240,7 @@ const PureChatPage = ({ id }: { id: string }) => {
               align="stretch"
             >
               <Suspense fallback={<Card className={styles.chatCard} loading />}>
-                {_.map(chat.chats, (chatData, index) => (
+                {_.map(chat.chats, (chatData) => (
                   <ChatCard
                     key={chatData.id}
                     className={styles.chatCard}

@@ -182,7 +182,7 @@ const SessionDetailContent: React.FC<{
   );
 
   // The feature to display imminent expiration time as a separate Alert is supported from version 24.12.
-  let imminentExpirationTime = _.min(
+  const imminentExpirationTime = _.min(
     _.values(
       useMemoizedJSONParse<IdleChecks>(session?.idle_checks, {
         fallbackValue: {},

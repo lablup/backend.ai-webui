@@ -95,7 +95,7 @@ const BAIGeneralNotificationItem: React.FC<{
             {notification.extraDescription && !notification?.onCancel ? (
               <BAIFlex>
                 <Typography.Link
-                  onClick={(e) => {
+                  onClick={() => {
                     // onClickAction && onClickAction(e, notification);
                     setShowExtraDescription(!showExtraDescription);
                   }}

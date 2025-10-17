@@ -63,7 +63,7 @@ export const useRelayPaginationQueryOptions = <
 >({
   query,
   defaultVariables,
-  getVariables = ({ page, pageSize, order, filter }) => {
+  getVariables = ({ pageSize, order, filter }) => {
     return {
       first: pageSize,
       //   after: page > 1 ? offset_to_cursor((page - 1) * pageSize - 1) : undefined,

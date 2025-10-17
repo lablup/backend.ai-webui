@@ -25,7 +25,7 @@ import { PinIcon } from 'lucide-react';
 import React, { Key, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyle = createStyles(({ token, css }) => ({
+const useStyle = createStyles(({ css }) => ({
   fixEditableVerticalAlign: css`
     & {
       margin-top: 0px !important;
@@ -135,7 +135,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               ),
               dataIndex: 'pinned',
               width: 40,
-              render: (value, record) => {
+              render: (_value, record) => {
                 const isPinned = !!record.pinned;
                 const isHovered = hoverRowKey === record.id;
                 return isPinned ? (
@@ -206,7 +206,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
             {
               title: t('session.launcher.Environments'),
               dataIndex: ['environments', 'version'],
-              render: (version, record) => {
+              render: (_version, record) => {
                 const imageStr =
                   record.environments.version || record.environments.manual;
                 return (
@@ -267,7 +267,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
             key: 'history',
             label: t('session.launcher.RecentHistory'),
             children: (
-              
+
             ),
           },
         ]}

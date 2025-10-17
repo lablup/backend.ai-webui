@@ -29,7 +29,7 @@ const DomainSelector: React.FC<Props> = ({
   );
   return (
     <Select
-      onChange={(value, option) => {
+      onChange={(_value, option) => {
         onSelectDomain?.(option);
       }}
       placeholder={t('storageHost.quotaSettings.SelectDomain')}

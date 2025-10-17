@@ -98,7 +98,7 @@ export function mergeFilterValues(
     _.map(filterOutEmpty(filterStrings), (str) => `(${str})`),
     operator,
   );
-  return !!mergedFilter ? mergedFilter : undefined;
+  return mergedFilter ? mergedFilter : undefined;
 }
 
 /**
@@ -203,7 +203,6 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   value: propValue,
   onChange: propOnChange,
   defaultValue,
-  loading,
   ...containerProps
 }) => {
   const [search, setSearch] = useState<string>();
@@ -332,7 +331,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           popupMatchSelectWidth={false}
           options={options}
           value={selectedProperty.key}
-          onChange={(value, options) => {
+          onChange={(_value, options) => {
             setSelectedProperty(_.castArray(options)[0].filter);
           }}
           onSelect={() => {

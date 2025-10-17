@@ -84,7 +84,7 @@ const MySession: React.FC<MySessionProps> = ({ queryRef, isRefetching }) => {
           <BAIFetchKeyButton
             loading={isPendingRefetch || isRefetching}
             value=""
-            onChange={(newFetchKey) => {
+            onChange={() => {
               startRefetchTransition(() => {
                 refetch(
                   {},

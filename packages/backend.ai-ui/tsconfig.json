@@ -11,12 +11,11 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "rootDir": "./src",
     "noEmit": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
     "types": ["vite-plugin-svgr/client"]
   },
-  "include": ["src/**/*", "svg.d.ts"],
+  "include": ["src/**/*", "svg.d.ts", "vite.config.ts"],
   "exclude": ["node_modules"]
 }

@@ -148,7 +148,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
             : '-'}
         </Descriptions.Item>
       </Descriptions>
-      {/* FIXME: Currently, the driver options feature is unimplemented. After the feature is implemented, 
+      {/* FIXME: Currently, the driver options feature is unimplemented. After the feature is implemented,
       it should be changed to show each type instead of the map type. */}
       {!_.isEmpty(driverOpts) ? (
         <Descriptions

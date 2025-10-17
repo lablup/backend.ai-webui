@@ -167,7 +167,7 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
         />
       }
       step={0} // this step applies when onStep doesn't setValue
-      onStep={(afterStepValue, info) => {
+      onStep={(_afterStepValue, info) => {
         const numValueNotNull =
           _.isNull(numValue) || _.isUndefined(numValue) ? 0 : numValue;
         const index = _.sortedIndex(_.sortBy(dynamicSteps), numValueNotNull);

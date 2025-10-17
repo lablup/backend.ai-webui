@@ -1,7 +1,7 @@
 import { useLocalStorageState } from 'ahooks';
 import { useCallback, useEffect } from 'react';
 
-export const useLocalStorageGlobalState = <T extends unknown>(
+export const useLocalStorageGlobalState = <T,>(
   key: string,
   defaultValue: T,
 ) => {

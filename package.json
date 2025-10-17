@@ -148,7 +148,6 @@
     "eslint-plugin-json-schema-validator": "^5.3.1",
     "eslint-plugin-lit-a11y": "^4.1.4",
     "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-wc": "^2.1.0",
     "express": "^4.19.2",
     "husky": "^9.1.4",
@@ -186,6 +185,11 @@
   "overrides": {
     "eslint": "^8.57.0"
   },
+  "pnpm": {
+    "overrides": {
+      "zod": "^4.0.0"
+    }
+  },
   "vaadin": {
     "disableUsageStatistics": true
   },
@@ -194,11 +198,11 @@
       "prettier --write"
     ],
     "react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "eslint --max-warnings=0 --cache",
+      "pnpm run --prefix ./react lint --cache",
       "prettier --write"
     ],
     "packages/backend.ai-ui/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "eslint --max-warnings=0 --cache",
+      "pnpm run --prefix ./packages/backend.ai-ui lint --cache",
       "prettier --write"
     ],
     "e2e/**/*.{js,ts}": [

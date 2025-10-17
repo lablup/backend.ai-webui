@@ -51,7 +51,6 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
   editable: editableOfProps,
   style,
   enableLink = true,
-  existingNames,
   onEditEnd,
   onEditStart,
   inputProps,

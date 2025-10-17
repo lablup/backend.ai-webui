@@ -396,9 +396,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   image: fullNameMatchedImage,
                 },
               });
-            }
-            // NOTE: when user set environment only then set the version to the first item
-            else {
+            } else {
+              // NOTE: when user set environment only then set the version to the first item
               const firstInListImage: Image = imageGroups
                 .flatMap((group) => group.environmentGroups)
                 .filter((envGroup) => envGroup.environmentName === value)[0]

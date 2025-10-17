@@ -31,7 +31,7 @@ const SourceCodeViewer: React.FC<SourceCodeViewerProps> = ({
       code={children || ''}
       language={language || ''}
     >
-      {({ className, style, tokens, getLineProps, getTokenProps }) => (
+      {({ style, tokens, getLineProps, getTokenProps }) => (
         <pre
           style={{
             margin: 0,

@@ -162,7 +162,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
             }
             setValidationStatus('processing');
           },
-          onDone: (data) => {
+          onDone: () => {
             setValidationStatus('finished');
             clearTimeout(timeoutId);
           },

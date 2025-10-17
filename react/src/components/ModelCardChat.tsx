@@ -11,7 +11,7 @@ interface ModelCardChatProps {
   style?: React.CSSProperties;
 }
 
-const ModelCardChat: React.FC<ModelCardChatProps> = ({ modelName, style }) => {
+const ModelCardChat: React.FC<ModelCardChatProps> = ({ modelName }) => {
   const { endpoint_list } = useLazyLoadQuery<ModelCardChatQuery>(
     graphql`
       query ModelCardChatQuery(

@@ -68,7 +68,6 @@ function BAISelect<
   tooltip = '',
   atBottomThreshold = 30,
   atBottomStateChange,
-  bottomLoading,
   footer,
   endReached, // Destructure the new prop
   ...selectProps

@@ -596,7 +596,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               {
                 title: t('autoScalingRule.ScalingType'),
                 fixed: 'left',
-                render: (text, row) =>
+                render: (_text, row) =>
                   (row?.step_size || 0) > 0 ? 'Up' : 'Down',
               },
               {
@@ -608,7 +608,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 title: t('autoScalingRule.Condition'),
                 dataIndex: 'metric_name',
                 fixed: 'left',
-                render: (text, row) => (
+                render: (_text, row) => (
                   <BAIFlex gap={'xs'}>
                     <Tag>{row?.metric_name}</Tag>
                     {row?.comparator ? (
@@ -628,7 +628,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 title: t('modelService.Controls'),
                 dataIndex: 'controls',
                 key: 'controls',
-                render: (text, row) => (
+                render: (_text, row) => (
                   <BAIFlex direction="row" align="stretch">
                     <Button
                       type="text"
@@ -735,7 +735,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               {
                 title: t('autoScalingRule.StepSize'),
                 dataIndex: 'step_size',
-                render: (text, row) => {
+                render: (_text, row) => {
                   if (row?.step_size) {
                     return (
                       <BAIFlex gap={'xs'}>
@@ -758,7 +758,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               },
               {
                 title: t('autoScalingRule.MIN/MAXReplicas'),
-                render: (text, row) => (
+                render: (_text, row) => (
                   <span>
                     {row?.step_size
                       ? row?.step_size > 0
@@ -775,7 +775,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               },
               {
                 title: t('autoScalingRule.LastTriggered'),
-                render: (text, row) => {
+                render: (_text, row) => {
                   return (
                     <span>
                       {row?.last_triggered_at
@@ -792,7 +792,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               {
                 title: t('autoScalingRule.CreatedAt'),
                 dataIndex: 'created_at',
-                render: (text, row) => (
+                render: (_text, row) => (
                   <span>{dayjs(row?.created_at).format('ll LT')}</span>
                 ),
                 sorter: dayDiff,
@@ -828,7 +828,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: t('modelService.Token'),
               dataIndex: 'token',
               fixed: 'left',
-              render: (text, row) => (
+              render: (_text, row) => (
                 <Typography.Text ellipsis copyable style={{ width: 150 }}>
                   {row.token}
                 </Typography.Text>
@@ -836,7 +836,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             },
             {
               title: t('modelService.Status'),
-              render: (text, row) => {
+              render: (_text, row) => {
                 const isExpired = dayjs.utc(row.valid_until).isBefore();
                 return (
                   <Tag color={isExpired ? 'red' : 'green'}>
@@ -848,7 +848,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             {
               title: t('modelService.ExpiredDate'),
               dataIndex: 'valid_until',
-              render: (text, row) => (
+              render: (_text, row) => (
                 <span>
                   {
                     // FIXME: temporally parse UTC and change to timezone (timezone need to be added in server side)
@@ -863,7 +863,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             {
               title: t('modelService.CreatedAt'),
               dataIndex: 'created_at',
-              render: (text, row) => (
+              render: (_text, row) => (
                 <span>{dayjs(row.created_at).format('ll LT')}</span>
               ),
               sorter: dayDiff,
@@ -896,7 +896,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         message.error(t('modelService.SyncRoutesFailed'));
                       }
                     },
-                    onError: (error) => {
+                    onError: () => {
                       message.error(t('modelService.SyncRoutesFailed'));
                     },
                   });
@@ -914,7 +914,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               title: t('modelService.RouteId'),
               dataIndex: 'routing_id',
               fixed: 'left',
-              render: (text, row) => (
+              render: (_text, row) => (
                 <Typography.Text ellipsis>
                   {row.routing_id}
                   {!_.isEmpty(row.error_data) && (
@@ -968,7 +968,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             },
             {
               title: t('modelService.Status'),
-              render: (text, row) =>
+              render: (_text, row) =>
                 row.status && (
                   <>
                     <Tag

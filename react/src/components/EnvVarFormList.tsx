@@ -45,7 +45,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                       ),
                     },
                     ({ getFieldValue }) => ({
-                      validator(rule, variableName) {
+                      validator(_rule, variableName) {
                         const variableNames = _.map(
                           getFieldValue(props.name),
                           (i) => i?.variable,
@@ -75,7 +75,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                     ref={index === fields.length - 1 ? inputRef : null}
                     placeholder="Variable"
                     onChange={() => {
-                      const fieldNames = fields.map((field, index) => [
+                      const fieldNames = fields.map((_field, index) => [
                         props.name,
                         index,
                         'variable',

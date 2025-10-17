@@ -14,7 +14,7 @@ interface BAIPanelItemProps extends Omit<BAIFlexProps, 'title'> {
   progressProps?: ProgressProps;
 }
 
-const useStyles = createStyles(({ css, token }) => ({
+const useStyles = createStyles(({ css }) => ({
   progressSteps: css`
     .ant-progress-steps-item {
       border-radius: 100px;

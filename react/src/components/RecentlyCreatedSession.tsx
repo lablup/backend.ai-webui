@@ -78,7 +78,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
               size="small"
               loading={isPendingRefetch || isRefetching}
               value=""
-              onChange={(newFetchKey) => {
+              onChange={() => {
                 startRefetchTransition(() => {
                   refetch(
                     {},

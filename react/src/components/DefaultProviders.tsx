@@ -85,7 +85,7 @@ interface WebComponentContextType {
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 const ShadowRootContext = React.createContext<ShadowRoot>(null!);
 export const useShadowRoot = () => React.useContext(ShadowRootContext);
-export const useWebComponentInfo = <ParsedType extends any>() => {
+export const useWebComponentInfo = <ParsedType,>() => {
   const context = React.useContext(WebComponentContext);
   return {
     ...context,
@@ -119,7 +119,7 @@ i18n
   .use({
     type: 'postProcessor',
     name: 'copyableI18nKey',
-    process: function (value: any, key: any, options: any, translator: any) {
+    process: function (value: any, key: any, _options: any, _translator: any) {
       // @ts-ignore
       if (globalThis?.backendaiwebui?.debug || isDebugModeByParam) {
         return (
@@ -323,7 +323,7 @@ export default DefaultProviders;
 
 export const DefaultProvidersForReactRoot: React.FC<
   Partial<DefaultProvidersProps>
-> = ({ children, value, styles }) => {
+> = ({ children }) => {
   const [lang] = useCurrentLanguage();
   const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();

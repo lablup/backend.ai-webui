@@ -67,6 +67,12 @@ module.exports = {
 
       if (babelLoader && babelLoader.options) {
         babelLoader.options.plugins = babelLoader.options.plugins || [];
+        babelLoader.options.plugins.push([
+          'babel-plugin-react-compiler',
+          {
+            compilationMode: 'annotation',
+          },
+        ]);
         babelLoader.options.overrides = [
           {
             include: [

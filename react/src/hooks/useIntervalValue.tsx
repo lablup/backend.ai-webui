@@ -46,7 +46,7 @@ export function useInterval(
       savedCallback.current?.();
     }
     if (effectiveDelay !== null) {
-      let id = setInterval(tick, effectiveDelay);
+      const id = setInterval(tick, effectiveDelay);
       return () => clearInterval(id);
     }
   }, [effectiveDelay]);

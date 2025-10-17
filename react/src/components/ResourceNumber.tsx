@@ -98,16 +98,12 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
 interface AccTypeIconProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   type: ResourceSlotName | string;
-  showIcon?: boolean;
-  showUnit?: boolean;
   showTooltip?: boolean;
   size?: number;
 }
 export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
   type,
   size = 16,
-  showIcon = true,
-  showUnit = true,
   showTooltip = true,
   ...props
 }) => {

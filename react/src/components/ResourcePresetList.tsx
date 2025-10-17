@@ -128,7 +128,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       title: t('general.Control'),
       key: 'control',
       fixed: 'right',
-      render: (text, record) => (
+      render: (_text, record) => (
         <BAIFlex align="stretch">
           <Tooltip title={t('button.Edit')}>
             <Button

@@ -163,7 +163,9 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   // reset when modal is closed
   useEffect(() => {
     if (!baiModalProps.open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHuggingFaceURL(undefined);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTypedURL('');
     }
   }, [baiModalProps.open]);
@@ -370,7 +372,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           >
             <Switch
               checked={isImportOnly}
-              onChange={(e) => {
+              onChange={() => {
                 toggleIsImportOnly();
               }}
             />

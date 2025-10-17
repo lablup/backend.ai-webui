@@ -2,7 +2,6 @@ import BAIFlex from './BAIFlex';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Typography } from 'antd';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -47,11 +46,11 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
       }
       onOk={(e) => {
         form.resetFields();
-        _.isFunction(onOk) && onOk(e);
+        onOk?.(e);
       }}
       onCancel={(e) => {
         form.resetFields();
-        _.isFunction(onCancel) && onCancel(e);
+        onCancel?.(e);
       }}
       {...props}
       okButtonProps={{

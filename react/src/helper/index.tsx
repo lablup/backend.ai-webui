@@ -30,7 +30,7 @@ export const baiSignedRequestWithPromise = ({
   body?: any;
   client: any;
 }) => {
-  let request = client?.newSignedRequest(method, url, body, null);
+  const request = client?.newSignedRequest(method, url, body, null);
   return client?._wrapWithPromise(request);
 };
 
@@ -538,7 +538,7 @@ type SSEHandlerKeys =
 
 export type SSEEventHandlerTypes<
   BaseType = unknown,
-  Overrides extends Partial<Record<SSEHandlerKeys, any>> = {},
+  Overrides extends Partial<Record<SSEHandlerKeys, any>> = NonNullable<unknown>,
 > = {
   [K in SSEHandlerKeys]: (
     data: K extends keyof Overrides ? Overrides[K] : BaseType,
@@ -553,7 +553,7 @@ export type SSEEventHandlerTypes<
  */
 export function listenToBackgroundTask<
   BaseType = unknown,
-  Overrides extends Partial<Record<SSEHandlerKeys, any>> = {},
+  Overrides extends Partial<Record<SSEHandlerKeys, any>> = NonNullable<unknown>,
 >(
   taskID: string,
   handlers: Partial<SSEEventHandlerTypes<BaseType, Overrides>>,

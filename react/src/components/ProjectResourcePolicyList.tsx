@@ -140,7 +140,7 @@ const ProjectResourcePolicyList: React.FC<
           dataIndex: 'max_network_count',
           key: 'max_network_count',
           render: (text) => (text === -1 ? '∞' : text),
-          sorter: (a, b) => true,
+          sorter: () => true,
         }
       : {},
     {
@@ -160,7 +160,7 @@ const ProjectResourcePolicyList: React.FC<
       title: t('general.Control'),
       fixed: 'right',
       key: 'control',
-      render: (text: any, row: ProjectResourcePolicies) => (
+      render: (_text: any, row: ProjectResourcePolicies) => (
         <BAIFlex direction="row" align="stretch">
           <Button
             type="text"

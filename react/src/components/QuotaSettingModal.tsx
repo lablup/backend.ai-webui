@@ -59,7 +59,7 @@ const QuotaSettingModal: React.FC<Props> = ({
       }
     `);
 
-  const _onOk = (e: React.MouseEvent<HTMLElement>) => {
+  const _onOk = () => {
     formRef.current?.validateFields().then((values) => {
       commitSetQuotaScope({
         variables: {

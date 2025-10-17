@@ -123,7 +123,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         return;
       }
       updateBootStrapScriptMutation.mutate(script, {
-        onSuccess: (result) => {
+        onSuccess: () => {
           message.success(t('userSettings.BootstrapScriptUpdated'));
           closeAfter && onRequestClose();
         },
@@ -138,7 +138,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       const existValidator = _.find(userConfigScript, { path: rcfileNames });
       if (existValidator) {
         updateUserConfigScriptMutation.mutate(script, {
-          onSuccess: (result) => {
+          onSuccess: () => {
             message.success(t('userSettings.DescScriptUpdated'));
             if (closeAfter) {
               onRequestClose();
@@ -153,7 +153,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         });
       } else {
         createUserConfigScriptMutation.mutate(script, {
-          onSuccess: (result) => {
+          onSuccess: () => {
             message.success(t('userSettings.DescScriptCreated'));
             if (closeAfter) {
               onRequestClose();
@@ -173,7 +173,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   const deleteScript = () => {
     if (shellInfo === 'bootstrap') {
       updateBootStrapScriptMutation.mutate('', {
-        onSuccess: (result) => {
+        onSuccess: () => {
           message.success(t('userSettings.BootstrapScriptDeleted'));
           onRequestClose();
         },
@@ -185,7 +185,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     }
     if (shellInfo === 'userconfig') {
       deleteUserConfigScriptMutation.mutate(undefined, {
-        onSuccess: (result) => {
+        onSuccess: () => {
           message.success(
             `${t('userSettings.DescScriptDeleted')}${rcfileNames}`,
           );

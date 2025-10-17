@@ -58,6 +58,8 @@ interface AgentListProps {
 }
 
 const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -262,7 +264,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
     {
       title: t('agent.Allocation'),
       key: 'allocation',
-      render: (value, record) => {
+      render: (_value, record) => {
         const parsedOccupiedSlots: {
           [key in ResourceSlotName]: string | undefined;
         } = JSON.parse(record?.occupied_slots || '{}');
@@ -273,7 +275,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
           <BAIFlex direction="column" gap="xxs">
             {_.map(
               parsedAvailableSlots,
-              (value: string | number, key: ResourceSlotName) => {
+              (_value: string | number, key: ResourceSlotName) => {
                 if (key === 'cpu') {
                   const cpuPercent = _.toFinite(
                     (_.toNumber(parsedOccupiedSlots.cpu) /
@@ -612,7 +614,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
     {
       title: t('agent.DiskPerc'),
       key: 'disk_perc',
-      render: (value, record) => {
+      render: (_value, record) => {
         const parsedDisk =
           JSON.parse(record?.live_stat || '{}')?.node?.disk ?? {};
         const pctValue = _.toFinite(parsedDisk.pct) || 0;
@@ -739,7 +741,7 @@ const AgentList: React.FC<AgentListProps> = ({ tableProps }) => {
       title: t('general.Control'),
       key: 'control',
       fixed: 'right',
-      render: (value, record) => {
+      render: (_value, record) => {
         return (
           <BAIFlex>
             <Button

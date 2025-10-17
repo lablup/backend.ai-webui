@@ -118,7 +118,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           }}
           {...sliderProps}
           // remove marks that are greater than max
-          marks={_.omitBy(sliderProps?.marks, (option, key) => {
+          marks={_.omitBy(sliderProps?.marks, (_option, key) => {
             return _.isNumber(max) ? _.parseInt(key) > max : false;
           })}
         />

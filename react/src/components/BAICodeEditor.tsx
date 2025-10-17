@@ -42,7 +42,7 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
         lineNumbers: showLineNumbers,
       }}
       value={script}
-      onChange={(value, viewUpdate) => setScript(value)}
+      onChange={(value) => setScript(value)}
       {...CodeMirrorProps}
     />
   );

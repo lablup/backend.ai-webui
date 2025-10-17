@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
   const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
-  const entries = {
+  const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };
   // Add locale entries
@@ -54,7 +54,18 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: !isDevMode,
     },
     plugins: [
-      react(),
+      react({
+        babel: {
+          plugins: [
+            [
+              'babel-plugin-react-compiler',
+              {
+                compilationMode: 'annotation',
+              },
+            ],
+          ],
+        },
+      }),
       relay({
         module: 'esmodule',
         codegen: !isDevMode,

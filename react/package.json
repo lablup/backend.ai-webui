@@ -68,11 +68,11 @@
     "shiki": "^3.13.0",
     "swr": "^2.3.6",
     "ts-md5": "^2.0.1",
+    "tus-js-client": "^4.1.0",
     "typescript": "^5.7.2",
     "use-query-params": "^2.2.1",
     "uuid": "^13.0.0",
-    "web-vitals": "^3.5.2",
-    "tus-js-client": "^4.1.0"
+    "web-vitals": "^3.5.2"
   },
   "scripts": {
     "start": "craco start",
@@ -90,22 +90,33 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest",
       "plugin:storybook/recommended",
       "plugin:react/recommended",
-      "plugin:relay/recommended"
+      "plugin:relay/recommended",
+      "plugin:react-hooks/recommended"
     ],
     "plugins": [
-      "relay"
+      "relay",
+      "import"
     ],
     "rules": {
+      "new-cap": "off",
+      "prefer-promise-reject-errors": "off",
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "import/no-duplicates": "error",
       "relay/graphql-syntax": "off",
       "relay/unused-fields": "off",
       "relay/must-colocate-fragment-spreads": "off",
+      "comma-spacing": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "args": "all",
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ],
       "no-restricted-imports": [
         "error",
         {
@@ -165,13 +176,14 @@
     "ajv": "^8.17.1",
     "babel-jest": "^30.0.5",
     "babel-plugin-named-exports-order": "^0.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
     "babel-plugin-relay": "^20.1.0",
     "babel-preset-react-app": "^10.1.0",
     "caniuse-lite": "^1.0.30001731",
     "eslint": "^8.57.1",
-    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^7.0.0",
     "eslint-plugin-relay": "^2.0.0",
     "eslint-plugin-storybook": "^0.11.1",
     "html-webpack-plugin": "5.6.3",

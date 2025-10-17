@@ -124,7 +124,7 @@ const ContainerRegistryEditorModal: React.FC<
                   onOk && onOk('modify');
                 }
               },
-              onError: (error) => {
+              onError: () => {
                 message.error(t('dialog.ErrorOccurred'));
               },
             },
@@ -154,13 +154,13 @@ const ContainerRegistryEditorModal: React.FC<
                 onOk && onOk('create');
               }
             },
-            onError(error) {
+            onError() {
               message.error(t('dialog.ErrorOccurred'));
             },
           });
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
   };
   return (
     <BAIModal
@@ -379,7 +379,7 @@ const ContainerRegistryEditorModal: React.FC<
           shouldUpdate={(prev, next) => prev?.type !== next?.type}
           noStyle
         >
-          {({ getFieldValue }) => {
+          {() => {
             return (
               <Form.Item
                 name={'project'}

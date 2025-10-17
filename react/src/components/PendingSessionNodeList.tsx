@@ -94,7 +94,7 @@ const PendingSessionNodeList: React.FC = () => {
           <SharedResourceGroupSelectForCurrentProject
             showSearch
             style={{ minWidth: 100 }}
-            onChangeInTransition={(v) => {
+            onChangeInTransition={() => {
               setTablePaginationOption({ current: 1 });
             }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}

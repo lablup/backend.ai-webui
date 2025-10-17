@@ -6,14 +6,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
+interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
   inferenceSessionErrorFrgmt: InferenceSessionErrorModalFragment$key | null;
   onRequestClose: () => void;
 }
 
 const InferenceSessionErrorModal: React.FC<Props> = ({
   onRequestClose,
-  onCancel,
   inferenceSessionErrorFrgmt,
   ...baiModalProps
 }) => {

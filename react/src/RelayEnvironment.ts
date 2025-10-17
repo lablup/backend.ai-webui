@@ -72,7 +72,7 @@ const fetchFn: FetchFunction = async (
   return result;
 };
 
-let subscribeFn: SubscribeFunction | undefined = undefined;
+const subscribeFn: SubscribeFunction | undefined = undefined;
 
 // if (typeof window !== "undefined") {
 //   // We only want to setup subscriptions if we are on the client.

@@ -28,7 +28,7 @@ const PortSelectFormItem: React.FC<Props> = ({
       extra={t('session.launcher.PreOpenPortRangeGuide')}
       rules={[
         () => ({
-          validator(rule, values) {
+          validator(_rule, values) {
             if (
               transformPortValuesToNumbers(values).length <=
               baiClient._config.maxCountForPreopenPorts
@@ -47,7 +47,7 @@ const PortSelectFormItem: React.FC<Props> = ({
         }),
         () => ({
           // To check if the port range is not start <= end
-          validator(rule, values) {
+          validator(_rule, values) {
             if (
               _.every(values, (v) => {
                 return parseInt(v).toString() === v || isPortRangeStr(v);
@@ -62,7 +62,7 @@ const PortSelectFormItem: React.FC<Props> = ({
           },
         }),
         () => ({
-          validator(rule, values) {
+          validator(_rule, values) {
             const allPorts = transformPortValuesToNumbers(values);
             if (
               _.every(allPorts, (port) => {
@@ -77,7 +77,7 @@ const PortSelectFormItem: React.FC<Props> = ({
           },
         }),
         () => ({
-          validator(rule, values) {
+          validator(_rule, values) {
             // To check if the port is duplicated
             const allPorts = transformPortValuesToNumbers(values);
             if (_.uniq(allPorts).length === allPorts.length) {
