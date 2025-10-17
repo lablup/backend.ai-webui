@@ -26,6 +26,8 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
 
   return (
     <img
+      draggable={false}
+      onDragStart={(e) => e.preventDefault()}
       style={{
         borderRadius: '0.25em',
         width: '1em',
@@ -33,6 +35,7 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
         borderWidth: 0.5,
         borderStyle: 'solid',
         borderColor: token.colorBorder,
+        userSelect: 'none',
         ...style,
       }}
       src={createAvatar(shapes, {

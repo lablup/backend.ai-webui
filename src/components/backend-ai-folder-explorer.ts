@@ -752,7 +752,7 @@ export default class BackendAIFolderExplorer extends BackendAIPage {
       mergedData?.group?.allowed_vfolder_hosts || '{}',
     );
     const allowedPermissionForResourcePolicyByVolume = JSON.parse(
-      mergedData?.keypair_resource_policy.allowed_vfolder_hosts || '{}',
+      mergedData?.keypair_resource_policy?.allowed_vfolder_hosts || '{}',
     );
 
     const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
