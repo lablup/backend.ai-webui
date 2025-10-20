@@ -69,7 +69,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (uploadStatus && _.isEmpty(uploadStatus.pending)) {
+    if (uploadStatus && _.isEmpty(uploadStatus?.pending?.vFolderNames)) {
       updateFetchKey();
     }
   }, [uploadStatus, updateFetchKey]);
