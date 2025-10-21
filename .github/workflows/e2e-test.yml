@@ -1,0 +1,127 @@
+# .github/workflows/playwright.yml
+name: Playwright Tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: "ubuntu-latest"
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        lts:
+          - name: "main"
+            apiEndpoint: "https://19d3c8.poc.isla-sorna.backend.ai/"
+          - name: "v25.15" # Please update according to the latest LTS versions
+            apiEndpoint: "https://99dfef.poc.isla-sorna.backend.ai/"
+
+    name: E2E Playwright Tests for LTS ${{ matrix.lts.name }}
+    env:
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+      E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
+      E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
+      E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
+      E2E_API_ENDPOINT: ${{ matrix.lts.apiEndpoint }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        name: Install Node.js
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Copy config.toml.sample to config.toml
+        run: |
+          awk '
+            /^[[:space:]]*$/ { next }
+            /^\[.*\]$/ { if (n++) print ""; print; next }
+            /^[[:space:]]*#[^=]/ { print; next }
+            {
+              line = $0
+              sub(/#.*/, "", line)
+              sub(/[[:space:]]+$/, "", line)
+              if (line != "") print line
+            }
+          ' config.toml.sample > config-cleaned.toml
+
+      - name: Inject apiEndpoint and allowChangeSigninMode into config.toml
+        run: |
+          EP="${{ matrix.lts.apiEndpoint }}"
+          awk -v ep="$EP" '
+            {
+              if ($0 ~ /^apiEndpoint[[:space:]]*=/) {
+                print "apiEndpoint = \"" ep "\""
+              } else if ($0 ~ /^allowChangeSigninMode[[:space:]]*=/) {
+                print "allowChangeSigninMode = true"
+              } else {
+                print
+              }
+            }
+          ' config-cleaned.toml > config.toml
+
+      # - name: Upload config.toml artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: config-toml-${{ matrix.lts.name }}
+      #     path: config.toml
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Serve build at port 9081 (background)
+        run: |
+          pnpm server:p -s -l 9081 > /dev/null 2>&1 &
+          echo "Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:9081 > /dev/null; then
+              echo "Server is up!"
+              break
+            fi
+            sleep 1
+          done
+
+      - name: Run Playwright Tests
+        run: pnpm playwright test
+
+      - name: Upload HTML report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.lts.name }}
+          path: playwright-report/

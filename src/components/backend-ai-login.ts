@@ -2139,6 +2139,7 @@ export default class BackendAILogin extends BackendAIPage {
               ? html`
                   <div
                     id="change-signin-area"
+                    data-testid="change-login-mode-button"
                     class="vertical center-justified layout"
                     style="flex: 1; text-align: right;"
                   >

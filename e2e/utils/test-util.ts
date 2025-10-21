@@ -3,7 +3,15 @@ import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
 export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
-export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
+export const visualRegressionWebserverEndpoint =
+  process.env.CI_API_ENDPOINT || 'http://127.0.0.1:8090';
+
+export const changeSignInInMode = async (page: Page, mode: 'IAM' | 'ID') => {
+  const button = page.locator('#change-signin-area button');
+  if ((await button.textContent())?.includes(mode)) {
+    await button.click();
+  }
+};
 
 export async function login(
   page: Page,
@@ -12,73 +20,130 @@ export async function login(
   endpoint: string,
 ) {
   await page.goto(webuiEndpoint);
+  await changeSignInInMode(page, 'ID');
   await page.getByLabel('Email or Username').fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+
+  const endpointInput = page.locator('#id_api_endpoint label');
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 1000 });
+    await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+  } catch (_e) {
+    // Endpoint input not visible, skip filling it
+  }
   await page.getByLabel('Login', { exact: true }).click();
   await page.waitForSelector('[data-testid="user-dropdown-button"]');
 }
 
-export const userInfo = {
-  admin: {
-    email: 'admin@lablup.com',
-    password: 'wJalrXUt',
-  },
-  user: {
-    email: 'user@lablup.com',
-    password: 'C8qnIo29',
-  },
-  user2: {
-    email: 'user2@lablup.com',
-    password: 'P7oxTDdz',
-  },
-  monitor: {
-    email: 'monitor@lablup.com',
-    password: '7tuEwF1J',
-  },
-  domainAdmin: {
-    email: 'domain-admin@lablup.com',
-    password: 'cWbsM_vB',
-  },
+export const getUserInfo = () => {
+  if (process.env.CI) {
+    return {
+      admin: {
+        email: 'admin@lablup.com',
+        password: process.env.E2E_ADMIN_PASSWORD || 'wJalrXUt',
+      },
+      user: {
+        email: 'user@lablup.com',
+        password: process.env.E2E_USER_PASSWORD || 'C8qnIo29',
+      },
+      user2: {
+        email: 'user2@lablup.com',
+        password: process.env.E2E_USER2_PASSWORD || 'P7oxTDdz',
+      },
+      monitor: {
+        email: 'monitor@lablup.com',
+        password: process.env.E2E_MONITOR_PASSWORD || '7tuEwF1J',
+      },
+      domainAdmin: {
+        email: 'domain-admin@lablup.com',
+        password: process.env.E2E_DOMAIN_ADMIN_PASSWORD || 'cWbsM_vB',
+      },
+    };
+  }
+  return {
+    admin: {
+      email: 'admin@lablup.com',
+      password: 'wJalrXUt',
+    },
+    user: {
+      email: 'user@lablup.com',
+      password: 'C8qnIo29',
+    },
+    user2: {
+      email: 'user2@lablup.com',
+      password: 'P7oxTDdz',
+    },
+    monitor: {
+      email: 'monitor@lablup.com',
+      password: '7tuEwF1J',
+    },
+    domainAdmin: {
+      email: 'domain-admin@lablup.com',
+      password: 'cWbsM_vB',
+    },
+  };
 };
+
+// export const userInfo = {
+// admin: {
+//   email: 'admin@lablup.com',
+//   password: 'wJalrXUt',
+// },
+// user: {
+//   email: 'user@lablup.com',
+//   password: 'C8qnIo29',
+// },
+// user2: {
+//   email: 'user2@lablup.com',
+//   password: 'P7oxTDdz',
+// },
+// monitor: {
+//   email: 'monitor@lablup.com',
+//   password: '7tuEwF1J',
+// },
+// domainAdmin: {
+//   email: 'domain-admin@lablup.com',
+//   password: 'cWbsM_vB',
+// },
+// };
 
 export async function loginAsAdmin(page: Page) {
   await login(
     page,
-    userInfo.admin.email,
-    userInfo.admin.password,
+    getUserInfo().admin.email,
+    getUserInfo().admin.password,
     webServerEndpoint,
   );
 }
 export async function loginAsDomainAdmin(page: Page) {
   await login(
     page,
-    userInfo.domainAdmin.email,
-    userInfo.domainAdmin.password,
+    getUserInfo().domainAdmin.email,
+    getUserInfo().domainAdmin.password,
     'http://127.0.0.1:8090',
   );
 }
 export async function loginAsUser(page: Page) {
   await login(
     page,
-    userInfo.user.email,
-    userInfo.user.password,
+    getUserInfo().user.email,
+    getUserInfo().user.password,
     webServerEndpoint,
   );
 }
 export async function loginAsUser2(page: Page) {
   await login(
     page,
-    userInfo.user2.email,
-    userInfo.user2.password,
+    getUserInfo().user2.email,
+    getUserInfo().user2.password,
     webServerEndpoint,
   );
 }
 export async function loginAsMonitor(page: Page) {
   await login(
     page,
-    userInfo.monitor.email,
-    userInfo.monitor.password,
+    getUserInfo().monitor.email,
+    getUserInfo().monitor.password,
     webServerEndpoint,
   );
 }
@@ -93,8 +158,8 @@ export async function loginAsCreatedAccount(
 export async function loginAsVisualRegressionAdmin(page: Page) {
   await login(
     page,
-    userInfo.admin.email,
-    userInfo.admin.password,
+    getUserInfo().admin.email,
+    getUserInfo().admin.password,
     visualRegressionWebserverEndpoint,
   );
 }
@@ -102,8 +167,8 @@ export async function loginAsVisualRegressionAdmin(page: Page) {
 export async function loginAsVisualRegressionUser2(page: Page) {
   await login(
     page,
-    userInfo.user2.email,
-    userInfo.user2.password,
+    getUserInfo().user2.email,
+    getUserInfo().user2.password,
     visualRegressionWebserverEndpoint,
   );
 }

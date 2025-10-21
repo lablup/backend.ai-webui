@@ -8,7 +8,7 @@ import {
   moveToTrashAndVerify,
   restoreVFolderAndVerify,
   shareVFolderAndVerify,
-  userInfo,
+  getUserInfo,
 } from './utils/test-util';
 import { test, expect } from '@playwright/test';
 
@@ -132,7 +132,11 @@ test.describe('VFolder sharing', () => {
   });
 
   test('User can share vFolder', async ({ page, browser }) => {
-    await shareVFolderAndVerify(page, sharingFolderName, userInfo.user2.email);
+    await shareVFolderAndVerify(
+      page,
+      sharingFolderName,
+      getUserInfo().user2.email,
+    );
     const user2_page = await browser.newPage();
     await loginAsUser2(user2_page);
     await acceptAllInvitationAndVerifySpecificFolder(
