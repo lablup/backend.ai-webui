@@ -18,7 +18,7 @@ import {
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -55,6 +55,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
   inputProps,
   ...otherProps
 }) => {
+  'use memo';
   const vfolder = useFragment(
     graphql`
       fragment EditableVFolderNameFragment on VirtualFolderNode {
@@ -93,10 +94,20 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
   const isPendingRenameMutation =
     renameMutation.isPending || optimisticName !== vfolder.name;
 
+  // focus back to the text component after editing for better UX related to keyboard shortcuts
+  const textRef = useRef<HTMLElement>(null);
+  const focusFallback = () => {
+    setTimeout(() => {
+      textRef.current?.focus();
+    }, 0);
+  };
+
   return (
     <>
       {(!isEditing || isPendingRenameMutation) && (
         <Component
+          ref={textRef}
+          tabIndex={-1}
           editable={
             isEditingAllowed && !isPendingRenameMutation
               ? {
@@ -118,6 +129,8 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
               : false
           }
           style={{
+            // after editing, focus this element, remove outline
+            outline: 'none',
             ...style,
             color: isPendingRenameMutation
               ? token.colorTextTertiary
@@ -142,6 +155,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
         <Form
           onFinish={(values) => {
             setIsEditing(false);
+            focusFallback();
             if (values.vfolderName === vfolder.name) {
               return;
             }
@@ -238,7 +252,9 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
               onKeyDown={(e) => {
                 // when press escape key, cancel editing
                 if (e.key === 'Escape') {
+                  e.stopPropagation();
                   setIsEditing(false);
+                  focusFallback();
                   onEditEnd?.();
                 }
               }}
