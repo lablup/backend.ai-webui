@@ -46,7 +46,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
     <BAIFlex
       data-testid={dataTestId}
       direction="column"
-      align="start"
+      align="stretch"
       gap={'xxs'}
     >
       <BAIFlex direction="row" gap={'xxs'}>
@@ -91,6 +91,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             disabled={disabled}
             style={{
               marginTop: token.marginXS,
+              maxWidth: 300,
               ...selectProps?.style,
             }}
             {..._.omit(selectProps, ['style'])}

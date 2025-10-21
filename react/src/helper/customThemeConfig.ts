@@ -29,6 +29,13 @@ type BrandingConfig = {
   companyName?: string;
   brandName?: string;
 };
+export type CustomThemeConfig = {
+  light: ThemeConfig;
+  dark: ThemeConfig;
+  logo: LogoConfig;
+  sider?: SiderConfig;
+  branding?: BrandingConfig;
+};
 let _customTheme:
   | {
       light: ThemeConfig;
@@ -70,7 +77,9 @@ export const loadCustomThemeConfig = () => {
 };
 
 export const useCustomThemeConfig = () => {
-  const [customThemeConfig, setCustomThemeConfig] = useState(_customTheme);
+  const [customThemeConfig, setCustomThemeConfig] = useState<
+    CustomThemeConfig | undefined
+  >(_customTheme);
   useEffect(() => {
     if (!customThemeConfig) {
       const handler = () => {
