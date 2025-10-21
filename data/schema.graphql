@@ -140,6 +140,23 @@ Added in 24.12.0. One of ['read_attribute', 'update_attribute', 'create_compute_
 scalar AgentPermissionField
   @join__type(graph: GRAPHENE)
 
+"""Added in 25.15.0"""
+type AgentResource
+  @join__type(graph: STRAWBERRY)
+{
+  free: JSON!
+  used: JSON!
+  capacity: JSON!
+}
+
+"""Added in 25.15.0"""
+type AgentStats
+  @join__type(graph: STRAWBERRY)
+{
+  """Added in 25.15.0"""
+  totalResource: AgentResource!
+}
+
 """A schema for normal users."""
 type AgentSummary implements Item
   @join__implements(graph: GRAPHENE, interface: "Item")
@@ -295,11 +312,60 @@ type ArtifactRegistry
   type: ArtifactRegistryType!
 }
 
+"""
+Added in 25.15.0.
+
+Represents common metadata for an artifact registry.
+All artifact registry nodes expose that information regardless of type.
+"""
+type ArtifactRegistryMeta implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  name: String!
+  registryId: ID!
+  type: ArtifactRegistryType!
+  url: String!
+}
+
+"""Added in 25.15.0"""
+type ArtifactRegistryMetaConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ArtifactRegistryMetaEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type ArtifactRegistryMetaEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ArtifactRegistryMeta!
+}
+
 enum ArtifactRegistryType
   @join__type(graph: STRAWBERRY)
 {
   HUGGINGFACE @join__enumValue(graph: STRAWBERRY)
   RESERVOIR @join__enumValue(graph: STRAWBERRY)
+}
+
+enum ArtifactRemoteStatus
+  @join__type(graph: STRAWBERRY)
+{
+  SCANNED @join__enumValue(graph: STRAWBERRY)
+  AVAILABLE @join__enumValue(graph: STRAWBERRY)
+  FAILED @join__enumValue(graph: STRAWBERRY)
 }
 
 """Added in 25.14.0"""
@@ -310,6 +376,9 @@ type ArtifactRevision implements Node
   """The Globally Unique ID of this object"""
   id: ID!
   status: ArtifactStatus!
+
+  """Added in 25.15.0"""
+  remoteStatus: ArtifactRemoteStatus
   version: String!
   readme: String
   size: ByteSize
@@ -346,6 +415,9 @@ input ArtifactRevisionFilter
   @join__type(graph: STRAWBERRY)
 {
   status: ArtifactRevisionStatusFilter = null
+
+  """Added in 25.16.0"""
+  remoteStatus: ArtifactRevisionRemoteStatusFilter = null
   version: StringFilter = null
   artifactId: ID = null
   size: IntFilter = null
@@ -378,6 +450,14 @@ enum ArtifactRevisionOrderField
   CREATED_AT @join__enumValue(graph: STRAWBERRY)
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
   STATUS @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 25.16.0"""
+input ArtifactRevisionRemoteStatusFilter
+  @join__type(graph: STRAWBERRY)
+{
+  in: [ArtifactRemoteStatus!] = null
+  equals: ArtifactRemoteStatus = null
 }
 
 """Added in 25.14.0"""
@@ -676,7 +756,7 @@ input ClearImageCustomResourceLimitKey
   @join__type(graph: GRAPHENE)
 {
   image_canonical: String!
-  architecture: String! = "x86_64"
+  architecture: String! = "aarch64"
 }
 
 """Added in 25.6.0."""
@@ -1401,6 +1481,9 @@ type CreateUser
   ok: Boolean
   msg: String
   user: User
+
+  """Added in 25.15.0."""
+  keypair: KeyPair
 }
 
 type CreateUserResourcePolicy
@@ -1436,6 +1519,22 @@ input CreateUserResourcePolicyInput
   max_customized_image_count: Int
 }
 
+"""Added in 25.16.0. Input for creating VFS storage"""
+input CreateVFSStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  name: String!
+  host: String!
+  basePath: String!
+}
+
+"""Added in 25.16.0. Payload for creating VFS storage"""
+type CreateVFSStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  vfsStorage: VFSStorage!
+}
+
 """
 The `DateTime` scalar type represents a DateTime
 value as specified by
@@ -1450,6 +1549,92 @@ type DealiasImage
 {
   ok: Boolean
   msg: String
+}
+
+"""Added in 25.15.0"""
+input DelegateeTarget
+  @join__type(graph: STRAWBERRY)
+{
+  delegateeReservoirId: ID!
+  targetRegistryId: ID!
+}
+
+"""
+Added in 25.15.0.
+
+Input type for delegated import of artifact revisions from a reservoir registry's remote registry.
+Used to specify which artifact revisions should be imported from the remote registry source
+into the local reservoir registry storage.
+"""
+input DelegateImportArtifactsInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of artifact revision IDs of delegatee artifact registry"""
+  artifactRevisionIds: [ID!]!
+
+  """ID of the reservoir registry to delegate the import request to"""
+  delegatorReservoirId: ID = null
+  artifactType: ArtifactType = null
+  delegateeTarget: DelegateeTarget = null
+}
+
+"""
+Added in 25.15.0.
+
+Response payload for delegated artifact import operation.
+Contains the imported artifact revisions and associated background tasks.
+The tasks can be monitored to track the progress of the import operation.
+"""
+type DelegateImportArtifactsPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Connection of artifact revisions that were imported from the reservoir registry's remote registry
+  """
+  artifactRevisions: ArtifactRevisionConnection!
+
+  """List of background tasks created for importing the artifact revisions"""
+  tasks: [ArtifactRevisionImportTask!]!
+}
+
+"""
+Added in 25.15.0.
+
+Input type for delegated scanning of artifacts from a delegatee reservoir registry's remote registry.
+"""
+input DelegateScanArtifactsInput
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the reservoir registry to delegate the scan request to"""
+  delegatorReservoirId: ID = null
+
+  """Target delegatee reservoir registry and its remote registry to scan"""
+  delegateeTarget: DelegateeTarget = null
+
+  """Maximum number of artifacts to scan (max: 500)"""
+  limit: Int!
+
+  """Filter artifacts by type (e.g., model, image, package)"""
+  artifactType: ArtifactType = null
+
+  """Search term to filter artifacts by name or description"""
+  search: String = null
+}
+
+"""
+Added in 25.15.0.
+
+Response payload for delegated artifact scanning operation.
+Contains the list of artifacts discovered during the scan of a reservoir registry's remote registry.
+These artifacts are now available for import or direct use.
+"""
+type DelegateScanArtifactsPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  List of artifacts discovered during the delegated scan from the reservoir registry's remote registry
+  """
+  artifacts: [Artifact!]!
 }
 
 """Added in 25.15.0"""
@@ -1633,6 +1818,20 @@ type DeleteUserResourcePolicy
 {
   ok: Boolean
   msg: String
+}
+
+"""Added in 25.16.0. Input for deleting VFS storage"""
+input DeleteVFSStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Added in 25.16.0. Payload for deleting VFS storage"""
+type DeleteVFSStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
 }
 
 input DeploymentFilter
@@ -2428,6 +2627,13 @@ enum join__Graph {
   GRAPHENE @join__graph(name: "graphene", url: "http://host.docker.internal:8091/admin/gql")
   STRAWBERRY @join__graph(name: "strawberry", url: "http://host.docker.internal:8091/admin/gql/strawberry")
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf).
+"""
+scalar JSON
+  @join__type(graph: STRAWBERRY)
+  @specifiedBy(url: "https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf")
 
 """
 Allows use of a JSON String for input / output from the GraphQL schema.
@@ -3534,7 +3740,7 @@ type Mutation
   ): RescanImages @join__field(graph: GRAPHENE)
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage @join__field(graph: GRAPHENE)
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage @join__field(graph: GRAPHENE)
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
 
   """Added in 25.6.0"""
   clear_image_custom_resource_limit(key: ClearImageCustomResourceLimitKey!): ClearImageCustomResourceLimitPayload @join__field(graph: GRAPHENE)
@@ -3543,7 +3749,7 @@ type Mutation
   forget_image_by_id(image_id: String!): ForgetImageById @join__field(graph: GRAPHENE)
 
   """Deprecated since 25.4.0. Use `forget_image_by_id` instead."""
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
 
   """Added in 25.4.0"""
   purge_image_by_id(
@@ -3555,7 +3761,7 @@ type Mutation
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry @join__field(graph: GRAPHENE)
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage @join__field(graph: GRAPHENE)
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage @join__field(graph: GRAPHENE)
   dealias_image(alias: String!): DealiasImage @join__field(graph: GRAPHENE)
   clear_images(registry: String): ClearImages @join__field(graph: GRAPHENE)
 
@@ -3766,6 +3972,37 @@ type Mutation
   """Added in 25.14.0"""
   importArtifacts(input: ImportArtifactsInput!): ImportArtifactsPayload! @join__field(graph: STRAWBERRY)
 
+  """
+  Added in 25.15.0.
+  
+  Triggers artifact scanning on a remote reservoir registry.
+  
+  This mutation instructs a reservoir-type registry to initiate a scan of artifacts
+  from its associated remote reservoir registry source. The scan process will discover and
+  catalog artifacts available in the remote reservoir, making them accessible
+  through the local reservoir registry.
+  
+  Requirements:
+  - The delegator registry must be of type 'reservoir'
+  - The delegator reservoir registry must have a valid remote registry configuration
+  """
+  delegateScanArtifacts(input: DelegateScanArtifactsInput!): DelegateScanArtifactsPayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 25.15.0.
+  
+  Trigger import of artifact revisions from a remote reservoir registry.
+  
+  This mutation instructs a reservoir-type registry to import specific artifact revisions
+  that were previously discovered during a scan from its remote registry.
+  Note that this operation does not import the artifacts directly into the local registry, but only into the delegator reservoir's storage.
+  
+  Requirements:
+  - The delegator registry must be of type 'reservoir'
+  - The delegator registry must have a valid remote registry configuration
+  """
+  delegateImportArtifacts(input: DelegateImportArtifactsInput!): DelegateImportArtifactsPayload! @join__field(graph: STRAWBERRY)
+
   """Added in 25.14.0"""
   updateArtifact(input: UpdateArtifactInput!): UpdateArtifactPayload! @join__field(graph: STRAWBERRY)
 
@@ -3794,11 +4031,28 @@ type Mutation
   """Added in 25.14.0"""
   deleteObjectStorage(input: DeleteObjectStorageInput!): DeleteObjectStoragePayload! @join__field(graph: STRAWBERRY)
 
-  """Added in 25.14.0"""
-  registerObjectStorageBucket(input: RegisterObjectStorageBucketInput!): RegisterObjectStorageBucketPayload! @join__field(graph: STRAWBERRY)
+  """Added in 25.16.0. Create a new VFS storage"""
+  createVFSStorage(input: CreateVFSStorageInput!): CreateVFSStoragePayload! @join__field(graph: STRAWBERRY)
 
-  """Added in 25.14.0"""
-  unregisterObjectStorageBucket(input: UnregisterObjectStorageBucketInput!): UnregisterObjectStorageBucketPayload! @join__field(graph: STRAWBERRY)
+  """Added in 25.16.0. Update an existing VFS storage"""
+  updateVFSStorage(input: UpdateVFSStorageInput!): UpdateVFSStoragePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.16.0. Delete a VFS storage"""
+  deleteVFSStorage(input: DeleteVFSStorageInput!): DeleteVFSStoragePayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 25.15.0.
+  
+  Registers a new namespace within a storage.
+  """
+  registerStorageNamespace(input: RegisterStorageNamespaceInput!): RegisterStorageNamespacePayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 25.15.0.
+  
+  Unregisters an existing namespace from a storage.
+  """
+  unregisterStorageNamespace(input: UnregisterStorageNamespaceInput!): UnregisterStorageNamespacePayload! @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   createHuggingfaceRegistry(input: CreateHuggingFaceRegistryInput!): CreateHuggingFaceRegistryPayload! @join__field(graph: STRAWBERRY)
@@ -3899,7 +4153,7 @@ type ObjectStorage implements Node
   secretKey: String!
   endpoint: String!
   region: String!
-  namespaces(before: String, after: String, first: Int, last: Int, limit: Int, offset: Int): ObjectStorageNamespaceConnection!
+  namespaces(before: String, after: String, first: Int, last: Int, limit: Int, offset: Int): StorageNamespaceConnection!
 }
 
 """Added in 25.14.0"""
@@ -3923,40 +4177,6 @@ type ObjectStorageEdge
 
   """The item at the end of the edge"""
   node: ObjectStorage!
-}
-
-"""Added in 25.14.0"""
-type ObjectStorageNamespace implements Node
-  @join__implements(graph: STRAWBERRY, interface: "Node")
-  @join__type(graph: STRAWBERRY)
-{
-  """The Globally Unique ID of this object"""
-  id: ID!
-  storageId: ID!
-  bucket: String!
-}
-
-"""Added in 25.14.0"""
-type ObjectStorageNamespaceConnection
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ObjectStorageNamespaceEdge!]!
-  count: Int!
-}
-
-"""An edge in a connection."""
-type ObjectStorageNamespaceEdge
-  @join__type(graph: STRAWBERRY)
-{
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: ObjectStorageNamespace!
 }
 
 enum OrderDirection
@@ -4248,7 +4468,7 @@ type Query
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+    architecture: String = "aarch64"
   ): Image @join__field(graph: GRAPHENE)
   images(
     """
@@ -4558,6 +4778,12 @@ type Query
   """Added in 25.14.0"""
   objectStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ObjectStorageConnection! @join__field(graph: STRAWBERRY)
 
+  """Added in 25.16.0. Get a VFS storage by ID"""
+  vfsStorage(id: ID!): VFSStorage @join__field(graph: STRAWBERRY)
+
+  """Added in 25.16.0. List all VFS storages"""
+  vfsStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFSStorageConnection! @join__field(graph: STRAWBERRY)
+
   """Added in 25.14.0"""
   huggingfaceRegistry(id: ID!): HuggingFaceRegistry @join__field(graph: STRAWBERRY)
 
@@ -4572,6 +4798,9 @@ type Query
 
   """Added in 25.14.0"""
   defaultArtifactRegistry(artifactType: ArtifactType!): ArtifactRegistry @join__field(graph: STRAWBERRY)
+
+  """Added in 25.15.0"""
+  agentStats: AgentStats! @join__field(graph: STRAWBERRY)
 }
 
 type QuotaDetails
@@ -4605,16 +4834,24 @@ type RawServiceConfig
   extraCliParameters: String
 }
 
-"""Added in 25.14.0"""
-input RegisterObjectStorageBucketInput
+"""
+Added in 25.15.0.
+
+Input type for registering a storage namespace.
+"""
+input RegisterStorageNamespaceInput
   @join__type(graph: STRAWBERRY)
 {
   storageId: UUID!
-  bucketName: String!
+  namespace: String!
 }
 
-"""Added in 25.14.0"""
-type RegisterObjectStorageBucketPayload
+"""
+Added in 25.15.0.
+
+Payload returned after storage namespace registration.
+"""
+type RegisterStorageNamespacePayload
   @join__type(graph: STRAWBERRY)
 {
   id: UUID!
@@ -4681,6 +4918,7 @@ type ReservoirRegistry implements Node
   accessKey: String!
   secretKey: String!
   apiVersion: String!
+  remoteArtifactRegistries: ArtifactRegistryMetaConnection!
 }
 
 """Added in 25.14.0"""
@@ -4956,6 +5194,33 @@ type ScanArtifactsPayload
   artifacts: [Artifact!]!
 }
 
+"""Added in 25.15.0. Scheduling event broadcast payload"""
+type SchedulingBroadcastEventPayload
+  @join__type(graph: STRAWBERRY)
+{
+  sessionId: ID!
+  creationId: String!
+  statusTransition: SchedulingStatus!
+  reason: String!
+}
+
+"""Status of session scheduling transitions"""
+enum SchedulingStatus
+  @join__type(graph: STRAWBERRY)
+{
+  PENDING @join__enumValue(graph: STRAWBERRY)
+  SCHEDULED @join__enumValue(graph: STRAWBERRY)
+  PREPARING @join__enumValue(graph: STRAWBERRY)
+  PULLING @join__enumValue(graph: STRAWBERRY)
+  PREPARED @join__enumValue(graph: STRAWBERRY)
+  CREATING @join__enumValue(graph: STRAWBERRY)
+  RUNNING @join__enumValue(graph: STRAWBERRY)
+  TERMINATING @join__enumValue(graph: STRAWBERRY)
+  TERMINATED @join__enumValue(graph: STRAWBERRY)
+  CANCELLED @join__enumValue(graph: STRAWBERRY)
+  ERROR @join__enumValue(graph: STRAWBERRY)
+}
+
 """
 Added in 24.12.0. A string value in the format '<SCOPE_TYPE>:<SCOPE_ID>'. <SCOPE_TYPE> should be one of [system, domain, project, user]. <SCOPE_ID> should be the ID value of the scope. e.g. `domain:default`, `user:123e4567-e89b-12d3-a456-426614174000`.
 """
@@ -5062,6 +5327,53 @@ type SourceInfo
   url: String
 }
 
+"""
+Added in 25.15.0.
+
+Storage namespace provides logical separation of data within a single storage system
+to organize and isolate domain-specific concerns.
+
+Implementation varies by storage type:
+- Object Storage (S3, MinIO): Uses bucket-based namespace separation
+- File System (VFS): Uses directory path prefix for namespace distinction
+"""
+type StorageNamespace implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  storageId: ID!
+  namespace: String!
+}
+
+"""
+Added in 25.15.0.
+
+Storage namespace connection for pagination.
+"""
+type StorageNamespaceConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [StorageNamespaceEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type StorageNamespaceEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: StorageNamespace!
+}
+
 type StorageVolume implements Item
   @join__implements(graph: GRAPHENE, interface: "Item")
   @join__type(graph: GRAPHENE)
@@ -5115,6 +5427,11 @@ type Subscription
   artifactImportProgressUpdated(artifactRevisionId: ID!): ArtifactImportProgressUpdatedPayload!
   deploymentStatusChanged(deploymentId: ID!): DeploymentStatusChangedPayload!
   replicaStatusChanged(revisionId: ID!): ReplicaStatusChangedPayload!
+
+  """
+  Subscribe to real-time scheduling events for a specific session. Streams status transition events during the session lifecycle (PENDING → SCHEDULED → PREPARING → RUNNING → TERMINATED). Added in 25.15.0.
+  """
+  schedulingEventsBySession(sessionId: ID!): SchedulingBroadcastEventPayload!
 }
 
 """Added in 25.5.0."""
@@ -5135,16 +5452,24 @@ type UnloadImage
   task_id: String
 }
 
-"""Added in 25.14.0"""
-input UnregisterObjectStorageBucketInput
+"""
+Added in 25.15.0.
+
+Input type for unregistering a storage namespace.
+"""
+input UnregisterStorageNamespaceInput
   @join__type(graph: STRAWBERRY)
 {
   storageId: UUID!
-  bucketName: String!
+  namespace: String!
 }
 
-"""Added in 25.14.0"""
-type UnregisterObjectStorageBucketPayload
+"""
+Added in 25.15.0.
+
+Payload returned after storage namespace unregistration.
+"""
+type UnregisterStorageNamespacePayload
   @join__type(graph: STRAWBERRY)
 {
   id: UUID!
@@ -5262,6 +5587,23 @@ type UpdateReservoirRegistryPayload
   @join__type(graph: STRAWBERRY)
 {
   reservoir: ReservoirRegistry!
+}
+
+"""Added in 25.16.0. Input for updating VFS storage"""
+input UpdateVFSStorageInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  name: String
+  host: String
+  basePath: String
+}
+
+"""Added in 25.16.0. Payload for updating VFS storage"""
+type UpdateVFSStoragePayload
+  @join__type(graph: STRAWBERRY)
+{
+  vfsStorage: VFSStorage!
 }
 
 type User implements Item
@@ -5526,6 +5868,41 @@ Added in 24.09.0. One of ['clone', 'assign_permission_to_others', 'read_attribut
 """
 scalar VFolderPermissionValueField
   @join__type(graph: GRAPHENE)
+
+"""Added in 25.16.0. VFS Storage configuration"""
+type VFSStorage implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  name: String!
+  host: String!
+  basePath: String!
+}
+
+"""Added in 25.16.0. VFS Storage connection"""
+type VFSStorageConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [VFSStorageEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type VFSStorageEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: VFSStorage!
+}
 
 """Added in 25.14.2."""
 type Viewer

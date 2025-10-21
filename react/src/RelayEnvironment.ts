@@ -1,23 +1,21 @@
 // import { createClient } from "graphql-ws";
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
+import { createClient } from 'graphql-ws';
 import {
   Environment,
   Network,
   RecordSource,
   Store,
   FetchFunction,
-  SubscribeFunction,
   RelayFeatureFlags,
+  RequestParameters,
+  Variables,
+  Observable,
 } from 'relay-runtime';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
-const fetchFn: FetchFunction = async (
-  request,
-  variables,
-  // cacheConfig,
-  // uploadables
-) => {
+const waitForBAIClient = async () => {
   //@ts-ignore
   if (globalThis.backendaiclient === undefined) {
     // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
@@ -33,6 +31,30 @@ const fetchFn: FetchFunction = async (
       document.addEventListener('backend-ai-connected', onBackendAIConnected);
     });
   }
+};
+const getSubscriptionEndpoint = async () => {
+  await waitForBAIClient();
+  let api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
+  if (api_endpoint !== null) {
+    api_endpoint = api_endpoint.replace('http://', 'ws://');
+    api_endpoint = api_endpoint.replace(/^"+|"+$/g, ''); // Remove trailing slashes
+
+    if (api_endpoint.endsWith('/')) {
+      api_endpoint += 'func/admin/gql';
+    } else {
+      api_endpoint += '/func/admin/gql';
+    }
+  }
+  return api_endpoint;
+};
+
+const fetchFn: FetchFunction = async (
+  request,
+  variables,
+  // cacheConfig,
+  // uploadables
+) => {
+  await waitForBAIClient();
 
   const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
@@ -72,8 +94,53 @@ const fetchFn: FetchFunction = async (
   return result;
 };
 
-const subscribeFn: SubscribeFunction | undefined = undefined;
+const subscriptionsClient = createClient({
+  url: getSubscriptionEndpoint,
+  connectionParams: () => {
+    // Note: getSession() is a placeholder function created by you
+    // const session = getSession();
+    // if (!session) {
+    //   return {};
+    // }
+    return {
+      // 'X-BackendAI-SessionID': '--',
+      // Authorization: `Bearer ${session.token}`,
+    };
+  },
+});
 
+function fetchOrSubscribe(
+  operation: RequestParameters,
+  variables: Variables,
+): Observable<any> {
+  return Observable.create((sink) => {
+    if (!operation.text) {
+      return sink.error(new Error('Operation text cannot be empty'));
+    }
+    // const transformedOperation = manipulateGraphQLQueryWithClientDirectives(
+    //   operation.text || '',
+    //   variables,
+    //   (version) => {
+    //     // @ts-ignore
+    //     return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
+    //       version,
+    //     );
+    //   },
+    // );
+
+    return subscriptionsClient.subscribe(
+      {
+        operationName: operation.name,
+        // query: transformedOperation,
+        query: operation.text,
+        variables,
+      },
+      sink,
+    );
+  });
+}
+
+// const subscribeFn: SubscribeFunction | undefined = undefined;
 // if (typeof window !== "undefined") {
 //   // We only want to setup subscriptions if we are on the client.
 //   const subscriptionsClient = createClient({
@@ -102,7 +169,7 @@ const subscribeFn: SubscribeFunction | undefined = undefined;
 
 function createRelayEnvironment() {
   return new Environment({
-    network: Network.create(fetchFn, subscribeFn),
+    network: Network.create(fetchFn, fetchOrSubscribe),
     store: new Store(new RecordSource()),
   });
 }
