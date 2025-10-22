@@ -31,6 +31,10 @@
     "Terminated": "Đã chấm dứt",
     "Utilization": "Sử dụng"
   },
+  "agentStats": {
+    "AgentStats": "Thống kê đại lý",
+    "AgentStatsDescription": "Bảng này hiển thị tất cả các tài nguyên được sử dụng trên tất cả các tổng đài viên trong hệ thống. \nCác giá trị đại diện cho tổng tài nguyên được sử dụng bởi tất cả các phiên hoạt động."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
     "Comparator": "Người so sánh",
@@ -217,6 +221,10 @@
     "Users": "Người dùng",
     "WarningLessRateLimit": "Nếu giá trị Giới hạn tốc độ nhỏ, các hoạt động API như đăng nhập có thể bị chặn.",
     "YouAreAboutToDeleteCredential": "Bạn sắp xóa thông tin xác thực của người dùng này:"
+  },
+  "dashboard": {
+    "Free": "Miễn phí",
+    "Used": "Đã sử dụng"
   },
   "data": {
     "Active": "Tích cực",
@@ -1170,11 +1178,6 @@
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
     "WsproxyAddress": "Địa chỉ máy chủ WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Giới hạn",
-    "RemainingNumber": "Rmaining",
-    "UsingNumber": "Sử dụng"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",
     "AllowedHosts": "Máy chủ được phép",
@@ -2052,10 +2055,10 @@
       "MyAccountInformation": "Thay đổi thông tin người dùng",
       "MyEnvironments": "Môi trường của tôi",
       "MyResources": "Tổng giới hạn tài nguyên của tôi",
-      "MyResourcesDescription": "<p>Bảng điều khiển này hiển thị tổng mức sử dụng tài nguyên và giới hạn trong tất cả các dự án và nhóm tài nguyên.</p><p>Khi áp dụng nhiều giới hạn (như domain, dự án hoặc cặp khóa), giới hạn nghiêm ngặt nhất được sử dụng để tính toán.</p>",
+      "MyResourcesDescription": "<p>Bảng này hiển thị tổng tài nguyên hiện đang được sử dụng và miễn phí trên tất cả các dự án và nhóm tài nguyên.</p><p>Khi áp dụng nhiều giới hạn (chẳng hạn như miền, dự án hoặc cặp khóa), phép tính sẽ sử dụng giới hạn tài nguyên miễn phí hạn chế nhất.</p>",
       "MyResourcesIn": "Tài nguyên của tôi trong",
       "MyResourcesInResourceGroup": "Tài nguyên của tôi trong nhóm tài nguyên",
-      "MyResourcesInResourceGroupDescription": "Bảng điều khiển này hiển thị việc sử dụng tài nguyên hiện tại của bạn và còn lại trong nhóm tài nguyên đã chọn.",
+      "MyResourcesInResourceGroupDescription": "Bảng này hiển thị lượng tài nguyên bạn đã sử dụng và lượng tài nguyên còn trống trong nhóm tài nguyên đã chọn của dự án hiện tại của bạn.",
       "NewPassword": "Mật khẩu mới",
       "NewPasswordAgain": "Mật khẩu mới (một lần nữa)",
       "NewPasswordCannotBeSame": "Vui lòng nhập mật khẩu khác với mật khẩu hiện tại của bạn.",
@@ -2088,7 +2091,7 @@
       "TermsOfService": "Điều khoản dịch vụ",
       "TotalResourcesIn": "Tổng tài nguyên trong",
       "TotalResourcesInResourceGroup": "Tổng tài nguyên trong nhóm tài nguyên",
-      "TotalResourcesInResourceGroupDescription": "Bảng điều khiển này cho thấy tổng tài nguyên được sử dụng và còn lại. \nCác giá trị được tính bằng cách thêm sử dụng và số lượng còn lại của tất cả các tác nhân bằng nhóm tài nguyên đã chọn.",
+      "TotalResourcesInResourceGroupDescription": "Bảng này hiển thị tổng số tài nguyên đã sử dụng và miễn phí trong nhóm tài nguyên đã chọn. \nCác giá trị được tính bằng cách tính tổng số tiền đã sử dụng và số tiền còn trống của tất cả các tác nhân sử dụng nhóm đó.",
       "TotpActivated": "Đã bật 2FA",
       "Update": "Cập nhật",
       "Usage": "Cách sử dụng",

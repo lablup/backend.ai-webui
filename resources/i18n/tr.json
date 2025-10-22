@@ -31,6 +31,10 @@
     "Terminated": "Sonlandırılmış",
     "Utilization": "Kullanım"
   },
+  "agentStats": {
+    "AgentStats": "Temsilci İstatistikleri",
+    "AgentStatsDescription": "Bu panel, sistemdeki tüm aracılarda kullanılan tüm kaynakları gösterir. \nDeğerler, tüm etkin oturumlar tarafından kullanılan toplam kaynakları temsil eder."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Otomatik ölçeklendirme kuralı ekleyin",
     "Comparator": "Karşılaştırıcı",
@@ -217,6 +221,10 @@
     "Users": "Kullanıcılar",
     "WarningLessRateLimit": "Hız Sınırı değeri küçükse, oturum açma gibi API işlemleri engellenebilir.",
     "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:"
+  },
+  "dashboard": {
+    "Free": "Özgür",
+    "Used": "Kullanılmış"
   },
   "data": {
     "Active": "Aktif",
@@ -1170,11 +1178,6 @@
     "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
     "WsproxyAddress": "WSProxy Sunucu Adresi"
   },
-  "resourcePanel": {
-    "Limit": "Sınırlamak",
-    "RemainingNumber": "Zırhlı",
-    "UsingNumber": "Kullanma"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",
     "AllowedHosts": "İzin verilen ana bilgisayarlar",
@@ -2052,10 +2055,10 @@
       "MyAccountInformation": "Kullanıcı Bilgilerini Değiştir",
       "MyEnvironments": "Ortamlarım",
       "MyResources": "Toplam kaynak sınırım",
-      "MyResourcesDescription": "<p>Bu panel, tüm projeler ve kaynak gruplarındaki toplam kaynak kullanımınızı ve limitlerinizi gösterir.</p><p>Birden fazla limit uygulandığında (alan adı, proje veya anahtar çifti gibi), hesaplama için en kısıtlayıcı limit kullanılır.</p>",
+      "MyResourcesDescription": "<p>Bu panel, tüm projelerde ve kaynak gruplarında halihazırda kullanılan ve ücretsiz olan toplam kaynaklarınızı görüntüler.</p><p>Birden fazla sınır uygulandığında (etki alanı, proje veya anahtar çifti gibi), hesaplama en kısıtlayıcı ücretsiz kaynak sınırını kullanır.</p>",
       "MyResourcesIn": "Kaynaklarım",
       "MyResourcesInResourceGroup": "Kaynak Grubundaki Kaynaklarım",
-      "MyResourcesInResourceGroupDescription": "Bu panel, mevcut kaynak kullanımınızı ve seçilen kaynak grubunda kaldığınızı gösterir.",
+      "MyResourcesInResourceGroupDescription": "Bu panel, mevcut projenizin seçilen kaynak grubunda ne kadar kaynak kullandığınızı ve ne kadarının ücretsiz olduğunu gösterir.",
       "NewPassword": "Yeni Şifre",
       "NewPasswordAgain": "Yeni Şifre Tekrar)",
       "NewPasswordCannotBeSame": "Lütfen mevcut şifrenizden farklı bir şifre girin.",
@@ -2088,7 +2091,7 @@
       "TermsOfService": "Kullanım Şartları",
       "TotalResourcesIn": "Toplam Kaynaklar",
       "TotalResourcesInResourceGroup": "Kaynak Grubundaki Toplam Kaynaklar",
-      "TotalResourcesInResourceGroupDescription": "Bu panel, kullanılan ve kalan toplam kaynakları gösterir. \nDeğerler, seçilen kaynak grubunu kullanan tüm ajanların kullanımını ve kalan miktarlarını ekleyerek hesaplanır.",
+      "TotalResourcesInResourceGroupDescription": "Bu panel, seçilen kaynak grubundaki toplam kullanılan ve boş kaynakları gösterir. \nDeğerler, o grubu kullanan tüm acentelerin kullanılmış ve serbest miktarlarının toplanmasıyla hesaplanır.",
       "TotpActivated": "2FA Etkin",
       "Update": "Güncelleme",
       "Usage": "Kullanım",

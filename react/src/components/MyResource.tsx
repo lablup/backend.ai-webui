@@ -2,25 +2,23 @@ import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import { useControllableValue } from 'ahooks';
 import { Segmented, theme } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFlex,
+  BAIFlexProps,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { ReactNode, useMemo, useTransition } from 'react';
+import { ReactNode, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useFetchKey } from 'src/hooks';
 
-interface MyResourceProps {
+interface MyResourceProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
-  displayType?: 'using' | 'remaining';
-  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
   extra?: ReactNode;
 }
 
@@ -49,15 +47,8 @@ const MyResource: React.FC<MyResourceProps> = ({
   });
 
   const resourceSlotsDetails = useResourceSlotsDetails();
-  const [displayType, setDisplayType] = useControllableValue<
-    Exclude<MyResourceProps['displayType'], undefined>
-  >(props, {
-    defaultValue: 'using',
-    trigger: 'onDisplayTypeChange',
-    defaultValuePropName: 'defaultDisplayType',
-  });
 
-  const resourceData = useMemo(() => {
+  const resourceData = (() => {
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
 
@@ -65,11 +56,11 @@ const MyResource: React.FC<MyResourceProps> = ({
 
     const cpuData = cpuSlot
       ? {
-          using: {
+          used: {
             current: convertToNumber(checkPresetInfo?.keypair_using.cpu),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
-          remaining: {
+          free: {
             current: convertToNumber(remainingWithoutResourceGroup.cpu),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
@@ -82,7 +73,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 
     const memoryData = memSlot
       ? {
-          using: {
+          used: {
             current: processMemoryValue(
               checkPresetInfo?.keypair_using.mem,
               memSlot.display_unit,
@@ -92,7 +83,7 @@ const MyResource: React.FC<MyResourceProps> = ({
               memSlot.display_unit,
             ),
           },
-          remaining: {
+          free: {
             current: processMemoryValue(
               remainingWithoutResourceGroup.mem,
               memSlot.display_unit,
@@ -116,7 +107,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 
         return {
           key,
-          using: {
+          used: {
             current: convertToNumber(
               checkPresetInfo?.keypair_using[key as ResourceSlotName],
             ),
@@ -124,7 +115,7 @@ const MyResource: React.FC<MyResourceProps> = ({
               resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
             ),
           },
-          remaining: {
+          free: {
             current: convertToNumber(
               remainingWithoutResourceGroup.accelerators[key],
             ),
@@ -142,12 +133,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       .value();
 
     return { cpu: cpuData, memory: memoryData, accelerators };
-  }, [
-    checkPresetInfo,
-    remainingWithoutResourceGroup,
-    resourceLimitsWithoutResourceGroup,
-    resourceSlotsDetails,
-  ]);
+  })();
 
   return (
     <BAIFlex
@@ -156,27 +142,24 @@ const MyResource: React.FC<MyResourceProps> = ({
       style={{
         paddingInline: token.paddingXL,
         paddingBottom: token.padding,
+        ...props.style,
       }}
+      {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
         title={t('webui.menu.MyResources')}
         tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
         extra={
           <BAIFlex gap={'xs'}>
-            <Segmented<Exclude<MyResourceProps['displayType'], undefined>>
+            <Segmented
               size="small"
               options={[
                 {
-                  label: t('resourcePanel.UsingNumber'),
-                  value: 'using',
-                },
-                {
-                  value: 'remaining',
-                  label: t('resourcePanel.Limit'),
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
               ]}
-              value={displayType}
-              onChange={(v) => setDisplayType(v)}
+              value={'used'}
             />
             <BAIFetchKeyButton
               size="small"
@@ -197,7 +180,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 
       <ResourceStatistics
         resourceData={resourceData}
-        displayType={displayType}
+        displayType="used"
         showProgress={true}
       />
     </BAIFlex>

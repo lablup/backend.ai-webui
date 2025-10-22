@@ -14,17 +14,18 @@ import {
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
+  BAIFlexProps,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFetchKey } from 'src/hooks';
 
-interface MyResourceWithinResourceGroupProps {
+interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
   fetchKey?: string;
   refetching?: boolean;
-  displayType?: 'using' | 'remaining';
-  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  displayType?: 'used' | 'free';
+  onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
@@ -54,7 +55,7 @@ const MyResourceWithinResourceGroup: React.FC<
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<MyResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
-    defaultValue: 'remaining',
+    defaultValue: 'free',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -69,14 +70,14 @@ const MyResourceWithinResourceGroup: React.FC<
           ?.cpu,
       )
         ? {
-            using: {
+            used: {
               current: convertToNumber(
                 checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
                   ?.using?.cpu,
               ),
               total: undefined, // No total for resource group view
             },
-            remaining: {
+            free: {
               current: convertToNumber(
                 checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
                   ?.remaining?.cpu,
@@ -97,7 +98,7 @@ const MyResourceWithinResourceGroup: React.FC<
           ?.mem,
       )
         ? {
-            using: {
+            used: {
               current: processMemoryValue(
                 checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
                   ?.using?.mem,
@@ -105,7 +106,7 @@ const MyResourceWithinResourceGroup: React.FC<
               ),
               total: undefined,
             },
-            remaining: {
+            free: {
               current: processMemoryValue(
                 checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
                   ?.remaining?.mem,
@@ -151,11 +152,11 @@ const MyResourceWithinResourceGroup: React.FC<
 
         return {
           key,
-          using: {
+          used: {
             current: usingCurrent,
             total: undefined,
           },
-          remaining: {
+          free: {
             current: remainingCurrent,
             total: undefined,
           },
@@ -178,7 +179,9 @@ const MyResourceWithinResourceGroup: React.FC<
       style={{
         paddingInline: token.paddingXL,
         paddingBottom: token.padding,
+        ...props.style,
       }}
+      {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
         title={
@@ -212,12 +215,12 @@ const MyResourceWithinResourceGroup: React.FC<
               size="small"
               options={[
                 {
-                  label: t('resourcePanel.UsingNumber'),
-                  value: 'using',
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
                 {
-                  label: t('resourcePanel.RemainingNumber'),
-                  value: 'remaining',
+                  label: t('dashboard.Free'),
+                  value: 'free',
                 },
               ]}
               value={displayType}

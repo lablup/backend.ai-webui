@@ -4,14 +4,16 @@ import { theme } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFlex,
+  BAIFlexProps,
   BAIRowWrapWithDividers,
 } from 'backend.ai-ui';
+import _ from 'lodash';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { SessionCountDashboardItemFragment$key } from 'src/__generated__/SessionCountDashboardItemFragment.graphql';
 
-interface SessionCountDashboardItemProps {
+interface SessionCountDashboardItemProps extends BAIFlexProps {
   queryRef: SessionCountDashboardItemFragment$key;
   isRefetching?: boolean;
   title?: string;
@@ -21,6 +23,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
   queryRef,
   isRefetching,
   title,
+  ...props
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -80,7 +83,9 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
         paddingLeft: token.paddingXL,
         paddingRight: token.paddingXL,
         height: '100%',
+        ...props.style,
       }}
+      {..._.omit(props, ['style'])}
     >
       {/* Fixed Title Section */}
       <BAIBoardItemTitle

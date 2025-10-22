@@ -31,6 +31,10 @@
     "Terminated": "Terminato",
     "Utilization": "Utilizzo"
   },
+  "agentStats": {
+    "AgentStats": "Statistiche dell'agente",
+    "AgentStatsDescription": "Questo pannello mostra tutte le risorse utilizzate in tutti gli agenti nel sistema. \nI valori rappresentano le risorse totali utilizzate da tutte le sessioni attive."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
     "Comparator": "Comparatore",
@@ -216,6 +220,10 @@
     "Users": "Utenti",
     "WarningLessRateLimit": "Se il valore di Rate Limit è piccolo, le operazioni API come il login possono essere bloccate.",
     "YouAreAboutToDeleteCredential": "Stai per eliminare le credenziali di questo utente:"
+  },
+  "dashboard": {
+    "Free": "Gratuito",
+    "Used": "Usato"
   },
   "data": {
     "Active": "Attivo",
@@ -1168,11 +1176,6 @@
     "TypeResourceGroupNameToDelete": "Digita il nome del gruppo di risorse da eliminare",
     "WsproxyAddress": "Indirizzo del server WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Limite",
-    "RemainingNumber": "Rmaining",
-    "UsingNumber": "Usando"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Stai per eliminare questa policy sulle risorse:",
     "AllowedHosts": "Host consentiti",
@@ -2049,10 +2052,10 @@
       "MyAccountInformation": "Modifica informazioni utente User",
       "MyEnvironments": "I miei ambienti",
       "MyResources": "Il mio limite di risorse totali",
-      "MyResourcesDescription": "<p>Questo pannello mostra l'utilizzo totale delle risorse e i limiti in tutti i progetti e gruppi di risorse.</p><p>Quando vengono applicati più limiti (come dominio, progetto o coppia di chiavi), viene utilizzato il limite più restrittivo per il calcolo.</p>",
+      "MyResourcesDescription": "<p>Questo pannello mostra le risorse totali attualmente utilizzate e gratuite in tutti i progetti e gruppi di risorse.</p><p>Quando vengono applicati più limiti (come dominio, progetto o coppia di chiavi), il calcolo utilizza il limite di risorse gratuite più restrittivo.</p>",
       "MyResourcesIn": "Le mie risorse in",
       "MyResourcesInResourceGroup": "Le mie risorse nel gruppo di risorse",
-      "MyResourcesInResourceGroupDescription": "Questo pannello mostra il tuo attuale utilizzo della mia risorsa e rimanendo nel gruppo di risorse selezionato.",
+      "MyResourcesInResourceGroupDescription": "Questo pannello mostra la quantità di risorse che hai utilizzato e la quantità disponibile nel gruppo di risorse selezionato del tuo progetto corrente.",
       "NewPassword": "Nuova password",
       "NewPasswordAgain": "Conferma la nuova password)",
       "NewPasswordCannotBeSame": "Inserire una password diversa da quella attuale.",
@@ -2085,7 +2088,7 @@
       "TermsOfService": "Termini di servizio",
       "TotalResourcesIn": "Risorse totali in",
       "TotalResourcesInResourceGroup": "Risorse totali nel gruppo di risorse",
-      "TotalResourcesInResourceGroupDescription": "Questo pannello mostra le risorse totali utilizzate e rimanenti. \nI valori vengono calcolati aggiungendo l'utilizzo e le quantità rimanenti di tutti gli agenti utilizzando il gruppo di risorse selezionato.",
+      "TotalResourcesInResourceGroupDescription": "Questo pannello mostra le risorse totali utilizzate e gratuite nel gruppo di risorse selezionato. \nI valori vengono calcolati sommando gli importi utilizzati e quelli gratuiti di tutti gli agenti che utilizzano quel gruppo.",
       "TotpActivated": "2FA abilitato",
       "Update": "Aggiornare",
       "Usage": "Utilizzo",

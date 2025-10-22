@@ -138,7 +138,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       titleStyle: {
         paddingLeft: 0,
       },
-      ..._.omit(props, ['style']),
+      ..._.omit(props, ['style', 'title']),
     };
 
     switch (currentPanelType) {

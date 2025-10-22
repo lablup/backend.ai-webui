@@ -31,6 +31,10 @@
     "Terminated": "종료됨",
     "Utilization": "사용량"
   },
+  "agentStats": {
+    "AgentStats": "에이전트 통계",
+    "AgentStatsDescription": "이 패널은 시스템 내 모든 에이전트가 사용 중인 전체 자원을 보여줍니다. 값은 모든 활성 세션에서 사용 중인 자원의 총합을 나타냅니다."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "오토스케일링 규칙 추가",
     "Comparator": "연산자",
@@ -219,6 +223,10 @@
     "Users": "사용자",
     "WarningLessRateLimit": "Rate Limit 값이 작으면 로그인 등 API 작업이 차단될 수 있습니다.",
     "YouAreAboutToDeleteCredential": "다음 사용자의 자격증명을 삭제하려고 합니다:"
+  },
+  "dashboard": {
+    "Free": "사용 가능",
+    "Used": "사용 중"
   },
   "data": {
     "Active": "활성",
@@ -487,7 +495,7 @@
       "Insufficient": "부족",
       "Status": "상태",
       "StatusOfSelectedHost": "선택한 호스트 상태",
-      "Used": "사용중"
+      "Used": "사용 중"
     }
   },
   "desktopNotification": {
@@ -1174,11 +1182,6 @@
     "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",
     "WsproxyAddress": "WSProxy 서버 주소"
   },
-  "resourcePanel": {
-    "Limit": "허용량",
-    "RemainingNumber": "가용량",
-    "UsingNumber": "사용량"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
     "AllowedHosts": "허용된 호스트",
@@ -1314,7 +1317,7 @@
     "ForceUseV2Proxy": "V2 프록시 강제 사용",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(메모리)",
-    "Gaudi2Enabled": "Gaudi 2 NPU 사용중",
+    "Gaudi2Enabled": "Gaudi 2 NPU 사용 중",
     "GracePeriod": "유예 기간",
     "GracePeriodDesc": "자원 사용량 기반 체커를 지정된 시간 동안 작동하지 않게 합니다. 이 시간이 지나기 전에는 사용량이 적더라도 연산 세션이 삭제되지 않습니다.",
     "Host": "호스트",
@@ -1831,9 +1834,9 @@
     }
   },
   "summary": {
-    "ATOMEnabled": "ATOM NPU 사용중",
+    "ATOMEnabled": "ATOM NPU 사용 중",
     "ATOMMaxEnabled": "ATOM Max 지원",
-    "ATOMPlusEnabled": "ATOM+ NPU 사용중",
+    "ATOMPlusEnabled": "ATOM+ NPU 사용 중",
     "Accept": "허용",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 이름: ",
     "ActiveSessions": "활성 세션",
@@ -1850,29 +1853,29 @@
     "DownloadWebUIApp": "데스크톱 앱 다운로드",
     "FastTrack": "FastTrack",
     "FolderName": "폴더 이름",
-    "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용중",
-    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용중",
-    "IPUEnabled": "IPU NPU 사용중",
+    "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용 중",
+    "HyperaccelLPUEnabled": "Hyperaccel LPU 사용 중",
+    "IPUEnabled": "IPU NPU 사용 중",
     "Invitation": "초대",
     "MaintainKeypairs": "키페어 관리",
     "NoAnnouncement": "표시할 안내문이 없습니다.",
     "NoInvitations": "초대받은 폴더가 없습니다.",
     "Permission": "권한",
     "RNGDEnabled": "RNGD NPU 사용 중",
-    "ROCMGPUEnabled": "ROCm GPU 사용중",
+    "ROCMGPUEnabled": "ROCm GPU 사용 중",
     "Reserved": "예약중",
     "ReservedShort": "예약",
     "ResourceStatistics": "자원 사용량",
     "StartMenu": "시작",
     "SystemMaintenance": "시스템 유지보수",
     "SystemResources": "시스템 자원",
-    "TPUEnabled": "TPU 사용중",
+    "TPUEnabled": "TPU 사용 중",
     "Total": "전체",
     "UpdateEnvironmentImages": "실행 환경 이미지 업데이트",
     "UploadFiles": "파일 업로드",
-    "Used": "사용중",
+    "Used": "사용 중",
     "Using": "사용",
-    "WarboyEnabled": "Warboy NPU 사용중"
+    "WarboyEnabled": "Warboy NPU 사용 중"
   },
   "table": {
     "SearchTableColumn": "테이블 열 검색",
@@ -1948,7 +1951,7 @@
     "DescMyKeypairInfo": "내 키페어 정보 보기",
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
     "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
-    "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
+    "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용 중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
     "DescSSHKeypairManagement": "랜덤 생성 또는 수동 입력을 통해 SSH 키페어를 변경할 수 있습니다.",
     "DescScriptAllDeleted": "생성되었던 모든 사용자 스크립트가 삭제되었습니다.",
     "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
@@ -2057,10 +2060,10 @@
       "MyAccountInformation": "사용자 정보 변경",
       "MyEnvironments": "나의 실행 환경",
       "MyResources": "나의 총자원 제한",
-      "MyResourcesDescription": "<p>이 패널은 모든 프로젝트와 리소스 그룹을 합산한 나의 전체 자원 사용량과 허용량을 보여줍니다.</p><p>여러 제한(도메인, 프로젝트, 키페어 등)이 복합적으로 적용될 경우, 가장 엄격한 제한 기준에 따라 허용량이 계산됩니다.</p>",
-      "MyResourcesIn": "자원 그룹 내 나의 자원",
+      "MyResourcesDescription": "<p>이 패널에서는 모든 프로젝트와 리소스 그룹의 자원 중 현재 사용 중인 양과 사용 가능한 양을 합산해서 보여줍니다.</p><p>여러 제한(도메인, 프로젝트, 키페어 등)이 복합적으로 적용될 경우, 가장 엄격한 제한 기준에 따라 사용 가능 자원이 계산됩니다.</p>",
+      "MyResourcesIn": "자원 그룹별 나의 자원",
       "MyResourcesInResourceGroup": "자원 그룹 내 나의 자원",
-      "MyResourcesInResourceGroupDescription": "이 패널은 선택한 자원 그룹에서 내 나의 자원 사용량과 가용량을 보여줍니다.",
+      "MyResourcesInResourceGroupDescription": "이 패널에서는 현재 프로젝트의 선택된 자원 그룹에서 내가 사용 중인 자원과 사용 가능한 잔여 자원을 보여줍니다.",
       "NewPassword": "새 비밀번호",
       "NewPasswordAgain": "새 비밀번호 (재입력)",
       "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해 주세요.",
@@ -2091,9 +2094,9 @@
       "Summary": "요약",
       "Tasks": "작업",
       "TermsOfService": "약관",
-      "TotalResourcesIn": "자원 그룹 내 총자원",
+      "TotalResourcesIn": "자원 그룹별 총자원",
       "TotalResourcesInResourceGroup": "자원 그룹 내 총자원",
-      "TotalResourcesInResourceGroupDescription": "이 패널은 총 사용량과 남은 자원량을 보여줍니다. 선택한 자원 그룹을 사용하는 모든 노드의 사용량과 남은 자원을 합산하여 계산합니다.",
+      "TotalResourcesInResourceGroupDescription": "이 패널은 선택한 자원 그룹에서 총 사용 중인 자원과 사용 가능한 자원을 보여줍니다. 값은 해당 자원 그룹을 사용하는 모든 에이전트의 사용량과 사용 가능량을 합산하여 계산됩니다.",
       "TotpActivated": "이중 인증 사용",
       "Update": "변경",
       "Usage": "사용량",

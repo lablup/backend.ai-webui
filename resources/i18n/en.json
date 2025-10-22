@@ -31,6 +31,11 @@
     "Terminated": "Terminated",
     "Utilization": "Utilization"
   },
+  "agentStats": {
+    "AgentStats": "Agent Statistics",
+    "AgentStatsDescription": "This panel shows all used resources across all agents in the system. The values represent the total used resources by all active sessions.",
+    "UsedResources": "Used Resources"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Add Auto Scaling Rule",
     "Comparator": "Comparator",
@@ -219,6 +224,10 @@
     "Users": "Users",
     "WarningLessRateLimit": "If the Rate Limit value is small, API operations such as login may be blocked.",
     "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:"
+  },
+  "dashboard": {
+    "Free": "Free",
+    "Used": "Used"
   },
   "data": {
     "Active": "Active",
@@ -1129,7 +1138,7 @@
     "SuccessFullyPulledArtifact": "Successfully pulled artifact {{name}}: {{version}}",
     "Type": "Type",
     "Version": "Version",
-    "VersionList": "Available List"
+    "VersionList": "Available List "
   },
   "resourceGroup": {
     "Activate": "Activate",
@@ -1174,11 +1183,6 @@
     "TimeoutSeconds": "Seconds",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
     "WsproxyAddress": "WSProxy Server Address"
-  },
-  "resourcePanel": {
-    "Limit": "Limit",
-    "RemainingNumber": "Remaining",
-    "UsingNumber": "Using"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: ",
@@ -2059,10 +2063,10 @@
       "MyAccountInformation": "My Account Information",
       "MyEnvironments": "My Environments",
       "MyResources": "My Total Resources Limit",
-      "MyResourcesDescription": "<p>This panel shows your total resource usage and limits across all projects and resource groups.</p><p>When multiple limits are applied (such as domain, project, or keypair), the most restrictive limit is used for calculation.</p>",
+      "MyResourcesDescription": "<p>This panel displays your total resources currently used and free across all projects and resource groups.</p><p>When multiple limits are applied (such as domain, project, or keypair), the calculation uses the most restrictive free resource limit.</p>",
       "MyResourcesIn": "My Resources in",
       "MyResourcesInResourceGroup": "My Resources in Resource Group",
-      "MyResourcesInResourceGroupDescription": "This panel shows your current my resource usage and remaining in the selected resource group.",
+      "MyResourcesInResourceGroupDescription": "This panel shows how much resource you have used and how much is free in the selected resource group of your current project.",
       "NewPassword": "New password",
       "NewPasswordAgain": "New password (again)",
       "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
@@ -2094,7 +2098,7 @@
       "TermsOfService": "Terms of Service",
       "TotalResourcesIn": "Total Resources in",
       "TotalResourcesInResourceGroup": "Total Resources in Resource Group",
-      "TotalResourcesInResourceGroupDescription": "This panel shows the total used and remaining resources. The values are calculated by adding up the usage and remaining amounts of all agents using the selected resource group.",
+      "TotalResourcesInResourceGroupDescription": "This panel shows the total used and free resources in the selected resource group. The values are calculated by summing the used and free amounts of all agents using that group.",
       "TotpActivated": "2FA Enabled",
       "Update": "Update",
       "Usage": "Usage",

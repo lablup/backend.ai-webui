@@ -31,6 +31,10 @@
     "Terminated": "終了しました",
     "Utilization": "使用量"
   },
+  "agentStats": {
+    "AgentStats": "エージェントの統計",
+    "AgentStatsDescription": "このパネルには、システム内のすべてのエージェントにわたって使用されているすべてのリソースが表示されます。\n値は、すべてのアクティブなセッションで使用されたリソースの合計を表します。"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "自動スケーリングルールを追加します",
     "Comparator": "コンパレータ",
@@ -216,6 +220,10 @@
     "Users": "ユーザー",
     "WarningLessRateLimit": "Rate Limit値が小さいと、ログインなどのAPI操作がブロックされることがあります。",
     "YouAreAboutToDeleteCredential": "このユーザーの資格情報を削除しようとしています:"
+  },
+  "dashboard": {
+    "Free": "無料",
+    "Used": "使用済み"
   },
   "data": {
     "Active": "アクティブ",
@@ -1169,11 +1177,6 @@
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
     "WsproxyAddress": "WSProxy サーバアドレス"
   },
-  "resourcePanel": {
-    "Limit": "制限",
-    "RemainingNumber": "rmaining",
-    "UsingNumber": "使用"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
     "AllowedHosts": "許可されたホスト",
@@ -2051,10 +2054,10 @@
       "MyAccountInformation": "ユーザー情報の変更",
       "MyEnvironments": "利用環境",
       "MyResources": "私の総リソース制限",
-      "MyResourcesDescription": "<p>このパネルは、全てのプロジェクトとリソースグループを合算した総リソース使用量と制限を表示します。</p><p>複数の制限（ドメイン、プロジェクト、キーペアなど）が適用される場合、最も厳しい制限に基づいて計算されます。</p>",
+      "MyResourcesDescription": "<p>このパネルには、すべてのプロジェクトおよびリソース グループにわたって現在使用されているリソースと空きリソースの合計が表示されます。</p><p>複数の制限が適用されている場合 (ドメイン、プロジェクト、キーペアなど)、計算では最も制限の厳しい無料リソース制限が使用されます。</p>",
       "MyResourcesIn": "私のリソース",
       "MyResourcesInResourceGroup": "リソースグループの私のリソース",
-      "MyResourcesInResourceGroupDescription": "このパネルは、現在の私のリソースの使用と選択したリソースグループに残っていることを示しています。",
+      "MyResourcesInResourceGroupDescription": "このパネルには、現在のプロジェクトで選択したリソース グループで使用したリソースの量と空き容量が表示されます。",
       "NewPassword": "新しいパスワード",
       "NewPasswordAgain": "新しいパスワードを再入力）",
       "NewPasswordCannotBeSame": "既存のパスワードとは異なる新しいパスワードを入力してください。",
@@ -2087,7 +2090,7 @@
       "TermsOfService": "利用規約",
       "TotalResourcesIn": "総リソース",
       "TotalResourcesInResourceGroup": "リソースグループの総リソース",
-      "TotalResourcesInResourceGroupDescription": "このパネルは、使用されている合計と残りのリソースを示しています。\n値は、選択したリソースグループを使用して、すべてのエージェントの使用量と残りの量を追加することによって計算されます。",
+      "TotalResourcesInResourceGroupDescription": "このパネルには、選択したリソース グループ内の使用済みリソースと空きリソースの合計が表示されます。\n値は、そのグループを使用するすべてのエージェントの使用量と空き量を合計することによって計算されます。",
       "TotpActivated": "二要素認証の使用",
       "Update": "更新",
       "Usage": "使用法",

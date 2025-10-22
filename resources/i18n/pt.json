@@ -31,6 +31,10 @@
     "Terminated": "Rescindido",
     "Utilization": "Utilização"
   },
+  "agentStats": {
+    "AgentStats": "Estatísticas do Agente",
+    "AgentStatsDescription": "Este painel mostra todos os recursos usados ​​em todos os agentes do sistema. \nOs valores representam o total de recursos usados ​​por todas as sessões ativas."
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Adicionar regra de escala automática",
     "Comparator": "Comparador",
@@ -217,6 +221,10 @@
     "Users": "Comercial",
     "WarningLessRateLimit": "Se o valor do Limite de taxa for pequeno, as operações da API, como o início de sessão, podem ser bloqueadas.",
     "YouAreAboutToDeleteCredential": "Você está prestes a excluir a credencial deste usuário:"
+  },
+  "dashboard": {
+    "Free": "Livre",
+    "Used": "Usado"
   },
   "data": {
     "Active": "Ativo",
@@ -1169,11 +1177,6 @@
     "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
     "WsproxyAddress": "Endereço do servidor WSProxy"
   },
-  "resourcePanel": {
-    "Limit": "Limite",
-    "RemainingNumber": "RMaining",
-    "UsingNumber": "Usando"
-  },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",
     "AllowedHosts": "Hosts permitidos",
@@ -2051,10 +2054,10 @@
       "MyAccountInformation": "Alterar as informações do usuário",
       "MyEnvironments": "Meus ambientes",
       "MyResources": "Meu limite total de recursos",
-      "MyResourcesDescription": "<p>Este painel mostra o uso total de recursos e limites em todos os projetos e grupos de recursos.</p><p>Quando múltiplos limites são aplicados (como domínio, projeto ou par de chaves), o limite mais restritivo é usado para o cálculo.</p>",
+      "MyResourcesDescription": "<p>Este painel exibe o total de recursos atualmente usados ​​e gratuitos em todos os projetos e grupos de recursos.</p><p>Quando vários limites são aplicados (como domínio, projeto ou par de chaves), o cálculo usa o limite de recursos livres mais restritivo.</p>",
       "MyResourcesIn": "Meus recursos em",
       "MyResourcesInResourceGroup": "Meus recursos em grupo de recursos",
-      "MyResourcesInResourceGroupDescription": "Este painel mostra o uso atual do meu recurso e permanecendo no grupo de recursos selecionados.",
+      "MyResourcesInResourceGroupDescription": "Este painel mostra quantos recursos você usou e quantos estão livres no grupo de recursos selecionado do seu projeto atual.",
       "NewPassword": "Nova Senha",
       "NewPasswordAgain": "Nova senha (novamente)",
       "NewPasswordCannotBeSame": "Introduza uma palavra-passe diferente da sua palavra-passe atual.",
@@ -2087,7 +2090,7 @@
       "TermsOfService": "Termos de serviço",
       "TotalResourcesIn": "Recursos totais em",
       "TotalResourcesInResourceGroup": "Recursos totais no grupo de recursos",
-      "TotalResourcesInResourceGroupDescription": "Este painel mostra o total de recursos usados ​​e restantes. \nOs valores são calculados adicionando o uso e as quantidades restantes de todos os agentes usando o grupo de recursos selecionados.",
+      "TotalResourcesInResourceGroupDescription": "Este painel mostra o total de recursos usados ​​e livres no grupo de recursos selecionado. \nOs valores são calculados somando os valores utilizados e livres de todos os agentes que utilizam esse grupo.",
       "TotpActivated": "2FA ativado",
       "Update": "Atualizar",
       "Usage": "Uso",

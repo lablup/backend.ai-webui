@@ -5,7 +5,11 @@ import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
+import {
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -19,6 +23,7 @@ import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import ActiveAgents from 'src/components/ActiveAgents';
+import AgentStats from 'src/components/AgentStats';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const AdminDashboardPage: React.FC = () => {
@@ -28,6 +33,7 @@ const AdminDashboardPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
@@ -39,12 +45,15 @@ const AdminDashboardPage: React.FC = () => {
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
 
+  const isAgentStatsSupported = baiClient.supports('agent-stats');
+
   const queryRef = useLazyLoadQuery<AdminDashboardPageQuery>(
     graphql`
       query AdminDashboardPageQuery(
         $scopeId: ScopeField
         $resourceGroup: String
         $skipTotalResourceWithinResourceGroup: Boolean!
+        $skipAgentStats: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
       ) {
@@ -58,12 +67,14 @@ const AdminDashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
+        ...AgentStatsFragment @skip(if: $skipAgentStats) @alias
       }
     `,
     {
       scopeId: `project:${currentProject.id}`,
       resourceGroup: currentResourceGroup || 'default',
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
+      skipAgentStats: !isAgentStatsSupported,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
     },
@@ -122,6 +133,33 @@ const AdminDashboardPage: React.FC = () => {
         ),
       },
     },
+    isAgentStatsSupported &&
+      queryRef.AgentStatsFragment && {
+        id: 'agentStats',
+        rowSpan: 2,
+        columnSpan: 2,
+        definition: {
+          minRowSpan: 2,
+          minColumnSpan: 2,
+        },
+        data: {
+          content: (
+            <Suspense
+              fallback={
+                <Skeleton
+                  active
+                  style={{ padding: `0px ${token.marginMD}px` }}
+                />
+              }
+            >
+              <AgentStats
+                queryRef={queryRef.AgentStatsFragment}
+                isRefetching={isPendingIntervalRefetch}
+              />
+            </Suspense>
+          ),
+        },
+      },
     {
       id: 'activeAgents',
       rowSpan: 4,

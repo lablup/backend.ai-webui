@@ -106,6 +106,7 @@ export type MenuKeys =
   | 'resource-policy'
   | 'reservoir'
   // superAdminMenu keys
+  | 'admin-dashboard'
   | 'agent'
   | 'settings'
   | 'maintenance'
@@ -307,7 +308,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       },
   ]);
 
-  const superAdminMenu: MenuProps['items'] = [
+  const superAdminMenu: MenuProps['items'] = filterOutEmpty([
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
@@ -334,7 +335,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
     },
-  ];
+  ]);
 
   const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,

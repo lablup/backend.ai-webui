@@ -16,6 +16,7 @@ import {
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
+  BAIFlexProps,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
@@ -30,11 +31,11 @@ import { graphql, useRefetchableFragment } from 'react-relay';
 import { useSuspendedBackendaiClient } from 'src/hooks';
 import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
-interface TotalResourceWithinResourceGroupProps {
+interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
   refetching?: boolean;
-  displayType?: 'using' | 'remaining';
-  onDisplayTypeChange?: (type: 'using' | 'remaining') => void;
+  displayType?: 'used' | 'free';
+  onDisplayTypeChange?: (type: 'used' | 'free') => void;
   extra?: ReactNode;
 }
 
@@ -66,7 +67,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       @argumentDefinitions(
         resourceGroup: { type: "String" }
         isSuperAdmin: { type: "Boolean!" }
-        agentNodeFilter: { type: "String" }
+        agentNodeFilter: { type: "String!" }
       )
       @refetchable(
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
@@ -88,8 +89,8 @@ const TotalResourceWithinResourceGroup: React.FC<
           total_count
         }
         agent_nodes(filter: $agentNodeFilter)
-          @include(if: $isSuperAdmin)
-          @since(version: "24.12.0") {
+          @since(version: "24.12.0")
+          @include(if: $isSuperAdmin) {
           edges {
             node {
               id
@@ -110,7 +111,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   const [displayType, setDisplayType] = useControllableValue<
     Exclude<TotalResourceWithinResourceGroupProps['displayType'], undefined>
   >(props, {
-    defaultValue: 'remaining',
+    defaultValue: 'free',
     trigger: 'onDisplayTypeChange',
     defaultValuePropName: 'defaultDisplayType',
   });
@@ -171,11 +172,11 @@ const TotalResourceWithinResourceGroup: React.FC<
 
     const cpuData = cpuSlot
       ? {
-          using: {
+          used: {
             current: convertToNumber(totalOccupiedSlots['cpu'] || 0),
             total: convertToNumber(totalAvailableSlots['cpu'] || 0),
           },
-          remaining: {
+          free: {
             current: convertToNumber(
               subNumberWithUnits(
                 _.toString(totalAvailableSlots['cpu'] || 0),
@@ -194,7 +195,7 @@ const TotalResourceWithinResourceGroup: React.FC<
 
     const memoryData = memSlot
       ? {
-          using: {
+          used: {
             current: processMemoryValue(
               totalOccupiedSlots['mem'] || 0,
               memSlot.display_unit,
@@ -204,7 +205,7 @@ const TotalResourceWithinResourceGroup: React.FC<
               memSlot.display_unit,
             ),
           },
-          remaining: {
+          free: {
             current: processMemoryValue(
               subNumberWithUnits(
                 _.toString(totalAvailableSlots['mem'] || 0),
@@ -244,11 +245,11 @@ const TotalResourceWithinResourceGroup: React.FC<
 
         return {
           key,
-          using: {
+          used: {
             current: processAcceleratorValue(occupied),
             total: processAcceleratorValue(available),
           },
-          remaining: {
+          free: {
             current: processAcceleratorValue(remaining),
             total: processAcceleratorValue(available),
           },
@@ -259,7 +260,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         };
       })
       .compact()
-      .filter((item) => !!(item.using.current || item.using.total))
+      .filter((item) => !!(item.used.current || item.used.total))
       .value();
 
     return { cpu: cpuData, memory: memoryData, accelerators };
@@ -272,7 +273,9 @@ const TotalResourceWithinResourceGroup: React.FC<
       style={{
         paddingInline: token.paddingXL,
         paddingBottom: token.padding,
+        ...props.style,
       }}
+      {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
         title={
@@ -307,12 +310,12 @@ const TotalResourceWithinResourceGroup: React.FC<
               size="small"
               options={[
                 {
-                  label: t('resourcePanel.UsingNumber'),
-                  value: 'using',
+                  label: t('dashboard.Used'),
+                  value: 'used',
                 },
                 {
-                  value: 'remaining',
-                  label: t('resourcePanel.RemainingNumber'),
+                  label: t('dashboard.Free'),
+                  value: 'free',
                 },
               ]}
               value={displayType}

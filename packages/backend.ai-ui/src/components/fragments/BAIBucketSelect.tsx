@@ -66,7 +66,7 @@ const BAIBucketSelect = ({
             edges {
               node {
                 id
-                bucket
+                namespace
               }
             }
           }
@@ -95,7 +95,7 @@ const BAIBucketSelect = ({
   );
 
   const selectedOptions = _.map(paginationData, (item) => ({
-    label: item.node.bucket,
+    label: item.node.namespace,
     value: item.node.id,
   }));
 
