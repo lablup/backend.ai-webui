@@ -41,6 +41,7 @@ import {
   useMemoizedJSONParse,
   BAIFlex,
   BAISessionAgentIds,
+  BAISessionClusterMode,
 } from 'backend.ai-ui';
 // import { graphql } from 'react-relay';
 import _ from 'lodash';
@@ -176,6 +177,7 @@ const SessionDetailContent: React.FC<{
         ...AppLauncherModalFragment
         ...MountedVFolderLinksFragment
         ...BAISessionAgentIdsFragment
+        ...BAISessionClusterModeFragment
       }
     `,
     (internalLoadedSession as SessionDetailContentFragment$key) || sessionFrgmt,
@@ -319,10 +321,13 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item label={t('session.Agent')}>
             <BAISessionAgentIds sessionFrgmt={session} />
           </Descriptions.Item>
-          <Descriptions.Item label={t('session.Reservation')} span={md ? 2 : 1}>
+          <Descriptions.Item label={t('session.Reservation')}>
             <BAIFlex gap={'xs'} wrap={'wrap'}>
               <SessionReservation sessionFrgmt={session} />
             </BAIFlex>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('session.ClusterMode')}>
+            <BAISessionClusterMode sessionFrgmt={session} showSize />
           </Descriptions.Item>
           {baiClient.supports('idle-checks-gql') &&
           session.status === 'RUNNING' &&
