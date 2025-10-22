@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Anulować",
       "Close": "Zamknąć",
+      "Collapse": "Zawalić się",
       "CopyAll": "Kopiuj wszystko",
       "Create": "Tworzyć",
       "Delete": "Usuwać",
+      "Expand": "Zwiększać",
       "Remove": "Usunąć",
       "Upload": "Wgrywać"
     },

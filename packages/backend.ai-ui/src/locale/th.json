@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
+      "Collapse": "ทรุด",
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",
+      "Expand": "ขยาย",
       "Remove": "ลบ",
       "Upload": "อัพโหลด"
     },

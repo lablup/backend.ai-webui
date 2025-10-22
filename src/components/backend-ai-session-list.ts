@@ -1356,7 +1356,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Convert start date to human readable date.
    *
    * @param {Date} d - Date to convert
-   * @return {string} Human-readable date
+   * @returns {string} Human-readable date
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
@@ -1404,7 +1404,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Get kernel icon
    *
    * @param {string} lang - session language
-   * @return {string} kernel icon name
+   * @returns {string} kernel icon name
    * */
   _getKernelIcon(lang) {
     if (lang === undefined) return [];
@@ -1452,7 +1452,7 @@ export default class BackendAISessionList extends BackendAIPage {
    *
    * @param {number} value
    * @param {number} decimalPoint decimal point to show
-   * @return {string} converted value from Bytes to MB
+   * @returns {string} converted value from Bytes to MB
    */
   static bytesToMB(value, decimalPoint = 1) {
     return Number(value / 10 ** 6).toFixed(1);
@@ -1463,7 +1463,7 @@ export default class BackendAISessionList extends BackendAIPage {
    *
    * @param {number} value
    * @param {number} decimalPoint decimal point to show
-   * @return {string} converted value from Bytes to GiB
+   * @returns {string} converted value from Bytes to GiB
    */
   static bytesToGiB(value, decimalPoint = 2) {
     if (!value) return value;
@@ -1483,7 +1483,7 @@ export default class BackendAISessionList extends BackendAIPage {
    *
    * @param {any} start - start time
    * @param {any} end - end time
-   * @return {string} Elapsed time between start and end
+   * @returns {string} Elapsed time between start and end
    * */
   _elapsed(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
@@ -2010,7 +2010,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Returns agent-oriented array from session list by traversing
    *
    * @param sessionList
-   * @returns [{agent: '...', containers: ['...', '...']}]
+   * @return [{agent: '...', containers: ['...', '...']}]
    */
   static _parseAgentBasedContainers(sessionList) {
     return Object.values(
@@ -2705,7 +2705,7 @@ export default class BackendAISessionList extends BackendAIPage {
   /**
    * Convert seconds to 'ddhh:mm:ss' string
    * @param {number} totalSeconds - Total seconds to convert
-   * @return {string} - ddhh:mm:ss
+   * @returns {string} - ddhh:mm:ss
    */
   static secondsToDHMS(totalSeconds) {
     const days = Math.floor(totalSeconds / 86400);
@@ -4649,7 +4649,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Aggregate shared memory allocated in session
    *
    * @param {Object} sharedMemoryObj
-   * @return {string} converted value from Bytes to GiB
+   * @returns {string} converted value from Bytes to GiB
    */
   _aggregateSharedMemory(sharedMemoryObj) {
     // FIXME: for now temporally sum up shared memory
@@ -4744,7 +4744,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Get user id according to configuration
    *
    * @param {string} userId
-   * @return {string} userId
+   * @returns {string} userId
    */
   _getUserId(userId = '') {
     if (userId && this.isUserInfoMaskEnabled) {

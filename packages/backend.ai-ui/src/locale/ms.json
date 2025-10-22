@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Batalkan",
       "Close": "Tutup",
+      "Collapse": "Runtuh",
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",
+      "Expand": "Berkembang",
       "Remove": "Keluarkan",
       "Upload": "Muat naik"
     },

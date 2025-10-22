@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "取消",
       "Close": "關閉",
+      "Collapse": "坍塌",
       "CopyAll": "複製全部",
       "Create": "創造",
       "Delete": "刪除",
+      "Expand": "擴張",
       "Remove": "消除",
       "Upload": "上傳"
     },

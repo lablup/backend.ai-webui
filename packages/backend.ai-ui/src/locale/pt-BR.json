@@ -149,9 +149,11 @@
     "button": {
       "Cancel": "Cancelar",
       "Close": "Fechar",
+      "Collapse": "Colapso",
       "CopyAll": "Copie tudo",
       "Create": "Criar",
       "Delete": "Excluir",
+      "Expand": "Expandir",
       "Remove": "Remover",
       "Upload": "Carregar"
     },

@@ -60,6 +60,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAIUnmountAfterClose,
+  BAIText,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -829,9 +830,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               dataIndex: 'token',
               fixed: 'left',
               render: (_text, row) => (
-                <Typography.Text ellipsis copyable style={{ width: 150 }}>
+                <BAIText
+                  ellipsis={{ tooltip: false }}
+                  copyable
+                  style={{ width: 150 }}
+                >
                   {row.token}
-                </Typography.Text>
+                </BAIText>
               ),
             },
             {
@@ -915,7 +920,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               dataIndex: 'routing_id',
               fixed: 'left',
               render: (_text, row) => (
-                <Typography.Text ellipsis>
+                <BAIText ellipsis>
                   {row.routing_id}
                   {!_.isEmpty(row.error_data) && (
                     <Button
@@ -928,7 +933,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                       }}
                     />
                   )}
-                </Typography.Text>
+                </BAIText>
               ),
             },
             {

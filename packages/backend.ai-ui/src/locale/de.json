@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Stornieren",
       "Close": "Schließen",
+      "Collapse": "Zusammenbruch",
       "CopyAll": "Alle kopieren",
       "Create": "Erstellen",
       "Delete": "Löschen",
+      "Expand": "Expandieren",
       "Remove": "Entfernen",
       "Upload": "Hochladen"
     },

@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Peruuttaa",
       "Close": "Lähellä",
+      "Collapse": "Romahdus",
       "CopyAll": "Kopioida kaikki",
       "Create": "Luoda",
       "Delete": "Poistaa",
+      "Expand": "Laajentaa",
       "Remove": "Poistaa",
       "Upload": "Ladata"
     },

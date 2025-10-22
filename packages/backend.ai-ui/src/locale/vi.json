@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
+      "Collapse": "Sụp đổ",
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",
+      "Expand": "Mở rộng",
       "Remove": "Di dời",
       "Upload": "Tải lên"
     },

@@ -145,9 +145,11 @@
     "button": {
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
+      "Collapse": "Yıkılmak",
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",
+      "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
       "Upload": "Yüklemek"
     },

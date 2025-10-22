@@ -1,6 +1,5 @@
-import BAIText from './BAIText';
 import { Tag, Typography } from 'antd';
-import { BAIPropertyFilter, BAIFlex, BAITable } from 'backend.ai-ui';
+import { BAIPropertyFilter, BAIFlex, BAITable, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';

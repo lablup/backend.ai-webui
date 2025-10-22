@@ -150,9 +150,11 @@
     "button": {
       "Cancel": "Cancelar",
       "Close": "Cerca",
+      "Collapse": "Colapsar",
       "CopyAll": "Copiar todo",
       "Create": "Crear",
       "Delete": "Borrar",
+      "Expand": "Expandir",
       "Remove": "Eliminar",
       "Upload": "Subir"
     },
