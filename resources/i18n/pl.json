@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "Aktywni agenci",
+    "ActiveAgentsTooltip": "Pokazuje przegląd w skrócie wszystkich agentów obecnie działających w systemie."
+  },
   "agent": {
     "Agent": "Agent",
     "AgentSetting": "Ustawienia agenta",
@@ -1254,6 +1258,7 @@
     "PendingSessions": "Oczekujące sesje"
   },
   "session": {
+    "ActiveSessions": "Aktywne sesje",
     "Agent": "Agent",
     "AgentId": "Identyfikator agenta",
     "Agents": "Agenci",
@@ -2004,6 +2009,7 @@
       "AIAccelerator": "Akcelerator AI",
       "AIAgents": "Agenci AI",
       "AboutBackendAI": "O Backend.AI",
+      "AdminDashboard": "Pulpit nawigacyjny administratora",
       "Administration": "Administracja",
       "AgentSummary": "Podsumowanie agenta",
       "Architecture": "Architektura",

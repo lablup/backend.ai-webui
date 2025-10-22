@@ -29,7 +29,7 @@ import {
 } from 'react';
 import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 
-export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
+export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 6;
 export type PluginPage = {
   name: string;
   url: string;

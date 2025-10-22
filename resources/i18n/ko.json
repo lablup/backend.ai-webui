@@ -1,5 +1,9 @@
 {
   "$schema": "../i18n.schema.json",
+  "activeAgent": {
+    "ActiveAgents": "활성 에이전트",
+    "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."
+  },
   "agent": {
     "Agent": "에이전트",
     "AgentSetting": "에이전트 설정",
@@ -1259,6 +1263,7 @@
     "PendingSessions": "대기 세션"
   },
   "session": {
+    "ActiveSessions": "활성 세션",
     "Agent": "실행 노드",
     "AgentId": "에이전트 ID",
     "Agents": "실행 노드",
@@ -2010,6 +2015,7 @@
       "AIAccelerator": "AI 가속기",
       "AIAgents": "AI 에이전트",
       "AboutBackendAI": "Backend.AI에 대하여",
+      "AdminDashboard": "관리자 대시보드",
       "Administration": "관리",
       "AgentSummary": "자원 요약",
       "Architecture": "운영체제",

@@ -10,6 +10,8 @@ export interface BAIBoardItemTitleProps {
   style?: React.CSSProperties;
 }
 
+const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 5;
+
 const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   title,
   tooltip,
@@ -28,7 +30,7 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
         position: 'sticky',
         top: 0,
         backgroundColor: token.colorBgContainer,
-        zIndex: 1,
+        zIndex: Z_INDEX_IN_BAI_BOARD_ITEM_TITLE,
         ...style,
       }}
       gap="xs"
