@@ -43,11 +43,15 @@ import {
   BAISessionAgentIds,
   BAISessionClusterMode,
 } from 'backend.ai-ui';
-// import { graphql } from 'react-relay';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useSubscription,
+} from 'react-relay';
 
 const SessionDetailContent: React.FC<{
   id: string;
@@ -92,6 +96,21 @@ const SessionDetailContent: React.FC<{
       fetchPolicy: deprecatedProjectId ? 'store-only' : 'store-or-network',
     },
   );
+
+  useSubscription({
+    subscription: graphql`
+      subscription SessionDetailContentSubscription($session_id: ID!) {
+        schedulingEventsBySession(sessionId: $session_id) {
+          sessionId
+          statusTransition
+          creationId
+          reason
+          __typename
+        }
+      }
+    `,
+    variables: { session_id: id },
+  });
 
   // TODO: Remove useLazyLoadQuery and use useRefetchableFragment instead of useFragment to fetch session data when deprecatedProjectId is removed.
   const { internalLoadedSession } = useLazyLoadQuery<SessionDetailContentQuery>(
