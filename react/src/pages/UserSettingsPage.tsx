@@ -9,12 +9,13 @@ import {
 } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Typography } from 'antd';
+import { App, Button, Skeleton, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
 import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
@@ -355,19 +356,24 @@ const UserPreferencesPage = () => {
             label: t('userSettings.Logs'),
           },
         ]}
-        styles={{
-          body: { padding: 0 },
-        }}
       >
-        {curTabKey === 'general' && (
-          <SettingList
-            settingGroups={settingGroups}
-            showChangedOptionFilter
-            showResetButton
-            showSearchBar
-          />
-        )}
-        {curTabKey === 'logs' && <ErrorLogList />}
+        <Suspense fallback={<Skeleton active />}>
+          {curTabKey === 'general' && (
+            <BAIErrorBoundary>
+              <SettingList
+                settingGroups={settingGroups}
+                showChangedOptionFilter
+                showResetButton
+                showSearchBar
+              />
+            </BAIErrorBoundary>
+          )}
+          {curTabKey === 'logs' && (
+            <BAIErrorBoundary>
+              <ErrorLogList />
+            </BAIErrorBoundary>
+          )}
+        </Suspense>
       </Card>
       <MyKeypairInfoModal
         open={isOpenSSHKeypairInfoModal}

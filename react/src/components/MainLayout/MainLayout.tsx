@@ -5,6 +5,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
+import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
@@ -26,7 +27,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 5;
@@ -220,9 +220,11 @@ function MainLayout() {
                     onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                   />
                   {/* sticky Alert components with banner props */}
-                  <Suspense fallback={null}>
-                    <NetworkStatusBanner />
-                  </Suspense>
+                  <ErrorBoundaryWithNullFallback>
+                    <Suspense fallback={null}>
+                      <NetworkStatusBanner />
+                    </Suspense>
+                  </ErrorBoundaryWithNullFallback>
                 </div>
               </Suspense>
               {/* Non sticky Alert components */}
@@ -233,42 +235,48 @@ function MainLayout() {
                   align="stretch"
                   className={styles.alertWrapper}
                 >
-                  <ErrorBoundary fallbackRender={() => null}>
+                  <ErrorBoundaryWithNullFallback>
                     <NoResourceGroupAlert />
-                  </ErrorBoundary>
-                  <PasswordChangeRequestAlert
-                    showIcon
-                    icon={undefined}
-                    banner={false}
-                    closable
-                  />
+                  </ErrorBoundaryWithNullFallback>
+                  <ErrorBoundaryWithNullFallback>
+                    <PasswordChangeRequestAlert
+                      showIcon
+                      icon={undefined}
+                      banner={false}
+                      closable
+                    />
+                  </ErrorBoundaryWithNullFallback>
                 </BAIFlex>
               </Suspense>
               <Suspense>
-                {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
-                {/* https://github.com/lablup/backend.ai/pull/4354 */}
-                <ForceTOTPChecker />
+                <ErrorBoundaryWithNullFallback>
+                  {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
+                  {/* https://github.com/lablup/backend.ai/pull/4354 */}
+                  <ForceTOTPChecker />
+                </ErrorBoundaryWithNullFallback>
               </Suspense>
               <Suspense>
-                {isHiddenBreadcrumb ? (
-                  <div
-                    style={{
-                      marginBottom: token.marginMD,
-                    }}
-                  />
-                ) : (
-                  <WebUIBreadcrumb
-                    style={{
-                      marginBottom: token.marginMD,
-                      marginLeft: token.paddingContentHorizontalLG * -1,
-                      marginRight: token.paddingContentHorizontalLG * -1,
-                    }}
-                  />
-                )}
-                <Outlet />
+                <ErrorBoundaryWithNullFallback>
+                  {isHiddenBreadcrumb ? (
+                    <div
+                      style={{
+                        marginBottom: token.marginMD,
+                      }}
+                    />
+                  ) : (
+                    <WebUIBreadcrumb
+                      style={{
+                        marginBottom: token.marginMD,
+                        marginLeft: token.paddingContentHorizontalLG * -1,
+                        marginRight: token.paddingContentHorizontalLG * -1,
+                      }}
+                    />
+                  )}
+                </ErrorBoundaryWithNullFallback>
+                <BAIErrorBoundary>
+                  <Outlet />
+                </BAIErrorBoundary>
               </Suspense>
-              {/* To match paddig to 16 (2+14) */}
-              {/* </BAIFlex> */}
               {/* @ts-ignore */}
               <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>

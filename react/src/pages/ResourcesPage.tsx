@@ -5,6 +5,7 @@ import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'agents' | 'storages' | 'resourceGroup';
@@ -38,21 +39,23 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         },
       ]}
     >
-      {curTabKey === 'agents' ? (
-        <Suspense fallback={<Skeleton active />}>
-          <AgentList />
-        </Suspense>
-      ) : null}
-      {curTabKey === 'storages' ? (
-        <Suspense fallback={<Skeleton active />}>
-          <StorageProxyList />
-        </Suspense>
-      ) : null}
-      {curTabKey === 'resourceGroup' ? (
-        <Suspense fallback={<Skeleton active />}>
-          <ResourceGroupList />
-        </Suspense>
-      ) : null}
+      <Suspense fallback={<Skeleton active />}>
+        {curTabKey === 'agents' && (
+          <BAIErrorBoundary>
+            <AgentList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'storages' && (
+          <BAIErrorBoundary>
+            <StorageProxyList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'resourceGroup' && (
+          <BAIErrorBoundary>
+            <ResourceGroupList />
+          </BAIErrorBoundary>
+        )}
+      </Suspense>
     </BAICard>
   );
 };

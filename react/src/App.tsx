@@ -3,6 +3,7 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import MainLayout from './components/MainLayout/MainLayout';
@@ -102,33 +103,42 @@ const router = createBrowserRouter([
     path: '/interactive-login',
     errorElement: <ErrorView />,
     element: (
-      <DefaultProvidersForReactRoot>
-        <InteractiveLoginPage />
-      </DefaultProvidersForReactRoot>
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <InteractiveLoginPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
     ),
   },
   {
     path: '/',
     errorElement: <ErrorView />,
     element: (
-      <DefaultProvidersForReactRoot>
-        <MainLayout />
-        <RoutingEventHandler />
-        <Suspense>
-          <FolderExplorerOpener />
-          <FolderInvitationResponseModalOpener />
-          <FileUploadManager />
-        </Suspense>
-      </DefaultProvidersForReactRoot>
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
+          <MainLayout />
+          <ErrorBoundaryWithNullFallback>
+            <RoutingEventHandler />
+          </ErrorBoundaryWithNullFallback>
+          <Suspense>
+            <ErrorBoundaryWithNullFallback>
+              <FolderExplorerOpener />
+            </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <FolderInvitationResponseModalOpener />
+            </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <FileUploadManager />
+            </ErrorBoundaryWithNullFallback>
+          </Suspense>
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
     ),
     children: [
       {
         path: '/start',
-        element: (
-          <BAIErrorBoundary>
-            <StartPage />
-          </BAIErrorBoundary>
-        ),
+        element: <StartPage />,
         handle: { labelKey: 'webui.menu.Start' },
       },
       {
@@ -175,11 +185,9 @@ const router = createBrowserRouter([
             'experimental_dashboard',
           );
           return experimentalDashboard ? (
-            <BAIErrorBoundary>
-              <Suspense fallback={<Skeleton active />}>
-                <DashboardPage />
-              </Suspense>
-            </BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DashboardPage />
+            </Suspense>
           ) : (
             <WebUINavigate to={'/summary' + location.search} replace />
           );
@@ -194,9 +202,7 @@ const router = createBrowserRouter([
             'classic_session_list',
           );
           return classic_session_list ? (
-            <BAIErrorBoundary>
-              <SessionDetailAndContainerLogOpenerLegacy />
-            </BAIErrorBoundary>
+            <SessionDetailAndContainerLogOpenerLegacy />
           ) : (
             <WebUINavigate to={'/session' + location.search} replace />
           );
@@ -217,17 +223,15 @@ const router = createBrowserRouter([
               useSuspendedBackendaiClient();
 
               return !classicSessionList ? (
-                <BAIErrorBoundary>
-                  <Suspense
-                    fallback={
-                      <Skeleton active />
-                      // <BAICard title={t('webui.menu.Sessions')} loading />
-                    }
-                  >
-                    <ComputeSessionListPage />
-                    <SessionDetailAndContainerLogOpenerLegacy />
-                  </Suspense>
-                </BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <Skeleton active />
+                    // <BAICard title={t('webui.menu.Sessions')} loading />
+                  }
+                >
+                  <ComputeSessionListPage />
+                  <SessionDetailAndContainerLogOpenerLegacy />
+                </Suspense>
               ) : (
                 <WebUINavigate to={'/job' + location.search} replace />
               );
@@ -273,26 +277,20 @@ const router = createBrowserRouter([
               const { t } = useTranslation();
               useSuspendedBackendaiClient();
               return (
-                <BAIErrorBoundary>
-                  <Suspense
-                    fallback={
-                      <BAICard title={t('webui.menu.Serving')} loading />
-                    }
-                  >
-                    <ServingPage />
-                  </Suspense>
-                </BAIErrorBoundary>
+                <Suspense
+                  fallback={<BAICard title={t('webui.menu.Serving')} loading />}
+                >
+                  <ServingPage />
+                </Suspense>
               );
             },
           },
           {
             path: '/serving/:serviceId',
             element: (
-              <BAIErrorBoundary>
-                <Suspense fallback={<Skeleton active />}>
-                  <EndpointDetailPage />
-                </Suspense>
-              </BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <EndpointDetailPage />
+              </Suspense>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
           },
@@ -310,34 +308,30 @@ const router = createBrowserRouter([
             path: 'start',
             handle: { labelKey: 'modelService.StartNewService' },
             element: (
-              <BAIErrorBoundary>
-                <Suspense
-                  fallback={
-                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                      <Skeleton active />
-                    </BAIFlex>
-                  }
-                >
-                  <ServiceLauncherCreatePage />
-                </Suspense>
-              </BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </BAIFlex>
+                }
+              >
+                <ServiceLauncherCreatePage />
+              </Suspense>
             ),
           },
           {
             path: 'update/:endpointId',
             handle: { labelKey: 'modelService.UpdateService' },
             element: (
-              <BAIErrorBoundary>
-                <Suspense
-                  fallback={
-                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                      <Skeleton active />
-                    </BAIFlex>
-                  }
-                >
-                  <ServiceLauncherUpdatePage />
-                </Suspense>
-              </BAIErrorBoundary>
+              <Suspense
+                fallback={
+                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                    <Skeleton active />
+                  </BAIFlex>
+                }
+              >
+                <ServiceLauncherUpdatePage />
+              </Suspense>
             ),
           },
         ],
@@ -346,17 +340,15 @@ const router = createBrowserRouter([
         path: '/model-store',
         handle: { labelKey: 'data.ModelStore' },
         element: (
-          <BAIErrorBoundary>
-            <Suspense
-              fallback={
-                <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                  <Skeleton active />
-                </BAIFlex>
-              }
-            >
-              <ModelStoreListPage />
-            </Suspense>
-          </BAIErrorBoundary>
+          <Suspense
+            fallback={
+              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                <Skeleton active />
+              </BAIFlex>
+            }
+          >
+            <ModelStoreListPage />
+          </Suspense>
         ),
       },
       {
@@ -364,11 +356,11 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
           return (
-            <BAIErrorBoundary>
+            <>
               <ImportAndRunPage />
               {/* @ts-ignore */}
               <backend-ai-import-view active class="page" name="import" />
-            </BAIErrorBoundary>
+            </>
           );
         },
       },
@@ -376,29 +368,17 @@ const router = createBrowserRouter([
         path: '/data',
         handle: { labelKey: 'webui.menu.Data' },
         Component: () => {
-          return (
-            <BAIErrorBoundary>
-              <VFolderNodeListPage />
-            </BAIErrorBoundary>
-          );
+          return <VFolderNodeListPage />;
         },
       },
       {
         path: '/my-environment',
-        element: (
-          <BAIErrorBoundary>
-            <MyEnvironmentPage />
-          </BAIErrorBoundary>
-        ),
+        element: <MyEnvironmentPage />,
         handle: { labelKey: 'webui.menu.MyEnvironments' },
       },
       {
         path: '/agent-summary',
-        element: (
-          <BAIErrorBoundary>
-            <AgentSummaryPage />
-          </BAIErrorBoundary>
-        ),
+        element: <AgentSummaryPage />,
         handle: { labelKey: 'webui.menu.AgentSummary' },
       },
       {
@@ -407,17 +387,15 @@ const router = createBrowserRouter([
         Component: () => {
           useSuspendedBackendaiClient();
           return (
-            <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                    <Skeleton active />
-                  </BAIFlex>
-                }
-              >
-                <StatisticsPage />
-              </Suspense>
-            </BAIErrorBoundary>
+            <Suspense
+              fallback={
+                <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </BAIFlex>
+              }
+            >
+              <StatisticsPage />
+            </Suspense>
           );
         },
       },
@@ -432,12 +410,10 @@ const router = createBrowserRouter([
         Component: () => {
           const baiClient = useSuspendedBackendaiClient();
           return baiClient?.supports('pending-session-list') ? (
-            <BAIErrorBoundary>
-              <Suspense fallback={<Skeleton active />}>
-                <SchedulerPage />
-                <SessionDetailAndContainerLogOpenerLegacy />
-              </Suspense>
-            </BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <SchedulerPage />
+              <SessionDetailAndContainerLogOpenerLegacy />
+            </Suspense>
           ) : (
             <WebUINavigate to={'/error'} replace />
           );
@@ -462,17 +438,15 @@ const router = createBrowserRouter([
             Component: () => {
               const baiClient = useSuspendedBackendaiClient();
               return baiClient?.supports('reservoir') ? (
-                <BAIErrorBoundary>
-                  <Suspense
-                    fallback={
-                      <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                        <Skeleton active />
-                      </BAIFlex>
-                    }
-                  >
-                    <ReservoirPage />
-                  </Suspense>
-                </BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <ReservoirPage />
+                </Suspense>
               ) : (
                 <WebUINavigate to={'/error'} replace />
               );
@@ -483,11 +457,9 @@ const router = createBrowserRouter([
             Component: () => {
               const baiClient = useSuspendedBackendaiClient();
               return baiClient?.supports('reservoir') ? (
-                <BAIErrorBoundary>
-                  <Suspense fallback={<Skeleton active />}>
-                    <ReservoirArtifactDetailPage />
-                  </Suspense>
-                </BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <ReservoirArtifactDetailPage />
+                </Suspense>
               ) : (
                 <WebUINavigate to={'/error'} replace />
               );
@@ -498,20 +470,12 @@ const router = createBrowserRouter([
       },
       {
         path: '/settings',
-        element: (
-          <BAIErrorBoundary>
-            <ConfigurationsPage />
-          </BAIErrorBoundary>
-        ),
+        element: <ConfigurationsPage />,
         handle: { labelKey: 'webui.menu.Configurations' },
       },
       {
         path: '/maintenance',
-        element: (
-          <BAIErrorBoundary>
-            <MaintenancePage />
-          </BAIErrorBoundary>
-        ),
+        element: <MaintenancePage />,
         handle: { labelKey: 'webui.menu.Maintenance' },
       },
       {

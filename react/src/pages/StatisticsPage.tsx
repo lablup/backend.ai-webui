@@ -5,6 +5,7 @@ import { Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface ResourcesPageProps {}
@@ -41,28 +42,32 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       }}
     >
       {curTabKey === 'allocation-history' ? (
-        <Suspense
-          fallback={
-            <Skeleton
-              active
-              style={{ padding: token.paddingContentVerticalLG }}
-            />
-          }
-        >
-          <AllocationHistory />
-        </Suspense>
+        <BAIErrorBoundary>
+          <Suspense
+            fallback={
+              <Skeleton
+                active
+                style={{ padding: token.paddingContentVerticalLG }}
+              />
+            }
+          >
+            <AllocationHistory />
+          </Suspense>
+        </BAIErrorBoundary>
       ) : null}
       {curTabKey === 'user-session-history' ? (
-        <Suspense
-          fallback={
-            <Skeleton
-              active
-              style={{ padding: token.paddingContentVerticalLG }}
-            />
-          }
-        >
-          <UserSessionsMetrics />
-        </Suspense>
+        <BAIErrorBoundary>
+          <Suspense
+            fallback={
+              <Skeleton
+                active
+                style={{ padding: token.paddingContentVerticalLG }}
+              />
+            }
+          >
+            <UserSessionsMetrics />
+          </Suspense>
+        </BAIErrorBoundary>
       ) : null}
     </BAICard>
   );

@@ -10,9 +10,14 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Typography, Table, Alert, Checkbox, Input, theme } from 'antd';
+import { Button, Typography, Alert, Checkbox, Input, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { BAIFlex, BAIModal } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAITable,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState, useMemo, useTransition } from 'react';
@@ -200,26 +205,9 @@ const ErrorLogList: React.FC<{
   }, [logSearch, storageLogData]);
 
   return (
-    <BAIFlex direction="column" align="stretch">
-      <BAIFlex
-        direction="row"
-        justify="between"
-        wrap="wrap"
-        gap={'xs'}
-        style={{
-          padding: token.paddingContentVertical,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        }}
-      >
-        <BAIFlex direction="column" align="start">
-          <Typography.Title level={4} style={{ margin: 0, padding: 0 }}>
-            {t('logs.LogMessages')}
-          </Typography.Title>
-          <Typography.Text type="secondary">
-            {t('logs.UpTo3000Logs')}
-          </Typography.Text>
-        </BAIFlex>
+    <BAIFlex direction="column" align="stretch" gap={'xs'}>
+      <BAIFlex direction="row" justify="between" wrap="wrap" gap={'xs'}>
+        <Typography.Text>{t('logs.UpTo3000Logs')}</Typography.Text>
         <BAIFlex
           direction="row"
           gap={'xs'}
@@ -266,7 +254,7 @@ const ErrorLogList: React.FC<{
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
-      <Table
+      <BAITable
         pagination={{
           showSizeChanger: false,
           style: {
@@ -337,21 +325,23 @@ const ErrorLogList: React.FC<{
       >
         <Alert message={t('dialog.warning.CannotBeUndone')} type="warning" />
       </BAIModal>
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
-        }}
-        columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
-      />
+      <BAIUnmountAfterClose>
+        <TableColumnsSettingModal
+          open={visibleColumnSettingModal}
+          onRequestClose={(values) => {
+            values?.selectedColumnKeys &&
+              setHiddenColumnKeys(
+                _.difference(
+                  columns.map((column) => _.toString(column.key)),
+                  values?.selectedColumnKeys,
+                ),
+              );
+            toggleColumnSettingModal();
+          }}
+          columns={columns}
+          hiddenColumnKeys={hiddenColumnKeys}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

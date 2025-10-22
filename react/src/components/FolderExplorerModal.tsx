@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { FolderExplorerQuery } from 'src/__generated__/FolderExplorerQuery.graphql';
+import { FolderExplorerModalQuery } from 'src/__generated__/FolderExplorerModalQuery.graphql';
 import {
   useCurrentDomainValue,
   useFetchKey,
@@ -44,7 +44,7 @@ interface FolderExplorerProps extends BAIModalProps {
   onRequestClose: () => void;
 }
 
-const FolderExplorer: React.FC<FolderExplorerProps> = ({
+const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   vfolderID,
   onRequestClose,
   ...modalProps
@@ -74,15 +74,14 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
     }
   }, [uploadStatus, updateFetchKey]);
 
-  const { vfolder_node } = useLazyLoadQuery<FolderExplorerQuery>(
+  const { vfolder_node } = useLazyLoadQuery<FolderExplorerModalQuery>(
     graphql`
-      query FolderExplorerQuery($vfolderGlobalId: String!) {
+      query FolderExplorerModalQuery($vfolderGlobalId: String!) {
         vfolder_node(id: $vfolderGlobalId) {
           group
           unmanaged_path @since(version: "25.04.0")
           permissions
           host
-
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
@@ -228,4 +227,4 @@ const FolderExplorer: React.FC<FolderExplorerProps> = ({
   );
 };
 
-export default FolderExplorer;
+export default FolderExplorerModal;

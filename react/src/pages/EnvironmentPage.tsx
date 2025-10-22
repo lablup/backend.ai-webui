@@ -1,11 +1,12 @@
 import ContainerRegistryList from '../components/ContainerRegistryList';
-import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'image');
@@ -38,17 +39,22 @@ const EnvironmentPage = () => {
           : []),
       ]}
     >
-      <Suspense
-        fallback={
-          <FlexActivityIndicator
-            style={{ height: 'calc(100vh - 145px)' }}
-            spinSize="large"
-          />
-        }
-      >
-        {curTabKey === 'image' && <ImageList />}
-        {curTabKey === 'preset' && <ResourcePresetList />}
-        {curTabKey === 'registry' && <ContainerRegistryList />}
+      <Suspense fallback={<Skeleton active />}>
+        {curTabKey === 'image' && (
+          <BAIErrorBoundary>
+            <ImageList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'preset' && (
+          <BAIErrorBoundary>
+            <ResourcePresetList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'registry' && (
+          <BAIErrorBoundary>
+            <ContainerRegistryList />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
     </BAICard>
   );

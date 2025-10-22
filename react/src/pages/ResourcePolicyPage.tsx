@@ -1,11 +1,12 @@
-import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { useWebUINavigate } from '../hooks';
+import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { withDefault, StringParam, useQueryParam } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'keypair');
@@ -49,10 +50,22 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         },
       ])}
     >
-      <Suspense fallback={<FlexActivityIndicator />}>
-        {curTabKey === 'keypair' && <KeypairResourcePolicyList />}
-        {curTabKey === 'user' && <UserResourcePolicyList />}
-        {curTabKey === 'project' && <ProjectResourcePolicyList />}
+      <Suspense fallback={<Skeleton active />}>
+        {curTabKey === 'keypair' && (
+          <BAIErrorBoundary>
+            <KeypairResourcePolicyList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'user' && (
+          <BAIErrorBoundary>
+            <UserResourcePolicyList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'project' && (
+          <BAIErrorBoundary>
+            <ProjectResourcePolicyList />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
     </BAICard>
   );

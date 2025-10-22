@@ -7,6 +7,7 @@ import {
 } from '../hooks/backendai';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DesktopAppDownloadModal from './DesktopAppDownloadModal';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import {
   UserOutlined,
@@ -30,6 +31,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -232,40 +234,48 @@ const UserDropdownMenu: React.FC<{
           </Button>,
         )}
       </Dropdown>
-      <Suspense>
-        {userProfileSettingQueryRef && (
-          <UserProfileSettingModal
-            totpSupported={isTOTPSupported}
-            queryRef={userProfileSettingQueryRef}
-            open={isOpenUserSettingModal}
-            onRequestClose={() => {
-              setIsOpenUserSettingModal(false);
-            }}
-            isRefreshModalPending={isPendingRefreshModal}
-            onRequestRefresh={() => {
-              startRefreshModalTransition(() => {
-                loadUserProfileSettingQuery(
-                  {
-                    email: userInfo.email,
-                    isNotSupportTotp: !isTOTPSupported,
-                  },
-                  {
-                    fetchPolicy: 'network-only',
-                  },
-                );
-              });
-            }}
+      <ErrorBoundaryWithNullFallback>
+        <Suspense>
+          {userProfileSettingQueryRef && (
+            <BAIUnmountAfterClose>
+              <UserProfileSettingModal
+                totpSupported={isTOTPSupported}
+                queryRef={userProfileSettingQueryRef}
+                open={isOpenUserSettingModal}
+                onRequestClose={() => {
+                  setIsOpenUserSettingModal(false);
+                }}
+                isRefreshModalPending={isPendingRefreshModal}
+                onRequestRefresh={() => {
+                  startRefreshModalTransition(() => {
+                    loadUserProfileSettingQuery(
+                      {
+                        email: userInfo.email,
+                        isNotSupportTotp: !isTOTPSupported,
+                      },
+                      {
+                        fetchPolicy: 'network-only',
+                      },
+                    );
+                  });
+                }}
+              />
+            </BAIUnmountAfterClose>
+          )}
+        </Suspense>
+        <BAIUnmountAfterClose>
+          <DesktopAppDownloadModal
+            open={isDownloadModalOpen}
+            onRequestClose={() => toggleDownloadModal()}
           />
-        )}
-      </Suspense>
-      <DesktopAppDownloadModal
-        open={isDownloadModalOpen}
-        onRequestClose={() => toggleDownloadModal()}
-      />
-      <AboutBackendAIModal
-        open={isOpenAboutBAIModal}
-        onRequestClose={toggleAboutBAIModal}
-      />
+        </BAIUnmountAfterClose>
+        <BAIUnmountAfterClose>
+          <AboutBackendAIModal
+            open={isOpenAboutBAIModal}
+            onRequestClose={toggleAboutBAIModal}
+          />
+        </BAIUnmountAfterClose>
+      </ErrorBoundaryWithNullFallback>
     </>
   );
 };

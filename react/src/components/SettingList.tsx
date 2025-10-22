@@ -117,7 +117,6 @@ const SettingList: React.FC<SettingPageProps> = ({
   showSearchBar,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { styles } = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
@@ -154,15 +153,7 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   return (
     <>
-      <BAIFlex
-        direction="column"
-        gap={'md'}
-        align="stretch"
-        style={{
-          padding: token.paddingContentHorizontal,
-          maxWidth: token.screenLG,
-        }}
-      >
+      <BAIFlex direction="column" gap={'md'} align="stretch">
         <BAIFlex justify="start" gap={'xs'}>
           {!!showSearchBar && (
             <Input

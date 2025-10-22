@@ -2,6 +2,7 @@ import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
 import { useWebUINavigate } from 'src/hooks';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -41,7 +42,11 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'pending-sessions' && <PendingSessionNodeList />}
+        {curTabKey === 'pending-sessions' && (
+          <BAIErrorBoundary>
+            <PendingSessionNodeList />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
     </BAICard>
   );
