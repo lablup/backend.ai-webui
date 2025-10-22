@@ -273,6 +273,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         .map((images, groupName) => {
           return {
             groupName,
+            groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
             environmentGroups: _.chain(images)
               // sub group by using (environment) `name` property of image info
               .groupBy((image) => {
@@ -288,13 +289,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
               .map((images, environmentName) => {
                 const imageKey = environmentName.split('/')?.[2];
                 const displayName =
-                  imageKey && metadata?.imageInfo[imageKey]?.name;
+                  (imageKey && metadata?.imageInfo[imageKey]?.name) ||
+                  (_.last(environmentName.split('/')) as string);
 
                 return {
                   environmentName,
-                  displayName:
-                    displayName ||
-                    (_.last(environmentName.split('/')) as string),
+                  displayName,
                   prefix: _.chain(environmentName)
                     .split('/')
                     .drop(1)
@@ -316,7 +316,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               .value(),
           };
         })
-        .sortBy((item) => item.groupName)
+        .sortBy((item) => item.groupSortKey)
         .value(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [images, metadata, filter, showPrivate],

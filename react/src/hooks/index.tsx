@@ -343,6 +343,7 @@ export const useBackendAIImageMetaData = () => {
     tagReplace: {
       [key: string]: string;
     };
+    groupSortKeyMap?: { [key: string]: string };
   }>({
     queryKey: ['backendai-metadata-for-suspense'],
     queryFn: () => {
