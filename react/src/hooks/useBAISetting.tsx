@@ -16,6 +16,7 @@ interface UserSettings {
   endpoints?: Array<string>;
   auto_logout?: boolean;
   selected_language?: string;
+  classic_dashboard_page?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;

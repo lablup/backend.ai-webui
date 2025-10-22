@@ -52,8 +52,8 @@ const UserPreferencesPage = () => {
   );
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
-  const [experimentalDashboard, setExperimentalDashboard] =
-    useBAISettingUserState('experimental_dashboard');
+  const [isClassicDashboardPage, setIsClassicDashboardPage] =
+    useBAISettingUserState('classic_dashboard_page');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -306,6 +306,18 @@ const UserPreferencesPage = () => {
             setClassicSessionList(e.target.checked);
           },
         },
+        {
+          'data-testid': 'items-classic-dashboard',
+          type: 'checkbox',
+          title: t('webui.menu.ClassicDashboardPage'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: isClassicDashboardPage,
+          setValue: setIsClassicDashboardPage,
+          onChange: (e) => {
+            setIsClassicDashboardPage(e.target.checked);
+          },
+        },
       ],
     },
     {
@@ -323,18 +335,6 @@ const UserPreferencesPage = () => {
           setValue: setExperimentalAIAgents,
           onChange: (e) => {
             setExperimentalAIAgents(e.target.checked);
-          },
-        },
-        {
-          'data-testid': 'items-experimental-dashboard',
-          type: 'checkbox',
-          title: t('webui.menu.Dashboard'),
-          description: t('userSettings.DescExperimentalDashboard'),
-          defaultValue: false,
-          value: experimentalDashboard,
-          setValue: setExperimentalDashboard,
-          onChange: (e) => {
-            setExperimentalDashboard(e.target.checked);
           },
         },
       ],
