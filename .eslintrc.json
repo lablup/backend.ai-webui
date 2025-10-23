@@ -18,11 +18,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": [
-      "tsconfig.json",
-      "react/tsconfig.json",
-      "packages/backend.ai-ui/tsconfig.json"
-    ],
+    "project": true,
     "extraFileExtensions": [".json"]
   },
   "plugins": ["@typescript-eslint", "lit-a11y", "wc", "json-schema-validator"],
