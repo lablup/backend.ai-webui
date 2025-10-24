@@ -21,7 +21,6 @@ const ConfigurationsPage = () => {
           tab: t('webui.menu.Configurations'),
         },
       ]}
-      styles={{ body: { padding: 0 } }}
     >
       {curTabKey === 'configurations' && <ConfigurationsSettingList />}
     </Card>

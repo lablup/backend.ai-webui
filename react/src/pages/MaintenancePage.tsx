@@ -21,7 +21,6 @@ const MaintenancePage = () => {
           tab: t('webui.menu.Maintenance'),
         },
       ]}
-      styles={{ body: { padding: 0 } }}
     >
       {curTabKey === 'maintenance' && <MaintenanceSettingList />}
     </Card>
