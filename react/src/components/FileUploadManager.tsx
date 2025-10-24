@@ -23,25 +23,37 @@ type UploadRequest = {
         bytesTotal: number,
         fileName: string,
       ) => void;
-    }) => Promise<string>
+    }) => Promise<{ name: string; bytes: number }>
   >;
+  totalBytes?: number;
+};
+type UploadRequestMap = {
+  uploadInfo: Array<UploadRequest>;
+  totalBytes: number;
 };
 type UploadStatus = {
+  vFolderNames: Array<string>;
+  totalSize: number;
+};
+type UploadStatusInfo = {
   vFolderName: string;
-  pending: Array<string>;
-  completed: Array<string>;
-  failed: Array<string>;
+  pending: UploadStatus;
+  completed: UploadStatus;
+  failed: UploadStatus;
 };
 type UploadStatusMap = {
-  [vFolderId: string]: UploadStatus;
+  [vFolderId: string]: UploadStatusInfo;
 };
 
-const uploadRequestAtom = atom<UploadRequest[]>([]);
+const uploadRequestAtom = atom<UploadRequestMap>({
+  uploadInfo: [],
+  totalBytes: 0,
+});
 const uploadStatusAtom = atom<UploadStatusMap>({});
 const uploadStatusAtomFamily = atomFamily((vFolderId: string) => {
   return atom(
     (get) => get(uploadStatusAtom)[vFolderId],
-    (get, set, newStatus: UploadStatus) => {
+    (get, set, newStatus: UploadStatusInfo) => {
       const prev = get(uploadStatusAtom);
       set(uploadStatusAtom, {
         ...prev,
@@ -52,7 +64,7 @@ const uploadStatusAtomFamily = atomFamily((vFolderId: string) => {
 });
 const useUploadStatusAtomStatus = (
   vFolderId: string,
-): [UploadStatus, (newStatus: UploadStatus) => void] => {
+): [UploadStatusInfo, (newStatus: UploadStatusInfo) => void] => {
   return useAtom(uploadStatusAtomFamily(vFolderId));
 };
 
@@ -62,12 +74,12 @@ const FileUploadManager: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const [uploadRequests, setUploadRequests] = useAtom(uploadRequestAtom);
   const [uploadStatus, setUploadStatus] = useAtom(uploadStatusAtom);
-  const queue = new PQueue({ concurrency: 1 });
+  const queue = new PQueue({ concurrency: 4 });
 
   useEffect(() => {
-    if (uploadRequests.length === 0 || !baiClient) return;
+    if (uploadRequests.uploadInfo.length === 0 || !baiClient) return;
 
-    uploadRequests.forEach((uploadRequest) => {
+    uploadRequests.uploadInfo.forEach((uploadRequest) => {
       const { vFolderId, vFolderName, uploadFilesNames, startFunctions } =
         uploadRequest;
 
@@ -75,9 +87,21 @@ const FileUploadManager: React.FC = () => {
         ...prev,
         [vFolderId]: {
           vFolderName,
-          pending: [...(prev[vFolderId]?.pending || []), ...uploadFilesNames],
-          completed: [],
-          failed: [],
+          pending: {
+            vFolderNames: [
+              ...(prev[vFolderId]?.pending.vFolderNames || []),
+              ...uploadFilesNames,
+            ],
+            totalSize: uploadRequests.totalBytes,
+          },
+          completed: prev[vFolderId]?.completed || {
+            vFolderNames: [],
+            totalSize: 0,
+          },
+          failed: prev[vFolderId]?.failed || {
+            vFolderNames: [],
+            totalSize: 0,
+          },
         },
       }));
 
@@ -100,17 +124,28 @@ const FileUploadManager: React.FC = () => {
       startFunctions.forEach((startFunction) => {
         queue.add(async () => {
           await startFunction({
-            onProgress: (bytesUploaded, bytesTotal, fileName) => {
+            onProgress: (bytesUploaded, _bytesTotal, fileName) => {
               setUploadStatus((prev) => {
-                const remainingFiles = prev[vFolderId]?.pending || [];
+                const uploadedFilesCount =
+                  prev[vFolderId]?.completed.vFolderNames.length || 0;
+                const totalUploadedFilesCount =
+                  (prev[vFolderId]?.completed?.vFolderNames.length || 0) +
+                  (prev[vFolderId]?.failed?.vFolderNames.length || 0) +
+                  (prev[vFolderId]?.pending?.vFolderNames.length || 0);
                 upsertNotification({
                   key: 'upload:' + vFolderId,
                   message: `${t('explorer.UploadToFolder', {
                     folderName: vFolderName,
-                  })}${remainingFiles.length > 1 ? ` (${remainingFiles.length})` : ''}`,
+                  })}${` (${uploadedFilesCount} / ${totalUploadedFilesCount})`}`,
                   backgroundTask: {
                     status: 'pending',
-                    percent: Math.round((bytesUploaded / bytesTotal) * 100) - 1,
+                    percent:
+                      Math.round(
+                        ((prev[vFolderId]?.completed.totalSize +
+                          bytesUploaded) /
+                          uploadRequests.totalBytes) *
+                          100,
+                      ) - 1,
                     onChange: {
                       pending: t('explorer.FileInProgress', {
                         fileName: fileName,
@@ -123,42 +158,62 @@ const FileUploadManager: React.FC = () => {
               });
             },
           })
-            .then((fileName: string) => {
+            .then(({ name: fileName, bytes: fileSize }) => {
               setUploadStatus((prev) => ({
                 ...prev,
                 [vFolderId]: {
                   ...prev[vFolderId],
-                  pending: prev[vFolderId].pending.filter(
-                    (f) => f !== fileName,
-                  ),
-                  completed: [...prev[vFolderId].completed, fileName],
+                  pending: {
+                    vFolderNames: prev[vFolderId].pending.vFolderNames.filter(
+                      (f) => f !== fileName,
+                    ),
+                    totalSize: prev[vFolderId]?.pending?.totalSize - fileSize,
+                  },
+                  completed: {
+                    vFolderNames: [
+                      ...(prev[vFolderId]?.completed?.vFolderNames || []),
+                      fileName,
+                    ],
+                    totalSize:
+                      (prev[vFolderId]?.completed?.totalSize || 0) + fileSize,
+                  },
                 },
               }));
             })
-            .catch((fileName: string) => {
+            .catch(({ name: fileName, bytes: fileSize }) => {
               setUploadStatus((prev) => ({
                 ...prev,
                 [vFolderId]: {
                   ...prev[vFolderId],
-                  pending: prev[vFolderId].pending.filter(
-                    (f) => f !== fileName,
-                  ),
-                  failed: [...prev[vFolderId].failed, fileName],
+                  pending: {
+                    vFolderNames: prev[vFolderId].pending.vFolderNames.filter(
+                      (f) => f !== fileName,
+                    ),
+                    totalSize: prev[vFolderId].pending.totalSize - fileSize,
+                  },
+                  failed: {
+                    vFolderNames: [
+                      ...(prev[vFolderId]?.failed?.vFolderNames || []),
+                      fileName,
+                    ],
+                    totalSize:
+                      (prev[vFolderId]?.failed?.totalSize || 0) + fileSize,
+                  },
                 },
               }));
             });
         });
       });
     });
-    setUploadRequests([]);
+    setUploadRequests({ uploadInfo: [], totalBytes: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadRequests]);
 
   useEffect(() => {
     Object.entries(uploadStatus).forEach(([vFolderId, status]) => {
-      if (!_.isEmpty(status?.pending)) return;
+      if (!_.isEmpty(status?.pending?.vFolderNames)) return;
 
-      if (!_.isEmpty(status?.failed)) {
+      if (!_.isEmpty(status?.failed?.vFolderNames)) {
         upsertNotification({
           key: 'upload:' + vFolderId,
           open: true,
@@ -174,9 +229,9 @@ const FileUploadManager: React.FC = () => {
               }),
             },
           },
-          extraDescription: _.join(status?.failed, ', '),
+          extraDescription: _.join(status?.failed.vFolderNames, ', '),
         });
-      } else if (!_.isEmpty(status?.completed)) {
+      } else if (!_.isEmpty(status?.completed?.vFolderNames)) {
         upsertNotification({
           key: 'upload:' + vFolderId,
           open: true,
@@ -196,7 +251,10 @@ const FileUploadManager: React.FC = () => {
           ...prev,
           [vFolderId]: {
             ...prev[vFolderId],
-            completed: [],
+            completed: {
+              vFolderNames: [],
+              totalSize: 0,
+            },
           },
         }));
       }
@@ -271,6 +329,7 @@ export const useFileUploadManager = (vFolderId: string) => {
     if (!validateUploadRequest(files, vfolderId)) return;
 
     const uploadFileNames: Array<string> = [];
+    const totalBytes = _.sumBy(files, (file) => file.size);
     const startUploadFunctionMap = _.map(files, (file) => {
       uploadFileNames.push(file.webkitRelativePath || file.name);
       return async (callbacks?: {
@@ -289,29 +348,37 @@ export const useFileUploadManager = (vFolderId: string) => {
           vfolderId,
         );
 
-        return new Promise<string>((resolve, reject) => {
-          const upload = new tus.Upload(file, {
-            endpoint: uploadUrl,
-            uploadUrl: uploadUrl,
-            retryDelays: [0, 3000, 5000, 10000, 20000],
-            chunkSize: getOptimalChunkSize(file.size),
-            storeFingerprintForResuming: false, // Disable localStorage storage
-            metadata: {
-              filename: file.name,
-              filetype: file.type,
-            },
-            onProgress: (bytesUploaded, bytesTotal) => {
-              callbacks?.onProgress?.(bytesUploaded, bytesTotal, file.name);
-            },
-            onSuccess: () => {
-              resolve(file.webkitRelativePath || file.name);
-            },
-            onError: () => {
-              reject(file.webkitRelativePath || file.name);
-            },
-          });
-          upload.start();
-        });
+        return new Promise<{ name: string; bytes: number }>(
+          (resolve, reject) => {
+            const upload = new tus.Upload(file, {
+              endpoint: uploadUrl,
+              uploadUrl: uploadUrl,
+              retryDelays: [0, 3000, 5000, 10000, 20000],
+              chunkSize: getOptimalChunkSize(file.size),
+              storeFingerprintForResuming: false, // Disable localStorage storage
+              metadata: {
+                filename: file.name,
+                filetype: file.type,
+              },
+              onProgress: (bytesUploaded, bytesTotal) => {
+                callbacks?.onProgress?.(bytesUploaded, bytesTotal, file.name);
+              },
+              onSuccess: () => {
+                resolve({
+                  name: file.webkitRelativePath || file.name,
+                  bytes: file.size,
+                });
+              },
+              onError: () => {
+                reject({
+                  name: file.webkitRelativePath || file.name,
+                  bytes: file.size,
+                });
+              },
+            });
+            upload.start();
+          },
+        );
       };
     });
 
@@ -321,7 +388,10 @@ export const useFileUploadManager = (vFolderId: string) => {
       uploadFilesNames: uploadFileNames,
       startFunctions: startUploadFunctionMap,
     };
-    setUploadRequests((prev) => [...prev, uploadRequestInfo]);
+    setUploadRequests((prev) => ({
+      uploadInfo: [...prev.uploadInfo, uploadRequestInfo],
+      totalBytes: prev.totalBytes + totalBytes,
+    }));
   };
 
   return {
