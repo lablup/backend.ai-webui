@@ -552,6 +552,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           );
           document.dispatchEvent(event);
           this.requestUpdate();
+
+          // After loading plugin, activate the current page component if exists (only for initial load)
+          if (this.plugins['page'].find((item) => item.name === this._page)) {
+            const component = this.shadowRoot?.querySelector(
+              this._page,
+            ) as BackendAIPage;
+            if (component) {
+              component.active = true;
+              component.requestUpdate();
+            }
+          }
         });
       }
     }
