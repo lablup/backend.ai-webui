@@ -1,0 +1,147 @@
+# .github/workflows/playwright.yml
+name: Playwright Tests
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: [self-hosted, linux, x64]
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        lts:
+          - name: "v25.6"
+            apiEndpoint: "http://10.122.10.224:8090"
+          - name: "v24.09"
+            apiEndpoint: "http://10.122.10.224:8090"
+
+    name: E2E Playwright Tests for LTS ${{ matrix.lts.name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        name: Install Node.js
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Copy config.toml.sample to config.toml
+        run: |
+          awk '
+            /^[[:space:]]*$/ { next }
+            /^\[.*\]$/ { if (n++) print ""; print; next }
+            /^[[:space:]]*#[^=]/ { print; next }
+            {
+              line = $0
+              sub(/#.*/, "", line)
+              sub(/[[:space:]]+$/, "", line)
+              if (line != "") print line
+            }
+          ' config.toml.sample > config-cleaned.toml
+
+      - name: Inject apiEndpoint and allowChangeSigninMode into config.toml
+        run: |
+          EP="${{ matrix.lts.apiEndpoint }}"
+          awk -v ep="$EP" '
+            {
+              if ($0 ~ /^apiEndpoint[[:space:]]*=/) {
+                print "apiEndpoint = \"" ep "\""
+              } else if ($0 ~ /^allowChangeSigninMode[[:space:]]*=/) {
+                print "allowChangeSigninMode = true"
+              } else {
+                print
+              }
+            }
+          ' config-cleaned.toml > config.toml
+
+      - name: Upload config.toml artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: config-toml-${{ matrix.lts.name }}
+          path: config.toml
+
+      # - name: Run Relay
+      #   run: pnpm run relay
+
+      # - name: Build project
+      #   run: pnpm run build
+
+      # - name: Serve build at port 9081 (background)
+      #   run: |
+      #     npx serve -s -l 9081 > /dev/null 2>&1 &
+      #     echo "Waiting for server to start..."
+      #     for i in {1..30}; do
+      #       if curl -s http://127.0.0.1:9081 > /dev/null; then
+      #         echo "Server is up!"
+      #         break
+      #       fi
+      #       sleep 1
+      #     done
+
+      # - name: Prepare .env.playwright with local server URL
+      #   run: |
+      #     cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
+      #     if grep -q '^BASE_URL=' e2e/envs/.env.playwright; then
+      #       sed -i 's|^BASE_URL=.*|BASE_URL=http://127.0.0.1:9081|' e2e/envs/.env.playwright
+      #     else
+      #       echo 'BASE_URL=http://127.0.0.1:9081' >> e2e/envs/.env.playwright
+      #     fi
+
+      - name: Run Relay
+        run: pnpm run relay
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Serve build at port 9081 (background)
+        run: |
+          pnpm server:p -s -l 9081 > /dev/null 2>&1 &
+          echo "Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:9081 > /dev/null; then
+              echo "Server is up!"
+              break
+            fi
+            sleep 1
+          done
+
+      - name: Run Playwright Tests
+        run: pnpm playwright test e2e/agent.test.ts
+
+      - name: Upload HTML report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.lts.name }}
+          path: playwright-report/
