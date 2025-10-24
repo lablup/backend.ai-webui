@@ -360,7 +360,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       _.map(value, (name) => {
         // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
         const page = _.find(pluginPages, { name: name }) as PluginPage;
-        if (page) {
+        // if menuitem is empty, skip adding menu item
+        if (page && page.menuitem) {
           const menuItem: MenuItem = {
             label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
             icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
