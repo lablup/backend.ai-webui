@@ -1,5 +1,5 @@
 import BAIFlex from './BAIFlex';
-import { theme, Typography, Tooltip } from 'antd';
+import { theme, Typography, Tooltip, Progress } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,9 @@ export interface BAIStatisticProps {
   unit?: string;
   precision?: number;
   infinityDisplay?: string;
-  showProgress?: boolean;
+  progressMode?: 'ghost' | 'hidden' | 'normal';
   progressSteps?: number;
+  style?: React.CSSProperties;
 }
 
 const BAIStatistic: React.FC<BAIStatisticProps> = ({
@@ -22,11 +23,13 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
   unit = '',
   precision = 2,
   infinityDisplay = '∞',
-  showProgress = false,
-  progressSteps = 12,
+  progressMode = 'hidden',
+  progressSteps = 20,
+  style,
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const showProgress = progressMode !== 'hidden';
 
   // Format number with precision
   const formatNumber = (value: number): string => {
@@ -41,26 +44,22 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
     : formatNumber(current);
   const displayTotal = total !== undefined ? formatNumber(total) : undefined;
 
-  // Calculate progress position
-  const calculateProgress = (): number => {
+  const calculatePercent = (): number => {
     if (!showProgress || total === undefined || total === Infinity) return 0;
-    if (!_.isFinite(current) || !isFinite(total) || total === 0)
-      return progressSteps;
-    return _.isUndefined(current)
-      ? 0
-      : Math.round((current / total) * progressSteps);
+    if (!_.isFinite(current) || !isFinite(total) || total === 0) return 100;
+    return _.isUndefined(current) ? 0 : Math.round((current / total) * 100);
   };
 
-  const currentPosition = calculateProgress();
+  const percent = calculatePercent();
 
   return (
-    <BAIFlex direction="column" align="start">
+    <BAIFlex direction="column" align="start" style={style}>
       <Typography.Text
         style={{
           fontSize: token.fontSizeLG,
-          fontWeight: 600,
           marginBottom: 16,
           lineHeight: '1em',
+          color: token.colorTextSecondary,
         }}
       >
         {title}
@@ -95,37 +94,42 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
               style={{
                 fontSize: 32,
                 lineHeight: '1em',
-                fontWeight: 700,
-                color: token.colorSuccess,
               }}
             >
               {displayCurrent}
             </Typography.Text>
-            {unit && <Typography.Text>{unit}</Typography.Text>}
+            {unit && (
+              <Typography.Text
+                style={{
+                  color: token.colorTextSecondary,
+                }}
+              >
+                {unit}
+              </Typography.Text>
+            )}
           </>
         )}
       </BAIFlex>
 
-      {showProgress && total !== undefined && (
+      {progressMode === 'normal' && total !== undefined ? (
         <Tooltip title={`${displayCurrent} ${unit} / ${displayTotal} ${unit}`}>
-          <BAIFlex direction="row" gap={2}>
-            {_.map(_.range(progressSteps), (i) => (
-              <BAIFlex
-                key={i}
-                style={{
-                  width: 5,
-                  height: 12,
-                  borderRadius: 2.5,
-                  backgroundColor:
-                    i < currentPosition
-                      ? token.colorSuccess
-                      : token.colorTextDisabled,
-                }}
-              />
-            ))}
-          </BAIFlex>
+          <Progress
+            percent={percent}
+            style={{ width: 100 }}
+            strokeColor={token.colorTextTertiary}
+            status="active"
+            steps={progressSteps}
+            size={[3, 10]}
+            showInfo={false}
+          />
         </Tooltip>
-      )}
+      ) : progressMode === 'ghost' ? (
+        <Progress
+          showInfo={false}
+          trailColor={'transparent'}
+          size={[100, 10]}
+        />
+      ) : null}
     </BAIFlex>
   );
 };

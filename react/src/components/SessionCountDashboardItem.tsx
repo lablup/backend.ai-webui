@@ -1,11 +1,11 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
-import BAIPanelItem from './BAIPanelItem';
 import { theme } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
   BAIRowWrapWithDividers,
+  BAIStatistic,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTransition } from 'react';
@@ -72,7 +72,15 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
   const { myInteractive, myBatch, myInference, myUpload } = data || {};
 
   const renderBAIPanelItem = (title: string, value: number) => (
-    <BAIPanelItem title={title} value={value} />
+    <BAIStatistic
+      title={title}
+      current={value}
+      progressMode="hidden"
+      style={{
+        // to match the height of BAIStatistic with progress bar without progress bar
+        paddingBottom: 22,
+      }}
+    />
   );
 
   return (
@@ -81,8 +89,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       align="stretch"
       style={{
         paddingLeft: token.paddingXL,
-        paddingRight: token.paddingXL,
-        height: '100%',
+        paddingRight: token.padding,
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
@@ -92,6 +99,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
         title={title}
         extra={
           <BAIFetchKeyButton
+            size="small"
             loading={isPendingRefetch || isRefetching}
             value=""
             onChange={() => {
@@ -107,27 +115,12 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
             type="text"
             style={{
               backgroundColor: 'transparent',
-              margin: -token.marginXS,
             }}
           />
         }
       />
-
-      {/* Scrollable Content Section */}
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-        }}
-      >
+      <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
         <BAIRowWrapWithDividers
-          columnGap={token.marginXXL}
-          rowGap={token.margin}
-          dividerWidth={1}
-          dividerInset={token.marginXS}
           style={{
             paddingBlock: token.padding,
           }}

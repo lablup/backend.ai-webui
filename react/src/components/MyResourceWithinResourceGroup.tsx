@@ -248,7 +248,7 @@ const MyResourceWithinResourceGroup: React.FC<
         <ResourceStatistics
           resourceData={resourceData}
           displayType={displayType}
-          showProgress={false}
+          progressMode="ghost"
         />
       )}
     </BAIFlex>

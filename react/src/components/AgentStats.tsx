@@ -215,7 +215,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         <ResourceStatistics
           resourceData={agentStatsData}
           displayType={displayType === 'used' ? 'used' : 'free'}
-          showProgress={true}
+          progressMode="normal"
         />
       )}
     </BAIFlex>
