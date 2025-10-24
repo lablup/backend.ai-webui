@@ -210,7 +210,7 @@ const KeypairResourcePolicySettingModal: React.FC<
         const props:
           | CreateKeyPairResourcePolicyInput
           | ModifyKeyPairResourcePolicyInput = {
-          ..._.omit(restValues, 'parsedTotalResourceSlots'),
+          ..._.omit(restValues, 'parsedTotalResourceSlots', 'name'),
           total_resource_slots: JSON.stringify(total_resource_slots),
           allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
         };
