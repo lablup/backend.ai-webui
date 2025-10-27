@@ -17,7 +17,7 @@ interface BAICodeEditorProps extends Omit<ReactCodeMirrorProps, 'language'> {
 const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   value,
   onChange,
-  language = 'shell',
+  language = 'sh',
   editable = false,
   showLineNumbers = true,
   lineWrapping = false,
