@@ -652,17 +652,18 @@
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {
-    "FileInProgress": "Hochladen von '{{fileName}}' ...",
     "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert.",
     "FileUploadFailed": "Es wurden einige Dateien nicht in Ordner '{{folderName}}' hochgeladen.",
+    "Filename": "Dateiname",
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
     "ProcessingUpload": "Ihre Datei wird hochgeladen. \nBitte warten.",
-    "SuccessfullyUploadedToFolder": "Dateien, die erfolgreich in Ordner '{{folderName}}' hochgeladen wurden",
+    "SuccessfullyUploadedToFolder": "Dateien erfolgreich hochgeladen.",
     "UploadFailed": "Upload fehlgeschlagen in '{{folderName}}' '",
-    "UploadToFolder": "Hochladen auf '{{folderName}}'",
+    "UploadingFiles": "Dateien werden hochgeladen...",
+    "VFolder": "Ordner",
     "ValueRequired": "WertErforderlich"
   },
   "general": {

@@ -652,17 +652,18 @@
     "Title": "Se ha producido un error."
   },
   "explorer": {
-    "FileInProgress": "Cargando '{{fileName}}' ...",
     "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario.",
     "FileUploadFailed": "No se pudo cargar algunos archivos en la carpeta '{{folderName}}'.",
+    "Filename": "Nombre del archivo",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "NoPermissions": "No hay permisos para acceder a esta carpeta",
     "ProcessingUpload": "Se está cargando su archivo. \nEspere por favor.",
-    "SuccessfullyUploadedToFolder": "Archivos cargados correctamente en la carpeta '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Archivos cargados exitosamente.",
     "UploadFailed": "La carga falló en '{{folderName}}'",
-    "UploadToFolder": "Cargar a '{{folderName}}'",
+    "UploadingFiles": "Subiendo archivos...",
+    "VFolder": "Carpeta",
     "ValueRequired": "ValorRequerido"
   },
   "general": {

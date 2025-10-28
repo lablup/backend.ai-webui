@@ -652,17 +652,18 @@
     "Title": "Ocorreu um erro."
   },
   "explorer": {
-    "FileInProgress": "Upload '{{fileName}}' ...",
     "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário.",
     "FileUploadFailed": "Falha ao fazer upload de alguns arquivos na pasta '{{folderName}}'.",
+    "Filename": "Nome do arquivo",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
     "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
-    "SuccessfullyUploadedToFolder": "Arquivos enviados com sucesso na pasta '{{folderName}}''",
+    "SuccessfullyUploadedToFolder": "Arquivos enviados com sucesso.",
     "UploadFailed": "O upload falhou em '{{folderName}}'",
-    "UploadToFolder": "Upload para '{{folderName}}'",
+    "UploadingFiles": "Fazendo upload de arquivos...",
+    "VFolder": "Pasta",
     "ValueRequired": "ValueRequired"
   },
   "general": {

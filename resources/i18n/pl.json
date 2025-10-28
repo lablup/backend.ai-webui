@@ -652,16 +652,17 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
-    "FileInProgress": "Przesyłanie „{{fileName}}” ...",
     "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
+    "Filename": "Nazwa pliku",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
-    "SuccessfullyUploadedToFolder": "Pliki przesłane pomyślnie w folderze '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Pliki przesłane pomyślnie.",
     "UploadFailed": "Przesyłanie nie powiodło się w '{{folderName}}' '",
-    "UploadToFolder": "Przesyłanie do „{{folderName}}”",
+    "UploadingFiles": "Przesyłanie plików...",
+    "VFolder": "Falcówka",
     "ValueRequired": "Wymagana wartość"
   },
   "general": {

@@ -641,17 +641,18 @@
     "Title": "เกิดข้อผิดพลาด"
   },
   "explorer": {
-    "FileInProgress": "การอัปโหลด '{{fileName}}' ...",
     "FileUploadCancelled": "การอัปโหลดไฟล์ถูกยกเลิกโดยคำขอผู้ใช้",
     "FileUploadFailed": "ไม่สามารถอัปโหลดไฟล์บางไฟล์ในโฟลเดอร์ '{{folderName}}'",
+    "Filename": "ชื่อไฟล์",
     "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "NoPermissions": "ไม่มีสิทธิ์ในการเข้าถึงโฟลเดอร์นี้",
     "ProcessingUpload": "ไฟล์ของคุณกำลังถูกอัปโหลด \nโปรดรอ.",
-    "SuccessfullyUploadedToFolder": "ไฟล์อัปโหลดสำเร็จในโฟลเดอร์ '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "อัปโหลดไฟล์เรียบร้อยแล้ว",
     "UploadFailed": "การอัปโหลดล้มเหลวใน '{{folderName}}'",
-    "UploadToFolder": "การอัปโหลดไปยัง '{{folderName}}'",
+    "UploadingFiles": "กำลังอัพโหลดไฟล์...",
+    "VFolder": "โฟลเดอร์",
     "ValueRequired": "ต้องระบุค่า"
   },
   "general": {

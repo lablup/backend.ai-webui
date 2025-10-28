@@ -652,16 +652,17 @@
     "Title": "Произошла ошибка."
   },
   "explorer": {
-    "FileInProgress": "Загрузка '{{fileName}}' ...",
     "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом.",
     "FileUploadFailed": "Не удалось загрузить некоторые файлы в папке '{{folderName}}'.",
+    "Filename": "Имя файла",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
     "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
-    "SuccessfullyUploadedToFolder": "Файлы успешно загружены в папке '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Файлы успешно загружены.",
     "UploadFailed": "Загрузка не удалась в '{{folderName}}'",
-    "UploadToFolder": "Загрузка на '{{folderName}}'",
+    "UploadingFiles": "Загрузка файлов...",
+    "VFolder": "Папка",
     "ValueRequired": "НужноЗначение"
   },
   "general": {

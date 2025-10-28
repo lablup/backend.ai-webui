@@ -651,17 +651,18 @@
     "Title": "Si è verificato un errore."
   },
   "explorer": {
-    "FileInProgress": "Caricamento '{{fileName}}' ...",
     "FileUploadCancelled": "Il caricamento del file è stato cancellato dalla richiesta dell'utente.",
     "FileUploadFailed": "Impossibile caricare alcuni file nella cartella '{{folderName}}'.",
+    "Filename": "Nome del file",
     "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "InputTooShort": "Inputtroppo corto",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "NoPermissions": "Nessuna autorizzazione per accedere a questa cartella",
     "ProcessingUpload": "Il tuo file viene caricato. \nAttendere prego.",
-    "SuccessfullyUploadedToFolder": "File caricati correttamente nella cartella '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "File caricati correttamente.",
     "UploadFailed": "Caricamento non riuscito in '{{folderName}'",
-    "UploadToFolder": "Caricamento su '{{folderName}}'",
+    "UploadingFiles": "Caricamento file...",
+    "VFolder": "Cartella",
     "ValueRequired": "ValoreRichiesto"
   },
   "general": {

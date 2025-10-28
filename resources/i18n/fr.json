@@ -652,17 +652,18 @@
     "Title": "Une erreur s'est produite."
   },
   "explorer": {
-    "FileInProgress": "Téléchargement '{{fileName}}' ...",
     "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
     "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
+    "Filename": "Nom de fichier",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "InputTooShort": "Entrée Trop Courte",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
     "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
-    "SuccessfullyUploadedToFolder": "Fichiers téléchargés avec succès dans le dossier '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Fichiers téléchargés avec succès.",
     "UploadFailed": "Le téléchargement a échoué dans '{{folderName}}'",
-    "UploadToFolder": "Téléchargement sur '{{folderName}}'",
+    "UploadingFiles": "Téléchargement de fichiers...",
+    "VFolder": "Dossier",
     "ValueRequired": "ValeurRequis"
   },
   "general": {

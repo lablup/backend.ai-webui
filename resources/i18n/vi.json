@@ -652,17 +652,18 @@
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {
-    "FileInProgress": "Tải lên '{{fileName}}' ...",
     "FileUploadCancelled": "Tải lên tệp đã bị hủy bởi yêu cầu người dùng.",
     "FileUploadFailed": "Không thể tải lên một số tệp trong thư mục '{{folderName}}'.",
+    "Filename": "Tên tệp",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "NoPermissions": "Không có quyền truy cập thư mục này",
     "ProcessingUpload": "Tệp của bạn đang được tải lên. \nVui lòng chờ.",
-    "SuccessfullyUploadedToFolder": "Các tệp được tải lên thành công trong thư mục '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Các tập tin được tải lên thành công.",
     "UploadFailed": "Tải lên không thành công trong '{{folderName}}'",
-    "UploadToFolder": "Tải lên '{{folderName}}'",
+    "UploadingFiles": "Đang tải tệp lên...",
+    "VFolder": "Thư mục",
     "ValueRequired": "Giá trị bắt buộc"
   },
   "general": {

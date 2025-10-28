@@ -652,17 +652,18 @@
     "Title": "On tapahtunut virhe."
   },
   "explorer": {
-    "FileInProgress": "Lataaminen '{{fileName}}' ...",
     "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
+    "Filename": "Tiedoston nimi",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "InputTooShort": "InputTooShort",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
     "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
-    "SuccessfullyUploadedToFolder": "Tiedostot ladataan onnistuneesti kansioon '{{folderName}}'",
+    "SuccessfullyUploadedToFolder": "Tiedostot on ladattu onnistuneesti.",
     "UploadFailed": "Lähettäminen epäonnistui '{{folderName}}'",
-    "UploadToFolder": "Lataaminen '{{folderName}}'",
+    "UploadingFiles": "Ladataan tiedostoja...",
+    "VFolder": "Kansio",
     "ValueRequired": "ValueRequired"
   },
   "general": {
