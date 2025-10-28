@@ -7,7 +7,7 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
 import { theme, Form, Input, App, GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -36,6 +36,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   style,
   ...otherProps
 }) => {
+  'use memo';
   const relayEvn = useRelayEnvironment();
   const currentProject = useCurrentProjectValue();
   const session = useFragment(
@@ -89,10 +90,21 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
 
   const isPendingRenamingAndRefreshing =
     renameSessionMutation.isPending || optimisticName !== session.name;
+
+  // focus back to the text component after editing for better UX related to keyboard shortcuts
+  const textRef = useRef<HTMLElement>(null);
+  const focusFallback = () => {
+    setTimeout(() => {
+      textRef.current?.focus();
+    }, 0);
+  };
+
   return (
     <>
       {(!isEditing || isPendingRenamingAndRefreshing) && (
         <Component
+          ref={textRef}
+          tabIndex={-1}
           editable={
             isEditingAllowed && !isPendingRenamingAndRefreshing
               ? {
@@ -105,6 +117,8 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
           }
           copyable
           style={{
+            // after editing, focus this element, remove outline
+            outline: 'none',
             ...style,
             color: isPendingRenamingAndRefreshing
               ? token.colorTextTertiary
@@ -121,6 +135,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
         <Form
           onFinish={(values) => {
             setIsEditing(false);
+            focusFallback();
             setOptimisticName(values.sessionName);
             // FIXME: This API does not return any response on success or error.
             renameSessionMutation.mutate(values.sessionName, {
@@ -190,7 +205,9 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
               onKeyDown={(e) => {
                 // when press escape key, cancel editing
                 if (e.key === 'Escape') {
+                  e.stopPropagation();
                   setIsEditing(false);
+                  focusFallback();
                 }
               }}
             />

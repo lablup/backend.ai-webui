@@ -9,7 +9,7 @@ import { App, Form, GetProps, Input, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';
-import { use, useState } from 'react';
+import { use, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ServerError extends Error {
@@ -62,6 +62,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
   style,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal, message } = App.useApp();
@@ -104,10 +105,20 @@ const EditableFileName: React.FC<EditableNameProps> = ({
   const isPendingRenamingAndRefreshing =
     renameMutation.isPending || optimisticName !== fileInfo.name;
 
+  // focus back to the text component after editing for better UX related to keyboard shortcuts
+  const textRef = useRef<HTMLElement>(null);
+  const focusFallback = () => {
+    setTimeout(() => {
+      textRef.current?.focus();
+    }, 0);
+  };
+
   return (
     <>
       {!isEditing || isPendingRenamingAndRefreshing ? (
         <Component
+          ref={textRef}
+          tabIndex={-1}
           editable={
             !disabled && !isPendingRenamingAndRefreshing
               ? {
@@ -123,7 +134,11 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               : false
           }
           className={!disabled ? styles.hoverEdit : undefined}
-          style={style}
+          style={{
+            // after editing, focus this element, remove outline
+            outline: 'none',
+            ...style,
+          }}
           {...props}
         >
           {fileInfo?.type === 'DIRECTORY' ? (
@@ -167,6 +182,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
           initialValues={{ newName: fileInfo?.name }}
           onFinish={(values) => {
             setIsEditing(false);
+            focusFallback();
             setOptimisticName(values.newName);
             const variables = {
               target_path: _.join([currentPath, fileInfo?.name], '/'),
@@ -242,7 +258,9 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Escape') {
+                  e.stopPropagation();
                   setIsEditing(false);
+                  focusFallback();
                 }
               }}
             />
