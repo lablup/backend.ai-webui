@@ -3,7 +3,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useVFolderInvitations } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import usePrimaryColors from '../hooks/usePrimaryColors';
 import BAIPanelItem from './BAIPanelItem';
 import { Badge, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -41,7 +40,6 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyles();
-  const primaryColors = usePrimaryColors();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -117,6 +115,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
             style={{
               maxWidth: PANEL_ITEM_MAX_WIDTH,
             }}
+            color={token.colorText}
           />
           <BAIPanelItem
             title={t('data.ProjectFolders')}
@@ -129,6 +128,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
             style={{
               maxWidth: PANEL_ITEM_MAX_WIDTH,
             }}
+            color={token.colorText}
           />
           <BAIPanelItem
             title={
@@ -155,24 +155,24 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                       count={count > 0 ? `+${count}` : null}
                       offset={[0, -`${token.sizeXS}`]}
                     >
-                      <Typography.Title level={5} style={{ margin: 0 }}>
+                      <Typography.Text
+                        style={{ fontSize: token.fontSizeHeading5 }}
+                      >
                         {t('data.InvitedFolders')}
-                      </Typography.Title>
+                      </Typography.Text>
                     </Badge>
                   </Tooltip>
                 </a>
               ) : (
-                <Typography.Title level={5} style={{ margin: 0 }}>
+                <Typography.Text style={{ fontSize: token.fontSizeHeading5 }}>
                   {t('data.InvitedFolders')}
-                </Typography.Title>
+                </Typography.Text>
               )
             }
             value={
               <Typography.Text
-                strong
                 style={{
                   fontSize: token.fontSizeHeading1,
-                  color: primaryColors.primary5,
                 }}
               >
                 {invitedCount}

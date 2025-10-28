@@ -181,7 +181,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       <ResourceStatistics
         resourceData={resourceData}
         displayType="used"
-        showProgress={true}
+        progressMode="normal"
       />
     </BAIFlex>
   );

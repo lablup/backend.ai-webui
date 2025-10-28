@@ -350,7 +350,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       <ResourceStatistics
         resourceData={resourceData}
         displayType={displayType}
-        showProgress={true}
+        progressMode="normal"
       />
     </BAIFlex>
   );

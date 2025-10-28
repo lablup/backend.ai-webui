@@ -48,7 +48,6 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
     >
       {_.isString(title) ? (
         <Typography.Text
-          strong
           style={{
             fontSize: token.fontSizeHeading5,
             wordBreak: 'keep-all',
@@ -63,7 +62,6 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       <BAIFlex>
         {_.isString(value) || _.isNumber(value) ? (
           <Typography.Text
-            strong
             style={{
               fontSize: token.fontSizeHeading1,
               color: color ?? primaryColors.primary5,

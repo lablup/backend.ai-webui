@@ -1,7 +1,7 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
-import BAIStatistic from './BAIStatistic';
+import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
 import { Empty, theme } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +28,7 @@ interface ResourceData {
 interface ResourceStatisticsProps {
   resourceData: ResourceData;
   displayType: 'used' | 'free';
-  showProgress?: boolean;
+  progressMode?: BAIStatisticProps['progressMode'];
   precision?: number;
   progressSteps?: number;
 }
@@ -55,8 +55,8 @@ export const convertToNumber = (value: any): number => {
 const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
   resourceData,
   displayType,
-  showProgress = false,
-  progressSteps = 12,
+  progressMode = 'hidden',
+  progressSteps,
   precision = 2,
 }) => {
   const { t } = useTranslation();
@@ -85,9 +85,12 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
             total={resourceData.cpu[displayType].total}
             title={resourceData.cpu.metadata.title}
             unit={resourceData.cpu.metadata.displayUnit}
-            showProgress={showProgress}
+            progressMode={progressMode}
             progressSteps={progressSteps}
             precision={precision}
+            style={{
+              color: displayType === 'free' ? token.colorSuccess : undefined,
+            }}
           />
         )}
         {resourceData.memory && (
@@ -96,9 +99,12 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
             total={resourceData.memory[displayType].total}
             title={resourceData.memory.metadata.title}
             unit={resourceData.memory.metadata.displayUnit}
-            showProgress={showProgress}
+            progressMode={progressMode}
             progressSteps={progressSteps}
             precision={precision}
+            style={{
+              color: displayType === 'free' ? token.colorSuccess : undefined,
+            }}
           />
         )}
       </BAIRowWrapWithDividers>
@@ -107,7 +113,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
         <BAIRowWrapWithDividers
           dividerColor={token.colorBorder}
           style={{
-            backgroundColor: token.colorSuccessBg,
+            backgroundColor: token.colorBgLayout,
             borderRadius: token.borderRadiusLG,
             padding: token.padding,
           }}
@@ -119,9 +125,12 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
               total={acc[displayType].total}
               title={acc.metadata.title}
               unit={acc.metadata.displayUnit}
-              showProgress={showProgress}
+              progressMode={progressMode}
               progressSteps={progressSteps}
               precision={precision}
+              style={{
+                color: displayType === 'free' ? token.colorSuccess : undefined,
+              }}
             />
           ))}
         </BAIRowWrapWithDividers>
