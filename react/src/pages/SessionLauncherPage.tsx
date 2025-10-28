@@ -79,7 +79,12 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { filterOutEmpty, BAIFlex, toGlobalId } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  toGlobalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
@@ -96,6 +101,14 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
+
+// Type for successful session creation result
+type SessionCreationSuccess = {
+  kernelId?: string;
+  sessionId: string;
+  sessionName: string;
+  servicePorts: Array<{ name: string }>;
+};
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
@@ -203,6 +216,7 @@ const SessionLauncherPage = () => {
   const app = App.useApp();
 
   const relayEnv = useRelayEnvironment();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
@@ -611,57 +625,70 @@ const SessionLauncherPage = () => {
         });
 
         await Promise.allSettled(sessionPromises)
-          .then(async (sessionCreations) => {
-            // sessionCreations has failed
-            if (_.every(sessionCreations, { status: 'rejected' })) {
-            } else {
-              // If at least one session creation is successful, navigate to job page and show success notifications
-              webuiNavigate(redirectTo || '/job');
+          .then(
+            async (
+              sessionCreations: PromiseSettledResult<SessionCreationSuccess>[],
+            ) => {
+              // Group session creations by their status
+              const results = _.groupBy(sessionCreations, 'status') as {
+                fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
+                rejected?: PromiseRejectedResult[];
+              };
 
-              _.map(sessionCreations, async (creation) => {
-                if (creation.status === 'fulfilled') {
-                  const session = creation.value as {
-                    kernelId?: string;
-                    sessionId: string;
-                    sessionName: string;
-                    servicePorts: Array<{ name: string }>;
-                  };
-                  const queryResult =
-                    await fetchQuery<SessionLauncherPageAfterCreationQuery>(
-                      relayEnv,
-                      graphql`
-                        query SessionLauncherPageAfterCreationQuery(
-                          $id: GlobalIDField!
-                        ) {
-                          compute_session_node(id: $id) {
-                            ...BAINodeNotificationItemFragment
-                          }
+              // Handle successful session creations
+              _.map(results.fulfilled, async (creation) => {
+                const session = creation.value;
+                const queryResult =
+                  await fetchQuery<SessionLauncherPageAfterCreationQuery>(
+                    relayEnv,
+                    graphql`
+                      query SessionLauncherPageAfterCreationQuery(
+                        $id: GlobalIDField!
+                      ) {
+                        compute_session_node(id: $id) {
+                          ...BAINodeNotificationItemFragment
                         }
-                      `,
-                      {
-                        id: toGlobalId('ComputeSessionNode', session.sessionId),
-                      },
-                    )
-                      .toPromise()
-                      .catch(() => null);
+                      }
+                    `,
+                    {
+                      id: toGlobalId('ComputeSessionNode', session.sessionId),
+                    },
+                  )
+                    .toPromise()
+                    .catch(() => null);
 
-                  const createdSession =
-                    queryResult?.compute_session_node ?? null;
+                const createdSession =
+                  queryResult?.compute_session_node ?? null;
 
-                  if (createdSession) {
-                    upsertNotification({
-                      key: `${SESSION_LAUNCHER_NOTI_PREFIX}${session.sessionId}`,
-                      node: createdSession,
-                      open: true,
-                      duration: 0,
-                    });
-                  }
+                if (createdSession) {
+                  upsertNotification({
+                    key: `${SESSION_LAUNCHER_NOTI_PREFIX}${session.sessionId}`,
+                    node: createdSession,
+                    open: true,
+                    duration: 0,
+                  });
                 }
               });
-            }
-          })
-          .catch(() => {
-            // Handle failed session creations
+
+              // If at least one session creation is successful, navigate to job page and show success notifications
+              if (results.fulfilled && results.fulfilled.length > 0) {
+                webuiNavigate(redirectTo || '/job');
+              }
+
+              // If there are any failed session creations, show the first error message
+              if (results.rejected && results.rejected.length > 0) {
+                const error = results.rejected[0].reason;
+                app.modal.error({
+                  title: error?.title,
+                  content: getErrorMessage(error),
+                });
+              }
+            },
+          )
+          .catch((error) => {
+            // Unexpected error in `then` of allSettled
+            console.error('Unexpected error during session creation:', error);
+            app.message.error(t('error.UnexpectedError'));
           });
       })
       .catch((e) => {
