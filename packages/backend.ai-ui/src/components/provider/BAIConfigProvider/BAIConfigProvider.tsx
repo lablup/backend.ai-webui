@@ -41,12 +41,22 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
-export interface BAIConfigProviderProps
+export interface BAIConfigProviderBaseProps
   extends Omit<ConfigProviderProps, 'locale'> {
   locale?: BAILocale;
-  clientPromise: Promise<BAIClient>;
-  anonymousClientFactory: (api_endpoint: string) => BAIClient;
 }
+
+export type BAIConfigProviderProps = BAIConfigProviderBaseProps &
+  (
+    | {
+        clientPromise: Promise<BAIClient>;
+        anonymousClientFactory: (api_endpoint: string) => BAIClient;
+      }
+    | {
+        clientPromise?: never;
+        anonymousClientFactory?: never;
+      }
+  );
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,16 +83,20 @@ const BAIConfigProvider = ({
 
   return (
     <I18nextProvider i18n={i18n}>
-      <ConfigProvider locale={locale?.antdLocale} {...props}>
-        <BAIClientProvider
-          clientPromise={clientPromise}
-          anonymousClientFactory={anonymousClientFactory}
-        >
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
-        </BAIClientProvider>
-      </ConfigProvider>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider locale={locale?.antdLocale} {...props}>
+          {clientPromise && anonymousClientFactory ? (
+            <BAIClientProvider
+              clientPromise={clientPromise}
+              anonymousClientFactory={anonymousClientFactory}
+            >
+              {children}
+            </BAIClientProvider>
+          ) : (
+            children
+          )}
+        </ConfigProvider>
+      </QueryClientProvider>
     </I18nextProvider>
   );
 };
