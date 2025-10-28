@@ -1548,7 +1548,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a guide for terminal
    */
   _openTerminalGuideDialog() {
-    this.terminalGuideDialog.show();
+    if (!globalThis.backendaiclient.supports('copy-on-terminal')) {
+      this.terminalGuideDialog.show();
+    }
   }
 
   /**
