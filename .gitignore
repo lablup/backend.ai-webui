@@ -165,6 +165,5 @@ CLAUDE.local.md
 # ignore merged schema
 data/merged_schema.graphql
 
-# webui release download temp directories
-temp-webui-*
-backend.ai-webui-bundle-*.zip
+# webui release download temp directories (safe to delete)
+scripts/temp-releases/
