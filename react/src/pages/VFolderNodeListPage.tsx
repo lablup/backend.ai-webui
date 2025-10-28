@@ -312,7 +312,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     width: '100%',
                     minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
-                  title={t('data.StorageStatus')}
+                  title={t('data.FolderStatus')}
                   status="error"
                   extra={
                     <BAIAlertIconWithTooltip
@@ -330,7 +330,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     width: '100%',
                     minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                   }}
-                  title={t('data.StorageStatus')}
+                  title={t('data.FolderStatus')}
                   loading
                 />
               }

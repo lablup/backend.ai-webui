@@ -159,6 +159,7 @@ guides-for-ai-temp
 CLAUDE.local.md
 
 .claude/settings.local.json
+.serena
 
 .env.development.local
 

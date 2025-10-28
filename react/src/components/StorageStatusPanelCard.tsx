@@ -15,11 +15,11 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 const useStyles = createStyles(({ css, token }) => ({
   invitationTooltip: css`
     .ant-tooltip-arrow {
-      right: -${token.sizeXS}px;
+      right: 0;
       bottom: ${token.size}px;
     }
     .ant-tooltip-content {
-      left: ${token.size}px;
+      left: ${token.sizeXS}px;
       bottom: ${token.size}px;
     }
   `,
@@ -96,7 +96,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
 
   return (
     <>
-      <BAICard {...cardProps} title={t('data.StorageStatus')}>
+      <BAICard {...cardProps} title={t('data.FolderStatus')}>
         <BAIRowWrapWithDividers
           rowGap={token.marginXL}
           columnGap={token.marginXL}
@@ -153,7 +153,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                   >
                     <Badge
                       count={count > 0 ? `+${count}` : null}
-                      offset={[0, -`${token.sizeXS}`]}
+                      offset={[-`${token.sizeXS}`, -`${token.sizeXS}`]}
                     >
                       <Typography.Text
                         style={{ fontSize: token.fontSizeHeading5 }}
