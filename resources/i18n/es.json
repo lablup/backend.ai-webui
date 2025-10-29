@@ -992,7 +992,7 @@
     "ServiceInfo": "Información de servicio",
     "ServiceName": "Nombre de servicio",
     "ServiceNameCannotStartWithHyphen": "No se pueden utilizar guiones (-) en ninguno de los extremos.",
-    "ServiceNameInvalidCharacter": "En el medio del nombre del servicio, solo el alfabeto, el número, el '_', '.', '--' solo se puede incluir.",
+    "ServiceNameInvalidCharacter": "En el medio del nombre del servicio, solo el alfabeto, el número, el '_', '-' solo se puede incluir.",
     "ServiceNameMaxLength": "Por favor ingrese 24 caracteres o menos.",
     "ServiceNameMinLength": "Por favor ingrese al menos 4 caracteres.",
     "ServiceNameShouldEndWith": "El nombre de la sesión debe terminar con alfabeto, caracteres grandes y pequeños, números y '_'.",

@@ -998,7 +998,7 @@
     "ServiceInfo": "Service Info",
     "ServiceName": "Service Name",
     "ServiceNameCannotStartWithHyphen": "Hyphens (-) cannot be used at either end.",
-    "ServiceNameInvalidCharacter": "In the middle of the service name, only the alphabet, the number, the '_', '.', '-' can only be included.",
+    "ServiceNameInvalidCharacter": "In the middle of the service name, only the alphabet, the number, the '_', '-' can only be included.",
     "ServiceNameMaxLength": "Please enter 24 characters or less.",
     "ServiceNameMinLength": "Please enter at least 4 characters.",
     "ServiceNameShouldEndWith": "It must end with alphabet, large and small characters, numbers, and '_'.",

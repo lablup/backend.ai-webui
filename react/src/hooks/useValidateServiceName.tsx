@@ -38,7 +38,7 @@ export const useValidateServiceName = (): Exclude<
             return Promise.reject(t('modelService.ServiceNameShouldEndWith'));
           }
 
-          if (!/^[\w.-]*$/.test(value)) {
+          if (!/^[\w-]*$/.test(value)) {
             return Promise.reject(
               t('modelService.ServiceNameInvalidCharacter'),
             );

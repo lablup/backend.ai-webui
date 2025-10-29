@@ -992,7 +992,7 @@
     "ServiceInfo": "Servis Bilgileri",
     "ServiceName": "Hizmet adı",
     "ServiceNameCannotStartWithHyphen": "Kısa çizgi (-) her iki uçta da kullanılamaz.",
-    "ServiceNameInvalidCharacter": "Servis adının ortasında, yalnızca alfabe, sayı, '_', '.', '-'-'sadece dahil edilebilir.",
+    "ServiceNameInvalidCharacter": "Servis adının ortasında, yalnızca alfabe, sayı, '_', '-' sadece dahil edilebilir.",
     "ServiceNameMaxLength": "Lütfen 24 veya daha az karakter girin.",
     "ServiceNameMinLength": "Lütfen en az 4 karakter giriniz.",
     "ServiceNameShouldEndWith": "Oturum adı alfabe, büyük ve küçük karakterler, sayılar ve '_' ile bitmelidir.",

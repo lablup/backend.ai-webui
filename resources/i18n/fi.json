@@ -991,7 +991,7 @@
     "ServiceInfo": "Palvelun tiedot",
     "ServiceName": "Palvelunimi",
     "ServiceNameCannotStartWithHyphen": "Tavuviivoja (-) ei voi käyttää kummassakaan päässä.",
-    "ServiceNameInvalidCharacter": "Palvelun nimen keskellä vain aakkoset, numero '_', '.', '-' voidaan sisällyttää vain.",
+    "ServiceNameInvalidCharacter": "Palvelun nimen keskellä vain aakkoset, numero '_', '-' voidaan sisällyttää vain.",
     "ServiceNameMaxLength": "Anna enintään 24 merkkiä.",
     "ServiceNameMinLength": "Kirjoita vähintään 4 merkkiä.",
     "ServiceNameShouldEndWith": "Istunnon nimen on päätyttävä aakkosella, suurilla ja pienillä merkeillä, numeroilla ja '_'.",

@@ -996,7 +996,7 @@
     "ServiceInfo": "서비스 정보",
     "ServiceName": "서비스 이름",
     "ServiceNameCannotStartWithHyphen": "하이픈(-)은 양쪽 끝에 사용할 수 없습니다.",
-    "ServiceNameInvalidCharacter": "서비스 이름 중간에는 알파벳 대소문자, 숫자, '_', '.', '-'만 포함할 수 있습니다.",
+    "ServiceNameInvalidCharacter": "서비스 이름 중간에는 알파벳 대소문자, 숫자, '_', '-'만 포함할 수 있습니다.",
     "ServiceNameMaxLength": "24자 이하로 입력해 주세요.",
     "ServiceNameMinLength": "4자 이상 입력해 주세요.",
     "ServiceNameShouldEndWith": "서비스 이름은 알파벳 대소문자, 숫자, '_'로 끝나야 합니다.",

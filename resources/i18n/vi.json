@@ -992,7 +992,7 @@
     "ServiceInfo": "Thông tin dịch vụ",
     "ServiceName": "Tên dịch vụ",
     "ServiceNameCannotStartWithHyphen": "Dấu gạch nối (-) không thể được sử dụng ở cả hai đầu.",
-    "ServiceNameInvalidCharacter": "Ở giữa tên dịch vụ, chỉ bảng chữ cái, số, '_', '.', '-' chỉ có thể được bao gồm.",
+    "ServiceNameInvalidCharacter": "Ở giữa tên dịch vụ, chỉ bảng chữ cái, số, '_', '-' chỉ có thể được bao gồm.",
     "ServiceNameMaxLength": "Vui lòng nhập 24 ký tự trở xuống.",
     "ServiceNameMinLength": "Vui lòng nhập ít nhất 4 ký tự.",
     "ServiceNameShouldEndWith": "Tên phiên phải kết thúc bằng bảng chữ cái, các ký tự lớn và nhỏ, số và '_'.",

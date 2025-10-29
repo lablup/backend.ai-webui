@@ -991,7 +991,7 @@
     "ServiceInfo": "Maklumat Perkhidmatan",
     "ServiceName": "Nama perkhidmatan",
     "ServiceNameCannotStartWithHyphen": "Tanda sempang (-) tidak boleh digunakan pada kedua-dua hujung.",
-    "ServiceNameInvalidCharacter": "Di tengah-tengah nama perkhidmatan, hanya abjad, nombor, '_', '.', '-' hanya boleh dimasukkan.",
+    "ServiceNameInvalidCharacter": "Di tengah-tengah nama perkhidmatan, hanya abjad, nombor, '_', '-' hanya boleh dimasukkan.",
     "ServiceNameMaxLength": "Sila masukkan 24 aksara atau kurang.",
     "ServiceNameMinLength": "Sila masukkan sekurang-kurangnya 4 aksara.",
     "ServiceNameShouldEndWith": "Nama sesi mesti berakhir dengan abjad, aksara besar dan kecil, nombor, dan '_'.",

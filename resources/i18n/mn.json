@@ -990,7 +990,7 @@
     "ServiceInfo": "Үйлчилгээний мэдээлэл",
     "ServiceName": "С УНKЦны нэр",
     "ServiceNameCannotStartWithHyphen": "Хоёр төгсгөлд зураас (-) ашиглах боломжгүй.",
-    "ServiceNameInvalidCharacter": "Үйлчилгээний голд зөвхөн цагаан толгой, цагаан толгой, тоо, '_', '_'.",
+    "ServiceNameInvalidCharacter": "Үйлчилгээний голд зөвхөн цагаан толгой, цагаан толгой, тоо, '_', '-'.",
     "ServiceNameMaxLength": "24 ба түүнээс бага тэмдэгт оруулна уу.",
     "ServiceNameMinLength": "Дор хаяж 4 тэмдэгт оруулна уу.",
     "ServiceNameShouldEndWith": "Сешн нэр нь цагаан толгой, том, жижиг тэмдэгтүүд, тоо, тоонууд, тоонууд, тоонууд, ба '_'.",

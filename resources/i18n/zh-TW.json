@@ -991,7 +991,7 @@
     "ServiceInfo": "服务信息",
     "ServiceName": "服務名稱",
     "ServiceNameCannotStartWithHyphen": "兩端不能使用連字符 (-)。",
-    "ServiceNameInvalidCharacter": "在服務名稱的中間，只有字母，數字，'_'，'。'，' - '只能包括在內。",
+    "ServiceNameInvalidCharacter": "在服務名稱的中間，只有字母，數字，'_', '-'只能包括在內。",
     "ServiceNameMaxLength": "請輸入 24 個或更少的字元。",
     "ServiceNameMinLength": "請輸入至少 4 個字元。",
     "ServiceNameShouldEndWith": "會話名稱必須以字母，大字符，數字和“ _”結尾。",
