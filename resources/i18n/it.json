@@ -990,7 +990,7 @@
     "ServiceInfo": "Info sul servizio",
     "ServiceName": "Nome del servizio",
     "ServiceNameCannotStartWithHyphen": "I trattini (-) non possono essere utilizzati alle due estremità.",
-    "ServiceNameInvalidCharacter": "Nel mezzo del nome del servizio, solo l'alfabeto, il numero, il '_', '.', '-' può essere incluso solo.",
+    "ServiceNameInvalidCharacter": "Nel mezzo del nome del servizio, solo l'alfabeto, il numero, il '_', '-' può essere incluso solo.",
     "ServiceNameMaxLength": "Inserisci 24 caratteri o meno.",
     "ServiceNameMinLength": "Inserisci almeno 4 caratteri.",
     "ServiceNameShouldEndWith": "Il nome della sessione deve terminare con alfabeto, caratteri grandi e piccoli, numeri e '_'.",

@@ -992,7 +992,7 @@
     "ServiceInfo": "Service-Informationen",
     "ServiceName": "Dienst Name",
     "ServiceNameCannotStartWithHyphen": "Bindestriche (-) dürfen an beiden Enden nicht verwendet werden.",
-    "ServiceNameInvalidCharacter": "In der Mitte des Dienstnamens kann nur das Alphabet, die Nummer, die '_', '.'-'-' nur eingeschlossen werden.",
+    "ServiceNameInvalidCharacter": "In der Mitte des Dienstnamens kann nur das Alphabet, die Nummer, die '_', '-' nur eingeschlossen werden.",
     "ServiceNameMaxLength": "Bitte geben Sie maximal 24 Zeichen ein.",
     "ServiceNameMinLength": "Bitte geben Sie mindestens 4 Zeichen ein.",
     "ServiceNameShouldEndWith": "Der Sitzungsname muss mit Alphabet, großen und kleinen Zeichen, Zahlen und '_' enden.",

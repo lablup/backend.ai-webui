@@ -992,7 +992,7 @@
     "ServiceInfo": "服务信息",
     "ServiceName": "服务名称",
     "ServiceNameCannotStartWithHyphen": "两端不能使用连字符 (-)。",
-    "ServiceNameInvalidCharacter": "在服务名称的中间，只有字母，数字，'_'，'。'，' - '只能包括在内。",
+    "ServiceNameInvalidCharacter": "在服务名称的中间，只有字母，数字，'_', '-'只能包括在内。",
     "ServiceNameMaxLength": "请输入 24 个或更少的字符。",
     "ServiceNameMinLength": "请输入至少 4 个字符。",
     "ServiceNameShouldEndWith": "会话名称必须以字母，大字符，数字和“ _”结尾。",

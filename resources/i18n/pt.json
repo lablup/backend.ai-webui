@@ -991,7 +991,7 @@
     "ServiceInfo": "Informações sobre o serviço",
     "ServiceName": "Nome do serviço",
     "ServiceNameCannotStartWithHyphen": "Hífens (-) não podem ser usados ​​em nenhuma das extremidades.",
-    "ServiceNameInvalidCharacter": "No meio do nome do serviço, apenas o alfabeto, o número, o '_', '.', '-' só pode ser incluído.",
+    "ServiceNameInvalidCharacter": "No meio do nome do serviço, apenas o alfabeto, o número, o '_', '-' só pode ser incluído.",
     "ServiceNameMaxLength": "Insira 24 caracteres ou menos.",
     "ServiceNameMinLength": "Por favor insira pelo menos 4 caracteres.",
     "ServiceNameShouldEndWith": "O nome da sessão deve terminar com alfabeto, caracteres grandes e pequenos, números e '_'.",

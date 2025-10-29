@@ -991,7 +991,7 @@
     "ServiceInfo": "Informacje o usłudze",
     "ServiceName": "Nazwa usługi",
     "ServiceNameCannotStartWithHyphen": "Łączników (-) nie można używać na żadnym końcu.",
-    "ServiceNameInvalidCharacter": "W środku nazwy usługi, tylko alfabet, liczba,„ _ ”, '.', '-' może być tylko uwzględnione.",
+    "ServiceNameInvalidCharacter": "W środku nazwy usługi, tylko alfabet, liczba,'_', '-' może być tylko uwzględnione.",
     "ServiceNameMaxLength": "Wprowadź maksymalnie 24 znaki.",
     "ServiceNameMinLength": "Proszę wpisać co najmniej 4 znaki.",
     "ServiceNameShouldEndWith": "Nazwa sesji musi zakończyć się alfabetem, dużymi i małymi znakami, liczbami i „_”.",

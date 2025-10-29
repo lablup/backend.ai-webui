@@ -990,7 +990,7 @@
     "ServiceInfo": "Info Layanan",
     "ServiceName": "Nama Layanan",
     "ServiceNameCannotStartWithHyphen": "Tanda hubung (-) tidak dapat digunakan pada kedua ujungnya.",
-    "ServiceNameInvalidCharacter": "Di tengah nama layanan, hanya alfabet, nomor, '_', '.', '-' hanya dapat dimasukkan.",
+    "ServiceNameInvalidCharacter": "Di tengah nama layanan, hanya alfabet, nomor, '_', '-' hanya dapat dimasukkan.",
     "ServiceNameMaxLength": "Silakan masukkan 24 karakter atau kurang.",
     "ServiceNameMinLength": "Silakan masukkan setidaknya 4 karakter.",
     "ServiceNameShouldEndWith": "Nama sesi harus diakhiri dengan alfabet, karakter besar dan kecil, angka, dan '_'.",

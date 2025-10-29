@@ -991,7 +991,7 @@
     "ServiceInfo": "サービス情報",
     "ServiceName": "サービス名",
     "ServiceNameCannotStartWithHyphen": "両端にハイフン（-）を使用することはできません。",
-    "ServiceNameInvalidCharacter": "サービス名の中央では、アルファベット、数字、「_」、 '、'  -  'のみを含めることができます。",
+    "ServiceNameInvalidCharacter": "サービス名の中央では、アルファベット、数字、'_', '-' のみを含めることができます。",
     "ServiceNameMaxLength": "24文字以内で入力してください。",
     "ServiceNameMinLength": "少なくとも 4 文字を入力してください。",
     "ServiceNameShouldEndWith": "アルファベット、大小の文字、数字、および「_」で終わる必要があります。",

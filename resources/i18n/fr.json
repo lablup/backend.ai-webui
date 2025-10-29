@@ -992,7 +992,7 @@
     "ServiceInfo": "Informations sur le service",
     "ServiceName": "Nom de service",
     "ServiceNameCannotStartWithHyphen": "Les tirets (-) ne peuvent pas être utilisés à chaque extrémité.",
-    "ServiceNameInvalidCharacter": "Au milieu du nom du service, seul l'alphabet, le numéro, le '_' ','. ',' - 'ne peut être inclus que.",
+    "ServiceNameInvalidCharacter": "Au milieu du nom du service, seul l'alphabet, le numéro, le '_', '-' ne peut être inclus que.",
     "ServiceNameMaxLength": "Veuillez saisir 24 caractères ou moins.",
     "ServiceNameMinLength": "Veuillez saisir au moins 4 caractères.",
     "ServiceNameShouldEndWith": "Il doit se terminer avec l'alphabet, les grands et petits caractères, les nombres et «_».",
