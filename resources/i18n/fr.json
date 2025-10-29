@@ -58,6 +58,7 @@
     "Threshold": "Seuil"
   },
   "button": {
+    "Action": "Action",
     "Add": "Ajouter",
     "Apply": "Appliquer",
     "Cancel": "Annuler",
