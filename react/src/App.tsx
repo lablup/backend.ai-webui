@@ -92,6 +92,16 @@ const ReservoirArtifactDetailPage = React.lazy(
 );
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
+// Deployment pages
+const DeploymentListPage = React.lazy(
+  () => import('./pages/DeploymentListPage'),
+);
+const DeploymentDetailPage = React.lazy(
+  () => import('./pages/DeploymentDetailPage'),
+);
+const DeploymentLauncherPage = React.lazy(
+  () => import('./pages/DeploymentLauncherPage'),
+);
 
 interface CustomHandle {
   title?: string;
@@ -298,6 +308,58 @@ const router = createBrowserRouter([
               </Suspense>
             ),
             handle: { labelKey: 'modelService.RoutingInfo' },
+          },
+        ],
+      },
+      {
+        path: '/deployment',
+        handle: { labelKey: 'webui.menu.Deployment' },
+        children: [
+          {
+            path: '',
+            Component: () => {
+              const { t } = useTranslation();
+              useSuspendedBackendaiClient();
+              return (
+                <BAIErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <BAICard title={t('webui.menu.Deployment')} loading />
+                    }
+                  >
+                    <DeploymentListPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+          },
+          {
+            path: '/deployment/start',
+            handle: { labelKey: 'deployment.launcher.CreateNewDeployment' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <DeploymentLauncherPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+          {
+            path: '/deployment/:deploymentId',
+            handle: { labelKey: 'deployment.DeploymentDetail' },
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <DeploymentDetailPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
           },
         ],
       },
@@ -556,7 +618,11 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <DefaultProvidersForReactRoot>
+      <RouterProvider router={router} />
+    </DefaultProvidersForReactRoot>
+  );
 };
 
 export default App;
