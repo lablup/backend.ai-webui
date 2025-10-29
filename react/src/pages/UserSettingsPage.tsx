@@ -57,6 +57,9 @@ const UserPreferencesPage = () => {
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
+  const [maxConcurrentUpload, setMaxConcurrentUpload] = useBAISettingUserState(
+    'max_concurrent_uploads',
+  );
 
   const languageOptions = [
     { label: t('language.English'), value: 'en' },
@@ -248,6 +251,38 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+        },
+        {
+          'data-testid': 'items-max-concurrent-uploads',
+          type: 'select',
+          title: t('userSettings.MaxConcurrentUploads'),
+          description: t('userSettings.DescMaxConcurrentUploads'),
+          selectProps: {
+            options: _.map([2, 3, 4, 5], (num) =>
+              num === 2
+                ? {
+                    label: (
+                      <>
+                        {num}&nbsp;
+                        <Typography.Text type="secondary">
+                          ({t('userSettings.Default')})
+                        </Typography.Text>
+                      </>
+                    ),
+                    value: num,
+                  }
+                : {
+                    label: num.toString(),
+                    value: num,
+                  },
+            ),
+          },
+          defaultValue: 2,
+          value: maxConcurrentUpload || 2,
+          setValue: setMaxConcurrentUpload,
+          onChange: (value: any) => {
+            setMaxConcurrentUpload(value);
+          },
         },
       ]),
     },

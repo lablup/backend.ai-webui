@@ -34,6 +34,7 @@ interface UserSettings {
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
 
   classic_session_list?: boolean; // `experimental_neo_session_list` has been replaced with `classic_session_list`
+  max_concurrent_uploads?: number;
 }
 
 export type SessionHistory = {

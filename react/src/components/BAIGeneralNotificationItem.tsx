@@ -108,7 +108,15 @@ const BAIGeneralNotificationItem: React.FC<{
             ) : null}
           </BAIFlex>
           {notification.extraDescription && showExtraDescription ? (
-            <Card size="small">
+            <Card
+              size="small"
+              style={{
+                maxHeight: '300px',
+                overflow: 'auto',
+                overflowX: 'hidden',
+                marginTop: token.marginSM,
+              }}
+            >
               <Typography.Text type="secondary" copyable>
                 {notification.extraDescription}
               </Typography.Text>

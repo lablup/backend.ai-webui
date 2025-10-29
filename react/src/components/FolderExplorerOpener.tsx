@@ -1,4 +1,3 @@
-import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParam } from 'use-query-params';
@@ -11,17 +10,15 @@ const FolderExplorerOpener = () => {
   const normalizedFolderId = folderId?.replaceAll('-', '');
 
   return (
-    <BAIUnmountAfterClose>
-      <FolderExplorerModal
-        vfolderID={normalizedFolderId || ''}
-        open={!!normalizedFolderId}
-        onRequestClose={() => {
-          setFolderId(null, 'replaceIn');
-          setCurrentPath(null, 'replaceIn');
-        }}
-        destroyOnHidden
-      />
-    </BAIUnmountAfterClose>
+    <FolderExplorerModal
+      vfolderID={normalizedFolderId || ''}
+      open={!!normalizedFolderId}
+      onRequestClose={() => {
+        setFolderId(null, 'replaceIn');
+        setCurrentPath(null, 'replaceIn');
+      }}
+      destroyOnHidden
+    />
   );
 };
 

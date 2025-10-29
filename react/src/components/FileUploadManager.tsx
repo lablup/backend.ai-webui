@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { FileUploadManagerQuery } from 'src/__generated__/FileUploadManagerQuery.graphql';
 import { useSuspendedBackendaiClient } from 'src/hooks';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import * as tus from 'tus-js-client';
 
 type uploadStartFunction = (callbacks?: {
@@ -76,7 +77,10 @@ const FileUploadManager: React.FC = () => {
   const { generateFolderPath } = useFolderExplorerOpener();
   const [uploadRequests, setUploadRequests] = useAtom(uploadRequestAtom);
   const [uploadStatus, setUploadStatus] = useAtom(uploadStatusAtom);
-  const queue = new PQueue({ concurrency: 4 });
+  const [maxConcurrentUploads] = useBAISettingUserState(
+    'max_concurrent_uploads',
+  );
+  const queue = new PQueue({ concurrency: maxConcurrentUploads || 2 });
 
   const pendingDeltaBytesRef = useRef<Record<string, number>>({});
   const throttledUploadRequests = _.throttle(
@@ -119,7 +123,7 @@ const FileUploadManager: React.FC = () => {
                         maxWidth: '300px',
                       }}
                     >
-                      ({t('explorer.Filename')}: {fileName})
+                      {fileName}
                     </Typography.Text>
                   </BAIFlex>
                 ),
@@ -205,56 +209,61 @@ const FileUploadManager: React.FC = () => {
         };
       });
 
-      uploadFileInfo.forEach(({ startFunction }) => {
+      uploadFileInfo.forEach(({ file, startFunction }) => {
         queue.add(async () => {
+          // Capture fileName before any async operations
+          const fileName = file.webkitRelativePath || file.name;
           let previousBytesUploaded = 0;
-          await startFunction({
-            onProgress: (bytesUploaded, _bytesTotal, fileName) => {
-              // Since bytesUploaded is cumulative, calculate delta from previous value
-              const deltaBytes = bytesUploaded - previousBytesUploaded;
-              previousBytesUploaded = bytesUploaded;
-              pendingDeltaBytesRef.current[vFolderId] =
-                (pendingDeltaBytesRef.current[vFolderId] || 0) + deltaBytes;
 
-              throttledUploadRequests(vFolderId, fileName);
-            },
-          })
-            // handle uploaded file name only, size is already handled in progress
-            .then(({ name: fileName }) => {
-              throttledUploadRequests.flush();
-              delete pendingDeltaBytesRef.current[vFolderId];
+          try {
+            await startFunction({
+              onProgress: (bytesUploaded, _bytesTotal, fileName) => {
+                // Since bytesUploaded is cumulative, calculate delta from previous value
+                const deltaBytes = bytesUploaded - previousBytesUploaded;
+                previousBytesUploaded = bytesUploaded;
+                pendingDeltaBytesRef.current[vFolderId] =
+                  (pendingDeltaBytesRef.current[vFolderId] || 0) + deltaBytes;
 
-              setUploadStatus((prev) => ({
-                ...prev,
-                [vFolderId]: {
-                  ...prev[vFolderId],
-                  pendingFiles: prev[vFolderId].pendingFiles.filter(
-                    (f: string) => f !== fileName,
-                  ),
-                  completedFiles: [
-                    ...(prev[vFolderId]?.completedFiles || []),
-                    fileName,
-                  ],
-                },
-              }));
-            })
-            .catch(({ name: fileName }) => {
-              delete pendingDeltaBytesRef.current[vFolderId];
-
-              setUploadStatus((prev) => ({
-                ...prev,
-                [vFolderId]: {
-                  ...prev[vFolderId],
-                  pendingFiles: prev[vFolderId].pendingFiles.filter(
-                    (f: string) => f !== fileName,
-                  ),
-                  failedFiles: [
-                    ...(prev[vFolderId]?.failedFiles || []),
-                    fileName,
-                  ],
-                },
-              }));
+                throttledUploadRequests(vFolderId, fileName);
+              },
             });
+
+            // Success case
+            throttledUploadRequests.flush();
+            delete pendingDeltaBytesRef.current[vFolderId];
+
+            setUploadStatus((prev) => ({
+              ...prev,
+              [vFolderId]: {
+                ...prev[vFolderId],
+                pendingFiles: prev[vFolderId].pendingFiles.filter(
+                  (f: string) => f !== fileName,
+                ),
+                completedFiles: [
+                  ...(prev[vFolderId]?.completedFiles || []),
+                  fileName,
+                ],
+              },
+            }));
+          } catch (error) {
+            // Error case - use the captured fileName regardless of error structure
+            throttledUploadRequests.flush();
+            delete pendingDeltaBytesRef.current[vFolderId];
+
+            setUploadStatus((prev) => ({
+              ...prev,
+              [vFolderId]: {
+                ...prev[vFolderId],
+                pendingFiles: prev[vFolderId].pendingFiles.filter(
+                  (f: string) => f !== fileName,
+                ),
+                failedFiles: [
+                  ...(prev[vFolderId]?.failedFiles || []),
+                  fileName,
+                ],
+              },
+            }));
+          }
         });
       });
     });
@@ -403,46 +412,63 @@ export const useFileUploadManager = (vFolderId: string) => {
           fileName: string,
         ) => void;
       }) => {
-        const uploadPath = [currentPath, file.webkitRelativePath || file.name]
-          .filter(Boolean)
-          .join('/');
-        const uploadUrl: string = await baiClient.vfolder.create_upload_session(
-          uploadPath,
-          file,
-          vfolderId,
-        );
+        const fileName = file.webkitRelativePath || file.name;
 
-        return new Promise<{ name: string; bytes: number }>(
-          (resolve, reject) => {
-            const upload = new tus.Upload(file, {
-              endpoint: uploadUrl,
-              uploadUrl: uploadUrl,
-              retryDelays: [0, 3000, 5000, 10000, 20000],
-              chunkSize: getOptimalChunkSize(file.size),
-              storeFingerprintForResuming: false, // Disable localStorage storage
-              metadata: {
-                filename: file.name,
-                filetype: file.type,
-              },
-              onProgress: (bytesUploaded, bytesTotal) => {
-                callbacks?.onProgress?.(bytesUploaded, bytesTotal, file.name);
-              },
-              onSuccess: () => {
-                resolve({
-                  name: file.webkitRelativePath || file.name,
-                  bytes: file.size,
+        try {
+          const uploadPath = [currentPath, fileName].filter(Boolean).join('/');
+
+          const uploadUrl: string =
+            await baiClient.vfolder.create_upload_session(
+              uploadPath,
+              file,
+              vfolderId,
+            );
+
+          return await new Promise<{ name: string; bytes: number }>(
+            (resolve, reject) => {
+              try {
+                const upload = new tus.Upload(file, {
+                  endpoint: uploadUrl,
+                  uploadUrl: uploadUrl,
+                  retryDelays: [0, 3000, 5000, 10000, 20000],
+                  chunkSize: getOptimalChunkSize(file.size),
+                  storeFingerprintForResuming: false, // Disable localStorage storage
+                  metadata: {
+                    filename: file.name,
+                    filetype: file.type,
+                  },
+                  onProgress: (bytesUploaded, bytesTotal) => {
+                    callbacks?.onProgress?.(
+                      bytesUploaded,
+                      bytesTotal,
+                      fileName,
+                    );
+                  },
+                  onSuccess: () => {
+                    resolve({
+                      name: fileName,
+                      bytes: file.size,
+                    });
+                  },
+                  onError: (_error) => {
+                    // Always reject with consistent structure
+                    reject(new Error(`Upload failed for ${fileName}`));
+                  },
                 });
-              },
-              onError: () => {
-                reject({
-                  name: file.webkitRelativePath || file.name,
-                  bytes: file.size,
-                });
-              },
-            });
-            upload.start();
-          },
-        );
+                upload.start();
+              } catch (error) {
+                // Handle synchronous errors from tus.Upload constructor or start()
+                reject(
+                  new Error(`Failed to initialize upload for ${fileName}`),
+                );
+              }
+            },
+          );
+        } catch (error) {
+          // Handle API errors or any other errors
+          // Always throw with a consistent error message
+          throw new Error(`Failed to prepare upload for ${fileName}`);
+        }
       };
     });
 
