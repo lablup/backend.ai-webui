@@ -143,7 +143,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
           <Form
             ref={formRef}
             layout="vertical"
-            labelCol={{ span: 8 }}
             initialValues={{
               full_name: userInfo.full_name,
               totp_activated: user?.totp_activated || false,
