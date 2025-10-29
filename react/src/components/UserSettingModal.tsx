@@ -31,7 +31,7 @@ import {
 } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useRef } from 'react';
+import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
 
@@ -75,6 +75,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const deferredOpen = useDeferredValue(baiModalProps.open);
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
@@ -105,8 +106,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     },
     {
       // Do not fetch user data if the modal is closed or the user email is not provided
-      fetchPolicy:
-        baiModalProps.open && userEmail ? 'network-only' : 'store-only',
+      fetchPolicy: deferredOpen && userEmail ? 'network-only' : 'store-only',
       fetchKey: fetchKey,
     },
   );
@@ -299,16 +299,15 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
       }
       onCancel={() => onRequestClose(false)}
+      loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >
       <Form
         ref={formRef}
         preserve={false}
-        labelCol={{ span: 10 }}
-        wrapperCol={{ span: 20 }}
         validateTrigger={['onChange', 'onBlur']}
-        style={{ marginBottom: 40, marginTop: token.marginMD }}
         initialValues={user ? { ...user } : INITIAL_VALUES}
+        layout="vertical"
       >
         <Form.Item
           name="email"
