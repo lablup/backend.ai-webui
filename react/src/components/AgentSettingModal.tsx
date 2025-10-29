@@ -88,6 +88,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           name="schedulable"
           label={t('agent.Schedulable')}
           valuePropName="checked"
+          required={true}
         >
           <Switch />
         </Form.Item>
