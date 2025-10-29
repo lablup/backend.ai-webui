@@ -825,6 +825,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.15.0')) {
       this._features['agent-stats'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.14.0')) {
+      this._features['deployment'] = true;
+    }
   }
 
   /**
