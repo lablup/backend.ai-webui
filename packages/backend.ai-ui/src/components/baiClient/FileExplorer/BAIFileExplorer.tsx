@@ -4,6 +4,7 @@ import {
   localeCompare,
 } from '../../../helper';
 import BAIFlex from '../../BAIFlex';
+import BAILink from '../../BAILink';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import { BAITable, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -15,7 +16,7 @@ import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
 import { FolderOutlined } from '@ant-design/icons';
-import { Breadcrumb, Skeleton, TableColumnsType, Typography } from 'antd';
+import { Breadcrumb, Skeleton, TableColumnsType, theme } from 'antd';
 import { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
@@ -56,6 +57,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   style,
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+
   const [isDragMode, setIsDragMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
@@ -88,7 +91,11 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 
     const items: Array<ItemType> = [
       {
-        title: <HouseIcon />,
+        title: (
+          <BAILink style={{ color: 'inherit' }}>
+            <HouseIcon />
+          </BAILink>
+        ),
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -125,7 +132,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       }));
 
       items.push({
-        title: part,
+        title: <BAILink style={{ color: 'inherit' }}>{part}</BAILink>,
         onClick: () => {
           navigateToPath(navigatePath);
           setSelectedItems([]);
@@ -258,11 +265,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         <BAIFlex align="center" justify="between">
           <Breadcrumb
             items={breadCrumbItems}
-            itemRender={(item) => (
-              <Typography.Link onClick={item.onClick}>
-                {item.title}
-              </Typography.Link>
-            )}
+            style={{
+              marginLeft: token.marginXXS,
+            }}
           />
           <ExplorerActionControls
             selectedFiles={selectedItems}
