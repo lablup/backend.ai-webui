@@ -1,5 +1,8 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Mengatur ulang"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Mengaktifkan",
     "ActivateArtifacts": "Aktifkan artefak",
@@ -134,6 +137,13 @@
       "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
       "FileNameRequired": "Harap masukkan file atau nama folder."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "Gagal memperbarui token.",
+    "HuggingFaceRegistryNotFound": "Registri Wajah Memeluk tidak ditemukan.",
+    "ResetTokenConfirm": "Setel Ulang Token",
+    "ResetTokenConfirmMessage": "Tokennya tampaknya kosong. \nApakah Anda ingin menginisialisasinya dengan nilai baru?",
+    "TokenUpdatedSuccessfully": "Token berhasil diperbarui."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"

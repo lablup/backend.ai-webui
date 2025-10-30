@@ -1,5 +1,6 @@
 import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   theme,
@@ -26,6 +27,7 @@ import {
   BAIDeactivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIActivateArtifactsModal,
+  BAIHuggingFaceRegistrySettingModal,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
@@ -78,6 +80,10 @@ const ReservoirPage: React.FC = () => {
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
   const [openHuggingFaceModal, { toggle: toggleOpenHuggingFaceModal }] =
     useToggle();
+  const [
+    openHuggingFaceSettingModal,
+    { toggle: toggleHuggingFaceSettingModal },
+  ] = useToggle();
 
   const {
     baiPaginationOption,
@@ -182,6 +188,14 @@ const ReservoirPage: React.FC = () => {
             }
           }
         }
+        huggingfaceRegistries {
+          edges {
+            node {
+              id
+              ...BAIHuggingFaceRegistrySettingModalFragment
+            }
+          }
+        }
       }
     `,
     deferredQueryVariables,
@@ -195,7 +209,8 @@ const ReservoirPage: React.FC = () => {
     },
   );
 
-  const { artifacts, defaultArtifactRegistry, total } = queryRef;
+  const { artifacts, defaultArtifactRegistry, total, huggingfaceRegistries } =
+    queryRef;
   const isAvailableUsingHuggingFace =
     defaultArtifactRegistry?.type === 'HUGGINGFACE';
   const mode = queryParams.mode;
@@ -240,6 +255,15 @@ const ReservoirPage: React.FC = () => {
             tab: t('reservoirPage.ReservoirArtifacts'),
           },
         ]}
+        tabBarExtraContent={
+          <Button
+            icon={<SettingOutlined />}
+            style={{ display: 'flex' }}
+            onClick={toggleHuggingFaceSettingModal}
+          >
+            {t('button.Settings')}
+          </Button>
+        }
         styles={{
           body: {
             padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
@@ -369,7 +393,7 @@ const ReservoirPage: React.FC = () => {
                   }
                   onClick={() => toggleOpenHuggingFaceModal()}
                 >
-                  {t('reservoirPage.FromHuggingFace')}
+                  {t('reservoirPage.ImportModel')}
                 </Button>
               )}
             </BAIFlex>
@@ -546,6 +570,16 @@ const ReservoirPage: React.FC = () => {
           updateFetchKey();
           setSelectedRestoreArtifacts([]);
           setSelectedArtifactIdList([]);
+        }}
+      />
+      <BAIHuggingFaceRegistrySettingModal
+        open={openHuggingFaceSettingModal}
+        huggingFaceRegistryFragment={huggingfaceRegistries?.edges?.[0]?.node}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+          }
+          toggleHuggingFaceSettingModal();
         }}
       />
     </BAIFlex>

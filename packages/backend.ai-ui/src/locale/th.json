@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "รีเซ็ต",
+    "Save": "บันทึก"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "เปิดใช้งาน",
     "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
@@ -134,6 +138,15 @@
       "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "อัปเดตโทเค็นไม่สำเร็จ",
+    "HuggingFaceRegistryNotFound": "ไม่พบรีจิสทรี Hugging Face",
+    "HuggingFaceSettings": "การตั้งค่า Hugging Face",
+    "ResetTokenConfirm": "รีเซ็ตโทเค็น",
+    "ResetTokenConfirmMessage": "โทเค็นดูเหมือนจะว่างเปล่า \nคุณต้องการเริ่มต้นด้วยค่าใหม่หรือไม่?",
+    "Token": "โทเค็น",
+    "TokenUpdatedSuccessfully": "อัปเดตโทเค็นเรียบร้อยแล้ว"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"

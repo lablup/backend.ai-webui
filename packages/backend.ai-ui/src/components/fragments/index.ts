@@ -45,3 +45,8 @@ export type {
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
+export type {
+  BAIHuggingFaceRegistrySettingModalProps,
+  BAIHuggingFaceRegistrySettingModalFragmentKey,
+} from './BAIHuggingFaceRegistrySettingModal';
