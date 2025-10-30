@@ -1266,6 +1266,7 @@
     "AgentId": "Αναγνωριστικό πράκτορα",
     "Agents": "Πράκτορες",
     "AllowedClientIps": "Επιτρεπόμενες IPs πελατών",
+    "AllowedMultipleClientsIps": "Επιτρεπόμενες διευθύνσεις IP πελάτη (χωρισμένες με κόμματα)",
     "AlreadyTerminatingSession": "Ήδη τερματισμός της συνεδρίας.",
     "AnotherUserSession": "Αυτή η συνεδρία δημιουργήθηκε από άλλο χρήστη.",
     "Architecture": "Αρχιτεκτονική",

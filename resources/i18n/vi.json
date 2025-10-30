@@ -1269,6 +1269,7 @@
     "AgentId": "Id đại lý",
     "Agents": "Đại lý",
     "AllowedClientIps": "IP khách hàng được phép",
+    "AllowedMultipleClientsIps": "IP khách hàng được phép (được phân tách bằng dấu phẩy)",
     "AlreadyTerminatingSession": "Đã kết thúc phiên.",
     "AnotherUserSession": "Phiên này được tạo bởi người dùng khác.",
     "Architecture": "Ngành kiến ​​​​trúc",

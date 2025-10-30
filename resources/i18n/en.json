@@ -1275,6 +1275,7 @@
     "AgentId": "Agent ID",
     "Agents": "Agents",
     "AllowedClientIps": "Allowed client IPs",
+    "AllowedMultipleClientsIps": "Allowed client IPs (comma-separated)",
     "AlreadyTerminatingSession": "Already terminating the session.",
     "AnotherUserSession": "This session was created by another user.",
     "Architecture": "Architecture",

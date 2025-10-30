@@ -1269,6 +1269,7 @@
     "AgentId": "Ajan kimliği",
     "Agents": "Temsilciler",
     "AllowedClientIps": "İzin verilen istemci IP'leri",
+    "AllowedMultipleClientsIps": "İzin verilen istemci IP'leri (virgülle ayrılmış)",
     "AlreadyTerminatingSession": "Oturum zaten sonlandırılıyor.",
     "AnotherUserSession": "Bu oturum başka bir kullanıcı tarafından oluşturuldu.",
     "Architecture": "Mimarlık",

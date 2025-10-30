@@ -1268,6 +1268,7 @@
     "AgentId": "Идентификатор агента",
     "Agents": "Агенты",
     "AllowedClientIps": "Разрешенные IP-адреса клиентов",
+    "AllowedMultipleClientsIps": "Разрешенные IP-адреса клиентов (через запятую)",
     "AlreadyTerminatingSession": "Уже завершаю сессию.",
     "AnotherUserSession": "Этот сеанс был создан другим пользователем.",
     "Architecture": "Архитектура",

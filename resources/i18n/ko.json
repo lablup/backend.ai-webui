@@ -1273,6 +1273,7 @@
     "AgentId": "에이전트 ID",
     "Agents": "실행 노드",
     "AllowedClientIps": "허용된 클라이언트 IP",
+    "AllowedMultipleClientsIps": "허용된 클라이언트 IP (쉼표로 구분)",
     "AlreadyTerminatingSession": "이미 종료 중인 세션입니다",
     "AnotherUserSession": "이 세션은 다른 사용자에 의해 생성되었습니다.",
     "Architecture": "아키텍처",

@@ -1269,6 +1269,7 @@
     "AgentId": "ID do agente",
     "Agents": "Agentes",
     "AllowedClientIps": "IPs de clientes permitidos",
+    "AllowedMultipleClientsIps": "IPs de cliente permitidos (separados por vírgula)",
     "AlreadyTerminatingSession": "Já está a terminar a sessão.",
     "AnotherUserSession": "Esta sessão foi criada por outro usuário.",
     "Architecture": "Arquitetura",

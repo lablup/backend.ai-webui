@@ -1268,6 +1268,7 @@
     "AgentId": "エージェントID",
     "Agents": "エージェント",
     "AllowedClientIps": "許可されたクライアントIP",
+    "AllowedMultipleClientsIps": "許可されたクライアント IP (カンマ区切り)",
     "AlreadyTerminatingSession": "すでに終了しているセッションです",
     "AnotherUserSession": "このセッションは、別のユーザーによって作成されました.",
     "Architecture": "アーキテクチャ",
