@@ -21,6 +21,8 @@
       "(?:^|[^\\w\\d])t\\s*\\(\\s*['\"`]({key})['\"`]", // t('key') / obj.t('key')
       "(?:^|[^\\w\\d])_t\\s*\\(\\s*['\"`]({key})['\"`]", // _t('key') / obj._t('key') for Lit components
     ],
+    "i18n-ally.translate.engines": ["openai"],
+    "i18n-ally.translate.openai.apiModel": "gpt-5-mini",
     "files.exclude": {
       "packages/backend.ai-ui": true,
     },

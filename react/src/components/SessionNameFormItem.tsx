@@ -24,7 +24,14 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
       rules={validationRules}
       {...formItemProps}
     >
-      <Input allowClear autoComplete="off" />
+      <Input
+        allowClear
+        autoComplete="off"
+        count={{
+          max: 64,
+          show: true,
+        }}
+      />
     </Form.Item>
   );
 };

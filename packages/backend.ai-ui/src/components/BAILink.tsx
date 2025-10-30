@@ -1,4 +1,3 @@
-import BAIFlex from './BAIFlex';
 import { Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
@@ -24,51 +23,40 @@ const useStyles = createStyles(({ css, token }) => ({
 export interface BAILinkProps extends Omit<LinkProps, 'to'> {
   type?: 'hover' | 'disabled' | undefined;
   to?: LinkProps['to'];
-  icon?: React.ReactNode;
   ellipsis?: boolean | { tooltip?: string };
   children?: string | React.ReactNode;
 }
 const BAILink: React.FC<BAILinkProps> = ({
   type,
   to,
-  icon,
   ellipsis,
   children,
   ...linkProps
 }) => {
   const { styles } = useStyles();
-  return (
-    <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-      {icon && icon}
-      {type !== 'disabled' && to ? (
-        <Link
+  return type !== 'disabled' && to ? (
+    <Link className={type ? styles?.[type] : undefined} to={to} {...linkProps}>
+      {children}
+    </Link>
+  ) : (
+    <Typography.Link
+      className={type ? styles?.[type] : undefined}
+      onClick={linkProps.onClick}
+      disabled={type === 'disabled'}
+      ellipsis={!!ellipsis}
+      {...linkProps}
+    >
+      {typeof ellipsis === 'object' && ellipsis.tooltip ? (
+        <Typography.Text
           className={type ? styles?.[type] : undefined}
-          to={to}
-          {...linkProps}
+          ellipsis={ellipsis}
         >
           {children}
-        </Link>
+        </Typography.Text>
       ) : (
-        <Typography.Link
-          className={type ? styles?.[type] : undefined}
-          onClick={linkProps.onClick}
-          disabled={type === 'disabled'}
-          ellipsis={!!ellipsis}
-          {...linkProps}
-        >
-          {typeof ellipsis === 'object' && ellipsis.tooltip ? (
-            <Typography.Text
-              className={type ? styles?.[type] : undefined}
-              ellipsis={ellipsis}
-            >
-              {children}
-            </Typography.Text>
-          ) : (
-            children
-          )}
-        </Typography.Link>
+        children
       )}
-    </BAIFlex>
+    </Typography.Link>
   );
 };
 

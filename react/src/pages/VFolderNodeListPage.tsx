@@ -20,7 +20,6 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import {
   Badge,
@@ -58,6 +57,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
@@ -102,7 +102,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
-  const { count } = useVFolderInvitationsValue();
+  const [invitations] = useVFolderInvitations();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -197,9 +197,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useEffect(() => {
     updateFetchKey();
-    // Update fetchKey when count changes
+    // Update fetchKey when invitation count changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count]);
+  }, [invitations.length]);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(

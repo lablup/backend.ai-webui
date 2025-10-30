@@ -1,9 +1,9 @@
 import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useVFolderInvitations } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIPanelItem from './BAIPanelItem';
+import { useUpdateEffect } from 'ahooks';
 import { Badge, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAICard, BAICardProps, BAIRowWrapWithDividers } from 'backend.ai-ui';
@@ -11,6 +11,7 @@ import _ from 'lodash';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 
 const useStyles = createStyles(({ css, token }) => ({
   invitationTooltip: css`
@@ -43,7 +44,13 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const [{ count }] = useVFolderInvitations(deferredFetchKey);
+  const [invitations, { updateInvitations }] = useVFolderInvitations();
+  const invitationCount = invitations.length;
+
+  useUpdateEffect(() => {
+    // TODO: Consider use suspense without useEffect
+    updateInvitations();
+  }, [fetchKey]);
 
   const isExcludedCount = (status: string) => {
     return _.includes(
@@ -132,7 +139,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
           />
           <BAIPanelItem
             title={
-              count > 0 ? (
+              invitationCount > 0 ? (
                 // Add <a></a> to make tooltip clickable
                 // eslint-disable-next-line
                 <a
@@ -141,18 +148,14 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                   }}
                 >
                   <Tooltip
-                    title={
-                      count > 0
-                        ? t('data.InvitedFoldersTooltip', {
-                            count: count,
-                          })
-                        : null
-                    }
+                    title={t('data.InvitedFoldersTooltip', {
+                      count: invitationCount,
+                    })}
                     rootClassName={styles.invitationTooltip}
                     placement="topRight"
                   >
                     <Badge
-                      count={count > 0 ? `+${count}` : null}
+                      count={`+${invitationCount}`}
                       offset={[-`${token.sizeXS}`, -`${token.sizeXS}`]}
                     >
                       <Typography.Text

@@ -12,8 +12,6 @@ import { SessionResources } from '../types/backend-ai-console';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
-import BackendAiResourceMonitor from './backend-ai-resource-monitor';
-import './backend-ai-resource-monitor';
 import './lablup-activity-panel';
 import LablupLoadingSpinner from './lablup-loading-spinner';
 
@@ -36,7 +34,6 @@ import { customElement, property, query } from 'lit/decorators.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 // type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-// type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
@@ -69,7 +66,6 @@ export default class BackendAIImport extends BackendAIPage {
   @property({ type: String }) _helpDescriptionTitle = '';
   @property({ type: String }) _helpDescriptionIcon = '';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-  @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
   @query('#notebook-url') notebookUrlInput!: TextField;
   @query('#notebook-badge-code') notebookBadgeCodeInput!: TextArea;
   @query('#notebook-badge-code-markdown')
@@ -194,11 +190,6 @@ export default class BackendAIImport extends BackendAIPage {
 
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
-    if (active === false) {
-      this.resourceMonitor.removeAttribute('active');
-      return;
-    }
-    this.resourceMonitor.setAttribute('active', 'true');
     if (
       typeof globalThis.backendaiclient === 'undefined' ||
       globalThis.backendaiclient === null ||
@@ -629,29 +620,10 @@ export default class BackendAIImport extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css" />
-      <div class="horizontal wrap layout" style="gap:24px">
-        <lablup-activity-panel
-          title="${_t('summary.ResourceStatistics')}"
-          elevation="1"
-          width="352"
-          height="490"
-          narrow
-          scrollableY
-        >
-          <div slot="message">
-            <backend-ai-resource-monitor
-              location="summary"
-              id="resource-monitor"
-              ?active="${this.active === true}"
-              direction="vertical"
-            ></backend-ai-resource-monitor>
-          </div>
-        </lablup-activity-panel>
         <lablup-activity-panel
           title="${_t('import.CreateNotebookButton')}"
           elevation="1"
-          width="352"
-          height="490"
+          horizontalsize="2x"
         >
           <div slot="message">
             <div class="vertical wrap layout center description">

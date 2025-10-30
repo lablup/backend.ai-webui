@@ -64,6 +64,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     'nniboard',
     'mlflow-ui',
   ];
+  @property({ type: Number }) preferredPort = -1;
   @property({ type: Object }) appController = Object();
   @property({ type: Boolean }) allowTCPApps = false;
   @property({ type: Boolean }) openPortToPublic = false;
@@ -77,6 +78,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({ type: Boolean }) useV1Proxy = false;
   @property({ type: Boolean }) useV2Proxy = false;
   @property({ type: String }) subDomain = '';
+  @property({ type: Boolean }) openToPublic = false;
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
@@ -825,11 +827,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField)
         ?.value;
 
-    let openToPublic = false;
     if (this.checkOpenToPublic == null) {
       // Null or undefined check. When user click console button without app launcher dialog, it will be undefined.
-    } else {
-      openToPublic = this.checkOpenToPublic.checked;
+    } else if (!this.openToPublic) {
+      this.openToPublic = this.checkOpenToPublic.checked;
       this.checkOpenToPublic.checked = false;
     }
 
@@ -838,14 +839,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (port !== null && port > 1024 && port < 65535) {
       searchParams.set('port', port.toString());
     }
-    if (openToPublic) {
+    if (this.openToPublic) {
       searchParams.set('open_to_public', 'true');
-    }
-    if (openToPublic && allowedClientIps?.length > 0) {
-      searchParams.set(
-        'allowed_client_ips',
-        allowedClientIps.replace(/\s/g, ''),
-      );
+      if (allowedClientIps?.length > 0) {
+        searchParams.set(
+          'allowed_client_ips',
+          allowedClientIps.replace(/\s/g, ''),
+        );
+      }
+      this.openToPublic = false;
     }
     if (envs !== null && Object.keys(envs).length > 0) {
       searchParams.set('envs', JSON.stringify(envs));
@@ -1129,10 +1131,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   async _runThisAppWithConfirmationIfNeeded(e) {
-    const controller = e.target;
+    const controller = e.target.closest('mwc-icon-button');
     const appName = controller['app-name'];
     if (this.appLaunchBeforeTunneling.includes(appName)) {
-      const controller = e.target;
+      const controller = e.target.closest('mwc-icon-button');
       this.appController['app-name'] = controller['app-name'];
       const controls = controller.closest('#app-dialog');
       this.appController['session-uuid'] =
@@ -1222,6 +1224,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.userPort
       ) {
         port = this.userPort;
+      }
+      if (this.preferredPort !== -1) {
+        // preferred port set from AppLauncherModal
+        // skip if preferred port is -1 (not set)
+        port = this.preferredPort;
+        this.preferredPort = -1;
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
@@ -1439,6 +1447,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _openAppLaunchConfirmationDialog(e) {
     this.appLaunchConfirmationDialog.show();
+  }
+
+  /**
+   * Close a confirmation dialog.
+   */
+  _hideAppLaunchConfirmationDialog() {
+    this.appLaunchConfirmationDialog.hide();
   }
 
   /**
@@ -2085,7 +2100,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             icon="rowing"
             label="${_t('session.appLauncher.ConfirmAndRun')}"
             fullwidth
-            @click="${() => this._runApp(this.appController)}"
+            @click="${() => {
+              this._hideAppLaunchConfirmationDialog();
+              this._runApp(this.appController);
+            }}"
           ></mwc-button>
         </div>
       </backend-ai-dialog>

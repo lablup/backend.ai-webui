@@ -21,7 +21,6 @@ import {
   Descriptions,
   Form,
   Input,
-  Table,
   TableProps,
   Tag,
   theme,
@@ -29,7 +28,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { BAIUserUnionIcon, BAIFlex, BAILink } from 'backend.ai-ui';
+import { BAIUserUnionIcon, BAIFlex, BAILink, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
@@ -631,7 +630,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         </Tooltip>
       </BAIFlex>
       <Form form={internalForm} component={false} preserve={false}>
-        <Table
+        <BAITable
           // size="small"
           scroll={{ x: 'max-content' }}
           rowKey={getRowKey}

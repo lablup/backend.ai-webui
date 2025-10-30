@@ -272,13 +272,15 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 
       <Suspense fallback={null}>
         {isVisible('appLauncher') && (
-          <AppLauncherModal
-            sessionFrgmt={session}
-            open={openAppLauncherModal}
-            onRequestClose={() => {
-              setOpenAppLauncherModal(false);
-            }}
-          />
+          <BAIUnmountAfterClose>
+            <AppLauncherModal
+              sessionFrgmt={session}
+              open={openAppLauncherModal}
+              onRequestClose={() => {
+                setOpenAppLauncherModal(false);
+              }}
+            />
+          </BAIUnmountAfterClose>
         )}
         {isVisible('logs') && (
           <BAIUnmountAfterClose>

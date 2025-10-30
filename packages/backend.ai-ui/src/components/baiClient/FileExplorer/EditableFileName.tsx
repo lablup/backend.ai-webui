@@ -150,10 +150,10 @@ const EditableFileName: React.FC<EditableNameProps> = ({
                   ? token.colorTextTertiary
                   : undefined,
               }}
-              icon={<FolderOutlined style={{ color: token.colorLink }} />}
               ellipsis
               title={fileInfo.name}
             >
+              <FolderOutlined style={{ color: token.colorLink }} /> &nbsp;
               {isPendingRenamingAndRefreshing ? optimisticName : fileInfo.name}
             </BAILink>
           ) : (

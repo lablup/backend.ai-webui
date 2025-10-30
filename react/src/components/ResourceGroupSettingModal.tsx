@@ -393,55 +393,43 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           </Form.Item>
           <Form.Item label={t('resourceGroup.SchedulerOptions')}>
             <BAICard styles={{ body: { paddingBottom: 0 } }}>
-              <Row gutter={[24, 24]}>
-                <Col
-                  span={12}
-                  style={{
-                    alignSelf: 'end',
-                  }}
-                >
-                  <Form.Item
-                    labelCol={{ span: 24 }}
-                    label={
-                      <BAIFlex gap="xxs">
-                        {t('resourceGroup.PendingTimeout')}
-                        <Tooltip
-                          title={newLineToBrElement(
-                            t('resourceGroup.PendingTimeoutDesc'),
-                          )}
-                        >
-                          <QuestionCircleOutlined
-                            style={{ color: token.colorTextSecondary }}
-                          />
-                        </Tooltip>
-                      </BAIFlex>
-                    }
-                    name="pendingTimeout"
-                  >
-                    <InputNumber
-                      style={{ width: '100%' }}
-                      addonAfter={t('resourceGroup.TimeoutSeconds')}
-                      min={0}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    label={
-                      <BAIFlex style={{ whiteSpace: 'pre' }}>
-                        {t('resourceGroup.RetriesToSkipDesc')}
-                      </BAIFlex>
-                    }
-                    name="retriesToSkip"
-                  >
-                    <InputNumber
-                      style={{ width: '100%' }}
-                      addonAfter={t('resourceGroup.RetriesToSkip')}
-                      min={0}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
+              <Form.Item
+                label={
+                  <BAIFlex gap="xxs">
+                    {t('resourceGroup.PendingTimeout')}
+                    <Tooltip
+                      title={newLineToBrElement(
+                        t('resourceGroup.PendingTimeoutDesc'),
+                      )}
+                    >
+                      <QuestionCircleOutlined
+                        style={{ color: token.colorTextSecondary }}
+                      />
+                    </Tooltip>
+                  </BAIFlex>
+                }
+                name="pendingTimeout"
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  addonAfter={t('resourceGroup.TimeoutSeconds')}
+                  min={0}
+                />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <BAIFlex style={{ whiteSpace: 'pre' }}>
+                    {t('resourceGroup.RetriesToSkipDesc')}
+                  </BAIFlex>
+                }
+                name="retriesToSkip"
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  addonAfter={t('resourceGroup.RetriesToSkip')}
+                  min={0}
+                />
+              </Form.Item>
             </BAICard>
           </Form.Item>
         </Form>

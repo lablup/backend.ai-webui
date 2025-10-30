@@ -8,13 +8,13 @@ import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useVFolderInvitationsValue } from '../hooks/useVFolderInvitations';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 
 interface StartPageBoardItem extends BAIBoardItem {
   requiredMenuKey: MenuKeys;
@@ -32,14 +32,14 @@ const StartPage: React.FC = () => {
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
 
   const { upsertNotification } = useSetBAINotification();
-  const { count } = useVFolderInvitationsValue();
+  const [vFolderInvitations] = useVFolderInvitations();
 
   useEffect(() => {
-    if (count <= 0) return;
+    if (vFolderInvitations.length <= 0) return;
     upsertNotification({
       key: 'invitedFolders',
       message: t('data.InvitedFoldersTooltip', {
-        count: count,
+        count: vFolderInvitations.length,
       }),
       to: {
         search: new URLSearchParams({
@@ -49,7 +49,7 @@ const StartPage: React.FC = () => {
       open: true,
       duration: 0,
     });
-  }, [count, t, upsertNotification]);
+  }, [vFolderInvitations.length, t, upsertNotification]);
 
   const initialBoardItems = filterOutEmpty<StartPageBoardItem>([
     {

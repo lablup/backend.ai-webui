@@ -1,7 +1,7 @@
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import { useUpdateEffect } from 'ahooks';
-import { BAIFlex, BAILink, BAINotificationItem } from 'backend.ai-ui';
+import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import {
   useFragment,
   useRelayEnvironment,
 } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
 import { BAIComputeSessionNodeNotificationItemFragment$key } from 'src/__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
 import { BAIComputeSessionNodeNotificationItemRefreshQuery } from 'src/__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
 import {
@@ -29,6 +30,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
 > = ({ sessionFrgmt, showDate, notification }) => {
   const { destroyNotification } = useSetBAINotification();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const node = useFragment(
     graphql`
       fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {
@@ -73,25 +75,23 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     node && (
       <BAINotificationItem
         title={
-          <span>
+          <BAIText ellipsis>
             {t('general.Session')}:&nbsp;
             <BAILink
               style={{
                 fontWeight: 'normal',
               }}
-              to={{
-                pathname: '/session',
-                search: node.row_id
-                  ? new URLSearchParams({
-                      sessionDetail: node.row_id,
-                    }).toString()
-                  : undefined,
-              }}
+              title={node.name || ''}
               onClick={() => {
+                navigate(
+                  `/session${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
+                );
                 destroyNotification(notification.key);
               }}
-            >{`${node.name}`}</BAILink>
-          </span>
+            >
+              {node.name}
+            </BAILink>
+          </BAIText>
         }
         description={
           <BAIFlex justify="between">
