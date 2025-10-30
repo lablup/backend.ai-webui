@@ -173,7 +173,16 @@ const UserPreferencesPage = () => {
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
-          setValue: setSelectedLanguage,
+          setValue: (value: any) => {
+            setSelectedLanguage(value);
+            const event = new CustomEvent('language-changed', {
+              detail: {
+                language: value,
+              },
+            });
+            setLanguage(value);
+            document.dispatchEvent(event);
+          },
           onChange: (value: any) => {
             setSelectedLanguage(value);
             const event = new CustomEvent('language-changed', {
