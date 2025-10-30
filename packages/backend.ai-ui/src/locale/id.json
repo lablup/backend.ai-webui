@@ -1,8 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Mengatur ulang"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Mengaktifkan",
     "ActivateArtifacts": "Aktifkan artefak",
@@ -139,7 +136,6 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Gagal memperbarui token.",
     "HuggingFaceRegistryNotFound": "Registri Wajah Memeluk tidak ditemukan.",
     "ResetTokenConfirm": "Setel Ulang Token",
     "ResetTokenConfirmMessage": "Tokennya tampaknya kosong. \nApakah Anda ingin menginisialisasinya dengan nilai baru?",
@@ -166,6 +162,8 @@
       "Delete": "Menghapus",
       "Expand": "Memperluas",
       "Remove": "Menghapus",
+      "Reset": "Mengatur ulang",
+      "Save": "Simpan",
       "Upload": "Mengunggah"
     },
     "modal": {

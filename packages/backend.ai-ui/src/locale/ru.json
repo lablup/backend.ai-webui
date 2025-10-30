@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Перезагрузить",
-    "Save": "Сохранять"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Активировать",
     "ActivateArtifacts": "Активируйте артефакты",
@@ -140,7 +136,6 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Не удалось обновить токен.",
     "HuggingFaceRegistryNotFound": "Реестр Hugging Face не найден.",
     "HuggingFaceSettings": "Настройки Hugging Face",
     "ResetTokenConfirm": "Сбросить токен",
@@ -169,6 +164,8 @@
       "Delete": "Удалить",
       "Expand": "Расширять",
       "Remove": "Удалять",
+      "Reset": "Перезагрузить",
+      "Save": "Сохранять",
       "Upload": "Загрузить"
     },
     "modal": {

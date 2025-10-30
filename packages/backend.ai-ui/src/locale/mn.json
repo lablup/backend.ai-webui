@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Нөөц",
-    "Save": "Аврах"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Идэвхжүүлэх",
     "ActivateArtifacts": "Олдворуудыг идэвхжүүлэх",
@@ -140,7 +136,6 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Токенийг шинэчилж чадсангүй.",
     "HuggingFaceRegistryNotFound": "Хуурамч байдлын бүртгэл олдсонгүй.",
     "HuggingFaceSettings": "Hugging Face тэвэрч \"Тохиргоо",
     "ResetTokenConfirm": "Токенийг дахин тохируулах",
@@ -169,6 +164,8 @@
       "Delete": "Эдгээх",
       "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
+      "Reset": "Нөөц",
+      "Save": "Аврах",
       "Upload": "Байршуулах"
     },
     "modal": {

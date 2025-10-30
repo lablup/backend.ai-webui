@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "รีเซ็ต",
-    "Save": "บันทึก"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "เปิดใช้งาน",
     "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
@@ -140,7 +136,6 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "อัปเดตโทเค็นไม่สำเร็จ",
     "HuggingFaceRegistryNotFound": "ไม่พบรีจิสทรี Hugging Face",
     "HuggingFaceSettings": "การตั้งค่า Hugging Face",
     "ResetTokenConfirm": "รีเซ็ตโทเค็น",
@@ -169,6 +164,8 @@
       "Delete": "ลบ",
       "Expand": "ขยาย",
       "Remove": "ลบ",
+      "Reset": "รีเซ็ต",
+      "Save": "บันทึก",
       "Upload": "อัพโหลด"
     },
     "modal": {

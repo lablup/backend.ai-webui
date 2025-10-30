@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Sıfırla",
-    "Save": "Kaydetmek"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Etkinleştirmek",
     "ActivateArtifacts": "Eserleri etkinleştirin",
@@ -135,7 +131,6 @@
     "error": {}
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Jeton güncellenemedi.",
     "HuggingFaceRegistryNotFound": "Hugging Face Kaydı bulunamadı.",
     "HuggingFaceSettings": "Hugging Face Ayarları",
     "ResetTokenConfirm": "Jetonu Sıfırla",
@@ -164,6 +159,8 @@
       "Delete": "Silmek",
       "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
+      "Reset": "Sıfırla",
+      "Save": "Kaydetmek",
       "Upload": "Yüklemek"
     },
     "modal": {
