@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "초기화",
-    "Save": "저장"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "활성화",
     "ActivateArtifacts": "아티팩트를 활성화",
@@ -141,9 +137,9 @@
   },
   "comp:HuggingFaceRegistrySettingModal": {
     "EnterToken": "HuggingFace 토큰을 입력하세요",
-    "FailedToUpdateToken": "토큰 업데이트에 실패했습니다.",
     "HuggingFaceRegistryNotFound": "허깅 페이스 레지스트리를 찾을 수 없습니다.",
     "HuggingFaceSettings": "허깅 페이스 설정",
+    "NoChangesToSave": "변경 사항이 없습니다",
     "ResetTokenConfirm": "토큰 초기화",
     "ResetTokenConfirmMessage": "토큰이 비어있는 것 같습니다. 새로운 값으로 초기화하시겠습니까?",
     "Token": "토큰",
@@ -170,6 +166,8 @@
       "Delete": "삭제",
       "Expand": "펼치기",
       "Remove": "제거",
+      "Reset": "초기화",
+      "Save": "저장",
       "Upload": "업로드"
     },
     "modal": {

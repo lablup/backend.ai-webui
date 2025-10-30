@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Cài lại",
-    "Save": "Cứu"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Kích hoạt",
     "ActivateArtifacts": "Kích hoạt hiện vật",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Không thể cập nhật mã thông báo.",
     "HuggingFaceRegistryNotFound": "Không tìm thấy sổ đăng ký Hugging Face.",
     "HuggingFaceSettings": "Cài đặt Hugging Face",
+    "NoChangesToSave": "Không có thay đổi để lưu",
     "ResetTokenConfirm": "Đặt lại mã thông báo",
     "ResetTokenConfirmMessage": "Mã thông báo dường như trống rỗng. \nBạn có muốn khởi tạo nó với một giá trị mới không?",
     "Token": "Mã thông báo",
@@ -169,6 +165,8 @@
       "Delete": "Xóa bỏ",
       "Expand": "Mở rộng",
       "Remove": "Di dời",
+      "Reset": "Cài lại",
+      "Save": "Cứu",
       "Upload": "Tải lên"
     },
     "modal": {

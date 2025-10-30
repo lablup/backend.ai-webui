@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Tetapkan semula",
-    "Save": "Simpan"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktifkan",
     "ActivateArtifacts": "Aktifkan artifak",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Gagal mengemas kini token.",
     "HuggingFaceRegistryNotFound": "Pendaftaran Hugging Face tidak dijumpai.",
     "HuggingFaceSettings": "Hugging Face tetapan",
+    "NoChangesToSave": "Tiada perubahan untuk disimpan",
     "ResetTokenConfirm": "Tetapkan semula token",
     "ResetTokenConfirmMessage": "Tanda itu kelihatan kosong. \nAdakah anda ingin memulakannya dengan nilai baru?",
     "Token": "Token",
@@ -169,6 +165,8 @@
       "Delete": "Padam",
       "Expand": "Berkembang",
       "Remove": "Keluarkan",
+      "Reset": "Tetapkan semula",
+      "Save": "Simpan",
       "Upload": "Muat naik"
     },
     "modal": {

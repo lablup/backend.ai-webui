@@ -1,5 +1,7 @@
 import { BAIHuggingFaceRegistrySettingModalFragment$key } from '../../__generated__/BAIHuggingFaceRegistrySettingModalFragment.graphql';
+import { UpdateHuggingFaceRegistryInput } from '../../__generated__/BAIHuggingFaceRegistrySettingModalMutation.graphql';
 import { toLocalId } from '../../helper';
+import { useErrorMessageResolver } from '../../hooks';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
@@ -14,17 +16,17 @@ export type BAIHuggingFaceRegistrySettingModalFragmentKey =
 
 export interface BAIHuggingFaceRegistrySettingModalProps extends BAIModalProps {
   huggingFaceRegistryFragment?: BAIHuggingFaceRegistrySettingModalFragmentKey;
-  onRequestClose?: (success?: boolean) => void;
 }
 
 const BAIHuggingFaceRegistrySettingModal = ({
   huggingFaceRegistryFragment,
-  onRequestClose,
   ...baiModalProps
 }: BAIHuggingFaceRegistrySettingModalProps) => {
   'use memo';
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
+
   const formRef = useRef<FormInstance>(null);
 
   const huggingFaceRegistry = useFragment(
@@ -56,34 +58,26 @@ const BAIHuggingFaceRegistrySettingModal = ({
 
   const hasToken = initialToken && initialToken.length > 0;
 
-  const executeUpdate = (values: any) => {
+  const executeUpdate = (values: UpdateHuggingFaceRegistryInput) => {
     updateHuggingFaceRegistry({
       variables: {
         input: {
           id: toLocalId(huggingFaceRegistry!.id),
-          token: values.token,
+          token: values.token ?? '',
         },
       },
       onCompleted: (_res, errors) => {
         if (errors && errors.length > 0) {
-          errors.forEach((err) =>
-            message.error(
-              err.message ??
-                t('comp:HuggingFaceRegistrySettingModal.FailedToUpdateToken'),
-            ),
-          );
+          errors.forEach((err) => message.error(getErrorMessage(err)));
           return;
         }
         message.success(
           t('comp:HuggingFaceRegistrySettingModal.TokenUpdatedSuccessfully'),
         );
-        onRequestClose?.(true);
+        baiModalProps.onOk?.({} as React.MouseEvent<HTMLButtonElement>);
       },
       onError: (err) => {
-        message.error(
-          err.message ??
-            t('comp:HuggingFaceRegistrySettingModal.FailedToUpdateToken'),
-        );
+        message.error(getErrorMessage(err));
       },
     });
   };
@@ -96,11 +90,19 @@ const BAIHuggingFaceRegistrySettingModal = ({
       return;
     }
 
+    if (hasToken && !isEditing) {
+      // If not editing, no need to update
+      message.success(
+        t('comp:HuggingFaceRegistrySettingModal.NoChangesToSave'),
+      );
+      baiModalProps.onOk?.({} as React.MouseEvent<HTMLButtonElement>);
+      return;
+    }
+
     formRef.current
       ?.validateFields()
       .then((values) => {
         // Check if current token exists and is empty string, but new token is not empty
-
         if (hasToken && !values.token) {
           modal.confirm({
             title: t('comp:HuggingFaceRegistrySettingModal.ResetTokenConfirm'),
@@ -114,7 +116,7 @@ const BAIHuggingFaceRegistrySettingModal = ({
               // Don't proceed with update
             },
             okButtonProps: { danger: true },
-            okText: t('button.Reset'),
+            okText: t('general.button.Reset'),
           });
         } else {
           executeUpdate(values);
@@ -128,15 +130,14 @@ const BAIHuggingFaceRegistrySettingModal = ({
       <BAIModal
         destroyOnHidden
         afterClose={() => setIsEditing(false)}
+        {...baiModalProps}
         title={t('comp:HuggingFaceRegistrySettingModal.HuggingFaceSettings')}
         centered
-        okText={t('button.Save')}
+        okText={t('general.button.Save')}
         onOk={handleOk}
-        onCancel={() => onRequestClose?.(false)}
         okButtonProps={{
           loading: isInflightUpdateHuggingFaceRegistry,
         }}
-        {...baiModalProps}
       >
         <Form ref={formRef} layout="vertical">
           <Form.Item

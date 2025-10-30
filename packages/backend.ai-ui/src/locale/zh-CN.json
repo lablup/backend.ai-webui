@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "重置",
-    "Save": "节省"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "激活",
     "ActivateArtifacts": "激活工件",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "更新令牌失败。",
     "HuggingFaceRegistryNotFound": "未找到 Hugging Face 注册表。",
     "HuggingFaceSettings": "Hugging Face设置",
+    "NoChangesToSave": "没有要保存的更改",
     "ResetTokenConfirm": "重置令牌",
     "ResetTokenConfirmMessage": "该令牌似乎是空的。\n您想用新值初始化它吗？",
     "Token": "代币",
@@ -169,6 +165,8 @@
       "Delete": "删除",
       "Expand": "扩张",
       "Remove": "消除",
+      "Reset": "重置",
+      "Save": "节省",
       "Upload": "上传"
     },
     "modal": {

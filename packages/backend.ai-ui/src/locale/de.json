@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Zurücksetzen",
-    "Save": "Speichern"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktivieren",
     "ActivateArtifacts": "Artefakte aktivieren",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Das Token konnte nicht aktualisiert werden.",
     "HuggingFaceRegistryNotFound": "Hugging Face-Registrierung nicht gefunden.",
     "HuggingFaceSettings": "Einstellungen für Hugging Face.",
+    "NoChangesToSave": "Keine Änderungen zum Speichern",
     "ResetTokenConfirm": "Token zurücksetzen",
     "ResetTokenConfirmMessage": "Der Token scheint leer zu sein. \nMöchten Sie es mit einem neuen Wert initialisieren?",
     "Token": "Token",
@@ -169,6 +165,8 @@
       "Delete": "Löschen",
       "Expand": "Expandieren",
       "Remove": "Entfernen",
+      "Reset": "Zurücksetzen",
+      "Save": "Speichern",
       "Upload": "Hochladen"
     },
     "modal": {

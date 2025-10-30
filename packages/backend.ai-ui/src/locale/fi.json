@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Nollaa",
-    "Save": "Tallentaa"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktivoida",
     "ActivateArtifacts": "Aktivoida esineitä",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Tunnusteen päivittäminen epäonnistui.",
     "HuggingFaceRegistryNotFound": "Hugging Face-rekisteriä ei löydy.",
     "HuggingFaceSettings": "Halaavat kasvot -asetukset",
+    "NoChangesToSave": "Ei tallennettavia muutoksia",
     "ResetTokenConfirm": "Reset Token",
     "ResetTokenConfirmMessage": "Tunnus näyttää olevan tyhjä. \nHaluatko alustaa sen uudella arvolla?",
     "Token": "Token",
@@ -169,6 +165,8 @@
       "Delete": "Poistaa",
       "Expand": "Laajentaa",
       "Remove": "Poistaa",
+      "Reset": "Nollaa",
+      "Save": "Tallentaa",
       "Upload": "Ladata"
     },
     "modal": {

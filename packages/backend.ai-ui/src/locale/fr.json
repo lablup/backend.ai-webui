@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Réinitialiser",
-    "Save": "Sauvegarder"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Activer",
     "ActivateArtifacts": "Activer les artefacts",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Échec de la mise à jour du jeton.",
     "HuggingFaceRegistryNotFound": "Registre Hugging Face introuvable.",
     "HuggingFaceSettings": "Paramètres Hugging Face",
+    "NoChangesToSave": "Aucune modification à enregistrer",
     "ResetTokenConfirm": "Réinitialiser le jeton",
     "ResetTokenConfirmMessage": "Le jeton semble vide. \nSouhaitez-vous l'initialiser avec une nouvelle valeur ?",
     "Token": "Jeton",
@@ -169,6 +165,8 @@
       "Delete": "Supprimer",
       "Expand": "Développer",
       "Remove": "Retirer",
+      "Reset": "Réinitialiser",
+      "Save": "Sauvegarder",
       "Upload": "Télécharger"
     },
     "modal": {

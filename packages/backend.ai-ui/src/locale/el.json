@@ -1,9 +1,5 @@
 {
   "$schema": "../../i18n.schema.json",
-  "button": {
-    "Reset": "Επαναφορά",
-    "Save": "Εκτός"
-  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Δραστηριοποιώ",
     "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
@@ -140,9 +136,9 @@
     }
   },
   "comp:HuggingFaceRegistrySettingModal": {
-    "FailedToUpdateToken": "Η ενημέρωση του διακριτικού απέτυχε.",
     "HuggingFaceRegistryNotFound": "Το μητρώο Hugging Face δεν βρέθηκε.",
     "HuggingFaceSettings": "Ρυθμίσεις Hugging Face",
+    "NoChangesToSave": "Δεν υπάρχουν αλλαγές για αποθήκευση",
     "ResetTokenConfirm": "Επαναφορά διακριτικού",
     "ResetTokenConfirmMessage": "Το διακριτικό φαίνεται να είναι κενό. \nΘέλετε να το αρχικοποιήσετε με μια νέα τιμή;",
     "Token": "Ενδειξη",
@@ -169,6 +165,8 @@
       "Delete": "Διαγράφω",
       "Expand": "Διαστέλλω",
       "Remove": "Αφαιρώ",
+      "Reset": "Επαναφορά",
+      "Save": "Αποθήκευση",
       "Upload": "Μεταφορτώσω"
     },
     "modal": {

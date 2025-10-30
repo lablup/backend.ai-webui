@@ -575,10 +575,10 @@ const ReservoirPage: React.FC = () => {
       <BAIHuggingFaceRegistrySettingModal
         open={openHuggingFaceSettingModal}
         huggingFaceRegistryFragment={huggingfaceRegistries?.edges?.[0]?.node}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-          }
+        onOk={() => {
+          toggleHuggingFaceSettingModal();
+        }}
+        onCancel={() => {
           toggleHuggingFaceSettingModal();
         }}
       />
