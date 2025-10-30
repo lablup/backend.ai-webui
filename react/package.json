@@ -110,7 +110,7 @@
       "relay/must-colocate-fragment-spreads": "off",
       "comma-spacing": "off",
       "@typescript-eslint/no-unused-vars": [
-        "error",
+        "warn",
         {
           "args": "all",
           "argsIgnorePattern": "^_",

@@ -1,9 +1,8 @@
-import { useSuspendedBackendaiClient } from '.';
+import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
 import { mutationOptions } from './backendai';
 import { useTanMutation } from './reactQueryAlias';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
-import { useCallback, useEffect } from 'react';
 
 export interface InvitationItem {
   id: string;
@@ -20,34 +19,25 @@ export interface InvitationItem {
   perm: string;
 }
 
-const vFolderInvitationsAtom = atomWithDefault(async () => {
-  return {
-    invitations: [] as InvitationItem[],
-    count: 0,
-  };
+const vFolderInvitationsAtom = atomWithDefault<
+  InvitationItem[] | Promise<InvitationItem[]>
+>(async () => {
+  // backendaiClientPromise is a promise instance;
+  const backendaiClient = await backendaiClientPromise;
+
+  const data = await backendaiClient.vfolder.invitations();
+  return data.invitations as InvitationItem[];
 });
 
-export const useVFolderInvitationsValue = () => {
-  const { updateInvitations } = useSetVFolderInvitations();
-  useEffect(() => {
-    updateInvitations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return useAtomValue(vFolderInvitationsAtom);
-};
-
-export const useSetVFolderInvitations = () => {
-  const setInvitations = useSetAtom(vFolderInvitationsAtom);
+export const useVFolderInvitations = () => {
+  'use memo';
+  const [vFolderInvitations, setInvitations] = useAtom(vFolderInvitationsAtom);
   const baiClient = useSuspendedBackendaiClient();
 
-  const updateInvitations = useCallback(async () => {
+  const updateInvitations = async () => {
     const data = await baiClient.vfolder.invitations();
-    setInvitations((prev) => ({
-      ...prev,
-      invitations: data.invitations as InvitationItem[],
-      count: data.invitations.length ?? 0,
-    }));
-  }, [baiClient, setInvitations]);
+    setInvitations(data.invitations as InvitationItem[]);
+  };
 
   const mutationToAcceptInvitation = useTanMutation({
     mutationFn: (values: { inv_id: string }) => {
@@ -67,33 +57,38 @@ export const useSetVFolderInvitations = () => {
     },
   });
 
-  return {
-    updateInvitations,
-    acceptInvitation: (inv_id: string, options?: mutationOptions<string>) => {
-      mutationToAcceptInvitation.mutate(
-        { inv_id },
-        {
-          onSuccess: () => {
-            options?.onSuccess?.(inv_id);
+  return [
+    vFolderInvitations,
+    {
+      updateInvitations,
+      acceptInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        return mutationToAcceptInvitation.mutateAsync(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess?.(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError?.(error);
+            },
           },
-          onError: (error: any) => {
-            options?.onError?.(error);
+        );
+      },
+      isPendingAcceptInvitation: mutationToAcceptInvitation.isPending,
+      rejectInvitation: (inv_id: string, options?: mutationOptions<string>) => {
+        return mutationToRejectInvitation.mutateAsync(
+          { inv_id },
+          {
+            onSuccess: () => {
+              options?.onSuccess?.(inv_id);
+            },
+            onError: (error: any) => {
+              options?.onError?.(error);
+            },
           },
-        },
-      );
+        );
+      },
+      isPendingRejectInvitation: mutationToRejectInvitation.isPending,
     },
-    rejectInvitation: (inv_id: string, options?: mutationOptions<string>) => {
-      mutationToRejectInvitation.mutate(
-        { inv_id },
-        {
-          onSuccess: () => {
-            options?.onSuccess?.(inv_id);
-          },
-          onError: (error: any) => {
-            options?.onError?.(error);
-          },
-        },
-      );
-    },
-  };
+  ] as const;
 };

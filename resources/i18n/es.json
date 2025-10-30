@@ -442,6 +442,7 @@
       "Invited": "Invitado con éxito",
       "LeaveSharedFolder": "Deja la carpeta compartida",
       "LeaveSharedFolderDesc": "¿Quieres dejar la carpeta compartida ‘{{folderName}}’?",
+      "NoMoreInvitation": "No hay invitaciones para revisar.",
       "NoOneWasInvited": "No se invita a nadie puesto que la invitación ya existe",
       "NoOneWasShared": "Error al compartir la carpeta de grupo",
       "NoValidEmails": "No se han introducido correos electrónicos válidos",

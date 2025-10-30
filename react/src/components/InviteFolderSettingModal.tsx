@@ -200,7 +200,12 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                   ]}
                   style={{ marginBottom: 0 }}
                 >
-                  <Input placeholder={t('data.explorer.EnterEmailAddress')} />
+                  <Input
+                    placeholder={t('data.explorer.EnterEmailAddress')}
+                    onPressEnter={() => {
+                      handleInvite();
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="permission"

@@ -442,6 +442,7 @@
       "Invited": "Erfolgreich eingeladen",
       "LeaveSharedFolder": "Lassen Sie den gemeinsam genutzten Ordner",
       "LeaveSharedFolderDesc": "Möchten Sie den freigegebenen Ordner \"{{Ordnername}}\" verlassen?",
+      "NoMoreInvitation": "Es gibt keine Einladungen zur Rezension.",
       "NoOneWasInvited": "Niemand eingeladen, da Einladung bereits existiert",
       "NoOneWasShared": "Fehler beim Freigeben des Gruppenordners",
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",

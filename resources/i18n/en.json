@@ -445,6 +445,7 @@
       "Invited": "Successfully invited",
       "LeaveSharedFolder": "Leave the shared folder",
       "LeaveSharedFolderDesc": "Do you want to leave the shared folder ‘{{folderName}}’?",
+      "NoMoreInvitation": "There are no invitations to review.",
       "NoOneWasInvited": "No one invited since invitation already exists",
       "NoOneWasShared": "Failed to share the group folder",
       "NoValidEmails": "No valid emails were entered",

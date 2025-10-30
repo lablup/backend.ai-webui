@@ -442,6 +442,7 @@
       "Invited": "Pomyślnie zaproszono",
       "LeaveSharedFolder": "Zostaw wspólny folder",
       "LeaveSharedFolderDesc": "Czy chcesz zostawić udostępniony folder „{{foldername}}”?",
+      "NoMoreInvitation": "Brak zaproszeń do recenzji.",
       "NoOneWasInvited": "Nikt nie został zaproszony, ponieważ zaproszenie już istnieje",
       "NoOneWasShared": "Nie udało się udostępnić folderu grupy",
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",

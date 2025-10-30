@@ -441,6 +441,7 @@
       "Invited": "Berjaya dijemput",
       "LeaveSharedFolder": "Tinggalkan folder kongsi",
       "LeaveSharedFolderDesc": "Adakah anda mahu meninggalkan folder kongsi '{{folderName}}'?",
+      "NoMoreInvitation": "Tiada jemputan untuk dikaji semula.",
       "NoOneWasInvited": "Tidak ada yang dijemput kerana jemputan sudah ada",
       "NoOneWasShared": "Gagal berkongsi folder kumpulan",
       "NoValidEmails": "Tidak ada e-mel yang sah dimasukkan",

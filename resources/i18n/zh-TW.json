@@ -443,6 +443,7 @@
       "Invited": "已成功邀請",
       "LeaveSharedFolder": "留下共享文件夾",
       "LeaveSharedFolderDesc": "您要留下共享文件夾“ {{foldername}}”？",
+      "NoMoreInvitation": "沒有審查邀請。",
       "NoOneWasInvited": "沒有人被邀請，因為邀請已經存在",
       "NoOneWasShared": "無法共享群組文件夾",
       "NoValidEmails": "沒有輸入有效的電子郵件",

@@ -442,6 +442,7 @@
       "Invited": "Kutsuttu onnistuneesti",
       "LeaveSharedFolder": "Jätä jaettu kansio",
       "LeaveSharedFolderDesc": "Haluatko jättää jaetun kansion '{{Folderinimi}}'?",
+      "NoMoreInvitation": "Arvostelukutsuja ei ole.",
       "NoOneWasInvited": "Ketään ei ole kutsuttu, koska kutsu on jo olemassa",
       "NoOneWasShared": "Ryhmäkansion jakaminen epäonnistui",
       "NoValidEmails": "Kelvollisia sähköposteja ei ole syötetty",

@@ -442,6 +442,7 @@
       "Invited": "已成功邀请",
       "LeaveSharedFolder": "留下共享文件夹",
       "LeaveSharedFolderDesc": "您要留下共享文件夹“ {{foldername}}”？",
+      "NoMoreInvitation": "没有审查邀请。",
       "NoOneWasInvited": "没有人被邀请，因为邀请已经存在",
       "NoOneWasShared": "无法共享群组文件夹",
       "NoValidEmails": "没有输入有效的电子邮件",

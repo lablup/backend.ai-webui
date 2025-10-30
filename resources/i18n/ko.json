@@ -444,6 +444,7 @@
       "Invited": "초대장을 보냈습니다",
       "LeaveSharedFolder": "공유 폴더 나가기",
       "LeaveSharedFolderDesc": "공유받은 ‘{{folderName}}’ 폴더에서 나가시겠습니까?",
+      "NoMoreInvitation": "확인해야 할 초대장이 없습니다.",
       "NoOneWasInvited": "초대장이 이미 존재하여 초대에 실패했습니다",
       "NoOneWasShared": "그룹 폴더 공유에 실패했습니다",
       "NoValidEmails": "입력하신 이메일이 존재하지 않는 것 같습니다. 주소를 다시 확인해 주세요.",

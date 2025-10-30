@@ -441,6 +441,7 @@
       "Invited": "招待に成功",
       "LeaveSharedFolder": "共有フォルダーを残します",
       "LeaveSharedFolderDesc": "共有フォルダー「{{foldername}}」を残しますか？",
+      "NoMoreInvitation": "レビューへの招待はありません。",
       "NoOneWasInvited": "招待状が既に存在するため、誰も招待されていません",
       "NoOneWasShared": "グループフォルダの共有に失敗しました",
       "NoValidEmails": "有効なメールが入力されていません",

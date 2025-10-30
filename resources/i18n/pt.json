@@ -442,6 +442,7 @@
       "Invited": "Convidado com sucesso",
       "LeaveSharedFolder": "Deixe a pasta compartilhada",
       "LeaveSharedFolderDesc": "Deseja deixar a pasta compartilhada '{{FolderName}}'?",
+      "NoMoreInvitation": "Não há convites para revisão.",
       "NoOneWasInvited": "Ninguém foi convidado porque o convite já existe",
       "NoOneWasShared": "Falha ao compartilhar a pasta do grupo",
       "NoValidEmails": "Nenhum e-mail válido foi inserido",

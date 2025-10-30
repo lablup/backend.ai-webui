@@ -441,6 +441,7 @@
       "Invited": "Invitato con successo",
       "LeaveSharedFolder": "Lascia la cartella condivisa",
       "LeaveSharedFolderDesc": "Vuoi lasciare la cartella condivisa \"{{Foldername}}\"?",
+      "NoMoreInvitation": "Non ci sono inviti alla revisione.",
       "NoOneWasInvited": "Nessuno invitato poiché l'invito esiste già",
       "NoOneWasShared": "Impossibile condividere la cartella del gruppo",
       "NoValidEmails": "Non sono state inserite email valide",

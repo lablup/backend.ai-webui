@@ -442,6 +442,7 @@
       "Invited": "Đã mời thành công",
       "LeaveSharedFolder": "Để lại thư mục chia sẻ",
       "LeaveSharedFolderDesc": "Bạn có muốn để lại thư mục được chia sẻ ‘{{furderName}}?",
+      "NoMoreInvitation": "Không có lời mời để xem xét.",
       "NoOneWasInvited": "Không ai được mời vì lời mời đã tồn tại",
       "NoOneWasShared": "Không chia sẻ được thư mục nhóm",
       "NoValidEmails": "Không có email hợp lệ nào được nhập",

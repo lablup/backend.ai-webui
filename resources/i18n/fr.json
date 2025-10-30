@@ -442,6 +442,7 @@
       "Invited": "Invité avec succès",
       "LeaveSharedFolder": "Laissez le dossier partagé",
       "LeaveSharedFolderDesc": "Voulez-vous quitter le dossier partagé «{{FolderName}}»?",
+      "NoMoreInvitation": "Il n’y a aucune invitation à réviser.",
       "NoOneWasInvited": "Personne n'a été invité car l'invitation existe déjà",
       "NoOneWasShared": "Échec du partage du dossier de groupe",
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
