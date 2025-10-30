@@ -44,3 +44,8 @@ export type {
   BAIActivateArtifactsModalProps,
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
+export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
+export type {
+  BAIHuggingFaceRegistrySettingModalProps,
+  BAIHuggingFaceRegistrySettingModalFragmentKey,
+} from './BAIHuggingFaceRegistrySettingModal';

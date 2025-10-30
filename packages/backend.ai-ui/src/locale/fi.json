@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Nollaa",
+    "Save": "Tallentaa"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktivoida",
     "ActivateArtifacts": "Aktivoida esineitä",
@@ -134,6 +138,15 @@
       "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
       "FileNameRequired": "Anna tiedoston tai kansionimi."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "Tunnusteen päivittäminen epäonnistui.",
+    "HuggingFaceRegistryNotFound": "Hugging Face-rekisteriä ei löydy.",
+    "HuggingFaceSettings": "Halaavat kasvot -asetukset",
+    "ResetTokenConfirm": "Reset Token",
+    "ResetTokenConfirmMessage": "Tunnus näyttää olevan tyhjä. \nHaluatko alustaa sen uudella arvolla?",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Tunnus päivitetty onnistuneesti."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"

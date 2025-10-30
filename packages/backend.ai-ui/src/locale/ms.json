@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Tetapkan semula",
+    "Save": "Simpan"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktifkan",
     "ActivateArtifacts": "Aktifkan artifak",
@@ -134,6 +138,15 @@
       "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza.",
       "FileNameRequired": "Sila masukkan fail atau nama folder."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "Gagal mengemas kini token.",
+    "HuggingFaceRegistryNotFound": "Pendaftaran Hugging Face tidak dijumpai.",
+    "HuggingFaceSettings": "Hugging Face tetapan",
+    "ResetTokenConfirm": "Tetapkan semula token",
+    "ResetTokenConfirmMessage": "Tanda itu kelihatan kosong. \nAdakah anda ingin memulakannya dengan nilai baru?",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token dikemas kini dengan jayanya."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"

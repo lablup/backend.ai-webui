@@ -258,12 +258,13 @@ const BAIArtifactTable = ({
 
   return (
     <BAITable<Artifact>
+      size="small"
       rowKey={(record) => record.id}
       columns={filterOutEmpty(columns)}
       dataSource={filterOutNullAndUndefined(artifact)}
       scroll={{ x: 'max-content' }}
       {...tableProps}
-    ></BAITable>
+    />
   );
 };
 

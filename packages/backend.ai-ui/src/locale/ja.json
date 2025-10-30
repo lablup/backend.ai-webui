@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "リセット",
+    "Save": "保存"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "活性化",
     "ActivateArtifacts": "アーティファクトをアクティブにします",
@@ -134,6 +138,15 @@
       "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
       "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "トークンの更新に失敗しました。",
+    "HuggingFaceRegistryNotFound": "Hugging Face レジストリが見つかりません。",
+    "HuggingFaceSettings": "Hugging Faceの設定",
+    "ResetTokenConfirm": "トークンのリセット",
+    "ResetTokenConfirmMessage": "トークンは空のようです。\n新しい値で初期化しますか?",
+    "Token": "トークン",
+    "TokenUpdatedSuccessfully": "トークンが正常に更新されました。"
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} of {{total}}アイテム"

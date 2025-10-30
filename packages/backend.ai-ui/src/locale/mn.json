@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Нөөц",
+    "Save": "Аврах"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Идэвхжүүлэх",
     "ActivateArtifacts": "Олдворуудыг идэвхжүүлэх",
@@ -134,6 +138,15 @@
       "DuplicatedName": "Энэ нэр аль хэдийн ашиглагдаж байна. \nӨөр нэр оруулна уу.",
       "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "Токенийг шинэчилж чадсангүй.",
+    "HuggingFaceRegistryNotFound": "Хуурамч байдлын бүртгэл олдсонгүй.",
+    "HuggingFaceSettings": "Hugging Face тэвэрч \"Тохиргоо",
+    "ResetTokenConfirm": "Токенийг дахин тохируулах",
+    "ResetTokenConfirmMessage": "Токен хоосон харагдаж байна. \nТа үүнийг шинэ утгатай эхлүүлэхийг хүсч байна уу?",
+    "Token": "Томог",
+    "TokenUpdatedSuccessfully": "Токен амжилттай шинэчлэгдсэн."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"

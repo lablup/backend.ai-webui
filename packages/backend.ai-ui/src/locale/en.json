@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Reset",
+    "Save": "Save"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Activate",
     "ActivateArtifacts": "Activate Artifacts",
@@ -137,6 +141,16 @@
       "DuplicatedName": "This name is already in use. Please enter a different name.",
       "FileNameRequired": "Please enter a file or folder name."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "FailedToUpdateToken": "Failed to update token.",
+    "HuggingFaceRegistryNotFound": "Hugging Face Registry not found.",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "ResetTokenConfirm": "Reset Token",
+    "ResetTokenConfirmMessage": "The token appears to be empty. Would you like to initialize it with a new value?",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} of {{total}} items"

@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "button": {
+    "Reset": "Επαναφορά",
+    "Save": "Εκτός"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Δραστηριοποιώ",
     "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
@@ -134,6 +138,15 @@
       "DuplicatedName": "Αυτό το όνομα χρησιμοποιείται ήδη. \nΕισαγάγετε ένα διαφορετικό όνομα.",
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
     }
+  },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "FailedToUpdateToken": "Η ενημέρωση του διακριτικού απέτυχε.",
+    "HuggingFaceRegistryNotFound": "Το μητρώο Hugging Face δεν βρέθηκε.",
+    "HuggingFaceSettings": "Ρυθμίσεις Hugging Face",
+    "ResetTokenConfirm": "Επαναφορά διακριτικού",
+    "ResetTokenConfirmMessage": "Το διακριτικό φαίνεται να είναι κενό. \nΘέλετε να το αρχικοποιήσετε με μια νέα τιμή;",
+    "Token": "Ενδειξη",
+    "TokenUpdatedSuccessfully": "Το διακριτικό ενημερώθηκε με επιτυχία."
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
