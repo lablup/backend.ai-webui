@@ -402,7 +402,7 @@
       "MoveToTrashMultipleDescription": "Êtes-vous sûr de vouloir déplacer des dossiers {{folderLength}} aux déchets?",
       "MovedToTrashBin": "Le dossier {{ folderName }} a été déplacé vers la corbeille.",
       "MultipleFilesDeleted": "Plusieurs fichiers supprimés",
-      "MultipleFolderDeleted": "Les dossiers sélectionnés {{FolderLength}} ont été supprimés.",
+      "MultipleFolderDeleted": "Les dossiers sélectionnés {{folderLength}} ont été supprimés.",
       "MultipleFolderRestored": "Les dossiers sélectionnés {{ folderLength }} ont été restaurés.",
       "Name": "Nom",
       "NoDeletePermission": "Pas d'autorisation de suppression",

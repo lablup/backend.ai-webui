@@ -401,7 +401,7 @@
       "MoveToTrashMultipleDescription": "Adakah anda pasti mahu bergerak {{folderLength}} folder ke sampah tong?",
       "MovedToTrashBin": "Folder {{ folderName }} telah dialihkan ke tong sampah.",
       "MultipleFilesDeleted": "Berbilang Fail dipadamkan",
-      "MultipleFolderDeleted": "Dipilih {{folderlength}} Folder telah dipadam.",
+      "MultipleFolderDeleted": "Dipilih {{folderLength}} Folder telah dipadam.",
       "MultipleFolderRestored": "Dipilih {{ folderLength }} Folder telah dipulihkan.",
       "Name": "Nama",
       "NoDeletePermission": "Tiada kebenaran memadam",

@@ -404,7 +404,7 @@
       "MoveToTrashMultipleDescription": "{{folderLength}}개의 폴더를 휴지통으로 이동하시겠습니까?",
       "MovedToTrashBin": "{{ folderName }} 폴더가 휴지통으로 이동되었습니다.",
       "MultipleFilesDeleted": "다수의 파일이 삭제되었습니다",
-      "MultipleFolderDeleted": "선택된 {{folderlength}}개 폴더가 삭제되었습니다.",
+      "MultipleFolderDeleted": "선택된 {{folderLength}}개 폴더가 삭제되었습니다.",
       "MultipleFolderRestored": "선택한 {{ folderLength }} 폴더가 복원되었습니다.",
       "Name": "이름",
       "NoDeletePermission": "삭제 권한이 없습니다",

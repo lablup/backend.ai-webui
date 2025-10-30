@@ -400,7 +400,7 @@
       "MoveToTrashMultipleDescription": "Είστε σίγουροι ότι θέλετε να μετακινήσετε τους φακέλους {{ folderLength }} στον κάδο απορριμμάτων;",
       "MovedToTrashBin": "Ο φάκελος {{ folderName }} έχει μετακινηθεί στον κάδο απορριμμάτων.",
       "MultipleFilesDeleted": "Διαγράφηκαν πολλά αρχεία",
-      "MultipleFolderDeleted": "Επιλεγμένα {{FolderLength}} Φάκελοι έχει διαγραφεί.",
+      "MultipleFolderDeleted": "Επιλεγμένα {{folderLength}} Φάκελοι έχει διαγραφεί.",
       "MultipleFolderRestored": "Επιλεγμένα {{ folderLength }} Φάκελοι έχει αποκατασταθεί.",
       "Name": "Ονομα",
       "NoDeletePermission": "Δεν υπάρχει δικαίωμα διαγραφής",

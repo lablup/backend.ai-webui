@@ -405,7 +405,7 @@
       "MoveToTrashMultipleDescription": "Are you sure you want to move {{ folderLength }} folders to trash bin?",
       "MovedToTrashBin": "The {{ folderName }} folder has been moved to the trash bin.",
       "MultipleFilesDeleted": "Multiple Files deleted",
-      "MultipleFolderDeleted": "Selected {{ folderLength }} folders has been deleted.",
+      "MultipleFolderDeleted": "Selected {{folderLength}} folders has been deleted.",
       "MultipleFolderRestored": "Selected {{ folderLength }} folders has been restored.",
       "Name": "Name",
       "NoDeletePermission": "No delete permission",

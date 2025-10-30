@@ -402,7 +402,7 @@
       "MoveToTrashMultipleDescription": "Tem certeza de que deseja mover {{folderLength}} pastas para lixo?",
       "MovedToTrashBin": "A pasta {{ folderName }} foi movida para a lixeira.",
       "MultipleFilesDeleted": "Vários arquivos excluídos",
-      "MultipleFolderDeleted": "As pastas selecionadas {{pasherLength}} foram excluídas.",
+      "MultipleFolderDeleted": "As pastas selecionadas {{folderLength}} foram excluídas.",
       "MultipleFolderRestored": "As pastas selecionadas {{ folderLength }} foram restauradas.",
       "Name": "Nome",
       "NoDeletePermission": "Sem permissão de eliminação",

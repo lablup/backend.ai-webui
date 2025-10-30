@@ -402,7 +402,7 @@
       "MoveToTrashMultipleDescription": "Bạn có chắc là bạn muốn di chuyển {{folderLength}} các thư mục sang thùng rác không?",
       "MovedToTrashBin": "Thư mục {{ folderName }} đã được chuyển vào thùng rác.",
       "MultipleFilesDeleted": "Nhiều tệp đã bị xóa",
-      "MultipleFolderDeleted": "Đã chọn {{thư mục}} Các thư mục đã bị xóa.",
+      "MultipleFolderDeleted": "Đã chọn {{folderLength}} Các thư mục đã bị xóa.",
       "MultipleFolderRestored": "Đã chọn {{ folderLength }} Các thư mục đã được khôi phục.",
       "Name": "Tên",
       "NoDeletePermission": "Không xóa quyền",

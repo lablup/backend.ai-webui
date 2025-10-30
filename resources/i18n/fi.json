@@ -402,7 +402,7 @@
       "MoveToTrashMultipleDescription": "Haluatko varmasti liikuttaa {{folderLength}} kansioita roskakoriin?",
       "MovedToTrashBin": "Kansio {{ folderName }} on siirretty roskakoriin.",
       "MultipleFilesDeleted": "Useita tiedostoja poistettu",
-      "MultipleFolderDeleted": "Valitut {{kansiota}} kansiot on poistettu.",
+      "MultipleFolderDeleted": "Valitut {{folderLength}} kansiot on poistettu.",
       "MultipleFolderRestored": "Valitut {{ folderLength }} kansiot on palautettu.",
       "Name": "Nimi",
       "NoDeletePermission": "Ei poistolupaa",

@@ -402,7 +402,7 @@
       "MoveToTrashMultipleDescription": "Sind Sie sicher, dass Sie {{folderLength}} Ordner in Müll bin verschieben möchten?",
       "MovedToTrashBin": "Der Ordner {{ folderName }} wurde in den Papierkorb verschoben.",
       "MultipleFilesDeleted": "Mehrere Dateien gelöscht",
-      "MultipleFolderDeleted": "Ausgewählte {{OrdnerLength}} Ordner wurden gelöscht.",
+      "MultipleFolderDeleted": "Ausgewählte {{folderLength}} Ordner wurden gelöscht.",
       "MultipleFolderRestored": "Ausgewählte {{ folderLength }} Ordner wurden wiederhergestellt.",
       "Name": "Name",
       "NoDeletePermission": "Keine Löschberechtigung",

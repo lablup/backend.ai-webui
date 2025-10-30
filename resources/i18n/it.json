@@ -401,7 +401,7 @@
       "MoveToTrashMultipleDescription": "Sei sicuro di voler spostare le cartelle {{folderLength}} per spazzare via?",
       "MovedToTrashBin": "La cartella {{ folderName }} è stata spostata nel cestino.",
       "MultipleFilesDeleted": "Più file eliminati",
-      "MultipleFolderDeleted": "Le cartelle selezionate {{CartederLength}} sono state eliminate.",
+      "MultipleFolderDeleted": "Le cartelle selezionate {{folderLength}} sono state eliminate.",
       "MultipleFolderRestored": "Le cartelle selezionate {{ folderLength }} sono state ripristinate.",
       "Name": "Nome",
       "NoDeletePermission": "Nessun permesso di cancellazione",
