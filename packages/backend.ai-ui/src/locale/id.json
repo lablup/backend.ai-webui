@@ -135,6 +135,12 @@
       "FileNameRequired": "Harap masukkan file atau nama folder."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Registri Wajah Memeluk tidak ditemukan.",
+    "ResetTokenConfirm": "Setel Ulang Token",
+    "ResetTokenConfirmMessage": "Tokennya tampaknya kosong. \nApakah Anda ingin menginisialisasinya dengan nilai baru?",
+    "TokenUpdatedSuccessfully": "Token berhasil diperbarui."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
@@ -156,6 +162,8 @@
       "Delete": "Menghapus",
       "Expand": "Memperluas",
       "Remove": "Menghapus",
+      "Reset": "Mengatur ulang",
+      "Save": "Simpan",
       "Upload": "Mengunggah"
     },
     "modal": {

@@ -135,6 +135,14 @@
       "FileNameRequired": "Immettere un nome di file o cartella."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Registro Hugging Face non trovato.",
+    "HuggingFaceSettings": "Impostazioni Hugging Face.",
+    "ResetTokenConfirm": "Reimposta gettone",
+    "ResetTokenConfirmMessage": "Il token sembra essere vuoto. \nDesideri inizializzarlo con un nuovo valore?",
+    "Token": "Gettone",
+    "TokenUpdatedSuccessfully": "Token aggiornato correttamente."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} di {{total}} elementi"
   },
@@ -156,6 +164,8 @@
       "Delete": "Eliminare",
       "Expand": "Espandere",
       "Remove": "Rimuovere",
+      "Reset": "Reset",
+      "Save": "Salva",
       "Upload": "Caricamento"
     },
     "modal": {

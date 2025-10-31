@@ -135,6 +135,14 @@
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Το μητρώο Hugging Face δεν βρέθηκε.",
+    "HuggingFaceSettings": "Ρυθμίσεις Hugging Face",
+    "ResetTokenConfirm": "Επαναφορά διακριτικού",
+    "ResetTokenConfirmMessage": "Το διακριτικό φαίνεται να είναι κενό. \nΘέλετε να το αρχικοποιήσετε με μια νέα τιμή;",
+    "Token": "Ενδειξη",
+    "TokenUpdatedSuccessfully": "Το διακριτικό ενημερώθηκε με επιτυχία."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
@@ -156,6 +164,8 @@
       "Delete": "Διαγράφω",
       "Expand": "Διαστέλλω",
       "Remove": "Αφαιρώ",
+      "Reset": "Επαναφορά",
+      "Save": "Αποθήκευση",
       "Upload": "Μεταφορτώσω"
     },
     "modal": {

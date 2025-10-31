@@ -135,6 +135,14 @@
       "FileNameRequired": "Sila masukkan fail atau nama folder."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Pendaftaran Hugging Face tidak dijumpai.",
+    "HuggingFaceSettings": "Hugging Face tetapan",
+    "ResetTokenConfirm": "Tetapkan semula token",
+    "ResetTokenConfirmMessage": "Tanda itu kelihatan kosong. \nAdakah anda ingin memulakannya dengan nilai baru?",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token dikemas kini dengan jayanya."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
@@ -156,6 +164,8 @@
       "Delete": "Padam",
       "Expand": "Berkembang",
       "Remove": "Keluarkan",
+      "Reset": "Tetapkan semula",
+      "Save": "Simpan",
       "Upload": "Muat naik"
     },
     "modal": {

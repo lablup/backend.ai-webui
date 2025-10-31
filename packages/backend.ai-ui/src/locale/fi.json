@@ -135,6 +135,14 @@
       "FileNameRequired": "Anna tiedoston tai kansionimi."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Hugging Face-rekisteriä ei löydy.",
+    "HuggingFaceSettings": "Halaavat kasvot -asetukset",
+    "ResetTokenConfirm": "Reset Token",
+    "ResetTokenConfirmMessage": "Tunnus näyttää olevan tyhjä. \nHaluatko alustaa sen uudella arvolla?",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Tunnus päivitetty onnistuneesti."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
@@ -156,6 +164,8 @@
       "Delete": "Poistaa",
       "Expand": "Laajentaa",
       "Remove": "Poistaa",
+      "Reset": "Nollaa",
+      "Save": "Tallentaa",
       "Upload": "Ladata"
     },
     "modal": {

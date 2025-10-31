@@ -135,6 +135,14 @@
       "FileNameRequired": "Vui lòng nhập tên tệp hoặc thư mục."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Không tìm thấy sổ đăng ký Hugging Face.",
+    "HuggingFaceSettings": "Cài đặt Hugging Face",
+    "ResetTokenConfirm": "Đặt lại mã thông báo",
+    "ResetTokenConfirmMessage": "Mã thông báo dường như trống rỗng. \nBạn có muốn khởi tạo nó với một giá trị mới không?",
+    "Token": "Mã thông báo",
+    "TokenUpdatedSuccessfully": "Mã thông báo được cập nhật thành công."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} của {{total}}"
   },
@@ -156,6 +164,8 @@
       "Delete": "Xóa bỏ",
       "Expand": "Mở rộng",
       "Remove": "Di dời",
+      "Reset": "Cài lại",
+      "Save": "Cứu",
       "Upload": "Tải lên"
     },
     "modal": {
