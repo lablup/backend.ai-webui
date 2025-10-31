@@ -416,8 +416,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         open={!!currentVFolder}
         onOk={() => {
           deleteFromTrashBinMutation.mutate(currentVFolder?.id ?? '', {
-            onSuccess: () => {
-              onRequestChange?.();
+            onSuccess: (_result, variables) => {
+              onRequestChange?.(variables);
               message.success(
                 t('data.folders.FolderDeletedForever', {
                   folderName: currentVFolder?.name,

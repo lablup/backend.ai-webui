@@ -653,13 +653,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 };
               },
               onChange: (selectedRowKeys) => {
-                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
+                // Using improved handleRowSelectionChange with preserveOtherPageSelections enabled
                 handleRowSelectionChange(
                   selectedRowKeys,
                   filterOutNullAndUndefined(
                     _.map(vfolder_nodes?.edges, 'node'),
                   ),
                   setSelectedFolderList,
+                  'id',
+                  true, // Enable preserveOtherPageSelections
                 );
               },
               selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
