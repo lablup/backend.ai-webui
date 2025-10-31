@@ -93,6 +93,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   return (
     <Select
       loading={isPendingUpdate}
+      popupMatchSelectWidth={false}
       options={[
         ...(showCustom
           ? [
