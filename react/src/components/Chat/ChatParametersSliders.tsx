@@ -142,6 +142,7 @@ export const ChatParametersSliders = ({
       <Form
         size="small"
         layout="vertical"
+        requiredMark={false}
         initialValues={
           Object.keys(parameters).length > 0
             ? parameters
