@@ -94,7 +94,7 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
               style={{
                 fontSize: 32,
                 lineHeight: '1em',
-                color: style?.color ?? 'inherit',
+                color: style?.color ?? token.colorText,
               }}
             >
               {displayCurrent}
