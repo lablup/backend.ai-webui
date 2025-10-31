@@ -47,7 +47,8 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
       <BAIFlex
         data-testid="folder-explorer-title"
         gap={'xs'}
-        style={{ flex: 1, ...titleStyle }}
+        // reset font weight set by BAIModal header
+        style={{ flex: 1, fontWeight: 'normal', ...titleStyle }}
       >
         {vfolderNode ? (
           <VFolderNodeIdenticon
@@ -84,6 +85,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
             }}
             inputProps={{
               size: 'large',
+              count: {
+                max: 64,
+                show: true,
+              },
+              style: {
+                fontWeight: 'normal',
+              },
             }}
           />
         )}
