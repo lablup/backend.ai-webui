@@ -3,7 +3,9 @@ import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';
 
-export interface BAIAlertProps extends AlertProps {}
+export interface BAIAlertProps extends AlertProps {
+  ghostInfoBg?: boolean;
+}
 const useStyle = createStyles(({ css, token }) => ({
   baiAlertDefault: css`
     .ant-alert-message {
@@ -14,6 +16,8 @@ const useStyle = createStyles(({ css, token }) => ({
     .ant-alert-icon {
       font-size: 22px;
     }
+  `,
+  ghostInfoBg: css`
     &.ant-alert-info {
       background-color: ${token.colorBgContainer};
       border-color: ${token.colorBorder};
@@ -24,12 +28,17 @@ const useStyle = createStyles(({ css, token }) => ({
 const BAIAlert: React.FC<BAIAlertProps> = ({
   className,
   description,
+  ghostInfoBg = true,
   ...otherProps
 }) => {
   const { styles } = useStyle();
   return (
     <Alert
-      className={classNames(styles.baiAlertDefault, className)}
+      className={classNames(
+        styles.baiAlertDefault,
+        ghostInfoBg && styles.ghostInfoBg,
+        className,
+      )}
       // Add empty description to follow the NEO style
       description={description || ' '}
       {...otherProps}

@@ -38,10 +38,10 @@ import {
   BAICard,
   BAINewFolderIcon,
   BAIRestoreIcon,
-  BAITrashBinIcon,
   BAIPropertyFilter,
   mergeFilterValues,
   BAIAlertIconWithTooltip,
+  BAIVFolderDeleteButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
@@ -226,12 +226,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               node @required(action: THROW) {
                 id @required(action: THROW)
                 status
+                permissions
                 ...VFolderNodesFragment
                 ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
+                ...BAIVFolderDeleteButtonFragment
               }
             }
             count
@@ -595,14 +597,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       count: selectedFolderList.length,
                     })}
                     <Tooltip title={t('data.folders.MoveToTrash')}>
-                      <Button
+                      <BAIVFolderDeleteButton
+                        vfolderFrgmt={selectedFolderList}
                         style={{
-                          color: token.colorError,
                           borderColor: token.colorBorder,
                         }}
                         type="text"
                         variant="outlined"
-                        icon={<BAITrashBinIcon />}
                         onClick={() => {
                           toggleDeleteModal();
                         }}
