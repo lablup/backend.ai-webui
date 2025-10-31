@@ -378,8 +378,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         <Select
           ref={envSelectRef}
           showSearch
-          // open={true}
-          // autoClearSearchValue
+          popupMatchSelectWidth={false}
           searchValue={environmentSearch}
           onSearch={setEnvironmentSearch}
           defaultActiveFirstOption={true}
@@ -582,6 +581,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             >
               <Select
                 ref={versionSelectRef}
+                popupMatchSelectWidth={false}
                 onChange={(value) => {
                   const selectedImage = _.find(images, (image) => {
                     return getImageFullName(image) === value;

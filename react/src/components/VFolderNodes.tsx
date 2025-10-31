@@ -29,7 +29,6 @@ import {
   filterOutNullAndUndefined,
   BAIRestoreIcon,
   BAIShareAltIcon,
-  BAITrashBinIcon,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -38,6 +37,7 @@ import {
   useErrorMessageResolver,
   BAILink,
   BAIConfirmModalWithInput,
+  BAIVFolderDeleteButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -105,6 +105,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ...EditableVFolderNameFragment
         ...VFolderNodeIdenticonFragment
         ...SharedFolderPermissionInfoModalFragment
+        ...BAIVFolderDeleteButtonFragment
       }
     `,
     vfoldersFrgmt,
@@ -317,27 +318,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         }
                         placement="right"
                       >
-                        <Button
+                        <BAIVFolderDeleteButton
+                          vfolderFrgmt={[vfolder]}
                           size="small"
                           type="text"
-                          icon={<BAITrashBinIcon />}
                           disabled={!hasDeletePermission || isPipelineFolder}
-                          style={{
-                            color:
-                              !_.includes(
-                                vfolder?.permissions,
-                                'delete_vfolder',
-                              ) || isPipelineFolder
-                                ? token.colorTextDisabled
-                                : token.colorError,
-                            background:
-                              !_.includes(
-                                vfolder?.permissions,
-                                'delete_vfolder',
-                              ) || isPipelineFolder
-                                ? token.colorBgContainerDisabled
-                                : token.colorErrorBg,
-                          }}
                         />
                       </Tooltip>
                     </Popconfirm>
@@ -345,20 +330,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   {/* Delete from trash bin & Disabled delete button */}
                   {isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('data.folders.Delete')} placement="right">
-                      <Button
+                      <BAIVFolderDeleteButton
+                        vfolderFrgmt={[vfolder]}
                         size="small"
                         type="text"
-                        icon={<BAITrashBinIcon />}
-                        style={{
-                          color:
-                            vfolder?.status !== 'delete-pending'
-                              ? token.colorTextDisabled
-                              : token.colorError,
-                          background:
-                            vfolder?.status !== 'delete-pending'
-                              ? token.colorBgContainerDisabled
-                              : token.colorErrorBg,
-                        }}
                         disabled={vfolder?.status !== 'delete-pending'}
                         onClick={() => {
                           setCurrentVFolder(vfolder ?? null);
