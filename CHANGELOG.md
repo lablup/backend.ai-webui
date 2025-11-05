@@ -1,5 +1,73 @@
 # Changelog
 
+## v25.16.0 (31/10/2025)
+
+### ✨ Features
+- **FR-1500**: add confirmation input modal to file explorer delete dialog by @ironAiken2 [#4391](https://github.com/lablup/backend.ai-webui/pull/4391)
+- **FR-1579**: add customizable sorting for image environment groups by @yomybaby [#4434](https://github.com/lablup/backend.ai-webui/pull/4434)
+- **FR-1480**: display cluster mode in session detail panel by @ironAiken2 [#4419](https://github.com/lablup/backend.ai-webui/pull/4419)
+- **FR-1531**: add active agent list to admin dashboard page by @agatha197 [#4365](https://github.com/lablup/backend.ai-webui/pull/4365)
+- **FR-1240**: add agent statistics and resource monitoring capabilities by @agatha197 [#4344](https://github.com/lablup/backend.ai-webui/pull/4344)
+- **FR-1462**: enhance BAIText with CSS-based ellipsis and Safari compatibility by @agatha197 [#4397](https://github.com/lablup/backend.ai-webui/pull/4397)
+- **FR-873**: set dashboard page as a default by @agatha197 [#3554](https://github.com/lablup/backend.ai-webui/pull/3554)
+- **FR-1575**: merge admin dashboard into user dashboard by @agatha197 [#4425](https://github.com/lablup/backend.ai-webui/pull/4425)
+- **FR-1572**: improve keyboard interaction and focus management for editable name components by @yomybaby [#4421](https://github.com/lablup/backend.ai-webui/pull/4421)
+- **FR-1426**: conditionally show terminal guide based on copy feature support by @ironAiken2 [#4414](https://github.com/lablup/backend.ai-webui/pull/4414)
+- **FR-1617**: add user setting for maximum concurrent file upload limit by @ironAiken2 [#4460](https://github.com/lablup/backend.ai-webui/pull/4460)
+- **FR-1632**: Set the schedulable field in the agent setting modal to required by @agatha197 [#4486](https://github.com/lablup/backend.ai-webui/pull/4486)
+- **FR-1630**: improve error handling for invitation acceptance by @yomybaby [#4484](https://github.com/lablup/backend.ai-webui/pull/4484)
+- **FR-1637**: add i18n Ally VSCode extension configuration and translation instructions by @yomybaby [#4498](https://github.com/lablup/backend.ai-webui/pull/4498)
+- **FR-1639**: update CHANGELOG.md with missing releases and add automation script by @yomybaby [#4502](https://github.com/lablup/backend.ai-webui/pull/4502)
+
+### 🐛 Bug Fixes
+- **FR-1553**: update deprecated props in antd by @agatha197 [#4393](https://github.com/lablup/backend.ai-webui/pull/4393)
+- **FR-1558**: Unable to upload multiple files in file explorer by @nowgnuesLee [#4408](https://github.com/lablup/backend.ai-webui/pull/4408)
+- handle optional chaining for allowed_vfolder_hosts in resource policy by @yomybaby [#4410](https://github.com/lablup/backend.ai-webui/pull/4410)
+- **FR-1605**: resolve plugin page activation issue on initial browser load by @yomybaby [#4450](https://github.com/lablup/backend.ai-webui/pull/4450)
+- **FR-1597**: exclude name field from KeypairResourcePolicySettingModal props by @ironAiken2 [#4443](https://github.com/lablup/backend.ai-webui/pull/4443)
+- **FR-1602**: update CodeMirror language option from 'shell' to 'sh' by @nowgnuesLee [#4448](https://github.com/lablup/backend.ai-webui/pull/4448)
+- **FR-1612**: missing session creation error handling by @yomybaby [#4456](https://github.com/lablup/backend.ai-webui/pull/4456)
+- **FR-1501**: fix file upload status tracking and error handling by @ironAiken2 [#4412](https://github.com/lablup/backend.ai-webui/pull/4412)
+- **FR-1606**: Prevent dot (.) in model service names for appproxy environment by @agatha197 [#4477](https://github.com/lablup/backend.ai-webui/pull/4477)
+- **FR-1628**: user profile setting modal's labels are too narrow by @agatha197 [#4483](https://github.com/lablup/backend.ai-webui/pull/4483)
+- **FR-1625**: Visibility on the dashboard page is poor when dark mode is enabled by @agatha197 [#4478](https://github.com/lablup/backend.ai-webui/pull/4478)
+- **FR-1623**: Labels misaligned in resource group midification modal by @agatha197 [#4473](https://github.com/lablup/backend.ai-webui/pull/4473)
+- **FR-1591**: 'Optional' text overflow in user setting modal by @agatha197 [#4472](https://github.com/lablup/backend.ai-webui/pull/4472)
+- **FR-1626**: fix folder name truncation by @nowgnuesLee [#4490](https://github.com/lablup/backend.ai-webui/pull/4490)
+- **FR-1629**: fix language reset to work properly by @nowgnuesLee [#4487](https://github.com/lablup/backend.ai-webui/pull/4487)
+- **FR-1633**: Success message shows `{{folderlength}}` template variable instead of actual count by @agatha197 [#4494](https://github.com/lablup/backend.ai-webui/pull/4494)
+- **FR-1631**: truncate session name in session notification by @nowgnuesLee [#4492](https://github.com/lablup/backend.ai-webui/pull/4492)
+- **FR-1582**: enable full visibility of long option text in select dropdowns by @yomybaby [#4504](https://github.com/lablup/backend.ai-webui/pull/4504)
+- **FR-1644**: modify to prevent deletion of invited folders by @nowgnuesLee [#4579](https://github.com/lablup/backend.ai-webui/pull/4579)
+
+### 🔨 Refactoring
+- **FR-1554**: fix Wrapper component typing and prop passing in SessionActionButtons by @yomybaby [#4398](https://github.com/lablup/backend.ai-webui/pull/4398)
+- **FR-1578**: optimize error boundary structure and component unmounting patterns by @yomybaby [#4430](https://github.com/lablup/backend.ai-webui/pull/4430)
+- **FR-1627**: remove resource monitor component from import view by @agatha197 [#4481](https://github.com/lablup/backend.ai-webui/pull/4481)
+- **FR-1621**: refactor AppLauncherModal to work properly by @nowgnuesLee [#4464](https://github.com/lablup/backend.ai-webui/pull/4464)
+
+### 🛠 Chores
+- **FR-1544**: Post 25.15.0 Release - Minor Refactoring and Dependency Updates by @yomybaby [#4380](https://github.com/lablup/backend.ai-webui/pull/4380)
+- **FR-1551**: remove legacy folder explorer components by @ironAiken2 [#4387](https://github.com/lablup/backend.ai-webui/pull/4387)
+- **FR-1557**: apply react compiler by @nowgnuesLee [#4404](https://github.com/lablup/backend.ai-webui/pull/4404)
+- **FR-1558**: refactor code related to #4404 by @yomybaby [#4409](https://github.com/lablup/backend.ai-webui/pull/4409)
+- **FR-1583**: Resolving the issue where ESLint cannot find the tsconfig file by @nowgnuesLee [#4431](https://github.com/lablup/backend.ai-webui/pull/4431)
+
+### 🎨 Style
+- **FR-1601**: remove unnecessary padding override from ConfigurationsPage Card component by @ironAiken2 [#4446](https://github.com/lablup/backend.ai-webui/pull/4446)
+- **FR-1577**: improve dashboard statistics display design and progress visualization by @yomybaby [#4427](https://github.com/lablup/backend.ai-webui/pull/4427)
+- **FR-1622**: fix clipped home icon of filebrowser by @agatha197 [#4475](https://github.com/lablup/backend.ai-webui/pull/4475)
+
+### 🌐 i18n
+- **FR-1618**: improved internationalization (i18n) translations of vfolder page by @agatha197 [#4462](https://github.com/lablup/backend.ai-webui/pull/4462)
+
+### 🔧 Miscellaneous
+- **FR-1614**: make BAIConfigProvider's client optional by @nowgnuesLee [#4458](https://github.com/lablup/backend.ai-webui/pull/4458)
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v25.15.2...v25.16.0
+
+---
+
 ## v25.15.2 (24/10/2025)
 
 - fix(FR-1605): resolve plugin page activation issue on initial browser load ([#4450](https://github.com/lablup/backend.ai-webui/issues/4450)) by @yomybaby
