@@ -55,7 +55,8 @@ Follow the strict markdown format that categorizes changes by type:
 4. Only update the GitHub release after confirmation
 
 ### Step 4: Update Release (After Confirmation)
-Use the `gh` command to update the release:
+Use the `gh` command to update the release:가
+
 ```bash
 gh release edit [version] --notes-file /tmp/improved-release-notes.md --repo lablup/backend.ai-webui
 ```
