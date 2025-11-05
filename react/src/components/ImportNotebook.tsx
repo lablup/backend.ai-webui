@@ -1,14 +1,18 @@
-import { generateRandomString } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import {
-  AppOption,
-  SessionLauncherFormValue,
-} from '../pages/SessionLauncherPage';
-import { SessionLauncherPageLocationState } from './LocationStateBreadCrumb';
+import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { CloudDownloadOutlined } from '@ant-design/icons';
-import { Button, Form, FormInstance, FormProps, Input } from 'antd';
+import { App, Form, FormInstance, FormProps, Input } from 'antd';
+import {
+  BAIButton,
+  generateRandomString,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from 'src/hooks/useStartSession';
 
 const regularizeGithubURL = (url: string) => {
   url = url.replace('/blob/', '/');
@@ -20,8 +24,57 @@ const ImportNotebook: React.FC<FormProps> = (props) => {
     url: string;
   }> | null>(null);
   const { t } = useTranslation();
+  const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
+  const { startSessionWithDefault, upsertSessionNotification } =
+    useStartSession();
+  const { getErrorMessage } = useErrorMessageResolver();
+
+  const handleNotebookImport = async (url: string) => {
+    const notebookURL = regularizeGithubURL(url);
+    const fileName = notebookURL.split('/').pop();
+
+    const launcherValue: StartSessionWithDefaultValue = {
+      sessionName: `imported-notebook-${generateRandomString(5)}`,
+      environments: {
+        version: baiClient._config.default_import_environment,
+      },
+      bootstrap_script: '#!/bin/sh\ncurl -O ' + notebookURL,
+    };
+
+    const results = await startSessionWithDefault(launcherValue);
+    if (results.fulfilled && results.fulfilled.length > 0) {
+      // Handle successful result
+      upsertSessionNotification(results.fulfilled, [
+        {
+          // TODO: send appOption
+          extraData: {
+            appName: 'jupyter',
+            urlPostfix: '&redirect=/notebooks/' + fileName,
+          } as PrimaryAppOption,
+        },
+      ]);
+    }
+
+    if (results?.rejected && results.rejected.length > 0) {
+      const error = results.rejected[0].reason;
+      app.modal.error({
+        title: error?.title,
+        content: getErrorMessage(error),
+      });
+    }
+
+    webuiNavigate('/session');
+
+    // navigateWithSessionLauncher(launcherValue, {
+    //   appOption: {
+    //     runtime: 'jupyter',
+    //     filename: fileName,
+    //   } as AppOption,
+    // });
+  };
+
   return (
     <Form ref={formRef} layout="inline" {...props}>
       <Form.Item
@@ -46,45 +99,20 @@ const ImportNotebook: React.FC<FormProps> = (props) => {
       >
         <Input placeholder={t('import.NotebookURL')} />
       </Form.Item>
-      <Button
+      <BAIButton
         icon={<CloudDownloadOutlined />}
         type="primary"
-        onClick={() => {
-          formRef.current
+        action={async () => {
+          const values = await formRef.current
             ?.validateFields()
-            .then((values) => {
-              const notebookURL = regularizeGithubURL(values.url);
-              const launcherValue: DeepPartial<SessionLauncherFormValue> = {
-                sessionName: 'imported-notebook-' + generateRandomString(5),
-                environments: {
-                  environment: 'cr.backend.ai/stable/python',
-                },
-                bootstrap_script: '#!/bin/sh\ncurl -O ' + notebookURL,
-              };
-              const params = new URLSearchParams();
-              params.set('step', '4');
-              params.set('formValues', JSON.stringify(launcherValue));
-              params.set(
-                'appOption',
-                JSON.stringify({
-                  runtime: 'jupyter',
-                  filename: notebookURL.split('/').pop(),
-                } as AppOption),
-              );
-              webuiNavigate(`/session/start?${params.toString()}`, {
-                state: {
-                  from: {
-                    pathname: '/import',
-                    label: t('webui.menu.Import&Run'),
-                  },
-                } as SessionLauncherPageLocationState,
-              });
-            })
-            .catch(() => {});
+            .catch(() => undefined);
+          if (values) {
+            await handleNotebookImport(values.url);
+          }
         }}
       >
         {t('import.GetAndRunNotebook')}
-      </Button>
+      </BAIButton>
     </Form>
   );
 };

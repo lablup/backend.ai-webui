@@ -67,6 +67,7 @@ export interface NotificationState
   extraDescription?: string | null;
   onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
+  extraData: any;
 }
 
 interface NotificationOptions {

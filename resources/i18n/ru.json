@@ -1301,6 +1301,7 @@
     "ElapsedTime": "Прошедшее время",
     "EnvironmentAndVersion": "Окружающая среда и версия",
     "EnvironmentInfo": "Информация об окружающей среде",
+    "ExecuteSpecificApp": "Запустить приложение {{appName}}",
     "ExecuteTerminalApp": "Выполнить приложение Terminal App",
     "ExpiresAfter": "Оставшееся время",
     "ExportCSV": "экспорт CSV",
@@ -1440,6 +1441,7 @@
       "BatchMode": "Пакет",
       "BatchModeConfig": "Пакетный режим Конфигурация",
       "BatchModeDesc": "Вы можете запускать свой код на нескольких узлах и кластерах, чтобы масштабировать свою идею.",
+      "BootstrapScriptDetail": "Скрипт Bootstrap",
       "CPU": "Процессор",
       "ChooseEnvironment": "Выберите среду",
       "ClusterMode": "Кластерный режим",
@@ -1599,6 +1601,7 @@
       "TitleSession": "Сессия (Backend.AI)",
       "TotalAllocation": "Итого распределено",
       "UserResourceLimit": "Лимит ресурсов пользователя",
+      "UsingBootstrapScriptInfo": "Скрипт Bootstrap включён.",
       "Version": "Версия",
       "YouCanStartWithHistory": "Это записи ваших недавно созданных сеансов. Щелкните имя сеанса, чтобы начать новый сеанс."
     },

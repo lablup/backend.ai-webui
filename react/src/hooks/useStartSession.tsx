@@ -4,14 +4,13 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
-import { toGlobalId } from 'backend.ai-ui';
+import { generateRandomString, toGlobalId } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import { useStartSessionCreationQuery } from 'src/__generated__/useStartSessionCreationQuery.graphql';
 import { transformPortValuesToNumbers } from 'src/components/PortSelectFormItem';
 import { RESOURCE_ALLOCATION_INITIAL_FORM_VALUES } from 'src/components/SessionFormItems/ResourceAllocationFormItems';
-import { generateRandomString } from 'src/helper';
 import {
   SessionLauncherFormValue,
   SessionResources,
@@ -33,6 +32,67 @@ interface CreateSessionInfo {
 }
 
 export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
+
+// Type that represents the fields with default values
+type SessionLauncherDefaultFields =
+  | 'sessionType'
+  | 'allocationPreset'
+  | 'hpcOptimization'
+  | 'batch'
+  | 'envvars'
+  | 'resourceGroup';
+
+// Custom type for environments - mutually exclusive fields
+type StartSessionEnvironments = {
+  environments:
+    | {
+        version: string;
+        environment?: never;
+        image?: never;
+        manual?: never;
+        customizedTag?: never;
+      }
+    | {
+        version?: never;
+        environment: string;
+        image?: never;
+        manual?: never;
+        customizedTag?: never;
+      }
+    | {
+        version?: never;
+        environment?: never;
+        image?: never;
+        manual: string;
+        customizedTag?: never;
+      };
+};
+
+// Type that makes certain fields optional while keeping others required
+export type StartSessionValue =
+  // Required fields (environments with only version required)
+  StartSessionEnvironments &
+    // Optional fields from SessionLauncherFormValue
+    Partial<Omit<SessionLauncherFormValue, 'environments'>>;
+
+// Type for minimum required values (all fields except those with defaults are required)
+export type StartSessionWithDefaultValue = Omit<
+  StartSessionValue,
+  | SessionLauncherDefaultFields
+  | keyof typeof RESOURCE_ALLOCATION_INITIAL_FORM_VALUES
+> &
+  DeepPartial<
+    Pick<
+      StartSessionValue,
+      | SessionLauncherDefaultFields
+      | keyof typeof RESOURCE_ALLOCATION_INITIAL_FORM_VALUES
+    >
+  >;
+
+export type StartSessionResults = {
+  fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
+  rejected?: PromiseRejectedResult[];
+};
 
 export const useStartSession = () => {
   'use memo';
@@ -68,14 +128,20 @@ export const useStartSession = () => {
     envvars: [],
     // set default_session_environment only if set
     ...(baiClient._config?.default_session_environment && {
-      environments: {
-        environment: baiClient._config?.default_session_environment,
-      },
+      environments: normalizeEnvironmentFormat(
+        baiClient._config.default_session_environment,
+      ),
     }),
     ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
     resourceGroup: currentGlobalResourceGroup || undefined,
   };
 
+  const startSessionWithDefault = (
+    minimumValues: StartSessionWithDefaultValue,
+  ) => {
+    const mergedValue = _.merge({}, defaultFormValues, minimumValues);
+    return startSession(mergedValue as SessionLauncherFormValue);
+  };
   const startSession = async (values: SessionLauncherFormValue) => {
     // If manual image is selected, use it as kernelName
     const imageFullName =
@@ -235,11 +301,10 @@ export const useStartSession = () => {
         sessionCreations: PromiseSettledResult<SessionCreationSuccess>[],
       ) => {
         // Group session creations by their status
-        const results = _.groupBy(sessionCreations, 'status') as {
-          fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
-          rejected?: PromiseRejectedResult[];
-        };
-
+        const results = _.groupBy(
+          sessionCreations,
+          'status',
+        ) as StartSessionResults;
         return results;
       },
     );
@@ -285,7 +350,12 @@ export const useStartSession = () => {
     return Promise.allSettled(promises);
   };
 
-  return { startSession, defaultFormValues, upsertSessionNotification };
+  return {
+    startSession,
+    startSessionWithDefault,
+    defaultFormValues,
+    upsertSessionNotification,
+  };
 };
 
 const generateSessionId = () => {
@@ -296,4 +366,16 @@ const generateSessionId = () => {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text + '-session';
+};
+
+const normalizeEnvironmentFormat = (environment: string) => {
+  if (environment.includes(':')) {
+    return {
+      version: environment,
+    };
+  } else {
+    return {
+      environment: environment,
+    };
+  }
 };

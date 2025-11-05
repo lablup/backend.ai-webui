@@ -1301,6 +1301,7 @@
     "ElapsedTime": "経過時間",
     "EnvironmentAndVersion": "環境とバージョン",
     "EnvironmentInfo": "環境情報",
+    "ExecuteSpecificApp": "{{appName}} アプリを起動",
     "ExecuteTerminalApp": "ターミナルアプリを起動する",
     "ExpiresAfter": "残り時間",
     "ExportCSV": "CSVをエクスポート",
@@ -1440,6 +1441,7 @@
       "BatchMode": "バッチ",
       "BatchModeConfig": "Batchモード設定",
       "BatchModeDesc": "複数のノードやクラスタでコードを実行し、アイデアをスケールさせることができます。",
+      "BootstrapScriptDetail": "ブートストラップスクリプト",
       "CPU": "CPU",
       "ChooseEnvironment": "環境を選択",
       "ClusterMode": "クラスターモード",
@@ -1599,6 +1601,7 @@
       "TitleSession": "セッション（Backend.AI）",
       "TotalAllocation": "総割り当て",
       "UserResourceLimit": "ユーザーリソース制限",
+      "UsingBootstrapScriptInfo": "ブートストラップスクリプトが含まれています。",
       "Version": "バージョン",
       "YouCanStartWithHistory": "これらは最近作成されたセッション記録です。セッション名をクリックすると、新しいセッションが開始されます。"
     },

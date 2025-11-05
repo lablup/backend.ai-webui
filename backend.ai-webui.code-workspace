@@ -14,7 +14,8 @@
     "i18n-ally.keystyle": "nested",
     "i18n-ally.dirStructure": "auto",
     "i18n-ally.displayLanguage": "en",
-    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.sourceLanguage": "ko",
+    "i18n-ally.translate.promptSource": true,
     "i18n-ally.regex.usageMatch": [
       "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*\\{['\"`]({key})['\"`]\\}", // <Trans i18nKey={'key'}>
       "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*['\"`]({key})['\"`]", // <Trans i18nKey="key">

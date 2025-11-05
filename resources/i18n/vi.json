@@ -1302,6 +1302,7 @@
     "ElapsedTime": "Thời gian đã trôi qua",
     "EnvironmentAndVersion": "Môi trường và phiên bản",
     "EnvironmentInfo": "Thông tin môi trường",
+    "ExecuteSpecificApp": "Chạy ứng dụng {{appName}}",
     "ExecuteTerminalApp": "Thực thi ứng dụng đầu cuối",
     "ExpiresAfter": "Thời gian còn lại",
     "ExportCSV": "xuất CSV",
@@ -1441,6 +1442,7 @@
       "BatchMode": "Lô hàng",
       "BatchModeConfig": "Cấu hình chế độ hàng loạt",
       "BatchModeDesc": "Bạn có thể chạy mã của mình với nhiều nút",
+      "BootstrapScriptDetail": "Tập lệnh Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Chọn môi trường",
       "ClusterMode": "Chế độ cụm",
@@ -1600,6 +1602,7 @@
       "TitleSession": "Phiên (Backend.AI)",
       "TotalAllocation": "Tổng phân bổ",
       "UserResourceLimit": "Giới hạn tài nguyên người dùng",
+      "UsingBootstrapScriptInfo": "Đã bao gồm tập lệnh khởi tạo.",
       "Version": "Phiên bản",
       "YouCanStartWithHistory": "Đây là hồ sơ phiên được tạo gần đây của bạn. \nNhấp vào tên phiên để bắt đầu một phiên mới."
     },

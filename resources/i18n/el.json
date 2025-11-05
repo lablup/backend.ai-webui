@@ -1299,6 +1299,7 @@
     "ElapsedTime": "Χρόνος που παρήλθε",
     "EnvironmentAndVersion": "Περιβάλλον και Έκδοση",
     "EnvironmentInfo": "Πληροφορίες για το περιβάλλον",
+    "ExecuteSpecificApp": "Εκκίνηση εφαρμογής {{appName}}",
     "ExecuteTerminalApp": "Εκτέλεση εφαρμογής τερματικού",
     "ExpiresAfter": "Υπολειπόμενος χρόνος",
     "ExportCSV": "εξαγωγή CSV",
@@ -1438,6 +1439,7 @@
       "BatchMode": "Παρτίδα",
       "BatchModeConfig": "Λειτουργία παρτίδας Διαμόρφωση",
       "BatchModeDesc": "Μπορείτε να εκτελέσετε τον κώδικά σας με πολλαπλούς κόμβους & συστάδες για να κλιμακώσετε την ιδέα σας",
+      "BootstrapScriptDetail": "Σενάριο Bootstrap",
       "CPU": "ΕΠΕΞΕΡΓΑΣΤΗΣ",
       "ChooseEnvironment": "Επιλέξτε Περιβάλλον",
       "ClusterMode": "Λειτουργία συμπλέγματος",
@@ -1597,6 +1599,7 @@
       "TitleSession": "Συνεδρία (Backend.AI)",
       "TotalAllocation": "Συνολική κατανομή",
       "UserResourceLimit": "Όριο πόρων χρήστη",
+      "UsingBootstrapScriptInfo": "Το Bootstrap script περιλαμβάνεται.",
       "Version": "Εκδοχή",
       "YouCanStartWithHistory": "Αυτές είναι οι εγγραφές συνόδου που δημιουργήσατε πρόσφατα. Κάντε κλικ σε ένα όνομα συνεδρίας για να ξεκινήσετε μια νέα συνεδρία."
     },

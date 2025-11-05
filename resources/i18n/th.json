@@ -1291,6 +1291,7 @@
     "ElapsedTime": "เวลาที่ผ่านไป",
     "EnvironmentAndVersion": "สภาพแวดล้อมและเวอร์ชัน",
     "EnvironmentInfo": "ข้อมูลสภาพแวดล้อม",
+    "ExecuteSpecificApp": "เรียกใช้แอป {{appName}}",
     "ExecuteTerminalApp": "เรียกใช้แอปเทอร์มินัล",
     "ExpiresAfter": "หมดอายุหลังจาก",
     "ExportCSV": "ส่งออก CSV",
@@ -1429,6 +1430,7 @@
       "BatchMode": "แบบแบตช์",
       "BatchModeConfig": "การกำหนดค่าโหมดแบตช์",
       "BatchModeDesc": "รันโค้ดของคุณด้วยโหนดและคลัสเตอร์หลายตัวเพื่อขยายแนวคิดของคุณ",
+      "BootstrapScriptDetail": "สคริปต์ Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "เลือกสภาพแวดล้อม",
       "ClusterMode": "โหมดคลัสเตอร์",
@@ -1587,6 +1589,7 @@
       "TitleSession": "เซสชัน (Backend.AI)",
       "TotalAllocation": "การจัดสรรทั้งหมด",
       "UserResourceLimit": "ขีดจำกัดทรัพยากรผู้ใช้",
+      "UsingBootstrapScriptInfo": "สคริปต์ Bootstrap ถูกรวมไว้",
       "Version": "เวอร์ชัน",
       "YouCanStartWithHistory": "นี่คือบันทึกเซสชันที่คุณสร้างขึ้นเมื่อเร็ว ๆ นี้ \nคลิกชื่อเซสชันเพื่อเริ่มเซสชันใหม่"
     },

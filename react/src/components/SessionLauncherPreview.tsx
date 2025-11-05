@@ -10,6 +10,7 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
+import BAIAlert from './BAIAlert';
 import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
@@ -28,6 +29,8 @@ import {
   Table,
   Form,
   theme,
+  Button,
+  App,
 } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -39,6 +42,7 @@ import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
 }> = ({ onClickEditStep }) => {
+  const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const { token } = theme.useToken();
@@ -54,6 +58,38 @@ const SessionLauncherPreview: React.FC<{
 
   return (
     <>
+      {form.getFieldValue('bootstrap_script') && (
+        <BAIAlert
+          description={t('session.launcher.UsingBootstrapScriptInfo')}
+          ghostInfoBg={false}
+          action={
+            <Button
+              size="small"
+              type="text"
+              onClick={() => {
+                app.modal.info({
+                  title: t('session.launcher.BootstrapScriptDetail'),
+                  content: (
+                    <BAIFlex direction="column" align="start">
+                      <Typography.Paragraph>
+                        {t('userSettings.BootstrapScriptDescription')}
+                      </Typography.Paragraph>
+                      <SourceCodeViewer wordWrap language={'shell'}>
+                        {form.getFieldValue('bootstrap_script')}
+                      </SourceCodeViewer>
+                    </BAIFlex>
+                  ),
+                  width: 800,
+                });
+              }}
+            >
+              {t('notification.SeeDetail')}
+            </Button>
+          }
+          type="info"
+          showIcon
+        />
+      )}
       <BAICard
         title={t('session.launcher.SessionType')}
         showDivider

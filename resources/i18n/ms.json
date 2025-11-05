@@ -1301,6 +1301,7 @@
     "ElapsedTime": "Masa Berlalu",
     "EnvironmentAndVersion": "Persekitaran dan Versi",
     "EnvironmentInfo": "Maklumat Persekitaran",
+    "ExecuteSpecificApp": "Jalankan aplikasi {{appName}}",
     "ExecuteTerminalApp": "Jalankan Apl Terminal",
     "ExpiresAfter": "Masa yang tinggal",
     "ExportCSV": "eksport CSV",
@@ -1440,6 +1441,7 @@
       "BatchMode": "Kumpulan",
       "BatchModeConfig": "Konfigurasi mod kelompok",
       "BatchModeDesc": "Anda boleh menjalankan kod anda dengan berbilang nod",
+      "BootstrapScriptDetail": "Skrip Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Pilih Persekitaran",
       "ClusterMode": "Mod kluster",
@@ -1599,6 +1601,7 @@
       "TitleSession": "Sesi (Backend.AI)",
       "TotalAllocation": "Jumlah Peruntukan",
       "UserResourceLimit": "Had Sumber Pengguna",
+      "UsingBootstrapScriptInfo": "Skrip bootstrap disertakan.",
       "Version": "Versi",
       "YouCanStartWithHistory": "Ini adalah rekod sesi yang anda baru -baru ini. \nKlik nama sesi untuk memulakan sesi baru."
     },

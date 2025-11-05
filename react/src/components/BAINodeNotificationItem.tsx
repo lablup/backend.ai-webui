@@ -35,6 +35,7 @@ const BAINodeNotificationItem: React.FC<{
         notification={notification}
         sessionFrgmt={node.sessionFrgmt || null}
         showDate={showDate}
+        primaryAppOption={notification.extraData}
       />
     );
   } else if (node?.__typename === 'VirtualFolderNode') {

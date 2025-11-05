@@ -1308,6 +1308,7 @@
     "ElapsedTime": "Elapsed Time",
     "EnvironmentAndVersion": "Environment and Version",
     "EnvironmentInfo": "Environment Info",
+    "ExecuteSpecificApp": "Launch {{appName}}",
     "ExecuteTerminalApp": "Execute Terminal App",
     "ExpiresAfter": "ExpiresAfter",
     "ExportCSV": "export CSV",
@@ -1447,6 +1448,7 @@
       "BatchMode": "Batch",
       "BatchModeConfig": "Batch mode Configuration",
       "BatchModeDesc": "runs your code with multiple node & clusters to scale your idea",
+      "BootstrapScriptDetail": "Bootstrap script",
       "CPU": "CPU",
       "ChooseEnvironment": "Choose Environment",
       "ClusterMode": "Cluster mode",
@@ -1607,6 +1609,7 @@
       "TitleSession": "Session (Backend.AI)",
       "TotalAllocation": "Total Allocation",
       "UserResourceLimit": "User Resource Limit",
+      "UsingBootstrapScriptInfo": "Bootstrap script is included.",
       "Version": "Version",
       "YouCanStartWithHistory": "These are your recently created session records. Click a session name to start a new session."
     },

@@ -413,24 +413,6 @@ export const numberSorterWithInfinityValue = (
   return transform(a) - transform(b);
 };
 
-export const generateRandomString = (n = 3) => {
-  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
-
-  const parseNum = (num: number) => {
-    if (num < 26) return String.fromCharCode(65 + num);
-    else return String.fromCharCode(97 + num - 26);
-  };
-
-  let randStr = '';
-
-  for (let i = 0; i < n; i++) {
-    randStr += parseNum(randNum % 52);
-    randNum = Math.floor(randNum / 52);
-  }
-
-  return randStr;
-};
-
 export function formatToUUID(str: string) {
   if (str.length !== 32) {
     throw new Error('Input string must be 32 characters long');

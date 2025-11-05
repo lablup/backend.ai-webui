@@ -1302,6 +1302,7 @@
     "ElapsedTime": "Geçen Zaman",
     "EnvironmentAndVersion": "Ortam ve Sürüm",
     "EnvironmentInfo": "Çevre Bilgisi",
+    "ExecuteSpecificApp": "{{appName}} uygulamasını çalıştır",
     "ExecuteTerminalApp": "Terminal Uygulamasını Yürüt",
     "ExpiresAfter": "Kalan süre",
     "ExportCSV": "CSV'yi dışa aktar",
@@ -1441,6 +1442,7 @@
       "BatchMode": "Toplu İş",
       "BatchModeConfig": "Toplu mod Yapılandırması",
       "BatchModeDesc": "Fikrinizi ölçeklendirmek için kodunuzu birden fazla düğüm ve küme ile çalıştırabilirsiniz",
+      "BootstrapScriptDetail": "Bootstrap betiği",
       "CPU": "İşlemci",
       "ChooseEnvironment": "Ortam Seçin",
       "ClusterMode": "küme modu",
@@ -1600,6 +1602,7 @@
       "TitleSession": "Oturum (Arka Uç.AI)",
       "TotalAllocation": "Toplam Tahsis",
       "UserResourceLimit": "Kullanıcı Kaynak Sınırı",
+      "UsingBootstrapScriptInfo": "Bootstrap betiği dahil edildi.",
       "Version": "Sürüm",
       "YouCanStartWithHistory": "Bunlar en son oluşturduğunuz oturum kayıtlarıdır. Yeni bir oturum başlatmak için bir oturum adına tıklayın."
     },
