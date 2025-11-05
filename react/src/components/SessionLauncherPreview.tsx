@@ -10,6 +10,7 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
+import BAIAlert from './BAIAlert';
 import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
@@ -35,6 +36,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
@@ -52,8 +54,20 @@ const SessionLauncherPreview: React.FC<{
     useBackendAIImageMetaData();
   const { isDarkMode } = useThemeMode();
 
+  const [queryParams, _setQueryParams] = useQueryParams({
+    launchMode: withDefault(StringParam, 'general'),
+  });
+
   return (
     <>
+      {queryParams.launchMode === 'file-browser' && (
+        <BAIAlert
+          type="warning"
+          showIcon
+          message={t('session.launcher.NoticeForFileBrowserSession')}
+        />
+      )}
+
       <BAICard
         title={t('session.launcher.SessionType')}
         showDivider
@@ -153,7 +167,9 @@ const SessionLauncherPreview: React.FC<{
                 form.getFieldError(['envvars', idx, 'value']).length > 0
               );
             },
-          )
+          ) ||
+          form.getFieldError(['environments', 'version']).length > 0 ||
+          form.getFieldError(['environments', 'environment']).length > 0
             ? 'error'
             : undefined
         }
@@ -420,6 +436,7 @@ const SessionLauncherPreview: React.FC<{
               type="warning"
               showIcon
               message={t('session.launcher.EnqueueComputeSessionWarning')}
+              style={{ marginBottom: token.marginSM }}
             />
           )}
 

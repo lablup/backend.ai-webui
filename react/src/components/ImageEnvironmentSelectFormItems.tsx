@@ -12,6 +12,7 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
+import BAIAlert from './BAIAlert';
 import DoubleTag from './DoubleTag';
 // @ts-ignore
 import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
@@ -33,6 +34,7 @@ import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']
@@ -247,16 +249,37 @@ const ImageEnvironmentSelectFormItems: React.FC<
         });
       }
     } else if (baiClient._config.allow_manual_image_name_for_session) {
-      // if no image is available, only set manual if it's allowed
-      form.setFieldValue(['environments', 'manual'], version);
+      // if no image is available, only set manual if it's allowed and empty
+      const existManualValue = form.getFieldValue(['environments', 'manual']);
+      !existManualValue &&
+        form.setFieldValue(['environments', 'manual'], version);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [environments?.version, environments?.manual]); // environments?.environment,
 
+  // When launch mode is 'file-browser', filter images that support file browser
+  const [queryParams, _setQueryParam] = useQueryParams({
+    launchMode: withDefault(StringParam, 'ALIVE'),
+  });
+  const imagesFilteredByLaunchMode = (() => {
+    if (queryParams?.launchMode === 'file-browser') {
+      return images?.filter((image) =>
+        image?.labels?.find(
+          (label) =>
+            // FIXME: Need to replace it with a better method to determine whether an image supports file browser functionality.
+            // Currently, it can only be verified using the method below.
+            label?.key === 'ai.backend.service-ports' &&
+            label?.value?.toLowerCase().includes('filebrowser'),
+        ),
+      );
+    }
+    return images;
+  })();
+
   const imageGroups: ImageGroup[] = useMemo(
     () =>
-      _.chain(images)
+      _.chain(imagesFilteredByLaunchMode)
         .filter((image) => {
           return (
             (showPrivate ? true : !isPrivateImage(image)) &&
@@ -346,10 +369,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
       fullNameMatchedImageGroup,
     };
   }, [environmentSearch, imageGroups]);
-
   return (
     <>
       <style>{cssRaw}</style>
+      {queryParams?.launchMode === 'file-browser' &&
+        !baiClient._config.allow_manual_image_name_for_session &&
+        _.isEmpty(imagesFilteredByLaunchMode) && (
+          <BAIAlert
+            showIcon
+            type="error"
+            message={t('session.launcher.NoFileBrowserImageAvailable')}
+            style={{ marginBottom: token.paddingLG }}
+          />
+        )}
       <Form.Item
         className="image-environment-select-form-item"
         name={['environments', 'environment']}

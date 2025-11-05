@@ -88,7 +88,7 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
@@ -213,6 +213,8 @@ interface StepPropsWithKey extends StepProps {
 export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
 const SessionLauncherPage = () => {
+  'use memo';
+
   const app = App.useApp();
 
   const relayEnv = useRelayEnvironment();
@@ -228,40 +230,33 @@ const SessionLauncherPage = () => {
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [isStartingSession, setIsStartingSession] = useState(false);
-  const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
-    () => ({
-      sessionType: 'interactive',
-      // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-      allocationPreset: 'auto-select',
-      hpcOptimization: {
-        autoEnabled: true,
-      },
-      batch: {
-        enabled: false,
-        command: undefined,
-        scheduleDate: undefined,
-        ...(supportBatchTimeout && {
-          timeoutEnabled: false,
-          timeout: undefined,
-          timeoutUnit: 's',
-        }),
-      },
-      envvars: [],
-      // set default_session_environment only if set
-      ...(baiClient._config?.default_session_environment && {
-        environments: {
-          environment: baiClient._config?.default_session_environment,
-        },
+  const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = {
+    sessionType: 'interactive',
+    // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
+    allocationPreset: 'auto-select',
+    hpcOptimization: {
+      autoEnabled: true,
+    },
+    batch: {
+      enabled: false,
+      command: undefined,
+      scheduleDate: undefined,
+      ...(supportBatchTimeout && {
+        timeoutEnabled: false,
+        timeout: undefined,
+        timeoutUnit: 's',
       }),
-      ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-      resourceGroup: currentGlobalResourceGroup || undefined,
+    },
+    envvars: [],
+    // set default_session_environment only if set
+    ...(baiClient._config?.default_session_environment && {
+      environments: {
+        environment: baiClient._config?.default_session_environment,
+      },
     }),
-    [
-      baiClient._config?.default_session_environment,
-      currentGlobalResourceGroup,
-      supportBatchTimeout,
-    ],
-  );
+    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+    resourceGroup: currentGlobalResourceGroup || undefined,
+  };
   const StepParam = withDefault(NumberParam, 0);
   const FormValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
   const AppOptionParam = withDefault(JsonParam, {});
@@ -347,9 +342,9 @@ const SessionLauncherPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const mergedInitialValues = useMemo(() => {
+  const mergedInitialValues = () => {
     return _.merge({}, INITIAL_FORM_VALUES, formValuesFromQueryParams);
-  }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
+  };
 
   // ScrollTo top when step is changed
   useEffect(() => {
@@ -754,15 +749,10 @@ const SessionLauncherPage = () => {
             <Form
               form={form}
               layout="vertical"
-              initialValues={mergedInitialValues}
+              initialValues={mergedInitialValues()}
             >
               <SessionLauncherFormIncompatibleValueChecker form={form} />
-              <BAIFlex
-                direction="column"
-                align="stretch"
-                gap="md"
-                // style={{  }}
-              >
+              <BAIFlex direction="column" align="stretch" gap="md">
                 {/* Step 0 fields */}
                 <Card
                   title={t('session.launcher.SessionType')}
