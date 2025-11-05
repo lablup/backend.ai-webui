@@ -40,6 +40,7 @@ versiontag:
 	@sed -i -E 's/globalThis.packageVersion = "\([^"]*\)"/globalThis.packageVersion = "${BUILD_VERSION}"/g' index.html
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' manifest.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' react/package.json
+	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' packages/backend.ai-ui/package.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' electron-app/package.json
 	@sed -i -E 's/globalThis.buildNumber = "\([^"]*\)"/globalThis.buildNumber = "${BUILD_NUMBER}"/g' index.html
 	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts

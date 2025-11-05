@@ -1,8 +1,24 @@
 {
   "name": "backend.ai-ui",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Shared UI components for Backend.AI",
+  "version": "25.16.0-alpha.0",
+  "description": "React components for Backend.AI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "backend.ai",
+    "component",
+    "react"
+  ],
+  "main": "./dist/backend.ai-ui.js",
+  "module": "./dist/backend.ai-ui.js",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
@@ -24,7 +40,8 @@
     "test": "NODE_OPTIONS='--no-deprecation' jest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0"
+    "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0",
+    "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "eslintConfig": {
     "extends": [
@@ -96,13 +113,10 @@
     "relay-runtime": "^20.1.1"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.6.1",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@tanstack/react-query": "^5.69.0",
-    "ahooks": "^3.9.5",
     "big.js": "^7.0.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.18",

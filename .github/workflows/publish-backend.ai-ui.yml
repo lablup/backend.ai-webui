@@ -1,0 +1,63 @@
+name: Publish Backend.ai-ui to npm registry
+
+on:
+  push:
+    paths:
+      - packages/backend.ai-ui/**
+    branches:
+      - main
+    tags:
+      - v*
+
+jobs:
+  publish:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+      - name: Update npm
+        run: npm install -g npm@latest
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Update to canary version
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-ui
+          ./scripts/update-canary-version.sh
+      - name: Publish to npm (canary)
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-ui
+          npm publish --tag canary --access public --no-git-checks
+
+      - name: Publish to npm (latest)
+        if: github.ref_type == 'tag'
+        run: |
+          cd packages/backend.ai-ui
+          npm publish --tag latest --access public --no-git-checks
