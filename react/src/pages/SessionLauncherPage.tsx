@@ -10,11 +10,9 @@ import ImageEnvironmentSelectFormItems, {
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
-  transformPortValuesToNumbers,
 } from '../components/PortSelectFormItem';
 import ResourceNumber from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
-  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
@@ -41,11 +39,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { useSetBAINotification } from '../hooks/useBAINotification';
-import {
-  useCurrentProjectValue,
-  useCurrentResourceGroupState,
-} from '../hooks/useCurrentProject';
+import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
@@ -82,8 +76,8 @@ import {
 import {
   filterOutEmpty,
   BAIFlex,
-  toGlobalId,
   useErrorMessageResolver,
+  BAIButton,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -91,9 +85,8 @@ import _ from 'lodash';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
-import { SessionLauncherPageAfterCreationQuery } from 'src/__generated__/SessionLauncherPageAfterCreationQuery.graphql';
+import { useStartSession } from 'src/hooks/useStartSession';
 import {
   JsonParam,
   NumberParam,
@@ -101,14 +94,6 @@ import {
   useQueryParams,
   withDefault,
 } from 'use-query-params';
-
-// Type for successful session creation result
-type SessionCreationSuccess = {
-  kernelId?: string;
-  sessionId: string;
-  sessionName: string;
-  servicePorts: Array<{ name: string }>;
-};
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
@@ -148,14 +133,6 @@ export interface SessionResources {
     preopen_ports?: number[];
     agent_list?: string[];
   };
-}
-
-interface CreateSessionInfo {
-  kernelName: string;
-  sessionName: string;
-  architecture: string;
-  batchTimeout?: string;
-  resources: SessionResources;
 }
 
 interface SessionLauncherValue {
@@ -210,60 +187,21 @@ interface StepPropsWithKey extends StepProps {
   key: SessionLauncherStepKey;
 }
 
-export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
-
 const SessionLauncherPage = () => {
   const app = App.useApp();
-
-  const relayEnv = useRelayEnvironment();
   const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
   const supportsMountById = baiClient.supports('mount-by-id');
-  const currentUserRole = useCurrentUserRole();
-  const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
-    useCurrentResourceGroupState();
-
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
+  const currentUserRole = useCurrentUserRole();
+  const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
 
-  const [isStartingSession, setIsStartingSession] = useState(false);
-  const INITIAL_FORM_VALUES: DeepPartial<SessionLauncherFormValue> = useMemo(
-    () => ({
-      sessionType: 'interactive',
-      // If you set `allocationPreset` to 'custom', `allocationPreset` is not changed automatically any more.
-      allocationPreset: 'auto-select',
-      hpcOptimization: {
-        autoEnabled: true,
-      },
-      batch: {
-        enabled: false,
-        command: undefined,
-        scheduleDate: undefined,
-        ...(supportBatchTimeout && {
-          timeoutEnabled: false,
-          timeout: undefined,
-          timeoutUnit: 's',
-        }),
-      },
-      envvars: [],
-      // set default_session_environment only if set
-      ...(baiClient._config?.default_session_environment && {
-        environments: {
-          environment: baiClient._config?.default_session_environment,
-        },
-      }),
-      ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-      resourceGroup: currentGlobalResourceGroup || undefined,
-    }),
-    [
-      baiClient._config?.default_session_environment,
-      currentGlobalResourceGroup,
-      supportBatchTimeout,
-    ],
-  );
+  const { startSession, defaultFormValues, upsertSessionNotification } =
+    useStartSession();
   const StepParam = withDefault(NumberParam, 0);
-  const FormValuesParam = withDefault(JsonParam, INITIAL_FORM_VALUES);
+  const FormValuesParam = withDefault(JsonParam, defaultFormValues);
   const AppOptionParam = withDefault(JsonParam, {});
   const [
     {
@@ -285,16 +223,13 @@ const SessionLauncherPage = () => {
 
   // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
-  const currentProject = useCurrentProjectValue();
 
   const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
     useToggle();
-  const { upsertNotification } = useSetBAINotification();
   const [, { push: pushSessionHistory }] = useRecentSessionHistory();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
     () => {
-      // console.log('syncFormToURLWithDebounce', form.getFieldsValue());
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       const currentValue = form.getFieldsValue();
@@ -348,8 +283,8 @@ const SessionLauncherPage = () => {
   }, []);
 
   const mergedInitialValues = useMemo(() => {
-    return _.merge({}, INITIAL_FORM_VALUES, formValuesFromQueryParams);
-  }, [INITIAL_FORM_VALUES, formValuesFromQueryParams]);
+    return _.merge({}, defaultFormValues, formValuesFromQueryParams);
+  }, [defaultFormValues, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
   useEffect(() => {
@@ -420,284 +355,6 @@ const SessionLauncherPage = () => {
       }
     }
   }, [finalStepLastValidateTime, hasError]);
-
-  const startSession = () => {
-    // TODO: support inference mode, support import mode
-    setIsStartingSession(true);
-    const usedSearchParams = search;
-    form
-      .validateFields()
-      .then(async (values) => {
-        if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
-          const isConformed = await new Promise((resolve) => {
-            app.modal.confirm({
-              title: t('session.launcher.NoFolderMounted'),
-              content: (
-                <>
-                  {t('session.launcher.HomeDirectoryDeletionDialog')}
-                  <br />
-                  <br />
-                  {t('session.launcher.LaunchConfirmationDialog')}
-                  <br />
-                  <br />
-                  {t('dialog.ask.DoYouWantToProceed')}
-                </>
-              ),
-              onOk: () => {
-                resolve(true);
-              },
-              okText: t('session.launcher.Start'),
-              onCancel: () => {
-                resolve(false);
-              },
-              closable: true,
-            });
-          });
-          if (!isConformed) return;
-        }
-
-        // If manual image is selected, use it as kernelName
-        const imageFullName =
-          values.environments.manual || values.environments.version;
-        const [kernelName, architecture] = imageFullName
-          ? imageFullName.split('@')
-          : ['', ''];
-
-        const sessionName = _.isEmpty(values.sessionName)
-          ? generateSessionId()
-          : values.sessionName;
-
-        const sessionInfo: CreateSessionInfo = {
-          // Basic session information
-          sessionName: sessionName,
-          kernelName,
-          architecture,
-          resources: {
-            enqueueOnly: true,
-            // Project and domain settings
-            group_name: values.owner?.enabled
-              ? values.owner.project
-              : currentProject.name,
-            domain: values.owner?.enabled
-              ? values.owner.domainName
-              : baiClient._config.domainName,
-
-            // Session configuration
-            type: values.sessionType,
-            cluster_mode: values.cluster_mode,
-            cluster_size: values.cluster_size,
-            maxWaitSeconds: 15,
-
-            // Owner settings (optional)
-            // FYI, `config.scaling_group` also changes based on owner settings
-            ...(values.owner?.enabled
-              ? {
-                  owner_access_key: values.owner.accesskey,
-                }
-              : {}),
-
-            // Batch mode settings (optional)
-            ...(values.sessionType === 'batch'
-              ? {
-                  starts_at: values.batch.enabled
-                    ? values.batch.scheduleDate
-                    : undefined,
-                  startupCommand: values.batch.command,
-                }
-              : {}),
-
-            // Bootstrap script (optional)
-            ...(values.bootstrap_script
-              ? { bootstrap_script: values.bootstrap_script }
-              : {}),
-
-            // Batch timeout configuration (optional)
-            ...(supportBatchTimeout &&
-            values?.batch?.timeoutEnabled &&
-            !_.isUndefined(values?.batch?.timeout)
-              ? {
-                  batchTimeout:
-                    _.toString(values.batch.timeout) +
-                    values?.batch?.timeoutUnit,
-                }
-              : undefined),
-
-            config: {
-              // Resource allocation
-              resources: {
-                cpu: values.resource.cpu,
-                mem: values.resource.mem,
-                // Add accelerator only if specified
-                ...(values.resource.accelerator > 0
-                  ? {
-                      [values.resource.acceleratorType]:
-                        values.resource.accelerator,
-                    }
-                  : undefined),
-              },
-              scaling_group: values.owner?.enabled
-                ? values.owner.project
-                : values.resourceGroup,
-              resource_opts: {
-                shmem: values.resource.shmem,
-                // allow_fractional_resource_fragmentation can be added here if needed
-              },
-
-              // Storage configuration
-              [supportsMountById ? 'mount_ids' : 'mounts']: values.mount_ids,
-              [supportsMountById ? 'mount_id_map' : 'mount_map']:
-                values.mount_id_map,
-
-              // Environment variables
-              environ: {
-                ..._.fromPairs(
-                  values.envvars.map((v) => [v.variable, v.value]),
-                ),
-                // set hpcOptimization options: "OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"
-                ...(values.hpcOptimization.autoEnabled
-                  ? {}
-                  : _.omit(values.hpcOptimization, 'autoEnabled')),
-              },
-
-              // Networking
-              preopen_ports: transformPortValuesToNumbers(values.ports),
-
-              // Agent selection (optional)
-              ...(baiClient.supports('agent-select') &&
-              !baiClient?._config?.hideAgents &&
-              values.agent !== 'auto'
-                ? {
-                    // Filter out undefined values
-                    agent_list: [values.agent].filter(
-                      (agent): agent is string => !!agent,
-                    ),
-                  }
-                : undefined),
-            },
-          },
-        };
-        const sessionPromises = _.map(
-          _.range(values.num_of_sessions || 1),
-          (i) => {
-            const formattedSessionName =
-              (values.num_of_sessions || 1) > 1
-                ? `${sessionInfo.sessionName}-${generateRandomString()}-${i}`
-                : sessionInfo.sessionName;
-            return baiClient
-              .createIfNotExists(
-                sessionInfo.kernelName,
-                formattedSessionName,
-                sessionInfo.resources,
-                undefined,
-                sessionInfo.architecture,
-              )
-              .then((res: { created: boolean; status: string }) => {
-                // // When session is already created with the same name, the status code
-                // // is 200, but the response body has 'created' field as false. For better
-                // // user experience, we show the notification message.
-                if (!res?.created) {
-                  // message.warning(t('session.launcher.SessionAlreadyExists'));
-                  throw new Error(t('session.launcher.SessionAlreadyExists'));
-                }
-                if (res?.status === 'CANCELLED') {
-                  // Case about failed to start new session kind of "docker image not found" or etc.
-                  throw new Error(
-                    t('session.launcher.FailedToStartNewSession'),
-                  );
-                }
-                return res;
-              })
-              .catch((err: any) => {
-                if (err?.message?.includes('The session already exists')) {
-                  throw new Error(t('session.launcher.SessionAlreadyExists'));
-                } else {
-                  throw err;
-                }
-              });
-          },
-        );
-        // After sending a create request, navigate to job page and set current resource group
-        setCurrentGlobalResourceGroup(values.resourceGroup);
-
-        pushSessionHistory({
-          params: usedSearchParams,
-          name: sessionName,
-        });
-
-        await Promise.allSettled(sessionPromises)
-          .then(
-            async (
-              sessionCreations: PromiseSettledResult<SessionCreationSuccess>[],
-            ) => {
-              // Group session creations by their status
-              const results = _.groupBy(sessionCreations, 'status') as {
-                fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
-                rejected?: PromiseRejectedResult[];
-              };
-
-              // Handle successful session creations
-              _.map(results.fulfilled, async (creation) => {
-                const session = creation.value;
-                const queryResult =
-                  await fetchQuery<SessionLauncherPageAfterCreationQuery>(
-                    relayEnv,
-                    graphql`
-                      query SessionLauncherPageAfterCreationQuery(
-                        $id: GlobalIDField!
-                      ) {
-                        compute_session_node(id: $id) {
-                          ...BAINodeNotificationItemFragment
-                        }
-                      }
-                    `,
-                    {
-                      id: toGlobalId('ComputeSessionNode', session.sessionId),
-                    },
-                  )
-                    .toPromise()
-                    .catch(() => null);
-
-                const createdSession =
-                  queryResult?.compute_session_node ?? null;
-
-                if (createdSession) {
-                  upsertNotification({
-                    key: `${SESSION_LAUNCHER_NOTI_PREFIX}${session.sessionId}`,
-                    node: createdSession,
-                    open: true,
-                    duration: 0,
-                  });
-                }
-              });
-
-              // If at least one session creation is successful, navigate to job page and show success notifications
-              if (results.fulfilled && results.fulfilled.length > 0) {
-                webuiNavigate(redirectTo || '/job');
-              }
-
-              // If there are any failed session creations, show the first error message
-              if (results.rejected && results.rejected.length > 0) {
-                const error = results.rejected[0].reason;
-                app.modal.error({
-                  title: error?.title,
-                  content: getErrorMessage(error),
-                });
-              }
-            },
-          )
-          .catch((error) => {
-            // Unexpected error in `then` of allSettled
-            console.error('Unexpected error during session creation:', error);
-            app.message.error(t('error.UnexpectedError'));
-          });
-      })
-      .catch((e) => {
-        console.log('validation errors', e);
-      })
-      .finally(() => {
-        setIsStartingSession(false);
-      });
-  };
 
   const [validationTourOpen, setValidationTourOpen] = useState(false);
 
@@ -802,38 +459,6 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     />
-                    {/* <Segmented
-                      width={100}
-                      options={[
-                        {
-                          label: (
-                            <SessionTypeItem
-                              title="🏃‍♀️ Make, test and run"
-                              description="Interactive mode allows you to create, test and run code interactively via jupyter notebook, visual studio code, etc."
-                            />
-                          ),
-                          value: 'interactive',
-                        },
-                        {
-                          label: (
-                            <SessionTypeItem
-                              title="⌚️ Start an long-running task"
-                              description="Batch mode runs your code with multiple node & clusters to scale your idea"
-                            />
-                          ),
-                          value: 'batch',
-                        },
-                        // {
-                        //   label: (
-                        //     <SessionTypeItem
-                        //       title="🤖 Run a inference service"
-                        //       description="Inference allow you dynamically scale your mode service"
-                        //     />
-                        //   ),
-                        //   value: 'inference',
-                        // },
-                      ]}
-                    /> */}
                   </Form.Item>
                   <SessionNameFormItem />
                   <Form.Item
@@ -1208,8 +833,7 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ErrorBoundary
-                    fallbackRender={(e) => {
-                      console.log(e);
+                    fallbackRender={() => {
                       return null;
                     }}
                   >
@@ -1473,7 +1097,6 @@ const SessionLauncherPage = () => {
                           setCurrentStep(currentStep - 1);
                         }}
                         icon={<LeftOutlined />}
-                        disabled={isStartingSession}
                       >
                         {t('button.Previous')}
                       </Button>
@@ -1486,15 +1109,100 @@ const SessionLauncherPage = () => {
                             : undefined
                         }
                       >
-                        <Button
+                        <BAIButton
                           type="primary"
                           icon={<PlayCircleOutlined />}
                           disabled={hasError}
-                          onClick={startSession}
-                          loading={isStartingSession}
+                          action={async () => {
+                            const usedSearchParams = search;
+                            const values = await form
+                              .validateFields()
+                              .catch((e) => {
+                                console.error('validation errors', e);
+                              });
+
+                            // validation failed do nothing
+                            if (!values) {
+                              return;
+                            }
+
+                            if (
+                              _.isEmpty(values.mount_ids) ||
+                              values.mount_ids?.length === 0
+                            ) {
+                              const isConformed = await app.modal.confirm({
+                                title: t('session.launcher.NoFolderMounted'),
+                                content: (
+                                  <>
+                                    {t(
+                                      'session.launcher.HomeDirectoryDeletionDialog',
+                                    )}
+                                    <br />
+                                    <br />
+                                    {t(
+                                      'session.launcher.LaunchConfirmationDialog',
+                                    )}
+                                    <br />
+                                    <br />
+                                    {t('dialog.ask.DoYouWantToProceed')}
+                                  </>
+                                ),
+                                okText: t('session.launcher.Start'),
+                                closable: true,
+                              });
+                              if (!isConformed) return;
+                            }
+
+                            await startSession(values)
+                              .then((results) => {
+                                // After sending a create request, navigate to job page and set current resource group
+                                if (
+                                  results?.fulfilled &&
+                                  results.fulfilled.length > 0
+                                ) {
+                                  // Do not await here to speed up the navigation
+                                  upsertSessionNotification(results.fulfilled);
+                                  setCurrentGlobalResourceGroup(
+                                    values.resourceGroup,
+                                  );
+                                  pushSessionHistory({
+                                    params: usedSearchParams,
+                                    name: results.fulfilled[0].value
+                                      .sessionName,
+                                  });
+                                }
+                                // If at least one session creation is successful, navigate to job page and show success notifications
+                                if (
+                                  results?.fulfilled &&
+                                  results.fulfilled.length > 0
+                                ) {
+                                  webuiNavigate(redirectTo || '/job');
+                                }
+
+                                // If there are any failed session creations, show the first error message
+                                if (
+                                  results?.rejected &&
+                                  results.rejected.length > 0
+                                ) {
+                                  const error = results.rejected[0].reason;
+                                  app.modal.error({
+                                    title: error?.title,
+                                    content: getErrorMessage(error),
+                                  });
+                                }
+                              })
+                              .catch((error) => {
+                                // Unexpected error in `then` of allSettled
+                                console.error(
+                                  'Unexpected error during session creation:',
+                                  error,
+                                );
+                                app.message.error(t('error.UnexpectedError'));
+                              });
+                          }}
                         >
                           {t('session.launcher.Launch')}
-                        </Button>
+                        </BAIButton>
                       </Tooltip>
                     ) : (
                       <Button
@@ -1653,16 +1361,6 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
       ) : null}
     </>
   );
-};
-
-const generateSessionId = () => {
-  let text = '';
-  const possible =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 8; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text + '-session';
 };
 
 export default SessionLauncherPage;
