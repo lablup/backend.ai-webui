@@ -40,11 +40,11 @@ import {
   App,
   Button,
   Card,
+  Checkbox,
   Form,
   Input,
   Skeleton,
   Select,
-  Switch,
   theme,
   Tooltip,
   Tag,
@@ -776,11 +776,25 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Input disabled={!!endpoint} />
                         </Form.Item>
                         <Form.Item
-                          name="openToPublic"
-                          label={t('modelService.OpenToPublic')}
                           valuePropName="checked"
+                          dependencies={['openToPublic']}
                         >
-                          <Switch disabled={!!endpoint}></Switch>
+                          {({ getFieldValue, setFieldValue }) => (
+                            <Form.Item name="openToPublic" noStyle>
+                              <BAIFlex gap={'xs'}>
+                                <Checkbox
+                                  checked={getFieldValue('openToPublic')}
+                                  onChange={(e) =>
+                                    setFieldValue(
+                                      ['openToPublic'],
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                {t('modelService.OpenToPublic')}
+                              </BAIFlex>
+                            </Form.Item>
+                          )}
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
