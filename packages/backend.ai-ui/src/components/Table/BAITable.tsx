@@ -326,6 +326,7 @@ const BAITable = <RecordType extends object = any>({
           styles.neoHeader,
           tableProps.rowSelection?.columnWidth === 0 &&
             styles.zeroWithSelectionColumn,
+          styles.adjustZIndex,
         )}
         style={{
           opacity: loading ? 0.7 : 1,
@@ -470,6 +471,11 @@ const useStyles = createStyles(({ token, css }) => ({
     .ant-table-selection-column {
       /* display: none !important; */
       padding: 0 !important;
+    }
+  `,
+  adjustZIndex: css`
+    td.ant-table-cell.ant-table-cell-fix-left {
+      z-index: 4;
     }
   `,
 }));
