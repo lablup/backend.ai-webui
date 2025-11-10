@@ -47,6 +47,7 @@ interface SessionActionButtonsProps {
   hiddenButtonKeys?: SessionActionButtonKey[];
   onAction?: (action: SessionActionButtonKey) => void;
   primaryAppOption?: PrimaryAppOption;
+  noPrimaryButton?: boolean;
 }
 
 const isActive = (session: SessionActionButtonsFragment$data) => {
@@ -76,6 +77,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   hiddenButtonKeys,
   primaryAppOption,
   onAction,
+  noPrimaryButton: noPrimaryColor,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -158,7 +160,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              type={'primary'}
+              type={noPrimaryColor ? undefined : 'primary'}
               disabled={
                 !isAppSupported(session) || !isActive(session) || !isOwner
               }
@@ -192,7 +194,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             >
               <Button
                 size={size}
-                type={primaryAppOption ? undefined : 'primary'}
+                type={
+                  primaryAppOption || noPrimaryColor ? undefined : 'primary'
+                }
                 disabled={
                   !isAppSupported(session) || !isActive(session) || !isOwner
                 }

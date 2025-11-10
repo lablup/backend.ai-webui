@@ -4,6 +4,7 @@ import {
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
+import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
@@ -60,6 +61,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...BAISessionAgentIdsFragment
         ...BAISessionTypeTagFragment
         ...BAISessionClusterModeFragment
+        ...SessionActionButtonsFragment
         kernel_nodes {
           edges {
             node {
@@ -113,6 +115,20 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
+      },
+      {
+        key: 'actionButtons',
+        title: t('general.Control'),
+        defaultHidden: true,
+        sorter: false,
+        render: (__, session) => (
+          <SessionActionButtons
+            size="small"
+            sessionFrgmt={session}
+            compact
+            noPrimaryButton
+          />
+        ),
       },
       // This column will be added back when the session list column setting ui is ready
       // {
