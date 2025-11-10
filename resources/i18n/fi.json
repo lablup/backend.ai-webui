@@ -1301,6 +1301,7 @@
     "ElapsedTime": "Kulunut aika",
     "EnvironmentAndVersion": "Ympäristö ja versio",
     "EnvironmentInfo": "Ympäristötiedot",
+    "ExecuteSpecificApp": "Käynnistä {{appName}}-sovellus",
     "ExecuteTerminalApp": "Suorita päätelaitesovellus",
     "ExpiresAfter": "Jäljellä oleva aika",
     "ExportCSV": "viedä CSV",
@@ -1440,6 +1441,7 @@
       "BatchMode": "Erä",
       "BatchModeConfig": "Erätila Konfigurointi",
       "BatchModeDesc": "Voit ajaa koodisi useiden solmujen ja klustereiden kanssa ideasi skaalaamiseksi.",
+      "BootstrapScriptDetail": "Bootstrap-skripti",
       "CPU": "CPU",
       "ChooseEnvironment": "Valitse ympäristö",
       "ClusterMode": "Cluster-tila",
@@ -1599,6 +1601,7 @@
       "TitleSession": "Istunto (Backend.AI)",
       "TotalAllocation": "Kokonaismääräraha",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
+      "UsingBootstrapScriptInfo": "Bootstrap-skripti on mukana.",
       "Version": "Versio",
       "YouCanStartWithHistory": "Nämä ovat äskettäin luotuja istuntotietueita. Aloita uusi istunto napsauttamalla istunnon nimeä."
     },

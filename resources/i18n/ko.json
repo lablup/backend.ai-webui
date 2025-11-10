@@ -1306,6 +1306,7 @@
     "ElapsedTime": "경과 시간",
     "EnvironmentAndVersion": "환경 및 버전",
     "EnvironmentInfo": "환경 정보",
+    "ExecuteSpecificApp": "{{appName}} 앱 실행하기",
     "ExecuteTerminalApp": "터미널 앱 실행하기",
     "ExpiresAfter": "남은 시간",
     "ExportCSV": "CSV로 내보내기",
@@ -1445,6 +1446,7 @@
       "BatchMode": "Batch",
       "BatchModeConfig": "Batch 모드 설정",
       "BatchModeDesc": "여러 노드 클러스터로 코드를 실행합니다.",
+      "BootstrapScriptDetail": "부트스트랩 스크립트",
       "CPU": "CPU",
       "ChooseEnvironment": "환경을 선택하세요",
       "ClusterMode": "클러스터 모드 설정",
@@ -1605,6 +1607,7 @@
       "TitleSession": "세션 (Backend.AI)",
       "TotalAllocation": "총 자원 할당량",
       "UserResourceLimit": "사용자 자원 제한",
+      "UsingBootstrapScriptInfo": "부트스트랩 스크립트가 포함되어 있습니다.",
       "Version": "버전",
       "YouCanStartWithHistory": "최근 생성된 세션 기록입니다. 세션 이름을 클릭하면 새 세션을 시작할 수 있습니다."
     },

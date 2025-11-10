@@ -1301,6 +1301,7 @@
     "ElapsedTime": "Tempo decorrido",
     "EnvironmentAndVersion": "Ambiente e versão",
     "EnvironmentInfo": "Informações sobre o ambiente",
+    "ExecuteSpecificApp": "Executar a aplicação {{appName}}",
     "ExecuteTerminalApp": "Executar a aplicação terminal",
     "ExpiresAfter": "Tempo restante",
     "ExportCSV": "exportar CSV",
@@ -1440,6 +1441,7 @@
       "BatchMode": "Lote",
       "BatchModeConfig": "Modo batch Configuração",
       "BatchModeDesc": "Pode executar o seu código com vários nós e clusters para escalar a sua ideia",
+      "BootstrapScriptDetail": "Script de inicialização",
       "CPU": "CPU",
       "ChooseEnvironment": "Escolha o ambiente",
       "ClusterMode": "Modo de cluster",
@@ -1599,6 +1601,7 @@
       "TitleSession": "Sessão (Backend.AI)",
       "TotalAllocation": "Alocação Total",
       "UserResourceLimit": "Limite de recursos do usuário",
+      "UsingBootstrapScriptInfo": "Script de bootstrap incluído.",
       "Version": "Versão",
       "YouCanStartWithHistory": "Estes são os registos de sessão criados recentemente. Clique no nome de uma sessão para iniciar uma nova sessão."
     },

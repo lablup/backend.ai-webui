@@ -1299,6 +1299,7 @@
     "ElapsedTime": "Зарцуулсан цаг хугацаа",
     "EnvironmentAndVersion": "Хүрээлэн буй орчин ба хувилбар",
     "EnvironmentInfo": "Байгаль орчны мэдээлэл",
+    "ExecuteSpecificApp": "{{appName}} апп ажиллуулах",
     "ExecuteTerminalApp": "Терминал програмыг ажиллуулна уу",
     "ExpiresAfter": "Үлдсэн хугацаа",
     "ExportCSV": "CSV экспортлох",
@@ -1438,6 +1439,7 @@
       "BatchMode": "Багц",
       "BatchModeConfig": "Багц горимын тохиргоо",
       "BatchModeDesc": "Кодоо олон зангилаатай кластераар ажиллуул.",
+      "BootstrapScriptDetail": "Bootstrap скрипт",
       "CPU": "CPU",
       "ChooseEnvironment": "Environment сонгоно уу",
       "ClusterMode": "Кластер горим",
@@ -1598,6 +1600,7 @@
       "TitleSession": "Чуулган (Backend.AI)",
       "TotalAllocation": "Нийт хуваарилалт",
       "UserResourceLimit": "Хэрэглэгчийн нөөцийн хязгаарлалт",
+      "UsingBootstrapScriptInfo": "Bootstrap скрипт багтсан.",
       "Version": "Хувилбар",
       "YouCanStartWithHistory": "Эдгээр нь таны саяхан бүтээсэн сешний бүртгэл юм. \nШинэ хуралдаан эхлэхийн тулд хуралдааны нэр дээр дарна уу."
     },

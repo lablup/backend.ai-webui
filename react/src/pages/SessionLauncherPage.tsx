@@ -28,11 +28,7 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
-import {
-  formatDuration,
-  generateRandomString,
-  convertToBinaryUnit,
-} from '../helper';
+import { formatDuration, convertToBinaryUnit } from '../helper';
 import {
   useSuspendedBackendaiClient,
   useUpdatableState,
@@ -78,6 +74,7 @@ import {
   BAIFlex,
   useErrorMessageResolver,
   BAIButton,
+  generateRandomString,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';

@@ -1299,6 +1299,7 @@
     "ElapsedTime": "Tempo trascorso",
     "EnvironmentAndVersion": "Ambiente e versione",
     "EnvironmentInfo": "Informazioni sull'ambiente",
+    "ExecuteSpecificApp": "Avvia {{appName}}",
     "ExecuteTerminalApp": "Eseguire l'applicazione terminale",
     "ExpiresAfter": "Tempo rimanente",
     "ExportCSV": "esporta CSV",
@@ -1438,6 +1439,7 @@
       "BatchMode": "Lotto",
       "BatchModeConfig": "Modalità batch Configurazione",
       "BatchModeDesc": "È possibile eseguire il codice con più nodi e cluster per scalare la propria idea.",
+      "BootstrapScriptDetail": "Script di bootstrap",
       "CPU": "processore",
       "ChooseEnvironment": "Scegli l'ambiente",
       "ClusterMode": "Modalità cluster",
@@ -1597,6 +1599,7 @@
       "TitleSession": "Sessione (Backend.AI)",
       "TotalAllocation": "Allocazione totale",
       "UserResourceLimit": "Limite risorse utente",
+      "UsingBootstrapScriptInfo": "Lo script di bootstrap è incluso.",
       "Version": "Versione",
       "YouCanStartWithHistory": "Questi sono i record delle sessioni create di recente. Fare clic sul nome di una sessione per avviarne una nuova."
     },

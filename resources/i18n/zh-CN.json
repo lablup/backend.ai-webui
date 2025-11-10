@@ -1302,6 +1302,7 @@
     "ElapsedTime": "所用时间",
     "EnvironmentAndVersion": "环境及版本",
     "EnvironmentInfo": "环境信息",
+    "ExecuteSpecificApp": "启动 {{appName}} 应用",
     "ExecuteTerminalApp": "执行终端应用程序",
     "ExpiresAfter": "剩余时间",
     "ExportCSV": "导出 CSV",
@@ -1441,6 +1442,7 @@
       "BatchMode": "批次",
       "BatchModeConfig": "批处理模式配置",
       "BatchModeDesc": "您可以使用多个节点和集群运行代码，以扩展您的想法",
+      "BootstrapScriptDetail": "引导脚本",
       "CPU": "中央处理器",
       "ChooseEnvironment": "选择环境",
       "ClusterMode": "集群模式",
@@ -1600,6 +1602,7 @@
       "TitleSession": "会话（后端.AI）",
       "TotalAllocation": "总分配",
       "UserResourceLimit": "用户资源限制",
+      "UsingBootstrapScriptInfo": "已包含引导脚本。",
       "Version": "版本",
       "YouCanStartWithHistory": "这些是您最近创建的会话记录。点击会话名称即可开始新的会话。"
     },

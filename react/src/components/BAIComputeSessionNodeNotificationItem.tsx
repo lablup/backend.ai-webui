@@ -1,4 +1,6 @@
-import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
+import SessionActionButtons, {
+  PrimaryAppOption,
+} from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import { useUpdateEffect } from 'ahooks';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
@@ -24,10 +26,12 @@ interface BAINodeNotificationItemProps {
   notification: NotificationState;
   sessionFrgmt: BAIComputeSessionNodeNotificationItemFragment$key | null;
   showDate?: boolean;
+  primaryAppOption?: PrimaryAppOption;
 }
+
 const BAIComputeSessionNodeNotificationItem: React.FC<
   BAINodeNotificationItemProps
-> = ({ sessionFrgmt, showDate, notification }) => {
+> = ({ sessionFrgmt, showDate, notification, primaryAppOption }) => {
   const { destroyNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -105,6 +109,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
               size="small"
               sessionFrgmt={node || null}
               hiddenButtonKeys={['containerCommit']}
+              primaryAppOption={primaryAppOption}
             />
           </BAIFlex>
         }

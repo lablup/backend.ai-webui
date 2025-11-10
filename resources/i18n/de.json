@@ -1300,6 +1300,7 @@
     "ElapsedTime": "Verstrichene Zeit",
     "EnvironmentAndVersion": "Umgebung und Version",
     "EnvironmentInfo": "Infos zur Umwelt",
+    "ExecuteSpecificApp": "{{appName}}-App starten",
     "ExecuteTerminalApp": "Terminal-App ausführen",
     "ExpiresAfter": "Verbleibende Zeit",
     "ExportCSV": "CSV-Datei exportieren",
@@ -1439,6 +1440,7 @@
       "BatchMode": "Stapel",
       "BatchModeConfig": "Batch-Modus Konfiguration",
       "BatchModeDesc": "Sie können Ihren Code mit mehreren Knoten und Clustern ausführen, um Ihre Idee zu skalieren",
+      "BootstrapScriptDetail": "Bootstrap-Skript",
       "CPU": "Zentralprozessor",
       "ChooseEnvironment": "Wählen Sie Umgebung",
       "ClusterMode": "Cluster-Modus",
@@ -1598,6 +1600,7 @@
       "TitleSession": "Sitzung (Backend.AI)",
       "TotalAllocation": "Gesamtzuweisung",
       "UserResourceLimit": "Beschränkung der Benutzerressourcen",
+      "UsingBootstrapScriptInfo": "Bootstrap-Skript ist enthalten.",
       "Version": "Ausführung",
       "YouCanStartWithHistory": "Dies sind Ihre kürzlich erstellten Sitzungsaufzeichnungen. Klicken Sie auf einen Sitzungsnamen, um eine neue Sitzung zu starten."
     },

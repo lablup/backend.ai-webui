@@ -1301,6 +1301,7 @@
     "ElapsedTime": "Upływający czas",
     "EnvironmentAndVersion": "Środowisko i wersja",
     "EnvironmentInfo": "Informacje o środowisku",
+    "ExecuteSpecificApp": "Uruchom {{appName}}",
     "ExecuteTerminalApp": "Uruchom aplikację terminalową",
     "ExpiresAfter": "Pozostały czas",
     "ExportCSV": "eksportuj CSV",
@@ -1440,6 +1441,7 @@
       "BatchMode": "Partia",
       "BatchModeConfig": "Konfiguracja trybu wsadowego",
       "BatchModeDesc": "Możesz uruchomić swój kod z wieloma węzłami i klastrami, aby skalować swój pomysł",
+      "BootstrapScriptDetail": "Skrypt inicjalizacyjny",
       "CPU": "procesor",
       "ChooseEnvironment": "Wybierz środowisko",
       "ClusterMode": "Tryb klastra",
@@ -1599,6 +1601,7 @@
       "TitleSession": "Sesja (Backend.AI)",
       "TotalAllocation": "Całkowity przydział",
       "UserResourceLimit": "Limit zasobów użytkownika",
+      "UsingBootstrapScriptInfo": "Skrypt bootstrap jest dołączony.",
       "Version": "Wersja",
       "YouCanStartWithHistory": "Są to ostatnio utworzone rekordy sesji. Kliknij nazwę sesji, aby rozpocząć nową sesję."
     },

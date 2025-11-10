@@ -1302,6 +1302,7 @@
     "ElapsedTime": "Tiempo transcurrido",
     "EnvironmentAndVersion": "Entorno y versión",
     "EnvironmentInfo": "Información medioambiental",
+    "ExecuteSpecificApp": "Iniciar {{appName}}",
     "ExecuteTerminalApp": "Ejecutar Terminal App",
     "ExpiresAfter": "Tiempo restante",
     "ExportCSV": "exportar CSV",
@@ -1441,6 +1442,7 @@
       "BatchMode": "Lote",
       "BatchModeConfig": "Modo por lotes Configuración",
       "BatchModeDesc": "Puedes ejecutar tu código con múltiples nodos y clusters para escalar tu idea",
+      "BootstrapScriptDetail": "Script de Bootstrap",
       "CPU": "CPU",
       "ChooseEnvironment": "Elija Entorno",
       "ClusterMode": "Modo clúster",
@@ -1600,6 +1602,7 @@
       "TitleSession": "Sesión (Backend.AI)",
       "TotalAllocation": "Asignación total",
       "UserResourceLimit": "Límite de recursos de usuario",
+      "UsingBootstrapScriptInfo": "Script de arranque incluido.",
       "Version": "Versión",
       "YouCanStartWithHistory": "Estos son sus registros de sesión creados recientemente. Haga clic en un nombre de sesión para iniciar una nueva sesión."
     },

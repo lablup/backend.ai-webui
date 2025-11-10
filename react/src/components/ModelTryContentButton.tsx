@@ -3,7 +3,6 @@ import { ModelTryContentButtonVFolderNodeListQuery } from '../__generated__/Mode
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
-  generateRandomString,
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import {
@@ -23,7 +22,7 @@ import {
   ServiceLauncherFormValue,
 } from './ServiceLauncherPageContent';
 import { Button } from 'antd';
-import { ESMClientErrorResponse } from 'backend.ai-ui';
+import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

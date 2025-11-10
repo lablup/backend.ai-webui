@@ -380,3 +380,38 @@ export const omitNullAndUndefinedFields = <T extends Record<string, any>>(
     ),
   ) as Partial<T>;
 };
+
+/**
+ * Generates a random string of alphabetic characters.
+ *
+ * @param n - The length of the random string to generate. Defaults to 3.
+ * @returns A random string containing uppercase and lowercase letters of the specified length.
+ *
+ * @example
+ * ```typescript
+ * generateRandomString(); // Returns a 3-character string like "AbC"
+ * generateRandomString(5); // Returns a 5-character string like "XyZaB"
+ * ```
+ *
+ * @remarks
+ * The function uses a base-52 number system where:
+ * - Characters 0-25 map to uppercase letters A-Z
+ * - Characters 26-51 map to lowercase letters a-z
+ */
+export const generateRandomString = (n = 3) => {
+  let randNum = Math.floor(Math.random() * 52 * 52 * 52);
+
+  const parseNum = (num: number) => {
+    if (num < 26) return String.fromCharCode(65 + num);
+    else return String.fromCharCode(97 + num - 26);
+  };
+
+  let randStr = '';
+
+  for (let i = 0; i < n; i++) {
+    randStr += parseNum(randNum % 52);
+    randNum = Math.floor(randNum / 52);
+  }
+
+  return randStr;
+};
