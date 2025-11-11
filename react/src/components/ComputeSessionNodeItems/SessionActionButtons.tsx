@@ -14,6 +14,7 @@ import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
+  BAIFileBrowserIcon,
   BAIJupyterIcon,
   BAISessionLogIcon,
   BAISftpIcon,
@@ -36,7 +37,7 @@ type SessionActionButtonKey =
   | 'terminate';
 
 export type PrimaryAppOption = {
-  appName: 'jupyter';
+  appName: 'jupyter' | 'filebrowser';
   urlPostfix?: string;
 };
 
@@ -146,44 +147,87 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   return session ? (
     <>
       <Wrapper compact={compact}>
-        {primaryAppOption && primaryAppOption.appName === 'jupyter' && (
-          <Tooltip
-            title={
-              isButtonTitleMode
-                ? undefined
-                : t('session.ExecuteSpecificApp', {
-                    appName: 'Jupyter Notebook',
-                  })
-            }
-          >
-            <Button
-              size={size}
-              type={'primary'}
-              disabled={
-                !isAppSupported(session) || !isActive(session) || !isOwner
-              }
-              icon={<BAIJupyterIcon />}
-              onClick={() => {
-                const appOption = {
-                  'app-name': primaryAppOption.appName,
-                  'session-uuid': session?.row_id,
-                  'url-postfix': primaryAppOption.urlPostfix,
-                };
+        {primaryAppOption && (
+          <>
+            {primaryAppOption.appName === 'jupyter' && (
+              <Tooltip
+                title={
+                  isButtonTitleMode
+                    ? undefined
+                    : t('session.ExecuteSpecificApp', {
+                        appName: 'Jupyter Notebook',
+                      })
+                }
+              >
+                <Button
+                  size={size}
+                  type={'primary'}
+                  disabled={
+                    !isAppSupported(session) || !isActive(session) || !isOwner
+                  }
+                  icon={<BAIJupyterIcon />}
+                  onClick={() => {
+                    const appOption = {
+                      'app-name': primaryAppOption.appName,
+                      'session-uuid': session?.row_id,
+                      'url-postfix': primaryAppOption.urlPostfix,
+                    };
 
-                // @ts-ignore
-                globalThis.appLauncher._runApp(
-                  omitNullAndUndefinedFields(appOption),
-                );
-              }}
-              title={
-                isButtonTitleMode
-                  ? t('session.ExecuteSpecificApp', {
-                      appName: 'Jupyter Notebook',
-                    })
-                  : undefined
-              }
-            />
-          </Tooltip>
+                    // @ts-ignore
+                    globalThis.appLauncher._runApp(
+                      omitNullAndUndefinedFields(appOption),
+                    );
+                  }}
+                  title={
+                    isButtonTitleMode
+                      ? t('session.ExecuteSpecificApp', {
+                          appName: 'Jupyter Notebook',
+                        })
+                      : undefined
+                  }
+                />
+              </Tooltip>
+            )}
+            {primaryAppOption.appName === 'filebrowser' && (
+              <Tooltip
+                title={
+                  isButtonTitleMode
+                    ? undefined
+                    : t('session.ExecuteSpecificApp', {
+                        appName: 'Jupyter Notebook',
+                      })
+                }
+              >
+                <Button
+                  size={size}
+                  type={'primary'}
+                  disabled={
+                    !isAppSupported(session) || !isActive(session) || !isOwner
+                  }
+                  icon={<BAIFileBrowserIcon />}
+                  onClick={() => {
+                    const appOption = {
+                      'app-name': primaryAppOption.appName,
+                      'session-uuid': session?.row_id,
+                      'url-postfix': primaryAppOption.urlPostfix,
+                    };
+
+                    // @ts-ignore
+                    globalThis.appLauncher._runApp(
+                      omitNullAndUndefinedFields(appOption),
+                    );
+                  }}
+                  title={
+                    isButtonTitleMode
+                      ? t('session.ExecuteSpecificApp', {
+                          appName: 'File browser',
+                        })
+                      : undefined
+                  }
+                />
+              </Tooltip>
+            )}
+          </>
         )}
         {isVisible('appLauncher') && (
           <>

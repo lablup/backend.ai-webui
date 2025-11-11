@@ -1,4 +1,5 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import EditableVFolderName from './EditableVFolderName';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { Button, Tooltip, Image, Grid, theme, Typography, App } from 'antd';
@@ -218,7 +219,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
                             results?.fulfilled &&
                             results.fulfilled.length > 0
                           ) {
-                            upsertSessionNotification(results.fulfilled);
+                            upsertSessionNotification(results.fulfilled, [
+                              {
+                                extraData: {
+                                  appName: 'filebrowser',
+                                } as PrimaryAppOption,
+                              },
+                            ]);
                           }
                           if (
                             results?.rejected &&
