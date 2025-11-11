@@ -65,7 +65,6 @@ const ImportNotebook: React.FC<FormProps> = (props) => {
     }
 
     webuiNavigate('/session');
-
   };
 
   return (
