@@ -592,6 +592,7 @@ type BackendAIConfig = {
   enableModelFolders: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
+  defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
   hideAgents: boolean;
   force2FA: boolean;

@@ -214,7 +214,9 @@ export const useStartSession = () => {
             cpu: values.resource.cpu,
             mem: values.resource.mem,
             // Add accelerator only if specified
-            ...(values.resource.accelerator > 0
+            ...(values.resource?.acceleratorType &&
+            values.resource?.accelerator &&
+            values.resource?.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
                     values.resource.accelerator,

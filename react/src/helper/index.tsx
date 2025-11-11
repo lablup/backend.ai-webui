@@ -386,7 +386,7 @@ export const isOutsideRangeWithUnits = (
 };
 
 export const getImageFullName = (
-  image: Image | CommittedImage | EnvironmentImage,
+  image: DeepPartial<Image | CommittedImage | EnvironmentImage>,
 ) => {
   return image
     ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`

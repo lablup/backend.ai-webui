@@ -335,7 +335,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
             cpu: values.resource.cpu?.toString(),
             mem: values.resource.mem,
-            ...(values.resource.accelerator > 0
+            ...(values.resource?.acceleratorType &&
+            values.resource?.accelerator &&
+            values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
                     // FIXME: manually convert to string since server-side only allows [str,str] tuple
@@ -343,13 +345,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 }
               : undefined),
           },
-          resource_opts: {
+          ...(values.resource.shmem && {
             shmem:
               compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
               compareNumberWithUnits(values.resource.shmem, '1g') < 0
                 ? '1g'
                 : values.resource.shmem,
-          },
+          }),
         },
       };
       return baiSignedRequestWithPromise({
@@ -487,7 +489,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 resource_slots: JSON.stringify({
                   cpu: values.resource.cpu,
                   mem: values.resource.mem,
-                  ...(values.resource.accelerator > 0
+                  ...(values.resource?.acceleratorType &&
+                  values.resource?.accelerator &&
+                  values.resource.accelerator > 0
                     ? {
                         [values.resource.acceleratorType]:
                           values.resource.accelerator,

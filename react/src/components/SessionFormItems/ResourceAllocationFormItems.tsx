@@ -57,9 +57,9 @@ export interface ResourceAllocationFormValue {
   resource: {
     cpu: number;
     mem: string;
-    shmem: string;
-    accelerator: number;
-    acceleratorType: string;
+    shmem?: string;
+    accelerator?: number;
+    acceleratorType?: string;
   };
   resourceGroup: string;
   num_of_sessions?: number;

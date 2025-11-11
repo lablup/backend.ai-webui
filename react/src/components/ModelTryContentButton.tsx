@@ -202,7 +202,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
             // FIXME: manually convert to string since server-side only allows [str,str] tuple
             cpu: values.resource.cpu.toString(),
             mem: values.resource.mem,
-            ...(values.resource.accelerator > 0
+            ...(values.resource?.acceleratorType &&
+            values.resource.accelerator &&
+            values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
                     // FIXME: manually convert to string since server-side only allows [str,str] tuple
@@ -210,13 +212,15 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                 }
               : undefined),
           },
-          resource_opts: {
-            shmem:
-              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-              compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                ? '1g'
-                : values.resource.shmem,
-          },
+          ...(values.resource.shmem && {
+            resource_opts: {
+              shmem:
+                compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+                compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                  ? '1g'
+                  : values.resource.shmem,
+            },
+          }),
         },
       };
       return baiSignedRequestWithPromise({
