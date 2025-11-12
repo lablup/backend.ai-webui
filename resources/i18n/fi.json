@@ -1068,6 +1068,8 @@
     "Initializing": "Aloitetaan...",
     "NoNotification": "Ei ilmoitusta.",
     "Notifications": "Ilmoitukset",
+    "RunAppOnSessionStart": "Käynnistä sovellus automaattisesti",
+    "RunAppOnSessionStartTooltip": "Käynnistää sovelluksen käynnissä olevassa istunnossa.",
     "SeeDetail": "Katso lisätietoja",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"

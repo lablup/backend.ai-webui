@@ -1075,6 +1075,8 @@
     "Initializing": "Initializing...",
     "NoNotification": "No Notification.",
     "Notifications": "Notifications",
+    "RunAppOnSessionStart": "Auto-launch app",
+    "RunAppOnSessionStartTooltip": "Launches app on session running",
     "SeeDetail": "See Detail",
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"

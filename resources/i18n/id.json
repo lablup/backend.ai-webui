@@ -1067,6 +1067,8 @@
     "Initializing": "Inisialisasi...",
     "NoNotification": "Tidak Ada Pemberitahuan.",
     "Notifications": "Pemberitahuan",
+    "RunAppOnSessionStart": "Mulai aplikasi secara otomatis",
+    "RunAppOnSessionStartTooltip": "Meluncurkan aplikasi pada sesi yang sedang berjalan",
     "SeeDetail": "Lihat Detail",
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
