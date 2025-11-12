@@ -69,38 +69,9 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             overflow: 'hidden',
           }}
         ></BAIFlex>
-        {/* Hide used text to avoid overlapping */}
-        {used && baiProgressProps.percent && baiProgressProps.percent < 70 ? (
-          <div
-            style={{
-              position: 'absolute',
-              left:
-                !baiProgressProps.percent || _.isNaN(baiProgressProps.percent)
-                  ? 0
-                  : `calc(${_.min([baiProgressProps.percent, 100])}% - ${token.size}px)`,
-              bottom: -(token.size + token.fontSize),
-              textAlign: 'center',
-            }}
-          >
-            <Typography.Text
-              style={{
-                color: _.isString(baiProgressProps.strokeColor)
-                  ? (baiProgressProps.strokeColor ??
-                    primaryColors.primary5 ??
-                    token.colorPrimary)
-                  : (primaryColors.primary5 ?? token.colorPrimary),
-              }}
-            >
-              {used}
-            </Typography.Text>
-          </div>
-        ) : null}
       </BAIFlex>
       <BAIFlex justify="end">
-        {used &&
-        total &&
-        baiProgressProps.percent &&
-        baiProgressProps.percent >= 70 ? (
+        {used && total && baiProgressProps.percent ? (
           <BAIFlex gap={'xxs'}>
             <Typography.Text
               style={{
