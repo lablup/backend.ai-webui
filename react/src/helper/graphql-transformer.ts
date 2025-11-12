@@ -156,21 +156,58 @@ export function manipulateGraphQLQueryWithClientDirectives(
     },
   });
 
-  // Second pass: Collect fragment spreads from the transformed AST
-  const fragmentSpreadNames = new Set<string>();
+  // Second pass: Remove fragment spreads to now empty fragments
+
+  let hasChanges = true;
+  const maxCount = 30; // prevent infinite loop even though it should not happen theoretically
+  let count = 0;
+  while (hasChanges && count < maxCount) {
+    count += 1;
+    hasChanges = false;
+    const emptyFragmentNames = new Set<string>();
+
+    // Find & Remove fragments that are now empty
+    newAst = visit(newAst, {
+      FragmentDefinition: {
+        enter(node) {
+          if (!node.selectionSet || node.selectionSet.selections.length === 0) {
+            emptyFragmentNames.add(node.name.value);
+            hasChanges = true;
+            return null;
+          }
+        },
+      },
+    });
+
+    // Remove spreads to empty fragments
+    if (hasChanges) {
+      newAst = visit(newAst, {
+        FragmentSpread: {
+          enter(node) {
+            if (emptyFragmentNames.has(node.name.value)) {
+              return null;
+            }
+          },
+        },
+      });
+    }
+  }
+
+  // Third pass: Collect used fragments and remove unused ones
+  const usedFragmentNames = new Set<string>();
   visit(newAst, {
     FragmentSpread: {
       enter(node) {
-        fragmentSpreadNames.add(node.name.value);
+        usedFragmentNames.add(node.name.value);
       },
     },
   });
 
-  // Third pass: Remove unused fragment definitions
   newAst = visit(newAst, {
     FragmentDefinition: {
       leave(node) {
-        if (!fragmentSpreadNames.has(node.name.value)) {
+        // Remove if fragment is not used
+        if (!usedFragmentNames.has(node.name.value)) {
           return null;
         }
       },
