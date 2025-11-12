@@ -365,7 +365,7 @@ const BAITable = <RecordType extends object = any>({
       {tableProps.pagination !== false && (
         <BAIFlex justify="end" gap={'xs'}>
           <Pagination
-            size={tableProps.size === 'small' ? 'small' : 'default'}
+            size={tableProps.pagination?.size || 'small'}
             align="end"
             pageSizeOptions={['10', '20', '50']}
             showSizeChanger={true}
@@ -396,7 +396,7 @@ const BAITable = <RecordType extends object = any>({
               type="text"
               icon={<SettingOutlined />}
               onClick={() => setIsColumnSettingModalOpen(true)}
-              size={tableProps.size}
+              size={tableProps.size || 'small'}
             />
           )}
           {tableProps.pagination && tableProps.pagination.extraContent}
