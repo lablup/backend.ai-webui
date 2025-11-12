@@ -162,7 +162,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         mutationToCreateFolder.mutate(input, {
           onSuccess: (result) => {
             upsertNotification({
-              key: 'folder-create-success',
+              key: `folder-create-success-${result.id}`,
               icon: 'folder',
               message: `${result.name}: ${t('data.folders.FolderCreated')}`,
               toText: t('data.folders.OpenAFolder'),

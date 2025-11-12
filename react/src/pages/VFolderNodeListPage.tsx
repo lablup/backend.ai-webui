@@ -677,12 +677,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             onChangeOrder={(order) => {
               setQuery({ order }, 'replaceIn');
             }}
-            onRequestChange={(updatedFolderId) => {
+            onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>
-                _.filter(
-                  prevSelected,
-                  (folder) => folder.id !== updatedFolderId,
-                ),
+                _.filter(prevSelected, (folder) => folder.id !== removedId),
               );
               updateFetchKey();
             }}

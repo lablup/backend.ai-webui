@@ -15,6 +15,7 @@ import {
 } from 'backend.ai-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 interface FolderInvitationResponseModalProps extends BAIModalProps {}
 
@@ -32,6 +33,7 @@ const FolderInvitationResponseModal: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const hasInviterEmail = baiClient.supports('invitation-inviter-email');
   const { getErrorMessage } = useErrorMessageResolver();
+  const { upsertNotification } = useSetBAINotification();
 
   useEffect(() => {
     updateInvitations();
@@ -49,6 +51,19 @@ const FolderInvitationResponseModal: React.FC<
               message.success(
                 t('data.invitation.SuccessfullyAcceptedInvitation'),
               );
+
+              upsertNotification({
+                key: `folder-invitation-success-${item.id}`,
+                icon: 'folder',
+                message: `${item.vfolder_name}: ${t('data.invitation.SuccessfullyAcceptedInvitation')}`,
+                toText: t('data.folders.OpenAFolder'),
+                to: {
+                  search: new URLSearchParams({
+                    folder: item.vfolder_id,
+                  }).toString(),
+                },
+                open: true,
+              });
             } catch (e: any) {
               if (
                 e?.statusCode === 409 ||

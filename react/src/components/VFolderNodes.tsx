@@ -63,12 +63,13 @@ export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
 interface VFolderNodesProps
   extends Omit<BAITableProps<VFolderNodeInList>, 'dataSource' | 'columns'> {
   vfoldersFrgmt: VFolderNodesFragment$key;
-  onRequestChange?: (updatedFolderId?: string) => void;
+  // Callback when a row is removed from current list
+  onRemoveRow?: (updatedFolderId?: string) => void;
 }
 
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
-  onRequestChange,
+  onRemoveRow,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -84,7 +85,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const [currentVFolder, setCurrentVFolder] =
+  const [deletingVFolder, setDeletingVFolder] =
     useState<VFolderNodeInList | null>(null);
   const [currentSharedVFolder, setCurrentSharedVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -263,8 +264,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         }
                         onClick={() => {
                           restoreMutation.mutate(vfolder?.id, {
-                            onSuccess: (_result, variables) => {
-                              onRequestChange?.(variables);
+                            onSuccess: (_result, vfolderId) => {
+                              onRemoveRow?.(vfolderId);
                               message.success(
                                 t('data.folders.FolderRestored', {
                                   folderName: vfolder?.name,
@@ -289,7 +290,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       onConfirm={() => {
                         deleteMutation.mutate(vfolder?.id, {
                           onSuccess: (_result, variables) => {
-                            onRequestChange?.(variables);
+                            onRemoveRow?.(variables);
                             message.success(
                               t('data.folders.MovedToTrashBin', {
                                 folderName: vfolder?.name,
@@ -336,7 +337,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                         type="text"
                         disabled={vfolder?.status !== 'delete-pending'}
                         onClick={() => {
-                          setCurrentVFolder(vfolder ?? null);
+                          setDeletingVFolder(vfolder ?? null);
                         }}
                       />
                     </Tooltip>
@@ -413,14 +414,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         {...tableProps}
       />
       <BAIConfirmModalWithInput
-        open={!!currentVFolder}
+        open={!!deletingVFolder}
         onOk={() => {
-          deleteFromTrashBinMutation.mutate(currentVFolder?.id ?? '', {
-            onSuccess: () => {
-              onRequestChange?.();
+          deleteFromTrashBinMutation.mutate(deletingVFolder?.id ?? '', {
+            onSuccess: (_result, vfolderId) => {
+              onRemoveRow?.(vfolderId);
               message.success(
                 t('data.folders.FolderDeletedForever', {
-                  folderName: currentVFolder?.name,
+                  folderName: deletingVFolder?.name,
                 }),
               );
             },
@@ -431,12 +432,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               });
             },
           });
-          setCurrentVFolder(null);
+          setDeletingVFolder(null);
         }}
         onCancel={() => {
-          setCurrentVFolder(null);
+          setDeletingVFolder(null);
         }}
-        confirmText={currentVFolder?.name ?? ''}
+        confirmText={deletingVFolder?.name ?? ''}
         content={
           <BAIFlex
             direction="column"
@@ -453,7 +454,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               <Typography.Text style={{ marginRight: token.marginXXS }}>
                 {t('data.folders.TypeFolderNameToDelete')}
               </Typography.Text>
-              (<Typography.Text code>{currentVFolder?.name}</Typography.Text>)
+              (<Typography.Text code>{deletingVFolder?.name}</Typography.Text>)
             </BAIFlex>
           </BAIFlex>
         }
@@ -470,11 +471,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
       <SharedFolderPermissionInfoModal
         vfolderFrgmt={currentSharedVFolder}
         open={!!currentSharedVFolder}
-        onRequestClose={(success?: boolean) => {
+        onLeaveFolder={(id) => {
+          onRemoveRow?.(id);
+        }}
+        onRequestClose={() => {
           setCurrentSharedVFolder(null);
-          if (success) {
-            onRequestChange?.();
-          }
         }}
       />
     </>
