@@ -609,5 +609,7 @@ type BackendAIConfig = {
   isDirectorySizeVisible: boolean;
   enableReservoir: boolean;
   debug: boolean;
-  [key: string]: any;
+  proxyURL: string;
+  allowCustomResourceAllocation: boolean;
+  allowAppDownloadPanel: boolean;
 };

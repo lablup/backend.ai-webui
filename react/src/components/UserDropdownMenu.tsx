@@ -31,7 +31,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { BAIUnmountAfterClose, filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +68,7 @@ const UserDropdownMenu: React.FC<{
     isPendingInitializeSettingModal,
     startInitializeSettingModalTransition,
   ] = useTransition();
-  const items: MenuProps['items'] = [
+  const items: MenuProps['items'] = filterOutEmpty([
     {
       'data-testid': 'dropdown-user-name',
       label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
@@ -185,7 +185,7 @@ const UserDropdownMenu: React.FC<{
         document.dispatchEvent(event);
       },
     },
-  ];
+  ]);
 
   const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
     useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
