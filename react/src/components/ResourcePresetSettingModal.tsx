@@ -354,6 +354,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                               _.get(mergedResourceSlots, resourceSlotKey)
                                 ?.display_unit
                             }
+                            style={{ width: '100%' }}
                           />
                         )}
                       </Form.Item>
