@@ -156,7 +156,7 @@ const ContainerRegistryList: React.FC<{
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<ContainerRegistryListDeleteMutation>(graphql`
       mutation ContainerRegistryListDeleteMutation($id: String!) {
-        delete_container_registry_node(id: $id) {
+        delete_container_registry_node_v2(id: $id) {
           container_registry {
             id
           }
