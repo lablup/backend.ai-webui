@@ -22,6 +22,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   strokeColor,
   labelStyle,
   progressStyle,
+  showInfo = true,
   size = 'small',
 }) => {
   const { token } = theme.useToken();
@@ -67,6 +68,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         <Typography.Text
           style={{
             fontSize,
+            minHeight: token.sizeXXS,
             color:
               _.isNaN(percent) || _.isUndefined(percent)
                 ? token.colorTextDisabled
@@ -74,7 +76,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
             ...labelStyle,
           }}
         >
-          {valueLabel}
+          {showInfo ? valueLabel : ' '}
         </Typography.Text>
       </BAIFlex>
     </BAIFlex>

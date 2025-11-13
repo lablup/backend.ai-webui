@@ -58,6 +58,10 @@ const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
           valueLabel={percentLabel}
           strokeColor="#BFBFBF"
           progressStyle={{ border: 'none' }}
+          showInfo={false}
+          labelStyle={{
+            height: token.sizeXS,
+          }}
         />
       </>
     );
@@ -159,6 +163,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                 ? displayPercent
                 : (sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0')
             }
+            description={`${liveStat.cpu_util?.pct}% / ${parseFloat(occupiedSlots.cpu ?? '1') * 100}%`}
           />
         );
       })(),
@@ -243,7 +248,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
                     value?.[displayTargetName],
                     value?.capacity,
                   )
-                : undefined
+                : `${value?.pct}%`
             }
             tooltipTitle={
               <BAIFlex direction="column" align="stretch">
