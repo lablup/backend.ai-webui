@@ -114,7 +114,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     // If system session, hide not applicable buttons
     if (
       ['appLauncher', 'terminal', 'containerCommit'].includes(key) &&
-      session?.type === 'system'
+      (session?.type === 'system' || session?.type === 'batch')
     ) {
       return false;
     }
