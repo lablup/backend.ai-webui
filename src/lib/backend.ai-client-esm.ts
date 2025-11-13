@@ -822,7 +822,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.2')) {
       this._features['copy-on-terminal'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('25.15.0')) {
+    if (this.isManagerVersionCompatibleWith('25.16.100')) {
       this._features['agent-stats'] = true;
     }
   }
