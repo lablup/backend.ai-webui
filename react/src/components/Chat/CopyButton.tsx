@@ -3,6 +3,7 @@ import { CopyConfig } from 'antd/es/typography/Base';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useTranslation } from 'react-i18next';
 
 interface CopyButtonProps extends ButtonProps {
   copyable?: Omit<CopyConfig, 'text'> & { text: string };
@@ -14,6 +15,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   ...props
 }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const { t } = useTranslation();
 
   const handleCopy = async () => {
     setIsCopied(true);
@@ -30,7 +32,13 @@ const CopyButton: React.FC<CopyButtonProps> = ({
 
   return (
     <Tooltip
-      title={isCopied ? 'Copied!' : 'Copy'}
+      title={
+        props.disabled
+          ? undefined
+          : isCopied
+            ? t('sourceCodeViewer.Copied')
+            : t('sourceCodeViewer.Copy')
+      }
       open={isCopied ? true : undefined}
     >
       <div>

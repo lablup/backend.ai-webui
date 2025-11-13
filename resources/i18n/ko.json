@@ -727,6 +727,7 @@
     "CreateButtonCode": "배지 코드 생성",
     "CreateNotebookButton": "노트북 실행 버튼 만들기",
     "Downloading": "다운로드 중...",
+    "FailedToFetchRepositoryInformation": "저장소 정보를 가져오지 못했습니다.",
     "FolderAlreadyExists": "같은 이름의 폴더가 이미 존재합니다. 이름을 변경합니다.",
     "FolderCreated": "폴더를 생성했습니다.",
     "FolderName": "가져올 폴더 이름: ",
@@ -743,6 +744,8 @@
     "ImportGithubRepo": "GitHub 저장소 가져오기",
     "ImportGitlabRepo": "GitLab 저장소 가져오기",
     "ImportNotebook": "노트북 가져오기",
+    "InvalidGitHubURL": "유효하지 않은 GitHub URL입니다. 유효한 GitHub 저장소 URL이어야 합니다.",
+    "InvalidGitLabURL": "잘못된 GitLab URL입니다. 유효한 GitLab 저장소 URL이어야 합니다.",
     "InvalidNotebookURL": "유효하지 않은 노트북 URL입니다.",
     "NoNotebookCode": "노트북 주소가 입력되지 않았습니다. 노트북 코드 입력 후 배지를 출력할 수 있는 코드를 복사할 수 있습니다.",
     "NoSuitableResourceFoundOnGivenURL": "URL에서 가져올 수 있는 항목이 없습니다.",
@@ -754,8 +757,11 @@
     "Preparing": "준비중...",
     "ReadyToImport": "가져올 준비가 완료되었습니다.",
     "RepoWillBeFolder": "가져온 GitHub 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
+    "RepositoryNotFound": "저장소를 찾을 수 없습니다.",
+    "StorageHost": "스토리지 호스트",
+    "VFolderUsageMode": "폴더 사용 방식",
     "WrongURLType": "잘못된 URL 형식입니다.",
-    "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 실행할 수 있는 아래와 같은 배지 코드를 만들어 줍니다."
+    "YouCanCreateNotebookCode": "입력한 노트북을 Backend.AI에서 바로 실행할 수 있는 배지입니다. 코드를 복사해서 사용해보세요."
   },
   "information": {
     "APIVersion": "API 버전",

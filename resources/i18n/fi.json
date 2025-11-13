@@ -724,6 +724,7 @@
     "CreateButtonCode": "Luo",
     "CreateNotebookButton": "Luo muistikirja -painike",
     "Downloading": "Lataaminen...",
+    "FailedToFetchRepositoryInformation": "Tietojen hakeminen repositoriosta epäonnistui.",
     "FolderAlreadyExists": "On olemassa kansio, jolla on sama nimi. nimi nimetään uudelleen.",
     "FolderCreated": "Kansio luotu.",
     "FolderName": "Tuodun kansion nimi:",
@@ -740,6 +741,8 @@
     "ImportGithubRepo": "Tuo GitHub-repositoriosta",
     "ImportGitlabRepo": "Tuo GitLab-repositoriosta",
     "ImportNotebook": "Tuo muistikirja",
+    "InvalidGitHubURL": "Virheellinen GitHub-URL. Sen tulee olla kelvollinen GitHub-repositorion URL-osoite.",
+    "InvalidGitLabURL": "Virheellinen GitLab-URL. Sen on oltava kelvollinen GitLab-repositorion osoite.",
     "InvalidNotebookURL": "Virheellinen muistikirjan URL-osoite.",
     "NoNotebookCode": "Muistikirjan osoite on tyhjä. Syötä voimassa oleva muistikirjan koodi kopioidaksesi virkamerkkikoodin.",
     "NoSuitableResourceFoundOnGivenURL": "Annetusta URL-osoitteesta ei löytynyt sopivaa resurssia.",
@@ -751,8 +754,11 @@
     "Preparing": "Valmistautuminen...",
     "ReadyToImport": "Valmis tuomaan",
     "RepoWillBeFolder": "Tuodut GitHub-arkistot muunnetaan kansioiksi ja ne voidaan asentaa istunnon alkaessa.",
+    "RepositoryNotFound": "Repositoriota ei löytynyt.",
+    "StorageHost": "Tallennuspalvelin",
+    "VFolderUsageMode": "Kansion käyttötila",
     "WrongURLType": "Väärä URL-tyyppi",
-    "YouCanCreateNotebookCode": "Kirjoita muistikirjan URL-osoite luodaksesi alla olevan kaltaisen merkkikoodin, jonka voit suorittaa suoraan Backend.AI:ssa."
+    "YouCanCreateNotebookCode": "Tämä badge mahdollistaa muistikirjasi suorittamisen suoraan Backend.AI:ssä. Kopioi koodi käyttääksesi sitä missä tahansa."
   },
   "information": {
     "APIVersion": "API-versio",

@@ -724,6 +724,7 @@
     "CreateButtonCode": "创造",
     "CreateNotebookButton": "创建笔记本按钮",
     "Downloading": "正在下载...",
+    "FailedToFetchRepositoryInformation": "获取仓库信息失败。",
     "FolderAlreadyExists": "有一个同名文件夹。名称将被重命名。",
     "FolderCreated": "文件夹已创建。",
     "FolderName": "导入的文件夹名称：",
@@ -740,6 +741,8 @@
     "ImportGithubRepo": "导入 GitHub 存储库",
     "ImportGitlabRepo": "导入 GitLab 仓库",
     "ImportNotebook": "进口笔记本",
+    "InvalidGitHubURL": "无效的 GitHub URL。必须为有效的 GitHub 仓库 URL。",
+    "InvalidGitLabURL": "无效的 GitLab URL。必须是有效的 GitLab 仓库 URL。",
     "InvalidNotebookURL": "笔记本 URL 无效。",
     "NoNotebookCode": "笔记本地址为空。请输入有效的笔记本代码以复制胸卡代码。",
     "NoSuitableResourceFoundOnGivenURL": "在给定的 URL 上找不到合适的资源。",
@@ -751,8 +754,11 @@
     "Preparing": "正在准备...",
     "ReadyToImport": "准备进口",
     "RepoWillBeFolder": "导入的 GitHub 存储库转换为文件夹，并且可以在会话开始时挂载。",
+    "RepositoryNotFound": "未找到仓库。",
+    "StorageHost": "存储主机",
+    "VFolderUsageMode": "文件夹使用模式",
     "WrongURLType": "错误的网址类型",
-    "YouCanCreateNotebookCode": "输入笔记本 URL 以创建如下所示的徽章代码，您可以直接在 Backend.AI 上运行。"
+    "YouCanCreateNotebookCode": "此徽章可在 Backend.AI 上直接运行您的笔记本。复制代码即可在任何地方使用。"
   },
   "information": {
     "APIVersion": "接口版本",

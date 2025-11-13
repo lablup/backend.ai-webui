@@ -724,6 +724,7 @@
     "CreateButtonCode": "Erstellen",
     "CreateNotebookButton": "Notizbuch-Schaltfläche erstellen",
     "Downloading": "Wird heruntergeladen...",
+    "FailedToFetchRepositoryInformation": "Fehler beim Abrufen der Repository-Informationen.",
     "FolderAlreadyExists": "Es gibt einen Ordner mit dem gleichen Namen. Name wird umbenannt.",
     "FolderCreated": "Ordner erstellt.",
     "FolderName": "Name des importierten Ordners:",
@@ -740,6 +741,8 @@
     "ImportGithubRepo": "GitHub-Repository importieren",
     "ImportGitlabRepo": "GitLab-Repository importieren",
     "ImportNotebook": "Notizbuch importieren",
+    "InvalidGitHubURL": "Ungültige GitHub-URL. Sie muss auf ein gültiges GitHub-Repository verweisen.",
+    "InvalidGitLabURL": "Ungültige GitLab-URL. Muss eine gültige GitLab-Repository-URL sein.",
     "InvalidNotebookURL": "Ungültige Notebook-URL.",
     "NoNotebookCode": "Notebook-Adresse ist leer. Bitte geben Sie einen gültigen Notebook-Code ein, um den Badge-Code zu kopieren.",
     "NoSuitableResourceFoundOnGivenURL": "Unter der angegebenen URL wurde keine geeignete Ressource gefunden.",
@@ -751,8 +754,11 @@
     "Preparing": "Vorbereitung...",
     "ReadyToImport": "Bereit zum Importieren",
     "RepoWillBeFolder": "Importierte GitHub-Repositorys werden in Ordner konvertiert und können beim Sitzungsstart gemountet werden.",
+    "RepositoryNotFound": "Repository nicht gefunden.",
+    "StorageHost": "Speicherhost",
+    "VFolderUsageMode": "Ordnernutzungsmodus",
     "WrongURLType": "Falscher URL-Typ",
-    "YouCanCreateNotebookCode": "Geben Sie die Notebook-URL ein, um einen Badge-Code wie unten zu erstellen, den Sie direkt auf Backend.AI ausführen können."
+    "YouCanCreateNotebookCode": "Dieses Abzeichen ermöglicht die direkte Ausführung Ihres Notebooks auf Backend.AI. Kopieren Sie den Code, um ihn überall zu verwenden."
   },
   "information": {
     "APIVersion": "API-Version",

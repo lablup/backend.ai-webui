@@ -723,6 +723,7 @@
     "CreateButtonCode": "Buat",
     "CreateNotebookButton": "Buat Butang Notebook",
     "Downloading": "Memuat turun ...",
+    "FailedToFetchRepositoryInformation": "Gagal mendapatkan maklumat repositori.",
     "FolderAlreadyExists": "Terdapat folder dengan nama yang sama. nama akan dinamakan semula.",
     "FolderCreated": "Folder Dicipta.",
     "FolderName": "Nama folder yang diimport:",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "Import Repositori GitHub",
     "ImportGitlabRepo": "Import Repositori GitLab",
     "ImportNotebook": "Import Notebook",
+    "InvalidGitHubURL": "URL GitHub tidak sah. Mesti merupakan URL repositori GitHub yang sah.",
+    "InvalidGitLabURL": "URL GitLab tidak sah. Mesti merupakan URL repositori GitLab yang sah.",
     "InvalidNotebookURL": "URL Notebook tidak sah.",
     "NoNotebookCode": "Alamat Notebook kosong. Sila masukkan kod buku nota yang sah untuk menyalin kod lencana.",
     "NoSuitableResourceFoundOnGivenURL": "Tiada sumber yang sesuai dijumpai pada URL yang diberikan.",
@@ -750,8 +753,11 @@
     "Preparing": "Menyiapkan ...",
     "ReadyToImport": "Sedia Diimport",
     "RepoWillBeFolder": "Repositori GitHub yang diimport ditukar menjadi folder dan boleh dipasang semasa sesi dimulakan.",
+    "RepositoryNotFound": "Repositori tidak dijumpai.",
+    "StorageHost": "Hos Penyimpanan",
+    "VFolderUsageMode": "Mod Penggunaan Folder",
     "WrongURLType": "Jenis URL yang salah",
-    "YouCanCreateNotebookCode": "Masukkan URL buku nota untuk membuat kod lencana seperti di bawah yang boleh anda jalankan terus di Backend.AI."
+    "YouCanCreateNotebookCode": "Lencana ini membolehkan notebook anda dijalankan terus di Backend.AI. Salin kod untuk menggunakannya di mana-mana."
   },
   "information": {
     "APIVersion": "Versi API",

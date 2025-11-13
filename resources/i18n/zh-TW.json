@@ -723,6 +723,7 @@
     "CreateButtonCode": "創造",
     "CreateNotebookButton": "創建筆記本按鈕",
     "Downloading": "正在下載...",
+    "FailedToFetchRepositoryInformation": "無法取得儲存庫資訊。",
     "FolderAlreadyExists": "有一個同名文件夾。名稱將被重命名。",
     "FolderCreated": "文件夾已創建。",
     "FolderName": "導入的文件夾名稱：",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "導入 GitHub 存儲庫",
     "ImportGitlabRepo": "导入 GitLab 仓库",
     "ImportNotebook": "進口筆記本",
+    "InvalidGitHubURL": "無效的 GitHub URL。必須為有效的 GitHub 儲存庫 URL。",
+    "InvalidGitLabURL": "無效的 GitLab URL。必須為有效的 GitLab 儲存庫 URL。",
     "InvalidNotebookURL": "筆記本 URL 無效。",
     "NoNotebookCode": "筆記本地址為空。請輸入有效的筆記本代碼以復制胸卡代碼。",
     "NoSuitableResourceFoundOnGivenURL": "在給定的 URL 上找不到合適的資源。",
@@ -750,8 +753,11 @@
     "Preparing": "正在準備...",
     "ReadyToImport": "準備進口",
     "RepoWillBeFolder": "導入的 GitHub 存儲庫轉換為文件夾，並且可以在會話開始時掛載。",
+    "RepositoryNotFound": "找不到儲存庫。",
+    "StorageHost": "儲存主機",
+    "VFolderUsageMode": "資料夾使用模式",
     "WrongURLType": "錯誤的網址類型",
-    "YouCanCreateNotebookCode": "輸入筆記本 URL 以創建如下所示的徽章代碼，您可以直接在 Backend.AI 上運行。"
+    "YouCanCreateNotebookCode": "此徽章可讓您的筆記本在 Backend.AI 上直接執行。複製程式碼以在任何地方使用。"
   },
   "information": {
     "APIVersion": "接口版本",

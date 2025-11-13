@@ -217,8 +217,6 @@ const SessionLauncherPage = () => {
   });
 
   const { search } = useLocation();
-
-  // const { moveTo } = useWebComponentInfo();
   const webuiNavigate = useWebUINavigate();
 
   const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =

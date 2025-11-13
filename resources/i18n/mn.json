@@ -722,6 +722,7 @@
     "CreateButtonCode": "Үүсгэх",
     "CreateNotebookButton": "Jupyter Notebook товчлуур үүсгэх",
     "Downloading": "Татаж авч байна ...",
+    "FailedToFetchRepositoryInformation": "Репозиторийн мэдээллийг авахад амжилтгүй боллоо.",
     "FolderAlreadyExists": "Ижил нэртэй хавтас байна. Нэр өөрчлөгдөнө.",
     "FolderCreated": "Хавтас үүсгэсэн.",
     "FolderName": "Импортын фолдерын нэр:",
@@ -738,6 +739,8 @@
     "ImportGithubRepo": "GitHub репозиторыг импортлох",
     "ImportGitlabRepo": "GitLab репозиторыг импортлох",
     "ImportNotebook": "Импортлох Jupyter Notebook",
+    "InvalidGitHubURL": "GitHub-ийн URL буруу байна. Үнэн зөв GitHub репозиторийн URL оруулна уу.",
+    "InvalidGitLabURL": "GitLab URL буруу байна. Хүчинтэй GitLab репозитори хаяг байх ёстой.",
     "InvalidNotebookURL": "Тэмдэглэлийн дэвтрийн URL буруу байна.",
     "NoNotebookCode": "Тэмдэглэлийн Jupyter Notebook хаяг хоосон байна. Тэмдгийн кодыг хуулахын тулд хүчинтэй Jupyter Notebook кодыг оруулна уу.",
     "NoSuitableResourceFoundOnGivenURL": "Өгөгдсөн URL дээр тохирох нөөц олдсонгүй.",
@@ -749,8 +752,11 @@
     "Preparing": "Бэлтгэж байна ...",
     "ReadyToImport": "Импортлоход бэлэн байна",
     "RepoWillBeFolder": "Импортоор оруулсан GitHub репозиторыг фолдер болгон хөрвүүлдэг бөгөөд Session эхлэхэд холбож болдог.",
+    "RepositoryNotFound": "Репозитор олдсонгүй.",
+    "StorageHost": "Хадгалах хост",
+    "VFolderUsageMode": "Хавтас ашиглалтын горим",
     "WrongURLType": "Буруу URL төрөл",
-    "YouCanCreateNotebookCode": "Jupyter Notebookийн URL хаягаа оруулаад Backend.AI дээр шууд ажиллуулах боломжтой тэмдгийн кодыг үүсгээрэй."
+    "YouCanCreateNotebookCode": "Энэхүү шошго нь таны тэмдэглэлийн дэвтрийг Backend.AI дээр шууд ажиллуулах боломжийг олгоно. Кодыг хаана ч ашиглахын тулд хуулж аваарай."
   },
   "information": {
     "APIVersion": "API хувилбар",

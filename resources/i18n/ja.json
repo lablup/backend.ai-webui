@@ -723,6 +723,7 @@
     "CreateButtonCode": "作成する",
     "CreateNotebookButton": "ノートブック実行ボタン生成",
     "Downloading": "ダウンロード中...",
+    "FailedToFetchRepositoryInformation": "リポジトリ情報の取得に失敗しました。",
     "FolderAlreadyExists": "同じ名前のフォルダがあります。名前が変更されます。",
     "FolderCreated": "フォルダが作成されました。",
     "FolderName": "インポートされたフォルダ名：",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "GitHubリポジトリをインポートする",
     "ImportGitlabRepo": "GitLabリポジトリ取り込み",
     "ImportNotebook": "ノートブック取り込み",
+    "InvalidGitHubURL": "無効なGitHub URLです。有効なGitHubリポジトリのURLを指定してください。",
+    "InvalidGitLabURL": "GitLab の URL が無効です。正しい GitLab リポジトリの URL を指定してください。",
     "InvalidNotebookURL": "ノートブックの URL が無効です。",
     "NoNotebookCode": "ノートブックアドレスが空です。バッジコードをコピーするには、有効なノートブックコードを入力してください。",
     "NoSuitableResourceFoundOnGivenURL": "指定されたURLに適切なリソースが見つかりません。",
@@ -750,8 +753,11 @@
     "Preparing": "準備...",
     "ReadyToImport": "インポートする準備ができました",
     "RepoWillBeFolder": "インポートされたGitHubリポジトリはフォルダーに変換され、セッションの開始時にマウントできます。",
+    "RepositoryNotFound": "リポジトリが見つかりません。",
+    "StorageHost": "ストレージホスト",
+    "VFolderUsageMode": "フォルダ利用モード",
     "WrongURLType": "間違ったURLタイプ",
-    "YouCanCreateNotebookCode": "ノートブックのURLを入力すると、Backend.AIで直接実行できる以下のようなバッジコードを生成します。"
+    "YouCanCreateNotebookCode": "このバッジを使うと、ノートブックを Backend.AI 上で直接実行できます。コードをコピーして任意の場所でご利用ください。"
   },
   "information": {
     "APIVersion": "APIバージョン",

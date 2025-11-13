@@ -724,6 +724,7 @@
     "CreateButtonCode": "Cree",
     "CreateNotebookButton": "Botón Crear bloc de notas",
     "Downloading": "Descargando...",
+    "FailedToFetchRepositoryInformation": "No se pudo obtener la información del repositorio.",
     "FolderAlreadyExists": "Existe una carpeta con el mismo nombre. Se cambiará el nombre.",
     "FolderCreated": "Carpeta creada.",
     "FolderName": "Nombre de la carpeta importada:",
@@ -740,6 +741,8 @@
     "ImportGithubRepo": "Importar repositorio GitHub",
     "ImportGitlabRepo": "Importar repositorio GitLab",
     "ImportNotebook": "Importar cuaderno",
+    "InvalidGitHubURL": "URL de GitHub inválida. Debe ser una URL válida de un repositorio de GitHub.",
+    "InvalidGitLabURL": "URL de GitLab no válida. Debe corresponder a la URL de un repositorio de GitLab.",
     "InvalidNotebookURL": "URL del cuaderno no válida.",
     "NoNotebookCode": "La dirección del cuaderno está vacía. Introduzca un código de libreta válido para copiar el código de identificación.",
     "NoSuitableResourceFoundOnGivenURL": "No se ha encontrado ningún recurso adecuado en la URL indicada.",
@@ -751,8 +754,11 @@
     "Preparing": "Preparando...",
     "ReadyToImport": "Listo para importar",
     "RepoWillBeFolder": "Los repositorios de GitHub importados se convierten en carpetas y se pueden montar al iniciar la sesión.",
+    "RepositoryNotFound": "Repositorio no encontrado.",
+    "StorageHost": "Host de almacenamiento",
+    "VFolderUsageMode": "Modo de uso de la carpeta",
     "WrongURLType": "Tipo de URL incorrecto",
-    "YouCanCreateNotebookCode": "Introduce la URL del cuaderno para crear un código de insignia como el siguiente que puedes ejecutar directamente en Backend.AI."
+    "YouCanCreateNotebookCode": "Esta insignia habilita la ejecución directa de tu notebook en Backend.AI. Copia el código para usarlo en cualquier lugar."
   },
   "information": {
     "APIVersion": "Versión API",

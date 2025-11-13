@@ -142,6 +142,14 @@ type KeypairInfoField =
 
 export type BackendAIClient = {
   vfolder: {
+    create: (
+      name: string,
+      host: string,
+      group: string,
+      usageMode: string,
+      permissions: string,
+      cloneable?: boolean,
+    ) => Promise<any>;
     list: (path: string) => Promise<any>;
     list_hosts: () => Promise<any>;
     list_all_hosts: () => Promise<any>;

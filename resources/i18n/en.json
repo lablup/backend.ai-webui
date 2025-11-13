@@ -729,6 +729,7 @@
     "CreateButtonCode": "Create",
     "CreateNotebookButton": "Create Notebook Button",
     "Downloading": "Downloading...",
+    "FailedToFetchRepositoryInformation": "Failed to fetch repository information.",
     "FolderAlreadyExists": "There is a folder with the same name. name will be renamed.",
     "FolderCreated": "Folder Created.",
     "FolderName": "Imported folder name: ",
@@ -745,6 +746,8 @@
     "ImportGithubRepo": "Import GitHub Repository",
     "ImportGitlabRepo": "Import GitLab Repository",
     "ImportNotebook": "Import Notebook",
+    "InvalidGitHubURL": "Invalid GitHub URL. Must be a valid GitHub repository URL",
+    "InvalidGitLabURL": "Invalid GitLab URL. Must be a valid GitLab repository URL",
     "InvalidNotebookURL": "Invalid Notebook URL.",
     "NoNotebookCode": "Notebook Address is empty. Please input a valid notebook code to copy the badge code.",
     "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
@@ -756,8 +759,11 @@
     "Preparing": "Preparing...",
     "ReadyToImport": "Ready To Import",
     "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
+    "RepositoryNotFound": "Repository Not Found.",
+    "StorageHost": "Storage Host",
+    "VFolderUsageMode": "Folder Usage Mode",
     "WrongURLType": "Wrong URL Type",
-    "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI."
+    "YouCanCreateNotebookCode": "This badge enables direct execution of your notebook on Backend.AI. Copy the code to use it anywhere."
   },
   "information": {
     "APIVersion": "API version",

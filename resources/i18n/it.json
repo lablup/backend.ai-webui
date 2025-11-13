@@ -723,6 +723,7 @@
     "CreateButtonCode": "Creare",
     "CreateNotebookButton": "Pulsante Crea blocco appunti",
     "Downloading": "Download in corso...",
+    "FailedToFetchRepositoryInformation": "Impossibile recuperare le informazioni del repository.",
     "FolderAlreadyExists": "C'è una cartella con lo stesso nome. nome verrà rinominato.",
     "FolderCreated": "Cartella creata.",
     "FolderName": "Nome della cartella importata:",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "Importa repository GitHub",
     "ImportGitlabRepo": "Importare il repository GitLab",
     "ImportNotebook": "Importa taccuino",
+    "InvalidGitHubURL": "URL GitHub non valido. Deve essere l'URL di un repository GitHub valido.",
+    "InvalidGitLabURL": "URL GitLab non valido. Deve essere l'URL di un repository GitLab valido.",
     "InvalidNotebookURL": "URL del blocco note non valido.",
     "NoNotebookCode": "L'indirizzo del blocco note è vuoto. Si prega di inserire un codice notebook valido per copiare il codice badge.",
     "NoSuitableResourceFoundOnGivenURL": "Nessuna risorsa adatta trovata sull'URL specificato.",
@@ -750,8 +753,11 @@
     "Preparing": "Preparazione...",
     "ReadyToImport": "Pronto per l'importazione",
     "RepoWillBeFolder": "I repository GitHub importati vengono convertiti in cartelle e possono essere montati all'avvio della sessione.",
+    "RepositoryNotFound": "Repository non trovato.",
+    "StorageHost": "Host di archiviazione",
+    "VFolderUsageMode": "Modalità di utilizzo della cartella",
     "WrongURLType": "Tipo di URL errato",
-    "YouCanCreateNotebookCode": "Inserisci l'URL del notebook per creare un codice badge come di seguito che puoi eseguire direttamente su Backend.AI."
+    "YouCanCreateNotebookCode": "Questo badge consente l'esecuzione diretta del tuo notebook su Backend.AI. Copia il codice per usarlo ovunque."
   },
   "information": {
     "APIVersion": "Versione API",

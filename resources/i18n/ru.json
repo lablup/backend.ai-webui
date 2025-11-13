@@ -723,6 +723,7 @@
     "CreateButtonCode": "Создавать",
     "CreateNotebookButton": "Создать кнопку блокнота",
     "Downloading": "Скачивание ...",
+    "FailedToFetchRepositoryInformation": "Не удалось получить информацию о репозитории.",
     "FolderAlreadyExists": "Есть папка с таким же названием. имя будет переименовано.",
     "FolderCreated": "Папка создана.",
     "FolderName": "Имя импортированной папки:",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "Импортировать репозиторий GitHub",
     "ImportGitlabRepo": "Импорт репозитория GitLab",
     "ImportNotebook": "Импортировать блокнот",
+    "InvalidGitHubURL": "Недействительный URL GitHub. Должен быть действительный URL репозитория на GitHub.",
+    "InvalidGitLabURL": "Недействительный URL GitLab. Должен быть корректным URL репозитория GitLab.",
     "InvalidNotebookURL": "Неверный URL-адрес блокнота.",
     "NoNotebookCode": "Адресблокнота пуст. Пожалуйста, введите действующий код записной книжки, чтобы скопировать код значка.",
     "NoSuitableResourceFoundOnGivenURL": "По данному URL не найдено подходящего ресурса.",
@@ -750,8 +753,11 @@
     "Preparing": "Подготовка ...",
     "ReadyToImport": "Готовы к импорту",
     "RepoWillBeFolder": "Импортированные репозитории GitHub преобразуются в папки и могут быть подключены при запуске сеанса.",
+    "RepositoryNotFound": "Репозиторий не найден.",
+    "StorageHost": "Хост хранения",
+    "VFolderUsageMode": "Режим использования папки",
     "WrongURLType": "Неверный тип URL",
-    "YouCanCreateNotebookCode": "Введите URL-адрес блокнота, чтобы создать код значка, как показано ниже, который можно запустить непосредственно на Backend.AI."
+    "YouCanCreateNotebookCode": "Этот значок позволяет запускать ваш ноутбук напрямую на Backend.AI. Скопируйте код, чтобы использовать его где угодно."
   },
   "information": {
     "APIVersion": "Версия API",

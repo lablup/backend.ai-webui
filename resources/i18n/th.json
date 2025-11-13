@@ -713,6 +713,7 @@
     "CreateButtonCode": "สร้าง",
     "CreateNotebookButton": "สร้างปุ่มโน้ตบุ๊ก",
     "Downloading": "กำลังดาวน์โหลด...",
+    "FailedToFetchRepositoryInformation": "ไม่สามารถดึงข้อมูลรีโพสิทอรีได้",
     "FolderAlreadyExists": "มีโฟลเดอร์ชื่อเดียวกันอยู่แล้ว ชื่อจะถูกเปลี่ยน",
     "FolderCreated": "สร้างโฟลเดอร์แล้ว",
     "FolderName": "ชื่อโฟลเดอร์ที่นำเข้า: ",
@@ -729,6 +730,8 @@
     "ImportGithubRepo": "นำเข้าพื้นที่เก็บข้อมูล GitHub",
     "ImportGitlabRepo": "นำเข้าพื้นที่เก็บข้อมูล GitLab",
     "ImportNotebook": "นำเข้าโน้ตบุ๊ก",
+    "InvalidGitHubURL": "URL ของ GitHub ไม่ถูกต้อง ต้องเป็น URL ของ repository บน GitHub ที่ถูกต้อง",
+    "InvalidGitLabURL": "URL ของ GitLab ไม่ถูกต้อง ต้องเป็น URL ของรีโพซิทอรี GitLab ที่ถูกต้อง",
     "InvalidNotebookURL": "URL สมุดบันทึกไม่ถูกต้อง",
     "NoNotebookCode": "ที่อยู่โน้ตบุ๊กว่างเปล่า กรุณาป้อนรหัสโน้ตบุ๊กที่ถูกต้องเพื่อคัดลอกรหัสป้ายกำกับ",
     "NoSuitableResourceFoundOnGivenURL": "ไม่พบทรัพยากรที่เหมาะสมบน URL ที่ให้มา",
@@ -740,8 +743,11 @@
     "Preparing": "กำลังเตรียมการ...",
     "ReadyToImport": "พร้อมนำเข้า",
     "RepoWillBeFolder": "พื้นที่เก็บข้อมูล GitHub ที่นำเข้าจะถูกแปลงเป็นโฟลเดอร์และสามารถเมาท์ได้เมื่อเริ่มเซสชัน",
+    "RepositoryNotFound": "ไม่พบที่เก็บ.",
+    "StorageHost": "โฮสต์ที่เก็บข้อมูล",
+    "VFolderUsageMode": "โหมดการใช้งานโฟลเดอร์",
     "WrongURLType": "ประเภท URL ไม่ถูกต้อง",
-    "YouCanCreateNotebookCode": "ป้อน URL โน้ตบุ๊กเพื่อสร้างรหัสป้ายกำกับเช่นด้านล่างที่คุณสามารถรันโดยตรงบน Backend.AI"
+    "YouCanCreateNotebookCode": "ป้ายนี้ช่วยให้รันโน้ตบุ๊กบน Backend.AI ได้โดยตรง คัดลอกโค้ดเพื่อนำไปใช้ได้ทุกที่"
   },
   "information": {
     "APIVersion": "เวอร์ชัน API",

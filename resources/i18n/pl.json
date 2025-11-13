@@ -723,6 +723,7 @@
     "CreateButtonCode": "Stwórz",
     "CreateNotebookButton": "Przycisk Utwórz notatnik",
     "Downloading": "Ściąganie...",
+    "FailedToFetchRepositoryInformation": "Nie udało się pobrać informacji o repozytorium.",
     "FolderAlreadyExists": "Istnieje folder o tej samej nazwie. nazwa zostanie zmieniona.",
     "FolderCreated": "Utworzono folder.",
     "FolderName": "Nazwa importowanego folderu:",
@@ -739,6 +740,8 @@
     "ImportGithubRepo": "Importuj repozytorium GitHub",
     "ImportGitlabRepo": "Importowanie repozytorium GitLab",
     "ImportNotebook": "Importuj notatnik",
+    "InvalidGitHubURL": "Nieprawidłowy adres URL GitHub. Wprowadź prawidłowy adres URL repozytorium GitHub.",
+    "InvalidGitLabURL": "Nieprawidłowy adres URL GitLab. Musi to być prawidłowy adres URL repozytorium GitLab.",
     "InvalidNotebookURL": "Nieprawidłowy adres URL notatnika.",
     "NoNotebookCode": "Adres notatnika jest pusty. Wprowadź prawidłowy kod notebooka, aby skopiować kod plakietki.",
     "NoSuitableResourceFoundOnGivenURL": "Nie znaleziono odpowiedniego zasobu pod podanym adresem URL.",
@@ -750,8 +753,11 @@
     "Preparing": "Przygotowuję...",
     "ReadyToImport": "Gotowy do importu",
     "RepoWillBeFolder": "Zaimportowane repozytoria GitHub są konwertowane na foldery i można je zamontować po rozpoczęciu sesji.",
+    "RepositoryNotFound": "Nie znaleziono repozytorium.",
+    "StorageHost": "Host pamięci masowej",
+    "VFolderUsageMode": "Tryb użycia folderu",
     "WrongURLType": "Nieprawidłowy typ adresu URL",
-    "YouCanCreateNotebookCode": "Wprowadź adres URL notatnika, aby utworzyć kod plakietki, taki jak poniżej, który możesz uruchomić bezpośrednio w Backend.AI."
+    "YouCanCreateNotebookCode": "Ta odznaka umożliwia bezpośrednie uruchamianie Twojego notatnika na Backend.AI. Skopiuj kod, aby użyć go w dowolnym miejscu."
   },
   "information": {
     "APIVersion": "Wersja API",

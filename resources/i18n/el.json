@@ -721,6 +721,7 @@
     "CreateButtonCode": "Δημιουργώ",
     "CreateNotebookButton": "Δημιουργία κουμπιού σημειωματάριου",
     "Downloading": "Λήψη ...",
+    "FailedToFetchRepositoryInformation": "Αποτυχία ανάκτησης πληροφοριών αποθετηρίου.",
     "FolderAlreadyExists": "Υπάρχει ένας φάκελος με το ίδιο όνομα. το όνομα θα μετονομαστεί.",
     "FolderCreated": "Δημιουργήθηκε φάκελος.",
     "FolderName": "Εισαγόμενο όνομα φακέλου:",
@@ -737,6 +738,8 @@
     "ImportGithubRepo": "Εισαγωγή αποθετηρίου GitHub",
     "ImportGitlabRepo": "Εισαγωγή αποθετηρίου GitLab",
     "ImportNotebook": "Εισαγωγή σημειωματάριου",
+    "InvalidGitHubURL": "Μη έγκυρο URL GitHub. Πρέπει να είναι URL έγκυρου αποθετηρίου στο GitHub.",
+    "InvalidGitLabURL": "Μη έγκυρη διεύθυνση URL GitLab. Πρέπει να είναι έγκυρη διεύθυνση URL αποθετηρίου GitLab.",
     "InvalidNotebookURL": "Μη έγκυρη διεύθυνση URL σημειωματάριου.",
     "NoNotebookCode": "Η διεύθυνση Notebook είναι κενή. Εισαγάγετε έναν έγκυρο κωδικό σημειωματάριου για να αντιγράψετε τον κωδικό σήματος.",
     "NoSuitableResourceFoundOnGivenURL": "Δεν βρέθηκε κατάλληλος πόρος σε δεδομένη διεύθυνση URL.",
@@ -748,8 +751,11 @@
     "Preparing": "Προετοιμασία ...",
     "ReadyToImport": "Έτοιμο για εισαγωγή",
     "RepoWillBeFolder": "Τα εισαγόμενα αποθετήρια GitHub μετατρέπονται σε φακέλους και μπορούν να προσαρτηθούν κατά την έναρξη της περιόδου λειτουργίας.",
+    "RepositoryNotFound": "Το αποθετήριο δεν βρέθηκε.",
+    "StorageHost": "Διακομιστής αποθήκευσης",
+    "VFolderUsageMode": "Τρόπος χρήσης φακέλου",
     "WrongURLType": "Λάθος τύπος διεύθυνσης URL",
-    "YouCanCreateNotebookCode": "Εισαγάγετε τη διεύθυνση URL του σημειωματάριου για να δημιουργήσετε έναν κωδικό σήματος όπως παρακάτω, τον οποίο μπορείτε να εκτελέσετε απευθείας στο Backend.AI."
+    "YouCanCreateNotebookCode": "Αυτό το σήμα επιτρέπει την άμεση εκτέλεση του σημειωματάριού σας στο Backend.AI. Αντιγράψτε τον κώδικα για να τον χρησιμοποιήσετε οπουδήποτε."
   },
   "information": {
     "APIVersion": "Έκδοση API",

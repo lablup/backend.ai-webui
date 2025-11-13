@@ -363,8 +363,6 @@ const router = createBrowserRouter([
           return (
             <>
               <ImportAndRunPage />
-              {/* @ts-ignore */}
-              <backend-ai-import-view active class="page" name="import" />
             </>
           );
         },
