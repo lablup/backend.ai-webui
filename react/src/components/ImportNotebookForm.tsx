@@ -32,10 +32,18 @@ const regularizeGithubURL = (url: string) => {
 
 const notebookURLPattern = new RegExp('^(https?)://([\\w./-]{1,}).ipynb$');
 
-const ImportNotebookForm: React.FC<FormProps> = (props) => {
+interface ImportNotebookFormProps extends FormProps {
+  initialUrl?: string;
+}
+const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
+  initialUrl,
+  ...props
+}) => {
+  'use memo';
   const formRef = useRef<FormInstance<{
     url: string;
   }> | null>(null);
+
   const { t } = useTranslation();
   const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
@@ -80,7 +88,15 @@ const ImportNotebookForm: React.FC<FormProps> = (props) => {
   };
 
   return (
-    <Form ref={formRef} layout="vertical" {...props}>
+    <Form
+      ref={formRef}
+      layout="vertical"
+      initialValues={{ url: initialUrl }}
+      onFinish={async (values) => {
+        await handleNotebookImport(values.url);
+      }}
+      {...props}
+    >
       <Form.Item
         name="url"
         label={t('import.NotebookURL')}
@@ -108,12 +124,7 @@ const ImportNotebookForm: React.FC<FormProps> = (props) => {
         type="primary"
         block
         action={async () => {
-          const values = await formRef.current
-            ?.validateFields()
-            .catch(() => undefined);
-          if (values) {
-            await handleNotebookImport(values.url);
-          }
+          formRef.current?.submit();
         }}
       >
         {t('import.GetAndRunNotebook')}
@@ -130,29 +141,26 @@ const ImportNotebookForm: React.FC<FormProps> = (props) => {
         <Form.Item dependencies={[['url']]}>
           {({ getFieldValue }) => {
             const url = getFieldValue('url') || '';
-            const rawURL = regularizeGithubURL(url);
-            const badgeURL = rawURL.replace(
-              'https://raw.githubusercontent.com/',
-              '',
-            );
-            let baseURL = '';
 
+            // Create the new format URL with encoded JSON data
+            const importData = { url };
+            const encodedData = encodeURIComponent(JSON.stringify(importData));
+
+            let baseURL = '';
             if (globalThis.isElectron) {
-              baseURL = 'https://cloud.backend.ai/github?';
+              baseURL = 'https://cloud.backend.ai';
             } else {
               baseURL =
                 window.location.protocol + '//' + window.location.hostname;
               if (window.location.port) {
                 baseURL = baseURL + ':' + window.location.port;
               }
-              baseURL = baseURL + '/github?';
             }
-            const fullText = `<a href="${
-              baseURL + badgeURL
-            }"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-            const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${
-              baseURL + badgeURL
-            })`;
+
+            const badgeURL = `${baseURL}/start?type=url&data=${encodedData}`;
+
+            const fullText = `<a href="${badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+            const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${badgeURL})`;
 
             const isValidURL =
               notebookURLPattern.test(url) && url.length <= 2048;
@@ -193,5 +201,8 @@ const ImportNotebookForm: React.FC<FormProps> = (props) => {
     </Form>
   );
 };
+
+// Add display name for debugging
+ImportNotebookForm.displayName = 'ImportNotebookForm';
 
 export default ImportNotebookForm;

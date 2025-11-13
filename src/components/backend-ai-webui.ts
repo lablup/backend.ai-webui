@@ -641,10 +641,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
     ];
 
-    if (this._page === 'start') {
-      this._moveTo('/start');
-    }
-
     // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages

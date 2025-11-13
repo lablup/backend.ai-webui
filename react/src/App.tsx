@@ -68,7 +68,6 @@ const ServiceLauncherUpdatePage = React.lazy(
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
-const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
@@ -356,15 +355,20 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      // Redirect paths for backward compatibility
       {
         path: '/import',
-        handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
-          return (
-            <>
-              <ImportAndRunPage />
-            </>
-          );
+          const location = useLocation();
+          return <WebUINavigate to={'/start' + location.search} replace />;
+        },
+      },
+      // Redirect paths for legacy support
+      {
+        path: '/github',
+        Component: () => {
+          const location = useLocation();
+          return <WebUINavigate to={'/start' + location.search} replace />;
         },
       },
       {

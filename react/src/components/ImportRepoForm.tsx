@@ -35,6 +35,8 @@ interface ImportFromURLFormValues {
 
 interface ImportFromURLFormProps extends FormProps {
   urlType: URLType;
+  initialUrl?: string;
+  initialBranch?: string;
 }
 
 const createRepoBootstrapScript = (
@@ -71,6 +73,8 @@ const createRepoBootstrapScript = (
 
 const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   urlType,
+  initialUrl,
+  initialBranch,
   ...formProps
 }) => {
   'use memo';
@@ -268,6 +272,8 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       initialValues={
         {
           vfolder_usage_mode: 'general',
+          url: initialUrl,
+          gitlabBranch: initialBranch,
         } as ImportFromURLFormValues
       }
     >
