@@ -47,9 +47,6 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
-  const [classicSessionList, setClassicSessionList] = useBAISettingUserState(
-    'classic_session_list',
-  );
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
   const [isClassicDashboardPage, setIsClassicDashboardPage] =
@@ -338,18 +335,6 @@ const UserPreferencesPage = () => {
       title: t('userSettings.BackToClassicFeatures'),
       description: t('userSettings.BackToClassicFeaturesDesc'),
       settingItems: [
-        {
-          'data-testid': 'items-experimental-neo-session-list',
-          type: 'checkbox',
-          title: t('userSettings.ClassicSessionList'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: classicSessionList,
-          setValue: setClassicSessionList,
-          onChange: (e) => {
-            setClassicSessionList(e.target.checked);
-          },
-        },
         {
           'data-testid': 'items-classic-dashboard',
           type: 'checkbox',

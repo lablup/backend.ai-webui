@@ -203,14 +203,7 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Sessions' },
         Component: () => {
           const location = useLocation();
-          const [classic_session_list] = useBAISettingUserState(
-            'classic_session_list',
-          );
-          return classic_session_list ? (
-            <SessionDetailAndContainerLogOpenerLegacy />
-          ) : (
-            <WebUINavigate to={'/session' + location.search} replace />
-          );
+          return <WebUINavigate to={'/session' + location.search} replace />;
         },
       },
       {
@@ -220,14 +213,9 @@ const router = createBrowserRouter([
           {
             path: '',
             Component: () => {
-              const location = useLocation();
-              const [classicSessionList] = useBAISettingUserState(
-                'classic_session_list',
-              );
-
               useSuspendedBackendaiClient();
 
-              return !classicSessionList ? (
+              return (
                 <Suspense
                   fallback={
                     <Skeleton active />
@@ -237,8 +225,6 @@ const router = createBrowserRouter([
                   <ComputeSessionListPage />
                   <SessionDetailAndContainerLogOpenerLegacy />
                 </Suspense>
-              ) : (
-                <WebUINavigate to={'/job' + location.search} replace />
               );
             },
           },
