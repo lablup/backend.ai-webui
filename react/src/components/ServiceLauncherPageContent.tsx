@@ -775,26 +775,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         >
                           <Input disabled={!!endpoint} />
                         </Form.Item>
-                        <Form.Item
-                          valuePropName="checked"
-                          dependencies={['openToPublic']}
-                        >
-                          {({ getFieldValue, setFieldValue }) => (
-                            <Form.Item name="openToPublic" noStyle>
-                              <BAIFlex gap={'xs'}>
-                                <Checkbox
-                                  checked={getFieldValue('openToPublic')}
-                                  onChange={(e) =>
-                                    setFieldValue(
-                                      ['openToPublic'],
-                                      e.target.checked,
-                                    )
-                                  }
-                                />
-                                {t('modelService.OpenToPublic')}
-                              </BAIFlex>
-                            </Form.Item>
-                          )}
+                        <Form.Item name="openToPublic" valuePropName="checked">
+                          <Checkbox>{t('modelService.OpenToPublic')}</Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
