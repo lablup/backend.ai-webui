@@ -135,6 +135,15 @@
       "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Хуурамч байдлын бүртгэл олдсонгүй.",
+    "HuggingFaceSettings": "Hugging Face тэвэрч \"Тохиргоо",
+    "NoChangesToSave": "Хадгалах өөрчлөлт байхгүй",
+    "ResetTokenConfirm": "Токенийг дахин тохируулах",
+    "ResetTokenConfirmMessage": "Токен хоосон харагдаж байна. \nТа үүнийг шинэ утгатай эхлүүлэхийг хүсч байна уу?",
+    "Token": "Томог",
+    "TokenUpdatedSuccessfully": "Токен амжилттай шинэчлэгдсэн."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
   },
@@ -156,6 +165,8 @@
       "Delete": "Эдгээх",
       "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
+      "Reset": "Нөөц",
+      "Save": "Аврах",
       "Upload": "Байршуулах"
     },
     "modal": {

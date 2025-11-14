@@ -135,6 +135,15 @@
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "ไม่พบรีจิสทรี Hugging Face",
+    "HuggingFaceSettings": "การตั้งค่า Hugging Face",
+    "NoChangesToSave": "ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก",
+    "ResetTokenConfirm": "รีเซ็ตโทเค็น",
+    "ResetTokenConfirmMessage": "โทเค็นดูเหมือนจะว่างเปล่า \nคุณต้องการเริ่มต้นด้วยค่าใหม่หรือไม่?",
+    "Token": "โทเค็น",
+    "TokenUpdatedSuccessfully": "อัปเดตโทเค็นเรียบร้อยแล้ว"
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
@@ -156,6 +165,8 @@
       "Delete": "ลบ",
       "Expand": "ขยาย",
       "Remove": "ลบ",
+      "Reset": "รีเซ็ต",
+      "Save": "บันทึก",
       "Upload": "อัพโหลด"
     },
     "modal": {

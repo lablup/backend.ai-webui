@@ -130,6 +130,15 @@
     "UploadFolder": "Klasörü Yükle",
     "error": {}
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "Hugging Face Kaydı bulunamadı.",
+    "HuggingFaceSettings": "Hugging Face Ayarları",
+    "NoChangesToSave": "Kaydedilecek değişiklik yok",
+    "ResetTokenConfirm": "Jetonu Sıfırla",
+    "ResetTokenConfirmMessage": "Jeton boş görünüyor. \nYeni bir değerle başlatmak ister misiniz?",
+    "Token": "Jeton",
+    "TokenUpdatedSuccessfully": "Jeton başarıyla güncellendi."
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
   },
@@ -151,6 +160,8 @@
       "Delete": "Silmek",
       "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
+      "Reset": "Sıfırla",
+      "Save": "Kaydetmek",
       "Upload": "Yüklemek"
     },
     "modal": {

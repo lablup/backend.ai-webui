@@ -135,6 +135,16 @@
       "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFace 토큰을 입력하세요",
+    "HuggingFaceRegistryNotFound": "허깅 페이스 레지스트리를 찾을 수 없습니다.",
+    "HuggingFaceSettings": "허깅 페이스 설정",
+    "NoChangesToSave": "변경 사항이 없습니다",
+    "ResetTokenConfirm": "토큰 초기화",
+    "ResetTokenConfirmMessage": "토큰이 비어있는 것 같습니다. 새로운 값으로 초기화하시겠습니까?",
+    "Token": "토큰",
+    "TokenUpdatedSuccessfully": "토큰이 성공적으로 업데이트되었습니다."
+  },
   "comp:PaginationInfoText": {
     "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
   },
@@ -156,6 +166,8 @@
       "Delete": "삭제",
       "Expand": "펼치기",
       "Remove": "제거",
+      "Reset": "초기화",
+      "Save": "저장",
       "Upload": "업로드"
     },
     "modal": {

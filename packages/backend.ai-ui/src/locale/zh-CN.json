@@ -135,6 +135,15 @@
       "FileNameRequired": "请输入文件或文件夹名称。"
     }
   },
+  "comp:HuggingFaceRegistrySettingModal": {
+    "HuggingFaceRegistryNotFound": "未找到 Hugging Face 注册表。",
+    "HuggingFaceSettings": "Hugging Face设置",
+    "NoChangesToSave": "没有要保存的更改",
+    "ResetTokenConfirm": "重置令牌",
+    "ResetTokenConfirmMessage": "该令牌似乎是空的。\n您想用新值初始化它吗？",
+    "Token": "代币",
+    "TokenUpdatedSuccessfully": "令牌更新成功。"
+  },
   "comp:PaginationInfoText": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
@@ -156,6 +165,8 @@
       "Delete": "删除",
       "Expand": "扩张",
       "Remove": "消除",
+      "Reset": "重置",
+      "Save": "节省",
       "Upload": "上传"
     },
     "modal": {

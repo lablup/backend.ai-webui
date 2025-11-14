@@ -181,6 +181,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'environment',
     'scheduler',
     'resource-policy',
+    'reservoir',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
     'admin-dashboard',
