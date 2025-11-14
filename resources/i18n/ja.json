@@ -60,6 +60,7 @@
   "button": {
     "Add": "追加",
     "Apply": "応募する",
+    "AutoRefreshEvery": "{{seconds}}秒ごとに自動更新",
     "Cancel": "キャンセル",
     "Clear": "消去",
     "ClearLogs": "ログをクリアする",

@@ -60,6 +60,7 @@
   "button": {
     "Add": "Tambah",
     "Apply": "Menerapkan",
+    "AutoRefreshEvery": "Segarkan otomatis setiap {{seconds}}s",
     "Cancel": "Batalkan",
     "Clear": "Menghapus",
     "ClearLogs": "Hapus Log",

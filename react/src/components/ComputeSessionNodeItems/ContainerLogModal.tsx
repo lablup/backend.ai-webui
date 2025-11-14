@@ -3,6 +3,7 @@ import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
+import AutoRefreshSwitch from '../AutoRefreshSwitch';
 import BAISelect from '../BAISelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
@@ -217,6 +218,14 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               onClick={() => refetch()}
             />
           </Tooltip>
+          <AutoRefreshSwitch
+            interval={5_000}
+            onRefresh={() => {
+              refetch();
+            }}
+          >
+            {t('button.AutoRefreshEvery', { seconds: 5 })}
+          </AutoRefreshSwitch>
         </BAIFlex>
 
         <div

@@ -60,6 +60,7 @@
   "button": {
     "Add": "Ekle",
     "Apply": "Başvurmak",
+    "AutoRefreshEvery": "Her {{seconds}} saniyede otomatik yenile",
     "Cancel": "İptal etmek",
     "Clear": "Silmek",
     "ClearLogs": "Günlükleri Temizle",

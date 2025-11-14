@@ -60,6 +60,7 @@
   "button": {
     "Add": "เพิ่ม",
     "Apply": "นำมาใช้",
+    "AutoRefreshEvery": "รีเฟรชอัตโนมัติทุก {{seconds}} วินาที",
     "Cancel": "ยกเลิก",
     "Clear": "ล้าง",
     "ClearLogs": "ล้างบันทึก",

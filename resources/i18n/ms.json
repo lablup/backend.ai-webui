@@ -60,6 +60,7 @@
   "button": {
     "Add": "Tambah",
     "Apply": "Mohon",
+    "AutoRefreshEvery": "Segarkan secara automatik setiap {{seconds}}s",
     "Cancel": "Batal",
     "Clear": "Padam",
     "ClearLogs": "Kosongkan Log",
