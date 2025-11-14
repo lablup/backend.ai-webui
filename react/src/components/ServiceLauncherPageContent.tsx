@@ -776,7 +776,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Input disabled={!!endpoint} />
                         </Form.Item>
                         <Form.Item name="openToPublic" valuePropName="checked">
-                          <Checkbox>{t('modelService.OpenToPublic')}</Checkbox>
+                          <Checkbox disabled={!!endpoint}>{t('modelService.OpenToPublic')}</Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
