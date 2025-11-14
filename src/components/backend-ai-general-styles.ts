@@ -310,47 +310,6 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
-    backend-ai-multi-select {
-      /* override for mwc-list */
-      --select-primary-theme: var(
-        --token-colorPrimary,
-        --general-sidebar-color
-      );
-      --select-secondary-theme: var(--general-checkbox-color);
-      --select-color: var(--token-colorText);
-      --select-background-color: var(
-        --token-colorBgElevated,
-        --general-background-color,
-        #efefef
-      );
-      --select-background-border-radius: 5px;
-      --select-box-shadow: var(
-        --token-boxShadow,
-        0 1px 3px -1px rgba(0, 0, 0, 60%),
-        0 3px 12px -1px rgb(200, 200, 200, 80%)
-      );
-      --selected-item-disabled-text-color: var(--token-colorTextDisabled);
-
-      /* override for selected-area */
-      --select-title-font-size: 10px;
-      --selected-area-border-radius: var(--token-borderRadius, 5px);
-      --selected-area-border: none;
-      --selected-area-padding: 5px;
-      --selected-area-min-height: 24px;
-      --selected-area-height: 100%;
-
-      /* override for selected-item */
-      --selected-item-font-family: var(--token-fontFamily);
-      --selected-item-theme-color: #c8ced7;
-      --selected-item-theme-font-color: #182739;
-      --selected-item-unelevated-theme-color: #c8ced7;
-      --selected-item-unelevated-theme-color: #c8ced7;
-      --selected-item-outlined-theme-font-color: black;
-      --selected-item-unelevated-theme-font-color: black;
-      --selected-item-font-size: 14px;
-      --selected-item-text-transform: none;
-    }
-
     div.card {
       display: block;
       background: var(--general-background-color);
