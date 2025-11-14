@@ -1,28 +1,26 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
 import EditableVFolderName from './EditableVFolderName';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
+import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { Button, Tooltip, Image, Grid, theme, Typography } from 'antd';
+import { theme, Typography, Skeleton, Grid } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Ref } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
-  folderExplorerRef: Ref<HTMLDivElement>;
   titleStyle?: React.CSSProperties;
 }
 
 const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   vfolderNodeFrgmt,
-  folderExplorerRef,
   titleStyle,
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { lg } = Grid.useBreakpoint();
 
@@ -38,6 +36,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         ...VFolderNodeIdenticonFragment
         ...EditableVFolderNameFragment
         ...FileBrowserButtonFragment
+        ...SFTPServerButtonFragment
       }
     `,
     vfolderNodeFrgmt,
@@ -99,28 +98,15 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         justify="end"
         gap={token.marginSM}
       >
-        {!vfolderNode?.unmanaged_path && vfolderNode ? (
-          <>
-            <FileBrowserButton vfolderFrgmt={vfolderNode} showTitle={lg} />
-            <Tooltip title={!lg && t('data.explorer.RunSSH/SFTPserver')}>
-              <Button
-                icon={
-                  <Image
-                    width="18px"
-                    src="/resources/icons/sftp.png"
-                    alt="SSH / SFTP"
-                    preview={false}
-                  />
-                }
-                onClick={() => {
-                  // @ts-ignore
-                  folderExplorerRef.current?._executeSSHProxyAgent();
-                }}
-              >
-                {lg && t('data.explorer.RunSSH/SFTPserver')}
-              </Button>
-            </Tooltip>
-          </>
+        {vfolderNode && !vfolderNode?.unmanaged_path ? (
+          <Suspense fallback={<Skeleton.Button active />}>
+            <ErrorBoundaryWithNullFallback>
+              <FileBrowserButton vfolderFrgmt={vfolderNode} showTitle={lg} />
+            </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <SFTPServerButton vfolderFrgmt={vfolderNode} showTitle={lg} />
+            </ErrorBoundaryWithNullFallback>
+          </Suspense>
         ) : null}
       </BAIFlex>
     </BAIFlex>

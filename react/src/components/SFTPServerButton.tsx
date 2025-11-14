@@ -1,0 +1,196 @@
+import { App, Image, Tooltip } from 'antd';
+import {
+  BAIButton,
+  BAIButtonProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
+import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+import { SFTPServerButtonFragment$key } from 'src/__generated__/SFTPServerButtonFragment.graphql';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
+import {
+  useCurrentProjectValue,
+  useResourceGroupsForCurrentProject,
+} from 'src/hooks/useCurrentProject';
+import { useDefaultSystemSSHImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
+import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
+import {
+  startSessionErrorCodes,
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from 'src/hooks/useStartSession';
+
+interface SFTPServerButtonProps extends BAIButtonProps {
+  showTitle?: boolean;
+  vfolderFrgmt: SFTPServerButtonFragment$key;
+}
+
+const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
+  showTitle = true,
+  vfolderFrgmt,
+  ...buttonProps
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { message, modal } = App.useApp();
+
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const currentProject = useCurrentProjectValue();
+  const currentUserAccessKey = baiClient?._config?.accessKey;
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      currentProject.id,
+      currentUserAccessKey,
+    );
+  const { vhostInfo: vhostInfoByCurrentProject } =
+    useResourceGroupsForCurrentProject();
+
+  const { getErrorMessage } = useErrorMessageResolver();
+  const { startSessionWithDefault, upsertSessionNotification } =
+    useStartSession();
+  const { upsertNotification } = useSetBAINotification();
+
+  const { systemSSHImage, systemSSHImageInfo } =
+    useDefaultSystemSSHImageWithFallback();
+
+  console.log('systemSSHImage', systemSSHImageInfo);
+
+  const vfolder = useFragment(
+    graphql`
+      fragment SFTPServerButtonFragment on VirtualFolderNode {
+        id
+        row_id
+        host
+      }
+    `,
+    vfolderFrgmt,
+  );
+
+  // Verify that the current user has access to the volume of the vfolder.
+  // Check the project has SFTP scaling groups for the host of the vfolder.
+  const sftpScalingGroupByCurrentProject =
+    vhostInfoByCurrentProject?.volume_info[vfolder?.host || '']
+      ?.sftp_scaling_groups;
+  // Verify that the current project has access to the volumes in the folder.
+  // Check the user has 'mount-in-session' permission united by domain, project, and keypair resource policy.
+  const hasAccessPermission = _.includes(
+    unitedAllowedPermissionByVolume[vfolder?.host ?? ''],
+    'mount-in-session',
+  );
+
+  const getTooltipTitle = () => {
+    if (!hasAccessPermission) {
+      return t('data.explorer.NoPermissionToMountFolder');
+    } else if (_.isEmpty(sftpScalingGroupByCurrentProject)) {
+      return t('data.explorer.NoSFTPSupportingScalingGroup');
+    } else if (!systemSSHImage) {
+      return t('data.explorer.NoImagesSupportingSystemSession');
+    } else if (!showTitle && systemSSHImage) {
+      return t('data.explorer.RunSSH/SFTPserver');
+    } else return '';
+  };
+
+  return (
+    <Tooltip title={getTooltipTitle()}>
+      <BAIButton
+        disabled={
+          _.isEmpty(sftpScalingGroupByCurrentProject) ||
+          !systemSSHImage ||
+          !hasAccessPermission
+        }
+        icon={
+          <Image
+            width="18px"
+            src="/resources/icons/sftp.png"
+            alt="SSH / SFTP"
+            preview={false}
+          />
+        }
+        action={async () => {
+          const resource: StartSessionWithDefaultValue['resource'] = {
+            cpu:
+              _.toNumber(
+                _.find(systemSSHImageInfo?.resource_limits, { key: 'cpu' })
+                  ?.min,
+              ) || 2,
+            mem:
+              _.find(systemSSHImageInfo?.resource_limits, { key: 'mem' })
+                ?.min || '0.5g',
+          };
+
+          const sftpSessionConf: StartSessionWithDefaultValue = {
+            sessionName: `sftp-${vfolder?.row_id}`,
+            sessionType: 'system',
+            // use default system SSH image if configured and allowed
+            ...(baiClient._config?.systemSSHImage &&
+            baiClient._config?.allow_manual_image_name_for_session
+              ? {
+                  environments: {
+                    manual: baiClient._config.systemSSHImage,
+                  },
+                }
+              : // otherwise use the first image found
+                {
+                  environments: {
+                    version: systemSSHImage || '',
+                  },
+                }),
+            cluster_mode: 'single-node',
+            cluster_size: 1,
+            mount_ids: [vfolder?.row_id?.replaceAll('-', '') || ''],
+            resourceGroup: sftpScalingGroupByCurrentProject?.[0],
+            resource: {
+              cpu: resource.cpu < 2 ? 2 : resource.cpu,
+              mem: resource.mem,
+            },
+          };
+
+          await startSessionWithDefault(sftpSessionConf)
+            .then((results) => {
+              if (results?.fulfilled && results.fulfilled.length > 0) {
+                // set notification key for handling duplicate session creation
+                upsertSessionNotification(results.fulfilled, [
+                  {
+                    key: `sftp-${vfolder?.row_id}`,
+                  },
+                ]);
+              }
+              if (results?.rejected && results.rejected.length > 0) {
+                const error = results.rejected[0].reason;
+                if (
+                  _.includes(
+                    error.message,
+                    startSessionErrorCodes.DUPLICATED_SESSION,
+                  )
+                ) {
+                  upsertNotification({
+                    key: `sftp-${vfolder?.row_id}`,
+                    open: true,
+                  });
+                } else {
+                  modal.error({
+                    title: error?.title,
+                    content: getErrorMessage(error),
+                  });
+                }
+              }
+            })
+            .catch((error) => {
+              console.error('Unexpected error during session creation:', error);
+              message.error(t('error.UnexpectedError'));
+            });
+        }}
+        {...buttonProps}
+      >
+        {showTitle && t('data.explorer.RunSSH/SFTPserver')}
+      </BAIButton>
+    </Tooltip>
+  );
+};
+
+export default SFTPServerButton;

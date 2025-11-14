@@ -1,31 +1,54 @@
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { App, ButtonProps, Image, Tooltip } from 'antd';
-import { BAIButton, useErrorMessageResolver } from 'backend.ai-ui';
+import { App, Image, Tooltip } from 'antd';
+import {
+  BAIButton,
+  BAIButtonProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
+import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { FileBrowserButtonFragment$key } from 'src/__generated__/FileBrowserButtonFragment.graphql';
-import { useDefaultFileBrowserImageWithFallback } from 'src/hooks/useDefaultFileBrowserImageWithFallback';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
+import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
+import { useDefaultFileBrowserImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
+import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 import {
+  startSessionErrorCodes,
   StartSessionWithDefaultValue,
   useStartSession,
 } from 'src/hooks/useStartSession';
 
-interface FileBrowserButtonProps extends ButtonProps {
+interface FileBrowserButtonProps extends BAIButtonProps {
   showTitle?: boolean;
   vfolderFrgmt: FileBrowserButtonFragment$key;
 }
 const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   showTitle = true,
   vfolderFrgmt,
+  ...buttonProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
 
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const currentProject = useCurrentProjectValue();
+  const currentUserAccessKey = baiClient?._config?.accessKey;
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      currentProject.id,
+      currentUserAccessKey,
+    );
+
   const { getErrorMessage } = useErrorMessageResolver();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
+  const { upsertNotification } = useSetBAINotification();
 
   const filebrowserImage = useDefaultFileBrowserImageWithFallback();
 
@@ -34,21 +57,29 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
       fragment FileBrowserButtonFragment on VirtualFolderNode {
         id
         row_id
+        host
       }
     `,
     vfolderFrgmt,
   );
 
+  const hasAccessPermission = _.includes(
+    unitedAllowedPermissionByVolume[vfolder?.host ?? ''],
+    'mount-in-session',
+  );
+
+  const getTooltipTitle = () => {
+    if (!hasAccessPermission) {
+      return t('data.explorer.NoPermissionToMountFolder');
+    } else if (filebrowserImage === null) {
+      return t('data.explorer.NoImagesSupportingFileBrowser');
+    } else if (!showTitle && filebrowserImage) {
+      return t('data.explorer.ExecuteFileBrowser');
+    } else return '';
+  };
+
   return (
-    <Tooltip
-      title={
-        filebrowserImage === null
-          ? t('data.explorer.NoImagesSupportingFileBrowser')
-          : !showTitle &&
-            filebrowserImage &&
-            t('data.explorer.ExecuteFileBrowser')
-      }
-    >
+    <Tooltip title={getTooltipTitle()}>
       <BAIButton
         icon={
           <Image
@@ -65,7 +96,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
             }
           />
         }
-        disabled={!filebrowserImage}
+        disabled={!filebrowserImage || !hasAccessPermission}
         action={async () => {
           if (!filebrowserImage) {
             return;
@@ -100,10 +131,22 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
               }
               if (results?.rejected && results.rejected.length > 0) {
                 const error = results.rejected[0].reason;
-                modal.error({
-                  title: error?.title,
-                  content: getErrorMessage(error),
-                });
+                if (
+                  _.includes(
+                    error.message,
+                    startSessionErrorCodes.DUPLICATED_SESSION,
+                  )
+                ) {
+                  upsertNotification({
+                    key: `filebrowser-${vfolder.row_id}`,
+                    open: true,
+                  });
+                } else {
+                  modal.error({
+                    title: error?.title,
+                    content: getErrorMessage(error),
+                  });
+                }
               }
             })
             .catch((error) => {
@@ -111,6 +154,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
               message.error(t('error.UnexpectedError'));
             });
         }}
+        {...buttonProps}
       >
         {showTitle && t('data.explorer.ExecuteFileBrowser')}
       </BAIButton>

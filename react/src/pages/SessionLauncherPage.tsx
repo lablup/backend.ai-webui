@@ -133,7 +133,7 @@ export interface SessionResources {
 }
 
 interface SessionLauncherValue {
-  sessionType: 'interactive' | 'batch' | 'inference';
+  sessionType: 'interactive' | 'batch' | 'inference' | 'system';
   batch: {
     enabled: boolean;
     scheduleDate?: string;

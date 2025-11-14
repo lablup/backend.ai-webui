@@ -256,7 +256,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
             <Button
               type="primary"
-              disabled={!isActive(session) || !isOwner}
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
+              }
               size={size}
               icon={<BAISftpIcon />}
               onClick={() => {

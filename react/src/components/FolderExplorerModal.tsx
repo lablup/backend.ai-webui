@@ -160,7 +160,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
               zIndex: token.zIndexPopupBase + 2,
             }}
             vfolderNodeFrgmt={vfolder_node}
-            folderExplorerRef={folderExplorerRef}
           />
         ) : null
       }

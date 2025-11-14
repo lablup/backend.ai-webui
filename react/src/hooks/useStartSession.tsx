@@ -31,6 +31,10 @@ interface CreateSessionInfo {
   resources: SessionResources;
 }
 
+export const startSessionErrorCodes = {
+  DUPLICATED_SESSION: 'DUPLICATED_SESSION',
+};
+
 export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
 // Field names that have default values in SessionLauncherFormValue
@@ -275,20 +279,20 @@ export const useStartSession = () => {
           undefined,
           sessionInfo.architecture,
         )
-        .then((res: { created: boolean; status: string }) => {
-          // // When session is already created with the same name, the status code
-          // // is 200, but the response body has 'created' field as false. For better
-          // // user experience, we show the notification message.
-          if (!res?.created) {
-            // message.warning(t('session.launcher.SessionAlreadyExists'));
-            throw new Error(t('session.launcher.SessionAlreadyExists'));
-          }
-          if (res?.status === 'CANCELLED') {
-            // Case about failed to start new session kind of "docker image not found" or etc.
-            throw new Error(t('session.launcher.FailedToStartNewSession'));
-          }
-          return res;
-        })
+        .then(
+          (res: { created: boolean; status: string; sessionId: string }) => {
+            // When session is already created with the same name, the status code
+            // is 200, but the response body has 'created' field as false.
+            // For such cases, we throw an error to be handled by using component.
+            if (!res?.created) {
+              const error = new Error(
+                startSessionErrorCodes.DUPLICATED_SESSION,
+              );
+              throw error;
+            }
+            return res;
+          },
+        )
         .catch((err: any) => {
           if (err?.message?.includes('The session already exists')) {
             throw new Error(t('session.launcher.SessionAlreadyExists'));
