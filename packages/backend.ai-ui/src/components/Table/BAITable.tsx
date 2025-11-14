@@ -17,7 +17,14 @@ import { AnyObject, GetProps } from 'antd/es/_util/type';
 import { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
 
 /**
@@ -28,6 +35,7 @@ interface BAITablePaginationConfig
   extends Omit<TablePaginationConfig, 'position'> {
   /** Additional content to display in the pagination area */
   extraContent?: ReactNode;
+  autoAdjustCurrentPage?: boolean;
 }
 
 /**
@@ -214,6 +222,7 @@ const BAITable = <RecordType extends object = any>({
   ...tableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   const { styles } = useStyles();
+  const { autoAdjustCurrentPage = true } = tableProps.pagination || {};
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
@@ -314,6 +323,34 @@ const BAITable = <RecordType extends object = any>({
     order,
     tableSettings,
     columnOverrides,
+  ]);
+
+  const adjustCurrentPage = useEffectEvent(() => {
+    if (!tableProps.pagination) return;
+    // if current page exceeds max page, adjust it
+    const current = currentPage || 1;
+    const pageSize = currentPageSize || 10;
+    const total =
+      tableProps.pagination?.total || tableProps.dataSource?.length || 0;
+    const maxPage = Math.max(1, Math.ceil(total / pageSize));
+
+    if (current > maxPage) {
+      setCurrentPage(maxPage);
+      tableProps.pagination?.onChange?.(maxPage, pageSize);
+      return;
+    }
+  });
+
+  useEffect(() => {
+    if (tableProps.pagination && autoAdjustCurrentPage) {
+      adjustCurrentPage();
+    }
+  }, [
+    tableProps.dataSource,
+    tableProps.pagination,
+    autoAdjustCurrentPage,
+    currentPage,
+    currentPageSize,
   ]);
 
   return (
