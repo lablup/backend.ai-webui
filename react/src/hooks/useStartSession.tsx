@@ -255,12 +255,14 @@ export const useStartSession = () => {
           // Agent selection (optional)
           ...(baiClient.supports('agent-select') &&
           !baiClient?._config?.hideAgents &&
-          values.agent !== 'auto'
+          values.agent !== undefined &&
+          !_.isEqual(values.agent, ['auto'])
             ? {
                 // Filter out undefined values
-                agent_list: [values.agent].filter(
-                  (agent): agent is string => !!agent,
-                ),
+                agent_list: _.chain(values.agent)
+                  .castArray()
+                  .filter((agent): agent is string => !!agent)
+                  .value(),
               }
             : undefined),
         },
