@@ -60,6 +60,7 @@
   "button": {
     "Add": "Нэмэх",
     "Apply": "Өргөдөл гаргах",
+    "AutoRefreshEvery": "Авто шинэчлэлт: {{seconds}} сек",
     "Cancel": "Цуцлах",
     "Clear": "Устгах",
     "ClearLogs": "Бүртгэлийг арилгах",

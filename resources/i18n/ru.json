@@ -60,6 +60,7 @@
   "button": {
     "Add": "Добавлять",
     "Apply": "Применить",
+    "AutoRefreshEvery": "Автообновление каждые {{seconds}} с",
     "Cancel": "Отмена",
     "Clear": "Удалить",
     "ClearLogs": "Очистить журналы",

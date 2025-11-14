@@ -60,6 +60,7 @@
   "button": {
     "Add": "添加",
     "Apply": "申请",
+    "AutoRefreshEvery": "每 {{seconds}} 秒自動刷新",
     "Cancel": "取消",
     "Clear": "刪除",
     "ClearLogs": "清除日誌",

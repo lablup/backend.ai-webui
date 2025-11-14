@@ -63,6 +63,7 @@
   "button": {
     "Add": "Add",
     "Apply": "Apply",
+    "AutoRefreshEvery": "Auto refresh every {{seconds}}s",
     "Cancel": "Cancel",
     "Clear": "Clear",
     "ClearLogs": "Clear Logs",

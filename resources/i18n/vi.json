@@ -60,6 +60,7 @@
   "button": {
     "Add": "Thêm vào",
     "Apply": "Áp dụng",
+    "AutoRefreshEvery": "Tự động làm mới mỗi {{seconds}}s",
     "Cancel": "Huỷ bỏ",
     "Clear": "Xóa bỏ",
     "ClearLogs": "Xóa các bản ghi",

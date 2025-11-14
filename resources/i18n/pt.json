@@ -60,6 +60,7 @@
   "button": {
     "Add": "Adicionar",
     "Apply": "Aplicar",
+    "AutoRefreshEvery": "Atualização automática a cada {{seconds}}s",
     "Cancel": "Cancelar",
     "Clear": "Excluir",
     "ClearLogs": "Limpar registros",
