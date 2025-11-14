@@ -1069,6 +1069,8 @@
     "Initializing": "Inicializando...",
     "NoNotification": "Sin notificación.",
     "Notifications": "Notificaciones",
+    "RunAppOnSessionStart": "Iniciar la aplicación automáticamente",
+    "RunAppOnSessionStartTooltip": "Inicia la aplicación cuando la sesión esté en ejecución.",
     "SeeDetail": "Ver detalle",
     "SuccessfullyUpdated": "Actualizado con éxito",
     "Visit": "Visite"

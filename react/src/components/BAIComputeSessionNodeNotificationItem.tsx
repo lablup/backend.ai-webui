@@ -2,7 +2,9 @@ import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { useUpdateEffect } from 'ahooks';
+import { Switch, theme } from 'antd';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -35,6 +37,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { token } = theme.useToken();
   const node = useFragment(
     graphql`
       fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {
@@ -98,19 +101,33 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
           </BAIText>
         }
         description={
-          <BAIFlex justify="between">
-            <SessionStatusTag
-              sessionFrgmt={node || null}
-              showQueuePosition={false}
-              showTooltip={false}
-            />
-            <SessionActionButtons
-              compact
-              size="small"
-              sessionFrgmt={node || null}
-              hiddenButtonKeys={['containerCommit']}
-              primaryAppOption={primaryAppOption}
-            />
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            <BAIFlex justify="between">
+              <SessionStatusTag
+                sessionFrgmt={node || null}
+                showQueuePosition={false}
+                showTooltip={false}
+              />
+              <SessionActionButtons
+                compact
+                size="small"
+                sessionFrgmt={node || null}
+                hiddenButtonKeys={['containerCommit']}
+                primaryAppOption={primaryAppOption}
+              />
+            </BAIFlex>
+            <BAIFlex
+              style={{
+                alignSelf: 'stretch',
+              }}
+              gap={'xs'}
+            >
+              <Switch size="small" /> {t('notification.RunAppOnSessionStart')}
+              <QuestionIconWithTooltip
+                title={t('notification.RunAppOnSessionStartTooltip')}
+                zIndex={(token.Notification?.zIndexPopup || 2050) + 1}
+              />
+            </BAIFlex>
           </BAIFlex>
         }
         footer={

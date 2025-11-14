@@ -1068,6 +1068,8 @@
     "Initializing": "正在初始化...",
     "NoNotification": "無通知。",
     "Notifications": "通知",
+    "RunAppOnSessionStart": "自動啟動應用程式",
+    "RunAppOnSessionStartTooltip": "在執行中的工作階段上啟動應用程式",
     "SeeDetail": "查看詳情",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"

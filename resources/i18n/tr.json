@@ -1069,6 +1069,8 @@
     "Initializing": "Başlatılıyor...",
     "NoNotification": "Bildirim yok.",
     "Notifications": "Bildirimler",
+    "RunAppOnSessionStart": "Uygulamayı otomatik başlat",
+    "RunAppOnSessionStartTooltip": "Çalışan oturumda uygulamayı başlatır",
     "SeeDetail": "Ayrıntıları gör",
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
