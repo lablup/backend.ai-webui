@@ -1776,6 +1776,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   ? html`
                       <h3
                         style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
+                        data-testid=${`divider-${item.title}`}
                       >
                         ${item.title}
                       </h3>
@@ -1783,6 +1784,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   : html`
                       <div
                         class="vertical layout center center-justified app-icon"
+                        data-testid=${`modal-item-${item.name}`}
                       >
                         <mwc-icon-button
                           class="fg apps green"
@@ -1803,7 +1805,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           ${
             this.preOpenedPortList.length > 0
               ? html`
-                  <lablup-expansion id="preopen-ports-expansion" open>
+                  <lablup-expansion
+                    id="preopen-ports-expansion"
+                    open
+                    data-testid="checkbox-preopen-ports"
+                  >
                     <span slot="title" class="horizontal layout">
                       ${_t('session.launcher.PreOpenPortTitle')}
                     </span>
@@ -1839,7 +1845,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               globalThis.isElectron || !this.openPortToPublic
                 ? ``
                 : html`
-                    <div class="horizontal layout center">
+                    <div
+                      class="horizontal layout center"
+                      data-testid="checkbox-open-to-public"
+                    >
                       <mwc-checkbox
                         id="chk-open-to-public"
                         style="margin-right:0.5em;"

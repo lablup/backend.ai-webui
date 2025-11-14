@@ -129,6 +129,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
 
   return (
     <BAIModal
+      data-testid="app-launcher-modal"
       title={
         <BAIText
           ellipsis
@@ -150,7 +151,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         {_.map(baseAppTemplate, (apps, category) => {
           return (
             <div key={category}>
-              <Typography.Title level={5} style={{ marginTop: 0 }}>
+              <Typography.Title
+                level={5}
+                style={{ marginTop: 0 }}
+                data-testid={`category-${category.split('.')[1]}`}
+              >
                 {category.split('.')[1]}
               </Typography.Title>
               <Row gutter={[24, 24]}>
@@ -158,6 +163,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   return (
                     <Col
                       key={app?.name}
+                      data-testid={`app-${app?.name}`}
                       span={6}
                       style={{ alignContent: 'center' }}
                     >
