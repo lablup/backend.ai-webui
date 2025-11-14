@@ -10,7 +10,11 @@ import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import { useStartSessionCreationQuery } from 'src/__generated__/useStartSessionCreationQuery.graphql';
 import { transformPortValuesToNumbers } from 'src/components/PortSelectFormItem';
-import { RESOURCE_ALLOCATION_INITIAL_FORM_VALUES } from 'src/components/SessionFormItems/ResourceAllocationFormItems';
+import {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  AUTOMATIC_DEFAULT_SHMEM,
+} from 'src/components/SessionFormItems/ResourceAllocationFormItems';
+import { compareNumberWithUnits } from 'src/helper';
 import {
   SessionLauncherFormValue,
   SessionResources,
@@ -144,6 +148,20 @@ export const useStartSession = () => {
     minimumValues: StartSessionWithDefaultValue,
   ) => {
     const mergedValue = _.merge({}, defaultFormValues, minimumValues);
+
+    // Apply automatic shmem calculation if enabledAutomaticShmem is true
+    if (mergedValue.enabledAutomaticShmem && mergedValue.resource?.mem) {
+      const mem = mergedValue.resource.mem;
+
+      // Apply the same logic as ResourceAllocationFormItems
+      // If mem > 4G, set shmem to 1G, otherwise use AUTOMATIC_DEFAULT_SHMEM (64m)
+      if (compareNumberWithUnits(mem, '4g') >= 0) {
+        mergedValue.resource.shmem = '1g';
+      } else {
+        mergedValue.resource.shmem = AUTOMATIC_DEFAULT_SHMEM;
+      }
+    }
+
     return startSession(mergedValue as SessionLauncherFormValue);
   };
   const startSession = async (values: SessionLauncherFormValue) => {
