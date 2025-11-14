@@ -110,9 +110,9 @@ export interface ServiceCreateType {
   name: string;
   desired_session_count?: number;
   replicas?: number;
-  image: string;
+  image?: string;
+  architecture?: string;
   runtime_variant: string;
-  architecture: string;
   group: string;
   domain: string;
   cluster_size: number;
