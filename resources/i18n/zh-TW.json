@@ -1423,6 +1423,7 @@
       "ConfirmAndRun": "我檢查過，我會開始",
       "ConnectUrlIsNotValid": "連線 URL 無效。",
       "DownloadSSHKey": "下載 SSH 密鑰",
+      "LaunchingApp": "正在啟動 {{appName}} 應用程式。",
       "NoExistingConnectionExample": "无连接示例可复制。",
       "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
       "Prepared": "準備好了",

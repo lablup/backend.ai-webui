@@ -1425,6 +1425,7 @@
       "ConfirmAndRun": "Eu verifiquei e vou começar",
       "ConnectUrlIsNotValid": "O URL de conexão não é válido.",
       "DownloadSSHKey": "Baixar chave SSH",
+      "LaunchingApp": "Iniciando o aplicativo {{appName}}.",
       "NoExistingConnectionExample": "Não há exemplo de ligação a copiar.",
       "OpenVSCodeRemote": "Abrir o código local do Visual Studio",
       "Prepared": "Preparado",

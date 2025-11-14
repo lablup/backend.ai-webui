@@ -1422,6 +1422,7 @@
       "ConfirmAndRun": "Έλεγξα και θα ξεκινήσω",
       "ConnectUrlIsNotValid": "Η διεύθυνση URL σύνδεσης δεν είναι έγκυρη.",
       "DownloadSSHKey": "Λήψη κλειδιού SSH",
+      "LaunchingApp": "Η εφαρμογή {{appName}} εκκινείται.",
       "NoExistingConnectionExample": "Δεν υπάρχει σύνδεση Παράδειγμα προς αντιγραφή.",
       "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
       "Prepared": "Ετοιμος",

@@ -1,13 +1,22 @@
+import { useSetBAINotification } from './useBAINotification';
+import { BAILink } from 'backend.ai-ui';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
 import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
 
 export const useBackendAIAppLauncher = (
   sessionFrgmt?: useBackendAIAppLauncherFragment$key | null,
 ) => {
+  const { t } = useTranslation();
+  const { upsertNotification } = useSetBAINotification();
+  const navigate = useNavigate();
+
   // TODO: migrate backend-ai-app-launcher features to this hook using fragment data.
   const session = useFragment(
     graphql`
       fragment useBackendAIAppLauncherFragment on ComputeSessionNode {
+        name
         row_id @required(action: NONE)
         vfolder_mounts
       }
@@ -17,7 +26,35 @@ export const useBackendAIAppLauncher = (
 
   // @ts-ignore
   return {
+    // TODO: AppLauncherModal should modify the hook to use, as it is currently separated,
+    // to re-declare the notification for use by the backend-ai-app-launcher.
     runTerminal: () => {
+      upsertNotification({
+        key: `session-app-${session?.row_id}`,
+        message: (
+          <span>
+            {t('general.Session')}:&nbsp;
+            <BAILink
+              style={{
+                fontWeight: 'normal',
+              }}
+              onClick={() => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', session?.row_id || '');
+                navigate({
+                  pathname: `/session`,
+                  search: newSearchParams.toString(),
+                });
+              }}
+            >
+              {session?.name}
+            </BAILink>
+          </span>
+        ),
+        description: t('session.appLauncher.LaunchingApp', {
+          appName: 'Console',
+        }),
+      });
       // @ts-ignore
       globalThis.appLauncher.runTerminal(session.row_id);
     },

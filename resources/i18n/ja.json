@@ -1424,6 +1424,7 @@
       "ConfirmAndRun": "確認して始めます",
       "ConnectUrlIsNotValid": "接続 URL が無効です。",
       "DownloadSSHKey": "SSHキーをダウンロード",
+      "LaunchingApp": "{{appName}} アプリを起動しています。",
       "NoExistingConnectionExample": "コピーする接続例がありません。",
       "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
       "Prepared": "準備",

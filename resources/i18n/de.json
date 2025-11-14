@@ -1423,6 +1423,7 @@
       "ConfirmAndRun": "Ich habe nachgesehen und ich fange an",
       "ConnectUrlIsNotValid": "Die Verbindungs-URL ist ungültig.",
       "DownloadSSHKey": "SSH-Schlüssel herunterladen",
+      "LaunchingApp": "Die App {{appName}} wird gestartet.",
       "NoExistingConnectionExample": "Keine Verbindung Zu kopierendes Beispiel.",
       "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
       "Prepared": "Bereit",

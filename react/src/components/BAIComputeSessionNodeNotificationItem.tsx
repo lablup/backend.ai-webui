@@ -32,7 +32,7 @@ interface BAINodeNotificationItemProps {
 const BAIComputeSessionNodeNotificationItem: React.FC<
   BAINodeNotificationItemProps
 > = ({ sessionFrgmt, showDate, notification, primaryAppOption }) => {
-  const { destroyNotification } = useSetBAINotification();
+  const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const node = useFragment(
@@ -70,7 +70,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   useUpdateEffect(() => {
     if (node?.status === 'TERMINATED' || node?.status === 'CANCELLED') {
       setTimeout(() => {
-        destroyNotification(notification.key);
+        closeNotification(notification.key);
       }, 3000);
     }
   }, [node?.status]);
@@ -90,7 +90,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
                 navigate(
                   `/session${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
                 );
-                destroyNotification(notification.key);
+                closeNotification(notification.key);
               }}
             >
               {node.name}

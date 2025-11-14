@@ -1429,6 +1429,7 @@
       "ConfirmAndRun": "확인했으며 시작하겠습니다",
       "ConnectUrlIsNotValid": "연결 URL이 유효하지 않습니다.",
       "DownloadSSHKey": "SSH 키 다운로드",
+      "LaunchingApp": "{{appName}} 앱을 실행합니다.",
       "NoExistingConnectionExample": "복사할 접속 예제가 없습니다.",
       "OpenVSCodeRemote": "로컬 Visual Studio Code 열기",
       "Prepared": "준비되었습니다",

@@ -1422,6 +1422,7 @@
       "ConfirmAndRun": "Шалгасан тул эхлүүлж болно",
       "ConnectUrlIsNotValid": "Холбох URL буруу байна.",
       "DownloadSSHKey": "SSH түлхүүр татаж авах",
+      "LaunchingApp": "{{appName}} апп эхлүүлж байна.",
       "NoExistingConnectionExample": "Хуулбарлах холболтын жишээ байхгүй.",
       "OpenVSCodeRemote": "Орон нутгийн Visual Studio кодыг нээнэ үү",
       "Prepared": "Бэлтгэсэн",

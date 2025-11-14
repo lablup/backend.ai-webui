@@ -1424,6 +1424,7 @@
       "ConfirmAndRun": "Sprawdziłem i zacznę",
       "ConnectUrlIsNotValid": "Adres URL połączenia jest nieprawidłowy.",
       "DownloadSSHKey": "Pobierz klucz SSH",
+      "LaunchingApp": "Uruchamianie aplikacji {{appName}}.",
       "NoExistingConnectionExample": "Brak przykładu połączenia do skopiowania.",
       "OpenVSCodeRemote": "Otwórz lokalny kod Visual Studio",
       "Prepared": "Przygotowany",

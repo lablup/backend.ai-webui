@@ -1425,6 +1425,7 @@
       "ConfirmAndRun": "我检查过，我会开始",
       "ConnectUrlIsNotValid": "连接 URL 无效。",
       "DownloadSSHKey": "下载 SSH 密钥",
+      "LaunchingApp": "{{appName}} 应用正在启动。",
       "NoExistingConnectionExample": "无连接示例可复制。",
       "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
       "Prepared": "准备好了",

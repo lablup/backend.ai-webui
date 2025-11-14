@@ -1424,6 +1424,7 @@
       "ConfirmAndRun": "Tarkistin ja aloitan",
       "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa.",
       "DownloadSSHKey": "Lataa SSH-avain",
+      "LaunchingApp": "Käynnistetään {{appName}}-sovellusta.",
       "NoExistingConnectionExample": "Ei yhteyttä Kopioitava esimerkki.",
       "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code",
       "Prepared": "Valmisteltu",

@@ -73,7 +73,7 @@ const FileUploadManager: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const { upsertNotification, destroyNotification } = useSetBAINotification();
+  const { upsertNotification, closeNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [uploadRequests, setUploadRequests] = useAtom(uploadRequestAtom);
   const [uploadStatus, setUploadStatus] = useAtom(uploadStatusAtom);
@@ -176,7 +176,7 @@ const FileUploadManager: React.FC = () => {
                 }}
                 to={generateFolderPath(vFolderId)}
                 onClick={() => {
-                  destroyNotification('upload:' + vFolderId);
+                  closeNotification('upload:' + vFolderId);
                 }}
               >{`${vFolderName}`}</BAILink>
             </span>
@@ -306,7 +306,7 @@ const FileUploadManager: React.FC = () => {
                 }}
                 to={generateFolderPath(vFolderId)}
                 onClick={() => {
-                  destroyNotification('upload:' + vFolderId);
+                  closeNotification('upload:' + vFolderId);
                 }}
               >{`${status?.vFolderName}`}</BAILink>
             </span>
