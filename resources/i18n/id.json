@@ -1944,6 +1944,7 @@
     "BootstrapScriptDescription": "Skrip bootstrap akan dieksekusi hanya sekali setelah pembuatan sesi",
     "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
     "BootstrapScriptUpdated": "Skrip Bootstrap diperbarui.",
+    "Branding": "Penjenamaan",
     "ClassicFeatures": "Fitur klasik",
     "ClassicFeaturesDesc": "Bergulir kembali ke versi klasik dapat membantu Anda mendapatkan kembali stabilitas dan fungsionalitas saat Anda menunggu pembaruan atau perbaikan untuk dirilis.",
     "ClassicSessionList": "Halaman Daftar Sesi Klasik",
@@ -2005,10 +2006,28 @@
     "SSHKeypairManagement": "Manajemen Pasangan Kunci SSH",
     "SessionTerminationDialog": "Penghentian sesi tidak dapat diurungkan. Apakah Anda ingin melanjutkan untuk mengakhiri sesi?",
     "ShellEnvironments": "Lingkungan Shell",
+    "Theme": "Tema",
     "ThemeMode": "Modus Tema",
     "UseCompactSidebar": "Atur Sidebar Kompak sebagai Default",
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
-    "UserConfigScript": "Skrip konfigurasi pengguna"
+    "UserConfigScript": "Skrip konfigurasi pengguna",
+    "theme": {
+      "ErrorColor": "Warna Kesalahan",
+      "ErrorColorDesc": "Warna yang diterapkan pada tombol atau peringatan yang mewakili tindakan penting, seperti penghapusan, untuk menunjukkan peringatan atau kesalahan.",
+      "HeaderBg": "Warna Latar Belakang Tajuk",
+      "HeaderBgDesc": "Warna diterapkan pada background header, kecuali bagian logo.",
+      "InfoColor": "Informasi Warna",
+      "InfoColorDesc": "Warna yang diterapkan pada ikon panduan informasi dan modifikasi untuk elemen yang menyampaikan informasi kepada pengguna.",
+      "LinkColor": "Warna Tautan",
+      "LinkColorDesc": "Warna yang digunakan untuk link yang mengalihkan ke halaman lain atau membuka elemen UI tambahan seperti laci atau modals.",
+      "Preview": "Pratinjau",
+      "PrimaryColor": "Warna Primer",
+      "PrimaryColorDesc": "Warna utama diterapkan pada tombol atau teks deskriptif yang mewakili tindakan utama. \nIni juga diterapkan sebagai warna latar belakang untuk bagian logo di header.",
+      "SuccessColor": "Warna Sukses",
+      "SuccessColorDesc": "Warna yang diterapkan pada tombol, peringatan, atau ikon yang menunjukkan tindakan pengguna telah berhasil diselesaikan.",
+      "TextColor": "Warna Teks",
+      "TextColorDesc": "Warna yang digunakan untuk teks umum."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
