@@ -5,6 +5,13 @@ export const webuiEndpoint = 'http://127.0.0.1:9081';
 export const webServerEndpoint = 'http://127.0.0.1:8090';
 export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
 
+export const changeSigninInMode = async (page: Page, mode: 'IAM' | 'ID') => {
+  const button = page.locator('#change-signin-area button');
+  if ((await button.textContent())?.includes(mode)) {
+    await button.click();
+  }
+};
+
 export async function login(
   page: Page,
   username: string,
@@ -12,9 +19,17 @@ export async function login(
   endpoint: string,
 ) {
   await page.goto(webuiEndpoint);
+  await changeSigninInMode(page, 'ID');
   await page.getByLabel('Email or Username').fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+
+  const endpointInput = page.locator('#id_api_endpoint label');
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 1000 });
+    await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+  } catch (_e) {
+    // Endpoint input not visible, skip filling it
+  }
   await page.getByLabel('Login', { exact: true }).click();
   await page.waitForSelector('[data-testid="user-dropdown-button"]');
 }
