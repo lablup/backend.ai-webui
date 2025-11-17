@@ -195,7 +195,6 @@ When reviewing or writing code:
 
 Read and follow below guides:
 
-- @guides-for-ai/react-component-guide.md
 - @.github/copilot-instructions.md
 - @.github/instructions/react.instructions.md
 - @.github/instructions/i18n.instructions.md
