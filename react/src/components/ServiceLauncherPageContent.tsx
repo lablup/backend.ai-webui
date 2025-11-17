@@ -40,11 +40,11 @@ import {
   App,
   Button,
   Card,
+  Checkbox,
   Form,
   Input,
   Skeleton,
   Select,
-  Switch,
   theme,
   Tooltip,
   Tag,
@@ -779,12 +779,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         >
                           <Input disabled={!!endpoint} />
                         </Form.Item>
-                        <Form.Item
-                          name="openToPublic"
-                          label={t('modelService.OpenToPublic')}
-                          valuePropName="checked"
-                        >
-                          <Switch disabled={!!endpoint}></Switch>
+                        <Form.Item name="openToPublic" valuePropName="checked">
+                          <Checkbox disabled={!!endpoint}>{t('modelService.OpenToPublic')}</Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
