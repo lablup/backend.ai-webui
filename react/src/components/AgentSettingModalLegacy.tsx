@@ -1,44 +1,41 @@
 import {
-  AgentSettingModalFragment$data,
-  AgentSettingModalFragment$key,
-} from '../__generated__/AgentSettingModalFragment.graphql';
-import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
-import ResourceGroupSelect from './ResourceGroupSelect';
+  AgentSettingModalLegacyFragment$data,
+  AgentSettingModalLegacyFragment$key,
+} from '../__generated__/AgentSettingModalLegacyFragment.graphql';
+import { AgentSettingModalLegacyMutation } from '../__generated__/AgentSettingModalLegacyMutation.graphql';
 import { App, Form, FormInstance, Switch } from 'antd';
-import { BAIModal, BAIModalProps, toLocalId } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface AgentSettingModalProps extends BAIModalProps {
-  agentNodeFrgmt?: AgentSettingModalFragment$key | null;
+interface AgentSettingModalLegacyProps extends BAIModalProps {
+  agentSettingModalLegacyFrgmt?: AgentSettingModalLegacyFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
-const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
-  agentNodeFrgmt = null,
+const AgentSettingModalLegacy: React.FC<AgentSettingModalLegacyProps> = ({
+  agentSettingModalLegacyFrgmt: agentSettingModalLegacyFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const formRef = useRef<FormInstance<AgentSettingModalFragment$data> | null>(
-    null,
-  );
+  const formRef =
+    useRef<FormInstance<AgentSettingModalLegacyFragment$data> | null>(null);
   const agent = useFragment(
     graphql`
-      fragment AgentSettingModalFragment on AgentNode {
-        id @required(action: THROW)
+      fragment AgentSettingModalLegacyFragment on Agent {
+        id
         schedulable
-        scaling_group
       }
     `,
-    agentNodeFrgmt,
+    agentSettingModalLegacyFrgmt,
   );
 
   const [commitModifyAgentSetting, isInFlightCommitModifyAgentSetting] =
-    useMutation<AgentSettingModalMutation>(graphql`
-      mutation AgentSettingModalMutation(
+    useMutation<AgentSettingModalLegacyMutation>(graphql`
+      mutation AgentSettingModalLegacyMutation(
         $id: String!
         $props: ModifyAgentInput!
       ) {
@@ -52,10 +49,10 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   return (
     <BAIModal
       {...modalProps}
-      title={`${t('agent.AgentSetting')}: ${toLocalId(agent?.id || '')}`}
+      title={`${t('agent.AgentSetting')}: ${agent?.id}`}
       onCancel={() => onRequestClose()}
       destroyOnHidden
-      width={400}
+      width={300}
       confirmLoading={isInFlightCommitModifyAgentSetting}
       onOk={() => {
         formRef.current
@@ -63,10 +60,9 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           .then((values) => {
             commitModifyAgentSetting({
               variables: {
-                id: toLocalId(agent?.id || ''),
+                id: agent?.id || '',
                 props: {
                   schedulable: values.schedulable,
-                  scaling_group: values.scaling_group,
                 },
               },
               onCompleted(res, errors) {
@@ -95,16 +91,9 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
         >
           <Switch />
         </Form.Item>
-        <Form.Item
-          name="scaling_group"
-          label={t('general.ResourceGroup')}
-          required={true}
-        >
-          <ResourceGroupSelect projectName="default" />
-        </Form.Item>
       </Form>
     </BAIModal>
   );
 };
 
-export default AgentSettingModal;
+export default AgentSettingModalLegacy;

@@ -1,6 +1,6 @@
-import AgentList from '../components/AgentList';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
+import AgentNodesListPage from './AgentNodesListPage';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -42,7 +42,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       <Suspense fallback={<Skeleton active />}>
         {curTabKey === 'agents' && (
           <BAIErrorBoundary>
-            <AgentList />
+            <AgentNodesListPage />
           </BAIErrorBoundary>
         )}
         {curTabKey === 'storages' && (
