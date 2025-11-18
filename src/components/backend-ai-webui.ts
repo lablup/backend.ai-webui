@@ -655,6 +655,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'error';
       this._moveTo('/error');
     }
+    // since we need to add search params, redirect to the start page after error validation
+    // if you move this block to the previous error-validation block, it may cause an error
+    if (this._page === 'start') {
+      const url = new URL(window.location.href);
+      const hasSearchParam = url.search.length > 0;
+      this._moveTo(hasSearchParam ? `/start${url.search}` : '/start');
+    }
   }
 
   showUpdateNotifier(): void {

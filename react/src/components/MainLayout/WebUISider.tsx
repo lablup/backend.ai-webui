@@ -41,7 +41,6 @@ import { MenuItemType } from 'antd/lib/menu/interface';
 import {
   filterOutEmpty,
   BAIEndpointsIcon,
-  BAIExampleStartIcon,
   BAIModelStoreIcon,
   BAIMyEnvironmentsIcon,
   BAIPipelinesIcon,
@@ -93,7 +92,6 @@ export type MenuKeys =
   | 'model-store'
   | 'ai-agent'
   | 'chat'
-  | 'import'
   | 'data'
   | 'my-environment'
   | 'agent-summary'
@@ -207,12 +205,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
       key: 'chat',
       group: 'playground',
-    },
-    {
-      label: <WebUILink to="/import">{t('webui.menu.Import&Run')}</WebUILink>,
-      icon: <BAIExampleStartIcon style={{ color: token.colorPrimary }} />,
-      key: 'import',
-      group: 'workload',
     },
     {
       label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
