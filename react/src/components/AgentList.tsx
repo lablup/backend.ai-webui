@@ -439,10 +439,10 @@ const AgentList: React.FC<AgentListProps> = ({
             liveStat.cpu_util.current = _.toFinite(
               parsedValue.node.cpu_util.current,
             );
-            liveStat.cpu_util.ratio =
-              liveStat.cpu_util.current /
-                liveStat.cpu_util.capacity /
-                numCores || 0;
+            liveStat.cpu_util.ratio = Math.min(
+              _.toFinite(parsedValue.node.cpu_util.pct) / 100 / (numCores || 1),
+              1,
+            );
             liveStat.mem_util.capacity = _.toInteger(
               available_slots.mem || parsedValue.node.mem.capacity,
             );

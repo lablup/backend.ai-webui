@@ -49,20 +49,19 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
   } = JSON.parse(session.occupied_slots || '{}');
 
   if (type === 'cpu') {
-    const displayPercent =
-      (liveStat.cpu_util?.pct ? parseFloat(liveStat.cpu_util?.pct) : 0) /
-      parseFloat(occupiedSlots.cpu ?? '1');
-    const cpuUtilPercentNumber = liveStat.cpu_util?.pct
-      ? parseFloat(liveStat.cpu_util.pct)
-      : 0;
-    const cpuOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1') * 100;
+    const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');
+    const CPUUtilPercent = Math.min(
+      parseFloat(liveStat.cpu_util?.pct ?? '0'),
+      CPUOccupiedSlot * 100,
+    );
+
     return occupiedSlots.cpu ? (
       <UsageBadge
-        percent={displayPercent}
-        text={occupiedSlots.cpu}
+        percent={Math.min(CPUUtilPercent / CPUOccupiedSlot, 100)}
+        text={CPUOccupiedSlot}
         tooltip={{
           title: liveStat.cpu_util
-            ? `${cpuUtilPercentNumber.toFixed(1)}% / ${cpuOccupiedSlot}%`
+            ? `${CPUUtilPercent.toFixed(1)}% / ${CPUOccupiedSlot * 100}%`
             : undefined,
           placement: 'left',
         }}

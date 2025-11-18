@@ -149,10 +149,11 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   const utilItems = filterOutEmpty([
     sortedLiveStat?.cpu_util &&
       (() => {
-        const displayPercent =
-          (liveStat.cpu_util?.pct ? parseFloat(liveStat.cpu_util?.pct) : 0) /
-          parseFloat(occupiedSlots.cpu ?? '1');
-
+        const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');
+        const CPUUtilPercent = Math.min(
+          parseFloat(liveStat.cpu_util?.pct ?? '0'),
+          CPUOccupiedSlot * 100,
+        );
         return (
           <SessionUtilItem
             key={'cpu'}
@@ -160,10 +161,13 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
             title={mergedResourceSlots?.['cpu']?.human_readable_name}
             percent={
               displayTarget === 'current'
-                ? displayPercent
-                : (sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0')
+                ? Math.min(CPUUtilPercent / CPUOccupiedSlot, 100).toString()
+                : Math.min(
+                    sortedLiveStat?.cpu_util?.[displayTargetName] ?? '0',
+                    100,
+                  ).toString()
             }
-            description={`${liveStat.cpu_util?.pct}% / ${parseFloat(occupiedSlots.cpu ?? '1') * 100}%`}
+            description={`${CPUUtilPercent.toFixed(1)}% / ${parseFloat(occupiedSlots.cpu ?? '1') * 100}%`}
           />
         );
       })(),
