@@ -10,6 +10,7 @@ import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
+import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
@@ -235,6 +236,7 @@ function MainLayout() {
                   align="stretch"
                   className={styles.alertWrapper}
                 >
+                  <ThemePreviewModeAlert />
                   <ErrorBoundaryWithNullFallback>
                     <NoResourceGroupAlert />
                   </ErrorBoundaryWithNullFallback>

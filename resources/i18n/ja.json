@@ -1896,6 +1896,12 @@
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブルセッティング"
   },
+  "theme": {
+    "PreviewModeAlert": "現在、テーマのプレビュー モードを使用しています。実際の作業は元のウィンドウで行ってください。",
+    "button": {
+      "ExportToJson": "JSON をエクスポート"
+    }
+  },
   "time": {
     "Day": "日",
     "Hour": "時間",
@@ -2014,6 +2020,7 @@
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト",
     "theme": {
+      "CustomThemeSettingAlert": "更新されたテーマはすぐには適用できません。テーマを適用したい場合は、エクスポートした設定のJSONファイルを添えてサポートチームまでご連絡ください。",
       "ErrorColor": "エラーの色",
       "ErrorColorDesc": "警告やエラーを示すために、削除などの重要なアクションを表すボタンまたはアラートに適用される色。",
       "HeaderBg": "ヘッダーの背景色",
@@ -2022,6 +2029,7 @@
       "InfoColorDesc": "ユーザーに情報を伝える要素（情報案内や編集アイコン）に適用される色。",
       "LinkColor": "リンクの色",
       "LinkColorDesc": "別のページにリダイレクトするリンク、またはドロワーやモーダルなどの追加の UI 要素を開くリンクに使用される色。",
+      "NoChangesMade": "変更はありません。",
       "Preview": "プレビュー",
       "PrimaryColor": "原色",
       "PrimaryColorDesc": "キーアクションを表すボタンまたは説明テキストに適用されるメインカラー。\nヘッダーのロゴセクションの背景色としても適用されます。",

@@ -1895,6 +1895,12 @@
     "SelectColumnToDisplay": "Pilih untuk lajur untuk dipaparkan",
     "SettingTable": "Tetapan Meja"
   },
+  "theme": {
+    "PreviewModeAlert": "Anda sedang menggunakan mod pratonton tema. Sila teruskan kerja sebenar anda di tetingkap asal.",
+    "button": {
+      "ExportToJson": "Eksport JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "jam",
@@ -2013,6 +2019,7 @@
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
     "theme": {
+      "CustomThemeSettingAlert": "Tema yang dikemas kini tidak dapat diterapkan serta-merta. Jika anda ingin menerapkan tema tersebut, sila hubungi pasukan sokongan kami dengan fail konfigurasi JSON yang dieksport.",
       "ErrorColor": "Warna ralat",
       "ErrorColorDesc": "Warna yang digunakan untuk butang atau amaran yang mewakili tindakan kritikal, seperti penghapusan, untuk menunjukkan amaran atau kesilapan.",
       "HeaderBg": "Warna latar belakang header",
@@ -2021,6 +2028,7 @@
       "InfoColorDesc": "Warna bagi ikon panduan dan pengubahsuaian maklumat, digunakan untuk elemen yang menyampaikan maklumat kepada pengguna.",
       "LinkColor": "Warna pautan",
       "LinkColorDesc": "Warna yang digunakan untuk pautan yang mengalihkan ke halaman lain atau membuka elemen UI tambahan seperti laci atau modal.",
+      "NoChangesMade": "Tiada perubahan dibuat.",
       "Preview": "Pratonton",
       "PrimaryColor": "Warna utama",
       "PrimaryColorDesc": "Warna utama yang digunakan untuk butang atau teks deskriptif yang mewakili tindakan utama. \nIa juga digunakan sebagai warna latar belakang untuk bahagian logo di tajuk.",

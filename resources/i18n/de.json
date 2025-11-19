@@ -1895,6 +1895,12 @@
     "SelectColumnToDisplay": "Wählen Sie die anzuzeigenden Spalten aus",
     "SettingTable": "Sitzordnung bei Tisch"
   },
+  "theme": {
+    "PreviewModeAlert": "Sie verwenden derzeit den Theme‑Vorschau‑Modus. Bitte setzen Sie Ihre Arbeit im Originalfenster fort.",
+    "button": {
+      "ExportToJson": "Als JSON exportieren"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "Stunde",
@@ -2013,6 +2019,7 @@
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "UserConfigScript": "Benutzerkonfigurationsskript",
     "theme": {
+      "CustomThemeSettingAlert": "Das aktualisierte Theme kann nicht sofort angewendet werden. Wenn Sie das Theme anwenden möchten, wenden Sie sich bitte an unser Support‑Team und senden Sie die exportierte Konfigurationsdatei (JSON).",
       "ErrorColor": "Fehlerfarbe",
       "ErrorColorDesc": "Die Farbe, die auf Schaltflächen oder Warnungen angewendet wird, die kritische Aktionen wie das Löschen darstellen, um Warnungen oder Fehler anzuzeigen.",
       "HeaderBg": "Hintergrundfarbe der Kopfzeile",
@@ -2021,6 +2028,7 @@
       "InfoColorDesc": "Die Farbe, die für Informations- und Bearbeitungssymbole verwendet wird und für Elemente, die Informationen an Benutzer vermitteln.",
       "LinkColor": "Linkfarbe",
       "LinkColorDesc": "Die Farbe, die für Links verwendet wird, die zu einer anderen Seite weiterleiten oder zusätzliche UI-Elemente wie Schubladen oder Modalitäten öffnen.",
+      "NoChangesMade": "Es wurden keine Änderungen vorgenommen.",
       "Preview": "Vorschau",
       "PrimaryColor": "Grundfarbe",
       "PrimaryColorDesc": "Die Hauptfarbe, die auf Schaltflächen oder beschreibenden Text angewendet wird, der wichtige Aktionen darstellt. \nSie wird auch als Hintergrundfarbe für den Logo-Bereich in der Kopfzeile verwendet.",

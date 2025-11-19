@@ -1,24 +1,38 @@
+import BAIAlert from './BAIAlert';
 import ThemeColorPicker from './BrandingSettingItems/ThemeColorPicker';
 import SettingList, { SettingGroup } from './SettingList';
-import { BAIButton } from 'backend.ai-ui';
+import { ExportOutlined } from '@ant-design/icons';
+import { App } from 'antd';
+import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { downloadBlob } from 'src/helper/csv-util';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface BrandingSettingListProps {}
 
 const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
-  const [, setUserCustomThemeConfig] = useBAISettingUserState(
-    'custom_theme_config',
-  );
+  const [userCustomThemeConfig, setUserCustomThemeConfig] =
+    useBAISettingUserState('custom_theme_config');
 
   const settingGroups: Array<SettingGroup> = [
     {
       'data-testid': 'group-theme-customization',
       title: t('userSettings.Theme'),
       titleExtra: (
-        <BAIButton size="small">{t('userSettings.theme.Preview')}</BAIButton>
+        <BAIButton
+          size="small"
+          action={async () => {
+            const previewWindow = window.open(window.location.origin, '_blank');
+            previewWindow?.sessionStorage.setItem('isThemePreviewMode', 'true');
+            previewWindow?.location.reload();
+          }}
+        >
+          {t('userSettings.theme.Preview')}
+        </BAIButton>
       ),
       settingItems: [
         {
@@ -82,7 +96,40 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
     },
   ];
 
-  return <SettingList settingGroups={settingGroups} showSearchBar />;
+  return (
+    <BAIFlex direction="column" gap="md" align="stretch">
+      <BAIAlert
+        description={t('userSettings.theme.CustomThemeSettingAlert')}
+        type="warning"
+        showIcon
+      />
+      <SettingList
+        showSearchBar
+        showResetButton
+        settingGroups={settingGroups}
+        primaryButton={
+          <BAIButton
+            type="primary"
+            icon={<ExportOutlined />}
+            action={async () => {
+              if (_.isEmpty(userCustomThemeConfig)) {
+                message.error(t('userSettings.theme.NoChangesMade'));
+                return;
+              }
+
+              const blob = new Blob(
+                [JSON.stringify(userCustomThemeConfig, null, 2)],
+                { type: 'application/json' },
+              );
+              downloadBlob(blob, `theme.json`);
+            }}
+          >
+            {t('theme.button.ExportToJson')}
+          </BAIButton>
+        }
+      />
+    </BAIFlex>
+  );
 };
 
 export default BrandingSettingList;

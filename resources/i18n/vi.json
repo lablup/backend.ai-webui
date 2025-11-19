@@ -1897,6 +1897,12 @@
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"
   },
+  "theme": {
+    "PreviewModeAlert": "Bạn đang ở chế độ xem trước giao diện. Vui lòng quay lại cửa sổ gốc để thực hiện công việc.",
+    "button": {
+      "ExportToJson": "Xuất JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "giờ",
@@ -2015,6 +2021,7 @@
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "UserConfigScript": "Tập lệnh cấu hình người dùng",
     "theme": {
+      "CustomThemeSettingAlert": "Chủ đề vừa cập nhật không thể áp dụng ngay. Nếu bạn muốn áp dụng chủ đề, vui lòng liên hệ bộ phận hỗ trợ của chúng tôi kèm theo tệp JSON cấu hình đã xuất.",
       "ErrorColor": "Màu lỗi",
       "ErrorColorDesc": "Màu được áp dụng cho các nút hoặc cảnh báo thể hiện các hành động quan trọng, chẳng hạn như xóa, để biểu thị cảnh báo hoặc lỗi.",
       "HeaderBg": "Màu nền tiêu đề",
@@ -2023,6 +2030,7 @@
       "InfoColorDesc": "Màu áp dụng cho các biểu tượng chỉ dẫn thông tin và chỉnh sửa, được dùng cho các thành phần truyền đạt thông tin tới người dùng.",
       "LinkColor": "Màu liên kết",
       "LinkColorDesc": "Màu được sử dụng cho các liên kết chuyển hướng đến một trang khác hoặc mở các thành phần giao diện người dùng bổ sung như ngăn kéo hoặc phương thức.",
+      "NoChangesMade": "Không có thay đổi.",
       "Preview": "Xem trước",
       "PrimaryColor": "Màu cơ bản",
       "PrimaryColorDesc": "Màu chính được áp dụng cho các nút hoặc văn bản mô tả thể hiện các hành động chính. \nNó cũng được áp dụng làm màu nền cho phần logo ở phần header.",

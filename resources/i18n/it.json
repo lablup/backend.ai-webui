@@ -1894,6 +1894,12 @@
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SettingTable": "Impostazione della tabella"
   },
+  "theme": {
+    "PreviewModeAlert": "Stai usando la modalità anteprima del tema. Ti preghiamo di proseguire il lavoro nella finestra originale.",
+    "button": {
+      "ExportToJson": "Esporta JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "ora",
@@ -2012,6 +2018,7 @@
     "UseSystemSetting": "Utilizza Impostazioni di sistema",
     "UserConfigScript": "Script di configurazione utente",
     "theme": {
+      "CustomThemeSettingAlert": "Il tema aggiornato non può essere applicato immediatamente. Se desideri applicarlo, contatta il nostro team di supporto fornendo il file JSON di configurazione esportato.",
       "ErrorColor": "Colore errore",
       "ErrorColorDesc": "Il colore applicato ai pulsanti o agli avvisi che rappresentano azioni critiche, come l'eliminazione, per indicare avvisi o errori.",
       "HeaderBg": "Colore di sfondo dell'intestazione",
@@ -2020,6 +2027,7 @@
       "InfoColorDesc": "Il colore applicato alle icone informative, di guida e di modifica, utilizzato per gli elementi che comunicano informazioni agli utenti.",
       "LinkColor": "Colore collegamento",
       "LinkColorDesc": "Il colore utilizzato per i collegamenti che reindirizzano a un'altra pagina o aprono elementi aggiuntivi dell'interfaccia utente come cassetti o finestre modali.",
+      "NoChangesMade": "Nessuna modifica apportata.",
       "Preview": "Anteprima",
       "PrimaryColor": "Colore primario",
       "PrimaryColorDesc": "Il colore principale applicato ai pulsanti o al testo descrittivo che rappresentano le azioni chiave. \nViene applicato anche come colore di sfondo per la sezione del logo nell'intestazione.",

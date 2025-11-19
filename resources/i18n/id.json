@@ -1896,6 +1896,12 @@
     "SelectColumnToDisplay": "Pilih kolom yang akan ditampilkan",
     "SettingTable": "Penataan meja"
   },
+  "theme": {
+    "PreviewModeAlert": "Anda sedang menggunakan mode pratinjau tema. Silakan lanjutkan pekerjaan Anda di jendela asli.",
+    "button": {
+      "ExportToJson": "Ekspor JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "jam",
@@ -2014,6 +2020,7 @@
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
     "theme": {
+      "CustomThemeSettingAlert": "Tema yang telah diperbarui tidak dapat diterapkan secara langsung. Jika Anda ingin menerapkannya, silakan hubungi tim dukungan kami dengan file JSON konfigurasi yang diekspor.",
       "ErrorColor": "Warna Kesalahan",
       "ErrorColorDesc": "Warna yang diterapkan pada tombol atau peringatan yang mewakili tindakan penting, seperti penghapusan, untuk menunjukkan peringatan atau kesalahan.",
       "HeaderBg": "Warna Latar Belakang Tajuk",
@@ -2022,6 +2029,7 @@
       "InfoColorDesc": "Warna yang diterapkan pada ikon panduan informasi dan modifikasi untuk elemen yang menyampaikan informasi kepada pengguna.",
       "LinkColor": "Warna Tautan",
       "LinkColorDesc": "Warna yang digunakan untuk link yang mengalihkan ke halaman lain atau membuka elemen UI tambahan seperti laci atau modals.",
+      "NoChangesMade": "Tidak ada perubahan.",
       "Preview": "Pratinjau",
       "PrimaryColor": "Warna Primer",
       "PrimaryColorDesc": "Warna utama diterapkan pada tombol atau teks deskriptif yang mewakili tindakan utama. \nIni juga diterapkan sebagai warna latar belakang untuk bagian logo di header.",

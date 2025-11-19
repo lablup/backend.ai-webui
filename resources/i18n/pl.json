@@ -1896,6 +1896,12 @@
     "SelectColumnToDisplay": "Wybierz, które kolumny mają być wyświetlane",
     "SettingTable": "Nakrycie stołu"
   },
+  "theme": {
+    "PreviewModeAlert": "Obecnie korzystasz z trybu podglądu motywu. Kontynuuj swoją pracę w oryginalnym oknie.",
+    "button": {
+      "ExportToJson": "Eksportuj JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "godzina",
@@ -2014,6 +2020,7 @@
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika",
     "theme": {
+      "CustomThemeSettingAlert": "Zaktualizowanego motywu nie można zastosować od razu. Jeśli chcesz go zastosować, skontaktuj się z naszym zespołem wsparcia i dołącz wyeksportowany plik konfiguracyjny w formacie JSON.",
       "ErrorColor": "Kolor błędu",
       "ErrorColorDesc": "Kolor zastosowany do przycisków lub alertów reprezentujących krytyczne działania, takie jak usuwanie, w celu wskazania ostrzeżeń lub błędów.",
       "HeaderBg": "Kolor tła nagłówka",
@@ -2022,6 +2029,7 @@
       "InfoColorDesc": "Kolor stosowany w ikonach informacyjnych i edycyjnych, używany dla elementów przekazujących informacje użytkownikom.",
       "LinkColor": "Kolor łącza",
       "LinkColorDesc": "Kolor używany w przypadku linków przekierowujących do innej strony lub otwierających dodatkowe elementy interfejsu użytkownika, takie jak szuflady lub moduły.",
+      "NoChangesMade": "Nie wprowadzono żadnych zmian.",
       "Preview": "Zapowiedź",
       "PrimaryColor": "Kolor podstawowy",
       "PrimaryColorDesc": "Główny kolor stosowany do przycisków lub tekstu opisowego reprezentującego kluczowe działania. \nJest on również stosowany jako kolor tła sekcji logo w nagłówku.",

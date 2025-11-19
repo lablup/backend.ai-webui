@@ -1897,6 +1897,12 @@
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SettingTable": "Ajuste de la tabla"
   },
+  "theme": {
+    "PreviewModeAlert": "Actualmente está usando el modo de vista previa del tema. Por favor, continúe con su trabajo en la ventana original.",
+    "button": {
+      "ExportToJson": "Exportar JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "hora",
@@ -2015,6 +2021,7 @@
     "UseSystemSetting": "Usar configuración del sistema",
     "UserConfigScript": "Script de configuración de usuario",
     "theme": {
+      "CustomThemeSettingAlert": "El tema actualizado no se puede aplicar de inmediato. Si desea aplicarlo, póngase en contacto con nuestro equipo de soporte e incluya el archivo JSON de configuración exportado.",
       "ErrorColor": "Color de error",
       "ErrorColorDesc": "El color aplicado a los botones o alertas que representan acciones críticas, como la eliminación, para indicar advertencias o errores.",
       "HeaderBg": "Color de fondo del encabezado",
@@ -2023,6 +2030,7 @@
       "InfoColorDesc": "Color aplicado a los iconos de orientación y modificación de información, usado para elementos que comunican información a los usuarios.",
       "LinkColor": "Color del enlace",
       "LinkColorDesc": "El color utilizado para los enlaces que redirigen a otra página o abren elementos adicionales de la interfaz de usuario, como cajones o modales.",
+      "NoChangesMade": "No se han realizado cambios.",
       "Preview": "Avance",
       "PrimaryColor": "Color primario",
       "PrimaryColorDesc": "El color principal aplicado a botones o texto descriptivo que representan acciones clave. \nTambién se aplica como color de fondo para la sección del logotipo en el encabezado.",

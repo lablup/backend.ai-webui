@@ -1897,6 +1897,12 @@
     "SelectColumnToDisplay": "Görüntülenecek sütunları seçin",
     "SettingTable": "Tablo Ayarı"
   },
+  "theme": {
+    "PreviewModeAlert": "Şu anda tema önizleme modundasınız. Lütfen asıl çalışmanızı orijinal pencerede sürdürün.",
+    "button": {
+      "ExportToJson": "JSON'u Dışa Aktar"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "saat",
@@ -2015,6 +2021,7 @@
     "UseSystemSetting": "Sistem Ayarını Kullan",
     "UserConfigScript": "Kullanıcı yapılandırma komut dosyası",
     "theme": {
+      "CustomThemeSettingAlert": "Güncellenen tema hemen uygulanamıyor. Temayı uygulamak istiyorsanız, lütfen dışa aktarılan yapılandırma JSON dosyasıyla destek ekibimizle iletişime geçin.",
       "ErrorColor": "Hata Rengi",
       "ErrorColorDesc": "Uyarıları veya hataları belirtmek için silme gibi kritik eylemleri temsil eden düğmelere veya uyarıya uygulanan renk.",
       "HeaderBg": "Başlık Arka Plan Rengi",
@@ -2023,6 +2030,7 @@
       "InfoColorDesc": "Kullanıcılara bilgi veren öğelerde kullanılan, bilgi yönlendirme ve düzenleme simgelerine uygulanan renk.",
       "LinkColor": "Bağlantı Rengi",
       "LinkColorDesc": "Başka bir sayfaya yönlendiren veya çekmeceler veya modeller gibi ek kullanıcı arayüzü öğelerini açan bağlantılar için kullanılan renk.",
+      "NoChangesMade": "Hiç değişiklik yapılmadı.",
       "Preview": "Önizleme",
       "PrimaryColor": "Ana Renk",
       "PrimaryColorDesc": "Anahtar eylemleri temsil eden düğmelere veya açıklayıcı metne uygulanan ana renk. \nAyrıca başlıktaki logo bölümünün arka plan rengi olarak da uygulanır.",

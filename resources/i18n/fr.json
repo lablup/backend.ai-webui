@@ -1897,6 +1897,12 @@
     "SelectColumnToDisplay": "Sélectionnez les colonnes à afficher",
     "SettingTable": "Paramètre de table"
   },
+  "theme": {
+    "PreviewModeAlert": "Vous êtes actuellement en mode aperçu du thème. Veuillez poursuivre votre travail dans la fenêtre d'origine.",
+    "button": {
+      "ExportToJson": "Exporter en JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "heure",
@@ -2015,6 +2021,7 @@
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur",
     "theme": {
+      "CustomThemeSettingAlert": "Le thème mis à jour ne peut pas être appliqué immédiatement. Si vous souhaitez l’appliquer, contactez notre équipe d’assistance en joignant le fichier JSON de configuration exporté.",
       "ErrorColor": "Couleur d'erreur",
       "ErrorColorDesc": "Couleur appliquée aux boutons ou aux alertes représentant des actions critiques, telles que la suppression, pour indiquer des avertissements ou des erreurs.",
       "HeaderBg": "Couleur d’arrière-plan de l’en-tête",
@@ -2023,6 +2030,7 @@
       "InfoColorDesc": "Couleur appliquée aux icônes d'aide et de modification, utilisée pour les éléments qui communiquent des informations aux utilisateurs.",
       "LinkColor": "Couleur du lien",
       "LinkColorDesc": "La couleur utilisée pour les liens qui redirigent vers une autre page ou ouvrent des éléments d'interface utilisateur supplémentaires tels que des tiroirs ou des modaux.",
+      "NoChangesMade": "Aucun changement n'a été effectué.",
       "Preview": "Aperçu",
       "PrimaryColor": "Couleur primaire",
       "PrimaryColorDesc": "La couleur principale appliquée aux boutons ou au texte descriptif qui représente les actions clés. \nElle est également appliquée comme couleur d’arrière-plan pour la section du logo dans l’en-tête.",

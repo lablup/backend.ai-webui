@@ -1904,6 +1904,12 @@
     "SelectColumnToDisplay": "Select for columns to display",
     "SettingTable": "Table Setting"
   },
+  "theme": {
+    "PreviewModeAlert": "You are currently using the theme preview mode. Please proceed with your actual work in the original window.",
+    "button": {
+      "ExportToJson": "Export JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "hour",
@@ -2023,6 +2029,7 @@
     "UseSystemSetting": "Use System Setting",
     "UserConfigScript": "User Config Script",
     "theme": {
+      "CustomThemeSettingAlert": "The updated theme cannot be applied immediately. If you would like to apply the theme, please contact our support team with the exported configuration JSON file.",
       "ErrorColor": "Error Color",
       "ErrorColorDesc": "The color applied to buttons or alert representing critical actions, such as deletion, to indicate warnings or errors.",
       "HeaderBg": "Header Background Color",
@@ -2031,6 +2038,7 @@
       "InfoColorDesc": "The color that applies to information guidance and modification icons, which is used for elements that communicate information to users.",
       "LinkColor": "Link Color",
       "LinkColorDesc": "The color used for links that redirect to another page or open additional UI elements such as drawers or modals.",
+      "NoChangesMade": "No changes made.",
       "Preview": "Preview",
       "PrimaryColor": "Primary Color",
       "PrimaryColorDesc": "The main color applied to buttons or descriptive text that represent key actions. It is also applied as the background color for the logo section in the header.",

@@ -3,7 +3,6 @@ import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
-  Button,
   Checkbox,
   Divider,
   Empty,
@@ -13,9 +12,9 @@ import {
   theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIModal, BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useState, ReactNode } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = createStyles(({ css }) => ({
@@ -35,6 +34,7 @@ export type SettingGroup = {
   titleExtra?: ReactNode;
   description?: ReactNode;
   settingItems: SettingItemProps[];
+  alert?: ReactNode;
 };
 
 interface SettingPageProps {
@@ -43,6 +43,8 @@ interface SettingPageProps {
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
+  primaryButton?: ReactNode;
+  extraButton?: ReactNode;
 }
 
 const TabTitle: React.FC<{
@@ -108,6 +110,7 @@ const GroupSettingItems: React.FC<
         )}
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" gap={'lg'}>
+        {group.alert}
         {group.settingItems.map((item, idx) => (
           <SettingItem key={item.title + idx} {...item} />
         ))}
@@ -122,6 +125,8 @@ const SettingList: React.FC<SettingPageProps> = ({
   showChangedOptionFilter,
   showResetButton,
   showSearchBar,
+  primaryButton,
+  extraButton,
 }) => {
   'use memo';
 
@@ -180,14 +185,16 @@ const SettingList: React.FC<SettingPageProps> = ({
               {t('settings.ShowOnlyChanged')}
             </Checkbox>
           )}
+          {extraButton}
           {!!showResetButton && (
-            <Button
+            <BAIButton
               icon={<RedoOutlined />}
               onClick={() => setIsOpenResetChangesModal()}
             >
               {t('button.Reset')}
-            </Button>
+            </BAIButton>
           )}
+          {primaryButton}
         </BAIFlex>
         <Tabs
           activeKey={activeTabKey}
@@ -241,21 +248,24 @@ const SettingList: React.FC<SettingPageProps> = ({
                   count={group.settingItems.length}
                 />
               ),
-              children:
-                group.settingItems.length > 0 ? (
-                  <GroupSettingItems
-                    group={group}
-                    hideEmpty
-                    onReset={() => {
-                      setIsOpenResetChangesModal();
-                    }}
-                  />
-                ) : (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={t('settings.NoChangesToDisplay')}
-                  />
-                ),
+              children: (
+                <BAIFlex direction="column" align="stretch" gap={'xl'}>
+                  {group.settingItems.length > 0 ? (
+                    <GroupSettingItems
+                      group={group}
+                      hideEmpty
+                      onReset={() => {
+                        setIsOpenResetChangesModal();
+                      }}
+                    />
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description={t('settings.NoChangesToDisplay')}
+                    />
+                  )}
+                </BAIFlex>
+              ),
             })),
           ]}
         />

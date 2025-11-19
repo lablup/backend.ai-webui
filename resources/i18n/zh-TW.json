@@ -1895,6 +1895,12 @@
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SettingTable": "桌面設定"
   },
+  "theme": {
+    "PreviewModeAlert": "您目前正在使用主題預覽模式。請在原視窗繼續進行您的實際工作。",
+    "button": {
+      "ExportToJson": "匯出 JSON"
+    }
+  },
   "time": {
     "Day": "day",
     "Hour": "小時",
@@ -2013,6 +2019,7 @@
     "UseSystemSetting": "使用系統設定",
     "UserConfigScript": "用戶配置腳本",
     "theme": {
+      "CustomThemeSettingAlert": "更新的主題無法立即套用。若您要套用此主題，請聯絡我們的支援團隊並提供匯出的設定 JSON 檔案。",
       "ErrorColor": "錯誤顏色",
       "ErrorColorDesc": "應用於表示關鍵操作（例如刪除）的按鈕或警報的顏色，以指示警告或錯誤。",
       "HeaderBg": "標題背景顏色",
@@ -2021,6 +2028,7 @@
       "InfoColorDesc": "此顏色用於資訊導引與編輯圖示，適用於向使用者傳達資訊的元素。",
       "LinkColor": "鏈接顏色",
       "LinkColorDesc": "用於重定向到另一個頁面或打開其他 UI 元素（例如抽屜或模式）的鏈接的顏色。",
+      "NoChangesMade": "未做任何變更。",
       "Preview": "預覽",
       "PrimaryColor": "原色",
       "PrimaryColorDesc": "應用於代表關鍵操作的按鈕或描述性文本的主要顏色。它還用作標題中徽標部分的背景顏色。",

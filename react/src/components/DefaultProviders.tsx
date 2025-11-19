@@ -13,7 +13,7 @@ import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
 import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUpdateEffect } from 'ahooks';
+import { useSessionStorageState, useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
 import { BAIConfigProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -47,10 +47,12 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import _ from 'lodash';
 import { GlobeIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useMemo,
   useState,
@@ -58,6 +60,7 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
@@ -205,7 +208,34 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
 }) => {
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
+
+  const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
   const themeConfig = useCustomThemeConfig();
+  const defaultThemeConfig =
+    isThemePreviewMode && !_.isEmpty(userCustomThemeConfig)
+      ? userCustomThemeConfig
+      : themeConfig;
+
+  const reloadPreviewWindow = useEffectEvent(() => {
+    if (!isThemePreviewMode) return;
+
+    const handleLocalStorageChange = (e: StorageEvent) => {
+      if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
+        window.location.reload();
+      }
+    };
+    window.addEventListener('storage', handleLocalStorageChange);
+    return () =>
+      window.removeEventListener('storage', handleLocalStorageChange);
+  });
+
+  useEffect(() => {
+    reloadPreviewWindow();
+  }, []);
+
   const { isDarkMode } = useThemeMode();
 
   const componentValues = useMemo(() => {
@@ -249,8 +279,8 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                       }}
                       theme={{
                         ...(isDarkMode
-                          ? { ...themeConfig?.dark }
-                          : { ...themeConfig?.light }),
+                          ? { ...defaultThemeConfig?.dark }
+                          : { ...defaultThemeConfig?.light }),
                         algorithm: isDarkMode
                           ? theme.darkAlgorithm
                           : theme.defaultAlgorithm,
@@ -325,8 +355,34 @@ export const DefaultProvidersForReactRoot: React.FC<
   Partial<DefaultProvidersProps>
 > = ({ children }) => {
   const [lang] = useCurrentLanguage();
-  const themeConfig = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
+
+  const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
+  const themeConfig = useCustomThemeConfig();
+  const defaultThemeConfig =
+    isThemePreviewMode && !_.isEmpty(userCustomThemeConfig)
+      ? userCustomThemeConfig
+      : themeConfig;
+
+  const reloadPreviewWindow = useEffectEvent(() => {
+    if (!isThemePreviewMode) return;
+
+    const handleLocalStorageChange = (e: StorageEvent) => {
+      if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
+        window.location.reload();
+      }
+    };
+    window.addEventListener('storage', handleLocalStorageChange);
+    return () =>
+      window.removeEventListener('storage', handleLocalStorageChange);
+  });
+
+  useEffect(() => {
+    reloadPreviewWindow();
+  }, []);
 
   return (
     <>
@@ -341,8 +397,8 @@ export const DefaultProvidersForReactRoot: React.FC<
               }
               theme={{
                 ...(isDarkMode
-                  ? { ...themeConfig?.dark }
-                  : { ...themeConfig?.light }),
+                  ? { ...defaultThemeConfig?.dark }
+                  : { ...defaultThemeConfig?.light }),
                 algorithm: isDarkMode
                   ? theme.darkAlgorithm
                   : theme.defaultAlgorithm,
