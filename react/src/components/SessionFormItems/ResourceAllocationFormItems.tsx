@@ -1243,6 +1243,7 @@ const ResourceAllocationFormItems: React.FC<
                   resourceGroup={currentResourceGroupInForm}
                   fetchKey={agentFetchKey}
                   mode={supportMultiAgents ? 'multiple' : undefined}
+                  fallbackToAuto
                   labelRender={
                     supportMultiAgents
                       ? ({ label, value }) => {
