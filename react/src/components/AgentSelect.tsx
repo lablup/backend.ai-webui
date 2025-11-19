@@ -2,14 +2,14 @@ import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import ResourceNumber from './ResourceNumber';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps } from 'antd';
+import { Select, SelectProps, theme } from 'antd';
 import { filterOutEmpty, BAIFlex, mergeFilterValues } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'options'> {
   autoSelectDefault?: boolean;
   fetchKey?: string;
   resourceGroup?: string | null;
@@ -24,6 +24,7 @@ const AgentSelect: React.FC<Props> = ({
   const [value, setValue] = useControllableValue(selectProps);
   const [searchStr, setSearchStr] = useState<string | undefined>(undefined);
   const deferredSearchStr = useDeferredValue(searchStr);
+  const { token } = theme.useToken();
 
   const { baiPaginationOption } = useBAIPaginationOptionState({
     current: 1,
@@ -94,7 +95,13 @@ const AgentSelect: React.FC<Props> = ({
       .value();
     return {
       label: (
-        <BAIFlex direction="row" justify="between">
+        <BAIFlex
+          direction="row"
+          justify="between"
+          style={{
+            marginRight: token.marginXS,
+          }}
+        >
           {agent?.id}
           <BAIFlex direction="row" gap={'xxs'}>
             {_.map(remainingSlotsInfo, (slot, key) => {
@@ -122,9 +129,6 @@ const AgentSelect: React.FC<Props> = ({
     : undefined;
   return (
     <Select
-      onChange={(value, option) => {
-        setValue(value, option);
-      }}
       loading={searchStr !== deferredSearchStr}
       filterOption={false}
       showSearch
@@ -132,9 +136,26 @@ const AgentSelect: React.FC<Props> = ({
       onSearch={(v) => {
         setSearchStr(v);
       }}
-      {...selectProps}
-      value={value}
       options={filterOutEmpty([autoSelectIfMatch, ...agentOptions])}
+      //override props.onChange and props.value, it is handled by useControllableValue
+      {...selectProps}
+      onChange={(value: unknown, option) => {
+        if (
+          selectProps.mode === 'multiple' &&
+          _.isArray(value) &&
+          _.isArray(option)
+        ) {
+          if (_.last(value) === 'auto' || value.length === 0) {
+            value = ['auto'];
+            option = _.last(option);
+          } else if (value[0] === 'auto' && value.length > 1) {
+            value = value.slice(1);
+            option = option.slice(1);
+          }
+        }
+        setValue(value, option);
+      }}
+      value={value}
     />
   );
 };

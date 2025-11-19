@@ -1276,7 +1276,7 @@ const SessionLauncherPage = () => {
                   command: undefined,
                   scheduleDate: undefined,
                 },
-                agent: 'auto', // Add the missing 'agent' property
+                agent: ['auto'], // Add the missing 'agent' property
               } as SessionLauncherFormData,
               formValue,
             );

@@ -1,7 +1,6 @@
 import { Switch, SwitchProps, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useInterval } from 'backend.ai-ui';
 import React from 'react';
-import { useInterval } from 'src/hooks/useIntervalValue';
 
 const { Text } = Typography;
 

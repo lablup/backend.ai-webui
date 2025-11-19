@@ -523,7 +523,7 @@ const SessionLauncherPreview: React.FC<{
             {baiClient.supports('agent-select') &&
               !baiClient?._config?.hideAgents && (
                 <Descriptions.Item label={t('session.launcher.AgentNode')}>
-                  {form.getFieldValue('agent') ||
+                  {_.castArray(form.getFieldValue('agent')).join(', ') ||
                     t('session.launcher.AutoSelect')}
                 </Descriptions.Item>
               )}
