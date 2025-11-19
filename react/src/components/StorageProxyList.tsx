@@ -5,7 +5,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
@@ -77,7 +77,7 @@ const StorageProxyList = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });

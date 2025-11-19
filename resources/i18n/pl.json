@@ -617,6 +617,7 @@
     "AuthenticationFailed": "Uwierzytelnianie nie powiodło się. Sprawdź informacje i status menedżera.",
     "CannotChangeVirtualFolderOption": "Nie można zmienić opcji folderu v, który nie jest moją własnością.",
     "CannotSharePrivateAutomountFolder": "Nie można udostępniać folderów vfolder automount zgodnie z zasadami.",
+    "FailedToLoadTableData": "Wystąpił błąd podczas ładowania listy.",
     "FolderSharingNotAvailableToUser": "Udostępnianie folderów nie jest dostępne dla żądanych użytkowników.",
     "InternalServerError": "Wewnętrzny błąd serwera. Spróbuj ponownie później.",
     "InvalidBaseURL": "Adres URL punktu końcowego jest nieprawidłowy.",

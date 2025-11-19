@@ -617,6 +617,7 @@
     "AuthenticationFailed": "验证失败。检查信息和管理器状态。",
     "CannotChangeVirtualFolderOption": "您不能更改不属于自己的 v 文件夹的选项。",
     "CannotSharePrivateAutomountFolder": "无法按照策略共享自动挂载 v 文件夹。",
+    "FailedToLoadTableData": "載入清單時發生錯誤。",
     "FolderSharingNotAvailableToUser": "请求的用户无法共享文件夹。",
     "InternalServerError": "内部服务器错误。请稍后再试。",
     "InvalidBaseURL": "端点 URL 无效。",

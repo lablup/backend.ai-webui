@@ -19,6 +19,7 @@ import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import React, { Suspense, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -558,7 +559,11 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <NuqsAdapter>
+      <RouterProvider router={router} />
+    </NuqsAdapter>
+  );
 };
 
 export default App;

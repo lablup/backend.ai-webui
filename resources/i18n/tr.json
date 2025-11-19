@@ -617,6 +617,7 @@
     "AuthenticationFailed": "Kimlik doğrulama başarısız oldu. Bilgileri ve yönetici durumunu kontrol edin.",
     "CannotChangeVirtualFolderOption": "Bana ait olmayan bir vfolder'ın seçeneklerini değiştiremezsiniz.",
     "CannotSharePrivateAutomountFolder": "İlkeye uygun olarak automount vfolders paylaşılamıyor.",
+    "FailedToLoadTableData": "Liste yüklenirken bir hata oluştu.",
     "FolderSharingNotAvailableToUser": "Klasör paylaşımı istenen kullanıcı(lar) için mevcut değil.",
     "InternalServerError": "Dahili Sunucu Hatası. Lütfen daha sonra tekrar deneyin.",
     "InvalidBaseURL": "Bitiş noktası URL'si geçerli değil.",

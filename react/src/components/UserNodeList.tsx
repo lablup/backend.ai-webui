@@ -1,7 +1,7 @@
 import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
 import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
 import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
@@ -62,7 +62,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });

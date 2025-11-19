@@ -616,6 +616,7 @@
     "AuthenticationFailed": "Autenticazione fallita. Controllare le informazioni e lo stato del manager.",
     "CannotChangeVirtualFolderOption": "Non è possibile modificare le opzioni di una cartella v che non è di mia proprietà.",
     "CannotSharePrivateAutomountFolder": "Impossibile condividere le vfolders automount in linea con il criterio.",
+    "FailedToLoadTableData": "Si è verificato un errore durante il caricamento dell'elenco.",
     "FolderSharingNotAvailableToUser": "La condivisione delle cartelle non è disponibile per gli utenti richiesti.",
     "InternalServerError": "Errore interno del server. Riprovare più tardi.",
     "InvalidBaseURL": "L'URL dell'endpoint non è valido.",

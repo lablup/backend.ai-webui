@@ -616,6 +616,7 @@
     "AuthenticationFailed": "Otentikasi gagal. Memeriksa informasi dan status manajer.",
     "CannotChangeVirtualFolderOption": "Anda tidak dapat mengubah opsi vfolder yang bukan milik saya sendiri.",
     "CannotSharePrivateAutomountFolder": "Tidak dapat berbagi vfolder otomatis sesuai dengan kebijakan.",
+    "FailedToLoadTableData": "Terjadi kesalahan saat memuat daftar.",
     "FolderSharingNotAvailableToUser": "Berbagi folder tidak tersedia untuk pengguna yang diminta.",
     "InternalServerError": "Kesalahan Server Internal. Silakan coba lagi nanti.",
     "InvalidBaseURL": "URL titik akhir tidak valid.",

@@ -9,12 +9,16 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
-import SessionNodes from '../components/SessionNodes';
+import SessionNodes, {
+  availableSessionSorterValues,
+} from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
+import { ExtractResultValue } from '../helper/resultTypes';
 import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
+  Alert,
   Badge,
   Button,
   Col,
@@ -37,23 +41,35 @@ import {
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';
-import { Suspense, useDeferredValue, useMemo, useRef, useState } from 'react';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
-type TypeFilterType = 'all' | 'interactive' | 'batch' | 'inference' | 'system';
-type SessionNode = NonNullableNodeOnEdges<
-  ComputeSessionListPageQuery$data['compute_session_nodes']
+const typeFilterValues = [
+  'all',
+  'interactive',
+  'batch',
+  'inference',
+  'system',
+] as const;
+type TypeFilterType = (typeof typeFilterValues)[number];
+
+// Extract the success value type from Result
+type ComputeSessionNodesData = ExtractResultValue<
+  ComputeSessionListPageQuery$data['computeSessionNodeResult']
 >;
+
+type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
 const CARD_MIN_HEIGHT = 200;
 
 const ComputeSessionListPage = () => {
+  'use memo';
   const currentProject = useCurrentProjectValue();
   const userRole = useCurrentUserRole();
 
@@ -79,12 +95,21 @@ const ComputeSessionListPage = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: withDefault(StringParam, undefined),
-    type: withDefault(StringParam, 'all'),
-    statusCategory: withDefault(StringParam, 'running'),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral(availableSessionSorterValues).withDefault(
+        '-created_at',
+      ),
+      filter: parseAsString.withDefault(''),
+      type: parseAsStringLiteral(typeFilterValues).withDefault('all'),
+      statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
+        'running',
+      ),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const queryMapRef = useRef({
     [queryParams.type]: {
@@ -93,10 +118,12 @@ const ComputeSessionListPage = () => {
     },
   });
 
-  queryMapRef.current[queryParams.type] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  useEffect(() => {
+    queryMapRef.current[queryParams.type] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
   const typeFilter =
     queryParams.type === 'all' || queryParams.type === undefined
@@ -115,24 +142,13 @@ const ComputeSessionListPage = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const queryVariables: ComputeSessionListPageQuery$variables = useMemo(
-    () => ({
-      projectId: currentProject.id,
-      offset: baiPaginationOption.offset,
-      first: baiPaginationOption.first,
-      filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-      order: queryParams.order,
-    }),
-    [
-      currentProject.id,
-      baiPaginationOption.offset,
-      baiPaginationOption.first,
-      statusFilter,
-      queryParams.filter,
-      typeFilter,
-      queryParams.order,
-    ],
-  );
+  const queryVariables: ComputeSessionListPageQuery$variables = {
+    projectId: currentProject.id,
+    offset: baiPaginationOption.offset,
+    first: baiPaginationOption.first,
+    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
+    order: queryParams.order,
+  };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -146,13 +162,13 @@ const ComputeSessionListPage = () => {
           $filter: String
           $order: String
         ) {
-          compute_session_nodes(
+          computeSessionNodeResult: compute_session_nodes(
             project_id: $projectId
             first: $first
             offset: $offset
             filter: $filter
             order: $order
-          ) {
+          ) @catch(to: RESULT) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
                 id @required(action: THROW)
@@ -215,7 +231,10 @@ const ComputeSessionListPage = () => {
     },
   );
 
-  const { compute_session_nodes, ...sessionCounts } = queryRef;
+  const { computeSessionNodeResult, ...sessionCounts } = queryRef;
+  const compute_session_nodes = computeSessionNodeResult.ok
+    ? computeSessionNodeResult.value
+    : null;
   const { lg } = Grid.useBreakpoint();
 
   return (
@@ -329,10 +348,12 @@ const ComputeSessionListPage = () => {
                 statusCategory: 'running',
               },
             };
-            setQuery(
-              { ...storedQuery.queryParams, type: key as TypeFilterType },
-              'replace',
-            );
+            // Set to null first to reset to default values
+            setQueryParams(null);
+            setQueryParams({
+              ...storedQuery.queryParams,
+              type: key as TypeFilterType,
+            });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
             );
@@ -392,7 +413,7 @@ const ComputeSessionListPage = () => {
                 optionType="button"
                 value={queryParams.statusCategory}
                 onChange={(e) => {
-                  setQuery({ statusCategory: e.target.value }, 'replaceIn');
+                  setQueryParams({ statusCategory: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedSessionList([]);
                 }}
@@ -432,9 +453,9 @@ const ComputeSessionListPage = () => {
                     type: 'string',
                   },
                 ])}
-                value={queryParams.filter}
+                value={queryParams.filter || undefined}
                 onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
+                  setQueryParams({ filter: value || '' });
                   setTablePaginationOption({ current: 1 });
                   setSelectedSessionList([]);
                 }}
@@ -461,72 +482,80 @@ const ComputeSessionListPage = () => {
               )}
             </BAIFlex>
           </BAIFlex>
-          <SessionNodes
-            order={queryParams.order}
-            onClickSessionName={(session) => {
-              // Set sessionDetailDrawerFrgmt in location state via webUINavigate
-              // instead of directly setting sessionDetailId query param
-              // to avoid additional fetch in SessionDetailDrawer
-              const newSearchParams = new URLSearchParams(location.search);
-              newSearchParams.set('sessionDetail', session.row_id);
-              webUINavigate(
-                {
-                  pathname: location.pathname,
-                  hash: location.hash,
-                  search: newSearchParams.toString(),
-                },
-                {
-                  state: {
-                    sessionDetailDrawerFrgmt: session,
-                    createdAt: new Date().toISOString(),
+          {computeSessionNodeResult.ok ? (
+            <SessionNodes
+              order={queryParams.order}
+              onClickSessionName={(session) => {
+                // Set sessionDetailDrawerFrgmt in location state via webUINavigate
+                // instead of directly setting sessionDetailId query param
+                // to avoid additional fetch in SessionDetailDrawer
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', session.row_id);
+                webUINavigate(
+                  {
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
                   },
-                },
-              );
-            }}
-            loading={deferredQueryVariables !== queryVariables}
-            rowSelection={{
-              type: 'checkbox',
-              // Preserve selected rows between pages, but clear when filter changes
-              preserveSelectedRowKeys: true,
-              getCheckboxProps(record) {
-                return {
-                  disabled: isNotRunningCategory(record.status),
-                };
-              },
-              onChange: (selectedRowKeys) => {
-                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
-                handleRowSelectionChange(
-                  selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    compute_session_nodes?.edges.map((e) => e?.node),
-                  ),
-                  setSelectedSessionList,
+                  {
+                    state: {
+                      sessionDetailDrawerFrgmt: session,
+                      createdAt: new Date().toISOString(),
+                    },
+                  },
                 );
-              },
-              selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
-            }}
-            sessionsFrgmt={filterOutNullAndUndefined(
-              compute_session_nodes?.edges.map((e) => e?.node),
-            )}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: compute_session_nodes?.count ?? 0,
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-              },
-            }}
-            sortDirections={['ascend', 'descend', 'ascend']}
-            onChangeOrder={(order) => {
-              setQuery({ order }, 'replaceIn');
-            }}
-            tableSettings={{
-              columnOverrides: columnOverrides,
-              onColumnOverridesChange: setColumnOverrides,
-            }}
-          />
+              }}
+              loading={deferredQueryVariables !== queryVariables}
+              rowSelection={{
+                type: 'checkbox',
+                // Preserve selected rows between pages, but clear when filter changes
+                preserveSelectedRowKeys: true,
+                getCheckboxProps(record) {
+                  return {
+                    disabled: isNotRunningCategory(record.status),
+                  };
+                },
+                onChange: (selectedRowKeys) => {
+                  // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
+                  handleRowSelectionChange(
+                    selectedRowKeys,
+                    filterOutNullAndUndefined(
+                      compute_session_nodes?.edges.map((e) => e?.node),
+                    ),
+                    setSelectedSessionList,
+                  );
+                },
+                selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+              }}
+              sessionsFrgmt={filterOutNullAndUndefined(
+                compute_session_nodes?.edges.map((e) => e?.node),
+              )}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                current: tablePaginationOption.current,
+                total: compute_session_nodes?.count ?? 0,
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({ current, pageSize });
+                  }
+                },
+              }}
+              sortDirections={['ascend', 'descend', 'ascend']}
+              onChangeOrder={(order) => {
+                setQueryParams({ order });
+              }}
+              tableSettings={{
+                columnOverrides: columnOverrides,
+                onColumnOverridesChange: setColumnOverrides,
+              }}
+            />
+          ) : (
+            <Alert
+              type="error"
+              showIcon
+              message={t('error.FailedToLoadTableData')}
+            />
+          )}
         </BAIFlex>
       </BAICard>
       <TerminateSessionModal

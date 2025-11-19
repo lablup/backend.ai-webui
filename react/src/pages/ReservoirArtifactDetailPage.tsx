@@ -31,7 +31,7 @@ import {
 } from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
 import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
 import { INITIAL_FETCH_KEY, useUpdatableState } from 'src/hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
 
@@ -69,7 +69,7 @@ const ReservoirArtifactDetailPage = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });

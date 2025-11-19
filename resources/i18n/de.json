@@ -617,6 +617,7 @@
     "AuthenticationFailed": "Authentifizierung fehlgeschlagen. Prüfen Sie die Informationen und den Status des Managers.",
     "CannotChangeVirtualFolderOption": "Sie können die Optionen eines vOrdners, der mir nicht gehört, nicht ändern.",
     "CannotSharePrivateAutomountFolder": "Die Freigabe von automatisch eingehängten vOrdnern gemäß der Richtlinie ist nicht möglich.",
+    "FailedToLoadTableData": "Beim Laden der Liste ist ein Fehler aufgetreten.",
     "FolderSharingNotAvailableToUser": "Die gemeinsame Nutzung von Ordnern ist für den/die gewünschten Benutzer nicht verfügbar.",
     "InternalServerError": "Interner Serverfehler. Bitte versuchen Sie es später noch einmal.",
     "InvalidBaseURL": "Die Endpunkt-URL ist nicht gültig.",

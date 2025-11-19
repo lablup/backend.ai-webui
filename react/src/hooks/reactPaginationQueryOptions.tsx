@@ -2,6 +2,7 @@
 import { LazyLoadQueryOptions } from '../helper/types';
 import { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
+import { parseAsInteger, useQueryStates } from 'nuqs';
 import { useMemo, useState } from 'react';
 import {
   fetchQuery,
@@ -339,7 +340,7 @@ export const useBAIPaginationOptionState = (
   }, [pageSize, current]);
 };
 
-export const useBAIPaginationOptionStateOnSearchParam = (
+export const useBAIPaginationOptionStateOnSearchParamLegacy = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
   const [{ pageSize, current }, setOptions] = useQueryParams({
@@ -382,6 +383,45 @@ export const useBAIPaginationOptionStateOnSearchParam = (
           }),
           'replaceIn',
         );
+      }
+    },
+  };
+};
+
+export const useBAIPaginationOptionStateOnSearchParam = (
+  initialOptions: InitialPaginationOption,
+): BAIPaginationOptionState => {
+  'use memo';
+  const [{ pageSize, current }, setQueryParams] = useQueryStates(
+    {
+      current: parseAsInteger.withDefault(initialOptions.current),
+      pageSize: parseAsInteger.withDefault(initialOptions.pageSize),
+    },
+    {
+      history: 'replace',
+    },
+  );
+
+  return {
+    baiPaginationOption: {
+      limit: pageSize,
+      first: pageSize,
+      offset: current > 1 ? (current - 1) * pageSize : 0,
+    },
+    tablePaginationOption: {
+      pageSize: pageSize,
+      current: current,
+    },
+    setTablePaginationOption: (
+      pagination: Partial<AntdBasicPaginationOption> | null,
+    ) => {
+      if (
+        !_.isEqual(pagination, {
+          pageSize,
+          current,
+        })
+      ) {
+        setQueryParams(pagination);
       }
     },
   };

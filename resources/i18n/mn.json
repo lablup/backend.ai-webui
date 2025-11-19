@@ -615,6 +615,7 @@
     "AuthenticationFailed": "Баталгаажуулалт амжилтгүй боллоо. \nМэдээлэл болон менежерийн статусыг шалгана уу.",
     "CannotChangeVirtualFolderOption": "Та миний эзэмшдэггүй vfolder-ийн сонголтыг өөрчлөх боломжгүй.",
     "CannotSharePrivateAutomountFolder": "Бодлогын дагуу автоматаар холбох vfolders хуваалцах боломжгүй.",
+    "FailedToLoadTableData": "Жагсаалтыг ачааллах үед алдаа гарлаа.",
     "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй.",
     "InternalServerError": "Дотоод серверийн алдаа. \nДараа дахин оролдоно уу.",
     "InvalidBaseURL": "EndPoint URL нь хүчин төгөлдөр бус байна.",

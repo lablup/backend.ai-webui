@@ -616,6 +616,7 @@
     "AuthenticationFailed": "Pengesahan gagal. \nSemak maklumat dan status pengurus.",
     "CannotChangeVirtualFolderOption": "Anda tidak boleh menukar pilihan vfolder yang bukan milik saya sendiri.",
     "CannotSharePrivateAutomountFolder": "Tidak boleh berkongsi vfolder automount selaras dengan dasar.",
+    "FailedToLoadTableData": "Ralat berlaku semasa memuatkan senarai.",
     "FolderSharingNotAvailableToUser": "Perkongsian folder tidak tersedia untuk pengguna yang diminta.",
     "InternalServerError": "Ralat pelayan dalaman. \nSila cuba lagi kemudian.",
     "InvalidBaseURL": "URL Endpoint tidak sah.",

@@ -622,6 +622,7 @@
     "CannotChangeVirtualFolderOption": "You cannot change the options of a vfolder that is not owned by myself.",
     "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
     "ErrorFetchingExternalContent": "Error fetching external content:",
+    "FailedToLoadTableData": "An error occurred while loading the list.",
     "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s).",
     "InternalServerError": "Internal Server Error. Please try again later.",
     "InvalidBaseURL": "Endpoint URL is not valid.",

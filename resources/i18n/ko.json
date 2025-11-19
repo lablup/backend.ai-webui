@@ -619,6 +619,7 @@
     "AuthenticationFailed": "API 인증 실패. 사용자 정보나 Manager 상태를 확인하세요.",
     "CannotChangeVirtualFolderOption": "폴더 소유자가 아닌 경우 폴더 옵션을 변경할 수 없습니다.",
     "CannotSharePrivateAutomountFolder": "정책에 따라 자동마운트 폴더는 공유할 수 없습니다.",
+    "FailedToLoadTableData": "목록을 불러오는 중 오류가 발생했습니다.",
     "FolderSharingNotAvailableToUser": "요청한 사용자는 폴더 공유가 불가능한 상태입니다.",
     "InternalServerError": "내부 서버 오류입니다. 나중에 다시 시도해 주세요.",
     "InvalidBaseURL": "Endpoint URL 이 유효하지 않습니다.",

@@ -26,19 +26,46 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type SessionNodeInList = NonNullable<SessionNodesFragment$data[number]>;
+
+const availableSessionSorterKeys = [
+  'name',
+  'scaling_group',
+  'type',
+  'cluster_mode',
+  'created_at',
+  'agent_ids',
+] as const;
+
+export const availableSessionSorterValues = [
+  ...availableSessionSorterKeys,
+  ...availableSessionSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availableSessionSorterKeys, key);
+};
+
 interface SessionNodesProps
-  extends Omit<BAITableProps<SessionNodeInList>, 'dataSource' | 'columns'> {
+  extends Omit<
+    BAITableProps<SessionNodeInList>,
+    'dataSource' | 'columns' | 'onChangeOrder'
+  > {
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
+  onChangeOrder?: (
+    order: (typeof availableSessionSorterValues)[number] | null,
+  ) => void;
 }
 
 const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   onClickSessionName,
   disableSorter,
+  onChangeOrder,
   ...tableProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -101,7 +128,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
             name
           );
         },
-        sorter: true,
+        sorter: isEnableSorter('name'),
         required: true,
         fixed: 'left',
       },
@@ -182,7 +209,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'scaling_group',
         title: t('session.ResourceGroup'),
         defaultHidden: true,
-        sorter: true,
+        sorter: isEnableSorter('scaling_group'),
         render: (__, session) =>
           session.scaling_group ? session.scaling_group : '-',
       },
@@ -191,7 +218,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'type',
         title: t('session.SessionType'),
         defaultHidden: true,
-        sorter: true,
+        sorter: isEnableSorter('type'),
         render: (__, session) => <BAISessionTypeTag sessionFrgmt={session} />,
       },
       {
@@ -199,7 +226,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'cluster_mode',
         title: t('session.ClusterMode'),
         defaultHidden: true,
-        sorter: true,
+        sorter: isEnableSorter('cluster_mode'),
         render: (__, session) => (
           <BAISessionClusterMode sessionFrgmt={session} />
         ),
@@ -209,7 +236,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'created_at',
         title: t('session.CreatedAt'),
         defaultHidden: true,
-        sorter: true,
+        sorter: isEnableSorter('created_at'),
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
       },
       (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
@@ -217,7 +244,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'agent_ids',
         title: t('session.Agent'),
         defaultHidden: false,
-        sorter: true,
+        sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
       userRole === 'superadmin' &&
@@ -242,6 +269,11 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataSource={filteredSessions}
         columns={columns}
         scroll={{ x: 'max-content' }}
+        onChangeOrder={(order) => {
+          onChangeOrder?.(
+            (order as (typeof availableSessionSorterValues)[number]) || null,
+          );
+        }}
         {...tableProps}
       />
     </>

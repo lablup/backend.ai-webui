@@ -617,6 +617,7 @@
     "AuthenticationFailed": "L'authentification a échoué. Vérifier les informations et le statut du gestionnaire.",
     "CannotChangeVirtualFolderOption": "Vous ne pouvez pas modifier les options d'un dossier v qui ne m'appartient pas.",
     "CannotSharePrivateAutomountFolder": "Impossible de partager les dossiers virtuels d'automount conformément à la politique.",
+    "FailedToLoadTableData": "Une erreur est survenue lors du chargement de la liste.",
     "FolderSharingNotAvailableToUser": "Le partage de dossiers n'est pas disponible pour le(s) utilisateur(s) demandé(s).",
     "InternalServerError": "Erreur de serveur interne. Veuillez réessayer plus tard.",
     "InvalidBaseURL": "L'URL du point final n'est pas valide.",

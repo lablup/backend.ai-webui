@@ -606,6 +606,7 @@
     "CannotChangeVirtualFolderOption": "คุณไม่สามารถเปลี่ยนตัวเลือกของ vfolder ที่ไม่ได้เป็นเจ้าของโดยตัวคุณเอง",
     "CannotSharePrivateAutomountFolder": "ไม่สามารถแชร์โฟลเดอร์ vfolder ที่เมาท์อัตโนมัติตามนโยบาย",
     "ErrorFetchingExternalContent": "เกิดข้อผิดพลาดในการดึงเนื้อหาภายนอก:",
+    "FailedToLoadTableData": "เกิดข้อผิดพลาดขณะโหลดรายการ",
     "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ",
     "InternalServerError": "ข้อผิดพลาดของเซิร์ฟเวอร์ภายใน \nโปรดลองอีกครั้งในภายหลัง",
     "InvalidBaseURL": "URL ปลายทางไม่ถูกต้อง",

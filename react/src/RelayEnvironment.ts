@@ -69,6 +69,17 @@ const fetchFn: FetchFunction = async (
         }
       })) || {};
 
+  if (result.errors) {
+    // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
+    // so we store the original message in the extensions.rawErrorMessage field.
+    // https://github.com/facebook/relay/releases/tag/v18.1.0
+    result.errors.forEach((error: any) => {
+      if (error.extensions && error.message) {
+        error.extensions.rawErrorMessage = error.message;
+      }
+    });
+  }
+
   return result;
 };
 

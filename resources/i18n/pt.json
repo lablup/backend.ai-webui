@@ -617,6 +617,7 @@
     "AuthenticationFailed": "A autenticação falhou. Verificar as informações e o estado do gestor.",
     "CannotChangeVirtualFolderOption": "Não é possível alterar as opções de uma pasta v que não seja propriedade minha.",
     "CannotSharePrivateAutomountFolder": "Não é possível partilhar vfolders de montagem automática em conformidade com a política.",
+    "FailedToLoadTableData": "Ocorreu um erro ao carregar a lista.",
     "FolderSharingNotAvailableToUser": "A partilha de pastas não está disponível para o(s) utilizador(es) solicitado(s).",
     "InternalServerError": "Erro interno do servidor. Por favor, tente novamente mais tarde.",
     "InvalidBaseURL": "O URL do ponto final não é válido.",

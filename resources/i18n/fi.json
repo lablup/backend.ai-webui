@@ -617,6 +617,7 @@
     "AuthenticationFailed": "Tunnistautuminen epäonnistui. Tarkista tiedot ja managerin tila.",
     "CannotChangeVirtualFolderOption": "Et voi muuttaa sellaisen v-kansion asetuksia, joka ei ole minun omistuksessani.",
     "CannotSharePrivateAutomountFolder": "Automaattisesti kiinnitettyjä v-kansioita ei voida jakaa käytäntöjen mukaisesti.",
+    "FailedToLoadTableData": "Listan latauksessa tapahtui virhe.",
     "FolderSharingNotAvailableToUser": "Kansioiden jakaminen ei ole käytettävissä pyydetyille käyttäjille.",
     "InternalServerError": "Sisäinen palvelinvirhe. Yritä myöhemmin uudelleen.",
     "InvalidBaseURL": "Päätepisteen URL-osoite ei ole kelvollinen.",

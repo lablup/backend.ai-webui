@@ -617,6 +617,7 @@
     "AuthenticationFailed": "Quá trình xác thực đã thất bại. \nKiểm tra thông tin và trạng thái người quản lý.",
     "CannotChangeVirtualFolderOption": "Bạn không thể thay đổi các tùy chọn của vfolder không thuộc quyền sở hữu của tôi.",
     "CannotSharePrivateAutomountFolder": "Không thể chia sẻ các thư mục vfolder tự động theo chính sách.",
+    "FailedToLoadTableData": "Đã xảy ra lỗi khi tải danh sách.",
     "FolderSharingNotAvailableToUser": "Chia sẻ thư mục không có sẵn cho (những) người dùng được yêu cầu.",
     "InternalServerError": "Lỗi máy chủ nội bộ. \nVui lòng thử lại sau.",
     "InvalidBaseURL": "URL điểm cuối không hợp lệ.",
