@@ -3,6 +3,7 @@ import { jotaiStore } from '../components/DefaultProviders';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
 interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
@@ -37,6 +38,7 @@ interface UserSettings {
   max_concurrent_uploads?: number;
   container_log_auto_refresh_enabled?: boolean;
   container_log_auto_refresh_interval?: number;
+  custom_theme_config?: CustomThemeConfig;
 }
 
 export type SessionHistory = {

@@ -2008,10 +2008,28 @@
     "SSHKeypairManagement": "SSHキーペア管理",
     "SessionTerminationDialog": "セッションの終了は元に戻せません。セッションの終了に進みますか？",
     "ShellEnvironments": "シェル環境",
+    "Theme": "テーマ",
     "ThemeMode": "テーマモード",
     "UseCompactSidebar": "コンパクトサイドバーをデフォルトに設定",
     "UseSystemSetting": "システム設定を使用する",
-    "UserConfigScript": "ユーザー構成スクリプト"
+    "UserConfigScript": "ユーザー構成スクリプト",
+    "theme": {
+      "ErrorColor": "エラーの色",
+      "ErrorColorDesc": "警告やエラーを示すために、削除などの重要なアクションを表すボタンまたはアラートに適用される色。",
+      "HeaderBg": "ヘッダーの背景色",
+      "HeaderBgDesc": "ロゴセクションを除く、ヘッダーの背景に適用される色。",
+      "InfoColor": "情報の色",
+      "InfoColorDesc": "ユーザーに情報を伝える要素（情報案内や編集アイコン）に適用される色。",
+      "LinkColor": "リンクの色",
+      "LinkColorDesc": "別のページにリダイレクトするリンク、またはドロワーやモーダルなどの追加の UI 要素を開くリンクに使用される色。",
+      "Preview": "プレビュー",
+      "PrimaryColor": "原色",
+      "PrimaryColorDesc": "キーアクションを表すボタンまたは説明テキストに適用されるメインカラー。\nヘッダーのロゴセクションの背景色としても適用されます。",
+      "SuccessColor": "サクセスカラー",
+      "SuccessColorDesc": "ユーザーアクションが正常に完了したことを示すボタン、アラート、またはアイコンに適用される色。",
+      "TextColor": "文字の色",
+      "TextColorDesc": "一般的なテキストに使用される色。"
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
@@ -2040,6 +2058,7 @@
       "AgentSummary": "リソース概要",
       "Architecture": "建築",
       "ArtifactDetails": "アーティファクトの詳細",
+      "Branding": "ブランディング",
       "Cancel": "キャンセル",
       "ChangePassword": "パスワードを変更する",
       "Chat": "チャット",

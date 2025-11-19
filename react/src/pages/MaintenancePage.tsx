@@ -1,6 +1,9 @@
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
-import { Card } from 'antd';
+import { Skeleton } from 'antd';
+import { BAICard } from 'backend.ai-ui';
+import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'maintenance';
@@ -12,8 +15,8 @@ const MaintenancePage = () => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   return (
-    <Card
-      activeTabKey="maintenance"
+    <BAICard
+      activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
         {
@@ -22,8 +25,14 @@ const MaintenancePage = () => {
         },
       ]}
     >
-      {curTabKey === 'maintenance' && <MaintenanceSettingList />}
-    </Card>
+      <Suspense fallback={<Skeleton active />}>
+        {curTabKey === 'maintenance' && (
+          <BAIErrorBoundary>
+            <MaintenanceSettingList />
+          </BAIErrorBoundary>
+        )}
+      </Suspense>
+    </BAICard>
   );
 };
 

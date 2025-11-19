@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",
+    "Theme": "Tema",
     "ThemeMode": "Tema Modu",
     "UseCompactSidebar": "Kompakt Kenar Çubuğunu Varsayılan Olarak Ayarla",
     "UseSystemSetting": "Sistem Ayarını Kullan",
-    "UserConfigScript": "Kullanıcı yapılandırma komut dosyası"
+    "UserConfigScript": "Kullanıcı yapılandırma komut dosyası",
+    "theme": {
+      "ErrorColor": "Hata Rengi",
+      "ErrorColorDesc": "Uyarıları veya hataları belirtmek için silme gibi kritik eylemleri temsil eden düğmelere veya uyarıya uygulanan renk.",
+      "HeaderBg": "Başlık Arka Plan Rengi",
+      "HeaderBgDesc": "Logo bölümü hariç başlık arka planına uygulanan renk.",
+      "InfoColor": "Bilgi Rengi",
+      "InfoColorDesc": "Kullanıcılara bilgi veren öğelerde kullanılan, bilgi yönlendirme ve düzenleme simgelerine uygulanan renk.",
+      "LinkColor": "Bağlantı Rengi",
+      "LinkColorDesc": "Başka bir sayfaya yönlendiren veya çekmeceler veya modeller gibi ek kullanıcı arayüzü öğelerini açan bağlantılar için kullanılan renk.",
+      "Preview": "Önizleme",
+      "PrimaryColor": "Ana Renk",
+      "PrimaryColorDesc": "Anahtar eylemleri temsil eden düğmelere veya açıklayıcı metne uygulanan ana renk. \nAyrıca başlıktaki logo bölümünün arka plan rengi olarak da uygulanır.",
+      "SuccessColor": "Başarı Rengi",
+      "SuccessColorDesc": "Bir kullanıcı eyleminin başarıyla tamamlandığını gösteren düğmelere, uyarılara veya simgelere uygulanan renk.",
+      "TextColor": "Metin Rengi",
+      "TextColorDesc": "Genel metin için kullanılan renk."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "Temsilci Özeti",
       "Architecture": "Mimarlık",
       "ArtifactDetails": "Eser detayları",
+      "Branding": "Markalaşma",
       "Cancel": "İptal etmek",
       "ChangePassword": "Şifre değiştir",
       "Chat": "Sohbet",

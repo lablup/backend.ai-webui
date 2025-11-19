@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "Gestión de pares de claves SSH",
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",
+    "Theme": "Tema",
     "ThemeMode": "Modo temático",
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
     "UseSystemSetting": "Usar configuración del sistema",
-    "UserConfigScript": "Script de configuración de usuario"
+    "UserConfigScript": "Script de configuración de usuario",
+    "theme": {
+      "ErrorColor": "Color de error",
+      "ErrorColorDesc": "El color aplicado a los botones o alertas que representan acciones críticas, como la eliminación, para indicar advertencias o errores.",
+      "HeaderBg": "Color de fondo del encabezado",
+      "HeaderBgDesc": "El color aplicado al fondo del encabezado, excepto en la sección del logotipo.",
+      "InfoColor": "Color de información",
+      "InfoColorDesc": "Color aplicado a los iconos de orientación y modificación de información, usado para elementos que comunican información a los usuarios.",
+      "LinkColor": "Color del enlace",
+      "LinkColorDesc": "El color utilizado para los enlaces que redirigen a otra página o abren elementos adicionales de la interfaz de usuario, como cajones o modales.",
+      "Preview": "Avance",
+      "PrimaryColor": "Color primario",
+      "PrimaryColorDesc": "El color principal aplicado a botones o texto descriptivo que representan acciones clave. \nTambién se aplica como color de fondo para la sección del logotipo en el encabezado.",
+      "SuccessColor": "Color del éxito",
+      "SuccessColorDesc": "El color aplicado a los botones, alertas o íconos que indican que una acción del usuario se completó exitosamente.",
+      "TextColor": "Color del texto",
+      "TextColorDesc": "El color utilizado para el texto general."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avanzado del terminal web: Copiar el contenido del terminal",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "Resumen del agente",
       "Architecture": "Arquitectura",
       "ArtifactDetails": "Detalles de artefactos",
+      "Branding": "Personalización de marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Cambiar contraseña",
       "Chat": "Chat",

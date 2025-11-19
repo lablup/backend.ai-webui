@@ -2008,10 +2008,28 @@
     "SSHKeypairManagement": "SSH-avainparin hallinta",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",
+    "Theme": "Teema",
     "ThemeMode": "Teematila",
     "UseCompactSidebar": "Aseta Kompakti Sivupalkki Oletukseksi",
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
-    "UserConfigScript": "Käyttäjän määrityskomentosarja"
+    "UserConfigScript": "Käyttäjän määrityskomentosarja",
+    "theme": {
+      "ErrorColor": "Värivirhe",
+      "ErrorColorDesc": "Väri, jota käytetään painikkeissa tai varoituksissa, jotka edustavat kriittisiä toimia, kuten poistoa, varoitusten tai virheiden ilmaisemiseksi.",
+      "HeaderBg": "Otsikon taustaväri",
+      "HeaderBgDesc": "Ylätunnisteen taustalle käytetty väri logoosia lukuun ottamatta.",
+      "InfoColor": "Info Väri",
+      "InfoColorDesc": "Väri, jota käytetään tiedon antamiseen ja muokkausta ilmaiseviin kuvakkeisiin sekä muihin käyttäjille tietoa välittäviin elementteihin.",
+      "LinkColor": "Linkin väri",
+      "LinkColorDesc": "Väri, jota käytetään linkeissä, jotka ohjaavat toiselle sivulle tai avaavat käyttöliittymän lisäelementtejä, kuten vetolaatikoita tai modaaleja.",
+      "Preview": "Esikatselu",
+      "PrimaryColor": "Ensisijainen väri",
+      "PrimaryColorDesc": "Pääväri, jota käytetään painikkeissa tai kuvaavassa tekstissä, jotka edustavat avaintoimintoja. \nSitä käytetään myös otsikon logoosion taustavärinä.",
+      "SuccessColor": "Menestyksen väri",
+      "SuccessColorDesc": "Väri, jota käytetään painikkeissa, ilmoituksissa tai kuvakkeissa, jotka osoittavat, että käyttäjän toiminto on suoritettu onnistuneesti.",
+      "TextColor": "Tekstin väri",
+      "TextColorDesc": "Yleistekstin väri."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
@@ -2040,6 +2058,7 @@
       "AgentSummary": "Agentin yhteenveto",
       "Architecture": "Arkkitehtuuri",
       "ArtifactDetails": "Esineiden yksityiskohdat",
+      "Branding": "Brändäys",
       "Cancel": "Peruuta",
       "ChangePassword": "Vaihda salasana",
       "Chat": "Chat",

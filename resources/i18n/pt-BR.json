@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "Gerenciamento de par de chaves SSH",
     "SessionTerminationDialog": "O encerramento da sessão não pode ser desfeito. Você deseja prosseguir para encerrar a sessão?",
     "ShellEnvironments": "Ambientes Shell",
+    "Theme": "Tema",
     "ThemeMode": "Modo Tema",
     "UseCompactSidebar": "Definir Barra Lateral Compacta como Padrão",
     "UseSystemSetting": "Usar configuração do sistema",
-    "UserConfigScript": "Script de configuração do usuário"
+    "UserConfigScript": "Script de configuração do usuário",
+    "theme": {
+      "ErrorColor": "Cor do erro",
+      "ErrorColorDesc": "A cor aplicada aos botões ou alertas que representam ações críticas, como exclusão, para indicar avisos ou erros.",
+      "HeaderBg": "Cor de fundo do cabeçalho",
+      "HeaderBgDesc": "A cor aplicada ao fundo do cabeçalho, exceto na seção do logotipo.",
+      "InfoColor": "Cor da informação",
+      "InfoColorDesc": "A cor aplicada aos ícones de orientação e de modificação de informações, usada para elementos que comunicam informações aos usuários.",
+      "LinkColor": "Cor do link",
+      "LinkColorDesc": "A cor usada para links que redirecionam para outra página ou abrem elementos adicionais da interface do usuário, como gavetas ou modais.",
+      "Preview": "Visualização",
+      "PrimaryColor": "Cor Primária",
+      "PrimaryColorDesc": "A cor principal aplicada a botões ou textos descritivos que representam ações principais. \nTambém é aplicada como cor de fundo para a seção do logotipo no cabeçalho.",
+      "SuccessColor": "Cor do sucesso",
+      "SuccessColorDesc": "A cor aplicada aos botões, alertas ou ícones que indicam que uma ação do usuário foi concluída com êxito.",
+      "TextColor": "Cor do texto",
+      "TextColorDesc": "A cor usada para texto geral."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Uso avançado do terminal da Web: Copiar o conteúdo do terminal",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "Resumo do agente",
       "Architecture": "Arquitetura",
       "ArtifactDetails": "Detalhes do artefato",
+      "Branding": "Personalização da marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Alterar a senha",
       "Chat": "Conversa",

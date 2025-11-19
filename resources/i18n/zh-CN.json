@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "SSH 密钥对管理",
     "SessionTerminationDialog": "会话终止无法撤消。您要继续终止会话吗？",
     "ShellEnvironments": "外壳环境",
+    "Theme": "主题",
     "ThemeMode": "主题模式",
     "UseCompactSidebar": "将紧凑侧边栏设为默认",
     "UseSystemSetting": "使用系统设置",
-    "UserConfigScript": "用户配置脚本"
+    "UserConfigScript": "用户配置脚本",
+    "theme": {
+      "ErrorColor": "错误颜色",
+      "ErrorColorDesc": "应用于表示关键操作（例如删除）的按钮或警报的颜色，以指示警告或错误。",
+      "HeaderBg": "标题背景颜色",
+      "HeaderBgDesc": "应用于标题背景的颜色，徽标部分除外。",
+      "InfoColor": "信息颜色",
+      "InfoColorDesc": "用于信息引导和编辑图标的颜色，适用于向用户传达信息的元素。",
+      "LinkColor": "链接颜色",
+      "LinkColorDesc": "用于重定向到另一个页面或打开其他 UI 元素（例如抽屉或模式）的链接的颜色。",
+      "Preview": "预览",
+      "PrimaryColor": "原色",
+      "PrimaryColorDesc": "应用于代表关键操作的按钮或描述性文本的主要颜色。\n它还用作标题中徽标部分的背景颜色。",
+      "SuccessColor": "成功色彩",
+      "SuccessColorDesc": "应用于按钮、警报或图标的颜色，指示用户操作已成功完成。",
+      "TextColor": "文字颜色",
+      "TextColorDesc": "用于一般文本的颜色。"
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "代理摘要",
       "Architecture": "建筑学",
       "ArtifactDetails": "文物细节",
+      "Branding": "品牌",
       "Cancel": "取消",
       "ChangePassword": "更改密码",
       "Chat": "聊天",

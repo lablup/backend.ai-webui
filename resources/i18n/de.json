@@ -2007,10 +2007,28 @@
     "SSHKeypairManagement": "SSH-Schlüsselpaarverwaltung",
     "SessionTerminationDialog": "Die Beendigung der Sitzung kann nicht rückgängig gemacht werden. Möchten Sie fortfahren, um die Sitzung zu beenden?",
     "ShellEnvironments": "Shell-Umgebungen",
+    "Theme": "Thema",
     "ThemeMode": "Themenmodus",
     "UseCompactSidebar": "Kompakte Seitenleiste als Standard festlegen",
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
-    "UserConfigScript": "Benutzerkonfigurationsskript"
+    "UserConfigScript": "Benutzerkonfigurationsskript",
+    "theme": {
+      "ErrorColor": "Fehlerfarbe",
+      "ErrorColorDesc": "Die Farbe, die auf Schaltflächen oder Warnungen angewendet wird, die kritische Aktionen wie das Löschen darstellen, um Warnungen oder Fehler anzuzeigen.",
+      "HeaderBg": "Hintergrundfarbe der Kopfzeile",
+      "HeaderBgDesc": "Die Farbe, die auf den Hintergrund der Kopfzeile angewendet wird, mit Ausnahme des Logo-Bereichs.",
+      "InfoColor": "Infofarbe",
+      "InfoColorDesc": "Die Farbe, die für Informations- und Bearbeitungssymbole verwendet wird und für Elemente, die Informationen an Benutzer vermitteln.",
+      "LinkColor": "Linkfarbe",
+      "LinkColorDesc": "Die Farbe, die für Links verwendet wird, die zu einer anderen Seite weiterleiten oder zusätzliche UI-Elemente wie Schubladen oder Modalitäten öffnen.",
+      "Preview": "Vorschau",
+      "PrimaryColor": "Grundfarbe",
+      "PrimaryColorDesc": "Die Hauptfarbe, die auf Schaltflächen oder beschreibenden Text angewendet wird, der wichtige Aktionen darstellt. \nSie wird auch als Hintergrundfarbe für den Logo-Bereich in der Kopfzeile verwendet.",
+      "SuccessColor": "Erfolgsfarbe",
+      "SuccessColorDesc": "Die auf Schaltflächen, Warnungen oder Symbole angewendete Farbe, die darauf hinweist, dass eine Benutzeraktion erfolgreich abgeschlossen wurde.",
+      "TextColor": "Textfarbe",
+      "TextColorDesc": "Die für allgemeinen Text verwendete Farbe."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Erweiterte Web-Terminal-Nutzung: Terminal-Inhalte kopieren",
@@ -2039,6 +2057,7 @@
       "AgentSummary": "Agent Zusammenfassung",
       "Architecture": "Architektur",
       "ArtifactDetails": "Artefaktdetails",
+      "Branding": "Branding",
       "Cancel": "Stornieren",
       "ChangePassword": "Kennwort ändern",
       "Chat": "Chat",

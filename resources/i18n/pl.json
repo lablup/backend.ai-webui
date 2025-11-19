@@ -2008,10 +2008,28 @@
     "SSHKeypairManagement": "Zarządzanie parami kluczy SSH",
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",
+    "Theme": "Temat",
     "ThemeMode": "Tryb tematyczny",
     "UseCompactSidebar": "Ustaw Kompaktowy Pasek Boczny jako Domyślny",
     "UseSystemSetting": "Użyj ustawień systemowych",
-    "UserConfigScript": "Skrypt konfiguracji użytkownika"
+    "UserConfigScript": "Skrypt konfiguracji użytkownika",
+    "theme": {
+      "ErrorColor": "Kolor błędu",
+      "ErrorColorDesc": "Kolor zastosowany do przycisków lub alertów reprezentujących krytyczne działania, takie jak usuwanie, w celu wskazania ostrzeżeń lub błędów.",
+      "HeaderBg": "Kolor tła nagłówka",
+      "HeaderBgDesc": "Kolor zastosowany do tła nagłówka, z wyjątkiem sekcji logo.",
+      "InfoColor": "Kolor informacyjny",
+      "InfoColorDesc": "Kolor stosowany w ikonach informacyjnych i edycyjnych, używany dla elementów przekazujących informacje użytkownikom.",
+      "LinkColor": "Kolor łącza",
+      "LinkColorDesc": "Kolor używany w przypadku linków przekierowujących do innej strony lub otwierających dodatkowe elementy interfejsu użytkownika, takie jak szuflady lub moduły.",
+      "Preview": "Zapowiedź",
+      "PrimaryColor": "Kolor podstawowy",
+      "PrimaryColorDesc": "Główny kolor stosowany do przycisków lub tekstu opisowego reprezentującego kluczowe działania. \nJest on również stosowany jako kolor tła sekcji logo w nagłówku.",
+      "SuccessColor": "Kolor sukcesu",
+      "SuccessColorDesc": "Kolor zastosowany do przycisków, alertów lub ikon wskazujących, że czynność użytkownika została pomyślnie wykonana.",
+      "TextColor": "Kolor tekstu",
+      "TextColorDesc": "Kolor używany w tekście ogólnym."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
@@ -2040,6 +2058,7 @@
       "AgentSummary": "Podsumowanie agenta",
       "Architecture": "Architektura",
       "ArtifactDetails": "Szczegóły artefaktu",
+      "Branding": "Identyfikacja wizualna",
       "Cancel": "Anuluj",
       "ChangePassword": "Zmień hasło",
       "Chat": "Czat",

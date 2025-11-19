@@ -2006,10 +2006,28 @@
     "SSHKeypairManagement": "Gestione delle coppie di chiavi SSH",
     "SessionTerminationDialog": "La chiusura della sessione non può essere annullata. Vuoi procedere per terminare la sessione?",
     "ShellEnvironments": "Ambienti shell",
+    "Theme": "Tema",
     "ThemeMode": "Modalità tema",
     "UseCompactSidebar": "Imposta Barra Laterale Compatta come Predefinita",
     "UseSystemSetting": "Utilizza Impostazioni di sistema",
-    "UserConfigScript": "Script di configurazione utente"
+    "UserConfigScript": "Script di configurazione utente",
+    "theme": {
+      "ErrorColor": "Colore errore",
+      "ErrorColorDesc": "Il colore applicato ai pulsanti o agli avvisi che rappresentano azioni critiche, come l'eliminazione, per indicare avvisi o errori.",
+      "HeaderBg": "Colore di sfondo dell'intestazione",
+      "HeaderBgDesc": "Il colore applicato allo sfondo dell'intestazione, ad eccezione della sezione del logo.",
+      "InfoColor": "Informazioni Colore",
+      "InfoColorDesc": "Il colore applicato alle icone informative, di guida e di modifica, utilizzato per gli elementi che comunicano informazioni agli utenti.",
+      "LinkColor": "Colore collegamento",
+      "LinkColorDesc": "Il colore utilizzato per i collegamenti che reindirizzano a un'altra pagina o aprono elementi aggiuntivi dell'interfaccia utente come cassetti o finestre modali.",
+      "Preview": "Anteprima",
+      "PrimaryColor": "Colore primario",
+      "PrimaryColorDesc": "Il colore principale applicato ai pulsanti o al testo descrittivo che rappresentano le azioni chiave. \nViene applicato anche come colore di sfondo per la sezione del logo nell'intestazione.",
+      "SuccessColor": "Colore del successo",
+      "SuccessColorDesc": "Il colore applicato a pulsanti, avvisi o icone che indicano che un'azione dell'utente è stata completata correttamente.",
+      "TextColor": "Colore del testo",
+      "TextColorDesc": "Il colore utilizzato per il testo generale."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilizzo avanzato del terminale Web: copia il contenuto del terminale",
@@ -2038,6 +2056,7 @@
       "AgentSummary": "Riepilogo dell'agente",
       "Architecture": "Architettura",
       "ArtifactDetails": "Dettagli artefatto",
+      "Branding": "Personalizzazione del marchio",
       "Cancel": "Annulla",
       "ChangePassword": "Cambia la password",
       "Chat": "Chat",

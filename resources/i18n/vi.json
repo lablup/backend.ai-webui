@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "Quản lý cặp khóa SSH",
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",
+    "Theme": "chủ đề",
     "ThemeMode": "Chế độ chủ đề",
     "UseCompactSidebar": "Đặt Thanh bên Gọn gàng làm Mặc định",
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
-    "UserConfigScript": "Tập lệnh cấu hình người dùng"
+    "UserConfigScript": "Tập lệnh cấu hình người dùng",
+    "theme": {
+      "ErrorColor": "Màu lỗi",
+      "ErrorColorDesc": "Màu được áp dụng cho các nút hoặc cảnh báo thể hiện các hành động quan trọng, chẳng hạn như xóa, để biểu thị cảnh báo hoặc lỗi.",
+      "HeaderBg": "Màu nền tiêu đề",
+      "HeaderBgDesc": "Màu được áp dụng cho nền tiêu đề, ngoại trừ phần logo.",
+      "InfoColor": "Màu thông tin",
+      "InfoColorDesc": "Màu áp dụng cho các biểu tượng chỉ dẫn thông tin và chỉnh sửa, được dùng cho các thành phần truyền đạt thông tin tới người dùng.",
+      "LinkColor": "Màu liên kết",
+      "LinkColorDesc": "Màu được sử dụng cho các liên kết chuyển hướng đến một trang khác hoặc mở các thành phần giao diện người dùng bổ sung như ngăn kéo hoặc phương thức.",
+      "Preview": "Xem trước",
+      "PrimaryColor": "Màu cơ bản",
+      "PrimaryColorDesc": "Màu chính được áp dụng cho các nút hoặc văn bản mô tả thể hiện các hành động chính. \nNó cũng được áp dụng làm màu nền cho phần logo ở phần header.",
+      "SuccessColor": "Màu thành công",
+      "SuccessColorDesc": "Màu áp dụng cho các nút, cảnh báo hoặc biểu tượng cho biết hành động của người dùng đã được hoàn tất thành công.",
+      "TextColor": "Màu văn bản",
+      "TextColorDesc": "Màu được sử dụng cho văn bản chung."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "Tóm tắt đại lý",
       "Architecture": "Ngành kiến ​​​​trúc",
       "ArtifactDetails": "Chi tiết tạo tác",
+      "Branding": "Thương hiệu",
       "Cancel": "Huỷ bỏ",
       "ChangePassword": "Đổi mật khẩu",
       "Chat": "Trò chuyện",

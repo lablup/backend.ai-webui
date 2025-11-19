@@ -2007,10 +2007,28 @@
     "SSHKeypairManagement": "SSH 密鑰對管理",
     "SessionTerminationDialog": "會話終止無法撤消。您要繼續終止會話嗎？",
     "ShellEnvironments": "外殼環境",
+    "Theme": "主題",
     "ThemeMode": "主題模式",
     "UseCompactSidebar": "將緊湊側邊欄設為預設",
     "UseSystemSetting": "使用系統設定",
-    "UserConfigScript": "用戶配置腳本"
+    "UserConfigScript": "用戶配置腳本",
+    "theme": {
+      "ErrorColor": "錯誤顏色",
+      "ErrorColorDesc": "應用於表示關鍵操作（例如刪除）的按鈕或警報的顏色，以指示警告或錯誤。",
+      "HeaderBg": "標題背景顏色",
+      "HeaderBgDesc": "應用於標題背景的顏色，徽標部分除外。",
+      "InfoColor": "信息顏色",
+      "InfoColorDesc": "此顏色用於資訊導引與編輯圖示，適用於向使用者傳達資訊的元素。",
+      "LinkColor": "鏈接顏色",
+      "LinkColorDesc": "用於重定向到另一個頁面或打開其他 UI 元素（例如抽屜或模式）的鏈接的顏色。",
+      "Preview": "預覽",
+      "PrimaryColor": "原色",
+      "PrimaryColorDesc": "應用於代表關鍵操作的按鈕或描述性文本的主要顏色。它還用作標題中徽標部分的背景顏色。",
+      "SuccessColor": "成功色彩",
+      "SuccessColorDesc": "應用於按鈕、警報或圖標的顏色，指示用戶操作已成功完成。",
+      "TextColor": "文字顏色",
+      "TextColorDesc": "用於一般文本的顏色。"
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高級 Web 終端使用：複製終端內容",
@@ -2039,6 +2057,7 @@
       "AgentSummary": "代理摘要",
       "Architecture": "建築學",
       "ArtifactDetails": "文物細節",
+      "Branding": "品牌設定",
       "Cancel": "取消",
       "ChangePassword": "更改密碼",
       "Chat": "聊天",

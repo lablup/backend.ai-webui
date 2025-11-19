@@ -2017,10 +2017,28 @@
     "SSHKeypairManagement": "SSH Keypair Management",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",
+    "Theme": "Theme",
     "ThemeMode": "Theme Mode",
     "UseCompactSidebar": "Set Compact Sidebar as Default",
     "UseSystemSetting": "Use System Setting",
-    "UserConfigScript": "User Config Script"
+    "UserConfigScript": "User Config Script",
+    "theme": {
+      "ErrorColor": "Error Color",
+      "ErrorColorDesc": "The color applied to buttons or alert representing critical actions, such as deletion, to indicate warnings or errors.",
+      "HeaderBg": "Header Background Color",
+      "HeaderBgDesc": "The color applied to the header background, except for the logo section.",
+      "InfoColor": "Info Color",
+      "InfoColorDesc": "The color that applies to information guidance and modification icons, which is used for elements that communicate information to users.",
+      "LinkColor": "Link Color",
+      "LinkColorDesc": "The color used for links that redirect to another page or open additional UI elements such as drawers or modals.",
+      "Preview": "Preview",
+      "PrimaryColor": "Primary Color",
+      "PrimaryColorDesc": "The main color applied to buttons or descriptive text that represent key actions. It is also applied as the background color for the logo section in the header.",
+      "SuccessColor": "Success Color",
+      "SuccessColorDesc": "The color applied to buttons, alerts, or icons that indicate a user action has been successfully completed.",
+      "TextColor": "Text Color",
+      "TextColorDesc": "The color used for general text."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -2049,6 +2067,7 @@
       "AgentSummary": "Agent Summary",
       "Architecture": "Architecture",
       "ArtifactDetails": "Artifact Details",
+      "Branding": "Branding",
       "Cancel": "Cancel",
       "ChangePassword": "Change Password",
       "Chat": "Chat",

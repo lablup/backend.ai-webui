@@ -2007,10 +2007,28 @@
     "SSHKeypairManagement": "Pengurusan Keypair SSH",
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",
+    "Theme": "Tema",
     "ThemeMode": "Mod Tema",
     "UseCompactSidebar": "Tetapkan Bar Sisi Padat sebagai Lalai",
     "UseSystemSetting": "Gunakan Tetapan Sistem",
-    "UserConfigScript": "Skrip konfigurasi pengguna"
+    "UserConfigScript": "Skrip konfigurasi pengguna",
+    "theme": {
+      "ErrorColor": "Warna ralat",
+      "ErrorColorDesc": "Warna yang digunakan untuk butang atau amaran yang mewakili tindakan kritikal, seperti penghapusan, untuk menunjukkan amaran atau kesilapan.",
+      "HeaderBg": "Warna latar belakang header",
+      "HeaderBgDesc": "Warna yang digunakan untuk latar belakang header, kecuali bahagian logo.",
+      "InfoColor": "Warna maklumat",
+      "InfoColorDesc": "Warna bagi ikon panduan dan pengubahsuaian maklumat, digunakan untuk elemen yang menyampaikan maklumat kepada pengguna.",
+      "LinkColor": "Warna pautan",
+      "LinkColorDesc": "Warna yang digunakan untuk pautan yang mengalihkan ke halaman lain atau membuka elemen UI tambahan seperti laci atau modal.",
+      "Preview": "Pratonton",
+      "PrimaryColor": "Warna utama",
+      "PrimaryColorDesc": "Warna utama yang digunakan untuk butang atau teks deskriptif yang mewakili tindakan utama. \nIa juga digunakan sebagai warna latar belakang untuk bahagian logo di tajuk.",
+      "SuccessColor": "Warna kejayaan",
+      "SuccessColorDesc": "Warna yang digunakan untuk butang, makluman, atau ikon yang menunjukkan tindakan pengguna telah berjaya diselesaikan.",
+      "TextColor": "Warna teks",
+      "TextColorDesc": "Warna yang digunakan untuk teks umum."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Lanjutan: Salin kandungan terminal",
@@ -2039,6 +2057,7 @@
       "AgentSummary": "Ringkasan Agen",
       "Architecture": "Seni bina",
       "ArtifactDetails": "Butiran artifak",
+      "Branding": "Penjenamaan",
       "Cancel": "Batal",
       "ChangePassword": "Tukar kata laluan",
       "Chat": "Berbual",

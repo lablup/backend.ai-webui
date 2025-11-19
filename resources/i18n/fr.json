@@ -2009,10 +2009,28 @@
     "SSHKeypairManagement": "Gestion des paires de clés SSH",
     "SessionTerminationDialog": "L'arrêt de la session ne peut pas être annulé. Voulez-vous continuer pour terminer la session ?",
     "ShellEnvironments": "Environnements Shell",
+    "Theme": "Thème",
     "ThemeMode": "Mode Thème",
     "UseCompactSidebar": "Utiliser la barre latérale compacte",
     "UseSystemSetting": "Utiliser les paramètres du système",
-    "UserConfigScript": "Script de configuration utilisateur"
+    "UserConfigScript": "Script de configuration utilisateur",
+    "theme": {
+      "ErrorColor": "Couleur d'erreur",
+      "ErrorColorDesc": "Couleur appliquée aux boutons ou aux alertes représentant des actions critiques, telles que la suppression, pour indiquer des avertissements ou des erreurs.",
+      "HeaderBg": "Couleur d’arrière-plan de l’en-tête",
+      "HeaderBgDesc": "La couleur appliquée à l'arrière-plan de l'en-tête, à l'exception de la section du logo.",
+      "InfoColor": "Informations Couleur",
+      "InfoColorDesc": "Couleur appliquée aux icônes d'aide et de modification, utilisée pour les éléments qui communiquent des informations aux utilisateurs.",
+      "LinkColor": "Couleur du lien",
+      "LinkColorDesc": "La couleur utilisée pour les liens qui redirigent vers une autre page ou ouvrent des éléments d'interface utilisateur supplémentaires tels que des tiroirs ou des modaux.",
+      "Preview": "Aperçu",
+      "PrimaryColor": "Couleur primaire",
+      "PrimaryColorDesc": "La couleur principale appliquée aux boutons ou au texte descriptif qui représente les actions clés. \nElle est également appliquée comme couleur d’arrière-plan pour la section du logo dans l’en-tête.",
+      "SuccessColor": "Couleur du succès",
+      "SuccessColorDesc": "Couleur appliquée aux boutons, alertes ou icônes qui indiquent qu'une action utilisateur a été effectuée avec succès.",
+      "TextColor": "Couleur du texte",
+      "TextColorDesc": "La couleur utilisée pour le texte général."
+    }
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -2041,6 +2059,7 @@
       "AgentSummary": "Résumé de l'agent",
       "Architecture": "Architecture",
       "ArtifactDetails": "Détails d'artefacts",
+      "Branding": "Personnalisation de la marque",
       "Cancel": "Annuler",
       "ChangePassword": "Changer le mot de passe",
       "Chat": "Chat",

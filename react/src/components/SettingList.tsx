@@ -32,6 +32,7 @@ const useStyles = createStyles(({ css }) => ({
 export type SettingGroup = {
   'data-testid': string;
   title: string;
+  titleExtra?: ReactNode;
   description?: ReactNode;
   settingItems: SettingItemProps[];
 };
@@ -61,8 +62,9 @@ const GroupSettingItems: React.FC<
     group: SettingGroup;
     hideEmpty?: boolean;
   } & React.HTMLAttributes<HTMLDivElement>
-> = ({ group, hideEmpty, ...props }) => {
+> = ({ group, hideEmpty = true, ...props }) => {
   const { token } = theme.useToken();
+
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
     <BAIFlex
@@ -82,14 +84,19 @@ const GroupSettingItems: React.FC<
           background: token.colorBgContainer,
         }}
       >
-        <Typography.Title
-          level={5}
-          style={{
-            marginTop: 0,
-          }}
-        >
-          {group.title}
-        </Typography.Title>
+        <BAIFlex align="start" justify="between">
+          <BAIFlex gap="sm" align="start">
+            <Typography.Title
+              level={5}
+              style={{
+                marginTop: 0,
+              }}
+            >
+              {group.title}
+            </Typography.Title>
+            {group.titleExtra && <div>{group.titleExtra}</div>}
+          </BAIFlex>
+        </BAIFlex>
         <Divider style={{ marginTop: 0, marginBottom: 0 }} />
         {group.description && (
           <Typography.Text
@@ -100,7 +107,7 @@ const GroupSettingItems: React.FC<
           </Typography.Text>
         )}
       </BAIFlex>
-      <BAIFlex direction="column" align="start" gap={'lg'}>
+      <BAIFlex direction="column" align="stretch" gap={'lg'}>
         {group.settingItems.map((item, idx) => (
           <SettingItem key={item.title + idx} {...item} />
         ))}
@@ -116,6 +123,8 @@ const SettingList: React.FC<SettingPageProps> = ({
   showResetButton,
   showSearchBar,
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { styles } = useStyles();
   const [searchValue, setSearchValue] = useState('');
@@ -210,6 +219,9 @@ const SettingList: React.FC<SettingPageProps> = ({
                         key={group.title}
                         group={group}
                         hideEmpty
+                        onReset={() => {
+                          setIsOpenResetChangesModal();
+                        }}
                       />
                     ))
                   ) : (
@@ -231,7 +243,13 @@ const SettingList: React.FC<SettingPageProps> = ({
               ),
               children:
                 group.settingItems.length > 0 ? (
-                  <GroupSettingItems group={group} hideEmpty />
+                  <GroupSettingItems
+                    group={group}
+                    hideEmpty
+                    onReset={() => {
+                      setIsOpenResetChangesModal();
+                    }}
+                  />
                 ) : (
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -248,13 +266,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         okText={t('button.Reset')}
         okButtonProps={{ danger: true }}
         onOk={() => {
-          _.flatMap(settingGroups, (item) => item.settingItems).forEach(
-            (option) => {
-              !option.disabled &&
-                option?.setValue &&
-                option.setValue(option.defaultValue);
-            },
-          );
+          resetSettingItems(settingGroups);
           setIsOpenResetChangesModal();
         }}
         cancelText={t('button.Cancel')}
@@ -271,3 +283,11 @@ const SettingList: React.FC<SettingPageProps> = ({
 };
 
 export default SettingList;
+
+const resetSettingItems = (settingGroups: SettingGroup[]) => {
+  _.flatMap(settingGroups, (item) => item.settingItems).forEach((option) => {
+    !option.disabled &&
+      option?.setValue &&
+      option.setValue(option.defaultValue);
+  });
+};
