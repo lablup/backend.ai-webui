@@ -1,7 +1,7 @@
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import VFolderNodeDescription from './VFolderNodeDescription';
-import { Alert, Divider, Grid, Splitter, theme } from 'antd';
+import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
@@ -12,7 +12,7 @@ import {
   toGlobalId,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useEffect, useRef } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { FolderExplorerModalQuery } from 'src/__generated__/FolderExplorerModalQuery.graphql';
@@ -54,7 +54,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { xl } = Grid.useBreakpoint();
   const { styles } = useStyles();
   const folderExplorerRef = useRef<FolderExplorerElement>(null);
-  const { uploadStatus, uploadFiles } = useFileUploadManager(vfolderID);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -68,12 +67,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     );
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (uploadStatus && _.isEmpty(uploadStatus?.pendingFiles)) {
-      updateFetchKey();
-    }
-  }, [uploadStatus, updateFetchKey]);
-
+  const deferredOpen = useDeferredValue(modalProps.open);
   const { vfolder_node } = useLazyLoadQuery<FolderExplorerModalQuery>(
     graphql`
       query FolderExplorerModalQuery($vfolderGlobalId: String!) {
@@ -82,6 +76,8 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
           unmanaged_path @since(version: "25.04.0")
           permissions
           host
+          id
+          name
           ...FolderExplorerHeaderFragment
           ...VFolderNodeDescriptionFragment
           ...VFolderNameTitleNodeFragment
@@ -90,9 +86,20 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     `,
     { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID) },
     {
-      fetchPolicy: modalProps.open ? 'network-only' : 'store-only',
+      // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
+      fetchPolicy:
+        deferredOpen && modalProps.open ? 'network-only' : 'store-only',
     },
   );
+  const { uploadStatus, uploadFiles } = useFileUploadManager(
+    vfolder_node?.id,
+    vfolder_node?.name || undefined,
+  );
+  useEffect(() => {
+    if (uploadStatus && _.isEmpty(uploadStatus?.pendingFiles)) {
+      updateFetchKey();
+    }
+  }, [uploadStatus, updateFetchKey]);
 
   const hasDownloadContentPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolder_node?.host ?? ''],
@@ -114,7 +121,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
       showIcon
     />
-  ) : !hasNoPermissions ? (
+  ) : !hasNoPermissions && vfolder_node ? (
     <BAIFileExplorer
       targetVFolderId={vfolderID}
       fetchKey={fetchKey}
@@ -149,10 +156,15 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     <BAIModal
       className={styles.baiModalHeader}
       width={'90%'}
-      centered
       keyboard
       destroyOnHidden
       footer={null}
+      style={{ maxWidth: '1600px' }}
+      styles={{
+        body: {
+          height: '100vh',
+        },
+      }}
       title={
         vfolder_node ? (
           <FolderExplorerHeader
@@ -171,58 +183,65 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       }}
       {...modalProps}
     >
-      <BAIFlex direction="column" gap={'lg'} align="stretch">
-        {!vfolder_node ? (
-          <Alert
-            message={t('explorer.FolderNotFoundOrNoAccess')}
-            type="error"
-            showIcon
-          />
-        ) : hasNoPermissions ? (
-          <Alert message={t('explorer.NoPermissions')} type="error" showIcon />
-        ) : currentProject?.id !== vfolder_node?.group &&
-          !!vfolder_node?.group ? (
-          <Alert message={t('data.NotInProject')} type="warning" showIcon />
-        ) : null}
-
-        {xl ? (
-          <Splitter
-            // Force re-render component when xl breakpoint changes to reset panel sizes
-            // This ensures defaultSize is recalculated based on current screen size
-            key={xl ? 'large' : 'small'}
-            style={{
-              gap: token.size,
-              // maxHeight: 'calc(100vh - 220px)',
-            }}
-            layout={xl ? 'horizontal' : 'vertical'}
-          >
-            <Splitter.Panel resizable={false}>
-              {fileExplorerElement}
-            </Splitter.Panel>
-            <Splitter.Panel defaultSize={500}>
-              {vFolderDescriptionElement}
-            </Splitter.Panel>
-          </Splitter>
+      <Suspense fallback={<Skeleton active />}>
+        {/* Use <Skeleton/> instead of using `loading` prop because layout align issue. */}
+        {deferredOpen !== modalProps.open ? (
+          <Skeleton active />
         ) : (
-          <BAIFlex direction="column" align="stretch">
-            {fileExplorerElement}
-            <Divider
-              style={{
-                borderColor: token.colorBorderSecondary,
-              }}
-            />
-            {vFolderDescriptionElement}
+          <BAIFlex direction="column" gap={'lg'} align="stretch">
+            {!vfolder_node ? (
+              <Alert
+                message={t('explorer.FolderNotFoundOrNoAccess')}
+                type="error"
+                showIcon
+              />
+            ) : hasNoPermissions ? (
+              <Alert
+                message={t('explorer.NoPermissions')}
+                type="error"
+                showIcon
+              />
+            ) : currentProject?.id !== vfolder_node?.group &&
+              !!vfolder_node?.group ? (
+              <Alert message={t('data.NotInProject')} type="warning" showIcon />
+            ) : null}
+
+            {xl ? (
+              <Splitter
+                style={{
+                  gap: token.size,
+                }}
+                layout={'horizontal'}
+              >
+                <Splitter.Panel resizable={false}>
+                  {fileExplorerElement}
+                </Splitter.Panel>
+                <Splitter.Panel defaultSize={500}>
+                  {vFolderDescriptionElement}
+                </Splitter.Panel>
+              </Splitter>
+            ) : (
+              <BAIFlex direction="column" align="stretch">
+                {fileExplorerElement}
+                <Divider
+                  style={{
+                    borderColor: token.colorBorderSecondary,
+                  }}
+                />
+                {vFolderDescriptionElement}
+              </BAIFlex>
+            )}
+            <div style={{ display: 'none' }}>
+              {/* @ts-ignore  TODO: delete below after https://lablup.atlassian.net/browse/FR-1150 */}
+              <backend-ai-folder-explorer
+                ref={folderExplorerRef}
+                active
+                vfolderID={vfolderID}
+              />
+            </div>
           </BAIFlex>
         )}
-        <div style={{ display: 'none' }}>
-          {/* @ts-ignore  TODO: delete below after https://lablup.atlassian.net/browse/FR-1150 */}
-          <backend-ai-folder-explorer
-            ref={folderExplorerRef}
-            active
-            vfolderID={vfolderID}
-          />
-        </div>
-      </BAIFlex>
+      </Suspense>
     </BAIModal>
   );
 };

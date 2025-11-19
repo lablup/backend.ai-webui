@@ -49,9 +49,7 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
         return res;
       }),
     enabled: !!vfolder,
-    // not using cache, always refetch
-    staleTime: 5 * 60 * 1000,
-    gcTime: 0,
+    staleTime: 3000,
   });
 
   return {

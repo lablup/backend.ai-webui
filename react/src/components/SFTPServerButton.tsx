@@ -58,8 +58,6 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const { systemSSHImage, systemSSHImageInfo } =
     useDefaultSystemSSHImageWithFallback();
 
-  console.log('systemSSHImage', systemSSHImageInfo);
-
   const vfolder = useFragment(
     graphql`
       fragment SFTPServerButtonFragment on VirtualFolderNode {

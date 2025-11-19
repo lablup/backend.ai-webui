@@ -5,7 +5,7 @@ import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,
   BAILink,
-  toGlobalId,
+  toLocalId,
   useConnectedBAIClient,
 } from 'backend.ai-ui';
 import { atom, useAtom, useSetAtom } from 'jotai';
@@ -14,8 +14,6 @@ import _ from 'lodash';
 import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
-import { FileUploadManagerQuery } from 'src/__generated__/FileUploadManagerQuery.graphql';
 import { useSuspendedBackendaiClient } from 'src/hooks';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import * as tus from 'tus-js-client';
@@ -339,29 +337,17 @@ const FileUploadManager: React.FC = () => {
 
 export default FileUploadManager;
 
-export const useFileUploadManager = (vFolderId: string) => {
+export const useFileUploadManager = (id?: string, folderName?: string) => {
   'use memo';
 
   const baiClient = useConnectedBAIClient();
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
-  const [uploadStatus, setUploadStatus] = useUploadStatusAtomStatus(vFolderId);
+
   const setUploadRequests = useSetAtom(uploadRequestAtom);
 
-  const { vfolder_node } = useLazyLoadQuery<FileUploadManagerQuery>(
-    graphql`
-      query FileUploadManagerQuery($vfolderGlobalId: String!) {
-        vfolder_node(id: $vfolderGlobalId) {
-          name @required(action: THROW)
-        }
-      }
-    `,
-    {
-      vfolderGlobalId: toGlobalId('VirtualFolderNode', vFolderId),
-    },
-    {
-      fetchPolicy: vFolderId ? 'network-only' : 'store-only',
-    },
+  const [uploadStatus, setUploadStatus] = useUploadStatusAtomStatus(
+    id ? toLocalId(id) : '',
   );
 
   const validateUploadRequest = (
@@ -379,7 +365,7 @@ export const useFileUploadManager = (vFolderId: string) => {
         open: true,
         key: 'upload:' + vfolderId,
         message: t('explorer.UploadFailed', {
-          folderName: vfolder_node?.name ?? '',
+          folderName: folderName ?? '',
         }),
         description: t('data.explorer.FileUploadSizeLimit'),
         duration: 3,
@@ -474,7 +460,7 @@ export const useFileUploadManager = (vFolderId: string) => {
 
     const uploadRequestInfo: UploadRequest = {
       vFolderId: vfolderId,
-      vFolderName: vfolder_node?.name ?? '',
+      vFolderName: folderName ?? '',
       uploadFileInfo: _.zipWith(
         fileToUpload,
         startUploadFunctionMap,

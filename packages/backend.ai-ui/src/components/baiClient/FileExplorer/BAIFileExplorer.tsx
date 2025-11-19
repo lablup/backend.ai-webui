@@ -247,6 +247,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     };
   }, []);
 
+  const mergedLoading = files?.items !== fetchedFilesCache || isFetching;
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       {isDragMode && (
@@ -304,7 +305,12 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           scroll={{ x: 'max-content' }}
           dataSource={fetchedFilesCache}
           columns={tableColumns}
-          loading={files?.items !== fetchedFilesCache || isFetching}
+          // If no files have been loaded yet (including cache), show spinner loading
+          spinnerLoading={!files?.items ? mergedLoading : undefined}
+          // If files have been loaded before, use normal loading style (opacity)
+          loading={
+            files?.items && files?.items.length >= 0 ? mergedLoading : undefined
+          }
           pagination={false}
           rowSelection={{
             type: 'checkbox',
