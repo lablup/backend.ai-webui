@@ -6,7 +6,6 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import NumberWithUnit from './NumberWithUnit';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import {
@@ -28,6 +27,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
+  BAINumberWithUnit,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -113,7 +113,11 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           return '-';
         }
         return (
-          <NumberWithUnit numberUnit={text} targetUnit="g" unitType="binary" />
+          <BAINumberWithUnit
+            numberUnit={text}
+            targetUnit="g"
+            unitType="binary"
+          />
         );
       },
     },

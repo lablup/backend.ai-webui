@@ -45,3 +45,11 @@ export type {
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export {
+  default as BAIProjectTable,
+  availableProjectSorterKeys,
+  availableProjectSorterValues,
+} from './BAIProjectTable';
+export type { BAIProjectTableProps } from './BAIProjectTable';
+export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
+export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
