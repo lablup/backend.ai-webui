@@ -60,6 +60,7 @@
   "button": {
     "Add": "Ekle",
     "Apply": "Başvurmak",
+    "AutoRefresh": "Otomatik yenileme",
     "Cancel": "İptal etmek",
     "Clear": "Silmek",
     "ClearLogs": "Günlükleri Temizle",

@@ -60,6 +60,7 @@
   "button": {
     "Add": "Añadir",
     "Apply": "Solicitar",
+    "AutoRefresh": "Actualización automática",
     "Cancel": "Cancelar",
     "Clear": "Borrar",
     "ClearLogs": "Borrar registros",

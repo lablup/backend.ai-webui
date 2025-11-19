@@ -35,6 +35,8 @@ interface UserSettings {
 
   classic_session_list?: boolean; // `experimental_neo_session_list` has been replaced with `classic_session_list`
   max_concurrent_uploads?: number;
+  container_log_auto_refresh_enabled?: boolean;
+  container_log_auto_refresh_interval?: number;
 }
 
 export type SessionHistory = {

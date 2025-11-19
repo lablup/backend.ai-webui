@@ -60,6 +60,7 @@
   "button": {
     "Add": "Hinzufügen",
     "Apply": "Bewerbung",
+    "AutoRefresh": "Automatische Aktualisierung",
     "Cancel": "Stornieren",
     "Clear": "Löschen",
     "ClearLogs": "Protokolle löschen",

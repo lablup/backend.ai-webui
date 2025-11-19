@@ -60,6 +60,7 @@
   "button": {
     "Add": "Inserisci",
     "Apply": "Applicare",
+    "AutoRefresh": "Aggiornamento automatico",
     "Cancel": "Annulla",
     "Clear": "Eliminare",
     "ClearLogs": "Cancella registri",

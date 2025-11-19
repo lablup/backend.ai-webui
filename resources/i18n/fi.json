@@ -60,6 +60,7 @@
   "button": {
     "Add": "Lisää",
     "Apply": "Hae",
+    "AutoRefresh": "Automaattinen päivitys",
     "Cancel": "Peruuta",
     "Clear": "Poistaa",
     "ClearLogs": "Tyhjennä lokit",

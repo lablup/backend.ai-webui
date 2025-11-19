@@ -62,6 +62,7 @@
   "button": {
     "Add": "추가",
     "Apply": "적용",
+    "AutoRefresh": "자동 새로고침",
     "Cancel": "취소",
     "Clear": "삭제",
     "ClearLogs": "로그 삭제",

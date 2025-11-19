@@ -63,6 +63,7 @@
   "button": {
     "Add": "Add",
     "Apply": "Apply",
+    "AutoRefresh": "Auto refresh",
     "Cancel": "Cancel",
     "Clear": "Clear",
     "ClearLogs": "Clear Logs",

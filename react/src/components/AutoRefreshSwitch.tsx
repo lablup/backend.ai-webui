@@ -1,31 +1,32 @@
-import { useRafInterval } from 'ahooks';
-import { Switch, Typography } from 'antd';
+import { Switch, SwitchProps, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { useState } from 'react';
+import React from 'react';
+import { useInterval } from 'src/hooks/useIntervalValue';
 
 const { Text } = Typography;
 
-interface Props {
+interface Props extends SwitchProps {
   children?: React.ReactNode;
   onRefresh: () => void;
-  interval: number;
+  interval: number | null;
 }
+
 const AutoRefreshSwitch: React.FC<Props> = ({
   children,
   interval,
   onRefresh,
+  ...switchProps
 }) => {
-  const [on, setOn] = useState(true);
-
-  useRafInterval(
+  useInterval(
     () => {
       onRefresh();
     },
-    on ? interval : undefined,
+    switchProps.checked ? interval : null,
   );
+
   return (
     <BAIFlex direction="row" gap={'xs'}>
-      <Switch size="small" checked={on} onChange={setOn} />
+      <Switch size="small" {...switchProps} />
       <Text>{children}</Text>
     </BAIFlex>
   );

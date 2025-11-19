@@ -60,6 +60,7 @@
   "button": {
     "Add": "Ajouter",
     "Apply": "Appliquer",
+    "AutoRefresh": "Actualisation automatique",
     "Cancel": "Annuler",
     "Clear": "Supprimer",
     "ClearLogs": "Effacer les journaux",
