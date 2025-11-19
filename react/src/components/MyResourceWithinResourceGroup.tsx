@@ -4,7 +4,6 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
@@ -14,6 +13,7 @@ import {
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
+  BAIFetchKeyButton,
   BAIFlexProps,
 } from 'backend.ai-ui';
 import _ from 'lodash';

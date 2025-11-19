@@ -38,3 +38,4 @@ export { default as useViewer } from './useViewer';
 export type { ErrorResponse } from './useErrorMessageResolver';
 export type { ESMClientErrorResponse } from './useErrorMessageResolver';
 export { default as useGetAvailableFolderName } from './useGetAvailableFolderName';
+export { useInterval, useIntervalValue } from './useIntervalValue';

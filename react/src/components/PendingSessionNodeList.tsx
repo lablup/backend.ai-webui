@@ -1,8 +1,11 @@
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Form } from 'antd';
-import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  filterOutNullAndUndefined,
+  BAIFetchKeyButton,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

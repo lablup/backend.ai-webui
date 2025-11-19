@@ -3,7 +3,13 @@ import SessionActionButtons, {
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import { useUpdateEffect } from 'ahooks';
-import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAILink,
+  BAINotificationItem,
+  BAIText,
+  useInterval,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +26,6 @@ import {
   NotificationState,
   useSetBAINotification,
 } from 'src/hooks/useBAINotification';
-import { useInterval } from 'src/hooks/useIntervalValue';
 
 interface BAINodeNotificationItemProps {
   notification: NotificationState;

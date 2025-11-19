@@ -3,6 +3,7 @@ import {
   filterOutEmpty,
   localeCompare,
 } from '../../../helper';
+import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
@@ -43,6 +44,7 @@ export interface BAIFileExplorerProps {
   enableDownload?: boolean;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  onChangeFetchKey?: (fetchKey: string) => void;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -70,21 +72,12 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     files,
     directoryTree,
     isFetching,
+    isLoading: isFirstFetching,
     currentPath,
     navigateDown,
     navigateToPath,
     refetch,
   } = useSearchVFolderFiles(targetVFolderId, fetchKey);
-
-  const [fetchedFilesCache, setFetchedFilesCache] = useState<
-    Array<VFolderFile>
-  >([]);
-
-  useEffect(() => {
-    if (!_.isNil(files?.items)) {
-      setFetchedFilesCache(files.items);
-    }
-  }, [files]);
 
   const breadCrumbItems: Array<ItemType> = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
@@ -153,7 +146,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       render: (name, record) => (
         <EditableFileName
           fileInfo={record}
-          existingFiles={fetchedFilesCache}
+          existingFiles={files?.items || []}
           disabled={!enableWrite}
           onEndEdit={() => {
             refetch();
@@ -247,7 +240,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     };
   }, []);
 
-  const mergedLoading = files?.items !== fetchedFilesCache || isFetching;
   return (
     <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
       {isDragMode && (
@@ -297,27 +289,34 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
                 refetch();
               }
             }}
+            extra={
+              <BAIFetchKeyButton
+                loading={isFetching}
+                value={'_not_used_key_'}
+                onChange={() => {
+                  refetch();
+                }}
+              />
+            }
           />
         </BAIFlex>
 
         <BAITable
           rowKey="name"
           scroll={{ x: 'max-content' }}
-          dataSource={fetchedFilesCache}
+          dataSource={files?.items}
           columns={tableColumns}
           // If no files have been loaded yet (including cache), show spinner loading
-          spinnerLoading={!files?.items ? mergedLoading : undefined}
+          spinnerLoading={isFirstFetching}
           // If files have been loaded before, use normal loading style (opacity)
-          loading={
-            files?.items && files?.items.length >= 0 ? mergedLoading : undefined
-          }
+          loading={!isFirstFetching && isFetching}
           pagination={false}
           rowSelection={{
             type: 'checkbox',
             selectedRowKeys: _.map(selectedItems, 'name'),
             onChange: (selectedRowKeys) => {
               setSelectedItems(
-                fetchedFilesCache?.filter((file) =>
+                files?.items?.filter((file) =>
                   selectedRowKeys.includes(file.name),
                 ) || [],
               );

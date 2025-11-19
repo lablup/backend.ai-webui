@@ -57,6 +57,7 @@ export { default as BAIConfirmModalWithInput } from './BAIConfirmModalWithInput'
 export type { BAIConfirmModalWithInputProps } from './BAIConfirmModalWithInput';
 export { default as BAIButton } from './BAIButton';
 export type { BAIButtonProps } from './BAIButton';
+export { default as BAIFetchKeyButton } from './BAIFetchKeyButton';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

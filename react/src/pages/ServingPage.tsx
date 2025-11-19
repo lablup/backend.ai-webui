@@ -1,5 +1,4 @@
 import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
-import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import { useUpdatableState, useWebUINavigate } from '../hooks';
@@ -8,10 +7,11 @@ import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPa
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Button, Skeleton, theme } from 'antd';
 import {
-  filterOutEmpty,
-  BAIFlex,
   BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
   BAIPropertyFilter,
+  filterOutEmpty,
   mergeFilterValues,
 } from 'backend.ai-ui';
 import _ from 'lodash';

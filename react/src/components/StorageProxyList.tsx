@@ -6,7 +6,6 @@ import {
 } from '../helper';
 import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
@@ -18,6 +17,7 @@ import {
   BAILink,
   BAIPureStorageIcon,
   BAITable,
+  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';

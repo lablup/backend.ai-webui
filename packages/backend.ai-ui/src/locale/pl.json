@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Pomyślnie usunięte wersje {{count}}.",
     "Version": "Wersja"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Ostatnia aktualizacja",
+    "Refresh": "Odśwież"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} wersje są wykluczone.",
     "FailedToPullVersions": "Nie udało się wyciągnąć wersji.",

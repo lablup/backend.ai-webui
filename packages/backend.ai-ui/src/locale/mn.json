@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Сүүлд шинэчлэгдсэн",
+    "Refresh": "Шинэчлэх"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
     "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй.",

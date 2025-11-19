@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Τελευταία ενημέρωση",
+    "Refresh": "Ανανέωση"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
     "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",

@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "อัปเดตล่าสุด",
+    "Refresh": "รีเฟรช"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",

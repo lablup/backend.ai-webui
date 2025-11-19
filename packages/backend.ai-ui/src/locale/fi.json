@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Viimeksi päivitetty",
+    "Refresh": "Päivitä"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versiot jätetään pois.",
     "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",

@@ -4,7 +4,6 @@ import {
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
-import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
@@ -32,16 +31,17 @@ import {
   Typography,
 } from 'antd';
 import {
+  BAIAlertIconWithTooltip,
+  BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAINewFolderIcon,
+  BAIPropertyFilter,
+  BAIRestoreIcon,
+  BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAIFlex,
-  BAICard,
-  BAINewFolderIcon,
-  BAIRestoreIcon,
-  BAIPropertyFilter,
   mergeFilterValues,
-  BAIAlertIconWithTooltip,
-  BAIVFolderDeleteButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {

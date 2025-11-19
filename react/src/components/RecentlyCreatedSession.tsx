@@ -1,5 +1,4 @@
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import { theme } from 'antd';
@@ -8,6 +7,7 @@ import {
   toLocalId,
   BAIFlex,
   BAIUnmountAfterClose,
+  BAIFetchKeyButton,
   BAIBoardItemTitle,
 } from 'backend.ai-ui';
 import { useTransition } from 'react';

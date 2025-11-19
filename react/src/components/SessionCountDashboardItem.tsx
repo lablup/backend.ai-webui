@@ -1,4 +1,3 @@
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { theme } from 'antd';
 import {
   BAIBoardItemTitle,
@@ -6,6 +5,7 @@ import {
   BAIFlexProps,
   BAIRowWrapWithDividers,
   BAIStatistic,
+  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTransition } from 'react';
