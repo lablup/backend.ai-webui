@@ -24,6 +24,8 @@ export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 const tabParam = withDefault(StringParam, 'general');
 
 const UserPreferencesPage = () => {
+  'use memo';
+
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);

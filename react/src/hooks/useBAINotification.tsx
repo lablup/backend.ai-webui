@@ -7,7 +7,7 @@ import { createStyles } from 'antd-style';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import _ from 'lodash';
-import { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
+import React, { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';
 import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
@@ -67,6 +67,7 @@ export interface NotificationState
   extraDescription?: string | null;
   onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
+  extraData: any;
 }
 
 interface NotificationOptions {
@@ -288,21 +289,40 @@ export const useSetBAINotification = () => {
   const webuiNavigate = useWebUINavigate();
   const { styles } = useStyle();
 
-  const destroyAllNotifications = useCallback(() => {
+  const closeAllNotifications = useCallback(() => {
     _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
     app.notification.destroy();
   }, [app.notification]);
 
+  /**
+   * Function to permanently clear all notifications.
+   */
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
-    destroyAllNotifications();
-  }, [setNotifications, destroyAllNotifications]);
+    closeAllNotifications();
+  }, [setNotifications, closeAllNotifications]);
 
-  const destroyNotification = useCallback(
+  /**
+   * Function to hide specific notification. It remains in the drawer.
+   */
+  const closeNotification = useCallback(
     (key: React.Key) => {
       app.notification.destroy(key);
     },
     [app.notification],
+  );
+
+  /**
+   * Function to remove specific notification from the list and hide it.
+   */
+  const clearNotification = useCallback(
+    (key: React.Key) => {
+      setNotifications((prev) => {
+        return prev.filter((n) => n.key !== key);
+      });
+      closeNotification(key);
+    },
+    [setNotifications, closeNotification],
   );
 
   /**
@@ -397,7 +417,7 @@ export const useSetBAINotification = () => {
                   if (newNotification.to) {
                     webuiNavigate(newNotification.to);
                   }
-                  destroyNotification(newNotification.key);
+                  closeNotification(newNotification.key);
                 }}
               />
             ),
@@ -411,6 +431,12 @@ export const useSetBAINotification = () => {
               });
               if (idx >= 0) {
                 setNotifications((prevList) => {
+                  // check the notification is removed by clearNotification function. If so, do nothing.
+                  const exists = prevList.some(
+                    (n) => n.key === newNotification.key,
+                  );
+                  if (!exists) return prevList;
+
                   const newList = [...prevList];
                   newList[idx] = {
                     ...newList[idx],
@@ -422,7 +448,7 @@ export const useSetBAINotification = () => {
             },
           });
         } else if (newNotification.open === false && newNotification.key) {
-          destroyNotification(newNotification.key);
+          closeNotification(newNotification.key);
         }
         currentKey = newNotification.key;
         return nextNotifications;
@@ -434,7 +460,7 @@ export const useSetBAINotification = () => {
     [
       app.notification,
       setNotifications,
-      destroyNotification,
+      closeNotification,
       desktopNotification,
     ],
   );
@@ -466,9 +492,10 @@ export const useSetBAINotification = () => {
 
   return {
     upsertNotification,
+    clearNotification,
     clearAllNotifications,
-    destroyNotification,
-    destroyAllNotifications,
+    closeNotification,
+    closeAllNotifications,
   };
 };
 

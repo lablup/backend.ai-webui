@@ -16,19 +16,34 @@ import useKeyboardShortcut from 'src/hooks/useKeyboardShortcut';
 export const isOpenDrawerState = atom(false);
 
 const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
-  const [notifications, { upsertNotification }] = useBAINotificationState();
+  const [notifications, { upsertNotification, clearNotification }] =
+    useBAINotificationState();
   useBAINotificationEffect();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
   useEffect(() => {
-    const handler = (e: any) => {
+    const addNotificationHandler = (e: any) => {
       upsertNotification(e.detail);
     };
-    document.addEventListener('add-bai-notification', handler);
-    return () => {
-      document.removeEventListener('add-bai-notification', handler);
+    const clearNotificationHandler = (e: any) => {
+      clearNotification(e.detail.key);
     };
-  }, [upsertNotification]);
+    document.addEventListener('add-bai-notification', addNotificationHandler);
+    document.addEventListener(
+      'clear-bai-notification',
+      clearNotificationHandler,
+    );
+    return () => {
+      document.removeEventListener(
+        'add-bai-notification',
+        addNotificationHandler,
+      );
+      document.removeEventListener(
+        'clear-bai-notification',
+        clearNotificationHandler,
+      );
+    };
+  }, [upsertNotification, clearNotification]);
 
   useKeyboardShortcut(
     (event) => {

@@ -17,9 +17,8 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { useInterval } from '../hooks/useIntervalValue';
 import { Skeleton, theme } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { filterOutEmpty, useInterval } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

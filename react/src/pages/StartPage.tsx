@@ -4,17 +4,33 @@ import BAIAlert from '../components/BAIAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import { MenuKeys } from '../components/MainLayout/WebUISider';
+import StartFromURLModal from '../components/StartFromURLModal';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
-import { AppstoreAddOutlined, FolderAddOutlined } from '@ant-design/icons';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import { AppstoreAddOutlined } from '@ant-design/icons';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAIUnmountAfterClose,
+  BAIURLStartIcon,
+  BAIInteractiveSessionIcon,
+  BAIBatchSessionIcon,
+  BAINewFolderIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
+import {
+  useQueryParams,
+  withDefault,
+  StringParam,
+  JsonParam,
+} from 'use-query-params';
 
 interface StartPageBoardItem extends BAIBoardItem {
   requiredMenuKey: MenuKeys;
@@ -30,9 +46,80 @@ const StartPage: React.FC = () => {
 
   const webuiNavigate = useWebUINavigate();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
+  const [isOpenStartURLModal, setIsOpenStartURLModal] =
+    useState<boolean>(false);
+
+  const location = useLocation();
+
+  // State for modal initial data
+  const [startModalInitialProps, setStartModalInitialProps] = useState<{
+    initialTab?: 'notebook' | 'github' | 'gitlab';
+    initialData?: { url?: string; branch?: string };
+  }>();
 
   const { upsertNotification } = useSetBAINotification();
   const [vFolderInvitations] = useVFolderInvitations();
+
+  // Parse query parameters
+  const [queryParams, setQueryParams] = useQueryParams({
+    type: withDefault(StringParam, undefined),
+    data: withDefault(JsonParam, undefined),
+  });
+
+  // Handle legacy GitHub URL format (for backward compatibility)
+  const legacyGithubPath = useMemo(() => {
+    // Check for legacy /github? URL format
+    const pathAfterGithub = location.search.substring(1); // Remove the '?'
+
+    // If we have a query string without 'type' param, it might be legacy format
+    if (
+      !queryParams.type &&
+      pathAfterGithub &&
+      !pathAfterGithub.includes('=')
+    ) {
+      return pathAfterGithub;
+    }
+    return null;
+  }, [location.search, queryParams.type]);
+
+  const badgeEventHandler = useEffectEvent(() => {
+    // Handle new format: /start?type=url&data=...
+    if (queryParams.type === 'url' && queryParams.data) {
+      setStartModalInitialProps({
+        initialTab: 'notebook',
+        initialData: queryParams.data,
+      });
+      setIsOpenStartURLModal(true);
+
+      setQueryParams({
+        type: undefined,
+        data: undefined,
+      });
+    } else if (legacyGithubPath) {
+      // Handle legacy format: /github?owner/repo/path/notebook.ipynb (via redirect)
+      // Convert legacy path to full URL
+      const fullUrl = `https://github.com/${legacyGithubPath}`;
+      setStartModalInitialProps({
+        initialTab: 'notebook',
+        initialData: { url: fullUrl },
+      });
+      setIsOpenStartURLModal(true);
+
+      // clear legacy query parameter
+      setQueryParams(
+        {
+          type: undefined,
+          data: undefined,
+        },
+        // clear legacy query parameter
+        'replace',
+      );
+    }
+  });
+
+  useEffect(() => {
+    badgeEventHandler();
+  }, []);
 
   useEffect(() => {
     if (vFolderInvitations.length <= 0) return;
@@ -64,7 +151,7 @@ const StartPage: React.FC = () => {
             title={t('start.CreateFolder')}
             description={t('start.CreateFolderDesc')}
             buttonText={t('start.button.CreateFolder')}
-            icon={<FolderAddOutlined />}
+            icon={<BAINewFolderIcon />}
             onClick={() => setIsOpenCreateModal(true)}
           />
         ),
@@ -82,7 +169,7 @@ const StartPage: React.FC = () => {
             title={t('start.StartSession')}
             description={t('start.StartSessionDesc')}
             buttonText={t('start.button.StartSession')}
-            icon={<AppstoreAddOutlined />}
+            icon={<BAIInteractiveSessionIcon />}
             onClick={() => webuiNavigate('/session/start')}
           />
         ),
@@ -100,7 +187,7 @@ const StartPage: React.FC = () => {
             title={t('start.StartBatchSession')}
             description={t('start.StartBatchSessionDesc')}
             buttonText={t('start.button.StartSession')}
-            icon={<AppstoreAddOutlined />}
+            icon={<BAIBatchSessionIcon />}
             onClick={() => {
               const launcherValue: DeepPartial<SessionLauncherFormValue> = {
                 sessionType: 'batch',
@@ -131,6 +218,26 @@ const StartPage: React.FC = () => {
               onClick={() => webuiNavigate('/service/start')}
             />
           </ThemeSecondaryProvider>
+        ),
+      },
+    },
+    {
+      id: 'importFromURL',
+      requiredMenuKey: 'import',
+      rowSpan: 3,
+      columnSpan: 1,
+      columnOffset: { 6: 3, 4: 3 },
+      data: {
+        content: (
+          <ActionItemContent
+            title={t('start.StartFromURL')}
+            description={t('start.StartFromURLDesc')}
+            buttonText={t('start.button.StartNow')}
+            icon={<BAIURLStartIcon />}
+            onClick={() => {
+              setIsOpenStartURLModal(true);
+            }}
+          />
         ),
       },
     },
@@ -182,15 +289,28 @@ const StartPage: React.FC = () => {
       {_.isEmpty(boardItems) && (
         <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
       )}
-      <FolderCreateModal
-        open={isOpenCreateModal}
-        onRequestClose={(response) => {
-          setIsOpenCreateModal(false);
-          if (response) {
-            webuiNavigate('/data');
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <FolderCreateModal
+          open={isOpenCreateModal}
+          onRequestClose={(response) => {
+            setIsOpenCreateModal(false);
+            if (response) {
+              webuiNavigate('/data');
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <StartFromURLModal
+          open={isOpenStartURLModal}
+          onCancel={() => {
+            setIsOpenStartURLModal(false);
+            setStartModalInitialProps(undefined);
+          }}
+          initialTab={startModalInitialProps?.initialTab}
+          initialData={startModalInitialProps?.initialData}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

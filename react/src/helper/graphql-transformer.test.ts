@@ -298,4 +298,166 @@ describe('graphql-transformer', () => {
     // UnusedFragment should be removed because the field using it was removed
     expect(result).not.toContain('fragment UnusedFragment');
   });
+
+  it('should handle empty fragments when all fields are removed by client directives', () => {
+    const result = manipulateGraphQLQueryWithClientDirectives(
+      `
+    query DashboardPageQuery($isSuperAdmin: Boolean!) {
+      ...SessionCountDashboardItemFragment
+      ...AgentStatsFragment @include(if: $isSuperAdmin)
+    }
+
+    fragment SessionCountDashboardItemFragment on Query {
+      myInteractive: compute_session_nodes(first: 0) {
+        count
+      }
+    }
+
+    fragment AgentStatsFragment on Query {
+      agentStats @since(version: "25.16.0") {
+        totalResource {
+          free
+          used
+        }
+      }
+    }
+  `,
+      { isSuperAdmin: true },
+      (version) => {
+        // Simulate version 25.15.0 - agentStats field should be removed
+        return version >= '25.16.0';
+      },
+    );
+
+    // Expected: AgentStatsFragment is completely removed (both definition and spread)
+    // because all its fields were removed by @since directive
+    expect(result).toBe(`query DashboardPageQuery {
+  ...SessionCountDashboardItemFragment
+}
+
+fragment SessionCountDashboardItemFragment on Query {
+  myInteractive: compute_session_nodes(first: 0) {
+    count
+  }
+}`);
+  });
+
+  it('should handle multiple empty fragments with different directives', () => {
+    const result = manipulateGraphQLQueryWithClientDirectives(
+      `
+    query TestQuery {
+      node {
+        ...FragmentWithOldFields
+        ...FragmentWithNewFields
+        ...FragmentWithMixedFields
+      }
+    }
+
+    fragment FragmentWithOldFields on Node {
+      oldField1 @deprecatedSince(version: "24.0.0")
+      oldField2 @deprecatedSince(version: "24.0.0")
+    }
+
+    fragment FragmentWithNewFields on Node {
+      newField1 @since(version: "26.0.0")
+      newField2 @since(version: "26.0.0")
+    }
+
+    fragment FragmentWithMixedFields on Node {
+      id
+      newField @since(version: "26.0.0")
+      oldField @deprecatedSince(version: "24.0.0")
+    }
+  `,
+      {},
+      (version) => {
+        // Simulate version 25.0.0.
+        // Predicate returns true when the current system version is NOT compatible with the required version,
+        // meaning the field should be removed.
+        // - Old fields (< 24.0.0) should remain (predicate returns false, so field is kept)
+        // - New fields (>= 26.0.0) should be removed (predicate returns true, so field is removed)
+        return version >= '26.0.0';
+      },
+    );
+
+    // Expected: FragmentWithOldFields and FragmentWithNewFields are completely removed
+    // because all their fields were removed. FragmentWithMixedFields remains with only 'id'.
+    expect(result).toBe(`query TestQuery {
+  node {
+    ...FragmentWithMixedFields
+  }
+}
+
+fragment FragmentWithMixedFields on Node {
+  id
+}`);
+  });
+
+  it('should handle nested fragments with empty parent fragments', () => {
+    const result = manipulateGraphQLQueryWithClientDirectives(
+      `
+    query TestQuery {
+      node {
+        ...ParentFragment
+      }
+    }
+
+    fragment ParentFragment on Node {
+      newField @since(version: "99.0.0") {
+        ...ChildFragment
+      }
+    }
+
+    fragment ChildFragment on Node {
+      id
+      name
+    }
+  `,
+      {},
+      (version) => {
+        // Remove the newField which uses ChildFragment
+        return version >= '99.0.0';
+      },
+    );
+
+    // Expected: ParentFragment becomes empty and is removed along with ChildFragment.
+    // The 'node' field also gets removed because it has no selection set after fragment removal.
+    expect(result).toBe(`query TestQuery {
+  node
+}`);
+  });
+
+  it('should remove empty fragment B when only referenced by unused fragment A', () => {
+    // Exact scenario from the problem description:
+    // Fragment A (unused) references Fragment B (becomes empty after directive removal)
+    const result = manipulateGraphQLQueryWithClientDirectives(
+      `
+    query MyQuery {
+      field1
+      ...A
+    }
+
+    fragment A on Type {
+      ...B
+    }
+
+    fragment B on Type {
+      fieldWithClientDirective @skipOnClient(if: true)
+    }
+  `,
+      {},
+      () => {
+        return false; // Not relevant for skipOnClient
+      },
+    );
+
+    // Expected: Both fragments should be removed
+    // - Fragment A is not used in the query
+    // - Fragment B becomes empty after fieldWithClientDirective is removed
+    // This test ensures that fragment B is properly removed even when it is only referenced by unused fragment A,
+    // and that both fragments are removed when B becomes empty after directive removal.
+    expect(result).toBe(`query MyQuery {
+  field1
+}`);
+  });
 });

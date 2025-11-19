@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "最后更新",
+    "Refresh": "刷新"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",
     "FailedToPullVersions": "未能拉动版本。",

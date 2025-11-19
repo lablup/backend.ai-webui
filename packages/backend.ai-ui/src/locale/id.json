@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Terakhir diperbarui",
+    "Refresh": "Segarkan"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",

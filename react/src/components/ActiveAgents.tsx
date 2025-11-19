@@ -1,7 +1,6 @@
 import AgentList from './AgentList';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { theme } from 'antd';
-import { BAIFlex, BAIBoardItemTitle } from 'backend.ai-ui';
+import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 

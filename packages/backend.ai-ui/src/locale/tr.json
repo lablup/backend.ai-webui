@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Son güncelleme",
+    "Refresh": "Yenile"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
     "FailedToPullVersions": "Sürümleri çekemedi.",

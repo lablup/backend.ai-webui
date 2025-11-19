@@ -31,6 +31,7 @@ export default class LablupNotification extends LitElement {
   @property({ type: String }) requestUrl = '';
   @property({ type: String }) status = '';
   @property({ type: String }) timestamp = '';
+  @property({ type: Object }) backgroundTask = Object();
   @property({ type: Object }) indicator;
   @property({ type: Array }) notifications;
   @property({ type: Array }) notificationstore;
@@ -195,10 +196,11 @@ export default class LablupNotification extends LitElement {
     const messageDetail = {
       open: true,
       type: shouldSaveLog ? 'error' : null,
-      message: this.text,
+      message: this.text ? this.text : undefined,
       description: this.text === this.detail ? undefined : this.detail,
       to: shouldSaveLog ? '/usersettings?tab=logs' : this.url,
       duration: persistent ? 0 : undefined,
+      backgroundTask: this.backgroundTask ? this.backgroundTask : undefined,
       // closeIcon: persistent,
     };
 
@@ -218,6 +220,21 @@ export default class LablupNotification extends LitElement {
       this._spawnDesktopNotification('Backend.AI', this.text, '');
     }
     this.detail = ''; // Reset the temporary detail scripts
+  }
+
+  /**
+   * Dispatch event to clear single notification item in BAINotificationDrawer.
+   *
+   * @param key
+   */
+  clear(key: string) {
+    const event: CustomEvent = new CustomEvent('clear-bai-notification', {
+      detail: {
+        key,
+      },
+    });
+
+    document.dispatchEvent(event);
   }
 
   // /**

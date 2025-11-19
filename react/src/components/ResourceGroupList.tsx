@@ -5,7 +5,6 @@ import {
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { useUpdatableState } from '../hooks';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
@@ -34,6 +33,7 @@ import {
   BAITable,
   BAIFlex,
   BAIConfirmModalWithInput,
+  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';

@@ -14,11 +14,14 @@ import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
+  BAIFileBrowserIcon,
+  BAIJupyterIcon,
   BAISessionLogIcon,
   BAISftpIcon,
   BAITerminalAppIcon,
   BAITerminateIcon,
   BAIUnmountAfterClose,
+  omitNullAndUndefinedFields,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
@@ -33,12 +36,18 @@ type SessionActionButtonKey =
   | 'sftp'
   | 'terminate';
 
+export type PrimaryAppOption = {
+  appName: 'jupyter' | 'filebrowser';
+  urlPostfix?: string;
+};
+
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;
   size?: ButtonProps['size'];
   compact?: boolean;
   hiddenButtonKeys?: SessionActionButtonKey[];
   onAction?: (action: SessionActionButtonKey) => void;
+  primaryAppOption?: PrimaryAppOption;
 }
 
 const isActive = (session: SessionActionButtonsFragment$data) => {
@@ -66,6 +75,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   compact,
   size,
   hiddenButtonKeys,
+  primaryAppOption,
   onAction,
 }) => {
   const { t } = useTranslation();
@@ -137,6 +147,88 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   return session ? (
     <>
       <Wrapper compact={compact}>
+        {primaryAppOption && (
+          <>
+            {primaryAppOption.appName === 'jupyter' && (
+              <Tooltip
+                title={
+                  isButtonTitleMode
+                    ? undefined
+                    : t('session.ExecuteSpecificApp', {
+                        appName: 'Jupyter Notebook',
+                      })
+                }
+              >
+                <Button
+                  size={size}
+                  type={'primary'}
+                  disabled={
+                    !isAppSupported(session) || !isActive(session) || !isOwner
+                  }
+                  icon={<BAIJupyterIcon />}
+                  onClick={() => {
+                    const appOption = {
+                      'app-name': primaryAppOption.appName,
+                      'session-uuid': session?.row_id,
+                      'url-postfix': primaryAppOption.urlPostfix,
+                    };
+
+                    // @ts-ignore
+                    globalThis.appLauncher._runApp(
+                      omitNullAndUndefinedFields(appOption),
+                    );
+                  }}
+                  title={
+                    isButtonTitleMode
+                      ? t('session.ExecuteSpecificApp', {
+                          appName: 'Jupyter Notebook',
+                        })
+                      : undefined
+                  }
+                />
+              </Tooltip>
+            )}
+            {primaryAppOption.appName === 'filebrowser' && (
+              <Tooltip
+                title={
+                  isButtonTitleMode
+                    ? undefined
+                    : t('session.ExecuteSpecificApp', {
+                        appName: 'Jupyter Notebook',
+                      })
+                }
+              >
+                <Button
+                  size={size}
+                  type={'primary'}
+                  disabled={
+                    !isAppSupported(session) || !isActive(session) || !isOwner
+                  }
+                  icon={<BAIFileBrowserIcon />}
+                  onClick={() => {
+                    const appOption = {
+                      'app-name': primaryAppOption.appName,
+                      'session-uuid': session?.row_id,
+                      'url-postfix': primaryAppOption.urlPostfix,
+                    };
+
+                    // @ts-ignore
+                    globalThis.appLauncher._runApp(
+                      omitNullAndUndefinedFields(appOption),
+                    );
+                  }}
+                  title={
+                    isButtonTitleMode
+                      ? t('session.ExecuteSpecificApp', {
+                          appName: 'File browser',
+                        })
+                      : undefined
+                  }
+                />
+              </Tooltip>
+            )}
+          </>
+        )}
         {isVisible('appLauncher') && (
           <>
             <Tooltip
@@ -144,7 +236,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             >
               <Button
                 size={size}
-                type="primary"
+                type={primaryAppOption ? undefined : 'primary'}
                 disabled={
                   !isAppSupported(session) || !isActive(session) || !isOwner
                 }
@@ -164,7 +256,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
             <Button
               type="primary"
-              disabled={!isActive(session) || !isOwner}
+              disabled={
+                !isAppSupported(session) || !isActive(session) || !isOwner
+              }
               size={size}
               icon={<BAISftpIcon />}
               onClick={() => {

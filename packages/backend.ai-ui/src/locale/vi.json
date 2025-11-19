@@ -53,6 +53,10 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Cập nhật lần cuối",
+    "Refresh": "Làm mới"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
     "FailedToPullVersions": "Không thể kéo phiên bản.",

@@ -1,23 +1,22 @@
 // import { createClient } from "graphql-ws";
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
+// import { createClient } from 'graphql-ws';
+import { createClient } from 'graphql-sse';
 import {
   Environment,
   Network,
   RecordSource,
   Store,
   FetchFunction,
-  SubscribeFunction,
   RelayFeatureFlags,
+  RequestParameters,
+  Variables,
+  Observable,
 } from 'relay-runtime';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
-const fetchFn: FetchFunction = async (
-  request,
-  variables,
-  // cacheConfig,
-  // uploadables
-) => {
+const waitForBAIClient = async () => {
   //@ts-ignore
   if (globalThis.backendaiclient === undefined) {
     // If globalThis.backendaiclient is not defined, wait for the backend-ai-connected event.
@@ -33,6 +32,26 @@ const fetchFn: FetchFunction = async (
       document.addEventListener('backend-ai-connected', onBackendAIConnected);
     });
   }
+  // @ts-ignore
+  return globalThis.backendaiclient;
+};
+const getSubscriptionEndpoint = async () => {
+  const baliClient = await waitForBAIClient();
+  let api_endpoint: string = baliClient._config.endpoint;
+  if (api_endpoint) {
+    api_endpoint = api_endpoint.replace(/^"+|"+$/g, ''); // Remove leading and trailing quotes
+    api_endpoint += '/func/admin/gql';
+  }
+  return api_endpoint;
+};
+
+const fetchFn: FetchFunction = async (
+  request,
+  variables,
+  // cacheConfig,
+  // uploadables
+) => {
+  await waitForBAIClient();
 
   const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
@@ -50,7 +69,7 @@ const fetchFn: FetchFunction = async (
     variables: variables,
   };
 
-  //@ts-ignore
+  // @ts-ignore
   const reqInfo = globalThis.backendaiclient?.newSignedRequest(
     'POST',
     '/admin/gql',
@@ -58,7 +77,7 @@ const fetchFn: FetchFunction = async (
   );
 
   const result =
-    //@ts-ignore
+    // @ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo)
       .catch((err: any) => {
@@ -69,40 +88,72 @@ const fetchFn: FetchFunction = async (
         }
       })) || {};
 
+  if (result.errors) {
+    // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
+    // so we store the original message in the extensions.rawErrorMessage field.
+    // https://github.com/facebook/relay/releases/tag/v18.1.0
+    result.errors.forEach((error: any) => {
+      if (error.extensions && error.message) {
+        error.extensions.rawErrorMessage = error.message;
+      }
+    });
+  }
+
   return result;
 };
 
-const subscribeFn: SubscribeFunction | undefined = undefined;
+const subscriptionsClient = createClient({
+  url: getSubscriptionEndpoint,
+  headers: () => {
+    const sessionId: string | undefined =
+      // @ts-ignore
+      globalThis.backendaiclient?._loginSessionId;
+    const headers: Record<string, string> = {};
+    if (sessionId) {
+      headers['X-BackendAI-SessionID'] = sessionId;
+    }
+    return headers;
+  },
+  retryAttempts: 3,
+  retry: async () => {
+    // Wait and retry on connection failure
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  },
+});
 
-// if (typeof window !== "undefined") {
-//   // We only want to setup subscriptions if we are on the client.
-//   const subscriptionsClient = createClient({
-//     url: WEBSOCKET_ENDPOINT,
-//   });
+function fetchForSubscribe(
+  operation: RequestParameters,
+  variables: Variables,
+): Observable<any> {
+  return Observable.create((sink) => {
+    if (!operation.text) {
+      return sink.error(new Error('Operation text cannot be empty'));
+    }
+    const transformedOperation = manipulateGraphQLQueryWithClientDirectives(
+      operation.text || '',
+      variables,
+      (version) => {
+        // @ts-ignore
+        return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
+          version,
+        );
+      },
+    );
 
-//   subscribeFn = (request, variables) => {
-//     // To understand why we return Observable.create<any>,
-//     // please see: https://github.com/enisdenjo/graphql-ws/issues/316#issuecomment-1047605774
-//     return Observable.create<any>((sink) => {
-//       if (!request.text) {
-//         return sink.error(new Error("Operation text cannot be empty"));
-//       }
-
-//       return subscriptionsClient.subscribe(
-//         {
-//           operationName: request.name,
-//           query: request.text,
-//           variables,
-//         },
-//         sink
-//       );
-//     });
-//   };
-// }
+    return subscriptionsClient.subscribe(
+      {
+        operationName: operation.name,
+        query: transformedOperation,
+        variables,
+      },
+      sink,
+    );
+  });
+}
 
 function createRelayEnvironment() {
   return new Environment({
-    network: Network.create(fetchFn, subscribeFn),
+    network: Network.create(fetchFn, fetchForSubscribe),
     store: new Store(new RecordSource()),
   });
 }

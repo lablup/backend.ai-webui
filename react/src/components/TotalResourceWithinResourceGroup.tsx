@@ -3,7 +3,6 @@ import {
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme, Typography } from 'antd';
@@ -17,6 +16,7 @@ import {
   convertToNumber,
   processMemoryValue,
   BAIFlexProps,
+  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {

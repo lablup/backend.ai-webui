@@ -157,6 +157,7 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
             setIsEditing(false);
             focusFallback();
             if (values.vfolderName === vfolder.name) {
+              onEditEnd?.();
               return;
             }
             setOptimisticName(values.vfolderName);

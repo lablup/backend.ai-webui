@@ -38,6 +38,7 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
     data: files,
     refetch,
     isFetching,
+    isLoading,
   } = useQuery({
     queryKey: ['searchVFolderFiles', vfolder, currentPath, fetchKey],
     queryFn: () =>
@@ -49,9 +50,7 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
         return res;
       }),
     enabled: !!vfolder,
-    // not using cache, always refetch
-    staleTime: 5 * 60 * 1000,
-    gcTime: 0,
+    staleTime: 3000,
   });
 
   return {
@@ -63,6 +62,7 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
     navigateToPath,
     refetch,
     isFetching,
+    isLoading,
   };
 };
 

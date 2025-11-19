@@ -4,7 +4,6 @@ import {
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
-import BAIFetchKeyButton from '../components/BAIFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
@@ -32,16 +31,17 @@ import {
   Typography,
 } from 'antd';
 import {
+  BAIAlertIconWithTooltip,
+  BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAINewFolderIcon,
+  BAIPropertyFilter,
+  BAIRestoreIcon,
+  BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAIFlex,
-  BAICard,
-  BAINewFolderIcon,
-  BAIRestoreIcon,
-  BAIPropertyFilter,
   mergeFilterValues,
-  BAIAlertIconWithTooltip,
-  BAIVFolderDeleteButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
@@ -55,7 +55,7 @@ import React, {
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
@@ -126,7 +126,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });
@@ -677,12 +677,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             onChangeOrder={(order) => {
               setQuery({ order }, 'replaceIn');
             }}
-            onRequestChange={(updatedFolderId) => {
+            onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>
-                _.filter(
-                  prevSelected,
-                  (folder) => folder.id !== updatedFolderId,
-                ),
+                _.filter(prevSelected, (folder) => folder.id !== removedId),
               );
               updateFetchKey();
             }}

@@ -61,7 +61,6 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
   };
   return (
     <Modal
-      keyboard={false}
       {...modalProps}
       centered={modalProps.centered ?? true}
       className={classNames(`bai-modal ${className ?? ''}`, styles.modal)}
@@ -127,7 +126,6 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
           <Draggable
             disabled={disabled}
             bounds={bounds}
-            // @ts-expect-error
             nodeRef={draggleRef}
             onStart={(e, uiData) => handleDrag(e, uiData)}
           >

@@ -1,10 +1,6 @@
 import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
-import { ContainerRegistryEditorModalCreateWithoutExtraMutation } from '../__generated__/ContainerRegistryEditorModalCreateWithoutExtraMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
-import { ContainerRegistryEditorModalModifyMutation } from '../__generated__/ContainerRegistryEditorModalModifyMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutExtraMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutExtraMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation.graphql';
-import { ContainerRegistryEditorModalModifyWithoutPasswordMutation } from '../__generated__/ContainerRegistryEditorModalModifyWithoutPasswordMutation.graphql';
+import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
@@ -14,12 +10,7 @@ import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useMutation,
-  UseMutationConfig,
-} from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type RegistryFormInput = {
   row_id?: string;
@@ -70,10 +61,31 @@ const ContainerRegistryEditorModal: React.FC<
   );
 
   const [commitCreateRegistry, isInflightCreateRegistry] =
-    useCreateContainerMutation();
+    useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
+      mutation ContainerRegistryEditorModalCreateMutation(
+        $props: CreateContainerRegistryNodeInputV2!
+      ) {
+        create_container_registry_node_v2(props: $props) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
 
   const [commitModifyRegistry, isInflightModifyRegistry] =
-    useModifyContainerMutation();
+    useMutation<ContainerRegistryEditorModalModifyRegistryMutation>(graphql`
+      mutation ContainerRegistryEditorModalModifyRegistryMutation(
+        $id: String!
+        $props: ModifyContainerRegistryNodeInputV2!
+      ) {
+        modify_container_registry_node_v2(id: $id, props: $props) {
+          container_registry {
+            id
+          }
+        }
+      }
+    `);
 
   const handleSave = async () => {
     return formRef.current
@@ -98,48 +110,45 @@ const ContainerRegistryEditorModal: React.FC<
         };
 
         if (containerRegistry) {
-          commitModifyRegistry(
-            {
-              variables: {
-                ...mutationVariables,
-                ...(mutationVariables.id
-                  ? { id: mutationVariables.id }
-                  : { id: '' }),
-              },
-              onCompleted: (res, errors) => {
-                if (
-                  _.isEmpty(
-                    res.modify_container_registry_node?.container_registry,
-                  )
-                ) {
-                  message.error(t('dialog.ErrorOccurred'));
-                  return;
-                }
-                if (errors && errors.length > 0) {
-                  const errorMsgList = _.map(errors, (error) => error.message);
-                  for (const error of errorMsgList) {
-                    message.error(error);
-                  }
-                } else {
-                  onOk && onOk('modify');
-                }
-              },
-              onError: () => {
-                message.error(t('dialog.ErrorOccurred'));
-              },
+          commitModifyRegistry({
+            variables: {
+              id: mutationVariables.id ?? '',
+              props: _.omit(mutationVariables, 'id'),
             },
-            values.isChangedPassword ?? false,
-          );
+            onCompleted: (res, errors) => {
+              if (
+                _.isEmpty(
+                  res.modify_container_registry_node_v2?.container_registry,
+                )
+              ) {
+                message.error(t('dialog.ErrorOccurred'));
+                return;
+              }
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error);
+                }
+              } else {
+                onOk && onOk('modify');
+              }
+            },
+            onError: () => {
+              message.error(t('dialog.ErrorOccurred'));
+            },
+          });
         } else {
           mutationVariables = _.omitBy(mutationVariables, _.isNil) as Required<
             typeof mutationVariables
           >;
           commitCreateRegistry({
-            variables: mutationVariables,
+            variables: {
+              props: mutationVariables,
+            },
             onCompleted: (res, errors) => {
               if (
                 _.isEmpty(
-                  res?.create_container_registry_node?.container_registry,
+                  res?.create_container_registry_node_v2?.container_registry,
                 )
               ) {
                 message.error(t('dialog.ErrorOccurred'));
@@ -445,252 +454,5 @@ const ContainerRegistryEditorModal: React.FC<
     </BAIModal>
   );
 };
-
-function useCreateContainerMutation() {
-  const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField = baiClient.supports('extra-field');
-  const [commitCreateRegistry, isInflightCreateRegistry] =
-    useMutation<ContainerRegistryEditorModalCreateMutation>(graphql`
-      mutation ContainerRegistryEditorModalCreateMutation(
-        $registry_name: String!
-        $type: ContainerRegistryTypeField!
-        $url: String!
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        create_container_registry_node(
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `);
-
-  // Because the input of mutation is provided as some argument, not the input type,
-  // versions of the mutation that do not include a particular argument are provided with 'Without'.
-  const [
-    commitCreateRegistryWithoutExtra,
-    isInflightCreateRegistryWithoutExtra,
-  ] = useMutation<ContainerRegistryEditorModalCreateWithoutExtraMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalCreateWithoutExtraMutation(
-        $registry_name: String!
-        $type: ContainerRegistryTypeField!
-        $url: String!
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-      ) {
-        create_container_registry_node(
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
-
-  return isSupportExtraField
-    ? ([commitCreateRegistry, isInflightCreateRegistry] as const)
-    : ([
-        commitCreateRegistryWithoutExtra,
-        isInflightCreateRegistryWithoutExtra,
-      ] as const);
-}
-
-function useModifyContainerMutation() {
-  const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField = baiClient.supports('extra-field');
-
-  const [commitModifyRegistry, isInflightModifyRegistry] =
-    useMutation<ContainerRegistryEditorModalModifyMutation>(graphql`
-      mutation ContainerRegistryEditorModalModifyMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `);
-
-  const [
-    commitModifyRegistryWithoutExtra,
-    isInflightModifyRegistryWithoutExtra,
-  ] = useMutation<ContainerRegistryEditorModalModifyWithoutExtraMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalModifyWithoutExtraMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $password: String
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          password: $password
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
-
-  const [
-    commitModifyRegistryWithoutPassword,
-    isInflightModifyRegistryWithoutPassword,
-  ] = useMutation<ContainerRegistryEditorModalModifyWithoutPasswordMutation>(
-    graphql`
-      mutation ContainerRegistryEditorModalModifyWithoutPasswordMutation(
-        $id: String!
-        $registry_name: String
-        $type: ContainerRegistryTypeField
-        $url: String
-        $is_global: Boolean
-        $project: String
-        $ssl_verify: Boolean
-        $username: String
-        $extra: JSONString
-      ) {
-        modify_container_registry_node(
-          id: $id
-          registry_name: $registry_name
-          type: $type
-          url: $url
-          is_global: $is_global
-          project: $project
-          ssl_verify: $ssl_verify
-          username: $username
-          extra: $extra
-        ) {
-          container_registry {
-            id
-          }
-        }
-      }
-    `,
-  );
-
-  const [
-    commitModifyRegistryWithoutPasswordAndExtra,
-    isInflightModifyRegistryWithoutPasswordAndExtra,
-  ] =
-    useMutation<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>(
-      graphql`
-        mutation ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation(
-          $id: String!
-          $registry_name: String
-          $type: ContainerRegistryTypeField
-          $url: String
-          $is_global: Boolean
-          $project: String
-          $ssl_verify: Boolean
-          $username: String
-        ) {
-          modify_container_registry_node(
-            id: $id
-            registry_name: $registry_name
-            type: $type
-            url: $url
-            is_global: $is_global
-            project: $project
-            ssl_verify: $ssl_verify
-            username: $username
-          ) {
-            container_registry {
-              id
-            }
-          }
-        }
-      `,
-    );
-
-  return [
-    (
-      config:
-        | UseMutationConfig<ContainerRegistryEditorModalModifyMutation>
-        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutExtraMutation>
-        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutPasswordMutation>
-        | UseMutationConfig<ContainerRegistryEditorModalModifyWithoutPasswordAndExtraMutation>,
-      isChangedPassword: boolean,
-    ) => {
-      if (!isChangedPassword && 'password' in config.variables) {
-        delete config.variables.password;
-      }
-      if (isSupportExtraField) {
-        return isChangedPassword
-          ? commitModifyRegistry(config)
-          : commitModifyRegistryWithoutPassword(config);
-      } else {
-        return isChangedPassword
-          ? commitModifyRegistryWithoutExtra(config)
-          : commitModifyRegistryWithoutPasswordAndExtra(config);
-      }
-    },
-    isInflightModifyRegistry ||
-      isInflightModifyRegistryWithoutExtra ||
-      isInflightModifyRegistryWithoutPassword ||
-      isInflightModifyRegistryWithoutPasswordAndExtra,
-  ] as const;
-}
 
 export default ContainerRegistryEditorModal;

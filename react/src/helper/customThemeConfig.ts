@@ -1,6 +1,6 @@
 import { ThemeConfig } from 'antd';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 type LogoConfig = {
   src: string;
@@ -28,6 +28,13 @@ type SiderConfig = {
 type BrandingConfig = {
   companyName?: string;
   brandName?: string;
+};
+export type CustomThemeConfig = {
+  light: ThemeConfig;
+  dark: ThemeConfig;
+  logo: LogoConfig;
+  sider?: SiderConfig;
+  branding?: BrandingConfig;
 };
 let _customTheme:
   | {
@@ -70,8 +77,10 @@ export const loadCustomThemeConfig = () => {
 };
 
 export const useCustomThemeConfig = () => {
-  const [customThemeConfig, setCustomThemeConfig] = useState(_customTheme);
-  useEffect(() => {
+  const [customThemeConfig, setCustomThemeConfig] = useState<
+    CustomThemeConfig | undefined
+  >(_customTheme);
+  const addEventListener = useEffectEvent(() => {
     if (!customThemeConfig) {
       const handler = () => {
         setCustomThemeConfig(_customTheme);
@@ -82,7 +91,10 @@ export const useCustomThemeConfig = () => {
         document.removeEventListener('custom-theme-loaded', handler);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    addEventListener();
   }, []);
 
   return customThemeConfig;

@@ -1,3 +1,4 @@
+import '../__test__/matchMedia.mock.js';
 import { useInterval, useIntervalValue } from './useIntervalValue';
 import { render, screen, act } from '@testing-library/react';
 import React from 'react';

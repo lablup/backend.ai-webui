@@ -209,13 +209,13 @@ const QuotaPerStorageVolumePanelCard: React.FC<
               used={
                 userUsageBytes === 0
                   ? ''
-                  : convertToDecimalUnit(_.toString(userUsageBytes), 'g')
+                  : convertToDecimalUnit(_.toString(userUsageBytes), 'auto')
                       ?.displayValue
               }
               total={
                 userHardLimitBytes === 0
                   ? ''
-                  : convertToDecimalUnit(_.toString(userHardLimitBytes), 'g')
+                  : convertToDecimalUnit(_.toString(userHardLimitBytes), 'auto')
                       ?.displayValue
               }
             />

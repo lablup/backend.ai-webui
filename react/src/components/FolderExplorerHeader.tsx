@@ -1,24 +1,26 @@
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
 import EditableVFolderName from './EditableVFolderName';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import FileBrowserButton from './FileBrowserButton';
+import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { Button, Tooltip, Image, Grid, theme, Typography } from 'antd';
+import { theme, Typography, Skeleton, Grid } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import React, { LegacyRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
+import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderProps {
   vfolderNodeFrgmt?: FolderExplorerHeaderFragment$key | null;
-  folderExplorerRef: LegacyRef<HTMLDivElement>;
   titleStyle?: React.CSSProperties;
 }
 
 const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   vfolderNodeFrgmt,
-  folderExplorerRef,
   titleStyle,
 }) => {
-  const { t } = useTranslation();
+  'use memo';
+
   const { token } = theme.useToken();
   const { lg } = Grid.useBreakpoint();
 
@@ -28,10 +30,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         id
         user
         permission
+        row_id @required(action: THROW)
         unmanaged_path @since(version: "25.04.0")
         ...VFolderNameTitleNodeFragment
         ...VFolderNodeIdenticonFragment
         ...EditableVFolderNameFragment
+        ...FileBrowserButtonFragment
+        ...SFTPServerButtonFragment
       }
     `,
     vfolderNodeFrgmt,
@@ -47,7 +52,8 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
       <BAIFlex
         data-testid="folder-explorer-title"
         gap={'xs'}
-        style={{ flex: 1, ...titleStyle }}
+        // reset font weight set by BAIModal header
+        style={{ flex: 1, fontWeight: 'normal', ...titleStyle }}
       >
         {vfolderNode ? (
           <VFolderNodeIdenticon
@@ -84,6 +90,13 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
             }}
             inputProps={{
               size: 'large',
+              count: {
+                max: 64,
+                show: true,
+              },
+              style: {
+                fontWeight: 'normal',
+              },
             }}
           />
         )}
@@ -93,45 +106,15 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         justify="end"
         gap={token.marginSM}
       >
-        {!vfolderNode?.unmanaged_path ? (
-          <>
-            <Tooltip title={!lg && t('data.explorer.ExecuteFileBrowser')}>
-              <Button
-                icon={
-                  <Image
-                    width="18px"
-                    src="/resources/icons/filebrowser.svg"
-                    alt="File Browser"
-                    preview={false}
-                  />
-                }
-                onClick={() =>
-                  // @ts-ignore
-                  folderExplorerRef.current?._executeFileBrowser()
-                }
-              >
-                {lg && t('data.explorer.ExecuteFileBrowser')}
-              </Button>
-            </Tooltip>
-            <Tooltip title={!lg && t('data.explorer.RunSSH/SFTPserver')}>
-              <Button
-                icon={
-                  <Image
-                    width="18px"
-                    src="/resources/icons/sftp.png"
-                    alt="SSH / SFTP"
-                    preview={false}
-                  />
-                }
-                onClick={() => {
-                  // @ts-ignore
-                  folderExplorerRef.current?._executeSSHProxyAgent();
-                }}
-              >
-                {lg && t('data.explorer.RunSSH/SFTPserver')}
-              </Button>
-            </Tooltip>
-          </>
+        {vfolderNode && !vfolderNode?.unmanaged_path ? (
+          <Suspense fallback={<Skeleton.Button active />}>
+            <ErrorBoundaryWithNullFallback>
+              <FileBrowserButton vfolderFrgmt={vfolderNode} showTitle={lg} />
+            </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <SFTPServerButton vfolderFrgmt={vfolderNode} showTitle={lg} />
+            </ErrorBoundaryWithNullFallback>
+          </Suspense>
         ) : null}
       </BAIFlex>
     </BAIFlex>

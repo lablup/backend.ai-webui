@@ -112,11 +112,6 @@ const loadPage =
       case 'change-password':
         import('./components/backend-ai-change-forgot-password-view.js');
         break;
-      case 'github':
-      case 'gitlab':
-      case 'import':
-        import('./components/backend-ai-import-view.js');
-        break;
       case 'applauncher':
       case 'edu-applauncher':
         import('./components/backend-ai-edu-applauncher.js');

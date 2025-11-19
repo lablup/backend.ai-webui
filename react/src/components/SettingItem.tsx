@@ -64,10 +64,15 @@ const SettingItem: React.FC<SettingItemProps> = ({
           defaultValue !== value && <Badge dot status="warning" />}
       </BAIFlex>
       {type === 'custom' && (
-        <>
+        <BAIFlex
+          direction="column"
+          gap="xs"
+          align="start"
+          style={{ width: '100%' }}
+        >
           {description}
-          <div style={{ marginTop: token.marginXS }}>{children}</div>
-        </>
+          {children}
+        </BAIFlex>
       )}
       {type === 'checkbox' && (
         <Checkbox

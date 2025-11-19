@@ -3,16 +3,26 @@ import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
+import AutoRefreshSwitch from '../AutoRefreshSwitch';
 import BAISelect from '../BAISelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Grid,
+  InputNumber,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;
@@ -24,8 +34,17 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   defaultKernelId,
   ...modalProps
 }) => {
+  'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
+
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useBAISettingUserState(
+    'container_log_auto_refresh_enabled',
+  );
+  const [autoRefreshInterval, setAutoRefreshInterval] = useBAISettingUserState(
+    'container_log_auto_refresh_interval',
+  );
+  const autoRefreshIntervalValue = autoRefreshInterval || 5_000;
 
   const session = useFragment(
     graphql`
@@ -86,7 +105,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         .get_logs(session?.row_id, session?.access_key, selectedKernelId, 15000)
         .then((req: any) => req.result.logs);
     },
-    staleTime: 5000,
+    staleTime: autoRefreshIntervalValue,
   });
 
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
@@ -174,27 +193,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               .value()}
           />
           <Divider type="vertical" />
-          {/* Request logs
-          <Select
-            value={logSize}
-            options={[
-              {
-                label: 'last 100 lines',
-                value: 100,
-              },
-              {
-                label: 'Full logs',
-                value: 'full',
-              },
-            ]}
-            onChange={(value) => {
-              setLogSize(value);
-              if(value!=='full'){
-                resetPreviousLineNumber();
-              }
-              refetch();
-            }}
-          ></Select> */}
           <Tooltip title={t('button.Download')}>
             <Button
               size="middle"
@@ -217,6 +215,29 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               onClick={() => refetch()}
             />
           </Tooltip>
+          <BAIFlex gap="xs" align="center">
+            <AutoRefreshSwitch
+              checked={autoRefreshEnabled}
+              onChange={setAutoRefreshEnabled}
+              interval={isRefetching ? null : autoRefreshIntervalValue}
+              onRefresh={() => {
+                refetch();
+              }}
+            >
+              {t('button.AutoRefresh')}:
+            </AutoRefreshSwitch>
+            <InputNumber
+              min={3}
+              value={(autoRefreshIntervalValue ?? 1000) / 1000}
+              onChange={(value) => {
+                if (typeof value === 'number') {
+                  setAutoRefreshInterval(value * 1000);
+                }
+              }}
+              addonAfter={t('time.Sec')}
+              style={{ maxWidth: 150 }}
+            />
+          </BAIFlex>
         </BAIFlex>
 
         <div

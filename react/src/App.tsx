@@ -19,6 +19,7 @@ import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import React, { Suspense, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -68,7 +69,6 @@ const ServiceLauncherUpdatePage = React.lazy(
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
-const ImportAndRunPage = React.lazy(() => import('./pages/ImportAndRunPage'));
 const UserCredentialsPage = React.lazy(
   () => import('./pages/UserCredentialsPage'),
 );
@@ -356,17 +356,20 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      // Redirect paths for backward compatibility
       {
         path: '/import',
-        handle: { labelKey: 'webui.menu.Import&Run' },
         Component: () => {
-          return (
-            <>
-              <ImportAndRunPage />
-              {/* @ts-ignore */}
-              <backend-ai-import-view active class="page" name="import" />
-            </>
-          );
+          const location = useLocation();
+          return <WebUINavigate to={'/start' + location.search} replace />;
+        },
+      },
+      // Redirect paths for legacy support
+      {
+        path: '/github',
+        Component: () => {
+          const location = useLocation();
+          return <WebUINavigate to={'/start' + location.search} replace />;
         },
       },
       {
@@ -556,7 +559,11 @@ const router = createBrowserRouter([
 ]);
 
 const App: FC = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <NuqsAdapter>
+      <RouterProvider router={router} />
+    </NuqsAdapter>
+  );
 };
 
 export default App;

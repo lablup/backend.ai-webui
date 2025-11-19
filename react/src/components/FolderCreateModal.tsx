@@ -162,7 +162,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         mutationToCreateFolder.mutate(input, {
           onSuccess: (result) => {
             upsertNotification({
-              key: 'folder-create-success',
+              key: `folder-create-success-${result.id}`,
               icon: 'folder',
               message: `${result.name}: ${t('data.folders.FolderCreated')}`,
               toText: t('data.folders.OpenAFolder'),
@@ -238,7 +238,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         initialValues={INITIAL_FORM_VALUES}
         labelCol={{ span: 8 }}
       >
-        <Form.Item label={t('data.UsageMode')} name={'usage_mode'}>
+        <Form.Item label={t('data.UsageMode')} name={'usage_mode'} required>
           <Radio.Group
             onChange={() => {
               // Only validate name field if it has a value to prevent excessive validation
@@ -316,7 +316,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item label={t('data.folders.Location')} name={'host'}>
+        <Form.Item label={t('data.folders.Location')} name={'host'} required>
           <Suspense fallback={<Skeleton.Input active />}>
             <StorageSelect
               onChange={(value) => {
@@ -329,7 +329,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           </Suspense>
         </Form.Item>
         <Divider />
-        <Form.Item dependencies={['usage_mode']} noStyle>
+        <Form.Item dependencies={['usage_mode']} noStyle required>
           {({ getFieldValue }) => {
             const usageMode = getFieldValue('usage_mode');
             const shouldDisableProject =
@@ -340,6 +340,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               <Form.Item
                 label={t('data.Type')}
                 name={'type'}
+                required
                 style={{ flex: 1, marginBottom: 0 }}
                 rules={[
                   ({ getFieldValue }) => ({
@@ -423,7 +424,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
         <Form.Item hidden name={'group'} />
 
-        <Form.Item label={t('data.Permission')} name={'permission'}>
+        <Form.Item label={t('data.Permission')} name={'permission'} required>
           <Radio.Group>
             <Radio value={'rw'} data-testid="rw-permission">
               {t('data.ReadWrite')}

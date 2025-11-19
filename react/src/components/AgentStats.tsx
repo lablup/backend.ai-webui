@@ -1,14 +1,14 @@
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
-  BAIFlex,
   BAIBoardItemTitle,
-  ResourceStatistics,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIFlexProps,
   convertToNumber,
   processMemoryValue,
-  BAIFlexProps,
+  ResourceStatistics,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTransition, ReactNode } from 'react';

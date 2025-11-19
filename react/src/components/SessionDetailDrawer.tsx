@@ -1,9 +1,9 @@
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useFetchKey, useSuspendedBackendaiClient } from '../hooks';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { Drawer, Skeleton, Tooltip } from 'antd';
+import { Drawer, Skeleton } from 'antd';
 import { DrawerProps } from 'antd/lib';
+import { BAIFetchKeyButton } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,18 +61,16 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
       title={t('session.SessionInfo')}
       width={800}
       extra={
-        <Tooltip title={t('button.Refresh')}>
-          <BAIFetchKeyButton
-            loading={isPendingReload}
-            autoUpdateDelay={7_000}
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              startReloadTransition(() => {
-                updateFetchKey(newFetchKey);
-              });
-            }}
-          />
-        </Tooltip>
+        <BAIFetchKeyButton
+          loading={isPendingReload}
+          autoUpdateDelay={7_000}
+          value={fetchKey}
+          onChange={(newFetchKey) => {
+            startReloadTransition(() => {
+              updateFetchKey(newFetchKey);
+            });
+          }}
+        />
       }
       {...drawerProps}
     >

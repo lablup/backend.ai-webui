@@ -12,7 +12,7 @@ import {
 } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
@@ -40,6 +40,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAIFlexProps,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -84,7 +85,7 @@ const AgentList: React.FC<AgentListProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });
@@ -438,10 +439,10 @@ const AgentList: React.FC<AgentListProps> = ({
             liveStat.cpu_util.current = _.toFinite(
               parsedValue.node.cpu_util.current,
             );
-            liveStat.cpu_util.ratio =
-              liveStat.cpu_util.current /
-                liveStat.cpu_util.capacity /
-                numCores || 0;
+            liveStat.cpu_util.ratio = Math.min(
+              _.toFinite(parsedValue.node.cpu_util.pct) / 100 / (numCores || 1),
+              1,
+            );
             liveStat.mem_util.capacity = _.toInteger(
               available_slots.mem || parsedValue.node.mem.capacity,
             );
@@ -478,6 +479,7 @@ const AgentList: React.FC<AgentListProps> = ({
           return (
             <BAIFlex direction="column" gap="xxs">
               <BAIFlex
+                // CPU
                 justify="between"
                 style={{ minWidth: 200, width: '100%' }}
               >
@@ -496,6 +498,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 />
               </BAIFlex>
               <BAIFlex
+                // MEM
                 justify="between"
                 style={{ minWidth: 200, width: '100%' }}
               >
@@ -519,7 +522,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 />
               </BAIFlex>
               {_.map(_.keys(parsedValue?.node), (statKey) => {
-                if (['cpu_util', 'mem'].includes(statKey)) {
+                if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
                   return;
                 }
                 if (_.includes(statKey, '_util')) {
@@ -605,6 +608,72 @@ const AgentList: React.FC<AgentListProps> = ({
                     </BAIFlex>
                   );
                 }
+                if (_.includes(statKey, '_power')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                  const humanReadableName =
+                    mergedResourceSlots?.[deviceName]?.human_readable_name;
+                  return (
+                    <BAIFlex
+                      key={statKey}
+                      justify="between"
+                      style={{ minWidth: 200, width: '100%' }}
+                      gap="xxs"
+                    >
+                      <BAIText>{`${humanReadableName}(power)`}</BAIText>
+                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current, 2)} ${parsedValue.node[statKey].unit_hint}`}</BAIText>
+                    </BAIFlex>
+                  );
+                }
+                if (_.includes(statKey, '_temperature')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('_') + '.device';
+                  const humanReadableName =
+                    mergedResourceSlots?.[deviceName]?.human_readable_name;
+                  return (
+                    <BAIFlex
+                      key={statKey}
+                      justify="between"
+                      style={{ minWidth: 200, width: '100%' }}
+                      gap="xxs"
+                    >
+                      <BAIText>{`${humanReadableName}(temp)`}</BAIText>
+                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current, 2)} °C`}</BAIText>
+                    </BAIFlex>
+                  );
+                }
+                if (_.includes(['net_rx', 'net_tx'], statKey)) {
+                  const convertedValue = convertToDecimalUnit(
+                    parsedValue.node[statKey]?.current,
+                    'auto',
+                  );
+                  return (
+                    <BAIFlex
+                      key={statKey}
+                      justify="between"
+                      style={{ minWidth: 200, width: '100%' }}
+                      gap="xxs"
+                    >
+                      <BAIText>
+                        {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
+                      </BAIText>
+                      <BAIText>
+                        {`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}
+                      </BAIText>
+                    </BAIFlex>
+                  );
+                }
+                return (
+                  <BAIFlex
+                    key={statKey}
+                    justify="between"
+                    style={{ minWidth: 200, width: '100%' }}
+                    gap="xxs"
+                  >
+                    <BAIText>{statKey}</BAIText>
+                    <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current ?? 0, 2)}${parsedValue.node[statKey]?.unit_hint ? ` ${parsedValue.node[statKey].unit_hint}` : ''}`}</BAIText>
+                  </BAIFlex>
+                );
               })}
             </BAIFlex>
           );

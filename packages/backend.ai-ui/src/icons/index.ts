@@ -40,3 +40,5 @@ export { default as BAIUserOutlinedIcon } from './BAIUserOutlinedIcon';
 export { default as BAIUserUnionIcon } from './BAIUserUnionIcon';
 export { default as BAIHuggingFaceIcon } from './BAIHuggingFaceIcon';
 export { default as BAISftpIcon } from './BAISftpIcon';
+export { default as BAIJupyterIcon } from './BAIJupyterIcon';
+export { default as BAIFileBrowserIcon } from './BAIFileBrowserIcon';

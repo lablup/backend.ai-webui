@@ -3,7 +3,6 @@ import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
-  Button,
   Checkbox,
   Divider,
   Empty,
@@ -13,9 +12,9 @@ import {
   theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIModal, BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useState, ReactNode } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const useStyles = createStyles(({ css }) => ({
@@ -32,8 +31,10 @@ const useStyles = createStyles(({ css }) => ({
 export type SettingGroup = {
   'data-testid': string;
   title: string;
+  titleExtra?: ReactNode;
   description?: ReactNode;
   settingItems: SettingItemProps[];
+  alert?: ReactNode;
 };
 
 interface SettingPageProps {
@@ -42,6 +43,8 @@ interface SettingPageProps {
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
+  primaryButton?: ReactNode;
+  extraButton?: ReactNode;
 }
 
 const TabTitle: React.FC<{
@@ -61,8 +64,9 @@ const GroupSettingItems: React.FC<
     group: SettingGroup;
     hideEmpty?: boolean;
   } & React.HTMLAttributes<HTMLDivElement>
-> = ({ group, hideEmpty, ...props }) => {
+> = ({ group, hideEmpty = true, ...props }) => {
   const { token } = theme.useToken();
+
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
     <BAIFlex
@@ -82,14 +86,19 @@ const GroupSettingItems: React.FC<
           background: token.colorBgContainer,
         }}
       >
-        <Typography.Title
-          level={5}
-          style={{
-            marginTop: 0,
-          }}
-        >
-          {group.title}
-        </Typography.Title>
+        <BAIFlex align="start" justify="between">
+          <BAIFlex gap="sm" align="start">
+            <Typography.Title
+              level={5}
+              style={{
+                marginTop: 0,
+              }}
+            >
+              {group.title}
+            </Typography.Title>
+            {group.titleExtra && <div>{group.titleExtra}</div>}
+          </BAIFlex>
+        </BAIFlex>
         <Divider style={{ marginTop: 0, marginBottom: 0 }} />
         {group.description && (
           <Typography.Text
@@ -100,7 +109,8 @@ const GroupSettingItems: React.FC<
           </Typography.Text>
         )}
       </BAIFlex>
-      <BAIFlex direction="column" align="start" gap={'lg'}>
+      <BAIFlex direction="column" align="stretch" gap={'lg'}>
+        {group.alert}
         {group.settingItems.map((item, idx) => (
           <SettingItem key={item.title + idx} {...item} />
         ))}
@@ -115,7 +125,11 @@ const SettingList: React.FC<SettingPageProps> = ({
   showChangedOptionFilter,
   showResetButton,
   showSearchBar,
+  primaryButton,
+  extraButton,
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { styles } = useStyles();
   const [searchValue, setSearchValue] = useState('');
@@ -171,14 +185,16 @@ const SettingList: React.FC<SettingPageProps> = ({
               {t('settings.ShowOnlyChanged')}
             </Checkbox>
           )}
+          {extraButton}
           {!!showResetButton && (
-            <Button
+            <BAIButton
               icon={<RedoOutlined />}
               onClick={() => setIsOpenResetChangesModal()}
             >
               {t('button.Reset')}
-            </Button>
+            </BAIButton>
           )}
+          {primaryButton}
         </BAIFlex>
         <Tabs
           activeKey={activeTabKey}
@@ -210,6 +226,9 @@ const SettingList: React.FC<SettingPageProps> = ({
                         key={group.title}
                         group={group}
                         hideEmpty
+                        onReset={() => {
+                          setIsOpenResetChangesModal();
+                        }}
                       />
                     ))
                   ) : (
@@ -229,15 +248,24 @@ const SettingList: React.FC<SettingPageProps> = ({
                   count={group.settingItems.length}
                 />
               ),
-              children:
-                group.settingItems.length > 0 ? (
-                  <GroupSettingItems group={group} hideEmpty />
-                ) : (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={t('settings.NoChangesToDisplay')}
-                  />
-                ),
+              children: (
+                <BAIFlex direction="column" align="stretch" gap={'xl'}>
+                  {group.settingItems.length > 0 ? (
+                    <GroupSettingItems
+                      group={group}
+                      hideEmpty
+                      onReset={() => {
+                        setIsOpenResetChangesModal();
+                      }}
+                    />
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description={t('settings.NoChangesToDisplay')}
+                    />
+                  )}
+                </BAIFlex>
+              ),
             })),
           ]}
         />
@@ -248,13 +276,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         okText={t('button.Reset')}
         okButtonProps={{ danger: true }}
         onOk={() => {
-          _.flatMap(settingGroups, (item) => item.settingItems).forEach(
-            (option) => {
-              !option.disabled &&
-                option?.setValue &&
-                option.setValue(option.defaultValue);
-            },
-          );
+          resetSettingItems(settingGroups);
           setIsOpenResetChangesModal();
         }}
         cancelText={t('button.Cancel')}
@@ -271,3 +293,11 @@ const SettingList: React.FC<SettingPageProps> = ({
 };
 
 export default SettingList;
+
+const resetSettingItems = (settingGroups: SettingGroup[]) => {
+  _.flatMap(settingGroups, (item) => item.settingItems).forEach((option) => {
+    !option.disabled &&
+      option?.setValue &&
+      option.setValue(option.defaultValue);
+  });
+};

@@ -641,10 +641,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       },
     ];
 
-    if (this._page === 'start') {
-      this._moveTo('/start');
-    }
-
     // redirect to error page when blocked by config option or the page is not available page.
     if (
       this.optionalPages
@@ -658,6 +654,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     ) {
       this._page = 'error';
       this._moveTo('/error');
+    }
+    // since we need to add search params, redirect to the start page after error validation
+    // if you move this block to the previous error-validation block, it may cause an error
+    if (this._page === 'start') {
+      const url = new URL(window.location.href);
+      const hasSearchParam = url.search.length > 0;
+      this._moveTo(hasSearchParam ? `/start${url.search}` : '/start');
     }
   }
 
@@ -898,13 +901,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         >
           <mwc-circular-progress indeterminate></mwc-circular-progress>
         </backend-ai-summary-view>
-        <backend-ai-import-view
-          class="page"
-          name="import"
-          ?active="${this._page === 'github'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-import-view>
         <backend-ai-session-view
           class="page"
           name="job"

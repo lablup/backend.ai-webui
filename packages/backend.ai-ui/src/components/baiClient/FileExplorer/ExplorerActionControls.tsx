@@ -38,6 +38,8 @@ interface ExplorerActionControlsProps {
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  // onClickRefresh?: (key: string) => void;
+  extra?: React.ReactNode;
 }
 
 const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
@@ -46,6 +48,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   onUpload,
   enableDelete = false,
   enableWrite = false,
+  extra,
 }) => {
   const { t } = useTranslation();
   const { lg } = Grid.useBreakpoint();
@@ -163,6 +166,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           toggleCreateModal();
         }}
       />
+      {extra}
     </BAIFlex>
   );
 };

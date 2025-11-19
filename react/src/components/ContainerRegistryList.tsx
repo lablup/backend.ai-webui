@@ -9,7 +9,7 @@ import {
   useFetchKey,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
@@ -78,7 +78,7 @@ const ContainerRegistryList: React.FC<{
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 20,
   });
@@ -156,7 +156,7 @@ const ContainerRegistryList: React.FC<{
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<ContainerRegistryListDeleteMutation>(graphql`
       mutation ContainerRegistryListDeleteMutation($id: String!) {
-        delete_container_registry_node(id: $id) {
+        delete_container_registry_node_v2(id: $id) {
           container_registry {
             id
           }

@@ -142,6 +142,14 @@ type KeypairInfoField =
 
 export type BackendAIClient = {
   vfolder: {
+    create: (
+      name: string,
+      host: string,
+      group: string,
+      usageMode: string,
+      permissions: string,
+      cloneable?: boolean,
+    ) => Promise<any>;
     list: (path: string) => Promise<any>;
     list_hosts: () => Promise<any>;
     list_all_hosts: () => Promise<any>;
@@ -592,6 +600,7 @@ type BackendAIConfig = {
   enableModelFolders: boolean;
   appDownloadUrl: string;
   systemSSHImage: string;
+  defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
   hideAgents: boolean;
   force2FA: boolean;
@@ -608,5 +617,7 @@ type BackendAIConfig = {
   isDirectorySizeVisible: boolean;
   enableReservoir: boolean;
   debug: boolean;
-  [key: string]: any;
+  proxyURL: string;
+  allowCustomResourceAllocation: boolean;
+  allowAppDownloadPanel: boolean;
 };

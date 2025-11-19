@@ -1,6 +1,12 @@
 import { useUpdatableState } from '../hooks';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { InputNumber, Slider, InputNumberProps, SliderSingleProps } from 'antd';
+import {
+  InputNumber,
+  Slider,
+  InputNumberProps,
+  SliderSingleProps,
+  GetRef,
+} from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -34,7 +40,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   ...otherProps
 }) => {
   const [value, setValue] = useControllableState_deprecated(otherProps);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<GetRef<typeof InputNumber>>(null);
   useEffect(() => {
     if (!allowNegative) {
       // when step is 1, make sure the value is integer

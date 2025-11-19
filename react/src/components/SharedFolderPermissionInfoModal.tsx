@@ -1,7 +1,4 @@
-import {
-  SharedFolderPermissionInfoModalFragment$data,
-  SharedFolderPermissionInfoModalFragment$key,
-} from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
+import { SharedFolderPermissionInfoModalFragment$key } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -25,6 +22,7 @@ import {
   BAIUserUnionIcon,
   BAIFlex,
   useErrorMessageResolver,
+  toGlobalId,
 } from 'backend.ai-ui';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,14 +30,13 @@ import { graphql, useFragment } from 'react-relay';
 
 interface SharedFolderPermissionInfoModalProps extends BAIModalProps {
   vfolderFrgmt: SharedFolderPermissionInfoModalFragment$key | null;
+  onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
 }
 
-type VFolder = NonNullable<SharedFolderPermissionInfoModalFragment$data>;
-
 const SharedFolderPermissionInfoModal: React.FC<
   SharedFolderPermissionInfoModalProps
-> = ({ vfolderFrgmt, onRequestClose, ...modalProps }) => {
+> = ({ vfolderFrgmt, onRequestClose, onLeaveFolder, ...modalProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -117,7 +114,7 @@ const SharedFolderPermissionInfoModal: React.FC<
             >
               {t('data.folders.Permission')}
             </Typography.Title>
-            <BAITable<VFolder>
+            <BAITable
               bordered
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}
@@ -137,32 +134,41 @@ const SharedFolderPermissionInfoModal: React.FC<
                 {
                   key: 'control',
                   title: t('data.folders.Control'),
-                  render: (data) => (
+                  render: (_, data) => (
                     <BAIFlex align="stretch" justify="center">
                       <Popconfirm
                         title={t('data.invitation.LeaveSharedFolderDesc', {
                           folderName: data?.name,
                         })}
                         onConfirm={() => {
-                          leaveFolder.mutate(
-                            {
-                              folderId: data?.row_id,
-                            },
-                            {
-                              onSuccess: () => {
-                                message.success(
-                                  t(
-                                    'data.invitation.SuccessfullyLeftSharedFolder',
-                                  ),
-                                );
-                                onRequestClose(true);
+                          const leaveFolderId = data?.row_id;
+                          if (leaveFolderId) {
+                            leaveFolder.mutate(
+                              {
+                                folderId: leaveFolderId,
                               },
-                              onError: (err) => {
-                                message.error(getErrorMessage(err));
-                                onRequestClose();
+                              {
+                                onSuccess: () => {
+                                  onLeaveFolder?.(
+                                    toGlobalId(
+                                      'VirtualFolderNode',
+                                      leaveFolderId,
+                                    ),
+                                  );
+                                  message.success(
+                                    t(
+                                      'data.invitation.SuccessfullyLeftSharedFolder',
+                                    ),
+                                  );
+                                  onRequestClose(true);
+                                },
+                                onError: (err) => {
+                                  message.error(getErrorMessage(err));
+                                  onRequestClose();
+                                },
                               },
-                            },
-                          );
+                            );
+                          }
                         }}
                       >
                         <Tooltip

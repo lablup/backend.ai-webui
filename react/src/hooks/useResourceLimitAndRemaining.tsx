@@ -244,7 +244,9 @@ export const useResourceLimitAndRemaining = ({
     () =>
       _.omitBy(baiClient._config, (_value, key) => {
         return !maxPerContainerRegex.test(key);
-      }),
+      }) as {
+        [key: string]: number;
+      },
     [baiClient._config],
   );
 
@@ -326,7 +328,7 @@ export const useResourceLimitAndRemaining = ({
         const perContainerLimit =
           _.find(perContainerConfigs, (_configValue, configName) => {
             return isMatchingMaxPerContainer(configName, key);
-          }) ?? baiClient._config['cuda.device']; // FIXME: temporally `cuda.device` config, when undefined
+          }) ?? baiClient._config.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
 
         result[key] = {
           min: parseInt(

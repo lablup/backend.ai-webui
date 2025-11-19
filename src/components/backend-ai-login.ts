@@ -86,6 +86,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Boolean }) allowAppDownloadPanel = true;
   @property({ type: String }) connection_mode = 'SESSION' as ConnectionMode;
   @property({ type: String }) systemSSHImage = '';
+  @property({ type: String }) defaultFileBrowserImage = '';
   @property({ type: String }) fasttrackEndpoint = '';
   @property({ type: Number }) login_attempt_limit = 500;
   @property({ type: Number }) login_block_time = 180;
@@ -752,6 +753,13 @@ export default class BackendAILogin extends BackendAIPage {
       valueType: 'string',
       defaultValue: '',
       value: generalConfig?.systemSSHImage,
+    } as ConfigValueObject) as string;
+
+    // Default file browser image
+    this.defaultFileBrowserImage = this._getConfigValueByExists(generalConfig, {
+      valueType: 'string',
+      defaultValue: '',
+      value: generalConfig?.defaultFileBrowserImage,
     } as ConfigValueObject) as string;
 
     // Enable hide agent flag
@@ -1919,6 +1927,8 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient._config.allowAppDownloadPanel =
           this.allowAppDownloadPanel;
         globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
+        globalThis.backendaiclient._config.defaultFileBrowserImage =
+          this.defaultFileBrowserImage;
         globalThis.backendaiclient._config.fasttrackEndpoint =
           this.fasttrackEndpoint;
         globalThis.backendaiclient._config.hideAgents = this.hideAgents;

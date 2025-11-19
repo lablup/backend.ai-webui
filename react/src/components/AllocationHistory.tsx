@@ -1,8 +1,7 @@
 import { useUpdatableState } from '../hooks';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import BAIFetchKeyButton from './BAIFetchKeyButton';
 import { Alert, Form, Select, Skeleton } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';

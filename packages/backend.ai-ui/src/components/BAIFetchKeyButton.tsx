@@ -1,12 +1,14 @@
-import useControllableState_deprecated from '../hooks/useControllableState';
+import { omitNullAndUndefinedFields } from '../helper';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import { ReloadOutlined } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import { Button, ButtonProps, Tooltip } from 'antd';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface BAIAutoRefetchButtonProps
+interface BAIFetchKeyButtonProps
   extends Omit<ButtonProps, 'value' | 'onChange' | 'loading'> {
   value: string;
   loading?: boolean;
@@ -18,7 +20,7 @@ interface BAIAutoRefetchButtonProps
   hidden?: boolean;
   pauseWhenHidden?: boolean;
 }
-const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
+const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   loading,
   onChange,
   showLastLoadTime,
@@ -29,11 +31,14 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   pauseWhenHidden = true,
   ...buttonProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
-  const [lastLoadTime, setLastLoadTime] = useControllableState_deprecated(
-    {
+  const [lastLoadTime, setLastLoadTime] = useControllableValue(
+    // To use the default value when lastLoadTimeProp is undefined, we need to omit the value field
+    omitNullAndUndefinedFields({
       value: lastLoadTimeProp,
-    },
+    }),
     {
       defaultValue: new Date(),
     },
@@ -61,7 +66,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   const loadTimeMessage = useIntervalValue(
     () => {
       if (lastLoadTime) {
-        return `${t('general.LastUpdated')}: ${dayjs(lastLoadTime).fromNow()}`;
+        return `${t('comp:BAIFetchKeyButton.LastUpdated')}: ${dayjs(lastLoadTime).fromNow()}`;
       }
       return '';
     },
@@ -90,7 +95,7 @@ const BAIFetchKeyButton: React.FC<BAIAutoRefetchButtonProps> = ({
   return hidden ? null : (
     <Tooltip title={tooltipTitle} placement="topLeft">
       <Button
-        title={tooltipTitle ? undefined : t('general.Refresh')}
+        title={tooltipTitle ? undefined : t('comp:BAIFetchKeyButton.Refresh')}
         loading={displayLoading}
         size={size}
         icon={<ReloadOutlined />}

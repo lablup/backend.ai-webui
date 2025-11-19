@@ -18,11 +18,20 @@ import {
   Row,
   Typography,
 } from 'antd';
-import { BAIFlex, BAIModal, BAISelect, BAIText } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIFlex,
+  BAILink,
+  BAIModal,
+  BAISelect,
+  BAIText,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;
@@ -42,6 +51,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   const [forceUseV1Proxy, setForceUseV1Proxy] = useState<boolean>(false);
   const [forceUseV2Proxy, setForceUseV2Proxy] = useState<boolean>(false);
   const [useSubDomain, setUseSubDomain] = useState<boolean>(false);
+
+  const { upsertNotification } = useSetBAINotification();
+  const navigate = useNavigate();
 
   const session = useFragment(
     graphql`
@@ -92,9 +104,38 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       }
     });
 
+    // set notification for lit-element component
+    upsertNotification({
+      key: `session-app-${session?.row_id}`,
+      message: (
+        <span>
+          {t('general.Session')}:&nbsp;
+          <BAILink
+            style={{
+              fontWeight: 'normal',
+            }}
+            onClick={() => {
+              const newSearchParams = new URLSearchParams(location.search);
+              newSearchParams.set('sessionDetail', session?.row_id || '');
+              navigate({
+                pathname: `/session`,
+                search: newSearchParams.toString(),
+              });
+            }}
+          >
+            {session?.name}
+          </BAILink>
+        </span>
+      ),
+      description: t('session.appLauncher.LaunchingApp', {
+        appName: app?.title || '',
+      }),
+    });
+
     const appController = {
       'app-name': app?.name ?? '',
       'session-uuid': session?.row_id ?? '',
+      'session-name': session?.name ?? '',
       'url-postfix': app?.redirect ?? '',
     };
 
@@ -121,14 +162,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       return;
     }
     // @ts-ignore
-    globalThis.appLauncher._runApp(appController).then(() => {});
-    setOpenToPublic(false);
-    setTryPreferredPort(false);
-    onRequestClose();
+    await globalThis.appLauncher._runApp(appController).then(() => {});
   };
 
   return (
     <BAIModal
+      data-testid="app-launcher-modal"
       title={
         <BAIText
           ellipsis
@@ -150,7 +189,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         {_.map(baseAppTemplate, (apps, category) => {
           return (
             <div key={category}>
-              <Typography.Title level={5} style={{ marginTop: 0 }}>
+              <Typography.Title
+                level={5}
+                style={{ marginTop: 0 }}
+                data-testid={`category-${category.split('.')[1]}`}
+              >
                 {category.split('.')[1]}
               </Typography.Title>
               <Row gutter={[24, 24]}>
@@ -158,6 +201,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   return (
                     <Col
                       key={app?.name}
+                      data-testid={`app-${app?.name}`}
                       span={6}
                       style={{ alignContent: 'center' }}
                     >
@@ -166,7 +210,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                         gap={'xs'}
                         style={{ height: '100%' }}
                       >
-                        <Button
+                        <BAIButton
                           icon={
                             <Image
                               src={app?.src}
@@ -175,8 +219,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                               style={{ height: 36, width: 36 }}
                             />
                           }
-                          onClick={() => {
-                            handleAppLaunch(app);
+                          action={async () => {
+                            await handleAppLaunch(app).then(() => {
+                              setOpenToPublic(false);
+                              setTryPreferredPort(false);
+                              onRequestClose();
+                            });
                           }}
                           style={{ height: 72, width: 72 }}
                         />

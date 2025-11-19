@@ -1,5 +1,5 @@
 import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useToggle } from 'ahooks';
 import {
   theme,
@@ -12,20 +12,21 @@ import {
   Typography,
 } from 'antd';
 import {
-  BAICard,
-  BAIFlex,
+  BAIActivateArtifactsModal,
+  BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIArtifactTable,
-  BAIImportArtifactModal,
+  BAICard,
+  BAIDeactivateArtifactsModal,
+  BAIDeactivateArtifactsModalArtifactsFragmentKey,
+  BAIFetchKeyButton,
+  BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIImportFromHuggingFaceModal,
   BAIHuggingFaceIcon,
-  toLocalId,
+  BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
-  BAIDeactivateArtifactsModalArtifactsFragmentKey,
-  BAIDeactivateArtifactsModal,
-  BAIActivateArtifactsModalArtifactsFragmentKey,
-  BAIActivateArtifactsModal,
+  BAIImportFromHuggingFaceModal,
+  toLocalId,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
@@ -38,7 +39,6 @@ import {
   ReservoirPageQuery$data,
   ReservoirPageQuery$variables,
 } from 'src/__generated__/ReservoirPageQuery.graphql';
-import BAIFetchKeyButton from 'src/components/BAIFetchKeyButton';
 import BAIRadioGroup from 'src/components/BAIRadioGroup';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import {
@@ -83,7 +83,7 @@ const ReservoirPage: React.FC = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
     current: 1,
     pageSize: 10,
   });

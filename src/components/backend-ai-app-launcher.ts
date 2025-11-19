@@ -692,9 +692,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && window.__local_proxy?.url === undefined) {
-      this.indicator.end();
-      this.notification.text = _text('session.launcher.ProxyNotReady');
-      this.notification.show();
+      this.notification.detail = _text('session.launcher.ProxyNotReady');
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       return;
     }
     const proxyURL = await this._getProxyURL(sessionUuid);
@@ -707,14 +710,22 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       },
       uri: new URL('conf', proxyURL).href,
     };
-    this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
+    this.notification.detail = _text('session.launcher.SettingUpProxyForApp');
+    this.notification.backgroundTask = {
+      percent: 20,
+      status: 'pending',
+    };
+    this.notification.show(false, undefined, `session-app-${sessionUuid}`);
     const response = await this.sendRequest(rqst);
     if (response === undefined) {
-      this.indicator.end();
-      this.notification.text = _text(
+      this.notification.detail = _text(
         'session.launcher.ProxyConfiguratorNotResponding',
       );
-      this.notification.show();
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       return;
     }
     const token = response.token;
@@ -751,11 +762,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         args,
       );
     if (tokenResponse === undefined) {
-      this.indicator.end();
-      this.notification.text = _text(
+      this.notification.detail = _text(
         'session.launcher.ProxyConfiguratorNotResponding',
       );
-      this.notification.show();
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       return;
     }
     const token = tokenResponse.token;
@@ -794,20 +808,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       sessionUuid,
     );
     if (kInfo === undefined) {
-      this.indicator.end();
-      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
-
-      this.notification.show();
+      this.notification.detail = _text('session.CreationFailed'); // TODO: Change text
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       return Promise.resolve(false);
     }
     const servicePortInfo = JSON.parse(
       kInfo.compute_session.service_ports,
     ).find(({ name }) => name === app);
     if (servicePortInfo === undefined) {
-      this.indicator.end();
-      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+      this.notification.detail = _text('session.CreationFailed'); // TODO: Change text
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
       if (app !== 'vscode-desktop') {
-        this.notification.show();
+        this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       }
       return Promise.resolve(false);
     }
@@ -819,7 +838,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         ? await this._resolveV1ProxyUri(sessionUuid, app)
         : await this._resolveV2ProxyUri(sessionUuid, app, null, envs, args);
     if (!uri) {
-      this.indicator.end();
       return Promise.resolve(false);
     }
     const allowedClientIps =
@@ -865,7 +883,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       searchParams.set('is_inference', 'true');
     }
     searchParams.set('protocol', servicePortInfo.protocol || 'tcp');
-    this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
+    this.notification.detail = _text(
+      'session.launcher.AddingKernelToSocketQueue',
+    );
+    this.notification.backgroundTask = {
+      percent: 50,
+      status: 'pending',
+    };
+    this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+
     const rqst_proxy = {
       method: 'GET',
       app: app,
@@ -873,14 +899,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     return this.sendRequest(rqst_proxy).catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
+        this.notification.detail = err.title
+          ? PainKiller.relieve(err.title)
+          : err.message;
       } else {
-        this.notification.text = PainKiller.relieve(
+        this.notification.detail = PainKiller.relieve(
           _text('session.launcher.FailedToConnectCoordinator'),
         );
       }
-      this.notification.show(true, err);
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       throw err;
     });
   }
@@ -1197,7 +1228,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       globalThis.backendaiwsproxy === null
     ) {
       this._hideAppLauncher();
-      this.indicator = await globalThis.lablupIndicator.start();
+      // start WebUI notification background progress indicator using same notification key.
+      // the default notification state is set in `AppLauncherModal` component.
+      this.notification.backgroundTask = {
+        percent: 10,
+        status: 'pending',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       let port;
       if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
@@ -1252,11 +1289,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 const body = await result.json();
                 const { redirectURI } = body;
                 if (redirectURI === null) {
-                  this.indicator.end();
-                  this.notification.text = _text(
+                  this.notification.detail = _text(
                     'session.launcher.ProxyNotReady',
                   );
-                  this.notification.show();
+                  this.notification.backgroundTask = {
+                    percent: 0,
+                    status: 'rejected',
+                  };
+                  this.notification.show(
+                    false,
+                    undefined,
+                    `session-app-${sessionUuid}`,
+                  );
                   return;
                 }
                 const redirectURL = new URL(redirectURI);
@@ -1264,18 +1308,32 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   redirectURL.searchParams.get('directTCP');
                 const gatewayURI = redirectURL.searchParams.get('gateway');
                 if (directTCPsupported !== 'true') {
-                  this.indicator.end();
-                  this.notification.text = _text(
+                  this.notification.detail = _text(
                     'session.launcher.ProxyDirectTCPNotSupported',
                   );
-                  this.notification.show();
+                  this.notification.backgroundTask = {
+                    percent: 0,
+                    status: 'rejected',
+                  };
+                  this.notification.show(
+                    false,
+                    undefined,
+                    `session-app-${sessionUuid}`,
+                  );
                   return;
                 } else if (gatewayURI === null) {
-                  this.indicator.end();
-                  this.notification.text = _text(
+                  this.notification.detail = _text(
                     'session.launcher.ProxyNotReady',
                   );
-                  this.notification.show();
+                  this.notification.backgroundTask = {
+                    percent: 0,
+                    status: 'rejected',
+                  };
+                  this.notification.show(
+                    false,
+                    undefined,
+                    `session-app-${sessionUuid}`,
+                  );
                   return;
                 } else {
                   gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
@@ -1290,28 +1348,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               this.tcpPort = gatewayURL.port;
             }
           }
+
+          this.notification.backgroundTask = {
+            percent: 100,
+            status: 'resolved',
+          };
+          this.notification.detail = _text('session.appLauncher.Prepared');
           if (appName === 'sshd') {
-            this.indicator.set(100, _text('session.appLauncher.Prepared'));
-            this._readSSHKey(sessionUuid);
+            await this._readSSHKey(sessionUuid);
             this._openSSHDialog();
-            setTimeout(() => {
-              this.indicator.end();
-            }, 1000);
           } else if (appName === 'vnc') {
-            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._openVNCDialog();
           } else if (appName === 'xrdp') {
-            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._openXRDPDialog();
           } else if (appName === 'vscode-desktop') {
-            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             this._readTempPasswd(sessionUuid);
             this._openVSCodeDesktopDialog();
-            setTimeout(() => {
-              this.indicator.end();
-            }, 1000);
           } else if (response.url) {
-            this.indicator.set(100, _text('session.appLauncher.Prepared'));
             if (response.url.includes('protocol=tcp') && redirectUrl) {
               const redirectResponse = await fetch(redirectUrl);
               const redirectBody = await redirectResponse.json();
@@ -1331,8 +1384,26 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 return;
               } else {
                 console.error('Gateway host or port not found in the URL');
+                this.notification.detail =
+                  'Gateway host or port not found in the URL';
+                this.notification.backgroundTask = {
+                  percent: 0,
+                  status: 'rejected',
+                };
+                this.notification.show(
+                  false,
+                  undefined,
+                  `session-app-${sessionUuid}`,
+                );
+                return;
               }
             }
+
+            this.notification.show(
+              false,
+              undefined,
+              `session-app-${sessionUuid}`,
+            );
 
             setTimeout(() => {
               globalThis.open(
@@ -1345,6 +1416,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           }
         })
         .finally(() => {
+          setTimeout(() => {
+            this.notification.clear(`session-app-${sessionUuid}`);
+          }, 3000);
+
           // The properties below are variables for launching the app in the react AppLauncherModal
           // TODO: After the `useBackendAIAppLauncher` hook completes, the following variables should be deleted
           if (this.allowedClientIpsInput?.value) {
@@ -1420,17 +1495,33 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       globalThis.backendaiwsproxy == undefined ||
       globalThis.backendaiwsproxy == null
     ) {
-      this.indicator = await globalThis.lablupIndicator.start();
+      this.notification.backgroundTask = {
+        percent: 10,
+        status: 'pending',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       this._open_wsproxy(sessionUuid, 'ttyd').then(async (response) => {
         const { appConnectUrl } = await this._connectToProxyWorker(
           response.url,
           '',
         );
         if (response.url) {
-          this.indicator.set(100, _text('session.appLauncher.Prepared'));
+          this.notification.backgroundTask = {
+            percent: 100,
+            status: 'resolved',
+          };
+          this.notification.detail = _text('session.appLauncher.Prepared');
+          this.notification.show(
+            false,
+            undefined,
+            `session-app-${sessionUuid}`,
+          );
+          setTimeout(() => {
+            this.notification.clear(`session-app-${sessionUuid}`);
+          }, 3000);
+
           setTimeout(() => {
             globalThis.open(appConnectUrl?.href || response.url, '_blank');
-            this.indicator.end();
             // console.log("Terminal proxy loaded: ");
             // console.log(sessionUuid);
           }, 1000);
@@ -1776,6 +1867,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   ? html`
                       <h3
                         style="width:100%;padding-left:15px;border-bottom:1px solid var(--token-colorBorder, #ccc);"
+                        data-testid=${`divider-${item.title}`}
                       >
                         ${item.title}
                       </h3>
@@ -1783,6 +1875,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   : html`
                       <div
                         class="vertical layout center center-justified app-icon"
+                        data-testid=${`modal-item-${item.name}`}
                       >
                         <mwc-icon-button
                           class="fg apps green"
@@ -1803,7 +1896,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           ${
             this.preOpenedPortList.length > 0
               ? html`
-                  <lablup-expansion id="preopen-ports-expansion" open>
+                  <lablup-expansion
+                    id="preopen-ports-expansion"
+                    open
+                    data-testid="checkbox-preopen-ports"
+                  >
                     <span slot="title" class="horizontal layout">
                       ${_t('session.launcher.PreOpenPortTitle')}
                     </span>
@@ -1839,7 +1936,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               globalThis.isElectron || !this.openPortToPublic
                 ? ``
                 : html`
-                    <div class="horizontal layout center">
+                    <div
+                      class="horizontal layout center"
+                      data-testid="checkbox-open-to-public"
+                    >
                       <mwc-checkbox
                         id="chk-open-to-public"
                         style="margin-right:0.5em;"

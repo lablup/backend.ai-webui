@@ -3,7 +3,7 @@ import BAIFlex from '../BAIFlex';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import BAITableSettingModal from './BAITableSettingModal';
-import { SettingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, SettingOutlined } from '@ant-design/icons';
 import { useControllableValue, useDebounce } from 'ahooks';
 import {
   Button,
@@ -171,6 +171,7 @@ export interface BAITableProps<RecordType extends AnyObject>
   tableSettings?: BAITableSettings;
   /** Array of column configurations using BAIColumnType */
   columns?: BAIColumnsType<RecordType>;
+  spinnerLoading?: boolean;
 }
 
 /**
@@ -208,6 +209,7 @@ const BAITable = <RecordType extends object = any>({
   columns,
   components,
   loading,
+  spinnerLoading,
   order,
   onChangeOrder,
   tableSettings,
@@ -327,8 +329,16 @@ const BAITable = <RecordType extends object = any>({
           tableProps.rowSelection?.columnWidth === 0 &&
             styles.zeroWithSelectionColumn,
         )}
+        loading={
+          spinnerLoading
+            ? {
+                indicator: <LoadingOutlined spin />,
+                spinning: true,
+              }
+            : undefined
+        }
         style={{
-          opacity: loading ? 0.7 : 1,
+          opacity: loading ? 0.6 : 1,
           transition: 'opacity 0.3s ease',
         }}
         components={
@@ -365,7 +375,7 @@ const BAITable = <RecordType extends object = any>({
       {tableProps.pagination !== false && (
         <BAIFlex justify="end" gap={'xs'}>
           <Pagination
-            size={tableProps.size === 'small' ? 'small' : 'default'}
+            size={tableProps.pagination?.size || 'small'}
             align="end"
             pageSizeOptions={['10', '20', '50']}
             showSizeChanger={true}
@@ -396,7 +406,7 @@ const BAITable = <RecordType extends object = any>({
               type="text"
               icon={<SettingOutlined />}
               onClick={() => setIsColumnSettingModalOpen(true)}
-              size={tableProps.size}
+              size={tableProps.size || 'small'}
             />
           )}
           {tableProps.pagination && tableProps.pagination.extraContent}
