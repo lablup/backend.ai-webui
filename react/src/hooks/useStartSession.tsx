@@ -154,7 +154,7 @@ export const useStartSession = () => {
       const mem = mergedValue.resource.mem;
 
       // Apply the same logic as ResourceAllocationFormItems
-      // If mem > 4G, set shmem to 1G, otherwise use AUTOMATIC_DEFAULT_SHMEM (64m)
+      // If mem >= 4G, set shmem to 1G, otherwise use AUTOMATIC_DEFAULT_SHMEM (64m)
       if (compareNumberWithUnits(mem, '4g') >= 0) {
         mergedValue.resource.shmem = '1g';
       } else {
