@@ -7,6 +7,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
+import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -35,10 +36,12 @@ export const statusTagColor = {
 
 const isTransitional = (session: SessionStatusTagFragment$data) => {
   return [
+    'SCHEDULED',
     'RESTARTING',
     'TERMINATING',
     'PENDING',
-    `PREPARING`,
+    'PREPARING',
+    'PREPARED',
     'CREATING',
     'PULLING',
   ].includes(session?.status || '');
@@ -89,6 +92,14 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
             }}
           >
             {session.status || ' '}
+            {session.status_info && isTransitional(session) ? (
+              <CircleAlertIcon
+                style={{
+                  marginLeft: token.marginXXS,
+                  color: token.colorError,
+                }}
+              />
+            ) : null}
           </Tag>
         </Tooltip>
         {displayQuePosition ? (

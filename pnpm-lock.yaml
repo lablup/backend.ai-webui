@@ -741,6 +741,9 @@ importers:
       graphql:
         specifier: ^16.12.0
         version: 16.12.0
+      graphql-sse:
+        specifier: ^2.6.0
+        version: 2.6.0(graphql@16.12.0)
       i18next:
         specifier: ^25.6.0
         version: 25.6.0(typescript@5.7.2)
@@ -9378,6 +9381,12 @@ packages:
 
   graphlib@2.1.8:
     resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
+
+  graphql-sse@2.6.0:
+    resolution: {integrity: sha512-BXT5Rjv9UFunjQsmN9WWEIq+TFNhgYibgwo1xkXLxzguQVyOd6paJ4v5DlL9K5QplS0w74bhF+aUiqaGXZBaug==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      graphql: '>=0.11 <=16'
 
   graphql@15.3.0:
     resolution: {integrity: sha512-GTCJtzJmkFLWRfFJuoo9RWWa/FfamUHgiFosxi/X1Ani4AVWbeyBenZTNX6dM+7WSbbFfTo/25eh0LLkwHMw2w==}
@@ -28511,6 +28520,10 @@ snapshots:
   graphlib@2.1.8:
     dependencies:
       lodash: 4.17.21
+
+  graphql-sse@2.6.0(graphql@16.12.0):
+    dependencies:
+      graphql: 16.12.0
 
   graphql@15.3.0: {}
 

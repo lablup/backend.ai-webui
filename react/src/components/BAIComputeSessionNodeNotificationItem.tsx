@@ -18,10 +18,12 @@ import {
   graphql,
   useFragment,
   useRelayEnvironment,
+  useSubscription,
 } from 'react-relay';
 import { useNavigate } from 'react-router-dom';
 import { BAIComputeSessionNodeNotificationItemFragment$key } from 'src/__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
 import { BAIComputeSessionNodeNotificationItemRefreshQuery } from 'src/__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
+import { useSuspendedBackendaiClient } from 'src/hooks';
 import {
   NotificationState,
   useSetBAINotification,
@@ -40,6 +42,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const baiClient = useSuspendedBackendaiClient();
   const node = useFragment(
     graphql`
       fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {
@@ -54,24 +57,6 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     sessionFrgmt,
   );
 
-  // TODO: delete this when Status subscription is implemented
-  const [delay, setDelay] = useState<number | null>(null);
-  UNSAFE_useAutoRefreshInterval(node?.id || '', delay);
-  useEffect(() => {
-    if (
-      !node?.status ||
-      node?.status === 'TERMINATED' ||
-      node?.status === 'CANCELLED'
-    ) {
-      setDelay(null);
-    } else if (node?.status === 'RUNNING') {
-      setDelay(15000);
-    } else {
-      setDelay(3000);
-    }
-  }, [node?.status]);
-  // ---
-
   useUpdateEffect(() => {
     if (node?.status === 'TERMINATED' || node?.status === 'CANCELLED') {
       setTimeout(() => {
@@ -82,46 +67,56 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
 
   return (
     node && (
-      <BAINotificationItem
-        title={
-          <BAIText ellipsis>
-            {t('general.Session')}:&nbsp;
-            <BAILink
-              style={{
-                fontWeight: 'normal',
-              }}
-              title={node.name || ''}
-              onClick={() => {
-                navigate(
-                  `/session${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
-                );
-                closeNotification(notification.key);
-              }}
-            >
-              {node.name}
-            </BAILink>
-          </BAIText>
-        }
-        description={
-          <BAIFlex justify="between">
-            <SessionStatusTag
-              sessionFrgmt={node || null}
-              showQueuePosition={false}
-              showTooltip={false}
-            />
-            <SessionActionButtons
-              compact
-              size="small"
-              sessionFrgmt={node || null}
-              hiddenButtonKeys={['containerCommit']}
-              primaryAppOption={primaryAppOption}
-            />
-          </BAIFlex>
-        }
-        footer={
-          showDate ? dayjs(notification.created).format('lll') : undefined
-        }
-      />
+      <>
+        <BAINotificationItem
+          title={
+            <BAIText ellipsis>
+              {t('general.Session')}:&nbsp;
+              <BAILink
+                style={{
+                  fontWeight: 'normal',
+                }}
+                title={node.name || ''}
+                onClick={() => {
+                  navigate(
+                    `/session${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
+                  );
+                  closeNotification(notification.key);
+                }}
+              >
+                {node.name}
+              </BAILink>
+            </BAIText>
+          }
+          description={
+            <BAIFlex justify="between">
+              <SessionStatusTag
+                sessionFrgmt={node || null}
+                showQueuePosition={false}
+                showTooltip={false}
+              />
+              <SessionActionButtons
+                compact
+                size="small"
+                sessionFrgmt={node || null}
+                hiddenButtonKeys={['containerCommit']}
+                primaryAppOption={primaryAppOption}
+              />
+            </BAIFlex>
+          }
+          footer={
+            showDate ? dayjs(notification.created).format('lll') : undefined
+          }
+        />
+        {baiClient.isManagerVersionCompatibleWith('25.16.0') && node.row_id ? (
+          <SessionStatusRefresherUsingSubscription sessionRowId={node.row_id} />
+        ) : node.row_id && node.status ? (
+          <UNSAFE_SessionStatusRefresher
+            id={node.row_id}
+            status={node.status}
+          />
+        ) : null}
+      </>
     )
   );
 };
@@ -150,4 +145,49 @@ const UNSAFE_useAutoRefreshInterval = (
       { id: sessionId },
     ).toPromise();
   }, delay);
+};
+
+const SessionStatusRefresherUsingSubscription: React.FC<{
+  sessionRowId: string;
+}> = ({ sessionRowId }) => {
+  useSubscription({
+    subscription: graphql`
+      subscription BAIComputeSessionNodeNotificationItemSubscription(
+        $session_id: ID!
+      ) {
+        schedulingEventsBySession(sessionId: $session_id) {
+          reason
+          session {
+            status
+            ...BAIComputeSessionNodeNotificationItemFragment
+            ...SessionNodesFragment
+            ...SessionDetailContentFragment
+          }
+        }
+      }
+    `,
+    variables: { session_id: sessionRowId },
+  });
+  return null;
+};
+
+const UNSAFE_SessionStatusRefresher: React.FC<{
+  id: string;
+  status: string;
+}> = ({ id, status }) => {
+  // TODO: delete this when Status subscription is implemented
+  const [delay, setDelay] = useState<number | null>(null);
+  UNSAFE_useAutoRefreshInterval(id || '', delay);
+  useEffect(() => {
+    if (!status || status === 'TERMINATED' || status === 'CANCELLED') {
+      setDelay(null);
+    } else if (status === 'RUNNING') {
+      setDelay(15000);
+    } else {
+      setDelay(3000);
+    }
+  }, [status]);
+  // ---
+
+  return null;
 };
