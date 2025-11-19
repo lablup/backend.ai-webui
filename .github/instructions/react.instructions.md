@@ -9,9 +9,28 @@ These instructions apply to React components in the `/react` directory.
 ## React Compiler Optimization
 
 ### 'use memo' Directive (Recommended)
-- **Prefer using the `'use memo'` directive** at the top of new component files
-- React Compiler automatically optimizes memoization when this directive is present
-- This is the modern, recommended approach over manual optimization
+
+- This project uses the new **React Compiler**.
+- We actively use React directives such as `use memo` and `use client` at the top of files or components.
+- `use memo` is **intentional and valid** in this codebase.
+- Even if tooling or TypeScript/ESLint shows something like:
+  - `Unknown directive: 'use memo'.`
+  - or similar warnings/errors
+    these directives are still **correct and should not be removed or changed**.
+
+### What should do
+
+- When generating or editing React components:
+  - Prefer adding `use memo` when it is beneficial for React Compiler.
+  - **Never** remove existing `use memo` directives.
+  - **Never** “fix” or “rename” `use memo` to something else.
+  - **Never** add comments suggesting that `use memo` is unknown, invalid, or deprecated.
+
+### Code style for React files
+
+- Keep React directives (`use memo`, `use client`, etc.) at the very top of the file or at the beginning of the component body, before other statements.
+- Do not wrap `use memo` in conditional logic or function calls; it must stay as a simple directive string.
+- When in doubt about `use memo`, assume it is correct and keep it as-is.
 
 ```typescript
 'use memo';
@@ -25,6 +44,7 @@ const MyComponent: React.FC<Props> = ({ data }) => {
 ```
 
 ### Manual Optimization Hooks (Use Sparingly)
+
 - `useMemo` and `useCallback` can still be used when needed
 - However, prefer `'use memo'` directive as React Compiler handles most cases automatically
 - Only use manual hooks when you have specific performance bottlenecks identified through profiling
@@ -33,18 +53,22 @@ const MyComponent: React.FC<Props> = ({ data }) => {
 ## React Composability
 
 ### Component Composition Principles
+
 Always consider React composability when writing or reviewing components:
 
 1. **Single Responsibility**
+
    - Each component should do one thing well
    - Extract complex logic into smaller, focused components
 
 2. **Composition Over Props Drilling**
+
    - Use component composition instead of passing props through multiple levels
    - Consider using Recoil for global state management
    - Leverage children props and render props patterns
 
 3. **Reusability**
+
    - Design components to be reusable across different contexts
    - Use generic prop types when appropriate
    - Avoid hard-coding values that could be props
@@ -87,7 +111,9 @@ const ComponentA = () => {
 ## GraphQL/Relay Integration
 
 ### Commonly Used Hooks
+
 We primarily use these Relay hooks:
+
 - **`useLazyLoadQuery`** - Fetch data on component mount
 - **`useFragment`** - Read fragment data from parent query
 - **`useRefetchableFragment`** - Fragment with refetch capability
@@ -151,16 +177,20 @@ const UserList = ({ usersRef }) => {
 ```
 
 ### Modern Relay Patterns (Recommended)
+
 If applicable, consider these newer patterns:
+
 - **`@required` directive** - Type-safe null handling in fragments
 - **`@alias` directive** - Rename fields for better semantics
 - **Suspense boundaries** - Better loading state handling with concurrent features
 
 ### Fragment Colocation
+
 - Colocate GraphQL fragments with components that use them
 - Use Relay's fragment composition for nested data requirements
 
 ### Query Optimization
+
 - Avoid over-fetching data - only request fields you need
 - Use Relay's pagination for lists (`usePaginationFragment`)
 - Consider using `@defer` and `@stream` for progressive loading
@@ -168,6 +198,7 @@ If applicable, consider these newer patterns:
 ## Backend.AI UI Component Library
 
 ### Prefer BAI Components
+
 - **Always prefer `backend.ai-ui` package components** over Ant Design equivalents
 - Use `BAIFlex`, `BAIModal`, `BAIButton`, etc. instead of Ant Design components
 - These components are custom-designed for Backend.AI WebUI
@@ -184,6 +215,7 @@ import { BAIModal, BAIFlex } from '@backend.ai/backend.ai-ui';
 ```
 
 ### When to Use Ant Design
+
 - Simple confirmation modals using App context
 - When BAI component equivalent doesn't exist
 - Temporary solutions while waiting for BAI component development
@@ -212,25 +244,27 @@ const MyComponent = () => {
 ## Custom Utilities and Hooks
 
 ### useFetchKey Hook
+
 - Check if `useFetchKey` is needed for data fetching patterns
 - This hook manages fetch keys for cache invalidation
 - Verify it's being used when component needs to refetch data
 
 ```typescript
-import { useFetchKey } from './hooks/useFetchKey';
+import { useFetchKey } from "./hooks/useFetchKey";
 
 const MyComponent = () => {
   const [fetchKey, setFetchKey] = useFetchKey();
 
   // Use fetchKey in queries to trigger refetch
   const { data } = useQuery({
-    queryKey: ['data', fetchKey],
+    queryKey: ["data", fetchKey],
     // ...
   });
 };
 ```
 
 ### BAIUnmountAfterClose
+
 - Check if `BAIUnmountAfterClose` is being used for modals/drawers with forms
 - This component ensures proper cleanup of form state when modal closes
 - Prevents stale data issues in modals
@@ -246,7 +280,9 @@ import { BAIUnmountAfterClose } from './components';
 ```
 
 ### Code Review Checklist for Custom Utils
+
 When reviewing code, verify:
+
 - [ ] `useFetchKey` is used when data needs manual refetching
 - [ ] `BAIUnmountAfterClose` wraps modal/drawer content with forms
 - [ ] Custom hooks are properly utilized where they provide value
@@ -254,6 +290,7 @@ When reviewing code, verify:
 ## Error Handling
 
 ### Error Boundaries
+
 - **Always use pre-defined error boundary components**
 - `ErrorBoundaryWithNullFallback` - for silent error handling
 - `BAIErrorBoundary` - for user-facing error UI
@@ -274,6 +311,7 @@ import { ErrorBoundaryWithNullFallback, BAIErrorBoundary } from './components';
 ```
 
 ### Loading States
+
 - Always handle loading states in async operations
 - Use Suspense boundaries where appropriate
 - Provide skeleton loaders for better UX
@@ -281,6 +319,7 @@ import { ErrorBoundaryWithNullFallback, BAIErrorBoundary } from './components';
 ## Ant Design (Secondary Usage)
 
 ### When BAI Components Are Not Available
+
 - Use Ant Design components when no BAI equivalent exists
 - Prefer using App context (`App.useApp()`) for modals, messages, notifications
 - Access theme tokens via `theme.useToken()`
@@ -310,6 +349,7 @@ const MyComponent = () => {
 ```
 
 ### Theme Awareness
+
 - Components should work in both light and dark themes
 - Use theme tokens instead of hard-coded colors
 - Test components in both theme modes
@@ -317,6 +357,7 @@ const MyComponent = () => {
 ## TypeScript Best Practices
 
 ### Type Safety
+
 - Always define prop interfaces
 - Extend BAI/Ant Design's prop types when wrapping components
 - Use discriminated unions for variant props
@@ -325,17 +366,18 @@ const MyComponent = () => {
 // ✅ Good: Proper prop typing
 interface MyComponentProps extends BAIModalProps {
   customProp: string;
-  variant: 'primary' | 'secondary';
+  variant: "primary" | "secondary";
 }
 
 // ✅ Good: Discriminated unions
 type Status =
-  | { type: 'loading' }
-  | { type: 'success'; data: Data }
-  | { type: 'error'; error: Error };
+  | { type: "loading" }
+  | { type: "success"; data: Data }
+  | { type: "error"; error: Error };
 ```
 
 ### Generic Components
+
 - Use generics for reusable components with different data types
 - Properly constrain generic types
 
@@ -360,20 +402,22 @@ const List = <T,>({ items, renderItem }: ListProps<T>) => {
 ## State Management
 
 ### Local State
+
 - Use `useState` for component-local state
 - Use `useReducer` for complex state logic
 
 ### Global State
+
 - Use **Recoil** for global state management
 - Use Relay for GraphQL-backed state
 - Use React Context for simple UI state that doesn't need persistence
 
 ```typescript
 // ✅ Good: Recoil for global state
-import { atom, useRecoilState } from 'recoil';
+import { atom, useRecoilState } from "recoil";
 
 const userSettingsState = atom({
-  key: 'userSettings',
+  key: "userSettings",
   default: {},
 });
 
@@ -386,11 +430,13 @@ const Component = () => {
 ## Testing
 
 ### Component Tests
+
 - Write tests for complex component logic
 - Test user interactions, not implementation details
 - Use React Testing Library conventions
 
 ### Accessibility in Tests
+
 - Query by accessible roles and labels
 - Ensure keyboard navigation works
 - Test with screen reader expectations
@@ -398,11 +444,13 @@ const Component = () => {
 ## Performance
 
 ### Code Splitting
+
 - Lazy load heavy components with `React.lazy()`
 - Split routes at page boundaries
 - Monitor bundle sizes
 
 ### Rendering Optimization
+
 - Prefer `'use memo'` directive for new components
 - Use `React.memo()` for expensive pure components only when profiling shows benefit
 - Avoid premature optimization
@@ -410,6 +458,7 @@ const Component = () => {
 ## Code Review Checklist
 
 When reviewing React code, check for:
+
 - [ ] Component uses `'use memo'` directive if it's a new component
 - [ ] Component follows composability principles (no props drilling, proper extraction)
 - [ ] No unnecessary `useMemo`/`useCallback` (prefer 'use memo' directive)
