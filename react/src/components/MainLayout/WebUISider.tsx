@@ -25,6 +25,7 @@ import {
   MessageOutlined,
   PlayCircleOutlined,
   SolutionOutlined,
+  TeamOutlined,
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -108,7 +109,8 @@ export type MenuKeys =
   | 'agent'
   | 'settings'
   | 'maintenance'
-  | 'information';
+  | 'information'
+  | 'project';
 
 interface WebUIGeneralMenuItemType extends MenuItemType {
   group: GroupName;
@@ -327,6 +329,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ),
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
+    },
+    {
+      label: <WebUILink to="/project">{t('webui.menu.Project')}</WebUILink>,
+      icon: <TeamOutlined style={{ color: token.colorInfo }} />,
+      key: 'project',
     },
   ]);
 
