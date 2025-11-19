@@ -1070,6 +1070,8 @@
     "Initializing": "初期化中...",
     "NoNotification": "通知はありません。",
     "Notifications": "通知",
+    "RunAppOnSessionStart": "アプリの自動起動",
+    "RunAppOnSessionStartTooltip": "セッション実行時にアプリを起動する",
     "SeeDetail": "詳細を見る",
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"

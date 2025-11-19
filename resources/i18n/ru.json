@@ -1070,6 +1070,8 @@
     "Initializing": "Инициализация ...",
     "NoNotification": "Нет уведомлений.",
     "Notifications": "Уведомления",
+    "RunAppOnSessionStart": "Автозапуск приложения",
+    "RunAppOnSessionStartTooltip": "Запускает приложение в запущенной сессии",
     "SeeDetail": "См детали",
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"

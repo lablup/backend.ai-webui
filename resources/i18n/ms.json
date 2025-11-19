@@ -1070,6 +1070,8 @@
     "Initializing": "Memulakan ...",
     "NoNotification": "Tiada Pemberitahuan.",
     "Notifications": "Pemberitahuan",
+    "RunAppOnSessionStart": "Lancarkan aplikasi secara automatik",
+    "RunAppOnSessionStartTooltip": "Melancarkan aplikasi pada sesi yang sedang berjalan",
     "SeeDetail": "Lihat Perincian",
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati"

@@ -1070,6 +1070,8 @@
     "Initializing": "Inicjowanie...",
     "NoNotification": "Brak powiadomienia.",
     "Notifications": "Powiadomienia",
+    "RunAppOnSessionStart": "Automatyczne uruchamianie aplikacji",
+    "RunAppOnSessionStartTooltip": "Uruchamia aplikację w działającej sesji",
     "SeeDetail": "Zobacz detale",
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
     "Visit": "Wizyta"

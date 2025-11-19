@@ -1071,6 +1071,8 @@
     "Initializing": "正在初始化...",
     "NoNotification": "无通知。",
     "Notifications": "通知",
+    "RunAppOnSessionStart": "自动启动应用",
+    "RunAppOnSessionStartTooltip": "在会话运行时启动应用",
     "SeeDetail": "查看详情",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "访问"

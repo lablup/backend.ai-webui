@@ -1069,6 +1069,8 @@
     "Initializing": "Эхлүүлж байна ...",
     "NoNotification": "Мэдэгдэл байхгүй.",
     "Notifications": "Мэдэгдэл",
+    "RunAppOnSessionStart": "Аппыг автоматаар эхлүүлэх",
+    "RunAppOnSessionStartTooltip": "Сесс ажиллаж байх үед апп эхлүүлнэ",
     "SeeDetail": "Дэлгэрэнгүйг үзнэ үү",
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"

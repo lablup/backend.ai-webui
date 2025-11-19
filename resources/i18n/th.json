@@ -1060,6 +1060,8 @@
     "Initializing": "กำลังเริ่มต้น...",
     "NoNotification": "ไม่มีการแจ้งเตือน",
     "Notifications": "การแจ้งเตือน",
+    "RunAppOnSessionStart": "เปิดแอปอัตโนมัติ",
+    "RunAppOnSessionStartTooltip": "เปิดแอปในเซสชันที่กำลังทำงาน",
     "SeeDetail": "ดูรายละเอียด",
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"

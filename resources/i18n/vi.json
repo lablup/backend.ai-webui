@@ -1071,6 +1071,8 @@
     "Initializing": "Đang khởi tạo ...",
     "NoNotification": "Không có thông báo.",
     "Notifications": "Thông báo",
+    "RunAppOnSessionStart": "Tự động khởi chạy ứng dụng",
+    "RunAppOnSessionStartTooltip": "Khởi chạy ứng dụng trên phiên đang hoạt động",
     "SeeDetail": "Xem chi tiết",
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm"

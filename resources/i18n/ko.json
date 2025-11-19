@@ -1075,6 +1075,8 @@
     "Initializing": "초기화 중...",
     "NoNotification": "알림이 없습니다.",
     "Notifications": "알림",
+    "RunAppOnSessionStart": "앱 자동실행",
+    "RunAppOnSessionStartTooltip": "세션이 RUNNING 상태가 되며 앱을 자동으로 시작합니다.",
     "SeeDetail": "상세보기",
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"

@@ -1071,6 +1071,8 @@
     "Initializing": "Initialisation...",
     "NoNotification": "Aucune notification.",
     "Notifications": "Notifications",
+    "RunAppOnSessionStart": "Lancer automatiquement l'application",
+    "RunAppOnSessionStartTooltip": "Lance l'application dans la session en cours",
     "SeeDetail": "Voir le détail",
     "SuccessfullyUpdated": "Mise à jour réussie",
     "Visit": "Visite"
