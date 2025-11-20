@@ -139,7 +139,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           }}
         >
           <Tooltip title={!lg && t('general.button.Upload')}>
-            <Button icon={<UploadOutlined />}>
+            <Button icon={<UploadOutlined />} disabled={!enableWrite}>
               {lg && t('general.button.Upload')}
             </Button>
           </Tooltip>
