@@ -267,15 +267,25 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   page: Page,
   folderName: string,
 ) {
-  await navigateTo(page, 'summary');
+  await page
+    .locator('.ant-notification-notice')
+    .getByText('See Detail')
+    .click();
+
   await page.waitForLoadState('networkidle');
-  const invitations = await page.getByLabel('Accept').all();
-  for (const invitation of invitations) {
-    await invitation.click();
+  // Accept all invitations one by one
+  const acceptButtons = await page
+    .getByRole('button', { name: 'Accept' })
+    .all();
+  for (const acceptButton of acceptButtons) {
+    await acceptButton.click();
   }
+  await page.waitForLoadState('networkidle');
 
   await navigateTo(page, 'data');
-  await page.locator('#rc_select_8').fill(folderName);
+  // Select the search input - use type="search" with ant-input class for the folder search
+  const searchInput = page.locator('input.ant-input[type="search"]');
+  await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
   expect(
     page.locator('.ant-table-row').locator('td').nth(1).getByText(folderName),

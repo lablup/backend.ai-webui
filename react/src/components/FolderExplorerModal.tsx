@@ -6,10 +6,12 @@ import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFileExplorer,
+  BAIFileExplorerRef,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   toGlobalId,
+  useInterval,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useDeferredValue, useEffect, useRef } from 'react';
@@ -59,6 +61,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const currentUserAccessKey = baiClient?._config?.accessKey;
+  const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
@@ -95,6 +98,14 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     vfolder_node?.id,
     vfolder_node?.name || undefined,
   );
+  // Polling to update fetchKey when there are pending uploads
+  useInterval(
+    () => {
+      fileExplorerRef.current?.refetch();
+    },
+    uploadStatus && !_.isEmpty(uploadStatus?.pendingFiles) ? 5000 : null,
+  );
+  // Also update fetchKey when uploadStatus changes to completed
   useEffect(() => {
     if (uploadStatus && _.isEmpty(uploadStatus?.pendingFiles)) {
       updateFetchKey();
@@ -123,6 +134,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     />
   ) : !hasNoPermissions && vfolder_node ? (
     <BAIFileExplorer
+      ref={fileExplorerRef}
       targetVFolderId={vfolderID}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {

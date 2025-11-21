@@ -141,7 +141,6 @@ export const useDefaultSystemSSHImageWithFallback = () => {
         )
         .then(async (sshImages) => {
           const firstImage = _.first(sshImages);
-          console.log(firstImage);
           setSystemSSHImage(firstImage ? getImageFullName(firstImage) : null);
           setSystemSSHImageInfo(firstImage || undefined);
         })

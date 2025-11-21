@@ -168,3 +168,6 @@ data/merged_schema.graphql
 
 # webui release download temp directories (safe to delete)
 scripts/temp-releases/
+
+# ignore playwright mcp test files
+.playwright-mcp/

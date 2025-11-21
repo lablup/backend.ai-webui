@@ -23,7 +23,14 @@ import { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { HouseIcon } from 'lucide-react';
-import { createContext, Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  Suspense,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const FolderInfoContext = createContext<{
@@ -33,6 +40,10 @@ export const FolderInfoContext = createContext<{
   targetVFolderId: '',
   currentPath: '.',
 });
+
+export interface BAIFileExplorerRef {
+  refetch: () => void;
+}
 
 export interface BAIFileExplorerProps {
   targetVFolderId: string;
@@ -45,6 +56,7 @@ export interface BAIFileExplorerProps {
   enableDelete?: boolean;
   enableWrite?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
+  ref?: React.Ref<BAIFileExplorerRef>;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -57,6 +69,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDelete = false,
   enableWrite = false,
   style,
+  ref,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -78,6 +91,14 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     navigateToPath,
     refetch,
   } = useSearchVFolderFiles(targetVFolderId, fetchKey);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      refetch,
+    }),
+    [refetch],
+  );
 
   const breadCrumbItems: Array<ItemType> = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');

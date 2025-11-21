@@ -34,7 +34,8 @@ const useStyles = createStyles(({ css }) => ({
   `,
   fixEditableVerticalAlign: css`
     & {
-      margin-top: 0px !important;
+      top: 0 !important;
+      margin: 0px !important;
       inset-inline-start: 0px !important;
     }
   `,
