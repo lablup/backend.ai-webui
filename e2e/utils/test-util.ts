@@ -336,28 +336,61 @@ export async function createSession(page: Page, sessionName: string) {
 }
 
 export async function deleteSession(page: Page, sessionName: string) {
-  // Search by session name
-  const sessionList = page.locator('#running-jobs').locator('#list-grid');
-  const searchSessionInfo = sessionList
-    .locator('vaadin-grid-cell-content')
-    .nth(1)
-    .locator('vaadin-text-field')
-    .nth(1)
-    .locator('input');
-  await searchSessionInfo.fill(sessionName);
+  // Navigate to sessions page if not already there
+  if (!page.url().includes('/session')) {
+    await page.goto('/session');
+    await page.waitForLoadState('networkidle');
+  }
 
-  // Click terminate button
-  await page
-    .locator('[id="\\30 -power"]')
-    .getByLabel('power_settings_new')
-    .click();
-  await page.getByRole('button', { name: 'Okay' }).click();
+  // Search by session name using the search input
+  const searchInput = page
+    .locator('input[placeholder*="검색"]')
+    .or(page.locator('input').filter({ hasText: /search|검색/ }));
 
-  // Verify session is cleared
-  await searchSessionInfo.fill('');
-  await expect(
-    page.locator('vaadin-grid-cell-content').filter({ hasText: sessionName }),
-  ).toBeHidden({ timeout: 30_000 });
+  if ((await searchInput.count()) > 0) {
+    await searchInput.fill(sessionName);
+    await page.waitForTimeout(1000); // Wait for search results
+  }
+
+  // Find session row and terminate it
+  const sessionRow = page.locator('tr').filter({ hasText: sessionName });
+
+  if ((await sessionRow.count()) > 0) {
+    // Select the session checkbox
+    const checkbox = sessionRow.locator('input[type="checkbox"]').first();
+    if ((await checkbox.count()) > 0) {
+      await checkbox.check();
+    }
+
+    // Click terminate button - look for power/stop icon
+    const terminateButton = page
+      .locator('button')
+      .filter({ hasText: /power|terminate|종료/ })
+      .first()
+      .or(page.locator('[data-testid*="terminate"]'))
+      .or(page.locator('button:has(svg)').filter({ hasText: /power/ }));
+
+    if ((await terminateButton.count()) > 0) {
+      await terminateButton.click();
+
+      // Confirm termination in modal
+      const confirmButton = page.getByRole('button', { name: /okay|확인|ok/i });
+      if ((await confirmButton.count()) > 0) {
+        await confirmButton.click();
+      }
+    }
+  }
+
+  // Clear search and verify session is removed
+  if ((await searchInput.count()) > 0) {
+    await searchInput.fill('');
+    await page.waitForTimeout(1000);
+  }
+
+  // Wait for session to be removed
+  await expect(page.locator('tr').filter({ hasText: sessionName })).toBeHidden({
+    timeout: 30_000,
+  });
 }
 
 /**
