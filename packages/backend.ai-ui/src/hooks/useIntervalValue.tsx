@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 /**
  * Custom hook that executes a callback function at a specified interval.
@@ -12,15 +12,13 @@ export function useInterval(
   delay: number | null,
   pauseWhenHidden: boolean = true,
 ) {
-  const savedCallback = useRef<(() => void) | null>(null);
   const [isPageVisible, setIsPageVisible] = useState(() =>
     typeof document === 'undefined' ? true : !document.hidden,
   );
 
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+  const tick = useEffectEvent(() => {
+    callback();
+  });
 
   // Handle page visibility changes if pauseWhenHidden is true
   useEffect(() => {
@@ -30,7 +28,7 @@ export function useInterval(
       const isVisibleNow = !document.hidden;
       setIsPageVisible(isVisibleNow);
       if (isVisibleNow && delay !== null) {
-        savedCallback.current?.();
+        tick();
       }
     };
     document.addEventListener('visibilitychange', handler);
@@ -42,9 +40,6 @@ export function useInterval(
 
   // Set up the interval
   useEffect(() => {
-    function tick() {
-      savedCallback.current?.();
-    }
     if (effectiveDelay !== null) {
       const id = setInterval(tick, effectiveDelay);
       return () => clearInterval(id);
@@ -69,11 +64,14 @@ export function useIntervalValue<T>(
 ): T {
   const [result, setResult] = useState<T>(calculator());
 
+  const updateCalculator = useEffectEvent(() => {
+    setResult(calculator());
+  });
+
   useEffect(() => {
     if (triggerKey) {
-      setResult(calculator());
+      updateCalculator();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerKey]);
 
   useInterval(

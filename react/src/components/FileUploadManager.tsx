@@ -347,7 +347,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
   const setUploadRequests = useSetAtom(uploadRequestAtom);
 
   const [uploadStatus, setUploadStatus] = useUploadStatusAtomStatus(
-    id ? toLocalId(id) : '',
+    id ? toLocalId(id).replace(/-/g, '') : '', // since jotai atom doesn't use '-' in key, we need to replace it
   );
 
   const validateUploadRequest = (
