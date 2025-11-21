@@ -84,8 +84,8 @@ interface ServiceCreateConfigResourceOptsType {
 }
 
 type ServiceCreateConfigResourceType = {
-  cpu: number | string;
-  mem: string;
+  cpu?: number | string;
+  mem?: string;
 } & {
   [key in KnownAcceleratorResourceSlotName]?: number | string;
 };
@@ -110,9 +110,9 @@ export interface ServiceCreateType {
   name: string;
   desired_session_count?: number;
   replicas?: number;
-  image: string;
+  image?: string;
+  architecture?: string;
   runtime_variant: string;
-  architecture: string;
   group: string;
   domain: string;
   cluster_size: number;
