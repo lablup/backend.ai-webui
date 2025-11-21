@@ -125,7 +125,7 @@ const createBatchSessionOnSessionStartPage = async (
   }
 };
 
-test.describe('Session Creation', () => {
+test.describe('Session Launcher', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
   });
@@ -252,12 +252,6 @@ test.describe('Session Creation', () => {
     const sessionRow = page.locator('tr').filter({ hasText: sessionName });
     // it takes time to show the created session
     await expect(sessionRow).toBeVisible({ timeout: 20000 });
-  });
-});
-
-test.describe('NEO Sessions Launcher', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
   });
 
   test('Sensitive environment variables are cleared when the browser is reloaded.', async ({

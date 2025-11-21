@@ -1,0 +1,230 @@
+// spec: FolderExplorerModal-Test-Plan.md
+import { FolderExplorerModal } from './utils/classes/FolderExplorerModal';
+import {
+  loginAsUser,
+  navigateTo,
+  createVFolderAndVerify,
+  moveToTrashAndVerify,
+  deleteForeverAndVerifyFromTrash,
+} from './utils/test-util';
+import { test, expect, Page } from '@playwright/test';
+
+const openFolderExplorer = async (
+  page: Page,
+  folderName: string,
+): Promise<FolderExplorerModal> => {
+  await navigateTo(page, 'data');
+  await page.getByRole('link', { name: folderName }).first().click();
+  const modal = new FolderExplorerModal(page);
+  await modal.waitForOpen();
+  return modal;
+};
+
+test.describe
+  .serial('FolderExplorerModal - VFolder Access and Permissions', () => {
+  const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
+  const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
+
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+  });
+
+  test.afterAll(async ({ browser }) => {
+    // Create a new context and page for cleanup
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    await loginAsUser(page);
+
+    // Clean up folders created during tests
+    // Use try-catch to handle cases where folders might not exist
+    try {
+      await moveToTrashAndVerify(page, rwFolderName);
+      await deleteForeverAndVerifyFromTrash(page, rwFolderName);
+    } catch (error) {
+      console.log(`Could not delete ${rwFolderName}, it may not exist`);
+    }
+
+    try {
+      await moveToTrashAndVerify(page, roFolderName);
+      await deleteForeverAndVerifyFromTrash(page, roFolderName);
+    } catch (error) {
+      console.log(`Could not delete ${roFolderName}, it may not exist`);
+    }
+
+    await context.close();
+  });
+
+  test('Valid VFolder with Full Permissions (Read & Write)', async ({
+    page,
+  }) => {
+    // 1. Create a VFolder with Read & Write permissions
+    await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
+
+    // 2. Open the VFolder in FolderExplorerModal
+    const modal = await openFolderExplorer(page, rwFolderName);
+
+    // 3. Verify modal opens successfully with proper layout
+    await modal.verifyFolderName(rwFolderName);
+
+    // 4. Verify file explorer loads without errors
+    await modal.verifyFileExplorerLoaded();
+
+    // 5. Verify Read & Write permission is displayed in folder details
+    await modal.verifyPermission('Read & Write');
+
+    // 6. Verify upload functionality is available (Write permission)
+    const uploadButton = await modal.getUploadButton();
+    await expect(uploadButton).toBeEnabled();
+
+    // 7. Verify create folder functionality is available (Write permission)
+    const createButton = await modal.getCreateFolderButton();
+    await expect(createButton).toBeEnabled();
+
+    // 8. Close modal
+    await modal.close();
+  });
+
+  test('Limited Permissions - Read Only VFolder', async ({ page }) => {
+    // 1. Create a VFolder with Read Only permissions
+    await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
+
+    // 2. Verify folder shows "Read only" in the table
+    await navigateTo(page, 'data');
+    const folderRow = page.getByRole('row', { name: new RegExp(roFolderName) });
+    await expect(folderRow.getByText('Read only').first()).toBeVisible();
+
+    // 3. Open the VFolder in FolderExplorerModal
+    const modal = await openFolderExplorer(page, roFolderName);
+
+    // 4. Verify modal opens successfully
+    await modal.verifyFolderName(roFolderName);
+
+    // 5. Verify "Read only" mount permission is displayed in folder details
+    await modal.verifyPermission('Read only');
+
+    // 6. Verify file explorer loads
+    await modal.verifyFileExplorerLoaded();
+
+    // 7. Close modal
+    await modal.close();
+  });
+
+  test('VFolder Not Found or No Access', async ({ page }) => {
+    // 1. Navigate directly to a non-existent VFolder URL
+    await page.goto('http://127.0.0.1:9081/data?folder=non-existent-id-12345');
+
+    // Wait for modal to appear
+    const modal = new FolderExplorerModal(page);
+    await modal.waitForOpen();
+
+    // 2. Verify error message is displayed in modal
+    await modal.verifyErrorMessage('Folder not found or access denied');
+
+    // 3. Verify file explorer table is not within the modal body
+    // Check that BAIFileExplorer's table is not rendered
+    await modal.verifyFileExplorerNotLoaded();
+
+    // 4. Verify modal can still be closed
+    const closeButton = await modal.getCloseButton();
+    // For React development mode, the button may be covered by Red screen; use force click
+    await closeButton.click({ force: true });
+  });
+});
+
+test.describe.serial('FolderExplorerModal - Modal Display and Layout', () => {
+  const testFolderName = 'e2e-test-folder-layout-' + new Date().getTime();
+  let folderCreated = false;
+
+  test.beforeEach(async ({ page }) => {
+    await loginAsUser(page);
+
+    // Only create the folder once for all tests in this serial group
+    if (!folderCreated) {
+      await createVFolderAndVerify(page, testFolderName);
+      folderCreated = true;
+    } else {
+      // Just navigate to the data page if folder already exists
+      await navigateTo(page, 'data');
+    }
+  });
+
+  test.afterEach(async ({ page }) => {
+    // Ensure modal is closed after each test to prevent interference
+    const modal = new FolderExplorerModal(page);
+    if (await modal.isModalVisible()) {
+      const closeButton = await modal.getCloseButton();
+      await closeButton.click();
+      await expect(page.locator('.ant-modal').first()).not.toBeVisible({
+        timeout: 2000,
+      });
+    }
+  });
+
+  test.afterAll(async ({ browser }) => {
+    // Create a new context and page for cleanup
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    await loginAsUser(page);
+
+    // Clean up folder created during tests
+    try {
+      await moveToTrashAndVerify(page, testFolderName);
+      await deleteForeverAndVerifyFromTrash(page, testFolderName);
+    } catch (error) {
+      console.log(`Could not delete ${testFolderName}, it may not exist`);
+    }
+
+    await context.close();
+  });
+
+  test('Modal opens with correct header and close functionality', async ({
+    page,
+  }) => {
+    // 1. Open modal
+    const modal = await openFolderExplorer(page, testFolderName);
+
+    // 2. Verify modal header displays folder name
+    await modal.verifyFolderName(testFolderName);
+
+    // 3. Verify close button is visible and clickable
+    const closeButton = await modal.getCloseButton();
+
+    // 4. Close modal by clicking the close button
+    await closeButton.click();
+
+    // 5. Wait for modal to actually be hidden
+    await expect(page.locator('.ant-modal').first()).not.toBeVisible({
+      timeout: 2000,
+    });
+
+    // 6. Verify URL no longer has folder parameter
+    await expect(page).toHaveURL(/\/data($|\?(?!.*folder=))/);
+  });
+
+  test('File Browser integration button is available', async ({ page }) => {
+    // 1. Open modal
+    const modal = await openFolderExplorer(page, testFolderName);
+
+    // 2. Verify File Browser button exists
+    const fileBrowserButton = await modal.getFileBrowserButton();
+    await expect(fileBrowserButton).toBeEnabled();
+
+    // 3. Close modal
+    await modal.close();
+  });
+
+  test('Folder details panel displays essential information', async ({
+    page,
+  }) => {
+    // 1. Open modal
+    const modal = await openFolderExplorer(page, testFolderName);
+
+    // 2. Verify essential folder details are displayed
+    await modal.verifyFolderDetails();
+
+    // 3. Close modal
+    await modal.close();
+  });
+});
