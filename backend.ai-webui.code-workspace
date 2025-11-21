@@ -27,5 +27,20 @@
     "files.exclude": {
       "packages/backend.ai-ui": true,
     },
+    // MCP server configurations for development and testing
+    "mcp": {
+      "servers": {
+        "atlassian": {
+          "url": "https://mcp.atlassian.com/v1/sse",
+          "type": "sse",
+        },
+        "playwright-test": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["playwright", "run-test-mcp-server"],
+        },
+      },
+      "inputs": [],
+    },
   },
 }
