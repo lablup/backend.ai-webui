@@ -16,6 +16,7 @@ import {
   BAIContainerCommitIcon,
   BAIFileBrowserIcon,
   BAIJupyterIcon,
+  BAILink,
   BAISessionLogIcon,
   BAISftpIcon,
   BAITerminalAppIcon,
@@ -27,6 +28,8 @@ import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 type SessionActionButtonKey =
   | 'appLauncher'
@@ -80,12 +83,15 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { upsertNotification } = useSetBAINotification();
   const baiClient = useSuspendedBackendaiClient();
+  const navigate = useNavigate();
 
   const session = useFragment(
     graphql`
       fragment SessionActionButtonsFragment on ComputeSessionNode {
         id
+        name
         row_id @required(action: NONE)
         type
         status
@@ -144,6 +150,45 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   // When size is 'small', use the button's title attribute instead of a Tooltip
   const isButtonTitleMode = size === 'small';
 
+  const launchApp = (appName: string) => {
+    // FIXME: Since the app execution logic is implemented in the web component,
+    // notification must be initially declared to control notification in the web component.
+    upsertNotification({
+      key: `session-app-${session?.row_id}`,
+      message: (
+        <span>
+          {t('general.Session')}:&nbsp;
+          <BAILink
+            style={{
+              fontWeight: 'normal',
+            }}
+            onClick={() => {
+              const newSearchParams = new URLSearchParams(location.search);
+              newSearchParams.set('sessionDetail', session?.row_id || '');
+              navigate({
+                pathname: `/session`,
+                search: newSearchParams.toString(),
+              });
+            }}
+          >
+            {session?.name}
+          </BAILink>
+        </span>
+      ),
+      description: t('session.appLauncher.LaunchingApp', {
+        appName: appName,
+      }),
+    });
+
+    const appOption = {
+      'app-name': primaryAppOption?.appName,
+      'session-uuid': session?.row_id,
+      'url-postfix': primaryAppOption?.urlPostfix,
+    };
+    // @ts-ignore
+    globalThis.appLauncher._runApp(omitNullAndUndefinedFields(appOption));
+  };
+
   return session ? (
     <>
       <Wrapper compact={compact}>
@@ -167,16 +212,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }
                   icon={<BAIJupyterIcon />}
                   onClick={() => {
-                    const appOption = {
-                      'app-name': primaryAppOption.appName,
-                      'session-uuid': session?.row_id,
-                      'url-postfix': primaryAppOption.urlPostfix,
-                    };
-
-                    // @ts-ignore
-                    globalThis.appLauncher._runApp(
-                      omitNullAndUndefinedFields(appOption),
-                    );
+                    launchApp('Jupyter Notebook');
                   }}
                   title={
                     isButtonTitleMode
@@ -194,7 +230,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   isButtonTitleMode
                     ? undefined
                     : t('session.ExecuteSpecificApp', {
-                        appName: 'Jupyter Notebook',
+                        appName: 'File browser',
                       })
                 }
               >
@@ -206,16 +242,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }
                   icon={<BAIFileBrowserIcon />}
                   onClick={() => {
-                    const appOption = {
-                      'app-name': primaryAppOption.appName,
-                      'session-uuid': session?.row_id,
-                      'url-postfix': primaryAppOption.urlPostfix,
-                    };
-
-                    // @ts-ignore
-                    globalThis.appLauncher._runApp(
-                      omitNullAndUndefinedFields(appOption),
-                    );
+                    launchApp('File browser');
                   }}
                   title={
                     isButtonTitleMode
