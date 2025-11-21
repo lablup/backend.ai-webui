@@ -837,6 +837,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       wsproxyVersion == 'v1'
         ? await this._resolveV1ProxyUri(sessionUuid, app)
         : await this._resolveV2ProxyUri(sessionUuid, app, null, envs, args);
+
     if (!uri) {
       return Promise.resolve(false);
     }
@@ -1303,13 +1304,47 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                   );
                   return;
                 }
-                const redirectURL = new URL(redirectURI);
-                const directTCPsupported =
-                  redirectURL.searchParams.get('directTCP');
-                const gatewayURI = redirectURL.searchParams.get('gateway');
-                if (directTCPsupported !== 'true') {
+
+                try {
+                  const redirectURL = new URL(redirectURI);
+                  const directTCPsupported =
+                    redirectURL.searchParams.get('directTCP');
+                  const gatewayURI = redirectURL.searchParams.get('gateway');
+                  if (directTCPsupported !== 'true') {
+                    this.notification.detail = _text(
+                      'session.launcher.ProxyDirectTCPNotSupported',
+                    );
+                    this.notification.backgroundTask = {
+                      percent: 0,
+                      status: 'rejected',
+                    };
+                    this.notification.show(
+                      false,
+                      undefined,
+                      `session-app-${sessionUuid}`,
+                    );
+                    return;
+                  } else if (gatewayURI === null) {
+                    this.notification.detail = _text(
+                      'session.launcher.ProxyNotReady',
+                    );
+                    this.notification.backgroundTask = {
+                      percent: 0,
+                      status: 'rejected',
+                    };
+                    this.notification.show(
+                      false,
+                      undefined,
+                      `session-app-${sessionUuid}`,
+                    );
+                    return;
+                  } else {
+                    gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
+                  }
+                } catch (err) {
+                  console.error('Invalid redirect URL:', err, 'redirectURI:', body?.redirectURI);
                   this.notification.detail = _text(
-                    'session.launcher.ProxyDirectTCPNotSupported',
+                    'session.InvalidRedirectURL',
                   );
                   this.notification.backgroundTask = {
                     percent: 0,
@@ -1321,22 +1356,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     `session-app-${sessionUuid}`,
                   );
                   return;
-                } else if (gatewayURI === null) {
-                  this.notification.detail = _text(
-                    'session.launcher.ProxyNotReady',
-                  );
-                  this.notification.backgroundTask = {
-                    percent: 0,
-                    status: 'rejected',
-                  };
-                  this.notification.show(
-                    false,
-                    undefined,
-                    `session-app-${sessionUuid}`,
-                  );
-                  return;
-                } else {
-                  gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
                 }
               } else {
                 // when port is used appproxy endpoint will just return url to proxy port directly
