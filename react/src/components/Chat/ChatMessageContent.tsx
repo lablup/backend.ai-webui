@@ -250,7 +250,12 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
     );
 
     const renderParagraph = useCallback(({ node: _node, ...props }: any) => {
-      return <p {...props} style={{ whiteSpace: 'pre-wrap' }} />;
+      return (
+        <p
+          {...props}
+          style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        />
+      );
     }, []);
 
     const renderBlockquote = useCallback(
