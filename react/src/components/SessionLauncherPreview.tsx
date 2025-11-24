@@ -4,7 +4,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useThemeMode } from '../hooks/useThemeMode';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
@@ -36,8 +35,6 @@ import { BAICard, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
@@ -54,7 +51,6 @@ const SessionLauncherPreview: React.FC<{
   const currentProject = useCurrentProjectValue();
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
-  const { isDarkMode } = useThemeMode();
 
   return (
     <>
@@ -386,25 +382,15 @@ const SessionLauncherPreview: React.FC<{
               label={t('session.launcher.EnvironmentVariable')}
             >
               {form.getFieldValue('envvars')?.length ? (
-                <SyntaxHighlighter
-                  style={isDarkMode ? dark : undefined}
-                  codeTagProps={{
-                    style: {
-                      // fontFamily: 'monospace',
-                    },
-                  }}
-                  // showLineNumbers
-                  customStyle={{
-                    margin: 0,
-                    width: '100%',
-                  }}
-                >
-                  {_.map(
-                    form.getFieldValue('envvars'),
-                    (v: { variable: string; value: string }) =>
-                      `${v?.variable || ''}="${v?.value || ''}"`,
-                  ).join('\n')}
-                </SyntaxHighlighter>
+                <BAIFlex align="stretch" direction="column">
+                  <SourceCodeViewer wordWrap language={'shell'}>
+                    {_.map(
+                      form.getFieldValue('envvars'),
+                      (v: { variable: string; value: string }) =>
+                        `${v?.variable || ''}="${v?.value || ''}"`,
+                    ).join('\n')}
+                  </SourceCodeViewer>
+                </BAIFlex>
               ) : (
                 <Typography.Text type="secondary">-</Typography.Text>
               )}
