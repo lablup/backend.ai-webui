@@ -2,3 +2,5 @@
 # Specifically target i18n translation files to avoid trailing comma conflicts
 resources/i18n/**/*.json merge=json-i18n
 packages/backend.ai-ui/src/locale/*.json merge=json-i18n
+
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
