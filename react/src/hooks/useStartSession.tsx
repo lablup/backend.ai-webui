@@ -31,10 +31,6 @@ interface CreateSessionInfo {
   resources: SessionResources;
 }
 
-export const startSessionErrorCodes = {
-  DUPLICATED_SESSION: 'DUPLICATED_SESSION',
-};
-
 export const SESSION_LAUNCHER_NOTI_PREFIX = 'session-launcher:';
 
 // Field names that have default values in SessionLauncherFormValue
@@ -136,7 +132,7 @@ export const useStartSession = () => {
         baiClient._config.default_session_environment,
       ),
     }),
-    ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+    ..._.omit(RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, ['resource']),
     resourceGroup: currentGlobalResourceGroup || undefined,
   };
 
@@ -214,26 +210,30 @@ export const useStartSession = () => {
 
         config: {
           // Resource allocation
-          resources: {
-            cpu: values.resource.cpu,
-            mem: values.resource.mem,
-            // Add accelerator only if specified
-            ...(values.resource?.acceleratorType &&
-            values.resource?.accelerator &&
-            values.resource?.accelerator > 0
-              ? {
-                  [values.resource.acceleratorType]:
-                    values.resource.accelerator,
-                }
-              : undefined),
-          },
+          ...(values?.resource && {
+            resources: {
+              cpu: values?.resource?.cpu,
+              mem: values?.resource?.mem,
+              // Add accelerator only if specified
+              ...(values.resource?.acceleratorType &&
+              values.resource?.accelerator &&
+              values.resource?.accelerator > 0
+                ? {
+                    [values.resource.acceleratorType]:
+                      values.resource.accelerator,
+                  }
+                : undefined),
+            },
+          }),
           scaling_group: values.owner?.enabled
             ? values.owner.project
             : values.resourceGroup,
-          resource_opts: {
-            shmem: values.resource.shmem,
-            // allow_fractional_resource_fragmentation can be added here if needed
-          },
+          ...(values?.resource && {
+            resource_opts: {
+              shmem: values?.resource?.shmem,
+              // allow_fractional_resource_fragmentation can be added here if needed
+            },
+          }),
 
           // Storage configuration
           [supportsMountById ? 'mount_ids' : 'mounts']: values.mount_ids,
@@ -277,21 +277,12 @@ export const useStartSession = () => {
         .createIfNotExists(
           sessionInfo.kernelName,
           formattedSessionName,
-          sessionInfo.resources,
+          sessionInfo?.resources,
           undefined,
           sessionInfo.architecture,
         )
         .then(
           (res: { created: boolean; status: string; sessionId: string }) => {
-            // When session is already created with the same name, the status code
-            // is 200, but the response body has 'created' field as false.
-            // For such cases, we throw an error to be handled by using component.
-            if (!res?.created) {
-              const error = new Error(
-                startSessionErrorCodes.DUPLICATED_SESSION,
-              );
-              throw error;
-            }
             return res;
           },
         )

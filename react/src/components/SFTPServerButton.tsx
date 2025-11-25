@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { SFTPServerButtonFragment$key } from 'src/__generated__/SFTPServerButtonFragment.graphql';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import {
   useCurrentProjectValue,
   useResourceGroupsForCurrentProject,
@@ -17,7 +16,6 @@ import {
 import { useDefaultSystemSSHImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 import {
-  startSessionErrorCodes,
   StartSessionWithDefaultValue,
   useStartSession,
 } from 'src/hooks/useStartSession';
@@ -53,10 +51,8 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
-  const { upsertNotification } = useSetBAINotification();
 
-  const { systemSSHImage, systemSSHImageInfo } =
-    useDefaultSystemSSHImageWithFallback();
+  const { systemSSHImage } = useDefaultSystemSSHImageWithFallback();
 
   const vfolder = useFragment(
     graphql`
@@ -110,18 +106,9 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
           />
         }
         action={async () => {
-          const resource: StartSessionWithDefaultValue['resource'] = {
-            cpu:
-              _.toNumber(
-                _.find(systemSSHImageInfo?.resource_limits, { key: 'cpu' })
-                  ?.min,
-              ) || 2,
-            mem:
-              _.find(systemSSHImageInfo?.resource_limits, { key: 'mem' })
-                ?.min || '0.5g',
-          };
-
           const sftpSessionConf: StartSessionWithDefaultValue = {
+            // If the resource setting is not included when the session is created,
+            // it is created with the value determined by the server.
             sessionName: `sftp-${vfolder?.row_id}`,
             sessionType: 'system',
             // use default system SSH image if configured and allowed
@@ -142,10 +129,6 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
             cluster_size: 1,
             mount_ids: [vfolder?.row_id?.replaceAll('-', '') || ''],
             resourceGroup: sftpScalingGroupByCurrentProject?.[0],
-            resource: {
-              cpu: resource.cpu < 2 ? 2 : resource.cpu,
-              mem: resource.mem,
-            },
           };
 
           await startSessionWithDefault(sftpSessionConf)
@@ -160,22 +143,10 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
               }
               if (results?.rejected && results.rejected.length > 0) {
                 const error = results.rejected[0].reason;
-                if (
-                  _.includes(
-                    error.message,
-                    startSessionErrorCodes.DUPLICATED_SESSION,
-                  )
-                ) {
-                  upsertNotification({
-                    key: `sftp-${vfolder?.row_id}`,
-                    open: true,
-                  });
-                } else {
-                  modal.error({
-                    title: error?.title,
-                    content: getErrorMessage(error),
-                  });
-                }
+                modal.error({
+                  title: error?.title,
+                  content: getErrorMessage(error),
+                });
               }
             })
             .catch((error) => {
