@@ -1,11 +1,8 @@
-import { createDataTransferFiles } from '../../helper';
 import ChatSender, {
   AttachmentChangeInfo,
   ChatAttachmentsProps,
 } from './ChatSender';
-import { CreateMessage, Message } from '@ai-sdk/react';
 import type { AttachmentsProps } from '@ant-design/x';
-import { ChatRequestOptions } from 'ai';
 import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
@@ -30,10 +27,7 @@ interface ChatInputProps extends ChatAttachmentsProps {
   input: string;
   setInput: (input: string) => void;
   stop: () => void;
-  append: (
-    message: Message | CreateMessage,
-    chatRequestOptions?: ChatRequestOptions,
-  ) => Promise<string | null | undefined>;
+  onSendMessage: (textContent: string, files?: File[]) => Promise<void>;
   isStreaming: boolean;
   disabled?: boolean;
 }
@@ -43,7 +37,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   input,
   setInput,
   stop,
-  append,
+  onSendMessage,
   isStreaming,
   disabled,
   dropContainerRef,
@@ -105,19 +99,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [synchronizedAttachment]);
 
   useEffect(() => {
-    if (!isUndefined(submitKey) && input) {
-      const chatRequestOptions: ChatRequestOptions = {};
-      if (!isEmpty(files)) {
-        chatRequestOptions.experimental_attachments =
-          createDataTransferFiles(files);
-      }
-      append(
-        {
-          role: 'user',
-          content: input,
-        },
-        chatRequestOptions,
-      );
+    if (!isUndefined(submitKey) && (input || !isEmpty(files))) {
+      // Convert files to File array
+      const fileArray =
+        files
+          ?.map((file) => file.originFileObj as File)
+          .filter((file): file is File => file != null) || [];
+
+      onSendMessage(input, fileArray.length > 0 ? fileArray : undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
@@ -138,18 +127,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleInputSubmit = useCallback(() => {
     if (input || !isEmpty(files)) {
-      const chatRequestOptions: ChatRequestOptions = {};
-      if (!isEmpty(files)) {
-        chatRequestOptions.experimental_attachments =
-          createDataTransferFiles(files);
-      }
-      append(
-        {
-          role: 'user',
-          content: input,
-        },
-        chatRequestOptions,
-      );
+      // Convert files to File array
+      const fileArray =
+        files
+          ?.map((file) => file.originFileObj as File)
+          .filter((file): file is File => file != null) || [];
+
+      onSendMessage(input, fileArray.length > 0 ? fileArray : undefined);
+
       setTimeout(() => {
         setInput('');
         setFiles([]);
@@ -168,7 +153,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   }, [
     input,
     files,
-    append,
+    onSendMessage,
     setSynchronizedMessage,
     setSynchronizedAttachment,
     sync,

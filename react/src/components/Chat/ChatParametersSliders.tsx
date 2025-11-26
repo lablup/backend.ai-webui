@@ -67,7 +67,7 @@ const ChatParameterSliderFormItem = ({
 };
 
 const chatParameters: Record<string, ChatParameterSliderData> = {
-  maxTokens: {
+  maxOutputTokens: {
     label: 'Max Tokens',
     min: 50,
     max: 16384,

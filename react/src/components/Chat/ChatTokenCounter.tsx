@@ -1,6 +1,6 @@
 import { useTokenCount } from '../../hooks/useTokenizer';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import { Message } from 'ai';
+import { UIMessage } from 'ai';
 import { Typography, Tag, Divider } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 
 interface ChatTokenCounterProps {
   input: string;
-  messages: Message[];
+  messages: UIMessage[];
   startTime: number | null;
   style?: React.CSSProperties;
 }
@@ -21,14 +21,24 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
 }) => {
   const inputTokenCount = useTokenCount(input);
   const allChatMessageString = useMemo(() => {
-    return map(messages, (message) => message?.content).join('');
+    return map(messages, (message) =>
+      message?.parts
+        ?.filter((part) => part.type === 'text')
+        .map((part) => part.text)
+        .join(''),
+    ).join('');
   }, [messages]);
   const chatsTokenCount = useTokenCount(allChatMessageString);
   const totalTokenCount = inputTokenCount + chatsTokenCount;
   const lastAssistantMessageString = useMemo(() => {
     const lastAssistantMessage = last(messages);
     if (lastAssistantMessage?.role === 'assistant') {
-      return lastAssistantMessage?.content;
+      return (
+        lastAssistantMessage?.parts
+          ?.filter((part) => part.type === 'text')
+          .map((part) => part.text)
+          .join('') || ''
+      );
     } else {
       return '';
     }

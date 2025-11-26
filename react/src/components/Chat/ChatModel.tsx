@@ -12,7 +12,7 @@ export interface ChatProviderData {
 }
 
 export interface ChatParameters {
-  maxTokens: number;
+  maxOutputTokens: number;
   temperature: number;
   topP: number;
   topK: number;
@@ -61,7 +61,7 @@ export function getAIErrorMessage(error: unknown): string {
 }
 
 export const DEFAULT_CHAT_PARAMETERS = {
-  maxTokens: 4096,
+  maxOutputTokens: 4096,
   temperature: 0.7,
   topP: 1,
   topK: 1,

@@ -202,7 +202,6 @@ export function useHistory(id: string, provider: ChatProviderData) {
         chat.chats[index].messages = [
           ...chatData.messages.slice(0, -1),
           _.merge({}, lastMessage, {
-            content: message.content,
             parts: message.parts,
           }),
         ];
@@ -217,7 +216,17 @@ export function useHistory(id: string, provider: ChatProviderData) {
         message.role === 'assistant'
       ) {
         // Change the chat label to the first user message content
-        chat.label = chat.chats[0].messages[0].content ?? chat.label;
+        const firstMessage = chat.chats[0].messages[0];
+        const textContent = firstMessage.parts
+          ?.filter((part) => part.type === 'text')
+          .map((part) => part.text)
+          .join('')
+          .trim();
+
+        // Only update label if there's actual text content
+        if (textContent) {
+          chat.label = textContent;
+        }
       }
 
       const currentChat = getChatById(chat.id);

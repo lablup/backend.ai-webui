@@ -1,6 +1,6 @@
 import PureChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
-import { Message } from '@ai-sdk/react';
+import { UIMessage } from '@ai-sdk/react';
 import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { memo } from 'react';
@@ -10,7 +10,7 @@ const ChatMessageList = memo(VirtualChatMessageList);
 const ChatTokenCounter = memo(PureChatTokenCounter);
 
 interface ChatMessageProps {
-  messages: Message[];
+  messages: UIMessage[];
   input: string;
   isStreaming: boolean;
   startTime: number | null;

@@ -20,7 +20,11 @@ export const AssistantChatMessage: React.FC<ChatMessageProps> = ({
             type="text"
             size="small"
             copyable={{
-              text: message.content,
+              text: message.parts
+                ?.filter((part) => part.type === 'text')
+                .map((part) => part.text)
+                .join('')
+                .trim(),
             }}
             style={{
               display: isStreaming ? 'none' : 'block',

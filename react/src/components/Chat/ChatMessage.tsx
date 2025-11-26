@@ -4,7 +4,7 @@ import {
 } from './ChatMessageContainer';
 // ES 2015
 import ChatMessageContent from './ChatMessageContent';
-import { Message } from '@ai-sdk/react';
+import { UIMessage } from '@ai-sdk/react';
 import { Attachments } from '@ant-design/x';
 import { theme, Image, Collapse, Typography, Spin } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -12,8 +12,15 @@ import _ from 'lodash';
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+interface FilePart {
+  type: 'file';
+  url: string;
+  mediaType?: string;
+  filename?: string;
+}
+
 export interface ChatMessageProps {
-  message: Message;
+  message: UIMessage;
   placement?: ChatMessagePlacement;
   extra?: React.ReactNode;
   enableExtraHover?: boolean;
@@ -33,7 +40,21 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
-  const { content, reasoning } = message;
+  // Extract content and reasoning from parts array
+  const content = _.chain(message.parts)
+    .filter((part) => part.type === 'text')
+    .map((part) => part.text)
+    .join('')
+    .value();
+
+  const reasoningText = _.chain(message.parts)
+    .filter((part) => part.type === 'reasoning')
+    .map((part) => part.text)
+    .join('')
+    .value();
+
+  // Filter file parts from the message parts array
+  const fileParts = _.filter(message.parts, (part) => part.type === 'file');
 
   return (
     <ChatMessageContainer
@@ -42,9 +63,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {_.map(message.experimental_attachments, (attachment, index) =>
-        _.includes(attachment?.contentType, 'image/') ? (
+      {_.map(fileParts, (part: FilePart, index) => {
+        if (part.type !== 'file') {
+          return null;
+        }
+
+        const filename =
+          part.filename || part.url?.split('/').pop() || `file-${index}`;
+
+        return _.includes(part?.mediaType, 'image/') ? (
           <BAIFlex
+            key={`${message?.id}-${index}`}
             style={{
               border: 'none',
               textAlign: 'end',
@@ -52,9 +81,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             align="end"
           >
             <Image
-              key={`${message?.id}-${index}`}
-              src={attachment?.url}
-              alt={attachment?.name}
+              src={part?.url}
+              alt={filename}
               style={{
                 maxWidth: '50vw',
                 maxHeight: '12vh',
@@ -64,17 +92,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           </BAIFlex>
         ) : (
           <Attachments.FileCard
-            key={index}
+            key={`${message?.id}-${index}`}
             item={{
               uid: `${message?.id}-${index}`,
-              name: attachment?.name || attachment?.url,
-              type: attachment?.contentType,
-              description: attachment?.name,
-              url: attachment?.url,
+              name: filename,
+              type: part?.mediaType,
+              description: filename,
+              url: part?.url,
             }}
           />
-        ),
-      )}
+        );
+      })}
       <BAIFlex
         align="stretch"
         direction="column"
@@ -87,10 +115,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           paddingBottom: 0,
           backgroundColor: token.colorBgElevated,
           maxWidth: '100%',
-          width: _.trim(message.reasoning) ? '100%' : 'auto',
+          width: _.trim(reasoningText) ? '100%' : 'auto',
         }}
       >
-        {_.trim(message.reasoning) && (
+        {_.trim(reasoningText) && (
           <Collapse
             style={{
               marginTop: token.margin,
@@ -109,7 +137,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 ),
                 children: (
                   <ChatMessageContent isStreaming={isStreaming}>
-                    {reasoning}
+                    {reasoningText}
                   </ChatMessageContent>
                 ),
               },

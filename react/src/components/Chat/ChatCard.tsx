@@ -17,9 +17,10 @@ import { CustomModelForm } from './CustomModelForm';
 import { createOpenAI } from '@ai-sdk/openai';
 import { useChat } from '@ai-sdk/react';
 import {
+  convertToModelMessages,
+  DefaultChatTransport,
   extractReasoningMiddleware,
   streamText,
-  UIMessage,
   wrapLanguageModel,
 } from 'ai';
 import { Alert, App, Card, CardProps, theme } from 'antd';
@@ -186,6 +187,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   className,
   ...otherCardProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message: appMessage } = App.useApp();
   const endpointResult = useLazyLoadQuery<ChatCardQuery>(
@@ -229,66 +231,109 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const { agents } = useAIAgent();
   const agent = agents.find((a) => a.id === chat.provider.agentId);
 
-  const {
-    error,
-    messages,
-    input,
-    setInput,
-    stop,
-    status,
-    append,
-    setMessages,
-  } = useChat({
-    id: chat.id,
-    api: baseURL,
-    body: {
-      modelId: modelId,
-    },
-    initialMessages: chat.messages,
-    experimental_throttle: 50,
-    fetch: async (input, init) => {
-      if (fetchOnClient || modelId === 'custom') {
-        const body = JSON.parse(init?.body as string);
-        const provider = createOpenAI({
-          baseURL: baseURL,
-          apiKey: chat.provider.apiKey || 'dummy',
-        });
-        const result = streamText({
-          abortSignal: init?.signal || undefined,
-          model: wrapLanguageModel({
-            model: provider(modelId),
-            middleware: extractReasoningMiddleware({ tagName: 'think' }),
-          }),
-          messages: body?.messages,
-          system: agent?.config.system_prompt || undefined,
-          ...(chat.usingParameters ? chat.parameters : {}),
-        });
+  const [input, setInput] = useState('');
 
-        const userMessage = getLatestUserMessage(body.messages);
-        if (userMessage) {
-          onSaveMessage?.(userMessage);
+  const { error, messages, stop, status, sendMessage, setMessages } = useChat({
+    messages: chat.messages,
+    onFinish: () => {
+      setStartTime(null);
+    },
+    transport: new DefaultChatTransport({
+      api: baseURL,
+      body: {
+        modelId: modelId,
+      },
+      headers: {
+        Authorization: chat.provider.apiKey
+          ? `Bearer ${chat.provider.apiKey}`
+          : '',
+      },
+      fetch: async (input, init) => {
+        // For custom models or client-side fetching, handle directly
+        if (fetchOnClient || modelId === 'custom') {
+          const provider = createOpenAI({
+            baseURL: baseURL,
+            apiKey: chat.provider.apiKey || 'dummy',
+          });
+
+          try {
+            const body = JSON.parse(init?.body as string);
+            const result = streamText({
+              abortSignal: init?.signal || undefined,
+              model: wrapLanguageModel({
+                model: provider.chat(modelId),
+                middleware: extractReasoningMiddleware({
+                  tagName: 'think',
+                  startWithReasoning: true,
+                }),
+              }),
+              messages: convertToModelMessages(body?.messages),
+              system: agent?.config.system_prompt || undefined,
+              ...(chat.usingParameters ? chat.parameters : {}),
+            });
+
+            const userMessage = getLatestUserMessage(body.messages);
+            if (userMessage) {
+              onSaveMessage?.(userMessage);
+            }
+
+            return result.toUIMessageStreamResponse({
+              onError: (error) => {
+                return getAIErrorMessage(error);
+              },
+              onFinish: (event) => {
+                if (!event.isAborted && event.responseMessage) {
+                  onSaveMessage?.(event.responseMessage);
+                }
+              },
+            });
+          } catch (error) {
+            console.error('Client-side streaming error:', error);
+            // Fallback to regular fetch
+            return fetch(input, init);
+          }
         }
 
-        setStartTime(Date.now());
-
-        return result.toDataStreamResponse({
-          sendReasoning: true,
-          getErrorMessage: (error) => {
-            return getAIErrorMessage(error);
-          },
-        });
-      }
-
-      return fetch(input, init);
-    },
-    onFinish: (assistantMessage, { finishReason }) => {
-      if (finishReason === 'stop') {
-        onSaveMessage?.(assistantMessage as UIMessage);
-      }
-    },
+        // Default fetch for server endpoints
+        return fetch(input, init);
+      },
+    }),
   });
 
   const isStreaming = status === 'streaming' || status === 'submitted';
+
+  // Helper function to handle message sending with files
+  const handleSendMessage = async (textContent: string, files?: File[]) => {
+    setStartTime(Date.now());
+
+    const parts: Array<
+      | { type: 'text'; text: string }
+      | { type: 'file'; url: string; mediaType: string; filename?: string }
+    > = [];
+
+    // Add text content if present
+    if (textContent) {
+      parts.push({ type: 'text', text: textContent });
+    }
+
+    // Add files if present
+    if (files && files.length > 0) {
+      files.forEach((file) => {
+        const url = URL.createObjectURL(file);
+        parts.push({
+          type: 'file',
+          url: url,
+          mediaType: file.type || 'application/octet-stream',
+          filename: file.name,
+        });
+      });
+    }
+
+    // Send with parts array if we have content
+    if (parts.length > 0) {
+      await sendMessage({ parts });
+    }
+  };
 
   useEffect(() => {
     // prevent to show the error message as failed fetching in the first time
@@ -450,7 +495,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         input={input}
         setInput={setInput}
         stop={stop}
-        append={append}
+        onSendMessage={handleSendMessage}
         isStreaming={isStreaming}
         dropContainerRef={dropContainerRef}
       />

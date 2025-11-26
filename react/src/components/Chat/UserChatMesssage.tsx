@@ -1,10 +1,10 @@
 import ChatMessage from './ChatMessage';
 import type { ChatMessagePlacement } from './ChatMessageContainer';
-import { Message } from '@ai-sdk/react';
+import { UIMessage } from '@ai-sdk/react';
 import Compact from 'antd/es/space/Compact';
 
 interface UserChatMessageProps {
-  message: Message;
+  message: UIMessage;
   isStreaming: boolean;
   placement?: ChatMessagePlacement;
 }

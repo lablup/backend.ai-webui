@@ -1,14 +1,14 @@
 import { AssistantChatMessage } from './AssistantChatMesssage';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';
-import { Message } from '@ai-sdk/react';
+import { UIMessage } from '@ai-sdk/react';
 import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useRef, useState } from 'react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
 interface VirtualizedListProps {
-  messages: Array<Message>;
+  messages: Array<UIMessage>;
   isStreaming?: boolean;
 }
 
@@ -31,7 +31,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
   const overscan = typeof window !== 'undefined' ? window.innerHeight * 1.5 : 0;
 
   const itemContent = useCallback(
-    (index: number, message: Message) => {
+    (index: number, message: UIMessage) => {
       const RenderChatMessage = ChatMessageRenders[message.role];
 
       return (
