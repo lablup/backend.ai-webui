@@ -28,8 +28,10 @@ NC := \033[0m
 
 test_web:
 	@pnpm run server:d
-test_electron:
-	@pnpm dlx electron . --dev
+test_electron: dep
+	@pnpm run electron:d
+test_electron_hmr: dep # For development with HMR, you have to run build:d and server:d first
+	@pnpm run electron:d:hmr
 proxy:
 	@node ./src/wsproxy/local_proxy.js
 run_tests:
@@ -116,7 +118,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
 compile_localproxy:
 	@rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
-	@pnpm dlx pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
+	@pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
 	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix); cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/backend.ai-local-proxy$(local_proxy_postfix)
 	@cd app; zip -r -9 ./backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"
 	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix)
@@ -198,7 +200,7 @@ linux_arm64: dep compile_localproxy package_zip
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
 i18n:
-	@pnpm dlx i18next-scanner --config ./i18n.config.js
+	@pnpm exec i18next-scanner --config ./i18n.config.js
 clean:
 	@rm -rf ./app/backend*; rm -rf ./app/Backend*
 	@rm -rf ./build/unbundle ./build/bundle ./build/rollup ./build/electron-app
