@@ -145,6 +145,7 @@ test.describe('FolderExplorerModal - User Modal Interaction', () => {
     const page = await context.newPage();
     await loginAsUser(page);
     await createVFolderAndVerify(page, testFolderName);
+    await context.close();
   });
 
   test.beforeEach(async ({ page }) => {
