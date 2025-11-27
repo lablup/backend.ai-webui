@@ -155,12 +155,6 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       onRequestClose();
       return;
     }
-    if (app?.name === 'tensorboard') {
-      // @ts-ignore
-      globalThis.appLauncher._openTensorboardDialog();
-      onRequestClose();
-      return;
-    }
     // @ts-ignore
     await globalThis.appLauncher._runApp(appController).then(() => {});
   };

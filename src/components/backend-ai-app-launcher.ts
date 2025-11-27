@@ -751,32 +751,43 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     envs: Record<string, unknown> | null = null,
     args: Record<string, unknown> | null = null,
   ): Promise<string | undefined> {
-    const loginSessionToken = globalThis.backendaiclient._config._session_id;
-    const tokenResponse =
-      await globalThis.backendaiclient.computeSession.startService(
-        loginSessionToken,
-        sessionUuid,
-        app,
-        port,
-        envs,
-        args,
-      );
-    if (tokenResponse === undefined) {
-      this.notification.detail = _text(
-        'session.launcher.ProxyConfiguratorNotResponding',
-      );
+    try {
+      const loginSessionToken = globalThis.backendaiclient._config._session_id;
+      const tokenResponse =
+        await globalThis.backendaiclient.computeSession.startService(
+          loginSessionToken,
+          sessionUuid,
+          app,
+          port,
+          envs,
+          args,
+        );
+
+      if (tokenResponse === undefined) {
+        this.notification.detail = _text(
+          'session.launcher.ProxyConfiguratorNotResponding',
+        );
+        this.notification.backgroundTask = {
+          percent: 0,
+          status: 'rejected',
+        };
+        this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+        return;
+      }
+      const token = tokenResponse.token;
+      return new URL(
+        `v2/proxy/${token}/${sessionUuid}/add?${new URLSearchParams({ app }).toString()}`,
+        tokenResponse.wsproxy_addr,
+      ).href;
+    } catch (err) {
+      this.notification.detail =
+        err.message || _text('session.launcher.ProxyConfiguratorNotResponding');
       this.notification.backgroundTask = {
         percent: 0,
         status: 'rejected',
       };
       this.notification.show(false, undefined, `session-app-${sessionUuid}`);
-      return;
     }
-    const token = tokenResponse.token;
-    return new URL(
-      `v2/proxy/${token}/${sessionUuid}/add?${new URLSearchParams({ app }).toString()}`,
-      tokenResponse.wsproxy_addr,
-    ).href;
   }
 
   /**
@@ -1214,7 +1225,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     if (appName === 'tensorboard') {
-      this._openTensorboardDialog();
+      this._openTensorboardDialog(config);
       return;
     }
     if (appName === 'ttyd') {
@@ -1342,7 +1353,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
                   }
                 } catch (err) {
-                  console.error('Invalid redirect URL:', err, 'redirectURI:', body?.redirectURI);
+                  console.error(
+                    'Invalid redirect URL:',
+                    err,
+                    'redirectURI:',
+                    body?.redirectURI,
+                  );
                   this.notification.detail = _text(
                     'session.InvalidRedirectURL',
                   );
@@ -1589,8 +1605,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   /**
    * Open a Tensorboard dialog for path input.
+   *
+   * * @param {Object} config - Configuration to run app. It should contain `app-name`, 'session-uuid` and `url-postfix`.
    */
-  _openTensorboardDialog() {
+  _openTensorboardDialog(config = null) {
+    if (config) {
+      // FIXME: config values come from AppLauncherModal in React. Set them to appController to use when launching tensorboard.
+      this.appController['app-name'] = config['app-name'];
+      this.appController['session-uuid'] = config['session-uuid'];
+      this.appController['url-postfix'] = config['url-postfix'];
+    }
     this.tensorboardDialog.show();
   }
 
@@ -1623,23 +1647,35 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const appName = this.appController['app-name'];
       const sessionUuid = this.appController['session-uuid'];
       const urlPostfix = this.appController['url-postfix'];
-      this.indicator = await globalThis.lablupIndicator.start();
-      this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
+      this.notification.detail = _text(
+        'session.launcher.ShuttingDownExistTensorBoard',
+      );
+      this.notification.backgroundTask = {
+        percent: 20,
+        status: 'pending',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       await globalThis.backendaiclient.shutdown_service(
         sessionUuid,
         'tensorboard',
       );
-      this.indicator.set(70, 'Clean up TensorBoard proxy...');
+      this.notification.detail = _text(
+        'session.launcher.CleaningUpTensorBoardProxy',
+      );
+      this.notification.backgroundTask = {
+        percent: 30,
+        status: 'pending',
+      };
+      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
       await this._close_wsproxy(sessionUuid, 'tensorboard');
-      this.indicator.set(100, 'Proxy is ready.');
       // if tensorboard path is empty, --logdir will be '/home/work/logs'
       this.tensorboardPath =
         this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
       const path: Record<string, unknown> = {
         '--logdir': this.tensorboardPath,
       };
-      this._open_wsproxy(sessionUuid, appName, port, null, path).then(
-        async (response) => {
+      this._open_wsproxy(sessionUuid, appName, port, null, path)
+        .then(async (response) => {
           const { appConnectUrl } = await this._connectToProxyWorker(
             response.url,
             urlPostfix,
@@ -1655,10 +1691,35 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             // console.log(appName + ' proxy loaded: ');
             // console.log(sessionUuid);
           }, 1000);
-        },
-      );
+        })
+        .then(() => {
+          this.notification.detail = _text(
+            'session.launcher.TensorBoardPrepared',
+          );
+          this.notification.backgroundTask = {
+            percent: 100,
+            status: 'resolved',
+          };
+          this.notification.show(
+            false,
+            undefined,
+            `session-app-${sessionUuid}`,
+          );
+        });
     } catch (e) {
       button.removeAttribute('disabled');
+      this.notification.detail = PainKiller.relieve(
+        _text('session.launcher.FailedToLaunchTensorBoard'),
+      );
+      this.notification.backgroundTask = {
+        percent: 0,
+        status: 'rejected',
+      };
+      this.notification.show(
+        false,
+        undefined,
+        `session-app-${this.appController['session-uuid']}`,
+      );
     }
   }
 
