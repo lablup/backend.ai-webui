@@ -1,0 +1,124 @@
+name: 'Generate Test Coverage Reports'
+description: 'Build project and generate combined coverage reports for Backend.AI WebUI'
+
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Install dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "=== Installing dependencies ===" | tee -a coverage-steps.log
+        pnpm install 2>&1 | tee -a coverage-steps.log
+        echo "Dependencies installed successfully" | tee -a coverage-steps.log
+    
+    # Step 2: Build the project (required before running tests)
+    # This compiles TypeScript and prepares all necessary files
+    - name: Build project
+      shell: bash
+      run: |
+        echo "=== Building project ===" | tee -a coverage-steps.log
+        # Build main project (includes React and backend.ai-ui)
+        pnpm run build 2>&1 | tee -a coverage-steps.log
+        echo "Project built successfully" | tee -a coverage-steps.log
+    
+    # Step 3: Run React tests with coverage
+    # Tests located in /react/src/**/*.test.{ts,tsx}
+    # Coverage output: /react/coverage/
+    - name: Run React tests with coverage
+      shell: bash
+      run: |
+        echo "=== Running React tests with coverage ===" | tee -a coverage-steps.log
+        cd react
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --coverageReporters=html 2>&1 | tee -a ../coverage-steps.log
+        cd ..
+        echo "React tests completed" | tee -a coverage-steps.log
+    
+    # Step 4: Run backend.ai-ui tests with coverage
+    # Tests located in /packages/backend.ai-ui/src/**/*.test.{ts,tsx}
+    # Coverage output: /packages/backend.ai-ui/coverage/
+    - name: Run backend.ai-ui tests with coverage
+      shell: bash
+      run: |
+        echo "=== Running backend.ai-ui tests with coverage ===" | tee -a coverage-steps.log
+        cd packages/backend.ai-ui
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --coverageReporters=html 2>&1 | tee -a ../../coverage-steps.log
+        cd ../..
+        echo "backend.ai-ui tests completed" | tee -a coverage-steps.log
+    
+    # Step 5: Run root-level Jest tests (legacy src directory)
+    # Tests located in /src/**/*.test.ts and /scripts/**/*.test.ts
+    # Coverage output: /coverage/
+    - name: Run root-level tests with coverage
+      shell: bash
+      run: |
+        echo "=== Running root-level tests with coverage ===" | tee -a coverage-steps.log
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --coverageReporters=html 2>&1 | tee -a coverage-steps.log || true
+        echo "Root-level tests completed" | tee -a coverage-steps.log
+    
+    # Step 6: Create combined coverage directory structure
+    - name: Organize coverage reports
+      shell: bash
+      run: |
+        echo "=== Organizing coverage reports ===" | tee -a coverage-steps.log
+        mkdir -p combined-coverage
+        
+        # Copy React coverage
+        if [ -d "react/coverage" ]; then
+          cp -r react/coverage combined-coverage/react
+          echo "React coverage copied to combined-coverage/react" | tee -a coverage-steps.log
+        fi
+        
+        # Copy backend.ai-ui coverage
+        if [ -d "packages/backend.ai-ui/coverage" ]; then
+          cp -r packages/backend.ai-ui/coverage combined-coverage/backend-ai-ui
+          echo "backend.ai-ui coverage copied to combined-coverage/backend-ai-ui" | tee -a coverage-steps.log
+        fi
+        
+        # Copy root coverage
+        if [ -d "coverage" ]; then
+          cp -r coverage combined-coverage/root
+          echo "Root coverage copied to combined-coverage/root" | tee -a coverage-steps.log
+        fi
+        
+        echo "Coverage reports organized successfully" | tee -a coverage-steps.log
+    
+    # Step 7: Generate coverage summary
+    - name: Generate coverage summary
+      shell: bash
+      run: |
+        echo "=== Coverage Summary ===" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        
+        if [ -f "react/coverage/coverage-summary.json" ]; then
+          echo "React Coverage:" | tee -a coverage-steps.log
+          cat react/coverage/coverage-summary.json | grep -A 5 "total" | tee -a coverage-steps.log || true
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        if [ -f "packages/backend.ai-ui/coverage/coverage-summary.json" ]; then
+          echo "backend.ai-ui Coverage:" | tee -a coverage-steps.log
+          cat packages/backend.ai-ui/coverage/coverage-summary.json | grep -A 5 "total" | tee -a coverage-steps.log || true
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        if [ -f "coverage/coverage-summary.json" ]; then
+          echo "Root Coverage:" | tee -a coverage-steps.log
+          cat coverage/coverage-summary.json | grep -A 5 "total" | tee -a coverage-steps.log || true
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        echo "Coverage summary generated" | tee -a coverage-steps.log
+    
+    # Step 8: Upload coverage reports as artifact
+    # This artifact will be used by the test improver workflow to identify areas needing tests
+    # Artifact name: "coverage"
+    # Contents: combined-coverage/ directory with all coverage reports
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          combined-coverage/
+          coverage-steps.log
+        retention-days: 30
