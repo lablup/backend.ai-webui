@@ -2,7 +2,9 @@ import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import CreateDirectoryModal from './CreateDirectoryModal';
-import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
+import DeleteSelectedItemsModal, {
+  DeleteSelectedItemsModalProps,
+} from './DeleteSelectedItemsModal';
 import { useUploadVFolderFiles } from './hooks';
 import {
   FileAddOutlined,
@@ -36,6 +38,7 @@ interface ExplorerActionControlsProps {
     modifiedItems?: Array<VFolderFile>,
   ) => void;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
   enableDelete?: boolean;
   enableWrite?: boolean;
   // onClickRefresh?: (key: string) => void;
@@ -46,6 +49,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   selectedFiles,
   onRequestClose,
   onUpload,
+  onDeleteFilesInBackground,
   enableDelete = false,
   enableWrite = false,
   extra,
@@ -149,6 +153,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
+        onDeleteFilesInBackground={onDeleteFilesInBackground}
         onRequestClose={(success: boolean) => {
           if (success) {
             onRequestClose(true, selectedFiles);

@@ -659,6 +659,7 @@
     "Title": "Une erreur s'est produite."
   },
   "explorer": {
+    "DeletingSelectedItems": "Suppression des fichiers sélectionnés. Veuillez patienter.",
     "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
     "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
     "Filename": "Nom de fichier",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
     "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
+    "SelectedItemsDeletedSuccessfully": "Le fichier sélectionné a été supprimé avec succès.",
+    "SelectedItemsDeletionFailed": "Une erreur s'est produite lors de la suppression des fichiers. Veuillez réessayer.",
     "SuccessfullyUploadedToFolder": "Fichiers téléchargés avec succès.",
     "UploadFailed": "Le téléchargement a échoué dans '{{folderName}}'",
     "UploadingFiles": "Téléchargement de fichiers...",

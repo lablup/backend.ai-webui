@@ -657,6 +657,7 @@
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {
+    "DeletingSelectedItems": "Сонгосон файлуудыг устгаж байна. Түр хүлээнэ үү.",
     "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
     "FileUploadFailed": "'{{folderName}}' Файлд файл байршуулж чадсангүй.",
     "Filename": "Хөдөлгөөний нэр",
@@ -665,6 +666,8 @@
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
     "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
+    "SelectedItemsDeletedSuccessfully": "Сонгосон файл амжилттай устгагдсан.",
+    "SelectedItemsDeletionFailed": "Файлуудыг устгах явцад алдаа гарлаа. Дахин оролдоно уу.",
     "SuccessfullyUploadedToFolder": "Файлуудыг амжилттай байршуулсан.",
     "UploadFailed": "'{{folderName}} -д бүтэлгүйтсэн.",
     "UploadingFiles": "Файл байршуулах ...",

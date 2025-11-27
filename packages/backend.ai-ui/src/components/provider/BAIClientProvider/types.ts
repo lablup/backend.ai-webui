@@ -47,6 +47,7 @@ export interface BAIClient {
   email: string;
   accessKey: string;
   _config: BackendAIConfig;
+  supports: (feature: string) => boolean;
 }
 
 export type BackendAIConfig = {

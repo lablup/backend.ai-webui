@@ -659,6 +659,7 @@
     "Title": "Bir hata oluştu."
   },
   "explorer": {
+    "DeletingSelectedItems": "Seçili dosyalar siliniyor. Lütfen bekleyin.",
     "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FileUploadFailed": "Bazı dosyaları '{{{folderName}}' klasörüne yükleyemedi.",
     "Filename": "Dosya adı",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "NoPermissions": "Bu klasöre erişmek için izin yok",
     "ProcessingUpload": "Dosyanız yükleniyor. \nLütfen bekleyin.",
+    "SelectedItemsDeletedSuccessfully": "Seçili dosya başarıyla silindi.",
+    "SelectedItemsDeletionFailed": "Dosyalar silinirken bir hata oluştu. Lütfen tekrar deneyin.",
     "SuccessfullyUploadedToFolder": "Dosyalar başarıyla yüklendi.",
     "UploadFailed": "Yükleme başarısız oldu '{{folderName}}'",
     "UploadingFiles": "Dosyalar yükleniyor...",

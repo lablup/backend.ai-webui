@@ -658,6 +658,7 @@
     "Title": "Ralat telah berlaku."
   },
   "explorer": {
+    "DeletingSelectedItems": "Sedang memadam fail yang dipilih. Sila tunggu.",
     "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna.",
     "FileUploadFailed": "Gagal memuat naik beberapa fail dalam folder '{{folderName}}'.",
     "Filename": "Nama fail",
@@ -666,6 +667,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
     "NoPermissions": "Tiada kebenaran untuk mengakses folder ini",
     "ProcessingUpload": "Fail anda sedang dimuat naik. \nTolong tunggu.",
+    "SelectedItemsDeletedSuccessfully": "Fail yang dipilih telah berjaya dipadam.",
+    "SelectedItemsDeletionFailed": "Ralat berlaku semasa memadam fail. Sila cuba lagi.",
     "SuccessfullyUploadedToFolder": "Fail dimuat naik dengan jayanya.",
     "UploadFailed": "Muat naik gagal dalam '{{folderName}}'",
     "UploadingFiles": "Memuat naik fail ...",

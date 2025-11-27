@@ -658,6 +658,7 @@
     "Title": "Si è verificato un errore."
   },
   "explorer": {
+    "DeletingSelectedItems": "Eliminazione dei file selezionati in corso. Attendere...",
     "FileUploadCancelled": "Il caricamento del file è stato cancellato dalla richiesta dell'utente.",
     "FileUploadFailed": "Impossibile caricare alcuni file nella cartella '{{folderName}}'.",
     "Filename": "Nome del file",
@@ -666,6 +667,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "NoPermissions": "Nessuna autorizzazione per accedere a questa cartella",
     "ProcessingUpload": "Il tuo file viene caricato. \nAttendere prego.",
+    "SelectedItemsDeletedSuccessfully": "Il file selezionato è stato eliminato con successo.",
+    "SelectedItemsDeletionFailed": "Si è verificato un errore durante l'eliminazione dei file. Riprova.",
     "SuccessfullyUploadedToFolder": "File caricati correttamente.",
     "UploadFailed": "Caricamento non riuscito in '{{folderName}'",
     "UploadingFiles": "Caricamento file...",

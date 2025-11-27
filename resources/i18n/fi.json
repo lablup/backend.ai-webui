@@ -659,6 +659,7 @@
     "Title": "On tapahtunut virhe."
   },
   "explorer": {
+    "DeletingSelectedItems": "Poistetaan valittuja tiedostoja. Odota hetki.",
     "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
     "Filename": "Tiedoston nimi",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
     "NoPermissions": "Ei oikeuksia käyttää tätä kansiota",
     "ProcessingUpload": "Tiedostosi ladataan. \nOdota.",
+    "SelectedItemsDeletedSuccessfully": "Valittu tiedosto on poistettu onnistuneesti.",
+    "SelectedItemsDeletionFailed": "Tiedostojen poistossa tapahtui virhe. Yritä uudelleen.",
     "SuccessfullyUploadedToFolder": "Tiedostot on ladattu onnistuneesti.",
     "UploadFailed": "Lähettäminen epäonnistui '{{folderName}}'",
     "UploadingFiles": "Ladataan tiedostoja...",

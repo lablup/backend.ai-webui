@@ -659,6 +659,7 @@
     "Title": "Wystąpił błąd."
   },
   "explorer": {
+    "DeletingSelectedItems": "Usuwanie wybranych plików. Proszę czekać.",
     "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
     "Filename": "Nazwa pliku",
@@ -666,6 +667,8 @@
     "InputTooShort": "Wejście zbyt krótkie",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
+    "SelectedItemsDeletedSuccessfully": "Wybrany plik został pomyślnie usunięty.",
+    "SelectedItemsDeletionFailed": "Wystąpił błąd podczas usuwania plików. Spróbuj ponownie.",
     "SuccessfullyUploadedToFolder": "Pliki przesłane pomyślnie.",
     "UploadFailed": "Przesyłanie nie powiodło się w '{{folderName}}' '",
     "UploadingFiles": "Przesyłanie plików...",

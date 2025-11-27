@@ -57,6 +57,13 @@ export interface BAIFileExplorerProps {
   enableWrite?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
   ref?: React.Ref<BAIFileExplorerRef>;
+  onDeleteFilesInBackground?: (
+    bgTaskId: string,
+    targetVFolderId: string,
+    deletingFilePaths: Array<string>,
+  ) => void;
+  // FIXME: need to delete when `delete-file-async` API returns deleting file paths
+  deletingFilePaths?: Array<string>;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -68,6 +75,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  onDeleteFilesInBackground,
+  deletingFilePaths,
   style,
   ref,
 }) => {
@@ -187,7 +196,17 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.Controls'),
       width: 80,
-      render: (_, record) => {
+      render: (_controls, record) => {
+        // true if the file is being deleted or its parent directory is being deleted
+        const isPendingDelete =
+          _.includes(deletingFilePaths, `${currentPath}/${record.name}`) ||
+          _.some(deletingFilePaths, (path) =>
+            _.startsWith(
+              currentPath,
+              _.endsWith(path, '/') ? path : `${path}/`,
+            ),
+          );
+
         return (
           <Suspense fallback={<Skeleton.Button size="small" active />}>
             <FileItemControls
@@ -197,6 +216,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               }}
               enableDownload={enableDownload}
               enableDelete={enableDelete}
+              deleteButtonProps={{ loading: isPendingDelete }}
             />
           </Suspense>
         );
@@ -288,6 +308,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableDelete={enableDelete}
             enableWrite={enableWrite}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
+            onDeleteFilesInBackground={onDeleteFilesInBackground}
             onRequestClose={(
               success: boolean,
               modifiedItems?: Array<VFolderFile>,
@@ -364,6 +385,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         <DeleteSelectedItemsModal
           open={!!selectedSingleItem}
           selectedFiles={selectedSingleItem ? [selectedSingleItem] : []}
+          onDeleteFilesInBackground={onDeleteFilesInBackground}
           onRequestClose={(success: boolean) => {
             if (success) {
               setSelectedItems((prev) =>

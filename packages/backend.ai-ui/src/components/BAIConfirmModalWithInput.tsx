@@ -1,7 +1,7 @@
 import BAIFlex from './BAIFlex';
 import BAIModal, { BAIModalProps } from './BAIModal';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Form, Input, Typography } from 'antd';
+import { Form, Input, InputProps, theme, Typography } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ export interface BAIConfirmModalWithInputProps
   title: React.ReactNode;
   icon?: React.ReactNode;
   okButtonProps?: Omit<BAIModalProps['okButtonProps'], 'disabled' | 'danger'>;
+  inputProps?: InputProps;
 }
 
 const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
@@ -23,9 +24,11 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
   icon,
   onOk,
   onCancel,
-  ...props
+  inputProps,
+  ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [form] = Form.useForm();
   const typedText = Form.useWatch('confirmText', form);
 
@@ -37,7 +40,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
           <Text strong>
             {icon ?? (
               <ExclamationCircleFilled
-                style={{ color: '#faad14', marginRight: 5 }}
+                style={{ color: token.colorWarning, marginRight: 5 }}
               />
             )}
             {title}
@@ -52,9 +55,9 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         form.resetFields();
         onCancel?.(e);
       }}
-      {...props}
+      {...modalProps}
       okButtonProps={{
-        ...props.okButtonProps,
+        ...modalProps.okButtonProps,
         disabled: confirmText !== typedText,
         danger: true,
       }}
@@ -83,9 +86,11 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
               autoFocus
               autoComplete="off"
               allowClear
+              {...inputProps}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                inputProps?.onClick?.(e);
               }}
             />
           </Form.Item>
