@@ -25,7 +25,16 @@ Based on the argument provided:
 - **commit**: Use `git diff HEAD~1..HEAD` to get latest commit changes
 
 ### Jira Issue Creation
-- You do **not** have to include a summary of changed files or key modifications in the issue description. Instead, focus on describing the background or purpose for which a PR is needed.
+- **IMPORTANT**: The issue description should explain **WHY** this work is needed (background, purpose, motivation), **NOT HOW** to do it (implementation details, step-by-step instructions).
+- Focus on:
+  - The problem or need that triggered this work
+  - Business or technical justification
+  - Context and background information
+  - Expected outcomes or goals
+- Do **NOT** include:
+  - Implementation steps or "how to do it" instructions
+  - Detailed lists of file changes or code modifications
+  - Technical execution details (these belong in the PR description)
 - Whenever possible, follow the recommended Jira title and description format for Story, Task, or Bug issues.
 - Please determine the appropriate Jira issue type (Story, Task, or Bug) based on the content.
 - **Before creating the Jira issue, display the issue content (title, description, type) in a readable format on screen for user review**

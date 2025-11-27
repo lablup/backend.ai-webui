@@ -80,10 +80,6 @@ git diff --cached
 
 # Create new branch for staged changes
 gt create feat/FR-1234-implement-feature  -m "feat(FR-1234): implement new feature functionality"
-
-# IMPORTANT: Ask user for confirmation before submitting
-# Review changes and commit message with user first
-# Then submit stack for review
 gt stack submit
 ```
 
