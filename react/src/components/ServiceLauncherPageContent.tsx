@@ -8,6 +8,7 @@ import {
   convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
+import { getRuntimeEnvVarConfigs } from '../helper/runtimeVariantConfigs';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -148,6 +149,7 @@ interface ServiceLauncherPageContentProps {
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
 }) => {
+  'use memo';
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { t } = useTranslation();
@@ -174,6 +176,105 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     useCurrentResourceGroupState();
 
   const { getErrorMessage } = useErrorMessageResolver();
+
+  // Helper function to set environment variables based on runtime variant
+  const setEnvironmentVariablesForRuntimeVariant = (
+    runtimeVariant: string,
+    allValues: ServiceLauncherFormValue,
+  ) => {
+    const RUNTIME_ENV_VAR_CONFIGS = getRuntimeEnvVarConfigs(t);
+    const runtimeConfig = RUNTIME_ENV_VAR_CONFIGS[runtimeVariant];
+    if (!runtimeConfig) return;
+
+    const currentEnvVars = allValues.envvars || [];
+    const existingVariables = _.map(
+      _.filter(
+        currentEnvVars,
+        (env: EnvVarFormListValue) => env != null && !!env.variable,
+      ),
+      'variable',
+    );
+
+    // Add required environment variables that don't exist
+    const newRequiredEnvVars = _.map(
+      _.filter(
+        runtimeConfig.requiredEnvVars || [],
+        (envVar) => !_.includes(existingVariables, envVar.variable),
+      ),
+      (envVar) => ({
+        variable: envVar.variable,
+        value: '',
+      }),
+    );
+
+    if (newRequiredEnvVars.length > 0) {
+      const updatedEnvVars = [...currentEnvVars, ...newRequiredEnvVars];
+      form.setFieldValue('envvars', updatedEnvVars);
+    }
+  };
+
+  // Create validation function for environment variables based on runtime variant
+  const createValidateVariableFunction = (
+    runtimeVariant: string | undefined,
+    t: ReturnType<typeof useTranslation>['t'],
+  ) => {
+    return (variableName: string) => {
+      if (!runtimeVariant || !variableName) {
+        return true; // Don't validate if no runtime variant or variable name
+      }
+
+      const RUNTIME_ENV_VAR_CONFIGS = getRuntimeEnvVarConfigs(t);
+      const currentRuntimeConfig = RUNTIME_ENV_VAR_CONFIGS[runtimeVariant];
+      if (!currentRuntimeConfig) {
+        return true; // Don't validate if runtime config not found
+      }
+
+      // Get all variables from current runtime
+      const currentRuntimeVars = [
+        ...(currentRuntimeConfig.requiredEnvVars || []),
+        ...(currentRuntimeConfig.optionalEnvVars || []),
+      ];
+      const currentRuntimeVariables = _.map(currentRuntimeVars, 'variable');
+
+      // Get all variables from other runtimes
+      const otherRuntimeVariables: string[] = [];
+      _.forEach(RUNTIME_ENV_VAR_CONFIGS, (config, runtimeName) => {
+        if (runtimeName !== runtimeVariant) {
+          const vars = [
+            ...(config.requiredEnvVars || []),
+            ...(config.optionalEnvVars || []),
+          ];
+          otherRuntimeVariables.push(..._.map(vars, 'variable'));
+        }
+      });
+
+      // If variable is defined in current runtime, it's valid
+      if (_.includes(currentRuntimeVariables, variableName)) {
+        return true;
+      }
+
+      // If variable is defined in other runtimes but not in current, it's invalid
+      if (_.includes(otherRuntimeVariables, variableName)) {
+        return false; // This will trigger the warning
+      }
+
+      // If variable is not defined in any runtime config, it's user-defined and valid
+      return true;
+    };
+  };
+
+  // Handler for form values change
+  const handleFormValuesChange = (
+    changedValues: Partial<ServiceLauncherInput>,
+    allValues: ServiceLauncherFormValue,
+  ) => {
+    if (changedValues.runtimeVariant && !endpoint) {
+      setEnvironmentVariablesForRuntimeVariant(
+        changedValues.runtimeVariant,
+        allValues,
+      );
+    }
+  };
 
   const endpoint = useFragment(
     graphql`
@@ -289,7 +390,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     mutationFn: (values) => {
       const environ: { [key: string]: string } = {};
       if (values.envvars) {
-        values.envvars.forEach((v) => (environ[v.variable] = v.value));
+        values.envvars
+          .filter(
+            (v: EnvVarFormListValue) => v != null && !!v.variable && !!v.value,
+          )
+          .forEach((v) => {
+            environ[v.variable] = v.value;
+          });
       }
       const body: ServiceCreateType = {
         name: values.serviceName,
@@ -535,7 +642,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             };
           const newEnvirons: { [key: string]: string } = {};
           if (values.envvars) {
-            values.envvars.forEach((v) => (newEnvirons[v.variable] = v.value));
+            values.envvars
+              .filter(
+                (v: EnvVarFormListValue) =>
+                  v != null && !!v.variable && !!v.value,
+              )
+              .forEach((v: EnvVarFormListValue) => {
+                newEnvirons[v.variable] = v.value;
+              });
           }
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
           commitModifyEndpoint({
@@ -635,7 +749,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               'envvars',
             ]),
             {
-              envvars: sanitizeSensitiveEnv(currentValue.envvars),
+              envvars: sanitizeSensitiveEnv(form.getFieldValue('envvars')),
             },
           ),
         },
@@ -766,6 +880,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 layout="vertical"
                 labelCol={{ span: 12 }}
                 initialValues={mergedInitialValues}
+                onValuesChange={handleFormValuesChange}
               >
                 <BAIFlex direction="column" gap={'md'} align="stretch">
                   <Card>
@@ -780,7 +895,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Input disabled={!!endpoint} />
                         </Form.Item>
                         <Form.Item name="openToPublic" valuePropName="checked">
-                          <Checkbox disabled={!!endpoint}>{t('modelService.OpenToPublic')}</Checkbox>
+                          <Checkbox disabled={!!endpoint}>
+                            {t('modelService.OpenToPublic')}
+                          </Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
@@ -837,6 +954,23 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 };
                               },
                             )}
+                            onChange={() => {
+                              // Force re-validation of all environment variable fields after form state updates
+                              queueMicrotask(() => {
+                                const envvars =
+                                  form.getFieldValue('envvars') || [];
+                                const fieldNames = envvars.map(
+                                  (_: string, index: number) => [
+                                    'envvars',
+                                    index,
+                                    'variable',
+                                  ],
+                                );
+                                if (fieldNames.length > 0) {
+                                  form.validateFields(fieldNames);
+                                }
+                              });
+                            }}
                           />
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
@@ -1013,15 +1147,63 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         >
                           <ResourceAllocationFormItems enableResourcePresets />
                         </div>
-                        <Form.Item
-                          label={t('session.launcher.EnvironmentVariable')}
-                        >
-                          <EnvVarFormList
-                            name={'envvars'}
-                            formItemProps={{
-                              validateTrigger: ['onChange', 'onBlur'],
-                            }}
-                          />
+                        <Form.Item dependencies={['runtimeVariant']} noStyle>
+                          {({ getFieldValue }) => {
+                            const runtimeVariant =
+                              getFieldValue('runtimeVariant');
+                            const RUNTIME_ENV_VAR_CONFIGS =
+                              getRuntimeEnvVarConfigs(t);
+                            const runtimeVariantConfig = runtimeVariant
+                              ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
+                              : null;
+
+                            return (
+                              <Form.Item
+                                label={t(
+                                  'session.launcher.EnvironmentVariable',
+                                )}
+                              >
+                                <EnvVarFormList
+                                  name={'envvars'}
+                                  requiredEnvVars={
+                                    runtimeVariantConfig?.requiredEnvVars
+                                  }
+                                  optionalEnvVars={
+                                    runtimeVariantConfig?.optionalEnvVars
+                                  }
+                                  formItemProps={{
+                                    validateTrigger: ['onChange', 'onBlur'],
+                                    rules: [
+                                      {
+                                        warningOnly: true,
+                                        validator: async (
+                                          _rule,
+                                          value: string,
+                                        ) => {
+                                          if (!value) {
+                                            return Promise.resolve();
+                                          }
+
+                                          const validateVariable =
+                                            createValidateVariableFunction(
+                                              runtimeVariant,
+                                              t,
+                                            );
+                                          if (!validateVariable(value)) {
+                                            throw t(
+                                              'session.launcher.EnvironmentVariableNotForRuntime',
+                                            );
+                                          } else {
+                                            return Promise.resolve();
+                                          }
+                                        },
+                                      },
+                                    ],
+                                  }}
+                                />
+                              </Form.Item>
+                            );
+                          }}
                         </Form.Item>
                       </>
                     )}

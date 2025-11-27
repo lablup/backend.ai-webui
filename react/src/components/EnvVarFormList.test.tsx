@@ -33,4 +33,18 @@ describe('emptySensitiveEnv', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should not sanitize NGC_API_KEY even though it matches sensitive pattern', () => {
+    const envs = [
+      { variable: 'NGC_API_KEY', value: 'my-secret-ngc-key' },
+      { variable: 'OTHER_API_KEY', value: 'should-be-sanitized' },
+    ];
+
+    const result = sanitizeSensitiveEnv(envs);
+
+    expect(result).toEqual([
+      { variable: 'NGC_API_KEY', value: 'my-secret-ngc-key' },
+      { variable: 'OTHER_API_KEY', value: '' },
+    ]);
+  });
 });
