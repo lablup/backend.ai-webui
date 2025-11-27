@@ -4,11 +4,14 @@ import {
   formatDurationAsDays,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import DoubleTag from '../DoubleTag';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
-import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
+import {
+  useResourceSlotsDetails,
+  useMemoizedJSONParse,
+  BAIFlex,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';

@@ -1,12 +1,11 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { Button, Select, SelectProps, Tooltip } from 'antd';
-import { BAIFlex, BAILink } from 'backend.ai-ui';
+import { useUpdatableState, BAIFlex, BAILink } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';

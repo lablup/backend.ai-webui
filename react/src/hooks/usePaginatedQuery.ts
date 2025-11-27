@@ -1,4 +1,4 @@
-import { useEventNotStable } from './useEventNotStable';
+import { useEventNotStable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition, useMemo, useRef, useEffect } from 'react';
 import { GraphQLTaggedNode, useLazyLoadQuery } from 'react-relay';

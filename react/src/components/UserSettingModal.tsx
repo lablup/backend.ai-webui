@@ -7,11 +7,7 @@ import {
   UserSettingModalModifyMutation,
 } from '../__generated__/UserSettingModalModifyMutation.graphql';
 import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
@@ -29,7 +25,7 @@ import {
   App,
   theme,
 } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, useUpdatableState } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

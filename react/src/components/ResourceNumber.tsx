@@ -1,9 +1,13 @@
 import { convertToBinaryUnit } from '../helper';
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import ImageWithFallback from './ImageWithFallback';
 import { Tooltip, Typography, theme } from 'antd';
-import { BAIFlex, BAINumberWithUnit } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAINumberWithUnit,
+  useResourceSlotsDetails,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';

@@ -1,9 +1,6 @@
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import {
-  ResourceSlotName,
-  useResourceSlotsDetails,
-} from '../../hooks/backendai';
+import { ResourceSlotName } from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
 import {
@@ -15,7 +12,7 @@ import {
   TooltipProps,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useResourceSlotsDetails } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

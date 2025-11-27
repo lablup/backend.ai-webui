@@ -16,6 +16,6 @@
     "resolveJsonModule": true,
     "types": ["vite-plugin-svgr/client"]
   },
-  "include": ["src/**/*", "svg.d.ts", "vite.config.ts"],
+  "include": ["src/**/*", "svg.d.ts", "vite.config.ts", "setupTests.ts"],
   "exclude": ["node_modules"]
 }

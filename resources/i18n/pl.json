@@ -1097,10 +1097,12 @@
   },
   "project": {
     "Active": "Aktywny",
+    "BulkEdit": "Masowa edycja",
     "Domain": "Domena",
     "Name": "Nazwa",
     "Project": "Projekt",
     "ProjectID": "ID projektu",
+    "ProjectIDFilterRuleMessage": "Nieprawidłowy UUID.",
     "ResourcePolicy": "Polityka zasobów"
   },
   "registry": {
