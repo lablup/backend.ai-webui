@@ -1,6 +1,5 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
-import BAIAlert from '../components/BAIAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
 import StartFromURLModal from '../components/StartFromURLModal';
@@ -18,6 +17,7 @@ import {
   BAIInteractiveSessionIcon,
   BAIBatchSessionIcon,
   BAINewFolderIcon,
+  BAIAlert,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';

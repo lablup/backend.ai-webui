@@ -1,13 +1,17 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '.';
-import { maskString, useBaiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '.';
+import { maskString } from '../helper';
 import {
   useSuspenseTanQuery,
   useTanMutation,
   useTanQuery,
 } from './reactQueryAlias';
-import { useViewer } from 'backend.ai-ui';
+import {
+  ResourceSlotDetail,
+  useUpdatableState,
+  useViewer,
+} from 'backend.ai-ui';
 import _ from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
@@ -62,18 +66,6 @@ export const useResourceSlots = () => {
   ] as const;
 };
 
-export type ResourceSlotDetail = {
-  slot_name: string;
-  description: string;
-  human_readable_name: string;
-  display_unit: string;
-  number_format: {
-    binary: boolean;
-    round_length: number;
-  };
-  display_icon: string;
-};
-
 export const useDeviceMetaData = (key = 'first') => {
   return useTanQuery<{ [key: string]: ResourceSlotDetail | undefined }>({
     queryKey: ['backendai-metadata-device', key],
@@ -84,46 +76,6 @@ export const useDeviceMetaData = (key = 'first') => {
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
-};
-
-/**
- * Custom hook to fetch resource slot details by resource group name.
- * @param resourceGroupName - The name of the resource group. if not provided, it will use resource/device_metadata.json
- * @returns An array containing the resource slots and a refresh function.
- */
-export const useResourceSlotsDetails = (resourceGroupName?: string) => {
-  const [key, checkUpdate] = useUpdatableState('first');
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
-    [key in ResourceSlotName]: ResourceSlotDetail | undefined;
-  }>({
-    queryKey: ['useResourceSlots', resourceGroupName, key],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      resourceGroupName && search.set('sgroup', resourceGroupName);
-      const searchParamString = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        // if `sgroup` is not provided, it will return all resource slots of all resource groups
-        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
-      });
-    },
-    staleTime: 3000,
-  });
-
-  // TODO: improve waterfall loading
-  const { data: deviceMetadata } = useDeviceMetaData(key);
-
-  return {
-    resourceSlotsInRG,
-    deviceMetadata,
-    mergedResourceSlots: useMemo(
-      () => _.merge({}, deviceMetadata, resourceSlotsInRG),
-      [deviceMetadata, resourceSlotsInRG],
-    ),
-    refresh: useCallback(() => checkUpdate(), [checkUpdate]),
-    isLoading,
-  };
 };
 
 interface UserInfo {
@@ -291,19 +243,6 @@ export const useTOTPSupported = () => {
   });
 
   return { isTOTPSupported: isManagerSupportingTOTP, isLoading };
-};
-
-export const useAllowedHostNames = () => {
-  const baiClient = useSuspendedBackendaiClient();
-  const { data: allowedHosts } = useSuspenseTanQuery<{
-    allowed: Array<string>;
-  }>({
-    queryKey: ['useAllowedHostNames'],
-    queryFn: () => {
-      return baiClient.vfolder.list_all_hosts();
-    },
-  });
-  return allowedHosts?.allowed;
 };
 
 export interface InvitationItem {

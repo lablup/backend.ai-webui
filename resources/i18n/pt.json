@@ -1099,10 +1099,12 @@
   },
   "project": {
     "Active": "Ativo",
+    "BulkEdit": "Edição em massa",
     "Domain": "Domínio",
     "Name": "Nome",
     "Project": "Projeto",
     "ProjectID": "ID do projeto",
+    "ProjectIDFilterRuleMessage": "UUID inválido.",
     "ResourcePolicy": "Política de Recursos"
   },
   "registry": {

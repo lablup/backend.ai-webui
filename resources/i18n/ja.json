@@ -1099,10 +1099,12 @@
   },
   "project": {
     "Active": "アクティブ",
+    "BulkEdit": "一括編集",
     "Domain": "ドメイン",
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
+    "ProjectIDFilterRuleMessage": "無効なUUIDです。",
     "ResourcePolicy": "リソースポリシー"
   },
   "registry": {

@@ -1,7 +1,7 @@
 import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { useUpdatableState, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -13,6 +13,7 @@ import {
   BAIPropertyFilter,
   filterOutEmpty,
   mergeFilterValues,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';

@@ -420,3 +420,9 @@ export const generateRandomString = (n = 3) => {
 
   return randStr;
 };
+
+export const isValidUUID = (uuid: string) => {
+  const regex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+  return regex.test(uuid);
+};

@@ -4,10 +4,14 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import { Col, Row, theme, Typography } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  useResourceSlotsDetails,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

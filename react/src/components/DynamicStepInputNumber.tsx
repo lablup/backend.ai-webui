@@ -1,6 +1,6 @@
-import { useUpdatableState } from '../hooks';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { InputNumber, InputNumberProps } from 'antd';
+import { useUpdatableState } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 

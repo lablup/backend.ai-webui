@@ -7,11 +7,10 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useMemo } from 'react';

@@ -10,9 +10,7 @@ import {
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import AllowedHostNamesSelect from './AllowedHostNamesSelect';
-import DynamicUnitInputNumber from './DynamicUnitInputNumber';
+import { useResourceSlots } from '../hooks/backendai';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -29,7 +27,14 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIDynamicUnitInputNumber,
+  BAIAllowedHostNamesSelect,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  useResourceSlotsDetails,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -423,7 +428,9 @@ const KeypairResourcePolicySettingModal: React.FC<
                         style={{ margin: 0, width: '100%' }}
                       >
                         {_.includes(resourceSlotKey, 'mem') ? (
-                          <DynamicUnitInputNumber style={{ width: '100%' }} />
+                          <BAIDynamicUnitInputNumber
+                            style={{ width: '100%' }}
+                          />
                         ) : (
                           <InputNumber
                             min={0}
@@ -564,7 +571,7 @@ const KeypairResourcePolicySettingModal: React.FC<
               label={t('resourcePolicy.AllowedHosts')}
               name="allowed_vfolder_hosts"
             >
-              <AllowedHostNamesSelect mode="multiple" />
+              <BAIAllowedHostNamesSelect mode="multiple" />
             </Form.Item>
           </Card>
         </Form.Item>

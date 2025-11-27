@@ -1100,10 +1100,12 @@
   },
   "project": {
     "Active": "Hoạt động",
+    "BulkEdit": "Chỉnh sửa hàng loạt",
     "Domain": "Miền",
     "Name": "Tên",
     "Project": "Dự án",
     "ProjectID": "ID dự án",
+    "ProjectIDFilterRuleMessage": "UUID không hợp lệ.",
     "ResourcePolicy": "Chính sách tài nguyên"
   },
   "registry": {
