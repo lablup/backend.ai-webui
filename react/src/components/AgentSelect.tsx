@@ -5,12 +5,17 @@ import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, theme } from 'antd';
 import { filterOutEmpty, BAIFlex, mergeFilterValues } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useDeferredValue, useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends Omit<SelectProps, 'options'> {
-  autoSelectDefault?: boolean;
+  fallbackToAuto?: boolean;
   fetchKey?: string;
   resourceGroup?: string | null;
 }
@@ -18,6 +23,7 @@ interface Props extends Omit<SelectProps, 'options'> {
 const AgentSelect: React.FC<Props> = ({
   fetchKey,
   resourceGroup,
+  fallbackToAuto,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -93,6 +99,7 @@ const AgentSelect: React.FC<Props> = ({
         }
       })
       .value();
+
     return {
       label: (
         <BAIFlex
@@ -127,6 +134,24 @@ const AgentSelect: React.FC<Props> = ({
     .includes(deferredSearchStr?.toLowerCase() ?? '')
     ? { label: t('session.launcher.AutoSelect'), value: 'auto' }
     : undefined;
+
+  const changeToAutoWhenInvalidValueEffectEvent = useEffectEvent(() => {
+    if (fallbackToAuto && value) {
+      const valueArray = _.castArray(value);
+      const validValues = agentOptions.map((option) => option.value);
+      const newValue = valueArray.filter((v) =>
+        validValues.includes(v as string),
+      );
+      if (!_.isEqual(valueArray, newValue)) {
+        setValue('auto');
+      }
+    }
+  });
+
+  useEffect(() => {
+    changeToAutoWhenInvalidValueEffectEvent();
+  }, [value, agentOptions]);
+
   return (
     <Select
       loading={searchStr !== deferredSearchStr}
