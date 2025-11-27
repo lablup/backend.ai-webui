@@ -659,6 +659,7 @@
     "Title": "Ocorreu um erro."
   },
   "explorer": {
+    "DeletingSelectedItems": "Excluindo os arquivos selecionados. Aguarde, por favor.",
     "FileUploadCancelled": "O upload do arquivo foi cancelado por solicitação do usuário.",
     "FileUploadFailed": "Falha ao fazer upload de alguns arquivos na pasta '{{folderName}}'.",
     "Filename": "Nome do arquivo",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
     "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
+    "SelectedItemsDeletedSuccessfully": "O ficheiro selecionado foi eliminado com sucesso.",
+    "SelectedItemsDeletionFailed": "Ocorreu um erro ao excluir os arquivos. Por favor, tente novamente.",
     "SuccessfullyUploadedToFolder": "Arquivos enviados com sucesso.",
     "UploadFailed": "O upload falhou em '{{folderName}}'",
     "UploadingFiles": "Fazendo upload de arquivos...",

@@ -656,6 +656,7 @@
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {
+    "DeletingSelectedItems": "Διαγράφονται τα επιλεγμένα αρχεία. Παρακαλώ περιμένετε.",
     "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
     "FileUploadFailed": "Απέτυχε να ανεβάσει κάποια αρχεία στο φάκελο '{{folderName}}'.",
     "Filename": "Όνομα αρχείου",
@@ -664,6 +665,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "NoPermissions": "Δεν υπάρχουν δικαιώματα πρόσβασης σε αυτόν τον φάκελο",
     "ProcessingUpload": "Το αρχείο σας μεταφορτώνεται. \nΠεριμένετε.",
+    "SelectedItemsDeletedSuccessfully": "Το επιλεγμένο αρχείο διαγράφηκε με επιτυχία.",
+    "SelectedItemsDeletionFailed": "Προέκυψε σφάλμα κατά τη διαγραφή των αρχείων. Παρακαλώ δοκιμάστε ξανά.",
     "SuccessfullyUploadedToFolder": "Τα αρχεία μεταφορτώθηκαν με επιτυχία.",
     "UploadFailed": "Η μεταφόρτωση απέτυχε στο '{{folderName}}'",
     "UploadingFiles": "Μεταφόρτωση αρχείων...",

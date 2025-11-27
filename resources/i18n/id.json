@@ -658,6 +658,7 @@
     "Title": "Telah terjadi kesalahan."
   },
   "explorer": {
+    "DeletingSelectedItems": "Menghapus file yang dipilih. Mohon tunggu.",
     "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna.",
     "FileUploadFailed": "Gagal mengunggah beberapa file di folder '{{folderName}}'.",
     "Filename": "Nama File",
@@ -666,6 +667,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
     "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
+    "SelectedItemsDeletedSuccessfully": "File terpilih berhasil dihapus.",
+    "SelectedItemsDeletionFailed": "Terjadi kesalahan saat menghapus file. Silakan coba lagi.",
     "SuccessfullyUploadedToFolder": "File berhasil diunggah.",
     "UploadFailed": "Unggah gagal di '{{folderName}}'",
     "UploadingFiles": "Mengunggah file...",

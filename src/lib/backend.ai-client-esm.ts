@@ -828,6 +828,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.16.0')) {
       this._features['multi-agents'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.17.0')) {
+      this._features['background-file-delete'] = true;
+    }
   }
 
   /**
@@ -2453,9 +2456,12 @@ class VFolder {
       files: files,
       recursive: recursive,
     };
+    
     let rqst = this.client.newSignedRequest(
-      this.client._managerVersion >= '24.03.7' ? 'POST' : 'DELETE',
-      `${this.urlPrefix}/${name}/delete-files`,
+      'POST',
+      this.client.supports('background-file-delete') 
+        ? `${this.urlPrefix}/${name}/delete-files-async` 
+        : `${this.urlPrefix}/${name}/delete-files`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

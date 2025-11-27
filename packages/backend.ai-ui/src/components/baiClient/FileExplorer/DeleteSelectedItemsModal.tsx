@@ -9,13 +9,19 @@ import _ from 'lodash';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface DeleteSelectedItemsModalProps extends ModalProps {
-  onRequestClose: (success: boolean) => void;
+export interface DeleteSelectedItemsModalProps extends ModalProps {
+  onRequestClose: (success: boolean, deletingFilePaths?: Array<string>) => void;
+  onDeleteFilesInBackground?: (
+    bgTaskId: string,
+    targetVFolderId: string,
+    deletingFilePaths: Array<string>,
+  ) => void;
   selectedFiles: Array<VFolderFile>;
 }
 
 const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   onRequestClose,
+  onDeleteFilesInBackground,
   selectedFiles,
   ...modalProps
 }) => {
@@ -49,11 +55,19 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
         recursive: true,
         name: targetVFolderId,
       })
-      .then(() => {
-        onRequestClose(true);
-        message.success(
-          t('comp:FileExplorer.SelectedItemsDeletedSuccessfully'),
-        );
+      .then(({ bgtask_id }: { bgtask_id: string }) => {
+        onRequestClose(true, selectedFileNames);
+        if (bgtask_id) {
+          onDeleteFilesInBackground?.(
+            bgtask_id,
+            targetVFolderId,
+            selectedFileNames,
+          );
+        } else {
+          message.success(
+            t('comp:FileExplorer.SelectedItemsDeletedSuccessfully'),
+          );
+        }
       })
       .catch((err) => {
         if (err && err.message) {
@@ -69,6 +83,7 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
       title={t('comp:FileExplorer.DeleteSelectedItemsDialog')}
       okText={t('general.button.Delete')}
       okButtonProps={{ danger: true, loading: deleteFilesMutation.isPending }}
+      inputProps={{ disabled: deleteFilesMutation.isPending }}
       onOk={handleDelete}
       onCancel={() => onRequestClose(false)}
       confirmText={

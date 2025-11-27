@@ -1,4 +1,5 @@
 import { BAITrashBinIcon } from '../../../icons';
+import { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
@@ -14,6 +15,8 @@ interface FileItemControlsProps {
   onClickDelete: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
+  downloadButtonProps?: BAIButtonProps;
+  deleteButtonProps?: BAIButtonProps;
 }
 
 const FileItemControls: React.FC<FileItemControlsProps> = ({
@@ -21,6 +24,8 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
   onClickDelete,
   enableDownload = false,
   enableDelete = false,
+  downloadButtonProps,
+  deleteButtonProps,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -90,6 +95,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
           e.stopPropagation();
           handleDownload();
         }}
+        {...downloadButtonProps}
       />
       <Button
         type="text"
@@ -100,6 +106,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
           e.stopPropagation();
           onClickDelete();
         }}
+        {...deleteButtonProps}
       />
     </BAIFlex>
   );

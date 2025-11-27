@@ -659,6 +659,7 @@
     "Title": "Произошла ошибка."
   },
   "explorer": {
+    "DeletingSelectedItems": "Удаление выбранных файлов. Пожалуйста, подождите.",
     "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом.",
     "FileUploadFailed": "Не удалось загрузить некоторые файлы в папке '{{folderName}}'.",
     "Filename": "Имя файла",
@@ -666,6 +667,8 @@
     "InputTooShort": "ВводОченьКороток",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
     "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
+    "SelectedItemsDeletedSuccessfully": "Выбранный файл успешно удалён.",
+    "SelectedItemsDeletionFailed": "Произошла ошибка при удалении файлов. Пожалуйста, попробуйте ещё раз.",
     "SuccessfullyUploadedToFolder": "Файлы успешно загружены.",
     "UploadFailed": "Загрузка не удалась в '{{folderName}}'",
     "UploadingFiles": "Загрузка файлов...",

@@ -648,6 +648,7 @@
     "Title": "เกิดข้อผิดพลาด"
   },
   "explorer": {
+    "DeletingSelectedItems": "กำลังลบไฟล์ที่เลือก โปรดรอ",
     "FileUploadCancelled": "การอัปโหลดไฟล์ถูกยกเลิกโดยคำขอผู้ใช้",
     "FileUploadFailed": "ไม่สามารถอัปโหลดไฟล์บางไฟล์ในโฟลเดอร์ '{{folderName}}'",
     "Filename": "ชื่อไฟล์",
@@ -656,6 +657,8 @@
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "NoPermissions": "ไม่มีสิทธิ์ในการเข้าถึงโฟลเดอร์นี้",
     "ProcessingUpload": "ไฟล์ของคุณกำลังถูกอัปโหลด \nโปรดรอ.",
+    "SelectedItemsDeletedSuccessfully": "ไฟล์ที่เลือกถูกลบเรียบร้อยแล้ว",
+    "SelectedItemsDeletionFailed": "เกิดข้อผิดพลาดขณะลบไฟล์ กรุณาลองอีกครั้ง",
     "SuccessfullyUploadedToFolder": "อัปโหลดไฟล์เรียบร้อยแล้ว",
     "UploadFailed": "การอัปโหลดล้มเหลวใน '{{folderName}}'",
     "UploadingFiles": "กำลังอัพโหลดไฟล์...",

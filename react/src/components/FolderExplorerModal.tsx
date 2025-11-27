@@ -1,5 +1,6 @@
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -8,13 +9,14 @@ import {
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAIFlex,
+  BAILink,
   BAIModal,
   BAIModalProps,
   toGlobalId,
   useInterval,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Suspense, useDeferredValue, useEffect, useRef } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { FolderExplorerModalQuery } from 'src/__generated__/FolderExplorerModalQuery.graphql';
@@ -23,6 +25,7 @@ import {
   useFetchKey,
   useSuspendedBackendaiClient,
 } from 'src/hooks';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
@@ -94,6 +97,11 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
         deferredOpen && modalProps.open ? 'network-only' : 'store-only',
     },
   );
+
+  // FIXME: This is a temporary workaround to notify file deletion to use WebUI Notification.
+  const { upsertNotification, closeNotification } = useSetBAINotification();
+  const { generateFolderPath } = useFolderExplorerOpener();
+  const [deletingFilePaths, setDeletingFilePaths] = useState<Array<string>>([]);
   const { uploadStatus, uploadFiles } = useFileUploadManager(
     vfolder_node?.id,
     vfolder_node?.name || undefined,
@@ -136,9 +144,52 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
+      deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
         uploadFiles(files, vfolderID, currentPath);
+      }}
+      onDeleteFilesInBackground={(
+        bgTaskId,
+        targetVFolderId,
+        deletingFilePaths,
+      ) => {
+        setDeletingFilePaths(deletingFilePaths);
+        upsertNotification({
+          key: `delete:${bgTaskId}`,
+          open: true,
+          message: (
+            <span>
+              {t('explorer.VFolder')}:&nbsp;
+              <BAILink
+                style={{
+                  fontWeight: 'normal',
+                }}
+                to={generateFolderPath(targetVFolderId)}
+                onClick={() => {
+                  closeNotification(`delete:${bgTaskId}`);
+                }}
+              >{`${vfolder_node.name}`}</BAILink>
+            </span>
+          ),
+          backgroundTask: {
+            status: 'pending',
+            taskId: bgTaskId,
+            promise: null,
+            percent: 0,
+            onChange: {
+              pending: t('explorer.DeletingSelectedItems'),
+              resolved: () => {
+                setDeletingFilePaths([]);
+                return t('explorer.SelectedItemsDeletedSuccessfully');
+              },
+              rejected: () => {
+                setDeletingFilePaths([]);
+                return t('explorer.SelectedItemsDeletionFailed');
+              },
+            },
+          },
+        });
       }}
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}

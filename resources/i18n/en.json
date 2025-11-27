@@ -664,6 +664,7 @@
     "Title": "An error has occurred."
   },
   "explorer": {
+    "DeletingSelectedItems": "Deleting the selected files. Please wait.",
     "FileUploadCancelled": "The file upload was canceled by user request.",
     "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "Filename": "File Name",
@@ -672,6 +673,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
     "ProcessingUpload": "Your file is being uploaded. Please wait.",
+    "SelectedItemsDeletedSuccessfully": "The selected files have been successfully deleted.",
+    "SelectedItemsDeletionFailed": "An error occurred while deleting the files. Please try again.",
     "SuccessfullyUploadedToFolder": "Files uploaded successfully.",
     "UploadFailed": "Upload failed in '{{folderName}}'",
     "UploadingFiles": "Uploading files...",

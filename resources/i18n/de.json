@@ -659,6 +659,7 @@
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {
+    "DeletingSelectedItems": "Die ausgewählten Dateien werden gelöscht. Bitte warten.",
     "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert.",
     "FileUploadFailed": "Es wurden einige Dateien nicht in Ordner '{{folderName}}' hochgeladen.",
     "Filename": "Dateiname",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
     "ProcessingUpload": "Ihre Datei wird hochgeladen. \nBitte warten.",
+    "SelectedItemsDeletedSuccessfully": "Die ausgewählte Datei wurde erfolgreich gelöscht.",
+    "SelectedItemsDeletionFailed": "Beim Löschen der Dateien ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
     "SuccessfullyUploadedToFolder": "Dateien erfolgreich hochgeladen.",
     "UploadFailed": "Upload fehlgeschlagen in '{{folderName}}' '",
     "UploadingFiles": "Dateien werden hochgeladen...",

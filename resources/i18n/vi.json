@@ -659,6 +659,7 @@
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {
+    "DeletingSelectedItems": "Đang xóa các tệp đã chọn. Vui lòng chờ.",
     "FileUploadCancelled": "Tải lên tệp đã bị hủy bởi yêu cầu người dùng.",
     "FileUploadFailed": "Không thể tải lên một số tệp trong thư mục '{{folderName}}'.",
     "Filename": "Tên tệp",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "NoPermissions": "Không có quyền truy cập thư mục này",
     "ProcessingUpload": "Tệp của bạn đang được tải lên. \nVui lòng chờ.",
+    "SelectedItemsDeletedSuccessfully": "Tệp được chọn đã được xóa thành công.",
+    "SelectedItemsDeletionFailed": "Đã xảy ra lỗi khi xóa các tệp. Vui lòng thử lại.",
     "SuccessfullyUploadedToFolder": "Các tập tin được tải lên thành công.",
     "UploadFailed": "Tải lên không thành công trong '{{folderName}}'",
     "UploadingFiles": "Đang tải tệp lên...",

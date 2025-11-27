@@ -659,6 +659,7 @@
     "Title": "发生错误。"
   },
   "explorer": {
+    "DeletingSelectedItems": "正在删除所选文件，请稍候。",
     "FileUploadCancelled": "文件上传已通过用户请求取消。",
     "FileUploadFailed": "无法将某些文件上传到文件夹'{{folderName}}'中。",
     "Filename": "文件名",
@@ -667,6 +668,8 @@
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
     "NoPermissions": "无权访问此文件夹",
     "ProcessingUpload": "您的文件正在上传。\n请稍等。",
+    "SelectedItemsDeletedSuccessfully": "所选文件已成功删除。",
+    "SelectedItemsDeletionFailed": "删除文件时出错，请重试。",
     "SuccessfullyUploadedToFolder": "文件上传成功。",
     "UploadFailed": "上传失败在'{{folderName}}'中",
     "UploadingFiles": "正在上传文件...",
