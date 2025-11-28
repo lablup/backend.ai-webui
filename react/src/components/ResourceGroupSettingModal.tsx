@@ -332,6 +332,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 { label: 'Batch', value: 'batch' },
                 { label: 'Interactive', value: 'interactive' },
                 { label: 'Inference', value: 'inference' },
+                { label: 'System', value: 'system' },
               ]}
             />
           </Form.Item>
