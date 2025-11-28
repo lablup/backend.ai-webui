@@ -1,0 +1,183 @@
+name: 'Test Coverage Steps'
+description: 'Runs tests and generates coverage reports for Backend.AI WebUI'
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Setup pnpm
+    - name: Setup pnpm
+      shell: bash
+      run: |
+        echo "=== Step 1: Setting up pnpm ===" | tee -a coverage-steps.log
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        pnpm --version | tee -a coverage-steps.log
+        echo "pnpm setup complete" | tee -a coverage-steps.log
+
+    # Step 2: Install dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "=== Step 2: Installing dependencies ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        pnpm install 2>&1 | tee -a coverage-steps.log
+        echo "Dependencies installed" | tee -a coverage-steps.log
+
+    # Step 3: Run relay compiler for React project
+    # The relay compiler generates GraphQL query artifacts needed by React components
+    - name: Run Relay Compiler
+      shell: bash
+      run: |
+        echo "=== Step 3: Running Relay compiler ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        cd react
+        pnpm run relay 2>&1 | tee -a ../coverage-steps.log
+        cd ..
+        echo "Relay compiler complete" | tee -a coverage-steps.log
+
+    # Step 4: Build the project
+    # This ensures all TypeScript is compiled and build artifacts are generated
+    - name: Build project
+      shell: bash
+      run: |
+        echo "=== Step 4: Building project ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        pnpm run build 2>&1 | tee -a coverage-steps.log
+        echo "Build complete" | tee -a coverage-steps.log
+
+    # Step 5: Run React tests with coverage
+    # Tests are located in /react/src/**/*.test.tsx
+    # Coverage report will be generated in react/coverage/
+    - name: Test React with coverage
+      shell: bash
+      run: |
+        echo "=== Step 5: Running React tests with coverage ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        cd react
+        pnpm test -- --coverage --coverageDirectory=./coverage --maxWorkers=2 2>&1 | tee -a ../coverage-steps.log
+        cd ..
+        echo "React tests complete" | tee -a coverage-steps.log
+        echo "React coverage report location: react/coverage/" | tee -a coverage-steps.log
+
+    # Step 6: Run backend.ai-ui tests with coverage
+    # Tests are located in /packages/backend.ai-ui/src/**/*.test.tsx
+    # Coverage report will be generated in packages/backend.ai-ui/coverage/
+    - name: Test backend.ai-ui with coverage
+      shell: bash
+      run: |
+        echo "=== Step 6: Running backend.ai-ui tests with coverage ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        cd packages/backend.ai-ui
+        pnpm test -- --coverage --coverageDirectory=./coverage --maxWorkers=2 2>&1 | tee -a ../../coverage-steps.log
+        cd ../..
+        echo "backend.ai-ui tests complete" | tee -a coverage-steps.log
+        echo "backend.ai-ui coverage report location: packages/backend.ai-ui/coverage/" | tee -a coverage-steps.log
+
+    # Step 7: Run legacy tests with coverage
+    # Tests are located in /src/**/*.test.ts
+    # Coverage report will be generated in coverage/ (root)
+    - name: Test legacy code with coverage
+      shell: bash
+      run: |
+        echo "=== Step 7: Running legacy tests with coverage ===" | tee -a coverage-steps.log
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        export PATH="$PNPM_HOME:$PATH"
+        pnpm test -- --coverage --coverageDirectory=./coverage --maxWorkers=2 2>&1 | tee -a coverage-steps.log
+        echo "Legacy tests complete" | tee -a coverage-steps.log
+        echo "Legacy coverage report location: coverage/" | tee -a coverage-steps.log
+
+    # Step 8: Organize coverage reports
+    # Creates a unified coverage directory with reports from all packages
+    - name: Organize coverage reports
+      shell: bash
+      run: |
+        echo "=== Step 8: Organizing coverage reports ===" | tee -a coverage-steps.log
+        mkdir -p coverage-reports
+        
+        # Copy React coverage
+        if [ -d "react/coverage" ]; then
+          cp -r react/coverage coverage-reports/react
+          echo "Copied React coverage to coverage-reports/react" | tee -a coverage-steps.log
+        fi
+        
+        # Copy backend.ai-ui coverage
+        if [ -d "packages/backend.ai-ui/coverage" ]; then
+          cp -r packages/backend.ai-ui/coverage coverage-reports/backend-ai-ui
+          echo "Copied backend.ai-ui coverage to coverage-reports/backend-ai-ui" | tee -a coverage-steps.log
+        fi
+        
+        # Copy legacy coverage
+        if [ -d "coverage" ]; then
+          cp -r coverage coverage-reports/legacy
+          echo "Copied legacy coverage to coverage-reports/legacy" | tee -a coverage-steps.log
+        fi
+        
+        echo "Coverage reports organized in: coverage-reports/" | tee -a coverage-steps.log
+        echo "  - coverage-reports/react/" | tee -a coverage-steps.log
+        echo "  - coverage-reports/backend-ai-ui/" | tee -a coverage-steps.log
+        echo "  - coverage-reports/legacy/" | tee -a coverage-steps.log
+
+    # Step 9: Generate coverage summary
+    - name: Generate coverage summary
+      shell: bash
+      run: |
+        echo "=== Step 9: Generating coverage summary ===" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "Coverage Summary:" | tee -a coverage-steps.log
+        echo "=================" | tee -a coverage-steps.log
+        
+        # React coverage summary
+        if [ -f "react/coverage/coverage-summary.json" ]; then
+          echo "" | tee -a coverage-steps.log
+          echo "React Project:" | tee -a coverage-steps.log
+          cat react/coverage/coverage-summary.json 2>&1 | tee -a coverage-steps.log
+        fi
+        
+        # backend.ai-ui coverage summary
+        if [ -f "packages/backend.ai-ui/coverage/coverage-summary.json" ]; then
+          echo "" | tee -a coverage-steps.log
+          echo "backend.ai-ui Package:" | tee -a coverage-steps.log
+          cat packages/backend.ai-ui/coverage/coverage-summary.json 2>&1 | tee -a coverage-steps.log
+        fi
+        
+        # Legacy coverage summary
+        if [ -f "coverage/coverage-summary.json" ]; then
+          echo "" | tee -a coverage-steps.log
+          echo "Legacy Code:" | tee -a coverage-steps.log
+          cat coverage/coverage-summary.json 2>&1 | tee -a coverage-steps.log
+        fi
+        
+        echo "" | tee -a coverage-steps.log
+        echo "Coverage summary generation complete" | tee -a coverage-steps.log
+
+    # Step 10: Upload coverage artifact
+    # This makes the coverage reports available for download and analysis
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          coverage-reports/
+          coverage-steps.log
+        retention-days: 30
+
+    # Step 11: Final summary
+    - name: Coverage steps complete
+      shell: bash
+      run: |
+        echo "=== Coverage Steps Complete ===" | tee -a coverage-steps.log
+        echo "All tests have been executed and coverage reports generated." | tee -a coverage-steps.log
+        echo "Coverage reports are available in the 'coverage' artifact." | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "To download and view coverage:" | tee -a coverage-steps.log
+        echo "1. Go to the workflow run in GitHub Actions" | tee -a coverage-steps.log
+        echo "2. Download the 'coverage' artifact" | tee -a coverage-steps.log
+        echo "3. Extract and open the HTML reports:" | tee -a coverage-steps.log
+        echo "   - coverage-reports/react/lcov-report/index.html" | tee -a coverage-steps.log
+        echo "   - coverage-reports/backend-ai-ui/lcov-report/index.html" | tee -a coverage-steps.log
+        echo "   - coverage-reports/legacy/lcov-report/index.html" | tee -a coverage-steps.log
