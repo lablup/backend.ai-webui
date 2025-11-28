@@ -14,7 +14,7 @@ import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DynamicUnitInputNumber from './DynamicUnitInputNumber';
 import ResourceGroupSelect from './ResourceGroupSelect';
-import { App, Col, Form, FormInstance, Input, InputNumber, Row } from 'antd';
+import { App, Form, FormInstance, Input, InputNumber } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Fragment, useRef } from 'react';
@@ -295,104 +295,96 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             />
           </Form.Item>
         )}
-        <Form.Item label={t('resourcePreset.ResourcePreset')} required>
-          <Row gutter={16}>
-            {_.map(
-              _.chunk(_.keys(resourceSlots), 2),
-              (resourceSlotKeys, index) => (
-                <Fragment key={index}>
-                  {_.map(resourceSlotKeys, (resourceSlotKey) => (
-                    <Col
-                      span={12}
-                      key={resourceSlotKey}
-                      style={{ alignSelf: 'end' }}
-                    >
-                      <Form.Item
-                        label={
+        <Form.Item
+          label={t('resourcePreset.ResourcePreset')}
+          required
+          layout="vertical"
+        >
+          {_.map(
+            _.chunk(_.keys(resourceSlots), 2),
+            (resourceSlotKeys, index) => (
+              <Fragment key={index}>
+                {_.map(resourceSlotKeys, (resourceSlotKey) => (
+                  <Form.Item
+                    label={
+                      _.get(mergedResourceSlots, resourceSlotKey)
+                        ?.description || resourceSlotKey
+                    }
+                    name={['resource_slots', resourceSlotKey]}
+                    rules={[
+                      _.includes(['cpu', 'mem'], resourceSlotKey)
+                        ? {
+                            required: true,
+                            message: t('data.explorer.ValueRequired'),
+                          }
+                        : {},
+                      {
+                        validator(__, value) {
+                          if (
+                            value &&
+                            _.includes(resourceSlotKey, 'mem') &&
+                            // @ts-ignore
+                            convertToBinaryUnit(value, 'p').number >
+                              // @ts-ignore
+                              convertToBinaryUnit('300p', 'p').number
+                          ) {
+                            return Promise.reject(
+                              new Error(
+                                'Memory size should be less than 300 PiB',
+                              ),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    {_.includes(resourceSlotKey, 'mem') ? (
+                      <DynamicUnitInputNumber style={{ width: '100%' }} />
+                    ) : (
+                      <InputNumber
+                        stringMode
+                        min={resourceSlotKey === 'cpu' ? 1 : 0}
+                        step={_.includes(resourceSlotKey, '.shares') ? 0.1 : 1}
+                        addonAfter={
                           _.get(mergedResourceSlots, resourceSlotKey)
-                            ?.description || resourceSlotKey
+                            ?.display_unit
                         }
-                        name={['resource_slots', resourceSlotKey]}
-                        rules={[
-                          _.includes(['cpu', 'mem'], resourceSlotKey)
-                            ? {
-                                required: true,
-                                message: t('data.explorer.ValueRequired'),
-                              }
-                            : {},
-                          {
-                            validator(__, value) {
-                              if (
-                                value &&
-                                _.includes(resourceSlotKey, 'mem') &&
-                                // @ts-ignore
-                                convertToBinaryUnit(value, 'p').number >
-                                  // @ts-ignore
-                                  convertToBinaryUnit('300p', 'p').number
-                              ) {
-                                return Promise.reject(
-                                  new Error(
-                                    'Memory size should be less than 300 PiB',
-                                  ),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        {_.includes(resourceSlotKey, 'mem') ? (
-                          <DynamicUnitInputNumber />
-                        ) : (
-                          <InputNumber
-                            stringMode
-                            min={resourceSlotKey === 'cpu' ? 1 : 0}
-                            step={
-                              _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
-                            }
-                            addonAfter={
-                              _.get(mergedResourceSlots, resourceSlotKey)
-                                ?.display_unit
-                            }
-                            style={{ width: '100%' }}
-                          />
-                        )}
-                      </Form.Item>
-                    </Col>
-                  ))}
-                </Fragment>
-              ),
-            )}
-            <Col span={12} style={{ alignSelf: 'end' }}>
-              <Form.Item
-                label={t('resourcePreset.SharedMemory')}
-                name="shared_memory"
-                dependencies={[['resource_slots', 'mem']]}
-                rules={[
-                  ({ getFieldValue }) => ({
-                    validator(__, value) {
-                      if (
-                        value &&
-                        getFieldValue('resource_slots')?.mem &&
-                        (convertToBinaryUnit(
-                          getFieldValue('resource_slots')?.mem,
-                          '',
-                        )?.number ?? 0) <
-                          (convertToBinaryUnit(value, '')?.number ?? 0)
-                      ) {
-                        return Promise.reject(
-                          t('resourcePreset.MemoryShouldBeLargerThanSHMEM'),
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <DynamicUnitInputNumber max="7.999p" />
-              </Form.Item>
-            </Col>
-          </Row>
+                        style={{ width: '100%' }}
+                      />
+                    )}
+                  </Form.Item>
+                ))}
+              </Fragment>
+            ),
+          )}
+          <Form.Item
+            label={t('resourcePreset.SharedMemory')}
+            name="shared_memory"
+            dependencies={[['resource_slots', 'mem']]}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(__, value) {
+                  if (
+                    value &&
+                    getFieldValue('resource_slots')?.mem &&
+                    (convertToBinaryUnit(
+                      getFieldValue('resource_slots')?.mem,
+                      '',
+                    )?.number ?? 0) <
+                      (convertToBinaryUnit(value, '')?.number ?? 0)
+                  ) {
+                    return Promise.reject(
+                      t('resourcePreset.MemoryShouldBeLargerThanSHMEM'),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <DynamicUnitInputNumber max="7.999p" style={{ width: '100%' }} />
+          </Form.Item>
         </Form.Item>
       </Form>
     </BAIModal>

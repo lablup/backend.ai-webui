@@ -15,7 +15,7 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSessionStorageState, useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
-import { BAIConfigProvider } from 'backend.ai-ui';
+import { BAIConfigProvider, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -208,6 +208,8 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
 }) => {
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
@@ -287,7 +289,22 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                       }}
                       clientPromise={backendaiClientPromise}
                       form={{
-                        requiredMark: 'optional',
+                        requiredMark: (label, { required }) => (
+                          <>
+                            {label}
+                            {!required && (
+                              <BAIText
+                                type="secondary"
+                                style={{
+                                  marginLeft: token.marginXXS,
+                                  wordBreak: 'keep-all',
+                                }}
+                              >
+                                {`(${t('general.Optional')})`}
+                              </BAIText>
+                            )}
+                          </>
+                        ),
                       }}
                       anonymousClientFactory={createAnonymousBackendaiClient}
                     >
@@ -355,6 +372,8 @@ export const DefaultProvidersForReactRoot: React.FC<
   Partial<DefaultProvidersProps>
 > = ({ children }) => {
   const [lang] = useCurrentLanguage();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
   const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
@@ -408,7 +427,22 @@ export const DefaultProvidersForReactRoot: React.FC<
               clientPromise={backendaiClientPromise}
               anonymousClientFactory={createAnonymousBackendaiClient}
               form={{
-                requiredMark: 'optional',
+                requiredMark: (label, { required }) => (
+                  <>
+                    {label}
+                    {!required && (
+                      <BAIText
+                        type="secondary"
+                        style={{
+                          marginLeft: token.marginXXS,
+                          wordBreak: 'keep-all',
+                        }}
+                      >
+                        {`(${t('general.Optional')})`}
+                      </BAIText>
+                    )}
+                  </>
+                ),
               }}
             >
               <QueryParamProvider adapter={ReactRouter6Adapter}>

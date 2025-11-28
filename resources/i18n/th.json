@@ -695,6 +695,7 @@
     "NavigateToDetailPage": "ไปที่หน้าโดยละเอียด",
     "NewPassword": "รหัสผ่านใหม่",
     "None": "ไม่มี",
+    "Optional": "ไม่บังคับ",
     "Password": "รหัสผ่าน",
     "RemainingLoginSessionTime": "เวลาจนกระทั่งออกจากระบบอัตโนมัติ",
     "ResourceGroup": "กลุ่มทรัพยากร",
