@@ -13,6 +13,7 @@ import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
+import WebUIAdminSider, { isAdminPath } from './WebUIAdminSider';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, LayoutProps, theme } from 'antd';
@@ -66,6 +67,7 @@ const useStyle = createStyles(({ css, token }) => ({
 
 function MainLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
@@ -166,20 +168,37 @@ function MainLayout() {
           </>
         }
       >
-        <WebUISider
-          collapsed={sideCollapsed}
-          onBreakpoint={(broken) => {
-            if (broken) {
-              setSideCollapsed(true);
-            } else {
-              !compactSidebarActive && setSideCollapsed(false);
-            }
-          }}
-          onCollapse={(collapsed, type) => {
-            type === 'clickTrigger' && setSideCollapsed(collapsed);
-          }}
-          webuiplugins={webUIPlugins}
-        />
+        {isAdminPath(location.pathname) ? (
+          <WebUIAdminSider
+            collapsed={sideCollapsed}
+            onBreakpoint={(broken) => {
+              if (broken) {
+                setSideCollapsed(true);
+              } else {
+                !compactSidebarActive && setSideCollapsed(false);
+              }
+            }}
+            onCollapse={(collapsed, type) => {
+              type === 'clickTrigger' && setSideCollapsed(collapsed);
+            }}
+            webuiplugins={webUIPlugins}
+          />
+        ) : (
+          <WebUISider
+            collapsed={sideCollapsed}
+            onBreakpoint={(broken) => {
+              if (broken) {
+                setSideCollapsed(true);
+              } else {
+                !compactSidebarActive && setSideCollapsed(false);
+              }
+            }}
+            onCollapse={(collapsed, type) => {
+              type === 'clickTrigger' && setSideCollapsed(collapsed);
+            }}
+            webuiplugins={webUIPlugins}
+          />
+        )}
       </Suspense>
       <Layout
         style={{

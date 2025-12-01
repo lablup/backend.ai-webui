@@ -1,42 +1,25 @@
-import { useCustomThemeConfig } from '../../helper/customThemeConfig';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
-import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';
-import BAISider, { BAISiderProps } from '../BAISider';
-import PrivacyPolicyModal from '../PrivacyPolicyModal';
-import ThemeReverseProvider from '../ReverseThemeProvider';
-import SiderToggleButton from '../SiderToggleButton';
-import SignoutModal from '../SignoutModal';
-import TermsOfServiceModal from '../TermsOfServiceModal';
+import BaseWebUISider, {
+  BaseWebUISiderProps,
+  MenuItem,
+} from '../BaseWebUISider';
 import WebUILink from '../WebUILink';
 import { PluginPage, WebUIPluginType } from './MainLayout';
 import {
   ApiOutlined,
   BarChartOutlined,
   CloudUploadOutlined,
-  ControlOutlined,
   DashboardOutlined,
-  FileDoneOutlined,
   HddOutlined,
-  InfoCircleOutlined,
   MessageOutlined,
   PlayCircleOutlined,
-  SolutionOutlined,
-  ToolOutlined,
-  UserOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
-import { useHover, useToggle } from 'ahooks';
-import {
-  theme,
-  MenuProps,
-  Typography,
-  ConfigProvider,
-  Divider,
-  Grid,
-} from 'antd';
+import { theme, MenuProps, Typography, ConfigProvider } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
   filterOutEmpty,
@@ -48,30 +31,10 @@ import {
   BAIFlex,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import {
-  BotMessageSquare,
-  ExternalLinkIcon,
-  LinkIcon,
-  ClipboardClock,
-  PackagePlus,
-} from 'lucide-react';
-import React, { ReactNode, useContext, useRef } from 'react';
+import { BotMessageSquare, ExternalLinkIcon, LinkIcon } from 'lucide-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-
-type MenuItem = {
-  label: ReactNode;
-  icon: React.ReactNode;
-  group?: string;
-  key: string;
-};
-interface WebUISiderProps
-  extends Pick<
-    BAISiderProps,
-    'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
-  > {
-  webuiplugins?: WebUIPluginType;
-}
 
 type GroupName =
   | 'none'
@@ -115,36 +78,24 @@ interface WebUIGeneralMenuItemType extends MenuItemType {
   key: MenuKeys;
 }
 
+interface WebUISiderProps extends BaseWebUISiderProps {
+  webuiplugins?: WebUIPluginType;
+}
+
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const themeConfig = useCustomThemeConfig();
-
-  const config = useContext(ConfigProvider.ConfigContext);
-  const currentSiderTheme =
-    config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
 
   const currentUserRole = useCurrentUserRole();
-  const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
+  const primaryColors = usePrimaryColors();
 
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
-
-  const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
-  const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
-  const [isOpenPrivacyPolicyModal, { toggle: togglePrivacyPolicyModal }] =
-    useToggle(false);
-  const [isOpenAboutBackendAIModal, { toggle: toggleAboutBackendAIModal }] =
-    useToggle(false);
-
-  const siderRef = useRef<HTMLDivElement>(null);
-  const isSiderHover = useHover(siderRef);
-  const gridBreakpoint = Grid.useBreakpoint();
-  const primaryColors = usePrimaryColors();
 
   const [classic_session_list] = useBAISettingUserState('classic_session_list');
   const [experimentalAIAgents] = useBAISettingUserState(
@@ -153,6 +104,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [isClassicDashboardPage] = useBAISettingUserState(
     'classic_dashboard_page',
   );
+
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     {
       label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
@@ -252,88 +204,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   ]);
 
   const adminMenu: MenuProps['items'] = filterOutEmpty([
-    // TODO: Enable the menu item when the page is ready.
-    // WARN: Currently only superadmins can access AdminDashboardPage.
-    // To place the Admin Dashboard menu item at the top of adminMenu,
-    // add it to adminMenu instead of superAdminMenu:
-    // currentUserRole === 'superadmin' && {
-    //   label: (
-    //     <WebUILink to="/admin-dashboard">
-    //       {t('webui.menu.AdminDashboard')}
-    //     </WebUILink>
-    //   ),
-    //   icon: <DashboardOutlined style={{ color: token.colorInfo }} />,
-    //   key: 'admin-dashboard',
-    // },
     {
-      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
-      icon: <UserOutlined style={{ color: token.colorInfo }} />,
-      key: 'credential',
-    },
-    {
-      label: (
-        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
-      ),
-      icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
-      key: 'environment',
-    },
-    baiClient?.supports('pending-session-list') && {
-      label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
-      icon: <ClipboardClock style={{ color: token.colorInfo }} />,
-      key: 'scheduler',
-    },
-    {
-      label: (
-        <WebUILink to="/resource-policy">
-          {t('webui.menu.ResourcePolicy')}
-        </WebUILink>
-      ),
-      icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
-      key: 'resource-policy',
-    },
-    baiClient?.supports('reservoir') &&
-      baiClient?._config.enableReservoir && {
-        label: (
-          <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>
-        ),
-        icon: <PackagePlus style={{ color: token.colorInfo }} />,
-        key: 'reservoir',
-      },
-  ]);
-
-  const superAdminMenu: MenuProps['items'] = filterOutEmpty([
-    {
-      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
-      icon: <HddOutlined style={{ color: token.colorInfo }} />,
-      key: 'agent',
-    },
-    {
-      label: (
-        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
-      ),
-      icon: <ControlOutlined style={{ color: token.colorInfo }} />,
-      key: 'settings',
-    },
-    {
-      label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
-    },
-    {
-      label: (
-        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
-      ),
-      icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
-      key: 'information',
+      label: <WebUILink to="/credential">{t('webui.menu.Settings')}</WebUILink>,
+      icon: <SettingOutlined style={{ color: token.colorInfo }} />,
+      key: 'admin-settings',
     },
   ]);
 
   const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
-    'menuitem-admin': adminMenu,
-    'menuitem-superadmin': superAdminMenu,
   };
 
   const pluginIconMap: {
@@ -342,15 +221,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     link: <LinkIcon />,
     externalLink: <ExternalLinkIcon />,
   };
+
   // Add plugin pages according to the user role.
   // Iterates over own enumerable string keyed properties of an object and invokes iteratee for each property.
+  // Only menu items for 'menuitem-user' are added here.
   _.forOwn(props.webuiplugins, (value, key) => {
     // Check if the `pluginMap` object has the current key using the `_.has` function.
     if (_.has(pluginMap, key)) {
       const menu = pluginMap[key as keyof typeof pluginMap] as MenuItem[];
       const pluginPages = props?.webuiplugins?.page;
       _.map(value, (name) => {
-        // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
+        // Find page item belonging to each of menuitem-user in webuiplugins.page
         const page = _.find(pluginPages, { name: name }) as PluginPage;
         // if menuitem is empty, skip adding menu item
         if (page && page.menuitem) {
@@ -366,7 +247,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     }
   });
 
-  _.forEach([generalMenu, adminMenu, superAdminMenu], (menu) => {
+  _.forEach([generalMenu, adminMenu], (menu) => {
     // Remove menu items that are in blockList
     _.remove(menu, (item) => _.includes(blockList, item?.key));
     // Disable menu items that are in inactiveList
@@ -388,6 +269,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     mlops: t('webui.menu.groupName.Mlops'),
     metrics: t('webui.menu.groupName.Metrics'),
   };
+
   const groupedGeneralMenu = _.chain(generalMenu)
     .groupBy('group')
     .map((items, group) => {
@@ -426,10 +308,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         'metrics',
       ];
 
-      // if item is not group type, place it at the beginning
-      // if item is group type but not in the groupOrder, place it at the end
       const getWeight = (item: any) => {
-        if (item?.type !== 'group') return -1; // non-group items first
+        if (item?.type !== 'group') return -1;
         const idx = groupOrder.indexOf(item.name as GroupName | undefined);
         return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
       };
@@ -439,277 +319,62 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     .value();
 
   return (
-    <BAISider
-      className="webui-sider"
-      ref={siderRef}
-      logo={
-        <img
-          className="logo-wide"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={
-            currentSiderTheme === 'dark' && themeConfig?.logo?.srcDark
-              ? themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-white-text.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-white-text.svg'
-          }
-          style={{
-            width: themeConfig?.logo?.size?.width || 159,
-            height: themeConfig?.logo?.size?.height || 24,
-            cursor: 'pointer',
-          }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
-        />
-      }
-      theme={currentSiderTheme}
-      logoCollapsed={
-        <img
-          className="logo-collapsed"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
-          src={
-            currentSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
-              ? themeConfig?.logo?.srcCollapsedDark ||
-                '/manifest/backend.ai-brand-simple-bgdark.svg'
-              : themeConfig?.logo?.srcCollapsed ||
-                '/manifest/backend.ai-brand-simple.svg'
-          }
-          style={{
-            width: themeConfig?.logo.sizeCollapsed?.width ?? 24,
-            height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
-            cursor: 'pointer',
-          }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
-        />
-      }
-      {...props}
-    >
-      <SiderToggleButton
+    <BaseWebUISider {...props} className="webui-sider">
+      <BAIMenu
         collapsed={props.collapsed}
-        buttonTop={68}
-        // buttonTop={18}
-        onClick={(collapsed) => {
-          props.onCollapse?.(collapsed, 'clickTrigger');
-        }}
-        hidden={!gridBreakpoint.sm || !isSiderHover}
+        selectedKeys={[
+          location.pathname.split('/')[1] || 'start',
+          location.pathname.split('/')[1] === 'storage-settings' ? 'agent' : '',
+          location.pathname.split('/')[1] === 'session' ? 'job' : '',
+        ]}
+        // @ts-ignore
+        items={groupedGeneralMenu}
       />
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        justify="start"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          paddingTop: token.paddingLG,
-          paddingBottom: token.paddingSM,
-        }}
-      >
-        <BAIMenu
-          collapsed={props.collapsed}
-          selectedKeys={[
-            location.pathname.split('/')[1] || 'start',
-            // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-            location.pathname.split('/')[1] === 'storage-settings'
-              ? 'agent'
-              : '',
-            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-            //       and change 'job' key to 'session'
-            location.pathname.split('/')[1] === 'session' ? 'job' : '',
-          ]}
-          // @ts-ignore
-          items={groupedGeneralMenu}
-        />
-        {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: primaryColors.admin,
-              },
-            }}
-          >
-            <BAIMenu
-              collapsed={props.collapsed}
-              selectedKeys={[
-                location.pathname.split('/')[1] || 'start',
-                // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-                location.pathname.split('/')[1] === 'storage-settings'
-                  ? 'agent'
-                  : '',
-                // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-                //       and change 'job' key to 'session'
-                location.pathname.split('/')[1] === 'session' ? 'job' : '',
-              ]}
-              items={
-                // TODO: add plugin menu
-                currentUserRole === 'superadmin'
-                  ? [
-                      {
-                        type: 'group',
-                        label: (
-                          <BAIFlex
-                            style={{
-                              borderBottom: `1px solid ${token.colorBorder}`,
-                            }}
-                          >
-                            {!props.collapsed && (
-                              <Typography.Text type="secondary" ellipsis>
-                                {t('webui.menu.Administration')}
-                              </Typography.Text>
-                            )}
-                          </BAIFlex>
-                        ),
-                        children: [...adminMenu, ...superAdminMenu],
-                      },
-                    ]
-                  : currentUserRole === 'admin'
-                    ? [
-                        {
-                          type: 'group',
-                          label: (
-                            <BAIFlex
-                              style={{
-                                borderBottom: `1px solid ${token.colorBorder}`,
-                              }}
-                            >
-                              {!props.collapsed && (
-                                <Typography.Text type="secondary" ellipsis>
-                                  {t('webui.menu.Administration')}
-                                </Typography.Text>
-                              )}
-                            </BAIFlex>
-                          ),
-                          children: [...adminMenu],
-                        },
-                      ]
-                    : []
-              }
-            />
-          </ConfigProvider>
-        )}
-      </BAIFlex>
-      {props.collapsed ? null : (
-        <BAIFlex
-          justify="center"
-          className="sider-footer-wrap"
-          direction="column"
-          style={{
-            width: '100%',
-            padding: 30,
-            paddingTop: 0,
-            textAlign: 'center',
+      {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: primaryColors.admin,
+            },
           }}
         >
-          <Typography.Text
-            type="secondary"
-            style={{
-              fontSize: '12px',
-              wordBreak: 'normal',
-            }}
-          >
-            <div className="terms-of-use">
-              <Divider style={{ marginTop: 0, marginBottom: token.margin }} />
-              <BAIFlex
-                wrap="wrap"
-                style={{ fontSize: token.sizeXS }}
-                justify="center"
-              >
-                <Typography.Link
-                  data-testid="button-terms-of-service"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    toggleTOSModal();
-                  }}
-                >
-                  {t('webui.menu.TermsOfService')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  data-testid="button-privacy-policy"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    togglePrivacyPolicyModal();
-                  }}
-                >
-                  {t('webui.menu.PrivacyPolicy')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  data-testid="button-about-backend-ai"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    toggleAboutBackendAIModal();
-                  }}
-                >
-                  {t('webui.menu.AboutBackendAI')}
-                </Typography.Link>
-                {!!baiClient?._config?.allowSignout && (
-                  <>
-                    &nbsp;·&nbsp;
-                    <Typography.Link
-                      data-testid="button-leave-service"
-                      type="secondary"
-                      style={{ fontSize: 11 }}
-                      onClick={toggleSignoutModal}
-                    >
-                      {t('webui.menu.LeaveService')}
-                    </Typography.Link>
-                    <SignoutModal
-                      open={isOpenSignoutModal}
-                      onRequestClose={toggleSignoutModal}
-                    />
-                  </>
-                )}
-              </BAIFlex>
-            </div>
-            <address>
-              <small className="sidebar-footer">
-                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
-              </small>
-              &nbsp;
-              <small
-                className="sidebar-footer"
-                style={{ fontSize: token.sizeXS }}
-              >
-                {/* @ts-ignore */}
-                {`${global.packageVersion}.${globalThis.buildNumber}`}
-              </small>
-            </address>
-          </Typography.Text>
-        </BAIFlex>
+          <BAIMenu
+            collapsed={props.collapsed}
+            selectedKeys={[
+              location.pathname.split('/')[1] || 'start',
+              location.pathname.split('/')[1] === 'storage-settings'
+                ? 'agent'
+                : '',
+              location.pathname.split('/')[1] === 'session' ? 'job' : '',
+            ]}
+            items={
+              currentUserRole === 'superadmin' || currentUserRole === 'admin'
+                ? [
+                    {
+                      type: 'group',
+                      label: (
+                        <BAIFlex
+                          style={{
+                            borderBottom: `1px solid ${token.colorBorder}`,
+                          }}
+                        >
+                          {!props.collapsed && (
+                            <Typography.Text type="secondary" ellipsis>
+                              {t('webui.menu.Administration')}
+                            </Typography.Text>
+                          )}
+                        </BAIFlex>
+                      ),
+                      children: [...adminMenu],
+                    },
+                  ]
+                : []
+            }
+          />
+        </ConfigProvider>
       )}
-      <TermsOfServiceModal
-        open={isOpenTOSModal}
-        onRequestClose={toggleTOSModal}
-      />
-      <PrivacyPolicyModal
-        open={isOpenPrivacyPolicyModal}
-        onRequestClose={togglePrivacyPolicyModal}
-      />
-      <AboutBackendAIModal
-        open={isOpenAboutBackendAIModal}
-        onRequestClose={toggleAboutBackendAIModal}
-      />
-    </BAISider>
+    </BaseWebUISider>
   );
 };
 
-const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
-  const themeConfig = useCustomThemeConfig();
-  const config = useContext(ConfigProvider.ConfigContext);
-  const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
-
-  const shouldReverse =
-    (isParentDark && themeConfig?.sider?.theme === 'light') ||
-    (!isParentDark && themeConfig?.sider?.theme === 'dark');
-
-  return shouldReverse ? (
-    <ThemeReverseProvider>
-      <WebUISider {...props} />
-    </ThemeReverseProvider>
-  ) : (
-    <WebUISider {...props} />
-  );
-};
-
-export default WebUISiderWithCustomTheme;
+export default WebUISider;
