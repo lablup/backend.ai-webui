@@ -60,7 +60,7 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
 };
 const isAppSupported = (session: SessionActionButtonsFragment$data) => {
   return (
-    ['batch', 'interactive', 'inference', 'running'].includes(
+    ['batch', 'interactive', 'inference', 'system', 'running'].includes(
       session?.type || '',
     ) && !_.isEmpty(JSON.parse(session?.service_ports ?? '{}'))
   );
