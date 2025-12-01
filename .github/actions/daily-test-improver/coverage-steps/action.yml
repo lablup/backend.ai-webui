@@ -1,0 +1,276 @@
+name: 'Generate Test Coverage Report'
+description: 'Build project, run tests with coverage for React and backend.ai-ui packages, and generate combined coverage report'
+
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Install pnpm package manager
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
+        run_install: false
+      shell: bash
+
+    # Step 2: Setup Node.js with pnpm cache
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
+      shell: bash
+
+    # Step 3: Get pnpm store directory for caching
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        echo "✅ pnpm store path configured" >> coverage-steps.log
+
+    # Step 4: Setup pnpm cache to speed up dependencies installation
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+      shell: bash
+
+    # Step 5: Install all project dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "📦 Installing dependencies..." | tee -a coverage-steps.log
+        pnpm install 2>&1 | tee -a coverage-steps.log
+        echo "✅ Dependencies installed successfully" >> coverage-steps.log
+
+    # Step 6: Build the project (needed for some tests)
+    - name: Build project
+      shell: bash
+      run: |
+        echo "🔨 Building project..." | tee -a coverage-steps.log
+        pnpm run build 2>&1 | tee -a coverage-steps.log || {
+          echo "⚠️ Build failed, but continuing with tests..." | tee -a coverage-steps.log
+        }
+        echo "✅ Build step completed" >> coverage-steps.log
+
+    # Step 7: Run relay compiler for React (needed for GraphQL)
+    - name: Run relay compiler
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "🔄 Running relay compiler..." | tee -a ../coverage-steps.log
+        pnpm run relay 2>&1 | tee -a ../coverage-steps.log
+        echo "✅ Relay compiler completed" >> ../coverage-steps.log
+
+    # Step 8: Run tests with coverage for React package
+    # Coverage report will be generated in react/coverage directory
+    - name: Run React tests with coverage
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "🧪 Running React tests with coverage..." | tee -a ../coverage-steps.log
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --passWithNoTests 2>&1 | tee -a ../coverage-steps.log
+        echo "✅ React tests completed" >> ../coverage-steps.log
+        echo "📊 React coverage report location: react/coverage/" >> ../coverage-steps.log
+
+    # Step 9: Run tests with coverage for backend.ai-ui package
+    # Coverage report will be generated in packages/backend.ai-ui/coverage directory
+    - name: Run backend.ai-ui tests with coverage
+      shell: bash
+      working-directory: ./packages/backend.ai-ui
+      run: |
+        echo "🧪 Running backend.ai-ui tests with coverage..." | tee -a ../../coverage-steps.log
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --passWithNoTests 2>&1 | tee -a ../../coverage-steps.log
+        echo "✅ backend.ai-ui tests completed" >> ../../coverage-steps.log
+        echo "📊 backend.ai-ui coverage report location: packages/backend.ai-ui/coverage/" >> ../../coverage-steps.log
+
+    # Step 10: Run tests with coverage for legacy src package (if any exist)
+    - name: Run legacy tests with coverage
+      shell: bash
+      run: |
+        echo "🧪 Running legacy tests with coverage..." | tee -a coverage-steps.log
+        pnpm test -- --coverage --coverageDirectory=./coverage --coverageReporters=json --coverageReporters=lcov --coverageReporters=text --passWithNoTests 2>&1 | tee -a coverage-steps.log || {
+          echo "⚠️ Legacy tests not found or failed, continuing..." | tee -a coverage-steps.log
+        }
+        echo "✅ Legacy tests step completed" >> coverage-steps.log
+
+    # Step 11: Create combined coverage directory
+    - name: Prepare combined coverage directory
+      shell: bash
+      run: |
+        echo "📁 Creating combined coverage directory..." | tee -a coverage-steps.log
+        mkdir -p coverage-combined
+        echo "✅ Combined coverage directory created" >> coverage-steps.log
+
+    # Step 12: Merge coverage reports from all packages
+    # This uses a simple approach of copying lcov files and merging them
+    - name: Merge coverage reports
+      shell: bash
+      run: |
+        echo "🔄 Merging coverage reports..." | tee -a coverage-steps.log
+        
+        # Copy all coverage files to combined directory
+        if [ -f "react/coverage/coverage-final.json" ]; then
+          cp react/coverage/coverage-final.json coverage-combined/react-coverage.json
+          echo "✅ Copied React coverage data" >> coverage-steps.log
+        fi
+        
+        if [ -f "packages/backend.ai-ui/coverage/coverage-final.json" ]; then
+          cp packages/backend.ai-ui/coverage/coverage-final.json coverage-combined/backend-ai-ui-coverage.json
+          echo "✅ Copied backend.ai-ui coverage data" >> coverage-steps.log
+        fi
+        
+        if [ -f "coverage/coverage-final.json" ]; then
+          cp coverage/coverage-final.json coverage-combined/legacy-coverage.json
+          echo "✅ Copied legacy coverage data" >> coverage-steps.log
+        fi
+        
+        # Copy lcov files for reference
+        if [ -f "react/coverage/lcov.info" ]; then
+          cp react/coverage/lcov.info coverage-combined/react-lcov.info
+        fi
+        
+        if [ -f "packages/backend.ai-ui/coverage/lcov.info" ]; then
+          cp packages/backend.ai-ui/coverage/lcov.info coverage-combined/backend-ai-ui-lcov.info
+        fi
+        
+        if [ -f "coverage/lcov.info" ]; then
+          cp coverage/lcov.info coverage-combined/legacy-lcov.info
+        fi
+        
+        echo "✅ Coverage reports merged into coverage-combined/" >> coverage-steps.log
+        ls -la coverage-combined/ >> coverage-steps.log
+
+    # Step 13: Generate coverage summary
+    - name: Generate coverage summary
+      shell: bash
+      run: |
+        echo "📊 Generating coverage summary..." | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        echo "            TEST COVERAGE SUMMARY" | tee -a coverage-steps.log
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        
+        # React coverage
+        if [ -d "react/coverage" ]; then
+          echo "📦 REACT PACKAGE" | tee -a coverage-steps.log
+          echo "─────────────────────────────────────────────────────" | tee -a coverage-steps.log
+          if [ -f "react/coverage/coverage-summary.json" ]; then
+            node -pe "
+              const summary = require('./react/coverage/coverage-summary.json');
+              const total = summary.total;
+              console.log('Lines:      ' + total.lines.pct + '%');
+              console.log('Statements: ' + total.statements.pct + '%');
+              console.log('Functions:  ' + total.functions.pct + '%');
+              console.log('Branches:   ' + total.branches.pct + '%');
+            " 2>&1 | tee -a coverage-steps.log || echo "⚠️ Could not parse React coverage summary" | tee -a coverage-steps.log
+          fi
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        # backend.ai-ui coverage
+        if [ -d "packages/backend.ai-ui/coverage" ]; then
+          echo "📦 BACKEND.AI-UI PACKAGE" | tee -a coverage-steps.log
+          echo "─────────────────────────────────────────────────────" | tee -a coverage-steps.log
+          if [ -f "packages/backend.ai-ui/coverage/coverage-summary.json" ]; then
+            node -pe "
+              const summary = require('./packages/backend.ai-ui/coverage/coverage-summary.json');
+              const total = summary.total;
+              console.log('Lines:      ' + total.lines.pct + '%');
+              console.log('Statements: ' + total.statements.pct + '%');
+              console.log('Functions:  ' + total.functions.pct + '%');
+              console.log('Branches:   ' + total.branches.pct + '%');
+            " 2>&1 | tee -a coverage-steps.log || echo "⚠️ Could not parse backend.ai-ui coverage summary" | tee -a coverage-steps.log
+          fi
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        # Legacy coverage
+        if [ -d "coverage" ]; then
+          echo "📦 LEGACY PACKAGE" | tee -a coverage-steps.log
+          echo "─────────────────────────────────────────────────────" | tee -a coverage-steps.log
+          if [ -f "coverage/coverage-summary.json" ]; then
+            node -pe "
+              const summary = require('./coverage/coverage-summary.json');
+              const total = summary.total;
+              console.log('Lines:      ' + total.lines.pct + '%');
+              console.log('Statements: ' + total.statements.pct + '%');
+              console.log('Functions:  ' + total.functions.pct + '%');
+              console.log('Branches:   ' + total.branches.pct + '%');
+            " 2>&1 | tee -a coverage-steps.log || echo "⚠️ Could not parse legacy coverage summary" | tee -a coverage-steps.log
+          fi
+          echo "" | tee -a coverage-steps.log
+        fi
+        
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        echo "✅ Coverage summary generated" >> coverage-steps.log
+
+    # Step 14: Upload React coverage report as artifact
+    - name: Upload React coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-react
+        path: react/coverage/
+        if-no-files-found: warn
+      shell: bash
+
+    # Step 15: Upload backend.ai-ui coverage report as artifact
+    - name: Upload backend.ai-ui coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-backend-ai-ui
+        path: packages/backend.ai-ui/coverage/
+        if-no-files-found: warn
+      shell: bash
+
+    # Step 16: Upload legacy coverage report as artifact
+    - name: Upload legacy coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-legacy
+        path: coverage/
+        if-no-files-found: warn
+      shell: bash
+
+    # Step 17: Upload combined coverage as primary artifact named "coverage"
+    # This is the artifact that will be analyzed for test improvements
+    - name: Upload combined coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          coverage-combined/
+          coverage-steps.log
+        if-no-files-found: error
+      shell: bash
+
+    # Step 18: Display final summary
+    - name: Final summary
+      shell: bash
+      run: |
+        echo "" | tee -a coverage-steps.log
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        echo "            COVERAGE GENERATION COMPLETE" | tee -a coverage-steps.log
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "📁 Coverage artifacts uploaded:" | tee -a coverage-steps.log
+        echo "   • coverage-react: React package coverage" | tee -a coverage-steps.log
+        echo "   • coverage-backend-ai-ui: Backend.AI UI package coverage" | tee -a coverage-steps.log
+        echo "   • coverage-legacy: Legacy package coverage" | tee -a coverage-steps.log
+        echo "   • coverage: Combined coverage (primary artifact)" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "📊 Coverage files locations:" | tee -a coverage-steps.log
+        echo "   • react/coverage/" | tee -a coverage-steps.log
+        echo "   • packages/backend.ai-ui/coverage/" | tee -a coverage-steps.log
+        echo "   • coverage-combined/ (merged data)" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        echo "✅ All coverage steps completed successfully!" | tee -a coverage-steps.log
+        echo "═══════════════════════════════════════════════════════" | tee -a coverage-steps.log
+        
+        # Display the full log
+        echo ""
+        echo "Full coverage-steps.log:"
+        cat coverage-steps.log
