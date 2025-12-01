@@ -1,5 +1,5 @@
 import { useCustomThemeConfig } from '../helper/customThemeConfig';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import BAISider, { BAISiderProps } from './BAISider';
 import { WebUIPluginType } from './MainLayout/MainLayout';
@@ -63,15 +63,7 @@ const BaseWebUISider: React.FC<BaseWebUISiderProps> = ({
   const isSiderHover = useHover(siderRef);
   const gridBreakpoint = Grid.useBreakpoint();
 
-  // Get backend client from children's context
-  const [baiClient] = React.useState(() => {
-    try {
-      // @ts-ignore
-      return window.backendaiclient;
-    } catch {
-      return null;
-    }
-  });
+  const baiClient = useSuspendedBackendaiClient();
 
   const defaultLogo = (
     <img
@@ -103,8 +95,8 @@ const BaseWebUISider: React.FC<BaseWebUISiderProps> = ({
             '/manifest/backend.ai-brand-simple.svg'
       }
       style={{
-        width: themeConfig?.logo.sizeCollapsed?.width ?? 24,
-        height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
+        width: themeConfig?.logo?.sizeCollapsed?.width ?? 24,
+        height: themeConfig?.logo?.sizeCollapsed?.height ?? 24,
         cursor: 'pointer',
       }}
       onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}

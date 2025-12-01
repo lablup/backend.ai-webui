@@ -39,26 +39,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-/**
- * Check if the current pathname is an admin page
- */
-export const isAdminPath = (pathname: string): boolean => {
-  const adminPaths = [
-    '/admin-settings',
-    '/credential',
-    '/environment',
-    '/scheduler',
-    '/resource-policy',
-    '/reservoir',
-    '/agent',
-    '/settings',
-    '/maintenance',
-    '/information',
-  ];
-
-  return _.some(adminPaths, (path) => _.startsWith(pathname, path));
-};
-
 interface WebUIAdminSiderProps extends BaseWebUISiderProps {
   webuiplugins?: WebUIPluginType;
 }
@@ -74,6 +54,9 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
   const webuiNavigate = useWebUINavigate();
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
+
+  // Get go-back path from location state
+  const goBackPath = location.state?.goBack;
 
   const adminMenu: MenuProps['items'] = filterOutEmpty([
     // TODO: Enable the menu item when the page is ready.
@@ -91,25 +74,35 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
     //   key: 'admin-dashboard',
     // },
     {
-      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
+      label: (
+        <WebUILink to="/credential" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Users')}
+        </WebUILink>
+      ),
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
       key: 'credential',
     },
     {
       label: (
-        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
+        <WebUILink to="/environment" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Environments')}
+        </WebUILink>
       ),
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
     },
     baiClient?.supports('pending-session-list') && {
-      label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
+      label: (
+        <WebUILink to="/scheduler" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Scheduler')}
+        </WebUILink>
+      ),
       icon: <ClipboardClock style={{ color: token.colorInfo }} />,
       key: 'scheduler',
     },
     {
       label: (
-        <WebUILink to="/resource-policy">
+        <WebUILink to="/resource-policy" state={{ goBack: goBackPath }}>
           {t('webui.menu.ResourcePolicy')}
         </WebUILink>
       ),
@@ -119,7 +112,9 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
     baiClient?.supports('reservoir') &&
       baiClient?._config.enableReservoir && {
         label: (
-          <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>
+          <WebUILink to="/reservoir" state={{ goBack: goBackPath }}>
+            {t('webui.menu.Reservoir')}
+          </WebUILink>
         ),
         icon: <PackagePlus style={{ color: token.colorInfo }} />,
         key: 'reservoir',
@@ -128,27 +123,37 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
 
   const superAdminMenu: MenuProps['items'] = filterOutEmpty([
     {
-      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
+      label: (
+        <WebUILink to="/agent" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Resources')}
+        </WebUILink>
+      ),
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent',
     },
     {
       label: (
-        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
+        <WebUILink to="/settings" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Configurations')}
+        </WebUILink>
       ),
       icon: <ControlOutlined style={{ color: token.colorInfo }} />,
       key: 'settings',
     },
     {
       label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
+        <WebUILink to="/maintenance" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Maintenance')}
+        </WebUILink>
       ),
       icon: <ToolOutlined style={{ color: token.colorInfo }} />,
       key: 'maintenance',
     },
     {
       label: (
-        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
+        <WebUILink to="/information" state={{ goBack: goBackPath }}>
+          {t('webui.menu.Information')}
+        </WebUILink>
       ),
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information',
@@ -163,8 +168,8 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
   const pluginIconMap: {
     [key: string]: React.ReactNode;
   } = {
-    link: <LinkIcon />,
-    externalLink: <ExternalLinkIcon />,
+    link: <LinkIcon style={{ color: primaryColors.admin }} />,
+    externalLink: <ExternalLinkIcon style={{ color: primaryColors.admin }} />,
   };
 
   // Add plugin pages according to the user role.
@@ -180,8 +185,14 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
         // if menuitem is empty, skip adding menu item
         if (page && page.menuitem) {
           const menuItem: MenuItem = {
-            label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
-            icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
+            label: (
+              <WebUILink to={`/${page?.url}`} state={{ goBack: goBackPath }}>
+                {page?.menuitem}
+              </WebUILink>
+            ),
+            icon: pluginIconMap[page.icon || ''] || (
+              <ApiOutlined style={{ color: primaryColors.admin }} />
+            ),
             key: page?.url,
             group: page.group || 'none',
           };
@@ -212,7 +223,7 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
   const adminHeader = (
     <BAIFlex align="center">
       <Tooltip
-        title={t('webui.menu.BackToStart')}
+        title={t('webui.menu.GoBack')}
         placement={props.collapsed ? 'right' : 'top'}
         styles={{
           // adjust height to match menu item height
@@ -228,7 +239,10 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
           type="text"
           shape="circle"
           icon={<ArrowLeftOutlined />}
-          onClick={() => webuiNavigate('/start')}
+          onClick={() => {
+            webuiNavigate(goBackPath ? goBackPath : '/start');
+          }}
+          aria-label={t('webui.menu.GoBack')}
           style={{
             color: token.colorTextSecondary,
             // set specific size like menu items
@@ -246,7 +260,7 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
             color: token.colorText,
           }}
         >
-          {t('webui.menu.Settings')}
+          {t('webui.menu.AdminSettings')}
         </Typography>
       )}
     </BAIFlex>
@@ -265,21 +279,8 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
         <BAIMenu
           collapsed={props.collapsed}
           selectedKeys={[_.get(_.split(location.pathname, '/'), 1, '')]}
-          items={[
-            {
-              type: 'group',
-              label: (
-                <BAIFlex>
-                  {!props.collapsed && (
-                    <Typography.Text type="secondary" ellipsis>
-                      {t('webui.menu.Administration')}
-                    </Typography.Text>
-                  )}
-                </BAIFlex>
-              ),
-              children: menuItems,
-            },
-          ]}
+          // TODO: add plugin menu
+          items={menuItems}
         />
       </ConfigProvider>
     </BaseWebUISider>

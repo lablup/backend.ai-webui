@@ -205,12 +205,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const adminMenu: MenuProps['items'] = filterOutEmpty([
     {
-      label: <WebUILink to="/credential">{t('webui.menu.Settings')}</WebUILink>,
+      // Go to first page of admin setting pages.
+      label: (
+        <WebUILink to="/credential" state={{ goBack: location.pathname }}>
+          {t('webui.menu.AdminSettings')}
+        </WebUILink>
+      ),
       icon: <SettingOutlined style={{ color: token.colorInfo }} />,
       key: 'admin-settings',
     },
   ]);
-
   const pluginMap: Record<string, MenuProps['items']> = {
     'menuitem-user': generalMenu,
   };
@@ -308,8 +312,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         'metrics',
       ];
 
+      // if item is not group type, place it at the beginning
+      // if item is group type but not in the groupOrder, place it at the end
       const getWeight = (item: any) => {
-        if (item?.type !== 'group') return -1;
+        if (item?.type !== 'group') return -1; // non-group items first
         const idx = groupOrder.indexOf(item.name as GroupName | undefined);
         return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
       };
@@ -342,9 +348,12 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             collapsed={props.collapsed}
             selectedKeys={[
               location.pathname.split('/')[1] || 'start',
+              // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
               location.pathname.split('/')[1] === 'storage-settings'
                 ? 'agent'
                 : '',
+              // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+              //       and change 'job' key to 'session'
               location.pathname.split('/')[1] === 'session' ? 'job' : '',
             ]}
             items={

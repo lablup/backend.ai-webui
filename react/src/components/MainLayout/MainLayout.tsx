@@ -13,7 +13,7 @@ import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
-import WebUIAdminSider, { isAdminPath } from './WebUIAdminSider';
+import WebUIAdminSider from './WebUIAdminSider';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, Layout, LayoutProps, theme } from 'antd';
@@ -46,6 +46,53 @@ export type WebUIPluginType = {
   'menuitem-user': string[];
   'menuitem-admin': string[];
   'menuitem-superadmin': string[];
+};
+
+/**
+ * Check if the current pathname requires admin sidebar
+ * Considers both reserved admin paths and plugin pages
+ */
+const shouldShowAdminSider = (
+  pathname: string,
+  webUIPlugins?: WebUIPluginType,
+): boolean => {
+  const adminPaths = [
+    '/credential',
+    '/environment',
+    '/scheduler',
+    '/resource-policy',
+    '/reservoir',
+    '/agent',
+    '/settings',
+    '/maintenance',
+    '/information',
+  ];
+
+  if (
+    _.some(adminPaths, (path) => {
+      return pathname === path || _.startsWith(pathname, path + '/');
+    })
+  ) {
+    return true;
+  }
+
+  // Check plugin pages
+  if (webUIPlugins?.page) {
+    const currentPath = pathname.split('/')[1]; // Get first path segment
+    const pluginPage = webUIPlugins.page.find(
+      (page) => page.url === currentPath,
+    );
+
+    if (pluginPage) {
+      // Check if this plugin page is in admin or superadmin menus
+      const isAdminPlugin =
+        webUIPlugins['menuitem-admin']?.includes(pluginPage.name) ||
+        webUIPlugins['menuitem-superadmin']?.includes(pluginPage.name);
+      return isAdminPlugin;
+    }
+  }
+
+  return false;
 };
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
@@ -168,7 +215,7 @@ function MainLayout() {
           </>
         }
       >
-        {isAdminPath(location.pathname) ? (
+        {shouldShowAdminSider(location.pathname, webUIPlugins) ? (
           <WebUIAdminSider
             collapsed={sideCollapsed}
             onBreakpoint={(broken) => {
