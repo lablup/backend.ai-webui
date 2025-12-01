@@ -1,9 +1,10 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
-// import ModelTryContentButton from './ModelTryContentButton';
+import ModelTryContentButton from './ModelTryContentButton';
 import ResourceNumber from './ResourceNumber';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
@@ -17,6 +18,7 @@ import {
   Typography,
   theme,
   Skeleton,
+  Tooltip,
 } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -112,16 +114,20 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
-        // FIXME: ModelTryContentButton is not working properly
-        // It should be fixed in the future.
         // This button is used to clone-and-create/create the model service with the content of the model card.
-        /*<ModelTryContentButton
-          vfolderNode={model_card?.vfolder_node || null}
-          modelStorageHost={model_card?.vfolder?.host as string}
-          modelCardMetadata={model || null}
-          modelName={model_card?.name as string}
-          key="try"
-        />,*/
+        <ErrorBoundaryWithNullFallback key="model-try-content-button">
+          <Suspense
+            fallback={
+              <Tooltip title={t('modelStore.CheckingSettings')}>
+                <Button loading disabled />
+              </Tooltip>
+            }
+          >
+            <ModelTryContentButton
+              vfolderNode={model_card?.vfolder_node || null}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>,
         <Button
           key="clone"
           type="primary"

@@ -44,6 +44,15 @@ export interface FolderExplorerElement extends HTMLDivElement {
   handleUpload: (name: 'file' | 'folder') => void;
 }
 
+export interface FileItem {
+  name: string;
+  type: string;
+  size: number;
+  mode: string;
+  created: string;
+  modified: string;
+}
+
 interface FolderExplorerProps extends BAIModalProps {
   vfolderID: string;
   onRequestClose: () => void;
