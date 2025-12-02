@@ -1531,14 +1531,14 @@ class Client {
     return k2;
   }
 
-  generateRandomStr(length) {
-    var text = '';
-    var possible =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (var i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  generateRandomStr(length:number) {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const idx = crypto_node.randomInt(0, possible.length);
+      result += possible.charAt(idx);
     }
-    return text;
+    return result;
   }
 
   generateSessionId(length = 8, nosuffix = false) {

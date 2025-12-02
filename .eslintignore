@@ -7,7 +7,6 @@ src/wsproxy*/*
 src/plastics/*
 src/types/*
 src/lib/*
-src/lib/backend.ai-client-es6.js
 src/lib/backend.ai-client-ingen.js
 src/lib/backend.ai-client-ingen-es6.js
 src/lib/backend.ai-client-node.js

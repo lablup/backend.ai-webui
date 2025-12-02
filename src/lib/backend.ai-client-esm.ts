@@ -1887,13 +1887,15 @@ class Client {
   }
 
   generateRandomStr(length) {
-    let text = '';
-    const possible =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
     for (let i = 0; i < length; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
+      const random = CryptoES.lib.WordArray.random(4).words[0];
+      result += possible.charAt(Math.abs(random) % possible.length);
     }
-    return text;
+
+    return result;
   }
 
   generateSessionId(length = 8, nosuffix = false) {

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-// import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
 import '../plastics/lablup-shields/lablup-shields';
 import {

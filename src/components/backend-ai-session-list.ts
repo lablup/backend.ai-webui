@@ -1495,29 +1495,24 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {XMLHttpRequest} rqst
    * */
   async sendRequest(rqst) {
-    let resp;
     let body;
-    try {
-      if (rqst.method == 'GET') {
-        rqst.body = undefined;
-      }
-      resp = await fetch(rqst.uri, rqst);
-      const contentType = resp.headers.get('Content-Type');
-      if (
-        contentType.startsWith('application/json') ||
-        contentType.startsWith('application/problem+json')
-      ) {
-        body = await resp.json();
-      } else if (contentType.startsWith('text/')) {
-        body = await resp.text();
-      } else {
-        body = await resp.blob();
-      }
-      if (!resp.ok) {
-        throw body;
-      }
-    } catch (e) {
-      // console.log(e);
+    if (rqst.method == 'GET') {
+      rqst.body = undefined;
+    }
+    const resp = await fetch(rqst.uri, rqst);
+    const contentType = resp.headers.get('Content-Type');
+    if (
+      contentType?.startsWith('application/json') ||
+      contentType?.startsWith('application/problem+json')
+    ) {
+      body = await resp.json();
+    } else if (contentType?.startsWith('text/')) {
+      body = await resp.text();
+    } else {
+      body = await resp.blob();
+    }
+    if (!resp.ok) {
+      throw body;
     }
     return body;
   }
@@ -1529,36 +1524,40 @@ export default class BackendAISessionList extends BackendAIPage {
       method: 'GET',
       uri: new URL(`proxy/${token}/${sessionId}`, proxyURL).href,
     };
-    return this.sendRequest(rqst)
-      .then((response) => {
-        this.total_session_count -= 1;
-        let uri = new URL(`proxy/${token}/${sessionId}/delete`, proxyURL);
-        if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
-          uri.searchParams.set(
-            'permit_key',
-            localStorage.getItem('backendaiwebui.appproxy-permit-key') || '',
-          );
-          uri = new URL(uri.href);
-        }
-        if (response !== undefined && response.code !== 404) {
-          const rqst = {
-            method: 'GET',
-            uri: uri.href,
-            credentials: 'include',
-            mode: 'cors',
-          };
-          return this.sendRequest(rqst);
-        }
-        return Promise.resolve(true);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
+    return (
+      this.sendRequest(rqst)
+        // terminate app session even if getting app info fails
+        .catch(() => undefined)
+        .then((response) => {
+          this.total_session_count -= 1;
+          let uri = new URL(`proxy/${token}/${sessionId}/delete`, proxyURL);
+          if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+            uri.searchParams.set(
+              'permit_key',
+              localStorage.getItem('backendaiwebui.appproxy-permit-key') || '',
+            );
+            uri = new URL(uri.href);
+          }
+          if (response !== undefined && response.code !== 404) {
+            const rqst = {
+              method: 'GET',
+              uri: uri.href,
+              credentials: 'include',
+              mode: 'cors',
+            };
+            return this.sendRequest(rqst);
+          }
+          return Promise.resolve(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        })
+    );
   }
 
   _getProxyToken() {

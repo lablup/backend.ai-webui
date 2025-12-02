@@ -55,9 +55,10 @@ export function getAIErrorMessage(error: unknown): string {
     } else if (typeof error === 'string') {
       return error;
     }
-  } catch {}
-
-  return 'Unknown error:' + error;
+    return 'Unknown error:' + error;
+  } catch {
+    return 'Unknown error:' + error;
+  }
 }
 
 export const DEFAULT_CHAT_PARAMETERS = {

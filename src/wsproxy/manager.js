@@ -14,6 +14,7 @@ const ai = require('../lib/backend.ai-client-node'),
   Gateway = require('./gateway/tcpwsproxy'),
   SGateway = require('./gateway/consoleproxy');
 const htmldeco = require('./lib/htmldeco');
+const crypto = require('crypto');
 
 // extHttpProxy is an endpoint of a http proxy server in a network.
 // Can be set when a user in a company network needs to access the web socket
@@ -53,7 +54,7 @@ class Manager extends EventEmitter {
   refreshPorts() {
     logger.info('PortRefresh');
     for (let i = 0; i < 100; i++) {
-      this.ports.push(Math.floor(Math.random() * 20000) + 10000);
+      this.ports.push(crypto.randomInt(10000, 30000));
     }
   }
 
