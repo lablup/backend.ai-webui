@@ -20,6 +20,7 @@ patchedDependencies:
   rc-field-form@2.7.1: react/patches/rc-field-form.patch
   react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
+  "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
 
 minimumReleaseAge: 10080
 

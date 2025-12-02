@@ -37,7 +37,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
       {selectedAgent && (
         <BAIFlex gap="xs">
           <FluentEmojiIcon
-            name={selectedAgent.meta.avatar}
+            emoji={selectedAgent.meta.avatar}
             height={token.sizeXL}
             width={token.sizeXL}
           />

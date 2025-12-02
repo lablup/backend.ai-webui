@@ -47,7 +47,7 @@ const AIAgentCard = ({ agent }: { agent: AIAgent }) => {
           title={agent.meta.title}
           avatar={
             <FluentEmojiIcon
-              name={agent.meta.avatar}
+              emoji={agent.meta.avatar}
               height={150}
               width={150}
             />

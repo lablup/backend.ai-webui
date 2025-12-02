@@ -15,7 +15,7 @@
     "@codemirror/language": "^6.11.3",
     "@dicebear/collection": "^9.2.4",
     "@dicebear/core": "^9.2.4",
-    "@iconify-json/fluent-emoji-flat": "^1.2.5",
+    "@lobehub/fluent-emoji": "^2.0.0",
     "@melloware/react-logviewer": "^5.3.2",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@react-hook/resize-observer": "^2.0.2",
@@ -124,7 +124,8 @@
         {
           "patterns": [
             "backend.ai-ui/*",
-            "!backend.ai-ui/dist"
+            "!backend.ai-ui/dist",
+            "@lobehub/fluent-emoji"
           ]
         }
       ]
