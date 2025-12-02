@@ -13,6 +13,7 @@ import { BackendAiStyles } from './backend-ai-general-styles';
 import { default as PainKiller } from './backend-ai-painkiller';
 import '@material/mwc-select';
 import { Select } from '@material/mwc-select';
+import DOMPurify from 'dompurify';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { get as _text, translate as _t } from 'lit-translate';
 import { customElement, property } from 'lit/decorators.js';
@@ -264,7 +265,7 @@ export default class LablupTermsOfService extends LitElement {
             this.shadowRoot?.querySelector(
               '#terms-of-service-dialog-content',
             ) as HTMLDivElement
-          ).innerHTML = this.tosContent;
+          ).innerHTML = DOMPurify.sanitize(this.tosContent);
           this.show = true;
           if (reuseDialog === false) {
             this.dialog.show();
@@ -281,8 +282,9 @@ export default class LablupTermsOfService extends LitElement {
             this.shadowRoot?.querySelector(
               '#terms-of-service-dialog-content',
             ) as HTMLDivElement
-          ).innerHTML =
-            'Problem found while loading contents. Please try again later.';
+          ).innerHTML = DOMPurify.sanitize(
+            'Problem found while loading contents. Please try again later.',
+          );
         });
     } else {
       this.show = true;

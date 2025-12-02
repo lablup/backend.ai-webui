@@ -21,6 +21,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import DOMPurify from 'dompurify';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -221,7 +222,11 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           borderRadius: token.borderRadius,
         }}
       >
-        <pre dangerouslySetInnerHTML={{ __html: containerLogSummary }} />
+        <pre
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(containerLogSummary),
+          }}
+        />
       </BAIFlex>
     </Suspense>
   );

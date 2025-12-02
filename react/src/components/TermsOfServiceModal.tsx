@@ -2,6 +2,7 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { Skeleton } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import DOMPurify from 'dompurify';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -32,7 +33,7 @@ const RenderTOSHtml = () => {
         (response) => response.text(),
       ),
   });
-  return <div dangerouslySetInnerHTML={{ __html: data }} />;
+  return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />;
 };
 
 const TermsOfServiceModal = ({

@@ -1,4 +1,5 @@
 import { useHighlight } from '../../hooks/useHighlight';
+import DOMPurify from 'dompurify';
 import { HTMLAttributes, memo } from 'react';
 
 export interface SyntaxHighlighterProps extends HTMLAttributes<HTMLDivElement> {
@@ -17,7 +18,10 @@ export const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
             <code style={{ whiteSpace: 'pre-wrap' }}>{children}</code>
           </pre>
         ) : (
-          <div dangerouslySetInnerHTML={{ __html: data as string }} dir="ltr" />
+          <div
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }}
+            dir="ltr"
+          />
         )}
       </>
     );

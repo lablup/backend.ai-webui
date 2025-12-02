@@ -15,6 +15,7 @@ import '@material/mwc-button';
 import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon-button';
 import { TextField } from '@material/mwc-textfield';
+import DOMPurify from 'dompurify';
 import { css, CSSResultGroup, html } from 'lit';
 import {
   get as _text,
@@ -1525,6 +1526,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
+      return;
     }
     if (
       globalThis.backendaiwsproxy == undefined ||
@@ -1753,7 +1755,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute('id', 'hide-guide');
     const checkboxMsg = document.createElement('span');
-    checkboxMsg.innerHTML = `${_text('dialog.hide.DoNotShowThisAgain')}`;
+    checkboxMsg.innerHTML = DOMPurify.sanitize(
+      `${_text('dialog.hide.DoNotShowThisAgain')}`,
+    );
 
     div.appendChild(checkbox);
     div.appendChild(checkboxMsg);
@@ -1803,7 +1807,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
-    div.innerHTML = `
+    const carouselContent = DOMPurify.sanitize(
+      `
       <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
         <article class="slide vertical layout center">
           <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:none;">
@@ -1833,7 +1838,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
             </a>
         </article>
-      </macro-carousel>`;
+      </macro-carousel>`,
+      {
+        ADD_TAGS: ['macro-carousel'],
+        ADD_ATTR: [
+          'pagination',
+          'navigation',
+          'selected',
+          'auto-focus',
+          'reduced-motion',
+          'disable-drag',
+        ],
+      },
+    );
+    div.innerHTML = carouselContent;
     content.appendChild(div);
   }
 

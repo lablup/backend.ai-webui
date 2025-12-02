@@ -37,6 +37,7 @@ import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '@material/mwc-top-app-bar-fixed';
 import '@vaadin/tooltip';
+import DOMPurify from 'dompurify';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
   get as _text,
@@ -668,8 +669,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const indicator = <any>(
       this.shadowRoot?.getElementById('backend-ai-indicator')
     );
-    indicator.innerHTML =
-      'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
+    indicator.innerHTML = DOMPurify.sanitize(
+      'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.',
+    );
     indicator.show();
   }
 
