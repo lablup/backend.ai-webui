@@ -146,12 +146,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const gridBreakpoint = Grid.useBreakpoint();
   const primaryColors = usePrimaryColors();
 
-  const [classic_session_list] = useBAISettingUserState('classic_session_list');
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
-  );
-  const [isClassicDashboardPage] = useBAISettingUserState(
-    'classic_dashboard_page',
   );
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     {
@@ -160,24 +156,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       key: 'start',
       group: 'none',
     },
-    !isClassicDashboardPage && {
+    {
       label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'dashboard',
       group: 'none',
     },
-    isClassicDashboardPage && {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-      group: 'none',
-    },
     {
-      label: (
-        <WebUILink to={classic_session_list ? '/job' : '/session'}>
-          {t('webui.menu.Sessions')}
-        </WebUILink>
-      ),
+      label: <WebUILink to={'/session'}>{t('webui.menu.Sessions')}</WebUILink>,
       icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
       group: 'workload',

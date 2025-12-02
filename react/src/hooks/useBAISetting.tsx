@@ -17,13 +17,11 @@ interface UserSettings {
   endpoints?: Array<string>;
   auto_logout?: boolean;
   selected_language?: string;
-  classic_dashboard_page?: boolean;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  experimental_dashboard?: boolean;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
@@ -34,7 +32,6 @@ interface UserSettings {
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
 
-  classic_session_list?: boolean; // `experimental_neo_session_list` has been replaced with `classic_session_list`
   max_concurrent_uploads?: number;
   container_log_auto_refresh_enabled?: boolean;
   container_log_auto_refresh_interval?: number;
