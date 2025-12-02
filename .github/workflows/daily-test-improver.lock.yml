@@ -89,6 +89,7 @@
 # ## Phase 1 - Testing research
 #
 # 1. Research the current state of test coverage in the repository. Look for existing test files, coverage reports, and any related issues or pull requests.
+#   **Important:** Focus your research exclusively on the two projects located in `/react` directory and `/packages/backend.ai-ui` directory. Do not consider projects in other locations.
 #
 # 2. Create a discussion with title "${{ github.workflow }} - Research and Plan" that includes:
 #   - A summary of your findings about the repository, its testing strategies, its test coverage
@@ -1725,6 +1726,7 @@ jobs:
           ## Phase 1 - Testing research
           
           1. Research the current state of test coverage in the repository. Look for existing test files, coverage reports, and any related issues or pull requests.
+            **Important:** Focus your research exclusively on the two projects located in `/react` directory and `/packages/backend.ai-ui` directory. Do not consider projects in other locations.
           
           2. Create a discussion with title "${GH_AW_EXPR_F76B6721} - Research and Plan" that includes:
             - A summary of your findings about the repository, its testing strategies, its test coverage
