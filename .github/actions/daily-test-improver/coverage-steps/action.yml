@@ -1,0 +1,150 @@
+name: 'Backend.AI WebUI Test Coverage Steps'
+description: 'Runs tests and generates coverage reports for the Backend.AI WebUI project'
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Check Node.js version from .nvmrc
+    - name: Read Node.js version
+      shell: bash
+      run: |
+        echo "Running coverage steps for Backend.AI WebUI" | tee -a coverage-steps.log
+        if [ -f .nvmrc ]; then
+          NODE_VERSION=$(cat .nvmrc)
+          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+          echo "Node.js version from .nvmrc: $NODE_VERSION" | tee -a coverage-steps.log
+        else
+          echo "NODE_VERSION=20" >> $GITHUB_ENV
+          echo "Node.js version not found, defaulting to 20" | tee -a coverage-steps.log
+        fi
+
+    # Step 2: Setup pnpm
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
+        run_install: false
+
+    # Step 3: Setup Node.js with pnpm cache
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'pnpm'
+
+    # Step 4: Get pnpm store directory
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        echo "pnpm store path: $(pnpm store path --silent)" | tee -a coverage-steps.log
+
+    # Step 5: Setup pnpm cache
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    # Step 6: Install dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "Installing dependencies..." | tee -a coverage-steps.log
+        pnpm install 2>&1 | tee -a coverage-steps.log
+        echo "Dependencies installed successfully" | tee -a coverage-steps.log
+
+    # Step 7: Run Relay compiler for React (needed before tests)
+    - name: Run Relay compiler
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "Running Relay compiler..." | tee -a ../coverage-steps.log
+        pnpm run relay 2>&1 | tee -a ../coverage-steps.log
+        echo "Relay compiler completed" | tee -a ../coverage-steps.log
+
+    # Step 8: Run Jest tests for root src directory with coverage
+    - name: Run Jest tests for root src
+      shell: bash
+      run: |
+        echo "Running Jest tests for root src directory..." | tee -a coverage-steps.log
+        pnpm run test -- --coverage --coverageDirectory=./coverage-root --json --outputFile=./coverage-root/test-results.json 2>&1 | tee -a coverage-steps.log || echo "Some tests may have failed in root src" | tee -a coverage-steps.log
+        echo "Root src tests completed" | tee -a coverage-steps.log
+
+    # Step 9: Run Jest tests for React with coverage
+    - name: Run Jest tests for React
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "Running Jest tests for React..." | tee -a ../coverage-steps.log
+        pnpm run test -- --coverage --coverageDirectory=./coverage --json --outputFile=./coverage/test-results.json 2>&1 | tee -a ../coverage-steps.log || echo "Some tests may have failed in React" | tee -a ../coverage-steps.log
+        echo "React tests completed" | tee -a ../coverage-steps.log
+
+    # Step 10: Run Jest tests for backend.ai-ui with coverage
+    - name: Run Jest tests for backend.ai-ui
+      shell: bash
+      working-directory: ./packages/backend.ai-ui
+      run: |
+        echo "Running Jest tests for backend.ai-ui..." | tee -a ../../coverage-steps.log
+        pnpm run test -- --coverage --coverageDirectory=./coverage --json --outputFile=./coverage/test-results.json 2>&1 | tee -a ../../coverage-steps.log || echo "Some tests may have failed in backend.ai-ui" | tee -a ../../coverage-steps.log
+        echo "backend.ai-ui tests completed" | tee -a ../../coverage-steps.log
+
+    # Step 11: Generate combined coverage summary
+    - name: Generate coverage summary
+      shell: bash
+      run: |
+        echo "" | tee -a coverage-steps.log
+        echo "========================================" | tee -a coverage-steps.log
+        echo "Test Coverage Summary" | tee -a coverage-steps.log
+        echo "========================================" | tee -a coverage-steps.log
+        echo "" | tee -a coverage-steps.log
+        
+        # Root src coverage
+        if [ -f coverage-root/coverage-summary.json ]; then
+          echo "Root src coverage:" | tee -a coverage-steps.log
+          cat coverage-root/coverage-summary.json | tee -a coverage-steps.log
+        fi
+        
+        # React coverage
+        if [ -f react/coverage/coverage-summary.json ]; then
+          echo "" | tee -a coverage-steps.log
+          echo "React coverage:" | tee -a coverage-steps.log
+          cat react/coverage/coverage-summary.json | tee -a coverage-steps.log
+        fi
+        
+        # backend.ai-ui coverage
+        if [ -f packages/backend.ai-ui/coverage/coverage-summary.json ]; then
+          echo "" | tee -a coverage-steps.log
+          echo "backend.ai-ui coverage:" | tee -a coverage-steps.log
+          cat packages/backend.ai-ui/coverage/coverage-summary.json | tee -a coverage-steps.log
+        fi
+        
+        echo "" | tee -a coverage-steps.log
+        echo "========================================" | tee -a coverage-steps.log
+        echo "Coverage reports generated in:" | tee -a coverage-steps.log
+        echo "  - ./coverage-root (root src)" | tee -a coverage-steps.log
+        echo "  - ./react/coverage (React)" | tee -a coverage-steps.log
+        echo "  - ./packages/backend.ai-ui/coverage (backend.ai-ui)" | tee -a coverage-steps.log
+        echo "========================================" | tee -a coverage-steps.log
+
+    # Step 12: Upload coverage reports as artifacts
+    - name: Upload coverage artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          coverage-root/
+          react/coverage/
+          packages/backend.ai-ui/coverage/
+          coverage-steps.log
+        if-no-files-found: warn
+        retention-days: 30
+
+    # Step 13: Log completion
+    - name: Log completion
+      shell: bash
+      run: |
+        echo "" | tee -a coverage-steps.log
+        echo "Coverage steps completed successfully!" | tee -a coverage-steps.log
+        echo "Coverage artifact uploaded with name: 'coverage'" | tee -a coverage-steps.log
