@@ -264,7 +264,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
                 model: provider.chat(modelId),
                 middleware: extractReasoningMiddleware({
                   tagName: 'think',
-                  startWithReasoning: true,
                 }),
               }),
               messages: convertToModelMessages(body?.messages),
