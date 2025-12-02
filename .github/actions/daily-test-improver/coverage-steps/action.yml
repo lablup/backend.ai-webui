@@ -1,0 +1,178 @@
+name: 'Coverage Steps for Daily Test Improver'
+description: 'Builds projects, runs tests, generates coverage reports for React and backend.ai-ui packages'
+
+runs:
+  using: 'composite'
+  steps:
+    # Step 1: Setup Node.js and pnpm
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
+      shell: bash
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
+        run_install: false
+      shell: bash
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        echo "Step: Get pnpm store directory" >> coverage-steps.log
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+      shell: bash
+
+    # Step 2: Install dependencies
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "Step: Installing dependencies..." >> coverage-steps.log
+        pnpm install 2>&1 | tee -a coverage-steps.log
+
+    # Step 3: Build and test React project with coverage
+    - name: Build React GraphQL types
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "Step: Building React GraphQL types..." >> ../coverage-steps.log
+        pnpm run relay 2>&1 | tee -a ../coverage-steps.log
+
+    - name: Run React tests with coverage
+      shell: bash
+      working-directory: ./react
+      run: |
+        echo "Step: Running React tests with coverage..." >> ../coverage-steps.log
+        echo "Coverage output will be saved to: react/coverage/" >> ../coverage-steps.log
+        pnpm run test -- --coverage --coverageDirectory=coverage 2>&1 | tee -a ../coverage-steps.log
+        echo "React tests completed" >> ../coverage-steps.log
+
+    # Step 4: Run backend.ai-ui tests with coverage
+    - name: Run backend.ai-ui tests with coverage
+      shell: bash
+      working-directory: ./packages/backend.ai-ui
+      run: |
+        echo "Step: Running backend.ai-ui tests with coverage..." >> ../../coverage-steps.log
+        echo "Coverage output will be saved to: packages/backend.ai-ui/coverage/" >> ../../coverage-steps.log
+        pnpm run test -- --coverage --coverageDirectory=coverage 2>&1 | tee -a ../../coverage-steps.log
+        echo "backend.ai-ui tests completed" >> ../../coverage-steps.log
+
+    # Step 5: Install nyc for merging coverage reports
+    - name: Install nyc for coverage merging
+      shell: bash
+      run: |
+        echo "Step: Installing nyc for coverage report merging..." >> coverage-steps.log
+        pnpm add -g nyc 2>&1 | tee -a coverage-steps.log
+
+    # Step 6: Create combined coverage directory
+    - name: Create combined coverage directory
+      shell: bash
+      run: |
+        echo "Step: Creating combined coverage directory..." >> coverage-steps.log
+        mkdir -p coverage/combined 2>&1 | tee -a coverage-steps.log
+
+    # Step 7: Copy coverage reports to combined directory
+    - name: Copy coverage reports
+      shell: bash
+      run: |
+        echo "Step: Copying coverage reports to combined directory..." >> coverage-steps.log
+        # Copy React coverage
+        if [ -d "react/coverage" ]; then
+          cp -r react/coverage coverage/react
+          echo "React coverage copied" >> coverage-steps.log
+        else
+          echo "Warning: React coverage not found" >> coverage-steps.log
+        fi
+        # Copy backend.ai-ui coverage
+        if [ -d "packages/backend.ai-ui/coverage" ]; then
+          cp -r packages/backend.ai-ui/coverage coverage/backend-ai-ui
+          echo "backend.ai-ui coverage copied" >> coverage-steps.log
+        else
+          echo "Warning: backend.ai-ui coverage not found" >> coverage-steps.log
+        fi
+
+    # Step 8: Merge coverage reports
+    - name: Merge coverage reports
+      shell: bash
+      run: |
+        echo "Step: Merging coverage reports..." >> coverage-steps.log
+        # Try to merge if both coverage-final.json files exist
+        if [ -f "react/coverage/coverage-final.json" ] && [ -f "packages/backend.ai-ui/coverage/coverage-final.json" ]; then
+          mkdir -p coverage/temp
+          cp react/coverage/coverage-final.json coverage/temp/react-coverage.json
+          cp packages/backend.ai-ui/coverage/coverage-final.json coverage/temp/backend-ai-ui-coverage.json
+          npx nyc merge coverage/temp coverage/combined/coverage-final.json 2>&1 | tee -a coverage-steps.log
+          npx nyc report --temp-dir coverage/combined --reporter=html --reporter=lcov --reporter=text-summary --report-dir coverage/combined 2>&1 | tee -a coverage-steps.log
+          echo "Combined coverage report generated at: coverage/combined/" >> coverage-steps.log
+        else
+          echo "Coverage files not found for merging, keeping separate reports" >> coverage-steps.log
+        fi
+
+    # Step 9: Generate coverage summary
+    - name: Generate coverage summary
+      shell: bash
+      run: |
+        echo "Step: Generating coverage summary..." >> coverage-steps.log
+        echo "" >> coverage-steps.log
+        echo "========================================" >> coverage-steps.log
+        echo "COVERAGE SUMMARY" >> coverage-steps.log
+        echo "========================================" >> coverage-steps.log
+        
+        # React coverage summary
+        if [ -f "react/coverage/lcov-report/index.html" ]; then
+          echo "" >> coverage-steps.log
+          echo "React Project Coverage:" >> coverage-steps.log
+          cd react && pnpm run test -- --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../coverage-steps.log || true
+          cd ..
+        fi
+        
+        # backend.ai-ui coverage summary
+        if [ -f "packages/backend.ai-ui/coverage/lcov-report/index.html" ]; then
+          echo "" >> coverage-steps.log
+          echo "backend.ai-ui Project Coverage:" >> coverage-steps.log
+          cd packages/backend.ai-ui && pnpm run test -- --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../../coverage-steps.log || true
+          cd ../..
+        fi
+        
+        # Combined coverage if available
+        if [ -f "coverage/combined/lcov-report/index.html" ]; then
+          echo "" >> coverage-steps.log
+          echo "Combined Coverage Report available at: coverage/combined/lcov-report/index.html" >> coverage-steps.log
+        fi
+        
+        echo "========================================" >> coverage-steps.log
+        echo "" >> coverage-steps.log
+
+    # Step 10: Upload coverage reports as artifacts
+    - name: Upload coverage artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: |
+          coverage/
+          coverage-steps.log
+        retention-days: 7
+      shell: bash
+
+    - name: Final log message
+      shell: bash
+      run: |
+        echo "Step: Coverage generation complete!" >> coverage-steps.log
+        echo "Coverage artifacts uploaded with name: 'coverage'" >> coverage-steps.log
+        echo "" >> coverage-steps.log
+        echo "Coverage reports available at:" >> coverage-steps.log
+        echo "  - React: coverage/react/lcov-report/index.html" >> coverage-steps.log
+        echo "  - backend.ai-ui: coverage/backend-ai-ui/lcov-report/index.html" >> coverage-steps.log
+        echo "  - Combined: coverage/combined/lcov-report/index.html (if merge successful)" >> coverage-steps.log
+        cat coverage-steps.log
