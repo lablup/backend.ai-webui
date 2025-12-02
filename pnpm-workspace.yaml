@@ -23,3 +23,5 @@ patchedDependencies:
 
 minimumReleaseAge: 10080
 
+minimumReleaseAgeExclude:
+  - node-forge@1.3.2
