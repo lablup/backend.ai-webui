@@ -477,14 +477,12 @@ export const useSetBAINotification = () => {
 
       const notification = new Notification(title, options);
       notification.onclick = () => {
-        notification.onclick = () => {
-          if (params.to) {
-            window.focus();
-            const href =
-              typeof params.to === 'string' ? params.to : createPath(params.to);
-            window.location.href = href;
-          }
-        };
+        if (params.to) {
+          window.focus();
+          const href =
+            typeof params.to === 'string' ? params.to : createPath(params.to);
+          window.location.href = href;
+        }
       };
     },
     [t],
