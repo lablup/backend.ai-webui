@@ -67,7 +67,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { token } = theme.useToken();
   const { xl } = Grid.useBreakpoint();
   const { styles } = useStyles();
-  const folderExplorerRef = useRef<FolderExplorerElement>(null);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -216,12 +215,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   ) : null;
 
   const vFolderDescriptionElement = vfolder_node ? (
-    <VFolderNodeDescription
-      vfolderNodeFrgmt={vfolder_node}
-      onRequestRefresh={() => {
-        folderExplorerRef.current?._fetchVFolder();
-      }}
-    />
+    <VFolderNodeDescription vfolderNodeFrgmt={vfolder_node} />
   ) : null;
 
   return (
@@ -303,14 +297,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
                 {vFolderDescriptionElement}
               </BAIFlex>
             )}
-            <div style={{ display: 'none' }}>
-              {/* @ts-ignore  TODO: delete below after https://lablup.atlassian.net/browse/FR-1150 */}
-              <backend-ai-folder-explorer
-                ref={folderExplorerRef}
-                active
-                vfolderID={vfolderID}
-              />
-            </div>
           </BAIFlex>
         )}
       </Suspense>

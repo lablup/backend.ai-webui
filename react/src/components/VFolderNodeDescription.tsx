@@ -38,12 +38,10 @@ import {
 
 interface VFolderNodeDescriptionProps extends DescriptionsProps {
   vfolderNodeFrgmt: VFolderNodeDescriptionFragment$key;
-  onRequestRefresh?: () => void;
 }
 
 const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   vfolderNodeFrgmt,
-  onRequestRefresh,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -195,7 +193,6 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
                       id: vfolderNode.id,
                     },
                   ).toPromise();
-                  onRequestRefresh?.();
                 },
                 onError: (error) => {
                   message.error(getErrorMessage(error));
