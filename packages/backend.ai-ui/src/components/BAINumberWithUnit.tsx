@@ -1,20 +1,20 @@
 import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
+import BAIFlex from './BAIFlex';
 import { Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
 
-interface NumberWithUnitProps {
+interface BAINumberWithUnitProps {
   numberUnit: string;
   targetUnit: SizeUnit;
   unitType: 'binary' | 'decimal';
   postfix?: string;
 }
 
-const NumberWithUnit = ({
+const BAINumberWithUnit = ({
   numberUnit,
   targetUnit,
   unitType,
   postfix,
-}: NumberWithUnitProps) => {
+}: BAINumberWithUnitProps) => {
   const convertedByTargetUnit =
     unitType === 'binary'
       ? convertToBinaryUnit(numberUnit, targetUnit, 2, true)
@@ -41,4 +41,4 @@ const NumberWithUnit = ({
   );
 };
 
-export default NumberWithUnit;
+export default BAINumberWithUnit;

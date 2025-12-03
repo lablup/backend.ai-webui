@@ -15,7 +15,7 @@ import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSessionStorageState, useUpdateEffect } from 'ahooks';
 import { App, AppProps, theme, Typography } from 'antd';
-import { BAIConfigProvider, BAIText } from 'backend.ai-ui';
+import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -50,6 +50,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';
 import { GlobeIcon } from 'lucide-react';
 import React, {
+  ReactNode,
   Suspense,
   useEffect,
   useEffectEvent,
@@ -60,6 +61,7 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { useDeviceMetaData } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -199,6 +201,14 @@ const commonAppProps: AppProps = {
   },
 };
 
+const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
+  const { data } = useDeviceMetaData();
+
+  return (
+    <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
+  );
+};
+
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   children,
   value,
@@ -308,18 +318,22 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                       }}
                       anonymousClientFactory={createAnonymousBackendaiClient}
                     >
-                      <App {...commonAppProps}>
-                        <StyleProvider container={shadowRoot} cache={cache}>
-                          <Suspense fallback="">
-                            <BrowserRouter>
-                              <QueryParamProvider adapter={ReactRouter6Adapter}>
-                                <RoutingEventHandler />
-                                {children}
-                              </QueryParamProvider>
-                            </BrowserRouter>
-                          </Suspense>
-                        </StyleProvider>
-                      </App>
+                      <BAIMetaDataWrapper>
+                        <App {...commonAppProps}>
+                          <StyleProvider container={shadowRoot} cache={cache}>
+                            <Suspense fallback="">
+                              <BrowserRouter>
+                                <QueryParamProvider
+                                  adapter={ReactRouter6Adapter}
+                                >
+                                  <RoutingEventHandler />
+                                  {children}
+                                </QueryParamProvider>
+                              </BrowserRouter>
+                            </Suspense>
+                          </StyleProvider>
+                        </App>
+                      </BAIMetaDataWrapper>
                     </BAIConfigProvider>
                   </WebComponentContext.Provider>
                 </ThemeModeProvider>
@@ -445,18 +459,20 @@ export const DefaultProvidersForReactRoot: React.FC<
                 ),
               }}
             >
-              <QueryParamProvider adapter={ReactRouter6Adapter}>
-                <App {...commonAppProps}>
-                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                  <Suspense>
-                    {/* <BrowserRouter> */}
-                    {/* <RoutingEventHandler /> */}
-                    {children}
-                    {/* </BrowserRouter> */}
-                  </Suspense>
-                  {/* </StyleProvider> */}
-                </App>
-              </QueryParamProvider>
+              <BAIMetaDataWrapper>
+                <QueryParamProvider adapter={ReactRouter6Adapter}>
+                  <App {...commonAppProps}>
+                    {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                    <Suspense>
+                      {/* <BrowserRouter> */}
+                      {/* <RoutingEventHandler /> */}
+                      {children}
+                      {/* </BrowserRouter> */}
+                    </Suspense>
+                    {/* </StyleProvider> */}
+                  </App>
+                </QueryParamProvider>
+              </BAIMetaDataWrapper>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
