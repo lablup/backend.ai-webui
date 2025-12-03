@@ -923,7 +923,7 @@
     "DescCleanupOldImages": "Docker 이미지 리스트에서 오래된 이미지를 정리하고 삭제합니다.",
     "DescMatchDatabase": "사용 통계 데이터베이스를 현재 상태 기반으로 재계산합니다. Docker가 사고로 인해 중단되었거나, 몇몇 세션이 강제 종료 되었을 때 유용합니다.",
     "DescRescanImageList": "등록된 컨테이너 이미지 저장소로부터 이미지 목록을 새로 읽습니다. 오랜 시간이 걸리므로, 실행 후 종료시까지 기다려주시기 바랍니다.",
-    "Fix": "수정",
+    "Fix": "문제 해결",
     "ImagesEnvironment": "세션 이미지 / 환경",
     "MatchDatabase": "사용 통계 데이터베이스를 현재 상태와 동기화",
     "RecalculateUsage": "사용량 재계산",
