@@ -74,7 +74,6 @@ const UserCredentialsPage = React.lazy(
 );
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
-const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
 const ConfigurationsPage = React.lazy(
   () => import('./pages/ConfigurationsPage'),
@@ -364,7 +363,7 @@ const router = createBrowserRouter([
           return <WebUINavigate to={'/start' + location.search} replace />;
         },
       },
-      // Redirect paths for legacy support
+      // Redirect paths for backward compatibility
       {
         path: '/github',
         Component: () => {
@@ -482,9 +481,17 @@ const router = createBrowserRouter([
         handle: { labelKey: 'webui.menu.Configurations' },
       },
       {
+        // Redirect paths for backward compatibility
         path: '/maintenance',
-        element: <MaintenancePage />,
-        handle: { labelKey: 'webui.menu.Maintenance' },
+        Component: () => {
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={'/settings?tab=maintenance' + location.search}
+              replace
+            />
+          );
+        },
       },
       {
         path: '/storage-settings/:hostname',

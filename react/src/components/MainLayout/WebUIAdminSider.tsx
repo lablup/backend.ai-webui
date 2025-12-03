@@ -16,7 +16,6 @@ import {
   HddOutlined,
   InfoCircleOutlined,
   SolutionOutlined,
-  ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
@@ -139,15 +138,6 @@ const WebUIAdminSider: React.FC<WebUIAdminSiderProps> = (props) => {
       ),
       icon: <ControlOutlined style={{ color: token.colorInfo }} />,
       key: 'settings',
-    },
-    {
-      label: (
-        <WebUILink to="/maintenance" state={{ goBack: goBackPath }}>
-          {t('webui.menu.Maintenance')}
-        </WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
     },
     {
       label: (

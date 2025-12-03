@@ -1,11 +1,12 @@
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
 import { useSessionStorageState } from 'ahooks';
-import { Card, Skeleton } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { Skeleton } from 'antd';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import BrandingSettingList from 'src/components/BrandingSettingList';
+import MaintenanceSettingList from 'src/components/MaintenanceSettingList';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'configurations' | 'branding';
@@ -13,6 +14,7 @@ type TabKey = 'configurations' | 'branding';
 const tabParam = withDefault(StringParam, 'configurations');
 
 const ConfigurationsPage = () => {
+  'use memo';
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
@@ -20,7 +22,7 @@ const ConfigurationsPage = () => {
   });
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={filterOutEmpty([
@@ -31,6 +33,10 @@ const ConfigurationsPage = () => {
         !isThemePreviewMode && {
           key: 'branding',
           tab: t('webui.menu.Branding'),
+        },
+        {
+          key: 'maintenance',
+          tab: t('webui.menu.Maintenance'),
         },
       ])}
     >
@@ -45,8 +51,13 @@ const ConfigurationsPage = () => {
             <BrandingSettingList />
           </BAIErrorBoundary>
         )}
+        {curTabKey === 'maintenance' && (
+          <BAIErrorBoundary>
+            <MaintenanceSettingList />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 
