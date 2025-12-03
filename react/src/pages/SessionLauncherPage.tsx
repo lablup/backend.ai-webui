@@ -277,7 +277,7 @@ const SessionLauncherPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const mergedInitialValues = useMemo(() => {
+  const mergedInitialValues: SessionLauncherFormValue = useMemo(() => {
     return _.merge({}, defaultFormValues, formValuesFromQueryParams);
   }, [defaultFormValues, formValuesFromQueryParams]);
 

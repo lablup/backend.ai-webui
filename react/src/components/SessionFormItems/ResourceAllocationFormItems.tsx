@@ -138,6 +138,7 @@ const ResourceAllocationFormItems: React.FC<
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
   );
+  const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
     preserve: true,
@@ -205,6 +206,11 @@ const ResourceAllocationFormItems: React.FC<
   }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
+    if (!currentResourceValue) {
+      form.setFieldsValue({
+        allocationPreset: 'auto-select',
+      });
+    }
     if (supportedAcceleratorTypesInRGByImage?.length === 0) {
       form.setFieldsValue({
         resource: {
@@ -212,7 +218,7 @@ const ResourceAllocationFormItems: React.FC<
         },
       });
     }
-  }, [supportedAcceleratorTypesInRGByImage, form]);
+  }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
   const sessionSliderLimitAndRemaining = {
     min: 1,
