@@ -1,7 +1,7 @@
 ---
 on:
   schedule:
-  - cron: 0 9 * * 1-5
+  - cron: 0 0 * * 1-5
   stop-after: +1mo
   workflow_dispatch: null
 permissions:
