@@ -387,6 +387,38 @@ export const omitNullAndUndefinedFields = <T extends Record<string, any>>(
 };
 
 /**
+ * Safely parses an unknown input into a plain object record.
+ *
+ * Accepts either:
+ * - a non-null object (not an array) returned as-is
+ * - a JSON string starting with '{' which will be parsed
+ * Otherwise returns an empty object.
+ *
+ *
+ * @param raw - Unknown input value that may be an object or JSON string
+ * @returns A record object or an empty object if parsing fails
+ */
+export function parseObjectMap<T = any>(raw: unknown): Record<string, T> {
+  if (!raw) return {};
+  if (typeof raw === 'object' && raw !== null && !Array.isArray(raw)) {
+    return raw as Record<string, T>;
+  }
+  if (typeof raw === 'string') {
+    const s = raw.trim();
+    if (!s.startsWith('{')) return {};
+    try {
+      const parsed = JSON.parse(s);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as Record<string, T>;
+      }
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+/**
  * Generates a random string of alphabetic characters.
  *
  * @param n - The length of the random string to generate. Defaults to 3.

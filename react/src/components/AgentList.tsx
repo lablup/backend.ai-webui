@@ -3,7 +3,6 @@ import {
   AgentListQuery,
   AgentListQuery$data,
 } from '../__generated__/AgentListQuery.graphql';
-import { AgentSettingModalFragment$key } from '../__generated__/AgentSettingModalFragment.graphql';
 import {
   convertToBinaryUnit,
   convertToDecimalUnit,
@@ -16,7 +15,7 @@ import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPa
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailModal from './AgentDetailModal';
-import AgentSettingModal from './AgentSettingModal';
+import AgentSettingModalLegacy from './AgentSettingModalLegacy';
 import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -47,6 +46,7 @@ import _ from 'lodash';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { AgentSettingModalLegacyFragment$key } from 'src/__generated__/AgentSettingModalLegacyFragment.graphql';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type Agent = NonNullable<AgentListQuery$data['agent_list']>['items'][number];
@@ -71,7 +71,7 @@ const AgentList: React.FC<AgentListProps> = ({
   const [currentAgentInfo, setCurrentAgentInfo] =
     useState<AgentDetailModalFragment$key | null>();
   const [currentSettingAgent, setCurrentSettingAgent] =
-    useState<AgentSettingModalFragment$key | null>();
+    useState<AgentSettingModalLegacyFragment$key | null>();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const baiClient = useSuspendedBackendaiClient();
@@ -146,7 +146,7 @@ const AgentList: React.FC<AgentListProps> = ({
             scaling_group
             schedulable
             ...AgentDetailModalFragment
-            ...AgentSettingModalFragment
+            ...AgentSettingModalLegacyFragment
           }
           total_count
         }
@@ -960,8 +960,8 @@ const AgentList: React.FC<AgentListProps> = ({
         open={!!currentAgentInfo}
         onRequestClose={() => setCurrentAgentInfo(null)}
       />
-      <AgentSettingModal
-        agentSettingModalFrgmt={currentSettingAgent}
+      <AgentSettingModalLegacy
+        agentSettingModalLegacyFrgmt={currentSettingAgent}
         open={!!currentSettingAgent}
         onRequestClose={(success) => {
           if (success) {
