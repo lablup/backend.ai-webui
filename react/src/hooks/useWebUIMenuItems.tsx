@@ -22,12 +22,10 @@ import {
   FileDoneOutlined,
   SolutionOutlined,
   ControlOutlined,
-  ToolOutlined,
   InfoCircleOutlined,
   ApiOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
-import { useSessionStorageState } from 'ahooks';
 import { type MenuProps, theme, Typography } from 'antd';
 import { GetProp } from 'antd/lib';
 import { MenuItemType } from 'antd/lib/menu/interface';
@@ -47,7 +45,6 @@ import {
   PackagePlus,
   LinkIcon,
   ExternalLinkIcon,
-  Palette,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -91,8 +88,6 @@ export type MenuKeys =
   | 'admin-dashboard'
   | 'agent'
   | 'settings'
-  | 'maintenance'
-  | 'branding'
   | 'information';
 
 // Convert menu key to URL path
@@ -141,10 +136,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
-
-  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
-    defaultValue: false,
-  });
 
   // Helper to create menu item with labelText reused in label
   const createMenuItem = (
@@ -327,18 +318,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <ControlOutlined style={{ color: token.colorInfo }} />,
       key: 'settings',
-    },
-    {
-      label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
-    },
-    !isThemePreviewMode && {
-      label: <WebUILink to="/branding">{t('webui.menu.Branding')}</WebUILink>,
-      icon: <Palette style={{ color: token.colorInfo }} />,
-      key: 'branding',
     },
     {
       label: (

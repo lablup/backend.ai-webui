@@ -3,29 +3,51 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
-import { Card, Skeleton } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { useSessionStorageState } from 'ahooks';
+import { Skeleton } from 'antd';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { useQueryState, parseAsStringLiteral, inferParserType } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import BrandingSettingList from 'src/components/BrandingSettingList';
+import MaintenanceSettingList from 'src/components/MaintenanceSettingList';
 
-type TabKey = 'configurations';
-
-const tabParam = withDefault(StringParam, 'configurations');
+const parser = parseAsStringLiteral([
+  'maintenance',
+  'configurations',
+  'branding',
+]);
+type TabKey = inferParserType<typeof parser>;
 
 const ConfigurationsPage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parser.withDefault('configurations'),
+  );
+
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={filterOutEmpty([
         {
+          key: 'maintenance',
+          tab: t('webui.menu.Maintenance'),
+        },
+        {
           key: 'configurations',
           tab: t('webui.menu.Configurations'),
+        },
+        !isThemePreviewMode && {
+          key: 'branding',
+          tab: t('webui.menu.Branding'),
         },
       ])}
     >
@@ -35,8 +57,18 @@ const ConfigurationsPage = () => {
             <ConfigurationsSettingList />
           </BAIErrorBoundary>
         )}
+        {curTabKey === 'branding' && (
+          <BAIErrorBoundary>
+            <BrandingSettingList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'maintenance' && (
+          <BAIErrorBoundary>
+            <MaintenanceSettingList />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 

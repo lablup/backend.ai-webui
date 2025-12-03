@@ -76,7 +76,6 @@ const UserCredentialsPage = React.lazy(
 );
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
-const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
 const ConfigurationsPage = React.lazy(
   () => import('./pages/ConfigurationsPage'),
@@ -95,7 +94,6 @@ const ReservoirArtifactDetailPage = React.lazy(
 );
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
-const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
@@ -445,14 +443,34 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'webui.menu.Configurations' },
   },
   {
+    // Redirect paths for backward compatibility
     path: '/maintenance',
-    element: <MaintenancePage />,
-    handle: { labelKey: 'webui.menu.Maintenance' },
+    Component: () => {
+      const location = useLocation();
+      const params = new URLSearchParams(location.search);
+      params.set('tab', 'maintenance');
+      return (
+        <WebUINavigate
+          to={`/settings?${params.toString()}${location.hash}`}
+          replace
+        />
+      );
+    },
   },
   {
+    // Redirect paths for backward compatibility
     path: '/branding',
-    element: <BrandingPage />,
-    handle: { labelKey: 'webui.menu.Branding' },
+    Component: () => {
+      const location = useLocation();
+      const params = new URLSearchParams(location.search);
+      params.set('tab', 'branding');
+      return (
+        <WebUINavigate
+          to={`/settings?${params.toString()}${location.hash}`}
+          replace
+        />
+      );
+    },
   },
   {
     path: '/project',
