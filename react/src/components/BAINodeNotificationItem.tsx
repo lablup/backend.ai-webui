@@ -1,5 +1,6 @@
 import { NotificationState } from '../hooks/useBAINotification';
 import BAIComputeSessionNodeNotificationItem from './BAIComputeSessionNodeNotificationItem';
+import BAIVirtualFolderNodeNotificationItem from './BAIVirtualFolderNodeNotificationItem';
 import React from 'react';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
@@ -18,6 +19,8 @@ const nodeFragmentOperation = graphql`
     ... on VirtualFolderNode {
       __typename
       status
+      ...BAIVirtualFolderNodeNotificationItemFragment
+        @alias(as: "virtualFolderNodeFrgmt")
     }
   }
 `;
@@ -39,6 +42,13 @@ const BAINodeNotificationItem: React.FC<{
       />
     );
   } else if (node?.__typename === 'VirtualFolderNode') {
+    return (
+      <BAIVirtualFolderNodeNotificationItem
+        notification={notification}
+        virtualFolderNodeFrgmt={node.virtualFolderNodeFrgmt || null}
+        showDate={showDate}
+      />
+    );
   } else {
     // console.warn('Unknown node type in BAINodeNotificationItem:', node);
     return null;

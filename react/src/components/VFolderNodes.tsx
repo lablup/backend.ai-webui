@@ -43,6 +43,7 @@ import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
 
 export const statusTagColor = {
   // mountable
@@ -84,6 +85,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
   const { getErrorMessage } = useErrorMessageResolver();
+  const navigate = useNavigate();
 
   const [deletingVFolder, setDeletingVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -107,6 +109,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ...VFolderNodeIdenticonFragment
         ...SharedFolderPermissionInfoModalFragment
         ...BAIVFolderDeleteButtonFragment
+        ...BAINodeNotificationItemFragment
       }
     `,
     vfoldersFrgmt,
@@ -274,6 +277,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                             },
                             onError: (error) => {
                               upsertNotification({
+                                key: `vfolder-error-${vfolder?.id}`,
+                                node: vfolder,
                                 description: getErrorMessage(error),
                                 open: true,
                               });
@@ -298,9 +303,46 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                             );
                           },
                           onError: (error) => {
+                            const matchString = error?.message.match(
+                              /sessions\(ids: (\[.*?\])\)/,
+                            )?.[1];
+                            const occupiedSession = JSON.parse(
+                              matchString?.replace(/'/g, '"') || '[]',
+                            );
                             upsertNotification({
-                              description: getErrorMessage(error),
                               open: true,
+                              key: `vfolder-error-${vfolder?.id}`,
+                              node: vfolder,
+                              description: getErrorMessage(error).replace(
+                                /\(ids[\s\S]*$/,
+                                '',
+                              ),
+                              extraDescription: !_.isEmpty(occupiedSession) ? (
+                                <BAIFlex direction="column" align="stretch">
+                                  <Typography.Text
+                                    style={{
+                                      color: token.colorTextDescription,
+                                    }}
+                                  >
+                                    {t('data.folders.MountedSessions')}
+                                  </Typography.Text>
+                                  {_.map(occupiedSession, (sessionId) => (
+                                    <BAILink
+                                      key={sessionId}
+                                      style={{
+                                        fontWeight: 'normal',
+                                      }}
+                                      onClick={() => {
+                                        navigate(
+                                          `/session${`?${new URLSearchParams({ sessionDetail: sessionId }).toString()}`}`,
+                                        );
+                                      }}
+                                    >
+                                      {sessionId}
+                                    </BAILink>
+                                  ))}
+                                </BAIFlex>
+                              ) : null,
                             });
                           },
                         });
@@ -427,6 +469,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             },
             onError: (error) => {
               upsertNotification({
+                key: `vfolder-error-${deletingVFolder?.id}`,
+                ...(deletingVFolder && { node: deletingVFolder }),
                 description: getErrorMessage(error),
                 open: true,
               });

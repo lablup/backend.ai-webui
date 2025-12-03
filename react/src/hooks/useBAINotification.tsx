@@ -64,7 +64,7 @@ export interface NotificationState
     renderDataMessage?: (message?: string) => React.ReactNode;
     promise?: Promise<unknown> | null;
   };
-  extraDescription?: string | null;
+  extraDescription?: ReactNode | null;
   onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
   extraData: any;
@@ -279,6 +279,8 @@ export const useBAINotificationEffect = () => {
  * @returns An object containing functions for manipulating notifications.
  */
 export const useSetBAINotification = () => {
+  'use memo';
+
   // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetAtom(notificationListState);
   const [desktopNotification] = useBAISettingUserState('desktop_notification');
