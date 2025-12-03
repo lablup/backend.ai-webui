@@ -291,11 +291,6 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         Promise.allSettled(promises).then(() => {
           setIsForce(false);
           onRequestClose(true);
-          // TODO: remove below code after session list migration to React
-          const event = new CustomEvent('backend-ai-session-list-refreshed', {
-            detail: 'running',
-          });
-          document.dispatchEvent(event);
         });
       }}
       okText={isForce ? t('button.ForceTerminate') : t('session.Terminate')}

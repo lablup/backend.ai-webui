@@ -167,15 +167,11 @@ const router = createBrowserRouter([
         },
       },
       {
+        // TODO: For the convenience of existing users, this path will be retained. It is scheduled for deletion in the future.
         path: '/summary',
         Component: () => {
           const location = useLocation();
-          const [isClassicDashboardPage] = useBAISettingUserState(
-            'classic_dashboard_page',
-          );
-          return !isClassicDashboardPage ? (
-            <WebUINavigate to={'/dashboard' + location.search} replace />
-          ) : null;
+          return <WebUINavigate to={'/dashboard' + location.search} replace />;
         },
         handle: { labelKey: 'webui.menu.Summary' },
       },
@@ -183,34 +179,22 @@ const router = createBrowserRouter([
         path: '/dashboard',
         handle: { labelKey: 'webui.menu.Dashboard' },
         Component: () => {
-          const location = useLocation();
-          const [isClassicDashboardPage] = useBAISettingUserState(
-            'classic_dashboard_page',
-          );
-          return !isClassicDashboardPage ? (
+          return (
             <BAIErrorBoundary>
               <Suspense fallback={<Skeleton active />}>
                 <DashboardPage />
               </Suspense>
             </BAIErrorBoundary>
-          ) : (
-            <WebUINavigate to={'/summary' + location.search} replace />
           );
         },
       },
       {
+        // TODO: For the convenience of existing users, this path will be retained. It is scheduled for deletion in the future.
         path: '/job',
         handle: { labelKey: 'webui.menu.Sessions' },
         Component: () => {
           const location = useLocation();
-          const [classic_session_list] = useBAISettingUserState(
-            'classic_session_list',
-          );
-          return classic_session_list ? (
-            <SessionDetailAndContainerLogOpenerLegacy />
-          ) : (
-            <WebUINavigate to={'/session' + location.search} replace />
-          );
+          return <WebUINavigate to={'/session' + location.search} replace />;
         },
       },
       {
@@ -220,25 +204,13 @@ const router = createBrowserRouter([
           {
             path: '',
             Component: () => {
-              const location = useLocation();
-              const [classicSessionList] = useBAISettingUserState(
-                'classic_session_list',
-              );
-
               useSuspendedBackendaiClient();
 
-              return !classicSessionList ? (
-                <Suspense
-                  fallback={
-                    <Skeleton active />
-                    // <BAICard title={t('webui.menu.Sessions')} loading />
-                  }
-                >
+              return (
+                <Suspense fallback={<Skeleton active />}>
                   <ComputeSessionListPage />
                   <SessionDetailAndContainerLogOpenerLegacy />
                 </Suspense>
-              ) : (
-                <WebUINavigate to={'/job' + location.search} replace />
               );
             },
           },
