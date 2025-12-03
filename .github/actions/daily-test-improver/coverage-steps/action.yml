@@ -5,19 +5,17 @@ runs:
   using: 'composite'
   steps:
     # Step 1: Setup Node.js and pnpm
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: ".nvmrc"
-        cache: "pnpm"
-      shell: bash
-
     - name: Install pnpm
       uses: pnpm/action-setup@v4
       with:
         version: latest
         run_install: false
-      shell: bash
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
 
     - name: Get pnpm store directory
       shell: bash
@@ -32,7 +30,6 @@ runs:
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-      shell: bash
 
     # Step 2: Install dependencies
     - name: Install dependencies
@@ -68,21 +65,14 @@ runs:
         pnpm run test -- --coverage --coverageDirectory=coverage 2>&1 | tee -a ../../coverage-steps.log
         echo "backend.ai-ui tests completed" >> ../../coverage-steps.log
 
-    # Step 5: Install nyc for merging coverage reports
-    - name: Install nyc for coverage merging
-      shell: bash
-      run: |
-        echo "Step: Installing nyc for coverage report merging..." >> coverage-steps.log
-        pnpm add -g nyc 2>&1 | tee -a coverage-steps.log
-
-    # Step 6: Create combined coverage directory
+    # Step 5: Create combined coverage directory
     - name: Create combined coverage directory
       shell: bash
       run: |
         echo "Step: Creating combined coverage directory..." >> coverage-steps.log
         mkdir -p coverage/combined 2>&1 | tee -a coverage-steps.log
 
-    # Step 7: Copy coverage reports to combined directory
+    # Step 6: Copy coverage reports to combined directory
     - name: Copy coverage reports
       shell: bash
       run: |
@@ -102,7 +92,7 @@ runs:
           echo "Warning: backend.ai-ui coverage not found" >> coverage-steps.log
         fi
 
-    # Step 8: Merge coverage reports
+    # Step 7: Merge coverage reports
     - name: Merge coverage reports
       shell: bash
       run: |
@@ -119,7 +109,7 @@ runs:
           echo "Coverage files not found for merging, keeping separate reports" >> coverage-steps.log
         fi
 
-    # Step 9: Generate coverage summary
+    # Step 8: Generate coverage summary
     - name: Generate coverage summary
       shell: bash
       run: |
@@ -154,7 +144,7 @@ runs:
         echo "========================================" >> coverage-steps.log
         echo "" >> coverage-steps.log
 
-    # Step 10: Upload coverage reports as artifacts
+    # Step 9: Upload coverage reports as artifacts
     - name: Upload coverage artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -163,7 +153,6 @@ runs:
           coverage/
           coverage-steps.log
         retention-days: 7
-      shell: bash
 
     - name: Final log message
       shell: bash
