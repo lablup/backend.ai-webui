@@ -45,9 +45,13 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
       direction="column"
       style={{ alignSelf: 'stretch' }}
     >
-      <Row gutter={16}>
-        <Col span={6}>
-          <BAIFlex gap="sm" style={{ color: token.colorTextTertiary }}>
+      <Row gutter={[16, 4]}>
+        <Col xl={6} lg={24}>
+          <BAIFlex
+            gap="sm"
+            style={{ color: token.colorTextTertiary }}
+            wrap="wrap"
+          >
             {t('userSettings.LightMode')}:
             <ColorPicker
               format="hex"
@@ -62,11 +66,16 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
                 _.set(newCustomThemeConfig, `light.${tokenName}`, newColor);
                 setUserCustomThemeConfig(newCustomThemeConfig);
               }}
+              style={{ minWidth: 110 }}
             />
           </BAIFlex>
         </Col>
-        <Col span={6}>
-          <BAIFlex gap="sm" style={{ color: token.colorTextTertiary }}>
+        <Col xl={6} lg={24}>
+          <BAIFlex
+            gap="sm"
+            style={{ color: token.colorTextTertiary }}
+            wrap="wrap"
+          >
             {t('userSettings.DarkMode')}:
             <ColorPicker
               format="hex"
@@ -81,6 +90,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
                 _.set(newCustomThemeConfig, `dark.${tokenName}`, newColor);
                 setUserCustomThemeConfig(newCustomThemeConfig);
               }}
+              style={{ minWidth: 110 }}
             />
           </BAIFlex>
         </Col>
