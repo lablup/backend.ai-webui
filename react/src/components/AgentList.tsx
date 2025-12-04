@@ -482,6 +482,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 // CPU
                 justify="between"
                 style={{ minWidth: 200, width: '100%' }}
+                data-testid="live-stat-cpu"
               >
                 <Typography.Text>
                   {mergedResourceSlots?.cpu?.human_readable_name}
@@ -501,6 +502,7 @@ const AgentList: React.FC<AgentListProps> = ({
                 // MEM
                 justify="between"
                 style={{ minWidth: 200, width: '100%' }}
+                data-testid="live-stat-mem"
               >
                 <Typography.Text>
                   {mergedResourceSlots?.mem?.human_readable_name}
@@ -533,6 +535,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       justify="between"
                       style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
+                      data-testid={`live-stat-${statKey}`}
                     >
                       <Typography.Text>
                         {mergedResourceSlots?.[deviceName]?.human_readable_name}
@@ -574,6 +577,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       justify="between"
                       style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
+                      data-testid={`live-stat-${statKey}`}
                     >
                       <Typography.Text>
                         {mergedResourceSlots?.[deviceName]?.human_readable_name}
@@ -619,6 +623,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       justify="between"
                       style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
+                      data-testid={`live-stat-${statKey}`}
                     >
                       <BAIText>{`${humanReadableName}(power)`}</BAIText>
                       <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current, 2)} ${parsedValue.node[statKey].unit_hint}`}</BAIText>
@@ -636,6 +641,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       justify="between"
                       style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
+                      data-testid={`live-stat-${statKey}`}
                     >
                       <BAIText>{`${humanReadableName}(temp)`}</BAIText>
                       <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current, 2)} °C`}</BAIText>
@@ -653,6 +659,7 @@ const AgentList: React.FC<AgentListProps> = ({
                       justify="between"
                       style={{ minWidth: 200, width: '100%' }}
                       gap="xxs"
+                      data-testid={`live-stat-${statKey}`}
                     >
                       <BAIText>
                         {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
@@ -669,6 +676,7 @@ const AgentList: React.FC<AgentListProps> = ({
                     justify="between"
                     style={{ minWidth: 200, width: '100%' }}
                     gap="xxs"
+                    data-testid={`live-stat-${statKey}`}
                   >
                     <BAIText>{statKey}</BAIText>
                     <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedValue.node[statKey]?.current ?? 0, 2)}${parsedValue.node[statKey]?.unit_hint ? ` ${parsedValue.node[statKey].unit_hint}` : ''}`}</BAIText>
@@ -841,7 +849,12 @@ const AgentList: React.FC<AgentListProps> = ({
     useHiddenColumnKeysSetting('AgentList');
 
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      gap="sm"
+      data-testid="agent-list"
+    >
       <BAIFlex justify="between" align="start" wrap="wrap" {...headerProps}>
         <BAIFlex
           direction="row"
