@@ -1,5 +1,4 @@
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
-import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import PureChatHeader from './ChatHeader';
@@ -25,6 +24,7 @@ import {
 } from 'ai';
 import { Alert, App, Card, CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { useUpdatableState } from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, {

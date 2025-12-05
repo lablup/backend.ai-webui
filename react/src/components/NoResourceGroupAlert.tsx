@@ -1,5 +1,5 @@
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import BAIAlert, { BAIAlertProps } from './BAIAlert';
+import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

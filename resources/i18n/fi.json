@@ -1097,10 +1097,12 @@
   },
   "project": {
     "Active": "Aktiivinen",
+    "BulkEdit": "Massamuokkaus",
     "Domain": "Toimialue",
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
+    "ProjectIDFilterRuleMessage": "Virheellinen UUID.",
     "ResourcePolicy": "Resurssipolitiikka"
   },
   "registry": {
