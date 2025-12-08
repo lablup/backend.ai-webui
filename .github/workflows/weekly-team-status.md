@@ -1,0 +1,48 @@
+---
+on:
+  schedule:
+  - cron: 0 0 * * 5
+  stop-after: +1mo
+  workflow_dispatch: null
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+network: defaults
+imports:
+- githubnext/agentics/workflows/shared/reporting.md@de988487053cfa3bed1c3027d414490cd9dd0096
+safe-outputs:
+  create-discussion:
+    category: announcements
+    title-prefix: "[team-status] "
+description: |
+  This workflow created weekly team status reporter creating upbeat activity summaries.
+  Gathers recent repository activity (issues, PRs, discussions, releases, code changes)
+  and generates engaging GitHub discussions with productivity insights, community
+  highlights, and project recommendations. Uses a positive, encouraging tone with
+  moderate emoji usage to boost team morale.
+source: githubnext/agentics/workflows/weekly-team-status.md@de988487053cfa3bed1c3027d414490cd9dd0096
+tools:
+  github: null
+---
+# Weekly Team Status
+
+Create an upbeat weekly status report for the team as a GitHub discussion.
+
+## What to include
+
+- Recent repository activity (issues, PRs, discussions, releases, code changes)
+- Team productivity suggestions and improvement ideas
+- Community engagement highlights
+- Project investment and feature recommendations
+
+## Style
+
+- Be positive, encouraging, and helpful 🌟
+- Use emojis moderately for engagement
+- Keep it concise - adjust length based on actual activity
+
+## Process
+
+1. Gather recent activity from the repository
+2. Create a new GitHub discussion with your findings and insights
