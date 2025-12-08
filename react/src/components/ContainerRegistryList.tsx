@@ -43,6 +43,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAIModal,
+  useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useDeferredValue, useMemo } from 'react';
@@ -61,6 +62,7 @@ export type ContainerRegistry = NonNullable<
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
+  const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const painKiller = usePainKiller();
@@ -210,7 +212,7 @@ const ContainerRegistryList: React.FC<{
       duration: 0,
     });
     const handleReScanError = (err: any) => {
-      console.log(err);
+      logger.error(err);
       upsertNotification({
         key: notiKey,
         backgroundTask: {

@@ -25,6 +25,7 @@ import {
   BAIModal,
   BAIModalProps,
   ESMClientErrorResponse,
+  useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -97,6 +98,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const { styles } = useStyles();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
 
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
@@ -186,7 +188,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           },
         });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => logger.error(error));
   };
 
   return (

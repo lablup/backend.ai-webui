@@ -81,7 +81,7 @@ export default class BackendAIMetadataStore extends BackendAIPage {
       .then((response) => response.json())
       .then((json) => {
         this.deviceInfo = json.deviceInfo;
-        console.log(this.deviceInfo);
+        // console.log(this.deviceInfo);
         for (const key in this.deviceInfo) {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
           }

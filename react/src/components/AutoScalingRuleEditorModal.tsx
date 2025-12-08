@@ -19,7 +19,7 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +66,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
 
   const [nameOptions, setNameOptions] = useState<Array<string>>(
     METRIC_NAMES_MAP.KERNEL || [],
@@ -222,7 +223,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         }
       })
       .catch((err) => {
-        console.log(err);
+        logger.error(err);
       });
   };
 

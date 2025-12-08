@@ -150,7 +150,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
         this._redirectToLoginPage();
       }, 2000);
     } catch (e) {
-      console.error(e);
       this.notification.text = e.message || _text('error.UpdateError');
       this.notification.show();
       this.failDialog.show();

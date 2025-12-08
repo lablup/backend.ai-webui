@@ -698,10 +698,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           this.config = tomlConfig;
         }
       })
-      .catch((err) => {
-        console.log('Configuration file missing.');
-        console.error(err);
-      });
+      .catch(() => undefined);
   }
 
   /**
@@ -773,7 +770,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {Boolean} performClose
    */
   async logout(performClose = false, callbackURL: string = '/') {
-    console.log('also close the app:', performClose);
+    // console.log('also close the app:', performClose);
     globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (
       typeof globalThis.backendaiclient != 'undefined' &&

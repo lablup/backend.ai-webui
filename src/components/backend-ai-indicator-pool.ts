@@ -82,14 +82,14 @@ export default class BackendAIIndicatorPool extends LitElement {
       }
       document.body.removeChild(result[0]);
       result[0].remove();
-      console.log('deleted');
+      // console.log('deleted');
     }
   }
 
   gc() {
     const finished: Array<any> = [];
     this.pool.forEach((indicator) => {
-      console.log(indicator.value);
+      // console.log(indicator.value);
       if (indicator.value >= 1) {
         finished.push(indicator);
       }

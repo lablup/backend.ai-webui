@@ -107,7 +107,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         await this.client.cloud.verify_email(token);
         this.successDialog.show();
       } catch (e) {
-        console.error(e);
+        // console.error(e);
         this.notification.text = _text('signUp.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
@@ -128,7 +128,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.notification.text = _text('signUp.EmailSent');
       this.notification.show();
     } catch (e) {
-      console.error(e);
+      // console.error(e);
       this.notification.text = e.message || _text('signUp.SendError');
       this.notification.show();
     }

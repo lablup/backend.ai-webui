@@ -39,3 +39,9 @@ export type { ErrorResponse } from './useErrorMessageResolver';
 export type { ESMClientErrorResponse } from './useErrorMessageResolver';
 export { default as useGetAvailableFolderName } from './useGetAvailableFolderName';
 export { useInterval, useIntervalValue } from './useIntervalValue';
+export {
+  default as useBAILogger,
+  ContextualLogger,
+  LogLevel,
+} from './useBAILogger';
+export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';

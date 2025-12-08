@@ -102,6 +102,17 @@
       "relay",
       "import"
     ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.test.*",
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "no-console": "off"
+        }
+      }
+    ],
     "rules": {
       "new-cap": "off",
       "prefer-promise-reject-errors": "off",
@@ -129,6 +140,9 @@
             "@lobehub/fluent-emoji"
           ]
         }
+      ],
+      "no-console": [
+        "warn"
       ]
     }
   },

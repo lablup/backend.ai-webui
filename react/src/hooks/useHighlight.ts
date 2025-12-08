@@ -1,4 +1,5 @@
 import { useThemeMode } from './useThemeMode';
+import { useBAILogger } from 'backend.ai-ui';
 import { useMemo } from 'react';
 import { codeToHtml } from 'shiki';
 import useSWR from 'swr';
@@ -7,6 +8,7 @@ import { Md5 } from 'ts-md5';
 export const FALLBACK_LANG = 'txt';
 
 export const useHighlight = (text: string, lang: string) => {
+  const { logger } = useBAILogger();
   const { isDarkMode } = useThemeMode();
   const language = lang.toLowerCase();
   const matchedLanguage = languageMap[language] ? language : FALLBACK_LANG;
@@ -21,7 +23,7 @@ export const useHighlight = (text: string, lang: string) => {
           theme: isDarkMode ? 'github-dark' : 'github-light',
         });
       } catch (error) {
-        console.error('shiki Highlight error:', error);
+        logger.error('shiki Highlight error:', error);
         return text;
       }
     },

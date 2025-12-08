@@ -2,7 +2,12 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { FormInstance, message, Form, Select, DatePicker } from 'antd';
-import { BAIModalProps, ESMClientErrorResponse, BAIModal } from 'backend.ai-ui';
+import {
+  BAIModalProps,
+  ESMClientErrorResponse,
+  BAIModal,
+  useBAILogger,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +29,7 @@ type FormValue = {
 const EndpointTokenGenerationModal: React.FC<
   EndpointTokenGenerationModalProps
 > = ({ onRequestClose, endpoint_id, ...baiModalProps }) => {
+  const { logger } = useBAILogger();
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<FormValue> | null>(null);
@@ -73,7 +79,7 @@ const EndpointTokenGenerationModal: React.FC<
               return;
             } else {
               message.error(t('modelService.TokenGenerationFailed'));
-              console.log(err);
+              logger.error(err);
             }
           },
         },

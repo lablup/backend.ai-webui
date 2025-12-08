@@ -411,16 +411,7 @@ const SessionLauncherPreview: React.FC<{
           form.getFieldError(['num_of_sessions']).length > 0 ||
           form.getFieldError('resourceGroup').length > 0
             ? 'error'
-            : // : _.some(form.getFieldValue('resource'), (v, key) => {
-              //     //                         console.log(form.getFieldError(['resource', 'shmem']));
-              //     // console.log(form.getFieldValue(['resource']));
-              //     return (
-              //       form.getFieldWarning(['resource', key]).length >
-              //       0
-              //     );
-              //   })
-              // ? 'warning'
-              undefined
+            : undefined
         }
         size="small"
         extraButtonTitle={t('button.Edit')}
@@ -554,8 +545,6 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('storage');
         }}
       >
-        {/* {console.log(_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames')]))} */}
-        {/* {_.sum([form.getFieldValue('mounts')?.length, form.getFieldValue('autoMountedFolderNames').length]) > 0 ? ( */}
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
           {form.getFieldValue('mount_ids')?.length > 0 ? (
             <Table

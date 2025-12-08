@@ -421,7 +421,6 @@ export const useBackendAIImageMetaData = () => {
         return langs[langs.length - 1];
       },
       getLang: (shortImageName: string) => {
-        // console.log(imageName);
         const names = shortImageName.split('/');
         let lang = '';
         if (!_.isUndefined(names[1])) {

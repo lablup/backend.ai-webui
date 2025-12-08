@@ -2,6 +2,7 @@ import { App, Image, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,
+  useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -34,6 +35,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
 }) => {
   'use memo';
 
+  const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
 
@@ -179,7 +181,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
               }
             })
             .catch((error) => {
-              console.error('Unexpected error during session creation:', error);
+              logger.error('Unexpected error during session creation:', error);
               message.error(t('error.UnexpectedError'));
             });
         }}

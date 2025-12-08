@@ -1550,7 +1550,7 @@ export default class BackendAISessionList extends BackendAIPage {
           return Promise.resolve(true);
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -1751,7 +1751,7 @@ export default class BackendAISessionList extends BackendAIPage {
           isOnProgress = res;
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
         });
     }
     return isOnProgress;
@@ -1774,7 +1774,7 @@ export default class BackendAISessionList extends BackendAIPage {
       ) as CommitSessionInfo;
       this._showCommitStatus(commitSession, newCommitSessionTask);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -1795,7 +1795,7 @@ export default class BackendAISessionList extends BackendAIPage {
     try {
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -1824,7 +1824,7 @@ export default class BackendAISessionList extends BackendAIPage {
       ) as CommitSessionInfo;
       this._showCommitStatus(commitSession, newCommitSessionTask);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -2983,8 +2983,8 @@ export default class BackendAISessionList extends BackendAIPage {
   copyText(text: string) {
     if (navigator.clipboard !== undefined) {
       // for Chrome, Safari
-      navigator?.clipboard?.writeText(text)?.then((err) => {
-        console.error('Could not copy text: ', err);
+      navigator?.clipboard?.writeText(text)?.then((_err) => {
+        // console.error('Could not copy text: ', err);
       });
     } else {
       // other browsers

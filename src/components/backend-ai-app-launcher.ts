@@ -1112,7 +1112,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             ) {
               await this._sleep(1000);
               count = count + 1;
-              console.warn(`Retry connect to proxy worker (${count})...`);
+              // console.warn(`Retry connect to proxy worker (${count})...`);
             } else {
               count = 6;
             }
@@ -1149,7 +1149,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         ) {
           await this._sleep(1000);
           count = count + 1;
-          console.warn(`Retry connect to proxy worker (${count})...`);
+          // console.warn(`Retry connect to proxy worker (${count})...`);
         } else {
           count = 6;
         }
@@ -1354,12 +1354,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
                   }
                 } catch (err) {
-                  console.error(
-                    'Invalid redirect URL:',
-                    err,
-                    'redirectURI:',
-                    body?.redirectURI,
-                  );
+                  // console.error(
+                  //   'Invalid redirect URL:',
+                  //   err,
+                  //   'redirectURI:',
+                  //   body?.redirectURI,
+                  // );
                   this.notification.detail = _text(
                     'session.InvalidRedirectURL',
                   );
@@ -1419,7 +1419,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 this._openTCPDialog();
                 return;
               } else {
-                console.error('Gateway host or port not found in the URL');
+                // console.error('Gateway host or port not found in the URL');
                 this.notification.detail =
                   'Gateway host or port not found in the URL';
                 this.notification.backgroundTask = {
@@ -1908,8 +1908,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               );
               this.notification.show();
             },
-            (err) => {
-              console.error('Could not copy text: ', err);
+            (_err) => {
+              // console.error('Could not copy text: ', err);
             },
           );
         } else {

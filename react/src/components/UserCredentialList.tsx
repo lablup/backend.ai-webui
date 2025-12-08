@@ -24,6 +24,7 @@ import {
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
+  useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -46,6 +47,7 @@ const UserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
+  const { logger } = useBAILogger();
 
   const [action, setAction] = useQueryParam('action', StringParam);
 
@@ -315,7 +317,7 @@ const UserCredentialList: React.FC = () => {
           {
             key: 'allocation',
             title: t('credential.Allocation'),
-            render: (record) => {
+            render: (record: Keypair) => {
               return (
                 <BAIFlex direction="column" align="start">
                   <Typography.Text>
@@ -426,7 +428,7 @@ const UserCredentialList: React.FC = () => {
                             },
                             onError: (error) => {
                               message.error(error?.message);
-                              console.error(error);
+                              logger.error(error);
                             },
                           });
                         }}
@@ -468,7 +470,7 @@ const UserCredentialList: React.FC = () => {
                             },
                             onError: (error) => {
                               message.error(error?.message);
-                              console.error(error);
+                              logger.error(error);
                             },
                           });
                         }}
@@ -516,7 +518,7 @@ const UserCredentialList: React.FC = () => {
                               },
                               onError: (error) => {
                                 message.error(error?.message);
-                                console.error(error);
+                                logger.error(error);
                               },
                             });
                           },

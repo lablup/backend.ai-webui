@@ -47,13 +47,6 @@ const DynamicUnitInputNumberWithSlider: React.FC<
     [value],
   );
 
-  // const warnPercent = useMemo(() => {
-  //   return warn
-  //     ? ((iSizeToSize(warn, 'g', 2)?.number || 0) / (maxGiB?.number || 1)) * 100
-  //     : undefined;
-  // }, [warn, maxGiB?.number]);
-  // console.log('##marks', marks);
-
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {

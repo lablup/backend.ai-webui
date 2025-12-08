@@ -548,7 +548,7 @@ class Client {
     try {
       localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
     } catch (e) {
-      console.warn('Local storage is full. Clearing part of the logs.');
+      // console.warn('Local storage is full. Clearing part of the logs.');
       // localStorage is full, we will keep the recent 2/3 of the logs.
       let webuiLogs = JSON.parse(
         localStorage.getItem('backendaiwebui.logs') || '[]',
@@ -893,7 +893,7 @@ class Client {
         //console.log("login failed");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;

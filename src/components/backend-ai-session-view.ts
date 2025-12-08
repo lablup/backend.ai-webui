@@ -233,7 +233,7 @@ export default class BackendAISessionView extends BackendAIPage {
     if (menu.open) {
       menu.close();
     }
-    console.log('Downloading CSV File...');
+    // console.log('Downloading CSV File...');
     this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }

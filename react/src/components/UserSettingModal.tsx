@@ -29,7 +29,7 @@ import {
   App,
   theme,
 } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +66,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const { token } = theme.useToken();
   const { modal } = App.useApp();
   const formRef = useRef<FormInstance>(null);
+  const { logger } = useBAILogger();
 
   const currentUserRole = useCurrentUserRole();
   const currentDomainName = useCurrentDomainValue();
@@ -214,7 +215,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             onCompleted: (res, errors) => {
               if (!res?.modify_user?.ok) {
                 message.error(t('dialog.ErrorOccurred'));
-                console.error(res?.modify_user?.msg);
+                logger.error(res?.modify_user?.msg);
                 onRequestClose(false);
                 return;
               }
@@ -230,7 +231,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
-              console.error(err);
+              logger.error(err);
             },
           });
         } else {
@@ -263,7 +264,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     ? t('credential.UserAccountCreatedError')
                     : t('dialog.ErrorOccurred'),
                 );
-                console.error(res?.create_user?.msg);
+                logger.error(res?.create_user?.msg);
                 onRequestClose(false);
                 return;
               }
@@ -279,12 +280,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
-              console.error(err);
+              logger.error(err);
             },
           });
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => logger.error(e));
   };
 
   return (
@@ -491,7 +492,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                             );
                           },
                           onError: (err) => {
-                            console.log(err);
+                            logger.error(err);
                           },
                         });
                       },

@@ -18,6 +18,7 @@ import {
   BAITable,
   BAIPropertyFilter,
   mergeFilterValues,
+  useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -35,6 +36,7 @@ import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 interface UserNodeListProps {}
 
 const UserNodeList: React.FC<UserNodeListProps> = () => {
+  const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -348,7 +350,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                           },
                           onError: (error) => {
                             message.error(error?.message);
-                            console.error(error);
+                            logger.error(error);
                           },
                         });
                       }}

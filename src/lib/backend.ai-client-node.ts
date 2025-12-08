@@ -675,7 +675,7 @@ class Client {
         //console.log("login failed");
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -4629,7 +4629,7 @@ class Pipeline {
         document.cookie = `${this.tokenName}=${token}; path=/`;
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw {
         title: 'No Pipeline Server found at API Endpoint.',
         message:
@@ -4649,7 +4649,7 @@ class Pipeline {
       await this.client._wrapWithPromise(rqst);
       this._removeCookieByName(this.tokenName);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw {
         title: 'Pipeline Logout Failed.',
         message:

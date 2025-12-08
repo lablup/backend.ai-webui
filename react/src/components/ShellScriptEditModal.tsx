@@ -9,6 +9,7 @@ import {
   BAIModalProps,
   BAIFlex,
   useErrorMessageResolver,
+  useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -31,6 +32,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
   const { message, modal } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const [rcfileNames, setRcfileNames] = useState<string>('.bashrc');
@@ -129,7 +131,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         },
         onError: (error) => {
           message.error(getErrorMessage(error));
-          console.error(error);
+          logger.error(error);
         },
       });
     }
@@ -148,7 +150,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           },
           onError: (error) => {
             message.error(getErrorMessage(error));
-            console.error(error);
+            logger.error(error);
           },
         });
       } else {
@@ -163,7 +165,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           },
           onError: (error) => {
             message.error(getErrorMessage(error));
-            console.error(error);
+            logger.error(error);
           },
         });
       }
@@ -179,7 +181,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         },
         onError: (error) => {
           message.error(getErrorMessage(error));
-          console.error(error);
+          logger.error(error);
         },
       });
     }
@@ -193,7 +195,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         },
         onError: (error) => {
           message.error(getErrorMessage(error));
-          console.error(error);
+          logger.error(error);
         },
       });
     }

@@ -71,6 +71,15 @@
         "rules": {
           "react-hooks/rules-of-hooks": "off"
         }
+      },
+      {
+        "files": [
+          "**/*.test.*",
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "no-console": "off"
+        }
       }
     ],
     "rules": {
@@ -94,6 +103,9 @@
         {
           "additionalHooks": "useRecoilCallback"
         }
+      ],
+      "no-console": [
+        "warn"
       ]
     }
   },

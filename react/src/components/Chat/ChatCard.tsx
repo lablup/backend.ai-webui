@@ -25,6 +25,7 @@ import {
 } from 'ai';
 import { Alert, App, Card, CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
+import { BAILogger, useBAILogger } from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, {
@@ -163,13 +164,17 @@ const ChatHeader = PureChatHeader;
 
 const ChatInput = React.memo(PureChatInput);
 
-function createBaseURL(basePath?: string, endpointUrl?: string | null) {
+function createBaseURL(
+  logger: BAILogger,
+  basePath?: string,
+  endpointUrl?: string | null,
+) {
   try {
     return endpointUrl
       ? new URL(basePath ?? '', endpointUrl).toString()
       : undefined;
   } catch {
-    console.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+    logger.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
   }
 }
 
@@ -189,6 +194,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
   const { message: appMessage } = App.useApp();
   const endpointResult = useLazyLoadQuery<ChatCardQuery>(
     graphql`
@@ -222,7 +228,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  const baseURL = createBaseURL(chat.provider.basePath, endpoint?.url);
+  const baseURL = createBaseURL(logger, chat.provider.basePath, endpoint?.url);
   const { models, modelId, modelsError } = useModels(
     chat.provider,
     fetchKey,
@@ -287,7 +293,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
               },
             });
           } catch (error) {
-            console.error('Client-side streaming error:', error);
+            logger.error('Client-side streaming error:', error);
             // Fallback to regular fetch
             return fetch(input, init);
           }

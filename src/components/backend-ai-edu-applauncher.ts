@@ -84,8 +84,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
       return true;
     } catch (e) {
-      const error = e.toString();
-      console.log(error);
+      // const error = e.toString();
+      // console.log(error);
       return false;
     }
   }
@@ -115,7 +115,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       ];
     };
 
-    console.log('current project:', currentProject);
+    // console.log('current project:', currentProject);
   }
 
   async launch(apiEndpoint: string) {
@@ -197,7 +197,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
-        console.log('logging with (cookie) token...');
+        // console.log('logging with (cookie) token...');
         const loginSuccess = await globalThis.backendaiclient.token_login(
           sToken,
           extraParams,
@@ -210,7 +210,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           return false;
         }
       } else {
-        console.log('already logged-in session');
+        // console.log('already logged-in session');
       }
       return true;
     } catch (err) {
@@ -286,7 +286,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       );
     } catch (err) {
       this.appLauncher.indicator.end();
-      console.error(err);
+      // console.error(err);
       if (err && err.message) {
         if (err.description) {
           this.notification.text = PainKiller.relieve(err.description);
@@ -330,7 +330,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       );
     } catch (err) {
       this.appLauncher.indicator.end();
-      console.error(err);
+      // console.error(err);
       if (err && err.message) {
         if (err.description) {
           this.notification.text = PainKiller.relieve(err.description);
@@ -356,7 +356,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     // Create or select an existing compute session before lauching app.
     let sessionId: string | null | unknown;
     if (sessions.compute_session_list.total_count > 0) {
-      console.log('Reusing an existing session ...');
+      // console.log('Reusing an existing session ...');
       let sess: Record<string, unknown> | null = null;
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
@@ -417,7 +417,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     if (launchNewSession) {
       // no existing compute session. create one.
-      console.log('Creating a new session ...');
+      // console.log('Creating a new session ...');
       this.appLauncher.indicator.set(
         40,
         _text('eduapi.FindingSessionTemplate'),
@@ -462,7 +462,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           );
         } catch (err) {
           this.appLauncher.indicator.end();
-          console.error(err);
+          // console.error(err);
           if (err && err.message) {
             if (err.description) {
               this.notification.text = PainKiller.relieve(err.description);
@@ -480,7 +480,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         sessionId = response.sessionId;
       } catch (err) {
         this.appLauncher.indicator.end();
-        console.error(err);
+        // console.error(err);
         if (err && err.message) {
           if ('statusCode' in err && err.statusCode === 408) {
             this.notification.text = _text('eduapi.SessionStillPreparing');
@@ -509,7 +509,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async _openServiceApp(sessionId, requestedApp) {
     this.appLauncher.indicator = await globalThis.lablupIndicator.start();
-    console.log(`launching ${requestedApp} from session ${sessionId} ...`);
+    // console.log(`launching ${requestedApp} from session ${sessionId} ...`);
     this.appLauncher
       ._open_wsproxy(sessionId, requestedApp, null, null)
       .then(async (resp) => {

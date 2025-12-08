@@ -221,7 +221,7 @@ export default class LablupTermsOfService extends LitElement {
         throw body;
       }
     } catch (e) {
-      console.log(e);
+      return undefined;
     }
     return body;
   }
@@ -272,7 +272,7 @@ export default class LablupTermsOfService extends LitElement {
           }
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;

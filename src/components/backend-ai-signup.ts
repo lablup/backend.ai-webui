@@ -364,7 +364,7 @@ export default class BackendAiSignup extends BackendAIPage {
           this.notification.text = PainKiller.relieve(e.message);
           this.notification.show(true, e);
         }
-        console.log(e);
+        // console.log(e);
       });
   }
 
@@ -375,7 +375,7 @@ export default class BackendAiSignup extends BackendAIPage {
         'User has no group. Please contact administrator to fix it.',
       "Cannot read property 'split' of undefined": 'Wrong API server address.',
     };
-    console.log(err);
+    // console.log(err);
     if (err in errorMsgSet) {
       return errorMsgSet[err];
     }

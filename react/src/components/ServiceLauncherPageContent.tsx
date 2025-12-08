@@ -56,6 +56,7 @@ import {
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
   useErrorMessageResolver,
+  useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
@@ -148,6 +149,7 @@ interface ServiceLauncherPageContentProps {
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
 }) => {
+  const { logger } = useBAILogger();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { t } = useTranslation();
@@ -780,7 +782,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Input disabled={!!endpoint} />
                         </Form.Item>
                         <Form.Item name="openToPublic" valuePropName="checked">
-                          <Checkbox disabled={!!endpoint}>{t('modelService.OpenToPublic')}</Checkbox>
+                          <Checkbox disabled={!!endpoint}>
+                            {t('modelService.OpenToPublic')}
+                          </Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
@@ -1042,7 +1046,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               setIsOpenServiceValidationModal(true);
                             })
                             .catch((err) => {
-                              console.log(err.message);
+                              logger.error(err.message);
                               message.error(
                                 t('modelService.FormValidationFailed'),
                               );

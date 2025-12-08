@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import {
   BAIButton,
+  useBAILogger,
   useErrorMessageResolver,
   useGetAvailableFolderName,
 } from 'backend.ai-ui';
@@ -78,6 +79,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   ...formProps
 }) => {
   'use memo';
+  const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<ImportFromURLFormValues> | null>(null);
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
@@ -344,7 +346,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
               if (!values) return;
               await handleRepoImport(values);
             } catch (error) {
-              console.error('Form validation failed:', error);
+              logger.error('Form validation failed:', error);
             }
           }}
           block

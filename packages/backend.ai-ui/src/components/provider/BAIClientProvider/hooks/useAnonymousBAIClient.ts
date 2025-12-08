@@ -1,8 +1,11 @@
+import { useBAILogger } from '../../../../hooks';
 import { BAIAnonymousClientContext } from '../context';
 import { BAIClient } from '../types';
 import { useContext } from 'react';
 
 const useBAIAnonymousClient = (apiEndpoint: string): BAIClient => {
+  const { logger } = useBAILogger();
+
   try {
     const baiAnonymousClient = useContext(BAIAnonymousClientContext);
     if (!baiAnonymousClient) {
@@ -12,7 +15,7 @@ const useBAIAnonymousClient = (apiEndpoint: string): BAIClient => {
     }
     return baiAnonymousClient(apiEndpoint);
   } catch (error) {
-    console.error('Error using BAI Anonymous Client:', error);
+    logger.error('Error using BAI Anonymous Client:', error);
     throw error;
   }
 };

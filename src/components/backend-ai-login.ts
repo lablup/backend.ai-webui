@@ -511,7 +511,7 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       import('../plugins/' + config.plugin.login)
         .then(() => {
-          console.log('Plugin loaded.');
+          // console.log('Plugin loaded.');
         })
         .catch((err) => {
           // Connection failed
@@ -567,7 +567,7 @@ export default class BackendAILogin extends BackendAIPage {
       } as ConfigValueObject,
     ) as boolean;
     if (globalThis.backendaiwebui.debug) {
-      console.log('Debug flag is set to true');
+      // console.log('Debug flag is set to true');
     }
 
     // Signup support flag
@@ -1387,7 +1387,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.text = _text('signUp.EmailSent');
       this.notification.show();
     } catch (e) {
-      console.error(e);
+      // console.error(e);
       this.notification.text = e.message || _text('signUp.SendError');
       this.notification.show();
     }
@@ -1419,7 +1419,7 @@ export default class BackendAILogin extends BackendAIPage {
       await this._connectGQL();
       window.location.href = '/';
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
       this.notification.show(true, err);
       window.location.href = '/';
@@ -1622,7 +1622,7 @@ export default class BackendAILogin extends BackendAIPage {
             .catch((err) => {
               // Connection failed
               this.free();
-              console.log(err);
+              // console.log(err);
               if (showError) {
                 if (this.loginPanel.open !== true) {
                   if (typeof err.message !== 'undefined') {
@@ -1695,7 +1695,7 @@ export default class BackendAILogin extends BackendAIPage {
       })
       .catch((err) => {
         // FIXME need error handling logic and message prompt
-        console.log(err);
+        // console.log(err);
         this._enableUserInput();
       });
   }
@@ -2006,7 +2006,7 @@ export default class BackendAILogin extends BackendAIPage {
         if (err.statusCode === 401) {
           // When authorization failed, it is highly likely that session cookie
           // is used which tried to use non-existent API keypairs
-          console.log('automatic logout ...');
+          // console.log('automatic logout ...');
 
           // Only request pipeline logout when pipeline value is enabled
           if (this._enablePipeline) {

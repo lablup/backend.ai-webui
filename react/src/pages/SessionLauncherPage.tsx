@@ -75,6 +75,7 @@ import {
   useErrorMessageResolver,
   BAIButton,
   generateRandomString,
+  useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -186,6 +187,7 @@ interface StepPropsWithKey extends StepProps {
 
 const SessionLauncherPage = () => {
   const app = App.useApp();
+  const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
@@ -1113,7 +1115,7 @@ const SessionLauncherPage = () => {
                             const values = await form
                               .validateFields()
                               .catch((e) => {
-                                console.error('validation errors', e);
+                                logger.error('validation errors', e);
                               });
 
                             // validation failed do nothing
@@ -1188,7 +1190,7 @@ const SessionLauncherPage = () => {
                               })
                               .catch((error) => {
                                 // Unexpected error in `then` of allSettled
-                                console.error(
+                                logger.error(
                                   'Unexpected error during session creation:',
                                   error,
                                 );

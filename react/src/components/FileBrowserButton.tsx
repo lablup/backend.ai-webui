@@ -3,6 +3,7 @@ import { App, Image, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,
+  useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -33,6 +34,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
+  const { logger } = useBAILogger();
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -150,7 +152,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
               }
             })
             .catch((error) => {
-              console.error('Unexpected error during session creation:', error);
+              logger.error('Unexpected error during session creation:', error);
               message.error(t('error.UnexpectedError'));
             });
         }}

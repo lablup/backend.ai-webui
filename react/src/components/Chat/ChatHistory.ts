@@ -5,6 +5,7 @@ import {
   type ChatProviderData,
   type ChatMessage,
 } from './ChatModel';
+import { useBAILogger } from 'backend.ai-ui';
 import _ from 'lodash';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useState } from 'react';
@@ -83,6 +84,7 @@ const chatHistoryCache = createLocalStorageCache<ChatHistoryData>(
 );
 
 export function useHistory(id: string, provider: ChatProviderData) {
+  const { logger } = useBAILogger();
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
@@ -107,7 +109,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
   const addChatData = useCallback(
     ({ provider, id }: ChatData) => {
       if (!chat) {
-        console.error('Chat history is not initialized.');
+        logger.error('Chat history is not initialized.');
         return;
       }
 
@@ -117,7 +119,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
       const index = chat.chats.findIndex((chat) => chat.id === id);
 
       if (index === -1) {
-        console.error(`Chat with id ${id} not found in cache.`);
+        logger.error(`Chat with id ${id} not found in cache.`);
         return;
       }
 
@@ -131,13 +133,13 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       updateHistory({ ...chat });
     },
-    [chat, webuiNavigate, updateHistory],
+    [chat, webuiNavigate, updateHistory, logger],
   );
 
   const removeChatData = useCallback(
     (id: string) => {
       if (!chat) {
-        console.error('Chat history is not initialized.');
+        logger.error('Chat history is not initialized.');
         return;
       }
 
@@ -150,19 +152,19 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       updateHistory({ ...chat });
     },
-    [chat, updateHistory],
+    [chat, updateHistory, logger],
   );
 
   const updateChatData = useCallback(
     (id: string, data: DeepPartial<ChatData>) => {
       if (!chat) {
-        console.error('Chat history is not initialized.');
+        logger.error('Chat history is not initialized.');
         return;
       }
 
       const index = chat.chats.findIndex((item) => item.id === id);
       if (index === -1) {
-        console.error(`Chat with id ${id} not found in cache.`);
+        logger.error(`Chat with id ${id} not found in cache.`);
         return;
       }
 
@@ -178,19 +180,19 @@ export function useHistory(id: string, provider: ChatProviderData) {
         webuiNavigate(`/chat/${chat.id}`, { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate],
+    [chat, updateHistory, webuiNavigate, logger],
   );
 
   const saveChatMessage = useCallback(
     (id: string, message: ChatMessage) => {
       if (!chat) {
-        console.error('Chat history is not initialized.');
+        logger.error('Chat history is not initialized.');
         return;
       }
 
       const index = chat.chats.findIndex((item) => item.id === id);
       if (index === -1) {
-        console.error(`Chat with id ${id} not found in cache.`);
+        logger.error(`Chat with id ${id} not found in cache.`);
         return;
       }
 
@@ -239,25 +241,25 @@ export function useHistory(id: string, provider: ChatProviderData) {
         webuiNavigate(`/chat/${chat.id}`, { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate],
+    [chat, updateHistory, webuiNavigate, logger],
   );
 
   const clearChatMessage = useCallback(
     (id: string) => {
       if (!chat) {
-        console.error('Chat history is not initialized.');
+        logger.error('Chat history is not initialized.');
         return;
       }
 
       const index = chat.chats.findIndex((item) => item.id === id);
       if (index === -1) {
-        console.error(`Chat with id ${id} not found in cache.`);
+        logger.error(`Chat with id ${id} not found in cache.`);
         return;
       }
 
       const chatData = chat.chats.find((item) => item.id === id);
       if (!chatData) {
-        console.error(`Chat with id ${id} not found in chat history.`);
+        logger.error(`Chat with id ${id} not found in chat history.`);
         return;
       }
 
@@ -265,7 +267,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       updateHistory({ ...chat });
     },
-    [chat, updateHistory],
+    [chat, updateHistory, logger],
   );
 
   useEffect(() => {

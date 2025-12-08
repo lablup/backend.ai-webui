@@ -2,7 +2,7 @@ import { QuotaSettingModalFragment$key } from '../__generated__/QuotaSettingModa
 import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModalSetMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { Form, FormInstance, Input, message } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -17,6 +17,7 @@ const QuotaSettingModal: React.FC<Props> = ({
   onRequestClose,
   ...baiModalProps
 }) => {
+  const { logger } = useBAILogger();
   const { t } = useTranslation();
 
   const formRef = useRef<FormInstance>(null);
@@ -80,7 +81,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           onRequestClose();
         },
         onError(error) {
-          console.log(error);
+          logger.error(error);
           message.error(error?.message);
         },
       });

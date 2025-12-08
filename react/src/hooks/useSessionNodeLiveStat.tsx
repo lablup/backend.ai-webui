@@ -1,4 +1,5 @@
 import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
+import { useBAILogger } from 'backend.ai-ui';
 import { Big } from 'big.js';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -32,6 +33,8 @@ interface SessionLiveStats {
 export const useSessionLiveStat = (
   kernelFrgmt: useSessionNodeLiveStatSessionFragment$key,
 ) => {
+  const { logger } = useBAILogger();
+
   const session = useFragment(
     graphql`
       fragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {
@@ -57,7 +60,7 @@ export const useSessionLiveStat = (
       try {
         return JSON.parse(edge?.node?.live_stat || '{}');
       } catch (e) {
-        console.error('Failed to parse live_stat:', e);
+        logger.error('Failed to parse live_stat:', e);
         return {};
       }
     });
@@ -84,7 +87,7 @@ export const useSessionLiveStat = (
           try {
             return acc.plus(new Big(value));
           } catch (e) {
-            console.error(`Failed to parse value for ${field}:`, value, e);
+            logger.error(`Failed to parse value for ${field}:`, value, e);
             return acc;
           }
         }, new Big(0));
@@ -97,7 +100,7 @@ export const useSessionLiveStat = (
           try {
             return acc.plus(new Big(value));
           } catch (e) {
-            console.error(`Failed to parse value for ${field}:`, value, e);
+            logger.error(`Failed to parse value for ${field}:`, value, e);
             return acc;
           }
         }, new Big(0));
@@ -135,7 +138,7 @@ export const useSessionLiveStat = (
       merged[key] = summed;
     });
     return merged;
-  }, [session?.kernel_nodes?.edges]);
+  }, [session?.kernel_nodes?.edges, logger]);
 
   const sortedLiveStatArray = useMemo(
     () =>
