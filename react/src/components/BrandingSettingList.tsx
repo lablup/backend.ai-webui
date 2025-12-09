@@ -1,5 +1,7 @@
 import BAIAlert from './BAIAlert';
-import ThemeColorPicker from './BrandingSettingItems/ThemeColorPicker';
+import ThemeColorPicker, {
+  ThemeConfigPath,
+} from './BrandingSettingItems/ThemeColorPicker';
 import SettingList, { SettingGroup } from './SettingList';
 import { ExportOutlined } from '@ant-design/icons';
 import { App } from 'antd';
@@ -7,6 +9,7 @@ import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';
+import { useCustomThemeConfig } from 'src/helper/customThemeConfig';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface BrandingSettingListProps {}
@@ -15,8 +18,27 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
 
+  const themeConfig = useCustomThemeConfig();
+
   const [userCustomThemeConfig, setUserCustomThemeConfig] =
     useBAISettingUserState('custom_theme_config');
+
+  const resetThemeConfig = (tokenName: ThemeConfigPath) => {
+    if (!themeConfig) return;
+
+    setUserCustomThemeConfig((prev: typeof userCustomThemeConfig) => {
+      const newCustomThemeConfig = _.cloneDeep({
+        ...themeConfig,
+        ...prev,
+      });
+      const lightDefaultValue = _.get(themeConfig, `light.${tokenName}`);
+      const darkDefaultValue = _.get(themeConfig, `dark.${tokenName}`);
+
+      _.set(newCustomThemeConfig, `light.${tokenName}`, lightDefaultValue);
+      _.set(newCustomThemeConfig, `dark.${tokenName}`, darkDefaultValue);
+      return newCustomThemeConfig;
+    });
+  };
 
   const settingGroups: Array<SettingGroup> = [
     {
@@ -40,57 +62,63 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           title: t('userSettings.theme.PrimaryColor'),
           description: t('userSettings.theme.PrimaryColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorPrimary" />,
-          // for reset feature
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorPrimary');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.HeaderBg'),
           description: t('userSettings.theme.HeaderBgDesc'),
           children: <ThemeColorPicker tokenName="components.Layout.headerBg" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('components.Layout.headerBg');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.LinkColor'),
           description: t('userSettings.theme.LinkColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorLink" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorLink');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.InfoColor'),
           description: t('userSettings.theme.InfoColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorInfo" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorInfo');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.ErrorColor'),
           description: t('userSettings.theme.ErrorColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorError" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorError');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.SuccessColor'),
           description: t('userSettings.theme.SuccessColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorSuccess" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorSuccess');
+          },
         },
         {
           type: 'custom',
           title: t('userSettings.theme.TextColor'),
           description: t('userSettings.theme.TextColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorText" />,
-          defaultValue: {},
-          setValue: setUserCustomThemeConfig,
+          onReset: () => {
+            resetThemeConfig('token.colorText');
+          },
         },
       ],
     },

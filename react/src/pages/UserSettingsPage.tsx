@@ -109,9 +109,7 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: desktopNotification,
           setValue: setDesktopNotification,
-          onChange: (e: any) => {
-            setDesktopNotification(e.target.checked);
-
+          onAfterChange: (e: any) => {
             // Request permission for desktop notifications
             if (!e.target.checked || Notification.permission === 'granted')
               return;
@@ -141,9 +139,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: compactSidebar,
           setValue: setCompactSidebar,
-          onChange: (e: any) => {
-            setCompactSidebar(e.target.checked);
-          },
         },
         {
           'data-testid': 'items-language-select',
@@ -177,22 +172,14 @@ const UserPreferencesPage = () => {
           value: selectedLanguage || defaultLanguage,
           setValue: (value: any) => {
             setSelectedLanguage(value);
-            const event = new CustomEvent('language-changed', {
-              detail: {
-                language: value,
-              },
-            });
             setLanguage(value);
-            document.dispatchEvent(event);
           },
-          onChange: (value: any) => {
-            setSelectedLanguage(value);
+          onAfterChange: (value: any) => {
             const event = new CustomEvent('language-changed', {
               detail: {
                 language: value,
               },
             });
-            setLanguage(value);
             document.dispatchEvent(event);
           },
         },
@@ -205,9 +192,7 @@ const UserPreferencesPage = () => {
           ),
           defaultValue: false,
           value: preserveLogin,
-          onChange: (e: any) => {
-            setPreserveLogin(e.target.checked);
-          },
+          setValue: setPreserveLogin,
         },
         {
           'data-testid': 'items-automatic-update-check',
@@ -219,9 +204,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
           setValue: setAutoAutomaticUpdateCheck,
-          onChange: (e: any) => {
-            setAutoAutomaticUpdateCheck(e.target.checked);
-          },
         },
         {
           'data-testid': 'items-auto-logout',
@@ -231,9 +213,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: autoLogout,
           setValue: setAutoLogout,
-          onChange: (e: any) => {
-            setAutoLogout(e.target.checked);
-          },
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -248,6 +227,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-ssh-keypair-management',
@@ -262,6 +242,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-max-concurrent-uploads',
@@ -291,9 +272,6 @@ const UserPreferencesPage = () => {
           defaultValue: 2,
           value: maxConcurrentUpload || 2,
           setValue: setMaxConcurrentUpload,
-          onChange: (value: any) => {
-            setMaxConcurrentUpload(value);
-          },
         },
       ]),
     },
@@ -316,6 +294,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-edit-user-config-script',
@@ -332,6 +311,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
       ],
     },
@@ -348,9 +328,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: classicSessionList,
           setValue: setClassicSessionList,
-          onChange: (e) => {
-            setClassicSessionList(e.target.checked);
-          },
         },
         {
           'data-testid': 'items-classic-dashboard',
@@ -360,9 +337,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: isClassicDashboardPage,
           setValue: setIsClassicDashboardPage,
-          onChange: (e) => {
-            setIsClassicDashboardPage(e.target.checked);
-          },
         },
       ],
     },
@@ -379,9 +353,6 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: experimentalAIAgents,
           setValue: setExperimentalAIAgents,
-          onChange: (e) => {
-            setExperimentalAIAgents(e.target.checked);
-          },
         },
       ],
     },

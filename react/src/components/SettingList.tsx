@@ -147,7 +147,12 @@ const SettingList: React.FC<SettingPageProps> = ({
   };
 
   const changedItemValidator = (item: SettingItemProps) => {
-    if (item.value === null || item.value === undefined || !!item.disabled) {
+    if (
+      item.value === null ||
+      item.value === undefined ||
+      item?.selectProps?.disabled ||
+      item?.checkboxProps?.disabled
+    ) {
       return false;
     }
     return item.value !== item.defaultValue;
@@ -188,6 +193,7 @@ const SettingList: React.FC<SettingPageProps> = ({
           {extraButton}
           {!!showResetButton && (
             <BAIButton
+              danger
               icon={<RedoOutlined />}
               onClick={() => setIsOpenResetChangesModal()}
             >
@@ -296,8 +302,13 @@ export default SettingList;
 
 const resetSettingItems = (settingGroups: SettingGroup[]) => {
   _.flatMap(settingGroups, (item) => item.settingItems).forEach((option) => {
-    !option.disabled &&
-      option?.setValue &&
-      option.setValue(option.defaultValue);
+    if (option.onReset) {
+      option.onReset();
+    } else {
+      !option?.selectProps?.disabled &&
+        !option?.checkboxProps?.disabled &&
+        option?.setValue &&
+        option.setValue(option.defaultValue);
+    }
   });
 };

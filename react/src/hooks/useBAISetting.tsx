@@ -54,9 +54,11 @@ interface GeneralSettings {
   language?: string;
 }
 
+type SetStateAction<T> = T | ((prev: T) => T);
+
 export const useBAISettingUserState = <K extends keyof UserSettings>(
   name: K,
-): [UserSettings[K], (newValue: UserSettings[K]) => void] => {
+): [UserSettings[K], (newValue: SetStateAction<UserSettings[K]>) => void] => {
   return useAtom<UserSettings[K]>(SettingAtomFamily('user.' + name));
 };
 
@@ -111,9 +113,14 @@ const SettingAtomFamily = atomFamily((param: string) => {
       get(settingAtom); // only for the reactivity
       return rawToSetting(localStorage.getItem(key));
     },
-    (get, set, newValue: any) => {
-      // const prev = get(SettingAtomFamily(param));
+    (get, set, newValueOrUpdater: any) => {
       const key = 'backendaiwebui.settings.' + param;
+      const currentValue = rawToSetting(localStorage.getItem(key));
+      const newValue =
+        typeof newValueOrUpdater === 'function'
+          ? newValueOrUpdater(currentValue)
+          : newValueOrUpdater;
+
       localStorage.setItem(key, settingToRaw(newValue));
       const [namespace, name] = param.split('.', 2);
 
