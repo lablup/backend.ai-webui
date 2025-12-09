@@ -1,3 +1,4 @@
+import { FolderCreationModal } from './classes/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
@@ -136,13 +137,47 @@ export async function fillOutVaadinGridCellFilter(
 }
 
 async function removeSearchButton(page: Page, folderName: string) {
-  await page
-    .getByTestId('vfolder-filter')
-    .locator('div')
-    .filter({ hasText: `Name: ${folderName}` })
-    .locator('svg')
-    .first()
-    .click();
+  try {
+    const filterChip = page
+      .getByTestId('vfolder-filter')
+      .locator('div')
+      .filter({ hasText: `Name: ${folderName}` })
+      .locator('svg')
+      .first();
+
+    // Only try to click if the filter chip exists
+    if (await filterChip.isVisible({ timeout: 1000 })) {
+      await filterChip.click();
+    }
+  } catch (error) {
+    // Silently ignore if filter chip doesn't exist
+    // This prevents cascading failures when the filter was already removed
+  }
+}
+
+async function clearAllFilters(page: Page) {
+  try {
+    // Find all filter chips in the vfolder-filter component
+    const filterChips = page
+      .getByTestId('vfolder-filter')
+      .locator('.ant-tag-close-icon');
+
+    // Get count of filter chips
+    const count = await filterChips.count();
+
+    // Remove all filter chips one by one
+    for (let i = 0; i < count; i++) {
+      // Always click the first chip since the list updates after each removal
+      const firstChip = filterChips.first();
+      if (await firstChip.isVisible({ timeout: 500 })) {
+        await firstChip.click();
+        // Wait for the filter chip count to decrease
+        await expect(filterChips).toHaveCount(count - i - 1);
+      }
+    }
+  } catch (error) {
+    // Silently ignore if no filters exist
+  }
 }
 
 export async function verifyVFolder(
@@ -175,14 +210,35 @@ export async function createVFolderAndVerify(
 ) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
-  await page.getByRole('textbox', { name: 'Folder name' }).fill(folderName);
 
-  // select parsed parameters in create modal form
-  await page.getByTestId(`${usageMode}-usage-mode`).click();
-  await page.getByTestId(`${type}-type`).click();
-  await page.getByTestId(`${permission}-permission`).click();
+  const modal = new FolderCreationModal(page);
+  await modal.modalToBeVisible();
 
-  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  // Fill folder name
+  await modal.fillFolderName(folderName);
+
+  // Select usage mode
+  if (usageMode === 'general') {
+    await (await modal.getGeneralUsageModeRadio()).click();
+  } else if (usageMode === 'model') {
+    await (await modal.getModelUsageModeRadio()).click();
+  }
+
+  // Select type
+  if (type === 'user') {
+    await (await modal.getUserTypeRadio()).click();
+  } else if (type === 'project') {
+    await (await modal.getProjectTypeRadio()).click();
+  }
+
+  // Select permission
+  if (permission === 'rw') {
+    await (await modal.getReadWritePermissionRadio()).click();
+  } else if (permission === 'ro') {
+    await (await modal.getReadOnlyPermissionRadio()).click();
+  }
+
+  await (await modal.getCreateButton()).click();
   await verifyVFolder(page, folderName);
 }
 
@@ -211,28 +267,52 @@ export async function deleteForeverAndVerifyFromTrash(
 ) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('tab', { name: 'Trash' }).click();
+
+  // Clear any existing filters before searching for the folder to delete
+  await clearAllFilters(page);
+
+  // Set filter to search by Name
+  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
+  await page.getByRole('option', { name: 'Name' }).locator('div').click();
+
   const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
+
+  // Verify the folder row exists before attempting deletion
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+
+  // Add proper error handling when folder is not found
+  try {
+    await expect(folderRow).toBeVisible({ timeout: 5000 });
+  } catch (error) {
+    throw new Error(
+      `Folder '${folderName}' not found in Trash. This may be due to active filters or the folder was already deleted.`,
+    );
+  }
+
   // Delete forever
-  await page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
-    .getByRole('button')
-    .nth(1)
-    .click();
+  await folderRow.getByRole('button').nth(1).click();
   await page.locator('#confirmText').click();
   await page.locator('#confirmText').fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
-  // Verify
+
+  // Verify deletion - clear filters again and search
+  await clearAllFilters(page);
   await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
   await page.getByRole('option', { name: 'Name' }).locator('div').click();
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
+
   await expect(
     page
       .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
       .filter({ hasText: folderName }),
   ).toHaveCount(0);
+
+  // Clean up the search filter
   await removeSearchButton(page, folderName);
 }
 
