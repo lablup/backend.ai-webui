@@ -57,24 +57,26 @@ jobs:
           cd packages/backend.ai-ui
           npm publish --tag canary --access public --no-git-checks
 
-      - name: Determine npm tag from git tag
+      - name: Determine npm tag and publish strategy
         if: github.ref_type == 'tag'
         id: determine-tag
         run: |
-          GIT_TAG="${GITHUB_REF#refs/tags/v}"
+          cd packages/backend.ai-ui
+          # Extract version from GITHUB_REF (refs/tags/v25.17.2 -> 25.17.2)
+          VERSION="${GITHUB_REF#refs/tags/v}"
 
-          if [[ "$GIT_TAG" == *"-rc"* ]]; then
-            NPM_TAG="rc"
-          elif [[ "$GIT_TAG" == *"-beta"* ]]; then
-            NPM_TAG="beta"
-          else
-            NPM_TAG="latest"
-          fi
+          # Run the script and capture stdout (key=value pairs)
+          SCRIPT_OUTPUT=$(./scripts/determine-publish-strategy.sh "$VERSION")
 
-          echo "npm_tag=${NPM_TAG}" >> $GITHUB_OUTPUT
+          # Parse each line and write to GITHUB_OUTPUT
+          echo "$SCRIPT_OUTPUT" | while IFS='=' read -r key value; do
+            if [ -n "$key" ]; then
+              echo "${key}=${value}" >> $GITHUB_OUTPUT
+            fi
+          done
 
       - name: Publish to npm
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' && steps.determine-tag.outputs.should_publish == 'true'
         run: |
           cd packages/backend.ai-ui
           npm publish --tag ${{ steps.determine-tag.outputs.npm_tag }} --access public --no-git-checks
