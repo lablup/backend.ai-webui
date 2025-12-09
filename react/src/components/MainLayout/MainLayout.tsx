@@ -29,23 +29,9 @@ import {
   useState,
 } from 'react';
 import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
+import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 6;
-export type PluginPage = {
-  name: string;
-  url: string;
-  menuitem: string;
-  icon?: string;
-  group?: string;
-};
-
-export type WebUIPluginType = {
-  page: PluginPage[];
-  menuitem: string[];
-  'menuitem-user': string[];
-  'menuitem-admin': string[];
-  'menuitem-superadmin': string[];
-};
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {
@@ -103,20 +89,10 @@ function MainLayout() {
     setMainContentDivRefState(contentScrollFlexRef);
   }, [contentScrollFlexRef, setMainContentDivRefState]);
 
-  const [webUIPlugins, setWebUIPlugins] = useState<
-    WebUIPluginType | undefined
-  >();
-
-  useEffect(() => {
-    const handler = () => {
-      // @ts-ignore
-      setWebUIPlugins(webUIRef.current?.plugins);
-    };
-    document.addEventListener('backend-ai-config-loaded', handler);
-    return () => {
-      document.removeEventListener('backend-ai-config-loaded', handler);
-    };
-  }, [webUIRef]);
+  // Call `useSetupWebUIPluginEffect` to setup listener for 'backend-ai-config-loaded' event
+  useSetupWebUIPluginEffect({
+    webUIRef: webUIRef,
+  });
 
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -178,7 +154,6 @@ function MainLayout() {
           onCollapse={(collapsed, type) => {
             type === 'clickTrigger' && setSideCollapsed(collapsed);
           }}
-          webuiplugins={webUIPlugins}
         />
       </Suspense>
       <Layout

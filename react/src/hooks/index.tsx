@@ -1,7 +1,7 @@
-import { MenuKeys } from '../components/MainLayout/WebUISider';
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
+import { MenuKeys } from './useWebUIMenuItems';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';

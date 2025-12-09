@@ -3,7 +3,6 @@ import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIAlert from '../components/BAIAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModal from '../components/FolderCreateModal';
-import { MenuKeys } from '../components/MainLayout/WebUISider';
 import StartFromURLModal from '../components/StartFromURLModal';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -25,6 +24,7 @@ import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
+import { MenuKeys } from 'src/hooks/useWebUIMenuItems';
 import {
   useQueryParams,
   withDefault,

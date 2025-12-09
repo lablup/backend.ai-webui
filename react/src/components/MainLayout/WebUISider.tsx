@@ -1,7 +1,6 @@
 import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';
@@ -12,110 +11,32 @@ import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
 import TermsOfServiceModal from '../TermsOfServiceModal';
 import WebUILink from '../WebUILink';
-import { PluginPage, WebUIPluginType } from './MainLayout';
-import {
-  ApiOutlined,
-  BarChartOutlined,
-  CloudUploadOutlined,
-  ControlOutlined,
-  DashboardOutlined,
-  FileDoneOutlined,
-  HddOutlined,
-  InfoCircleOutlined,
-  MessageOutlined,
-  PlayCircleOutlined,
-  SolutionOutlined,
-  ToolOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { useHover, useToggle } from 'ahooks';
+import { useHover, useSessionStorageState, useToggle } from 'ahooks';
 import {
   theme,
-  MenuProps,
   Typography,
   ConfigProvider,
   Divider,
   Grid,
+  Tooltip,
+  Button,
 } from 'antd';
-import { MenuItemType } from 'antd/lib/menu/interface';
-import {
-  filterOutEmpty,
-  BAIEndpointsIcon,
-  BAIModelStoreIcon,
-  BAIMyEnvironmentsIcon,
-  BAIPipelinesIcon,
-  BAISessionsIcon,
-  BAIFlex,
-} from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import {
-  BotMessageSquare,
-  ExternalLinkIcon,
-  LinkIcon,
-  ClipboardClock,
-  PackagePlus,
-} from 'lucide-react';
-import React, { ReactNode, useContext, useRef } from 'react';
+import { ArrowLeftIcon, SettingsIcon } from 'lucide-react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 
-type MenuItem = {
-  label: ReactNode;
-  icon: React.ReactNode;
-  group?: string;
-  key: string;
-};
 interface WebUISiderProps
   extends Pick<
     BAISiderProps,
     'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
-  > {
-  webuiplugins?: WebUIPluginType;
-}
-
-type GroupName =
-  | 'none'
-  | 'playground'
-  | 'storage'
-  | 'workload'
-  | 'service'
-  | 'metrics'
-  | 'mlops';
-
-export type MenuKeys =
-  // generalMenu keys
-  | 'start'
-  | 'dashboard'
-  | 'summary'
-  | 'job'
-  | 'serving'
-  | 'model-store'
-  | 'ai-agent'
-  | 'chat'
-  | 'data'
-  | 'my-environment'
-  | 'agent-summary'
-  | 'statistics'
-  | 'pipeline'
-  // adminMenu keys
-  | 'credential'
-  | 'environment'
-  | 'scheduler'
-  | 'resource-policy'
-  | 'reservoir'
-  // superAdminMenu keys
-  | 'admin-dashboard'
-  | 'agent'
-  | 'settings'
-  | 'maintenance'
-  | 'information';
-
-interface WebUIGeneralMenuItemType extends MenuItemType {
-  group: GroupName;
-  key: MenuKeys;
-}
+  > {}
 
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const themeConfig = useCustomThemeConfig();
@@ -129,11 +50,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
 
-  const isHideAgents = baiClient?._config?.hideAgents ?? true;
-  const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
-  const blockList = baiClient?._config?.blockList ?? null;
-  const inactiveList = baiClient?._config?.inactiveList ?? null;
-
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
   const [isOpenTOSModal, { toggle: toggleTOSModal }] = useToggle(false);
   const [isOpenPrivacyPolicyModal, { toggle: togglePrivacyPolicyModal }] =
@@ -146,297 +62,71 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const gridBreakpoint = Grid.useBreakpoint();
   const primaryColors = usePrimaryColors();
 
-  const [classic_session_list] = useBAISettingUserState('classic_session_list');
-  const [experimentalAIAgents] = useBAISettingUserState(
-    'experimental_ai_agents',
+  const {
+    groupedGeneralMenu,
+    adminMenu,
+    superAdminMenu,
+    isSelectedAdminCategoryMenu,
+  } = useWebUIMenuItems({
+    hideGroupName: props.collapsed,
+  });
+
+  const [goBackPath, setGoBackPath] = useSessionStorageState(
+    'backendaiwebui.last_visited_general_path',
   );
-  const [isClassicDashboardPage] = useBAISettingUserState(
-    'classic_dashboard_page',
-  );
-  const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
-    {
-      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
-      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
-      key: 'start',
-      group: 'none',
-    },
-    !isClassicDashboardPage && {
-      label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'dashboard',
-      group: 'none',
-    },
-    isClassicDashboardPage && {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-      group: 'none',
-    },
-    {
-      label: (
-        <WebUILink to={classic_session_list ? '/job' : '/session'}>
-          {t('webui.menu.Sessions')}
-        </WebUILink>
-      ),
-      icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
-      key: 'job',
-      group: 'workload',
-    },
-    {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
-      key: 'serving',
-      group: 'service',
-    },
-    {
-      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
-      icon: <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
-      key: 'model-store',
-      group: 'service',
-    },
-    experimentalAIAgents && {
-      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
-      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
-      key: 'ai-agent',
-      group: 'playground',
-    },
-    {
-      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
-      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
-      key: 'chat',
-      group: 'playground',
-    },
-    {
-      label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
-      icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
-      key: 'data',
-      group: 'storage',
-    },
-    {
-      label: (
-        <WebUILink to="/my-environment">
-          {t('webui.menu.MyEnvironments')}
-        </WebUILink>
-      ),
-      icon: <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
-      key: 'my-environment',
-      group: 'workload',
-    },
-    !isHideAgents && {
-      label: (
-        <WebUILink to="/agent-summary">
-          {t('webui.menu.AgentSummary')}
-        </WebUILink>
-      ),
-      icon: <HddOutlined style={{ color: token.colorPrimary }} />,
-      key: 'agent-summary',
-      group: 'metrics',
-    },
-    {
-      label: (
-        <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
-      ),
-      icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
-      key: 'statistics',
-      group: 'metrics',
-    },
-    !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
-      icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
-      key: 'pipeline',
-      onClick: () => {
-        window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
-      },
-      group: 'mlops',
-    },
-  ]);
 
-  const adminMenu: MenuProps['items'] = filterOutEmpty([
-    // TODO: Enable the menu item when the page is ready.
-    // WARN: Currently only superadmins can access AdminDashboardPage.
-    // To place the Admin Dashboard menu item at the top of adminMenu,
-    // add it to adminMenu instead of superAdminMenu:
-    // currentUserRole === 'superadmin' && {
-    //   label: (
-    //     <WebUILink to="/admin-dashboard">
-    //       {t('webui.menu.AdminDashboard')}
-    //     </WebUILink>
-    //   ),
-    //   icon: <DashboardOutlined style={{ color: token.colorInfo }} />,
-    //   key: 'admin-dashboard',
-    // },
-    {
-      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
-      icon: <UserOutlined style={{ color: token.colorInfo }} />,
-      key: 'credential',
-    },
-    {
-      label: (
-        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
-      ),
-      icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
-      key: 'environment',
-    },
-    baiClient?.supports('pending-session-list') && {
-      label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
-      icon: <ClipboardClock style={{ color: token.colorInfo }} />,
-      key: 'scheduler',
-    },
-    {
-      label: (
-        <WebUILink to="/resource-policy">
-          {t('webui.menu.ResourcePolicy')}
-        </WebUILink>
-      ),
-      icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
-      key: 'resource-policy',
-    },
-    baiClient?.supports('reservoir') &&
-      baiClient?._config.enableReservoir && {
-        label: (
-          <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>
-        ),
-        icon: <PackagePlus style={{ color: token.colorInfo }} />,
-        key: 'reservoir',
-      },
-  ]);
-
-  const superAdminMenu: MenuProps['items'] = filterOutEmpty([
-    {
-      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
-      icon: <HddOutlined style={{ color: token.colorInfo }} />,
-      key: 'agent',
-    },
-    {
-      label: (
-        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
-      ),
-      icon: <ControlOutlined style={{ color: token.colorInfo }} />,
-      key: 'settings',
-    },
-    {
-      label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
-    },
-    {
-      label: (
-        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
-      ),
-      icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
-      key: 'information',
-    },
-  ]);
-
-  const pluginMap: Record<string, MenuProps['items']> = {
-    'menuitem-user': generalMenu,
-    'menuitem-admin': adminMenu,
-    'menuitem-superadmin': superAdminMenu,
-  };
-
-  const pluginIconMap: {
-    [key: string]: React.ReactNode;
-  } = {
-    link: <LinkIcon />,
-    externalLink: <ExternalLinkIcon />,
-  };
-  // Add plugin pages according to the user role.
-  // Iterates over own enumerable string keyed properties of an object and invokes iteratee for each property.
-  _.forOwn(props.webuiplugins, (value, key) => {
-    // Check if the `pluginMap` object has the current key using the `_.has` function.
-    if (_.has(pluginMap, key)) {
-      const menu = pluginMap[key as keyof typeof pluginMap] as MenuItem[];
-      const pluginPages = props?.webuiplugins?.page;
-      _.map(value, (name) => {
-        // Find page item belonging to each of menuitem-user, menuitem-admin, menuitem-superadmin in webuiplugins.page
-        const page = _.find(pluginPages, { name: name }) as PluginPage;
-        // if menuitem is empty, skip adding menu item
-        if (page && page.menuitem) {
-          const menuItem: MenuItem = {
-            label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
-            icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
-            key: page?.url,
-            group: page.group || 'none',
-          };
-          menu?.push(menuItem);
-        }
-      });
+  // Store the last visited general menu path when the admin category menu is not selected
+  useEffect(() => {
+    if (isSelectedAdminCategoryMenu === false) {
+      setGoBackPath(location.pathname);
     }
-  });
+  }, [setGoBackPath, location.pathname, isSelectedAdminCategoryMenu]);
 
-  _.forEach([generalMenu, adminMenu, superAdminMenu], (menu) => {
-    // Remove menu items that are in blockList
-    _.remove(menu, (item) => _.includes(blockList, item?.key));
-    // Disable menu items that are in inactiveList
-    _.forEach(menu, (item) => {
-      if (_.includes(inactiveList, item?.key)) {
-        _.extend(item, { disabled: true });
-      }
-    });
-  });
-
-  const aliasGroupNameMap: {
-    [key in GroupName]: string;
-  } = {
-    none: '',
-    storage: t('webui.menu.groupName.Storage'),
-    workload: t('webui.menu.groupName.Workload'),
-    playground: t('webui.menu.groupName.Playground'),
-    service: t('webui.menu.groupName.Service'),
-    mlops: t('webui.menu.groupName.Mlops'),
-    metrics: t('webui.menu.groupName.Metrics'),
-  };
-  const groupedGeneralMenu = _.chain(generalMenu)
-    .groupBy('group')
-    .map((items, group) => {
-      if (group === 'none') {
-        return items;
-      }
-      return {
-        type: 'group',
-        name: group,
-        label: (
-          <BAIFlex
-            style={{
-              borderBottom: `1px solid ${token.colorBorder}`,
-            }}
-          >
-            {!props.collapsed && (
-              <Typography.Text type="secondary" ellipsis>
-                {aliasGroupNameMap[group as GroupName] ?? group}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        ),
-        children: items,
-      };
-    })
-    .flatten()
-    .sort((a, b) => {
-      const groupOrder: Array<GroupName | undefined> = [
-        undefined,
-        'none',
-        'storage',
-        'workload',
-        'playground',
-        'service',
-        'mlops',
-        'metrics',
-      ];
-
-      // if item is not group type, place it at the beginning
-      // if item is group type but not in the groupOrder, place it at the end
-      const getWeight = (item: any) => {
-        if (item?.type !== 'group') return -1; // non-group items first
-        const idx = groupOrder.indexOf(item.name as GroupName | undefined);
-        return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
-      };
-
-      return getWeight(a) - getWeight(b);
-    })
-    .value();
+  const adminHeader = (
+    <BAIFlex align="center">
+      <Tooltip
+        title={t('webui.menu.GoBack')}
+        placement={props.collapsed ? 'right' : 'top'}
+        styles={{
+          // adjust height to match menu item height
+          body: {
+            height: 40,
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: token.fontSizeLG,
+          },
+        }}
+      >
+        <Button
+          type="text"
+          shape="circle"
+          icon={<ArrowLeftIcon />}
+          onClick={() => {
+            webuiNavigate(goBackPath ? goBackPath : '/start');
+          }}
+          aria-label={t('webui.menu.GoBack')}
+          style={{
+            color: token.colorTextSecondary,
+            // set specific size like menu items
+            height: 40,
+            width: 42,
+            marginLeft: token.margin,
+          }}
+        />
+      </Tooltip>
+      {!props.collapsed && (
+        <Typography
+          style={{
+            fontSize: token.fontSizeLG,
+            fontWeight: token.fontWeightStrong,
+            color: token.colorText,
+          }}
+        >
+          {t('webui.menu.AdminSettings')}
+        </Typography>
+      )}
+    </BAIFlex>
+  );
 
   return (
     <BAISider
@@ -502,88 +192,78 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           paddingBottom: token.paddingSM,
         }}
       >
-        <BAIMenu
-          collapsed={props.collapsed}
-          selectedKeys={[
-            location.pathname.split('/')[1] || 'start',
-            // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-            location.pathname.split('/')[1] === 'storage-settings'
-              ? 'agent'
-              : '',
-            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-            //       and change 'job' key to 'session'
-            location.pathname.split('/')[1] === 'session' ? 'job' : '',
-          ]}
-          // @ts-ignore
-          items={groupedGeneralMenu}
-        />
-        {(currentUserRole === 'superadmin' || currentUserRole === 'admin') && (
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: primaryColors.admin,
+        {!isSelectedAdminCategoryMenu && (
+          <BAIMenu
+            collapsed={props.collapsed}
+            selectedKeys={[
+              location.pathname.split('/')[1] || 'start',
+              // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+              //       and change 'job' key to 'session'
+              location.pathname.split('/')[1] === 'session' ? 'job' : '',
+            ]}
+            // @ts-ignore
+            items={filterOutEmpty([
+              ...groupedGeneralMenu,
+              (currentUserRole === 'superadmin' ||
+                currentUserRole === 'admin') && {
+                // Go to first page of admin setting pages.
+                type: 'group',
+                label: (
+                  <BAIFlex
+                    style={{
+                      borderBottom: `1px solid ${token.colorBorder}`,
+                    }}
+                  >
+                    {!props.collapsed && (
+                      <Typography.Text type="secondary" ellipsis>
+                        {t('webui.menu.Administration')}
+                      </Typography.Text>
+                    )}
+                  </BAIFlex>
+                ),
+                children: [
+                  {
+                    label: (
+                      <WebUILink
+                        to="/credential"
+                        state={{ goBack: location.pathname }}
+                      >
+                        {t('webui.menu.AdminSettings')}
+                      </WebUILink>
+                    ),
+                    icon: <SettingsIcon style={{ color: token.colorInfo }} />,
+                    key: 'admin-settings',
+                  },
+                ],
               },
-            }}
-          >
-            <BAIMenu
-              collapsed={props.collapsed}
-              selectedKeys={[
-                location.pathname.split('/')[1] || 'start',
-                // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-                location.pathname.split('/')[1] === 'storage-settings'
-                  ? 'agent'
-                  : '',
-                // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-                //       and change 'job' key to 'session'
-                location.pathname.split('/')[1] === 'session' ? 'job' : '',
-              ]}
-              items={
-                // TODO: add plugin menu
-                currentUserRole === 'superadmin'
-                  ? [
-                      {
-                        type: 'group',
-                        label: (
-                          <BAIFlex
-                            style={{
-                              borderBottom: `1px solid ${token.colorBorder}`,
-                            }}
-                          >
-                            {!props.collapsed && (
-                              <Typography.Text type="secondary" ellipsis>
-                                {t('webui.menu.Administration')}
-                              </Typography.Text>
-                            )}
-                          </BAIFlex>
-                        ),
-                        children: [...adminMenu, ...superAdminMenu],
-                      },
-                    ]
-                  : currentUserRole === 'admin'
-                    ? [
-                        {
-                          type: 'group',
-                          label: (
-                            <BAIFlex
-                              style={{
-                                borderBottom: `1px solid ${token.colorBorder}`,
-                              }}
-                            >
-                              {!props.collapsed && (
-                                <Typography.Text type="secondary" ellipsis>
-                                  {t('webui.menu.Administration')}
-                                </Typography.Text>
-                              )}
-                            </BAIFlex>
-                          ),
-                          children: [...adminMenu],
-                        },
-                      ]
-                    : []
-              }
-            />
-          </ConfigProvider>
+            ])}
+          />
         )}
+        {(currentUserRole === 'superadmin' || currentUserRole === 'admin') &&
+          isSelectedAdminCategoryMenu && (
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorPrimary: primaryColors.admin,
+                },
+              }}
+            >
+              {adminHeader}
+              <BAIMenu
+                collapsed={props.collapsed}
+                selectedKeys={[
+                  // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+                  location.pathname.split('/')[1] === 'storage-settings'
+                    ? 'agent'
+                    : location.pathname.split('/')[1],
+                ]}
+                items={[
+                  ...adminMenu,
+                  ...(currentUserRole === 'superadmin' ? superAdminMenu : []),
+                ]}
+              />
+            </ConfigProvider>
+          )}
       </BAIFlex>
       {props.collapsed ? null : (
         <BAIFlex
