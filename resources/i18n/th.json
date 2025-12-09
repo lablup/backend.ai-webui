@@ -1576,7 +1576,6 @@
       "PreOpenPortRangeGuide": "ใส่หลายค่าโดยคั่นด้วยเครื่องหมายจุลภาค (,) หรือช่องว่าง",
       "PreOpenPortTitle": "พอร์ตที่เปิดล่วงหน้า",
       "PrePortConfigWillDisappear": "พอร์ตที่เปิดล่วงหน้าที่ยังไม่ได้บันทึกจะหายไป",
-      "PreviousLauncher": "คลาสสิก",
       "Project": "โครงการ",
       "ProxyConfiguratorNotResponding": "ตัวกำหนดค่าพร็อกซีไม่ตอบสนอง",
       "ProxyDirectTCPNotSupported": "ยังไม่รองรับการเชื่อมต่อ TCP โดยตรงผ่านพร็อกซี",
@@ -1941,9 +1940,6 @@
       "ValidationErrorTitle": "ข้อผิดพลาดในการตรวจสอบช่องข้อมูล"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "มีเวอร์ชันใหม่พร้อมใช้งาน:"
-  },
   "usagePanel": {
     "CpuUsedTime": "เวลาที่ใช้ CPU",
     "DiskUsed": "การใช้ดิสก์",
@@ -1956,16 +1952,11 @@
   "userSettings": {
     "AutoLogout": "ออกจากระบบอัตโนมัติ",
     "AutomaticUpdateCheck": "ตรวจสอบการอัปเดตอัตโนมัติ",
-    "BackToClassicFeatures": "สลับกลับไปเป็น UI แบบคลาสสิก",
-    "BackToClassicFeaturesDesc": "คุณสามารถเลือก UI แบบคลาสสิกแทน Neo UI ล่าสุด \nโปรดทราบว่าคุณสมบัติล่าสุดบางอย่างอาจไม่ได้รับการสนับสนุนใน UI แบบคลาสสิก",
     "BetaFeatures": "คุณสมบัติเบต้า",
     "BootstrapScriptDeleted": "ลบสคริปต์บูตสแตรปแล้ว",
     "BootstrapScriptDescription": "สคริปต์บูตสแตรปจะถูกดำเนินการเพียงครั้งเดียวหลังจากสร้างเซสชัน",
     "BootstrapScriptEmpty": "สคริปต์ว่างเปล่า \nกรุณาป้อนสคริปต์",
     "BootstrapScriptUpdated": "อัปเดตสคริปต์บูตสแตรปแล้ว",
-    "ClassicFeatures": "คุณสมบัติคลาสสิก",
-    "ClassicFeaturesDesc": "การย้อนกลับไปยังเวอร์ชันคลาสสิกสามารถช่วยให้คุณฟื้นความมั่นคงและฟังก์ชั่นในขณะที่คุณรอการอัปเดตหรือแก้ไขที่จะเปิดตัว",
-    "ClassicSessionList": "หน้ารายการเซสชันคลาสสิก",
     "ClearSSHKeypairInput": "คู่คีย์ SSH ที่เขียนไว้จะถูกลบ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?",
     "ConfigFilename": "ชื่อไฟล์การกำหนดค่า",
     "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน: ",
@@ -2051,7 +2042,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "คำแนะนำการใช้งานเทอร์มินัลเว็บขั้นสูง: คัดลอกเนื้อหาเทอร์มินัล",
-    "CopyGuideFour": "หากต้องการเปิดการเลื่อนด้วยเมาส์อีกครั้ง กด <code>Ctrl + B</code> และพิมพ์ <code>:set -g mouse on</code> จากนั้นกด <code>Enter</code>",
     "CopyGuideOne": "กด <code>Ctrl + B</code> เพื่อเข้าสู่โหมดควบคุม tmux",
     "CopyGuideThree": "ตอนนี้คุณสามารถคัดลอกข้อความจากเทอร์มินัลได้",
     "CopyGuideTwo": "พิมพ์ <code>:set -g mouse off</code> และกด <code>Enter</code>",
@@ -2081,7 +2071,6 @@
       "Cancel": "ยกเลิก",
       "ChangePassword": "เปลี่ยนรหัสผ่าน",
       "Chat": "แชท",
-      "ClassicDashboardPage": "หน้าแดชบอร์ดคลาสสิก (หน้าสรุป)",
       "ClickToDownload": "คลิกเพื่อดาวน์โหลด",
       "ComputationResources": "ทรัพยากรการคำนวณ",
       "Configurations": "การกำหนดค่า",

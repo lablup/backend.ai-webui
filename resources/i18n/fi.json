@@ -1586,7 +1586,6 @@
       "PreOpenPortRangeGuide": "Syötä useita arvoja joko pilkulla (,) tai välilyönnillä erotettuina.",
       "PreOpenPortTitle": "Esiavoimet satamat",
       "PrePortConfigWillDisappear": "Kaikki tallentamattomat esiavatut portit häviävät.",
-      "PreviousLauncher": "Classic",
       "Project": "Hanke",
       "ProxyConfiguratorNotResponding": "Proxy-konfiguraattori ei vastaa.",
       "ProxyDirectTCPNotSupported": "Välityspalvelimen suoraa TCP-yhteyttä ei tueta vielä",
@@ -1956,9 +1955,6 @@
       "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Uusi versio on saatavilla:"
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU:n käytetty aika",
     "DiskUsed": "Levyn käyttö",
@@ -1971,16 +1967,11 @@
   "userSettings": {
     "AutoLogout": "Automaattinen uloskirjautuminen",
     "AutomaticUpdateCheck": "Automaattinen päivityksen tarkistus",
-    "BackToClassicFeatures": "Vaihda takaisin klassiseen käyttöliittymään",
-    "BackToClassicFeaturesDesc": "Voit valita klassisen käyttöliittymän uusimman Neo -käyttöliittymän sijasta. \nHuomaa, että joitain uusimmista ominaisuuksista ei ehkä tueta klassisessa käyttöliittymässä.",
     "BetaFeatures": "Beta-ominaisuudet",
     "BootstrapScriptDeleted": "Bootstrap-skripti poistettu",
     "BootstrapScriptDescription": "Bootstrap-skripti suoritetaan vain kerran istunnon luomisen jälkeen.",
     "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
     "BootstrapScriptUpdated": "Bootstrap-skripti päivitetty.",
-    "ClassicFeatures": "Klassiset ominaisuudet",
-    "ClassicFeaturesDesc": "Klassiseen versioon palaaminen voi auttaa sinua palauttamaan vakauden ja toiminnallisuuden odottaessasi päivitysten tai korjausten julkaisua.",
-    "ClassicSessionList": "Klassinen istuntoluettelosivu",
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
@@ -2066,7 +2057,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Edistynyt verkkopäätteen käyttö: Kopioi terminaalin sisältö",
-    "CopyGuideFour": "Voit ottaa hiiren vierityksen uudelleen käyttöön painamalla <code>Ctrl + B</koodi> ja kirjoittamalla <code>:set -g mouse on</koodi> ja painamalla <code>Enter</koodi>.",
     "CopyGuideOne": "Paina <code>Ctrl + B</code> -näppäintä siirtyäksesi tmux-ohjaustilaan.",
     "CopyGuideThree": "Nyt voit kopioida tekstiä terminaalista.",
     "CopyGuideTwo": "Kirjoita <code>:set -g mouse off</code> ja paina <code>Enter</code>-näppäintä.",
@@ -2096,7 +2086,6 @@
       "Cancel": "Peruuta",
       "ChangePassword": "Vaihda salasana",
       "Chat": "Chat",
-      "ClassicDashboardPage": "Klassinen kojelaudan sivu (yhteenvetosivu)",
       "ClickToDownload": "Napsauta ladataksesi",
       "ComputationResources": "Laskentaresurssit",
       "Configurations": "Kokoonpanot",

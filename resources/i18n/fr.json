@@ -1587,7 +1587,6 @@
       "PreOpenPortRangeGuide": "Entrez plusieurs valeurs séparées par une virgule (,) ou un espace.",
       "PreOpenPortTitle": "Ports préouverts",
       "PrePortConfigWillDisappear": "Tous les ports préouverts non sauvegardés disparaissent.",
-      "PreviousLauncher": "Classic",
       "Project": "Projet",
       "ProxyConfiguratorNotResponding": "Le configurateur de proxy ne répond pas.",
       "ProxyDirectTCPNotSupported": "La connexion TCP directe par proxy n'est pas encore prise en charge",
@@ -1957,9 +1956,6 @@
       "ValidationErrorTitle": "Erreurs de validation du champ de saisie"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Une nouvelle version est disponible :"
-  },
   "usagePanel": {
     "CpuUsedTime": "Temps d'utilisation du processeur",
     "DiskUsed": "Utilisation du disque",
@@ -1972,16 +1968,11 @@
   "userSettings": {
     "AutoLogout": "Déconnexion automatique",
     "AutomaticUpdateCheck": "Vérification automatique des mises à jour",
-    "BackToClassicFeatures": "Passez à l'interface utilisateur classique",
-    "BackToClassicFeaturesDesc": "Vous pouvez choisir l'interface utilisateur classique au lieu de la dernière interface utilisateur NEO. \nVeuillez noter que certaines des dernières fonctionnalités peuvent ne pas être prises en charge dans l'interface utilisateur classique.",
     "BetaFeatures": "Fonctionnalités bêta",
     "BootstrapScriptDeleted": "Script d'amorçage supprimé",
     "BootstrapScriptDescription": "Le script Bootstrap ne sera exécuté qu'une seule fois après la création de la session.",
     "BootstrapScriptEmpty": "Le script est vide. \nVeuillez entrer le script.",
     "BootstrapScriptUpdated": "Script d'amorçage mis à jour.",
-    "ClassicFeatures": "Caractéristiques classiques",
-    "ClassicFeaturesDesc": "Retour à une version classique peut vous aider à retrouver la stabilité et les fonctionnalités pendant que vous attendez que les mises à jour ou les correctifs soient publiées.",
-    "ClassicSessionList": "Page de liste de session classique",
     "ClearSSHKeypairInput": "La paire de clés SSH écrite sera supprimée. Es-tu sur de vouloir continuer?",
     "ConfigFilename": "Nom du fichier de configuration",
     "CurrentSSHPublicKey": "Clé publique actuelle :",
@@ -2067,7 +2058,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
-    "CopyGuideFour": "Pour réactiver le défilement de la souris, appuyez sur <code> Ctrl + B </code> et tapez <code> : set -g mouse on </code> et appuyez sur <code> Entrez la touche </code>.",
     "CopyGuideOne": "Appuyez sur <code> Ctrl + B </code> pour entrer en mode de contrôle tmux.",
     "CopyGuideThree": "Vous pouvez maintenant copier du texte depuis le terminal.",
     "CopyGuideTwo": "Tapez <code> : set -g mouse off </code> et appuyez sur <code> Entrez </code> Key.",
@@ -2097,7 +2087,6 @@
       "Cancel": "Annuler",
       "ChangePassword": "Changer le mot de passe",
       "Chat": "Chat",
-      "ClassicDashboardPage": "Page de tableau de bord classique (page de résumé)",
       "ClickToDownload": "Cliquez pour télécharger",
       "ComputationResources": "Ressources de calcul",
       "Configurations": "Configurations",

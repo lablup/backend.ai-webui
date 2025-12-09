@@ -1587,7 +1587,6 @@
       "PreOpenPortRangeGuide": "Virgülle (,) veya boşlukla ayırarak birden fazla değer girin.",
       "PreOpenPortTitle": "Ön Açık Bağlantı Noktaları",
       "PrePortConfigWillDisappear": "Kaydedilmemiş tüm önceden açık portlar kaybolacaktır.",
-      "PreviousLauncher": "Classic",
       "Project": "Proje",
       "ProxyConfiguratorNotResponding": "Proxy yapılandırıcı yanıt vermiyor.",
       "ProxyDirectTCPNotSupported": "Proxy doğrudan TCP bağlantısı henüz desteklenmiyor",
@@ -1957,9 +1956,6 @@
       "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Yeni sürüm mevcut:"
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU Kullanım Süresi",
     "DiskUsed": "Disk kullanımı",
@@ -1972,16 +1968,11 @@
   "userSettings": {
     "AutoLogout": "Otomatik Çıkış",
     "AutomaticUpdateCheck": "Otomatik Güncelleme Kontrolü",
-    "BackToClassicFeatures": "Klasik kullanıcı arayüzüne geri dönün",
-    "BackToClassicFeaturesDesc": "En son neo kullanıcı arayüzü yerine klasik kullanıcı arayüzünü seçebilirsiniz. \nEn son özelliklerin bazılarının klasik kullanıcı arayüzünde desteklenmeyebileceğini lütfen unutmayın.",
     "BetaFeatures": "Beta Özellikleri",
     "BootstrapScriptDeleted": "Bootstrap komut dosyası silindi",
     "BootstrapScriptDescription": "Bootstrap komut dosyası oturum oluşturulduktan sonra yalnızca bir kez çalıştırılacaktır",
     "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
     "BootstrapScriptUpdated": "Önyükleme komut dosyası güncellendi.",
-    "ClassicFeatures": "Klasik Özellikler",
-    "ClassicFeaturesDesc": "Klasik bir sürüme geri dönmek, güncellemelerin veya düzeltmelerin yayınlanmasını beklerken istikrar ve işlevselliği yeniden kazanmanıza yardımcı olabilir.",
-    "ClassicSessionList": "Klasik Oturum Listesi Sayfası",
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
@@ -2067,7 +2058,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Gelişmiş Web Terminali Kullanımı: Terminal içeriğini kopyalayın",
-    "CopyGuideFour": "Fare kaydırmayı tekrar açmak için, <code> Ctrl + B </code> tuşlarına basın ve </code> üzerinde <code> :set -g mouse yazın ve <code> tuşuna basın </code> anahtarını girin.",
     "CopyGuideOne": "tmux kontrol moduna girmek için <code> Ctrl + B </code> tuşuna basın.",
     "CopyGuideThree": "Artık terminalden metin kopyalayabilirsiniz.",
     "CopyGuideTwo": "<code> :set -g mouse off </code> yazın ve <code> tuşuna basın </code> Anahtarını girin.",
@@ -2097,7 +2087,6 @@
       "Cancel": "İptal etmek",
       "ChangePassword": "Şifre değiştir",
       "Chat": "Sohbet",
-      "ClassicDashboardPage": "Klasik Gösterge Tablosu Sayfası (özet sayfası)",
       "ClickToDownload": "İndirmek için tıklayın",
       "ComputationResources": "Hesaplama Kaynakları",
       "Configurations": "Yapılandırmalar",

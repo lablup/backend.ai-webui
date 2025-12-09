@@ -1585,7 +1585,6 @@
       "PreOpenPortRangeGuide": "Таслал (,) эсвэл хоосон зайгаар тусгаарласан олон утгыг оруулна уу.",
       "PreOpenPortTitle": "Портуудыг урьдчилан нээх",
       "PrePortConfigWillDisappear": "Хадгалагдаагүй урьдчилан нээх портууд алга болно.",
-      "PreviousLauncher": "Сонгодог",
       "Project": "Төсөл",
       "ProxyConfiguratorNotResponding": "Прокси тохируулагч хариу өгөхгүй байна.",
       "ProxyDirectTCPNotSupported": "Прокси шууд TCP холболт хараахан дэмжигдээгүй байна",
@@ -1954,9 +1953,6 @@
       "ValidationErrorTitle": "Оролтын талбарын баталгаажуулалтын алдаа"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Шинэ хувилбарыг авах боломжтой:"
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU ашигласан цаг",
     "DiskUsed": "Дискний хэрэглээ",
@@ -1969,16 +1965,11 @@
   "userSettings": {
     "AutoLogout": "Автоматаар гарах",
     "AutomaticUpdateCheck": "Шинэчлэлтийг автоматаар шалгах",
-    "BackToClassicFeatures": "Сонгодог UI руу буцах",
-    "BackToClassicFeaturesDesc": "Та хамгийн сүүлийн үеийн NEO UI-ийн оронд сонгодог UI-г сонгож болно. \nСонгодог UI-д хамгийн сүүлийн үеийн функцийг дэмжихгүй байж магадгүй гэдгийг анхаарна уу.",
     "BetaFeatures": "Бета хувилбарууд",
     "BootstrapScriptDeleted": "Bootstrap скриптийг устгасан",
     "BootstrapScriptDescription": "Ачаалагч скрипт нь сесс үүсгэсний дараа зөвхөн нэг удаа хийгдэх болно",
     "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
     "BootstrapScriptUpdated": "Ачаалагч скрипт шинэчлэгдсэн.",
-    "ClassicFeatures": "Сонгодог онцлог",
-    "ClassicFeaturesDesc": "Сонгодог хувилбар руу буцах нь шинэчлэлт, засварыг хүлээж байх үед тогтвортой байдал, тогтвортой байдлыг сэргээхэд тусалдаг.",
-    "ClassicSessionList": "Сонгодог хуралдааны жагсаалтын хуудас",
     "ClearSSHKeypairInput": "Бичсэн SSH товчлуурыг устгах болно. Үргэлжлүүлэхийг хүсч байна уу?",
     "ConfigFilename": "Файлын нэрийг тохируулах",
     "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр:",
@@ -2064,7 +2055,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
-    "CopyGuideFour": "Хулганаар гүйлгэхийг дахин асаахын тулд <code> Ctrl + B </code> дарж <code> гэж бичнэ үү: </code> дээр -g хулганаа тохируулаад <code> Enter a0088771d",
     "CopyGuideOne": "<code> Ctrl + B </code> товчийг дарж tmux хяналтын горимд орно уу.",
     "CopyGuideThree": "Одоо та текстийг терминалаас хуулж болно.",
     "CopyGuideTwo": "<code> гэж бичээд </code> унтраах -g хулганаа оруулаад <code> Enter </code> товчийг дар.",
@@ -2094,7 +2084,6 @@
       "Cancel": "Цуцлах",
       "ChangePassword": "Нууц үгээ солих",
       "Chat": "Яриа хөрөө",
-      "ClassicDashboardPage": "Сонгодог хяналтын самбар хуудас (хураангуй хуудас)",
       "ClickToDownload": "Татаж авахын тулд дарна уу",
       "ComputationResources": "Тооцооллын нөөц",
       "Configurations": "Тохиргоо",

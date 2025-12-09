@@ -1586,7 +1586,6 @@
       "PreOpenPortRangeGuide": "Masukkan beberapa nilai yang dipisahkan dengan koma (,) atau spasi.",
       "PreOpenPortTitle": "Pelabuhan yang sudah dibuka sebelumnya",
       "PrePortConfigWillDisappear": "Semua port yang belum disimpan dan belum dibuka akan hilang.",
-      "PreviousLauncher": "Classic",
       "Project": "Proyek",
       "ProxyConfiguratorNotResponding": "Konfigurator proksi tidak merespons.",
       "ProxyDirectTCPNotSupported": "Koneksi TCP langsung proxy belum didukung",
@@ -1956,9 +1955,6 @@
       "ValidationErrorTitle": "Kesalahan validasi kolom masukan"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Versi baru tersedia:"
-  },
   "usagePanel": {
     "CpuUsedTime": "Waktu Pemakaian CPU",
     "DiskUsed": "Pemakaian Disk",
@@ -1971,16 +1967,11 @@
   "userSettings": {
     "AutoLogout": "Keluar Otomatis",
     "AutomaticUpdateCheck": "Pemeriksaan Pembaruan Otomatis",
-    "BackToClassicFeatures": "Beralih kembali ke UI klasik",
-    "BackToClassicFeaturesDesc": "Anda dapat memilih UI klasik daripada Neo UI terbaru. \nHarap dicatat bahwa beberapa fitur terbaru mungkin tidak didukung di UI klasik.",
     "BetaFeatures": "Fitur Beta",
     "BootstrapScriptDeleted": "Skrip bootstrap dihapus",
     "BootstrapScriptDescription": "Skrip bootstrap akan dieksekusi hanya sekali setelah pembuatan sesi",
     "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
     "BootstrapScriptUpdated": "Skrip Bootstrap diperbarui.",
-    "ClassicFeatures": "Fitur klasik",
-    "ClassicFeaturesDesc": "Bergulir kembali ke versi klasik dapat membantu Anda mendapatkan kembali stabilitas dan fungsionalitas saat Anda menunggu pembaruan atau perbaikan untuk dirilis.",
-    "ClassicSessionList": "Halaman Daftar Sesi Klasik",
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini: ",
@@ -2066,7 +2057,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
-    "CopyGuideFour": "Untuk mengaktifkan scroll mouse lagi, Tekan <code>Ctrl + B</code> dan Ketik <code>:set -g mouse on</code> dan Tekan <code>Masukkan</code> kunci",
     "CopyGuideOne": "Tekan tombol <code>Ctrl + B</code> untuk masuk ke mode kontrol tmux.",
     "CopyGuideThree": "Sekarang Anda dapat menyalin teks dari terminal.",
     "CopyGuideTwo": "Ketik <code>:set -g mouse off</code> dan Tekan <code>Masukkan</code> Kunci.",
@@ -2096,7 +2086,6 @@
       "Cancel": "Batal",
       "ChangePassword": "Ganti kata sandi",
       "Chat": "Mengobrol",
-      "ClassicDashboardPage": "Halaman dasbor klasik (halaman ringkasan)",
       "ClickToDownload": "Klik untuk mengunduh",
       "ComputationResources": "Sumber Daya Komputasi",
       "Configurations": "Konfigurasi",

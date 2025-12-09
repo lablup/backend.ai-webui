@@ -160,10 +160,6 @@ export const useSetCurrentProject = () => {
       baiClient.current_group = projectName;
       // @ts-ignore
       globalThis.backendaiutils._writeRecentProjectGroup(projectName);
-      const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {
-        detail: projectName,
-      });
-      document.dispatchEvent(event);
     },
     [set, baiClient],
   );

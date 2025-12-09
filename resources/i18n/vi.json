@@ -1587,7 +1587,6 @@
       "PreOpenPortRangeGuide": "Nhập nhiều giá trị được phân tách bằng dấu phẩy (,) hoặc dấu cách.",
       "PreOpenPortTitle": "Cổng mở trước",
       "PrePortConfigWillDisappear": "Mọi cổng mở trước chưa được lưu sẽ biến mất.",
-      "PreviousLauncher": "Classic",
       "Project": "Dự án",
       "ProxyConfiguratorNotResponding": "Trình cấu hình proxy không phản hồi.",
       "ProxyDirectTCPNotSupported": "Kết nối TCP trực tiếp proxy chưa được hỗ trợ",
@@ -1957,9 +1956,6 @@
       "ValidationErrorTitle": "Lỗi xác thực trường đầu vào"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Phiên bản mới có sẵn:"
-  },
   "usagePanel": {
     "CpuUsedTime": "Thời gian sử dụng CPU",
     "DiskUsed": "Sử dụng đĩa",
@@ -1972,16 +1968,11 @@
   "userSettings": {
     "AutoLogout": "Đăng xuất tự động",
     "AutomaticUpdateCheck": "Kiểm tra cập nhật tự động",
-    "BackToClassicFeatures": "Chuyển trở lại UI cổ điển",
-    "BackToClassicFeaturesDesc": "Bạn có thể chọn giao diện người dùng cổ điển thay vì giao diện người dùng mới mới nhất. \nXin lưu ý rằng một số tính năng mới nhất có thể không được hỗ trợ trong UI cổ điển.",
     "BetaFeatures": "Tính năng Beta",
     "BootstrapScriptDeleted": "Tập lệnh Bootstrap đã bị xóa",
     "BootstrapScriptDescription": "Tập lệnh Bootstrap sẽ chỉ được thực thi một lần sau khi tạo phiên",
     "BootstrapScriptEmpty": "Kịch bản trống rỗng. \nVui lòng nhập kịch bản.",
     "BootstrapScriptUpdated": "Đã cập nhật tập lệnh Bootstrap.",
-    "ClassicFeatures": "Các tính năng cổ điển",
-    "ClassicFeaturesDesc": "Quay trở lại một phiên bản cổ điển có thể giúp bạn lấy lại sự ổn định và chức năng trong khi bạn chờ đợi các bản cập nhật hoặc sửa chữa được phát hành.",
-    "ClassicSessionList": "Trang danh sách phiên cổ điển",
     "ClearSSHKeypairInput": "Cặp khóa SSH đã viết sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục không?",
     "ConfigFilename": "Định cấu hình tên tệp",
     "CurrentSSHPublicKey": "Khóa công khai hiện tại:",
@@ -2067,7 +2058,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Sử dụng đầu cuối web nâng cao: Sao chép nội dung đầu cuối",
-    "CopyGuideFour": "Để bật lại tính năng cuộn chuột, Nhấn <code> Ctrl + B </code> và Nhập <code>: đặt -g chuột trên </code> và Nhấn <code> Nhập phím </code>.",
     "CopyGuideOne": "Nhấn phím <code> Ctrl + B </code> để vào chế độ điều khiển tmux.",
     "CopyGuideThree": "Bây giờ bạn có thể sao chép văn bản từ thiết bị đầu cuối.",
     "CopyGuideTwo": "Gõ <code>: set -g mouse off </code> and Press <code> Enter </code> Key.",
@@ -2097,7 +2087,6 @@
       "Cancel": "Huỷ bỏ",
       "ChangePassword": "Đổi mật khẩu",
       "Chat": "Trò chuyện",
-      "ClassicDashboardPage": "Trang bảng điều khiển cổ điển (trang tóm tắt)",
       "ClickToDownload": "Bấm để tải xuống",
       "ComputationResources": "Tài nguyên tính toán",
       "Configurations": "Cấu hình",

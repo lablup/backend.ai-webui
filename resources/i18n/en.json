@@ -1593,7 +1593,6 @@
       "PreOpenPortRangeGuide": "Enter multiple values separated by either a comma (,) or a space.",
       "PreOpenPortTitle": "Preopen Ports",
       "PrePortConfigWillDisappear": "Any unsaved preopen ports will disappear.",
-      "PreviousLauncher": "Classic",
       "Project": "Project",
       "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
       "ProxyDirectTCPNotSupported": "Proxy direct TCP connection is not supported yet",
@@ -1963,9 +1962,6 @@
       "ValidationErrorTitle": "Input field validation errors"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "New version is available:"
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU Used Time",
     "DiskUsed": "Disk Usage",
@@ -1979,16 +1975,11 @@
     "AIAgents": "AI Agents",
     "AutoLogout": "Auto Logout",
     "AutomaticUpdateCheck": "Automatic Update Check",
-    "BackToClassicFeatures": "Switch back to the Classic UI",
-    "BackToClassicFeaturesDesc": "You can choose the Classic UI instead of the latest NEO UI. Please note that some of the latest features may not be supported in the Classic UI.",
     "BetaFeatures": "Beta Features",
     "BootstrapScriptDeleted": "Bootstrap script deleted",
     "BootstrapScriptDescription": "Bootstrap script will be executed only once after session creation",
     "BootstrapScriptEmpty": "The script is empty. \nPlease enter the script.",
     "BootstrapScriptUpdated": "Bootstrap script updated.",
-    "ClassicFeatures": "Classic features",
-    "ClassicFeaturesDesc": "Rolling back to a classic version can help you regain stability and functionality while you wait for updates or fixes to be released.",
-    "ClassicSessionList": "Classic Session list page",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key: ",
@@ -2074,7 +2065,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
-    "CopyGuideFour": "To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.",
     "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
     "CopyGuideThree": "Now you can copy text from the terminal.",
     "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
@@ -2104,7 +2094,6 @@
       "Cancel": "Cancel",
       "ChangePassword": "Change Password",
       "Chat": "Chat",
-      "ClassicDashboardPage": "Classic Dashboard Page (Summary Page)",
       "ClickToDownload": "Click to download",
       "ComputationResources": "Computation Resources",
       "Configurations": "Configurations",

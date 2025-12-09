@@ -892,20 +892,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
       <div id="app-page">
-        <backend-ai-summary-view
-          class="page"
-          name="summary"
-          ?active="${this._page === 'summary'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-summary-view>
-        <backend-ai-session-view
-          class="page"
-          name="job"
-          ?active="${this._page === 'job'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-session-view>
         <backend-ai-email-verification-view
           class="page"
           name="email-verification"

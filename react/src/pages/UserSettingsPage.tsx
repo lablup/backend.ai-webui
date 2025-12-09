@@ -49,13 +49,8 @@ const UserPreferencesPage = () => {
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] =
     useBAISettingUserState('preserve_login');
-  const [classicSessionList, setClassicSessionList] = useBAISettingUserState(
-    'classic_session_list',
-  );
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
-  const [isClassicDashboardPage, setIsClassicDashboardPage] =
-    useBAISettingUserState('classic_dashboard_page');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -332,37 +327,6 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
-        },
-      ],
-    },
-    {
-      'data-testid': 'group-classic-features',
-      title: t('userSettings.BackToClassicFeatures'),
-      description: t('userSettings.BackToClassicFeaturesDesc'),
-      settingItems: [
-        {
-          'data-testid': 'items-experimental-neo-session-list',
-          type: 'checkbox',
-          title: t('userSettings.ClassicSessionList'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: classicSessionList,
-          setValue: setClassicSessionList,
-          onChange: (e) => {
-            setClassicSessionList(e.target.checked);
-          },
-        },
-        {
-          'data-testid': 'items-classic-dashboard',
-          type: 'checkbox',
-          title: t('webui.menu.ClassicDashboardPage'),
-          description: t('general.Enabled'),
-          defaultValue: false,
-          value: isClassicDashboardPage,
-          setValue: setIsClassicDashboardPage,
-          onChange: (e) => {
-            setIsClassicDashboardPage(e.target.checked);
-          },
         },
       ],
     },

@@ -88,19 +88,6 @@ const loadPage =
   (page, params: Record<string, unknown> = {}) =>
   (dispatch) => {
     switch (page) {
-      case 'summary':
-        import('./components/backend-ai-summary-view.js').then((module) => {
-          // TODO: after page changing?
-        });
-        break;
-      case 'job':
-        import('./components/backend-ai-session-view.js');
-        break;
-      // temporally block experiment
-      /*
-      case 'experiment':
-        import('./components/backend-ai-experiment-view.js');
-        break; */
       case 'serving':
         import('./components/backend-ai-serving-view.js');
         break;

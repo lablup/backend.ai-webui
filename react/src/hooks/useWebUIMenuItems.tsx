@@ -108,12 +108,8 @@ export const useWebUIMenuItems = ({
   const inactiveList = baiClient?._config?.inactiveList ?? null;
   const { token } = theme.useToken();
 
-  const [classic_session_list] = useBAISettingUserState('classic_session_list');
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
-  );
-  const [isClassicDashboardPage] = useBAISettingUserState(
-    'classic_dashboard_page',
   );
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
@@ -123,24 +119,14 @@ export const useWebUIMenuItems = ({
       key: 'start',
       group: 'none',
     },
-    !isClassicDashboardPage && {
+    {
       label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
       icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
       key: 'dashboard',
       group: 'none',
     },
-    isClassicDashboardPage && {
-      label: <WebUILink to="/summary">{t('webui.menu.Summary')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'summary',
-      group: 'none',
-    },
     {
-      label: (
-        <WebUILink to={classic_session_list ? '/job' : '/session'}>
-          {t('webui.menu.Sessions')}
-        </WebUILink>
-      ),
+      label: <WebUILink to={'/session'}>{t('webui.menu.Sessions')}</WebUILink>,
       icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
       key: 'job',
       group: 'workload',

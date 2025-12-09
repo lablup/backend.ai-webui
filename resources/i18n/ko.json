@@ -1591,7 +1591,6 @@
       "PreOpenPortRangeGuide": "여러 값을 콤마(,) 또는 스페이스로 구분하여 입력할 수 있습니다.",
       "PreOpenPortTitle": "사전 개방 포트",
       "PrePortConfigWillDisappear": "저장되지 않은 사전 개방 포트값은 사라집니다.",
-      "PreviousLauncher": "Classic",
       "Project": "프로젝트",
       "ProxyConfiguratorNotResponding": "프록시 구성자가 응답하지 않습니다.",
       "ProxyDirectTCPNotSupported": "프록시 직접 TCP 연결은 아직 지원되지 않습니다.",
@@ -1961,9 +1960,6 @@
       "ValidationErrorTitle": "입력 필드 검증 오류"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "새 버전이 출시되었습니다:"
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU 사용량",
     "DiskUsed": "디스크 사용량",
@@ -1976,16 +1972,11 @@
   "userSettings": {
     "AutoLogout": "자동 로그아웃",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "BackToClassicFeatures": "Classic UI로 돌아가기",
-    "BackToClassicFeaturesDesc": "최신의 NEO UI 대신 Classic UI를 선택할 수 있습니다. 다만, Classic UI에서는 일부 최신 기능이 지원되지 않을 수 있습니다.",
     "BetaFeatures": "베타 기능",
     "BootstrapScriptDeleted": "부트스트랩 스크립트가 삭제되었습니다.",
     "BootstrapScriptDescription": "부트스트랩 스크립트는 세션 생성 후 한 번만 실행됩니다",
     "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
-    "ClassicFeatures": "클래식 기능",
-    "ClassicFeaturesDesc": "클래식 버전으로 돌아가면 새 업데이트나 수정이 적용될 때까지 안정적인 기능을 계속 사용할 수 있습니다.",
-    "ClassicSessionList": "Classic 세션 목록 페이지",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키: ",
@@ -2071,7 +2062,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
-    "CopyGuideFour": "원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 엔터키 입력",
     "CopyGuideOne": "<code>Ctrl + B</code>를 입력하여 tmux의 제어 모드로 진입",
     "CopyGuideThree": "마우스로 드래그하여 터미널의 텍스트를 복사할 수 있습니다.",
     "CopyGuideTwo": "<code>:set -g mouse off</code>를 입력하고 엔터키 입력",
@@ -2101,7 +2091,6 @@
       "Cancel": "취소",
       "ChangePassword": "비밀번호 변경",
       "Chat": "채팅",
-      "ClassicDashboardPage": "클래식 대시 보드 페이지 (요약 페이지)",
       "ClickToDownload": "다운로드하려면 클릭하세요",
       "ComputationResources": "연산 자원",
       "Configurations": "환경 설정",

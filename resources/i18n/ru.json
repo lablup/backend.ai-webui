@@ -1586,7 +1586,6 @@
       "PreOpenPortRangeGuide": "Введите несколько значений, разделенных запятой (,) или пробелом.",
       "PreOpenPortTitle": "Предварительно открытые порты",
       "PrePortConfigWillDisappear": "Все несохраненные предварительно открытые порты исчезнут.",
-      "PreviousLauncher": "Classic",
       "Project": "Проект",
       "ProxyConfiguratorNotResponding": "Конфигуратор прокси не отвечает.",
       "ProxyDirectTCPNotSupported": "Прямое TCP-соединение через прокси-сервер пока не поддерживается.",
@@ -1956,9 +1955,6 @@
       "ValidationErrorTitle": "Ошибки проверки поля ввода"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Доступна новая версия:"
-  },
   "usagePanel": {
     "CpuUsedTime": "Используемое время процессора",
     "DiskUsed": "Использование диска",
@@ -1971,16 +1967,11 @@
   "userSettings": {
     "AutoLogout": "Автоматический выход",
     "AutomaticUpdateCheck": "Автоматическая проверка обновлений",
-    "BackToClassicFeatures": "Вернитесь в классический пользовательский интерфейс",
-    "BackToClassicFeaturesDesc": "Вы можете выбрать классический пользовательский интерфейс вместо последнего NEO UI. \nОбратите внимание, что некоторые из последних функций не могут быть поддержаны в классическом пользовательском интерфейсе.",
     "BetaFeatures": "Бета-функции",
     "BootstrapScriptDeleted": "Скрипт начальной загрузки удален.",
     "BootstrapScriptDescription": "Bootstrap-скрипт будет выполняться только один раз после создания сессии",
     "BootstrapScriptEmpty": "Скрипт пуст. \nПожалуйста, введите сценарий.",
     "BootstrapScriptUpdated": "Обновлен скрипт начальной загрузки.",
-    "ClassicFeatures": "Классические особенности",
-    "ClassicFeaturesDesc": "Обращение обратно в классическую версию может помочь вам восстановить стабильность и функциональность, пока вы ожидаете выпуска обновлений или исправлений.",
-    "ClassicSessionList": "Классическая страница списка сеансов",
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
     "ConfigFilename": "Имя файла конфигурации",
     "CurrentSSHPublicKey": "Текущий открытый ключ:",
@@ -2066,7 +2057,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
-    "CopyGuideFour": "Чтобы снова включить прокрутку мыши, нажмите <code> Ctrl + B </code> и введите <code>: установите -g мышь на </code> и нажмите <code> Введите a0088777z0a6.",
     "CopyGuideOne": "Нажмите <code> Ctrl + B </code>, чтобы войти в режим управления tmux.",
     "CopyGuideThree": "Теперь вы можете копировать текст из терминала.",
     "CopyGuideTwo": "Введите <code>: set -g mouse off </code> и нажмите <code> Введите ключ </code>.",
@@ -2096,7 +2086,6 @@
       "Cancel": "Отмена",
       "ChangePassword": "Изменить пароль",
       "Chat": "Чат",
-      "ClassicDashboardPage": "Классическая страница на приборной панели (сводная страница)",
       "ClickToDownload": "Нажмите, чтобы скачать",
       "ComputationResources": "Вычислительные ресурсы",
       "Configurations": "Конфигурации",

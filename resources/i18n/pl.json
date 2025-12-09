@@ -1586,7 +1586,6 @@
       "PreOpenPortRangeGuide": "Wprowadź wiele wartości oddzielonych przecinkiem (,) lub spacją.",
       "PreOpenPortTitle": "Wstępnie otwarte porty",
       "PrePortConfigWillDisappear": "Wszystkie niezapisane wcześniej otwarte porty zostaną usunięte.",
-      "PreviousLauncher": "Classic",
       "Project": "Projekt",
       "ProxyConfiguratorNotResponding": "Konfigurator proxy nie odpowiada.",
       "ProxyDirectTCPNotSupported": "Bezpośrednie połączenie proxy TCP nie jest jeszcze obsługiwane",
@@ -1956,9 +1955,6 @@
       "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Dostępna jest nowa wersja:"
-  },
   "usagePanel": {
     "CpuUsedTime": "Czas użycia procesora",
     "DiskUsed": "Użycie dysku",
@@ -1971,16 +1967,11 @@
   "userSettings": {
     "AutoLogout": "Automatyczne wylogowanie",
     "AutomaticUpdateCheck": "Automatyczne sprawdzanie aktualizacji",
-    "BackToClassicFeatures": "Wróć do klasycznego interfejsu użytkownika",
-    "BackToClassicFeaturesDesc": "Możesz wybrać klasyczny interfejs użytkownika zamiast najnowszego interfejsu użytkownika NEO. \nNależy pamiętać, że niektóre z najnowszych funkcji mogą nie być obsługiwane w klasycznym interfejsie użytkownika.",
     "BetaFeatures": "Funkcje beta",
     "BootstrapScriptDeleted": "Usunięto skrypt Bootstrap",
     "BootstrapScriptDescription": "Skrypt Bootstrap zostanie wykonany tylko raz po utworzeniu sesji.",
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
     "BootstrapScriptUpdated": "Zaktualizowano skrypt Bootstrap.",
-    "ClassicFeatures": "Klasyczne funkcje",
-    "ClassicFeaturesDesc": "Powrót do klasycznej wersji może pomóc w odzyskaniu stabilności i funkcjonalności podczas oczekiwania na wydanie aktualizacji lub poprawek.",
-    "ClassicSessionList": "Klasyczna strona listy sesji",
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
     "CurrentSSHPublicKey": "Aktualny klucz publiczny:",
@@ -2066,7 +2057,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Zaawansowane korzystanie z terminala internetowego: Skopiuj zawartość terminala",
-    "CopyGuideFour": "Aby ponownie włączyć przewijanie myszy, naciśnij <code> Ctrl + B </code> i wpisz <code> :set -g mouse on </code> i naciśnij <code> Wprowadź klawisz </code>.",
     "CopyGuideOne": "Naciśnij klawisz <code> Ctrl + B </code>, aby przejść do trybu sterowania tmux.",
     "CopyGuideThree": "Teraz możesz skopiować tekst z terminala.",
     "CopyGuideTwo": "Wpisz <code> :set -g mouse off </code> i naciśnij <code> Wprowadź klucz </code>.",
@@ -2096,7 +2086,6 @@
       "Cancel": "Anuluj",
       "ChangePassword": "Zmień hasło",
       "Chat": "Czat",
-      "ClassicDashboardPage": "Klasyczna strona deski rozdzielczej (strona podsumowująca)",
       "ClickToDownload": "Kliknij, aby pobrać",
       "ComputationResources": "Zasoby obliczeniowe",
       "Configurations": "Konfiguracje",

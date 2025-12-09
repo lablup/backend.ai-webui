@@ -1584,7 +1584,6 @@
       "PreOpenPortRangeGuide": "Εισαγάγετε πολλές τιμές διαχωρισμένες είτε με κόμμα (,) είτε με κενό.",
       "PreOpenPortTitle": "Προανοιχτά λιμάνια",
       "PrePortConfigWillDisappear": "Τυχόν μη αποθηκευμένες προ-ανοιχτές θύρες θα εξαφανιστούν.",
-      "PreviousLauncher": "Classic",
       "Project": "Εργο",
       "ProxyConfiguratorNotResponding": "Ο διαμορφωτής μεσολάβησης δεν αποκρίνεται.",
       "ProxyDirectTCPNotSupported": "Η απευθείας σύνδεση TCP μεσολάβησης δεν υποστηρίζεται ακόμη",
@@ -1954,9 +1953,6 @@
       "ValidationErrorTitle": "Σφάλματα επικύρωσης πεδίου εισαγωγής"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "Η νέα έκδοση είναι διαθέσιμη:"
-  },
   "usagePanel": {
     "CpuUsedTime": "Χρησιμοποιημένος χρόνος CPU",
     "DiskUsed": "Χρήση δίσκου",
@@ -1969,16 +1965,11 @@
   "userSettings": {
     "AutoLogout": "Αυτόματη αποσύνδεση",
     "AutomaticUpdateCheck": "Έλεγχος αυτόματης ενημέρωσης",
-    "BackToClassicFeatures": "Επιστροφή στο κλασικό UI",
-    "BackToClassicFeaturesDesc": "Μπορείτε να επιλέξετε το κλασικό UI αντί για το τελευταίο NEO UI. \nΛάβετε υπόψη ότι ορισμένες από τις τελευταίες λειτουργίες ενδέχεται να μην υποστηρίζονται στο κλασικό UI.",
     "BetaFeatures": "Χαρακτηριστικά beta",
     "BootstrapScriptDeleted": "Το σενάριο Bootstrap διαγράφηκε",
     "BootstrapScriptDescription": "Το σενάριο Bootstrap θα εκτελεστεί μόνο μία φορά μετά τη δημιουργία συνεδρίας",
     "BootstrapScriptEmpty": "Το σενάριο είναι κενό. \nΕισαγάγετε το σενάριο.",
     "BootstrapScriptUpdated": "Το σενάριο Bootstrap ενημερώθηκε.",
-    "ClassicFeatures": "Κλασικά χαρακτηριστικά",
-    "ClassicFeaturesDesc": "Η κύλιση πίσω σε μια κλασική έκδοση μπορεί να σας βοηθήσει να ανακτήσετε τη σταθερότητα και τη λειτουργικότητα ενώ περιμένετε να κυκλοφορήσουν ενημερώσεις ή διορθώσεις.",
-    "ClassicSessionList": "Κλασική σελίδα λίστας συνεδριών",
     "ClearSSHKeypairInput": "Το γραπτό πληκτρολόγιο SSH θα αφαιρεθεί. Εισαι σιγουρος οτι θελεις να συνεχισεις?",
     "ConfigFilename": "Διαμόρφωση ονόματος αρχείου",
     "CurrentSSHPublicKey": "Τρέχον δημόσιο κλειδί:",
@@ -2063,7 +2054,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Σύνθετη χρήση τερματικού Web: Αντιγραφή περιεχομένου τερματικού",
-    "CopyGuideFour": "Για να ενεργοποιήσετε ξανά την κύλιση του ποντικιού, πατήστε <code> Ctrl + B </code> και Πληκτρολογήστε <code>: ορίστε -g ποντίκι στο </code> και πατήστε <code> Πληκτρολογήστε a0088771d5a",
     "CopyGuideOne": "Πατήστε το πλήκτρο <code> Ctrl + B </code> για είσοδο στη λειτουργία ελέγχου tmux.",
     "CopyGuideThree": "Τώρα μπορείτε να αντιγράψετε κείμενο από το τερματικό.",
     "CopyGuideTwo": "Πληκτρολογήστε <code>: set -g mouse off </code> και πατήστε <code> Enter </code> Key.",
@@ -2093,7 +2083,6 @@
       "Cancel": "Ματαίωση",
       "ChangePassword": "Άλλαξε κωδικό",
       "Chat": "Συνομιλία",
-      "ClassicDashboardPage": "Κλασική σελίδα ταμπλό (σελίδα συνοπτικής)",
       "ClickToDownload": "Κάντε κλικ για λήψη",
       "ComputationResources": "Πόροι υπολογισμού",
       "Configurations": "Διαμορφώσεις",

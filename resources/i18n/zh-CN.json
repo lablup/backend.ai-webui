@@ -1587,7 +1587,6 @@
       "PreOpenPortRangeGuide": "您可以输入多个值，以逗号（,）或空格分隔。",
       "PreOpenPortTitle": "预开放端口",
       "PrePortConfigWillDisappear": "任何未保存的预打开端口都将消失。",
-      "PreviousLauncher": "Classic",
       "Project": "项目",
       "ProxyConfiguratorNotResponding": "代理配置器没有响应。",
       "ProxyDirectTCPNotSupported": "尚不支持代理直接 TCP 连接",
@@ -1957,9 +1956,6 @@
       "ValidationErrorTitle": "输入字段验证错误"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "新版本可用："
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU使用时间",
     "DiskUsed": "磁盘使用情况",
@@ -1972,16 +1968,11 @@
   "userSettings": {
     "AutoLogout": "自动退出",
     "AutomaticUpdateCheck": "自动更新检查",
-    "BackToClassicFeatures": "切换回经典UI",
-    "BackToClassicFeaturesDesc": "您可以选择经典的UI，而不是最新的NEO UI。 请注意，经典UI可能不支持一些最新功能。",
     "BetaFeatures": "测试版功能",
     "BootstrapScriptDeleted": "引导脚本已删除",
     "BootstrapScriptDescription": "Bootstrap 脚本只会在会话创建后执行一次",
     "BootstrapScriptEmpty": "脚本是空的。\n请输入脚本。",
     "BootstrapScriptUpdated": "引导脚本已更新。",
-    "ClassicFeatures": "经典功能",
-    "ClassicFeaturesDesc": "回到经典版本可以帮助您在等待更新或释放更新或修复时恢复稳定性和功能。",
-    "ClassicSessionList": "经典会话列表页面",
     "ClearSSHKeypairInput": "书面 SSH 密钥对将被删除。你确定你要继续吗？",
     "ConfigFilename": "配置文件名",
     "CurrentSSHPublicKey": "当前公钥：",
@@ -2067,7 +2058,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高级 Web 终端使用：复制终端内容",
-    "CopyGuideFour": "要再次打开鼠标滚动，请按 <code> Ctrl + B </code> 并键入 <code> :set -g mouse on </code> 并按 a09d9160780dz709d91607dz70z70z70z70z70z1",
     "CopyGuideOne": "按 <code> Ctrl + B </code> 键进入 tmux 控制模式。",
     "CopyGuideThree": "现在您可以从终端复制文本。",
     "CopyGuideTwo": "输入 <code> :set -g mouse off </code> 并按 <code> 输入 </code> 键。",
@@ -2097,7 +2087,6 @@
       "Cancel": "取消",
       "ChangePassword": "更改密码",
       "Chat": "聊天",
-      "ClassicDashboardPage": "经典仪表板页面（摘要页面）",
       "ClickToDownload": "点击下载",
       "ComputationResources": "计算资源",
       "Configurations": "配置",

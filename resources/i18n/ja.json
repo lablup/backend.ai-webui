@@ -1586,7 +1586,6 @@
       "PreOpenPortRangeGuide": "複数の値をカンマ（、）またはスペースで区切って入力できます。",
       "PreOpenPortTitle": "プリオープンポート",
       "PrePortConfigWillDisappear": "保存されていない事前開放ポート値は消えます。",
-      "PreviousLauncher": "Classic",
       "Project": "事業",
       "ProxyConfiguratorNotResponding": "プロキシコンフィギュレータが応答していません。",
       "ProxyDirectTCPNotSupported": "プロキシ直接 TCP 接続はまだサポートされていません",
@@ -1956,9 +1955,6 @@
       "ValidationErrorTitle": "入力フィールド検証エラー"
     }
   },
-  "update": {
-    "NewWebUIVersionAvailable": "新しいバージョンが利用可能です："
-  },
   "usagePanel": {
     "CpuUsedTime": "CPU使用時間",
     "DiskUsed": "ディスクの使用状況",
@@ -1971,16 +1967,11 @@
   "userSettings": {
     "AutoLogout": "自動ログアウト",
     "AutomaticUpdateCheck": "自動更新チェック",
-    "BackToClassicFeatures": "クラシックUIに戻ります",
-    "BackToClassicFeaturesDesc": "最新のNEO UIの代わりに、クラシックUIを選択できます。\n最新の機能のいくつかは、古典的なUIではサポートされていない場合があることに注意してください。",
     "BetaFeatures": "ベータ機能",
     "BootstrapScriptDeleted": "ブートストラップ スクリプトが削除されました",
     "BootstrapScriptDescription": "ブートストラップスクリプトはセッション作成後一度だけ実行されます。",
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
     "BootstrapScriptUpdated": "ブートストラップスクリプトが更新されました。",
-    "ClassicFeatures": "古典的な機能",
-    "ClassicFeaturesDesc": "古典的なバージョンに戻ると、更新や修正がリリースされるのを待っている間、安定性と機能を取り戻すのに役立ちます。",
-    "ClassicSessionList": "クラシックセッションリストページ",
     "ClearSSHKeypairInput": "書き込まれたSSHキーペアは削除されます。続行してもよろしいですか？",
     "ConfigFilename": "構成ファイル名",
     "CurrentSSHPublicKey": "現在の公開鍵：",
@@ -2066,7 +2057,6 @@
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "高度なWeb端末の使用法：端末の内容をコピーする",
-    "CopyGuideFour": "マウススクロールを再度オンにするには、<code> Ctrl + B </code>を押し、<code>：set -g mouse on </code>と入力し、<code>を押します。</code>キーを入力します。",
     "CopyGuideOne": "<code> Ctrl + B </code>キーを押して、tmux制御モードに入ります。",
     "CopyGuideThree": "これで、端末からテキストをコピーできます。",
     "CopyGuideTwo": "<code>：set -g mouse off </code>と入力し、<code>を押します。</code>キーを入力します。",
@@ -2096,7 +2086,6 @@
       "Cancel": "キャンセル",
       "ChangePassword": "パスワードを変更する",
       "Chat": "チャット",
-      "ClassicDashboardPage": "クラシックダッシュボードページ（要約ページ）",
       "ClickToDownload": "クリックしてダウンロードします",
       "ComputationResources": "計算リソース",
       "Configurations": "構成",

@@ -925,16 +925,6 @@ export const BackendAiStyles = [
       font-weight: 200;
     }
 
-    /* Loading spinner */
-    #lablup-loading-spinner {
-      position: fixed;
-      width: 30px;
-      height: 30px;
-      bottom: 6px;
-      left: 6px;
-      z-index: 1000;
-    }
-
     /* Tab on head */
     div.card h3.tab {
       padding-top: 0;
@@ -954,24 +944,6 @@ export const BackendAiStyles = [
     mwc-button.full-size,
     mwc-button.full {
       width: 100%;
-    }
-
-    lablup-progress-bar {
-      --progress-bar-width: 186px;
-      --progress-bar-height: 17px;
-      --progress-bar-font-family: var(--token-fontFamily);
-      --progress-bar-border-radius: 3px;
-      --progress-bar-font-color-inverse: var(--token-colorBgBase, white);
-      --progress-bar-font-color: var(--token-colorText, black);
-      margin-bottom: 5px;
-    }
-
-    lablup-progress-bar.start {
-      --progress-bar-background: var(--general-progress-bar-reserved);
-    }
-
-    lablup-progress-bar.end {
-      --progress-bar-background: var(--general-progress-bar-using);
     }
 
     div.progress-bar {

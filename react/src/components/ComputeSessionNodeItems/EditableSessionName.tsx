@@ -165,10 +165,6 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   .toPromise()
                   // ignore the error
                   .catch();
-                // ignore the error
-                document.dispatchEvent(
-                  new CustomEvent('backend-ai-session-list-refreshed'),
-                );
               },
               onError: () => {
                 // if the session name is not changed, do not show error
