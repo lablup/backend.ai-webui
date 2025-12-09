@@ -240,6 +240,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [input, setInput] = useState('');
 
   const { error, messages, stop, status, sendMessage, setMessages } = useChat({
+    experimental_throttle: 100,
     messages: chat.messages,
     onFinish: () => {
       setStartTime(null);
