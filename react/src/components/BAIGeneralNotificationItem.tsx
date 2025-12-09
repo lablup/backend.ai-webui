@@ -1,10 +1,11 @@
 import { NotificationState } from '../hooks/useBAINotification';
+import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Card, List, Progress, Typography, theme } from 'antd';
+import { Button, Card, List, Typography, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -117,36 +118,23 @@ const BAIGeneralNotificationItem: React.FC<{
                 marginTop: token.marginSM,
               }}
             >
-              <Typography.Text type="secondary" copyable>
-                {notification.extraDescription}
-              </Typography.Text>
+              {_.isString(notification.extraDescription) ? (
+                <Typography.Text type="secondary" copyable>
+                  {notification.extraDescription}
+                </Typography.Text>
+              ) : (
+                notification.extraDescription
+              )}
             </Card>
           ) : null}
 
           <BAIFlex direction="row" align="center" justify="end" gap={'sm'}>
-            {notification.backgroundTask &&
-            _.isNumber(notification.backgroundTask.percent) ? (
-              <Progress
-                size="small"
-                showInfo={false}
-                percent={notification.backgroundTask.percent}
-                strokeColor={
-                  notification.backgroundTask.status === 'rejected'
-                    ? token.colorTextDisabled
-                    : undefined
-                }
-                style={{
-                  margin: 0,
-                  opacity:
-                    notification.backgroundTask.status === 'resolved' &&
-                    showDate
-                      ? 0
-                      : 1,
-                }}
-
-                // status={item.progressStatus}
+            {notification.backgroundTask && (
+              <BAINotificationBackgroundProgress
+                backgroundTask={notification.backgroundTask}
+                showDate={showDate}
               />
-            ) : null}
+            )}
             {showDate ? (
               <BAIFlex>
                 <Typography.Text type="secondary">
