@@ -2,7 +2,6 @@ window.isUpdateAvailable = new Promise(function(resolve, reject) {
   if ('serviceWorker' in navigator && ['localhost', '127.0.0.1'].indexOf(location.hostname) === -1) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('service-worker.js').then((registration) => {
-        console.log('ServiceWorker registered with scope: ', registration.scope);
         registration.onupdatefound = () => {
           const installingWorker = registration.installing;
           installingWorker.onstatechange = () => {
@@ -19,8 +18,8 @@ window.isUpdateAvailable = new Promise(function(resolve, reject) {
             }
           };
         };
-      }).catch(function(err) {
-        console.log('ServiceWorker registration failed: ', err);
+      }).catch(function() {
+        return undefined;
       });
     });
   }
@@ -31,6 +30,5 @@ window['isUpdateAvailable']
         document.addEventListener('backend-ai-connected', (e) => {
           document.querySelector('#webui-shell').showUpdateNotifier();
         });
-        console.log('New Web UI is available. Please reload to update.');
       }
     });
