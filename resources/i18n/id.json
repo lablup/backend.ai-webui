@@ -1098,10 +1098,12 @@
   },
   "project": {
     "Active": "Aktif",
+    "BulkEdit": "Edit Massal",
     "Domain": "Domain",
     "Name": "Nama",
     "Project": "Proyek",
     "ProjectID": "ID Proyek",
+    "ProjectIDFilterRuleMessage": "UUID tidak valid.",
     "ResourcePolicy": "Kebijakan Sumber Daya"
   },
   "registry": {

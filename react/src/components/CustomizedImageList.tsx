@@ -9,7 +9,6 @@ import { getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
-  useUpdatableState,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
@@ -30,6 +29,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAITable,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useState, useTransition } from 'react';

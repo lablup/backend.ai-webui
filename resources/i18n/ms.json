@@ -1099,10 +1099,12 @@
   },
   "project": {
     "Active": "Aktif",
+    "BulkEdit": "Sunting Pukal",
     "Domain": "Domain",
     "Name": "Nama",
     "Project": "Projek",
     "ProjectID": "ID Projek",
+    "ProjectIDFilterRuleMessage": "UUID tidak sah.",
     "ResourcePolicy": "Dasar Sumber"
   },
   "registry": {

@@ -1100,10 +1100,12 @@
   },
   "project": {
     "Active": "活跃",
+    "BulkEdit": "批量编辑",
     "Domain": "域",
     "Name": "名称",
     "Project": "项目",
     "ProjectID": "项目 ID",
+    "ProjectIDFilterRuleMessage": "无效的 UUID。",
     "ResourcePolicy": "资源策略"
   },
   "registry": {

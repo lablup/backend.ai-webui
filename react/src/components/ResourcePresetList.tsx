@@ -5,7 +5,7 @@ import {
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { localeCompare } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import {
@@ -28,6 +28,7 @@ import {
   BAITable,
   BAIFlex,
   BAINumberWithUnit,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';

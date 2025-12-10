@@ -1099,10 +1099,12 @@
   },
   "project": {
     "Active": "Активен",
+    "BulkEdit": "Массовое редактирование",
     "Domain": "Домен",
     "Name": "Имя",
     "Project": "Проект",
     "ProjectID": "ID проекта",
+    "ProjectIDFilterRuleMessage": "Неверный UUID.",
     "ResourcePolicy": "Политика ресурсов"
   },
   "registry": {

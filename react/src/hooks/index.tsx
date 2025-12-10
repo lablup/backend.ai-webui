@@ -1,7 +1,7 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
-import { useEventNotStable } from './useEventNotStable';
 import { MenuKeys } from './useWebUIMenuItems';
+import { useDateISOState } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
@@ -46,19 +46,6 @@ export const useBackendAIConnectedState = () => {
   }, []);
 
   return time;
-};
-
-export const useDateISOState = (initialValue?: string) => {
-  const [value, setValue] = useState(initialValue || new Date().toISOString());
-
-  const update = useEventNotStable((newValue?: string) => {
-    setValue(newValue || new Date().toISOString());
-  });
-  return [value, update] as const;
-};
-
-export const useUpdatableState = (initialValue: string) => {
-  return useDateISOState(initialValue);
 };
 
 export const INITIAL_FETCH_KEY = 'first';

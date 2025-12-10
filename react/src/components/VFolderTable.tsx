@@ -1,11 +1,10 @@
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEventNotStable } from '../hooks/useEventNotStable';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
@@ -28,7 +27,14 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { BAIUserUnionIcon, BAIFlex, BAILink, BAITable } from 'backend.ai-ui';
+import {
+  BAIUserUnionIcon,
+  BAIFlex,
+  BAILink,
+  BAITable,
+  useEventNotStable,
+  useUpdatableState,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';

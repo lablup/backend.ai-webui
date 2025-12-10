@@ -1,7 +1,4 @@
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
-import DynamicUnitInputNumber, {
-  DynamicUnitInputNumberProps,
-} from '../DynamicUnitInputNumber';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
 import {
@@ -13,14 +10,18 @@ import {
   SwitchProps,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIDynamicUnitInputNumber,
+  BAIDynamicUnitInputNumberProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface SharedMemoryFormItemsProps {
   min?: string;
-  onChangeResourceShmem?: DynamicUnitInputNumberProps['onChange'];
+  onChangeResourceShmem?: BAIDynamicUnitInputNumberProps['onChange'];
   onChangeAutomaticShmem?: SwitchProps['onChange'];
 }
 
@@ -182,7 +183,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                     },
                   ]}
                 >
-                  <DynamicUnitInputNumber
+                  <BAIDynamicUnitInputNumber
                     min={min}
                     size="small"
                     addonBefore={'SHM'}
