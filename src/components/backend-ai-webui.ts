@@ -349,7 +349,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       })
       .catch(() => {
-        console.log('Initialization failed.');
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
           globalThis.backendaiclient === null ||
@@ -770,7 +769,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {Boolean} performClose
    */
   async logout(performClose = false, callbackURL: string = '/') {
-    // console.log('also close the app:', performClose);
     globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (
       typeof globalThis.backendaiclient != 'undefined' &&

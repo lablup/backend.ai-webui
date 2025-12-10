@@ -5326,7 +5326,6 @@ class Pipeline {
         return Promise.resolve(false);
       }
     } catch (err) {
-      console.log(err);
       throw {
         title: 'No Pipeline Server found at API Endpoint.',
         message:
