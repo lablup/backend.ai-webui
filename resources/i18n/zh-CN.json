@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "上传文件需要写权限。"
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "无法将自动挂载的文件夹创建为项目类型。",
       "CannotDeleteFolder": "无法删除安装在一个或多个会话中的文件夹。请先终止会话。",
       "CannotDeletePipelineFolder": "您无法删除管道文件夹。",
       "CannotRestorePipelineFolder": "您无法还原管道文件夹。",

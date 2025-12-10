@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "No se pueden crear carpetas de montaje automático como tipo de proyecto.",
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
       "CannotDeletePipelineFolder": "No puede eliminar las carpetas de tuberías.",
       "CannotRestorePipelineFolder": "No puedes restaurar las carpetas de tuberías.",

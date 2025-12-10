@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Dosya(lar)ı yüklerken yazma izni gereklidir."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Otomatik bağlanan klasörler proje türü olarak oluşturulamaz.",
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
       "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
       "CannotRestorePipelineFolder": "Boru hattı klasörlerini geri yükleyemezsiniz.",

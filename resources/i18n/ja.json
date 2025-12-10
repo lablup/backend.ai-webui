@@ -354,6 +354,7 @@
       "WritePermissionRequiredInUploadFiles": "ファイルのアップロードには書き込み権限が必要です。"
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "自動マウントフォルダはプロジェクトとして作成できません。",
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
       "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
       "CannotRestorePipelineFolder": "パイプラインフォルダーを復元することはできません。",

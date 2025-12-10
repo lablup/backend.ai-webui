@@ -354,6 +354,7 @@
       "WritePermissionRequiredInUploadFiles": "Файл (ууд) -ийг байршуулахад бичих зөвшөөрөл шаардлагатай."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Автоматаар холбогдох хавтаснуудыг төслийн төрөл болгон үүсгэж болохгүй.",
       "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу.",
       "CannotDeletePipelineFolder": "Та дамжуулах хоолойн хавтасыг устгах боломжгүй.",
       "CannotRestorePipelineFolder": "Та дамжуулах хоолойн хавтасыг сэргээх боломжгүй.",

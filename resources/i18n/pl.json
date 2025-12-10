@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Do przesyłania plików wymagane jest uprawnienie do zapisu."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Folderów z automatycznym montowaniem nie można utworzyć jako typu projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
       "CannotRestorePipelineFolder": "Nie możesz przywrócić folderów rurociągów.",

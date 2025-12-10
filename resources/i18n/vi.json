@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Quyền ghi là bắt buộc khi tải lên (các) tệp."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Không thể tạo thư mục tự động gắn dưới dạng loại dự án.",
       "CannotDeleteFolder": "Không thể xóa thư mục được gắn trong một hoặc nhiều phiên. Vui lòng kết thúc phiên trước.",
       "CannotDeletePipelineFolder": "Bạn không thể xóa các thư mục đường ống.",
       "CannotRestorePipelineFolder": "Bạn không thể khôi phục các thư mục đường ống.",

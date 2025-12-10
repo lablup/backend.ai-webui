@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Для загрузки файла (ов) требуется разрешение на запись."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Папки с автоматическим монтированием нельзя создавать как тип проекта.",
       "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
       "CannotDeletePipelineFolder": "Вы не можете удалить папки трубопровода.",
       "CannotRestorePipelineFolder": "Вы не можете восстановить папки трубопровода.",

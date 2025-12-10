@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Une autorisation d'écriture est requise pour le téléchargement de fichiers."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Les dossiers montés automatiquement ne peuvent pas être créés en tant que type « projet ».",
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
       "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
       "CannotRestorePipelineFolder": "Vous ne pouvez pas restaurer les dossiers du pipeline.",

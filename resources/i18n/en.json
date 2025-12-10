@@ -358,6 +358,7 @@
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s)."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Auto-mount folders cannot be created as project type.",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
       "CannotDeletePipelineFolder": "You can't delete pipeline folders.",
       "CannotRestorePipelineFolder": "You can't restore pipeline folders.",

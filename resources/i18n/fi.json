@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Automaattisesti liitettäviä kansioita ei voi luoda projektityypiksi.",
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
       "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
       "CannotRestorePipelineFolder": "Putkilinjan kansiot eivät voi palauttaa.",

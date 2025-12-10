@@ -354,6 +354,7 @@
       "WritePermissionRequiredInUploadFiles": "Per caricare i file è richiesta l'autorizzazione di scrittura."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Le cartelle auto-montate non possono essere create come tipo progetto.",
       "CannotDeleteFolder": "Impossibile eliminare la cartella montata in una o più sessioni. Si prega di terminare prima la sessione.",
       "CannotDeletePipelineFolder": "Non puoi eliminare le cartelle della pipeline.",
       "CannotRestorePipelineFolder": "Non puoi ripristinare le cartelle della pipeline.",

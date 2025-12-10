@@ -357,6 +357,7 @@
       "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "자동 마운트 폴더는 프로젝트 타입으로 생성할 수 없습니다.",
       "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
       "CannotDeletePipelineFolder": "파이프라인 폴더는 삭제할 수 없습니다.",
       "CannotRestorePipelineFolder": "파이프라인 폴더는 복원할 수 없습니다.",

@@ -353,6 +353,7 @@
       "WritePermissionRequiredInUploadFiles": "Απαιτείται άδεια εγγραφής κατά τη μεταφόρτωση αρχείων."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Οι φάκελοι αυτόματης προσάρτησης δεν μπορούν να δημιουργηθούν ως τύπος έργου.",
       "CannotDeleteFolder": "Δεν είναι δυνατή η διαγραφή του φακέλου που είναι τοποθετημένος σε μία ή περισσότερες περιόδους σύνδεσης. Κλείστε πρώτα τη συνεδρία.",
       "CannotDeletePipelineFolder": "Δεν μπορείτε να διαγράψετε τους φακέλους αγωγών.",
       "CannotRestorePipelineFolder": "Δεν μπορείτε να επαναφέρετε τους φακέλους αγωγών.",

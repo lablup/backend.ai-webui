@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "Zum Hochladen von Datei(en) ist eine Schreibberechtigung erforderlich."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Auto-Mount-Ordner können nicht als Projekttyp erstellt werden.",
       "CannotDeleteFolder": "Der in einer oder mehreren Sitzungen bereitgestellte Ordner kann nicht gelöscht werden. Bitte beenden Sie zuerst die Sitzung.",
       "CannotDeletePipelineFolder": "Sie können Pipeline -Ordner nicht löschen.",
       "CannotRestorePipelineFolder": "Sie können Pipeline -Ordner nicht wiederherstellen.",

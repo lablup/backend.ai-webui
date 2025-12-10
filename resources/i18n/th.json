@@ -355,6 +355,7 @@
       "WritePermissionRequiredInUploadFiles": "ต้องมีสิทธิ์เขียนในการอัปโหลดไฟล์"
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "โฟลเดอร์ที่เมานต์อัตโนมัติไม่สามารถสร้างเป็นประเภทโปรเจกต์ได้",
       "CannotDeleteFolder": "ไม่สามารถลบโฟลเดอร์ที่ถูกเมาท์ในหนึ่งหรือหลายเซสชัน กรุณายุติเซสชันก่อน",
       "CannotDeletePipelineFolder": "คุณไม่สามารถลบโฟลเดอร์ไปป์ไลน์ได้",
       "CannotRestorePipelineFolder": "คุณไม่สามารถกู้คืนโฟลเดอร์ไปป์ไลน์ได้",

@@ -362,6 +362,18 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                           ),
                         );
                       }
+                      if (
+                        value === 'project' &&
+                        currentUsageMode === 'automount'
+                      ) {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'data.folders.AutoMountFoldersCanNotBeCreatedAsProjectType',
+                            ),
+                          ),
+                        );
+                      }
                       return Promise.resolve();
                     },
                   }),

@@ -354,6 +354,7 @@
       "WritePermissionRequiredInUploadFiles": "Izin menulis diperlukan dalam mengunggah file."
     },
     "folders": {
+      "AutoMountFoldersCanNotBeCreatedAsProjectType": "Folder auto-mount tidak dapat dibuat sebagai jenis proyek.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak dapat menghapus folder pipa.",
       "CannotRestorePipelineFolder": "Anda tidak dapat mengembalikan folder pipa.",
