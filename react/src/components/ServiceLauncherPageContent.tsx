@@ -21,6 +21,7 @@ import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from './EnvVarFormList';
+import FolderCreateModal from './FolderCreateModal';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -59,6 +60,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -169,6 +171,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const validationRules = useValidateServiceName();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
+  const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
@@ -730,6 +733,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     formValuesFromQueryParams,
   );
 
+  const queryRef = useLazyLoadQuery<any>(
+    graphql`
+      query ServiceLauncherPageContent_RefQuery {
+        ...VFolderSelectFragment
+      }
+    `,
+    {},
+    {
+      fetchPolicy: 'store-and-network',
+    },
+  );
+
   return (
     <>
       <BAIFlex
@@ -787,30 +802,47 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           </Checkbox>
                         </Form.Item>
                         {!endpoint ? (
-                          <Form.Item
-                            name={'vFolderID'}
-                            label={t('session.launcher.ModelStorageToMount')}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
-                          >
-                            <VFolderSelect
-                              filter={(vf) =>
-                                vf.usage_mode === 'model' &&
-                                vf.status === 'ready' &&
-                                vf.ownership_type !== 'group'
-                              }
-                              valuePropName="id"
-                              autoSelectDefault={
-                                !model && !formValuesFromQueryParams.vFolderID
-                              }
-                              disabled={!!endpoint}
-                              allowFolderExplorer
-                              allowCreateFolder
-                            />
-                          </Form.Item>
+                          <BAIFlex direction="row" gap="xs" align="end">
+                            <Form.Item
+                              style={{ width: '100%' }}
+                              name={'vFolderID'}
+                              label={t('session.launcher.ModelStorageToMount')}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
+                            >
+                              <VFolderSelect
+                                queryRef={queryRef}
+                                filter={(vf) =>
+                                  vf.usage_mode === 'model' &&
+                                  vf.status === 'ready' &&
+                                  vf.ownership_type !== 'group'
+                                }
+                                valuePropName="id"
+                                autoSelectDefault={
+                                  !model && !formValuesFromQueryParams.vFolderID
+                                }
+                                disabled={!!endpoint}
+                                allowFolderExplorer
+                              />
+                            </Form.Item>
+                            <Form.Item>
+                              <Tooltip
+                                title={t('data.CreateANewStorageFolder')}
+                              >
+                                <Button
+                                  icon={<PlusIcon />}
+                                  type="primary"
+                                  ghost
+                                  onClick={() => {
+                                    setIsOpenCreateFolderModal(true);
+                                  }}
+                                />
+                              </Tooltip>
+                            </Form.Item>
+                          </BAIFlex>
                         ) : (
                           endpoint?.model && (
                             <Form.Item
@@ -1084,6 +1116,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       >
         <ServiceValidationView serviceData={validateServiceData} />
       </BAIModal>
+      <FolderCreateModal
+        usageMode="model"
+        open={isOpenCreateFolderModal}
+        onRequestClose={(result) => {
+          setIsOpenCreateFolderModal(false);
+          if (result) {
+            form.setFieldValue('vFolderID', result.id);
+          }
+        }}
+      />
     </>
   );
 };
