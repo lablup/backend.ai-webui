@@ -11,12 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { FileBrowserButtonFragment$key } from 'src/__generated__/FileBrowserButtonFragment.graphql';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 import { useDefaultFileBrowserImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 import {
-  startSessionErrorCodes,
   StartSessionWithDefaultValue,
   useStartSession,
 } from 'src/hooks/useStartSession';
@@ -48,7 +46,6 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
-  const { upsertNotification } = useSetBAINotification();
 
   const filebrowserImage = useDefaultFileBrowserImageWithFallback();
 
@@ -102,6 +99,8 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
             return;
           }
           const fileBrowserFormValue: StartSessionWithDefaultValue = {
+            // If the resource setting is not included when the session is created,
+            // it is created with the value determined by the server.
             sessionName: `filebrowser-${vfolder.row_id}`,
             sessionType: 'interactive',
             // use default file browser image if configured and allowed
@@ -112,10 +111,6 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
             cluster_mode: 'single-node',
             cluster_size: 1,
             mount_ids: [vfolder.row_id?.replaceAll('-', '') || ''],
-            resource: {
-              cpu: 1,
-              mem: '0.5g',
-            },
           };
 
           await startSessionWithDefault(fileBrowserFormValue)
@@ -123,6 +118,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
               if (results?.fulfilled && results.fulfilled.length > 0) {
                 upsertSessionNotification(results.fulfilled, [
                   {
+                    key: `filebrowser-${vfolder.row_id}`,
                     extraData: {
                       appName: 'filebrowser',
                     } as PrimaryAppOption,
@@ -131,22 +127,10 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
               }
               if (results?.rejected && results.rejected.length > 0) {
                 const error = results.rejected[0].reason;
-                if (
-                  _.includes(
-                    error.message,
-                    startSessionErrorCodes.DUPLICATED_SESSION,
-                  )
-                ) {
-                  upsertNotification({
-                    key: `filebrowser-${vfolder.row_id}`,
-                    open: true,
-                  });
-                } else {
-                  modal.error({
-                    title: error?.title,
-                    content: getErrorMessage(error),
-                  });
-                }
+                modal.error({
+                  title: error?.title,
+                  content: getErrorMessage(error),
+                });
               }
             })
             .catch((error) => {
