@@ -8,7 +8,6 @@ import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
   App,
-  Button,
   Divider,
   Form,
   Input,
@@ -21,6 +20,7 @@ import {
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
+  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -153,15 +153,15 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
     cloneable: false,
   };
 
-  const handleOk = () => {
-    formRef.current
+  const handleOk = async () => {
+    await formRef.current
       ?.validateFields()
       .then((values) => {
         const input = {
           ...values,
           group: values.type === 'user' ? null : values.group,
         };
-        mutationToCreateFolder.mutate(input, {
+        return mutationToCreateFolder.mutateAsync(input, {
           onSuccess: (result) => {
             upsertNotification({
               key: `folder-create-success-${result.id}`,
@@ -198,36 +198,35 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       title={t('data.CreateANewStorageFolder')}
       footer={
         <BAIFlex justify="between">
-          <Button
+          <BAIButton
             danger
             onClick={() => {
               formRef.current?.resetFields();
             }}
           >
             {t('button.Reset')}
-          </Button>
+          </BAIButton>
           <BAIFlex gap={token.marginSM}>
-            <Button
+            <BAIButton
               onClick={() => {
                 onRequestClose();
               }}
             >
               {t('button.Cancel')}
-            </Button>
-            <Button
+            </BAIButton>
+            <BAIButton
               type="primary"
               data-testid="create-folder-button"
-              onClick={() => {
-                handleOk();
+              action={async () => {
+                await handleOk();
               }}
             >
               {t('data.Create')}
-            </Button>
+            </BAIButton>
           </BAIFlex>
         </BAIFlex>
       }
       width={MODAL_WIDTH}
-      okButtonProps={{ loading: mutationToCreateFolder.isPending }}
       onCancel={() => {
         onRequestClose();
       }}
@@ -335,8 +334,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           {({ getFieldValue }) => {
             const usageMode = getFieldValue('usage_mode');
             const shouldDisableProject =
-              usageMode === 'model' &&
-              currentProject?.name !== MODEL_STORE_PROJECT_NAME;
+              (usageMode === 'model' &&
+                currentProject?.name !== MODEL_STORE_PROJECT_NAME) ||
+              usageMode === 'automount';
 
             return (
               <Form.Item
@@ -348,21 +348,32 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   ({ getFieldValue }) => ({
                     validator(__, value) {
                       const currentUsageMode = getFieldValue('usage_mode');
-                      const isInvalid =
+                      const isInvalidModelProjectFolder =
                         value === 'project' &&
                         currentUsageMode === 'model' &&
                         currentProject?.name !== MODEL_STORE_PROJECT_NAME;
+                      const isInvalidAutoMountFolder =
+                        value === 'project' && currentUsageMode === 'automount';
 
-                      if (isInvalid) {
+                      if (isInvalidModelProjectFolder) {
                         return Promise.reject(
                           new Error(
                             t(
-                              'data.folders.ChangeTheCurrentProjectToModelStoreOrSelectUserType',
+                              'data.folders.CreateModelFolderOnlyInExclusiveProject',
                             ),
                           ),
                         );
+                      } else if (isInvalidAutoMountFolder) {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Promise.resolve();
                       }
-                      return Promise.resolve();
                     },
                   }),
                   {
@@ -404,9 +415,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                       <Tooltip
                         title={
                           shouldDisableProject
-                            ? t(
-                                'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                              )
+                            ? usageMode === 'model'
+                              ? t(
+                                  'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                                )
+                              : t(
+                                  'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
+                                )
                             : undefined
                         }
                       >

@@ -357,7 +357,7 @@
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
       "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
       "CannotRestorePipelineFolder": "パイプラインフォルダーを復元することはできません。",
-      "ChangeTheCurrentProjectToModelStoreOrSelectUserType": "モデルプロジェクトフォルダーは、モデルストアと独占プロジェクトでのみ作成できます。\n現在のプロジェクトまたはユーザータイプを変更します。",
+      "ChangeTheVFolderTypeToCreateAutoMountFolder": "自動マウントフォルダをプロジェクトフォルダとして作成できません。",
       "CloneAFolder": "フォルダのクローンを作成する",
       "CloneFolder": "フォルダクローン",
       "Cloneable": "クローン可能",
