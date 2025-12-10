@@ -54,6 +54,9 @@ interface SessionActionButtonsProps {
 }
 
 const isActive = (session: SessionActionButtonsFragment$data) => {
+  if (session?.type === 'system') {
+    return session?.status === 'RUNNING';
+  }
   return !['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(
     session?.status || '',
   );
@@ -283,9 +286,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
             <Button
               type="primary"
-              disabled={
-                !isAppSupported(session) || !isActive(session) || !isOwner
-              }
+              disabled={!isActive(session) || !isOwner}
               size={size}
               icon={<BAISftpIcon />}
               onClick={() => {
