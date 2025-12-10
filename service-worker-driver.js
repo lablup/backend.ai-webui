@@ -19,7 +19,7 @@ window.isUpdateAvailable = new Promise(function(resolve, reject) {
           };
         };
       }).catch(function() {
-        return undefined;
+        resolve(false);
       });
     });
   }
