@@ -1524,7 +1524,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async runTerminal(sessionUuid: string) {
     const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
-    if (!isVisible || isVisible === 'true') {
+    if (
+      (!globalThis.backendaiclient.supports('copy-on-terminal') &&
+        !isVisible) ||
+      isVisible === 'true'
+    ) {
       this._openTerminalGuideDialog();
       return;
     }

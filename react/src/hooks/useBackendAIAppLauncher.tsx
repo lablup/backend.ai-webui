@@ -1,8 +1,8 @@
+import { useWebUINavigate } from '.';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
 
 export const useBackendAIAppLauncher = (
@@ -10,7 +10,7 @@ export const useBackendAIAppLauncher = (
 ) => {
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
-  const navigate = useNavigate();
+  const webuiNavigate = useWebUINavigate();
 
   // TODO: migrate backend-ai-app-launcher features to this hook using fragment data.
   const session = useFragment(
@@ -41,7 +41,7 @@ export const useBackendAIAppLauncher = (
               onClick={() => {
                 const newSearchParams = new URLSearchParams(location.search);
                 newSearchParams.set('sessionDetail', session?.row_id || '');
-                navigate({
+                webuiNavigate({
                   pathname: `/session`,
                   search: newSearchParams.toString(),
                 });
@@ -56,7 +56,7 @@ export const useBackendAIAppLauncher = (
         }),
       });
       // @ts-ignore
-      globalThis.appLauncher.runTerminal(session.row_id);
+      globalThis.appLauncher.runTerminal(session?.row_id ?? '');
     },
     // TODO: implement below function
     // showLauncher: (params: {
