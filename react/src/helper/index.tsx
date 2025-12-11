@@ -594,3 +594,9 @@ export function listenToBackgroundTask<
 
   return controller.abort.bind(controller);
 }
+
+export const isValidUUID = (uuid: string) => {
+  const regex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+  return regex.test(uuid);
+};
