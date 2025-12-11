@@ -156,7 +156,30 @@ export function manipulateGraphQLQueryWithClientDirectives(
     },
   });
 
-  // Second pass: Collect fragment spreads from the transformed AST
+  // Second pass: Collect empty fragment definitions (all fields were removed by directives)
+  const emptyFragmentNames = new Set<string>();
+  visit(newAst, {
+    FragmentDefinition: {
+      enter(node) {
+        if (!node.selectionSet || node.selectionSet.selections.length === 0) {
+          emptyFragmentNames.add(node.name.value);
+        }
+      },
+    },
+  });
+
+  // Third pass: Remove fragment spreads that reference empty fragments
+  newAst = visit(newAst, {
+    FragmentSpread: {
+      enter(node) {
+        if (emptyFragmentNames.has(node.name.value)) {
+          return null;
+        }
+      },
+    },
+  });
+
+  // Fourth pass: Collect remaining fragment spreads
   const fragmentSpreadNames = new Set<string>();
   visit(newAst, {
     FragmentSpread: {
@@ -166,13 +189,19 @@ export function manipulateGraphQLQueryWithClientDirectives(
     },
   });
 
-  // Third pass: Remove unused fragment definitions
+  // Fifth pass: Remove unused and empty fragment definitions
   newAst = visit(newAst, {
     FragmentDefinition: {
       leave(node) {
+        // Remove if fragment is not used
         if (!fragmentSpreadNames.has(node.name.value)) {
           return null;
         }
+        // Remove if fragment has empty selection set
+        if (!node.selectionSet || node.selectionSet.selections.length === 0) {
+          return null;
+        }
+        return node;
       },
     },
   });
