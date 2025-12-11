@@ -93,11 +93,10 @@ export interface UseWebUIMenuItemsProps {
   hideGroupName?: boolean;
 }
 
-export const useWebUIMenuItems = ({
-  hideGroupName,
-}: UseWebUIMenuItemsProps) => {
+export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   'use memo';
 
+  const { hideGroupName = false } = props || {};
   const plugins = useWebUIPluginValue();
 
   const location = useLocation();

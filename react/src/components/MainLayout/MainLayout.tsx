@@ -15,7 +15,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, Layout, LayoutProps, theme } from 'antd';
+import { App, ConfigProvider, Layout, LayoutProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -29,6 +29,8 @@ import {
   useState,
 } from 'react';
 import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
+import usePrimaryColors from 'src/hooks/usePrimaryColors';
+import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
 
 export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 6;
@@ -211,7 +213,9 @@ function MainLayout() {
                   align="stretch"
                   className={styles.alertWrapper}
                 >
-                  <ThemePreviewModeAlert />
+                  <ErrorBoundaryWithNullFallback>
+                    <ThemePreviewModeAlert />
+                  </ErrorBoundaryWithNullFallback>
                   <ErrorBoundaryWithNullFallback>
                     <NoResourceGroupAlert />
                   </ErrorBoundaryWithNullFallback>
@@ -251,7 +255,9 @@ function MainLayout() {
                   )}
                 </ErrorBoundaryWithNullFallback>
                 <BAIErrorBoundary>
-                  <Outlet />
+                  <AutoAdminPrimaryColorProvider>
+                    <Outlet />
+                  </AutoAdminPrimaryColorProvider>
                 </BAIErrorBoundary>
               </Suspense>
               {/* @ts-ignore */}
@@ -263,6 +269,32 @@ function MainLayout() {
     </LayoutWithPageTestId>
   );
 }
+
+const AutoAdminPrimaryColorProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  'use memo';
+
+  const primaryColors = usePrimaryColors();
+  const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();
+  if (isSelectedAdminCategoryMenu) {
+    return (
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: primaryColors.admin,
+          },
+        }}
+      >
+        {children}
+      </ConfigProvider>
+    );
+  }
+
+  return children;
+};
 
 const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
   const location = useLocation();
