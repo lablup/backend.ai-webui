@@ -42,7 +42,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   const [value, setValue] = useControllableState_deprecated(otherProps);
   const inputRef = React.useRef<GetRef<typeof InputNumber>>(null);
   useEffect(() => {
-    if (!allowNegative) {
+    if (!allowNegative && !_.isNil(value)) {
       // when step is 1, make sure the value is integer
       if (step === 1 && value % 1 !== 0) {
         setValue(_.max([Math.round(value), min]));

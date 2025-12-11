@@ -402,12 +402,14 @@ const SessionLauncherPreview: React.FC<{
         title={t('session.launcher.ResourceAllocation')}
         showDivider
         status={
-          _.some(form.getFieldValue('resource'), (_v, key) => {
-            return (
-              // @ts-ignore
-              form.getFieldError(['resource', key]).length > 0
-            );
-          }) ||
+          // When retrieving a key using getFieldValue, there are cases where the field key cannot be obtained
+          // if the corresponding field value does not exist, so it must be explicitly declared.
+          _.some(
+            ['cpu', 'mem', 'shmem', 'accelerator', 'acceleratorType'] as const,
+            (key) => {
+              return form.getFieldError(['resource', key]).length > 0;
+            },
+          ) ||
           form.getFieldError(['num_of_sessions']).length > 0 ||
           form.getFieldError('resourceGroup').length > 0
             ? 'error'
