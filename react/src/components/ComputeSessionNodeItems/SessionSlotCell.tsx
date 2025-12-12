@@ -106,7 +106,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
             <BAIFlex
               direction="row"
               key={key}
-              align="start"
+              align="center"
               style={{ minWidth: 100 }}
             >
               <UsageBadge
