@@ -58,7 +58,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
       <Virtuoso
         atBottomStateChange={setAtBottom}
         atBottomThreshold={60}
-        computeItemKey={(_, item) => item.id}
+        computeItemKey={(index, item) => item.id || index}
         data={messages}
         followOutput={'auto'}
         initialTopMostItemIndex={messages?.length - 1}
