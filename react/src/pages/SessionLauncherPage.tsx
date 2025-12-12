@@ -13,6 +13,7 @@ import PortSelectFormItem, {
 } from '../components/PortSelectFormItem';
 import ResourceNumber from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
@@ -280,7 +281,12 @@ const SessionLauncherPage = () => {
   }, []);
 
   const mergedInitialValues: SessionLauncherFormValue = useMemo(() => {
-    return _.merge({}, defaultFormValues, formValuesFromQueryParams);
+    return _.merge(
+      {},
+      defaultFormValues,
+      formValuesFromQueryParams,
+      RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+    );
   }, [defaultFormValues, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
