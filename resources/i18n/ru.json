@@ -511,6 +511,7 @@
     "ErrorOccurred": "Возникла ошибка",
     "PleaseTypeToConfirm": "Пожалуйста, введите {{confirmText}}, чтобы подтвердить.",
     "ask": {
+      "DoYouWantToDelete": "Вы уверены, что хотите удалить?",
       "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?",
       "DoYouWantToProceed": "Вы хотите продолжить?",
       "DoYouWantToResetChanges": "Вы хотите сбросить изменения?"

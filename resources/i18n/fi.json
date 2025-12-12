@@ -511,6 +511,7 @@
     "ErrorOccurred": "Tapahtunut virhe",
     "PleaseTypeToConfirm": "Kirjoita {{confirmText}} vahvistaaksesi.",
     "ask": {
+      "DoYouWantToDelete": "Haluatko varmasti poistaa tämän?",
       "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?",
       "DoYouWantToProceed": "Haluatteko jatkaa?",
       "DoYouWantToResetChanges": "Haluatko nollata tekemäsi muutokset?"

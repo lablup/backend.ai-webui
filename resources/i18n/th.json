@@ -505,6 +505,7 @@
     "ErrorOccurred": "เกิดข้อผิดพลาด",
     "PleaseTypeToConfirm": "กรุณาพิมพ์ {{confirmText}} เพื่อยืนยัน",
     "ask": {
+      "DoYouWantToDelete": "คุณแน่ใจว่าต้องการลบหรือไม่?",
       "DoYouWantToDeleteSomething": "คุณแน่ใจหรือไม่ที่จะลบ \"{{ name }}\"?",
       "DoYouWantToProceed": "คุณต้องการดำเนินการต่อหรือไม่?",
       "DoYouWantToResetChanges": "คุณต้องการรีเซ็ตการเปลี่ยนแปลงของคุณหรือไม่?"

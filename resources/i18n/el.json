@@ -508,6 +508,7 @@
   "dialog": {
     "ErrorOccurred": "Προέκυψε σφάλμα",
     "ask": {
+      "DoYouWantToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
       "DoYouWantToDeleteSomething": "Είστε σίγουροι ότι θέλετε να διαγράψετε το \"{{ name }}\";",
       "DoYouWantToProceed": "Θέλετε να συνεχίσετε?",
       "DoYouWantToResetChanges": "Θέλετε να επαναφέρετε τις αλλαγές σας;"

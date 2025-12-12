@@ -514,6 +514,7 @@
     "ErrorOccurred": "Error Occurred",
     "PleaseTypeToConfirm": "Please type {{ confirmText }} to confirm.",
     "ask": {
+      "DoYouWantToDelete": "Are you sure you want to delete?",
       "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?",
       "DoYouWantToProceed": "Do you want to proceed?",
       "DoYouWantToResetChanges": "Do you want to reset your changes?"

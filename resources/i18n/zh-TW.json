@@ -512,6 +512,7 @@
     "ErrorOccurred": "錯誤發生",
     "PleaseTypeToConfirm": "請鍵入{{confirmText}}以確認。",
     "ask": {
+      "DoYouWantToDelete": "您確定要刪除嗎？",
       "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",
       "DoYouWantToProceed": "您要繼續嗎？",
       "DoYouWantToResetChanges": "您想重置您的變更嗎？"

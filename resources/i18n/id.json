@@ -510,6 +510,7 @@
     "ErrorOccurred": "Terjadi Galat",
     "PleaseTypeToConfirm": "Harap ketik {{confirmText}} untuk mengonfirmasi.",
     "ask": {
+      "DoYouWantToDelete": "Apakah Anda yakin ingin menghapus?",
       "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?",
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
       "DoYouWantToResetChanges": "Apakah Anda ingin mengatur ulang perubahan Anda?"

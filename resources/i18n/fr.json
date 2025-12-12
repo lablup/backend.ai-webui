@@ -511,6 +511,7 @@
     "ErrorOccurred": "Erreur est survenue",
     "PleaseTypeToConfirm": "Veuillez taper {{confirmText}} pour confirmer.",
     "ask": {
+      "DoYouWantToDelete": "Voulez-vous vraiment supprimer ?",
       "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?",
       "DoYouWantToProceed": "Voulez-vous poursuivre?",
       "DoYouWantToResetChanges": "Voulez-vous réinitialiser vos modifications ?"

@@ -511,6 +511,7 @@
     "ErrorOccurred": "Ocorreu um erro",
     "PleaseTypeToConfirm": "Digite {{confirmText}} para confirmar.",
     "ask": {
+      "DoYouWantToDelete": "Tem certeza de que deseja excluir?",
       "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?",
       "DoYouWantToProceed": "Você quer prosseguir?",
       "DoYouWantToResetChanges": "Deseja redefinir suas alterações?"

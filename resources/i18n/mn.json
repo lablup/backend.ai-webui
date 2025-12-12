@@ -509,6 +509,7 @@
     "ErrorOccurred": "Алдаа гарлаа",
     "PleaseTypeToConfirm": "Баталгаажуулахын тулд {{confirmText}} оруулна уу.",
     "ask": {
+      "DoYouWantToDelete": "Та үүнийг устгахдаа итгэлтэй байна уу?",
       "DoYouWantToDeleteSomething": "Та \"{{ name }}\"-г устгахдаа итгэлтэй байна уу?",
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?",
       "DoYouWantToResetChanges": "Та өөрчлөлтөө дахин тохируулахыг хүсэж байна уу?"
