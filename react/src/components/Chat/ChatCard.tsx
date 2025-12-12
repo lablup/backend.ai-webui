@@ -193,6 +193,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   ...otherCardProps
 }) => {
   'use memo';
+
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message: appMessage } = App.useApp();
@@ -239,8 +240,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
   const [input, setInput] = useState('');
 
+  const chatId = `chat-${endpoint?.endpoint_id}-${modelId}`;
+
   const { error, messages, stop, status, sendMessage, setMessages } = useChat({
     experimental_throttle: 100,
+    id: chatId,
     messages: chat.messages,
     onFinish: () => {
       setStartTime(null);
