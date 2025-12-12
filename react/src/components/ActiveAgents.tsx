@@ -24,8 +24,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingLeft: token.paddingXL,
-        paddingRight: token.paddingXL,
+        paddingInline: token.paddingXL,
         height: '100%',
       }}
     >

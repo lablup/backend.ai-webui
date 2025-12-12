@@ -22,14 +22,16 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Input, Popconfirm, theme, Typography } from 'antd';
+import { Alert, App, Button, Input, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIFlex,
+  BAIModal,
   BAITable,
+  BAIText,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useMemo, useState, useTransition } from 'react';
@@ -53,9 +55,11 @@ const CustomizedImageList: React.FC = () => {
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
     useUpdatableState('initial-fetch');
-  const [inFlightImageId, setInFlightImageId] = useState<string>();
   const [imageSearch, setImageSearch] = useState('');
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
+  const [imageToDelete, setImageToDelete] = useState<CommittedImage | null>(
+    null,
+  );
   const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
     useBackendAIImageMetaData();
 
@@ -216,7 +220,8 @@ const CustomizedImageList: React.FC = () => {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
       render: (row) => (
-        <Typography.Text
+        <BAIText
+          monospace
           copyable={{
             text: getImageFullName(row) || '',
           }}
@@ -224,10 +229,26 @@ const CustomizedImageList: React.FC = () => {
           <TextHighlighter keyword={imageSearch}>
             {getImageFullName(row) || ''}
           </TextHighlighter>
-        </Typography.Text>
+        </BAIText>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
       width: token.screenXS,
+    },
+    {
+      title: t('general.Control'),
+      key: 'control',
+      render: (_text, row) => (
+        <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
+          <Button
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              setImageToDelete(row || null);
+            }}
+            danger
+          />
+        </BAIFlex>
+      ),
     },
     {
       title: t('environment.Registry'),
@@ -352,102 +373,6 @@ const CustomizedImageList: React.FC = () => {
         </Typography.Text>
       ),
     },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'right',
-      render: (_text, row) => (
-        <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              if (row?.id) {
-                setInFlightImageId(row.id + customizedImageListFetchKey);
-                // TODO: when BA-1905 resolved. use commitPurgeImage
-                commitUntag({
-                  variables: { id: row.id },
-                  onCompleted: (res, errors) => {
-                    if (
-                      !_.isNil(res.untag_image_from_registry) &&
-                      !res.untag_image_from_registry.ok
-                    ) {
-                      message.error(res.untag_image_from_registry.msg);
-                      return;
-                    }
-                    if (errors && errors?.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const errorMsg of errorMsgList) {
-                        message.error(errorMsg);
-                      }
-                      return;
-                    }
-                    commitForget({
-                      variables: { id: row.id },
-                      onCompleted: (res, errors) => {
-                        setInFlightImageId(undefined);
-                        if (
-                          !_.isNil(res.forget_image_by_id) &&
-                          !res.forget_image_by_id.ok
-                        ) {
-                          message.error(res.forget_image_by_id.msg);
-                          return;
-                        }
-                        if (errors && errors?.length > 0) {
-                          const errorMsgList = _.map(
-                            errors,
-                            (error) => error.message,
-                          );
-                          for (const errorMsg of errorMsgList) {
-                            message.error(errorMsg);
-                          }
-                          return;
-                        }
-                        startRefetchTransition(() => {
-                          updateCustomizedImageListFetchKey();
-                        });
-                        message.success(
-                          t('environment.CustomizedImageSuccessfullyDeleted'),
-                        );
-                      },
-                      onError: () => {
-                        message.error(
-                          t('environment.FailedToDeleteCustomizedImage'),
-                        );
-                      },
-                    });
-                  },
-                  onError: () => {
-                    message.error(
-                      t('environment.FailedToDeleteCustomizedImage'),
-                    );
-                  },
-                });
-              }
-            }}
-          >
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              danger
-              loading={
-                (isInFlightForget || isInFlightUntag) &&
-                inFlightImageId === row?.id + customizedImageListFetchKey
-              }
-              disabled={
-                (isInFlightForget || isInFlightUntag) &&
-                inFlightImageId !== row?.id + customizedImageListFetchKey
-              }
-            />
-          </Popconfirm>
-        </BAIFlex>
-      ),
-    },
   ]);
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
@@ -518,6 +443,96 @@ const CustomizedImageList: React.FC = () => {
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
+      <BAIModal
+        open={imageToDelete !== null}
+        title={t('dialog.ask.DoYouWantToDelete')}
+        okText={t('button.Delete')}
+        okType="danger"
+        confirmLoading={isInFlightForget || isInFlightUntag}
+        onOk={() => {
+          if (imageToDelete) {
+            // TODO: when BA-1905 resolved. use commitPurgeImage
+            commitUntag({
+              variables: { id: imageToDelete.id },
+              onCompleted: (res, errors) => {
+                if (
+                  !_.isNil(res.untag_image_from_registry) &&
+                  !res.untag_image_from_registry.ok
+                ) {
+                  message.error(res.untag_image_from_registry.msg);
+                  return;
+                }
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const errorMsg of errorMsgList) {
+                    message.error(errorMsg);
+                  }
+                  return;
+                }
+                commitForget({
+                  variables: { id: imageToDelete.id },
+                  onCompleted: (res, errors) => {
+                    if (
+                      !_.isNil(res.forget_image_by_id) &&
+                      !res.forget_image_by_id.ok
+                    ) {
+                      message.error(res.forget_image_by_id.msg);
+                      return;
+                    }
+                    if (errors && errors?.length > 0) {
+                      const errorMsgList = _.map(
+                        errors,
+                        (error) => error.message,
+                      );
+                      for (const errorMsg of errorMsgList) {
+                        message.error(errorMsg);
+                      }
+
+                      return;
+                    }
+                    startRefetchTransition(() => {
+                      updateCustomizedImageListFetchKey();
+                    });
+                    message.success(
+                      t('environment.CustomizedImageSuccessfullyDeleted'),
+                    );
+                    setImageToDelete(null);
+                  },
+                  onError: () => {
+                    message.error(
+                      t('environment.FailedToDeleteCustomizedImage'),
+                    );
+                  },
+                });
+              },
+              onError: () => {
+                message.error(t('environment.FailedToDeleteCustomizedImage'));
+              },
+            });
+          }
+        }}
+        onCancel={() => {
+          setImageToDelete(null);
+        }}
+      >
+        <Alert
+          type="warning"
+          showIcon
+          message={t('dialog.warning.CannotBeUndone')}
+        />
+        {imageToDelete !== null && (
+          <ul
+            style={{
+              paddingInlineStart: token.marginSM,
+              listStyle: 'circle',
+            }}
+          >
+            <li>
+              <BAIText monospace>{getImageFullName(imageToDelete)}</BAIText>
+            </li>
+          </ul>
+        )}
+      </BAIModal>
     </BAIFlex>
   );
 };

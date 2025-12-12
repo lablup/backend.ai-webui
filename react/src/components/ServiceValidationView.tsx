@@ -31,7 +31,7 @@ interface ServiceValidationModalProps {
 }
 type BackgroundTaskEvent = {
   task_id: string;
-  message: { event: string; session_id: string };
+  message: string;
   current_progress: number;
   total_progress: number;
 };
@@ -110,7 +110,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
             values.resource.accelerator > 0
               ? {
                   [values.resource.acceleratorType]:
-                    values.resource.accelerator,
+                    values.resource.accelerator.toString(),
                 }
               : undefined),
           },
@@ -147,41 +147,50 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         const timeoutId = setTimeout(() => {
           setValidationStatus('error');
           message.error(t('modelService.CannotValidateNow'));
-        }, 10000);
+        }, 60000);
 
         const SSEEventHandlers: SSEEventHandlerTypes<BackgroundTaskEvent> = {
           onUpdated: async (data, controller) => {
-            const msg = data.message;
-            if (validationStatus === 'error') {
-              clearTimeout(timeoutId);
-              controller?.abort();
-            } else if (
-              ['session_started', 'session_terminated'].includes(msg.event)
-            ) {
-              const logs = await getLogs(msg.session_id);
-              setContainerLogSummary(logs);
-              clearTimeout(timeoutId);
-              controller?.abort();
+            try {
+              setValidationStatus('processing');
+
+              const msg = JSON.parse(data.message);
+              if (msg.event === 'session_cancelled') {
+                setValidationStatus('error');
+                message.error(t('modelService.CannotValidateNow'));
+                controller?.abort();
+                clearTimeout(timeoutId);
+              } else if (
+                msg.event === 'session_started' ||
+                msg.event === 'session_terminated'
+              ) {
+                const logs = await getLogs(msg.session_id);
+                setContainerLogSummary(logs);
+              }
+            } catch {
+              // ignore errors in log fetching
+              return;
             }
-            setValidationStatus('processing');
           },
           onDone: () => {
             setValidationStatus('finished');
             clearTimeout(timeoutId);
           },
           onFailed: async (data) => {
-            const logs = await getLogs(data.message.session_id);
-            setContainerLogSummary(logs);
+            const logs = await getLogs(
+              JSON.parse(data.message).session_id,
+            ).catch(() => undefined);
+            logs ?? setContainerLogSummary(logs);
             setValidationStatus('error');
-            throw new Error(data.message.event);
+            throw new Error(JSON.parse(data.message).event);
           },
           onTaskCancelled: (data) => {
             setValidationStatus('error');
-            throw new Error(data.message.event);
+            throw new Error(JSON.parse(data.message).event);
           },
           onTaskFailed: (data) => {
             setValidationStatus('error');
-            throw new Error(data.message.event);
+            throw new Error(JSON.parse(data.message).event);
           },
         };
 

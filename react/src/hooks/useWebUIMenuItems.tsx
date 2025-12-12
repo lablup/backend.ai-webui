@@ -27,7 +27,6 @@ import {
   BAISessionsIcon,
   filterOutEmpty,
 } from 'backend.ai-ui';
-import { t } from 'i18next';
 import _ from 'lodash';
 import {
   BotMessageSquare,
@@ -37,6 +36,7 @@ import {
   ExternalLinkIcon,
 } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import WebUILink from 'src/components/WebUILink';
 
@@ -101,6 +101,7 @@ export const useWebUIMenuItems = ({
   const plugins = useWebUIPluginValue();
 
   const location = useLocation();
+  const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;

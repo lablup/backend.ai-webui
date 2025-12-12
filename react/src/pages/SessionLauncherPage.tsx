@@ -13,6 +13,7 @@ import PortSelectFormItem, {
 } from '../components/PortSelectFormItem';
 import ResourceNumber from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
@@ -80,7 +81,13 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -279,8 +286,31 @@ const SessionLauncherPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const validateSilently = useEffectEvent(() => {
+    const id = _.isEmpty(formValuesFromQueryParams)
+      ? null
+      : setTimeout(() => {
+          form.validateFields().catch(() => {
+            // ignore errors in preview, it will be handled in UI preview.
+            return undefined;
+          });
+        }, 500);
+    return id;
+  });
+  useEffect(() => {
+    const id = validateSilently();
+    return () => {
+      id && clearTimeout(id);
+    };
+  }, []);
+
   const mergedInitialValues: SessionLauncherFormValue = useMemo(() => {
-    return _.merge({}, defaultFormValues, formValuesFromQueryParams);
+    return _.merge(
+      {},
+      defaultFormValues,
+      RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+      formValuesFromQueryParams,
+    );
   }, [defaultFormValues, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed

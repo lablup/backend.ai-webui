@@ -80,8 +80,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingLeft: token.paddingXL,
-        paddingRight: token.padding,
+        paddingInline: token.paddingXL,
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

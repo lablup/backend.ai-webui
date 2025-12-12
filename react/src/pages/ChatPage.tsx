@@ -21,17 +21,6 @@ import { useParams } from 'react-router-dom';
 import { StringParam, useQueryParams } from 'use-query-params';
 
 const useStyles = createStyles(({ css }) => ({
-  chatViewHorizontal: css`
-    overflow: auto;
-    height: calc(100vh - 224px);
-  `,
-  chatViewVertical: css`
-    overflow: hidden;
-  `,
-  chatCard: css`
-    flex: 1;
-    overflow: 'hidden';
-  `,
   fixEditableVerticalAlign: css`
     & {
       top: 0 !important;
@@ -157,6 +146,8 @@ const ChatHistoryDrawer = ({
 };
 
 const PureChatPage = ({ id }: { id: string }) => {
+  'use memo';
+
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProviderData(defaultEndpointId);
   const { styles } = useStyles();
@@ -197,11 +188,19 @@ const PureChatPage = ({ id }: { id: string }) => {
             {chat.label}
           </Typography.Text>
         }
-        styles={{
-          body: { overflow: 'hidden', paddingTop: 0 },
-        }}
         style={{
           overflow: 'hidden',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+        styles={{
+          body: {
+            overflow: 'hidden',
+            height: '100%',
+            paddingTop: 0,
+          },
         }}
         extra={
           <>
@@ -229,45 +228,45 @@ const PureChatPage = ({ id }: { id: string }) => {
       >
         {id && (
           <BAIFlex
-            className={styles.chatViewVertical}
             direction="column"
             align="stretch"
             gap={'xs'}
+            style={{
+              overflow: 'hidden',
+              minHeight: 0,
+              height: '100%',
+            }}
           >
-            <BAIFlex
-              className={styles.chatViewHorizontal}
-              gap={'xs'}
-              direction="row"
-              align="stretch"
-            >
-              <Suspense fallback={<Card className={styles.chatCard} loading />}>
-                {_.map(chat.chats, (chatData) => (
-                  <ChatCard
-                    key={chatData.id}
-                    className={styles.chatCard}
-                    chat={chatData}
-                    onUpdateChat={(newChatProperties) => {
-                      updateChatData(chatData.id, newChatProperties);
-                    }}
-                    fetchOnClient
-                    onRemoveChat={() => {
-                      removeChatData(chatData.id);
-                    }}
-                    onAddChat={() => {
-                      addChatData(chatData);
-                    }}
-                    onSaveMessage={(message) => {
-                      saveChatMessage(chatData.id, message);
-                    }}
-                    onClearMessage={(chatData) => {
-                      clearChatMessage(chatData.id);
-                    }}
-                    closable={isClosable(chat.chats.length)}
-                    cloneable={isClonable(chat.chats.length)}
-                  />
-                ))}
-              </Suspense>
-            </BAIFlex>
+            <Suspense fallback={<Card loading />}>
+              {_.map(chat.chats, (chatData) => (
+                <ChatCard
+                  key={chatData.id}
+                  chat={chatData}
+                  onUpdateChat={(newChatProperties) => {
+                    updateChatData(chatData.id, newChatProperties);
+                  }}
+                  fetchOnClient
+                  onRemoveChat={() => {
+                    removeChatData(chatData.id);
+                  }}
+                  onAddChat={() => {
+                    addChatData(chatData);
+                  }}
+                  onSaveMessage={(message) => {
+                    saveChatMessage(chatData.id, message);
+                  }}
+                  onClearMessage={(chatData) => {
+                    clearChatMessage(chatData.id);
+                  }}
+                  closable={isClosable(chat.chats.length)}
+                  cloneable={isClonable(chat.chats.length)}
+                  style={{
+                    flex: 1,
+                    overflow: 'hidden',
+                  }}
+                />
+              ))}
+            </Suspense>
           </BAIFlex>
         )}
         <ChatHistoryDrawer

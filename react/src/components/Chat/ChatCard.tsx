@@ -38,6 +38,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useEventNotStable } from 'src/hooks/useEventNotStable';
 
 interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   chat: ChatData;
@@ -193,6 +194,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   ...otherCardProps
 }) => {
   'use memo';
+
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message: appMessage } = App.useApp();
@@ -245,6 +247,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     onFinish: () => {
       setStartTime(null);
     },
+    // Because there is an issue(https://github.com/vercel/ai/issues/8956) with useChat that does not run a new transport without an id change,
+    // we have to change the id and use fetch by utilizing useEventNotStable.
+    id: `chat-${baseURL}-${modelId}-${chat.provider.apiKey}`,
     transport: new DefaultChatTransport({
       api: baseURL,
       body: {
@@ -255,7 +260,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           ? `Bearer ${chat.provider.apiKey}`
           : '',
       },
-      fetch: async (input, init) => {
+      fetch: useEventNotStable(async (input, init) => {
         // For custom models or client-side fetching, handle directly
         if (fetchOnClient || modelId === 'custom') {
           const provider = createOpenAI({
@@ -302,7 +307,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
         // Default fetch for server endpoints
         return fetch(input, init);
-      },
+      }),
     }),
   });
 

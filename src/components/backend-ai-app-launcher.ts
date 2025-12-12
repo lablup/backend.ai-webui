@@ -1524,9 +1524,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async runTerminal(sessionUuid: string) {
     const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
-    if (!isVisible || isVisible === 'true') {
+    if (
+      !globalThis.backendaiclient.supports('copy-on-terminal') &&
+      (!isVisible || isVisible === 'true')
+    ) {
       this._openTerminalGuideDialog();
-      return;
     }
     if (
       globalThis.backendaiwsproxy == undefined ||
@@ -1736,9 +1738,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a guide for terminal
    */
   _openTerminalGuideDialog() {
-    if (!globalThis.backendaiclient.supports('copy-on-terminal')) {
-      this.terminalGuideDialog.show();
-    }
+    this.terminalGuideDialog.show();
   }
 
   /**
