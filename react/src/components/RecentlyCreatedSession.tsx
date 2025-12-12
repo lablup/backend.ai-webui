@@ -63,8 +63,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         direction="column"
         align="stretch"
         style={{
-          paddingLeft: token.paddingXL,
-          paddingRight: token.paddingXL,
+          paddingInline: token.paddingXL,
           height: '100%',
         }}
       >
