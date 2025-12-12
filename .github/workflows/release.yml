@@ -1,0 +1,370 @@
+name: Release Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - minor
+          - patch
+          - rc
+          - final
+      base_minor:
+        description: 'Base minor version (e.g., "25.15") - required for minor/patch/rc/final'
+        required: false
+        type: string
+      force_version:
+        description: 'Force specific version (optional, overrides automatic planning)'
+        required: false
+        type: string
+      auto_approve_notes:
+        description: 'Auto-approve release notes without manual review'
+        required: false
+        type: boolean
+        default: false
+      dry_run:
+        description: 'Dry run - plan release without making changes'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      tag: ${{ steps.plan.outputs.tag }}
+      branch: ${{ steps.plan.outputs.branch }}
+      needs_new_branch: ${{ steps.plan.outputs.needs_new_branch }}
+      is_prerelease: ${{ steps.plan.outputs.is_prerelease }}
+      release_type: ${{ steps.plan.outputs.release_type }}
+      previous_tag: ${{ steps.plan.outputs.previous_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for tags
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Plan release
+        id: plan
+        run: |
+          set -e
+          
+          echo "🎯 Planning release..."
+          echo "Release type: ${{ inputs.release_type }}"
+          echo "Base minor: ${{ inputs.base_minor }}"
+          echo "Force version: ${{ inputs.force_version }}"
+          echo "Dry run: ${{ inputs.dry_run }}"
+          
+          # Run the planning script
+          PLAN_OUTPUT=$(node scripts/release/plan.js "${{ inputs.release_type }}" "${{ inputs.base_minor }}" "${{ inputs.force_version }}")
+          echo "Plan output: $PLAN_OUTPUT"
+          
+          # Parse JSON output
+          VERSION=$(echo "$PLAN_OUTPUT" | jq -r '.version')
+          TAG=$(echo "$PLAN_OUTPUT" | jq -r '.tag')
+          BRANCH=$(echo "$PLAN_OUTPUT" | jq -r '.branch')
+          NEEDS_NEW_BRANCH=$(echo "$PLAN_OUTPUT" | jq -r '.needsNewBranch')
+          IS_PRERELEASE=$(echo "$PLAN_OUTPUT" | jq -r '.isPrerelease')
+          RELEASE_TYPE=$(echo "$PLAN_OUTPUT" | jq -r '.releaseType')
+          
+          # Find previous tag for release notes
+          PREVIOUS_TAG=$(git tag -l --sort=-version:refname | head -1 || echo "")
+          
+          echo "✅ Release planned:"
+          echo "  Version: $VERSION"
+          echo "  Tag: $TAG"
+          echo "  Branch: $BRANCH"
+          echo "  Needs new branch: $NEEDS_NEW_BRANCH"
+          echo "  Is prerelease: $IS_PRERELEASE"
+          echo "  Release type: $RELEASE_TYPE"
+          echo "  Previous tag: $PREVIOUS_TAG"
+          
+          # Set outputs
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "needs_new_branch=$NEEDS_NEW_BRANCH" >> $GITHUB_OUTPUT
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+
+      - name: Validate plan
+        run: |
+          # Validate that we have all required information
+          if [ -z "${{ steps.plan.outputs.version }}" ]; then
+            echo "❌ Version planning failed"
+            exit 1
+          fi
+          
+          # Check if tag already exists
+          if git tag -l | grep -q "^${{ steps.plan.outputs.tag }}$"; then
+            echo "❌ Tag ${{ steps.plan.outputs.tag }} already exists"
+            exit 1
+          fi
+          
+          echo "✅ Plan validation passed"
+
+  generate-notes:
+    runs-on: ubuntu-latest
+    needs: plan
+    if: ${{ !inputs.dry_run }}
+    outputs:
+      release_notes: ${{ steps.notes.outputs.release_notes }}
+      notes_file: ${{ steps.notes.outputs.notes_file }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          set -e
+          
+          echo "📝 Generating release notes..."
+          echo "From tag: ${{ needs.plan.outputs.previous_tag }}"
+          echo "To ref: HEAD"
+          echo "Version: ${{ needs.plan.outputs.version }}"
+          
+          # Generate release notes
+          if [ -n "${{ needs.plan.outputs.previous_tag }}" ]; then
+            node scripts/release/generate-notes.js \
+              "${{ needs.plan.outputs.previous_tag }}" \
+              "HEAD" \
+              "${{ needs.plan.outputs.version }}"
+          else
+            echo "# Release ${{ needs.plan.outputs.version }}" > /tmp/release-notes-${{ needs.plan.outputs.version }}.md
+            echo "" >> /tmp/release-notes-${{ needs.plan.outputs.version }}.md
+            echo "Initial release." >> /tmp/release-notes-${{ needs.plan.outputs.version }}.md
+          fi
+          
+          NOTES_FILE="/tmp/release-notes-${{ needs.plan.outputs.version }}.md"
+          
+          echo "✅ Release notes generated"
+          echo "Notes file: $NOTES_FILE"
+          
+          # Set outputs
+          echo "notes_file=$NOTES_FILE" >> $GITHUB_OUTPUT
+          
+          # Read the file content for output (escape newlines)
+          RELEASE_NOTES=$(cat "$NOTES_FILE" | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "release_notes=$RELEASE_NOTES" >> $GITHUB_OUTPUT
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ needs.plan.outputs.version }}
+          path: /tmp/release-notes-${{ needs.plan.outputs.version }}.md
+          retention-days: 30
+
+  approve-notes:
+    runs-on: ubuntu-latest
+    needs: [plan, generate-notes]
+    if: ${{ !inputs.dry_run && !inputs.auto_approve_notes }}
+    environment: release-approval
+    steps:
+      - name: Display release notes for approval
+        run: |
+          echo "📋 Please review the release notes for version ${{ needs.plan.outputs.version }}:"
+          echo ""
+          echo "${{ needs.generate-notes.outputs.release_notes }}" | sed 's/\\n/\n/g'
+          echo ""
+          echo "🔍 Release Plan Summary:"
+          echo "  Version: ${{ needs.plan.outputs.version }}"
+          echo "  Tag: ${{ needs.plan.outputs.tag }}"
+          echo "  Branch: ${{ needs.plan.outputs.branch }}"
+          echo "  Release Type: ${{ needs.plan.outputs.release_type }}"
+          echo "  Is Prerelease: ${{ needs.plan.outputs.is_prerelease }}"
+          echo ""
+          echo "✅ Approve this environment to proceed with the release"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [plan, generate-notes, approve-notes]
+    if: ${{ !inputs.dry_run && (inputs.auto_approve_notes || success()) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create release branch
+        if: ${{ needs.plan.outputs.needs_new_branch == 'true' }}
+        run: |
+          echo "🌿 Creating new branch: ${{ needs.plan.outputs.branch }}"
+          git checkout -b "${{ needs.plan.outputs.branch }}"
+          git push origin "${{ needs.plan.outputs.branch }}"
+
+      - name: Checkout release branch
+        if: ${{ needs.plan.outputs.needs_new_branch == 'false' }}
+        run: |
+          echo "🔄 Switching to existing branch: ${{ needs.plan.outputs.branch }}"
+          git fetch origin "${{ needs.plan.outputs.branch }}" || true
+          git checkout "${{ needs.plan.outputs.branch }}" || git checkout -b "${{ needs.plan.outputs.branch }}"
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Update version
+        run: |
+          echo "📝 Updating version to ${{ needs.plan.outputs.version }}"
+          
+          # Update package.json using npm (works with pnpm too)
+          npm version "${{ needs.plan.outputs.version }}" --no-git-tag-version
+          
+          # Run make versiontag to update other files
+          make versiontag
+          
+          # Commit changes
+          git add .
+          git commit -m "chore: bump version to ${{ needs.plan.outputs.version }}" || echo "No changes to commit"
+
+      - name: Create and push tag
+        run: |
+          echo "🏷️  Creating tag: ${{ needs.plan.outputs.tag }}"
+          git tag -a "${{ needs.plan.outputs.tag }}" -m "Release ${{ needs.plan.outputs.version }}"
+          git push origin "${{ needs.plan.outputs.tag }}"
+          
+          # Push branch changes
+          git push origin "${{ needs.plan.outputs.branch }}"
+
+      - name: Download release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ needs.plan.outputs.version }}
+          path: ./
+
+      - name: Create GitHub release
+        run: |
+          echo "🚀 Creating GitHub release..."
+          
+          NOTES_FILE="release-notes-${{ needs.plan.outputs.version }}.md"
+          
+          gh release create "${{ needs.plan.outputs.tag }}" \
+            --title "Release ${{ needs.plan.outputs.version }}" \
+            --notes-file "$NOTES_FILE" \
+            ${{ needs.plan.outputs.is_prerelease == 'true' && '--prerelease' || '' }} \
+            --target "${{ needs.plan.outputs.branch }}"
+          
+          echo "✅ Release created successfully"
+
+      - name: Trigger package build
+        if: ${{ needs.plan.outputs.is_prerelease == 'false' }}
+        run: |
+          echo "📦 Triggering package build workflow..."
+          # The package.yml workflow will be triggered by the release event
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [plan, release]
+    if: ${{ !inputs.dry_run && always() }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Send Teams notification
+        if: ${{ vars.TEAMS_WEBHOOK_URL }}
+        run: |
+          if [ "${{ needs.release.result }}" = "success" ]; then
+            echo "✅ Release ${{ needs.plan.outputs.version }} completed successfully!"
+            RELEASE_URL="https://github.com/lablup/backend.ai-webui/releases/tag/${{ needs.plan.outputs.tag }}"
+            
+            node scripts/release/teams-notify.js \
+              "${{ vars.TEAMS_WEBHOOK_URL }}" \
+              "${{ needs.plan.outputs.version }}" \
+              "${{ needs.plan.outputs.tag }}" \
+              "$RELEASE_URL" \
+              "${{ needs.plan.outputs.is_prerelease }}" \
+              "true"
+          else
+            echo "❌ Release ${{ needs.plan.outputs.version }} failed!"
+            
+            node scripts/release/teams-notify.js \
+              "${{ vars.TEAMS_WEBHOOK_URL }}" \
+              "${{ needs.plan.outputs.version }}" \
+              "${{ needs.plan.outputs.tag }}" \
+              "" \
+              "${{ needs.plan.outputs.is_prerelease }}" \
+              "false" \
+              "Release workflow failed. Check GitHub Actions for details."
+          fi
+
+      - name: Log completion
+        run: |
+          if [ "${{ needs.release.result }}" = "success" ]; then
+            echo "✅ Release ${{ needs.plan.outputs.version }} completed successfully!"
+            echo "🔗 Release URL: https://github.com/lablup/backend.ai-webui/releases/tag/${{ needs.plan.outputs.tag }}"
+          else
+            echo "❌ Release ${{ needs.plan.outputs.version }} failed!"
+            echo "📋 Check the workflow logs for details"
+          fi
