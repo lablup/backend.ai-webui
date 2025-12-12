@@ -46,6 +46,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
 
   const currentUserRole = useCurrentUserRole();
+  const hasAdminCategoryRole =
+    currentUserRole === 'superadmin' || currentUserRole === 'admin';
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
@@ -111,6 +113,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             height: 40,
             width: 42,
             marginLeft: token.margin,
+            marginBottom: 4,
           }}
         />
       </Tooltip>
@@ -203,67 +206,44 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             ]}
             // @ts-ignore
             items={filterOutEmpty([
-              ...groupedGeneralMenu,
-              (currentUserRole === 'superadmin' ||
-                currentUserRole === 'admin') && {
+              hasAdminCategoryRole && {
                 // Go to first page of admin setting pages.
-                type: 'group',
                 label: (
-                  <BAIFlex
-                    style={{
-                      borderBottom: `1px solid ${token.colorBorder}`,
-                    }}
-                  >
-                    {!props.collapsed && (
-                      <Typography.Text type="secondary" ellipsis>
-                        {t('webui.menu.Administration')}
-                      </Typography.Text>
-                    )}
-                  </BAIFlex>
+                  <WebUILink to="/credential">
+                    {t('webui.menu.AdminSettings')}
+                  </WebUILink>
                 ),
-                children: [
-                  {
-                    label: (
-                      <WebUILink
-                        to="/credential"
-                        state={{ goBack: location.pathname }}
-                      >
-                        {t('webui.menu.AdminSettings')}
-                      </WebUILink>
-                    ),
-                    icon: <SettingsIcon style={{ color: token.colorInfo }} />,
-                    key: 'admin-settings',
-                  },
-                ],
+                icon: <SettingsIcon style={{ color: token.colorInfo }} />,
+                key: 'admin-settings',
               },
+              ...groupedGeneralMenu,
             ])}
           />
         )}
-        {(currentUserRole === 'superadmin' || currentUserRole === 'admin') &&
-          isSelectedAdminCategoryMenu && (
-            <ConfigProvider
-              theme={{
-                token: {
-                  colorPrimary: primaryColors.admin,
-                },
-              }}
-            >
-              {adminHeader}
-              <BAIMenu
-                collapsed={props.collapsed}
-                selectedKeys={[
-                  // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
-                  location.pathname.split('/')[1] === 'storage-settings'
-                    ? 'agent'
-                    : location.pathname.split('/')[1],
-                ]}
-                items={[
-                  ...adminMenu,
-                  ...(currentUserRole === 'superadmin' ? superAdminMenu : []),
-                ]}
-              />
-            </ConfigProvider>
-          )}
+        {hasAdminCategoryRole && isSelectedAdminCategoryMenu && (
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: primaryColors.admin,
+              },
+            }}
+          >
+            {adminHeader}
+            <BAIMenu
+              collapsed={props.collapsed}
+              selectedKeys={[
+                // TODO: After matching first path of 'storage-settings' and 'agent', remove this code
+                location.pathname.split('/')[1] === 'storage-settings'
+                  ? 'agent'
+                  : location.pathname.split('/')[1],
+              ]}
+              items={[
+                ...adminMenu,
+                ...(currentUserRole === 'superadmin' ? superAdminMenu : []),
+              ]}
+            />
+          </ConfigProvider>
+        )}
       </BAIFlex>
       {props.collapsed ? null : (
         <BAIFlex
