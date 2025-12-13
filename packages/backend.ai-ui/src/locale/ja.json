@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
     "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "リソースグループを選択"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "説明",
     "Name": "名前",

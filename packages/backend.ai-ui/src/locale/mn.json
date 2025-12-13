@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Ресурсын бүлэг сонгох"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Тодорхойлолт / төрөл анги",
     "Name": "Нэр",
