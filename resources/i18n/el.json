@@ -1096,6 +1096,14 @@
   "pagination": {
     "Total": "{{start}} - {{end}} των στοιχείων {{Total}}"
   },
+  "project": {
+    "Active": "Ενεργό",
+    "Domain": "Τομέας",
+    "Name": "Όνομα",
+    "Project": "Έργο",
+    "ProjectID": "ID έργου",
+    "ResourcePolicy": "Πολιτική πόρων"
+  },
   "registry": {
     "AddRegistry": "Προσθήκη μητρώου",
     "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",

@@ -1099,6 +1099,14 @@
   "pagination": {
     "Total": "{{start}}  -  {{end}} {{total}}项目"
   },
+  "project": {
+    "Active": "活跃",
+    "Domain": "域",
+    "Name": "名称",
+    "Project": "项目",
+    "ProjectID": "项目 ID",
+    "ResourcePolicy": "资源策略"
+  },
   "registry": {
     "AddRegistry": "添加注册表",
     "ConfirmNoUserName": "未指定用户和密码，要保存吗？",

@@ -1097,6 +1097,14 @@
   "pagination": {
     "Total": "{{start}} - {{end}} dari {{total}} item"
   },
+  "project": {
+    "Active": "Aktif",
+    "Domain": "Domain",
+    "Name": "Nama",
+    "Project": "Proyek",
+    "ProjectID": "ID Proyek",
+    "ResourcePolicy": "Kebijakan Sumber Daya"
+  },
   "registry": {
     "AddRegistry": "Tambahkan Registri",
     "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",

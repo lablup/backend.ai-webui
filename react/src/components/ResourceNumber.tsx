@@ -2,9 +2,8 @@ import { convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import ImageWithFallback from './ImageWithFallback';
-import NumberWithUnit from './NumberWithUnit';
 import { Tooltip, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAINumberWithUnit } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
@@ -53,7 +52,7 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
         type
       )}
       {mergedResourceSlots?.[type]?.number_format.binary ? (
-        <NumberWithUnit
+        <BAINumberWithUnit
           numberUnit={amount}
           targetUnit="g"
           unitType="binary"

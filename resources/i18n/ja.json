@@ -1098,6 +1098,14 @@
   "pagination": {
     "Total": "{{start}}  -  {{end}} of {{attol}}アイテム"
   },
+  "project": {
+    "Active": "アクティブ",
+    "Domain": "ドメイン",
+    "Name": "名前",
+    "Project": "プロジェクト",
+    "ProjectID": "プロジェクトID",
+    "ResourcePolicy": "リソースポリシー"
+  },
   "registry": {
     "AddRegistry": "レジストリを追加する",
     "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",

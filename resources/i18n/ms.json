@@ -1098,6 +1098,14 @@
   "pagination": {
     "Total": "{{start}} - {{end}} {{total}} item"
   },
+  "project": {
+    "Active": "Aktif",
+    "Domain": "Domain",
+    "Name": "Nama",
+    "Project": "Projek",
+    "ProjectID": "ID Projek",
+    "ResourcePolicy": "Dasar Sumber"
+  },
   "registry": {
     "AddRegistry": "Tambah Pendaftaran",
     "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",

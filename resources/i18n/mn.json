@@ -1097,6 +1097,14 @@
   "pagination": {
     "Total": "{{start}} - {{{End}} {{нийт}}}} зүйл"
   },
+  "project": {
+    "Active": "Идэвхтэй",
+    "Domain": "Домен",
+    "Name": "Нэр",
+    "Project": "Төсөл",
+    "ProjectID": "Төслийн ID",
+    "ResourcePolicy": "Ресурсийн бодлого"
+  },
   "registry": {
     "AddRegistry": "Бүртгэл нэмэх",
     "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
