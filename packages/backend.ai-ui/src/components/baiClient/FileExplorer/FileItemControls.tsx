@@ -1,3 +1,4 @@
+import { initiateDownload } from '../../../helper';
 import { BAITrashBinIcon } from '../../../icons';
 import { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
@@ -88,7 +89,15 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
       <Button
         type="text"
         size="small"
-        icon={<DownloadIcon color={token.colorInfo} />}
+        icon={
+          <DownloadIcon
+            color={
+              !enableDownload || downloadFileMutation.isPending
+                ? token.colorTextDisabled
+                : token.colorInfo
+            }
+          />
+        }
         disabled={!enableDownload || downloadFileMutation.isPending}
         loading={downloadFileMutation.isPending}
         onClick={(e) => {
@@ -100,7 +109,13 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
       <Button
         type="text"
         size="small"
-        icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+        icon={
+          <BAITrashBinIcon
+            style={{
+              color: !enableDelete ? token.colorTextDisabled : token.colorError,
+            }}
+          />
+        }
         disabled={!enableDelete}
         onClick={(e) => {
           e.stopPropagation();
@@ -113,38 +128,3 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
 };
 
 export default FileItemControls;
-
-/**
- *
- * @param downloadURL
- * @param fileName
- */
-const initiateDownload = async (
-  downloadURL: string,
-  fileName: string,
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    try {
-      // @ts-ignore - iOS Safari
-      if (globalThis.iOSSafari) {
-        const newWindow = window.open(downloadURL, '_blank');
-        newWindow && resolve();
-      } else {
-        const downloadLink = document.createElement('a');
-        downloadLink.style.display = 'none';
-        downloadLink.href = downloadURL;
-        downloadLink.download = fileName;
-        downloadLink.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-
-        resolve();
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
