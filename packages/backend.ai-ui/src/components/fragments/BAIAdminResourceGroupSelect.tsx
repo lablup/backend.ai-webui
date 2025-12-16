@@ -60,9 +60,10 @@ const BAIAdminResourceGroupSelect = ({
     <BAISelect
       ref={selectRef}
       placeholder={t('comp:BAIAdminResourceGroupSelect.PlaceHolder')}
-      showSearch
-      autoClearSearchValue
-      filterOption={false}
+      showSearch={{
+        autoClearSearchValue: true,
+        filterOption: false,
+      }}
       loading={loading}
       options={selectOptions}
       {...selectPropsWithoutLoading}

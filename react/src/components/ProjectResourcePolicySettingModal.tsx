@@ -281,7 +281,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
-              addonAfter="GB"
+              suffix="GB"
               style={{ width: '100%' }}
             />
           </FormItemWithUnlimited>

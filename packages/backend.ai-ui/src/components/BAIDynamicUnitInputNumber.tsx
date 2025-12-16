@@ -1,6 +1,6 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from 'ahooks';
-import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
+import { InputNumber, InputNumberProps, Select, Space, Typography } from 'antd';
 import _ from 'lodash';
 import React, { RefObject, useEffect, useRef } from 'react';
 
@@ -78,146 +78,150 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   }, [ref, numValue, _unitFromValue, setValue]);
 
   return (
-    <InputNumber
-      {...inputNumberProps}
-      ref={(node) => {
-        ref.current = node;
-        return _.isFunction(inputNumberProps.ref) && inputNumberProps.ref(node);
-      }}
-      stringMode
-      onBlur={() => {
-        if (_.isNumber(roundStep) && roundStep > 0) {
-          const nextRoundedNumValue =
-            Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
-            roundStep;
+    <Space.Compact size={inputNumberProps?.size} block>
+      <InputNumber
+        {...inputNumberProps}
+        ref={(node) => {
+          ref.current = node;
+          return (
+            _.isFunction(inputNumberProps.ref) && inputNumberProps.ref(node)
+          );
+        }}
+        stringMode
+        onBlur={() => {
+          if (_.isNumber(roundStep) && roundStep > 0) {
+            const nextRoundedNumValue =
+              Math.round(_.toNumber(ref.current?.value || '0') / roundStep) *
+              roundStep;
 
-          if (isNaN(nextRoundedNumValue)) {
-            return;
+            if (isNaN(nextRoundedNumValue)) {
+              return;
+            }
+
+            if (
+              (minNumValueForCurrentUnit &&
+                minNumValueForCurrentUnit >= nextRoundedNumValue) ||
+              (maxNumValueForCurrentUnit &&
+                maxNumValueForCurrentUnit <= nextRoundedNumValue)
+            ) {
+              return;
+            }
+
+            // The value is adjusted based on the roundStep.
+            const decimalCount =
+              roundStep.toString().split('.')[1]?.length || 0;
+            setValue(`${nextRoundedNumValue.toFixed(decimalCount)}${unit}`);
+          }
+        }}
+        value={numValue}
+        onChange={(newValue) => {
+          if (newValue === null || newValue === undefined) {
+            setValue(newValue);
+          } else {
+            setValue(`${newValue}${unit}`);
+          }
+        }}
+        //TODO: When min and max have different units, they should be calculated and put in.
+        // 입력의 초소단위 확인 0.4g 가 되는지 확인
+        max={
+          maxUnit === unit
+            ? maxNumValue
+            : convertToBinaryUnit(max, unit as SizeUnit)?.number
+        }
+        min={
+          minUnit === unit
+            ? minNumValue
+            : // @ts-ignore
+              convertToBinaryUnit(min, unit).number
+        }
+        step={0} // this step applies when onStep doesn't setValue
+        onStep={(_afterStepValue, info) => {
+          const numValueNotNull =
+            _.isNull(numValue) || _.isUndefined(numValue) ? 0 : numValue;
+          const index = _.sortedIndex(_.sortBy(dynamicSteps), numValueNotNull);
+          let nextIndex: number;
+          if (info.type === 'up') {
+            if (numValueNotNull === dynamicSteps[index]) {
+              nextIndex = index + 1;
+            } else {
+              nextIndex = index;
+            }
+          } else {
+            nextIndex = index - 1;
           }
 
-          if (
-            (minNumValueForCurrentUnit &&
-              minNumValueForCurrentUnit >= nextRoundedNumValue) ||
-            (maxNumValueForCurrentUnit &&
-              maxNumValueForCurrentUnit <= nextRoundedNumValue)
-          ) {
-            return;
-          }
-
-          // The value is adjusted based on the roundStep.
-          const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
-          setValue(`${nextRoundedNumValue.toFixed(decimalCount)}${unit}`);
-        }
-      }}
-      value={numValue}
-      onChange={(newValue) => {
-        if (newValue === null || newValue === undefined) {
-          setValue(newValue);
-        } else {
-          setValue(`${newValue}${unit}`);
-        }
-      }}
-      //TODO: When min and max have different units, they should be calculated and put in.
-      // 입력의 초소단위 확인 0.4g 가 되는지 확인
-      max={
-        maxUnit === unit
-          ? maxNumValue
-          : convertToBinaryUnit(max, unit as SizeUnit)?.number
-      }
-      min={
-        minUnit === unit
-          ? minNumValue
-          : // @ts-ignore
-            convertToBinaryUnit(min, unit).number
-      }
-      addonAfter={
-        <Select
-          tabIndex={-1}
-          value={unit}
-          onChange={(newUnit) => {
-            setValue(`${numValue}${newUnit}`);
-          }}
-          onOpenChange={(open) => {
-            // A null or undefined value doesn't have a unit info, so we need to set the value before setting the unit.
-            if ((open && value === null) || value === undefined) {
+          const currentUnitIndex = units.indexOf(unit);
+          if (!disableAutoUnit && nextIndex < 0) {
+            // WHEN MOVING TO MORE Smaller Unit: change unit and number
+            if (currentUnitIndex === 0) {
+              // if already at min unit, set to 0
               setValue(`0${unit}`);
+            } else {
+              const nextValue = dynamicSteps[dynamicSteps.length - 1];
+              const nextUnit = units[currentUnitIndex - 1];
+              setValue(`${nextValue}${nextUnit}`);
             }
-          }}
-          disabled={inputNumberProps.disabled}
-          options={_.map(units, (unit) => ({
-            value: unit,
-            label: (
-              <Typography.Text
-                style={{
-                  color: 'inherit',
-                  fontFamily:
-                    "'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace",
-                }}
-              >
-                {unit.toUpperCase() + 'iB'}
-              </Typography.Text>
-            ),
-          }))}
-          suffixIcon={units.length > 1 ? undefined : null}
-          open={units.length > 1 ? undefined : false}
-          style={{
-            cursor: units.length > 1 ? undefined : 'default',
-          }}
-        />
-      }
-      step={0} // this step applies when onStep doesn't setValue
-      onStep={(_afterStepValue, info) => {
-        const numValueNotNull =
-          _.isNull(numValue) || _.isUndefined(numValue) ? 0 : numValue;
-        const index = _.sortedIndex(_.sortBy(dynamicSteps), numValueNotNull);
-        let nextIndex: number;
-        if (info.type === 'up') {
-          if (numValueNotNull === dynamicSteps[index]) {
-            nextIndex = index + 1;
+          } else if (!disableAutoUnit && nextIndex > dynamicSteps.length - 1) {
+            // WHEN MOVING TO MORE Bigger Unit: change unit and number
+            //  if already at max unit, step up/down by 1
+            if (currentUnitIndex === units.length - 1) {
+              setValue(
+                `${numValueNotNull + (info.type === 'up' ? 1 : -1)}${maxUnit}`,
+              );
+            } else {
+              const nextValue = dynamicSteps[0];
+              const nextUnit = units[currentUnitIndex + 1];
+              setValue(`${nextValue}${nextUnit}`);
+            }
           } else {
-            nextIndex = index;
+            // WHEN, DON'T NEED TO CHANGE UNIT
+            if (nextIndex >= 0 && nextIndex < dynamicSteps.length) {
+              let nextNumValue = dynamicSteps[nextIndex];
+              if (minUnit === unit && nextNumValue < minNumValue) {
+                nextNumValue = minNumValue;
+              } else if (maxUnit === unit && nextNumValue > maxNumValue) {
+                nextNumValue = maxNumValue;
+              }
+              setValue(`${nextNumValue}${unit}`);
+            }
           }
-        } else {
-          nextIndex = index - 1;
-        }
-
-        const currentUnitIndex = units.indexOf(unit);
-        if (!disableAutoUnit && nextIndex < 0) {
-          // WHEN MOVING TO MORE Smaller Unit: change unit and number
-          if (currentUnitIndex === 0) {
-            // if already at min unit, set to 0
+        }}
+      />
+      <Select
+        tabIndex={-1}
+        value={unit}
+        onChange={(newUnit) => {
+          setValue(`${numValue}${newUnit}`);
+        }}
+        onOpenChange={(open) => {
+          // A null or undefined value doesn't have a unit info, so we need to set the value before setting the unit.
+          if ((open && value === null) || value === undefined) {
             setValue(`0${unit}`);
-          } else {
-            const nextValue = dynamicSteps[dynamicSteps.length - 1];
-            const nextUnit = units[currentUnitIndex - 1];
-            setValue(`${nextValue}${nextUnit}`);
           }
-        } else if (!disableAutoUnit && nextIndex > dynamicSteps.length - 1) {
-          // WHEN MOVING TO MORE Bigger Unit: change unit and number
-          //  if already at max unit, step up/down by 1
-          if (currentUnitIndex === units.length - 1) {
-            setValue(
-              `${numValueNotNull + (info.type === 'up' ? 1 : -1)}${maxUnit}`,
-            );
-          } else {
-            const nextValue = dynamicSteps[0];
-            const nextUnit = units[currentUnitIndex + 1];
-            setValue(`${nextValue}${nextUnit}`);
-          }
-        } else {
-          // WHEN, DON'T NEED TO CHANGE UNIT
-          if (nextIndex >= 0 && nextIndex < dynamicSteps.length) {
-            let nextNumValue = dynamicSteps[nextIndex];
-            if (minUnit === unit && nextNumValue < minNumValue) {
-              nextNumValue = minNumValue;
-            } else if (maxUnit === unit && nextNumValue > maxNumValue) {
-              nextNumValue = maxNumValue;
-            }
-            setValue(`${nextNumValue}${unit}`);
-          }
-        }
-      }}
-    />
+        }}
+        disabled={inputNumberProps.disabled}
+        options={_.map(units, (unit) => ({
+          value: unit,
+          label: (
+            <Typography.Text
+              style={{
+                color: 'inherit',
+                fontFamily:
+                  "'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace",
+              }}
+            >
+              {unit.toUpperCase() + 'iB'}
+            </Typography.Text>
+          ),
+        }))}
+        suffixIcon={units.length > 1 ? undefined : null}
+        open={units.length > 1 ? undefined : false}
+        style={{
+          width: 75,
+          cursor: units.length > 1 ? undefined : 'default',
+        }}
+      />
+    </Space.Compact>
   );
 };
 

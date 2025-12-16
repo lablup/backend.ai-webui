@@ -271,6 +271,16 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           : theme.defaultAlgorithm,
                       }}
                       clientPromise={backendaiClientPromise}
+                      modal={{
+                        mask: {
+                          blur: false,
+                        },
+                      }}
+                      drawer={{
+                        mask: {
+                          blur: false,
+                        },
+                      }}
                       form={{
                         requiredMark: (label, { required }) => (
                           <>
@@ -288,6 +298,9 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                             )}
                           </>
                         ),
+                      }}
+                      tag={{
+                        variant: 'outlined',
                       }}
                       anonymousClientFactory={createAnonymousBackendaiClient}
                     >
@@ -388,6 +401,16 @@ export const DefaultProvidersForReactRoot: React.FC<
               csp={{ nonce: globalThis.baiNonce }}
               clientPromise={backendaiClientPromise}
               anonymousClientFactory={createAnonymousBackendaiClient}
+              modal={{
+                mask: {
+                  blur: false,
+                },
+              }}
+              drawer={{
+                mask: {
+                  blur: false,
+                },
+              }}
               form={{
                 requiredMark: (label, { required }) => (
                   <>
@@ -405,6 +428,9 @@ export const DefaultProvidersForReactRoot: React.FC<
                     )}
                   </>
                 ),
+              }}
+              tag={{
+                variant: 'outlined',
               }}
             >
               <BAIMetaDataWrapper>

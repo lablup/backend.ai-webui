@@ -1,10 +1,8 @@
-import { theme, Tooltip } from 'antd';
-import { TooltipPropsWithTitle } from 'antd/es/tooltip';
+import { theme, Tooltip, TooltipProps } from 'antd';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 
-interface BAIAlertIconWithTooltipProps
-  extends Omit<TooltipPropsWithTitle, 'children'> {
+interface BAIAlertIconWithTooltipProps extends Omit<TooltipProps, 'children'> {
   iconProps?: React.ComponentProps<typeof CircleAlertIcon>;
   type?: 'warning' | 'error';
 }

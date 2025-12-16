@@ -111,13 +111,14 @@ const BAIBucketSelect = ({
       ref={selectRef}
       autoSelectOption
       options={selectedOptions}
-      showSearch
-      searchValue={searchStr}
-      onSearch={(v) => {
-        setSearchStr(v);
+      showSearch={{
+        searchValue: searchStr,
+        onSearch: (v) => {
+          setSearchStr(v);
+        },
+        filterOption: false,
+        autoClearSearchValue: true,
       }}
-      autoClearSearchValue
-      filterOption={false}
       loading={searchStr !== deferredSearchStr || loading}
       {...selectProps}
       endReached={() => loadNext()}

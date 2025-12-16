@@ -40,7 +40,8 @@ import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
-  useFragment, // useLazyLoadQuery,
+  useFragment,
+  // useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
 
@@ -438,7 +439,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                             step={
                               _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
                             }
-                            addonAfter={
+                            suffix={
                               _.get(mergedResourceSlots, resourceSlotKey)
                                 ?.display_unit
                             }

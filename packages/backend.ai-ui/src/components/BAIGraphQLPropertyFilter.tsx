@@ -522,8 +522,9 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             setIsOpenAutoComplete(true);
             setIsValid(true);
           }}
-          showSearch
-          optionFilterProp="label"
+          showSearch={{
+            optionFilterProp: 'label',
+          }}
           style={{ minWidth: 150 }}
         />
         {/* Hide operator selector if there's only one operator available or fixedOperator is set */}

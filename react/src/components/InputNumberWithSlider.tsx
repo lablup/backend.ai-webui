@@ -5,6 +5,7 @@ import {
   InputNumberProps,
   SliderSingleProps,
   GetRef,
+  Space,
 } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
@@ -68,44 +69,48 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
         align="stretch"
         direction="column"
       >
-        <InputNumber
-          key={key}
-          ref={inputRef}
-          max={max}
-          min={min}
-          step={step ?? undefined}
-          disabled={disabled}
-          value={value}
-          onChange={setValue}
-          onBlur={() => {
-            if (_.isNumber(step) && step > 0) {
-              if (
-                _.isNumber(max) &&
-                max < _.toNumber(inputRef.current?.value || '0')
-              ) {
-                return; // do not update value if it is greater than max
+        <Space.Compact block>
+          {inputNumberProps?.addonBefore ? inputNumberProps.addonBefore : null}
+          <InputNumber
+            key={key}
+            ref={inputRef}
+            max={max}
+            min={min}
+            step={step ?? undefined}
+            disabled={disabled}
+            value={value}
+            onChange={setValue}
+            onBlur={() => {
+              if (_.isNumber(step) && step > 0) {
+                if (
+                  _.isNumber(max) &&
+                  max < _.toNumber(inputRef.current?.value || '0')
+                ) {
+                  return; // do not update value if it is greater than max
+                }
+                const decimalCount = step.toString().split('.')[1]?.length || 0;
+                setValue(
+                  _.max([
+                    _.toNumber(
+                      (
+                        Math.round(
+                          _.toNumber(inputRef.current?.value || '0') / step,
+                        ) * step
+                      ).toFixed(decimalCount),
+                    ),
+                    min,
+                  ]),
+                );
               }
-              const decimalCount = step.toString().split('.')[1]?.length || 0;
-              setValue(
-                _.max([
-                  _.toNumber(
-                    (
-                      Math.round(
-                        _.toNumber(inputRef.current?.value || '0') / step,
-                      ) * step
-                    ).toFixed(decimalCount),
-                  ),
-                  min,
-                ]),
-              );
-            }
-          }}
-          {...inputNumberProps}
-          style={{
-            width: '100%',
-            ...inputNumberProps?.style,
-          }}
-        />
+            }}
+            {..._.omit(inputNumberProps, ['addonAfter', 'addonBefore'])}
+            style={{
+              width: '100%',
+              ...inputNumberProps?.style,
+            }}
+          />
+          {inputNumberProps?.addonAfter ? inputNumberProps.addonAfter : null}
+        </Space.Compact>
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" style={{ flex: 3 }}>
         <Slider
