@@ -1214,6 +1214,7 @@
     "AgentId": "Id ejen",
     "Agents": "ejen",
     "AllowedClientIps": "IP pelanggan yang dibenarkan",
+    "AllowedMultipleClientsIps": "IPS Pelanggan yang Dibenarkan (dipisahkan koma)",
     "AlreadyTerminatingSession": "Sudah menamatkan sesi.",
     "AnotherUserSession": "Sesi ini dibuat oleh pengguna lain.",
     "Architecture": "Seni bina",

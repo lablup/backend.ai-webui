@@ -90,13 +90,15 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = (props) => {
           />
         </Tooltip>
         <Suspense fallback={null}>
-          <AppLauncherModal
-            sessionFrgmt={session}
-            open={openAppLauncherModal}
-            onRequestClose={() => {
-              setOpenAppLauncherModal(false);
-            }}
-          />
+          <BAIUnmountAfterClose>
+            <AppLauncherModal
+              sessionFrgmt={session}
+              open={openAppLauncherModal}
+              onRequestClose={() => {
+                setOpenAppLauncherModal(false);
+              }}
+            />
+          </BAIUnmountAfterClose>
         </Suspense>
         <Tooltip title={t('session.ExecuteTerminalApp')}>
           <Button

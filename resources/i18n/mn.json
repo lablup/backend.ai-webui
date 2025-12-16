@@ -1212,6 +1212,7 @@
     "AgentId": "Хийнний ID",
     "Agents": "Агентууд",
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгчийн IP",
+    "AllowedMultipleClientsIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IPS (таслалаар тусгаарлагдсан)",
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",
     "AnotherUserSession": "Энэ хуралдааныг өөр хэрэглэгч үүсгэсэн.",
     "Architecture": "Архитектур",

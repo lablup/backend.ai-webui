@@ -6,7 +6,8 @@ import {
   useSuspendedFilteredAppTemplate,
 } from '../../hooks/useSuspendedFilteredAppTemplate';
 import BAIModal from '../BAIModal';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import BAISelect from '../BAISelect';
+import BAIText from '../BAIText';
 import {
   Button,
   Checkbox,
@@ -18,7 +19,6 @@ import {
   InputNumber,
   ModalProps,
   Row,
-  Tooltip,
   Typography,
 } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -72,11 +72,13 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     await formRef.current?.validateFields().then((values) => {
       if (openToPublic) {
         // @ts-ignore
-        globalThis.appLauncher.clientIps = values.clientIps;
+        globalThis.appLauncher.openToPublic = true;
+        // @ts-ignore
+        globalThis.appLauncher.clientIps = values.clientIps?.join(',') || '';
       }
       if (tryPreferredPort) {
         // @ts-ignore
-        globalThis.appLauncher.userPort = values.preferredPort ?? 10250;
+        globalThis.appLauncher.preferredPort = values.preferredPort ?? 10250;
       }
       if (useSubDomain) {
         // @ts-ignore
@@ -100,7 +102,15 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
 
     if (['nniboard', 'mlflow-ui'].includes(app?.name ?? '')) {
       // @ts-ignore
-      globalThis.appLauncher._openAppLaunchConfirmationDialog(appController);
+      globalThis.appLauncher.appController['app-name'] = app?.name ?? '';
+      // @ts-ignore
+      globalThis.appLauncher.appController['session-uuid'] =
+        session?.row_id ?? '';
+      // @ts-ignore
+      globalThis.appLauncher.appController['url-postfix'] = app?.redirect ?? '';
+      // @ts-ignore
+      globalThis.appLauncher._openAppLaunchConfirmationDialog();
+      onRequestClose();
       return;
     }
     if (app?.name === 'tensorboard') {
@@ -118,7 +128,17 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
 
   return (
     <BAIModal
-      title={t('session.appLauncher.App')}
+      title={
+        <BAIText
+          ellipsis
+          title={session?.name ?? ''}
+          style={{
+            maxWidth: 375,
+          }}
+        >
+          {`${t('session.appLauncher.App')}: ${session?.name ?? ''}`}
+        </BAIText>
+      }
       width={450}
       onCancel={onRequestClose}
       footer={null}
@@ -212,121 +232,102 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
             </Row>
           </>
         ) : null}
-        <Form ref={formRef} layout="vertical">
-          <Row gutter={16}>
-            {/* @ts-ignore */}
-            {!globalThis.isElectron && baiClient._config.openPortToPublic ? (
-              <Col span={12}>
-                <Form.Item
-                  name={'clientIps'}
-                  label={
-                    <BAIFlex gap={'xs'}>
-                      <Checkbox
-                        value={openToPublic}
-                        onChange={(value) =>
-                          setOpenToPublic(value.target.checked)
-                        }
-                      />
-                      {t('session.OpenToPublic')}
-                      <Tooltip
-                        title={<Trans i18nKey="session.OpenToPublicDesc" />}
-                      >
-                        <QuestionCircleOutlined style={{ cursor: 'pointer' }} />
-                      </Tooltip>
-                    </BAIFlex>
-                  }
-                >
-                  <Input
-                    disabled={!openToPublic}
-                    placeholder={t('session.AllowedClientIps')}
+        <Form ref={formRef} layout="vertical" requiredMark={false}>
+          {/* @ts-ignore */}
+          {!globalThis.isElectron && baiClient._config.openPortToPublic ? (
+            <Form.Item
+              name={'clientIps'}
+              tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
+              label={
+                <BAIFlex gap={'xs'}>
+                  <Checkbox
+                    value={openToPublic}
+                    onChange={(value) => setOpenToPublic(value.target.checked)}
                   />
-                </Form.Item>
-              </Col>
-            ) : null}
-            {baiClient._config.allowPreferredPort ? (
-              <Col span={12}>
-                <Form.Item
-                  name={'preferredPort'}
-                  label={
-                    <BAIFlex gap={'xs'}>
-                      <Checkbox
-                        value={tryPreferredPort}
-                        onChange={(value) =>
-                          setTryPreferredPort(value.target.checked)
-                        }
-                      />
-                      {t('session.TryPreferredPort')}
-                    </BAIFlex>
-                  }
-                  rules={[
-                    {
-                      type: 'number',
-                      min: 1025,
-                    },
-                    {
-                      type: 'number',
-                      max: 65534,
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="10250"
-                    disabled={!tryPreferredPort}
-                    style={{ width: '100%' }}
-                  />
-                </Form.Item>
-              </Col>
-            ) : null}
-            {/* TODO: add debug value into baiClient._config */}
-            {/* @ts-ignore */}
-            {globalThis?.backendaiwebui?.debug ? (
-              <>
-                <Col span={12}>
-                  <Form.Item
-                    name="subDomain"
-                    label={
-                      <BAIFlex gap={'xs'}>
-                        <Checkbox
-                          value={useSubDomain}
-                          onChange={(value) =>
-                            setUseSubDomain(value.target.checked)
-                          }
-                        />
-                        {t('session.UseSubdomain')}
-                      </BAIFlex>
+                  {t('session.OpenToPublic')}
+                </BAIFlex>
+              }
+            >
+              <BAISelect
+                mode="tags"
+                suffixIcon={null}
+                open={false}
+                tokenSeparators={[',', ' ']}
+                disabled={!openToPublic}
+                placeholder={t('session.AllowedMultipleClientsIps')}
+              />
+            </Form.Item>
+          ) : null}
+          {baiClient._config.allowPreferredPort ? (
+            <Form.Item
+              name={'preferredPort'}
+              label={
+                <BAIFlex gap={'xs'}>
+                  <Checkbox
+                    value={tryPreferredPort}
+                    onChange={(value) =>
+                      setTryPreferredPort(value.target.checked)
                     }
-                  >
-                    <Input disabled={!useSubDomain} />
-                  </Form.Item>
-                </Col>
-                <Col></Col>
-                <Col span={12}>
-                  <Form.Item name={'forceUseV1Proxy'}>
+                  />
+                  {t('session.TryPreferredPort')}
+                </BAIFlex>
+              }
+              rules={[
+                {
+                  type: 'number',
+                  min: 1025,
+                },
+                {
+                  type: 'number',
+                  max: 65534,
+                },
+              ]}
+            >
+              <InputNumber
+                placeholder="10250"
+                disabled={!tryPreferredPort}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          ) : null}
+          {/* TODO: add debug value into baiClient._config */}
+          {/* @ts-ignore */}
+          {globalThis?.backendaiwebui?.debug ? (
+            <>
+              <Form.Item
+                name="subDomain"
+                label={
+                  <BAIFlex gap={'xs'}>
                     <Checkbox
-                      disabled={forceUseV2Proxy}
+                      value={useSubDomain}
                       onChange={(value) =>
-                        setForceUseV1Proxy(value.target.checked)
+                        setUseSubDomain(value.target.checked)
                       }
-                    >
-                      {t('session.ForceUseV1Proxy')}
-                    </Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item name={'forceUseV2Proxy'}>
-                    <Checkbox
-                      disabled={forceUseV1Proxy}
-                      onChange={(value) =>
-                        setForceUseV2Proxy(value.target.checked)
-                      }
-                    >
-                      {t('session.ForceUseV2Proxy')}
-                    </Checkbox>
-                  </Form.Item>
-                </Col>
-              </>
-            ) : null}
-          </Row>
+                    />
+                    {t('session.UseSubdomain')}
+                  </BAIFlex>
+                }
+              >
+                <Input disabled={!useSubDomain} />
+              </Form.Item>
+              <Form.Item name={'forceUseV1Proxy'}>
+                <Checkbox
+                  disabled={forceUseV2Proxy}
+                  onChange={(value) => setForceUseV1Proxy(value.target.checked)}
+                >
+                  {t('session.ForceUseV1Proxy')}
+                </Checkbox>
+              </Form.Item>
+              <Form.Item name={'forceUseV2Proxy'}>
+                <Checkbox
+                  disabled={forceUseV1Proxy}
+                  onChange={(value) => setForceUseV2Proxy(value.target.checked)}
+                >
+                  {t('session.ForceUseV2Proxy')}
+                </Checkbox>
+              </Form.Item>
+            </>
+          ) : null}
         </Form>
       </BAIFlex>
     </BAIModal>

@@ -1213,6 +1213,7 @@
     "AgentId": "Agenten -ID",
     "Agents": "Agenten",
     "AllowedClientIps": "Erlaubte Client-IPs",
+    "AllowedMultipleClientsIps": "Zulässige Client-IPs (durch Kommas getrennt)",
     "AlreadyTerminatingSession": "Die Sitzung ist bereits beendet.",
     "AnotherUserSession": "Diese Sitzung wurde von einem anderen Benutzer erstellt.",
     "Architecture": "Architektur",

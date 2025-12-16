@@ -1214,6 +1214,7 @@
     "AgentId": "Agenttitunnus",
     "Agents": "Agentit",
     "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",
+    "AllowedMultipleClientsIps": "Sallitut asiakkaan IP-osoitteet (pilkuilla erotettu)",
     "AlreadyTerminatingSession": "Istunto on jo päättymässä.",
     "AnotherUserSession": "Tämän istunnon on luonut toinen käyttäjä.",
     "Architecture": "Arkkitehtuuri",
