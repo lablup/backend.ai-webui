@@ -50,6 +50,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     graphql`
       fragment AppLauncherModalFragment on ComputeSessionNode {
         id
+        name
         row_id
         service_ports
         access_key
