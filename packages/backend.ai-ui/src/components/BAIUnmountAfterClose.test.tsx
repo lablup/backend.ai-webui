@@ -1,5 +1,5 @@
 import BAIUnmountAfterClose from './BAIUnmountAfterClose';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { Modal, Drawer } from 'antd';
 import React from 'react';
 
@@ -120,7 +120,7 @@ describe('BAIUnmountAfterClose', () => {
       expect(originalAfterClose).not.toHaveBeenCalled();
     });
 
-    it('should keep modal mounted when initially open and then closed', () => {
+    it('should keep modal mounted when initially open and then closed, and unmount after animation', async () => {
       const { rerender: _rerender } = render(
         <BAIUnmountAfterClose>
           <Modal open={true} title="Test Modal">
@@ -131,18 +131,21 @@ describe('BAIUnmountAfterClose', () => {
 
       expect(screen.getByTestId('modal-content')).toBeInTheDocument();
 
-      // Change open to false - component will stay mounted
-      // but Ant Design Modal may not render content when closed
-      _rerender(
-        <BAIUnmountAfterClose>
-          <Modal open={false} title="Test Modal">
-            <div data-testid="modal-content">Modal Content</div>
-          </Modal>
-        </BAIUnmountAfterClose>,
-      );
+      // Change open to false - component will stay mounted during animation
+      await act(async () => {
+        _rerender(
+          <BAIUnmountAfterClose>
+            <Modal open={false} title="Test Modal">
+              <div data-testid="modal-content">Modal Content</div>
+            </Modal>
+          </BAIUnmountAfterClose>,
+        );
+      });
 
-      // BAIUnmountAfterClose keeps the component tree alive
-      // Note: Ant Design Modal's internal behavior affects visibility
+      // After animation completes, component should be unmounted
+      await waitFor(() => {
+        expect(screen.queryByTestId('modal-content')).not.toBeInTheDocument();
+      });
     });
 
     it('should handle modal with afterClose callback', () => {
@@ -218,7 +221,7 @@ describe('BAIUnmountAfterClose', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle rapid open/close transitions', () => {
+    it('should handle rapid open/close transitions', async () => {
       const { rerender } = render(
         <BAIUnmountAfterClose>
           <Modal open={true} title="Test Modal">
@@ -229,24 +232,27 @@ describe('BAIUnmountAfterClose', () => {
 
       expect(screen.getByTestId('modal-content')).toBeInTheDocument();
 
-      // Rapid close
-      rerender(
-        <BAIUnmountAfterClose>
-          <Modal open={false} title="Test Modal">
-            <div data-testid="modal-content">Modal Content</div>
-          </Modal>
-        </BAIUnmountAfterClose>,
-      );
+      // Rapid close and re-open before animation completes
+      await act(async () => {
+        rerender(
+          <BAIUnmountAfterClose>
+            <Modal open={false} title="Test Modal">
+              <div data-testid="modal-content">Modal Content</div>
+            </Modal>
+          </BAIUnmountAfterClose>,
+        );
 
-      // Rapid re-open
-      rerender(
-        <BAIUnmountAfterClose>
-          <Modal open={true} title="Test Modal">
-            <div data-testid="modal-content">Modal Content</div>
-          </Modal>
-        </BAIUnmountAfterClose>,
-      );
+        // Re-open immediately before close animation finishes
+        rerender(
+          <BAIUnmountAfterClose>
+            <Modal open={true} title="Test Modal">
+              <div data-testid="modal-content">Modal Content</div>
+            </Modal>
+          </BAIUnmountAfterClose>,
+        );
+      });
 
+      // Modal should still be mounted after rapid transitions
       expect(screen.getByTestId('modal-content')).toBeInTheDocument();
     });
 
@@ -254,11 +260,11 @@ describe('BAIUnmountAfterClose', () => {
       // React.Children.only will throw if more than one child is provided
       expect(() => {
         render(
+          // @ts-expect-error - Testing error case
           <BAIUnmountAfterClose>
             <Modal open={true} title="Modal 1">
               <div>Content 1</div>
             </Modal>
-            {/* @ts-expect-error - Testing error case */}
             <Modal open={true} title="Modal 2">
               <div>Content 2</div>
             </Modal>
@@ -343,7 +349,7 @@ describe('BAIUnmountAfterClose', () => {
       );
     });
 
-    it('should maintain modal state during open->close transition', () => {
+    it('should maintain modal state during open->close transition', async () => {
       const TestComponent = () => {
         const [isOpen, setIsOpen] = React.useState(true);
         const [inputValue, setInputValue] = React.useState('test');
@@ -371,10 +377,18 @@ describe('BAIUnmountAfterClose', () => {
       const input = screen.getByTestId('modal-input') as HTMLInputElement;
       expect(input.value).toBe('test');
 
-      // Modal should still be mounted even after close is triggered
-      // (waiting for animation to complete)
-      screen.getByTestId('close-button').click();
-      expect(input.value).toBe('test');
+      // Click close button and wait for animation
+      await act(async () => {
+        screen.getByTestId('close-button').click();
+
+        // Modal should still be mounted during animation
+        expect(screen.getByTestId('modal-input')).toBeInTheDocument();
+      });
+
+      // After animation, modal should be unmounted
+      await waitFor(() => {
+        expect(screen.queryByTestId('modal-input')).not.toBeInTheDocument();
+      });
     });
   });
 });
