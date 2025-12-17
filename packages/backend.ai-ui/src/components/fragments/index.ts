@@ -45,3 +45,5 @@ export type {
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDownloadButton } from './BAIVFolderDownloadButton';
+export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';

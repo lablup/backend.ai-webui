@@ -2,7 +2,11 @@ import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -38,11 +42,13 @@ import {
   BAILink,
   BAIConfirmModalWithInput,
   BAIVFolderDeleteButton,
+  BAIVFolderDownloadButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
 export const statusTagColor = {
   // mountable
@@ -77,6 +83,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { message } = App.useApp();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const currentUserAccessKey = baiClient?._config?.accessKey;
   const [currentUser] = useCurrentUserInfo();
   const [hoveredColumn, setHoveredColumn] = useState<string | null>();
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
@@ -85,6 +93,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      currentProject.id,
+      currentUserAccessKey,
+    );
 
   const [deletingVFolder, setDeletingVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -150,6 +164,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             dataIndex: 'name',
             required: true,
             render: (_name, vfolder) => {
+              const editable =
+                !isDeletedCategory(vfolder?.status) &&
+                vfolder?.id !== editingColumn &&
+                _.includes(vfolder?.permissions, 'update_attribute');
               return (
                 <BAIFlex align="center" gap="xs">
                   <VFolderNodeIdenticon
@@ -158,15 +176,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       fontSize: token.fontSizeHeading5,
                     }}
                   />
-                  {vfolder?.id === hoveredColumn ? (
+                  {vfolder?.id === hoveredColumn && editable ? (
                     <EditableVFolderName
                       vfolderFrgmt={vfolder}
                       style={{ color: token.colorLink }}
-                      editable={
-                        !isDeletedCategory(vfolder?.status) &&
-                        vfolder?.id !== editingColumn &&
-                        _.includes(vfolder?.permissions, 'update_attribute')
-                      }
+                      editable={editable}
                       onEditEnd={() => {
                         setEditingColumn(null);
                       }}
@@ -212,6 +226,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               const hasDeletePermission = _.includes(
                 vfolder?.permissions,
                 'delete_vfolder',
+              );
+              const hasDownloadContentPermission = _.includes(
+                unitedAllowedPermissionByVolume[vfolder.host ?? ''],
+                'download-file',
               );
               return (
                 <BAIFlex gap={'xs'}>
@@ -287,6 +305,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                       />
                     </Tooltip>
                   )}
+                  <Tooltip title={t('button.Download')} placement="top">
+                    <BAIVFolderDownloadButton
+                      size="small"
+                      type="text"
+                      vfolderId={toLocalId(vfolder.id)}
+                      vfolderName={vfolder.name ?? toLocalId(vfolder.id)}
+                      disabled={!hasDownloadContentPermission}
+                    />
+                  </Tooltip>
                   {/* Move to trash bin */}
                   {!isDeletedCategory(vfolder?.status) && (
                     <Popconfirm
