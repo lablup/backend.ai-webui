@@ -5,6 +5,9 @@
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
+  "engines": {
+    "pnpm": "^10.16.0"
+  },
   "scripts": {
     "lint": "eslint src -c ./.eslintrc.json --quiet --ext .js,.ts; exit 0",
     "lint-fix": "eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
