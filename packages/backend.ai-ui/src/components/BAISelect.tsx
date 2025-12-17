@@ -5,7 +5,7 @@ import { BaseOptionType, DefaultOptionType } from 'antd/es/select';
 import { GetRef } from 'antd/lib';
 import classNames from 'classnames';
 import _ from 'lodash';
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useTransition } from 'react';
 
 const useStyles = createStyles(({ css, token }) => ({
   ghostSelect: css`
@@ -56,6 +56,7 @@ export interface BAISelectProps<
   bottomLoading?: boolean;
   footer?: React.ReactNode;
   endReached?: () => void; // New prop for endReached
+  searchAction?: (value: string) => Promise<void>;
 }
 
 function BAISelect<
@@ -70,6 +71,7 @@ function BAISelect<
   atBottomStateChange,
   footer,
   endReached, // Destructure the new prop
+  searchAction,
   ...selectProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { value, options, onChange } = selectProps;
@@ -78,6 +80,7 @@ function BAISelect<
   const lastScrollTop = useRef<number>(0);
   const isAtBottom = useRef<boolean>(false);
   const { token } = theme.useToken();
+  const [isPending, startTransition] = useTransition();
 
   useLayoutEffect(() => {
     if (autoSelectOption && _.isEmpty(value) && options?.[0]) {
@@ -122,6 +125,13 @@ function BAISelect<
     <Tooltip title={tooltip}>
       <Select<ValueType, OptionType>
         {...selectProps}
+        loading={isPending || selectProps.loading}
+        onSearch={async (value) => {
+          selectProps.onSearch?.(value);
+          startTransition(async () => {
+            await searchAction?.(value);
+          });
+        }}
         ref={ref}
         className={
           ghost

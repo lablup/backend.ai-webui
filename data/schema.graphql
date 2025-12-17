@@ -351,6 +351,7 @@ type Artifact implements Node
   registry: SourceInfo!
   source: SourceInfo!
   readonly: Boolean!
+  extra: JSON
   scannedAt: DateTime!
   updatedAt: DateTime!
   availability: ArtifactAvailability!
@@ -456,6 +457,16 @@ enum ArtifactOrderField
 type ArtifactRegistry
   @join__type(graph: STRAWBERRY)
 {
+  """
+  Added in 25.17.0. Internal identifier for the artifact registry metadata record in the 'artifact_registries' table. This ID is unique across all registry types and represents the metadata record itself. Example: When you need to reference a registry entry in the metadata table, use this ID.
+  """
+  id: ID!
+
+  """
+  Added in 25.17.0. Identifier of the actual registry implementation (e.g., HuggingFace registry, Reservoir registry). This ID corresponds to the primary key in the registry-type-specific table. Example: For a HuggingFace registry, this value matches the 'id' field in the 'huggingface_registries' table. Use this ID when you need to access type-specific registry details.
+  """
+  registryId: ID!
+
   """Name of the default artifact registry."""
   name: String!
 
@@ -548,6 +559,16 @@ type ArtifactRevision implements Node
   size: ByteSize
   createdAt: DateTime
   updatedAt: DateTime
+
+  """
+  Digest at the time of import. None for models that have not been imported. Added in 25.17.0
+  """
+  digest: String
+
+  """
+  Verification result containing malware scan results from all verifiers. None if not yet verified. Added in 25.17.0
+  """
+  verificationResult: ArtifactVerificationResult
   artifact: Artifact!
 }
 
@@ -613,7 +634,7 @@ being imported from external registries.
 type ArtifactRevisionImportTask
   @join__type(graph: STRAWBERRY)
 {
-  taskId: ID!
+  taskId: ID
   artifactRevision: ArtifactRevision!
 }
 
@@ -706,6 +727,71 @@ enum ArtifactType
   MODEL @join__enumValue(graph: STRAWBERRY)
   PACKAGE @join__enumValue(graph: STRAWBERRY)
   IMAGE @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 25.17.0.
+
+Complete verification result containing results from all configured verifiers.
+
+Artifacts undergo malware scanning through multiple verifiers after being imported.
+This type aggregates results from all verifiers that were run on the artifact.
+"""
+type ArtifactVerificationResult
+  @join__type(graph: STRAWBERRY)
+{
+  """Results from each verifier that scanned the artifact"""
+  verifiers: [ArtifactVerifierResultEntry!]!
+}
+
+"""
+Added in 25.17.0.
+
+Result from a single malware verifier containing scan results and metadata.
+
+Each verifier scans the artifact for potential security issues and reports
+findings including infected file count, scan time, and any errors encountered.
+"""
+type ArtifactVerifierResult
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the verification completed successfully"""
+  success: Boolean!
+
+  """Number of infected or suspicious files detected"""
+  infectedCount: Int!
+
+  """Timestamp when verification started"""
+  scannedAt: DateTime!
+
+  """Time taken to complete verification in seconds"""
+  scanTime: Float!
+
+  """Total number of files scanned"""
+  scannedCount: Int!
+
+  """Additional metadata from the verifier"""
+  metadata: JSON!
+
+  """Fatal error message if the verifier failed to complete"""
+  error: String
+}
+
+"""
+Added in 25.17.0.
+
+Entry for a single verifier's result in the verification results.
+
+Associates a verifier name with its scan results.
+"""
+type ArtifactVerifierResultEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the verifier (e.g., 'clamav', 'custom')"""
+  name: String!
+
+  """Scan result from this verifier"""
+  result: ArtifactVerifierResult!
 }
 
 """Added in 24.03.9."""
@@ -1043,7 +1129,7 @@ input ClearImageCustomResourceLimitKey
   @join__type(graph: GRAPHENE)
 {
   image_canonical: String!
-  architecture: String! = "x86_64"
+  architecture: String! = "aarch64"
 }
 
 """Added in 25.6.0."""
@@ -1701,6 +1787,43 @@ type CreateNetwork
   network: NetworkNode
 }
 
+"""Input for creating a notification channel"""
+input CreateNotificationChannelInput
+  @join__type(graph: STRAWBERRY)
+{
+  name: String!
+  description: String = null
+  channelType: NotificationChannelType! = WEBHOOK
+  config: WebhookConfigInput!
+  enabled: Boolean! = true
+}
+
+"""Payload for create notification channel mutation"""
+type CreateNotificationChannelPayload
+  @join__type(graph: STRAWBERRY)
+{
+  channel: NotificationChannel!
+}
+
+"""Input for creating a notification rule"""
+input CreateNotificationRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  name: String!
+  description: String = null
+  ruleType: NotificationRuleType!
+  channelId: ID!
+  messageTemplate: String!
+  enabled: Boolean! = true
+}
+
+"""Payload for create notification rule mutation"""
+type CreateNotificationRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  rule: NotificationRule!
+}
+
 """Added in 25.14.0"""
 input CreateObjectStorageInput
   @join__type(graph: STRAWBERRY)
@@ -2135,6 +2258,34 @@ type DeleteNetwork
   msg: String
 }
 
+"""Input for deleting a notification channel"""
+input DeleteNotificationChannelInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Payload for delete notification channel mutation"""
+type DeleteNotificationChannelPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Input for deleting a notification rule"""
+input DeleteNotificationRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Payload for delete notification rule mutation"""
+type DeleteNotificationRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
 """Added in 25.14.0"""
 input DeleteObjectStorageInput
   @join__type(graph: STRAWBERRY)
@@ -2451,7 +2602,7 @@ type DomainNode implements Node
   allowed_docker_registries: [String] @join__field(graph: GRAPHENE)
   dotfiles: Bytes @join__field(graph: GRAPHENE)
   integration_id: String @join__field(graph: GRAPHENE)
-  scaling_groups(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ScalinGroupConnection @join__field(graph: GRAPHENE)
+  scaling_groups(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ScalingGroupConnection @join__field(graph: GRAPHENE)
 }
 
 """
@@ -4310,7 +4461,7 @@ type Mutation
   ): RescanImages @join__field(graph: GRAPHENE)
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage @join__field(graph: GRAPHENE)
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage @join__field(graph: GRAPHENE)
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
 
   """Added in 25.6.0"""
   clear_image_custom_resource_limit(key: ClearImageCustomResourceLimitKey!): ClearImageCustomResourceLimitPayload @join__field(graph: GRAPHENE)
@@ -4319,7 +4470,7 @@ type Mutation
   forget_image_by_id(image_id: String!): ForgetImageById @join__field(graph: GRAPHENE)
 
   """Deprecated since 25.4.0. Use `forget_image_by_id` instead."""
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
 
   """Added in 25.4.0"""
   purge_image_by_id(
@@ -4331,7 +4482,7 @@ type Mutation
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry @join__field(graph: GRAPHENE)
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage @join__field(graph: GRAPHENE)
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage @join__field(graph: GRAPHENE)
   dealias_image(alias: String!): DealiasImage @join__field(graph: GRAPHENE)
   clear_images(registry: String): ClearImages @join__field(graph: GRAPHENE)
 
@@ -4420,7 +4571,7 @@ type Mutation
     ssl_verify: Boolean
 
     """
-    Added in 24.09.0. Registry type. One of ('docker', 'harbor', 'harbor2', 'github', 'gitlab', 'ecr', 'ecr-public', 'local').
+    Added in 24.09.0. Container Registry type. One of ('docker', 'harbor', 'harbor2', 'github', 'gitlab', 'ecr', 'ecr-public', 'local', 'ocp').
     """
     type: ContainerRegistryTypeField!
 
@@ -4455,7 +4606,7 @@ type Mutation
     ssl_verify: Boolean
 
     """
-    Registry type. One of ('docker', 'harbor', 'harbor2', 'github', 'gitlab', 'ecr', 'ecr-public', 'local'). Added in 24.09.0.
+    Container Registry type. One of ('docker', 'harbor', 'harbor2', 'github', 'gitlab', 'ecr', 'ecr-public', 'local', 'ocp'). Added in 24.09.0.
     """
     type: ContainerRegistryTypeField
 
@@ -4563,7 +4714,7 @@ type Mutation
   Import scanned artifact revisions from external registries.
   
   Downloads the actual files for the specified artifact revisions, transitioning
-  them from SCANNED → PULLING → PULLED → AVAILABLE status.
+  them from SCANNED → PULLING → VERIFYING → AVAILABLE status.
   
   Returns background tasks that can be monitored for import progress.
   Once AVAILABLE, artifacts can be used by users in their sessions.
@@ -4718,6 +4869,30 @@ type Mutation
   """
   createModelRevision(input: CreateModelRevisionInput!): CreateModelRevisionPayload! @join__field(graph: STRAWBERRY)
 
+  """Create a new notification channel"""
+  createNotificationChannel(input: CreateNotificationChannelInput!): CreateNotificationChannelPayload! @join__field(graph: STRAWBERRY)
+
+  """Update a notification channel"""
+  updateNotificationChannel(input: UpdateNotificationChannelInput!): UpdateNotificationChannelPayload! @join__field(graph: STRAWBERRY)
+
+  """Delete a notification channel"""
+  deleteNotificationChannel(input: DeleteNotificationChannelInput!): DeleteNotificationChannelPayload! @join__field(graph: STRAWBERRY)
+
+  """Validate a notification channel"""
+  validateNotificationChannel(input: ValidateNotificationChannelInput!): ValidateNotificationChannelPayload! @join__field(graph: STRAWBERRY)
+
+  """Create a new notification rule"""
+  createNotificationRule(input: CreateNotificationRuleInput!): CreateNotificationRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Update a notification rule"""
+  updateNotificationRule(input: UpdateNotificationRuleInput!): UpdateNotificationRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Delete a notification rule"""
+  deleteNotificationRule(input: DeleteNotificationRuleInput!): DeleteNotificationRulePayload! @join__field(graph: STRAWBERRY)
+
+  """Validate a notification rule"""
+  validateNotificationRule(input: ValidateNotificationRuleInput!): ValidateNotificationRulePayload! @join__field(graph: STRAWBERRY)
+
   """Added in 25.14.0"""
   createObjectStorage(input: CreateObjectStorageInput!): CreateObjectStoragePayload! @join__field(graph: STRAWBERRY)
 
@@ -4860,6 +5035,155 @@ interface Node
 {
   """The ID of the object"""
   id: ID!
+}
+
+"""Notification channel"""
+type NotificationChannel implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  name: String!
+  description: String
+  channelType: NotificationChannelType!
+  config: WebhookConfigGQL!
+  enabled: Boolean!
+  createdAt: DateTime!
+}
+
+"""Notification channel connection"""
+type NotificationChannelConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [NotificationChannelEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type NotificationChannelEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: NotificationChannel!
+}
+
+"""Filter for notification channels"""
+input NotificationChannelFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  channelType: [NotificationChannelType!] = null
+  enabled: Boolean = null
+  AND: [NotificationChannelFilter!] = null
+  OR: [NotificationChannelFilter!] = null
+  NOT: [NotificationChannelFilter!] = null
+}
+
+"""Order by specification for notification channels"""
+input NotificationChannelOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: NotificationChannelOrderField!
+  direction: OrderDirection! = ASC
+}
+
+enum NotificationChannelOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Notification channel types"""
+enum NotificationChannelType
+  @join__type(graph: STRAWBERRY)
+{
+  WEBHOOK @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Notification rule"""
+type NotificationRule implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  name: String!
+  description: String
+  ruleType: NotificationRuleType!
+  channel: NotificationChannel!
+  messageTemplate: String!
+  enabled: Boolean!
+  createdAt: DateTime!
+}
+
+"""Notification rule connection"""
+type NotificationRuleConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [NotificationRuleEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type NotificationRuleEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: NotificationRule!
+}
+
+"""Filter for notification rules"""
+input NotificationRuleFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  ruleType: [NotificationRuleType!] = null
+  enabled: Boolean = null
+  AND: [NotificationRuleFilter!] = null
+  OR: [NotificationRuleFilter!] = null
+  NOT: [NotificationRuleFilter!] = null
+}
+
+"""Order by specification for notification rules"""
+input NotificationRuleOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: NotificationRuleOrderField!
+  direction: OrderDirection! = ASC
+}
+
+enum NotificationRuleOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Notification rule types"""
+enum NotificationRuleType
+  @join__type(graph: STRAWBERRY)
+{
+  SESSION_STARTED @join__enumValue(graph: STRAWBERRY)
+  SESSION_TERMINATED @join__enumValue(graph: STRAWBERRY)
+  ARTIFACT_DOWNLOAD_COMPLETED @join__enumValue(graph: STRAWBERRY)
 }
 
 """Added in 25.14.0"""
@@ -5190,7 +5514,7 @@ type Query
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+    architecture: String = "aarch64"
   ): Image @join__field(graph: GRAPHENE)
   images(
     """
@@ -5545,6 +5869,21 @@ type Query
   """Added in 25.16.0"""
   replica(id: ID!): ModelReplica @join__field(graph: STRAWBERRY)
 
+  """Get a notification channel by ID"""
+  notificationChannel(id: ID!): NotificationChannel @join__field(graph: STRAWBERRY)
+
+  """List notification channels"""
+  notificationChannels(filter: NotificationChannelFilter = null, orderBy: [NotificationChannelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationChannelConnection! @join__field(graph: STRAWBERRY)
+
+  """Get a notification rule by ID"""
+  notificationRule(id: ID!): NotificationRule @join__field(graph: STRAWBERRY)
+
+  """List notification rules"""
+  notificationRules(filter: NotificationRuleFilter = null, orderBy: [NotificationRuleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationRuleConnection! @join__field(graph: STRAWBERRY)
+
+  """List available notification rule types"""
+  notificationRuleTypes: [NotificationRuleType!]! @join__field(graph: STRAWBERRY)
+
   """Added in 25.14.0"""
   objectStorage(id: ID!): ObjectStorage @join__field(graph: STRAWBERRY)
 
@@ -5568,6 +5907,12 @@ type Query
 
   """Added in 25.14.0"""
   reservoirRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): ReservoirRegistryConnection! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.18.0. List scaling groups for a specific project"""
+  scalingGroupsV2(project: ID!, filter: ScalingGroupFilter = null, orderBy: [ScalingGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ScalingGroupV2Connection! @join__field(graph: STRAWBERRY)
+
+  """Added in 25.18.0. List all scaling groups"""
+  allScalingGroupsV2(filter: ScalingGroupFilter = null, orderBy: [ScalingGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ScalingGroupV2Connection! @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   defaultArtifactRegistry(artifactType: ArtifactType!): ArtifactRegistry @join__field(graph: STRAWBERRY)
@@ -5949,6 +6294,97 @@ type ScalingGroup
 }
 
 """Added in 24.12.0."""
+type ScalingGroupConnection
+  @join__type(graph: GRAPHENE)
+{
+  """Pagination data for this connection."""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection."""
+  edges: [ScalingGroupEdge]!
+
+  """Total count of the GQL nodes of the query."""
+  count: Int
+}
+
+"""Added in 25.18.0. Driver configuration for resource allocation"""
+type ScalingGroupDriverConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Agent resource driver implementation name.
+  'static' uses a predefined set of agents registered to this scaling group.
+  """
+  name: String!
+
+  """Driver-specific configuration options. Contents vary by driver type."""
+  options: JSON!
+}
+
+"""
+Added in 24.12.0. A Relay edge containing a `ScalingGroup` and its cursor.
+"""
+type ScalingGroupEdge
+  @join__type(graph: GRAPHENE)
+{
+  """The item at the end of the edge"""
+  node: ScalingGroupNode
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+"""Added in 25.18.0. Filter for scaling groups"""
+input ScalingGroupFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  description: StringFilter = null
+  isActive: Boolean = null
+  isPublic: Boolean = null
+  driver: String = null
+  scheduler: String = null
+  useHostNetwork: Boolean = null
+  AND: [ScalingGroupFilter!] = null
+  OR: [ScalingGroupFilter!] = null
+  NOT: [ScalingGroupFilter!] = null
+}
+
+"""Added in 25.18.0. Metadata information for a scaling group"""
+type ScalingGroupMetadata
+  @join__type(graph: STRAWBERRY)
+{
+  """Human-readable description of the scaling group's purpose"""
+  description: String!
+
+  """Timestamp when the scaling group was created"""
+  createdAt: DateTime!
+}
+
+"""Added in 25.18.0. Network configuration for a scaling group"""
+type ScalingGroupNetworkConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  App-proxy coordinator API server address.
+  Manager uses this address to communicate with the app-proxy coordinator
+  for managing service routes, endpoint registration, and proxying client connections
+  to session services.
+  """
+  wsproxyAddr: String!
+
+  """Authentication token for the App-proxy coordinator API server."""
+  wsproxyApiToken: String!
+
+  """
+  Whether session containers use the host's network namespace
+  instead of isolated container networking.
+  Enables direct host port binding but reduces isolation.
+  """
+  useHostNetwork: Boolean!
+}
+
+"""Added in 24.12.0."""
 type ScalingGroupNode implements Node
   @join__implements(graph: GRAPHENE, interface: "Node")
   @join__type(graph: GRAPHENE, key: "id")
@@ -5970,31 +6406,208 @@ type ScalingGroupNode implements Node
   use_host_network: Boolean @join__field(graph: GRAPHENE)
 }
 
-"""Added in 24.12.0."""
-type ScalinGroupConnection
-  @join__type(graph: GRAPHENE)
+"""Added in 25.18.0. Order by specification for scaling groups"""
+input ScalingGroupOrderBy
+  @join__type(graph: STRAWBERRY)
 {
-  """Pagination data for this connection."""
-  pageInfo: PageInfo!
+  field: ScalingGroupOrderField!
+  direction: OrderDirection! = ASC
+}
 
-  """Contains the nodes in this connection."""
-  edges: [ScalinGroupEdge]!
+enum ScalingGroupOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  IS_ACTIVE @join__enumValue(graph: STRAWBERRY)
+  IS_PUBLIC @join__enumValue(graph: STRAWBERRY)
+}
 
-  """Total count of the GQL nodes of the query."""
-  count: Int
+"""Added in 25.18.0. Scheduler configuration for session scheduling"""
+type ScalingGroupSchedulerConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Scheduling algorithm implementation.
+  'fifo' schedules oldest pending sessions first,
+  'lifo' schedules newest first,
+  'drf' (Dominant Resource Fairness) balances resource usage across users.
+  """
+  name: ScalingGroupSchedulerType!
+
+  """
+  Detailed scheduler behavior configuration including session type restrictions,
+  timeouts, agent selection strategy, and resource allocation policies.
+  """
+  options: ScalingGroupSchedulerOptions!
+}
+
+"""Added in 25.18.0. Scheduler configuration options"""
+type ScalingGroupSchedulerOptions
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Session types that can be scheduled in this scaling group.
+  Valid values: 'interactive' , 'batch', 'inference'.
+  Requests for unlisted types are rejected.
+  """
+  allowedSessionTypes: [String!]!
+
+  """
+  Maximum time in seconds a session can wait in PENDING state
+  before automatic cancellation.
+  Zero means no timeout.
+  Used to prevent indefinite resource waiting when no agents are available.
+  """
+  pendingTimeout: Float!
+
+  """
+  Scheduler-specific configuration options.
+  Contents depend on the scheduler implementation (fifo/lifo/drf).
+  Used for advanced scheduling behavior customization.
+  """
+  config: JSON!
+
+  """
+  Algorithm for selecting target agents when scheduling sessions.
+  'dispersed' spreads sessions across available agents,
+  'concentrated' packs sessions onto fewer agents,
+  'roundrobin' cycles through agents sequentially.
+  """
+  agentSelectionStrategy: String!
+
+  """
+  Configuration for the agent selection strategy.
+  Structure varies by strategy - for example,
+  concentrated strategy may specify endpoint spreading rules.
+  """
+  agentSelectorConfig: JSON!
+
+  """
+  Whether inference service replicas should be distributed across different agents
+  instead of co-locating on same agent.
+  When true, forces replica spreading.
+  Applied only when using concentrated agent selection strategy.
+  Improves fault tolerance for model serving.
+  """
+  enforceSpreadingEndpointReplica: Boolean!
+
+  """
+  Whether agents accept session requests that allocate fractional resources
+  (e.g., 0.5 GPU) causing resource fragmentation.
+  When false, agents reject sessions that would prevent future efficient resource allocation.
+  """
+  allowFractionalResourceFragmentation: Boolean!
+
+  """
+  List of route health statuses that trigger automatic cleanup of service routes.
+  Valid values: 'healthy', 'unhealthy', 'degraded'.
+  Default: ['unhealthy'].
+  """
+  routeCleanupTargetStatuses: [String!]!
 }
 
 """
-Added in 24.12.0. A Relay edge containing a `ScalinGroup` and its cursor.
-"""
-type ScalinGroupEdge
-  @join__type(graph: GRAPHENE)
-{
-  """The item at the end of the edge"""
-  node: ScalingGroupNode
+Added in 25.18.0. Scheduler type for session scheduling.
 
+- FIFO: First-In-First-Out - Schedules oldest pending sessions first
+- LIFO: Last-In-First-Out - Schedules newest pending sessions first
+- DRF: Dominant Resource Fairness - Balances resource usage across users
+"""
+enum ScalingGroupSchedulerType
+  @join__type(graph: STRAWBERRY)
+{
+  FIFO @join__enumValue(graph: STRAWBERRY)
+  LIFO @join__enumValue(graph: STRAWBERRY)
+  DRF @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 25.18.0. Status information for a scaling group"""
+type ScalingGroupStatus
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Whether the scaling group can accept new session creation requests.
+  Inactive scaling groups are excluded from scheduling and cannot start new sessions.
+  """
+  isActive: Boolean!
+
+  """
+  Whether this scaling group is available for regular user sessions
+  (interactive/batch/inference).
+  When false, the scaling group is reserved for internal SYSTEM-type sessions only,
+  such as management or infrastructure sessions.
+  """
+  isPublic: Boolean!
+}
+
+"""Added in 25.18.0. Scaling group with structured configuration"""
+type ScalingGroupV2 implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """
+  Unique name identifying the scaling group.
+  Used as primary key and referenced by agents, sessions, and resource presets.
+  """
+  name: String!
+
+  """
+  Operational status controlling whether this scaling group accepts new sessions
+  and its visibility to users without explicit access grants.
+  """
+  status: ScalingGroupStatus!
+
+  """
+  Administrative metadata including human-readable description
+  and creation timestamp for audit and documentation purposes.
+  """
+  metadata: ScalingGroupMetadata!
+
+  """
+  Network configuration for connecting clients to interactive session services
+  (terminals, notebooks, web apps) through WebSocket proxy infrastructure.
+  """
+  network: ScalingGroupNetworkConfig!
+
+  """
+  Agent resource management driver determining how compute agents are provisioned
+  and registered to this scaling group (static registration vs dynamic provisioning).
+  """
+  driver: ScalingGroupDriverConfig!
+
+  """
+  Session scheduling configuration controlling queue management,
+  agent selection strategy, resource allocation policies,
+  and session lifecycle timeouts.
+  """
+  scheduler: ScalingGroupSchedulerConfig!
+}
+
+"""Added in 25.18.0. Scaling group connection"""
+type ScalingGroupV2Connection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ScalingGroupV2Edge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type ScalingGroupV2Edge
+  @join__type(graph: STRAWBERRY)
+{
   """A cursor for use in pagination"""
   cursor: String!
+
+  """The item at the end of the edge"""
+  node: ScalingGroupV2!
 }
 
 """Added in 25.16.0"""
@@ -6504,6 +7117,42 @@ type UpdateModelDeploymentPayload
   deployment: ModelDeployment!
 }
 
+"""Input for updating a notification channel"""
+input UpdateNotificationChannelInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  name: String
+  description: String
+  config: WebhookConfigInput
+  enabled: Boolean
+}
+
+"""Payload for update notification channel mutation"""
+type UpdateNotificationChannelPayload
+  @join__type(graph: STRAWBERRY)
+{
+  channel: NotificationChannel!
+}
+
+"""Input for updating a notification rule"""
+input UpdateNotificationRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  name: String
+  description: String
+  messageTemplate: String
+  enabled: Boolean
+}
+
+"""Payload for update notification rule mutation"""
+type UpdateNotificationRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  rule: NotificationRule!
+}
+
 """Added in 25.14.0"""
 input UpdateObjectStorageInput
   @join__type(graph: STRAWBERRY)
@@ -6868,6 +7517,36 @@ Verifies that the key is a UUID (represented as a string) and the value is a flo
 scalar UUIDFloatMap
   @join__type(graph: GRAPHENE)
 
+"""Input for validate notification channel mutation"""
+input ValidateNotificationChannelInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  testMessage: String!
+}
+
+"""Payload for validate notification channel mutation"""
+type ValidateNotificationChannelPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
+"""Input for validate notification rule mutation"""
+input ValidateNotificationRuleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+  notificationData: JSON
+}
+
+"""Payload for validate notification rule mutation"""
+type ValidateNotificationRulePayload
+  @join__type(graph: STRAWBERRY)
+{
+  message: String!
+}
+
 """
 Added in 24.09.0. One of ['clone', 'assign_permission_to_others', 'read_attribute', 'update_attribute', 'delete_vfolder', 'read_content', 'write_content', 'delete_content', 'mount_ro', 'mount_rw', 'mount_wd'].
 """
@@ -7039,4 +7718,17 @@ type VirtualFolderPermissionList implements PaginatedList
 {
   items: [VirtualFolderPermission]!
   total_count: Int!
+}
+
+type WebhookConfigGQL
+  @join__type(graph: STRAWBERRY)
+{
+  url: String!
+}
+
+"""Input for webhook configuration"""
+input WebhookConfigInput
+  @join__type(graph: STRAWBERRY)
+{
+  url: String!
 }

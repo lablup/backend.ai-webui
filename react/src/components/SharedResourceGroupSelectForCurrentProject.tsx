@@ -4,9 +4,9 @@ import {
   useCurrentResourceGroupState,
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
-import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { SelectProps } from 'antd';
+import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 

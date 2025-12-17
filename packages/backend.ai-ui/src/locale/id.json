@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Pilih grup sumber daya"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Keterangan",
     "Name": "Nama",

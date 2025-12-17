@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
     "SuccessfullyActivated": "성공적으로 아티팩트를 활성화했습니다."
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "리소스 그룹을 선택해주세요"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "설명",
     "Name": "이름",

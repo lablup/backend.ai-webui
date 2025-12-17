@@ -15,7 +15,6 @@ import {
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
 import AgentSelect from '../AgentSelect';
-import BAISelect from '../BAISelect';
 import DynamicUnitInputNumberWithSlider from '../DynamicUnitInputNumberWithSlider';
 import {
   Image,
@@ -27,7 +26,7 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Divider, Form, Radio, Row, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';

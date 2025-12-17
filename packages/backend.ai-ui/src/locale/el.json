@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
     "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Επιλέξτε ομάδα πόρων"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Περιγραφή",
     "Name": "Ονομα",

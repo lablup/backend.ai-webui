@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "Échec de l'activation des artefacts.",
     "SuccessfullyActivated": "Artefacts activés avec succès."
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Sélectionner un groupe de ressources"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Description",
     "Name": "Nom",
