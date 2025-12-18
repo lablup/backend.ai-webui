@@ -12,7 +12,7 @@ import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type TokenPath = `token.${keyof AliasToken & string}`;
 type ComponentPath = `components.${keyof ComponentTokenMap & string}.${string}`;
-type ThemeConfigPath = TokenPath | ComponentPath;
+export type ThemeConfigPath = TokenPath | ComponentPath;
 
 interface ThemeColorPickerSettingItemProps extends ColorPickerProps {
   tokenName?: ThemeConfigPath;
