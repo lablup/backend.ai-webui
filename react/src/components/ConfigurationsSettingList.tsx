@@ -159,7 +159,8 @@ const ConfigurationsSettingList = () => {
           },
           defaultValue: defaultConfigurationsSettings.image_pulling_behavior,
           value: options.image_pulling_behavior,
-          setValue: (value) => setImagePullingBehavior(value),
+          onChange: (value) =>
+            setImagePullingBehavior(value as ImagePullingBehavior),
         },
         {
           type: 'custom',

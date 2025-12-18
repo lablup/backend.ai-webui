@@ -16,21 +16,46 @@ import { t } from 'i18next';
 import _ from 'lodash';
 import React, { ReactElement, ReactNode, useState } from 'react';
 
-export interface SettingItemProps {
+type BaseSettingItemProps = {
   'data-testid'?: string;
-  type: 'custom' | 'checkbox' | 'select';
   title: string;
   description?: string | ReactElement;
   children?: ReactNode;
+  showResetButton?: boolean;
+  onReset?: () => void;
+};
+
+type CheckboxSettingItemProps = BaseSettingItemProps & {
+  type: 'checkbox';
+  defaultValue?: boolean;
+  value?: boolean;
+  onChange?: (value?: boolean) => void;
+  checkboxProps?: Omit<CheckboxProps, 'value' | 'onChange' | 'defaultValue'>;
+  selectProps?: never;
+};
+
+type SelectSettingItemProps = BaseSettingItemProps & {
+  type: 'select';
+  defaultValue?: string | number;
+  value?: string | number;
+  onChange?: (value?: string | number) => void;
+  selectProps?: Omit<BAISelectProps, 'value' | 'onChange' | 'defaultValue'>;
+  checkboxProps?: never;
+};
+
+type CustomSettingItemProps = BaseSettingItemProps & {
+  type: 'custom';
   defaultValue?: any;
   value?: any;
-  setValue?: (value: any) => void;
-  showResetButton?: boolean;
-  checkboxProps?: Omit<CheckboxProps, 'value' | 'onChange' | 'defaultValue'>;
-  selectProps?: Omit<BAISelectProps, 'value' | 'onChange' | 'defaultValue'>;
-  onAfterChange?: (value: any) => void;
-  onReset?: () => void;
-}
+  onChange?: (value?: any) => void;
+  selectProps?: never;
+  checkboxProps?: never;
+};
+
+export type SettingItemProps =
+  | CheckboxSettingItemProps
+  | SelectSettingItemProps
+  | CustomSettingItemProps;
 
 const useStyles = createStyles(({ css }) => ({
   baiSettingItemCheckbox: css`
@@ -49,8 +74,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
   children,
   defaultValue,
   value,
-  setValue,
-  onAfterChange,
+  onChange,
   onReset,
   selectProps,
   checkboxProps,
@@ -67,12 +91,15 @@ const SettingItem: React.FC<SettingItemProps> = ({
   const resetItem = () => {
     if (onReset) {
       onReset();
-    } else {
-      !selectProps?.disabled &&
-        !checkboxProps?.disabled &&
-        setValue?.(defaultValue);
+    } else if (isEnabled && onChange) {
+      onChange(defaultValue);
     }
   };
+
+  const isEnabled =
+    (type === 'select' && !selectProps?.disabled) ||
+    (type === 'checkbox' && !checkboxProps?.disabled) ||
+    type === 'custom';
 
   return (
     <BAIFlex
@@ -93,38 +120,37 @@ const SettingItem: React.FC<SettingItemProps> = ({
           >
             {title}
           </Typography.Text>
-          {(!selectProps?.disabled || !checkboxProps?.disabled) &&
+          {isEnabled &&
             value !== undefined &&
             value !== null &&
             defaultValue !== value && <Badge dot status="warning" />}
-          {!selectProps?.disabled &&
-            !checkboxProps?.disabled &&
-            showResetButton && (
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'reset',
-                      label: t('button.Reset'),
-                      onClick: () => setIsOpenResetChangesModal(),
-                      danger: true,
-                    },
-                  ],
+          {isEnabled && showResetButton && (
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'reset',
+                    label: t('button.Reset'),
+                    onClick: () => setIsOpenResetChangesModal(),
+                    danger: true,
+                  },
+                ],
+              }}
+              placement="topLeft"
+              onOpenChange={(e) => e && setIsDropdownOpen(true)}
+            >
+              <BAIButton
+                icon={<SettingOutlined />}
+                type="text"
+                style={{
+                  width: 20,
+                  height: 20,
+                  opacity: isDropdownOpen ? 1 : 0,
+                  transition: 'opacity 0.2s ease-in-out',
                 }}
-                onOpenChange={(e) => e && setIsDropdownOpen(true)}
-              >
-                <BAIButton
-                  icon={<SettingOutlined />}
-                  type="text"
-                  style={{
-                    width: 20,
-                    height: 20,
-                    opacity: isDropdownOpen ? 1 : 0,
-                    transition: 'opacity 0.2s ease-in-out',
-                  }}
-                />
-              </Dropdown>
-            )}
+              />
+            </Dropdown>
+          )}
         </BAIFlex>
       </BAIFlex>
       {type === 'custom' && (
@@ -143,8 +169,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
           className={styles.baiSettingItemCheckbox}
           checked={value}
           onChange={(e) => {
-            setValue?.(e.target.checked);
-            onAfterChange?.(e);
+            onChange?.(e.target.checked);
           }}
           {...checkboxProps}
         >
@@ -166,8 +191,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             value={value}
             popupMatchSelectWidth={false}
             onChange={(value) => {
-              setValue?.(value);
-              onAfterChange?.(value);
+              onChange?.(value);
             }}
             style={{
               marginTop: token.marginXS,

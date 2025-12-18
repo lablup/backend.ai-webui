@@ -103,11 +103,11 @@ const UserPreferencesPage = () => {
           description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
           defaultValue: false,
           value: desktopNotification,
-          setValue: setDesktopNotification,
-          onAfterChange: (e: any) => {
+          onChange: (value) => {
+            setDesktopNotification(value);
+
             // Request permission for desktop notifications
-            if (!e.target.checked || Notification.permission === 'granted')
-              return;
+            if (!value || Notification.permission === 'granted') return;
             if (!('Notification' in window)) {
               message.error(t('desktopNotification.NotSupported'));
               setDesktopNotification(false);
@@ -133,7 +133,7 @@ const UserPreferencesPage = () => {
           description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
           defaultValue: false,
           value: compactSidebar,
-          setValue: setCompactSidebar,
+          onChange: setCompactSidebar,
         },
         {
           'data-testid': 'items-language-select',
@@ -165,7 +165,7 @@ const UserPreferencesPage = () => {
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
-          setValue: (value: any) => {
+          onChange: (value: any) => {
             setSelectedLanguage(value);
             setLanguage(value);
             const event = new CustomEvent('language-changed', {
@@ -185,7 +185,7 @@ const UserPreferencesPage = () => {
           ),
           defaultValue: false,
           value: preserveLogin,
-          setValue: setPreserveLogin,
+          onChange: setPreserveLogin,
         },
         {
           'data-testid': 'items-automatic-update-check',
@@ -196,7 +196,7 @@ const UserPreferencesPage = () => {
           ),
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
-          setValue: setAutoAutomaticUpdateCheck,
+          onChange: setAutoAutomaticUpdateCheck,
         },
         {
           'data-testid': 'items-auto-logout',
@@ -205,7 +205,7 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescAutoLogout'),
           defaultValue: false,
           value: autoLogout,
-          setValue: setAutoLogout,
+          onChange: setAutoLogout,
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -264,7 +264,7 @@ const UserPreferencesPage = () => {
           },
           defaultValue: 2,
           value: maxConcurrentUpload || 2,
-          setValue: setMaxConcurrentUpload,
+          onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
         },
       ]),
     },
@@ -320,7 +320,7 @@ const UserPreferencesPage = () => {
           description: t('general.Enabled'),
           defaultValue: false,
           value: experimentalAIAgents,
-          setValue: setExperimentalAIAgents,
+          onChange: setExperimentalAIAgents,
         },
       ],
     },

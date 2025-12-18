@@ -307,8 +307,7 @@ const resetSettingItems = (settingGroups: SettingGroup[]) => {
     } else {
       !option?.selectProps?.disabled &&
         !option?.checkboxProps?.disabled &&
-        option?.setValue &&
-        option.setValue(option.defaultValue);
+        option?.onChange?.(option.defaultValue);
     }
   });
 };
