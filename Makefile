@@ -149,6 +149,7 @@ ifdef BAI_APP_SIGN_KEYCHAIN
 endif
 	@rm -rf ./app/backend.ai-desktop-$(os)-$(arch)
 	@cd app; mv "Backend.AI Desktop-darwin-$(arch)" backend.ai-desktop-$(os)-$(arch);
+	@rm -rf ~/.npm/_npx 2>/dev/null || true
 	@npx electron-installer-dmg './app/backend.ai-desktop-$(os)-$(arch)/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).dmg
