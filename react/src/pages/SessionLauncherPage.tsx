@@ -843,10 +843,6 @@ const SessionLauncherPage = () => {
                       ]}
                     >
                       <Select />
-                      {/* <VFolderSelect
-                          filter={(vf) => vf.usage_mode === 'model'}
-                          autoSelectDefault
-                          /> */}
                     </Form.Item>
                   </Card>
                 )}
