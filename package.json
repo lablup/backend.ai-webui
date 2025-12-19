@@ -5,6 +5,9 @@
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
+  "engines": {
+    "pnpm": "^10.16.0"
+  },
   "scripts": {
     "lint": "eslint src -c ./.eslintrc.json --quiet --ext .js,.ts; exit 0",
     "lint-fix": "eslint src -c ./.eslintrc.json  --quiet --ext .js,.ts --fix;exit 0",
@@ -148,7 +151,7 @@
     "eslint-plugin-lit-a11y": "^4.1.4",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-wc": "^2.2.1",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "glob": "^10.5.0",
     "husky": "^9.1.4",
     "i18next-scanner": "^4.5.0",
@@ -172,9 +175,9 @@
     "vis-util": "^5.0.7",
     "web-animations-js": "^2.3.2",
     "webpack": "^5.103.0",
-    "webpack-cli": "^5.1.4",
+    "webpack-cli": "^6.0.1",
     "workbox-expiration": "^7.1.0",
-    "workbox-routing": "^7.1.0",
+    "workbox-routing": "^7.4.0",
     "workbox-strategies": "^7.1.0",
     "workbox-sw": "^7.1.0",
     "ws": "^8.18.0"

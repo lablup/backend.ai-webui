@@ -8,6 +8,9 @@
     "FailedToActivateArtifacts": "未能激活偽影。",
     "SuccessfullyActivated": "成功激活的工件。"
   },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "選擇資源群組"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "描述",
     "Name": "姓名",

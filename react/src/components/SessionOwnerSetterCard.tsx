@@ -1,7 +1,6 @@
 import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import BAISelect from './BAISelect';
 import HiddenFormItem from './HiddenFormItem';
 import ResourceGroupSelect from './ResourceGroupSelect';
 import {
@@ -17,7 +16,7 @@ import {
   theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
-import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAICardProps, BAIFlex, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';

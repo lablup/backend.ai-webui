@@ -99,6 +99,7 @@ const MaintenanceSettingList = () => {
                 : t('maintenance.RecalculateUsage')}
             </Button>
           ),
+          showResetButton: false,
         },
       ],
     },
@@ -121,6 +122,7 @@ const MaintenanceSettingList = () => {
                 : t('maintenance.RescanImages')}
             </Button>
           ),
+          showResetButton: false,
         },
       ],
     },

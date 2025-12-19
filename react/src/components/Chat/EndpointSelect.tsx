@@ -5,11 +5,10 @@ import {
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
-import { BAIFlex, BAILink } from 'backend.ai-ui';
+import { BAIFlex, BAILink, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';

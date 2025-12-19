@@ -2,9 +2,9 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import BAISelect, { BAISelectProps } from './BAISelect';
 import TextHighlighter from './TextHighlighter';
 import { SelectProps } from 'antd';
+import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 

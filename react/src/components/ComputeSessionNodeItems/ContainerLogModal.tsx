@@ -4,7 +4,6 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import AutoRefreshSwitch from '../AutoRefreshSwitch';
-import BAISelect from '../BAISelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
 import {
@@ -16,7 +15,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import { DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';

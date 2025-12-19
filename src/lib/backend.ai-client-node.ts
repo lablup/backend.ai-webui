@@ -881,7 +881,7 @@ class Client {
       clientSessionToken: sessionId,
       architecture: architecture,
     };
-    if (resources != {}) {
+    if (resources && Object.keys(resources).length > 0) {
       let config = {};
       if (resources['cpu']) {
         config['cpu'] = resources['cpu'];
@@ -3200,7 +3200,7 @@ class ComputeSession {
       'occupied_slots',
       'containers {live_stat last_stat}',
     ],
-    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,CREATING,PULLING,TERMINATED,CANCELLED,ERROR',
+    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PREPARED,CREATING,PULLING,TERMINATED,CANCELLED,ERROR',
     accessKey = '',
     limit = 100,
     offset = 0,

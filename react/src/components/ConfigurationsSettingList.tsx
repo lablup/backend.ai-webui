@@ -157,10 +157,10 @@ const ConfigurationsSettingList = () => {
               { label: t('settings.image.None'), value: 'none' },
             ],
           },
-          setValue: (value) => setImagePullingBehavior(value),
           defaultValue: defaultConfigurationsSettings.image_pulling_behavior,
           value: options.image_pulling_behavior,
-          onChange: (value) => setImagePullingBehavior(value),
+          onChange: (value) =>
+            setImagePullingBehavior(value as ImagePullingBehavior),
         },
         {
           type: 'custom',
@@ -214,7 +214,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.cuda_gpu,
           defaultValue: defaultConfigurationsSettings.cuda_gpu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -222,7 +224,9 @@ const ConfigurationsSettingList = () => {
           description: t('settings.DescRocmGPUSupport'),
           value: options.rocm_gpu,
           defaultValue: defaultConfigurationsSettings.rocm_gpu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
       ],
     },
@@ -249,7 +253,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.cuda_fgpu,
           defaultValue: defaultConfigurationsSettings.cuda_fgpu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -263,7 +269,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.tpu,
           defaultValue: defaultConfigurationsSettings.tpu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -277,7 +285,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.ipu,
           defaultValue: defaultConfigurationsSettings.ipu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -291,7 +301,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.atom,
           defaultValue: defaultConfigurationsSettings.atom,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -305,7 +317,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.atom_plus,
           defaultValue: defaultConfigurationsSettings.atom_plus,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -319,7 +333,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.atom_max,
           defaultValue: defaultConfigurationsSettings.atom_max,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -333,7 +349,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.gaudi2,
           defaultValue: defaultConfigurationsSettings.gaudi2,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -347,7 +365,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.warboy,
           defaultValue: defaultConfigurationsSettings.warboy,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -361,7 +381,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.rngd,
           defaultValue: defaultConfigurationsSettings.rngd,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
         {
           type: 'checkbox',
@@ -375,7 +397,9 @@ const ConfigurationsSettingList = () => {
           ),
           value: options.hyperaccel_lpu,
           defaultValue: defaultConfigurationsSettings.hyperaccel_lpu,
-          disabled: true,
+          checkboxProps: {
+            disabled: true,
+          },
         },
       ],
     },
@@ -387,7 +411,6 @@ const ConfigurationsSettingList = () => {
         settingGroups={settingGroupList}
         showSearchBar
         showChangedOptionFilter
-        showResetButton
       />
       <OverlayNetworkSettingModal
         onRequestClose={toggleOverlayNetworkModal}

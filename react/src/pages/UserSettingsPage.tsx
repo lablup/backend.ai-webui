@@ -103,13 +103,11 @@ const UserPreferencesPage = () => {
           description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
           defaultValue: false,
           value: desktopNotification,
-          setValue: setDesktopNotification,
-          onChange: (e: any) => {
-            setDesktopNotification(e.target.checked);
+          onChange: (value) => {
+            setDesktopNotification(value);
 
             // Request permission for desktop notifications
-            if (!e.target.checked || Notification.permission === 'granted')
-              return;
+            if (!value || Notification.permission === 'granted') return;
             if (!('Notification' in window)) {
               message.error(t('desktopNotification.NotSupported'));
               setDesktopNotification(false);
@@ -135,10 +133,7 @@ const UserPreferencesPage = () => {
           description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
           defaultValue: false,
           value: compactSidebar,
-          setValue: setCompactSidebar,
-          onChange: (e: any) => {
-            setCompactSidebar(e.target.checked);
-          },
+          onChange: setCompactSidebar,
         },
         {
           'data-testid': 'items-language-select',
@@ -170,24 +165,14 @@ const UserPreferencesPage = () => {
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
-          setValue: (value: any) => {
-            setSelectedLanguage(value);
-            const event = new CustomEvent('language-changed', {
-              detail: {
-                language: value,
-              },
-            });
-            setLanguage(value);
-            document.dispatchEvent(event);
-          },
           onChange: (value: any) => {
             setSelectedLanguage(value);
+            setLanguage(value);
             const event = new CustomEvent('language-changed', {
               detail: {
                 language: value,
               },
             });
-            setLanguage(value);
             document.dispatchEvent(event);
           },
         },
@@ -200,9 +185,7 @@ const UserPreferencesPage = () => {
           ),
           defaultValue: false,
           value: preserveLogin,
-          onChange: (e: any) => {
-            setPreserveLogin(e.target.checked);
-          },
+          onChange: setPreserveLogin,
         },
         {
           'data-testid': 'items-automatic-update-check',
@@ -213,10 +196,7 @@ const UserPreferencesPage = () => {
           ),
           defaultValue: false,
           value: autoAutomaticUpdateCheck,
-          setValue: setAutoAutomaticUpdateCheck,
-          onChange: (e: any) => {
-            setAutoAutomaticUpdateCheck(e.target.checked);
-          },
+          onChange: setAutoAutomaticUpdateCheck,
         },
         {
           'data-testid': 'items-auto-logout',
@@ -225,10 +205,7 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescAutoLogout'),
           defaultValue: false,
           value: autoLogout,
-          setValue: setAutoLogout,
-          onChange: (e: any) => {
-            setAutoLogout(e.target.checked);
-          },
+          onChange: setAutoLogout,
         },
         {
           'data-testid': 'items-my-keypair-info',
@@ -243,6 +220,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-ssh-keypair-management',
@@ -257,6 +235,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-max-concurrent-uploads',
@@ -285,10 +264,7 @@ const UserPreferencesPage = () => {
           },
           defaultValue: 2,
           value: maxConcurrentUpload || 2,
-          setValue: setMaxConcurrentUpload,
-          onChange: (value: any) => {
-            setMaxConcurrentUpload(value);
-          },
+          onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
         },
       ]),
     },
@@ -311,6 +287,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           'data-testid': 'items-edit-user-config-script',
@@ -327,6 +304,7 @@ const UserPreferencesPage = () => {
               {t('button.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
       ],
     },
@@ -342,10 +320,7 @@ const UserPreferencesPage = () => {
           description: t('general.Enabled'),
           defaultValue: false,
           value: experimentalAIAgents,
-          setValue: setExperimentalAIAgents,
-          onChange: (e) => {
-            setExperimentalAIAgents(e.target.checked);
-          },
+          onChange: setExperimentalAIAgents,
         },
       ],
     },

@@ -50,6 +50,43 @@ const MyComponent: React.FC<Props> = ({ data }) => {
 - Only use manual hooks when you have specific performance bottlenecks identified through profiling
 - Do NOT suggest adding `useMemo`/`useCallback` unnecessarily in code reviews
 
+### useEffectEvent Hook (Recommended)
+
+`useEffectEvent` extracts non-reactive logic from Effects, allowing access to latest props/state without making them dependencies.
+
+**When to Use:**
+- Access current values in Effects without triggering re-runs
+- Separate what triggers the Effect from what it does
+- Event handlers, logging, or analytics inside Effects
+
+**Example:**
+```typescript
+const onConnected = useEffectEvent(() => {
+  showNotification('Connected!', theme); // Latest theme, not reactive
+});
+
+useEffect(() => {
+  const connection = createConnection(url);
+  connection.on('connected', onConnected);
+  return () => connection.disconnect();
+}, [url]); // Only url triggers re-connection
+```
+
+**Restrictions:**
+- Only call inside `useEffect`/`useLayoutEffect`/`useInsertionEffect`
+- Never use to bypass legitimate dependencies
+- Only for truly non-reactive logic (logging, analytics, non-triggering side effects)
+
+**Benefits Over useCallback:**
+```typescript
+// ❌ Old: Re-subscribes on every change
+const handler = useCallback(() => doSomething(a, b, c), [a, b, c]);
+
+// ✅ New: Subscribe once, always latest values
+const handler = useEffectEvent(() => doSomething(a, b, c));
+useEffect(() => { subscribe(handler); }, []);
+```
+
 ## React Composability
 
 ### Component Composition Principles
@@ -462,6 +499,7 @@ When reviewing React code, check for:
 - [ ] Component uses `'use memo'` directive if it's a new component
 - [ ] Component follows composability principles (no props drilling, proper extraction)
 - [ ] No unnecessary `useMemo`/`useCallback` (prefer 'use memo' directive)
+- [ ] `useEffectEvent` is used for non-reactive logic in Effects when appropriate
 - [ ] **BAI components are used instead of Ant Design equivalents**
 - [ ] Ant Design modals use `App.useApp()` context instead of direct Modal import
 - [ ] Relay hooks (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`) are used correctly

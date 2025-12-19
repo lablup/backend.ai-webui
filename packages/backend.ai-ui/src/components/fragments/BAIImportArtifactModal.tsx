@@ -164,14 +164,16 @@ const BAIImportArtifactModal = ({
               );
               onOk(
                 e,
-                res.importArtifacts.tasks.map((task) => ({
-                  taskId: task.taskId,
-                  version: task.artifactRevision.version,
-                  artifact: {
-                    id: toLocalId(selectedArtifact?.id ?? ''),
-                    name: selectedArtifact?.name ?? '',
-                  },
-                })),
+                res.importArtifacts.tasks
+                  .filter((task) => task.taskId != null)
+                  .map((task) => ({
+                    taskId: task.taskId!,
+                    version: task.artifactRevision.version,
+                    artifact: {
+                      id: toLocalId(selectedArtifact?.id ?? ''),
+                      name: selectedArtifact?.name ?? '',
+                    },
+                  })),
               );
             },
             onError: (err) => {

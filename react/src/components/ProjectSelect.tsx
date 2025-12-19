@@ -2,7 +2,7 @@ import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.grap
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import BAISelect, { BAISelectProps } from './BAISelect';
+import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

@@ -101,6 +101,7 @@ deploy
 
 # build output
 src/lib/backend.ai-client-ingen-es6.js
+src/lib/backend.ai-client-node.js
 src/lib/bundles/
 src/lib/web-animations-js/
 src/lib/webcomponents-loader.js
