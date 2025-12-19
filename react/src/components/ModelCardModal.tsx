@@ -5,7 +5,6 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 import ModelTryContentButton from './ModelTryContentButton';
-import ResourceNumber from './ResourceNumber';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -20,7 +19,12 @@ import {
   Skeleton,
   Tooltip,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIResourceNumberWithIcon,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { FolderX } from 'lucide-react';
@@ -324,7 +328,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                                 JSON.parse(model_card?.min_resource),
                                 (value, type) => {
                                   return (
-                                    <ResourceNumber
+                                    <BAIResourceNumberWithIcon
                                       key={type}
                                       type={type}
                                       value={_.toString(value)}

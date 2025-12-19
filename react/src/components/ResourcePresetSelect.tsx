@@ -6,12 +6,11 @@ import { localeCompare } from '../helper';
 import { useUpdatableState } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import ResourceNumber from './ResourceNumber';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip, theme } from 'antd';
 import { SelectProps } from 'antd/lib';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIResourceNumberWithIcon } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -162,7 +161,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                       ),
                       (slot, key) => {
                         return (
-                          <ResourceNumber
+                          <BAIResourceNumberWithIcon
                             key={key}
                             // @ts-ignore
                             type={key}

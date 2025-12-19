@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Autorisé",
+    "Permission": "Autorisation"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Activer",
     "ActivateArtifacts": "Activer les artefacts",
@@ -80,6 +84,30 @@
     "ModelID": "ID de modèle",
     "SuccessfullyImportedModelFromHuggingFace": "A demandé avec succès l'importation de modèle à partir de l'étreinte",
     "Version": "Version"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Êtes-vous sûr de vouloir désactiver le projet {{projectName}}?",
+    "AreYouSureToPurgeProject": "Voulez-vous vraiment purger {{projectName}}? Cette action est irréversible.",
+    "ContainerRegistry": "Registre de conteneurs",
+    "Controls": "Contrôles",
+    "CreatedAt": "Créé le",
+    "Description": "Description",
+    "Domain": "Domaine",
+    "Inactive": "Inactif",
+    "InactiveProject": "Projet inactif",
+    "IntegrationID": "ID d'intégration",
+    "IsActive": "Actif",
+    "Name": "Nom",
+    "Project": "Projet",
+    "ProjectID": "ID du projet",
+    "Purge": "Purger",
+    "PurgeProject": "Purger le projet",
+    "Registry": "Registre",
+    "ResourcePolicy": "Politique des ressources",
+    "ScalingGroups": "Groupes de mise à l'échelle",
+    "StorageNodes": "Nœuds de stockage",
+    "TotalResourceSlots": "Nombre total de créneaux de ressources",
+    "Type": "Type"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",

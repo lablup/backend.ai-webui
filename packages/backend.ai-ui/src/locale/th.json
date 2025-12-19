@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "อนุญาตแล้ว",
+    "Permission": "สิทธิ์"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "เปิดใช้งาน",
     "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
@@ -80,6 +84,30 @@
     "ModelID": "ID รุ่น",
     "SuccessfullyImportedModelFromHuggingFace": "ร้องขอการนำเข้าโมเดลจากการกอดอย่างประสบความสำเร็จ",
     "Version": "รุ่น"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "คุณแน่ใจว่าต้องการปิดใช้งานโครงการ {{projectName}} หรือไม่?",
+    "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
+    "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
+    "Controls": "การควบคุม",
+    "CreatedAt": "สร้างเมื่อ",
+    "Description": "คำอธิบาย",
+    "Domain": "โดเมน",
+    "Inactive": "ไม่ได้ใช้งาน",
+    "InactiveProject": "โปรเจกต์ที่ไม่ใช้งาน",
+    "IntegrationID": "รหัสการผสานระบบ",
+    "IsActive": "ใช้งาน",
+    "Name": "ชื่อ",
+    "Project": "โปรเจ็กต์",
+    "ProjectID": "รหัสโครงการ",
+    "Purge": "ลบถาวร",
+    "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
+    "Registry": "รีจิสทรี",
+    "ResourcePolicy": "นโยบายทรัพยากร",
+    "ScalingGroups": "กลุ่มปรับขนาด",
+    "StorageNodes": "โหนดจัดเก็บข้อมูล",
+    "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
+    "Type": "ประเภท"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",

@@ -38,6 +38,7 @@ export const navigate =
         '/chat',
         '/ai-agent',
         '/model-store',
+        '/project',
       ].includes(path) !== true
     ) {
       // Fallback for Electron Shell/Windows OS

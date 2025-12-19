@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Dibenarkan",
+    "Permission": "Kebenaran"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktifkan",
     "ActivateArtifacts": "Aktifkan artifak",
@@ -80,6 +84,30 @@
     "ModelID": "ID Model",
     "SuccessfullyImportedModelFromHuggingFace": "Berjaya meminta import model dari memeluk muka",
     "Version": "Versi"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Adakah anda pasti mahu menyahaktifkan projek {{projectName}}?",
+    "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
+    "ContainerRegistry": "Registri Kontena",
+    "Controls": "Kawalan",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Keterangan",
+    "Domain": "Domain",
+    "Inactive": "Tidak aktif",
+    "InactiveProject": "Projek Tidak Aktif",
+    "IntegrationID": "ID Integrasi",
+    "IsActive": "Aktif",
+    "Name": "Nama",
+    "Project": "Projek",
+    "ProjectID": "ID Projek",
+    "Purge": "Padam",
+    "PurgeProject": "Padam Projek",
+    "Registry": "Registri",
+    "ResourcePolicy": "Dasar Sumber",
+    "ScalingGroups": "Kumpulan Penskalaan",
+    "StorageNodes": "Nod Storan",
+    "TotalResourceSlots": "Jumlah Slot Sumber",
+    "Type": "Jenis"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",

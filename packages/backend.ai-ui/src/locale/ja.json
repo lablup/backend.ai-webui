@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "許可済み",
+    "Permission": "権限"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "活性化",
     "ActivateArtifacts": "アーティファクトをアクティブにします",
@@ -80,6 +84,30 @@
     "ModelID": "モデルID",
     "SuccessfullyImportedModelFromHuggingFace": "抱き合った顔からモデルのインポートを正常にリクエストしました",
     "Version": "バージョン"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "プロジェクト「{{projectName}}」を無効化してもよろしいですか？",
+    "AreYouSureToPurgeProject": "本当に{{projectName}}を完全に削除しますか？この操作は取り消せません。",
+    "ContainerRegistry": "コンテナレジストリ",
+    "Controls": "操作",
+    "CreatedAt": "作成日時",
+    "Description": "説明",
+    "Domain": "ドメイン",
+    "Inactive": "非アクティブ",
+    "InactiveProject": "非アクティブなプロジェクト",
+    "IntegrationID": "連携ID",
+    "IsActive": "アクティブ",
+    "Name": "名前",
+    "Project": "プロジェクト",
+    "ProjectID": "プロジェクトID",
+    "Purge": "パージ",
+    "PurgeProject": "プロジェクトを完全に削除",
+    "Registry": "レジストリ",
+    "ResourcePolicy": "リソースポリシー",
+    "ScalingGroups": "スケーリンググループ",
+    "StorageNodes": "ストレージノード",
+    "TotalResourceSlots": "合計リソーススロット数",
+    "Type": "種類"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",

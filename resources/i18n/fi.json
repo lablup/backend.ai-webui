@@ -1098,6 +1098,14 @@
   "pagination": {
     "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
+  "project": {
+    "Active": "Aktiivinen",
+    "Domain": "Toimialue",
+    "Name": "Nimi",
+    "Project": "Projekti",
+    "ProjectID": "Projektin tunnus",
+    "ResourcePolicy": "Resurssipolitiikka"
+  },
   "registry": {
     "AddRegistry": "Lisää rekisteri",
     "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",

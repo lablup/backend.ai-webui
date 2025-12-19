@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Sallittu",
+    "Permission": "Oikeus"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Aktivoida",
     "ActivateArtifacts": "Aktivoida esineitä",
@@ -80,6 +84,30 @@
     "ModelID": "Mallitunnus",
     "SuccessfullyImportedModelFromHuggingFace": "Onnistuneesti pyydetty mallin tuonti halaamisesta",
     "Version": "Versio"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Haluatko varmasti poistaa projektin {{projectName}} käytöstä?",
+    "AreYouSureToPurgeProject": "Haluatko varmasti poistaa {{projectName}}? Tämä toimenpide on peruuttamaton.",
+    "ContainerRegistry": "Säiliörekisteri",
+    "Controls": "Ohjaimet",
+    "CreatedAt": "Luotu",
+    "Description": "Kuvaus",
+    "Domain": "Toimialue",
+    "Inactive": "Epäaktiivinen",
+    "InactiveProject": "Epäaktiivinen projekti",
+    "IntegrationID": "Integraation tunnus",
+    "IsActive": "Aktiivinen",
+    "Name": "Nimi",
+    "Project": "Projekti",
+    "ProjectID": "Projektin tunnus",
+    "Purge": "Tyhjennä",
+    "PurgeProject": "Poista projekti pysyvästi",
+    "Registry": "Rekisteri",
+    "ResourcePolicy": "Resurssipolitiikka",
+    "ScalingGroups": "Skaalausryhmät",
+    "StorageNodes": "Tallennussolmut",
+    "TotalResourceSlots": "Resurssipaikat yhteensä",
+    "Type": "Tyyppi"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",

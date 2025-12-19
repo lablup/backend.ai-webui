@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Permitido",
+    "Permission": "Permissão"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Ativar",
     "ActivateArtifacts": "Ativar artefatos",
@@ -79,6 +83,30 @@
     "ModelID": "ID do modelo",
     "SuccessfullyImportedModelFromHuggingFace": "Solicitou com sucesso a importação do modelo de abraçar o rosto",
     "Version": "Versão"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Tem certeza de que deseja inativar o projeto {{projectName}}?",
+    "AreYouSureToPurgeProject": "Tem certeza de que deseja excluir {{projectName}}? Esta ação é irreversível.",
+    "ContainerRegistry": "Registro de Contêineres",
+    "Controls": "Controles",
+    "CreatedAt": "Criado em",
+    "Description": "Descrição",
+    "Domain": "Domínio",
+    "Inactive": "Inativo",
+    "InactiveProject": "Projeto inativo",
+    "IntegrationID": "ID da Integração",
+    "IsActive": "Ativo",
+    "Name": "Nome",
+    "Project": "Projeto",
+    "ProjectID": "ID do projeto",
+    "Purge": "Limpar",
+    "PurgeProject": "Excluir projeto",
+    "Registry": "Registro",
+    "ResourcePolicy": "Política de Recursos",
+    "ScalingGroups": "Grupos de Escalonamento",
+    "StorageNodes": "Nós de Armazenamento",
+    "TotalResourceSlots": "Total de slots de recursos",
+    "Type": "Tipo"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",

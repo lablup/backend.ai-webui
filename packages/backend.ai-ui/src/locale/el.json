@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Επιτρέπεται",
+    "Permission": "Δικαίωμα"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Δραστηριοποιώ",
     "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
@@ -80,6 +84,30 @@
     "ModelID": "Μοντέλο ταυτότητας",
     "SuccessfullyImportedModelFromHuggingFace": "Ζήτησε επιτυχώς εισαγωγή μοντέλου από το αγκάλιασμα πρόσωπο",
     "Version": "Εκδοχή"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε το έργο {{projectName}};",
+    "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
+    "ContainerRegistry": "Αποθετήριο κοντέινερ",
+    "Controls": "Έλεγχοι",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "Description": "Περιγραφή",
+    "Domain": "Τομέας",
+    "Inactive": "Ανενεργό",
+    "InactiveProject": "Ανενεργό έργο",
+    "IntegrationID": "ID ενσωμάτωσης",
+    "IsActive": "Ενεργό",
+    "Name": "Όνομα",
+    "Project": "Έργο",
+    "ProjectID": "ID έργου",
+    "Purge": "Εκκαθάριση",
+    "PurgeProject": "Μόνιμη διαγραφή έργου",
+    "Registry": "Μητρώο",
+    "ResourcePolicy": "Πολιτική πόρων",
+    "ScalingGroups": "Ομάδες κλιμάκωσης",
+    "StorageNodes": "Κόμβοι Αποθήκευσης",
+    "TotalResourceSlots": "Συνολικές θέσεις πόρων",
+    "Type": "Τύπος"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",

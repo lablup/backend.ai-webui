@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "허용",
+    "Permission": "권한"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "활성화",
     "ActivateArtifacts": "아티팩트를 활성화",
@@ -80,6 +84,30 @@
     "ModelID": "모델 ID",
     "SuccessfullyImportedModelFromHuggingFace": "허깅 페이스에서 모델 가져오기 요청을 성공적으로 보냈습니다.",
     "Version": "버전"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
+    "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "ContainerRegistry": "컨테이너 레지스트리",
+    "Controls": "제어",
+    "CreatedAt": "생성 시각",
+    "Description": "설명",
+    "Domain": "도메인",
+    "Inactive": "비활성화",
+    "InactiveProject": "프로젝트 비활성화",
+    "IntegrationID": "통합 ID",
+    "IsActive": "활성",
+    "Name": "이름",
+    "Project": "프로젝트",
+    "ProjectID": "프로젝트 ID",
+    "Purge": "삭제",
+    "PurgeProject": "프로젝트 삭제",
+    "Registry": "레지스트리",
+    "ResourcePolicy": "자원 정책",
+    "ScalingGroups": "스케일링 그룹",
+    "StorageNodes": "저장소 노드",
+    "TotalResourceSlots": "총 리소스 슬롯",
+    "Type": "타입"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",

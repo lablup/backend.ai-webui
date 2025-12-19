@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "İzin verildi",
+    "Permission": "İzin"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Etkinleştirmek",
     "ActivateArtifacts": "Eserleri etkinleştirin",
@@ -80,6 +84,30 @@
     "ModelID": "Model kimliği",
     "SuccessfullyImportedModelFromHuggingFace": "Sarılma yüzünden başarılı bir şekilde model ithalatını istedi",
     "Version": "Versiyon"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "{{projectName}} projesini devre dışı bırakmak istediğinizden emin misiniz?",
+    "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "ContainerRegistry": "Konteyner Kayıt Deposu",
+    "Controls": "Kontroller",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "Description": "Açıklama",
+    "Domain": "Etki Alanı",
+    "Inactive": "Etkin değil",
+    "InactiveProject": "Etkin Olmayan Proje",
+    "IntegrationID": "Entegrasyon Kimliği",
+    "IsActive": "Aktif",
+    "Name": "Ad",
+    "Project": "Proje",
+    "ProjectID": "Proje Kimliği",
+    "Purge": "Temizle",
+    "PurgeProject": "Projeyi Temizle",
+    "Registry": "Kayıt Deposu",
+    "ResourcePolicy": "Kaynak Politikası",
+    "ScalingGroups": "Ölçeklendirme Grupları",
+    "StorageNodes": "Depolama Düğümleri",
+    "TotalResourceSlots": "Toplam Kaynak Slotları",
+    "Type": "Tür"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",

@@ -47,3 +47,11 @@ export type {
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
 export { default as BAIAdminResourceGroupSelect } from './BAIAdminResourceGroupSelect';
 export type { BAIAdminResourceGroupSelectProps } from './BAIAdminResourceGroupSelect';
+export {
+  default as BAIProjectTable,
+  availableProjectSorterKeys,
+  availableProjectSorterValues,
+} from './BAIProjectTable';
+export type { BAIProjectTableProps } from './BAIProjectTable';
+export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
+export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';

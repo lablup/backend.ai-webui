@@ -6,8 +6,6 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import NumberWithUnit from './NumberWithUnit';
-import ResourceNumber from './ResourceNumber';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import {
   ReloadOutlined,
@@ -28,6 +26,8 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
+  BAINumberWithUnit,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -99,7 +99,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         <BAIFlex gap="xxs">
           {!_.isEmpty(text)
             ? _.map(JSON.parse(text), (value, key) => (
-                <ResourceNumber key={key} type={key} value={value} />
+                <BAIResourceNumberWithIcon key={key} type={key} value={value} />
               ))
             : '-'}
         </BAIFlex>
@@ -113,7 +113,11 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           return '-';
         }
         return (
-          <NumberWithUnit numberUnit={text} targetUnit="g" unitType="binary" />
+          <BAINumberWithUnit
+            numberUnit={text}
+            targetUnit="g"
+            unitType="binary"
+          />
         );
       },
     },

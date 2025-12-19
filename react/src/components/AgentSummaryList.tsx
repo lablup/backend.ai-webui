@@ -14,7 +14,6 @@ import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIRadioGroup from './BAIRadioGroup';
-import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   CheckCircleOutlined,
@@ -31,6 +30,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   mergeFilterValues,
+  ResourceTypeIcon,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useMemo } from 'react';

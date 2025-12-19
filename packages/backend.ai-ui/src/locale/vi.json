@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Được phép",
+    "Permission": "Quyền"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Kích hoạt",
     "ActivateArtifacts": "Kích hoạt hiện vật",
@@ -80,6 +84,30 @@
     "ModelID": "Mô hình ID",
     "SuccessfullyImportedModelFromHuggingFace": "Yêu cầu nhập khẩu thành công mô hình từ khuôn mặt ôm",
     "Version": "Phiên bản"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
+    "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
+    "ContainerRegistry": "Kho lưu trữ container",
+    "Controls": "Điều khiển",
+    "CreatedAt": "Ngày tạo",
+    "Description": "Mô tả",
+    "Domain": "Miền",
+    "Inactive": "Không hoạt động",
+    "InactiveProject": "Dự án không hoạt động",
+    "IntegrationID": "ID tích hợp",
+    "IsActive": "Hoạt động",
+    "Name": "Tên",
+    "Project": "Dự án",
+    "ProjectID": "ID dự án",
+    "Purge": "Xóa sạch",
+    "PurgeProject": "Xóa vĩnh viễn dự án",
+    "Registry": "Kho chứa",
+    "ResourcePolicy": "Chính sách tài nguyên",
+    "ScalingGroups": "Nhóm tự động mở rộng",
+    "StorageNodes": "Nút lưu trữ",
+    "TotalResourceSlots": "Tổng số khe tài nguyên",
+    "Type": "Loại"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",

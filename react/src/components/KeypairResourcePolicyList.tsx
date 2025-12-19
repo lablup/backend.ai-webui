@@ -10,10 +10,8 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
@@ -26,7 +24,13 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
-import { filterOutEmpty, BAITable, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAITable,
+  BAIFlex,
+  BAIAllowedVfolderHostsWithPermission,
+  BAIResourceNumberWithIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -77,7 +81,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_concurrent_sftp_sessions @since(version: "24.03.4")
             ...KeypairResourcePolicySettingModalFragment
             ...KeypairResourcePolicyInfoModalFragment
-            ...AllowedVfolderHostsWithPermissionFragment
+            ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
           }
         }
       `,
@@ -120,7 +124,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
                 JSON.parse(row?.total_resource_slots || '{}'),
                 (value, type) => {
                   return (
-                    <ResourceNumber
+                    <BAIResourceNumberWithIcon
                       key={type}
                       // @ts-ignore
                       type={type}
@@ -183,8 +187,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         return (
           <>
             {text && row ? (
-              <AllowedVfolderHostsWithPermission
-                allowedVfolderHostsWithPermissionFrgmt={row}
+              <BAIAllowedVfolderHostsWithPermission
+                allowedHostPermissionFrgmtFromKeyPair={row}
               />
             ) : (
               '-'

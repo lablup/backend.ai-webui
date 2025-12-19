@@ -15,6 +15,7 @@ import {
   ToolOutlined,
   InfoCircleOutlined,
   ApiOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { MenuProps, theme, Typography } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
@@ -255,6 +256,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent',
+    },
+    {
+      label: <WebUILink to="/project">{t('webui.menu.Project')}</WebUILink>,
+      icon: <TeamOutlined style={{ color: token.colorInfo }} />,
+      key: 'project',
     },
     {
       label: (

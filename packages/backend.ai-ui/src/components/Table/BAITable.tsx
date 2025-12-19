@@ -79,10 +79,18 @@ export interface BAIColumnType<RecordType = any>
   required?: boolean;
 }
 
+export interface BAIColumnGroupType<RecordType = AnyObject>
+  extends Omit<BAIColumnType<RecordType>, 'dataIndex'> {
+  children: ColumnsType<RecordType>;
+}
+
 /**
  * Array type for BAI table columns
  */
-export type BAIColumnsType<RecordType = any> = BAIColumnType<RecordType>[];
+export type BAIColumnsType<RecordType = any> = (
+  | BAIColumnGroupType<RecordType>
+  | BAIColumnType<RecordType>
+)[];
 
 /**
  * Utility function to determine if a column should be visible

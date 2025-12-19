@@ -1099,6 +1099,14 @@
   "pagination": {
     "Total": "{{start}} - {{total}} öğelerinin {{end}}"
   },
+  "project": {
+    "Active": "Aktif",
+    "Domain": "Etki Alanı",
+    "Name": "Ad",
+    "Project": "Proje",
+    "ProjectID": "Proje Kimliği",
+    "ResourcePolicy": "Kaynak Politikası"
+  },
   "registry": {
     "AddRegistry": "Kayıt Ekle",
     "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",

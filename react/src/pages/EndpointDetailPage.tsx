@@ -16,7 +16,6 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
-import ResourceNumber from '../components/ResourceNumber';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise } from '../helper';
@@ -61,6 +60,7 @@ import {
   BAIFlex,
   BAIUnmountAfterClose,
   BAIText,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -414,7 +414,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             JSON.parse(endpoint?.resource_slots || '{}'),
             (value: string, type) => {
               return (
-                <ResourceNumber
+                <BAIResourceNumberWithIcon
                   key={type}
                   type={type}
                   value={value}

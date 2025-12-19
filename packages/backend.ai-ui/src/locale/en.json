@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Allowed",
+    "Permission": "Permission"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Activate",
     "ActivateArtifacts": "Activate Artifacts",
@@ -80,6 +84,30 @@
     "ModelID": "Model ID",
     "SuccessfullyImportedModelFromHuggingFace": "Successfully requested import of model from Hugging Face",
     "Version": "Version"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Are you sure to inactivate project {{projectName}}?",
+    "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
+    "ContainerRegistry": "Container Registry",
+    "Controls": "Controls",
+    "CreatedAt": "Created At",
+    "Description": "Description",
+    "Domain": "Domain",
+    "Inactive": "Inactive",
+    "InactiveProject": "Inactive Project",
+    "IntegrationID": "Integration ID",
+    "IsActive": "Active",
+    "Name": "Name",
+    "Project": "Project",
+    "ProjectID": "Project ID",
+    "Purge": "Purge",
+    "PurgeProject": "Purge Project",
+    "Registry": "Registry",
+    "ResourcePolicy": "Resource Policy",
+    "ScalingGroups": "Scaling Groups",
+    "StorageNodes": "Storage Nodes",
+    "TotalResourceSlots": "Total Resource Slots",
+    "Type": "Type"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",

@@ -1099,6 +1099,14 @@
   "pagination": {
     "Total": "{{inicio}} - {{end}} de {{Total}} elementos"
   },
+  "project": {
+    "Active": "Activo",
+    "Domain": "Dominio",
+    "Name": "Nombre",
+    "Project": "Proyecto",
+    "ProjectID": "ID del proyecto",
+    "ResourcePolicy": "Política de recursos"
+  },
   "registry": {
     "AddRegistry": "Añadir registro",
     "ConfirmNoUserName": "Usuario y contraseña no especificados, ¿desea guardar?",

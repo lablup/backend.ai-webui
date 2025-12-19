@@ -1,6 +1,4 @@
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
-import AllowedVfolderHostsWithPermission from './AllowedVfolderHostsWithPermission';
-import ResourceNumber from './ResourceNumber';
 import { Descriptions, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
@@ -9,6 +7,8 @@ import {
   BAIFlex,
   BAIModalProps,
   BAIModal,
+  BAIAllowedVfolderHostsWithPermission,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -57,7 +57,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
         max_pending_session_count @since(version: "24.03.4")
         max_concurrent_sftp_sessions @since(version: "24.03.4")
         max_pending_session_resource_slots @since(version: "24.03.4")
-        ...AllowedVfolderHostsWithPermissionFragment
+        ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
       }
     `,
     resourcePolicyFrgmt,
@@ -92,7 +92,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
                 {_.map(
                   JSON.parse(resourcePolicy?.total_resource_slots),
                   (v, type) => (
-                    <ResourceNumber
+                    <BAIResourceNumberWithIcon
                       key={type}
                       type={type}
                       value={_.toString(v)}
@@ -116,8 +116,8 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
         !_.isEmpty(
           JSON.parse(resourcePolicy?.allowed_vfolder_hosts || '{}'),
         ) ? (
-          <AllowedVfolderHostsWithPermission
-            allowedVfolderHostsWithPermissionFrgmt={resourcePolicy}
+          <BAIAllowedVfolderHostsWithPermission
+            allowedHostPermissionFrgmtFromKeyPair={resourcePolicy}
           />
         ) : (
           '-'
@@ -165,7 +165,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
                     resourcePolicy?.max_pending_session_resource_slots,
                   ),
                   (v, type) => (
-                    <ResourceNumber
+                    <BAIResourceNumberWithIcon
                       key={type}
                       type={type}
                       value={_.toString(v)}

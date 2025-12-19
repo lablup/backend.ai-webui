@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Разрешено",
+    "Permission": "Разрешение"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Активировать",
     "ActivateArtifacts": "Активируйте артефакты",
@@ -80,6 +84,30 @@
     "ModelID": "Идентификатор модели",
     "SuccessfullyImportedModelFromHuggingFace": "Успешно запросил импорт модели от обнимающегося лица",
     "Version": "Версия"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
+    "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
+    "ContainerRegistry": "Реестр контейнеров",
+    "Controls": "Элементы управления",
+    "CreatedAt": "Создано",
+    "Description": "Описание",
+    "Domain": "Домен",
+    "Inactive": "Неактивен",
+    "InactiveProject": "Неактивный проект",
+    "IntegrationID": "ID интеграции",
+    "IsActive": "Активный",
+    "Name": "Имя",
+    "Project": "Проект",
+    "ProjectID": "ID проекта",
+    "Purge": "Очистить",
+    "PurgeProject": "Полностью удалить проект",
+    "Registry": "Реестр",
+    "ResourcePolicy": "Политика ресурсов",
+    "ScalingGroups": "Группы масштабирования",
+    "StorageNodes": "Узлы хранения",
+    "TotalResourceSlots": "Всего ресурсных слотов",
+    "Type": "Тип"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",

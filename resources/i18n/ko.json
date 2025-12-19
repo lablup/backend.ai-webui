@@ -1102,6 +1102,14 @@
   "pagination": {
     "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
   },
+  "project": {
+    "Active": "활성",
+    "Domain": "도메인",
+    "Name": "이름",
+    "Project": "프로젝트",
+    "ProjectID": "프로젝트 ID",
+    "ResourcePolicy": "자원 정책"
+  },
   "registry": {
     "AddRegistry": "레지스트리 추가",
     "ConfirmNoUserName": "사용자 및 비밀번호가 지정되지 않았습니다. 저장하시겠습니까?",

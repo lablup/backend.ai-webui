@@ -1,41 +1,67 @@
-import { AllowedVfolderHostsWithPermissionFragment$key } from '../__generated__/AllowedVfolderHostsWithPermissionFragment.graphql';
-import { AllowedVfolderHostsWithPermissionQuery } from '../__generated__/AllowedVfolderHostsWithPermissionQuery.graphql';
+import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromGroupFragment.graphql';
+import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
+import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
+import BAIFlex from '../BAIFlex';
+import BAILink from '../BAILink';
+import BAIModal from '../BAIModal';
+import { BAITable } from '../Table';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
 import { Badge, theme } from 'antd';
-import { BAITable, BAIFlex, BAILink, BAIModal } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface AllowedVfolderHostsWithPermissionProps {
-  allowedVfolderHostsWithPermissionFrgmt: AllowedVfolderHostsWithPermissionFragment$key;
-}
+export type BAIAllowedVfolderHostsWithPermissionProps =
+  | {
+      allowedHostPermissionFrgmtFromKeyPair: BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key;
+      allowedHostPermissionFrgmtFromGroup?: never;
+    }
+  | {
+      allowedHostPermissionFrgmtFromKeyPair?: never;
+      allowedHostPermissionFrgmtFromGroup: BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key;
+    };
 
-const AllowedVfolderHostsWithPermission: React.FC<
-  AllowedVfolderHostsWithPermissionProps
-> = ({ allowedVfolderHostsWithPermissionFrgmt }) => {
+const BAIAllowedVfolderHostsWithPermission: React.FC<
+  BAIAllowedVfolderHostsWithPermissionProps
+> = ({
+  allowedHostPermissionFrgmtFromKeyPair,
+  allowedHostPermissionFrgmtFromGroup,
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [storageHost, setStorageHost] = React.useState<string | null>();
 
-  const keypairResourcePolicy = useFragment(
-    graphql`
-      fragment AllowedVfolderHostsWithPermissionFragment on KeyPairResourcePolicy {
-        allowed_vfolder_hosts
-      }
-    `,
-    allowedVfolderHostsWithPermissionFrgmt,
-  );
+  const keypairResourcePolicy =
+    useFragment<BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key>(
+      graphql`
+        fragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {
+          allowed_vfolder_hosts
+        }
+      `,
+      allowedHostPermissionFrgmtFromKeyPair,
+    );
+
+  const groupNode =
+    useFragment<BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key>(
+      graphql`
+        fragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {
+          allowed_vfolder_hosts
+        }
+      `,
+      allowedHostPermissionFrgmtFromGroup,
+    );
 
   const allowedVfolderHosts = JSON.parse(
-    keypairResourcePolicy?.allowed_vfolder_hosts || '{}',
+    keypairResourcePolicy?.allowed_vfolder_hosts ||
+      groupNode?.allowed_vfolder_hosts ||
+      '{}',
   );
 
   const { vfolder_host_permissions } =
-    useLazyLoadQuery<AllowedVfolderHostsWithPermissionQuery>(
+    useLazyLoadQuery<BAIAllowedVfolderHostsWithPermissionQuery>(
       graphql`
-        query AllowedVfolderHostsWithPermissionQuery {
+        query BAIAllowedVfolderHostsWithPermissionQuery {
           vfolder_host_permissions {
             vfolder_host_permission_list
           }
@@ -77,7 +103,7 @@ const AllowedVfolderHostsWithPermission: React.FC<
       </BAIFlex>
       <BAIModal
         centered
-        title={`${storageHost} ${t('data.explorer.Permission')}`}
+        title={`${storageHost} ${t('comp:AllowedVfolderHostsWithPermission.Permission')}`}
         open={!_.isEmpty(storageHost)}
         onCancel={() => setStorageHost(null)}
         footer={null}
@@ -116,12 +142,12 @@ const AllowedVfolderHostsWithPermission: React.FC<
           )}
           columns={[
             {
-              title: t('data.explorer.Permission'),
+              title: t('comp:AllowedVfolderHostsWithPermission.Permission'),
               dataIndex: 'permission',
               key: 'permission',
             },
             {
-              title: t('data.explorer.Allowed'),
+              title: t('comp:AllowedVfolderHostsWithPermission.Allowed'),
               dataIndex: 'isAllowed',
               key: 'isAllowed',
             },
@@ -132,4 +158,4 @@ const AllowedVfolderHostsWithPermission: React.FC<
   );
 };
 
-export default AllowedVfolderHostsWithPermission;
+export default BAIAllowedVfolderHostsWithPermission;

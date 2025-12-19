@@ -1104,6 +1104,14 @@
   "pagination": {
     "Total": "{{start}} - {{end}} of {{total}} items"
   },
+  "project": {
+    "Active": "Active",
+    "Domain": "Domain",
+    "Name": "Name",
+    "Project": "Project",
+    "ProjectID": "Project ID",
+    "ResourcePolicy": "Resource Policy"
+  },
   "registry": {
     "AddRegistry": "Add Registry",
     "ConfirmNoUserName": "User and password not specified, would you like to save?",

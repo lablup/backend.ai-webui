@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Diizinkan",
+    "Permission": "Izin"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Mengaktifkan",
     "ActivateArtifacts": "Aktifkan artefak",
@@ -80,6 +84,30 @@
     "ModelID": "ID Model",
     "SuccessfullyImportedModelFromHuggingFace": "Berhasil Meminta Impor Model dari Face Memeluk",
     "Version": "Versi"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
+    "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
+    "ContainerRegistry": "Registri Kontainer",
+    "Controls": "Kontrol",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "Inactive": "Nonaktif",
+    "InactiveProject": "Proyek Tidak Aktif",
+    "IntegrationID": "ID Integrasi",
+    "IsActive": "Aktif",
+    "Name": "Nama",
+    "Project": "Proyek",
+    "ProjectID": "ID Proyek",
+    "Purge": "Bersihkan",
+    "PurgeProject": "Hapus Proyek Secara Permanen",
+    "Registry": "Registri",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "ScalingGroups": "Grup Penskalaan",
+    "StorageNodes": "Node Penyimpanan",
+    "TotalResourceSlots": "Jumlah Slot Sumber Daya",
+    "Type": "Tipe"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",

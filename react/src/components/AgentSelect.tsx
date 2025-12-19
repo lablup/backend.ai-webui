@@ -1,9 +1,13 @@
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import ResourceNumber from './ResourceNumber';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps, theme } from 'antd';
-import { filterOutEmpty, BAIFlex, mergeFilterValues } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  mergeFilterValues,
+  BAIResourceNumberWithIcon,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {
   useDeferredValue,
@@ -113,7 +117,7 @@ const AgentSelect: React.FC<Props> = ({
           <BAIFlex direction="row" gap={'xxs'}>
             {_.map(remainingSlotsInfo, (slot, key) => {
               return (
-                <ResourceNumber
+                <BAIResourceNumberWithIcon
                   key={key}
                   // @ts-ignore
                   type={key}

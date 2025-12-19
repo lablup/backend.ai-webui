@@ -1088,6 +1088,14 @@
   "pagination": {
     "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
+  "project": {
+    "Active": "ใช้งาน",
+    "Domain": "โดเมน",
+    "Name": "ชื่อ",
+    "Project": "โปรเจกต์",
+    "ProjectID": "รหัสโครงการ",
+    "ResourcePolicy": "นโยบายทรัพยากร"
+  },
   "registry": {
     "AddRegistry": "เพิ่มทะเบียน",
     "ConfirmNoUserName": "ไม่ได้ระบุชื่อผู้ใช้และรหัสผ่าน คุณต้องการบันทึกหรือไม่?",

@@ -21,7 +21,6 @@ import BAIIntervalView from './BAIIntervalView';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIRadioGroup from './BAIRadioGroup';
 import DoubleTag from './DoubleTag';
-import { ResourceTypeIcon } from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   CheckCircleOutlined,
@@ -41,6 +40,7 @@ import {
   BAIPropertyFilter,
   BAIFlexProps,
   BAIText,
+  ResourceTypeIcon,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

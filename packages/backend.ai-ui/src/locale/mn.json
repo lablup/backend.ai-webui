@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Зөвшөөрсөн",
+    "Permission": "Зөвшөөрөл"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "Идэвхжүүлэх",
     "ActivateArtifacts": "Олдворуудыг идэвхжүүлэх",
@@ -80,6 +84,30 @@
     "ModelID": "Загвар он",
     "SuccessfullyImportedModelFromHuggingFace": "Нүүр царайг тэвэрч авахаас шууд импортлохыг хүссэн",
     "Version": "Таамаглал"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "Та {{projectName}} төслийг идэвхгүй болгохдоо итгэлтэй байна уу?",
+    "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
+    "ContainerRegistry": "Контейнерийн бүртгэл",
+    "Controls": "Удирдлага",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "Description": "Тайлбар",
+    "Domain": "Домен",
+    "Inactive": "Идэвхгүй",
+    "InactiveProject": "Идэвхгүй төсөл",
+    "IntegrationID": "Интеграцийн ID",
+    "IsActive": "Идэвхтэй",
+    "Name": "Нэр",
+    "Project": "Төсөл",
+    "ProjectID": "Төслийн ID",
+    "Purge": "Устгах",
+    "PurgeProject": "Төслийг бүрэн устгах",
+    "Registry": "Регистри",
+    "ResourcePolicy": "Ресурсын бодлого",
+    "ScalingGroups": "Тэлэлтийн бүлгүүд",
+    "StorageNodes": "Хадгалах зангилаанууд",
+    "TotalResourceSlots": "Нийт нөөцийн слотууд",
+    "Type": "Төрөл"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",

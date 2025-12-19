@@ -1098,6 +1098,14 @@
   "pagination": {
     "Total": "{{start}}  -  {{end}} {{total}}項目"
   },
+  "project": {
+    "Active": "啟用",
+    "Domain": "網域",
+    "Name": "名稱",
+    "Project": "專案",
+    "ProjectID": "專案 ID",
+    "ResourcePolicy": "資源策略"
+  },
   "registry": {
     "AddRegistry": "添加註冊表",
     "ConfirmNoUserName": "未指定用户和密码，要保存吗？",

@@ -18,7 +18,6 @@ import ImageInstallModal from './ImageInstallModal';
 import { ImageTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
-import ResourceNumber from './ResourceNumber';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
@@ -36,6 +35,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAITable,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -343,7 +343,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           render: (_text, row) => (
             <BAIFlex direction="row" gap="xxs">
               {row?.resource_limits?.map((resource_limit) => (
-                <ResourceNumber
+                <BAIResourceNumberWithIcon
                   key={resource_limit?.key}
                   type={resource_limit?.key || ''}
                   value={resource_limit?.min || '0'}

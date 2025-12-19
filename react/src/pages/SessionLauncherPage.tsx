@@ -11,7 +11,6 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
-import ResourceNumber from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
@@ -77,6 +76,7 @@ import {
   BAIButton,
   generateRandomString,
   useBAILogger,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -1355,7 +1355,7 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
         _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
         (value, type) => {
           return value === '0' ? null : (
-            <ResourceNumber
+            <BAIResourceNumberWithIcon
               key={type}
               // @ts-ignore
               type={type}
@@ -1380,7 +1380,7 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
       resource.accelerator &&
       resource.acceleratorType &&
       _.isNumber(resource.accelerator) ? (
-        <ResourceNumber
+        <BAIResourceNumberWithIcon
           // @ts-ignore
           type={resource.acceleratorType}
           value={_.toString(resource.accelerator * containerCount)}

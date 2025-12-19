@@ -82,6 +82,7 @@ const ConfigurationsPage = React.lazy(
 const SessionDetailAndContainerLogOpenerLegacy = React.lazy(
   () => import('./components/SessionDetailAndContainerLogOpenerLegacy'),
 );
+const ProjectPage = React.lazy(() => import('./pages/ProjectPage'));
 
 const ChatPage = React.lazy(() => import('./pages/ChatPage'));
 
@@ -457,6 +458,17 @@ const router = createBrowserRouter([
         path: '/maintenance',
         element: <MaintenancePage />,
         handle: { labelKey: 'webui.menu.Maintenance' },
+      },
+      {
+        path: '/project',
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <ProjectPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+        handle: { labelKey: 'webui.menu.Project' },
       },
       {
         path: '/storage-settings/:hostname',

@@ -1,5 +1,9 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "已允许",
+    "Permission": "权限"
+  },
   "comp:BAIActivateArtifactsModal": {
     "Activate": "激活",
     "ActivateArtifacts": "激活工件",
@@ -80,6 +84,30 @@
     "ModelID": "模型ID",
     "SuccessfullyImportedModelFromHuggingFace": "成功要求从拥抱脸部进口模型",
     "Version": "版本"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToInactiveProject": "确定要停用项目 {{projectName}} 吗？",
+    "AreYouSureToPurgeProject": "确定要永久清除 {{projectName}}? 此操作不可恢复。",
+    "ContainerRegistry": "容器镜像仓库",
+    "Controls": "控制",
+    "CreatedAt": "创建时间",
+    "Description": "描述",
+    "Domain": "域",
+    "Inactive": "已停用",
+    "InactiveProject": "已停用项目",
+    "IntegrationID": "集成 ID",
+    "IsActive": "活跃",
+    "Name": "名称",
+    "Project": "项目",
+    "ProjectID": "项目 ID",
+    "Purge": "清除",
+    "PurgeProject": "永久删除项目",
+    "Registry": "镜像仓库",
+    "ResourcePolicy": "资源策略",
+    "ScalingGroups": "伸缩组",
+    "StorageNodes": "存储节点",
+    "TotalResourceSlots": "资源插槽总数",
+    "Type": "类型"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",

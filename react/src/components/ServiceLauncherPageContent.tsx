@@ -25,7 +25,6 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import ResourceNumber from './ResourceNumber';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -57,6 +56,7 @@ import {
   filterOutNullAndUndefined,
   useErrorMessageResolver,
   useBAILogger,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
@@ -991,7 +991,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   JSON.parse(endpoint?.resource_slots || '{}'),
                                   (value: string, type) => {
                                     return (
-                                      <ResourceNumber
+                                      <BAIResourceNumberWithIcon
                                         key={type}
                                         type={type}
                                         value={value}
