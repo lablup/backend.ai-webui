@@ -105,6 +105,8 @@
     "Unlimited": "Rajoittamaton"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Siirry ensimmäiselle sivulle",
+    "InvalidPageNumber": "Virheellinen sivunumero",
     "SearchTableColumn": "Hakutaulukon sarakkeet",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
     "SettingTable": "Taulukon asetukset"

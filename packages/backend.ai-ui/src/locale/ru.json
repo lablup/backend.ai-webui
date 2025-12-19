@@ -105,6 +105,8 @@
     "Unlimited": "Неограниченный"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Перейти на первую страницу",
+    "InvalidPageNumber": "Неверный номер страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы"

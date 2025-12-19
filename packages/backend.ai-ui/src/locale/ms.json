@@ -105,6 +105,8 @@
     "Unlimited": "Tidak terhad"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Pergi ke halaman pertama",
+    "InvalidPageNumber": "Nombor halaman tidak sah",
     "SearchTableColumn": "Lajur jadual carian",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
     "SettingTable": "Tetapan Jadual"

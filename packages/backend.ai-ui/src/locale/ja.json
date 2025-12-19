@@ -105,6 +105,8 @@
     "Unlimited": "無制限"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "最初のページへ",
+    "InvalidPageNumber": "無効なページ番号です",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブル設定"

@@ -105,6 +105,8 @@
     "Unlimited": "Ilimitado"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Ir a la primera página",
+    "InvalidPageNumber": "Número de página no válido",
     "SearchTableColumn": "Columnas de la tabla de búsqueda",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SettingTable": "Configuración de tabla"

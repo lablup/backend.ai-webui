@@ -105,6 +105,8 @@
     "Unlimited": "ไม่ จำกัด"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "ไปยังหน้าแรก",
+    "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
     "SettingTable": "การตั้งค่าตาราง"

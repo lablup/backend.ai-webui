@@ -105,6 +105,8 @@
     "Unlimited": "Tak terbatas"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Ke halaman pertama",
+    "InvalidPageNumber": "Nomor halaman tidak valid",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel"

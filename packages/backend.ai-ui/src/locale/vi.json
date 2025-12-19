@@ -105,6 +105,8 @@
     "Unlimited": "Không giới hạn"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Đến trang đầu",
+    "InvalidPageNumber": "Số trang không hợp lệ",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"

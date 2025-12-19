@@ -105,6 +105,8 @@
     "Unlimited": "無限"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "跳到第一頁",
+    "InvalidPageNumber": "無效的頁碼",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SettingTable": "表設置"

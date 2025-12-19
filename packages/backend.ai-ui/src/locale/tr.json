@@ -105,6 +105,8 @@
     "Unlimited": "Sınırsız"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "İlk sayfaya git",
+    "InvalidPageNumber": "Geçersiz sayfa numarası",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"

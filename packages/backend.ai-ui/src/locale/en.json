@@ -108,6 +108,8 @@
     "Unlimited": "Unlimited"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Go to first page",
+    "InvalidPageNumber": "Invalid page number",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",
     "SettingTable": "Table Settings"

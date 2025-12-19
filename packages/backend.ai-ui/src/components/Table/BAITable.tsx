@@ -1,6 +1,9 @@
 import { transformSorterToOrderString } from '../../helper';
+import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
+import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
+import { BAIConfigProvider } from '../provider';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import BAITableSettingModal from './BAITableSettingModal';
 import { LoadingOutlined, SettingOutlined } from '@ant-design/icons';
@@ -18,6 +21,7 @@ import { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Resizable, ResizeCallbackData } from 'react-resizable';
 
 /**
@@ -215,6 +219,8 @@ const BAITable = <RecordType extends object = any>({
   tableSettings,
   ...tableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
+  'use memo';
+  const { t } = useTranslation();
   const { styles } = useStyles();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
@@ -318,60 +324,102 @@ const BAITable = <RecordType extends object = any>({
     columnOverrides,
   ]);
 
+  const isValidPageNumber = () => {
+    const total =
+      (tableProps.pagination && tableProps.pagination.total) ||
+      tableProps.dataSource?.length ||
+      0;
+    if (total === 0 && currentPage === 1) {
+      // skip validation when there is no data
+      return true;
+    }
+    const totalPages = Math.ceil(total / currentPageSize);
+    return currentPage >= 1 && currentPage <= totalPages;
+  };
+
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
-      <Table
-        size={tableProps.size || 'small'}
-        showSorterTooltip={false}
-        className={classNames(
-          resizable && styles.resizableTable,
-          styles.neoHeader,
-          tableProps.rowSelection?.columnWidth === 0 &&
-            styles.zeroWithSelectionColumn,
-        )}
-        loading={
-          spinnerLoading
-            ? {
-                indicator: <LoadingOutlined spin />,
-                spinning: true,
-              }
-            : undefined
+      <BAIConfigProvider
+        renderEmpty={
+          isValidPageNumber()
+            ? undefined
+            : () => (
+                <BAIFlex
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  gap={'sm'}
+                >
+                  <BAIText type="secondary">
+                    {t('comp:BAITable.InvalidPageNumber')}
+                  </BAIText>
+                  <BAIButton
+                    type="primary"
+                    onClick={() => {
+                      setCurrentPage(1);
+                      tableProps.pagination &&
+                        tableProps.pagination.onChange?.(1, currentPageSize);
+                    }}
+                  >
+                    {t('comp:BAITable.GoToFirstPage')}
+                  </BAIButton>
+                </BAIFlex>
+              )
         }
-        style={{
-          opacity: loading ? 0.6 : 1,
-          transition: 'opacity 0.3s ease',
-        }}
-        components={
-          resizable
-            ? _.merge(components || {}, {
-                header: {
-                  cell: ResizableTitle,
-                },
-              })
-            : components
-        }
-        columns={mergedColumns}
-        {...tableProps}
-        onChange={(_pagination, _filters, sorter) => {
-          if (onChangeOrder) {
-            const nextOrder = transformSorterToOrderString(sorter);
-            if (nextOrder !== order) {
-              onChangeOrder(nextOrder);
-            }
+      >
+        <Table
+          size={tableProps.size || 'small'}
+          showSorterTooltip={false}
+          className={classNames(
+            resizable && styles.resizableTable,
+            styles.neoHeader,
+            tableProps.rowSelection?.columnWidth === 0 &&
+              styles.zeroWithSelectionColumn,
+          )}
+          loading={
+            spinnerLoading
+              ? {
+                  indicator: <LoadingOutlined spin />,
+                  spinning: true,
+                }
+              : undefined
           }
-        }}
-        pagination={
-          tableProps.pagination === false
-            ? false
-            : {
-                style: {
-                  display: 'none', // Hide default pagination as we're using custom Pagination component below
-                },
-                current: currentPage,
-                pageSize: currentPageSize,
+          style={{
+            opacity: loading ? 0.6 : 1,
+            transition: 'opacity 0.3s ease',
+          }}
+          components={
+            resizable
+              ? _.merge(components || {}, {
+                  header: {
+                    cell: ResizableTitle,
+                  },
+                })
+              : components
+          }
+          columns={mergedColumns}
+          {...tableProps}
+          onChange={(_pagination, _filters, sorter) => {
+            if (onChangeOrder) {
+              const nextOrder = transformSorterToOrderString(sorter);
+              if (nextOrder !== order) {
+                onChangeOrder(nextOrder);
               }
-        }
-      />
+            }
+          }}
+          pagination={
+            tableProps.pagination === false
+              ? false
+              : {
+                  style: {
+                    display: 'none', // Hide default pagination as we're using custom Pagination component below
+                  },
+                  current: currentPage,
+                  pageSize: currentPageSize,
+                }
+          }
+        />
+      </BAIConfigProvider>
       {tableProps.pagination !== false && (
         <BAIFlex justify="end" gap={'xs'}>
           <Pagination

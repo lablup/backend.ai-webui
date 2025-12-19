@@ -105,6 +105,8 @@
     "Unlimited": "Хязгааргүй"
   },
   "comp:BAITable": {
+    "GoToFirstPage": "Эх хуудас руу шилжих",
+    "InvalidPageNumber": "Хуудасны дугаар буруу байна",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SettingTable": "Хүснэгтийн тохиргоо"
