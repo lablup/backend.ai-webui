@@ -8,7 +8,6 @@ import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
@@ -25,6 +24,7 @@ import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import { ColumnsType, ColumnType } from 'antd/es/table';
 import {
+  useUpdatableState,
   filterOutEmpty,
   BAITable,
   BAIFlex,

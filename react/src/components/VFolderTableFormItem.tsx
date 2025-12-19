@@ -1,4 +1,3 @@
-import { useEventNotStable } from '../hooks/useEventNotStable';
 import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
@@ -7,6 +6,7 @@ import VFolderTable, {
   vFolderAliasNameRegExp,
 } from './VFolderTable';
 import { App, Form, FormItemProps, Input } from 'antd';
+import { useEventNotStable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

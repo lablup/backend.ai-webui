@@ -1,4 +1,4 @@
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
@@ -16,6 +16,7 @@ import {
   BAIFlex,
   BAIModal,
   BAITable,
+  useUpdatableState,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';

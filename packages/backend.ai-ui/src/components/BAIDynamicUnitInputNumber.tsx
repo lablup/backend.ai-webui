@@ -1,11 +1,10 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
-import useControllableState_deprecated from '../hooks/useControllableState';
-import { usePrevious } from 'ahooks';
+import { useControllableValue, usePrevious } from 'ahooks';
 import { InputNumber, InputNumberProps, Select, Typography } from 'antd';
 import _ from 'lodash';
 import React, { RefObject, useEffect, useRef } from 'react';
 
-export interface DynamicUnitInputNumberProps
+export interface BAIDynamicUnitInputNumberProps
   extends Omit<
     InputNumberProps,
     'step' | 'max' | 'min' | 'value' | 'onChange'
@@ -21,7 +20,7 @@ export interface DynamicUnitInputNumberProps
   ref?: RefObject<HTMLInputElement | null>;
 }
 
-const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
+const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   dynamicSteps = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512],
   units = ['m', 'g', 't', 'p'],
   disableAutoUnit = false,
@@ -30,11 +29,12 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   roundStep,
   ...inputNumberProps
 }) => {
-  const [value, setValue] = useControllableState_deprecated<
-    string | null | undefined
-  >(inputNumberProps, {
-    defaultValue: '0g',
-  });
+  const [value, setValue] = useControllableValue<string | null | undefined>(
+    inputNumberProps,
+    {
+      defaultValue: '0g',
+    },
+  );
   const [numValue, _unitFromValue] =
     value === null || value === undefined
       ? [null, null]
@@ -221,4 +221,4 @@ const DynamicUnitInputNumber: React.FC<DynamicUnitInputNumberProps> = ({
   );
 };
 
-export default DynamicUnitInputNumber;
+export default BAIDynamicUnitInputNumber;

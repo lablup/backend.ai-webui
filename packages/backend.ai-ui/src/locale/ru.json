@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Выберите домен"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Обновлено",
     "Refresh": "Обновить"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Успешно запросил импорт модели от обнимающегося лица",
     "Version": "Версия"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "ProjectResourcePolicy": "Политика ресурсов проекта",
+    "UpdateMultipleProjects": "Обновить несколько проектов"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Разрешённые хосты для папок",
+    "AllowedResourceGroups": "Разрешённые группы ресурсов",
+    "ContainerMustBeSpecified": "Необходимо указать реестр контейнеров для хранения образов, созданных пользователем.",
+    "ContainerRegistryForImageCommit": "Реестр контейнеров для сохранения образа",
+    "CreateProject": "Создать проект",
+    "Description": "Описание",
+    "Domain": "Домен",
+    "FailedToCreateProject": "Не удалось создать проект",
+    "FailedToUpdateProject": "Не удалось обновить проект",
+    "IsActive": "Активно?",
+    "MaxAllowedResourceSlots": "Максимально допустимо {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Объём памяти должен быть меньше 300 PiB",
+    "Name": "Имя",
+    "PleaseEnterBothRegistryAndProject": "Укажите и реестр, и проект.",
+    "Project": "Проект",
+    "ProjectCreated": "Проект создан",
+    "ProjectResourcePolicy": "Политика ресурсов",
+    "ProjectUpdated": "Проект обновлён.",
+    "Registry": "Реестр",
+    "UpdateProject": "Обновить проект"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
     "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
     "Controls": "Элементы управления",
     "CreatedAt": "Создано",
+    "Deactivate": "Деактивировать",
+    "DeactivateProject": "Деактивировать проект",
     "Description": "Описание",
     "Domain": "Домен",
-    "Inactive": "Неактивен",
-    "InactiveProject": "Неактивный проект",
+    "FailedToDeactivateProject": "Не удалось деактивировать проект.",
+    "FailedToPurgeProject": "Не удалось очистить проект.",
     "IntegrationID": "ID интеграции",
     "IsActive": "Активный",
     "Name": "Имя",
     "Project": "Проект",
+    "ProjectDeactivated": "Проект деактивирован.",
     "ProjectID": "ID проекта",
+    "ProjectPurged": "Проект был окончательно удалён.",
     "Purge": "Очистить",
     "PurgeProject": "Полностью удалить проект",
     "Registry": "Реестр",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Pull of {{version}} версия отменена успешно.",
     "WARNING": "ПРЕДУПРЕЖДЕНИЕ",
     "YouAreAboutToCancelThisVersion": "Вы собираетесь отменить эту версию"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Выберите группу ресурсов"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
@@ -193,12 +230,17 @@
       "Delete": "Удалить",
       "Expand": "Расширять",
       "Remove": "Удалять",
+      "Save": "Сохранить",
       "Upload": "Загрузить"
     },
     "modal": {
       "DeleteForeverDesc": "ВНИМАНИЕ: выбранные элементы будут удалены навсегда и не будут восстановлены.",
       "ItemSelectedWithCount": "Выбрано {{count}} элементов.",
       "PleaseTypeToConfirm": "Пожалуйста, введите {{ confirmText }} для подтверждения."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Разрешены только буквы, цифры и символы '-', '_' и '.'.",
+      "LetterNumber:/-_dot": "Разрешены только буквы (A–Z, a–z), цифры, '-', '_', ':', '/' и '.'."
     }
   }
 }

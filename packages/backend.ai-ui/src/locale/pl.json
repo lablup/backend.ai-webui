@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Pomyślnie usunięte wersje {{count}}.",
     "Version": "Wersja"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Wybierz domenę"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Ostatnia aktualizacja",
     "Refresh": "Odśwież"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Pomyślnie zażądał importu modelu z przytulania twarzy",
     "Version": "Wersja"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Poniższe foldery zostaną zaktualizowane.",
+    "ProjectResourcePolicy": "Polityka zasobów projektu",
+    "UpdateMultipleProjects": "Aktualizuj wiele projektów"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Dozwolone hosty dla folderów",
+    "AllowedResourceGroups": "Dozwolone grupy zasobów",
+    "ContainerMustBeSpecified": "Należy określić rejestr kontenerów, w którym będą przechowywane obrazy kontenerów zatwierdzane przez użytkownika.",
+    "ContainerRegistryForImageCommit": "Rejestr kontenerów do zatwierdzania obrazów",
+    "CreateProject": "Utwórz projekt",
+    "Description": "Opis",
+    "Domain": "Domena",
+    "FailedToCreateProject": "Nie udało się utworzyć projektu",
+    "FailedToUpdateProject": "Nie udało się zaktualizować projektu",
+    "IsActive": "Aktywny?",
+    "MaxAllowedResourceSlots": "Maks. dozwolone {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Rozmiar pamięci powinien być mniejszy niż 300 PiB.",
+    "Name": "Nazwa",
+    "PleaseEnterBothRegistryAndProject": "Wprowadź zarówno rejestr, jak i projekt.",
+    "Project": "Projekt",
+    "ProjectCreated": "Projekt został utworzony.",
+    "ProjectResourcePolicy": "Polityka zasobów",
+    "ProjectUpdated": "Projekt został zaktualizowany.",
+    "Registry": "Rejestr",
+    "UpdateProject": "Aktualizuj projekt"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Czy na pewno chcesz dezaktywować projekt {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Czy na pewno chcesz dezaktywować projekt {{projectName}}?",
     "AreYouSureToPurgeProject": "Czy na pewno chcesz trwale usunąć {{projectName}}? Ta operacja jest nieodwracalna.",
     "ContainerRegistry": "Rejestr kontenerów",
     "Controls": "Sterowanie",
     "CreatedAt": "Utworzono",
+    "Deactivate": "Dezaktywuj",
+    "DeactivateProject": "Dezaktywuj projekt",
     "Description": "Opis",
     "Domain": "Domena",
-    "Inactive": "Nieaktywny",
-    "InactiveProject": "Nieaktywny projekt",
+    "FailedToDeactivateProject": "Nie udało się dezaktywować projektu.",
+    "FailedToPurgeProject": "Nie udało się trwale usunąć projektu.",
     "IntegrationID": "ID integracji",
     "IsActive": "Aktywny",
     "Name": "Nazwa",
     "Project": "Projekt",
+    "ProjectDeactivated": "Projekt został dezaktywowany.",
     "ProjectID": "ID projektu",
+    "ProjectPurged": "Projekt został trwale usunięty.",
     "Purge": "Wyczyść",
     "PurgeProject": "Trwale usuń projekt",
     "Registry": "Rejestr",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Pobranie wersji {{version}} anulowano pomyślnie.",
     "WARNING": "OSTRZEŻENIE",
     "YouAreAboutToCancelThisVersion": "Masz zamiar anulować tę wersję"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Wybierz grupę zasobów"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
@@ -193,12 +230,17 @@
       "Delete": "Usuwać",
       "Expand": "Zwiększać",
       "Remove": "Usunąć",
+      "Save": "Zapisz",
       "Upload": "Wgrywać"
     },
     "modal": {
       "DeleteForeverDesc": "OSTRZEŻENIE: Wybrane elementy zostaną usunięte na zawsze i nie zostaną przywrócone.",
       "ItemSelectedWithCount": "Wybrano {{count}} elementów.",
       "PleaseTypeToConfirm": "Wpisz {{ confirmText }}, aby potwierdzić."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Dozwolone są tylko litery, cyfry oraz znaki '-', '_' i '.'.",
+      "LetterNumber:/-_dot": "Dozwolone są tylko litery (A–Z, a–z), cyfry, '-', '_', ':', '/' i '.'."
     }
   }
 }

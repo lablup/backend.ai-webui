@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Επιλέξτε τομέα"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Τελευταία ενημέρωση",
     "Refresh": "Ανανέωση"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Ζήτησε επιτυχώς εισαγωγή μοντέλου από το αγκάλιασμα πρόσωπο",
     "Version": "Εκδοχή"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
+    "ProjectResourcePolicy": "Πολιτική πόρων έργου",
+    "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Επιτρεπόμενοι hosts φακέλων",
+    "AllowedResourceGroups": "Επιτρεπόμενες ομάδες πόρων",
+    "ContainerMustBeSpecified": "Πρέπει να καθοριστεί αποθετήριο για την αποθήκευση των εικόνων κοντέινερ που προωθεί ο χρήστης.",
+    "ContainerRegistryForImageCommit": "Αποθετήριο κοντέινερ για καταχώρηση εικόνας",
+    "CreateProject": "Δημιουργία έργου",
+    "Description": "Περιγραφή",
+    "Domain": "Τομέας",
+    "FailedToCreateProject": "Αποτυχία δημιουργίας έργου",
+    "FailedToUpdateProject": "Η ενημέρωση του έργου απέτυχε",
+    "IsActive": "Είναι ενεργό;",
+    "MaxAllowedResourceSlots": "Μέγιστο επιτρεπόμενο {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Το μέγεθος μνήμης πρέπει να είναι μικρότερο από 300 PiB.",
+    "Name": "Όνομα",
+    "PleaseEnterBothRegistryAndProject": "Παρακαλώ εισάγετε τόσο το μητρώο όσο και το έργο.",
+    "Project": "Έργο",
+    "ProjectCreated": "Το έργο δημιουργήθηκε.",
+    "ProjectResourcePolicy": "Πολιτική Πόρων",
+    "ProjectUpdated": "Το έργο ενημερώθηκε.",
+    "Registry": "Μητρώο",
+    "UpdateProject": "Ενημέρωση έργου"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε το έργο {{projectName}};",
+    "AreYouSureToDeactivateProject": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε το έργο {{projectName}};",
     "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
     "Controls": "Έλεγχοι",
     "CreatedAt": "Δημιουργήθηκε στις",
+    "Deactivate": "Απενεργοποίηση",
+    "DeactivateProject": "Απενεργοποίηση έργου",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
-    "Inactive": "Ανενεργό",
-    "InactiveProject": "Ανενεργό έργο",
+    "FailedToDeactivateProject": "Η απενεργοποίηση του έργου απέτυχε.",
+    "FailedToPurgeProject": "Αποτυχία εκκαθάρισης του έργου.",
     "IntegrationID": "ID ενσωμάτωσης",
     "IsActive": "Ενεργό",
     "Name": "Όνομα",
     "Project": "Έργο",
+    "ProjectDeactivated": "Το έργο έχει απενεργοποιηθεί.",
     "ProjectID": "ID έργου",
+    "ProjectPurged": "Το projecth έχει διαγραφεί.",
     "Purge": "Εκκαθάριση",
     "PurgeProject": "Μόνιμη διαγραφή έργου",
     "Registry": "Μητρώο",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Τραβήξτε το {{version}} έκδοση ακυρώθηκε με επιτυχία.",
     "WARNING": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ",
     "YouAreAboutToCancelThisVersion": "Πρόκειται να ακυρώσετε αυτήν την έκδοση"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
@@ -193,12 +230,17 @@
       "Delete": "Διαγράφω",
       "Expand": "Διαστέλλω",
       "Remove": "Αφαιρώ",
+      "Save": "Αποθήκευση",
       "Upload": "Μεταφορτώσω"
     },
     "modal": {
       "DeleteForeverDesc": "Προειδοποίηση: Τα επιλεγμένα στοιχεία θα διαγραφούν για πάντα και δεν θα αποκατασταθούν.",
       "ItemSelectedWithCount": "{{count}} Τα επιλεγμένα στοιχεία.",
       "PleaseTypeToConfirm": "Πληκτρολογήστε {{ confirmText }} για επιβεβαίωση."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Επιτρέπονται μόνο γράμματα, αριθμοί, '-', '_' και '.'.",
+      "LetterNumber:/-_dot": "Επιτρέπονται μόνο γράμματα (A–Z, a–z), αριθμοί, '-', '_', ':', '/' και '.'."
     }
   }
 }

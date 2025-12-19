@@ -2,7 +2,6 @@ import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetter
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import HiddenFormItem from './HiddenFormItem';
-import ResourceGroupSelect from './ResourceGroupSelect';
 import {
   Button,
   Card,
@@ -16,7 +15,13 @@ import {
   theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
-import { BAICard, BAICardProps, BAIFlex, BAISelect } from 'backend.ai-ui';
+import {
+  BAICard,
+  BAICardProps,
+  BAIFlex,
+  BAISelect,
+  BAIProjectResourceGroupSelect,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
@@ -240,7 +245,7 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                             ]}
                           >
                             {getFieldValue(['owner', 'project']) ? (
-                              <ResourceGroupSelect
+                              <BAIProjectResourceGroupSelect
                                 projectName={getFieldValue([
                                   'owner',
                                   'project',

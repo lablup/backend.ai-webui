@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Chọn miền"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Cập nhật lần cuối",
     "Refresh": "Làm mới"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Yêu cầu nhập khẩu thành công mô hình từ khuôn mặt ôm",
     "Version": "Phiên bản"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
+    "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Máy chủ thư mục được cho phép",
+    "AllowedResourceGroups": "Nhóm tài nguyên được phép",
+    "ContainerMustBeSpecified": "Phải chỉ định một container registry để lưu trữ các container image do người dùng commit.",
+    "ContainerRegistryForImageCommit": "Container Registry cho việc commit image",
+    "CreateProject": "Tạo dự án",
+    "Description": "Mô tả",
+    "Domain": "Miền",
+    "FailedToCreateProject": "Không thể tạo dự án",
+    "FailedToUpdateProject": "Không thể cập nhật dự án",
+    "IsActive": "Đang hoạt động?",
+    "MaxAllowedResourceSlots": "Tối đa cho phép {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Dung lượng bộ nhớ phải nhỏ hơn 300 PiB",
+    "Name": "Tên",
+    "PleaseEnterBothRegistryAndProject": "Vui lòng nhập cả registry và dự án.",
+    "Project": "Dự án",
+    "ProjectCreated": "Dự án đã được tạo.",
+    "ProjectResourcePolicy": "Chính sách tài nguyên",
+    "ProjectUpdated": "Dự án đã được cập nhật.",
+    "Registry": "Kho lưu trữ",
+    "UpdateProject": "Cập nhật dự án"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
     "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
     "Controls": "Điều khiển",
     "CreatedAt": "Ngày tạo",
+    "Deactivate": "Vô hiệu hóa",
+    "DeactivateProject": "Vô hiệu hóa dự án",
     "Description": "Mô tả",
     "Domain": "Miền",
-    "Inactive": "Không hoạt động",
-    "InactiveProject": "Dự án không hoạt động",
+    "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
+    "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
     "IntegrationID": "ID tích hợp",
     "IsActive": "Hoạt động",
     "Name": "Tên",
     "Project": "Dự án",
+    "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
     "ProjectID": "ID dự án",
+    "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
     "Purge": "Xóa sạch",
     "PurgeProject": "Xóa vĩnh viễn dự án",
     "Registry": "Kho chứa",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Kéo phiên bản {{version}} bị hủy thành công.",
     "WARNING": "CẢNH BÁO",
     "YouAreAboutToCancelThisVersion": "Bạn sắp hủy phiên bản này"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
@@ -193,12 +230,17 @@
       "Delete": "Xóa bỏ",
       "Expand": "Mở rộng",
       "Remove": "Di dời",
+      "Save": "Lưu",
       "Upload": "Tải lên"
     },
     "modal": {
       "DeleteForeverDesc": "CẢNH BÁO: Các mục đã chọn sẽ bị xóa vĩnh viễn và không được khôi phục.",
       "ItemSelectedWithCount": "Đã chọn {{count}} mục.",
       "PleaseTypeToConfirm": "Vui lòng nhập {{ confirmText }} để xác nhận."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Chỉ cho phép chữ cái, chữ số, '-', '_' và '.'.",
+      "LetterNumber:/-_dot": "Chỉ cho phép các chữ cái (A–Z, a–z), chữ số, '-', '_', ':', '/' và '.'."
     }
   }
 }

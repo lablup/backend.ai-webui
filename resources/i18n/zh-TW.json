@@ -1100,10 +1100,13 @@
   },
   "project": {
     "Active": "啟用",
+    "BulkEdit": "批次編輯",
+    "CreateProject": "建立專案",
     "Domain": "網域",
     "Name": "名稱",
     "Project": "專案",
     "ProjectID": "專案 ID",
+    "ProjectIDFilterRuleMessage": "無效的 UUID。",
     "ResourcePolicy": "資源策略"
   },
   "registry": {

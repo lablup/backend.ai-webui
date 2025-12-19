@@ -1,10 +1,9 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useUpdatableState } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import BAIIntervalView from './BAIIntervalView';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
 import { Repeat2Icon } from 'lucide-react';

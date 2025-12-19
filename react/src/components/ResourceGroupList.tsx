@@ -4,7 +4,6 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
-import { useUpdatableState } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
@@ -28,6 +27,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
+  useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,

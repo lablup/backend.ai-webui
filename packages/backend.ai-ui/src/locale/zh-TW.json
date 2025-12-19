@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
     "Version": "版本"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "選擇網域"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "最後更新",
     "Refresh": "重新整理"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "成功要求從擁抱臉部進口模型",
     "Version": "版本"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
+    "ProjectResourcePolicy": "專案資源政策",
+    "UpdateMultipleProjects": "更新多個專案"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "允許的資料夾主機",
+    "AllowedResourceGroups": "允許的資源群組",
+    "ContainerMustBeSpecified": "必須指定容器映像註冊表以儲存使用者提交的容器映像。",
+    "ContainerRegistryForImageCommit": "映像提交的容器註冊表",
+    "CreateProject": "建立專案",
+    "Description": "描述",
+    "Domain": "網域",
+    "FailedToCreateProject": "建立專案失敗",
+    "FailedToUpdateProject": "無法更新專案",
+    "IsActive": "是否啟用？",
+    "MaxAllowedResourceSlots": "最大允許 {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "記憶體大小應小於 300 PiB",
+    "Name": "名稱",
+    "PleaseEnterBothRegistryAndProject": "請同時輸入 registry 與 project。",
+    "Project": "專案",
+    "ProjectCreated": "專案已建立",
+    "ProjectResourcePolicy": "資源策略",
+    "ProjectUpdated": "專案已更新。",
+    "Registry": "映像註冊表",
+    "UpdateProject": "更新專案"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "您確定要停用專案 {{projectName}}嗎？",
+    "AreYouSureToDeactivateProject": "您確定要停用專案 {{projectName}} 嗎？",
     "AreYouSureToPurgeProject": "您確定要清除 {{projectName}}? 此操作無法復原。",
     "ContainerRegistry": "容器映像庫",
     "Controls": "控制項",
     "CreatedAt": "建立時間",
+    "Deactivate": "停用",
+    "DeactivateProject": "停用專案",
     "Description": "描述",
     "Domain": "網域",
-    "Inactive": "不活躍",
-    "InactiveProject": "專案已停用",
+    "FailedToDeactivateProject": "無法停用專案。",
+    "FailedToPurgeProject": "無法清除專案。",
     "IntegrationID": "整合識別碼",
     "IsActive": "啟用",
     "Name": "名稱",
     "Project": "專案",
+    "ProjectDeactivated": "該專案已停用。",
     "ProjectID": "專案 ID",
+    "ProjectPurged": "專案「projecth」已被清除",
     "Purge": "清除",
     "PurgeProject": "永久刪除專案",
     "Registry": "映像註冊表",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
     "WARNING": "警告",
     "YouAreAboutToCancelThisVersion": "您即將取消此版本"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "選擇資源群組"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
@@ -193,12 +230,17 @@
       "Delete": "刪除",
       "Expand": "擴張",
       "Remove": "消除",
+      "Save": "儲存",
       "Upload": "上傳"
     },
     "modal": {
       "DeleteForeverDesc": "警告：所選項目將被永久刪除且無法恢復。",
       "ItemSelectedWithCount": "已選擇 {{count}} 項。",
       "PleaseTypeToConfirm": "請輸入{{ confirmText }}進行確認。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "僅允許字母、數字、'-'、'_' 及 '.'。",
+      "LetterNumber:/-_dot": "僅允許字母 (A–Z, a–z)、數字，以及 '-', '_', ':', '/' 和 '.'。"
     }
   }
 }

@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Selecionar Domínio"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Última atualização",
     "Refresh": "Atualizar"
@@ -84,21 +87,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Solicitou com sucesso a importação do modelo de abraçar o rosto",
     "Version": "Versão"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "ProjectResourcePolicy": "Política de Recursos do Projeto",
+    "UpdateMultipleProjects": "Atualizar vários projetos"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Hosts permitidos para pastas",
+    "AllowedResourceGroups": "Grupos de Recursos Permitidos",
+    "ContainerMustBeSpecified": "É necessário especificar um registro de contêiner para armazenar as imagens de contêiner criadas pelo usuário.",
+    "ContainerRegistryForImageCommit": "Registro de Contêiner para Commit de Imagem",
+    "CreateProject": "Criar projeto",
+    "Description": "Descrição",
+    "Domain": "Domínio",
+    "FailedToCreateProject": "Não foi possível criar o projeto",
+    "FailedToUpdateProject": "Falha ao atualizar o projeto",
+    "IsActive": "Ativo?",
+    "MaxAllowedResourceSlots": "Máximo permitido de {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "O tamanho da memória deve ser inferior a 300 PiB",
+    "Name": "Nome",
+    "PleaseEnterBothRegistryAndProject": "Por favor, insira tanto o registro quanto o projeto.",
+    "Project": "Projeto",
+    "ProjectCreated": "O projeto foi criado",
+    "ProjectResourcePolicy": "Política de Recursos",
+    "ProjectUpdated": "O projeto foi atualizado.",
+    "Registry": "Registro",
+    "UpdateProject": "Atualizar Projeto"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Tem certeza de que deseja inativar o projeto {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Tem certeza de que deseja desativar o projeto {{projectName}}?",
     "AreYouSureToPurgeProject": "Tem certeza de que deseja excluir {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
     "Controls": "Controles",
     "CreatedAt": "Criado em",
+    "Deactivate": "Desativar",
+    "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "Inactive": "Inativo",
-    "InactiveProject": "Projeto inativo",
+    "FailedToDeactivateProject": "Falha ao desativar o projeto.",
+    "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
     "IsActive": "Ativo",
     "Name": "Nome",
     "Project": "Projeto",
+    "ProjectDeactivated": "O projeto foi desativado.",
     "ProjectID": "ID do projeto",
+    "ProjectPurged": "O projeto foi excluído permanentemente.",
     "Purge": "Limpar",
     "PurgeProject": "Excluir projeto",
     "Registry": "Registro",
@@ -120,6 +154,9 @@
     "VersionPullCanceledSuccessfully": "Pull da versão {{version}} cancelada com sucesso.",
     "WARNING": "AVISO",
     "YouAreAboutToCancelThisVersion": "Você está prestes a cancelar esta versão"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Selecionar grupo de recursos"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
@@ -192,12 +229,17 @@
       "Delete": "Excluir",
       "Expand": "Expandir",
       "Remove": "Remover",
+      "Save": "Salvar",
       "Upload": "Carregar"
     },
     "modal": {
       "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos permanentemente e não serão restaurados.",
       "ItemSelectedWithCount": "{{count}} itens selecionados.",
       "PleaseTypeToConfirm": "Digite {{ confirmText }} para confirmar."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Somente letras, números, '-', '_' e '.' são permitidos.",
+      "LetterNumber:/-_dot": "Apenas letras (A–Z, a–z), números, '-', '_', ':', '/' e '.' são permitidos."
     }
   }
 }

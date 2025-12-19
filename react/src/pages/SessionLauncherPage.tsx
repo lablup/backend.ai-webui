@@ -29,11 +29,7 @@ import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import { formatDuration, convertToBinaryUnit } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
@@ -77,6 +73,7 @@ import {
   generateRandomString,
   useBAILogger,
   BAIResourceNumberWithIcon,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';

@@ -9,7 +9,7 @@ import {
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
   transformSorterToOrderString,
-} from '.';
+} from './index';
 import { describe, it, expect, test } from '@jest/globals';
 
 describe('transformSorterToOrderString', () => {

@@ -11,7 +11,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -41,6 +41,7 @@ import {
   BAIFlexProps,
   BAIText,
   ResourceTypeIcon,
+  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

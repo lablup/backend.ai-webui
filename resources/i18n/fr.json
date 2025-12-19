@@ -1101,10 +1101,13 @@
   },
   "project": {
     "Active": "Actif",
+    "BulkEdit": "Modification groupée",
+    "CreateProject": "Créer un projet",
     "Domain": "Domaine",
     "Name": "Nom",
     "Project": "Projet",
     "ProjectID": "ID du projet",
+    "ProjectIDFilterRuleMessage": "UUID invalide.",
     "ResourcePolicy": "Politique de ressources"
   },
   "registry": {

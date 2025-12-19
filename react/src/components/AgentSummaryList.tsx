@@ -8,7 +8,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -31,6 +31,7 @@ import {
   BAIPropertyFilter,
   mergeFilterValues,
   ResourceTypeIcon,
+  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useMemo } from 'react';

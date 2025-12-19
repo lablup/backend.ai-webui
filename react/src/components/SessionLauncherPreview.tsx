@@ -9,7 +9,6 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
-import BAIAlert from './BAIAlert';
 import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
@@ -31,7 +30,7 @@ import {
   Button,
   App,
 } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { BAIAlert, BAICard, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';

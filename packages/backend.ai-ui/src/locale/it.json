@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Rimosse correttamente {{count}} versioni.",
     "Version": "Versione"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Seleziona dominio"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Ultimo aggiornamento",
     "Refresh": "Aggiorna"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Ha richiesto con successo l'importazione di modello da abbraccio",
     "Version": "Versione"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "La cartella o le cartelle seguenti verranno aggiornate.",
+    "ProjectResourcePolicy": "Politica delle risorse del progetto",
+    "UpdateMultipleProjects": "Aggiorna più progetti"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Host autorizzati per le cartelle",
+    "AllowedResourceGroups": "Gruppi di risorse consentiti",
+    "ContainerMustBeSpecified": "È necessario specificare un registro dei container per archiviare le immagini dei container create dall'utente.",
+    "ContainerRegistryForImageCommit": "Registro dei container per il commit delle immagini",
+    "CreateProject": "Crea progetto",
+    "Description": "Descrizione",
+    "Domain": "Dominio",
+    "FailedToCreateProject": "Impossibile creare il progetto",
+    "FailedToUpdateProject": "Impossibile aggiornare il progetto",
+    "IsActive": "È attivo?",
+    "MaxAllowedResourceSlots": "Massimo consentito per {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "La dimensione della memoria deve essere inferiore a 300 PiB",
+    "Name": "Nome",
+    "PleaseEnterBothRegistryAndProject": "Inserisci sia il registro che il progetto.",
+    "Project": "Progetto",
+    "ProjectCreated": "Il progetto è stato creato.",
+    "ProjectResourcePolicy": "Politica delle risorse",
+    "ProjectUpdated": "Il progetto è stato aggiornato.",
+    "Registry": "Registro",
+    "UpdateProject": "Aggiorna progetto"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Sei sicuro di voler disattivare il progetto {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Sei sicuro di voler disattivare il progetto {{projectName}}?",
     "AreYouSureToPurgeProject": "Sei sicuro di voler eliminare {{projectName}}? Questa azione è irreversibile.",
     "ContainerRegistry": "Registro dei container",
     "Controls": "Controlli",
     "CreatedAt": "Creato il",
+    "Deactivate": "Disattiva",
+    "DeactivateProject": "Disattiva progetto",
     "Description": "Descrizione",
     "Domain": "Dominio",
-    "Inactive": "Inattivo",
-    "InactiveProject": "Progetto inattivo",
+    "FailedToDeactivateProject": "Impossibile disattivare il progetto.",
+    "FailedToPurgeProject": "Impossibile eliminare definitivamente il progetto.",
     "IntegrationID": "ID integrazione",
     "IsActive": "Attivo",
     "Name": "Nome",
     "Project": "Progetto",
+    "ProjectDeactivated": "Il progetto è stato disattivato.",
     "ProjectID": "ID progetto",
+    "ProjectPurged": "Il progetto è stato eliminato.",
     "Purge": "Svuota",
     "PurgeProject": "Elimina definitivamente il progetto",
     "Registry": "Registro",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Pull of {{versione}} versione cancellata correttamente.",
     "WARNING": "AVVERTIMENTO",
     "YouAreAboutToCancelThisVersion": "Stai per annullare questa versione"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Seleziona gruppo di risorse"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
@@ -193,12 +230,17 @@
       "Delete": "Eliminare",
       "Expand": "Espandere",
       "Remove": "Rimuovere",
+      "Save": "Salva",
       "Upload": "Caricamento"
     },
     "modal": {
       "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non verranno ripristinati.",
       "ItemSelectedWithCount": "{{count}} elementi selezionati.",
       "PleaseTypeToConfirm": "Digita {{ confirmText }} per confermare."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Sono ammessi solo caratteri: lettere, numeri, '-', '_' e '.'.",
+      "LetterNumber:/-_dot": "Sono consentiti solo i caratteri: lettere (A–Z, a–z), numeri, '-', '_', ':', '/' e '.'."
     }
   }
 }

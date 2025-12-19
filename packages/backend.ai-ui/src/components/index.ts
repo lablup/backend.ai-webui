@@ -64,6 +64,15 @@ export {
 } from './BAIResourceNumberWithIcon';
 export type { BAIResourceNumberWithIconProps } from './BAIResourceNumberWithIcon';
 export { default as BAINumberWithUnit } from './BAINumberWithUnit';
+export { default as BAIAllowedHostNamesSelect } from './BAIAllowedHostNamesSelect';
+export { default as BAIDynamicUnitInputNumber } from './BAIDynamicUnitInputNumber';
+export type { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber';
+export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnitInputNumberWithSlider';
+export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
+export { default as BAIAlert } from './BAIAlert';
+export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';
+export { default as BAITextHighlighter } from './BAITextHighlighter';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

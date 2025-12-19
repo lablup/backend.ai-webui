@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Select Domain"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Last Updated",
     "Refresh": "Refresh"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Successfully requested import of model from Hugging Face",
     "Version": "Version"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "ProjectResourcePolicy": "Project Resource Policy",
+    "UpdateMultipleProjects": "Update Multiple Projects"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Allowed Folder Hosts",
+    "AllowedResourceGroups": "Allowed Resource Groups",
+    "ContainerMustBeSpecified": "A container registry must be specified to store container images committed by the user.",
+    "ContainerRegistryForImageCommit": "Container Registry for Image Commit",
+    "CreateProject": "Create Project",
+    "Description": "Description",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Failed to create a project",
+    "FailedToUpdateProject": "Failed to update a project",
+    "IsActive": "Is Active?",
+    "MaxAllowedResourceSlots": "Max allowed {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Memory size should be less than 300 PiB",
+    "Name": "Name",
+    "PleaseEnterBothRegistryAndProject": "Please enter both the registry and project.",
+    "Project": "Project",
+    "ProjectCreated": "The project has been created",
+    "ProjectResourcePolicy": "Resource Policy",
+    "ProjectUpdated": "The project has been updated.",
+    "Registry": "Registry",
+    "UpdateProject": "Update Project"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Are you sure to inactivate project {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Are you sure to deactivate project {{projectName}}?",
     "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
     "Controls": "Controls",
     "CreatedAt": "Created At",
+    "Deactivate": "Deactivate",
+    "DeactivateProject": "Deactivate Project",
     "Description": "Description",
     "Domain": "Domain",
-    "Inactive": "Inactive",
-    "InactiveProject": "Inactive Project",
+    "FailedToDeactivateProject": "Failed to deactivate the project.",
+    "FailedToPurgeProject": "Failed to purge the project.",
     "IntegrationID": "Integration ID",
     "IsActive": "Active",
     "Name": "Name",
     "Project": "Project",
+    "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
+    "ProjectPurged": "The projecth has been purged",
     "Purge": "Purge",
     "PurgeProject": "Purge Project",
     "Registry": "Registry",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Pull of {{version}} version canceled successfully.",
     "WARNING": "WARNING",
     "YouAreAboutToCancelThisVersion": "You are about to cancel this version"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Select Resource Group"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
@@ -196,12 +233,17 @@
       "Delete": "Delete",
       "Expand": "Expand",
       "Remove": "Remove",
+      "Save": "Save",
       "Upload": "Upload"
     },
     "modal": {
       "DeleteForeverDesc": "WARNING: Selected items will be deleted forever and won't be restored.",
       "ItemSelectedWithCount": "{{count}} items selected.",
       "PleaseTypeToConfirm": "Please type {{ confirmText }} to confirm."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Only letters, numbers, '-', '_', and '.' are allowed.",
+      "LetterNumber:/-_dot": "Only letters (A–Z, a–z), numbers, '-', '_', ':', '/' and '.' are allowed."
     }
   }
 }

@@ -9,6 +9,10 @@ export interface BAIClient {
     info: (name: string) => Promise<vfolderInfo>;
     list: (path: string) => Promise<any>;
     list_hosts: () => Promise<VFolderHosts>;
+    list_all_hosts: () => Promise<{
+      allowed: Array<string>;
+      default: string;
+    }>;
     list_files: (
       path: string,
       id: string,

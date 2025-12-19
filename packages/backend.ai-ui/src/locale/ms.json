@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Pilih Domain"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Dikemaskini terakhir",
     "Refresh": "Segarkan"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Berjaya meminta import model dari memeluk muka",
     "Version": "Versi"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
+    "ProjectResourcePolicy": "Polisi Sumber Projek",
+    "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Hos Dibenarkan untuk Folder",
+    "AllowedResourceGroups": "Kumpulan Sumber yang Dibenarkan",
+    "ContainerMustBeSpecified": "Registri kontena perlu ditentukan untuk menyimpan imej kontena yang dikomit oleh pengguna.",
+    "ContainerRegistryForImageCommit": "Registri Kontena untuk Commit Imej",
+    "CreateProject": "Cipta Projek",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Gagal membuat projek",
+    "FailedToUpdateProject": "Gagal mengemas kini projek",
+    "IsActive": "Aktif?",
+    "MaxAllowedResourceSlots": "Had maksimum untuk {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Saiz memori mesti kurang daripada 300 PiB",
+    "Name": "Nama",
+    "PleaseEnterBothRegistryAndProject": "Sila masukkan kedua-dua registri dan projek.",
+    "Project": "Projek",
+    "ProjectCreated": "Projek telah berjaya dibuat",
+    "ProjectResourcePolicy": "Dasar Sumber",
+    "ProjectUpdated": "Projek telah dikemas kini.",
+    "Registry": "Registry",
+    "UpdateProject": "Kemas kini Projek"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Adakah anda pasti mahu menyahaktifkan projek {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Adakah anda pasti mahu nyahaktifkan projek {{projectName}}?",
     "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
     "ContainerRegistry": "Registri Kontena",
     "Controls": "Kawalan",
     "CreatedAt": "Dibuat pada",
+    "Deactivate": "Nyahaktifkan",
+    "DeactivateProject": "Nyahaktifkan Projek",
     "Description": "Keterangan",
     "Domain": "Domain",
-    "Inactive": "Tidak aktif",
-    "InactiveProject": "Projek Tidak Aktif",
+    "FailedToDeactivateProject": "Gagal menyahaktifkan projek.",
+    "FailedToPurgeProject": "Gagal memadam projek.",
     "IntegrationID": "ID Integrasi",
     "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Projek",
+    "ProjectDeactivated": "Projek ini telah dinyahaktifkan.",
     "ProjectID": "ID Projek",
+    "ProjectPurged": "Projek telah dipadam",
     "Purge": "Padam",
     "PurgeProject": "Padam Projek",
     "Registry": "Registri",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Tarik versi {{version}} dibatalkan dengan jayanya.",
     "WARNING": "Amaran",
     "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Pilih Kumpulan Sumber"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
@@ -193,12 +230,17 @@
       "Delete": "Padam",
       "Expand": "Berkembang",
       "Remove": "Keluarkan",
+      "Save": "Simpan",
       "Upload": "Muat naik"
     },
     "modal": {
       "DeleteForeverDesc": "Amaran: Item terpilih akan dipadamkan selama -lamanya dan tidak akan dipulihkan.",
       "ItemSelectedWithCount": "{{Count}} Item dipilih.",
       "PleaseTypeToConfirm": "Sila taipkan {{ confirmText }} untuk mengesahkan."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Hanya huruf, nombor, '-', '_' dan '.' dibenarkan.",
+      "LetterNumber:/-_dot": "Hanya huruf (A–Z, a–z), nombor, '-', '_', ':', '/' dan '.' dibenarkan."
     }
   }
 }

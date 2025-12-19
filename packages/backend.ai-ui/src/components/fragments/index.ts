@@ -55,3 +55,12 @@ export {
 export type { BAIProjectTableProps } from './BAIProjectTable';
 export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
 export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
+export { default as BAIDomainSelector } from './BAIDomainSelector';
+export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
+export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
+export { default as BAIProjectResourcePolicySelector } from './BAIProjectResourcePolicySelector';
+export type { BAIProjectResourcePolicySelectorProps } from './BAIProjectResourcePolicySelector';
+export { default as BAIResourceGroupSelect } from './BAIResourceGroupSelect';
+export type { BAIResourceGroupSelectProps } from './BAIResourceGroupSelect';
+export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
+export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';

@@ -1,5 +1,4 @@
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
-import { useUpdatableState } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import PureChatHeader from './ChatHeader';
@@ -25,7 +24,12 @@ import {
 } from 'ai';
 import { Alert, App, Card, CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAILogger, useBAILogger } from 'backend.ai-ui';
+import {
+  BAILogger,
+  useBAILogger,
+  useEventNotStable,
+  useUpdatableState,
+} from 'backend.ai-ui';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, {
@@ -38,7 +42,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useEventNotStable } from 'src/hooks/useEventNotStable';
 
 interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   chat: ChatData;

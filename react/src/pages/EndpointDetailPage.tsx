@@ -19,11 +19,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -61,6 +57,7 @@ import {
   BAIUnmountAfterClose,
   BAIText,
   BAIResourceNumberWithIcon,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';

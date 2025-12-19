@@ -1,13 +1,13 @@
-// Button.stories.ts|tsx
-import DynamicUnitInputNumberWithSlider, {
-  DynamicUnitInputNumberWithSliderProps,
-} from './DynamicUnitInputNumberWithSlider';
-import type { Meta, StoryObj } from '@storybook/react';
+import {
+  BAIDynamicUnitInputNumberWithSlider,
+  BAIDynamicUnitInputNumberWithSliderProps,
+} from '.';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Form } from 'antd';
 
-const meta: Meta<typeof DynamicUnitInputNumberWithSlider> = {
-  title: 'Input/DynamicUnitInputNumberWithSlider',
-  component: DynamicUnitInputNumberWithSlider,
+const meta: Meta<typeof BAIDynamicUnitInputNumberWithSlider> = {
+  title: 'Components/Input/DynamicUnitInputNumberWithSlider',
+  component: BAIDynamicUnitInputNumberWithSlider,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
     layout: 'centered',
@@ -16,12 +16,12 @@ const meta: Meta<typeof DynamicUnitInputNumberWithSlider> = {
 
 export default meta;
 
-type Story = StoryObj<typeof DynamicUnitInputNumberWithSlider>;
+type Story = StoryObj<typeof BAIDynamicUnitInputNumberWithSlider>;
 
 const renderWithFormItem = ({
   value,
   ...args
-}: DynamicUnitInputNumberWithSliderProps) => {
+}: BAIDynamicUnitInputNumberWithSliderProps) => {
   return (
     <Form
       initialValues={{
@@ -29,7 +29,7 @@ const renderWithFormItem = ({
       }}
     >
       <Form.Item name="mem">
-        <DynamicUnitInputNumberWithSlider {...args} />
+        <BAIDynamicUnitInputNumberWithSlider {...args} />
       </Form.Item>
     </Form>
   );

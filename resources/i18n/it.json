@@ -1099,10 +1099,13 @@
   },
   "project": {
     "Active": "Attivo",
+    "BulkEdit": "Modifica in blocco",
+    "CreateProject": "Crea progetto",
     "Domain": "Dominio",
     "Name": "Nome",
     "Project": "Progetto",
     "ProjectID": "ID progetto",
+    "ProjectIDFilterRuleMessage": "UUID non valido.",
     "ResourcePolicy": "Politica delle risorse"
   },
   "registry": {

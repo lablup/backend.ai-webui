@@ -1,4 +1,3 @@
-import { useUpdatableState } from '../hooks';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   InputNumber,
@@ -8,7 +7,7 @@ import {
   GetRef,
 } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
-import { BAIFlex } from 'backend.ai-ui';
+import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 

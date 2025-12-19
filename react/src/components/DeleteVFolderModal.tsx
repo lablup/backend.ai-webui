@@ -2,9 +2,9 @@ import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderMo
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIAlert from './BAIAlert';
 import { Typography, message, theme } from 'antd';
 import {
+  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,

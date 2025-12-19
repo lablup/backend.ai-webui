@@ -13,11 +13,7 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import {
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useToggle } from 'ahooks';
 import {
@@ -42,6 +38,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, {

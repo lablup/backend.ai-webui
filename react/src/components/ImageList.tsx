@@ -10,7 +10,6 @@ import {
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
-  useUpdatableState,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import DoubleTag from './DoubleTag';
@@ -36,6 +35,7 @@ import {
   BAIFlex,
   BAITable,
   BAIResourceNumberWithIcon,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';

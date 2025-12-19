@@ -161,6 +161,7 @@
     "@types/relay-test-utils": "^19.0.0",
     "@vitejs/plugin-react": "^4.7.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
@@ -195,7 +196,8 @@
             "jsx": "react-jsx"
           }
         }
-      ]
+      ],
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
     },
     "setupFilesAfterEnv": [
       "./setupTests.ts"

@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "选择域"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "最后更新",
     "Refresh": "刷新"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "成功要求从拥抱脸部进口模型",
     "Version": "版本"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
+    "ProjectResourcePolicy": "项目资源策略",
+    "UpdateMultipleProjects": "批量更新项目"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "允许的文件夹主机",
+    "AllowedResourceGroups": "允许的资源组",
+    "ContainerMustBeSpecified": "必须指定一个容器镜像仓库来存储用户提交的容器镜像。",
+    "ContainerRegistryForImageCommit": "用于提交镜像的容器镜像仓库",
+    "CreateProject": "创建项目",
+    "Description": "描述",
+    "Domain": "域",
+    "FailedToCreateProject": "创建项目失败",
+    "FailedToUpdateProject": "更新项目失败",
+    "IsActive": "是否启用？",
+    "MaxAllowedResourceSlots": "允许的最大{{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "内存大小应小于 300 PiB。",
+    "Name": "名称",
+    "PleaseEnterBothRegistryAndProject": "请同时输入镜像仓库和项目。",
+    "Project": "项目",
+    "ProjectCreated": "项目已创建",
+    "ProjectResourcePolicy": "资源策略",
+    "ProjectUpdated": "项目已更新。",
+    "Registry": "镜像仓库",
+    "UpdateProject": "更新项目"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "确定要停用项目 {{projectName}} 吗？",
+    "AreYouSureToDeactivateProject": "您确定要停用项目 {{projectName}} 吗？",
     "AreYouSureToPurgeProject": "确定要永久清除 {{projectName}}? 此操作不可恢复。",
     "ContainerRegistry": "容器镜像仓库",
     "Controls": "控制",
     "CreatedAt": "创建时间",
+    "Deactivate": "停用",
+    "DeactivateProject": "停用项目",
     "Description": "描述",
     "Domain": "域",
-    "Inactive": "已停用",
-    "InactiveProject": "已停用项目",
+    "FailedToDeactivateProject": "无法停用该项目。",
+    "FailedToPurgeProject": "无法清除该项目。",
     "IntegrationID": "集成 ID",
     "IsActive": "活跃",
     "Name": "名称",
     "Project": "项目",
+    "ProjectDeactivated": "该项目已被停用。",
     "ProjectID": "项目 ID",
+    "ProjectPurged": "项目 \"projecth\" 已被清除",
     "Purge": "清除",
     "PurgeProject": "永久删除项目",
     "Registry": "镜像仓库",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
     "WARNING": "警告",
     "YouAreAboutToCancelThisVersion": "您即将取消此版本"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "选择资源组"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
@@ -193,12 +230,17 @@
       "Delete": "删除",
       "Expand": "扩张",
       "Remove": "消除",
+      "Save": "保存",
       "Upload": "上传"
     },
     "modal": {
       "DeleteForeverDesc": "警告：所选项目将被永久删除且无法恢复。",
       "ItemSelectedWithCount": "已选择 {{count}} 项。",
       "PleaseTypeToConfirm": "请输入{{ confirmText }}进行确认。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "仅允许字母、数字、'-'、'_' 和 '.'。",
+      "LetterNumber:/-_dot": "仅允许字母 (A–Z、a–z)、数字、'-'、'_'、':'、'/' 和 '.'。"
     }
   }
 }

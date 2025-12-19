@@ -1,5 +1,5 @@
-import { useUpdatableState } from '.';
 import { useTanQuery } from './reactQueryAlias';
+import { useUpdatableState } from 'backend.ai-ui';
 import { useCallback } from 'react';
 
 export interface AIAgentMeta {

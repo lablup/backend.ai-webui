@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Etki Alanı Seçin"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Son güncelleme",
     "Refresh": "Yenile"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Sarılma yüzünden başarılı bir şekilde model ithalatını istedi",
     "Version": "Versiyon"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
+    "ProjectResourcePolicy": "Proje Kaynak Politikası",
+    "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "İzin Verilen Klasör Sunucuları",
+    "AllowedResourceGroups": "İzin Verilen Kaynak Grupları",
+    "ContainerMustBeSpecified": "Kullanıcının commit ettiği konteyner imajlarını depolamak için bir konteyner kayıt deposu belirtilmelidir.",
+    "ContainerRegistryForImageCommit": "Görüntü commit işlemi için konteyner kayıt defteri",
+    "CreateProject": "Proje Oluştur",
+    "Description": "Açıklama",
+    "Domain": "Etki Alanı",
+    "FailedToCreateProject": "Proje oluşturulamadı",
+    "FailedToUpdateProject": "Proje güncellenemedi",
+    "IsActive": "Etkin mi?",
+    "MaxAllowedResourceSlots": "İzin verilen maksimum {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Bellek boyutu 300 PiB'den az olmalıdır",
+    "Name": "Ad",
+    "PleaseEnterBothRegistryAndProject": "Lütfen hem kayıt defterini hem de projeyi girin.",
+    "Project": "Proje",
+    "ProjectCreated": "Proje oluşturuldu.",
+    "ProjectResourcePolicy": "Kaynak Politikası",
+    "ProjectUpdated": "Proje güncellendi.",
+    "Registry": "Kayıt Deposu",
+    "UpdateProject": "Projeyi Güncelle"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "{{projectName}} projesini devre dışı bırakmak istediğinizden emin misiniz?",
+    "AreYouSureToDeactivateProject": "Proje {{projectName}}'i devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "Controls": "Kontroller",
     "CreatedAt": "Oluşturulma Tarihi",
+    "Deactivate": "Devre dışı bırak",
+    "DeactivateProject": "Projeyi devre dışı bırak",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "Inactive": "Etkin değil",
-    "InactiveProject": "Etkin Olmayan Proje",
+    "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",
+    "FailedToPurgeProject": "Proje temizlenemedi.",
     "IntegrationID": "Entegrasyon Kimliği",
     "IsActive": "Aktif",
     "Name": "Ad",
     "Project": "Proje",
+    "ProjectDeactivated": "Proje devre dışı bırakıldı.",
     "ProjectID": "Proje Kimliği",
+    "ProjectPurged": "Proje kalıcı olarak silindi.",
     "Purge": "Temizle",
     "PurgeProject": "Projeyi Temizle",
     "Registry": "Kayıt Deposu",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}} sürümünün çekilmesi başarıyla iptal edildi.",
     "WARNING": "UYARI",
     "YouAreAboutToCancelThisVersion": "Bu sürümü iptal etmek üzeresiniz"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Kaynak Grubu Seç"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
@@ -188,12 +225,17 @@
       "Delete": "Silmek",
       "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
+      "Save": "Kaydet",
       "Upload": "Yüklemek"
     },
     "modal": {
       "DeleteForeverDesc": "UYARI: Seçilen öğeler kalıcı olarak silinecek ve geri yüklenmeyecektir.",
       "ItemSelectedWithCount": "{{count}} öğe seçildi.",
       "PleaseTypeToConfirm": "Lütfen onaylamak için {{ confirmText }} yazın."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Yalnızca harfler, rakamlar, '-', '_' ve '.' kullanılabilir.",
+      "LetterNumber:/-_dot": "Sadece harfler (A–Z, a–z), rakamlar, '-', '_', ':', '/' ve '.' kullanılabilir."
     }
   }
 }

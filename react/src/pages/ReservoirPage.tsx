@@ -1,4 +1,4 @@
-import { INITIAL_FETCH_KEY, useUpdatableState } from '../hooks';
+import { INITIAL_FETCH_KEY } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useToggle } from 'ahooks';
 import {
@@ -27,6 +27,7 @@ import {
   BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAIImportFromHuggingFaceModal,
   toLocalId,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';

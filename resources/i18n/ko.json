@@ -1104,10 +1104,13 @@
   },
   "project": {
     "Active": "활성",
+    "BulkEdit": "일괄 수정",
+    "CreateProject": "프로젝트 생성",
     "Domain": "도메인",
     "Name": "이름",
     "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
+    "ProjectIDFilterRuleMessage": "잘못된 UUID입니다.",
     "ResourcePolicy": "자원 정책"
   },
   "registry": {

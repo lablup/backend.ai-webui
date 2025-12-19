@@ -1101,10 +1101,13 @@
   },
   "project": {
     "Active": "Aktif",
+    "BulkEdit": "Toplu Düzenle",
+    "CreateProject": "Proje Oluştur",
     "Domain": "Etki Alanı",
     "Name": "Ad",
     "Project": "Proje",
     "ProjectID": "Proje Kimliği",
+    "ProjectIDFilterRuleMessage": "Geçersiz UUID.",
     "ResourcePolicy": "Kaynak Politikası"
   },
   "registry": {

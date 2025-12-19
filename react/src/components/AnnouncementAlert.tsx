@@ -1,7 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import BAIAlert, { BAIAlertProps } from './BAIAlert';
 import { theme } from 'antd';
+import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';

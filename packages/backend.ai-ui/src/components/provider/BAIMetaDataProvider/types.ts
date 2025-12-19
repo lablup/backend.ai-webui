@@ -1,17 +1,7 @@
+import { ResourceSlotDetail } from '../../../hooks';
+
 export type DeviceMetaData = {
   [name: string]: ResourceSlotDetail | undefined;
-};
-
-export type ResourceSlotDetail = {
-  slot_name: string;
-  description: string;
-  human_readable_name: string;
-  display_unit: string;
-  number_format: {
-    binary: boolean;
-    round_length: number;
-  };
-  display_icon: string;
 };
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;

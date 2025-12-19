@@ -1,10 +1,9 @@
-import { useBaiSignedRequestWithPromise } from '../helper';
-import { useUpdatableState } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import useControllableState_deprecated from '../hooks/useControllableState';
-import TextHighlighter from './TextHighlighter';
+import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
+import { useBAISignedRequestWithPromise, useUpdatableState } from '../hooks';
+import BAISelect, { BAISelectProps } from './BAISelect';
+import BAITextHighlighter from './BAITextHighlighter';
+import { useControllableValue } from 'ahooks';
 import { SelectProps } from 'antd';
-import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 
@@ -21,13 +20,15 @@ interface VolumeInfo {
   sftp_scaling_groups?: string[];
 }
 
-interface ResourceGroupSelectProps extends BAISelectProps {
+interface BAIProjectResourceGroupSelectProps extends BAISelectProps {
   projectName: string;
   autoSelectDefault?: boolean;
   filter?: (projectName: string) => boolean;
 }
 
-const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
+const BAIProjectResourceGroupSelect: React.FC<
+  BAIProjectResourceGroupSelectProps
+> = ({
   projectName,
   autoSelectDefault,
   filter,
@@ -36,16 +37,16 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   loading,
   ...selectProps
 }) => {
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiRequestWithPromise = useBAISignedRequestWithPromise();
   const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState_deprecated<string>({
+    useControllableValue<string>({
       value: searchValue,
       onChange: onSearch,
     });
 
   const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
-    useControllableState_deprecated(selectProps);
+    useControllableValue(selectProps);
   const [isPendingChangeTransition, startChangeTransition] = useTransition();
 
   const [optimisticValue, setOptimisticValue] = useState();
@@ -169,9 +170,9 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
       })}
       optionRender={(option) => {
         return (
-          <TextHighlighter keyword={controllableSearchValue}>
+          <BAITextHighlighter keyword={controllableSearchValue}>
             {option.data.value?.toString()}
-          </TextHighlighter>
+          </BAITextHighlighter>
         );
       }}
       {...selectProps}
@@ -181,4 +182,4 @@ const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = ({
   );
 };
 
-export default ResourceGroupSelect;
+export default BAIProjectResourceGroupSelect;

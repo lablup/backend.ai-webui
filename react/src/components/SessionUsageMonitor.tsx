@@ -4,11 +4,15 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  useResourceSlotsDetails,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';

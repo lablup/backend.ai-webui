@@ -1106,10 +1106,13 @@
   },
   "project": {
     "Active": "Active",
+    "BulkEdit": "Bulk Edit",
+    "CreateProject": "Create Project",
     "Domain": "Domain",
     "Name": "Name",
     "Project": "Project",
     "ProjectID": "Project ID",
+    "ProjectIDFilterRuleMessage": "Invalid UUID.",
     "ResourcePolicy": "Resource Policy"
   },
   "registry": {

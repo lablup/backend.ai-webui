@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "เลือกโดเมน"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "อัปเดตล่าสุด",
     "Refresh": "รีเฟรช"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "ร้องขอการนำเข้าโมเดลจากการกอดอย่างประสบความสำเร็จ",
     "Version": "รุ่น"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
+    "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
+    "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "โฮสต์ที่อนุญาตสำหรับโฟลเดอร์",
+    "AllowedResourceGroups": "กลุ่มทรัพยากรที่ได้รับอนุญาต",
+    "ContainerMustBeSpecified": "ต้องระบุรีจิสทรีของคอนเทนเนอร์เพื่อเก็บอิมเมจคอนเทนเนอร์ที่ผู้ใช้คอมมิต",
+    "ContainerRegistryForImageCommit": "รีจิสทรีคอนเทนเนอร์สำหรับการคอมมิตอิมเมจ",
+    "CreateProject": "สร้างโปรเจกต์",
+    "Description": "คำอธิบาย",
+    "Domain": "โดเมน",
+    "FailedToCreateProject": "ไม่สามารถสร้างโปรเจกต์ได้",
+    "FailedToUpdateProject": "ไม่สามารถอัปเดตโปรเจ็กต์ได้",
+    "IsActive": "ใช้งานอยู่หรือไม่?",
+    "MaxAllowedResourceSlots": "สูงสุดที่อนุญาตสำหรับ {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "ขนาดหน่วยความจำควรน้อยกว่า 300 PiB",
+    "Name": "ชื่อ",
+    "PleaseEnterBothRegistryAndProject": "กรุณากรอกทั้งรีจิสทรีและโปรเจกต์",
+    "Project": "โครงการ",
+    "ProjectCreated": "สร้างโครงการเรียบร้อยแล้ว",
+    "ProjectResourcePolicy": "นโยบายทรัพยากร",
+    "ProjectUpdated": "โปรเจกต์ได้รับการอัปเดตแล้ว.",
+    "Registry": "รีจิสทรี",
+    "UpdateProject": "อัปเดตโปรเจกต์"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "คุณแน่ใจว่าต้องการปิดใช้งานโครงการ {{projectName}} หรือไม่?",
+    "AreYouSureToDeactivateProject": "คุณแน่ใจว่าต้องการปิดใช้งานโปรเจ็กต์ {{projectName}}?",
     "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "Controls": "การควบคุม",
     "CreatedAt": "สร้างเมื่อ",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateProject": "ปิดการใช้งานโครงการ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
-    "Inactive": "ไม่ได้ใช้งาน",
-    "InactiveProject": "โปรเจกต์ที่ไม่ใช้งาน",
+    "FailedToDeactivateProject": "ไม่สามารถปิดใช้งานโปรเจ็กต์ได้",
+    "FailedToPurgeProject": "ไม่สามารถล้างโปรเจกต์ได้",
     "IntegrationID": "รหัสการผสานระบบ",
     "IsActive": "ใช้งาน",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
+    "ProjectDeactivated": "โครงการถูกปิดการใช้งานแล้ว",
     "ProjectID": "รหัสโครงการ",
+    "ProjectPurged": "โครงการถูกลบอย่างถาวร",
     "Purge": "ลบถาวร",
     "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "Registry": "รีจิสทรี",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "ดึง {{version}} ยกเลิกเวอร์ชันสำเร็จ",
     "WARNING": "คำเตือน",
     "YouAreAboutToCancelThisVersion": "คุณกำลังจะยกเลิกเวอร์ชันนี้"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
@@ -193,12 +230,17 @@
       "Delete": "ลบ",
       "Expand": "ขยาย",
       "Remove": "ลบ",
+      "Save": "บันทึก",
       "Upload": "อัพโหลด"
     },
     "modal": {
       "DeleteForeverDesc": "คำเตือน: รายการที่เลือกจะถูกลบถาวรและไม่สามารถกู้คืนได้",
       "ItemSelectedWithCount": "เลือกแล้ว {{count}} รายการ",
       "PleaseTypeToConfirm": "กรุณาพิมพ์ {{ confirmText }} เพื่อยืนยัน"
+    },
+    "validation": {
+      "LetterNumber-_dot": "อนุญาตให้ใช้ได้เฉพาะตัวอักษร ตัวเลข '-' '_' และ '.' เท่านั้น",
+      "LetterNumber:/-_dot": "อนุญาตเฉพาะตัวอักษร (A–Z, a–z), ตัวเลข และสัญลักษณ์ '-', '_', ':', '/' และ '.' เท่านั้น"
     }
   }
 }

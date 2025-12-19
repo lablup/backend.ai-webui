@@ -1,11 +1,10 @@
-import BAIAlert from './BAIAlert';
 import ThemeColorPicker, {
   ThemeConfigPath,
 } from './BrandingSettingItems/ThemeColorPicker';
 import SettingList, { SettingGroup } from './SettingList';
 import { ExportOutlined } from '@ant-design/icons';
 import { App } from 'antd';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { BAIAlert, BAIButton, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';

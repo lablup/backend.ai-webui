@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "ドメインを選択"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "最終更新",
     "Refresh": "更新"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "抱き合った顔からモデルのインポートを正常にリクエストしました",
     "Version": "バージョン"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
+    "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
+    "UpdateMultipleProjects": "プロジェクトを一括更新"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "許可済みフォルダホスト",
+    "AllowedResourceGroups": "許可されたリソースグループ",
+    "ContainerMustBeSpecified": "ユーザーがコミットしたコンテナイメージを保存するために、コンテナレジストリを指定する必要があります。",
+    "ContainerRegistryForImageCommit": "イメージのコミット用コンテナレジストリ",
+    "CreateProject": "プロジェクトを作成",
+    "Description": "説明",
+    "Domain": "ドメイン",
+    "FailedToCreateProject": "プロジェクトの作成に失敗しました",
+    "FailedToUpdateProject": "プロジェクトの更新に失敗しました",
+    "IsActive": "有効ですか？",
+    "MaxAllowedResourceSlots": "{{resourceKey}}の最大許容量",
+    "MemorySizeShouldBeLessThan300PiB": "メモリサイズは300 PiB未満である必要があります",
+    "Name": "名前",
+    "PleaseEnterBothRegistryAndProject": "レジストリとプロジェクトの両方を入力してください。",
+    "Project": "プロジェクト",
+    "ProjectCreated": "プロジェクトが作成されました",
+    "ProjectResourcePolicy": "リソースポリシー",
+    "ProjectUpdated": "プロジェクトが更新されました。",
+    "Registry": "レジストリ",
+    "UpdateProject": "プロジェクトの更新"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "プロジェクト「{{projectName}}」を無効化してもよろしいですか？",
+    "AreYouSureToDeactivateProject": "プロジェクト「{{projectName}}」を無効化してもよろしいですか？",
     "AreYouSureToPurgeProject": "本当に{{projectName}}を完全に削除しますか？この操作は取り消せません。",
     "ContainerRegistry": "コンテナレジストリ",
     "Controls": "操作",
     "CreatedAt": "作成日時",
+    "Deactivate": "無効化",
+    "DeactivateProject": "プロジェクトを無効化",
     "Description": "説明",
     "Domain": "ドメイン",
-    "Inactive": "非アクティブ",
-    "InactiveProject": "非アクティブなプロジェクト",
+    "FailedToDeactivateProject": "プロジェクトの無効化に失敗しました。",
+    "FailedToPurgeProject": "プロジェクトの完全削除に失敗しました。",
     "IntegrationID": "連携ID",
     "IsActive": "アクティブ",
     "Name": "名前",
     "Project": "プロジェクト",
+    "ProjectDeactivated": "プロジェクトは無効化されました。",
     "ProjectID": "プロジェクトID",
+    "ProjectPurged": "プロジェクトは完全に削除されました",
     "Purge": "パージ",
     "PurgeProject": "プロジェクトを完全に削除",
     "Registry": "レジストリ",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}}バージョンのプルは正常にキャンセルされました。",
     "WARNING": "警告",
     "YouAreAboutToCancelThisVersion": "このバージョンをキャンセルしようとしています"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "リソースグループを選択"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
@@ -193,12 +230,17 @@
       "Delete": "消去",
       "Expand": "拡大する",
       "Remove": "取り除く",
+      "Save": "保存",
       "Upload": "アップロード"
     },
     "modal": {
       "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元されません。",
       "ItemSelectedWithCount": "{{count}} 個のアイテムが選択されました。",
       "PleaseTypeToConfirm": "確認するには、「{{ confirmText }}」と入力してください。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "英字、数字、'-'、'_'、'.' のみ使用できます。",
+      "LetterNumber:/-_dot": "使用できるのは英字（A–Z、a–z）、数字、'-'、'_'、':'、'/'、'.' のみです。"
     }
   }
 }

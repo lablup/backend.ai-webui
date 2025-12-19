@@ -1,6 +1,6 @@
-import { useUpdatableState } from '.';
 import { ServiceLauncherFormValue } from '../components/ServiceLauncherPageContent';
 import { useTanQuery } from './reactQueryAlias';
+import { useUpdatableState } from 'backend.ai-ui';
 import { useCallback } from 'react';
 
 export interface ModelCard extends ServiceLauncherFormValue {

@@ -10,7 +10,6 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useUpdatableState } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
@@ -24,6 +23,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
 import { ColumnType } from 'antd/es/table';
 import {
+  useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,

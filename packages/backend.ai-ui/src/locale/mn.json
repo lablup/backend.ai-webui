@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Домен сонгох"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
     "Refresh": "Шинэчлэх"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Нүүр царайг тэвэрч авахаас шууд импортлохыг хүссэн",
     "Version": "Таамаглал"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
+    "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
+    "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Зөвшөөрөгдсөн хавтас хостууд",
+    "AllowedResourceGroups": "Зөвшөөрөгдсөн нөөцийн бүлгүүд",
+    "ContainerMustBeSpecified": "Хэрэглэгчийн commit хийсэн контейнерийн зургийг хадгалахын тулд контейнерийн регистр заах шаардлагатай.",
+    "ContainerRegistryForImageCommit": "Имэйж commit хийхэд зориулсан контейнерийн регистр",
+    "CreateProject": "Төсөл үүсгэх",
+    "Description": "Тайлбар",
+    "Domain": "Домен",
+    "FailedToCreateProject": "Төслийг үүсгэж чадсангүй.",
+    "FailedToUpdateProject": "Төслийг шинэчлэхэд амжилтгүй боллоо.",
+    "IsActive": "Идэвхтэй юу?",
+    "MaxAllowedResourceSlots": "Зөвшөөрөгдөх хамгийн их {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Санах ойн хэмжээ 300 PiB-ээс бага байх ёстой.",
+    "Name": "Нэр",
+    "PleaseEnterBothRegistryAndProject": "Регистри болон төсөлийг хоёуланг нь оруулна уу.",
+    "Project": "Төсөл",
+    "ProjectCreated": "Төсөл амжилттай үүслээ.",
+    "ProjectResourcePolicy": "Ресурсийн бодлого",
+    "ProjectUpdated": "Төсөл шинэчлэгдлээ.",
+    "Registry": "Регистри",
+    "UpdateProject": "Төслийг шинэчлэх"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Та {{projectName}} төслийг идэвхгүй болгохдоо итгэлтэй байна уу?",
+    "AreYouSureToDeactivateProject": "Та {{projectName}} төслийг идэвхгүй болгохыг баталж байна уу?",
     "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
     "ContainerRegistry": "Контейнерийн бүртгэл",
     "Controls": "Удирдлага",
     "CreatedAt": "Үүсгэсэн огноо",
+    "Deactivate": "Идэвхгүй болгох",
+    "DeactivateProject": "Төслийг идэвхгүй болгох",
     "Description": "Тайлбар",
     "Domain": "Домен",
-    "Inactive": "Идэвхгүй",
-    "InactiveProject": "Идэвхгүй төсөл",
+    "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",
+    "FailedToPurgeProject": "Төслийг бүрмөсөн устгахад амжилтгүй боллоо.",
     "IntegrationID": "Интеграцийн ID",
     "IsActive": "Идэвхтэй",
     "Name": "Нэр",
     "Project": "Төсөл",
+    "ProjectDeactivated": "Төсөл идэвхгүй боллоо.",
     "ProjectID": "Төслийн ID",
+    "ProjectPurged": "Төсөл бүрмөсөн устгагдсан.",
     "Purge": "Устгах",
     "PurgeProject": "Төслийг бүрэн устгах",
     "Registry": "Регистри",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Татах {{version}} хувилбар амжилттай цуцаллаа.",
     "WARNING": "Анхааруулга",
     "YouAreAboutToCancelThisVersion": "Та энэ хувилбарыг цуцлах гэж байна"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
@@ -193,12 +230,17 @@
       "Delete": "Эдгээх",
       "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
+      "Save": "Хадгалах",
       "Upload": "Байршуулах"
     },
     "modal": {
       "DeleteForeverDesc": "АНХААРУУЛГА: Сонгосон зүйлийг үүрд устгах болно, сэргээгдэхгүй.",
       "ItemSelectedWithCount": "{{тоолох}} сонгосон зүйлс.",
       "PleaseTypeToConfirm": "Баталгаажуулахын тулд {{ confirmText }} оруулна уу."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Зөвхөн үсэг, цифр, '-', '_', болон '.' тэмдэгтүүдийг ашиглаж болно.",
+      "LetterNumber:/-_dot": "Зөвхөн үсгүүд (A–Z, a–z), тоонууд, '-', '_', ':', '/' болон '.' тэмдэгтүүдийг ашиглахыг зөвшөөрнө."
     }
   }
 }

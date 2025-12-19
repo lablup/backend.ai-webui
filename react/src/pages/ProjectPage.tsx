@@ -1,28 +1,51 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   availableProjectSorterValues,
+  BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIProjectBulkEditModal,
+  BAIProjectSettingModal,
   BAIProjectTable,
   BAIPropertyFilter,
+  BAIText,
   filterOutEmpty,
+  isValidUUID,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   ProjectPageQuery,
+  ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from 'src/__generated__/ProjectPageQuery.graphql';
-import { INITIAL_FETCH_KEY, useUpdatableState } from 'src/hooks';
+import { INITIAL_FETCH_KEY } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+
+type ProjectNode = NonNullable<
+  NonNullable<
+    NonNullable<ProjectPageQuery$data['group_nodes']>['edges'][number]
+  >['node']
+>;
 
 const ProjectPage = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
+  const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
+  const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
+    [],
+  );
+  const [selectedProject, setSelectedProject] = useState<ProjectNode | null>(
+    null,
+  );
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -77,7 +100,10 @@ const ProjectPage = () => {
           count
           edges {
             node {
+              id
+              ...BAIProjectSettingModalFragment
               ...BAIProjectTableFragment
+              ...BAIProjectBulkEditModalFragment
             }
           }
         }
@@ -131,25 +157,50 @@ const ProjectPage = () => {
                 propertyLabel: t('project.ProjectID'),
                 type: 'string',
                 defaultOperator: '==',
+                rule: {
+                  message: t('project.ProjectIDFilterRuleMessage'),
+                  validate: (value) => isValidUUID(value),
+                },
               },
             ]}
             value={queryParams.filter}
             onChange={(filter) => {
               setQueryParams({ filter: filter || '' });
+              setSelectedProjectList([]);
             }}
           />
-          <BAIFlex>
+          <BAIFlex gap="xs">
+            {selectedProjectList.length > 0 && (
+              <>
+                <BAIText>
+                  {t('general.NSelected', {
+                    count: selectedProjectList.length,
+                  })}
+                </BAIText>
+                <BAIButton onClick={toggleBulkEditModal}>
+                  {t('project.BulkEdit')}
+                </BAIButton>
+              </>
+            )}
             <BAIFetchKeyButton
               value={fetchKey}
-              autoUpdateDelay={10_000}
+              autoUpdateDelay={null}
               loading={deferredFetchKey !== fetchKey}
               onChange={() => {
                 updateFetchKey();
               }}
             />
+            <BAIButton
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={toggleSettingModal}
+            >
+              {t('project.CreateProject')}
+            </BAIButton>
           </BAIFlex>
         </BAIFlex>
         <BAIProjectTable
+          updateFetchKey={updateFetchKey}
           projectFragment={filterOutEmpty(
             group_nodes?.edges.map((e) => e?.node) ?? [],
           )}
@@ -162,8 +213,10 @@ const ProjectPage = () => {
             current: tablePaginationOption.current,
             total: group_nodes?.count ?? 0,
             onChange: (current, pageSize) => {
-              if (_.isNumber(pageSize) && _.isNumber(current))
+              if (_.isNumber(pageSize) && _.isNumber(current)) {
                 setTablePaginationOption({ current, pageSize });
+                setSelectedProjectList([]);
+              }
             },
           }}
           sortDirections={['ascend', 'descend', 'ascend']}
@@ -171,9 +224,60 @@ const ProjectPage = () => {
           onChangeOrder={(order) => {
             setQueryParams({ order });
           }}
-          onEditProject={(_project) => {}}
+          onClickProjectEditButton={(project) => {
+            group_nodes?.edges.forEach((edge) => {
+              if (edge?.node?.id === project.id) {
+                setSelectedProject(edge.node);
+                toggleSettingModal();
+              }
+            });
+          }}
+          rowSelection={{
+            type: 'checkbox',
+            onChange: (keys) => {
+              if (!group_nodes) {
+                return;
+              }
+              setSelectedProjectList(
+                _.chain(group_nodes.edges)
+                  .map((e) => e?.node)
+                  .compact()
+                  .filter((node) => keys.includes(node.id))
+                  .value(),
+              );
+            },
+            selectedRowKeys: _.map(selectedProjectList, 'id'),
+            getCheckboxProps: (record) => ({
+              disabled: _.get(record, 'type') === 'MODEL_STORE',
+            }),
+          }}
         />
       </BAIFlex>
+      <BAIProjectSettingModal
+        open={openSettingModal}
+        onOk={() => {
+          updateFetchKey();
+          toggleSettingModal();
+          setSelectedProject(null);
+        }}
+        onCancel={() => {
+          toggleSettingModal();
+          setSelectedProject(null);
+        }}
+        projectFragment={selectedProject}
+      />
+      <BAIProjectBulkEditModal
+        open={openBulkEditModal}
+        selectedProjectFragments={selectedProjectList}
+        onOk={() => {
+          updateFetchKey();
+          toggleBulkEditModal();
+          setSelectedProjectList([]);
+        }}
+        onCancel={() => {
+          toggleBulkEditModal();
+        }}
+      />
     </BAICard>
   );
 };

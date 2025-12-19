@@ -1100,10 +1100,13 @@
   },
   "project": {
     "Active": "Aktywny",
+    "BulkEdit": "Masowa edycja",
+    "CreateProject": "Utwórz projekt",
     "Domain": "Domena",
     "Name": "Nazwa",
     "Project": "Projekt",
     "ProjectID": "ID projektu",
+    "ProjectIDFilterRuleMessage": "Nieprawidłowy UUID.",
     "ResourcePolicy": "Polityka zasobów"
   },
   "registry": {

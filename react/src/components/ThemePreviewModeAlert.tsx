@@ -1,5 +1,5 @@
-import BAIAlert, { BAIAlertProps } from './BAIAlert';
 import { useSessionStorageState } from 'ahooks';
+import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface ThemePreviewModeAlertProps extends BAIAlertProps {}

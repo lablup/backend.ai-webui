@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
     "Version": "버전"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "도메인 선택"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "마지막 업데이트",
     "Refresh": "새로고침"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "허깅 페이스에서 모델 가져오기 요청을 성공적으로 보냈습니다.",
     "Version": "버전"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
+    "ProjectResourcePolicy": "프로젝트 리소스 정책",
+    "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "허용된 호스트",
+    "AllowedResourceGroups": "허용된 리소스 그룹",
+    "ContainerMustBeSpecified": " 사용자가 커밋한 컨테이너 이미지를 저장하려면 컨테이너 레지스트리를 지정해야 합니다.",
+    "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
+    "CreateProject": "프로젝트 생성",
+    "Description": "설명",
+    "Domain": "도메인",
+    "FailedToCreateProject": "프로젝트 생성에 실패했습니다.",
+    "FailedToUpdateProject": "프로젝트 업데이트에 실패했습니다.",
+    "IsActive": "활성화?",
+    "MaxAllowedResourceSlots": "최대 허용 {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "메모리 사이즈는 300 PiB보다 작아야 합니다.",
+    "Name": "이름",
+    "PleaseEnterBothRegistryAndProject": "레지스트리와 프로젝트 모두 입력해 주세요.",
+    "Project": "프로젝트",
+    "ProjectCreated": "프로젝트가 생성되었습니다.",
+    "ProjectResourcePolicy": "리소스 정책",
+    "ProjectUpdated": "프로젝트가 업데이트 되었습니다.",
+    "Registry": "레지스트리",
+    "UpdateProject": "프로젝트 수정"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
+    "AreYouSureToDeactivateProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
     "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "ContainerRegistry": "컨테이너 레지스트리",
     "Controls": "제어",
     "CreatedAt": "생성 시각",
+    "Deactivate": "비활성화",
+    "DeactivateProject": "프로젝트 비활성화",
     "Description": "설명",
     "Domain": "도메인",
-    "Inactive": "비활성화",
-    "InactiveProject": "프로젝트 비활성화",
+    "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",
+    "FailedToPurgeProject": "프로젝트 삭제에 실패했습니다.",
     "IntegrationID": "통합 ID",
     "IsActive": "활성",
     "Name": "이름",
     "Project": "프로젝트",
+    "ProjectDeactivated": "프로젝트가 비활성화됐습니다.",
     "ProjectID": "프로젝트 ID",
+    "ProjectPurged": "프로젝트를 삭제했습니다.",
     "Purge": "삭제",
     "PurgeProject": "프로젝트 삭제",
     "Registry": "레지스트리",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 성공적으로 취소했습니다.",
     "WARNING": "경고",
     "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
@@ -193,12 +230,17 @@
       "Delete": "삭제",
       "Expand": "펼치기",
       "Remove": "제거",
+      "Save": "저장",
       "Upload": "업로드"
     },
     "modal": {
       "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다.",
       "ItemSelectedWithCount": "{{count}}개 선택됨.",
       "PleaseTypeToConfirm": "{{ confirmText }}를 입력하십시오."
+    },
+    "validation": {
+      "LetterNumber-_dot": "문자, 숫자, '-', '_', '.'만 입력할 수 있습니다.",
+      "LetterNumber:/-_dot": "알파벳 대소문자 (A-Z, a-z), 숫자, '-', '_', ':', '/', '.'만 입력할 수 있습니다."
     }
   }
 }

@@ -1,7 +1,7 @@
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
+  useResourceSlotsDetails,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,

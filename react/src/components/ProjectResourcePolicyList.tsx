@@ -10,7 +10,7 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -28,6 +28,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

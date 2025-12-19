@@ -1,5 +1,5 @@
 import { PasswordChangeRequestAlertQuery } from '../__generated__/PasswordChangeRequestAlertQuery.graphql';
-import BAIAlert, { BAIAlertProps } from './BAIAlert';
+import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

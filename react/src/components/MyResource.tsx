@@ -1,4 +1,4 @@
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import { Segmented, theme } from 'antd';
@@ -10,6 +10,7 @@ import {
   convertToNumber,
   processMemoryValue,
   BAIFetchKeyButton,
+  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useTransition } from 'react';

@@ -4,29 +4,33 @@ import {
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../../helper';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../../hooks';
-import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { useEventNotStable } from '../../hooks/useEventNotStable';
 import {
   MergedResourceLimits,
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
 import AgentSelect from '../AgentSelect';
-import DynamicUnitInputNumberWithSlider from '../DynamicUnitInputNumberWithSlider';
 import {
   Image,
   ImageEnvironmentFormInput,
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import ResourceGroupSelect from '../ResourceGroupSelect';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Divider, Form, Radio, Row, theme } from 'antd';
-import { BAIFlex, BAISelect } from 'backend.ai-ui';
+import {
+  useResourceSlotsDetails,
+  BAIFlex,
+  useEventNotStable,
+  useUpdatableState,
+  BAIDynamicUnitInputNumberWithSlider,
+  BAIProjectResourceGroupSelect,
+  BAISelect,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -517,7 +521,10 @@ const ResourceAllocationFormItems: React.FC<
           },
         ]}
       >
-        <ResourceGroupSelect projectName={currentProject.name} showSearch />
+        <BAIProjectResourceGroupSelect
+          projectName={currentProject.name}
+          showSearch
+        />
       </Form.Item>
 
       {enableResourcePresets ? (
@@ -818,7 +825,7 @@ const ResourceAllocationFormItems: React.FC<
                               },
                             ]}
                           >
-                            <DynamicUnitInputNumberWithSlider
+                            <BAIDynamicUnitInputNumberWithSlider
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
                               addonBefore={'MEM'}

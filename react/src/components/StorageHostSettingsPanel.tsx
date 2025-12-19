@@ -1,15 +1,14 @@
 import { StorageHostSettingsPanelQuery } from '../__generated__/StorageHostSettingsPanelQuery.graphql';
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
-import { useCurrentDomainValue, useUpdatableState } from '../hooks';
-import DomainSelector from './DomainSelector';
+import { useCurrentDomainValue } from '../hooks';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
 import UserSelector from './UserSelector';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDomainSelector, BAIFlex, useUpdatableState } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -111,7 +110,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             <BAIFlex style={{ marginBottom: 10 }}>
               <Form layout="inline">
                 <Form.Item label={t('resourceGroup.Domain')}>
-                  <DomainSelector
+                  <BAIDomainSelector
                     style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
                     onSelectDomain={(domain: any) => {

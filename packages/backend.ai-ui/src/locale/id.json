@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Pilih Domain"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Terakhir diperbarui",
     "Refresh": "Segarkan"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Berhasil Meminta Impor Model dari Face Memeluk",
     "Version": "Versi"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
+    "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Host Folder yang Diizinkan",
+    "AllowedResourceGroups": "Grup Sumber Daya yang Diizinkan",
+    "ContainerMustBeSpecified": "Sebuah registri kontainer harus ditentukan untuk menyimpan image kontainer yang di-commit oleh pengguna.",
+    "ContainerRegistryForImageCommit": "Registry Kontainer untuk Commit Image",
+    "CreateProject": "Buat Proyek",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Gagal membuat proyek",
+    "FailedToUpdateProject": "Gagal memperbarui proyek",
+    "IsActive": "Aktif?",
+    "MaxAllowedResourceSlots": "Maksimum {{resourceKey}} yang diizinkan",
+    "MemorySizeShouldBeLessThan300PiB": "Ukuran memori harus kurang dari 300 PiB",
+    "Name": "Nama",
+    "PleaseEnterBothRegistryAndProject": "Harap masukkan registri dan proyek.",
+    "Project": "Proyek",
+    "ProjectCreated": "Proyek berhasil dibuat.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya",
+    "ProjectUpdated": "Proyek telah diperbarui.",
+    "Registry": "Registri",
+    "UpdateProject": "Perbarui Proyek"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
     "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
     "ContainerRegistry": "Registri Kontainer",
     "Controls": "Kontrol",
     "CreatedAt": "Dibuat pada",
+    "Deactivate": "Nonaktifkan",
+    "DeactivateProject": "Nonaktifkan Proyek",
     "Description": "Deskripsi",
     "Domain": "Domain",
-    "Inactive": "Nonaktif",
-    "InactiveProject": "Proyek Tidak Aktif",
+    "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",
+    "FailedToPurgeProject": "Gagal menghapus proyek secara permanen.",
     "IntegrationID": "ID Integrasi",
     "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Proyek",
+    "ProjectDeactivated": "Proyek telah dinonaktifkan.",
     "ProjectID": "ID Proyek",
+    "ProjectPurged": "Proyek telah dihapus secara permanen.",
     "Purge": "Bersihkan",
     "PurgeProject": "Hapus Proyek Secara Permanen",
     "Registry": "Registri",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Tarik {{version}} versi berhasil dibatalkan.",
     "WARNING": "PERINGATAN",
     "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Pilih Grup Sumber Daya"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
@@ -193,12 +230,17 @@
       "Delete": "Menghapus",
       "Expand": "Memperluas",
       "Remove": "Menghapus",
+      "Save": "Simpan",
       "Upload": "Mengunggah"
     },
     "modal": {
       "DeleteForeverDesc": "PERINGATAN: Item yang dipilih akan dihapus selamanya dan tidak dapat dipulihkan.",
       "ItemSelectedWithCount": "{{count}} item dipilih.",
       "PleaseTypeToConfirm": "Silakan ketik {{ confirmText }} untuk mengonfirmasi."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Hanya huruf, angka, '-', '_', dan '.' yang diperbolehkan.",
+      "LetterNumber:/-_dot": "Hanya huruf (A–Z, a–z), angka, '-', '_', ':', '/' dan '.' yang diizinkan."
     }
   }
 }

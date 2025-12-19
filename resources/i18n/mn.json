@@ -1099,10 +1099,13 @@
   },
   "project": {
     "Active": "Идэвхтэй",
+    "BulkEdit": "Бөөнөөр засах",
+    "CreateProject": "Төсөл үүсгэх",
     "Domain": "Домен",
     "Name": "Нэр",
     "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
+    "ProjectIDFilterRuleMessage": "UUID хүчин төгөлдөргүй.",
     "ResourcePolicy": "Ресурсийн бодлого"
   },
   "registry": {

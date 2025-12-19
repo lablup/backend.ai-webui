@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Valitse toimialue"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Viimeksi päivitetty",
     "Refresh": "Päivitä"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Onnistuneesti pyydetty mallin tuonti halaamisesta",
     "Version": "Versio"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
+    "ProjectResourcePolicy": "Projektin resurssipolitiikka",
+    "UpdateMultipleProjects": "Päivitä useita projekteja"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Sallitut kansioisäntäkoneet",
+    "AllowedResourceGroups": "Sallitut resurssiryhmät",
+    "ContainerMustBeSpecified": "Säiliörekisteri on määritettävä käyttäjän tallentamien säiliökuvien säilyttämistä varten.",
+    "ContainerRegistryForImageCommit": "Säiliörekisteri kuvan tallennusta varten",
+    "CreateProject": "Luo projekti",
+    "Description": "Kuvaus",
+    "Domain": "Toimialue",
+    "FailedToCreateProject": "Projektin luominen epäonnistui",
+    "FailedToUpdateProject": "Projektin päivittäminen epäonnistui.",
+    "IsActive": "Aktiivinen?",
+    "MaxAllowedResourceSlots": "Suurin sallittu {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Muistin koko on oltava alle 300 PiB.",
+    "Name": "Nimi",
+    "PleaseEnterBothRegistryAndProject": "Anna sekä rekisteri että projekti.",
+    "Project": "Projekti",
+    "ProjectCreated": "Projekti on luotu.",
+    "ProjectResourcePolicy": "Resurssipolitiikka",
+    "ProjectUpdated": "Projekti on päivitetty.",
+    "Registry": "Rekisteri",
+    "UpdateProject": "Päivitä projekti"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Haluatko varmasti poistaa projektin {{projectName}} käytöstä?",
+    "AreYouSureToDeactivateProject": "Haluatko varmasti poistaa projektin {{projectName}} käytöstä?",
     "AreYouSureToPurgeProject": "Haluatko varmasti poistaa {{projectName}}? Tämä toimenpide on peruuttamaton.",
     "ContainerRegistry": "Säiliörekisteri",
     "Controls": "Ohjaimet",
     "CreatedAt": "Luotu",
+    "Deactivate": "Poista käytöstä",
+    "DeactivateProject": "Poista projekti käytöstä",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
-    "Inactive": "Epäaktiivinen",
-    "InactiveProject": "Epäaktiivinen projekti",
+    "FailedToDeactivateProject": "Projektin poistaminen käytöstä epäonnistui.",
+    "FailedToPurgeProject": "Projektin tyhjennys epäonnistui.",
     "IntegrationID": "Integraation tunnus",
     "IsActive": "Aktiivinen",
     "Name": "Nimi",
     "Project": "Projekti",
+    "ProjectDeactivated": "Projekti on poistettu käytöstä.",
     "ProjectID": "Projektin tunnus",
+    "ProjectPurged": "Projekti on poistettu pysyvästi.",
     "Purge": "Tyhjennä",
     "PurgeProject": "Poista projekti pysyvästi",
     "Registry": "Rekisteri",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "{{version}} versio peruutettu onnistuneesti.",
     "WARNING": "VAROITUS",
     "YouAreAboutToCancelThisVersion": "Olet peruuttanut tämän version"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Valitse resurssiryhmä"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
@@ -193,12 +230,17 @@
       "Delete": "Poistaa",
       "Expand": "Laajentaa",
       "Remove": "Poistaa",
+      "Save": "Tallenna",
       "Upload": "Ladata"
     },
     "modal": {
       "DeleteForeverDesc": "Varoitus: Valitut esineet poistetaan ikuisesti eikä niitä palauteta.",
       "ItemSelectedWithCount": "{{count}} valitut kohteet.",
       "PleaseTypeToConfirm": "Kirjoita {{ confirmText }} vahvistaaksesi."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Sallittuja ovat vain kirjaimet, numerot sekä merkit '-', '_' ja '.'.",
+      "LetterNumber:/-_dot": "Sallittuja ovat vain kirjaimet (A–Z, a–z), numerot, '-', '_', ':', '/' ja '.'."
     }
   }
 }

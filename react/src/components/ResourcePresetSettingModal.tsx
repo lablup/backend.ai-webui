@@ -10,12 +10,16 @@ import {
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import DynamicUnitInputNumber from './DynamicUnitInputNumber';
-import ResourceGroupSelect from './ResourceGroupSelect';
 import { App, Form, FormInstance, Input, InputNumber } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIDynamicUnitInputNumber,
+  BAIModal,
+  BAIModalProps,
+  BAIProjectResourceGroupSelect,
+  useResourceSlotsDetails,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Fragment, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -288,7 +292,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             label={t('general.ResourceGroup')}
             name="scaling_group_name"
           >
-            <ResourceGroupSelect
+            <BAIProjectResourceGroupSelect
               projectName={currentProject.name}
               allowClear
               popupMatchSelectWidth={false}
@@ -340,7 +344,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     ]}
                   >
                     {_.includes(resourceSlotKey, 'mem') ? (
-                      <DynamicUnitInputNumber style={{ width: '100%' }} />
+                      <BAIDynamicUnitInputNumber style={{ width: '100%' }} />
                     ) : (
                       <InputNumber
                         stringMode
@@ -383,7 +387,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               }),
             ]}
           >
-            <DynamicUnitInputNumber max="7.999p" style={{ width: '100%' }} />
+            <BAIDynamicUnitInputNumber max="7.999p" style={{ width: '100%' }} />
           </Form.Item>
         </Form.Item>
       </Form>

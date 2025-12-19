@@ -1098,10 +1098,13 @@
   },
   "project": {
     "Active": "Ενεργό",
+    "BulkEdit": "Μαζική επεξεργασία",
+    "CreateProject": "Δημιουργία έργου",
     "Domain": "Τομέας",
     "Name": "Όνομα",
     "Project": "Έργο",
     "ProjectID": "ID έργου",
+    "ProjectIDFilterRuleMessage": "Μη έγκυρο UUID.",
     "ResourcePolicy": "Πολιτική πόρων"
   },
   "registry": {

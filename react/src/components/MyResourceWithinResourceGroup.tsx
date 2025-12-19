@@ -1,4 +1,4 @@
-import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { ResourceSlotName } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
@@ -15,6 +15,7 @@ import {
   processMemoryValue,
   BAIFetchKeyButton,
   BAIFlexProps,
+  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';

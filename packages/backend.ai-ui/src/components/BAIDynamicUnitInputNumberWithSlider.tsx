@@ -4,18 +4,16 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
-import useControllableState_deprecated from '../hooks/useControllableState';
-import DynamicUnitInputNumber, {
-  DynamicUnitInputNumberProps,
-} from './DynamicUnitInputNumber';
+import { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber';
+import BAIFlex from './BAIFlex';
+import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import { SliderMarks } from 'antd/es/slider';
-import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
-export interface DynamicUnitInputNumberWithSliderProps
-  extends DynamicUnitInputNumberProps {
+export interface BAIDynamicUnitInputNumberWithSliderProps
+  extends BAIDynamicUnitInputNumberProps {
   extraMarks?: SliderMarks;
   hideSlider?: boolean;
   warn?: string;
@@ -23,7 +21,7 @@ export interface DynamicUnitInputNumberWithSliderProps
   inputMinWidth?: number;
 }
 const DynamicUnitInputNumberWithSlider: React.FC<
-  DynamicUnitInputNumberWithSliderProps
+  BAIDynamicUnitInputNumberWithSliderProps
 > = ({
   min = '0m',
   max = '32g',
@@ -34,11 +32,12 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   step = 0.05,
   ...otherProps
 }) => {
-  const [value, setValue] = useControllableState_deprecated<
-    string | undefined | null
-  >(otherProps, {
-    defaultValue: '0g',
-  });
+  const [value, setValue] = useControllableValue<string | undefined | null>(
+    otherProps,
+    {
+      defaultValue: '0g',
+    },
+  );
   const { token } = theme.useToken();
   const minGiB = useMemo(() => convertToBinaryUnit(min, 'g', 2), [min]);
   const maxGiB = useMemo(() => convertToBinaryUnit(max, 'g', 2), [max]);
@@ -79,7 +78,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
         direction="column"
         align="stretch"
       >
-        <DynamicUnitInputNumber
+        <DynamicUnitInputNumberWithSlider
           {...otherProps}
           key={key}
           min={min}

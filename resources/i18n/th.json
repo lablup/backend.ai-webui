@@ -1090,10 +1090,13 @@
   },
   "project": {
     "Active": "ใช้งาน",
+    "BulkEdit": "แก้ไขแบบกลุ่ม",
+    "CreateProject": "สร้างโปรเจกต์",
     "Domain": "โดเมน",
     "Name": "ชื่อ",
     "Project": "โปรเจกต์",
     "ProjectID": "รหัสโครงการ",
+    "ProjectIDFilterRuleMessage": "UUID ไม่ถูกต้อง.",
     "ResourcePolicy": "นโยบายทรัพยากร"
   },
   "registry": {

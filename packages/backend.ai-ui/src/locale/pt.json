@@ -60,6 +60,9 @@
     "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIDomainSelector": {
+    "SelectDomain": "Selecionar domínio"
+  },
   "comp:BAIFetchKeyButton": {
     "LastUpdated": "Última atualização",
     "Refresh": "Atualizar"
@@ -85,21 +88,52 @@
     "SuccessfullyImportedModelFromHuggingFace": "Solicitou com sucesso a importação do modelo de abraçar o rosto",
     "Version": "Versão"
   },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "ProjectResourcePolicy": "Política de Recursos do Projeto",
+    "UpdateMultipleProjects": "Atualizar vários projetos"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Hosts permitidos para pastas",
+    "AllowedResourceGroups": "Grupos de Recursos Permitidos",
+    "ContainerMustBeSpecified": "É necessário especificar um registro de contêineres para armazenar as imagens de contêiner enviadas pelo usuário.",
+    "ContainerRegistryForImageCommit": "Registro de contêiner para commit da imagem",
+    "CreateProject": "Criar projeto",
+    "Description": "Descrição",
+    "Domain": "Domínio",
+    "FailedToCreateProject": "Falha ao criar o projeto",
+    "FailedToUpdateProject": "Não foi possível atualizar o projeto",
+    "IsActive": "Ativo?",
+    "MaxAllowedResourceSlots": "Máximo permitido {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "O tamanho da memória deve ser inferior a 300 PiB",
+    "Name": "Nome",
+    "PleaseEnterBothRegistryAndProject": "Por favor, insira tanto o registro quanto o projeto.",
+    "Project": "Projeto",
+    "ProjectCreated": "O projeto foi criado",
+    "ProjectResourcePolicy": "Política de Recursos",
+    "ProjectUpdated": "O projeto foi atualizado.",
+    "Registry": "Registo",
+    "UpdateProject": "Atualizar projeto"
+  },
   "comp:BAIProjectTable": {
-    "AreYouSureToInactiveProject": "Tem certeza de que deseja inativar o projeto {{projectName}}?",
+    "AreYouSureToDeactivateProject": "Tem certeza de que deseja desativar o projeto {{projectName}}?",
     "AreYouSureToPurgeProject": "Tem certeza de que deseja purgar {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
     "Controls": "Controles",
     "CreatedAt": "Criado em",
+    "Deactivate": "Desativar",
+    "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "Inactive": "Inativo",
-    "InactiveProject": "Projeto inativo",
+    "FailedToDeactivateProject": "Falha ao desativar o projeto.",
+    "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
     "IsActive": "Ativo",
     "Name": "Nome",
     "Project": "Projeto",
+    "ProjectDeactivated": "O projeto foi desativado.",
     "ProjectID": "ID do Projeto",
+    "ProjectPurged": "O projeto foi purgado",
     "Purge": "Limpar",
     "PurgeProject": "Purgar Projeto",
     "Registry": "Registo",
@@ -121,6 +155,9 @@
     "VersionPullCanceledSuccessfully": "Pull da versão {{version}} cancelada com sucesso.",
     "WARNING": "AVISO",
     "YouAreAboutToCancelThisVersion": "Você está prestes a cancelar esta versão"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Selecionar grupo de recursos"
   },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
@@ -193,12 +230,17 @@
       "Delete": "Excluir",
       "Expand": "Expandir",
       "Remove": "Remover",
+      "Save": "Salvar",
       "Upload": "Carregar"
     },
     "modal": {
       "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos permanentemente e não serão restaurados.",
       "ItemSelectedWithCount": "{{count}} itens selecionados.",
       "PleaseTypeToConfirm": "Digite {{ confirmText }} para confirmar."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Apenas letras, números, '-', '_' e '.' são permitidos.",
+      "LetterNumber:/-_dot": "Apenas letras (A–Z, a–z), números, '-', '_', ':', '/' e '.' são permitidos."
     }
   }
 }

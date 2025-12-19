@@ -1,12 +1,12 @@
 // Button.stories.ts|tsx
 import DynamicUnitInputNumber, {
-  DynamicUnitInputNumberProps,
-} from './DynamicUnitInputNumber';
-import type { Meta, StoryObj } from '@storybook/react';
+  BAIDynamicUnitInputNumberProps,
+} from './BAIDynamicUnitInputNumber';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Form } from 'antd';
 
 const meta: Meta<typeof DynamicUnitInputNumber> = {
-  title: 'Input/DynamicUnitInputNumber',
+  title: 'Components/Input/DynamicUnitInputNumber',
   component: DynamicUnitInputNumber,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
@@ -21,7 +21,7 @@ type Story = StoryObj<typeof DynamicUnitInputNumber>;
 const renderWithFormItem = ({
   value,
   ...args
-}: DynamicUnitInputNumberProps) => {
+}: BAIDynamicUnitInputNumberProps) => {
   return (
     <Form
       initialValues={{
