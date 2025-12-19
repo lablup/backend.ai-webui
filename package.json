@@ -144,6 +144,7 @@
     "cors": "^2.8.5",
     "crypto-es": "^2.1.0",
     "electron": "^35.7.5",
+    "electron-installer-dmg": "^5.0.1",
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.1.2",
