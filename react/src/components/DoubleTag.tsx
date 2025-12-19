@@ -1,6 +1,6 @@
 import TextHighlighter from './TextHighlighter';
 import { Tag } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIText } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -45,13 +45,21 @@ const DoubleTag: React.FC<{
             }}
             color={objValue.color}
           >
-            {!_.isUndefined(highlightKeyword) ? (
-              <TextHighlighter keyword={highlightKeyword}>
-                {objValue.label}
-              </TextHighlighter>
-            ) : (
-              objValue.label
-            )}
+            <BAIText
+              style={{
+                fontSize: 'inherit',
+                maxWidth: 150,
+              }}
+              ellipsis={{ tooltip: true }}
+            >
+              {!_.isUndefined(highlightKeyword) ? (
+                <TextHighlighter keyword={highlightKeyword}>
+                  {objValue.label}
+                </TextHighlighter>
+              ) : (
+                objValue.label
+              )}
+            </BAIText>
           </Tag>
         ) : null,
       )}
