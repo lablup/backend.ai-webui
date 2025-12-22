@@ -8,6 +8,8 @@ module.exports = {
     app: ['./manager.js'],
   },
   output: {
+    clean: true,
+    path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'commonjs2',
     filename: 'wsproxy.js',
   },
