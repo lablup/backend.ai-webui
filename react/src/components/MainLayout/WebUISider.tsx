@@ -140,10 +140,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           className="logo-wide"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            currentSiderTheme === 'dark' && themeConfig?.logo?.srcDark
+            currentSiderTheme === 'dark'
               ? themeConfig?.logo?.srcDark ||
-                '/manifest/backend.ai-white-text.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-white-text.svg'
+                '/manifest/backend.ai-webui-white.svg'
+              : themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg'
           }
           style={{
             width: themeConfig?.logo?.size?.width || 159,
@@ -159,11 +159,11 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           className="logo-collapsed"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            currentSiderTheme === 'dark' && themeConfig?.logo?.srcCollapsedDark
+            currentSiderTheme === 'dark'
               ? themeConfig?.logo?.srcCollapsedDark ||
-                '/manifest/backend.ai-brand-simple-bgdark.svg'
+                '/manifest/backend.ai-brand-simple-black.svg'
               : themeConfig?.logo?.srcCollapsed ||
-                '/manifest/backend.ai-brand-simple.svg'
+                '/manifest/backend.ai-brand-simple-white.svg'
           }
           style={{
             width: themeConfig?.logo.sizeCollapsed?.width ?? 24,

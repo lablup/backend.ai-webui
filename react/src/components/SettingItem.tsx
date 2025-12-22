@@ -105,7 +105,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
     <BAIFlex
       data-testid={dataTestId}
       direction="column"
-      align="start"
+      align="stretch"
       gap={'xxs'}
       onMouseEnter={() => setIsDropdownOpen(true)}
       onMouseLeave={() => setIsDropdownOpen(false)}
@@ -195,6 +195,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             }}
             style={{
               marginTop: token.marginXS,
+              width: 'fit-content',
               ...selectProps?.style,
             }}
             {..._.omit(selectProps, ['style'])}

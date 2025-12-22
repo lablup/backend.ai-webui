@@ -1940,7 +1940,7 @@
   "theme": {
     "PreviewModeAlert": "현재 테마 미리보기 모드를 사용하고 있습니다. 실제 작업은 기존 창에서 진행해 주세요.",
     "button": {
-      "ExportToJson": "JSON 추출하기"
+      "ExportToJson": "JSON 내보내기"
     }
   },
   "time": {
@@ -2028,6 +2028,7 @@
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
     "Language": "언어",
     "LightMode": "라이트 모드",
+    "Logo": "로고 CI",
     "Logs": "로그",
     "MaxConcurrentUploads": "병렬 파일 업로드 제한",
     "MyKeypairInfo": "내 키페어 정보",
@@ -2052,6 +2053,22 @@
     "UseCompactSidebar": "간결한 사이드바를 기본값으로 설정",
     "UseSystemSetting": "시스템 설정 사용",
     "UserConfigScript": "사용자 환경 스크립트",
+    "logo": {
+      "CreateURLWithImage": "이미지로 경로 생성",
+      "DarkModeCollapsedLogo": "간결한 사이드바 로고 (다크 모드)",
+      "DarkModeCollapsedLogoDesc": "다크 모드 WebUI 의 간결한 사이드바 로고로 사용될 이미지를 설정할 수 있습니다.",
+      "DarkModeLogo": "다크모드 로고",
+      "DarkModeLogoDesc": "다크모드 WebUI 의 로고로 사용될 이미지를 설정할 수 있습니다. ",
+      "FailedToReadFile": "파일을 읽을 수 없습니다. 다시 시도해 주세요. ",
+      "Image": "이미지",
+      "ImagePath": "경로",
+      "LightModeCollapsedLogo": "간결한 사이드바 로고 (라이트 모드)",
+      "LightModeCollapsedLogoDesc": "라이트 모드 WebUI 의 간결한 사이드바 로고로 사용될 이미지를 설정할 수 있습니다.",
+      "LightModeLogo": "라이트 모드 로고",
+      "LightModeLogoDesc": "라이트 모드 WebUI 의 로고로 사용될 이미지를 설정할 수 있습니다. ",
+      "LogoCustomizationDesc": "로고로 사용될 이미지를 미리 적용해보거나, 로고가 저장된 경로를 지정할 수 있습니다.",
+      "UploadFileSizeExceed": "업로드 가능한 최대 크기(2MB)를 초과했습니다."
+    },
     "theme": {
       "CustomThemeSettingAlert": "현재 변경된 테마를 바로 적용하는 기능이 제공되지 않습니다. 테마 적용을 원하시는 경우, 추출된 설정 JSON 파일과 함께 지원팀에 문의해 주세요. ",
       "ErrorColor": "오류 색상",

@@ -1,6 +1,8 @@
+import { useSessionStorageState } from 'ahooks';
 import { ThemeConfig } from 'antd';
 import _ from 'lodash';
 import { useEffect, useEffectEvent, useState } from 'react';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type LogoConfig = {
   src: string;
@@ -80,7 +82,24 @@ export const useCustomThemeConfig = () => {
   const [customThemeConfig, setCustomThemeConfig] = useState<
     CustomThemeConfig | undefined
   >(_customTheme);
+  const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
+
   const addEventListener = useEffectEvent(() => {
+    if (isThemePreviewMode) {
+      const themePreviewModehandler = (e: StorageEvent) => {
+        if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
+          window.location.reload();
+        }
+      };
+      window.addEventListener('storage', themePreviewModehandler);
+      return () => {
+        window.removeEventListener('storage', themePreviewModehandler);
+      };
+    }
+
     if (!customThemeConfig) {
       const handler = () => {
         setCustomThemeConfig(_customTheme);
@@ -97,5 +116,7 @@ export const useCustomThemeConfig = () => {
     addEventListener();
   }, []);
 
-  return customThemeConfig;
+  return isThemePreviewMode
+    ? _.merge({}, customThemeConfig, userCustomThemeConfig)
+    : customThemeConfig;
 };

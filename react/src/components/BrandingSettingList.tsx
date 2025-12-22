@@ -1,3 +1,6 @@
+import LogoPreviewer, {
+  getLogoThemeKey,
+} from './BrandingSettingItems/LogoPreviewer';
 import ThemeColorPicker, {
   ThemeConfigPath,
 } from './BrandingSettingItems/ThemeColorPicker';
@@ -6,6 +9,7 @@ import { ExportOutlined } from '@ant-design/icons';
 import { App } from 'antd';
 import { BAIAlert, BAIButton, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
+import { Fullscreen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';
 import { useCustomThemeConfig } from 'src/helper/customThemeConfig';
@@ -14,6 +18,8 @@ import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 interface BrandingSettingListProps {}
 
 const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
+  'use memo';
+
   const { t } = useTranslation();
   const { message } = App.useApp();
 
@@ -22,7 +28,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const [userCustomThemeConfig, setUserCustomThemeConfig] =
     useBAISettingUserState('custom_theme_config');
 
-  const resetThemeConfig = (tokenName: ThemeConfigPath) => {
+  const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
     if (!themeConfig) return;
 
     setUserCustomThemeConfig((prev: typeof userCustomThemeConfig) => {
@@ -39,22 +45,25 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
     });
   };
 
+  const resetLogoThemeConfig = (
+    mode: 'light' | 'dark' | 'lightCollapsed' | 'darkCollapsed',
+  ) => {
+    if (!themeConfig) return;
+    setUserCustomThemeConfig((prev) => ({
+      ...themeConfig!,
+      ...prev,
+      logo: {
+        ...themeConfig!.logo,
+        ...prev?.logo,
+        [getLogoThemeKey(mode)]: themeConfig!.logo[getLogoThemeKey(mode)],
+      },
+    }));
+  };
+
   const settingGroups: Array<SettingGroup> = [
     {
       'data-testid': 'group-theme-customization',
       title: t('userSettings.Theme'),
-      titleExtra: (
-        <BAIButton
-          size="small"
-          action={async () => {
-            const previewWindow = window.open(window.location.origin, '_blank');
-            previewWindow?.sessionStorage.setItem('isThemePreviewMode', 'true');
-            previewWindow?.location.reload();
-          }}
-        >
-          {t('userSettings.theme.Preview')}
-        </BAIButton>
-      ),
       settingItems: [
         {
           type: 'custom',
@@ -62,7 +71,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.PrimaryColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorPrimary" />,
           onReset: () => {
-            resetThemeConfig('token.colorPrimary');
+            resetColorThemeConfig('token.colorPrimary');
           },
         },
         {
@@ -71,7 +80,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.HeaderBgDesc'),
           children: <ThemeColorPicker tokenName="components.Layout.headerBg" />,
           onReset: () => {
-            resetThemeConfig('components.Layout.headerBg');
+            resetColorThemeConfig('components.Layout.headerBg');
           },
         },
         {
@@ -80,7 +89,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.LinkColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorLink" />,
           onReset: () => {
-            resetThemeConfig('token.colorLink');
+            resetColorThemeConfig('token.colorLink');
           },
         },
         {
@@ -89,7 +98,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.InfoColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorInfo" />,
           onReset: () => {
-            resetThemeConfig('token.colorInfo');
+            resetColorThemeConfig('token.colorInfo');
           },
         },
         {
@@ -98,7 +107,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.ErrorColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorError" />,
           onReset: () => {
-            resetThemeConfig('token.colorError');
+            resetColorThemeConfig('token.colorError');
           },
         },
         {
@@ -107,7 +116,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.SuccessColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorSuccess" />,
           onReset: () => {
-            resetThemeConfig('token.colorSuccess');
+            resetColorThemeConfig('token.colorSuccess');
           },
         },
         {
@@ -116,7 +125,50 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           description: t('userSettings.theme.TextColorDesc'),
           children: <ThemeColorPicker tokenName="token.colorText" />,
           onReset: () => {
-            resetThemeConfig('token.colorText');
+            resetColorThemeConfig('token.colorText');
+          },
+        },
+      ],
+    },
+    {
+      'data-testid': 'group-logo-customization',
+      title: t('userSettings.Logo'),
+      description: t('userSettings.logo.LogoCustomizationDesc'),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('userSettings.logo.LightModeLogo'),
+          description: t('userSettings.logo.LightModeLogoDesc'),
+          children: <LogoPreviewer mode="light" />,
+          onReset: () => {
+            resetLogoThemeConfig('light');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.DarkModeLogo'),
+          description: t('userSettings.logo.DarkModeLogoDesc'),
+          children: <LogoPreviewer mode="dark" />,
+          onReset: () => {
+            resetLogoThemeConfig('dark');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.LightModeCollapsedLogo'),
+          description: t('userSettings.logo.LightModeCollapsedLogoDesc'),
+          children: <LogoPreviewer mode="lightCollapsed" />,
+          onReset: () => {
+            resetLogoThemeConfig('lightCollapsed');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.DarkModeCollapsedLogo'),
+          description: t('userSettings.logo.DarkModeCollapsedLogoDesc'),
+          children: <LogoPreviewer mode="darkCollapsed" />,
+          onReset: () => {
+            resetLogoThemeConfig('darkCollapsed');
           },
         },
       ],
@@ -152,6 +204,26 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
             }}
           >
             {t('theme.button.ExportToJson')}
+          </BAIButton>
+        }
+        extraButton={
+          <BAIButton
+            icon={<Fullscreen />}
+            action={async () => {
+              const previewWindow = window.open(
+                window.location.origin,
+                '_blank',
+              );
+              previewWindow?.addEventListener('load', () => {
+                previewWindow?.sessionStorage.setItem(
+                  'isThemePreviewMode',
+                  'true',
+                );
+                previewWindow?.location.reload();
+              });
+            }}
+          >
+            {t('userSettings.theme.Preview')}
           </BAIButton>
         }
       />
