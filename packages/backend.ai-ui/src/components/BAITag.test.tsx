@@ -1,8 +1,6 @@
 import BAITag from './BAITag';
 import { describe, expect, it } from '@jest/globals';
 import { render, screen, act } from '@testing-library/react';
-import React from 'react';
-
 describe('BAITag', () => {
   describe('Basic Rendering', () => {
     it('should render tag with children text', () => {
