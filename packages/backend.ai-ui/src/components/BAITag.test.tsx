@@ -1,6 +1,6 @@
 import BAITag from './BAITag';
 import { describe, expect, it } from '@jest/globals';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import React from 'react';
 
 describe('BAITag', () => {
@@ -68,7 +68,9 @@ describe('BAITag', () => {
         </BAITag>,
       );
       const closeButton = screen.getByRole('img', { name: /close/i });
-      closeButton.click();
+      act(() => {
+        closeButton.click();
+      });
       expect(handleClose).toHaveBeenCalledTimes(1);
     });
 
@@ -201,7 +203,9 @@ describe('BAITag', () => {
       );
       const closeButtons = screen.getAllByRole('img', { name: /close/i });
       expect(closeButtons).toHaveLength(2);
-      closeButtons[0].click();
+      act(() => {
+        closeButtons[0].click();
+      });
       expect(handleClose1).toHaveBeenCalledTimes(1);
       expect(handleClose2).toHaveBeenCalledTimes(0);
     });
@@ -212,7 +216,9 @@ describe('BAITag', () => {
       const handleClick = jest.fn();
       render(<BAITag onClick={handleClick}>Clickable Tag</BAITag>);
       const tag = screen.getByText('Clickable Tag');
-      tag.click();
+      act(() => {
+        tag.click();
+      });
       expect(handleClick).toHaveBeenCalledTimes(1);
     });
 
@@ -224,7 +230,9 @@ describe('BAITag', () => {
         </BAITag>,
       );
       const closeButton = screen.getByRole('img', { name: /close/i });
-      closeButton.click();
+      act(() => {
+        closeButton.click();
+      });
       expect(handleClose).toHaveBeenCalled();
       expect(handleClose.mock.calls[0][0]).toBeDefined();
     });
