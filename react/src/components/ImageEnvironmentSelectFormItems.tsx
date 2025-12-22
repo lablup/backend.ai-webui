@@ -14,7 +14,6 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import DoubleTag from './DoubleTag';
 // @ts-ignore
-import cssRaw from './ImageEnvironmentSelectFormItems.css?raw';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
@@ -28,7 +27,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -349,7 +348,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   return (
     <>
-      <style>{cssRaw}</style>
       <Form.Item
         className="image-environment-select-form-item"
         name={['environments', 'environment']}
@@ -375,7 +373,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         ]}
         style={{ marginBottom: 10 }}
       >
-        <Select
+        <BAISelect
           ref={envSelectRef}
           showSearch={{
             searchValue: environmentSearch,
@@ -543,7 +541,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               );
             })
           )}
-        </Select>
+        </BAISelect>
       </Form.Item>
       <Form.Item
         noStyle
@@ -581,7 +579,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 },
               ]}
             >
-              <Select
+              <BAISelect
                 ref={versionSelectRef}
                 popupMatchSelectWidth={false}
                 onChange={(value) => {
@@ -797,7 +795,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     );
                   },
                 )}
-              </Select>
+              </BAISelect>
             </Form.Item>
           );
         }}

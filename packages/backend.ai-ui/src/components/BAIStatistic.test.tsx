@@ -1,6 +1,5 @@
 import BAIStatistic from './BAIStatistic';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 // Mock useTranslation
 jest.mock('react-i18next', () => ({
@@ -408,7 +407,6 @@ describe('BAIStatistic', () => {
 
   describe('Tooltip Content', () => {
     it('should show tooltip with current/total when hovering over progress bar', async () => {
-      const user = userEvent.setup();
       const { container } = render(
         <BAIStatistic
           title="Memory"
@@ -423,14 +421,14 @@ describe('BAIStatistic', () => {
       const progressBar = container.querySelector('.ant-progress');
       expect(progressBar).toBeInTheDocument();
 
-      // Hover over the progress bar to trigger tooltip
-      await user.hover(progressBar!);
+      // Hover over the progress bar to trigger tooltip using fireEvent
+      // Note: userEvent.hover() doesn't work well with Ant Design tooltips
+      // due to pointer-events: none on child elements
+      fireEvent.mouseOver(progressBar!);
 
       // Wait for tooltip to appear and verify content
-      await waitFor(() => {
-        const tooltipContent = screen.getByText('4 GB / 8 GB');
-        expect(tooltipContent).toBeInTheDocument();
-      });
+      const tooltipContent = await screen.findByText('4 GB / 8 GB');
+      expect(tooltipContent).toBeInTheDocument();
     });
 
     it('should not show tooltip when progressMode is hidden', () => {

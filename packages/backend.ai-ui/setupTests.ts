@@ -4,3 +4,10 @@
 // learn more: https://github.com/testing-library/jest-dom
 import './src/__test__/matchMedia.mock';
 import '@testing-library/jest-dom';
+
+// Mock ResizeObserver for Ant Design v6 components
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
