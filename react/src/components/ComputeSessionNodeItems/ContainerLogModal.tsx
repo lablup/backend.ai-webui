@@ -241,9 +241,8 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
 
         <div
           style={{
-            height: 'calc(100% - 50px)',
+            height: '100%',
             alignSelf: 'stretch',
-
             border: `1px solid ${token.colorBorder}`,
             overflow: 'hidden',
           }}
