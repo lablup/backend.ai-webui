@@ -4,7 +4,9 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
-import { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber';
+import BAIDynamicUnitInputNumber, {
+  BAIDynamicUnitInputNumberProps,
+} from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
@@ -20,7 +22,7 @@ export interface BAIDynamicUnitInputNumberWithSliderProps
   step?: number;
   inputMinWidth?: number;
 }
-const DynamicUnitInputNumberWithSlider: React.FC<
+const BAIDynamicUnitInputNumberWithSlider: React.FC<
   BAIDynamicUnitInputNumberWithSliderProps
 > = ({
   min = '0m',
@@ -78,7 +80,7 @@ const DynamicUnitInputNumberWithSlider: React.FC<
         direction="column"
         align="stretch"
       >
-        <DynamicUnitInputNumberWithSlider
+        <BAIDynamicUnitInputNumber
           {...otherProps}
           key={key}
           min={min}
@@ -234,4 +236,4 @@ const DynamicUnitInputNumberWithSlider: React.FC<
   );
 };
 
-export default DynamicUnitInputNumberWithSlider;
+export default BAIDynamicUnitInputNumberWithSlider;

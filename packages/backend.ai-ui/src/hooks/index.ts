@@ -3,7 +3,7 @@ import {
   useBAIDeviceMetaData,
   useConnectedBAIClient,
 } from '../components';
-import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
+import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -69,7 +69,7 @@ export const useAllowedHostNames = () => {
     queryKey: ['useAllowedHOstNames'],
     queryFn: () => baiClient.vfolder.list_all_hosts(),
   });
-  return data.allowed;
+  return data?.allowed;
 };
 
 export type ResourceSlotDetail = {
@@ -93,7 +93,7 @@ export const useResourceSlotsDetails = (resourceGroupName?: string) => {
   'use memo';
   const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const { data: resourceSlotsInRG, isLoading } = useSuspenseTanQuery<{
+  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
     [key in ResourceSlotName]?: ResourceSlotDetail | undefined;
   }>({
     queryKey: ['useResourceSlots', resourceGroupName, key],
