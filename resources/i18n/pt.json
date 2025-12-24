@@ -425,6 +425,7 @@
       "Location": "Localização",
       "MaxFolderQuota": "Quota máxima de pastas",
       "MaxSize": "Tamanho máximo",
+      "ModelProjectFolderRestrictedToReadOnly": "A permissão 'Leitura e escrita' não é suportada para a pasta do repositório de modelos",
       "ModifyPermissions": "Modificar permissões",
       "MountPermission": "Permissão de montagem",
       "MountedSessions": "Sessões montadas",

@@ -834,6 +834,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.17.0')) {
       this._features['background-file-delete'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.18.2')) {
+      this._features['allow-only-ro-permission-for-model-project-folder'] = true;
+    }
   }
 
   /**

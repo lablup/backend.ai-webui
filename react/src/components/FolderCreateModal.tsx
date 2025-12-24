@@ -441,15 +441,69 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 
         <Form.Item hidden name={'group'} />
 
-        <Form.Item label={t('data.Permission')} name={'permission'} required>
-          <Radio.Group>
-            <Radio value={'rw'} data-testid="rw-permission">
-              {t('data.ReadWrite')}
-            </Radio>
-            <Radio value={'ro'} data-testid="ro-permission">
-              {t('data.ReadOnly')}
-            </Radio>
-          </Radio.Group>
+        <Form.Item dependencies={['usage_mode', 'type']} noStyle required>
+          {({ getFieldValue }) => {
+            const usageMode = getFieldValue('usage_mode');
+            const type = getFieldValue('type');
+            const allowOnlyROForModelProjectFolder = baiClient?.supports(
+              'allow-only-ro-permission-for-model-project-folder',
+            );
+            const shouldDisableRWPermission =
+              usageMode === 'model' &&
+              type === 'project' &&
+              allowOnlyROForModelProjectFolder;
+
+            return (
+              <Form.Item
+                label={t('data.Permission')}
+                name={'permission'}
+                required
+                dependencies={['usage_mode', 'type']}
+                rules={[
+                  () => ({
+                    validator(__, value) {
+                      if (shouldDisableRWPermission && value === 'rw') {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                            ),
+                          ),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <Radio.Group>
+                  <Radio
+                    value={'rw'}
+                    data-testid="rw-permission"
+                    disabled={shouldDisableRWPermission}
+                  >
+                    <Tooltip
+                      title={
+                        shouldDisableRWPermission
+                          ? t(
+                              'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                            )
+                          : undefined
+                      }
+                    >
+                      <BAIFlex gap="xxs">
+                        {t('data.ReadWrite')}
+                        {shouldDisableRWPermission && <TriangleAlertIcon />}
+                      </BAIFlex>
+                    </Tooltip>
+                  </Radio>
+                  <Radio value={'ro'} data-testid="ro-permission">
+                    {t('data.ReadOnly')}
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            );
+          }}
         </Form.Item>
 
         <Form.Item dependencies={['usage_mode']} noStyle>

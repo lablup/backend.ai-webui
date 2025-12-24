@@ -425,6 +425,7 @@
       "Location": "Lokalizacja",
       "MaxFolderQuota": "Maksymalny limit folderu",
       "MaxSize": "Max rozmiar",
+      "ModelProjectFolderRestrictedToReadOnly": "Uprawnienie 'Odczyt i zapis' nie jest obsługiwane dla folderu magazynu modeli",
       "ModifyPermissions": "Modyfikowanie uprawnień",
       "MountPermission": "Zamontować pozwolenie",
       "MountedSessions": "Zamontowane sesje",

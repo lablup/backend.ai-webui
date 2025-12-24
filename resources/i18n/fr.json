@@ -425,6 +425,7 @@
       "Location": "Emplacement",
       "MaxFolderQuota": "Quota maximum de dossiers",
       "MaxSize": "Taille maximale",
+      "ModelProjectFolderRestrictedToReadOnly": "La permission 'Lecture et écriture' n'est pas prise en charge pour le dossier du référentiel de modèles.",
       "ModifyPermissions": "Modifier les autorisations",
       "MountPermission": "Autorisation de montage",
       "MountedSessions": "Sessions montées",

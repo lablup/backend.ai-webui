@@ -423,6 +423,7 @@
       "Location": "Τοποθεσία",
       "MaxFolderQuota": "Μέγιστη ποσόστωση φακέλων",
       "MaxSize": "Μέγιστο μέγεθος",
+      "ModelProjectFolderRestrictedToReadOnly": "Δεν υποστηρίζεται η άδεια 'Read & Write' για τον φάκελο του model store.",
       "ModifyPermissions": "Τροποποίηση δικαιωμάτων",
       "MountPermission": "Τοποθετημένος άδεια",
       "MountedSessions": "Προσαρτημένες συνεδρίες",

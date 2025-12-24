@@ -425,6 +425,7 @@
       "Location": "Ort",
       "MaxFolderQuota": "Maximale Ordner-Quote",
       "MaxSize": "Maximale Größe",
+      "ModelProjectFolderRestrictedToReadOnly": "Die Berechtigung 'Lesen & Schreiben' wird für Model-Store-Ordner nicht unterstützt.",
       "ModifyPermissions": "Berechtigungen ändern",
       "MountPermission": "Erlaubnis montieren",
       "MountedSessions": "Gemountete Sitzungen",

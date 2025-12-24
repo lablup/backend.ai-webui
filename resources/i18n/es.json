@@ -425,6 +425,7 @@
       "Location": "Ubicación",
       "MaxFolderQuota": "Cuota máxima de carpetas",
       "MaxSize": "Tamaño máximo",
+      "ModelProjectFolderRestrictedToReadOnly": "El permiso 'Lectura y escritura' no es compatible con la carpeta del almacén de modelos",
       "ModifyPermissions": "Modificar permisos",
       "MountPermission": "Montar permiso",
       "MountedSessions": "Sesiones montadas",

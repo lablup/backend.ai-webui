@@ -428,6 +428,7 @@
       "Location": "Location",
       "MaxFolderQuota": "Max Folder Quota",
       "MaxSize": "Max Size",
+      "ModelProjectFolderRestrictedToReadOnly": "'Read & Write' permission is not supported for model store folder",
       "ModifyPermissions": "Modify permissions",
       "MountPermission": "Mount Permission",
       "MountedSessions": "Mounted Sessions",

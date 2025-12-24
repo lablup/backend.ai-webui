@@ -424,6 +424,7 @@
       "Location": "Байршил",
       "MaxFolderQuota": "Фолдерын хамгийн их квот",
       "MaxSize": "Хамгийн их хэмжээ",
+      "ModelProjectFolderRestrictedToReadOnly": "Моделийн агуулах хавтас дээр 'Унших ба бичих' эрхийг дэмждэггүй.",
       "ModifyPermissions": "Зөвшөөрлийг өөрчлөх",
       "MountPermission": "ЗОРИУЛСАН",
       "MountedSessions": "Маунтлагдсан сессүүд",

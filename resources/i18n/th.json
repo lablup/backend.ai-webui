@@ -425,6 +425,7 @@
       "Location": "ตำแหน่ง",
       "MaxFolderQuota": "โควตาโฟลเดอร์สูงสุด",
       "MaxSize": "ขนาดสูงสุด",
+      "ModelProjectFolderRestrictedToReadOnly": "สิทธิ์ 'อ่านและเขียน' ไม่รองรับสำหรับโฟลเดอร์ Model Store",
       "ModifyPermissions": "แก้ไขสิทธิ์",
       "MountPermission": "การอนุญาตเมานต์",
       "MountedSessions": "เซสชันที่เมานต์",

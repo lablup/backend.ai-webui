@@ -427,6 +427,7 @@
       "Location": "위치",
       "MaxFolderQuota": "최대 할당 가능 용량",
       "MaxSize": "최대 크기",
+      "ModelProjectFolderRestrictedToReadOnly": "모델 스토어 폴더에 대해 '읽기 및 쓰기' 권한이 허용되지 않습니다. ",
       "ModifyPermissions": "권한 수정",
       "MountPermission": "마운트 권한",
       "MountedSessions": "마운트 된 세션",

@@ -425,6 +425,7 @@
       "Location": "Место расположения",
       "MaxFolderQuota": "Максимальная квота на папки",
       "MaxSize": "Максимальный размер",
+      "ModelProjectFolderRestrictedToReadOnly": "Разрешение 'Read & Write' не поддерживается для папки хранилища моделей",
       "ModifyPermissions": "Изменение прав доступа",
       "MountPermission": "Разрешение на крепление",
       "MountedSessions": "Смонтированные сессии",

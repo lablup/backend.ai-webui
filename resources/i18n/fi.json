@@ -425,6 +425,7 @@
       "Location": "Sijainti",
       "MaxFolderQuota": "Kansioiden enimmäiskiintiö",
       "MaxSize": "Enimmäiskoko",
+      "ModelProjectFolderRestrictedToReadOnly": "Luku- ja kirjoitusoikeutta ei tueta mallivaraston kansiolle.",
       "ModifyPermissions": "Muokkaa käyttöoikeuksia",
       "MountPermission": "Kiinnityslupa",
       "MountedSessions": "Liitetyt istunnot",

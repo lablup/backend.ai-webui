@@ -425,6 +425,7 @@
       "Location": "Vị trí",
       "MaxFolderQuota": "Hạn ngạch thư mục tối đa",
       "MaxSize": "Kích thước tối đa",
+      "ModelProjectFolderRestrictedToReadOnly": "Quyền 'Đọc & Ghi' không được hỗ trợ cho thư mục kho mô hình",
       "ModifyPermissions": "Sửa đổi quyền",
       "MountPermission": "Gắn kết quyền",
       "MountedSessions": "Các phiên đã gắn",

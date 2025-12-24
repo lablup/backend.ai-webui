@@ -425,6 +425,7 @@
       "Location": "yer",
       "MaxFolderQuota": "Maksimum Klasör Kotası",
       "MaxSize": "Maksimum Boyut",
+      "ModelProjectFolderRestrictedToReadOnly": "'Okuma ve Yazma' izni model depolama klasörü için desteklenmiyor",
       "ModifyPermissions": "İzinleri değiştirme",
       "MountPermission": "Montaj İzni",
       "MountedSessions": "Bağlanmış Oturumlar",

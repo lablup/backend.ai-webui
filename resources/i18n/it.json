@@ -424,6 +424,7 @@
       "Location": "Posizione",
       "MaxFolderQuota": "Quota massima della cartella",
       "MaxSize": "Dimensione massima",
+      "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
       "ModifyPermissions": "Modificare le autorizzazioni",
       "MountPermission": "Autorizzazione del montaggio",
       "MountedSessions": "Sessioni montate",

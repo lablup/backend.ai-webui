@@ -424,6 +424,7 @@
       "Location": "Lokasi",
       "MaxFolderQuota": "Kuota Folder Maksimal",
       "MaxSize": "Ukuran maksimal",
+      "ModelProjectFolderRestrictedToReadOnly": "Izin 'Baca & Tulis' tidak didukung untuk folder penyimpanan model.",
       "ModifyPermissions": "Memodifikasi izin",
       "MountPermission": "MUNGGAL Izin",
       "MountedSessions": "Sesi Terpasang",

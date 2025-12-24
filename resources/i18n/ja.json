@@ -424,6 +424,7 @@
       "Location": "ロケーション",
       "MaxFolderQuota": "最大割り当て可能容量",
       "MaxSize": "最大サイズ",
+      "ModelProjectFolderRestrictedToReadOnly": "モデルストアフォルダーでは「読み取り/書き込み」権限はサポートされていません",
       "ModifyPermissions": "権限修正",
       "MountPermission": "マウント許可",
       "MountedSessions": "マウント済みセッション",

@@ -425,6 +425,7 @@
       "Location": "地点",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
+      "ModelProjectFolderRestrictedToReadOnly": "模型存储文件夹不支持“读写”权限",
       "ModifyPermissions": "修改权限",
       "MountPermission": "安装许可",
       "MountedSessions": "已挂载的会话",
