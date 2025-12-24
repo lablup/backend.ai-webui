@@ -1523,6 +1523,7 @@
       "Container": "Contenitore",
       "Core": "Nucleo",
       "CreatedAt": "CreatoAt",
+      "CurrentAcceleratorTypeAllowsMaxOne": "È possibile assegnare al massimo 1 acceleratore di tipo \"{{ accelerator }}\".",
       "CurrentResourceGroup": "Gruppo di risorse attuale",
       "CustomAllocation": "Allocazione personalizzata",
       "CustomResourceApplied": "Viene applicata la risorsa personalizzata",

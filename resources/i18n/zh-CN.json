@@ -1526,6 +1526,7 @@
       "Container": "容器",
       "Core": "核",
       "CreatedAt": "创建时间",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\" 类型最多只能分配 1 个。",
       "CurrentResourceGroup": "当前资源组",
       "CustomAllocation": "自定义分配",
       "CustomResourceApplied": "应用自定义资源",

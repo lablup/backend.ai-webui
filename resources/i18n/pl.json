@@ -1525,6 +1525,7 @@
       "Container": "Pojemnik",
       "Core": "Rdzeń",
       "CreatedAt": "Utworzono o godz",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Można przypisać maksymalnie 1 urządzenie typu \"{{ accelerator }}\".",
       "CurrentResourceGroup": "Bieżąca grupa zasobów",
       "CustomAllocation": "Przydział niestandardowy",
       "CustomResourceApplied": "Zastosowano zasób niestandardowy",

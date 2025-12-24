@@ -1523,6 +1523,7 @@
       "Container": "Δοχείο",
       "Core": "Πυρήνας",
       "CreatedAt": "Δημιουργήθηκε στο",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Μπορεί να εκχωρηθεί μόνο 1 συσκευή τύπου \"{{ accelerator }}\".",
       "CurrentResourceGroup": "Τρέχουσα ομάδα πόρων",
       "CustomAllocation": "Προσαρμοσμένη κατανομή",
       "CustomResourceApplied": "Εφαρμόζεται προσαρμοσμένος πόρος",

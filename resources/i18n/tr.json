@@ -1526,6 +1526,7 @@
       "Container": "Konteyner",
       "Core": "çekirdek",
       "CreatedAt": "Oluşturulma Tarihi",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\" türünden en fazla 1 adet atanabilir.",
       "CurrentResourceGroup": "Mevcut Kaynak Grubu",
       "CustomAllocation": "Özel tahsis",
       "CustomResourceApplied": "Özel kaynak uygulandı",

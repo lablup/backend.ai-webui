@@ -5,6 +5,7 @@ import {
   convertToBinaryUnit,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
+import { useResourceSlots } from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
@@ -162,6 +163,8 @@ const ResourceAllocationFormItems: React.FC<
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
     });
+
+  const [resourceSlots] = useResourceSlots();
 
   const { mergedResourceSlots, resourceSlotsInRG } = useResourceSlotsDetails(
     currentResourceGroupInForm || undefined,
@@ -904,6 +907,12 @@ const ResourceAllocationFormItems: React.FC<
                       currentAcceleratorType,
                       'shares',
                     );
+
+                    const isUniqueType =
+                      resourceSlots[
+                        currentAcceleratorType as keyof typeof resourceSlots
+                      ] === 'unique';
+
                     const isSingleCluster =
                       form.getFieldValue('cluster_size') < 2;
                     const hasQuantumSize = _.isNumber(
@@ -948,6 +957,7 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
+                        dependencies={[['resource', 'acceleratorType']]}
                         rules={[
                           {
                             required:
@@ -960,9 +970,12 @@ const ResourceAllocationFormItems: React.FC<
                               resourceLimits.accelerators[
                                 currentAcceleratorType
                               ]?.min || 0,
-                            max: resourceLimits.accelerators[
-                              currentAcceleratorType
-                            ]?.max,
+                            // Unique type should only allow 0 or 1
+                            max: isUniqueType
+                              ? 1
+                              : resourceLimits.accelerators[
+                                  currentAcceleratorType
+                                ]?.max,
                           },
                           {
                             validator: async (_rule: any, value: number) => {
@@ -1053,6 +1066,22 @@ const ResourceAllocationFormItems: React.FC<
                               return Promise.resolve();
                             },
                           },
+                          {
+                            warningOnly: true,
+                            validator: async (_rule, _value) => {
+                              if (isUniqueType) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.CurrentAcceleratorTypeAllowsMaxOne',
+                                    {
+                                      accelerator: currentAcceleratorType,
+                                    },
+                                  ),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
                         ]}
                       >
                         <InputNumberWithSlider
@@ -1083,6 +1112,7 @@ const ResourceAllocationFormItems: React.FC<
                                       ]?.max,
                                   }
                                 : {}),
+                              ...(isUniqueType ? { 1: 1 } : {}),
                             },
                             tooltip: {
                               formatter: (value = 0) => {
@@ -1100,8 +1130,12 @@ const ResourceAllocationFormItems: React.FC<
                           }
                           min={0}
                           max={
-                            resourceLimits.accelerators[currentAcceleratorType]
-                              ?.max
+                            // Unique type should only allow 0 or 1
+                            isUniqueType
+                              ? 1
+                              : resourceLimits.accelerators[
+                                  currentAcceleratorType
+                                ]?.max
                           }
                           step={currentAcceleratorStep}
                           onChange={() => {

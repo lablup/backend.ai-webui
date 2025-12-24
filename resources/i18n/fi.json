@@ -1525,6 +1525,7 @@
       "Container": "Kontti",
       "Core": "Ydin",
       "CreatedAt": "LuotuAt",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\"-tyyppiä voi olla enintään yksi.",
       "CurrentResourceGroup": "Nykyinen resurssiryhmä",
       "CustomAllocation": "Mukautettu jako",
       "CustomResourceApplied": "Mukautettua resurssia sovelletaan",

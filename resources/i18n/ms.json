@@ -1525,6 +1525,7 @@
       "Container": "Bekas",
       "Core": "Teras",
       "CreatedAt": "Dicipta Pada",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Jenis \"{{ accelerator }}\" hanya boleh diperuntukkan maksimum 1 sahaja.",
       "CurrentResourceGroup": "Kumpulan Sumber Semasa",
       "CustomAllocation": "Peruntukan khusus",
       "CustomResourceApplied": "Sumber khusus digunakan",

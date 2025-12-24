@@ -1526,6 +1526,7 @@
       "Container": "Recipiente",
       "Core": "Testemunho",
       "CreatedAt": "Criado em",
+      "CurrentAcceleratorTypeAllowsMaxOne": "É possível alocar no máximo 1 unidade do tipo \"{{ accelerator }}\".",
       "CurrentResourceGroup": "Grupo de Recursos Atual",
       "CustomAllocation": "Alocação personalizada",
       "CustomResourceApplied": "Recurso personalizado é aplicado",

@@ -1531,6 +1531,7 @@
       "Container": "Container",
       "Core": "Core",
       "CreatedAt": "CreatedAt",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\" type can only have a maximum of 1.",
       "CurrentResourceGroup": "Current Resource Group",
       "CustomAllocation": "Custom allocation",
       "CustomResourceApplied": "Custom resource applied",

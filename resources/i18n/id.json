@@ -1524,6 +1524,7 @@
       "Container": "Kontainer",
       "Core": "Core",
       "CreatedAt": "DibuatPada",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Tipe \"{{ accelerator }}\" hanya dapat dialokasikan paling banyak 1.",
       "CurrentResourceGroup": "Grup Sumber Daya Saat Ini",
       "CustomAllocation": "Alokasi khusus",
       "CustomResourceApplied": "Sumber daya khusus diterapkan",

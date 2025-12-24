@@ -1526,6 +1526,7 @@
       "Container": "Thùng đựng hàng",
       "Core": "Cốt lõi",
       "CreatedAt": "Đã tạoTại",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Loại \"{{ accelerator }}\" chỉ được phép gán tối đa 1 thiết bị.",
       "CurrentResourceGroup": "Nhóm tài nguyên hiện tại",
       "CustomAllocation": "Phân bổ tùy chỉnh",
       "CustomResourceApplied": "Tài nguyên tùy chỉnh được áp dụng",

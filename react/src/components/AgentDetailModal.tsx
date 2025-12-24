@@ -66,8 +66,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap={'md'}>
         <Row gutter={[24, 24]}>
-          <Col xs={24} sm={12}>
-            {parsedLiveStat?.devices?.cpu_util ? (
+          {parsedLiveStat?.devices?.cpu_util ? (
+            <Col xs={24} sm={12}>
               <BAIFlex direction="column" gap="xxs" align="stretch">
                 <Typography.Title level={5} style={{ marginTop: 0 }}>
                   {mergedResourceSlots?.cpu?.human_readable_name}
@@ -91,8 +91,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   </BAIFlex>
                 ))}
               </BAIFlex>
-            ) : null}
-          </Col>
+            </Col>
+          ) : null}
           <Col xs={24} sm={12}>
             {parsedAvailableSlots?.mem ? (
               <BAIFlex direction="column" gap="xxs" align="stretch">

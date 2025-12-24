@@ -1525,6 +1525,7 @@
       "Container": "コンテナ",
       "Core": "芯",
       "CreatedAt": "作成日",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\"タイプは最大1個までしか割り当てられません。",
       "CurrentResourceGroup": "現在のリソースグループ",
       "CustomAllocation": "カスタム割り当て",
       "CustomResourceApplied": "カスタムリソースが適用されます",

@@ -1523,6 +1523,7 @@
       "Container": "Контейнер",
       "Core": "Цөм",
       "CreatedAt": "Үүсгэсэн",
+      "CurrentAcceleratorTypeAllowsMaxOne": "\"{{ accelerator }}\" төрлийг хамгийн ихдээ 1 ширхэгээр л хуваарилж болно.",
       "CurrentResourceGroup": "Одоогийн нөөцийн бүлэг",
       "CustomAllocation": "Захиалгат хуваарилалт",
       "CustomResourceApplied": "Захиалгат нөөцийг ашигладаг",

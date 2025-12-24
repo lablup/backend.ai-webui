@@ -1525,6 +1525,7 @@
       "Container": "Контейнер",
       "Core": "Ядро",
       "CreatedAt": "Создано в",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Для типа \"{{ accelerator }}\" можно выделить не более одного устройства.",
       "CurrentResourceGroup": "Текущая группа ресурсов",
       "CustomAllocation": "Произвольное распределение",
       "CustomResourceApplied": "Настраиваемый ресурс применен",

@@ -1524,6 +1524,7 @@
       "Container": "Container",
       "Core": "Ader",
       "CreatedAt": "Erstellt am",
+      "CurrentAcceleratorTypeAllowsMaxOne": "Vom Typ \"{{ accelerator }}\" kann höchstens 1 zugewiesen werden.",
       "CurrentResourceGroup": "Aktuelle Ressourcengruppe",
       "CustomAllocation": "Benutzerdefinierte Zuordnung",
       "CustomResourceApplied": "Benutzerdefinierte Ressource wird angewendet",
