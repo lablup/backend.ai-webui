@@ -229,7 +229,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         <BAIFlex direction="row" align="stretch">
           <Button
             type="text"
-            icon={<InfoCircleOutlined style={{ color: token.colorSuccess }} />}
+            icon={<InfoCircleOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
               startInfoModalOpenTransition(() => {
                 setCurrentResourcePolicy(row || null);

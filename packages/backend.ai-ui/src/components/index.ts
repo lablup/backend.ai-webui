@@ -73,6 +73,7 @@ export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';
 export { default as BAITextHighlighter } from './BAITextHighlighter';
+export { default as BooleanTag } from './BooleanTag';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

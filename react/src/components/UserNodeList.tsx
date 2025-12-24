@@ -1,15 +1,18 @@
 import { UserNodeListModifyMutation } from '../__generated__/UserNodeListModifyMutation.graphql';
-import { UserNodeListQuery } from '../__generated__/UserNodeListQuery.graphql';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
+import {
+  UserNodeListQuery,
+  UserNodeListQuery$data,
+} from '../__generated__/UserNodeListQuery.graphql';
+import {
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import {
-  ReloadOutlined,
-  InfoCircleOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { ReloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Button, theme, Popconfirm, App } from 'antd';
 import {
   filterOutEmpty,
@@ -19,10 +22,15 @@ import {
   BAIPropertyFilter,
   mergeFilterValues,
   useBAILogger,
+  BAIText,
+  BAIColumnsType,
+  toLocalId,
+  BooleanTag,
+  isValidUUID,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import React, {
   useState,
   useTransition,
@@ -35,11 +43,15 @@ import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 interface UserNodeListProps {}
 
+type UserNode = NonNullableNodeOnEdges<UserNodeListQuery$data['user_nodes']>;
+
 const UserNodeList: React.FC<UserNodeListProps> = () => {
   const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [fetchKey, updateFetchKey] = useFetchKey();
+
+  const baiClient = useSuspendedBackendaiClient();
 
   const [queryParams, setQueryParams] = useQueryParams({
     filter: withDefault(StringParam, undefined),
@@ -118,7 +130,27 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
               email
               username
               created_at
+              modified_at
               status
+              domain_name
+              resource_policy
+              allowed_client_ip
+              container_gids
+              container_main_gid
+              container_uid
+              status_info
+              sudo_session_enabled
+              need_password_change
+              totp_activated
+              project_nodes {
+                count
+                edges {
+                  node {
+                    name
+                    id
+                  }
+                }
+              }
             }
           }
         }
@@ -172,15 +204,35 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
             ]}
           />
           <BAIPropertyFilter
-            filterProperties={[
+            filterProperties={filterOutEmpty([
               {
                 key: 'email',
-                propertyLabel: t('credential.UserID'),
+                propertyLabel: t('general.E-Mail'),
                 type: 'string',
+              },
+              {
+                key: 'uuid',
+                propertyLabel: 'ID',
+                type: 'string',
+                defaultOperator: '==',
+                rule: {
+                  message: 'Invalid UUID.',
+                  validate: (value) => isValidUUID(value),
+                },
               },
               {
                 key: 'username',
                 propertyLabel: t('credential.Name'),
+                type: 'string',
+              },
+              {
+                key: 'full_name',
+                propertyLabel: t('credential.FullName'),
+                type: 'string',
+              },
+              baiClient.isManagerVersionCompatibleWith('25.15.2') && {
+                key: 'project_name',
+                propertyLabel: t('general.Project'),
                 type: 'string',
               },
               {
@@ -194,26 +246,43 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                     label: 'superadmin',
                     value: 'superadmin',
                   },
-                  // {
-                  //   label: 'admin',
-                  //   value: 'admin',
-                  // },
                   {
                     label: 'user',
                     value: 'user',
                   },
-                  // {
-                  //   label: 'monitor',
-                  //   value: 'monitor',
-                  // },
                 ],
+              },
+              {
+                key: 'resource_policy',
+                propertyLabel: t('credential.ResourcePolicy'),
+                type: 'string',
               },
               {
                 key: 'description',
                 propertyLabel: t('credential.Description'),
                 type: 'string',
               },
-            ]}
+              {
+                key: 'status_info',
+                propertyLabel: t('credential.StatusInfo'),
+                type: 'string',
+              },
+              {
+                key: 'need_password_change',
+                propertyLabel: 'Need Password Change',
+                type: 'boolean',
+              },
+              {
+                key: 'totp_activated',
+                propertyLabel: '2FA Enabled',
+                type: 'boolean',
+              },
+              {
+                key: 'sudo_session_enabled',
+                propertyLabel: 'Sudo Session Enabled',
+                type: 'boolean',
+              },
+            ])}
             value={queryParams.filter}
             onChange={(value) => {
               setQueryParams({ filter: value }, 'replaceIn');
@@ -248,52 +317,22 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
         columns={filterOutEmpty([
           {
             key: 'email',
-            title: t('credential.UserID'),
-            dataIndex: 'email',
+            title: t('general.E-Mail'),
             sorter: true,
-          },
-          {
-            key: 'username',
-            title: t('credential.Name'),
-            dataIndex: 'username',
-            sorter: true,
-          },
-          {
-            key: 'role',
-            title: t('credential.Role'),
-            dataIndex: 'role',
-            sorter: true,
-          },
-          {
-            key: 'description',
-            title: t('credential.Description'),
-            dataIndex: 'description',
-          },
-          {
-            title: t('credential.CreatedAt'),
-            dataIndex: 'created_at',
-            render: (text) => dayjs(text).format('lll'),
-            sorter: true,
-            defaultSortOrder: 'descend',
-          },
-          queryParams.status !== 'active' && {
-            key: 'status',
-            title: t('credential.Status'),
-            dataIndex: 'status',
-            sorter: true,
+            fixed: true,
+            render: (__, record) => <BAIText copyable>{record.email}</BAIText>,
           },
           {
             title: t('general.Control'),
-            render: (record) => {
+            fixed: true,
+            render: (__, record) => {
               const isActive = record?.status === 'active';
               return (
-                <BAIFlex gap={token.marginXS}>
+                <BAIFlex gap={token.marginXXS}>
                   <Button
                     type="text"
                     icon={
-                      <InfoCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
+                      <InfoCircleOutlined style={{ color: token.colorInfo }} />
                     }
                     onClick={() => {
                       startInfoModalOpenTransition(() => {
@@ -303,9 +342,7 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
                   />
                   <Button
                     type="text"
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
+                    icon={<EditIcon style={{ color: token.colorInfo }} />}
                     onClick={() => {
                       startSettingModalOpenTransition(() => {
                         setEmailForSettingModal(record?.email || null);
@@ -374,7 +411,158 @@ const UserNodeList: React.FC<UserNodeListProps> = () => {
               );
             },
           },
-        ])}
+          {
+            key: 'id',
+            title: 'ID',
+            render: (__, record) => (
+              <BAIText
+                copyable
+                ellipsis
+                monospace
+                style={{
+                  maxWidth: 100,
+                }}
+              >
+                {toLocalId(record.id)}
+              </BAIText>
+            ),
+          },
+          {
+            key: 'username',
+            title: t('credential.Name'),
+            dataIndex: 'username',
+            sorter: true,
+          },
+          {
+            key: 'full_name',
+            title: t('credential.FullName'),
+            dataIndex: 'full_name',
+            sorter: true,
+          },
+          {
+            key: 'project',
+            title: t('general.Project'),
+            render: (__, record) => {
+              return (
+                <BAIText ellipsis style={{ maxWidth: 200 }}>
+                  {_.map(
+                    record.project_nodes?.edges,
+                    (edge) => edge?.node?.name,
+                  ).join(', ')}
+                </BAIText>
+              );
+            },
+          },
+          {
+            key: 'role',
+            title: t('credential.Role'),
+            dataIndex: 'role',
+            sorter: true,
+          },
+          {
+            key: 'resource_policy',
+            title: t('credential.ResourcePolicy'),
+            dataIndex: 'resource_policy',
+            sorter: true,
+          },
+          {
+            key: 'allowed_client_ip',
+            title: t('session.AllowedClientIps'),
+            dataIndex: 'allowed_client_ip',
+            render: (value) => (!_.isEmpty(value) ? value : '-'),
+          },
+          {
+            key: 'container_uid',
+            title: 'Container UID',
+            render: (__, record) =>
+              record.container_uid ? (
+                <BAIText ellipsis style={{ maxWidth: 200 }}>
+                  {record.container_uid}
+                </BAIText>
+              ) : (
+                '-'
+              ),
+          },
+          {
+            key: 'container_main_gid',
+            title: 'Container Main GID',
+            render: (__, record) =>
+              record.container_main_gid ? (
+                <BAIText ellipsis style={{ maxWidth: 200 }}>
+                  {record.container_main_gid}
+                </BAIText>
+              ) : (
+                '-'
+              ),
+          },
+          {
+            key: 'container_gids',
+            title: 'Container GIDs',
+            render: (__, record) =>
+              !_.isEmpty(record.container_gids) ? (
+                <BAIText ellipsis style={{ maxWidth: 200 }}>
+                  {_.join(record.container_gids, ', ')}
+                </BAIText>
+              ) : (
+                '-'
+              ),
+          },
+          {
+            key: 'description',
+            title: t('credential.Description'),
+            dataIndex: 'description',
+          },
+          {
+            key: 'sudo_session_enabled',
+            title: 'Sudo Session Enabled',
+            sorter: true,
+            render: (_, record) => (
+              <BooleanTag value={record.sudo_session_enabled} />
+            ),
+          },
+          {
+            key: 'need_password_change',
+            title: 'Need Password Change',
+            sorter: true,
+            render: (_, record) => (
+              <BooleanTag value={record.need_password_change} />
+            ),
+          },
+          {
+            key: 'totp_activated',
+            title: '2FA',
+            sorter: true,
+            render: (_, record) => (
+              <BooleanTag
+                value={record.totp_activated}
+                trueLabel={t('general.Enabled')}
+                falseLabel={t('general.Disabled')}
+              />
+            ),
+          },
+          {
+            key: 'status_info',
+            title: t('credential.StatusInfo'),
+            dataIndex: 'status_info',
+          },
+          {
+            title: t('general.CreatedAt'),
+            render: (__, record) => dayjs(record.created_at).format('lll'),
+            sorter: true,
+            defaultSortOrder: 'descend',
+          },
+          {
+            title: t('general.ModifiedAt'),
+            render: (__, record) => dayjs(record.modified_at).format('lll'),
+            sorter: true,
+          },
+          queryParams.status !== 'active' && {
+            key: 'status',
+            title: t('credential.Status'),
+            render: (__, record) => record.status,
+            sorter: true,
+          },
+        ] as BAIColumnsType<UserNode>)}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: user_nodes?.count || 0,

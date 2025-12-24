@@ -26,6 +26,7 @@ import {
   BAIPropertyFilter,
   useBAILogger,
   useUpdatableState,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -262,6 +263,14 @@ const UserCredentialList: React.FC = () => {
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         columns={filterOutEmpty([
           {
+            key: 'accessKey',
+            title: t('credential.AccessKey'),
+            sorter: true,
+            render: (_value, record) => {
+              return <BAIText monospace>{record.access_key}</BAIText>;
+            },
+          },
+          {
             key: 'userID',
             title: t('credential.UserID'),
             dataIndex: 'email',
@@ -273,115 +282,16 @@ const UserCredentialList: React.FC = () => {
             },
           },
           {
-            key: 'accessKey',
-            title: t('credential.AccessKey'),
-            dataIndex: 'access_key',
-            sorter: true,
-          },
-          {
-            key: 'permission',
-            title: t('credential.Permission'),
-            dataIndex: 'is_admin',
-            render: (isAdmin) =>
-              isAdmin ? (
-                <>
-                  <Tag color="red">admin</Tag>
-                  <Tag color="green">user</Tag>
-                </>
-              ) : (
-                <Tag color="green">user</Tag>
-              ),
-            sorter: true,
-          },
-          {
-            key: 'keyAge',
-            title: t('credential.KeyAge'),
-            dataIndex: 'created_at',
-            render: (createdAt) => {
-              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
-            },
-            sorter: true,
-          },
-          {
-            key: 'createdAt',
-            title: t('credential.CreatedAt'),
-            dataIndex: 'created_at',
-            render: (createdAt) => dayjs(createdAt).format('lll'),
-            sorter: true,
-          },
-          {
-            key: 'resourcePolicy',
-            title: t('credential.ResourcePolicy'),
-            dataIndex: 'resource_policy',
-            sorter: true,
-          },
-          {
-            key: 'allocation',
-            title: t('credential.Allocation'),
-            render: (record: Keypair) => {
-              return (
-                <BAIFlex direction="column" align="start">
-                  <Typography.Text>
-                    {record.concurrency_used}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.Sessions')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.rate_limit}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.ReqPer15Min')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.num_queries}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
-                      {t('credential.Queries')}
-                    </Typography.Text>
-                  </Typography.Text>
-                </BAIFlex>
-              );
-            },
-          },
-          {
             key: 'control',
             title: t('general.Control'),
-            fixed: 'right',
+            fixed: 'left',
             render: (_value, record) => {
               return (
                 <BAIFlex gap={token.marginXS}>
                   <Button
                     type="text"
                     icon={
-                      <InfoCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
+                      <InfoCircleOutlined style={{ color: token.colorInfo }} />
                     }
                     onClick={() => {
                       startInfoModalOpenTransition(() => {
@@ -531,6 +441,97 @@ const UserCredentialList: React.FC = () => {
                       }}
                     />
                   )}
+                </BAIFlex>
+              );
+            },
+          },
+          {
+            key: 'permission',
+            title: t('credential.Permission'),
+            dataIndex: 'is_admin',
+            render: (isAdmin) =>
+              isAdmin ? (
+                <>
+                  <Tag color="red">admin</Tag>
+                  <Tag color="green">user</Tag>
+                </>
+              ) : (
+                <Tag color="green">user</Tag>
+              ),
+            sorter: true,
+          },
+          {
+            key: 'keyAge',
+            title: t('credential.KeyAge'),
+            dataIndex: 'created_at',
+            render: (createdAt) => {
+              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+            },
+            sorter: true,
+          },
+          {
+            key: 'createdAt',
+            title: t('credential.CreatedAt'),
+            dataIndex: 'created_at',
+            render: (createdAt) => dayjs(createdAt).format('lll'),
+            sorter: true,
+          },
+          {
+            key: 'resourcePolicy',
+            title: t('credential.ResourcePolicy'),
+            dataIndex: 'resource_policy',
+            sorter: true,
+          },
+          {
+            key: 'allocation',
+            title: t('credential.Allocation'),
+            render: (record: Keypair) => {
+              return (
+                <BAIFlex direction="column" align="start">
+                  <Typography.Text>
+                    {record.concurrency_used}
+                    <Typography.Text
+                      type="secondary"
+                      style={{
+                        marginLeft: token.marginXXS,
+                        fontSize: token.fontSizeSM,
+                      }}
+                    >
+                      {t('credential.Sessions')}
+                    </Typography.Text>
+                  </Typography.Text>
+                  <Typography.Text
+                    style={{
+                      fontSize: token.fontSizeSM,
+                    }}
+                  >
+                    {record.rate_limit}
+                    <Typography.Text
+                      type="secondary"
+                      style={{
+                        marginLeft: token.marginXXS,
+                        fontSize: token.fontSizeSM,
+                      }}
+                    >
+                      {t('credential.ReqPer15Min')}
+                    </Typography.Text>
+                  </Typography.Text>
+                  <Typography.Text
+                    style={{
+                      fontSize: token.fontSizeSM,
+                    }}
+                  >
+                    {record.num_queries}
+                    <Typography.Text
+                      type="secondary"
+                      style={{
+                        marginLeft: token.marginXXS,
+                        fontSize: token.fontSizeSM,
+                      }}
+                    >
+                      {t('credential.Queries')}
+                    </Typography.Text>
+                  </Typography.Text>
                 </BAIFlex>
               );
             },
