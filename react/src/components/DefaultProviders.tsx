@@ -2,7 +2,7 @@ import { RelayEnvironment } from '../RelayEnvironment';
 // @ts-ignore
 import rawFixAntCss from '../fix_antd.css?raw';
 import { buiLanguages } from '../helper/bui-language';
-import { useCustomThemeConfig } from '../helper/customThemeConfig';
+import { useUserCustomThemeConfig } from '../helper/customThemeConfig';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import {
   backendaiClientPromise,
@@ -219,7 +219,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useUserCustomThemeConfig();
 
   const { isDarkMode } = useThemeMode();
 
@@ -363,7 +363,7 @@ export const DefaultProvidersForReactRoot: React.FC<
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useUserCustomThemeConfig();
 
   return (
     <>

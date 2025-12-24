@@ -2051,6 +2051,7 @@
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "ExperimentalFeatures": "실험적 기능",
     "ExperimentalFeaturesDesc": "새로운 실험적 기능을 먼저 경험해보세요. 이러한 기능들은 향후 업데이트에서 변경되거나 제거될 수 있습니다.",
+    "FailedToLoadDefaultThemeConfig": "기본 테마 설정이 존재하지 않아 변경내용을 적용할 수 없습니다.",
     "General": "일반",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
@@ -2082,6 +2083,8 @@
     "UseSystemSetting": "시스템 설정 사용",
     "UserConfigScript": "사용자 환경 스크립트",
     "logo": {
+      "CollapsedLogoSize": "간결한 사이드바 로고 크기",
+      "CollapsedLogoSizeDesc": "간결한 사이더바 상단 부분에 사용될 로고 이미지의 크기를 지정할 수 있습니다. 최대 크기는 가로 74px 세로 60px 까지 적용 가능하며, 권장 크기는 가로 35px 세로 35px 입니다. ",
       "CreateURLWithImage": "이미지로 경로 생성",
       "DarkModeCollapsedLogo": "간결한 사이드바 로고 (다크 모드)",
       "DarkModeCollapsedLogoDesc": "다크 모드 WebUI 의 간결한 사이드바 로고로 사용될 이미지를 설정할 수 있습니다.",
@@ -2095,7 +2098,13 @@
       "LightModeLogo": "라이트 모드 로고",
       "LightModeLogoDesc": "라이트 모드 WebUI 의 로고로 사용될 이미지를 설정할 수 있습니다. ",
       "LogoCustomizationDesc": "로고로 사용될 이미지를 미리 적용해보거나, 로고가 저장된 경로를 지정할 수 있습니다.",
-      "UploadFileSizeExceed": "업로드 가능한 최대 크기(2MB)를 초과했습니다."
+      "UploadFileSizeExceed": "업로드 가능한 최대 크기(2MB)를 초과했습니다.",
+      "WideLogoSize": "로고 크기",
+      "WideLogoSizeDesc": "사이더 상단의 부분에 사용될 로고 이미지의 크기를 지정할 수 있습니다. 최대 크기는 가로 180px 세로 60px 까지 적용 가능하며, 권장 크기는 가로 180px 세로 30px 입니다. ",
+      "size": {
+        "Height": "높이",
+        "Width": "너비"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "현재 변경된 테마를 바로 적용하는 기능이 제공되지 않습니다. 테마 적용을 원하시는 경우, 추출된 설정 JSON 파일과 함께 지원팀에 문의해 주세요. ",

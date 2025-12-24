@@ -2047,6 +2047,7 @@
     "Edit_ShellScriptTitle_2": " script de shell",
     "ExperimentalFeatures": "Características experimentales",
     "ExperimentalFeaturesDesc": "Pruebe funciones nuevas y experimentales antes de que se publiquen oficialmente. Estas funciones pueden cambiar o eliminarse en futuras actualizaciones.",
+    "FailedToLoadDefaultThemeConfig": "No se pueden realizar cambios porque falta la configuración predeterminada del tema.",
     "General": "General",
     "InvalidPortNumber": "El número de puerto debe estar comprendido entre 1025~65534.",
     "KeepLoginSessionInformation": "Conservar la información de la sesión de inicio de sesión al cerrar la sesión",
@@ -2078,6 +2079,8 @@
     "UseSystemSetting": "Usar configuración del sistema",
     "UserConfigScript": "Script de configuración de usuario",
     "logo": {
+      "CollapsedLogoSize": "Tamaño del logo en la barra lateral colapsada",
+      "CollapsedLogoSizeDesc": "Puede configurar el tamaño de la imagen del logo para el área superior de la barra lateral compacta. El tamaño máximo admitido es 74px (ancho) × 60px (alto), y el tamaño recomendado es 35px (ancho) × 35px (alto).",
       "CreateURLWithImage": "Crear ruta a partir de una imagen",
       "DarkModeCollapsedLogo": "Logo de la barra lateral colapsada (modo oscuro)",
       "DarkModeCollapsedLogoDesc": "Establece la imagen utilizada como el logo de la barra lateral colapsada en la WebUI en modo oscuro.",
@@ -2091,7 +2094,13 @@
       "LightModeLogo": "Logotipo del modo claro",
       "LightModeLogoDesc": "Puede configurar la imagen que se usará como logo del WebUI en modo claro.",
       "LogoCustomizationDesc": "Establezca una imagen de vista previa para el logo o especifique la ruta donde se almacena.",
-      "UploadFileSizeExceed": "Se ha superado el tamaño máximo de archivo permitido (2 MB)."
+      "UploadFileSizeExceed": "Se ha superado el tamaño máximo de archivo permitido (2 MB).",
+      "WideLogoSize": "Tamaño del logotipo",
+      "WideLogoSizeDesc": "El tamaño de la imagen del logotipo para el área superior de la barra lateral se puede configurar. El tamaño máximo admitido es 180px (W) × 60px (H), y el tamaño recomendado es 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Altura",
+        "Width": "Ancho"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "El tema actualizado no se puede aplicar de inmediato. Si desea aplicarlo, póngase en contacto con nuestro equipo de soporte e incluya el archivo JSON de configuración exportado.",

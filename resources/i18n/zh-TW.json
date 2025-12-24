@@ -2045,6 +2045,7 @@
     "Edit_ShellScriptTitle_2": " 外殼腳本",
     "ExperimentalFeatures": "实验特点",
     "ExperimentalFeaturesDesc": "搶先體驗新的實驗性功能——這些功能可能在未來更新中發生變化或被移除。",
+    "FailedToLoadDefaultThemeConfig": "變更不可用，因為找不到預設主題設定。",
     "General": "一般的",
     "InvalidPortNumber": "端口號應為 1025~65534 之間的正數",
     "KeepLoginSessionInformation": "註銷時保留登錄會話信息",
@@ -2076,6 +2077,8 @@
     "UseSystemSetting": "使用系統設定",
     "UserConfigScript": "用戶配置腳本",
     "logo": {
+      "CollapsedLogoSize": "收合側邊欄 Logo 大小",
+      "CollapsedLogoSizeDesc": "緊湊側邊欄上方區域的 Logo 圖像大小可設定。最大支援尺寸為 74px（寬）× 60px（高），建議尺寸為 35px（寬）× 35px（高）。",
       "CreateURLWithImage": "由映像建立路徑",
       "DarkModeCollapsedLogo": "收合側邊欄 Logo（深色模式）",
       "DarkModeCollapsedLogoDesc": "設定深色模式 WebUI 中收合側邊欄的 Logo 圖像。",
@@ -2089,7 +2092,13 @@
       "LightModeLogo": "淺色模式標誌",
       "LightModeLogoDesc": "可以設定用於淺色模式 WebUI 的 Logo 圖片。",
       "LogoCustomizationDesc": "設定 Logo 預覽圖片或指定 Logo 的儲存路徑。",
-      "UploadFileSizeExceed": "已超過可上傳的最大檔案大小（2MB）。"
+      "UploadFileSizeExceed": "已超過可上傳的最大檔案大小（2MB）。",
+      "WideLogoSize": "Logo 大小",
+      "WideLogoSizeDesc": "側邊欄頂部的 logo 圖片大小可設定。最大支援 180px（寬）× 60px（高），建議 180px（寬）× 30px（高）。",
+      "size": {
+        "Height": "高度",
+        "Width": "寬度"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "更新的主題無法立即套用。若您要套用此主題，請聯絡我們的支援團隊並提供匯出的設定 JSON 檔案。",

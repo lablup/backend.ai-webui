@@ -2044,6 +2044,7 @@
     "Edit_ShellScriptTitle_2": " script di shell",
     "ExperimentalFeatures": "Caratteristiche sperimentali",
     "ExperimentalFeaturesDesc": "Accedi presto alle nuove funzionalità sperimentali—queste potrebbero cambiare o essere rimosse in aggiornamenti futuri.",
+    "FailedToLoadDefaultThemeConfig": "Le modifiche non sono disponibili perché manca la configurazione del tema predefinito.",
     "General": "Generale",
     "InvalidPortNumber": "Il numero della porta deve essere un numero positivo compreso tra 1025~65534",
     "KeepLoginSessionInformation": "Mantieni le informazioni sulla sessione di accesso durante il logout",
@@ -2075,6 +2076,8 @@
     "UseSystemSetting": "Utilizza Impostazioni di sistema",
     "UserConfigScript": "Script di configurazione utente",
     "logo": {
+      "CollapsedLogoSize": "Dimensione logo (barra laterale collassata)",
+      "CollapsedLogoSizeDesc": "La dimensione dell'immagine del logo per l'area superiore della barra laterale compatta può essere configurata. La dimensione massima supportata è 74px (L) × 60px (A), mentre la dimensione consigliata è 35px (L) × 35px (A).",
       "CreateURLWithImage": "Crea percorso dall'immagine",
       "DarkModeCollapsedLogo": "Logo della barra laterale ridotta (modalità scura)",
       "DarkModeCollapsedLogoDesc": "Imposta l'immagine utilizzata come logo della barra laterale ridotta nella WebUI in modalità scura.",
@@ -2088,7 +2091,13 @@
       "LightModeLogo": "Logo modalità chiara",
       "LightModeLogoDesc": "È possibile impostare l'immagine da utilizzare come logo per la WebUI in modalità chiara.",
       "LogoCustomizationDesc": "Imposta un'immagine di anteprima per il logo o indica il percorso in cui è memorizzato.",
-      "UploadFileSizeExceed": "Superata la dimensione massima consentita per il caricamento (2MB)."
+      "UploadFileSizeExceed": "Superata la dimensione massima consentita per il caricamento (2MB).",
+      "WideLogoSize": "Dimensione del logo",
+      "WideLogoSizeDesc": "La dimensione dell'immagine del logo per l'area superiore della barra laterale può essere configurata. La dimensione massima supportata è 180px (L) × 60px (A) e la dimensione consigliata è 180px (L) × 30px (A).",
+      "size": {
+        "Height": "Altezza",
+        "Width": "Larghezza"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Il tema aggiornato non può essere applicato immediatamente. Se desideri applicarlo, contatta il nostro team di supporto fornendo il file JSON di configurazione esportato.",

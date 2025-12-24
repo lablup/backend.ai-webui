@@ -2047,6 +2047,7 @@
     "Edit_ShellScriptTitle_2": " script shell",
     "ExperimentalFeatures": "Caractéristiques expérimentales",
     "ExperimentalFeaturesDesc": "Accédez tôt aux nouvelles fonctionnalités expérimentales—celles-ci peuvent changer ou être supprimées dans de futures mises à jour.",
+    "FailedToLoadDefaultThemeConfig": "Impossible d'appliquer les modifications : la configuration du thème par défaut est manquante.",
     "General": "Général",
     "InvalidPortNumber": "Le numéro de port doit être un nombre positif compris entre 1025 et 65534",
     "KeepLoginSessionInformation": "Conserver les informations de session de connexion pendant la déconnexion",
@@ -2078,6 +2079,8 @@
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur",
     "logo": {
+      "CollapsedLogoSize": "Taille du logo (barre latérale réduite)",
+      "CollapsedLogoSizeDesc": "La taille de l'image du logo dans la partie supérieure de la barre latérale compacte est configurable. La taille maximale prise en charge est de 74px (L) × 60px (H), la taille recommandée est de 35px (L) × 35px (H).",
       "CreateURLWithImage": "Créer un chemin depuis l’image",
       "DarkModeCollapsedLogo": "Logo de la barre latérale réduite (mode sombre)",
       "DarkModeCollapsedLogoDesc": "Définir l'image utilisée comme logo du panneau latéral réduit en mode sombre de la WebUI.",
@@ -2091,7 +2094,13 @@
       "LightModeLogo": "Logo en mode clair",
       "LightModeLogoDesc": "Vous pouvez définir l'image utilisée comme logo pour la WebUI en mode clair.",
       "LogoCustomizationDesc": "Définissez une image d'aperçu pour le logo ou indiquez le chemin où le logo est stocké.",
-      "UploadFileSizeExceed": "La taille maximale autorisée pour le téléchargement (2 Mo) a été dépassée."
+      "UploadFileSizeExceed": "La taille maximale autorisée pour le téléchargement (2 Mo) a été dépassée.",
+      "WideLogoSize": "Taille du logo",
+      "WideLogoSizeDesc": "La taille de l'image du logo dans la partie supérieure de la barre latérale peut être configurée. La taille maximale prise en charge est de 180 px (L) × 60 px (H), et la taille recommandée est de 180 px (L) × 30 px (H).",
+      "size": {
+        "Height": "Hauteur",
+        "Width": "Largeur"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Le thème mis à jour ne peut pas être appliqué immédiatement. Si vous souhaitez l’appliquer, contactez notre équipe d’assistance en joignant le fichier JSON de configuration exporté.",

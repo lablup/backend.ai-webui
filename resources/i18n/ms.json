@@ -2045,6 +2045,7 @@
     "Edit_ShellScriptTitle_2": " skrip shell",
     "ExperimentalFeatures": "Ciri -ciri eksperimen",
     "ExperimentalFeaturesDesc": "Akses ciri eksperimental baharu awal—ini mungkin berubah atau dialih keluar dalam kemas kini akan datang.",
+    "FailedToLoadDefaultThemeConfig": "Perubahan tidak tersedia kerana konfigurasi tema lalai tiada.",
     "General": "Am",
     "InvalidPortNumber": "Nombor port mestilah nombor positif antara 1025 ~ 65534",
     "KeepLoginSessionInformation": "Simpan Maklumat Sesi Masuk semasa Log Keluar",
@@ -2076,6 +2077,8 @@
     "UseSystemSetting": "Gunakan Tetapan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
     "logo": {
+      "CollapsedLogoSize": "Saiz Logo Sider Terkuncup",
+      "CollapsedLogoSizeDesc": "Saiz imej logo untuk bahagian atas bar sisi kompak boleh dikonfigurasikan. Saiz maksimum yang disokong ialah 74px (W) × 60px (H), dan saiz yang disyorkan ialah 35px (W) × 35px (H).",
       "CreateURLWithImage": "Cipta laluan daripada imej",
       "DarkModeCollapsedLogo": "Logo Bar Sisi Mengecil (mod gelap)",
       "DarkModeCollapsedLogoDesc": "Tetapkan imej yang digunakan sebagai logo bar sisi yang dimampatkan dalam mod gelap WebUI.",
@@ -2089,7 +2092,13 @@
       "LightModeLogo": "Logo Mod Terang",
       "LightModeLogoDesc": "Anda boleh menetapkan imej yang akan digunakan sebagai logo untuk WebUI Mod Terang.",
       "LogoCustomizationDesc": "Tetapkan imej pratonton untuk logo atau tetapkan laluan di mana logo disimpan.",
-      "UploadFileSizeExceed": "Melebihi saiz maksimum muat naik (2MB)."
+      "UploadFileSizeExceed": "Melebihi saiz maksimum muat naik (2MB).",
+      "WideLogoSize": "Saiz Logo",
+      "WideLogoSizeDesc": "Saiz imej logo untuk kawasan atas bar sisi boleh dikonfigurasikan. Saiz maksimum yang disokong ialah 180px (W) × 60px (H), dan saiz yang disyorkan ialah 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Tinggi",
+        "Width": "Lebar"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Tema yang dikemas kini tidak dapat diterapkan serta-merta. Jika anda ingin menerapkan tema tersebut, sila hubungi pasukan sokongan kami dengan fail konfigurasi JSON yang dieksport.",

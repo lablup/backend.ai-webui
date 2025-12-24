@@ -2046,6 +2046,7 @@
     "Edit_ShellScriptTitle_2": " skrip shell",
     "ExperimentalFeatures": "Fitur eksperimental",
     "ExperimentalFeaturesDesc": "Akses fitur eksperimental baru lebih awal—ini dapat berubah atau dihapus dalam pembaruan mendatang.",
+    "FailedToLoadDefaultThemeConfig": "Perubahan tidak tersedia karena konfigurasi tema default tidak ditemukan.",
     "General": "Umum",
     "InvalidPortNumber": "Nomor port harus berupa angka positif antara 1025~65534",
     "KeepLoginSessionInformation": "Simpan Informasi Login saat Keluar",
@@ -2077,6 +2078,8 @@
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
     "logo": {
+      "CollapsedLogoSize": "Ukuran Logo Saat Sidebar Diperkecil",
+      "CollapsedLogoSizeDesc": "Ukuran gambar logo untuk area atas sidebar kompak dapat dikonfigurasi. Ukuran maksimum yang didukung adalah 74px (W) × 60px (H), dan ukuran yang disarankan adalah 35px (W) × 35px (H).",
       "CreateURLWithImage": "Buat jalur dari gambar",
       "DarkModeCollapsedLogo": "Logo Sider (diperkecil, mode gelap)",
       "DarkModeCollapsedLogoDesc": "Tetapkan gambar yang digunakan sebagai logo sidebar ketika disusutkan pada mode gelap WebUI.",
@@ -2090,7 +2093,13 @@
       "LightModeLogo": "Logo Mode Terang",
       "LightModeLogoDesc": "Anda dapat mengatur gambar yang akan digunakan sebagai logo WebUI Mode Terang.",
       "LogoCustomizationDesc": "Tetapkan gambar pratinjau untuk logo atau tentukan jalur tempat logo disimpan.",
-      "UploadFileSizeExceed": "Melebihi ukuran maksimum unggahan (2MB)."
+      "UploadFileSizeExceed": "Melebihi ukuran maksimum unggahan (2MB).",
+      "WideLogoSize": "Ukuran logo",
+      "WideLogoSizeDesc": "Ukuran gambar logo untuk area atas bilah sisi dapat dikonfigurasi. Ukuran maksimum yang didukung adalah 180px (W) × 60px (H), dan ukuran yang direkomendasikan adalah 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Tinggi",
+        "Width": "Lebar"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Tema yang telah diperbarui tidak dapat diterapkan secara langsung. Jika Anda ingin menerapkannya, silakan hubungi tim dukungan kami dengan file JSON konfigurasi yang diekspor.",

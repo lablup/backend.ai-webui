@@ -1,22 +1,10 @@
-import {
-  App,
-  Image,
-  Input,
-  InputRef,
-  Space,
-  theme,
-  Tooltip,
-  Typography,
-  Upload,
-} from 'antd';
+import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';
 import _ from 'lodash';
-import { CornerDownLeftIcon, ImagePlus } from 'lucide-react';
-import { useRef, useState } from 'react';
-import { useCustomThemeConfig } from 'src/helper/customThemeConfig';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { ImagePlus } from 'lucide-react';
+import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
@@ -37,30 +25,13 @@ interface LogoPreviewerProps {
 const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   'use memo';
 
-  const { token } = theme.useToken();
   const { styles } = useStyles();
   const { message } = App.useApp();
 
-  const themeConfig = useCustomThemeConfig();
-  const [showEnterIcon, setShowEnterIcon] = useState(false);
-  const [userCustomThemeConfig, setUserCustomThemeConfig] =
-    useBAISettingUserState('custom_theme_config');
+  const { themeConfig, getThemeValue, setUserCustomThemeConfig } =
+    useUserCustomThemeConfig();
   const logoThemeKey = getLogoThemeKey(mode);
-  const currentLogoPath = userCustomThemeConfig?.logo?.[logoThemeKey];
-
-  const handlePathChange = (path: string) => {
-    setUserCustomThemeConfig((prev) => ({
-      ...themeConfig!,
-      ...prev,
-      logo: {
-        ...themeConfig!.logo,
-        ...prev?.logo,
-        [getLogoThemeKey(mode)]: path,
-      },
-    }));
-  };
-
-  const inputRef = useRef<InputRef>(null);
+  const currentLogoPath = getThemeValue<string>(`logo.${logoThemeKey}`);
 
   return (
     <BAIFlex gap="sm" align="stretch" direction="column">
@@ -69,31 +40,11 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
           {t('userSettings.logo.ImagePath')}:
         </Typography.Text>
         <Space.Compact>
-          <Input
-            key={currentLogoPath} // to reset internal state when path changes externally
-            ref={inputRef}
+          <BAIUncontrolledInput
             defaultValue={currentLogoPath}
-            onFocus={() => {
-              setShowEnterIcon(true);
+            onCommit={(value) => {
+              setUserCustomThemeConfig(`logo.${logoThemeKey}`, value);
             }}
-            onBlur={() => {
-              setShowEnterIcon(false);
-              handlePathChange(inputRef.current?.input?.value || '');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                inputRef.current?.blur();
-              }
-            }}
-            suffix={
-              <CornerDownLeftIcon
-                style={{
-                  fontSize: '0.8em',
-                  color: token.colorTextTertiary,
-                  visibility: showEnterIcon ? 'visible' : 'hidden',
-                }}
-              />
-            }
           />
           <Tooltip title={t('userSettings.logo.CreateURLWithImage')}>
             <Upload
@@ -111,7 +62,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                   const base64 = e.target?.result as string;
-                  handlePathChange(base64);
+                  setUserCustomThemeConfig(`logo.${logoThemeKey}`, base64);
                 };
                 reader.onerror = () => {
                   message.error(t('userSettings.logo.FailedToReadFile'));
@@ -121,7 +72,10 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 return false;
               }}
               onRemove={() => {
-                handlePathChange(themeConfig?.logo?.[logoThemeKey] || '');
+                setUserCustomThemeConfig(
+                  `logo.${logoThemeKey}`,
+                  themeConfig?.logo?.[logoThemeKey],
+                );
               }}
               onPreview={() => false}
             >

@@ -2045,6 +2045,7 @@
     "Edit_ShellScriptTitle_2": " Shell-Skript",
     "ExperimentalFeatures": "Experimentelle Merkmale",
     "ExperimentalFeaturesDesc": "Greifen Sie frühzeitig auf neue experimentelle Funktionen zu—diese können sich in zukünftigen Updates ändern oder entfernt werden.",
+    "FailedToLoadDefaultThemeConfig": "Änderungen sind nicht verfügbar, da die Standard-Theme-Konfiguration fehlt.",
     "General": "Allgemeines",
     "InvalidPortNumber": "Die Portnummer sollte eine positive Zahl zwischen 1025 und 65534 sein",
     "KeepLoginSessionInformation": "Behalten Sie die Informationen zur Anmeldesitzung beim Abmelden bei",
@@ -2076,6 +2077,8 @@
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "UserConfigScript": "Benutzerkonfigurationsskript",
     "logo": {
+      "CollapsedLogoSize": "Logo-Größe in der eingeklappten Seitenleiste",
+      "CollapsedLogoSizeDesc": "Die Größe des Logo-Bildes für den oberen Bereich der kompakten Seitenleiste lässt sich konfigurieren. Die maximal unterstützte Größe beträgt 74px (B) × 60px (H), empfohlen sind 35px (B) × 35px (H).",
       "CreateURLWithImage": "Pfad aus Bild erstellen",
       "DarkModeCollapsedLogo": "Eingeklapptes Seitenleisten‑Logo (Dunkelmodus)",
       "DarkModeCollapsedLogoDesc": "Bild für das Logo der eingeklappten Seitenleiste im Dunkelmodus des WebUI festlegen.",
@@ -2089,7 +2092,13 @@
       "LightModeLogo": "Logo (Hellmodus)",
       "LightModeLogoDesc": "Sie können das Bild festlegen, das als Logo für die Light-Mode-WebUI verwendet wird.",
       "LogoCustomizationDesc": "Legen Sie ein Vorschaubild für das Logo fest oder geben Sie den Pfad zum Speicherort des Logos an.",
-      "UploadFileSizeExceed": "Die maximal zulässige Upload-Größe (2 MB) wurde überschritten."
+      "UploadFileSizeExceed": "Die maximal zulässige Upload-Größe (2 MB) wurde überschritten.",
+      "WideLogoSize": "Logo-Größe",
+      "WideLogoSizeDesc": "Die Bildgröße des Logos für den oberen Bereich der Seitenleiste lässt sich konfigurieren. Die maximal unterstützte Größe ist 180px (B) × 60px (H), empfohlen wird 180px (B) × 30px (H).",
+      "size": {
+        "Height": "Höhe",
+        "Width": "Breite"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Das aktualisierte Theme kann nicht sofort angewendet werden. Wenn Sie das Theme anwenden möchten, wenden Sie sich bitte an unser Support‑Team und senden Sie die exportierte Konfigurationsdatei (JSON).",

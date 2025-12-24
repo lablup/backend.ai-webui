@@ -2046,6 +2046,7 @@
     "Edit_ShellScriptTitle_2": " script de shell",
     "ExperimentalFeatures": "Características experimentais",
     "ExperimentalFeaturesDesc": "Aceda a funcionalidades experimentais novas antecipadamente—estas podem mudar ou ser removidas em actualizações futuras.",
+    "FailedToLoadDefaultThemeConfig": "As alterações não estão disponíveis porque a configuração do tema padrão está ausente.",
     "General": "Em geral",
     "InvalidPortNumber": "O número da porta deve ser um número positivo entre 1025 ~ 65534",
     "KeepLoginSessionInformation": "Manter as informações da sessão de login durante o logout",
@@ -2077,6 +2078,8 @@
     "UseSystemSetting": "Usar configuração do sistema",
     "UserConfigScript": "Script de configuração do usuário",
     "logo": {
+      "CollapsedLogoSize": "Tamanho do logotipo na barra lateral recolhida",
+      "CollapsedLogoSizeDesc": "O tamanho da imagem do logotipo para a área superior da barra lateral compacta pode ser configurado. O tamanho máximo suportado é 74px (L) × 60px (A) e o tamanho recomendado é 35px (L) × 35px (A).",
       "CreateURLWithImage": "Gerar caminho a partir da imagem",
       "DarkModeCollapsedLogo": "Logotipo da barra lateral recolhida (modo escuro)",
       "DarkModeCollapsedLogoDesc": "Defina a imagem usada como logotipo da barra lateral colapsada no modo escuro da WebUI.",
@@ -2090,7 +2093,13 @@
       "LightModeLogo": "Logotipo do Modo Claro",
       "LightModeLogoDesc": "Você pode definir a imagem que será usada como logotipo da WebUI em modo claro.",
       "LogoCustomizationDesc": "Defina uma imagem de pré-visualização para o logotipo ou especifique o caminho onde o logotipo está armazenado.",
-      "UploadFileSizeExceed": "O tamanho máximo de upload (2MB) foi excedido."
+      "UploadFileSizeExceed": "O tamanho máximo de upload (2MB) foi excedido.",
+      "WideLogoSize": "Tamanho do logotipo",
+      "WideLogoSizeDesc": "O tamanho da imagem do logotipo para a área superior da barra lateral pode ser configurado. O tamanho máximo suportado é 180px (W) × 60px (H), e o tamanho recomendado é 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Altura",
+        "Width": "Largura"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "O tema atualizado não pode ser aplicado imediatamente. Se desejar aplicá‑lo, contacte a nossa equipa de suporte com o ficheiro JSON de configuração exportado.",

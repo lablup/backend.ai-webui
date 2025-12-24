@@ -166,8 +166,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 '/manifest/backend.ai-brand-simple-white.svg'
           }
           style={{
-            width: themeConfig?.logo.sizeCollapsed?.width ?? 24,
-            height: themeConfig?.logo.sizeCollapsed?.height ?? 24,
+            width: themeConfig?.logo?.sizeCollapsed?.width ?? 24,
+            height: themeConfig?.logo?.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}

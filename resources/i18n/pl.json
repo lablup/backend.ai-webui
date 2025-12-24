@@ -2046,6 +2046,7 @@
     "Edit_ShellScriptTitle_2": " Skrypt powłoki",
     "ExperimentalFeatures": "Cechy eksperymentalne",
     "ExperimentalFeaturesDesc": "Uzyskaj wcześniejszy dostęp do nowych funkcji eksperymentalnych—mogą one zostać zmienione lub usunięte w przyszłych aktualizacjach.",
+    "FailedToLoadDefaultThemeConfig": "Zmiany są niedostępne, ponieważ brakuje domyślnej konfiguracji motywu.",
     "General": "Generał",
     "InvalidPortNumber": "Numer portu powinien być liczbą dodatnią z zakresu 1025~65534",
     "KeepLoginSessionInformation": "Zachowaj informacje o sesji logowania podczas wylogowania",
@@ -2077,6 +2078,8 @@
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika",
     "logo": {
+      "CollapsedLogoSize": "Rozmiar logo w zwiniętym pasku bocznym",
+      "CollapsedLogoSizeDesc": "Rozmiar obrazu logo w górnej części kompaktowego paska bocznego można skonfigurować. Maksymalny obsługiwany rozmiar to 74px (szer.) × 60px (wys.), a zalecany rozmiar to 35px (szer.) × 35px (wys.).",
       "CreateURLWithImage": "Utwórz ścieżkę z obrazu",
       "DarkModeCollapsedLogo": "Logo zwiniętego paska bocznego (tryb ciemny)",
       "DarkModeCollapsedLogoDesc": "Ustaw obraz używany jako logo zwiniętego paska bocznego w trybie ciemnym WebUI.",
@@ -2090,7 +2093,13 @@
       "LightModeLogo": "Logo w trybie jasnym",
       "LightModeLogoDesc": "Możesz ustawić obraz, który będzie używany jako logo WebUI w trybie jasnym.",
       "LogoCustomizationDesc": "Ustaw obraz podglądu logo lub podaj ścieżkę do pliku z logo.",
-      "UploadFileSizeExceed": "Przekroczono maksymalny rozmiar przesyłanego pliku (2 MB)."
+      "UploadFileSizeExceed": "Przekroczono maksymalny rozmiar przesyłanego pliku (2 MB).",
+      "WideLogoSize": "Rozmiar logo",
+      "WideLogoSizeDesc": "Rozmiar obrazu logo w górnej części paska bocznego można skonfigurować. Maksymalny obsługiwany rozmiar to 180px (szer.) × 60px (wys.), a zalecany rozmiar to 180px (szer.) × 30px (wys.).",
+      "size": {
+        "Height": "Wysokość",
+        "Width": "Szerokość"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Zaktualizowanego motywu nie można zastosować od razu. Jeśli chcesz go zastosować, skontaktuj się z naszym zespołem wsparcia i dołącz wyeksportowany plik konfiguracyjny w formacie JSON.",

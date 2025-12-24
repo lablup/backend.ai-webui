@@ -2047,6 +2047,7 @@
     "Edit_ShellScriptTitle_2": " kabuk komut dosyası",
     "ExperimentalFeatures": "Deneysel özellikler",
     "ExperimentalFeaturesDesc": "Yeni deneysel özelliklere erken erişim sağlayın—bunlar gelecek güncellemelerde değişebilir veya kaldırılabilir.",
+    "FailedToLoadDefaultThemeConfig": "Varsayılan tema yapılandırması eksik olduğu için değişiklikler yapılamıyor.",
     "General": "Genel",
     "InvalidPortNumber": "Port numarası 1025~65534 arasında pozitif bir sayı olmalıdır",
     "KeepLoginSessionInformation": "Oturumu Kapatırken Oturum Açma Bilgilerini Saklayın",
@@ -2078,6 +2079,8 @@
     "UseSystemSetting": "Sistem Ayarını Kullan",
     "UserConfigScript": "Kullanıcı yapılandırma komut dosyası",
     "logo": {
+      "CollapsedLogoSize": "Daraltılmış yan paneldeki logo boyutu",
+      "CollapsedLogoSizeDesc": "Kompakt kenar çubuğunun üst alanındaki logo görüntü boyutu yapılandırılabilir. Desteklenen maksimum boyut 74px (G) × 60px (Y), önerilen boyut 35px (G) × 35px (Y).",
       "CreateURLWithImage": "Görüntüden yol oluştur",
       "DarkModeCollapsedLogo": "Daraltılmış yan çubuğu logosu (koyu mod)",
       "DarkModeCollapsedLogoDesc": "Karanlık mod WebUI'de daraltılmış kenar çubuğu logosu olarak kullanılacak görseli ayarla.",
@@ -2091,7 +2094,13 @@
       "LightModeLogo": "Açık Mod Logosu",
       "LightModeLogoDesc": "Light Mode WebUI için logo olarak kullanılacak resmi ayarlayabilirsiniz.",
       "LogoCustomizationDesc": "Logoya ait bir önizleme resmi belirleyin veya logonun saklandığı yolu ayarlayın.",
-      "UploadFileSizeExceed": "İzin verilen maksimum yükleme boyutu (2MB) aşıldı."
+      "UploadFileSizeExceed": "İzin verilen maksimum yükleme boyutu (2MB) aşıldı.",
+      "WideLogoSize": "Logo Boyutu",
+      "WideLogoSizeDesc": "Kenar çubuğunun üst alanındaki logo görüntü boyutu yapılandırılabilir. Maksimum desteklenen boyut 180px (G) × 60px (Y), önerilen boyut ise 180px (G) × 30px (Y) şeklindedir.",
+      "size": {
+        "Height": "Yükseklik",
+        "Width": "Genişlik"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Güncellenen tema hemen uygulanamıyor. Temayı uygulamak istiyorsanız, lütfen dışa aktarılan yapılandırma JSON dosyasıyla destek ekibimizle iletişime geçin.",

@@ -1,6 +1,7 @@
 import LogoPreviewer, {
   getLogoThemeKey,
 } from './BrandingSettingItems/LogoPreviewer';
+import LogoSizeSettingItem from './BrandingSettingItems/LogoSizeSettingItem';
 import ThemeColorPicker, {
   ThemeConfigPath,
 } from './BrandingSettingItems/ThemeColorPicker';
@@ -12,8 +13,7 @@ import _ from 'lodash';
 import { Fullscreen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';
-import { useCustomThemeConfig } from 'src/helper/customThemeConfig';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
 
 interface BrandingSettingListProps {}
 
@@ -23,41 +23,25 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
 
-  const themeConfig = useCustomThemeConfig();
-
-  const [userCustomThemeConfig, setUserCustomThemeConfig] =
-    useBAISettingUserState('custom_theme_config');
+  const { userCustomThemeConfig, setUserCustomThemeConfig } =
+    useUserCustomThemeConfig();
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
-    if (!themeConfig) return;
-
-    setUserCustomThemeConfig((prev: typeof userCustomThemeConfig) => {
-      const newCustomThemeConfig = _.cloneDeep({
-        ...themeConfig,
-        ...prev,
-      });
-      const lightDefaultValue = _.get(themeConfig, `light.${tokenName}`);
-      const darkDefaultValue = _.get(themeConfig, `dark.${tokenName}`);
-
-      _.set(newCustomThemeConfig, `light.${tokenName}`, lightDefaultValue);
-      _.set(newCustomThemeConfig, `dark.${tokenName}`, darkDefaultValue);
-      return newCustomThemeConfig;
-    });
+    setUserCustomThemeConfig('light.' + tokenName, undefined);
+    setUserCustomThemeConfig('dark.' + tokenName, undefined);
   };
 
   const resetLogoThemeConfig = (
     mode: 'light' | 'dark' | 'lightCollapsed' | 'darkCollapsed',
   ) => {
-    if (!themeConfig) return;
-    setUserCustomThemeConfig((prev) => ({
-      ...themeConfig!,
-      ...prev,
-      logo: {
-        ...themeConfig!.logo,
-        ...prev?.logo,
-        [getLogoThemeKey(mode)]: themeConfig!.logo[getLogoThemeKey(mode)],
-      },
-    }));
+    setUserCustomThemeConfig('logo.' + getLogoThemeKey(mode), undefined);
+  };
+
+  const resetLogoSizeConfig = (logoType: 'wide' | 'collapsed') => {
+    setUserCustomThemeConfig(
+      logoType === 'wide' ? 'logo.size' : 'logo.sizeCollapsed',
+      undefined,
+    );
   };
 
   const settingGroups: Array<SettingGroup> = [
@@ -137,6 +121,15 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       settingItems: [
         {
           type: 'custom',
+          title: t('userSettings.logo.WideLogoSize'),
+          description: t('userSettings.logo.WideLogoSizeDesc'),
+          children: <LogoSizeSettingItem />,
+          onReset: () => {
+            resetLogoSizeConfig('wide');
+          },
+        },
+        {
+          type: 'custom',
           title: t('userSettings.logo.LightModeLogo'),
           description: t('userSettings.logo.LightModeLogoDesc'),
           children: <LogoPreviewer mode="light" />,
@@ -151,6 +144,15 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           children: <LogoPreviewer mode="dark" />,
           onReset: () => {
             resetLogoThemeConfig('dark');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.CollapsedLogoSize'),
+          description: t('userSettings.logo.CollapsedLogoSizeDesc'),
+          children: <LogoSizeSettingItem logoType="collapsed" />,
+          onReset: () => {
+            resetLogoSizeConfig('collapsed');
           },
         },
         {

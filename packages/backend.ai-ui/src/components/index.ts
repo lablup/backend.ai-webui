@@ -79,6 +79,8 @@ export {
   availableUserSorterValues,
 } from './BAIUserNodes';
 export type { UserNodeInList } from './BAIUserNodes';
+export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
+export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

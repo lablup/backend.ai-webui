@@ -1,7 +1,8 @@
 import { useSessionStorageState } from 'ahooks';
-import { ThemeConfig } from 'antd';
+import { App, ThemeConfig } from 'antd';
 import _ from 'lodash';
 import { useEffect, useEffectEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type LogoConfig = {
@@ -119,4 +120,57 @@ export const useCustomThemeConfig = () => {
   return isThemePreviewMode
     ? _.merge({}, customThemeConfig, userCustomThemeConfig)
     : customThemeConfig;
+};
+
+export const useUserCustomThemeConfig = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const themeConfig = useCustomThemeConfig();
+  const [userCustomThemeConfig, setUserCustomThemeConfig] =
+    useBAISettingUserState('custom_theme_config');
+
+  const mergedThemeConfig = themeConfig
+    ? _.merge({}, themeConfig, userCustomThemeConfig)
+    : undefined;
+
+  const updateThemeConfig = (path: string, value: unknown) => {
+    if (!themeConfig) {
+      message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
+      return;
+    }
+
+    setUserCustomThemeConfig((prev) => {
+      const newConfig = _.cloneDeep({
+        ...themeConfig,
+        ...prev,
+      });
+      if (value) {
+        _.set(newConfig, path, value);
+      } else {
+        const defaultValue = _.get(themeConfig, path);
+        if (defaultValue !== undefined) {
+          _.set(newConfig, path, defaultValue);
+        } else {
+          _.unset(newConfig, path);
+        }
+      }
+      return newConfig;
+    });
+  };
+
+  const getThemeValue = <T>(path: string, defaultValue?: T): T | undefined => {
+    return (
+      _.get(userCustomThemeConfig, path) ??
+      _.get(themeConfig, path) ??
+      defaultValue
+    );
+  };
+
+  return {
+    themeConfig,
+    userCustomThemeConfig: mergedThemeConfig,
+    setUserCustomThemeConfig: updateThemeConfig,
+    getThemeValue,
+  };
 };

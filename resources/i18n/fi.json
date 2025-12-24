@@ -2046,6 +2046,7 @@
     "Edit_ShellScriptTitle_2": " komentosarjan komentosarja",
     "ExperimentalFeatures": "Kokeelliset ominaisuudet",
     "ExperimentalFeaturesDesc": "Käytä uusia kokeellisia ominaisuuksia aikaisin—nämä voivat muuttua tai poistua tulevissa päivityksissä.",
+    "FailedToLoadDefaultThemeConfig": "Muutoksia ei voi tehdä, koska oletusteeman määritys puuttuu.",
     "General": "Yleistä",
     "InvalidPortNumber": "Portin numeron on oltava positiivinen numero välillä 1025~65534.",
     "KeepLoginSessionInformation": "Pidä kirjautumisistunnon tiedot uloskirjautumisen aikana",
@@ -2077,6 +2078,8 @@
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "UserConfigScript": "Käyttäjän määrityskomentosarja",
     "logo": {
+      "CollapsedLogoSize": "Kutistetun sivupalkin logon koko",
+      "CollapsedLogoSizeDesc": "Kompaktin sivupalkin yläalueen logokuvan kokoa voidaan määrittää. Suurin tuettu koko on 74px (W) × 60px (H) ja suositeltu koko 35px (W) × 35px (H).",
       "CreateURLWithImage": "Luo polku kuvasta",
       "DarkModeCollapsedLogo": "Sivupalkin kutistettu logo (tumma tila)",
       "DarkModeCollapsedLogoDesc": "Aseta kuva, jota käytetään kutistetun sivupalkin logona WebUI:n tummassa tilassa.",
@@ -2090,7 +2093,13 @@
       "LightModeLogo": "Vaalean tilan logo",
       "LightModeLogoDesc": "Voit määrittää kuvan, jota käytetään Light Mode WebUI:n logona.",
       "LogoCustomizationDesc": "Aseta logolle esikatselukuva tai määritä polku, johon logo on tallennettu.",
-      "UploadFileSizeExceed": "Tiedoston koko ylittää sallitun enimmäiskoon (2 MB)."
+      "UploadFileSizeExceed": "Tiedoston koko ylittää sallitun enimmäiskoon (2 MB).",
+      "WideLogoSize": "Logon koko",
+      "WideLogoSizeDesc": "Sivupalkin yläosan logokuvan kokoa voi määrittää. Suurin tuettu koko on 180 px (L) × 60 px (K) ja suositeltu koko 180 px (L) × 30 px (K).",
+      "size": {
+        "Height": "Korkeus",
+        "Width": "Leveys"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Päivitettyä teemaa ei voi ottaa käyttöön välittömästi. Jos haluat ottaa teeman käyttöön, ota yhteyttä tukitiimiimme ja lähetä viety konfiguraatio JSON-tiedostona.",

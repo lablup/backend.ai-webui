@@ -2047,6 +2047,7 @@
     "Edit_ShellScriptTitle_2": " kịch bản shell",
     "ExperimentalFeatures": "Các tính năng thử nghiệm",
     "ExperimentalFeaturesDesc": "Truy cập sớm các tính năng thử nghiệm mới—những tính năng này có thể thay đổi hoặc bị xóa trong các bản cập nhật tương lai.",
+    "FailedToLoadDefaultThemeConfig": "Không thể thực hiện thay đổi vì cấu hình chủ đề mặc định bị thiếu.",
     "General": "Chung",
     "InvalidPortNumber": "Số cổng phải là số dương trong khoảng 1025 ~ 65534",
     "KeepLoginSessionInformation": "Giữ thông tin phiên đăng nhập trong khi đăng xuất",
@@ -2078,6 +2079,8 @@
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "UserConfigScript": "Tập lệnh cấu hình người dùng",
     "logo": {
+      "CollapsedLogoSize": "Kích thước logo khi thanh bên thu gọn",
+      "CollapsedLogoSizeDesc": "Kích thước ảnh logo cho khu vực trên cùng của thanh bên thu gọn có thể cấu hình. Kích thước tối đa được hỗ trợ là 74px (W) × 60px (H), kích thước khuyến nghị là 35px (W) × 35px (H).",
       "CreateURLWithImage": "Tạo đường dẫn từ hình ảnh",
       "DarkModeCollapsedLogo": "Logo thanh bên thu gọn (chế độ tối)",
       "DarkModeCollapsedLogoDesc": "Đặt hình ảnh làm logo khi thanh bên thu gọn trên WebUI ở chế độ tối.",
@@ -2091,7 +2094,13 @@
       "LightModeLogo": "Logo chế độ sáng",
       "LightModeLogoDesc": "Bạn có thể thiết lập hình ảnh được dùng làm logo cho WebUI ở chế độ Sáng.",
       "LogoCustomizationDesc": "Đặt ảnh xem trước cho logo hoặc thiết lập đường dẫn tới nơi lưu logo.",
-      "UploadFileSizeExceed": "Vượt quá kích thước tối đa cho phép khi tải lên (2MB)."
+      "UploadFileSizeExceed": "Vượt quá kích thước tối đa cho phép khi tải lên (2MB).",
+      "WideLogoSize": "Kích thước logo",
+      "WideLogoSizeDesc": "Kích thước ảnh logo cho phần trên cùng của thanh bên có thể được cấu hình. Kích thước tối đa hỗ trợ là 180px (W) × 60px (H), kích thước khuyến nghị là 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Chiều cao",
+        "Width": "Chiều rộng"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "Chủ đề vừa cập nhật không thể áp dụng ngay. Nếu bạn muốn áp dụng chủ đề, vui lòng liên hệ bộ phận hỗ trợ của chúng tôi kèm theo tệp JSON cấu hình đã xuất.",

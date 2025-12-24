@@ -2054,6 +2054,7 @@
     "Edit_ShellScriptTitle_2": " shell script",
     "ExperimentalFeatures": "Experimental features",
     "ExperimentalFeaturesDesc": "Access new experimental features early—these may change or be removed in future updates.",
+    "FailedToLoadDefaultThemeConfig": "Changes are unavailable because the default theme configuration is missing.",
     "General": "General",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
@@ -2085,6 +2086,8 @@
     "UseSystemSetting": "Use System Setting",
     "UserConfigScript": "User Config Script",
     "logo": {
+      "CollapsedLogoSize": "Collapsed Sider Logo Size",
+      "CollapsedLogoSizeDesc": "The logo image size for the top area of the compact sidebar can be configured. The maximum supported size is 74px (W) × 60px (H), and the recommended size is 35px (W) × 35px (H).",
       "CreateURLWithImage": "Create path from image",
       "DarkModeCollapsedLogo": "Collapsed Sider Logo (dark mode)",
       "DarkModeCollapsedLogoDesc": "Set the image used as the collapsed sider logo in dark mode WebUI.",
@@ -2098,7 +2101,13 @@
       "LightModeLogo": "Light Mode Logo",
       "LightModeLogoDesc": "Set the image used as the Light Mode WebUI logo.",
       "LogoCustomizationDesc": "Set a preview image for the logo or set the path where the logo is stored.",
-      "UploadFileSizeExceed": "The upload exceeds the maximum allowed size (2 MB)."
+      "UploadFileSizeExceed": "The upload exceeds the maximum allowed size (2 MB).",
+      "WideLogoSize": "Logo Size",
+      "WideLogoSizeDesc": "The logo image size for the top area of the sidebar can be configured. The maximum supported size is 180px (W) × 60px (H), and the recommended size is 180px (W) × 30px (H).",
+      "size": {
+        "Height": "Height",
+        "Width": "Width"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "The updated theme cannot be applied immediately. If you would like to apply the theme, please contact our support team with the exported configuration JSON file.",

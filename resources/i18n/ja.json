@@ -2046,6 +2046,7 @@
     "Edit_ShellScriptTitle_2": " シェルスクリプト",
     "ExperimentalFeatures": "実験的特徴",
     "ExperimentalFeaturesDesc": "新しい実験的機能に早期アクセス—これらは将来のアップデートで変更または削除される可能性があります。",
+    "FailedToLoadDefaultThemeConfig": "デフォルトのテーマ設定が見つからないため、変更できません。",
     "General": "一般",
     "InvalidPortNumber": "ポート番号は1025〜65534の正の数である必要があります",
     "KeepLoginSessionInformation": "ログアウト中はログインセッション情報を保持する",
@@ -2077,6 +2078,8 @@
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト",
     "logo": {
+      "CollapsedLogoSize": "サイドバー折りたたみ時のロゴサイズ",
+      "CollapsedLogoSizeDesc": "コンパクトサイドバーの上部領域に表示するロゴ画像のサイズは設定できます。最大対応サイズは74px（W）×60px（H）、推奨サイズは35px（W）×35px（H）です。",
       "CreateURLWithImage": "画像からパスを生成",
       "DarkModeCollapsedLogo": "折りたたみサイドバーのロゴ（ダークモード）",
       "DarkModeCollapsedLogoDesc": "ダークモードのWebUIで折りたたみ時のサイドバーに表示するロゴ画像を設定します。",
@@ -2090,7 +2093,13 @@
       "LightModeLogo": "ライトモード用ロゴ",
       "LightModeLogoDesc": "Light Mode WebUI のロゴとして使用する画像を設定できます。",
       "LogoCustomizationDesc": "ロゴのプレビュー画像を設定するか、ロゴが保存されているパスを指定してください。",
-      "UploadFileSizeExceed": "アップロード可能な最大サイズ（2MB）を超えました。"
+      "UploadFileSizeExceed": "アップロード可能な最大サイズ（2MB）を超えました。",
+      "WideLogoSize": "ロゴサイズ",
+      "WideLogoSizeDesc": "サイドバー上部のロゴ画像サイズは設定可能です。サポートされる最大サイズは180px（幅）×60px（高さ）、推奨サイズは180px（幅）×30px（高さ）です。",
+      "size": {
+        "Height": "高さ",
+        "Width": "幅"
+      }
     },
     "theme": {
       "CustomThemeSettingAlert": "更新されたテーマはすぐには適用できません。テーマを適用したい場合は、エクスポートした設定のJSONファイルを添えてサポートチームまでご連絡ください。",
