@@ -180,7 +180,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/big.js": "^6.2.2",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.20",
+    "@types/lodash": "^4.17.21",
     "@types/node": "^22.19.1",
     "@types/react": "^19.2.2",
     "@types/react-copy-to-clipboard": "^5.0.7",

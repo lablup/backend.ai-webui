@@ -324,12 +324,14 @@ export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {
   return `${type}:${str}`;
 };
 
-export const usageIndicatorColor = (percentage: number) => {
-  return percentage < 70
-    ? 'rgba(58, 178, 97, 1)'
-    : percentage < 90
-      ? 'rgb(223, 179, 23)'
-      : '#ef5350';
+export const usageIndicatorColor = (percentage: number | undefined) => {
+  return percentage === undefined
+    ? undefined
+    : percentage < 70
+      ? 'rgba(58, 178, 97, 1)'
+      : percentage < 90
+        ? 'rgb(223, 179, 23)'
+        : '#ef5350';
 };
 
 export const maskString = (
@@ -509,6 +511,64 @@ export function getOS() {
   if (_.includes(userAgent, 'macintosh')) return 'MacOS';
   if (_.includes(userAgent, 'linux')) return 'Linux';
   return 'Linux';
+}
+
+/**
+ * Validates if a string is a valid IPv4 address
+ */
+export function isValidIPv4(ip: string): boolean {
+  const ipv4Regex =
+    /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  return ipv4Regex.test(ip);
+}
+
+/**
+ * Validates if a string is a valid IPv6 address
+ */
+export function isValidIPv6(ip: string): boolean {
+  const ipv6Regex =
+    /^(?:(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}|(?:[a-fA-F0-9]{1,4}:){1,7}:|(?:[a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}|(?:[a-fA-F0-9]{1,4}:){1,5}(?::[a-fA-F0-9]{1,4}){1,2}|(?:[a-fA-F0-9]{1,4}:){1,4}(?::[a-fA-F0-9]{1,4}){1,3}|(?:[a-fA-F0-9]{1,4}:){1,3}(?::[a-fA-F0-9]{1,4}){1,4}|(?:[a-fA-F0-9]{1,4}:){1,2}(?::[a-fA-F0-9]{1,4}){1,5}|[a-fA-F0-9]{1,4}:(?::[a-fA-F0-9]{1,4}){1,6}|:(?:(?::[a-fA-F0-9]{1,4}){1,7}|:)|fe80:(?::[a-fA-F0-9]{0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])|(?:[a-fA-F0-9]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9]))$/;
+  return ipv6Regex.test(ip);
+}
+
+/**
+ * Validates if a string is a valid IP address (IPv4 or IPv6)
+ */
+export function isValidIP(ip: string): boolean {
+  return isValidIPv4(ip) || isValidIPv6(ip);
+}
+
+/**
+ * Validates if a string is a valid CIDR range (IPv4 or IPv6)
+ * Examples: 10.20.30.0/24, 192.168.1.0/16, 2001:db8::/32
+ */
+export function isCidrRange(cidr: string): boolean {
+  const parts = cidr.split('/');
+  if (parts.length !== 2) return false;
+
+  const [ip, prefix] = parts;
+  const prefixNum = parseInt(prefix, 10);
+
+  if (isNaN(prefixNum)) return false;
+
+  // IPv4 CIDR
+  if (isValidIPv4(ip)) {
+    return prefixNum >= 0 && prefixNum <= 32;
+  }
+
+  // IPv6 CIDR
+  if (isValidIPv6(ip)) {
+    return prefixNum >= 0 && prefixNum <= 128;
+  }
+
+  return false;
+}
+
+/**
+ * Validates if a string is a valid IP address or CIDR range
+ */
+export function isValidIPOrCidr(value: string): boolean {
+  return isValidIP(value) || isCidrRange(value);
 }
 
 type SSEHandlerKeys =

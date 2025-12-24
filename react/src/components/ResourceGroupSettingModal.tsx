@@ -4,7 +4,6 @@ import { ResourceGroupSettingModalFragment$key } from '../__generated__/Resource
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { newLineToBrElement } from '../helper';
 import { useCurrentDomainValue } from '../hooks';
-import DomainSelector from './DomainSelector';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -27,6 +26,7 @@ import {
   omitNullAndUndefinedFields,
   BAICard,
   BAIFlex,
+  BAIDomainSelector,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
@@ -308,7 +308,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 },
               ]}
             >
-              <DomainSelector />
+              <BAIDomainSelector />
             </Form.Item>
           ) : null}
           <Form.Item label={t('resourceGroup.Description')} name="description">

@@ -1,4 +1,5 @@
 import { BAIDomainSelectorQuery } from '../../__generated__/BAIDomainSelectorQuery.graphql';
+import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -6,34 +7,36 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
-  onSelectDomain?: (project: any) => void;
+  activeOnly?: boolean;
 }
 const BAIDomainSelector: React.FC<Props> = ({
-  onSelectDomain,
+  activeOnly = true,
   ...selectProps
 }) => {
   const { t } = useTranslation();
+  const [value, setValue] = useControllableValue(selectProps);
 
   const { domains } = useLazyLoadQuery<BAIDomainSelectorQuery>(
     graphql`
-      query BAIDomainSelectorQuery {
-        domains(is_active: true) {
+      query BAIDomainSelectorQuery($is_active: Boolean) {
+        domains(is_active: $is_active) {
           name
         }
       }
     `,
-    {},
+    { is_active: activeOnly },
     {
       fetchPolicy: 'store-and-network',
     },
   );
   return (
     <Select
-      onChange={(_value, option) => {
-        onSelectDomain?.(option);
-      }}
       placeholder={t('comp:BAIDomainSelector.SelectDomain')}
       {...selectProps}
+      value={value}
+      onChange={(_value, option) => {
+        setValue(_value, option);
+      }}
     >
       {_.map(domains, (domain) => {
         return (
