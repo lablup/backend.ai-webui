@@ -142,6 +142,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "이중인중 활성화",
     "AccessKey": "접근키",
     "AccessKeyOptional": "접근 키 (선택)",
     "Activate": "활성화",
@@ -167,7 +168,7 @@
     "DeleteCredential": "자격증명 삭제",
     "Deleted": "삭제",
     "DescActiveUser": "활성화 유저?",
-    "DescRequirePasswordChange": "비밀번호 변경 필요?",
+    "DescRequirePasswordChange": "비밀번호 변경 필요",
     "Description": "소개",
     "Domain": "도메인",
     "EnableSudoSession": "sudo 세션 허용",

@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",
+    "ContainerGIDs": "Контейнерийн GID",
+    "ContainerMainGID": "Контейнерийн үндсэн GID",
+    "ContainerUID": "Контейнерийн UID",
+    "CreatedAt": "Үүсгэсэн",
+    "Description": "Тайлбар",
+    "Disabled": "Идэвхгүй",
+    "DomainName": "Домен",
+    "Email": "И-мэйл",
+    "Enabled": "Идэвхтэй",
+    "FullName": "Бүтэн нэр",
+    "ModifiedAt": "Өөрчилсөн",
+    "NeedPasswordChange": "Нууц үг солих шаардлагатай",
+    "Project": "Төсөл",
+    "ResourcePolicy": "Нөөцийн бодлого",
+    "Role": "Үүрэг",
+    "Status": "Төлөв",
+    "StatusInfo": "Төлөвийн мэдээлэл",
+    "SudoSessionEnabled": "Sudo горим идэвхтэй",
+    "TwoFA": "Хоёр үе шаттай баталгаажуулалт",
+    "Username": "Хэрэглэгчийн нэр"
+  },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },

@@ -139,6 +139,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA идэвхтэй",
     "AccessKey": "Хандалтын түлхүүр",
     "AccessKeyOptional": "Хандалтын түлхүүр (заавал биш)",
     "Activate": "Идэвхжүүлэх",
@@ -164,7 +165,7 @@
     "DeleteCredential": "Итгэмжлэлийг устгах",
     "Deleted": "Устгасан",
     "DescActiveUser": "Идэвхтэй хэрэглэгч үү?",
-    "DescRequirePasswordChange": "Нууц үгээ өөрчлөх шаардлагатай юу?",
+    "DescRequirePasswordChange": "Нууц үгийг өөрчлөх шаардлагатай",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
     "EnableSudoSession": "Sudo сессийг идэвхжүүлэх",

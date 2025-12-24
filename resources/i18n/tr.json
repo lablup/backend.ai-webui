@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA Etkin",
     "AccessKey": "Erişim Anahtarı",
     "AccessKeyOptional": "Erişim Anahtarı (isteğe bağlı)",
     "Activate": "Etkinleştir",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Kimlik bilgisini sil",
     "Deleted": "Silinmiş",
     "DescActiveUser": "Aktif kullanıcı?",
-    "DescRequirePasswordChange": "Şifre değişikliği gerekiyor mu?",
+    "DescRequirePasswordChange": "Şifre değişikliği gerekli",
     "Description": "Açıklama",
     "Domain": "Alan adı",
     "EnableSudoSession": "Sudo oturumunu etkinleştir",

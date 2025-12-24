@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP Klien yang Diizinkan",
+    "ContainerGIDs": "GID Container",
+    "ContainerMainGID": "GID Utama Container",
+    "ContainerUID": "UID Container",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Deskripsi",
+    "Disabled": "Nonaktif",
+    "DomainName": "Domain",
+    "Email": "Email",
+    "Enabled": "Aktif",
+    "FullName": "Nama Lengkap",
+    "ModifiedAt": "Dimodifikasi pada",
+    "NeedPasswordChange": "Perlu Ganti Kata Sandi",
+    "Project": "Proyek",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "Role": "Peran",
+    "Status": "Status",
+    "StatusInfo": "Info Status",
+    "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
+    "TwoFA": "Autentikasi Dua Faktor",
+    "Username": "Nama Pengguna"
+  },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },

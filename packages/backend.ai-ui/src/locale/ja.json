@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "許可されたクライアントIP",
+    "ContainerGIDs": "コンテナGID",
+    "ContainerMainGID": "コンテナメインGID",
+    "ContainerUID": "コンテナUID",
+    "CreatedAt": "作成日時",
+    "Description": "説明",
+    "Disabled": "無効",
+    "DomainName": "ドメイン",
+    "Email": "メールアドレス",
+    "Enabled": "有効",
+    "FullName": "フルネーム",
+    "ModifiedAt": "更新日時",
+    "NeedPasswordChange": "パスワード変更が必要",
+    "Project": "プロジェクト",
+    "ResourcePolicy": "リソースポリシー",
+    "Role": "ロール",
+    "Status": "ステータス",
+    "StatusInfo": "ステータス情報",
+    "SudoSessionEnabled": "Sudoセッション有効",
+    "TwoFA": "2段階認証",
+    "Username": "ユーザー名"
+  },
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },

@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA ενεργό",
     "AccessKey": "Κλειδί πρόσβασης",
     "AccessKeyOptional": "Κλειδί πρόσβασης (προαιρετικό)",
     "Activate": "Δραστηριοποιώ",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Διαγραφή διαπιστευτηρίων",
     "Deleted": "Διαγραμμένος",
     "DescActiveUser": "Ενεργός χρήστης;",
-    "DescRequirePasswordChange": "Απαιτείται αλλαγή κωδικού πρόσβασης;",
+    "DescRequirePasswordChange": "Απαιτείται αλλαγή κωδικού πρόσβασης",
     "Description": "Περιγραφή",
     "Domain": "Τομέα",
     "EnableSudoSession": "Ενεργοποίηση συνεδρίας sudo",

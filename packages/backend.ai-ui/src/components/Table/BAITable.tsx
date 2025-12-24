@@ -176,7 +176,7 @@ export interface BAITableProps<RecordType extends AnyObject>
   /** Whether columns should be resizable */
   resizable?: boolean;
   /** Current sort order string (e.g., 'name' or '-name' for descending) */
-  order?: string;
+  order?: string | null;
   /** Callback function called when sort order changes */
   onChangeOrder?: (order?: string) => void;
   /** Table settings including column visibility controls */

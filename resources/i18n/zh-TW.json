@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "已啟用雙因素驗證",
     "AccessKey": "存取密鑰",
     "AccessKeyOptional": "訪問密鑰（可選）",
     "Activate": "啟用設定",
@@ -165,7 +166,7 @@
     "DeleteCredential": "刪除憑證",
     "Deleted": "刪除",
     "DescActiveUser": "活躍用戶？",
-    "DescRequirePasswordChange": "需要修改密碼嗎？",
+    "DescRequirePasswordChange": "需要更改密碼",
     "Description": "描述",
     "Domain": "領域",
     "EnableSudoSession": "啟用 sudo 會話",

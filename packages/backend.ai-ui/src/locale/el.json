@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Επιτρεπόμενες IP πελατών",
+    "ContainerGIDs": "GID περιέκτη",
+    "ContainerMainGID": "Κύριο GID περιέκτη",
+    "ContainerUID": "UID περιέκτη",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "Description": "Περιγραφή",
+    "Disabled": "Απενεργοποιημένο",
+    "DomainName": "Τομέας",
+    "Email": "Email",
+    "Enabled": "Ενεργοποιημένο",
+    "FullName": "Πλήρες όνομα",
+    "ModifiedAt": "Τροποποιήθηκε στις",
+    "NeedPasswordChange": "Απαιτείται αλλαγή κωδικού",
+    "Project": "Έργο",
+    "ResourcePolicy": "Πολιτική πόρων",
+    "Role": "Ρόλος",
+    "Status": "Κατάσταση",
+    "StatusInfo": "Πληροφορίες κατάστασης",
+    "SudoSessionEnabled": "Συνεδρία Sudo ενεργοποιημένη",
+    "TwoFA": "Έλεγχος ταυτότητας δύο παραγόντων",
+    "Username": "Όνομα χρήστη"
+  },
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },

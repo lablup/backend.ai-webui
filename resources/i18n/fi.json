@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA Enabled",
     "AccessKey": "Pääsyavain",
     "AccessKeyOptional": "Pääsyavain (valinnainen)",
     "Activate": "Aktivoida",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Poista kirjautumistiedot",
     "Deleted": "Poistettu",
     "DescActiveUser": "Aktiivinen käyttäjä?",
-    "DescRequirePasswordChange": "Vaadi salasanan vaihtamista?",
+    "DescRequirePasswordChange": "Salasanan vaihto vaaditaan",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
     "EnableSudoSession": "Ota sudo-istunto käyttöön",

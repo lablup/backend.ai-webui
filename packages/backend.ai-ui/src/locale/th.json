@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
+    "ContainerGIDs": "GID ของคอนเทนเนอร์",
+    "ContainerMainGID": "GID หลักของคอนเทนเนอร์",
+    "ContainerUID": "UID ของคอนเทนเนอร์",
+    "CreatedAt": "สร้างเมื่อ",
+    "Description": "คำอธิบาย",
+    "Disabled": "ปิดใช้งาน",
+    "DomainName": "โดเมน",
+    "Email": "อีเมล",
+    "Enabled": "เปิดใช้งาน",
+    "FullName": "ชื่อเต็ม",
+    "ModifiedAt": "แก้ไขเมื่อ",
+    "NeedPasswordChange": "ต้องเปลี่ยนรหัสผ่าน",
+    "Project": "โครงการ",
+    "ResourcePolicy": "นโยบายทรัพยากร",
+    "Role": "บทบาท",
+    "Status": "สถานะ",
+    "StatusInfo": "ข้อมูลสถานะ",
+    "SudoSessionEnabled": "เซสชัน Sudo เปิดใช้งาน",
+    "TwoFA": "การยืนยันตัวตนสองขั้นตอน",
+    "Username": "ชื่อผู้ใช้"
+  },
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },

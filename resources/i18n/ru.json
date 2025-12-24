@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA Enabled",
     "AccessKey": "Ключ доступа",
     "AccessKeyOptional": "Ключ доступа (необязательно)",
     "Activate": "Активировать",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Удалить учетные данные",
     "Deleted": "Удален",
     "DescActiveUser": "Активный пользователь?",
-    "DescRequirePasswordChange": "Требовать смены пароля?",
+    "DescRequirePasswordChange": "Требуется смена пароля",
     "Description": "Описание",
     "Domain": "Домен",
     "EnableSudoSession": "Включить сеанс sudo",

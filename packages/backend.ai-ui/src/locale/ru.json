@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Разрешенные IP клиентов",
+    "ContainerGIDs": "GID контейнера",
+    "ContainerMainGID": "Основной GID контейнера",
+    "ContainerUID": "UID контейнера",
+    "CreatedAt": "Создано",
+    "Description": "Описание",
+    "Disabled": "Отключено",
+    "DomainName": "Домен",
+    "Email": "Электронная почта",
+    "Enabled": "Включено",
+    "FullName": "Полное имя",
+    "ModifiedAt": "Изменено",
+    "NeedPasswordChange": "Требуется смена пароля",
+    "Project": "Проект",
+    "ResourcePolicy": "Политика ресурсов",
+    "Role": "Роль",
+    "Status": "Статус",
+    "StatusInfo": "Информация о статусе",
+    "SudoSessionEnabled": "Сеанс Sudo включен",
+    "TwoFA": "Двухфакторная аутентификация",
+    "Username": "Имя пользователя"
+  },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },

@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Brak danych dotyczących zasobów"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Dozwolone IP klientów",
+    "ContainerGIDs": "GID kontenerów",
+    "ContainerMainGID": "Główny GID kontenera",
+    "ContainerUID": "UID kontenera",
+    "CreatedAt": "Utworzono",
+    "Description": "Opis",
+    "Disabled": "Wyłączone",
+    "DomainName": "Domena",
+    "Email": "E-mail",
+    "Enabled": "Włączone",
+    "FullName": "Pełna nazwa",
+    "ModifiedAt": "Zmodyfikowano",
+    "NeedPasswordChange": "Wymagana zmiana hasła",
+    "Project": "Projekt",
+    "ResourcePolicy": "Polityka zasobów",
+    "Role": "Rola",
+    "Status": "Status",
+    "StatusInfo": "Informacje o statusie",
+    "SudoSessionEnabled": "Sesja Sudo włączona",
+    "TwoFA": "Uwierzytelnianie dwuskładnikowe",
+    "Username": "Nazwa użytkownika"
+  },
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },

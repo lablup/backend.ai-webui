@@ -218,6 +218,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Allowed Client IPs",
+    "ContainerGIDs": "Container GIDs",
+    "ContainerMainGID": "Container Main GID",
+    "ContainerUID": "Container UID",
+    "CreatedAt": "Created At",
+    "Description": "Description",
+    "Disabled": "Disabled",
+    "DomainName": "Domain",
+    "Email": "E-Mail",
+    "Enabled": "Enabled",
+    "FullName": "Full Name",
+    "ModifiedAt": "Modified At",
+    "NeedPasswordChange": "Need Password Change",
+    "Project": "Project",
+    "ResourcePolicy": "Resource Policy",
+    "Role": "Role",
+    "Status": "Status",
+    "StatusInfo": "Status Info",
+    "SudoSessionEnabled": "Sudo Session Enabled",
+    "TwoFA": "2FA",
+    "Username": "Username"
+  },
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },

@@ -139,6 +139,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA Diaktifkan",
     "AccessKey": "Kunci Akses",
     "AccessKeyOptional": "Kunci Akses (opsional)",
     "Activate": "Mengaktifkan",
@@ -164,7 +165,7 @@
     "DeleteCredential": "Hapus kredensial",
     "Deleted": "Dihapus",
     "DescActiveUser": "Pengguna aktif?",
-    "DescRequirePasswordChange": "Perlu perubahan kata sandi?",
+    "DescRequirePasswordChange": "Perubahan kata sandi diperlukan",
     "Description": "Deskripsi",
     "Domain": "Domain",
     "EnableSudoSession": "Aktifkan sesi sudo",

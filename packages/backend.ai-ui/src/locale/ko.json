@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "허용된 클라이언트 IP",
+    "ContainerGIDs": "컨테이너 GID",
+    "ContainerMainGID": "컨테이너 메인 GID",
+    "ContainerUID": "컨테이너 UID",
+    "CreatedAt": "생성일",
+    "Description": "설명",
+    "Disabled": "비활성화",
+    "DomainName": "도메인",
+    "Email": "이메일",
+    "Enabled": "활성화",
+    "FullName": "전체 이름",
+    "ModifiedAt": "수정일",
+    "NeedPasswordChange": "비밀번호 변경 필요",
+    "Project": "프로젝트",
+    "ResourcePolicy": "리소스 정책",
+    "Role": "역할",
+    "Status": "상태",
+    "StatusInfo": "상태 정보",
+    "SudoSessionEnabled": "Sudo 세션 활성화",
+    "TwoFA": "2단계 인증",
+    "Username": "사용자 이름"
+  },
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },

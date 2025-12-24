@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Nessun dati sulle risorse disponibili"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP client consentiti",
+    "ContainerGIDs": "GID del container",
+    "ContainerMainGID": "GID principale del container",
+    "ContainerUID": "UID del container",
+    "CreatedAt": "Creato il",
+    "Description": "Descrizione",
+    "Disabled": "Disabilitato",
+    "DomainName": "Dominio",
+    "Email": "E-mail",
+    "Enabled": "Abilitato",
+    "FullName": "Nome completo",
+    "ModifiedAt": "Modificato il",
+    "NeedPasswordChange": "Richiede cambio password",
+    "Project": "Progetto",
+    "ResourcePolicy": "Politica delle risorse",
+    "Role": "Ruolo",
+    "Status": "Stato",
+    "StatusInfo": "Informazioni sullo stato",
+    "SudoSessionEnabled": "Sessione Sudo abilitata",
+    "TwoFA": "Autenticazione a due fattori",
+    "Username": "Nome utente"
+  },
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },

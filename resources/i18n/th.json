@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA Enabled",
     "AccessKey": "คีย์การเข้าถึง",
     "AccessKeyOptional": "คีย์การเข้าถึง (ไม่บังคับ)",
     "Activate": "เปิดใช้งาน",
@@ -165,7 +166,7 @@
     "DeleteCredential": "ลบข้อมูลรับรอง",
     "Deleted": "ถูกลบออก",
     "DescActiveUser": "ผู้ใช้ที่ใช้งานอยู่?",
-    "DescRequirePasswordChange": "ต้องการเปลี่ยนรหัสผ่านหรือไม่?",
+    "DescRequirePasswordChange": "ต้องเปลี่ยนรหัสผ่าน",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
     "EnableSudoSession": "เปิดใช้งานเซสชัน sudo",

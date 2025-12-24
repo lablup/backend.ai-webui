@@ -139,6 +139,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA abilitata",
     "AccessKey": "Chiave di accesso",
     "AccessKeyOptional": "Chiave di accesso (opzionale)",
     "Activate": "Attivare",
@@ -164,7 +165,7 @@
     "DeleteCredential": "Elimina credenziale",
     "Deleted": "Cancellato",
     "DescActiveUser": "Utente attivo?",
-    "DescRequirePasswordChange": "Richiedi la modifica della password?",
+    "DescRequirePasswordChange": "Cambio password richiesto",
     "Description": "Descrizione",
     "Domain": "Dominio",
     "EnableSudoSession": "Abilita la sessione sudo",

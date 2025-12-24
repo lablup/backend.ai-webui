@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "已启用双因素认证",
     "AccessKey": "访问密钥",
     "AccessKeyOptional": "访问密钥（可选）",
     "Activate": "激活",
@@ -165,7 +166,7 @@
     "DeleteCredential": "删除凭证",
     "Deleted": "删除",
     "DescActiveUser": "活跃用户？",
-    "DescRequirePasswordChange": "需要修改密码吗？",
+    "DescRequirePasswordChange": "需要更改密码",
     "Description": "描述",
     "Domain": "领域",
     "EnableSudoSession": "启用 sudo 会话",

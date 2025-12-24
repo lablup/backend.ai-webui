@@ -139,6 +139,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2要素認証が有効",
     "AccessKey": "アクセスキー",
     "AccessKeyOptional": "アクセスキー（オプション）",
     "Activate": "活性化",
@@ -164,7 +165,7 @@
     "DeleteCredential": "資格情報の削除",
     "Deleted": "削除されました",
     "DescActiveUser": "アクティブユーザー？",
-    "DescRequirePasswordChange": "パスワードの変更が必要ですか？",
+    "DescRequirePasswordChange": "パスワードの変更が必要です",
     "Description": "説明",
     "Domain": "ドメイン",
     "EnableSudoSession": "sudoセッションを有効にする",

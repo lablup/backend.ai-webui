@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",
+    "ContainerGIDs": "Kontin GID:t",
+    "ContainerMainGID": "Kontin päähallinto-GID",
+    "ContainerUID": "Kontin UID",
+    "CreatedAt": "Luotu",
+    "Description": "Kuvaus",
+    "Disabled": "Poistettu käytöstä",
+    "DomainName": "Toimialue",
+    "Email": "Sähköposti",
+    "Enabled": "Käytössä",
+    "FullName": "Koko nimi",
+    "ModifiedAt": "Muokattu",
+    "NeedPasswordChange": "Salasanan vaihto vaaditaan",
+    "Project": "Projekti",
+    "ResourcePolicy": "Resurssikäytäntö",
+    "Role": "Rooli",
+    "Status": "Tila",
+    "StatusInfo": "Tilatiedot",
+    "SudoSessionEnabled": "Sudo-istunto käytössä",
+    "TwoFA": "Kaksivaiheinen todennus",
+    "Username": "Käyttäjänimi"
+  },
   "error": {
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },

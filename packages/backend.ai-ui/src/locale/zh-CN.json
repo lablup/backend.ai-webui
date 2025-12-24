@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "没有可用的资源数据"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "允许的客户端IP",
+    "ContainerGIDs": "容器GID",
+    "ContainerMainGID": "容器主GID",
+    "ContainerUID": "容器UID",
+    "CreatedAt": "创建时间",
+    "Description": "描述",
+    "Disabled": "已禁用",
+    "DomainName": "域",
+    "Email": "电子邮件",
+    "Enabled": "已启用",
+    "FullName": "全名",
+    "ModifiedAt": "修改时间",
+    "NeedPasswordChange": "需要更改密码",
+    "Project": "项目",
+    "ResourcePolicy": "资源策略",
+    "Role": "角色",
+    "Status": "状态",
+    "StatusInfo": "状态信息",
+    "SudoSessionEnabled": "Sudo会话已启用",
+    "TwoFA": "双因素认证",
+    "Username": "用户名"
+  },
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
   },

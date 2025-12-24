@@ -1,5 +1,5 @@
 import UserCredentialList from '../components/UserCredentialList';
-import UserNodeList from '../components/UserNodeList';
+import UserManagement from '../components/UserManagement';
 import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
@@ -39,7 +39,7 @@ const UserCredentialsPage: React.FC = () => {
         {currentTab === 'users' && (
           <BAIErrorBoundary>
             <BAIFlex direction="column" align="stretch">
-              <UserNodeList />
+              <UserManagement />
             </BAIFlex>
           </BAIErrorBoundary>
         )}

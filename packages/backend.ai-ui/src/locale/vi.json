@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP khách hàng được phép",
+    "ContainerGIDs": "GID của container",
+    "ContainerMainGID": "GID chính của container",
+    "ContainerUID": "UID của container",
+    "CreatedAt": "Tạo lúc",
+    "Description": "Mô tả",
+    "Disabled": "Đã tắt",
+    "DomainName": "Miền",
+    "Email": "Email",
+    "Enabled": "Đã bật",
+    "FullName": "Họ và tên",
+    "ModifiedAt": "Sửa lúc",
+    "NeedPasswordChange": "Cần đổi mật khẩu",
+    "Project": "Dự án",
+    "ResourcePolicy": "Chính sách tài nguyên",
+    "Role": "Vai trò",
+    "Status": "Trạng thái",
+    "StatusInfo": "Thông tin trạng thái",
+    "SudoSessionEnabled": "Phiên Sudo đã bật",
+    "TwoFA": "Xác thực hai yếu tố",
+    "Username": "Tên người dùng"
+  },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },

@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Aucune données de ressources disponibles"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IPs clients autorisés",
+    "ContainerGIDs": "GIDs de conteneur",
+    "ContainerMainGID": "GID principal du conteneur",
+    "ContainerUID": "UID du conteneur",
+    "CreatedAt": "Créé le",
+    "Description": "Description",
+    "Disabled": "Désactivé",
+    "DomainName": "Domaine",
+    "Email": "E-mail",
+    "Enabled": "Activé",
+    "FullName": "Nom complet",
+    "ModifiedAt": "Modifié le",
+    "NeedPasswordChange": "Changement de mot de passe requis",
+    "Project": "Projet",
+    "ResourcePolicy": "Politique de ressources",
+    "Role": "Rôle",
+    "Status": "Statut",
+    "StatusInfo": "Info de statut",
+    "SudoSessionEnabled": "Session Sudo activée",
+    "TwoFA": "Authentification à deux facteurs",
+    "Username": "Nom d'utilisateur"
+  },
   "error": {
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },

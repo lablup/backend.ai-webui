@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP Pelanggan yang Dibenarkan",
+    "ContainerGIDs": "GID Bekas",
+    "ContainerMainGID": "GID Utama Bekas",
+    "ContainerUID": "UID Bekas",
+    "CreatedAt": "Dibuat Pada",
+    "Description": "Penerangan",
+    "Disabled": "Dilumpuhkan",
+    "DomainName": "Domain",
+    "Email": "E-mel",
+    "Enabled": "Didayakan",
+    "FullName": "Nama Penuh",
+    "ModifiedAt": "Diubahsuai Pada",
+    "NeedPasswordChange": "Perlu Tukar Kata Laluan",
+    "Project": "Projek",
+    "ResourcePolicy": "Dasar Sumber",
+    "Role": "Peranan",
+    "Status": "Status",
+    "StatusInfo": "Maklumat Status",
+    "SudoSessionEnabled": "Sesi Sudo Didayakan",
+    "TwoFA": "Pengesahan Dua Faktor",
+    "Username": "Nama Pengguna"
+  },
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },

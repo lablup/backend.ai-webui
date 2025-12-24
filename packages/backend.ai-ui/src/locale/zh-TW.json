@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "允許的用戶端IP",
+    "ContainerGIDs": "容器GID",
+    "ContainerMainGID": "容器主GID",
+    "ContainerUID": "容器UID",
+    "CreatedAt": "建立時間",
+    "Description": "描述",
+    "Disabled": "已停用",
+    "DomainName": "網域",
+    "Email": "電子郵件",
+    "Enabled": "已啟用",
+    "FullName": "全名",
+    "ModifiedAt": "修改時間",
+    "NeedPasswordChange": "需要變更密碼",
+    "Project": "專案",
+    "ResourcePolicy": "資源原則",
+    "Role": "角色",
+    "Status": "狀態",
+    "StatusInfo": "狀態資訊",
+    "SudoSessionEnabled": "Sudo工作階段已啟用",
+    "TwoFA": "雙重驗證",
+    "Username": "使用者名稱"
+  },
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },

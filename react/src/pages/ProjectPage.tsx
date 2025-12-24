@@ -56,9 +56,7 @@ const ProjectPage = () => {
   });
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableProjectSorterValues).withDefault(
-        '-created_at',
-      ),
+      order: parseAsStringLiteral(availableProjectSorterValues),
       filter: parseAsString.withDefault(''),
     },
     {
@@ -71,7 +69,7 @@ const ProjectPage = () => {
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.limit,
-    order: queryParams.order,
+    order: queryParams.order || '-created_at',
     filter: queryParams.filter || null,
   };
 
@@ -219,7 +217,6 @@ const ProjectPage = () => {
               }
             },
           }}
-          sortDirections={['ascend', 'descend', 'ascend']}
           order={queryParams.order}
           onChangeOrder={(order) => {
             setQueryParams({ order });

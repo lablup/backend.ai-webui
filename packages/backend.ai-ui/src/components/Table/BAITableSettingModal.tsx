@@ -409,6 +409,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
             initialColumnOrder || columnOptions.map((option) => option.key),
         }}
         layout="vertical"
+        requiredMark={false}
       >
         <Form.Item
           name="searchInput"

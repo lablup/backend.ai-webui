@@ -74,6 +74,11 @@ export type { BAIAlertProps } from './BAIAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';
 export { default as BAITextHighlighter } from './BAITextHighlighter';
 export { default as BooleanTag } from './BooleanTag';
+export {
+  default as BAIUserNodes,
+  availableUserSorterValues,
+} from './BAIUserNodes';
+export type { UserNodeInList } from './BAIUserNodes';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

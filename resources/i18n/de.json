@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "2FA aktiviert",
     "AccessKey": "Zugriffsschlüssel",
     "AccessKeyOptional": "Zugangsschlüssel (optional)",
     "Activate": "Aktivieren",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Anmeldedaten löschen",
     "Deleted": "Gelöscht",
     "DescActiveUser": "Aktiver Nutzer?",
-    "DescRequirePasswordChange": "Passwortänderung erforderlich?",
+    "DescRequirePasswordChange": "Passwortänderung erforderlich",
     "Description": "Beschreibung",
     "Domain": "Domain",
     "EnableSudoSession": "Sudo-Sitzung aktivieren",

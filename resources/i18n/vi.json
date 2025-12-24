@@ -140,6 +140,7 @@
     }
   },
   "credential": {
+    "2FAEnabled": "Đã bật 2FA",
     "AccessKey": "Khóa truy cập",
     "AccessKeyOptional": "Khóa truy cập (tùy chọn)",
     "Activate": "Kích hoạt",
@@ -165,7 +166,7 @@
     "DeleteCredential": "Xóa thông tin xác thực",
     "Deleted": "Đã xóa",
     "DescActiveUser": "Người dùng đang hoạt động?",
-    "DescRequirePasswordChange": "Yêu cầu thay đổi mật khẩu?",
+    "DescRequirePasswordChange": "Yêu cầu đổi mật khẩu",
     "Description": "Sự miêu tả",
     "Domain": "Miền",
     "EnableSudoSession": "Kích hoạt phiên sudo",

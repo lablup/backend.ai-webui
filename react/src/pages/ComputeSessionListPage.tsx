@@ -97,9 +97,7 @@ const ComputeSessionListPage = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableSessionSorterValues).withDefault(
-        '-created_at',
-      ),
+      order: parseAsStringLiteral(availableSessionSorterValues),
       filter: parseAsString.withDefault(''),
       type: parseAsStringLiteral(typeFilterValues).withDefault('all'),
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
@@ -147,7 +145,7 @@ const ComputeSessionListPage = () => {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-    order: queryParams.order,
+    order: queryParams.order || '-created_at',
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -540,7 +538,6 @@ const ComputeSessionListPage = () => {
                   }
                 },
               }}
-              sortDirections={['ascend', 'descend', 'ascend']}
               onChangeOrder={(order) => {
                 setQueryParams({ order });
               }}

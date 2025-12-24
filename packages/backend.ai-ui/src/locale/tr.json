@@ -210,6 +210,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "İzin Verilen İstemci IP'leri",
+    "ContainerGIDs": "Konteyner GID'leri",
+    "ContainerMainGID": "Konteyner Ana GID",
+    "ContainerUID": "Konteyner UID",
+    "CreatedAt": "Oluşturulma",
+    "Description": "Açıklama",
+    "Disabled": "Devre Dışı",
+    "DomainName": "Etki Alanı",
+    "Email": "E-posta",
+    "Enabled": "Etkin",
+    "FullName": "Tam Ad",
+    "ModifiedAt": "Değiştirilme",
+    "NeedPasswordChange": "Şifre Değişikliği Gerekli",
+    "Project": "Proje",
+    "ResourcePolicy": "Kaynak Politikası",
+    "Role": "Rol",
+    "Status": "Durum",
+    "StatusInfo": "Durum Bilgisi",
+    "SudoSessionEnabled": "Sudo Oturumu Etkin",
+    "TwoFA": "İki Faktörlü Kimlik Doğrulama",
+    "Username": "Kullanıcı Adı"
+  },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },

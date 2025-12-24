@@ -215,6 +215,29 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Keine Ressourcendaten verfügbar"
   },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Zugelassene Client-IPs",
+    "ContainerGIDs": "Container-GIDs",
+    "ContainerMainGID": "Container-Haupt-GID",
+    "ContainerUID": "Container-UID",
+    "CreatedAt": "Erstellt am",
+    "Description": "Beschreibung",
+    "Disabled": "Deaktiviert",
+    "DomainName": "Domäne",
+    "Email": "E-Mail",
+    "Enabled": "Aktiviert",
+    "FullName": "Vollständiger Name",
+    "ModifiedAt": "Geändert am",
+    "NeedPasswordChange": "Passwortänderung erforderlich",
+    "Project": "Projekt",
+    "ResourcePolicy": "Ressourcenrichtlinie",
+    "Role": "Rolle",
+    "Status": "Status",
+    "StatusInfo": "Statusinfo",
+    "SudoSessionEnabled": "Sudo-Sitzung aktiviert",
+    "TwoFA": "Zwei-Faktor-Authentifizierung",
+    "Username": "Benutzername"
+  },
   "error": {
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
