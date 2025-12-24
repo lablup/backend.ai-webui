@@ -515,20 +515,93 @@ export function getOS() {
 
 /**
  * Validates if a string is a valid IPv4 address
+ *
+ * Strict validation rules:
+ * - No leading zeros (e.g., 01.2.3.4 is invalid)
+ * - No whitespace
+ * - Exactly 4 octets
+ * - Each octet must be 0-255
  */
 export function isValidIPv4(ip: string): boolean {
-  const ipv4Regex =
-    /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  return ipv4Regex.test(ip);
+  // Quick format check
+  if (!ip || ip.trim() !== ip) return false;
+
+  const parts = ip.split('.');
+  if (parts.length !== 4) return false;
+
+  for (const part of parts) {
+    // Empty octet
+    if (part.length === 0) return false;
+
+    // Leading zero check (except '0' itself)
+    if (part.length > 1 && part[0] === '0') return false;
+
+    // Must be numeric
+    const num = Number(part);
+    if (isNaN(num) || num < 0 || num > 255) return false;
+
+    // Must not have non-numeric characters
+    if (!/^\d+$/.test(part)) return false;
+  }
+
+  return true;
 }
 
 /**
  * Validates if a string is a valid IPv6 address
+ *
+ * Strict validation rules:
+ * - No whitespace
+ * - No zone identifiers (e.g., %eth0)
+ * - No IPv4-mapped addresses (e.g., ::ffff:192.168.0.1)
+ * - Exactly 8 groups or proper :: compression
+ * - Each group must be 1-4 hex digits
+ * - Case-insensitive hex digits allowed
  */
 export function isValidIPv6(ip: string): boolean {
-  const ipv6Regex =
-    /^(?:(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}|(?:[a-fA-F0-9]{1,4}:){1,7}:|(?:[a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}|(?:[a-fA-F0-9]{1,4}:){1,5}(?::[a-fA-F0-9]{1,4}){1,2}|(?:[a-fA-F0-9]{1,4}:){1,4}(?::[a-fA-F0-9]{1,4}){1,3}|(?:[a-fA-F0-9]{1,4}:){1,3}(?::[a-fA-F0-9]{1,4}){1,4}|(?:[a-fA-F0-9]{1,4}:){1,2}(?::[a-fA-F0-9]{1,4}){1,5}|[a-fA-F0-9]{1,4}:(?::[a-fA-F0-9]{1,4}){1,6}|:(?:(?::[a-fA-F0-9]{1,4}){1,7}|:)|fe80:(?::[a-fA-F0-9]{0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])|(?:[a-fA-F0-9]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9])\.){3}(?:25[0-5]|(?:2[0-4]|1?[0-9])?[0-9]))$/;
-  return ipv6Regex.test(ip);
+  // Quick format check
+  if (!ip || ip.trim() !== ip) return false;
+
+  // Reject zone identifiers
+  if (ip.includes('%')) return false;
+
+  // Reject IPv4-mapped addresses
+  if (ip.includes('.')) return false;
+
+  // Handle :: compression
+  const doubleColonCount = (ip.match(/::/g) || []).length;
+  if (doubleColonCount > 1) return false; // Only one :: allowed
+
+  // Split by ::
+  if (ip.includes('::')) {
+    const [left, right] = ip.split('::');
+    const leftGroups = left ? left.split(':') : [];
+    const rightGroups = right ? right.split(':') : [];
+
+    // Check if total groups <= 8
+    if (leftGroups.length + rightGroups.length >= 8) return false;
+
+    // Validate each group
+    const allGroups = [...leftGroups, ...rightGroups];
+    for (const group of allGroups) {
+      if (group.length === 0) continue; // Empty group is ok in split result
+      if (group.length > 4) return false;
+      if (!/^[0-9a-fA-F]+$/.test(group)) return false;
+    }
+
+    return true;
+  }
+
+  // No :: compression - must have exactly 8 groups
+  const groups = ip.split(':');
+  if (groups.length !== 8) return false;
+
+  for (const group of groups) {
+    if (group.length === 0 || group.length > 4) return false;
+    if (!/^[0-9a-fA-F]+$/.test(group)) return false;
+  }
+
+  return true;
 }
 
 /**
@@ -539,8 +612,91 @@ export function isValidIP(ip: string): boolean {
 }
 
 /**
+ * Validates if an IPv4 address matches its network prefix
+ * @param ip - IPv4 address string
+ * @param prefixLength - Number of network bits (0-32)
+ * @returns true if the IP is a valid network address for the given prefix
+ */
+function isValidIPv4NetworkAddress(ip: string, prefixLength: number): boolean {
+  const octets = ip.split('.').map(Number);
+
+  // Convert IP to 32-bit unsigned integer
+  let ipBits = 0;
+  for (let i = 0; i < 4; i++) {
+    ipBits = ((ipBits << 8) | octets[i]) >>> 0; // >>> 0 ensures unsigned
+  }
+
+  // Create network mask (unsigned)
+  const mask = prefixLength === 0 ? 0 : (~0 << (32 - prefixLength)) >>> 0;
+
+  // Check if host bits are all zero
+  const networkAddress = (ipBits & mask) >>> 0;
+  return ipBits === networkAddress;
+}
+
+/**
+ * Validates if an IPv6 address matches its network prefix
+ * @param ip - IPv6 address string
+ * @param prefixLength - Number of network bits (0-128)
+ * @returns true if the IP is a valid network address for the given prefix
+ */
+function isValidIPv6NetworkAddress(ip: string, prefixLength: number): boolean {
+  // Expand IPv6 address to full form
+  const expandIPv6 = (ip: string): string => {
+    // Handle :: abbreviation
+    if (ip.includes('::')) {
+      const sides = ip.split('::');
+      const leftGroups = sides[0] ? sides[0].split(':') : [];
+      const rightGroups = sides[1] ? sides[1].split(':') : [];
+      const missingGroups = 8 - leftGroups.length - rightGroups.length;
+      const middleGroups = Array(missingGroups).fill('0000');
+      return [...leftGroups, ...middleGroups, ...rightGroups]
+        .map((g) => g.padStart(4, '0'))
+        .join(':');
+    }
+    return ip
+      .split(':')
+      .map((g) => g.padStart(4, '0'))
+      .join(':');
+  };
+
+  try {
+    const expanded = expandIPv6(ip);
+    const groups = expanded.split(':');
+
+    if (groups.length !== 8) return false;
+
+    // Convert to binary string
+    let binaryStr = '';
+    for (const group of groups) {
+      const num = parseInt(group, 16);
+      if (isNaN(num)) return false;
+      binaryStr += num.toString(2).padStart(16, '0');
+    }
+
+    // Check if host bits (after prefix length) are all zero
+    for (let i = prefixLength; i < 128; i++) {
+      if (binaryStr[i] === '1') return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Validates if a string is a valid CIDR range (IPv4 or IPv6)
  * Examples: 10.20.30.0/24, 192.168.1.0/16, 2001:db8::/32
+ *
+ * This function validates:
+ * 1. IP address format (IPv4 or IPv6)
+ * 2. Prefix length is in valid range
+ * 3. Host bits are zero (network address is correct)
+ *
+ * Invalid examples:
+ * - 10.20.30.40/12 (host bits are non-zero, should be 10.16.0.0/12)
+ * - 192.168.1.5/24 (host bits are non-zero, should be 192.168.1.0/24)
  */
 export function isCidrRange(cidr: string): boolean {
   const parts = cidr.split('/');
@@ -553,12 +709,14 @@ export function isCidrRange(cidr: string): boolean {
 
   // IPv4 CIDR
   if (isValidIPv4(ip)) {
-    return prefixNum >= 0 && prefixNum <= 32;
+    if (prefixNum < 0 || prefixNum > 32) return false;
+    return isValidIPv4NetworkAddress(ip, prefixNum);
   }
 
   // IPv6 CIDR
   if (isValidIPv6(ip)) {
-    return prefixNum >= 0 && prefixNum <= 128;
+    if (prefixNum < 0 || prefixNum > 128) return false;
+    return isValidIPv6NetworkAddress(ip, prefixNum);
   }
 
   return false;

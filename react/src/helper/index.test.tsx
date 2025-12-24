@@ -5,6 +5,11 @@ import {
   localeCompare,
   numberSorterWithInfinityValue,
   convertToDecimalUnit,
+  isValidIPv4,
+  isValidIPv6,
+  isValidIP,
+  isCidrRange,
+  isValidIPOrCidr,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -352,5 +357,201 @@ describe('auto unit selection', () => {
       value: '1.5k',
       displayValue: '1.5 KB',
     });
+  });
+});
+
+describe('isValidIPv4', () => {
+  it('should validate correct IPv4 addresses', () => {
+    expect(isValidIPv4('192.168.1.1')).toBe(true);
+    expect(isValidIPv4('10.0.0.0')).toBe(true);
+    expect(isValidIPv4('255.255.255.255')).toBe(true);
+    expect(isValidIPv4('0.0.0.0')).toBe(true);
+    expect(isValidIPv4('1.1.1.1')).toBe(true);
+  });
+
+  it('should reject invalid IPv4 addresses', () => {
+    expect(isValidIPv4('256.1.1.1')).toBe(false);
+    expect(isValidIPv4('192.168.1')).toBe(false);
+    expect(isValidIPv4('192.168.1.1.1')).toBe(false);
+    expect(isValidIPv4('abc.def.ghi.jkl')).toBe(false);
+    expect(isValidIPv4('192.168.-1.1')).toBe(false);
+  });
+
+  it('should reject IPv4 with leading zeros', () => {
+    expect(isValidIPv4('01.2.3.4')).toBe(false);
+    expect(isValidIPv4('192.168.01.1')).toBe(false);
+    expect(isValidIPv4('192.168.001.1')).toBe(false);
+    // '0' itself is valid
+    expect(isValidIPv4('0.0.0.0')).toBe(true);
+  });
+
+  it('should reject IPv4 with whitespace', () => {
+    expect(isValidIPv4(' 192.168.1.1')).toBe(false);
+    expect(isValidIPv4('192.168.1.1 ')).toBe(false);
+    expect(isValidIPv4('192. 168.1.1')).toBe(false);
+    expect(isValidIPv4('1.1.1.1\n')).toBe(false);
+    expect(isValidIPv4('\t1.1.1.1')).toBe(false);
+  });
+
+  it('should reject IPv4 with empty octets', () => {
+    expect(isValidIPv4('192..1.1')).toBe(false);
+    expect(isValidIPv4('.192.168.1.1')).toBe(false);
+    expect(isValidIPv4('192.168.1.')).toBe(false);
+  });
+});
+
+describe('isValidIPv6', () => {
+  it('should validate correct IPv6 addresses', () => {
+    expect(isValidIPv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334')).toBe(true);
+    expect(isValidIPv6('2001:db8:85a3::8a2e:370:7334')).toBe(true);
+    expect(isValidIPv6('::1')).toBe(true);
+    expect(isValidIPv6('::')).toBe(true);
+    expect(isValidIPv6('fe80::1')).toBe(true);
+  });
+
+  it('should accept uppercase hex digits', () => {
+    expect(isValidIPv6('2001:DB8::1')).toBe(true);
+    expect(isValidIPv6('2001:0DB8:85A3::8A2E:370:7334')).toBe(true);
+    expect(isValidIPv6('ABCD:EF01:2345:6789:ABCD:EF01:2345:6789')).toBe(true);
+  });
+
+  it('should reject invalid IPv6 addresses', () => {
+    expect(isValidIPv6('gggg::1')).toBe(false);
+    expect(isValidIPv6('2001:db8::8a2e::7334')).toBe(false);
+  });
+
+  it('should reject IPv4 addresses', () => {
+    expect(isValidIPv6('192.168.1.1')).toBe(false);
+  });
+
+  it('should reject IPv4-mapped IPv6 addresses', () => {
+    // These contain dots (IPv4 notation) so they are rejected
+    expect(isValidIPv6('::ffff:192.168.0.1')).toBe(false);
+    expect(isValidIPv6('64:ff9b::192.0.2.1')).toBe(false);
+  });
+
+  it('should reject zone identifiers', () => {
+    expect(isValidIPv6('fe80::1%eth0')).toBe(false);
+    expect(isValidIPv6('fe80::1%lo0')).toBe(false);
+    expect(isValidIPv6('fe80::1%1')).toBe(false);
+  });
+
+  it('should reject IPv6 with whitespace', () => {
+    expect(isValidIPv6(' 2001:db8::1')).toBe(false);
+    expect(isValidIPv6('2001:db8::1 ')).toBe(false);
+    expect(isValidIPv6('2001:db8 ::1')).toBe(false);
+    expect(isValidIPv6('2001:db8::1\n')).toBe(false);
+  });
+
+  it('should reject hextet that is too long', () => {
+    expect(isValidIPv6('12345::')).toBe(false);
+    expect(isValidIPv6('2001:0db8:85a3:00000::1')).toBe(false);
+  });
+
+  it('should reject IPv6 with wrong number of groups', () => {
+    expect(isValidIPv6('1:2:3:4:5:6:7:8:9')).toBe(false);
+    expect(isValidIPv6('1:2:3:4:5:6:7')).toBe(false);
+    expect(isValidIPv6('1:2:3:4:5:6:7:8:9:10')).toBe(false);
+  });
+
+  it('should reject multiple :: compressions', () => {
+    expect(isValidIPv6('2001::db8::1')).toBe(false);
+    expect(isValidIPv6('::1::')).toBe(false);
+  });
+});
+
+describe('isValidIP', () => {
+  it('should validate both IPv4 and IPv6 addresses', () => {
+    expect(isValidIP('192.168.1.1')).toBe(true);
+    expect(isValidIP('2001:db8::1')).toBe(true);
+    expect(isValidIP('invalid')).toBe(false);
+  });
+});
+
+describe('isCidrRange', () => {
+  describe('IPv4 CIDR validation', () => {
+    it('should validate correct IPv4 CIDR ranges', () => {
+      expect(isCidrRange('192.168.1.0/24')).toBe(true);
+      expect(isCidrRange('10.0.0.0/8')).toBe(true);
+      expect(isCidrRange('172.16.0.0/12')).toBe(true);
+      expect(isCidrRange('192.168.0.0/16')).toBe(true);
+      expect(isCidrRange('0.0.0.0/0')).toBe(true);
+    });
+
+    it('should reject IPv4 CIDR with non-zero host bits', () => {
+      // 10.20.30.40/12 should be 10.16.0.0/12
+      expect(isCidrRange('10.20.30.40/12')).toBe(false);
+      // 192.168.1.5/24 should be 192.168.1.0/24
+      expect(isCidrRange('192.168.1.5/24')).toBe(false);
+      // 172.16.5.128/25 should be 172.16.5.128/25 (actually valid)
+      expect(isCidrRange('172.16.5.128/25')).toBe(true);
+      // 172.16.5.129/25 should be 172.16.5.128/25
+      expect(isCidrRange('172.16.5.129/25')).toBe(false);
+    });
+
+    it('should handle edge case prefix lengths', () => {
+      expect(isCidrRange('192.168.1.1/32')).toBe(true); // Single host
+      expect(isCidrRange('192.168.1.0/32')).toBe(true);
+      expect(isCidrRange('0.0.0.0/0')).toBe(true); // All addresses
+    });
+
+    it('should reject invalid prefix lengths', () => {
+      expect(isCidrRange('192.168.1.0/33')).toBe(false);
+      expect(isCidrRange('192.168.1.0/-1')).toBe(false);
+    });
+
+    it('should reject invalid formats', () => {
+      expect(isCidrRange('192.168.1.0')).toBe(false);
+      expect(isCidrRange('192.168.1.0/24/16')).toBe(false);
+      expect(isCidrRange('192.168.1.0/abc')).toBe(false);
+    });
+  });
+
+  describe('IPv6 CIDR validation', () => {
+    it('should validate correct IPv6 CIDR ranges', () => {
+      expect(isCidrRange('2001:db8::/32')).toBe(true);
+      expect(isCidrRange('fe80::/10')).toBe(true);
+      expect(isCidrRange('::/0')).toBe(true);
+      expect(isCidrRange('2001:db8:85a3::/48')).toBe(true);
+    });
+
+    it('should reject IPv6 CIDR with non-zero host bits', () => {
+      // 2001:db8::1/32 should be 2001:db8::/32
+      expect(isCidrRange('2001:db8::1/32')).toBe(false);
+      // 2001:db8:85a3::8a2e:370:7334/48 should be 2001:db8:85a3::/48
+      expect(isCidrRange('2001:db8:85a3::8a2e:370:7334/48')).toBe(false);
+    });
+
+    it('should handle edge case prefix lengths', () => {
+      expect(isCidrRange('2001:db8::1/128')).toBe(true); // Single host
+      expect(isCidrRange('::/0')).toBe(true); // All addresses
+    });
+
+    it('should reject invalid prefix lengths', () => {
+      expect(isCidrRange('2001:db8::/129')).toBe(false);
+      expect(isCidrRange('2001:db8::/-1')).toBe(false);
+    });
+  });
+});
+
+describe('isValidIPOrCidr', () => {
+  it('should validate IP addresses', () => {
+    expect(isValidIPOrCidr('192.168.1.1')).toBe(true);
+    expect(isValidIPOrCidr('2001:db8::1')).toBe(true);
+  });
+
+  it('should validate CIDR ranges', () => {
+    expect(isValidIPOrCidr('192.168.1.0/24')).toBe(true);
+    expect(isValidIPOrCidr('2001:db8::/32')).toBe(true);
+  });
+
+  it('should reject invalid CIDR ranges with non-zero host bits', () => {
+    expect(isValidIPOrCidr('10.20.30.40/12')).toBe(false);
+    expect(isValidIPOrCidr('192.168.1.5/24')).toBe(false);
+  });
+
+  it('should reject invalid values', () => {
+    expect(isValidIPOrCidr('invalid')).toBe(false);
+    expect(isValidIPOrCidr('192.168.1.0/33')).toBe(false);
   });
 });

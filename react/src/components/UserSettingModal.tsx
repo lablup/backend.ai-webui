@@ -26,6 +26,7 @@ import {
   theme,
   Checkbox,
   Skeleton,
+  Tag,
 } from 'antd';
 import {
   BAIDomainSelector,
@@ -642,6 +643,15 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             <Select
               mode="tags"
               tokenSeparators={[',', ' ']}
+              tagRender={(props) => {
+                const isValid =
+                  _.isString(props.label) && isValidIPOrCidr(props.label);
+                return (
+                  <Tag color={!isValid ? 'red' : undefined} {...props}>
+                    {props.label}
+                  </Tag>
+                );
+              }}
               open={false}
               suffixIcon={null}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
