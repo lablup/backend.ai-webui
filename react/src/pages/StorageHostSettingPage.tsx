@@ -2,12 +2,13 @@ import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSetting
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
 import { useWebUINavigate } from '../hooks';
-import { Breadcrumb, Card, Empty, Typography } from 'antd';
+import { Breadcrumb, Card, Empty, Skeleton, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
 
 interface StorageHostSettingPageProps {
   // storageHostId: string;
@@ -59,11 +60,13 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
       </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
       {isQuotaSupportedStorage ? (
-        <Suspense fallback={<div>loading...</div>}>
-          <StorageHostSettingsPanel
-            storageVolumeFrgmt={storage_volume || null}
-          />
-        </Suspense>
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active />}>
+            <StorageHostSettingsPanel
+              storageVolumeFrgmt={storage_volume || null}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
       ) : (
         <Card title={t('storageHost.QuotaSettings')}>
           <Empty
