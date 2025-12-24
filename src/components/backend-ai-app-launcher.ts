@@ -1112,7 +1112,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             ) {
               await this._sleep(1000);
               count = count + 1;
-              // console.warn(`Retry connect to proxy worker (${count})...`);
             } else {
               count = 6;
             }
@@ -1149,7 +1148,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         ) {
           await this._sleep(1000);
           count = count + 1;
-          // console.warn(`Retry connect to proxy worker (${count})...`);
         } else {
           count = 6;
         }
@@ -1247,7 +1245,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         percent: 10,
         status: 'pending',
       };
-      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+      // Use persistent=true to prevent notification from auto-closing while app is connecting
+      this.notification.show(true, undefined, `session-app-${sessionUuid}`);
       let port;
       if (this.allowTCPApps && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
@@ -1436,7 +1435,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             }
 
             this.notification.show(
-              false,
+              true,
               undefined,
               `session-app-${sessionUuid}`,
             );
@@ -1446,8 +1445,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 appConnectUrl?.href || response.url + urlPostfix,
                 '_blank',
               );
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
             }, 1000);
           }
         })
@@ -1538,7 +1535,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         percent: 10,
         status: 'pending',
       };
-      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+      // Use persistent=true to keep notification visible until connection completes
+      this.notification.show(true, undefined, `session-app-${sessionUuid}`);
       this._open_wsproxy(sessionUuid, 'ttyd').then(async (response) => {
         const { appConnectUrl } = await this._connectToProxyWorker(
           response.url,
@@ -1550,11 +1548,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             status: 'resolved',
           };
           this.notification.detail = _text('session.appLauncher.Prepared');
-          this.notification.show(
-            false,
-            undefined,
-            `session-app-${sessionUuid}`,
-          );
+          // Still use persistent=true, let the 3s timeout at line 1588 clear it
+          this.notification.show(true, undefined, `session-app-${sessionUuid}`);
           setTimeout(() => {
             this.notification.clear(`session-app-${sessionUuid}`);
           }, 3000);
@@ -1658,7 +1653,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         percent: 20,
         status: 'pending',
       };
-      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+      // Use persistent=true to keep notification visible during operation
+      this.notification.show(true, undefined, `session-app-${sessionUuid}`);
       await globalThis.backendaiclient.shutdown_service(
         sessionUuid,
         'tensorboard',
@@ -1670,7 +1666,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         percent: 30,
         status: 'pending',
       };
-      this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+      // Use persistent=true to keep notification visible during operation
+      this.notification.show(true, undefined, `session-app-${sessionUuid}`);
       await this._close_wsproxy(sessionUuid, 'tensorboard');
       // if tensorboard path is empty, --logdir will be '/home/work/logs'
       this.tensorboardPath =

@@ -435,13 +435,17 @@ function createWindow() {
     }
   });
 
-  mainWindow.webContents.once('did-finish-load', () => {
-    manager.once('ready', () => {
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (manager.port) {
       const url = 'http://localhost:' + manager.port + '/';
-      console.log('Proxy is ready:' + url);
       mainWindow.webContents.send('proxy-ready', url);
-    });
-    manager.start();
+    } else {
+      manager.once('ready', () => {
+        const url = 'http://localhost:' + manager.port + '/';
+        mainWindow.webContents.send('proxy-ready', url);
+      });
+      manager.start();
+    }
   });
 
   ipcMain.on('app-closed', (_) => {
