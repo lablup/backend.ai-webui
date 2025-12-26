@@ -1765,6 +1765,11 @@ export default class BackendAILogin extends BackendAIPage {
       .then(async (response) => {
         this.is_connected = true;
         globalThis.backendaiclient = this.client;
+        if (!response['keypair']) {
+          // if no keypair info, logout and throw error
+          await this.client?.logout();
+          throw new Error('Keypair information is missing.');
+        }
         const resource_policy = response['keypair'].resource_policy;
         globalThis.backendaiclient.resource_policy = resource_policy;
         this.user = response['keypair'].user;
