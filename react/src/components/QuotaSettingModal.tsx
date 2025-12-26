@@ -109,6 +109,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           name="hard_limit_bytes"
           label={t('storageHost.HardLimit')}
           initialValue={bytesToGB(quotaScope?.details?.hard_limit_bytes)}
+          required
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
