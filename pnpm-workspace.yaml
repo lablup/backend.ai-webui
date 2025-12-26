@@ -17,10 +17,10 @@ onlyBuiltDependencies:
 
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.60": react/patches/@cloudscape-design__board-components@3.0.60.patch
-  rc-field-form@2.7.1: react/patches/rc-field-form.patch
   react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
   "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
+  "@rc-component/form": react/patches/@rc-component__form.patch
 
 minimumReleaseAge: 10080
 

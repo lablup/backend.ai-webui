@@ -117,8 +117,9 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   return (
     <BAIFlex gap="xs">
       <Select
-        showSearch
-        optionFilterProp={'label'}
+        showSearch={{
+          optionFilterProp: 'label',
+        }}
         {...selectProps}
         value={value}
         labelRender={({ label, value }) =>

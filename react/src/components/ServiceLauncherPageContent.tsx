@@ -945,7 +945,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             }
                             inputNumberProps={{
                               //TODO: change unit based on resource limit
-                              addonAfter: '#',
+                              suffix: '#',
                             }}
                             step={1}
                           />

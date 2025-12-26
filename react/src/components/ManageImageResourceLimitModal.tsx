@@ -218,7 +218,7 @@ const ManageImageResourceLimitModal: React.FC<
                             }
                             step={_.includes(key, '.shares') ? 0.1 : 1}
                             style={{ width: '100%' }}
-                            addonAfter={
+                            suffix={
                               mergedResourceSlots?.[key]?.display_unit || ''
                             }
                           />

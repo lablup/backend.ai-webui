@@ -159,11 +159,12 @@ const AgentSelect: React.FC<Props> = ({
   return (
     <Select
       loading={searchStr !== deferredSearchStr}
-      filterOption={false}
-      showSearch
-      searchValue={searchStr}
-      onSearch={(v) => {
-        setSearchStr(v);
+      showSearch={{
+        searchValue: searchStr,
+        onSearch: (v) => {
+          setSearchStr(v);
+        },
+        filterOption: false,
       }}
       options={filterOutEmpty([autoSelectIfMatch, ...agentOptions])}
       //override props.onChange and props.value, it is handled by useControllableValue

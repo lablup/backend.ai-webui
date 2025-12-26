@@ -350,7 +350,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                         stringMode
                         min={resourceSlotKey === 'cpu' ? 1 : 0}
                         step={_.includes(resourceSlotKey, '.shares') ? 0.1 : 1}
-                        addonAfter={
+                        suffix={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.display_unit
                         }

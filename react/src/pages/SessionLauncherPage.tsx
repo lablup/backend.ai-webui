@@ -58,13 +58,14 @@ import {
   Radio,
   Row,
   Select,
-  StepProps,
+  Space,
   Steps,
   Switch,
   Tooltip,
   Typography,
   theme,
 } from 'antd';
+import type { StepsProps } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -185,7 +186,9 @@ export type SessionLauncherStepKey =
   | 'network'
   | 'review';
 
-interface StepPropsWithKey extends StepProps {
+type StepItem = NonNullable<StepsProps['items']>[number];
+
+interface StepPropsWithKey extends StepItem {
   key: SessionLauncherStepKey;
 }
 
@@ -748,63 +751,102 @@ const SessionLauncherPage = () => {
                                       ]) !== true;
                                     return (
                                       <>
-                                        <Form.Item
-                                          name={['batch', 'timeout']}
-                                          label={t(
-                                            'session.launcher.BatchJobTimeoutDuration',
-                                          )}
-                                          noStyle
-                                          rules={[
-                                            {
-                                              min: 0,
-                                              type: 'number',
-                                              message: t(
-                                                'error.AllowsPositiveNumberOnly',
-                                              ),
-                                            },
-                                            {
-                                              required: !disabled,
-                                            },
-                                          ]}
-                                        >
-                                          <InputNumber
-                                            disabled={disabled}
-                                            min={1}
-                                            addonAfter={
-                                              <Form.Item
-                                                noStyle
-                                                name={['batch', 'timeoutUnit']}
-                                              >
-                                                <Select
-                                                  tabIndex={-1}
-                                                  style={{ minWidth: 75 }}
-                                                  options={[
-                                                    {
-                                                      label: t('time.Sec'),
-                                                      value: 's',
-                                                    },
-                                                    {
-                                                      label: t('time.Min'),
-                                                      value: 'm',
-                                                    },
-                                                    {
-                                                      label: t('time.Hour'),
-                                                      value: 'h',
-                                                    },
-                                                    {
-                                                      label: t('time.Day'),
-                                                      value: 'd',
-                                                    },
-                                                    {
-                                                      label: t('time.Week'),
-                                                      value: 'w',
-                                                    },
-                                                  ]}
-                                                />
-                                              </Form.Item>
-                                            }
-                                          />
-                                        </Form.Item>
+                                        <Space.Compact>
+                                          <Form.Item
+                                            name={['batch', 'timeout']}
+                                            label={t(
+                                              'session.launcher.BatchJobTimeoutDuration',
+                                            )}
+                                            noStyle
+                                            dependencies={[
+                                              ['batch', 'timeoutEnabled'],
+                                            ]}
+                                            rules={[
+                                              {
+                                                min: 0,
+                                                type: 'number',
+                                                message: t(
+                                                  'error.AllowsPositiveNumberOnly',
+                                                ),
+                                              },
+                                              {
+                                                required: !disabled,
+                                              },
+                                            ]}
+                                          >
+                                            <InputNumber
+                                              disabled={disabled}
+                                              min={1}
+                                              style={{
+                                                width: '100%',
+                                              }}
+                                              onChange={() => {
+                                                form.validateFields([
+                                                  ['batch', 'timeoutUnit'],
+                                                ]);
+                                              }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            noStyle
+                                            name={['batch', 'timeoutUnit']}
+                                            dependencies={[
+                                              ['batch', 'timeout'],
+                                              ['batch', 'timeoutEnabled'],
+                                            ]}
+                                            rules={[
+                                              ({ getFieldValue }) => ({
+                                                validator() {
+                                                  const timeout = getFieldValue(
+                                                    ['batch', 'timeout'],
+                                                  );
+                                                  const timeoutEnabled =
+                                                    getFieldValue([
+                                                      'batch',
+                                                      'timeoutEnabled',
+                                                    ]);
+                                                  if (
+                                                    timeoutEnabled === true &&
+                                                    (timeout === undefined ||
+                                                      timeout === null ||
+                                                      timeout < 1)
+                                                  ) {
+                                                    return Promise.reject();
+                                                  }
+                                                  return Promise.resolve();
+                                                },
+                                              }),
+                                            ]}
+                                          >
+                                            <Select
+                                              tabIndex={-1}
+                                              disabled={disabled}
+                                              style={{ width: 100 }}
+                                              options={[
+                                                {
+                                                  label: t('time.Sec'),
+                                                  value: 's',
+                                                },
+                                                {
+                                                  label: t('time.Min'),
+                                                  value: 'm',
+                                                },
+                                                {
+                                                  label: t('time.Hour'),
+                                                  value: 'h',
+                                                },
+                                                {
+                                                  label: t('time.Day'),
+                                                  value: 'd',
+                                                },
+                                                {
+                                                  label: t('time.Week'),
+                                                  value: 'w',
+                                                },
+                                              ]}
+                                            />
+                                          </Form.Item>
+                                        </Space.Compact>
                                       </>
                                     );
                                   }}
@@ -1263,7 +1305,7 @@ const SessionLauncherPage = () => {
           >
             <Steps
               size="small"
-              direction="vertical"
+              orientation="vertical"
               current={currentStep}
               onChange={(nextCurrent) => {
                 setCurrentStep(nextCurrent);

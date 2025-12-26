@@ -339,8 +339,9 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             setIsOpenAutoComplete(true);
             setIsValid(true);
           }}
-          showSearch
-          optionFilterProp="label"
+          showSearch={{
+            optionFilterProp: 'label',
+          }}
         />
         <Tooltip
           title={isValid || !isFocused ? '' : selectedProperty.rule?.message}

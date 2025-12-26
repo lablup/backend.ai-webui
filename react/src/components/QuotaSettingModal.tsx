@@ -119,7 +119,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           ]}
         >
           <Input
-            addonAfter="GB"
+            suffix="GB"
             type="number"
             step={0.25}
             style={{ width: '70%' }}

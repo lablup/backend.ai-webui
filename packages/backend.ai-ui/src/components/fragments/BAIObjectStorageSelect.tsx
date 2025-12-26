@@ -87,16 +87,17 @@ const BAIObjectStorageSelect = ({
     <BAISelect
       ref={selectRef}
       placeholder="Select Storage"
-      showSearch
-      searchValue={searchStr}
-      onSearch={(v) => {
-        setSearchStr(v);
+      showSearch={{
+        searchValue: searchStr,
+        onSearch: (v) => {
+          setSearchStr(v);
+        },
+        filterOption: false,
+        autoClearSearchValue: true,
       }}
       labelRender={({ label }: { label: React.ReactNode }) => {
         return <BAIText>{label}</BAIText>;
       }}
-      autoClearSearchValue
-      filterOption={false}
       loading={searchStr !== deferredSearchStr || loading}
       options={selectOptions}
       {...selectPropsWithoutLoading}

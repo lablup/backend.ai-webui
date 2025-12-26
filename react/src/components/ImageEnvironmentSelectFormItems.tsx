@@ -377,12 +377,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
       >
         <Select
           ref={envSelectRef}
-          showSearch
+          showSearch={{
+            searchValue: environmentSearch,
+            onSearch: setEnvironmentSearch,
+            optionFilterProp: 'filterValue',
+          }}
           popupMatchSelectWidth={false}
-          searchValue={environmentSearch}
-          onSearch={setEnvironmentSearch}
           defaultActiveFirstOption={true}
-          optionFilterProp="filterValue"
           onChange={(value) => {
             if (fullNameMatchedImage) {
               form.setFieldsValue({
@@ -529,6 +530,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               marginLeft: token.marginXS,
                               flexShrink: 1,
                             }}
+                            gap="xs"
                           >
                             {environmentPrefixTag}
                             {tagsFromMetaImageInfoLabel}
@@ -588,12 +590,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   });
                   form.setFieldValue(['environments', 'image'], selectedImage);
                 }}
-                showSearch
-                searchValue={versionSearch}
-                onSearch={setVersionSearch}
-                // autoClearSearchValue
-                optionFilterProp="filterValue"
-                // optionLabelProp="label"
+                showSearch={{
+                  searchValue: versionSearch,
+                  onSearch: setVersionSearch,
+                  optionFilterProp: 'filterValue',
+                }}
                 popupRender={(menu) => (
                   <>
                     <BAIFlex
@@ -714,12 +715,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             <TextHighlighter keyword={versionSearch}>
                               {image?.version}
                             </TextHighlighter>
-                            <Divider type="vertical" />
+                            <Divider orientation="vertical" />
                             <TextHighlighter keyword={versionSearch}>
                               {image?.architecture}
                             </TextHighlighter>
-                            <Divider type="vertical" />
-                            <BAIFlex direction="row" align="start">
+                            <Divider orientation="vertical" />
+                            <BAIFlex direction="row" align="start" gap="xs">
                               {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                               {_.map(
                                 image?.tags,
@@ -774,11 +775,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               <TextHighlighter keyword={versionSearch}>
                                 {getBaseVersion(getImageFullName(image) || '')}
                               </TextHighlighter>
-                              <Divider type="vertical" />
+                              <Divider orientation="vertical" />
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.architecture}
                               </TextHighlighter>
-                              <Divider type="vertical" />
+                              <Divider orientation="vertical" />
                               <ImageTags
                                 tag={image?.tag || ''}
                                 highlightKeyword={versionSearch}

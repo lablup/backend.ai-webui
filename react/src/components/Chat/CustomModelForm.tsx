@@ -65,16 +65,12 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         }}
       >
         <div style={{ marginBottom: themeToken.size }}>
-          <Alert
-            type="warning"
-            showIcon
-            message={t('chatui.CannotFindModel')}
-          />
+          <Alert type="warning" showIcon title={t('chatui.CannotFindModel')} />
         </div>
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            addonBefore={shrinkControlSize ? undefined : endpointUrl}
+            prefix={shrinkControlSize ? undefined : endpointUrl}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">

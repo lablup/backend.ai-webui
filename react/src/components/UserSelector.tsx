@@ -45,12 +45,7 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   );
   return (
     <Select
-      filterOption={false}
-      searchValue={search}
       loading={deferredSearch !== search}
-      onSearch={(value) => {
-        setSearch(value);
-      }}
       onChange={(value) => {
         onSelectUser(
           _.find(user_list?.items, (user) => {
@@ -58,7 +53,13 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
           }),
         );
       }}
-      showSearch
+      showSearch={{
+        searchValue: search,
+        onSearch: (v) => {
+          setSearch(v);
+        },
+        filterOption: false,
+      }}
       placeholder={t('storageHost.quotaSettings.SelectUser')}
       options={_.map(user_list?.items, (user) => {
         return {
