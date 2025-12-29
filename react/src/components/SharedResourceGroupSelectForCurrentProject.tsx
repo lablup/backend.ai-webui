@@ -5,7 +5,6 @@ import {
   useResourceGroupsForCurrentProject,
 } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
-import { SelectProps } from 'antd';
 import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
@@ -22,8 +21,7 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
   ResourceGroupSelectForCurrentProjectProps
 > = ({
   // filter,
-  searchValue,
-  onSearch,
+  showSearch,
   onChangeInTransition,
   loading,
   ...selectProps
@@ -31,8 +29,10 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
   useSuspendedBackendaiClient(); // To make sure the client is ready
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableState_deprecated<string>({
-      value: searchValue,
-      onChange: onSearch,
+      value:
+        typeof showSearch === 'object' ? showSearch.searchValue : undefined,
+      onChange:
+        typeof showSearch === 'object' ? showSearch.onSearch : undefined,
     });
   const [currentResourceGroup, setCurrentResourceGroup] =
     useCurrentResourceGroupState();
@@ -40,17 +40,6 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
   const [isPendingLoading, startLoadingTransition] = useTransition();
   const { nonSftpResourceGroups } = useResourceGroupsForCurrentProject();
   const [optimisticValue, setOptimisticValue] = useState(currentResourceGroup);
-
-  const searchProps: Pick<
-    SelectProps,
-    'onSearch' | 'searchValue' | 'showSearch'
-  > = selectProps.showSearch
-    ? {
-        onSearch: setControllableSearchValue,
-        searchValue: controllableSearchValue,
-        showSearch: true,
-      }
-    : {};
 
   return (
     <BAISelect
@@ -66,7 +55,14 @@ const SharedResourceGroupSelectForCurrentProject: React.FC<
           </TextHighlighter>
         );
       }}
-      {...searchProps}
+      showSearch={
+        showSearch
+          ? {
+              onSearch: setControllableSearchValue,
+              searchValue: controllableSearchValue,
+            }
+          : undefined
+      }
       {...selectProps}
       disabled={isPendingLoading}
       value={isPendingLoading ? optimisticValue : currentResourceGroup}

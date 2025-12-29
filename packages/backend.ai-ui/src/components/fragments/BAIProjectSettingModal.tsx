@@ -509,7 +509,7 @@ const BAIProjectSettingModal = ({
                   <InputNumber
                     style={{ width: '100%' }}
                     min={0}
-                    addonAfter={
+                    suffix={
                       resourceSlotsInRG?.[resourceSlotKey as ResourceSlotName]
                         ?.display_unit
                     }

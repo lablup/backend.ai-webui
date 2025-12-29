@@ -3,7 +3,6 @@ import { useBAISignedRequestWithPromise, useUpdatableState } from '../hooks';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import BAITextHighlighter from './BAITextHighlighter';
 import { useControllableValue } from 'ahooks';
-import { SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useState, useTransition } from 'react';
 
@@ -32,8 +31,7 @@ const BAIProjectResourceGroupSelect: React.FC<
   projectName,
   autoSelectDefault,
   filter,
-  searchValue,
-  onSearch,
+  showSearch,
   loading,
   ...selectProps
 }) => {
@@ -41,8 +39,10 @@ const BAIProjectResourceGroupSelect: React.FC<
   const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableValue<string>({
-      value: searchValue,
-      onChange: onSearch,
+      value:
+        typeof showSearch === 'object' ? showSearch?.searchValue : undefined,
+      onChange:
+        typeof showSearch === 'object' ? showSearch?.onSearch : undefined,
     });
 
   const [controllableValue, setControllableValueDoNotUseWithoutTransition] =
@@ -147,21 +147,17 @@ const BAIProjectResourceGroupSelect: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
 
-  const searchProps: Pick<
-    SelectProps,
-    'onSearch' | 'searchValue' | 'showSearch'
-  > = selectProps.showSearch
-    ? {
-        onSearch: setControllableSearchValue,
-        searchValue: controllableSearchValue,
-        showSearch: true,
-      }
-    : {};
-
   return (
     <BAISelect
       defaultActiveFirstOption
-      {...searchProps}
+      showSearch={
+        showSearch
+          ? {
+              searchValue: controllableSearchValue,
+              onSearch: setControllableSearchValue,
+            }
+          : undefined
+      }
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
       loading={loading || isPendingChangeTransition}
       disabled={isPendingChangeTransition}

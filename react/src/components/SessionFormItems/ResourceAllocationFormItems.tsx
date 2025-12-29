@@ -649,7 +649,7 @@ const ResourceAllocationFormItems: React.FC<
                   >
                     <InputNumberWithSlider
                       inputNumberProps={{
-                        addonAfter:
+                        suffix:
                           mergedResourceSlots?.cpu?.display_unit ||
                           t('session.launcher.Core'),
                       }}
@@ -831,7 +831,7 @@ const ResourceAllocationFormItems: React.FC<
                             <BAIDynamicUnitInputNumberWithSlider
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
-                              addonBefore={'MEM'}
+                              prefix={'MEM'}
                               extraMarks={{
                                 ...(remaining.mem
                                   ? {
@@ -1142,46 +1142,47 @@ const ResourceAllocationFormItems: React.FC<
                             form.setFieldValue('allocationPreset', 'custom');
                           }}
                           inputNumberProps={{
-                            addonAfter: (
-                              <Form.Item
-                                noStyle
-                                name={['resource', 'acceleratorType']}
-                                initialValue={_.first(
-                                  _.keys(acceleratorSlotsInRG),
-                                )}
-                                hidden={
-                                  supportedAcceleratorTypesInRGByImage?.length ===
-                                  0
-                                }
-                              >
-                                <BAISelect
-                                  autoSelectOption
-                                  tabIndex={-1}
-                                  // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
-                                  suffixIcon={
-                                    _.size(acceleratorSlotsInRG) > 1
-                                      ? undefined
-                                      : null
-                                  }
-                                  popupMatchSelectWidth={false}
-                                  options={_.map(
-                                    acceleratorSlotsInRG,
-                                    (_value, name) => {
-                                      return {
-                                        value: name,
-                                        label:
-                                          mergedResourceSlots?.[name]
-                                            ?.display_unit || 'UNIT',
-                                        disabled: !_.includes(
-                                          supportedAcceleratorTypesInRGByImage,
-                                          name,
-                                        ),
-                                      };
-                                    },
+                            addonAfter:
+                              (supportedAcceleratorTypesInRGByImage?.length ??
+                                0) > 0 ? (
+                                <Form.Item
+                                  noStyle
+                                  name={['resource', 'acceleratorType']}
+                                  initialValue={_.first(
+                                    _.keys(acceleratorSlotsInRG),
                                   )}
-                                />
-                              </Form.Item>
-                            ),
+                                >
+                                  <BAISelect
+                                    style={{
+                                      width: 75,
+                                    }}
+                                    autoSelectOption
+                                    tabIndex={-1}
+                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
+                                    suffixIcon={
+                                      _.size(acceleratorSlotsInRG) > 1
+                                        ? undefined
+                                        : null
+                                    }
+                                    popupMatchSelectWidth={false}
+                                    options={_.map(
+                                      acceleratorSlotsInRG,
+                                      (_value, name) => {
+                                        return {
+                                          value: name,
+                                          label:
+                                            mergedResourceSlots?.[name]
+                                              ?.display_unit || 'UNIT',
+                                          disabled: !_.includes(
+                                            supportedAcceleratorTypesInRGByImage,
+                                            name,
+                                          ),
+                                        };
+                                      },
+                                    )}
+                                  />
+                                </Form.Item>
+                              ) : undefined,
                           }}
                         />
                       </Form.Item>
@@ -1239,7 +1240,7 @@ const ResourceAllocationFormItems: React.FC<
                   <InputNumberWithSlider
                     inputContainerMinWidth={190}
                     inputNumberProps={{
-                      addonAfter: '#',
+                      suffix: '#',
                     }}
                     disabled={form.getFieldValue('cluster_size') > 1}
                     sliderProps={{
@@ -1453,7 +1454,7 @@ const ResourceAllocationFormItems: React.FC<
                               },
                             }}
                             inputNumberProps={{
-                              addonAfter: clusterUnit,
+                              suffix: clusterUnit,
                             }}
                             onChange={(value) => {
                               if (value > 1) {

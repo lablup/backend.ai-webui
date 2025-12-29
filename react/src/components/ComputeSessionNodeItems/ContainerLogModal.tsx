@@ -233,7 +233,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                   setAutoRefreshInterval(value * 1000);
                 }
               }}
-              addonAfter={t('time.Sec')}
+              suffix={t('time.Sec')}
               style={{ maxWidth: 150 }}
             />
           </BAIFlex>

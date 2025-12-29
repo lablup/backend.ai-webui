@@ -81,6 +81,7 @@ export {
 export type { UserNodeInList } from './BAIUserNodes';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
+export { default as BAITag } from './BAITag';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

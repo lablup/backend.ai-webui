@@ -10,31 +10,29 @@ import React, { useLayoutEffect, useRef, useTransition } from 'react';
 const useStyles = createStyles(({ css, token }) => ({
   ghostSelect: css`
     &.ant-select {
-      .ant-select-selector {
-        background-color: transparent;
-        border-color: ${token.colorBgBase} !important;
-        /* box-shadow: none; */
-        color: ${token.colorBgBase};
-        /* transition: color 0.3s, border-color 0.3s; */
-      }
+      background-color: transparent;
+      border-color: ${token.colorBgBase} !important;
+      /* box-shadow: none; */
+      color: ${token.colorBgBase};
+      /* transition: color 0.3s, border-color 0.3s; */
 
-      &:hover .ant-select-selector {
+      &:hover {
         background-color: rgb(255 255 255 / 10%);
       }
 
-      &:active .ant-select-selector {
+      &:active {
         background-color: rgb(255 255 255 / 10%);
       }
 
-      .ant-select-arrow {
+      .ant-select-suffix {
         color: ${token.colorBgBase};
       }
 
-      &:hover .ant-select-arrow {
+      &:hover .ant-select-suffix {
         color: ${token.colorBgBase};
       }
 
-      &:active .ant-select-arrow {
+      &:active .ant-select-suffix {
         color: ${token.colorBgBase};
       }
     }

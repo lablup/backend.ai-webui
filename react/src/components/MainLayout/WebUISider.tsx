@@ -91,7 +91,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         placement={props.collapsed ? 'right' : 'top'}
         styles={{
           // adjust height to match menu item height
-          body: {
+          container: {
             height: 40,
             display: 'flex',
             alignItems: 'center',

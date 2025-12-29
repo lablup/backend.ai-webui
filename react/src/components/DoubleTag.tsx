@@ -49,6 +49,7 @@ const DoubleTag: React.FC<{
               style={{
                 fontSize: 'inherit',
                 maxWidth: 150,
+                color: 'inherit',
               }}
               ellipsis={{ tooltip: true }}
             >

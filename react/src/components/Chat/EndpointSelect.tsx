@@ -178,11 +178,15 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       placeholder={t('chatui.SelectEndpoint')}
       style={{
         minWidth: 100,
+        fontWeight: 'normal',
       }}
-      showSearch
-      searchValue={searchStr}
-      onSearch={(v) => {
-        setSearchStr(v);
+      showSearch={{
+        searchValue: searchStr,
+        onSearch: (v) => {
+          setSearchStr(v);
+        },
+        autoClearSearchValue: true,
+        filterOption: false,
       }}
       labelRender={({ label }: { label: React.ReactNode }) => {
         return label ? (
@@ -199,8 +203,6 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
         );
       }}
       // TODO: Need to make it work properly when autoClearSearchValue is not specified
-      autoClearSearchValue
-      filterOption={false}
       loading={searchStr !== deferredSearchStr || loading}
       options={selectOptions}
       {...selectPropsWithoutLoading}

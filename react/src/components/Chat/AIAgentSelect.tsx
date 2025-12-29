@@ -42,13 +42,14 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
             width={token.sizeXL}
           />
           <Select
-            showSearch
-            onSearch={(v) => {
-              startSearchTransition(() => {
-                setSearchAgent(v);
-              });
+            showSearch={{
+              filterOption: false,
+              onSearch: (v) => {
+                startSearchTransition(() => {
+                  setSearchAgent(v);
+                });
+              },
             }}
-            filterOption={false}
             loading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}
             value={controllableValue}

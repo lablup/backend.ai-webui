@@ -378,18 +378,18 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           padding: 0,
           height: '50%',
           position: 'relative',
-          ...styles?.body,
+          ...(!_.isFunction(styles) && styles?.body),
         },
         actions: {
           paddingLeft: token.paddingContentHorizontal,
           paddingRight: token.paddingContentHorizontal,
-          ...styles?.actions,
+          ...(!_.isFunction(styles) && styles?.actions),
         },
         header: {
           zIndex: 1,
           paddingInline: token.paddingContentHorizontal,
           paddingRight: token.paddingXS,
-          ...styles?.header,
+          ...(!_.isFunction(styles) && styles?.header),
         },
       }}
       title={

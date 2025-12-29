@@ -85,7 +85,6 @@ const StorageSelect: React.FC<Props> = ({
   }, [vhostInfo]);
   return (
     <BAISelect
-      filterOption={true}
       placeholder={t('data.SelectStorageHost')}
       loading={isLoadingVhostInfo}
       popupMatchSelectWidth={false}
@@ -96,8 +95,11 @@ const StorageSelect: React.FC<Props> = ({
           ...(vhostInfo?.volume_info?.[host] || {}),
         });
       }}
-      searchValue={controllableSearchValue}
-      onSearch={setControllableSearchValue}
+      showSearch={{
+        searchValue: controllableSearchValue,
+        onSearch: setControllableSearchValue,
+        filterOption: true,
+      }}
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (

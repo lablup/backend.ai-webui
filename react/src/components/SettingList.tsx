@@ -206,7 +206,7 @@ const SettingList: React.FC<SettingPageProps> = ({
           activeKey={activeTabKey}
           onChange={setActiveTabKey}
           className={styles.TabStyles}
-          tabPosition={tabDirection ? 'left' : 'top'}
+          tabPlacement={tabDirection ? 'start' : 'top'}
           tabBarStyle={{ minWidth: 200 }}
           items={[
             {

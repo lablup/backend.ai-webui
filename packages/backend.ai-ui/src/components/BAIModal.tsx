@@ -4,6 +4,7 @@ import { HolderOutlined } from '@ant-design/icons';
 import { Modal, ModalProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
+import _ from 'lodash';
 import React, { useState, useRef } from 'react';
 import type { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
@@ -76,7 +77,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
           alignItems: 'center',
           height: 'var(--general-modal-header-height, 69px)',
           padding: 'var(--general-modal-header-padding, 10px 24px)',
-          ...modalProps.styles?.header,
+          ...(!_.isFunction(modalProps.styles) && modalProps.styles?.header),
         },
         body: {
           padding: `var(--general-modal-body-padding, 0 24px)`,
@@ -84,11 +85,11 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
           overflow: 'auto',
           paddingTop: token.paddingMD,
           paddingBottom: token.paddingMD,
-          ...modalProps.styles?.body,
+          ...(!_.isFunction(modalProps.styles) && modalProps.styles?.body),
         },
-        content: {
+        container: {
           padding: `var(--general-modal-content-padding, 0)`,
-          ...modalProps.styles?.content,
+          ...(!_.isFunction(modalProps.styles) && modalProps.styles?.container),
         },
         footer: {
           borderTop: '1px solid',
@@ -97,7 +98,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
           paddingLeft: token.paddingMD,
           paddingRight: token.paddingMD,
           marginTop: 0,
-          ...modalProps.styles?.footer,
+          ...(!_.isFunction(modalProps.styles) && modalProps.styles?.footer),
         },
       }}
       title={

@@ -413,7 +413,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               >
                 <InputNumber
                   style={{ width: '100%' }}
-                  addonAfter={t('resourceGroup.TimeoutSeconds')}
+                  suffix={t('resourceGroup.TimeoutSeconds')}
                   min={0}
                 />
               </Form.Item>
@@ -427,7 +427,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               >
                 <InputNumber
                   style={{ width: '100%' }}
-                  addonAfter={t('resourceGroup.RetriesToSkip')}
+                  suffix={t('resourceGroup.RetriesToSkip')}
                   min={0}
                 />
               </Form.Item>
