@@ -1,13 +1,29 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, FormItemProps, Input, InputRef } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Form,
+  FormItemProps,
+  Input,
+  InputRef,
+} from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+export interface EnvVarConfig {
+  variable: string;
+  placeholder?: string;
+  required?: boolean;
+  description?: string;
+}
+
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
   formItemProps?: FormItemProps;
+  requiredEnvVars?: EnvVarConfig[];
+  optionalEnvVars?: EnvVarConfig[];
 }
 
 export interface EnvVarFormListValue {
@@ -17,14 +33,104 @@ export interface EnvVarFormListValue {
 // TODO: validation rule for duplicate variable name
 const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   formItemProps,
+  requiredEnvVars,
+  optionalEnvVars,
   ...props
 }) => {
+  'use memo';
   const inputRef = useRef<InputRef>(null);
   const { t } = useTranslation();
   const form = Form.useFormInstance();
+
+  const allEnvVars = [
+    ..._.filter(
+      requiredEnvVars || [],
+      (env): env is EnvVarConfig => env != null && !!env.variable,
+    ),
+    ..._.filter(
+      optionalEnvVars || [],
+      (env): env is EnvVarConfig => env != null && !!env.variable,
+    ),
+  ];
+
+  const getPlaceholderForVariable = (variable: string) => {
+    if (!variable || !allEnvVars.length)
+      return t('session.launcher.EnvironmentVariableValue');
+    const envVarConfig = _.find(
+      allEnvVars,
+      (env) => env && env.variable === variable,
+    );
+    return (
+      envVarConfig?.placeholder ||
+      t('session.launcher.EnvironmentVariableValue')
+    );
+  };
+
+  const getAutoCompleteOptions = () => {
+    const currentValues = form.getFieldValue(props.name) || [];
+    const usedVariables = _.map(
+      _.filter(
+        currentValues,
+        (item: EnvVarFormListValue) =>
+          item != null &&
+          typeof item.variable === 'string' &&
+          item.variable.trim() !== '',
+      ),
+      'variable',
+    );
+
+    return _.map(
+      _.filter(
+        [...(optionalEnvVars || []), ...(requiredEnvVars || [])],
+        (env): env is EnvVarConfig =>
+          env != null &&
+          !!env.variable &&
+          !_.includes(usedVariables, env.variable),
+      ),
+      (env) => ({
+        value: env.variable,
+        label: env.variable,
+      }),
+    );
+  };
+
   return (
-    <Form.List {...props}>
-      {(fields, { add, remove }) => {
+    <Form.List
+      {...props}
+      rules={[
+        ...(props.rules || []),
+        // check if all required fields are filled
+        {
+          validator: async (
+            _rule,
+            envVars: EnvVarFormListValue[] | undefined,
+          ) => {
+            if (requiredEnvVars && requiredEnvVars.length > 0) {
+              const missingRequiredVars = _.filter(
+                requiredEnvVars,
+                (requiredEnv) => {
+                  return !_.some(
+                    envVars,
+                    (envVar) =>
+                      envVar &&
+                      envVar.variable === requiredEnv.variable &&
+                      envVar.value.trim() !== '',
+                  );
+                },
+              );
+              if (missingRequiredVars.length > 0) {
+                return Promise.reject(
+                  t('session.launcher.MissingRequiredEnvironmentVariables', {
+                    vars: _.map(missingRequiredVars, 'variable').join(', '),
+                  }),
+                );
+              }
+            }
+          },
+        },
+      ]}
+    >
+      {(fields, { add, remove }, { errors }) => {
         return (
           <BAIFlex direction="column" gap="xs" align="stretch">
             {fields.map(({ key, name, ...restField }, index) => (
@@ -34,6 +140,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   style={{ marginBottom: 0, flex: 1 }}
                   name={[name, 'variable']}
                   rules={[
+                    ...(formItemProps?.rules || []),
                     {
                       required: true,
                       message: t('session.launcher.EnterEnvironmentVariable'),
@@ -71,18 +178,38 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   ]}
                   {...formItemProps}
                 >
-                  <Input
-                    ref={index === fields.length - 1 ? inputRef : null}
-                    placeholder="Variable"
-                    onChange={() => {
-                      const fieldNames = fields.map((_field, index) => [
-                        props.name,
-                        index,
-                        'variable',
-                      ]);
-                      form.validateFields(fieldNames);
-                    }}
-                  />
+                  {optionalEnvVars && getAutoCompleteOptions().length > 0 ? (
+                    <AutoComplete
+                      placeholder={t('session.launcher.EnvironmentVariable')}
+                      options={getAutoCompleteOptions()}
+                      onChange={() => {
+                        const fieldNames = fields.map((_field, index) => [
+                          props.name,
+                          index,
+                          'variable',
+                        ]);
+                        form.validateFields(fieldNames);
+                      }}
+                      filterOption={(inputValue, option) =>
+                        option?.value
+                          ?.toLowerCase()
+                          .indexOf(inputValue.toLowerCase()) !== -1
+                      }
+                    />
+                  ) : (
+                    <Input
+                      ref={index === fields.length - 1 ? inputRef : null}
+                      placeholder={t('session.launcher.EnvironmentVariable')}
+                      onChange={() => {
+                        const fieldNames = fields.map((_field, index) => [
+                          props.name,
+                          index,
+                          'variable',
+                        ]);
+                        form.validateFields(fieldNames);
+                      }}
+                    />
+                  )}
                 </Form.Item>
                 <Form.Item
                   {...restField}
@@ -97,17 +224,12 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                     },
                   ]}
                   validateTrigger={['onChange', 'onBlur']}
+                  dependencies={[[props.name, name, 'variable']]}
                 >
                   <Input
-                    placeholder="Value"
-                    // onChange={() => {
-                    //   const valueFields = fields.map((field, index) => [
-                    //     props.name,
-                    //     index,
-                    //     'value',
-                    //   ]);
-                    //   form.validateFields(valueFields);
-                    // }}
+                    placeholder={getPlaceholderForVariable(
+                      form.getFieldValue([props.name, name, 'variable']),
+                    )}
                   />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
@@ -130,6 +252,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 {t('session.launcher.AddEnvironmentVariable')}
               </Button>
             </Form.Item>
+            <Form.ErrorList errors={errors} />
           </BAIFlex>
         );
       }}
@@ -161,7 +284,7 @@ const sensitivePatterns = [
 ];
 
 export function isSensitiveEnv(key: string) {
-  return sensitivePatterns.some((pattern) => pattern.test(key));
+  return _.some(sensitivePatterns, (pattern) => pattern.test(key));
 }
 
 export function sanitizeSensitiveEnv(envs: EnvVarFormListValue[]) {
