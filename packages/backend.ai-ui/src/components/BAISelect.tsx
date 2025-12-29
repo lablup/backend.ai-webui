@@ -37,6 +37,33 @@ const useStyles = createStyles(({ css, token }) => ({
       }
     }
   `,
+  customStyle: css`
+    /* Change the opacity of images and tags in the select option when the dropdown is open */
+    &.ant-select-open .ant-select-content .ant-select-content-value img,
+    &.ant-select-open
+      .ant-select-content
+      .ant-select-content-value
+      span.ant-tag {
+      opacity: 0.5;
+    }
+
+    /* TODO: re-enable this style after fixing flickering when theme changes */
+    /* Add a gradient effect to the right side of the dropdown to indicate more content */
+    /* & .ant-select-content::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 10px;
+      background: linear-gradient(
+        to right,
+        transparent,
+        ${token.colorBgContainer}
+      );
+      z-index: 2;
+    } */
+  `,
 }));
 
 export interface BAISelectProps<
@@ -131,11 +158,11 @@ function BAISelect<
           });
         }}
         ref={ref}
-        className={
-          ghost
-            ? classNames(styles.ghostSelect, selectProps.className)
-            : selectProps.className
-        }
+        className={classNames(
+          selectProps.className,
+          styles.customStyle,
+          ghost && styles.ghostSelect,
+        )}
         onPopupScroll={(e) => {
           if (atBottomStateChange || endReached) handlePopupScroll(e);
           selectProps.onPopupScroll?.(e);
