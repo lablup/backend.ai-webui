@@ -1031,7 +1031,7 @@ When reviewing React code, check for:
 ### Relay Architecture
 - [ ] Query orchestrator components separate from fragment components
 - [ ] Fragment refs are properly typed with generated `$key` types
-- [ ] Fragment props follow naming conventions (`queryRef` for Query, `{type}Ref` for others)
+- [ ] Fragment props follow naming conventions (`queryRef` for Query, `{typeName}Frgmt` for others)
 - [ ] `@required` directive used for non-null fields
 - [ ] Fragments are colocated with components that use them
 - [ ] Relay hooks (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`) are used correctly
