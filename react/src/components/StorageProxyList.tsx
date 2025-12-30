@@ -31,11 +31,11 @@ const backendType = {
     icon: <Server />,
   },
   ceph: {
-    color: 'lightblue',
+    color: 'geekblue',
     icon: <BAICephIcon />,
   },
   cephfs: {
-    color: 'lightblue',
+    color: 'geekblue',
     icon: <BAICephIcon />,
   },
   vfs: {
