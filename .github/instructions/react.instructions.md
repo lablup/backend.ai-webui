@@ -888,7 +888,7 @@ const BAITable = <T extends { id: string }>({
 <BAITable
   dataSource={users} // T inferred as User
   columns={userColumns}
-  onRowClick={(user) => console.log(user.email)} // user is typed as User
+  onRowClick={(user) => handleUserRowClick(user)} // user is typed as User
 />
 ```
 
