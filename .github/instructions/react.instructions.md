@@ -310,7 +310,7 @@ interface ComponentProps {
 **Naming Rules:**
 - Query fragments: Use `queryRef`
 - Other types: Use `{typeName}Frgmt` (e.g., `userFrgmt`, `projectFrgmt`)
-- Always include the `Ref` suffix to indicate it's a fragment reference
+- For non-Query fragments, always include the `Frgmt` suffix to indicate it's a fragment reference
 
 ### Relay Fragment Architecture
 
