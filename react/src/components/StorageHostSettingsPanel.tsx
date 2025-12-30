@@ -108,8 +108,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         <BAIFlex justify="between">
           {currentSettingType === 'project' ? (
             <BAIFlex style={{ marginBottom: 10 }}>
-              <Form layout="inline">
-                <Form.Item label={t('resourceGroup.Domain')}>
+              <Form layout="inline" requiredMark={false}>
+                <Form.Item label={t('resourceGroup.Domain')} required>
                   <BAIDomainSelector
                     style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
@@ -121,7 +121,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                     }}
                   />
                 </Form.Item>
-                <Form.Item label={t('webui.menu.Project')}>
+                <Form.Item label={t('webui.menu.Project')} required>
                   <ProjectSelectForAdminPage
                     value={selectedProjectId}
                     disabled={!selectedDomainName}
@@ -137,7 +137,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             </BAIFlex>
           ) : (
             <Form layout="inline">
-              <Form.Item label={t('data.User')}>
+              <Form.Item label={t('data.User')} required>
                 <UserSelector
                   style={{ width: '30vw', marginBottom: 10 }}
                   value={selectedUserEmail}
