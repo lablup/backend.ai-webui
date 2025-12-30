@@ -985,7 +985,7 @@ interface Props {
 
 - Cover critical user flows
 - Use Playwright-based E2E tests for full browser interactions
-- In `.claude/agents/` directory has agents for E2E testing. Please use following agents when writing E2E tests:
+- The `.claude/agents/` directory has agents for E2E testing. Please use the following agents when writing E2E tests:
   - playwright-test-planner
     - Use this agent when you need to create comprehensive test plan for a web application or website.
   - playwright-test-generator
