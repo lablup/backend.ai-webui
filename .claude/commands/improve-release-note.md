@@ -68,11 +68,37 @@ Enhanced integration with Claude Code and AI development tools. Added Backend.AI
 - **FR-1463**: upgrade AI SDK to v5 by @agatha197 in [#4697](...)
 ```
 
-### Step 4: Show Preview and Confirm
+### Step 4: User Confirmation (REQUIRED)
+
+**IMPORTANT**: Use `AskUserQuestion` tool to get user confirmation, NOT text-based prompts.
+
 1. Display the improved release note format
-2. Ask for user confirmation before updating
-3. Wait for explicit approval (y/yes/confirm) before proceeding
-4. Only update the GitHub release after confirmation
+2. Use `AskUserQuestion` to present options
+3. Example format:
+   ```
+   AskUserQuestion({
+     questions: [{
+       question: "Update GitHub release with this improved format?",
+       header: "Confirm Update",
+       multiSelect: false,
+       options: [
+         {
+           label: "Yes, Update Release (Recommended)",
+           description: "Version: v25.11.0\nChanges: Formatted and grouped by category\nRun: gh release edit"
+         },
+         {
+           label: "Edit Content",
+           description: "Make additional changes to the release notes"
+         },
+         {
+           label: "Cancel",
+           description: "Don't update the release"
+         }
+       ]
+     }]
+   })
+   ```
+4. Only proceed to Step 5 after user selects the first option
 
 ### Step 5: Update Release (After Confirmation)
 Use the `gh` command to update the release:
@@ -80,4 +106,4 @@ Use the `gh` command to update the release:
 gh release edit [version] --notes-file /tmp/improved-release-notes.md --repo lablup/backend.ai-webui
 ```
 
-**Important**: Always show the improved format first and get explicit user confirmation before making any updates to the actual GitHub release.
+**Important**: Never update the GitHub release without explicit user confirmation through `AskUserQuestion`.

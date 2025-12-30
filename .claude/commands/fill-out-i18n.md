@@ -123,12 +123,32 @@ The command provides:
 - **Format validation**: Placeholder syntax verification
 
 ### Interactive Improvement Process
-```
-🔍 Quality Review Results:
-Korean: "테스트" → 개선 제안: "테스트하기"
-English: "Test" → 개선 제안: "Run Test"
 
-✅ Apply suggestions? [Y/n/e(dit)]: 
+**IMPORTANT**: Use `AskUserQuestion` tool for user confirmation, NOT text-based prompts.
+
+Example format:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Quality review found improvements for source text. Apply these suggestions?",
+    header: "Review Changes",
+    multiSelect: false,
+    options: [
+      {
+        label: "Apply All Suggestions (Recommended)",
+        description: "Korean: '테스트' → '테스트하기'\nEnglish: 'Test' → 'Run Test'\n\nApply all improvements and proceed with translation"
+      },
+      {
+        label: "Edit Suggestions",
+        description: "Review and modify specific suggestions before applying"
+      },
+      {
+        label: "Skip Review",
+        description: "Use original text without improvements (not recommended)"
+      }
+    ]
+  }]
+})
 ```
 
 ## Technical Implementation
