@@ -34,10 +34,35 @@ The associated Jira issue is specified by `$ARGUMENTS`.
      - `style`: Design/UI changes
      - `chore`: Other maintenance tasks
 
-4. **Submit for review**
-   - **IMPORTANT**: Always ask for user confirmation before running `gt stack submit`
-   - Review commit message and changes with user first
-   - Use `gt stack submit` to create PR only after confirmation
+4. **Submit for review (REQUIRES USER CONFIRMATION)**
+   - **IMPORTANT**: Use `AskUserQuestion` tool to get user confirmation before running `gt stack submit`
+   - **Do NOT use text-based prompts** (e.g., "Proceed? [y/n]")
+   - Present commit message and changes for review
+   - Example format:
+     ```
+     AskUserQuestion({
+       questions: [{
+         question: "Ready to create PR with this commit?",
+         header: "Confirm Submit",
+         multiSelect: false,
+         options: [
+           {
+             label: "Yes, Create PR (Recommended)",
+             description: "Branch: feat/FR-1234-description\nCommit: feat(FR-1234): description\n\nFiles changed: 5 files\nRun: gt stack submit"
+           },
+           {
+             label: "Edit Commit Message",
+             description: "Modify the commit message before submitting"
+           },
+           {
+             label: "Cancel",
+             description: "Don't create PR yet"
+           }
+         ]
+       }]
+     })
+     ```
+   - Only run `gt stack submit` after user confirms with the first option
 
 5. **After submit**
 - Please update PR description based on jira issue and changes of PR
