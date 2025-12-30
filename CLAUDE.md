@@ -138,7 +138,7 @@ e2e/                    # End-to-end tests
 
 ## GitHub Copilot Custom Instructions
 
-This repository includes custom instructions for GitHub Copilot to provide more accurate code reviews and suggestions. These instructions are automatically applied when using GitHub Copilot on github.com, VS Code, and Visual Studio.
+This repository includes custom instructions for GitHub Copilot to provide more accurate code reviews and suggestions. These instructions are automatically applied when using GitHub Copilot on github.com, VS Code, and Visual Studio. When writing new code or refactoring, please make sure to refer to these instructions.
 
 ### Instruction Files
 
