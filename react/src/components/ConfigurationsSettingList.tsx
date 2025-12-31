@@ -174,6 +174,7 @@ const ConfigurationsSettingList = () => {
               {t('settings.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
         {
           type: 'custom',
@@ -184,6 +185,7 @@ const ConfigurationsSettingList = () => {
               {t('settings.Config')}
             </Button>
           ),
+          showResetButton: false,
         },
       ],
     },
