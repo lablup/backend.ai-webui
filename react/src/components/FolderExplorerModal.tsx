@@ -102,7 +102,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     {
       // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
       fetchPolicy:
-        deferredOpen && modalProps.open ? 'network-only' : 'store-only',
+        deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
     },
   );
 
@@ -248,11 +248,11 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     >
       <Suspense fallback={<Skeleton active />}>
         {/* Use <Skeleton/> instead of using `loading` prop because layout align issue. */}
-        {deferredOpen !== modalProps.open ? (
+        {deferredOpen !== modalProps.open || vfolder_node === undefined ? (
           <Skeleton active />
         ) : (
           <BAIFlex direction="column" gap={'lg'} align="stretch">
-            {!vfolder_node ? (
+            {vfolder_node === null ? (
               <Alert
                 title={t('explorer.FolderNotFoundOrNoAccess')}
                 type="error"
