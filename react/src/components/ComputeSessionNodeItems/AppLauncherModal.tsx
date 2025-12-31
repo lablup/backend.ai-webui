@@ -286,8 +286,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   <Checkbox
                     value={openToPublic}
                     onChange={(value) => setOpenToPublic(value.target.checked)}
-                  />
-                  {t('session.OpenToPublic')}
+                  >
+                    {t('session.OpenToPublic')}
+                  </Checkbox>
                 </BAIFlex>
               }
             >
@@ -311,8 +312,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     onChange={(value) =>
                       setTryPreferredPort(value.target.checked)
                     }
-                  />
-                  {t('session.TryPreferredPort')}
+                  >
+                    {t('session.TryPreferredPort')}
+                  </Checkbox>
                 </BAIFlex>
               }
               rules={[
@@ -346,8 +348,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       onChange={(value) =>
                         setUseSubDomain(value.target.checked)
                       }
-                    />
-                    {t('session.UseSubdomain')}
+                    >
+                      {t('session.UseSubdomain')}
+                    </Checkbox>
                   </BAIFlex>
                 }
               >
