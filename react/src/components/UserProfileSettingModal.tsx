@@ -11,16 +11,7 @@ import TOTPActivateModal from './TOTPActivateModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Modal,
-  ModalProps,
-  Input,
-  Form,
-  message,
-  Switch,
-  Spin,
-  FormInstance,
-} from 'antd';
+import { ModalProps, Input, Form, Switch, Spin, FormInstance, App } from 'antd';
 import { BAIModal, useErrorMessageResolver } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,8 +43,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<UserProfileFormValues>>(null);
-  const [messageApi, contextHolder] = message.useMessage();
-  const [modal, modalContextHolder] = Modal.useModal();
+  const { message, modal } = App.useApp();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
@@ -74,13 +64,11 @@ const UserProfileSettingModal: React.FC<Props> = ({
       ?.validateFields()
       .then((values) => {
         userMutations.updateFullName(values.full_name, {
-          onSuccess: (newFullName) => {
-            if (newFullName !== userInfo.full_name) {
-              messageApi.open({
-                type: 'success',
-                content: t('webui.menu.FullNameUpdated'),
-              });
-            }
+          onSuccess: () => {
+            message.open({
+              type: 'success',
+              content: t('webui.menu.FullNameUpdated'),
+            });
 
             if (
               values.newPassword &&
@@ -95,14 +83,14 @@ const UserProfileSettingModal: React.FC<Props> = ({
                 },
                 {
                   onSuccess: () => {
-                    messageApi.open({
+                    message.open({
                       type: 'success',
                       content: t('webui.menu.PasswordUpdated'),
                     });
                     onRequestClose(true);
                   },
                   onError: (e) => {
-                    messageApi.open({
+                    message.open({
                       type: 'error',
                       content: e.message,
                     });
@@ -114,7 +102,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             }
           },
           onError: (e) => {
-            messageApi.open({
+            message.open({
               type: 'error',
               content: e.message,
             });
@@ -144,7 +132,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ref={formRef}
             layout="vertical"
             initialValues={{
-              full_name: userInfo.full_name,
+              full_name: user?.full_name ?? userInfo.full_name,
               totp_activated: user?.totp_activated || false,
             }}
             preserve={false}
@@ -293,8 +281,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
           />
         )}
       </BAIModal>
-      {contextHolder}
-      {modalContextHolder}
     </>
   );
 };

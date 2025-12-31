@@ -45,6 +45,7 @@ const UserDropdownMenu: React.FC<{
   buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
   style?: CSSProperties;
 }> = ({ buttonRender = (btn) => btn, style }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
@@ -195,8 +196,10 @@ const UserDropdownMenu: React.FC<{
       <Dropdown
         menu={{ items }}
         trigger={['click']}
-        overlayStyle={{
-          maxWidth: 300,
+        styles={{
+          root: {
+            maxWidth: 300,
+          },
         }}
         placement="bottomRight"
       >
@@ -214,7 +217,6 @@ const UserDropdownMenu: React.FC<{
               fontSize: token.fontSizeLG,
               ...style,
             }}
-            // icon={<UserOutlined />}
             icon={
               <Avatar
                 size={17}
@@ -224,7 +226,6 @@ const UserDropdownMenu: React.FC<{
                   />
                 }
                 style={{
-                  // border: 1,
                   backgroundColor: token.colorBgBase,
                 }}
               ></Avatar>
