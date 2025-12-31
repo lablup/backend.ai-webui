@@ -86,7 +86,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(filter: $agentNodeFilter)
+        agent_nodes(filter: $agentNodeFilter, first: 100)
           @since(version: "24.12.0")
           @include(if: $isSuperAdmin) {
           edges {
