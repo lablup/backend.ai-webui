@@ -147,7 +147,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
       }}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Alert showIcon type="info" message={t('modelStore.CloneInfo')} />
+        <Alert showIcon type="info" title={t('modelStore.CloneInfo')} />
         <Form
           ref={formRef}
           layout="vertical"
@@ -161,7 +161,6 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
           }}
           scrollToFirstError
         >
-          {/*  */}
           <Form.Item label={t('data.ExistingFolderName')} required>
             <Input value={vfolder?.name || ''} disabled />
           </Form.Item>

@@ -49,7 +49,7 @@ const BAIPullingArtifactRevisionAlert = ({
     <Alert
       type="info"
       showIcon
-      message={t('comp:BAIPullingArtifactRevisionAlert.VersionIsPullingNow', {
+      title={t('comp:BAIPullingArtifactRevisionAlert.VersionIsPullingNow', {
         version: pullingArtifactRevision.version,
       })}
       action={

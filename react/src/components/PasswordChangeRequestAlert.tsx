@@ -26,7 +26,7 @@ const PasswordChangeRequestAlert: React.FC<Props> = ({ ...alertProps }) => {
       <BAIAlert
         banner
         type="warning"
-        message={t('webui.menu.PleaseChangeYourPassword')}
+        title={t('webui.menu.PleaseChangeYourPassword')}
         description={t('webui.menu.PasswordChangePlace')}
         {...alertProps}
       />

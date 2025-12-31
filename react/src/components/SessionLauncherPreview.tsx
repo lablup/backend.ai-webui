@@ -431,7 +431,7 @@ const SessionLauncherPreview: React.FC<{
             <Alert
               type="warning"
               showIcon
-              message={t('session.launcher.EnqueueComputeSessionWarning')}
+              title={t('session.launcher.EnqueueComputeSessionWarning')}
             />
           )}
 
@@ -586,7 +586,7 @@ const SessionLauncherPreview: React.FC<{
             <Alert
               type="warning"
               showIcon
-              message={t('session.launcher.NoFolderMounted')}
+              title={t('session.launcher.NoFolderMounted')}
             />
           )}
           {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (

@@ -93,10 +93,7 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
       }
       content={
         <BAIFlex align="stretch" direction="column" gap="md">
-          <Alert
-            type="warning"
-            message={t('general.modal.DeleteForeverDesc')}
-          />
+          <Alert type="warning" title={t('general.modal.DeleteForeverDesc')} />
           {selectedFiles.length > 1 ? (
             <BAIFlex gap="sm" direction="column" align="stretch">
               <Typography.Text strong>

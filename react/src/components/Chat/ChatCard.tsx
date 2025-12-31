@@ -481,7 +481,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       )}
       {!_.isEmpty(error?.message) ? (
         <Alert
-          message={error?.message}
+          title={error?.message}
           type="error"
           showIcon
           className={alertStyle}
@@ -490,7 +490,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       ) : null}
       {!baseURL ? (
         <Alert
-          message={t('error.InvalidBaseURL')}
+          title={t('error.InvalidBaseURL')}
           type="error"
           showIcon
           className={alertStyle}

@@ -253,7 +253,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
       {dayDiff > 30 && (
         <Alert
           showIcon
-          message={t('statistics.prometheus.DataMissingInLowUsageDesc')}
+          title={t('statistics.prometheus.DataMissingInLowUsageDesc')}
         />
       )}
       {_.isEmpty(sortedMetricMetadata) ? (

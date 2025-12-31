@@ -11,7 +11,7 @@ const ThemePreviewModeAlert: React.FC<ThemePreviewModeAlertProps> = () => {
   });
 
   return isThemePreviewMode ? (
-    <BAIAlert showIcon type="warning" message={t('theme.PreviewModeAlert')} />
+    <BAIAlert showIcon type="warning" title={t('theme.PreviewModeAlert')} />
   ) : null;
 };
 

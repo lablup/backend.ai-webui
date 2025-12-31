@@ -337,7 +337,7 @@ const ResourceGroupList: React.FC = () => {
           >
             <Alert
               type="warning"
-              message={t('dialog.warning.DeleteForeverDesc')}
+              title={t('dialog.warning.DeleteForeverDesc')}
               style={{ width: '100%' }}
             />
             <BAIFlex>

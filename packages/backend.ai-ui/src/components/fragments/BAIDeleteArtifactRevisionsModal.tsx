@@ -179,7 +179,7 @@ const BAIDeleteArtifactRevisionsModal = ({
                 </Tooltip>
               }
               showIcon
-              message={t('comp:BAIDeleteArtifactModal.ExcludedVersions', {
+              title={t('comp:BAIDeleteArtifactModal.ExcludedVersions', {
                 count:
                   selectedArtifactRevision.length -
                   filteredSelectedRevisions.length,

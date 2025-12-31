@@ -78,7 +78,7 @@ const SharedFolderPermissionInfoModal: React.FC<
         <Alert
           showIcon
           type="info"
-          message={
+          title={
             vfolder?.ownership_type === 'user'
               ? t('data.folders.SharedFolderAlertDesc')
               : t('data.folders.ProjectFolderAlertDesc')

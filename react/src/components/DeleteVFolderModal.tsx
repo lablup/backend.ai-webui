@@ -104,7 +104,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
             <BAIAlert
               showIcon
               ghostInfoBg={false}
-              message={t('data.folders.ExcludedFolders', {
+              title={t('data.folders.ExcludedFolders', {
                 count: foldersByPermission.undeletable?.length || 0,
               })}
               description={

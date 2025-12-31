@@ -87,7 +87,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                             <Typography.Text>{error.message}</Typography.Text>
                           </BAIFlex>
                         }
-                        message={t('errorBoundary.DisplayOnlyDevEnv')}
+                        title={t('errorBoundary.DisplayOnlyDevEnv')}
                       />
                     </BAIFlex>
                   )}

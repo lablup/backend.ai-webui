@@ -61,6 +61,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
                 const task_id = (data as { task_id: string }).task_id;
                 onRequestClose();
                 return {
+                  duration: 0,
                   backgroundTask: {
                     status: 'pending',
                     taskId: task_id,

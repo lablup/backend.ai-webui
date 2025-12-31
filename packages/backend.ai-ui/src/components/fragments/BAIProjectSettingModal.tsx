@@ -16,9 +16,17 @@ import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSetti
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver, useResourceSlotsDetails } from '../../hooks';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { App, Checkbox, Form, Input, InputNumber, theme } from 'antd';
+import {
+  App,
+  Checkbox,
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  theme,
+} from 'antd';
 import _ from 'lodash';
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -60,7 +68,7 @@ const BAIProjectSettingModal = ({
   const { t } = useTranslation();
   const deferredOpen = useDeferredValue(modalProps.open);
   const { resourceSlotsInRG, deviceMetaData } = useResourceSlotsDetails();
-  const [form] = Form.useForm<FormValues>();
+  const form = useRef<FormInstance<FormValues>>(null);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -165,8 +173,8 @@ const BAIProjectSettingModal = ({
     `);
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    form
-      .validateFields()
+    form.current
+      ?.validateFields()
       .then((values) => {
         const allPermissions =
           vfolder_host_permissions?.vfolder_host_permission_list;
@@ -382,14 +390,11 @@ const BAIProjectSettingModal = ({
       }}
     >
       <Form
-        form={form}
+        ref={form}
         preserve={false}
         layout="vertical"
         requiredMark="optional"
         initialValues={{
-          ...(projectFragment ?? {
-            is_active: true,
-          }),
           total_resource_slots: _.mapValues(
             JSON.parse(project?.total_resource_slots || '{}'),
             (value, key) => {
@@ -415,7 +420,7 @@ const BAIProjectSettingModal = ({
           description: project?.description,
           resource_policy: project?.resource_policy,
           scaling_groups: project?.scaling_groups,
-          is_active: project?.is_active,
+          is_active: projectFragment ? project?.is_active : true,
         }}
       >
         <Form.Item

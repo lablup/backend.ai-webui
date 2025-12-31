@@ -216,7 +216,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
       >
         <Alert
           showIcon
-          message={t('dialog.warning.CannotBeUndone')}
+          title={t('dialog.warning.CannotBeUndone')}
           type="warning"
         />
       </BAIModal>

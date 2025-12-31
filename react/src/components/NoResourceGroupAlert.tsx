@@ -12,7 +12,7 @@ const NoResourceGroupAlert: React.FC<NoResourceGroupAlertProps> = (props) => {
 
   return _.isEmpty(currentResourceGroup) ? (
     <BAIAlert
-      message={t('resourceGroup.NoScalingGroupAssignedToThisProject')}
+      title={t('resourceGroup.NoScalingGroupAssignedToThisProject')}
       showIcon
       {...props}
     />

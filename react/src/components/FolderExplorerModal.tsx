@@ -102,7 +102,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     {
       // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
       fetchPolicy:
-        deferredOpen && modalProps.open ? 'network-only' : 'store-only',
+        deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
     },
   );
 
@@ -144,10 +144,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const hasNoPermissions = false;
 
   const fileExplorerElement = vfolder_node?.unmanaged_path ? (
-    <Alert
-      message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
-      showIcon
-    />
+    <Alert title={t('explorer.NoExplorerSupportForUnmanagedFolder')} showIcon />
   ) : !hasNoPermissions && vfolder_node ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
@@ -251,25 +248,25 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     >
       <Suspense fallback={<Skeleton active />}>
         {/* Use <Skeleton/> instead of using `loading` prop because layout align issue. */}
-        {deferredOpen !== modalProps.open ? (
+        {deferredOpen !== modalProps.open || vfolder_node === undefined ? (
           <Skeleton active />
         ) : (
           <BAIFlex direction="column" gap={'lg'} align="stretch">
-            {!vfolder_node ? (
+            {vfolder_node === null ? (
               <Alert
-                message={t('explorer.FolderNotFoundOrNoAccess')}
+                title={t('explorer.FolderNotFoundOrNoAccess')}
                 type="error"
                 showIcon
               />
             ) : hasNoPermissions ? (
               <Alert
-                message={t('explorer.NoPermissions')}
+                title={t('explorer.NoPermissions')}
                 type="error"
                 showIcon
               />
             ) : currentProject?.id !== vfolder_node?.group &&
               !!vfolder_node?.group ? (
-              <Alert message={t('data.NotInProject')} type="warning" showIcon />
+              <Alert title={t('data.NotInProject')} type="warning" showIcon />
             ) : null}
 
             {xl ? (
@@ -277,7 +274,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
                 style={{
                   gap: token.size,
                 }}
-                layout={'horizontal'}
+                orientation={'horizontal'}
               >
                 <Splitter.Panel resizable={false}>
                   {fileExplorerElement}

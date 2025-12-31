@@ -26,18 +26,84 @@ Based on the argument provided:
 
 ### Jira Issue Creation
 - **IMPORTANT**: The issue description should explain **WHY** this work is needed (background, purpose, motivation), **NOT HOW** to do it (implementation details, step-by-step instructions).
+- **Keep descriptions CONCISE**: Aim for 3-5 sentences per section, focusing only on essential information
 - Focus on:
   - The problem or need that triggered this work
-  - Business or technical justification
-  - Context and background information
   - Expected outcomes or goals
 - Do **NOT** include:
   - Implementation steps or "how to do it" instructions
   - Detailed lists of file changes or code modifications
   - Technical execution details (these belong in the PR description)
+  - Repetitive or redundant information
 - Whenever possible, follow the recommended Jira title and description format for Story, Task, or Bug issues.
 - Please determine the appropriate Jira issue type (Story, Task, or Bug) based on the content.
-- **Before creating the Jira issue, display the issue content (title, description, type) in a readable format on screen for user review**
+
+### Description Format (Recommended)
+Use this concise format:
+```
+[One-line summary of what this task does and why it matters]
+
+## Why This Work is Needed
+
+[2-3 sentences explaining the problem or need]
+
+## Expected Outcomes
+
+- [Key outcome 1]
+- [Key outcome 2]
+- [Key outcome 3]
+```
+
+**Example of Good (Concise) Description:**
+```
+Standardize Claude Code CLI user interaction patterns and enhance React development guidelines for improved developer experience and code quality.
+
+## Why This Work is Needed
+
+Current Claude Code commands use inconsistent text-based prompts ("Proceed? [y/n]") instead of modern structured UI components. React guidelines also need updates for current best practices.
+
+## Expected Outcomes
+
+- Consistent button-based user confirmation across all Claude Code commands
+- Updated React development guidelines with modern patterns
+- Improved developer productivity and reduced errors
+```
+
+### User Confirmation (REQUIRED)
+- **Before creating the Jira issue, you MUST use the `AskUserQuestion` tool to get user confirmation**
+- Display the issue content in a readable format within the question options
+- Provide structured options for the user to:
+  1. Confirm and create the issue (recommended option)
+  2. Edit the title or description
+  3. Cancel the operation
+- Example format:
+  ```
+  AskUserQuestion({
+    questions: [{
+      question: "Ready to create this Jira issue?",
+      header: "Confirm Issue",
+      multiSelect: false,
+      options: [
+        {
+          label: "Yes, Create Issue (Recommended)",
+          description: "Type: Task\nTitle: feat(FR-XXXX): Your title here\nDescription: Your description here..."
+        },
+        {
+          label: "Edit Details",
+          description: "Modify the issue details before creating"
+        },
+        {
+          label: "Cancel",
+          description: "Don't create the issue"
+        }
+      ]
+    }]
+  })
+  ```
+- **Do NOT create the issue without user confirmation through AskUserQuestion**
+- Only proceed with creation after user selects the confirmation option
+
+### Issue Creation
 - Use the "Atlassian MCP" command to create a Jira issue of proper type.
 - Default values:
   - Jira Project: **FR**

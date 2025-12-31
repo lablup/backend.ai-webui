@@ -182,7 +182,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 gap={'sm'}
               >
                 <Alert
-                  message={model_card?.error_msg}
+                  title={model_card?.error_msg}
                   type="error"
                   showIcon
                   style={{ width: '100%' }}
