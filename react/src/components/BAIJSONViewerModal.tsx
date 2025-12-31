@@ -44,7 +44,7 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
         {hasError && (
           <Alert
             type="warning"
-            message={t('general.InvalidJSONFormat')}
+            title={t('general.InvalidJSONFormat')}
             showIcon
           />
         )}

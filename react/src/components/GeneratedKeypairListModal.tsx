@@ -81,12 +81,12 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
         <Alert
           showIcon
           type="success"
-          message={t('credential.GeneratedKeypairSuccess')}
+          title={t('credential.GeneratedKeypairSuccess')}
         />
         <Alert
           showIcon
           type="warning"
-          message={t('credential.GeneratedKeypairWarning')}
+          title={t('credential.GeneratedKeypairWarning')}
         />
         <BAIText>{t('credential.GeneratedKeypairInfo')}</BAIText>
         <BAITable<KeypairType>

@@ -210,7 +210,7 @@ const BAIImportArtifactModal = ({
                 </Tooltip>
               }
               showIcon
-              message={t('comp:BAIImportArtifactModal.ExcludedVersions', {
+              title={t('comp:BAIImportArtifactModal.ExcludedVersions', {
                 count:
                   selectedArtifactRevision.length -
                   filteredSelectedRevisions.length,

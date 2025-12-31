@@ -144,10 +144,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const hasNoPermissions = false;
 
   const fileExplorerElement = vfolder_node?.unmanaged_path ? (
-    <Alert
-      message={t('explorer.NoExplorerSupportForUnmanagedFolder')}
-      showIcon
-    />
+    <Alert title={t('explorer.NoExplorerSupportForUnmanagedFolder')} showIcon />
   ) : !hasNoPermissions && vfolder_node ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
@@ -257,19 +254,19 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
           <BAIFlex direction="column" gap={'lg'} align="stretch">
             {!vfolder_node ? (
               <Alert
-                message={t('explorer.FolderNotFoundOrNoAccess')}
+                title={t('explorer.FolderNotFoundOrNoAccess')}
                 type="error"
                 showIcon
               />
             ) : hasNoPermissions ? (
               <Alert
-                message={t('explorer.NoPermissions')}
+                title={t('explorer.NoPermissions')}
                 type="error"
                 showIcon
               />
             ) : currentProject?.id !== vfolder_node?.group &&
               !!vfolder_node?.group ? (
-              <Alert message={t('data.NotInProject')} type="warning" showIcon />
+              <Alert title={t('data.NotInProject')} type="warning" showIcon />
             ) : null}
 
             {xl ? (
@@ -277,7 +274,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
                 style={{
                   gap: token.size,
                 }}
-                layout={'horizontal'}
+                orientation={'horizontal'}
               >
                 <Splitter.Panel resizable={false}>
                   {fileExplorerElement}

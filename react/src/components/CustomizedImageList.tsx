@@ -518,7 +518,7 @@ const CustomizedImageList: React.FC = () => {
         <Alert
           type="warning"
           showIcon
-          message={t('dialog.warning.CannotBeUndone')}
+          title={t('dialog.warning.CannotBeUndone')}
         />
         {imageToDelete !== null && (
           <ul

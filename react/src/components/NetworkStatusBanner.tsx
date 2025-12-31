@@ -59,7 +59,7 @@ const NetworkStatusBanner = () => {
     <>
       {shouldOpenOfflineAlert && (
         <Alert
-          message={t('webui.YouAreOffline')}
+          title={t('webui.YouAreOffline')}
           className={styles.borderError}
           type="error"
           banner
@@ -67,7 +67,7 @@ const NetworkStatusBanner = () => {
       )}
       {shouldOpenSoftAlert && (
         <Alert
-          message={t('webui.NetworkSoftTimeout')}
+          title={t('webui.NetworkSoftTimeout')}
           className={styles.borderWarning}
           banner
           closable

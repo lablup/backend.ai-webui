@@ -33,7 +33,7 @@ const AllocationHistory: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Alert showIcon message={t('statistics.UsageHistoryNote')} type="info" />
+      <Alert showIcon title={t('statistics.UsageHistoryNote')} type="info" />
       <BAIFlex gap={'sm'} justify="between">
         <Form.Item
           label={t('statistics.SelectPeriod')}

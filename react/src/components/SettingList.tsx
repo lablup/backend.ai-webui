@@ -290,7 +290,7 @@ const SettingList: React.FC<SettingPageProps> = ({
       >
         <Alert
           showIcon
-          message={t('dialog.warning.CannotBeUndone')}
+          title={t('dialog.warning.CannotBeUndone')}
           type="warning"
         />
       </BAIModal>

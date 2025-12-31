@@ -82,7 +82,7 @@ const BAIProjectBulkEditModal = ({
           type="info"
           showIcon
           ghostInfoBg={false}
-          message={t(
+          title={t(
             'comp:BAIProjectBulkEditModal.FollowingFoldersWillBeUpdated',
           )}
           description={

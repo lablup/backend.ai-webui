@@ -208,7 +208,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       {...baiModalProps}
     >
       <Alert
-        message={t('storageHost.BeCarefulToSetUserResourcePolicy')}
+        title={t('storageHost.BeCarefulToSetUserResourcePolicy')}
         type="warning"
         showIcon
         style={{ marginBottom: token.marginMD }}

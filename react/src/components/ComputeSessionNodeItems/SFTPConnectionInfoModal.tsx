@@ -90,12 +90,12 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
         <Alert
           showIcon
           type="info"
-          message={<Trans i18nKey="session.SFTPDescription" />}
+          title={<Trans i18nKey="session.SFTPDescription" />}
         />
         <Alert
           showIcon
           type="warning"
-          message={
+          title={
             <>
               <Trans i18nKey="session.SFTPExtraNotification" />
               &nbsp;{t('session.SFTPSessionManagementDesc')}

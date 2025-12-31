@@ -324,7 +324,7 @@ const ErrorLogList: React.FC<{
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
-        <Alert message={t('dialog.warning.CannotBeUndone')} type="warning" />
+        <Alert title={t('dialog.warning.CannotBeUndone')} type="warning" />
       </BAIModal>
       <BAIUnmountAfterClose>
         <TableColumnsSettingModal

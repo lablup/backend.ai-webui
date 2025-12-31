@@ -859,7 +859,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               (vf) => vf?.name && !vf?.name.startsWith('.'),
             ).length > 0 && (
               <Alert
-                message={t('modelService.ExtraMountsWarning')}
+                title={t('modelService.ExtraMountsWarning')}
                 type="warning"
                 showIcon
                 style={{ marginBottom: token.marginMD }}

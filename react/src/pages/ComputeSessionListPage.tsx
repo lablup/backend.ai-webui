@@ -550,7 +550,7 @@ const ComputeSessionListPage = () => {
             <Alert
               type="error"
               showIcon
-              message={t('error.FailedToLoadTableData')}
+              title={t('error.FailedToLoadTableData')}
             />
           )}
         </BAIFlex>

@@ -77,7 +77,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
           disabled={signoutMutation.isPending}
         >
           <Form.Item name="alert">
-            <Alert message={t('login.DescConfirmLeave')} type="warning" />
+            <Alert title={t('login.DescConfirmLeave')} type="warning" />
           </Form.Item>
           <Form.Item
             name="email"

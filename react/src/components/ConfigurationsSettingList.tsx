@@ -191,11 +191,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
-        <Alert
-          message={t('settings.NoteAboutFixedSetup')}
-          type="info"
-          showIcon
-        />
+        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
       ),
       settingItems: [
         {
@@ -234,11 +230,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
-        <Alert
-          message={t('settings.NoteAboutFixedSetup')}
-          type="info"
-          showIcon
-        />
+        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
       ),
       settingItems: [
         {
