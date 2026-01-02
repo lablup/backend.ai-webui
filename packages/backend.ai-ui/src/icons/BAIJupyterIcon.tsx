@@ -4,11 +4,16 @@ import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon'
 
 // https://jupyter.org/governance/trademarks.html
 // https://github.com/jupyter/design/tree/main/logos/Logo%20Mark
-interface BAIHuggingFaceIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
+interface BAIJupyterIconProps
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+  'aria-label'?: string;
+}
 
-const BAIJupyterIcon: React.FC<BAIHuggingFaceIconProps> = (props) => {
-  return <Icon component={logo} {...props} />;
+const BAIJupyterIcon: React.FC<BAIJupyterIconProps> = ({
+  'aria-label': ariaLabel = 'jupyter',
+  ...props
+}) => {
+  return <Icon component={logo} aria-label={ariaLabel} {...props} />;
 };
 
 export default BAIJupyterIcon;

@@ -3,10 +3,15 @@ import Icon from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 interface BAIAppIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+  'aria-label'?: string;
+}
 
-const BAIAppIcon: React.FC<BAIAppIconProps> = (props) => {
-  return <Icon component={logo} {...props} />;
+const BAIAppIcon: React.FC<BAIAppIconProps> = ({
+  'aria-label': ariaLabel = 'app',
+  ...props
+}) => {
+  return <Icon component={logo} aria-label={ariaLabel} {...props} />;
 };
 
 export default BAIAppIcon;

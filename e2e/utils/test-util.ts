@@ -249,10 +249,10 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
   const searchInput = page.locator('input[type="search"].ant-input');
   await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
+
   await page
     .getByRole('row', { name: `VFolder Identicon ${folderName}` })
-    .getByRole('button')
-    .nth(1)
+    .getByRole('button', { name: 'trash bin' })
     .click();
   const moveButton = page.getByRole('button', { name: 'Move' });
   await expect(moveButton).toBeVisible();
@@ -284,14 +284,7 @@ export async function deleteForeverAndVerifyFromTrash(
     name: `VFolder Identicon ${folderName}`,
   });
 
-  // Add proper error handling when folder is not found
-  try {
-    await expect(folderRow).toBeVisible({ timeout: 5000 });
-  } catch (error) {
-    throw new Error(
-      `Folder '${folderName}' not found in Trash. This may be due to active filters or the folder was already deleted.`,
-    );
-  }
+  await expect(folderRow).toBeVisible({ timeout: 5000 });
 
   // Delete forever
   await folderRow.getByRole('button').nth(1).click();
@@ -323,7 +316,8 @@ export async function shareVFolderAndVerify(
 ) {
   await navigateTo(page, 'data');
 
-  await page.locator('#rc_select_8').fill(folderName);
+  const searchInput = page.locator('input[type="search"].ant-input');
+  await searchInput.fill(folderName);
   await page.getByRole('button', { name: 'search' }).click();
 
   // share folder

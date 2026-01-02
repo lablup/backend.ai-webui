@@ -1,3 +1,4 @@
+import { getFormItemControlByLabel } from '../test-util-antd';
 import { expect, Locator, Page } from '@playwright/test';
 
 export class FolderCreationModal {
@@ -31,13 +32,7 @@ export class FolderCreationModal {
   }
 
   async getLocationSelector(): Promise<Locator> {
-    const locationSelector = (
-      await this.getFormItemByLabel('Location')
-    ).locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    );
-    await expect(locationSelector).toBeVisible();
-    return locationSelector;
+    return getFormItemControlByLabel(this.page, 'Location');
   }
 
   async getLocationSelectorInput(): Promise<Locator> {

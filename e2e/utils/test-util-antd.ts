@@ -43,3 +43,12 @@ export const getMenuItem = (page: Page, menuName: string) => {
 export const getCardItemByCardTitle = (page: Page, title: string) => {
   return page.locator(`.ant-card:has-text("${title}")`);
 };
+
+export const getFormItemControlByLabel = (page: Page, label: string) => {
+  return page
+    .locator('.ant-form-item-row')
+    .filter({
+      has: page.locator('.ant-form-item-label label', { hasText: label }),
+    })
+    .locator('.ant-form-item-control-input');
+};

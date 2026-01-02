@@ -50,3 +50,97 @@ Key principles:
 - If you encounter non-compliant test names, maintain the existing name during fixes (do not rename unless explicitly asked)
 - Focus on fixing test logic, not renaming tests
 - Refer to `e2e/E2E-TEST-NAMING-GUIDELINES.md` for detailed naming guidelines if creating new tests
+
+**Ant Design 5.6+ Modal Locator Updates:**
+- **IMPORTANT**: With Ant Design 5.6+, modal locators have changed significantly
+- **Old Pattern (Deprecated)**: `.ant-modal-content:has-text("Modal Title")`
+- **New Pattern (Recommended)**: `getByRole('dialog', { name: 'Modal Title' })`
+- When fixing failing tests with modal locators, always migrate from class-based selectors to role-based selectors
+- Role-based selectors are more semantic, accessible, and resilient to DOM structure changes
+- For modal content access: Use `page.getByRole('dialog').getByRole('heading')` instead of `.ant-modal-content .ant-modal-title`
+- For modal buttons: Use `page.getByRole('dialog').getByRole('button', { name: 'Button Text' })` instead of `.ant-modal-content button`
+
+**Examples of Modal Locator Migration:**
+```typescript
+// ❌ Old: Class-based selector (breaks with Ant Design 5.6+)
+const modal = page.locator('.ant-modal-content:has-text("Modify Minimum Image Resource Limit")');
+await modal.locator('.ant-modal-body input').fill('value');
+
+// ✅ New: Role-based selector (recommended)
+const modal = page.getByRole('dialog', { name: /Modify Minimum Image Resource Limit/i });
+await modal.getByRole('textbox').fill('value');
+
+// ❌ Old: Nested class selectors
+const confirmModal = page.locator('div.ant-modal-content').first();
+await confirmModal.locator('.ant-btn-primary').click();
+
+// ✅ New: Semantic role-based approach
+const confirmModal = page.getByRole('dialog');
+await confirmModal.getByRole('button', { name: 'OK' }).click();
+```
+
+**Ant Design Form Item Locator:**
+- When locating form controls by their label, use the utility function from `e2e/utils/test-util-antd.ts`
+- **Pattern**: `getFormItemControlByLabel(page, 'Label Text')`
+- This function handles the Ant Design form structure properly:
+  - Finds `.ant-form-item-row` container
+  - Filters by label text in `.ant-form-item-label label`
+  - Returns the `.ant-form-item-control` element
+
+**Examples of Form Item Locator:**
+```typescript
+import { getFormItemControlByLabel } from '../utils/test-util-antd';
+
+// ✅ Correct: Using utility function
+const locationControl = getFormItemControlByLabel(page, 'Location');
+await locationControl.locator('.ant-select').click();
+
+const nameControl = getFormItemControlByLabel(page, 'Name');
+await nameControl.getByRole('textbox').fill('My Name');
+
+// ❌ Avoid: Direct CSS selectors that may break with DOM changes
+const control = page.locator('.ant-form-item:has-text("Location") .ant-form-item-control');
+```
+
+**Icon Locators with aria-label:**
+- All BAI icons now support `aria-label` for better accessibility and test automation
+- **Pattern**: Use `page.getByLabel('icon-description')` for icon interactions
+- Icons have default aria-labels matching their semantic meaning
+
+**Examples of Icon Locators:**
+```typescript
+// ✅ Correct: Using aria-label
+await page.getByLabel('trash bin').click();
+await page.getByLabel('upload').click();
+await page.getByLabel('new folder').click();
+await page.getByLabel('share').click();
+
+// ✅ Also works with role
+await page.getByRole('img', { name: 'trash bin' }).click();
+
+// ❌ Avoid: Class-based icon selectors (brittle)
+await page.locator('.anticon-delete').click();
+await page.locator('svg[data-icon="upload"]').click();
+```
+
+**Common BAI Icon Labels:**
+- Delete/Remove: `'trash bin'`
+- Upload: `'upload'`
+- Create folder: `'new folder'`
+- Share: `'share'`
+- Terminal: `'terminal'`
+- User: `'user'` or `'user group'`
+- Sessions: `'sessions'`, `'session start'`, `'session log'`
+- System: `'dashboard'`, `'system monitor'`
+
+**Test Utility Functions:**
+- **Ant Design utilities** (`e2e/utils/test-util-antd.ts`):
+  - `getFormItemControlByLabel(page, label)` - Form control locator by label
+  - `getMenuItem(page, menuName)` - Menu item locator
+  - `getCardItemByCardTitle(page, title)` - Card locator by title
+  - `checkActiveTab(tabsLocator, expectedTabName)` - Tab verification
+  - Notification utilities for testing alerts
+
+- **General utilities** (`e2e/utils/test-util.ts`):
+  - Import appropriate utility based on UI framework being tested
+  - Prefer utility functions over direct CSS selectors for maintainability

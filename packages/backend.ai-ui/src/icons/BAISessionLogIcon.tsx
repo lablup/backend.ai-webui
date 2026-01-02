@@ -3,10 +3,15 @@ import Icon from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 interface BAISessionLogIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+  'aria-label'?: string;
+}
 
-const BAISessionLogIcon: React.FC<BAISessionLogIconProps> = (props) => {
-  return <Icon component={logo} {...props} />;
+const BAISessionLogIcon: React.FC<BAISessionLogIconProps> = ({
+  'aria-label': ariaLabel = 'session log',
+  ...props
+}) => {
+  return <Icon component={logo} aria-label={ariaLabel} {...props} />;
 };
 
 export default BAISessionLogIcon;

@@ -3,10 +3,15 @@ import Icon from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 interface BAIUserOutlinedIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+  'aria-label'?: string;
+}
 
-const BAIUserOutlinedIcon: React.FC<BAIUserOutlinedIconProps> = (props) => {
-  return <Icon component={logo} {...props} />;
+const BAIUserOutlinedIcon: React.FC<BAIUserOutlinedIconProps> = ({
+  'aria-label': ariaLabel = 'user',
+  ...props
+}) => {
+  return <Icon component={logo} aria-label={ariaLabel} {...props} />;
 };
 
 export default BAIUserOutlinedIcon;

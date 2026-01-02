@@ -3,12 +3,14 @@ import Icon from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 interface BAIUpdateEnvironmentImagesIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {}
+  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+  'aria-label'?: string;
+}
 
 const BAIUpdateEnvironmentImagesIcon: React.FC<
   BAIUpdateEnvironmentImagesIconProps
-> = (props) => {
-  return <Icon component={logo} {...props} />;
+> = ({ 'aria-label': ariaLabel = 'update environment images', ...props }) => {
+  return <Icon component={logo} aria-label={ariaLabel} {...props} />;
 };
 
 export default BAIUpdateEnvironmentImagesIcon;
