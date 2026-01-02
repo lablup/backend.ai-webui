@@ -23,25 +23,19 @@ const createInteractiveSessionOnSessionStartPage = async (
   await page.waitForLoadState('networkidle');
 
   // select default resource group
-  const resourceGroup = page
-    .locator('.ant-form-item-row:has-text("Resource Group")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
+  const resourceGroup = page.getByRole('combobox', {
+    name: 'Resource Group',
+  });
   await expect(resourceGroup).toBeVisible();
   await resourceGroup.fill('default');
-  await page.locator('.ant-select-dropdown:has-text("default")').click();
+  await page.keyboard.press('Enter');
   // select Minimum Requirements
-  const ResourcePreset = page
-    .locator('.ant-form-item-row:has-text("Resource Presets")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
+  const ResourcePreset = page.getByRole('combobox', {
+    name: 'Resource Presets',
+  });
   await expect(ResourcePreset).toBeVisible();
   await ResourcePreset.fill('minimum');
-  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
+  await page.getByRole('option', { name: 'minimum' }).click();
   // launch
   await page.getByRole('button', { name: 'Skip to review' }).click();
 
@@ -50,17 +44,11 @@ const createInteractiveSessionOnSessionStartPage = async (
   await expect(launchButton).toBeEnabled({ timeout: 10000 });
   await launchButton.click();
 
-  // Wait for either success or modal to appear
-  try {
-    await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
-      'No storage folder is mounted',
-      { timeout: 10000 },
-    );
-    await page.getByRole('button', { name: 'Start' }).click();
-  } catch (error) {
-    // Modal might not appear if storage is already configured
-    console.log('No storage modal appeared, session might start directly');
-  }
+  await page
+    .getByRole('dialog')
+    .filter({ hasText: 'No storage folder is mounted' })
+    .getByRole('button', { name: 'Start' })
+    .click();
 };
 
 const createBatchSessionOnSessionStartPage = async (
@@ -85,25 +73,20 @@ const createBatchSessionOnSessionStartPage = async (
   await page.waitForLoadState('networkidle');
 
   // select default resource group
-  const resourceGroup = page
-    .locator('.ant-form-item-row:has-text("Resource Group")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
+  const resourceGroup = page.getByRole('combobox', {
+    name: 'Resource Group',
+  });
   await expect(resourceGroup).toBeVisible();
   await resourceGroup.fill('default');
-  await page.locator('.ant-select-dropdown:has-text("default")').click();
+  await page.keyboard.press('Enter');
+
   // select Minimum Requirements
-  const ResourcePreset = page
-    .locator('.ant-form-item-row:has-text("Resource Presets")')
-    .locator(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector',
-    )
-    .locator('input');
+  const ResourcePreset = page.getByRole('combobox', {
+    name: 'Resource Presets',
+  });
   await expect(ResourcePreset).toBeVisible();
   await ResourcePreset.fill('minimum');
-  await page.locator('.ant-select-dropdown:has-text("minimum")').click();
+  await page.getByRole('option', { name: 'minimum' }).click();
   // launch
   await page.getByRole('button', { name: 'Skip to review' }).click();
 
@@ -113,16 +96,11 @@ const createBatchSessionOnSessionStartPage = async (
   await launchButton.click();
 
   // Wait for either success or modal to appear
-  try {
-    await expect(page.locator('.ant-modal-confirm-title')).toHaveText(
-      'No storage folder is mounted',
-      { timeout: 10000 },
-    );
-    await page.getByRole('button', { name: 'Start' }).click();
-  } catch (error) {
-    // Modal might not appear if storage is already configured
-    console.log('No storage modal appeared, session might start directly');
-  }
+  await page
+    .getByRole('dialog')
+    .filter({ hasText: 'No storage folder is mounted' })
+    .getByRole('button', { name: 'Start' })
+    .click();
 };
 
 test.describe('Session Launcher', () => {

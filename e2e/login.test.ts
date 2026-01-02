@@ -1,13 +1,13 @@
 import {
-  login,
   loginAsAdmin,
   userInfo,
   webServerEndpoint,
+  webuiEndpoint,
 } from './utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:9081');
+  await page.goto(webuiEndpoint);
 });
 
 test.describe('Before login', () => {
@@ -45,9 +45,10 @@ test.describe('Login failure cases', () => {
       .fill(webServerEndpoint);
     await page.getByLabel('Login', { exact: true }).click();
 
+    // Wait for and verify the error notification appears
     await expect(
-      page.locator('.ant-notification-notice-message'),
-    ).toContainText('Login information mismatch. Check your information');
+      page.getByText('Login information mismatch. Check your information'),
+    ).toBeVisible();
   });
 
   test('should display error message for incorrect password', async ({
@@ -62,8 +63,9 @@ test.describe('Login failure cases', () => {
       .fill(webServerEndpoint);
     await page.getByLabel('Login', { exact: true }).click();
 
+    // Wait for and verify the error notification appears
     await expect(
-      page.locator('.ant-notification-notice-message'),
-    ).toContainText('Login information mismatch. Check your information');
+      page.getByText('Login information mismatch. Check your information'),
+    ).toBeVisible();
   });
 });

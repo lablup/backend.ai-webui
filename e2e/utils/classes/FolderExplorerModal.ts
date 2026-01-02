@@ -5,7 +5,7 @@ export class FolderExplorerModal {
   private readonly page: Page;
 
   constructor(page: Page) {
-    this.modal = page.locator('.ant-modal').first();
+    this.modal = page.getByRole('dialog').first();
     this.page = page;
   }
 

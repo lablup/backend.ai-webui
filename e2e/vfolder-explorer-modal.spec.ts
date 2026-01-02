@@ -7,6 +7,7 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
   modifyConfigToml,
+  webuiEndpoint,
 } from './utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -15,50 +16,26 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page.getByRole('link', { name: folderName }).first().click();
+  await page
+    .getByRole('link', { name: folderName })
+    .first()
+    .click({ force: true });
   const modal = new FolderExplorerModal(page);
   await modal.waitForOpen();
   return modal;
 };
 
 test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
-  const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
-  const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
-
   test.beforeEach(async ({ page }) => {
     await loginAsUser(page);
     await navigateTo(page, 'data');
   });
 
-  test.afterAll(async ({ browser }) => {
-    // Create a new context and page for cleanup
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
-    await loginAsUser(page);
-
-    // Clean up folders created during tests
-    // Use try-catch to handle cases where folders might not exist
-    try {
-      await moveToTrashAndVerify(page, rwFolderName);
-      await deleteForeverAndVerifyFromTrash(page, rwFolderName);
-    } catch (error) {
-      console.log(`Could not delete ${rwFolderName}, it may not exist`);
-    }
-
-    try {
-      await moveToTrashAndVerify(page, roFolderName);
-      await deleteForeverAndVerifyFromTrash(page, roFolderName);
-    } catch (error) {
-      console.log(`Could not delete ${roFolderName}, it may not exist`);
-    }
-
-    await context.close();
-  });
-
   test('User can create folders and upload files in VFolder with write permissions', async ({
     page,
   }) => {
+    const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
+
     // 1. Create a VFolder with Read & Write permissions
     await createVFolderAndVerify(page, rwFolderName, 'general', 'user', 'rw');
 
@@ -84,11 +61,17 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 
     // 8. Close modal
     await modal.close();
+
+    // 9. Cleanup
+    await moveToTrashAndVerify(page, rwFolderName);
+    await deleteForeverAndVerifyFromTrash(page, rwFolderName);
   });
 
   test('User can view files but cannot upload to read-only VFolder', async ({
     page,
   }) => {
+    const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
+
     // 1. Create a VFolder with Read Only permissions
     await createVFolderAndVerify(page, roFolderName, 'general', 'user', 'ro');
 
@@ -111,13 +94,17 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 
     // 7. Close modal
     await modal.close();
+
+    // 8. Cleanup
+    await moveToTrashAndVerify(page, roFolderName);
+    await deleteForeverAndVerifyFromTrash(page, roFolderName);
   });
 
   test('User sees error message when accessing non-existent VFolder', async ({
     page,
   }) => {
     // 1. Navigate directly to a non-existent VFolder URL
-    await page.goto('http://127.0.0.1:9081/data?folder=non-existent-id-12345');
+    await page.goto(`${webuiEndpoint}/data?folder=non-existent-id-12345`);
 
     // Wait for modal to appear
     const modal = new FolderExplorerModal(page);
@@ -187,7 +174,7 @@ test.describe('FolderExplorerModal - User Modal Interaction', () => {
     await closeButton.click();
 
     // 5. Wait for modal to actually be hidden
-    await expect(page.locator('.ant-modal').first()).not.toBeVisible({
+    await expect(page.getByRole('dialog').first()).not.toBeVisible({
       timeout: 2000,
     });
 

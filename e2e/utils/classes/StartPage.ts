@@ -9,6 +9,11 @@ export class StartPage {
   }
 
   async goto(): Promise<void> {
+    // If in admin settings pages, click Go Back first
+    const goBackButton = this.page.getByRole('button', { name: 'Go Back' });
+    if (await goBackButton.isVisible()) {
+      await goBackButton.click();
+    }
     await getMenuItem(this.page, 'Start').click();
   }
 

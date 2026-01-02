@@ -1,13 +1,20 @@
 import { loginAsAdmin, navigateTo } from './utils/test-util';
-import { findColumnIndex, getMenuItem } from './utils/test-util-antd';
+import { findColumnIndex } from './utils/test-util-antd';
 import { expect, test } from '@playwright/test';
 
 test.describe('environment ', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsAdmin(page);
-    await getMenuItem(page, 'Environments').click();
+    await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
+    await page
+      .getByRole('menuitem', { name: 'file-done Environments' })
+      .click();
     await expect(page).toHaveURL(/\/environment/);
     await page.waitForLoadState('networkidle');
+    // Wait for the table to be visible
+    await page
+      .locator('.ant-table-content')
+      .waitFor({ state: 'visible', timeout: 10000 });
   });
   test('Rendering Image List', async ({ page }) => {
     const table = page.locator('.ant-table-content');
@@ -74,9 +81,10 @@ test.describe('environment ', () => {
       .click();
     await page.waitForLoadState('networkidle');
     // get resource limit from control modal
-    const resourceLimitControlModal = page.locator(
-      '.ant-modal-content:has-text("Modify Minimum Image Resource Limit")',
-    );
+    const resourceLimitControlModal = page.getByRole('dialog', {
+      name: /Modify Minimum Image Resource Limit/i,
+    });
+
     await expect(resourceLimitControlModal).toBeVisible();
 
     const cpuFormItem = resourceLimitControlModal.locator(
@@ -92,8 +100,9 @@ test.describe('environment ', () => {
       '.ant-input-number input',
     );
     const memoryValue = await memoryFormItemInput.getAttribute('value');
+    // In Ant Design 6, the unit selector structure changed - use .ant-select .ant-typography
     const memorySize = await memoryFormItem
-      .locator('.ant-input-number-group-addon .ant-select-selection-item')
+      .locator('.ant-select .ant-typography')
       .textContent();
     // modify resource limit
     await cpuFormItemInput.fill(CPU_CORE);
@@ -115,9 +124,10 @@ test.describe('environment ', () => {
       .getByRole('button', { name: 'setting' })
       .click();
     await page.waitForLoadState('networkidle');
-    const modifiedResourceLimitControlModal = page.locator(
-      '.ant-modal-content:has-text("Modify Minimum Image Resource Limit")',
-    );
+    // In Ant Design 6, use role-based selector for dialog
+    const modifiedResourceLimitControlModal = page.getByRole('dialog', {
+      name: /Modify Minimum Image Resource Limit/i,
+    });
     await expect(modifiedResourceLimitControlModal).toBeVisible();
     const modifiedCpuFormItemInput = modifiedResourceLimitControlModal.locator(
       '.ant-form-item-row:has-text("CPU") input',
@@ -128,10 +138,11 @@ test.describe('environment ', () => {
       );
     await expect(modifiedCpuFormItemInput).toHaveValue(CPU_CORE);
     await expect(modifiedMemoryFormItemInput).toHaveValue(MEMORY_SIZE);
+    // In Ant Design 6, the unit selector structure changed - use .ant-select .ant-typography
     await expect(
-      memoryFormItem.locator(
-        '.ant-input-number-group-addon .ant-select-selection-item',
-      ),
+      modifiedResourceLimitControlModal
+        .locator('.ant-form-item-row:has-text("Memory")')
+        .locator('.ant-select .ant-typography'),
     ).toHaveText('GiB');
 
     // reset resource limit
@@ -141,8 +152,9 @@ test.describe('environment ', () => {
     await expect(modifiedMemoryFormItemInput).toHaveValue(
       memoryValue as string,
     );
+    // In Ant Design 6, click on the select component wrapper
     const memorySizeAddon = modifiedResourceLimitControlModal.locator(
-      '.ant-form-item-row:has-text("Memory") .ant-select-selector',
+      '.ant-form-item-row:has-text("Memory") .ant-select',
     );
     await memorySizeAddon.click();
     await page
@@ -175,7 +187,8 @@ test.describe('environment ', () => {
       .click();
 
     // Add app
-    const modal = page.locator('.ant-modal-content:has-text("Manage Apps")');
+    // In Ant Design 6, use role-based selector for dialog
+    const modal = page.getByRole('dialog', { name: /Manage Apps/i });
     await expect(modal).toBeVisible();
     const numberOfAppsBeforeAdd = await modal.locator('.ant-form-item').count();
     await modal.getByRole('button', { name: 'plus Add' }).click();
@@ -207,9 +220,8 @@ test.describe('environment ', () => {
       .nth(controlColumnIndex)
       .getByRole('button', { name: 'appstore' })
       .click();
-    const modalAfterAdd = page.locator(
-      '.ant-modal-content:has-text("Manage Apps")',
-    );
+    // In Ant Design 6, use role-based selector for dialog
+    const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
     await expect(modalAfterAdd).toBeVisible();
     const numberOfApps = await modalAfterAdd.locator('.ant-form-item').count();
     expect(numberOfApps).toBe(numberOfAppsBeforeAdd + 1);

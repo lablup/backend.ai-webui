@@ -4,9 +4,10 @@ export class FolderCreationModal {
   private readonly modal: Locator;
   private readonly page: Page;
   constructor(page: Page) {
-    this.modal = page.locator(
-      '.ant-modal-content:has-text("Create a new storage folder")',
-    );
+    this.modal = page
+      .getByRole('dialog')
+      .filter({ hasText: 'Create a new storage folder' });
+
     this.page = page;
   }
 

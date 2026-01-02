@@ -1,24 +1,26 @@
 import { loginAsAdmin } from './utils/test-util';
 import { checkActiveTab, findColumnIndex } from './utils/test-util-antd';
-import { test, expect } from '@playwright/test';
+import { test, expect, Locator } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await loginAsAdmin(page);
+  await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
   await page.getByRole('menuitem', { name: 'hdd Resources' }).click();
   await expect(
     page.getByTestId('webui-breadcrumb').getByText('Resources'),
   ).toBeVisible();
+  await page.waitForLoadState('networkidle');
+  // Click on Agent tab if not already active
+  await page.getByRole('tab', { name: 'Agent' }).click();
 });
 
 test.describe('Agent list', () => {
-  let resourcesPageTab;
-  let agentListTable;
+  let agentListTable: Locator;
 
   test.beforeEach(async ({ page }) => {
     const firstCard = await page
       .locator('.ant-layout-content .ant-card')
       .first();
-    resourcesPageTab = await firstCard.locator('.ant-tabs');
     agentListTable = await firstCard.locator('.ant-table');
   });
 

@@ -7,7 +7,9 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await loginAsAdmin(page);
-  await page.getByRole('menuitem', { name: 'Maintenance' }).click();
+  await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
+  await page.getByRole('menuitem', { name: 'tool Maintenance' }).click();
+  await page.waitForLoadState('networkidle');
 });
 
 test.describe('test maintenance page', () => {

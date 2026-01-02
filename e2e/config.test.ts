@@ -71,16 +71,17 @@ test.describe.parallel('config.toml', () => {
       await loginAsAdmin(page);
 
       // Step 2: Go to Environments page and find an uninstalled image
-      await page
-        .getByRole('group')
-        .getByText('Environments', { exact: true })
-        .click();
+      await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
+      await page.getByRole('menuitem', { name: 'Environments' }).click();
 
-      // Wait for the table to load and have data (excluding measure rows)
-      await page.waitForSelector('table tbody tr:not(.ant-table-measure-row)', {
-        state: 'visible',
-        timeout: 15000,
-      });
+      // Wait for the table to load and have data (excluding measure rows and placeholder)
+      await page.waitForSelector(
+        'table tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
+        {
+          state: 'visible',
+          timeout: 15000,
+        },
+      );
 
       // Sort by Status column to get uninstalled images first
       const statusHeader = page.getByRole('columnheader', { name: 'Status' });
@@ -89,7 +90,9 @@ test.describe.parallel('config.toml', () => {
       // Find the first row where the status cell (2nd cell) is empty (uninstalled image)
       // Uninstalled images have no status badge
       // Exclude ant-table-measure-row which is hidden
-      const allRows = page.locator('tbody tr:not(.ant-table-measure-row)');
+      const allRows = page.locator(
+        'tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
+      );
       let uninstalledImageName: string | null = null;
 
       // Wait for at least one row to be available
