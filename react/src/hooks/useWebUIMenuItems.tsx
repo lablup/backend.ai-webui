@@ -271,13 +271,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     },
     {
       label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
-      ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance',
-    },
-    {
-      label: (
         <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
       ),
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
