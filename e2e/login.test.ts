@@ -1,6 +1,6 @@
 import {
   loginAsAdmin,
-  userInfo,
+  getUserInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from './utils/test-util';
@@ -54,10 +54,10 @@ test.describe('Login failure cases', () => {
   test('should display error message for incorrect password', async ({
     page,
   }) => {
-    await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+    await page.getByLabel('Email or Username').fill(getUserInfo().admin.email);
     await page
       .getByRole('textbox', { name: 'Password' })
-      .fill(userInfo.admin.password + 'wrong');
+      .fill(getUserInfo().admin.password + 'wrong');
     await page
       .getByRole('textbox', { name: 'Endpoint' })
       .fill(webServerEndpoint);
