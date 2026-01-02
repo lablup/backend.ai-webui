@@ -53,7 +53,7 @@ const BAIAdminResourceGroupSelect = ({
 
   const selectOptions = _.map(data.allScalingGroupsV2.edges, (item) => ({
     label: item.node.name,
-    value: item.node.id,
+    value: item.node.name,
   }));
 
   return (
