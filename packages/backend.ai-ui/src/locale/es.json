@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar.",
     "DuplicatedFiles": "Confirmación de sobrescribencia",
     "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
+    "EditFile": "Editar archivo",
     "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
     "FolderName": "Nombre de carpeta",
     "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",

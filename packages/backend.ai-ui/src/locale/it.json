@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
+    "EditFile": "Modifica file",
     "FolderCreatedSuccessfully": "Cartella creata correttamente.",
     "FolderName": "Nome della cartella",
     "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",

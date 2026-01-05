@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
     "DuplicatedFiles": "Écran de confirmation",
     "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
+    "EditFile": "Modifier le fichier",
     "FolderCreatedSuccessfully": "Dossier créé avec succès.",
     "FolderName": "Nom du dossier",
     "MaxFolderNameLength": "Le nom du dossier doit comporter 255 caractères ou moins.",

@@ -189,6 +189,7 @@
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
+    "EditFile": "Dosyayı Düzenle",
     "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
     "FolderName": "Klasör adı",
     "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",

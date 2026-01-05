@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
+    "EditFile": "Muokkaa tiedostoa",
     "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
     "FolderName": "Kansionimi",
     "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",

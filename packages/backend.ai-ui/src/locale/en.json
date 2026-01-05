@@ -194,6 +194,7 @@
     "DragAndDropDesc": "Drag and drop files to this area to upload.",
     "DuplicatedFiles": "Overwrite Confirmation",
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
+    "EditFile": "Edit File",
     "FolderCreatedSuccessfully": "Folder created successfully.",
     "FolderName": "Folder Name",
     "MaxFolderNameLength": "Folder name must be 255 characters or less.",

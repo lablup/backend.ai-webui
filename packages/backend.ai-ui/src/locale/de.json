@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
     "DuplicatedFiles": "Überschreibung der Bestätigung",
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
+    "EditFile": "Datei bearbeiten",
     "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
     "FolderName": "Ordner Name",
     "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",

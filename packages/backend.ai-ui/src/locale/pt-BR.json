@@ -190,6 +190,7 @@
     "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
+    "EditFile": "Editar arquivo",
     "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
     "FolderName": "Nome da pasta",
     "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",

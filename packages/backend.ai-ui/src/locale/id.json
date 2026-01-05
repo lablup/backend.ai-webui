@@ -191,6 +191,7 @@
     "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "EditFile": "Edit File",
     "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
     "FolderName": "Nama folder",
     "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
