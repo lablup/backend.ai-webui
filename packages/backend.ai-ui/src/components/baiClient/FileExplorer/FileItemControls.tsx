@@ -126,6 +126,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
           size="small"
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
           }}
           icon={<MoreOutlined />}
           style={{ color: token.colorTextSecondary }}
