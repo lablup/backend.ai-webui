@@ -4,9 +4,10 @@ import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
+import { MoreOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { App, Button, theme } from 'antd';
-import { DownloadIcon } from 'lucide-react';
+import { App, Button, theme, Dropdown } from 'antd';
+import { DownloadIcon, EditIcon } from 'lucide-react';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -108,6 +109,28 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         }}
         {...deleteButtonProps}
       />
+      <Dropdown
+        menu={{
+          items: [
+            {
+              key: 'fileEdit',
+              icon: <EditIcon size={14} />,
+              label: t('comp:FileExplorer.EditFile'),
+            },
+          ],
+        }}
+        trigger={['click']}
+      >
+        <Button
+          type="text"
+          size="small"
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+          icon={<MoreOutlined />}
+          style={{ color: token.colorTextSecondary }}
+        />
+      </Dropdown>
     </BAIFlex>
   );
 };
