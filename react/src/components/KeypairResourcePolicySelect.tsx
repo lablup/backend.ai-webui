@@ -1,4 +1,4 @@
-import { KeypairResourcePolicySelectorQuery } from '../__generated__/KeypairResourcePolicySelectorQuery.graphql';
+import { KeypairResourcePolicySelectQuery } from '../__generated__/KeypairResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { Select, SelectProps } from 'antd';
@@ -6,10 +6,10 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface KeypairResourcePolicySelectorProps extends SelectProps {}
+interface KeypairResourcePolicySelectProps extends SelectProps {}
 
-const KeypairResourcePolicySelector: React.FC<
-  KeypairResourcePolicySelectorProps
+const KeypairResourcePolicySelect: React.FC<
+  KeypairResourcePolicySelectProps
 > = ({ ...selectProps }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableState_deprecated<string>({
@@ -18,9 +18,9 @@ const KeypairResourcePolicySelector: React.FC<
   });
 
   const { keypair_resource_policies } =
-    useLazyLoadQuery<KeypairResourcePolicySelectorQuery>(
+    useLazyLoadQuery<KeypairResourcePolicySelectQuery>(
       graphql`
-        query KeypairResourcePolicySelectorQuery {
+        query KeypairResourcePolicySelectQuery {
           keypair_resource_policies {
             name
           }
@@ -49,4 +49,4 @@ const KeypairResourcePolicySelector: React.FC<
   );
 };
 
-export default KeypairResourcePolicySelector;
+export default KeypairResourcePolicySelect;

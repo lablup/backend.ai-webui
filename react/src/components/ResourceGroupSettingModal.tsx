@@ -26,7 +26,7 @@ import {
   omitNullAndUndefinedFields,
   BAICard,
   BAIFlex,
-  BAIDomainSelector,
+  BAIDomainSelect,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useMemo, useRef } from 'react';
@@ -308,7 +308,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 },
               ]}
             >
-              <BAIDomainSelector />
+              <BAIDomainSelect />
             </Form.Item>
           ) : null}
           <Form.Item label={t('resourceGroup.Description')} name="description">

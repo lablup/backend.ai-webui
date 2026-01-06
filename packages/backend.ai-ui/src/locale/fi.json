@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
   },
   "comp:BAIFetchKeyButton": {

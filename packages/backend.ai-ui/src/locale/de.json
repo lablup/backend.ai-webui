@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Erfolgreich entfernt {{count}} Versionen.",
     "Version": "Version"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Domäne auswählen"
   },
   "comp:BAIFetchKeyButton": {

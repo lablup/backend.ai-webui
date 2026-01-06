@@ -10,7 +10,7 @@ import AccessKeySelect from './AccessKeySelect';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
-import UserResourcePolicySelector from './UserResourcePolicySelector';
+import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -29,7 +29,7 @@ import {
   Tag,
 } from 'antd';
 import {
-  BAIDomainSelector,
+  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAIUnmountAfterClose,
@@ -580,14 +580,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('resourcePolicy.ResourcePolicy')}
             rules={[{ required: !user }]}
           >
-            <UserResourcePolicySelector />
+            <UserResourcePolicySelect />
           </Form.Item>
           <Form.Item
             name="domain_name"
             label={t('credential.Domain')}
             rules={[{ required: true }]}
           >
-            <BAIDomainSelector />
+            <BAIDomainSelect />
           </Form.Item>
           <Suspense
             fallback={

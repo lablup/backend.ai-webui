@@ -1,4 +1,4 @@
-import { UserSelectorQuery } from '../__generated__/UserSelectorQuery.graphql';
+import { UserSelectQuery } from '../__generated__/UserSelectQuery.graphql';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
@@ -9,13 +9,13 @@ interface Props extends SelectProps {
   onSelectUser: (user: any) => void;
 }
 
-const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
+const UserSelect: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string>('');
   const deferredSearch = useDeferredValue(search);
-  const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
+  const { user_list } = useLazyLoadQuery<UserSelectQuery>(
     graphql`
-      query UserSelectorQuery($limit: Int!, $offset: Int!, $filter: String) {
+      query UserSelectQuery($limit: Int!, $offset: Int!, $filter: String) {
         user_list(
           limit: $limit
           offset: $offset
@@ -72,4 +72,4 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   );
 };
 
-export default UserSelector;
+export default UserSelect;

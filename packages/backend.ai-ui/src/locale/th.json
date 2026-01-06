@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
   },
   "comp:BAIFetchKeyButton": {

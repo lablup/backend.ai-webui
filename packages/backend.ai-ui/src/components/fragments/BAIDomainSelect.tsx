@@ -1,4 +1,4 @@
-import { BAIDomainSelectorQuery } from '../../__generated__/BAIDomainSelectorQuery.graphql';
+import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
@@ -9,16 +9,16 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface Props extends SelectProps {
   activeOnly?: boolean;
 }
-const BAIDomainSelector: React.FC<Props> = ({
+const BAIDomainSelect: React.FC<Props> = ({
   activeOnly = true,
   ...selectProps
 }) => {
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue(selectProps);
 
-  const { domains } = useLazyLoadQuery<BAIDomainSelectorQuery>(
+  const { domains } = useLazyLoadQuery<BAIDomainSelectQuery>(
     graphql`
-      query BAIDomainSelectorQuery($is_active: Boolean) {
+      query BAIDomainSelectQuery($is_active: Boolean) {
         domains(is_active: $is_active) {
           name
         }
@@ -31,7 +31,7 @@ const BAIDomainSelector: React.FC<Props> = ({
   );
   return (
     <Select
-      placeholder={t('comp:BAIDomainSelector.SelectDomain')}
+      placeholder={t('comp:BAIDomainSelect.SelectDomain')}
       {...selectProps}
       value={value}
       onChange={(_value, option) => {
@@ -50,4 +50,4 @@ const BAIDomainSelector: React.FC<Props> = ({
   );
 };
 
-export default BAIDomainSelector;
+export default BAIDomainSelect;

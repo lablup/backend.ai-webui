@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
   },
   "comp:BAIFetchKeyButton": {

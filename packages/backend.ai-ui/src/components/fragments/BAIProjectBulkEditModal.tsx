@@ -5,7 +5,7 @@ import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
-import BAIProjectResourcePolicySelector from './BAIProjectResourcePolicySelector';
+import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
 import { Form, theme } from 'antd';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
@@ -114,7 +114,7 @@ const BAIProjectBulkEditModal = ({
               label={t('comp:BAIProjectBulkEditModal.ProjectResourcePolicy')}
               name="resource_policy"
             >
-              <BAIProjectResourcePolicySelector />
+              <BAIProjectResourcePolicySelect />
             </Form.Item>
           </Suspense>
         </Form>

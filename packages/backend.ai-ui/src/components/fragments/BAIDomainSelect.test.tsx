@@ -1,4 +1,4 @@
-import BAIDomainSelector from './BAIDomainSelector';
+import BAIDomainSelect from './BAIDomainSelect';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
@@ -28,7 +28,7 @@ describe.skip('DomainSelect', () => {
     const { asFragment } = render(
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback="loading...">
-          <BAIDomainSelector
+          <BAIDomainSelect
             title="hello"
             placeholder="Please select domain"
             autoFocus={true}
