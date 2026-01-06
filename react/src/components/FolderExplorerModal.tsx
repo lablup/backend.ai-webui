@@ -314,6 +314,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
             targetVFolderId={vfolderID}
             currentPath={editingFile?.currentPath || '.'}
             fileInfo={editingFile?.file || null}
+            uploadFiles={uploadFiles}
             onRequestClose={(success) => {
               if (success) {
                 fileExplorerRef.current?.refetch();

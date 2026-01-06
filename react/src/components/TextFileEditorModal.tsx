@@ -3,6 +3,7 @@
 import BAICodeEditor from './BAICodeEditor';
 import { LanguageName } from '@uiw/codemirror-extensions-langs';
 import { Alert, Typography, Skeleton } from 'antd';
+import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,
   BAIModal,
@@ -26,6 +27,11 @@ interface TextFileEditorModalProps extends Omit<BAIModalProps, 'children'> {
   currentPath: string;
   fileInfo: VFolderFile | null;
   onRequestClose: (success: boolean) => void;
+  uploadFiles: (
+    files: RcFile[],
+    vfolderId: string,
+    currentPath: string,
+  ) => Promise<void>;
 }
 
 const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
@@ -34,12 +40,14 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
   currentPath,
   fileInfo,
   onRequestClose,
+  uploadFiles,
 }) => {
   const { t } = useTranslation();
   const baiClient = useConnectedBAIClient();
 
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,6 +93,23 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
 
   const handleSave = async () => {
     if (!fileInfo) return;
+
+    setIsSaving(true);
+    try {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const file = new File([blob], fileInfo.name, {
+        type: 'text/plain',
+      }) as RcFile;
+
+      await uploadFiles([file], targetVFolderId, currentPath);
+      onRequestClose(true);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      setLoadError(errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -110,6 +135,7 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
       destroyOnHidden
       onCancel={handleCancel}
       onOk={handleSave}
+      confirmLoading={isSaving}
       okText={t('button.Save')}
       cancelText={t('button.Cancel')}
     >
