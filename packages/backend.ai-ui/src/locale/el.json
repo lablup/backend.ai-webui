@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Επιλέξτε τομέα"
   },
   "comp:BAIFetchKeyButton": {

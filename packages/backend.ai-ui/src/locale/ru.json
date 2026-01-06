@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
   },
   "comp:BAIFetchKeyButton": {

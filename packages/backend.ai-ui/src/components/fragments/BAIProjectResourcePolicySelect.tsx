@@ -1,18 +1,18 @@
-import { BAIProjectResourcePolicySelectorQuery } from '../../__generated__/BAIProjectResourcePolicySelectorQuery.graphql';
+import { BAIProjectResourcePolicySelectQuery } from '../../__generated__/BAIProjectResourcePolicySelectQuery.graphql';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import _ from 'lodash';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface BAIProjectResourcePolicySelectorProps
+export interface BAIProjectResourcePolicySelectProps
   extends Omit<BAISelectProps, 'options'> {}
 
-const BAIProjectResourcePolicySelector = ({
+const BAIProjectResourcePolicySelect = ({
   ...selectProps
-}: BAIProjectResourcePolicySelectorProps) => {
+}: BAIProjectResourcePolicySelectProps) => {
   const { project_resource_policies } =
-    useLazyLoadQuery<BAIProjectResourcePolicySelectorQuery>(
+    useLazyLoadQuery<BAIProjectResourcePolicySelectQuery>(
       graphql`
-        query BAIProjectResourcePolicySelectorQuery {
+        query BAIProjectResourcePolicySelectQuery {
           project_resource_policies {
             id
             name
@@ -37,4 +37,4 @@ const BAIProjectResourcePolicySelector = ({
   );
 };
 
-export default BAIProjectResourcePolicySelector;
+export default BAIProjectResourcePolicySelect;

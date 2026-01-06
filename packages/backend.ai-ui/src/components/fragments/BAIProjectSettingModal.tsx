@@ -1,6 +1,6 @@
 import {
-  BAIDomainSelector,
-  BAIProjectResourcePolicySelector,
+  BAIDomainSelect,
+  BAIProjectResourcePolicySelect,
   BAIResourceGroupSelect,
 } from '.';
 import {
@@ -451,13 +451,13 @@ const BAIProjectSettingModal = ({
           name="domain_name"
           rules={[{ required: true }]}
         >
-          <BAIDomainSelector />
+          <BAIDomainSelect />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}
           name="resource_policy"
         >
-          <BAIProjectResourcePolicySelector />
+          <BAIProjectResourcePolicySelect />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}

@@ -1,7 +1,7 @@
 import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSettingModalCreateMutation.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
-import KeypairResourcePolicySelector from './KeypairResourcePolicySelector';
+import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { App, Col, Form, Input, InputNumber, ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { BAIModal } from 'backend.ai-ui';
@@ -165,7 +165,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <KeypairResourcePolicySelector />
+              <KeypairResourcePolicySelect />
             </Form.Item>
           </Col>
           <Col span={12}>

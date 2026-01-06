@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
   },
   "comp:BAIFetchKeyButton": {

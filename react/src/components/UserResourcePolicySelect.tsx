@@ -1,4 +1,4 @@
-import { UserResourcePolicySelectorQuery } from '../__generated__/UserResourcePolicySelectorQuery.graphql';
+import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
 import { Select, SelectProps } from 'antd';
 import _ from 'lodash';
@@ -9,12 +9,12 @@ interface Props extends SelectProps {
   defaultValue?: string;
 }
 
-const UserResourcePolicySelector: React.FC<Props> = ({ ...selectProps }) => {
+const UserResourcePolicySelect: React.FC<Props> = ({ ...selectProps }) => {
   const { t } = useTranslation();
   const { user_resource_policies } =
-    useLazyLoadQuery<UserResourcePolicySelectorQuery>(
+    useLazyLoadQuery<UserResourcePolicySelectQuery>(
       graphql`
-        query UserResourcePolicySelectorQuery {
+        query UserResourcePolicySelectQuery {
           user_resource_policies {
             id
             name
@@ -51,4 +51,4 @@ const UserResourcePolicySelector: React.FC<Props> = ({ ...selectProps }) => {
   );
 };
 
-export default UserResourcePolicySelector;
+export default UserResourcePolicySelect;

@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
   },
   "comp:BAIFetchKeyButton": {

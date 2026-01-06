@@ -5,10 +5,10 @@ import { useCurrentDomainValue } from '../hooks';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import QuotaScopeCard from './QuotaScopeCard';
 import QuotaSettingModal from './QuotaSettingModal';
-import UserSelector from './UserSelector';
+import UserSelect from './UserSelect';
 import { useToggle } from 'ahooks';
 import { Card, Form, Spin } from 'antd';
-import { BAIDomainSelector, BAIFlex, useUpdatableState } from 'backend.ai-ui';
+import { BAIDomainSelect, BAIFlex, useUpdatableState } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -110,7 +110,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             <BAIFlex style={{ marginBottom: 10 }}>
               <Form layout="inline" requiredMark={false}>
                 <Form.Item label={t('resourceGroup.Domain')} required>
-                  <BAIDomainSelector
+                  <BAIDomainSelect
                     style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
                     onChange={(_value, domain: any) => {
@@ -138,7 +138,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           ) : (
             <Form layout="inline">
               <Form.Item label={t('data.User')} required>
-                <UserSelector
+                <UserSelect
                   style={{ width: '30vw', marginBottom: 10 }}
                   value={selectedUserEmail}
                   onSelectUser={(user) => {

@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
     "Version": "版本"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "選擇網域"
   },
   "comp:BAIFetchKeyButton": {

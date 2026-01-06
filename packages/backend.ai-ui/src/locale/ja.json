@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "ドメインを選択"
   },
   "comp:BAIFetchKeyButton": {

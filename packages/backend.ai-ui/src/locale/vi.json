@@ -60,7 +60,7 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
-  "comp:BAIDomainSelector": {
+  "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
   },
   "comp:BAIFetchKeyButton": {
