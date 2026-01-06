@@ -72,11 +72,11 @@ const SessionKernelTags: React.FC<{
 }> = React.memo(function SessionKernelTags({ image }) {
   image = image || '';
   return (
-    <>
+    <BAIFlex gap="xs" wrap="wrap">
       <ImageAliasNameAndBaseVersionTags image={image} />
       <BaseImageTags image={image} />
       <ArchitectureTags image={image} />
-    </>
+    </BAIFlex>
   );
 });
 

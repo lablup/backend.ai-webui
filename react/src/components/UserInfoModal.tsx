@@ -1,7 +1,7 @@
 import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
 import { Descriptions, DescriptionsProps, Tag, Spin } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -138,9 +138,11 @@ const UserInfoModal: React.FC<Props> = ({
         labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item>
-          {_.map(user?.groups, (group) => {
-            return <Tag key={group?.id}>{group?.name}</Tag>;
-          })}
+          <BAIFlex gap="xs" wrap="wrap">
+            {_.map(user?.groups, (group) => {
+              return <Tag key={group?.id}>{group?.name}</Tag>;
+            })}
+          </BAIFlex>
         </Descriptions.Item>
       </Descriptions>
     </BAIModal>

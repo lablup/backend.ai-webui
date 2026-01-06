@@ -209,7 +209,7 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
-              <Tag key={item} color="blue" style={{ margin: 0 }}>
+              <Tag key={item} color="blue">
                 {item}
               </Tag>
             ))}
