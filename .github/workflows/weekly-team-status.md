@@ -2,7 +2,7 @@
 on:
   schedule:
   - cron: 0 0 * * 5
-  stop-after: +1mo
+  stop-after: +6mo
   workflow_dispatch: null
 permissions:
   contents: read
