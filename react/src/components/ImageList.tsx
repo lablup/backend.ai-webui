@@ -227,7 +227,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           dataIndex: 'tags',
           render: (text, row) => {
             return (
-              <BAIFlex direction="row" align="start">
+              <BAIFlex direction="row" align="start" gap="xs" wrap="wrap">
                 {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                 {_.map(text, (tag: { key: string; value: string }) => {
                   const isCustomized = _.includes(tag.key, 'customized_');

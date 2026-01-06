@@ -1,6 +1,7 @@
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { convertToDecimalUnit, usageIndicatorColor } from '../helper/index';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -69,9 +70,11 @@ const StorageHostResourcePanel: React.FC<{
         {resource?.backend}
       </Descriptions.Item>
       <Descriptions.Item label={t('agent.Capabilities')}>
-        {_.map(resource?.capabilities, (cap) => (
-          <Tag key={cap}>{cap}</Tag>
-        ))}
+        <BAIFlex gap="xs" wrap="wrap">
+          {_.map(resource?.capabilities, (cap) => (
+            <Tag key={cap}>{cap}</Tag>
+          ))}
+        </BAIFlex>
       </Descriptions.Item>
     </Descriptions>
   );

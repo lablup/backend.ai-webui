@@ -116,9 +116,6 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
               <Tag
                 key={`${tag.key}-${index}`}
                 color={isCustomized ? 'cyan' : undefined}
-                style={{
-                  marginRight: 0,
-                }}
               >
                 {aliasedTag}
               </Tag>

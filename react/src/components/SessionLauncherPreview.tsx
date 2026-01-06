@@ -592,9 +592,11 @@ const SessionLauncherPreview: React.FC<{
           {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (
             <Descriptions size="small">
               <Descriptions.Item label={t('data.AutomountFolders')}>
-                {_.map(form.getFieldValue('autoMountedFolderNames'), (name) => {
-                  return <Tag>{name}</Tag>;
-                })}
+                <BAIFlex gap="xs" wrap="wrap">
+                  {_.map(form.getFieldValue('autoMountedFolderNames'), (name) => {
+                    return <Tag>{name}</Tag>;
+                  })}
+                </BAIFlex>
               </Descriptions.Item>
             </Descriptions>
           ) : null}

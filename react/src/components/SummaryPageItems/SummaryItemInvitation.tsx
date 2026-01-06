@@ -67,13 +67,13 @@ const SummaryItemInvitation: React.FC = () => {
       ];
 
       return (
-        <Tag color={color} key={p} style={{ marginInlineEnd: 0 }}>
+        <Tag color={color} key={p}>
           {text}
         </Tag>
       );
     });
 
-    return indicator;
+    return <BAIFlex gap="xs">{indicator}</BAIFlex>;
   };
 
   return (

@@ -451,10 +451,10 @@ const UserCredentialList: React.FC = () => {
             dataIndex: 'is_admin',
             render: (isAdmin) =>
               isAdmin ? (
-                <>
+                <BAIFlex gap="xs">
                   <Tag color="red">admin</Tag>
                   <Tag color="green">user</Tag>
-                </>
+                </BAIFlex>
               ) : (
                 <Tag color="green">user</Tag>
               ),

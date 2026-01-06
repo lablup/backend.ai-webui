@@ -89,10 +89,10 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.Permission')}>
           {keypair?.is_admin ? (
-            <>
+            <BAIFlex gap="xs">
               <Tag color="red">admin</Tag>
               <Tag color="green">user</Tag>
-            </>
+            </BAIFlex>
           ) : (
             <Tag color="green">user</Tag>
           )}
