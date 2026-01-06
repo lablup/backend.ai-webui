@@ -121,7 +121,7 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
       open={open}
       title={
         <BAIFlex align="center" gap="xs">
-          <Typography.Text>{t('comp:FileExplorer.EditFile')}</Typography.Text>
+          <Typography.Text>{t('data.explorer.EditFile')}</Typography.Text>
           {fileInfo && (
             <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
               - {fileInfo.name}
