@@ -1,6 +1,7 @@
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import TextFileEditorModal from './TextFileEditorModal';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -12,8 +13,10 @@ import {
   BAILink,
   BAIModal,
   BAIModalProps,
+  BAIUnmountAfterClose,
   toGlobalId,
   useInterval,
+  VFolderFile,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -110,6 +113,10 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { upsertNotification, closeNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deletingFilePaths, setDeletingFilePaths] = useState<Array<string>>([]);
+  const [editingFile, setEditingFile] = useState<{
+    file: VFolderFile;
+    currentPath: string;
+  } | null>(null);
   const { uploadStatus, uploadFiles } = useFileUploadManager(
     vfolder_node?.id,
     vfolder_node?.name || undefined,
@@ -208,6 +215,9 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
         paddingBottom: xl ? token.paddingLG : 0,
       }}
       fileDropContainerRef={bodyRef}
+      onClickEditFile={(file, currentPath) => {
+        setEditingFile({ file, currentPath });
+      }}
     />
   ) : null;
 
@@ -296,6 +306,22 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
             )}
           </BAIFlex>
         )}
+      </Suspense>
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <TextFileEditorModal
+            open={!!editingFile}
+            targetVFolderId={vfolderID}
+            currentPath={editingFile?.currentPath || '.'}
+            fileInfo={editingFile?.file || null}
+            onRequestClose={(success) => {
+              if (success) {
+                fileExplorerRef.current?.refetch();
+              }
+              setEditingFile(null);
+            }}
+          />
+        </BAIUnmountAfterClose>
       </Suspense>
     </BAIModal>
   );

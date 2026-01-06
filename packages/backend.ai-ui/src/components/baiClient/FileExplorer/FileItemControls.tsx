@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 interface FileItemControlsProps {
   selectedItem: VFolderFile;
   onClickDelete: () => void;
+  onClickEdit?: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
   downloadButtonProps?: BAIButtonProps;
@@ -23,6 +24,7 @@ interface FileItemControlsProps {
 const FileItemControls: React.FC<FileItemControlsProps> = ({
   selectedItem,
   onClickDelete,
+  onClickEdit,
   enableDownload = false,
   enableDelete = false,
   downloadButtonProps,
@@ -116,6 +118,10 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
               key: 'fileEdit',
               icon: <EditIcon size={14} />,
               label: t('comp:FileExplorer.EditFile'),
+              onClick: (e) => {
+                e.domEvent.stopPropagation();
+                onClickEdit?.();
+              },
             },
           ],
         }}

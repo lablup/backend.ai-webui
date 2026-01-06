@@ -64,6 +64,7 @@ export interface BAIFileExplorerProps {
   ) => void;
   // FIXME: need to delete when `delete-file-async` API returns deleting file paths
   deletingFilePaths?: Array<string>;
+  onClickEditFile?: (file: VFolderFile, currentPath: string) => void;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -77,6 +78,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableWrite = false,
   onDeleteFilesInBackground,
   deletingFilePaths,
+  onClickEditFile,
   style,
   ref,
 }) => {
@@ -214,6 +216,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
+              onClickEdit={() => onClickEditFile?.(record, currentPath)}
               enableDownload={enableDownload}
               enableDelete={enableDelete}
               deleteButtonProps={{ loading: isPendingDelete }}
