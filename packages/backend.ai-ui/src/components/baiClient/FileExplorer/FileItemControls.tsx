@@ -17,9 +17,45 @@ interface FileItemControlsProps {
   onClickEdit?: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
+  enableEdit?: boolean;
   downloadButtonProps?: BAIButtonProps;
   deleteButtonProps?: BAIButtonProps;
 }
+
+const TEXT_FILE_EXTENSIONS = [
+  '.txt',
+  '.md',
+  '.json',
+  '.yaml',
+  '.yml',
+  '.xml',
+  '.csv',
+  '.js',
+  '.ts',
+  '.jsx',
+  '.tsx',
+  '.py',
+  '.sh',
+  '.bash',
+  '.html',
+  '.css',
+  '.scss',
+  '.less',
+  '.sql',
+  '.log',
+  '.env',
+  '.conf',
+  '.config',
+  '.ini',
+  '.toml',
+];
+
+const isTextFile = (fileName: string): boolean => {
+  const lastDotIndex = fileName.lastIndexOf('.');
+  if (lastDotIndex === -1) return false;
+  const ext = fileName.toLowerCase().slice(lastDotIndex);
+  return TEXT_FILE_EXTENSIONS.includes(ext);
+};
 
 const FileItemControls: React.FC<FileItemControlsProps> = ({
   selectedItem,
@@ -27,6 +63,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
   onClickEdit,
   enableDownload = false,
   enableDelete = false,
+  enableEdit = false,
   downloadButtonProps,
   deleteButtonProps,
 }) => {
@@ -118,6 +155,10 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
               key: 'fileEdit',
               icon: <EditIcon size={14} />,
               label: t('comp:FileExplorer.EditFile'),
+              disabled:
+                !enableEdit ||
+                selectedItem.type === 'DIRECTORY' ||
+                !isTextFile(selectedItem.name),
               onClick: (e) => {
                 e.domEvent.stopPropagation();
                 onClickEdit?.();

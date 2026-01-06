@@ -206,6 +206,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}
       enableWrite={hasWriteContentPermission}
+      enableEdit={hasWriteContentPermission}
       tableProps={{
         scroll: xl
           ? { x: 'max-content' }

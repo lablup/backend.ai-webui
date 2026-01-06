@@ -55,6 +55,7 @@ export interface BAIFileExplorerProps {
   enableDownload?: boolean;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  enableEdit?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
   ref?: React.Ref<BAIFileExplorerRef>;
   onDeleteFilesInBackground?: (
@@ -76,6 +77,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  enableEdit = false,
   onDeleteFilesInBackground,
   deletingFilePaths,
   onClickEditFile,
@@ -219,6 +221,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               onClickEdit={() => onClickEditFile?.(record, currentPath)}
               enableDownload={enableDownload}
               enableDelete={enableDelete}
+              enableEdit={enableEdit}
               deleteButtonProps={{ loading: isPendingDelete }}
             />
           </Suspense>
