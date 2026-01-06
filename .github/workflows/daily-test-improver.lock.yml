@@ -26,7 +26,7 @@
 #
 # Source: githubnext/agentics/workflows/daily-test-improver.md@de988487053cfa3bed1c3027d414490cd9dd0096
 #
-# Effective stop-time: 2025-12-25 09:13:29
+# Effective stop-time: 2026-06-30 23:59:59
 
 name: "Daily Test Coverage Improver"
 "on":
@@ -1315,7 +1315,7 @@ jobs:
         id: check_stop_time
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
-          GH_AW_STOP_TIME: 2025-12-25 09:13:29
+          GH_AW_STOP_TIME: 2026-06-30 23:59:59
           GH_AW_WORKFLOW_NAME: "Daily Test Coverage Improver"
         with:
           script: |

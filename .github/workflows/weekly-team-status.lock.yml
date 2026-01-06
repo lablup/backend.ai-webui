@@ -31,7 +31,7 @@
 #   Imports:
 #     - githubnext/agentics/workflows/shared/reporting.md@de988487053cfa3bed1c3027d414490cd9dd0096
 #
-# Effective stop-time: 2026-01-04 13:46:00
+# Effective stop-time: 2026-06-30 23:59:59
 
 name: "Weekly Team Status"
 "on":
@@ -1023,7 +1023,7 @@ jobs:
         id: check_stop_time
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
-          GH_AW_STOP_TIME: 2026-01-04 13:46:00
+          GH_AW_STOP_TIME: 2026-06-30 23:59:59
           GH_AW_WORKFLOW_NAME: "Weekly Team Status"
         with:
           script: |
