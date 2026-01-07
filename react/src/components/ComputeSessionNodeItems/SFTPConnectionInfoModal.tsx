@@ -28,10 +28,14 @@ type DirectAccessInfo = {
 
 interface SFTPConnectionInfoModalProps extends BAIModalProps {
   sessionFrgmt: SFTPConnectionInfoModalFragment$key;
+  host?: string;
+  port?: number;
 }
 
 const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
   sessionFrgmt,
+  host,
+  port,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -110,10 +114,10 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
         >
           <Descriptions.Item label={t('session.User')}>work</Descriptions.Item>
           <Descriptions.Item label={t('session.Host')}>
-            {directAccessInfo?.public_host}
+            {host || directAccessInfo?.public_host}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Port')}>
-            {directAccessInfo?.sshd_ports.join(', ')}
+            {port || directAccessInfo?.sshd_ports.join(', ')}
           </Descriptions.Item>
         </Descriptions>
 
