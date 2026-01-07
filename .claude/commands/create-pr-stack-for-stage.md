@@ -1,7 +1,7 @@
 ---
 description: Create a PR Stack and link to Jira issue.
 argument-hint: [FR-1234, https://lablup.atlassian.net/browse/FR-1234]
-model: claude-sonnet-4-20250514
+model: claude-sonnet-4-5
 ---
 
 # Create a PR Stack for Staged Changes
