@@ -49,6 +49,7 @@ export const useSuspendedFilteredAppTemplate = (
       title: app.name,
       // TODO: change image according to the connected app.
       src: '/resources/icons/default_app.svg',
+      ports: app.container_ports,
     };
   });
 
