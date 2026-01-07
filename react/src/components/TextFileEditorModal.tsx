@@ -131,7 +131,7 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
           )}
         </BAIFlex>
       }
-      width={800}
+      width={'100%'}
       destroyOnHidden
       onCancel={handleCancel}
       onOk={handleSave}
@@ -150,12 +150,15 @@ const TextFileEditorModal: React.FC<TextFileEditorModalProps> = ({
             showIcon
           />
         ) : (
-          <BAICodeEditor
-            value={content}
-            onChange={(value) => setContent(value || '')}
-            editable={true}
-            language={getLanguageFromExtension(fileInfo?.name || '')}
-          />
+          <div style={{ overflow: 'auto', width: '100%' }}>
+            <BAICodeEditor
+              style={{ minWidth: 768 }}
+              value={content}
+              onChange={(value) => setContent(value || '')}
+              editable={true}
+              language={getLanguageFromExtension(fileInfo?.name || '')}
+            />
+          </div>
         )}
       </BAIFlex>
     </BAIModal>
