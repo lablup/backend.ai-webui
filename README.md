@@ -212,6 +212,24 @@ The project uses `Playwright` as E2E testing framework and `Jest` as JavaScript 
 #### Playwright test
 
 To perform E2E tests, you must run complete Backend.AI cluster before starting test.
+
+##### Environment Configuration
+
+E2E tests can be configured using environment variables. Copy the sample environment file and customize it:
+
+```console
+$ cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
+```
+
+Available environment variables:
+- `E2E_WEBUI_ENDPOINT` - WebUI endpoint URL (default: `http://127.0.0.1:9081`)
+- `E2E_WEBSERVER_ENDPOINT` - Backend.AI server endpoint URL (default: `http://127.0.0.1:8090`)
+- User credentials: `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD`, `E2E_USER_EMAIL`, `E2E_USER_PASSWORD`, etc.
+
+If environment variables are not set, default values will be used.
+
+##### Running Tests
+
 On a terminal:
 
 ```console

@@ -86,7 +86,7 @@ Current Claude Code commands use inconsistent text-based prompts ("Proceed? [y/n
       options: [
         {
           label: "Yes, Create Issue (Recommended)",
-          description: "Type: Task\nTitle: feat(FR-XXXX): Your title here\nDescription: Your description here..."
+          description: "Type: Task\nTitle: Your title here\nDescription: Your description here..."
         },
         {
           label: "Edit Details",
@@ -100,6 +100,7 @@ Current Claude Code commands use inconsistent text-based prompts ("Proceed? [y/n
     }]
   })
   ```
+- **IMPORTANT**: Jira issue titles should only contain the actual description without prefixes like `feat`, `fix`, or `(FR-XXXX)`. These prefixes belong in PR titles, not Jira issue titles.
 - **Do NOT create the issue without user confirmation through AskUserQuestion**
 - Only proceed with creation after user selects the confirmation option
 

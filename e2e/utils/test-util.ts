@@ -2,8 +2,8 @@ import { FolderCreationModal } from './classes/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
-export const webuiEndpoint = 'http://127.0.0.1:9081';
-export const webServerEndpoint = 'http://127.0.0.1:8090';
+export const webuiEndpoint = process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
+export const webServerEndpoint = process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
 
 export async function login(
@@ -22,24 +22,24 @@ export async function login(
 
 export const userInfo = {
   admin: {
-    email: 'admin@lablup.com',
-    password: 'wJalrXUt',
+    email: process.env.E2E_ADMIN_EMAIL || 'admin@lablup.com',
+    password: process.env.E2E_ADMIN_PASSWORD || 'wJalrXUt',
   },
   user: {
-    email: 'user@lablup.com',
-    password: 'C8qnIo29',
+    email: process.env.E2E_USER_EMAIL || 'user@lablup.com',
+    password: process.env.E2E_USER_PASSWORD || 'C8qnIo29',
   },
   user2: {
-    email: 'user2@lablup.com',
-    password: 'P7oxTDdz',
+    email: process.env.E2E_USER2_EMAIL || 'user2@lablup.com',
+    password: process.env.E2E_USER2_PASSWORD || 'P7oxTDdz',
   },
   monitor: {
-    email: 'monitor@lablup.com',
-    password: '7tuEwF1J',
+    email: process.env.E2E_MONITOR_EMAIL || 'monitor@lablup.com',
+    password: process.env.E2E_MONITOR_PASSWORD || '7tuEwF1J',
   },
   domainAdmin: {
-    email: 'domain-admin@lablup.com',
-    password: 'cWbsM_vB',
+    email: process.env.E2E_DOMAIN_ADMIN_EMAIL || 'domain-admin@lablup.com',
+    password: process.env.E2E_DOMAIN_ADMIN_PASSWORD || 'cWbsM_vB',
   },
 };
 
@@ -56,7 +56,7 @@ export async function loginAsDomainAdmin(page: Page) {
     page,
     userInfo.domainAdmin.email,
     userInfo.domainAdmin.password,
-    'http://127.0.0.1:8090',
+    webServerEndpoint,
   );
 }
 export async function loginAsUser(page: Page) {
