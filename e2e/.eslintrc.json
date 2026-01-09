@@ -28,6 +28,7 @@
     "relay/graphql-syntax": "off",
     "relay/unused-fields": "off",
     "relay/must-colocate-fragment-spreads": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-empty-pattern": "off"
   }
 }

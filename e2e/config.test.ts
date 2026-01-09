@@ -19,7 +19,7 @@ test.describe.parallel('config.toml', () => {
         },
       };
       await modifyConfigToml(page, request, requestConfig);
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, request);
 
       // check if the menu items are hidden
       await expect(
@@ -68,7 +68,7 @@ test.describe.parallel('config.toml', () => {
         },
       };
       await modifyConfigToml(page, request, requestConfig);
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, request);
 
       // Step 2: Go to Environments page and find an uninstalled image
       await page.getByRole('menuitem', { name: 'Admin Settings' }).click();

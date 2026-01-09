@@ -29,6 +29,59 @@ application behavior.
     multiple actions.
   - Always use best practices from the log when generating tests.
 
+**Critical: Avoid Unnecessary Visibility Checks and Fallback Logic**
+- **DO NOT** create visibility check variables like `isSomethingVisible` with fallback logic
+- **DO NOT** wrap actions in try-catch blocks with alternative fallback paths to continue testing
+- If an element should be visible, use Playwright's built-in auto-waiting - it will fail the test if element is not found
+- Tests should **fail fast** when expected elements are missing, not silently continue with fallback behavior
+- Trust Playwright's default timeout and auto-waiting mechanisms
+
+```typescript
+// ❌ BAD: Unnecessary visibility check with fallback
+const isButtonVisible = await page.locator('button.submit').isVisible();
+if (isButtonVisible) {
+  await page.locator('button.submit').click();
+} else {
+  // fallback logic - DON'T DO THIS
+  await page.locator('button.alt-submit').click();
+}
+
+// ❌ BAD: Try-catch with fallback to continue test
+try {
+  await page.locator('.specific-element').click();
+} catch {
+  // continue anyway - DON'T DO THIS
+  console.log('Element not found, continuing...');
+}
+
+// ✅ GOOD: Direct action - test fails if element not found (this is the DEFAULT approach)
+await page.locator('button.submit').click();
+await page.getByRole('button', { name: 'Submit' }).click();
+```
+
+**Critical: Never Use `networkidle` for Waiting**
+- **`'networkidle'` is DISCOURAGED** by Playwright official documentation
+- From Playwright docs: _"'networkidle' - DISCOURAGED wait until there are no network connections for at least 500 ms. Don't use this method for testing, rely on web assertions to assess readiness instead."_
+- Using `networkidle` can cause unexpected page/context closures and flaky tests
+- Instead of `page.waitForLoadState('networkidle')`, use:
+  - Playwright's auto-waiting with assertions: `await expect(element).toBeVisible()`
+  - Specific waits: `await page.waitForSelector('.element')`
+  - URL-based waits: `await page.waitForURL('/expected-path')`
+
+```typescript
+// ❌ BAD: Using networkidle (DISCOURAGED)
+await page.goto('/dashboard');
+await page.waitForLoadState('networkidle');
+
+// ✅ GOOD: Use assertions to wait for readiness
+await page.goto('/dashboard');
+await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+
+// ✅ GOOD: Wait for specific element that indicates page is ready
+await page.goto('/dashboard');
+await page.waitForSelector('[data-testid="dashboard-loaded"]');
+```
+
    <example-generation>
    For following plan:
 

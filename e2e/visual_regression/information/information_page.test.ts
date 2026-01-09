@@ -1,8 +1,8 @@
 import { loginAsVisualRegressionAdmin } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-  await loginAsVisualRegressionAdmin(page);
+test.beforeEach(async ({ page, request }) => {
+  await loginAsVisualRegressionAdmin(page, request);
   await page.setViewportSize({
     width: 1500,
     height: 1400,

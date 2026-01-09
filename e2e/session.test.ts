@@ -104,8 +104,8 @@ const createBatchSessionOnSessionStartPage = async (
 };
 
 test.describe('Session Launcher', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsUser(page, request);
   });
 
   test('User can create interactive session on the Start page', async ({
@@ -277,8 +277,9 @@ test.describe('Restrict resource policy and see resource warning message', () =>
   // TODO: fix this test
   test.skip('superadmin to modify keypair resource policy', async ({
     page,
+    request,
   }) => {
-    await loginAsAdmin(page);
+    await loginAsAdmin(page, request);
     // go to resource policy page
     await navigateTo(page, 'resource-policy');
     // modify resource limit (cpu, memory) to zero

@@ -1,12 +1,12 @@
 import { loginAsVisualRegressionAdmin } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   await page.setViewportSize({
     width: 1800,
     height: 1400,
   });
-  await loginAsVisualRegressionAdmin(page);
+  await loginAsVisualRegressionAdmin(page, request);
   await page.getByRole('link', { name: 'Environments', exact: true }).click();
   await page.locator('.ant-input-affix-wrapper').first().waitFor();
 });

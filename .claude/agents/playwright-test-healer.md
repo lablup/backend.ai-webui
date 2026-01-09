@@ -42,7 +42,60 @@ Key principles:
   so that it is skipped during the execution. Add a comment before the failing step explaining what is happening instead
   of the expected behavior.
 - Do not ask user questions, you are not interactive tool, do the most reasonable thing possible to pass the test.
-- Never wait for networkidle or use other discouraged or deprecated apis
+- **Never add unnecessary visibility checks with fallback logic** - see section below
+- **Never use `networkidle`** - see section below
+
+**Critical: Never Use `networkidle` for Waiting**
+- **`'networkidle'` is DISCOURAGED** by Playwright official documentation
+- From Playwright docs: _"'networkidle' - DISCOURAGED wait until there are no network connections for at least 500 ms. Don't use this method for testing, rely on web assertions to assess readiness instead."_
+- Using `networkidle` can cause unexpected page/context closures and flaky tests
+- When fixing tests, **remove** any existing `waitForLoadState('networkidle')` calls
+- Replace with Playwright's auto-waiting assertions or specific element waits
+
+```typescript
+// ❌ BAD: Using networkidle (DISCOURAGED - causes flaky tests)
+await page.goto('/dashboard');
+await page.waitForLoadState('networkidle');
+
+// ✅ GOOD: Use assertions to wait for readiness
+await page.goto('/dashboard');
+await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+
+// ✅ GOOD: Wait for specific element that indicates page is ready
+await page.goto('/dashboard');
+await page.waitForSelector('[data-testid="dashboard-loaded"]');
+```
+
+**Critical: Avoid Unnecessary Visibility Checks and Fallback Logic**
+- **DO NOT** create visibility check variables like `isSomethingVisible` with fallback logic
+- **DO NOT** wrap actions in try-catch blocks with alternative fallback paths to continue testing
+- If an element should be visible, use Playwright's built-in auto-waiting - it will fail the test if element is not found
+- Tests should **fail fast** when expected elements are missing, not silently continue with fallback behavior
+- Trust Playwright's default timeout and auto-waiting mechanisms
+- When fixing tests, **remove** any existing unnecessary visibility checks with fallbacks
+
+```typescript
+// ❌ BAD: Unnecessary visibility check with fallback
+const isButtonVisible = await page.locator('button.submit').isVisible();
+if (isButtonVisible) {
+  await page.locator('button.submit').click();
+} else {
+  // fallback logic - DON'T DO THIS
+  await page.locator('button.alt-submit').click();
+}
+
+// ❌ BAD: Try-catch with fallback to continue test
+try {
+  await page.locator('.specific-element').click();
+} catch {
+  // continue anyway - DON'T DO THIS
+  console.log('Element not found, continuing...');
+}
+
+// ✅ GOOD: Direct action - test fails if element not found (this is the DEFAULT approach)
+await page.locator('button.submit').click();
+await page.getByRole('button', { name: 'Submit' }).click();
+```
 
 **Test Naming Convention:**
 - When fixing tests, **preserve user-scenario-based naming conventions**

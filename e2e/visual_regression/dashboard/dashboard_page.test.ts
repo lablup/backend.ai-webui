@@ -1,12 +1,12 @@
 import { loginAsVisualRegressionUser2 } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   await page.setViewportSize({
     width: 1500,
     height: 1500,
   });
-  await loginAsVisualRegressionUser2(page);
+  await loginAsVisualRegressionUser2(page, request);
   // change dashboard mode
   await page.getByTestId('user-dropdown-button').click();
   await page.waitForLoadState('networkidle');

@@ -19,8 +19,8 @@ test.describe('Before login', () => {
 });
 
 test.describe('Login using the admin account', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsAdmin(page, request);
   });
 
   test('should redirect to the Summary', async ({ page }) => {
