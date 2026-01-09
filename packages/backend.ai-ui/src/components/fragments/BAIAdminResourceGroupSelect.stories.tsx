@@ -18,7 +18,7 @@ const meta: Meta<typeof BAIAdminResourceGroupSelect> = {
 const BAIAdminResourceGroupSelectWithQuery = (
   props: Omit<
     React.ComponentProps<typeof BAIAdminResourceGroupSelect>,
-    'resourceGroupFragment'
+    'queryRef'
   >,
 ) => {
   const queryRef = useLazyLoadQuery<BAIAdminResourceGroupSelectStoriesQuery>(
@@ -30,9 +30,7 @@ const BAIAdminResourceGroupSelectWithQuery = (
     {},
   );
 
-  return (
-    <BAIAdminResourceGroupSelect resourceGroupFragment={queryRef} {...props} />
-  );
+  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
 export const Default: Story = {
