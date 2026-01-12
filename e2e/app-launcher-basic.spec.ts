@@ -2,7 +2,7 @@
 // Section 1: App Launcher Modal - Basic Interaction
 import { AppLauncherModal } from './utils/classes/AppLauncherModal';
 import { SessionLauncher } from './utils/classes/SessionLauncher';
-import { loginAsUser } from './utils/test-util';
+import { loginAsUser, createOrReuseSession } from './utils/test-util';
 import { test, expect, BrowserContext, Page } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
@@ -15,7 +15,8 @@ test.describe('AppLauncher - Basic Interaction', () => {
   let sharedContext: BrowserContext;
   let sharedPage: Page;
   let appLauncherModal: AppLauncherModal;
-  let sessionLauncher: SessionLauncher;
+  let sessionName: string;
+  let sessionLauncher: SessionLauncher | undefined;
 
   test.beforeAll(async ({ browser, request }, testInfo) => {
     testInfo.setTimeout(300000); // 5 minutes timeout for session creation + modal opening
@@ -26,20 +27,29 @@ test.describe('AppLauncher - Basic Interaction', () => {
 
     await loginAsUser(sharedPage, request);
 
-    // Initialize SessionLauncher with a unique session name
-    sessionLauncher = new SessionLauncher(sharedPage).withSessionName(
-      `e2e-app-launcher-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
-    );
+    // Use createOrReuseSession helper for session creation
+    // When E2E_REUSE_SESSION=true and E2E_EXISTING_SESSION_NAME is set,
+    // returns only sessionName (no SessionLauncher created)
+    const sessionInfo = await createOrReuseSession(sharedPage, {
+      defaultSessionName: `e2e-app-launcher-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+    });
+    sessionName = sessionInfo.sessionName;
+    sessionLauncher = sessionInfo.sessionLauncher;
 
-    // Create session using SessionLauncher
-    await sessionLauncher.create();
     sessionCreated = true;
 
-    // Open app launcher modal once for all tests
-    appLauncherModal = await AppLauncherModal.openFromSession(
-      sharedPage,
-      sessionLauncher,
-    );
+    // Open app launcher modal based on session mode
+    if (sessionLauncher) {
+      appLauncherModal = await AppLauncherModal.openFromSession(
+        sharedPage,
+        sessionLauncher,
+      );
+    } else {
+      appLauncherModal = await AppLauncherModal.openBySessionName(
+        sharedPage,
+        sessionName,
+      );
+    }
   });
 
   // Cleanup: Terminate the session and close context after all tests
@@ -71,8 +81,9 @@ test.describe('AppLauncher - Basic Interaction', () => {
         // Wait for drawer to close
       }
 
-      // Terminate the session using SessionLauncher
-      await sessionLauncher.terminate();
+      // Terminate the session only if we created it (sessionLauncher exists)
+      // When reusing, sessionLauncher is undefined, so this is skipped
+      await sessionLauncher?.terminate();
     }
 
     if (sharedContext) {
@@ -87,7 +98,7 @@ test.describe('AppLauncher - Basic Interaction', () => {
     await expect(appLauncherModal.getModal()).toBeVisible();
 
     // Verify modal title contains session name
-    await appLauncherModal.verifyModalTitle(sessionLauncher.getSessionName());
+    await appLauncherModal.verifyModalTitle(sessionName);
 
     // Verify modal footer is not visible (footer={null})
     await appLauncherModal.verifyNoFooter();

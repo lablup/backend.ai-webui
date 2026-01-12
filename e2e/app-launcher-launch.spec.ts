@@ -2,7 +2,11 @@
 // Section 2: App Launcher - Basic App Launch Tests
 import { AppLauncherModal } from './utils/classes/AppLauncherModal';
 import { SessionLauncher } from './utils/classes/SessionLauncher';
-import { loginAsUser, modifyConfigToml } from './utils/test-util';
+import {
+  loginAsUser,
+  modifyConfigToml,
+  createOrReuseSession,
+} from './utils/test-util';
 import { test, expect, Page, BrowserContext } from '@playwright/test';
 
 /**
@@ -57,7 +61,8 @@ test.describe('AppLauncher - Basic App Launch', () => {
   let sharedContext: BrowserContext;
   let sharedPage: Page;
   let appLauncherModal: AppLauncherModal;
-  let sessionLauncher: SessionLauncher;
+  let sessionName: string;
+  let sessionLauncher: SessionLauncher | undefined;
 
   test.beforeAll(async ({ browser, request }, testInfo) => {
     testInfo.setTimeout(300000); // 5 minutes timeout for session creation + modal opening
@@ -75,22 +80,30 @@ test.describe('AppLauncher - Basic App Launch', () => {
 
     await loginAsUser(sharedPage, request);
 
-    // Initialize SessionLauncher with custom image and unique session name
-    sessionLauncher = new SessionLauncher(sharedPage)
-      .withSessionName(
-        `e2e-app-launch-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
-      )
-      .withImage('cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64');
+    // Use createOrReuseSession helper for session creation
+    // When E2E_REUSE_SESSION=true and E2E_EXISTING_SESSION_NAME is set,
+    // returns only sessionName (no SessionLauncher created)
+    const sessionInfo = await createOrReuseSession(sharedPage, {
+      defaultSessionName: `e2e-app-launch-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+      image: 'cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64',
+    });
+    sessionName = sessionInfo.sessionName;
+    sessionLauncher = sessionInfo.sessionLauncher;
 
-    // Create session using SessionLauncher
-    await sessionLauncher.create();
     sessionCreated = true;
 
-    // Open app launcher modal once for all tests
-    appLauncherModal = await AppLauncherModal.openFromSession(
-      sharedPage,
-      sessionLauncher,
-    );
+    // Open app launcher modal based on session mode
+    if (sessionLauncher) {
+      appLauncherModal = await AppLauncherModal.openFromSession(
+        sharedPage,
+        sessionLauncher,
+      );
+    } else {
+      appLauncherModal = await AppLauncherModal.openBySessionName(
+        sharedPage,
+        sessionName,
+      );
+    }
   });
 
   // Cleanup: Terminate the session and close context after all tests
@@ -121,8 +134,9 @@ test.describe('AppLauncher - Basic App Launch', () => {
         await drawerCloseButton.click();
       }
 
-      // Terminate the session using SessionLauncher
-      await sessionLauncher.terminate();
+      // Terminate the session only if we created it (sessionLauncher exists)
+      // When reusing, sessionLauncher is undefined, so this is skipped
+      await sessionLauncher?.terminate();
     }
 
     if (sharedContext) {

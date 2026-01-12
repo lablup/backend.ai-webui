@@ -1,4 +1,5 @@
 import { FolderCreationModal } from './classes/FolderCreationModal';
+import { SessionLauncher } from './classes/SessionLauncher';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
@@ -496,6 +497,31 @@ export async function deleteSession(page: Page, sessionName: string) {
 }
 
 /**
+ * Deep merge utility function
+ */
+function deepMerge(
+  target: Record<string, any>,
+  source: Record<string, any>,
+): Record<string, any> {
+  const result = { ...target };
+  for (const key in source) {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key])
+    ) {
+      result[key] = deepMerge(result[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+}
+
+// Store accumulated config modifications per page
+const pageConfigCache = new WeakMap<Page, Record<string, any>>();
+
+/**
  * Modify specific columns in the webui config.toml file
  *
  * @param page
@@ -504,6 +530,9 @@ export async function deleteSession(page: Page, sessionName: string) {
  * The object to modify the config.toml file
  *
  * e.g. { "environments": { "showNonInstalledImages": "true" } }
+ *
+ * NOTE: This function accumulates config changes across multiple calls.
+ * Each call deep merges with previous modifications.
  */
 
 export async function modifyConfigToml(
@@ -511,17 +540,123 @@ export async function modifyConfigToml(
   request: APIRequestContext,
   configColumn: Record<string, Record<string, any>>,
 ) {
-  const configToml = await (
-    await request.get(`${webuiEndpoint}/config.toml`)
-  ).text();
-  const config = TOML.parse(configToml);
-  Object.assign(config, configColumn);
+  // Get or initialize the accumulated config for this page
+  let accumulatedConfig = pageConfigCache.get(page);
 
+  if (!accumulatedConfig) {
+    // First call: fetch original config
+    const configToml = await (
+      await request.get(`${webuiEndpoint}/config.toml`)
+    ).text();
+    accumulatedConfig = TOML.parse(configToml) as Record<string, any>;
+  }
+
+  // Deep merge the new config column with accumulated config
+  accumulatedConfig = deepMerge(accumulatedConfig, configColumn);
+
+  // Store the accumulated config for future calls
+  pageConfigCache.set(page, accumulatedConfig);
+
+  // Unroute any existing route first to avoid conflicts
+  await page.unroute(`${webuiEndpoint}/config.toml`);
+
+  // Set up the route with the accumulated config
   await page.route(`${webuiEndpoint}/config.toml`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'text/plain',
-      body: TOML.stringify(config),
+      body: TOML.stringify(accumulatedConfig as TOML.JsonMap),
     });
   });
+}
+
+/**
+ * Check if session reuse is enabled via environment variables.
+ * Session reuse is useful for speeding up test development and debugging.
+ *
+ * @returns true if E2E_REUSE_SESSION is 'true' and E2E_EXISTING_SESSION_NAME is set
+ */
+export function isSessionReuseEnabled(): boolean {
+  return (
+    process.env.E2E_REUSE_SESSION === 'true' &&
+    !!process.env.E2E_EXISTING_SESSION_NAME
+  );
+}
+
+/**
+ * Result of createOrReuseSession helper
+ */
+export interface SessionInfo {
+  /** Session name (always available) */
+  sessionName: string;
+  /** SessionLauncher instance (only available when a new session was created) */
+  sessionLauncher?: SessionLauncher;
+}
+
+/**
+ * Create a new session or reuse an existing one based on environment variables.
+ *
+ * When E2E_REUSE_SESSION=true and E2E_EXISTING_SESSION_NAME is set:
+ * - Returns only the session name (no SessionLauncher object created)
+ * - Use AppLauncherModal.openBySessionName() to open the modal
+ *
+ * When creating a new session:
+ * - Returns both sessionName and sessionLauncher
+ * - Use AppLauncherModal.openFromSession() or sessionLauncher for operations
+ * - Call sessionLauncher.terminate() in afterAll to cleanup
+ *
+ * @param page - Playwright Page object
+ * @param options - Configuration options
+ * @param options.defaultSessionName - Session name to use when creating a new session
+ * @param options.image - Container image to use (optional, has default)
+ * @returns SessionInfo with sessionName and optional sessionLauncher
+ *
+ * @example
+ * ```typescript
+ * const { sessionName, sessionLauncher } = await createOrReuseSession(page, {
+ *   defaultSessionName: `e2e-test-${Date.now()}`,
+ * });
+ *
+ * // Open modal based on mode
+ * if (sessionLauncher) {
+ *   appLauncherModal = await AppLauncherModal.openFromSession(page, sessionLauncher);
+ * } else {
+ *   appLauncherModal = await AppLauncherModal.openBySessionName(page, sessionName);
+ * }
+ *
+ * // Cleanup (only terminates if sessionLauncher exists)
+ * await sessionLauncher?.terminate();
+ * ```
+ */
+export async function createOrReuseSession(
+  page: Page,
+  options: {
+    defaultSessionName: string;
+    image?: string;
+  },
+): Promise<SessionInfo> {
+  if (isSessionReuseEnabled()) {
+    const sessionName = process.env.E2E_EXISTING_SESSION_NAME!;
+    console.log(`[SESSION REUSE] Using existing session: ${sessionName}`);
+    return { sessionName };
+  }
+
+  // Create new session
+  const image =
+    options.image ||
+    'cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64';
+
+  const sessionLauncher = new SessionLauncher(page)
+    .withSessionName(options.defaultSessionName)
+    .withImage(image);
+
+  await sessionLauncher.create();
+  console.log(
+    `[SESSION CREATE] Created new session: ${options.defaultSessionName}`,
+  );
+
+  return {
+    sessionName: sessionLauncher.getSessionName(),
+    sessionLauncher,
+  };
 }
