@@ -13,6 +13,7 @@ import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
 import {
+  App,
   Button,
   Checkbox,
   Col,
@@ -33,6 +34,7 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   useBAILogger,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef, useState } from 'react';
@@ -53,6 +55,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   sessionFrgmt,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
@@ -63,6 +66,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   const [forceUseV2Proxy, setForceUseV2Proxy] = useState<boolean>(false);
   const [useSubDomain, setUseSubDomain] = useState<boolean>(false);
   const [subDomainValue, setSubDomainValue] = useState<string>('');
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const session = useFragment(
     graphql`
@@ -102,12 +107,15 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         return;
       });
 
-    // Tensorboard - show path input modal BEFORE starting proxy
-    // This matches legacy behavior where modal is shown first, then proxy starts after path submission
-    if (app?.name === 'tensorboard') {
-      setOpenTensorboardModal(true);
-      return;
-    }
+      // Handle special apps that require confirmation before launching (nniboard, mlflow-ui)
+      // These apps need to run before tunneling, so show confirmation dialog first
+      if (['nniboard', 'mlflow-ui'].includes(app?.name ?? '')) {
+        setConfirmationModalState({
+          open: true,
+          appName: app?.name ?? '',
+        });
+        return;
+      }
 
       // Tensorboard - show path input modal BEFORE starting proxy
       // This matches legacy behavior where modal is shown first, then proxy starts after path submission
@@ -198,7 +206,6 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         },
       });
     } catch (error) {
-      // @ts-ignore
       message.error(getErrorMessage(error));
     }
   };

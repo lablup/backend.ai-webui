@@ -28,29 +28,32 @@ export type ESMClientErrorResponse = {
 const useErrorMessageResolver = () => {
   const { t } = useTranslation();
 
+  const isErrorLike = (
+    error: unknown,
+  ): error is Partial<ErrorResponse & Error> => {
+    return typeof error === 'object' && error !== null;
+  };
+
   /**
    * Resolves the error message for a given error object.
    * @param error - The error object to resolve.
    * @param defaultMessage - (optional) The default message to return if no specific message is found.
    * @returns - The resolved error message (string).
    */
-  const getErrorMessage = (
-    error: Partial<ErrorResponse & Error> | undefined | null,
-    defaultMessage?: string,
-  ): string => {
+  const getErrorMessage = (error: unknown, defaultMessage?: string): string => {
     let errorMsg = defaultMessage || t('error.UnknownError');
-    if (!error) return errorMsg;
+    if (!error || !isErrorLike(error)) return errorMsg;
 
     // Prioritize `msg` or `message`(deprecated) field if available.
-    if (error?.msg || error?.message) {
-      const integratedErrorMsg = error?.msg || error?.message || '';
+    if (error.msg || error.message) {
+      const integratedErrorMsg = error.msg || error.message || '';
       errorMsg = !_.includes(integratedErrorMsg, 'Traceback')
         ? integratedErrorMsg
         : errorMsg;
     } else if (error.title) {
       errorMsg = error.title;
     }
-    if (error?.error_code) {
+    if (error.error_code) {
       errorMsg = _.join([errorMsg, `(${error.error_code})`], ' ');
     }
 

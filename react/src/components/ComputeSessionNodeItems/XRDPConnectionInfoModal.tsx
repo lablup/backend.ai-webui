@@ -1,5 +1,3 @@
-'use memo';
-
 import { Alert, Descriptions, Typography } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +12,8 @@ const XRDPConnectionInfoModal: React.FC<XRDPConnectionInfoModalProps> = ({
   port,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const rdpUrl = `rdp://${host}:${port}`;
 

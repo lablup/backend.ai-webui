@@ -1,5 +1,3 @@
-'use memo';
-
 import { Descriptions } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +14,8 @@ const TCPConnectionInfoModal: React.FC<TCPConnectionInfoModalProps> = ({
   port,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
 
   return (

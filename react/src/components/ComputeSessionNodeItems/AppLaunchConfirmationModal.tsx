@@ -1,5 +1,3 @@
-'use memo';
-
 import { Typography } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +24,8 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
 
   const session = useFragment(

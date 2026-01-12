@@ -1,5 +1,3 @@
-'use memo';
-
 import { Alert, Descriptions, Typography } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +12,7 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
   port,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const vncDisplayUrl = `vnc://${host}:${port}`;
   // Note: Original code uses ssh:// in href but displays vnc://

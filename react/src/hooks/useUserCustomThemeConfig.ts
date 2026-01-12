@@ -1,5 +1,3 @@
-'use memo';
-
 import { useBAISettingUserState } from './useBAISetting';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import { App } from 'antd';
@@ -8,6 +6,8 @@ import { useEffectEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const useUserCustomThemeConfig = () => {
+  'use memo';
+
   const { t } = useTranslation();
   const { message } = App.useApp();
   const themeConfig = useCustomThemeConfig();

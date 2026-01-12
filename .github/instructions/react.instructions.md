@@ -11,7 +11,7 @@ These instructions apply to React components in the `/react` directory.
 ### 'use memo' Directive (Recommended)
 
 - This project uses the new **React Compiler**.
-- We actively use React directives such as `use memo` and `use client` at the top of files or components.
+- We actively use React directives such as `use memo` and `use client` at the top components (NOT files).
 - `use memo` is **intentional and valid** in this codebase.
 - Even if tooling or TypeScript/ESLint shows something like:
   - `Unknown directive: 'use memo'.`
@@ -55,36 +55,42 @@ const MyComponent: React.FC<Props> = ({ data }) => {
 `useEffectEvent` extracts non-reactive logic from Effects, allowing access to latest props/state without making them dependencies.
 
 **When to Use:**
+
 - Access current values in Effects without triggering re-runs
 - Separate what triggers the Effect from what it does
 - Event handlers, logging, or analytics inside Effects
 
 **Example:**
+
 ```typescript
 const onConnected = useEffectEvent(() => {
-  showNotification('Connected!', theme); // Latest theme, not reactive
+  showNotification("Connected!", theme); // Latest theme, not reactive
 });
 
 useEffect(() => {
   const connection = createConnection(url);
-  connection.on('connected', onConnected);
+  connection.on("connected", onConnected);
   return () => connection.disconnect();
 }, [url]); // Only url triggers re-connection
 ```
 
 **Restrictions:**
+
 - Only call inside `useEffect`/`useLayoutEffect`/`useInsertionEffect`
 - Never use to bypass legitimate dependencies
 - Only for truly non-reactive logic (logging, analytics, non-triggering side effects)
 
 **Benefits Over useCallback:**
+
 ```typescript
 // ❌ Old: Re-subscribes on every change
 const handler = useCallback(() => doSomething(a, b, c), [a, b, c]);
 
 // ✅ New: Subscribe once, always latest values
 const handler = useEffectEvent(() => doSomething(a, b, c));
-useEffect(() => { subscribe(handler); }, []);
+useEffect(() => {
+  subscribe(handler);
+}, []);
 ```
 
 ## React Composability
@@ -150,6 +156,7 @@ const ComponentA = () => {
 Replace array-based column extension with function-based composition for maximum flexibility.
 
 **Problem with Array-Based Approach:**
+
 ```typescript
 // ❌ Limited: Can only append columns
 interface TableProps {
@@ -161,6 +168,7 @@ interface TableProps {
 ```
 
 **Solution: Function-Based Composition:**
+
 ```typescript
 // ✅ Flexible: Full control over column order
 interface TableProps {
@@ -189,12 +197,14 @@ interface TableProps {
 ```
 
 **Benefits:**
+
 - **Flexible Composition**: Insert, filter, reorder columns at any position
 - **Reusability**: Base component works with different column configurations
 - **Type Safety**: TypeScript ensures column customization is type-safe
 - **Clean Architecture**: Follows separation of concerns principle
 
 **When to Apply:**
+
 - Table components with customizable columns
 - Lists with configurable items
 - Any component where consumers need control over child element ordering
@@ -291,23 +301,27 @@ interface ComponentProps {
 }
 
 const Component: React.FC<ComponentProps> = ({ queryRef }) => {
-  const data = useFragment(graphql`fragment Component_query on Query { ... }`, queryRef);
+  const data = useFragment(
+    graphql`fragment Component_query on Query { ... }`,
+    queryRef,
+  );
 };
 
 // ✅ Good: Use specific naming for other types
 interface UserProfileProps {
-  userFrgmt: UserProfile_user$key;  // For User type
-  projectFrgmt: UserProfile_project$key;  // For Project type
+  userFrgmt: UserProfile_user$key; // For User type
+  projectFrgmt: UserProfile_project$key; // For Project type
 }
 
 // ❌ Bad: Inconsistent naming
 interface ComponentProps {
-  fragmentData: ComponentQuery$key;  // Not following convention
-  queryKey: ComponentQuery$key;  // Missing 'Ref' suffix
+  fragmentData: ComponentQuery$key; // Not following convention
+  queryKey: ComponentQuery$key; // Missing 'Ref' suffix
 }
 ```
 
 **Naming Rules:**
+
 - Query fragments: Use `queryRef`
 - Other types: Use `{typeName}Frgmt` (e.g., `userFrgmt`, `projectFrgmt`)
 - For non-Query fragments, always include the `Frgmt` suffix to indicate it's a fragment reference
@@ -317,6 +331,7 @@ interface ComponentProps {
 Separate data fetching (query orchestrator) from presentation (fragment component) for better code organization and reusability.
 
 **Architecture Pattern:**
+
 ```
 ┌─────────────────────────────────────┐
 │     Query Orchestrator Component    │
@@ -335,6 +350,7 @@ Separate data fetching (query orchestrator) from presentation (fragment componen
 ```
 
 **Implementation Example:**
+
 ```typescript
 // Query Orchestrator Component
 const UserManagement: React.FC = () => {
@@ -412,6 +428,7 @@ const UserNodes: React.FC<UserNodesProps> = ({
 ```
 
 **Benefits:**
+
 - **Separation of Concerns**: Data fetching logic separate from presentation
 - **Reusability**: Fragment components can be used with different queries
 - **Type Safety**: Relay generates types for fragments
@@ -449,14 +466,15 @@ import { BAIModal, BAIFlex } from '@backend.ai/backend.ai-ui';
 
 **When to Use `action` vs `onClick`:**
 
-| Scenario | Use `action` | Use `onClick` |
-|----------|--------------|---------------|
-| Async operations (API calls, mutations) | ✅ | ❌ |
-| Simple state updates | ❌ | ✅ |
-| Operations requiring loading feedback | ✅ | ❌ |
-| Navigation or routing | ✅ | ✅ |
+| Scenario                                | Use `action` | Use `onClick` |
+| --------------------------------------- | ------------ | ------------- |
+| Async operations (API calls, mutations) | ✅           | ❌            |
+| Simple state updates                    | ❌           | ✅            |
+| Operations requiring loading feedback   | ✅           | ❌            |
+| Navigation or routing                   | ✅           | ✅            |
 
 **Usage Examples:**
+
 ```typescript
 // ✅ Good: Use action for async operations
 <BAIButton
@@ -495,6 +513,7 @@ const [isLoading, setIsLoading] = useState(false);
 ```
 
 **Benefits:**
+
 - Automatic loading state management
 - React Transition integration for responsive UI
 - Prevents double clicks during execution
@@ -612,7 +631,7 @@ try {
 try {
   await fetchData();
 } catch (e) {
-  logger.error('Failed to fetch data:', e);
+  logger.error("Failed to fetch data:", e);
   // Handle error appropriately
 }
 
@@ -625,6 +644,7 @@ try {
 ```
 
 **Why this matters:**
+
 - Empty catch blocks hide bugs and make debugging difficult
 - Security scanners flag empty catches as vulnerabilities
 - Makes code review harder - unclear if error is intentionally ignored
@@ -642,6 +662,7 @@ try {
 ```
 
 **Why this rule exists:**
+
 - Console statements should be removed before production
 - Uncontrolled logging clutters browser console
 - No way to filter or control log levels
@@ -682,13 +703,13 @@ Use appropriate log levels for different scenarios:
 ```typescript
 // ✅ Good: Appropriate log levels
 const handleSubmit = async () => {
-  logger.debug('Form submitted with values:', formValues);
+  logger.debug("Form submitted with values:", formValues);
 
   try {
     const result = await submitData(formValues);
-    logger.info('Data submitted successfully:', result.id);
+    logger.info("Data submitted successfully:", result.id);
   } catch (error) {
-    logger.error('Failed to submit data:', error);
+    logger.error("Failed to submit data:", error);
     throw error;
   }
 };
@@ -697,20 +718,23 @@ const handleSubmit = async () => {
 #### Logger Features
 
 **Automatic production control:**
+
 ```typescript
 // Logger is automatically disabled in production
 // No need to manually check NODE_ENV
-logger.debug('This only logs in development');
+logger.debug("This only logs in development");
 ```
 
 **Contextual logging:**
+
 ```typescript
 // Add context to logs for better debugging
-const contextLogger = logger.withContext('userId', user.id);
-contextLogger.info('User action performed');
+const contextLogger = logger.withContext("userId", user.id);
+contextLogger.info("User action performed");
 ```
 
 **Plugin support:**
+
 ```typescript
 // Logger supports plugins for custom behavior
 logger.use({
@@ -730,15 +754,15 @@ When you encounter `console.log` in existing code:
 
 ```typescript
 // ❌ Bad: Using console directly
-console.log('User logged in');
-console.error('API error:', error);
-console.warn('Deprecated feature used');
+console.log("User logged in");
+console.error("API error:", error);
+console.warn("Deprecated feature used");
 
 // ✅ Good: Use logger with appropriate levels
 const { logger } = useBAILogger();
-logger.info('User logged in');
-logger.error('API error:', error);
-logger.warn('Deprecated feature used');
+logger.info("User logged in");
+logger.error("API error:", error);
+logger.warn("Deprecated feature used");
 ```
 
 ### Loading States
@@ -1012,23 +1036,27 @@ interface Props {
 When reviewing React code, check for:
 
 ### React Compiler & Optimization
+
 - [ ] Component uses `'use memo'` directive if it's a new component
 - [ ] No unnecessary `useMemo`/`useCallback` (prefer 'use memo' directive)
 - [ ] `useEffectEvent` is used for non-reactive logic in Effects when appropriate
 
 ### React Transitions
+
 - [ ] `BAIButton` uses `action` prop for async operations
 - [ ] No manual loading state management where `BAIButton` action suffices
 - [ ] `useTransition` is used for non-urgent state updates
 - [ ] `useDeferredValue` is used for optimistic rendering
 
 ### Component Composition
+
 - [ ] Component follows composability principles (no props drilling, proper extraction)
 - [ ] Function-based APIs (`customizeColumns`) over array-based (`extraColumns`)
 - [ ] Components follow single responsibility principle
 - [ ] Complex components are split into smaller, focused components
 
 ### Relay Architecture
+
 - [ ] Query orchestrator components separate from fragment components
 - [ ] Fragment refs are properly typed with generated `$key` types
 - [ ] Fragment props follow naming conventions (`queryRef` for Query, `{typeName}Frgmt` for others)
@@ -1037,6 +1065,7 @@ When reviewing React code, check for:
 - [ ] Relay hooks (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`) are used correctly
 
 ### UI Components
+
 - [ ] **BAI components are used instead of Ant Design equivalents**
 - [ ] `BAIText` used for text rendering (theme management)
 - [ ] CSS inheritance (`fontSize: 'inherit'`) preferred over hard-coded values
@@ -1045,6 +1074,7 @@ When reviewing React code, check for:
 - [ ] `BAIUnmountAfterClose` wraps modal/drawer content with forms
 
 ### TypeScript
+
 - [ ] Discriminated unions used for component variants
 - [ ] No `any` types without justification
 - [ ] Callback props follow standard naming (`onChange`, `onSubmit`)
@@ -1052,15 +1082,18 @@ When reviewing React code, check for:
 - [ ] TypeScript types are properly defined
 
 ### Error Handling & State
+
 - [ ] Pre-defined error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`) are used
 - [ ] Error states and loading states are handled
 - [ ] Recoil is used for global state when appropriate
 
 ### Internationalization & Accessibility
+
 - [ ] i18n is used for all user-facing text
 - [ ] Component is accessible (ARIA, keyboard navigation)
 
 ### Security & Quality
+
 - [ ] No security vulnerabilities (XSS, injection risks)
 - [ ] No empty catch blocks (use explicit error handling or `catch { return undefined; }`)
 - [ ] No `console.log` or direct console methods (use `useBAILogger` instead)
@@ -1068,6 +1101,7 @@ When reviewing React code, check for:
 - [ ] Unused props and variables removed
 
 ### Refactoring Quality (when applicable)
+
 - [ ] Changes are incremental and reviewable
 - [ ] All usages updated consistently
 - [ ] Backward compatibility maintained where needed

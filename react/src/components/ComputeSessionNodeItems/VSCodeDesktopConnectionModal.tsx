@@ -1,6 +1,4 @@
-'use memo';
-
-import SourceCodeViewer from '../SourceCodeViewer';
+import SourceCodeView from '../SourceCodeView';
 import { Descriptions, Skeleton, Typography } from 'antd';
 import {
   BAIButton,
@@ -22,6 +20,7 @@ interface VSCodeDesktopConnectionModalProps extends BAIModalProps {
 const VSCodeDesktopConnectionModal: React.FC<
   VSCodeDesktopConnectionModalProps
 > = ({ sessionId, host = '127.0.0.1', port, ...modalProps }) => {
+  'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -90,7 +89,7 @@ const VSCodeDesktopConnectionModal: React.FC<
         <Typography.Text>
           {t('session.VSCodeRemoteNoticeSSHConfig')}
         </Typography.Text>
-        <SourceCodeViewer language="shell">{sshConfig}</SourceCodeViewer>
+        <SourceCodeView language="shell">{sshConfig}</SourceCodeView>
 
         <BAIButton href={vscodeUri} target="_blank" type="primary" size="large">
           {t('session.appLauncher.OpenVSCodeRemote')}

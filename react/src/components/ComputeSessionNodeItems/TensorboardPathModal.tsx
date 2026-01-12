@@ -1,5 +1,3 @@
-'use memo';
-
 import { App, Form, Input, Typography } from 'antd';
 import {
   BAIButton,
@@ -9,7 +7,6 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { TensorboardPathModalFragment$key } from 'src/__generated__/TensorboardPathModalFragment.graphql';
@@ -26,11 +23,12 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [form] = Form.useForm();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -50,7 +48,6 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
     useBackendAIAppLauncher(session);
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
     try {
       const values = await form.validateFields();
       const path = values.tensorboardPath || '/home/work/logs';
@@ -82,8 +79,6 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
     } catch (error) {
       logger.error('Failed to launch tensorboard:', error);
       message.error(getErrorMessage(error as Error));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -111,12 +106,7 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           </Form.Item>
         </Form>
 
-        <BAIButton
-          type="primary"
-          size="large"
-          loading={isSubmitting}
-          action={handleSubmit}
-        >
+        <BAIButton type="primary" size="large" action={handleSubmit}>
           {t('session.UseThisPath')}
         </BAIButton>
       </BAIFlex>

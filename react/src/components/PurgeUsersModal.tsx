@@ -1,5 +1,3 @@
-'use memo';
-
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { PurgeUsersModalMutation } from '../__generated__/PurgeUsersModalMutation.graphql';
 import { App, Checkbox, Form, theme } from 'antd';
@@ -32,6 +30,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   usersFrgmt,
   ...baiModalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<PurgeUsersFormValues>>(null);
