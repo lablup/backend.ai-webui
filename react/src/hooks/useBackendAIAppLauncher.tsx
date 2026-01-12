@@ -393,8 +393,7 @@ export const useBackendAIAppLauncher = (
     const { appConnectUrl, reused, redirectUrl } = await _connectToProxyWorker(
       response.url,
       '',
-      !TCP_APPS.includes(app) || globalThis.isElectron,
-      // ^^ false for TCP apps in browser, true otherwise
+      !TCP_APPS.includes(app) || globalThis.isElectron, // Enable direct TCP for non-TCP apps, or when running in Electron
     );
 
     // Initialize TCP connection info variables
@@ -746,7 +745,6 @@ export const useBackendAIAppLauncher = (
     };
   };
 
-  // @ts-ignore
   return {
     /**
      * Convenience method to launch terminal (ttyd) app.
@@ -831,18 +829,6 @@ export const useBackendAIAppLauncher = (
      * Used when re-launching apps like tensorboard that need to be restarted with different args.
      */
     closeWsproxy: _close_wsproxy,
-    // TODO: implement below function
-    // showLauncher: (params: {
-    //   'session-uuid'?: string;
-    //   'access-key'?: string;
-    //   'app-services'?: string;
-    //   mode?: string;
-    //   'app-services-option'?: string;
-    //   'service-ports'?: string;
-    //   runtime?: string;
-    //   filename?: string;
-    //   arguments?: string;
-    // }) => {},
   };
 };
 
@@ -874,7 +860,11 @@ class AppLaunchError extends Error {
  * @param request - Request configuration object
  * @returns Parsed response body or error object with status
  */
-async function sendRequest(request: any) {
+interface SendRequestConfig extends RequestInit {
+  uri: string;
+  method?: string;
+}
+async function sendRequest(request: SendRequestConfig) {
   try {
     if (request.method === 'GET') {
       request.body = undefined;

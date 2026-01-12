@@ -111,7 +111,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
 
     // Tensorboard - show path input modal BEFORE starting proxy
     // This matches legacy behavior where modal is shown first, then proxy starts after path submission
-    if (app?.name === 'tensorboard') {
+    if (app.name === 'tensorboard') {
       setOpenTensorboardModal(true);
       return;
     }
