@@ -28,7 +28,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
         const isLoginSessionExpiredError =
           isExpiredLoginSession ||
           error?.name === 'AuthorizationError' ||
-          error?.statusCode === 401;
+          (error as any)?.statusCode === 401;
         return (
           <BAIFlex
             style={{ margin: 'auto', ...style }}

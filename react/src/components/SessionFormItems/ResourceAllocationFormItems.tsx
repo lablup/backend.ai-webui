@@ -240,6 +240,25 @@ const ResourceAllocationFormItems: React.FC<
     );
   }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
 
+  const runShmemAutomationRule = (M_plus_S: string) => {
+    // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
+    if (
+      // M+S > 4G
+      compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+      // M+S > M+1G
+      compareNumberWithUnits(
+        M_plus_S,
+        addNumberWithUnits(currentImageMinM, '1g') || '0b',
+      ) >= 0 &&
+      // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
+      compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
+    ) {
+      form.setFieldValue(['resource', 'shmem'], '1g');
+    } else {
+      form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
+    }
+  };
+
   const ensureValidAcceleratorType = useEventNotStable(() => {
     const currentAcceleratorType = form.getFieldValue([
       'resource',
@@ -426,25 +445,6 @@ const ResourceAllocationFormItems: React.FC<
         .catch(() => {});
     },
   );
-
-  const runShmemAutomationRule = (M_plus_S: string) => {
-    // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
-    if (
-      // M+S > 4G
-      compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
-      // M+S > M+1G
-      compareNumberWithUnits(
-        M_plus_S,
-        addNumberWithUnits(currentImageMinM, '1g') || '0b',
-      ) >= 0 &&
-      // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
-      compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
-    ) {
-      form.setFieldValue(['resource', 'shmem'], '1g');
-    } else {
-      form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
-    }
-  };
 
   // This effect is
   // - for auto selecting the preset right after initialling the form and resourceSlots are loaded

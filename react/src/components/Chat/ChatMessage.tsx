@@ -5,7 +5,7 @@ import {
 // ES 2015
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
-import { Attachments } from '@ant-design/x';
+import { FileCard } from '@ant-design/x';
 import { theme, Image, Collapse, Typography, Spin } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -91,15 +91,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             />
           </BAIFlex>
         ) : (
-          <Attachments.FileCard
+          <FileCard
             key={`${message?.id}-${index}`}
-            item={{
-              uid: `${message?.id}-${index}`,
-              name: filename,
-              type: part?.mediaType,
-              description: filename,
-              url: part?.url,
-            }}
+            name={filename}
+            description={filename}
+            src={part?.url}
+            type={part?.mediaType}
           />
         );
       })}
