@@ -1461,6 +1461,7 @@
     "SessionTerminated": "Чуулган дуусав.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Чуулган дуусгавар болсон.",
+    "StartupCommand": "Эхлэх тушаал",
     "Status": "Статус",
     "StatusDetail": "Дэлгэрэнгүй",
     "StatusInfo": "Статусын мэдээлэл",
@@ -1491,6 +1492,7 @@
     "VSCodeRemoteDescription": "Та доорх нууц үгийг ашиглан дотоод Visual Studio Code програмаа ажиллуулж, алсаас тооцоолох сесс (SSH-ээр) холбогдож болно. \nТовчлуур дээр дарахаас өмнө нууц үгээ хуулна уу. \n(ЖИЧ: Та өөрийн дотоод машиндаа Visual Studio кодыг суулгах хэрэгтэй.)",
     "VSCodeRemoteNoticeSSHConfig": "Visual Studio Code-ийн алсын тооцооллын сесстэй саадгүй холболтыг тохируулахын тулд $HOME/.ssh/config файлыг үүсгэж, засаад дараах блокийг нэмнэ үү.",
     "VSCodeRemotePasswordTitle": "Visual Studio Code алсын SSH нууц үг",
+    "ViewStartupCommand": "Эхлүүлэх тушаалыг үзэх",
     "WarningForceTerminateSessions": "Анхааруулга: Сешн(үүд)-ийг хүчээр зогсоох",
     "XRDPconnection": "RDP холболт",
     "appLauncher": {

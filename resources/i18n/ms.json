@@ -1463,6 +1463,7 @@
     "SessionTerminated": "Sesi ditamatkan.",
     "SessionType": "Jenis Sesi",
     "SessionsTerminated": "Sesi ditamatkan.",
+    "StartupCommand": "Perintah Permulaan",
     "Status": "Status",
     "StatusDetail": "Perincian",
     "StatusInfo": "Maklumat Status",
@@ -1493,6 +1494,7 @@
     "VSCodeRemoteDescription": "Anda boleh melancarkan aplikasi Kod Visual Studio tempatan anda dan menyambung ke sesi pengiraan jauh (melalui SSH) menggunakan kata laluan di bawah. \nSila salin kata laluan sebelum mengklik butang. \n(NOTA: Anda perlu memasang Kod Visual Studio dalam mesin tempatan anda.)",
     "VSCodeRemoteNoticeSSHConfig": "Untuk menyediakan sambungan lancar bagi Kod Visual Studio ke sesi pengiraan jauh, cipta atau edit fail $HOME/.ssh/config dan tambahkan blok berikut.",
     "VSCodeRemotePasswordTitle": "Kata laluan SSH jauh Kod Visual Studio",
+    "ViewStartupCommand": "Lihat perintah permulaan",
     "WarningForceTerminateSessions": "Amaran: Tamatkan Sesi Paksa",
     "XRDPconnection": "Sambungan RDP",
     "appLauncher": {

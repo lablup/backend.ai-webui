@@ -14,7 +14,7 @@ import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
-import SourceCodeViewer from './SourceCodeViewer';
+import SourceCodeView from './SourceCodeView';
 import {
   Descriptions,
   Typography,
@@ -69,9 +69,9 @@ const SessionLauncherPreview: React.FC<{
                       <Typography.Paragraph>
                         {t('userSettings.BootstrapScriptDescription')}
                       </Typography.Paragraph>
-                      <SourceCodeViewer wordWrap language={'shell'}>
+                      <SourceCodeView language={'shell'}>
                         {form.getFieldValue('bootstrap_script')}
-                      </SourceCodeViewer>
+                      </SourceCodeView>
                     </BAIFlex>
                   ),
                   width: 800,
@@ -124,9 +124,9 @@ const SessionLauncherPreview: React.FC<{
                 }}
               >
                 {form.getFieldValue(['batch', 'command']) ? (
-                  <SourceCodeViewer language="shell">
+                  <SourceCodeView language="shell">
                     {form.getFieldValue(['batch', 'command'])}
-                  </SourceCodeViewer>
+                  </SourceCodeView>
                 ) : (
                   <Typography.Text type="secondary">
                     {t('general.None')}
@@ -382,13 +382,13 @@ const SessionLauncherPreview: React.FC<{
             >
               {form.getFieldValue('envvars')?.length ? (
                 <BAIFlex align="stretch" direction="column">
-                  <SourceCodeViewer wordWrap language={'shell'}>
+                  <SourceCodeView language={'shell'}>
                     {_.map(
                       form.getFieldValue('envvars'),
                       (v: { variable: string; value: string }) =>
                         `${v?.variable || ''}="${v?.value || ''}"`,
                     ).join('\n')}
-                  </SourceCodeViewer>
+                  </SourceCodeView>
                 </BAIFlex>
               ) : (
                 <Typography.Text type="secondary">-</Typography.Text>
@@ -593,13 +593,12 @@ const SessionLauncherPreview: React.FC<{
             <Descriptions size="small">
               <Descriptions.Item label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
-                  {_.map(form.getFieldValue('autoMountedFolderNames'), (name) => {
-                    return (
-                      <Tag key={name}>
-                        {name}
-                      </Tag>
-                    );
-                  })}
+                  {_.map(
+                    form.getFieldValue('autoMountedFolderNames'),
+                    (name) => {
+                      return <Tag key={name}>{name}</Tag>;
+                    },
+                  )}
                 </BAIFlex>
               </Descriptions.Item>
             </Descriptions>

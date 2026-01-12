@@ -1452,6 +1452,7 @@
     "SessionTerminated": "เซสชันถูกยุติแล้ว",
     "SessionType": "ประเภทเซสชัน",
     "SessionsTerminated": "เซสชันถูกยุติแล้ว",
+    "StartupCommand": "คำสั่งเริ่มต้น",
     "Status": "สถานะ",
     "StatusDetail": "รายละเอียด",
     "StatusInfo": "ข้อมูลสถานะ",
@@ -1482,6 +1483,7 @@
     "VSCodeRemoteDescription": "คุณสามารถเปิดแอปพลิเคชัน Visual Studio Code ในเครื่องของคุณและเชื่อมต่อกับเซสชันการคำนวณระยะไกล (ผ่าน SSH) โดยใช้รหัสผ่านด้านล่าง กรุณาคัดลอกรหัสผ่านก่อนคลิกปุ่ม (หมายเหตุ: คุณต้องติดตั้ง Visual Studio Code ในเครื่องของคุณ)",
     "VSCodeRemoteNoticeSSHConfig": "เพื่อตั้งค่าการเชื่อมต่อแบบไร้รอยต่อสำหรับ Visual Studio Code ไปยังเซสชันการคำนวณระยะไกล ให้สร้างหรือแก้ไขไฟล์ $HOME/.ssh/config และเพิ่มบล็อกต่อไปนี้",
     "VSCodeRemotePasswordTitle": "รหัสผ่าน SSH ระยะไกลสำหรับ Visual Studio Code",
+    "ViewStartupCommand": "ดูคำสั่งเริ่มต้น",
     "WarningForceTerminateSessions": "คำเตือน: บังคับยุติเซสชัน",
     "XRDPconnection": "การเชื่อมต่อ RDP",
     "appLauncher": {

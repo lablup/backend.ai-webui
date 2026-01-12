@@ -1464,6 +1464,7 @@
     "SessionTerminated": "Phiên chấm dứt.",
     "SessionType": "Loại phiên",
     "SessionsTerminated": "Phiên đã kết thúc.",
+    "StartupCommand": "Lệnh khởi động",
     "Status": "Trạng thái",
     "StatusDetail": "Chi tiết",
     "StatusInfo": "Thông tin trạng thái",
@@ -1494,6 +1495,7 @@
     "VSCodeRemoteDescription": "Bạn có thể khởi chạy ứng dụng Visual Studio Code cục bộ của mình và kết nối với phiên điện toán từ xa (thông qua SSH) bằng mật khẩu bên dưới. \nVui lòng sao chép mật khẩu trước khi nhấp vào nút. \n(LƯU Ý: Bạn phải cài đặt Visual Studio Code trên máy cục bộ của mình.)",
     "VSCodeRemoteNoticeSSHConfig": "Để thiết lập kết nối liền mạch cho Visual Studio Code với phiên điện toán từ xa, hãy tạo hoặc chỉnh sửa tệp $HOME/.ssh/config và thêm khối sau.",
     "VSCodeRemotePasswordTitle": "Mật khẩu SSH từ xa của Visual Studio Code",
+    "ViewStartupCommand": "Xem lệnh khởi động",
     "WarningForceTerminateSessions": "Cảnh báo: Buộc chấm dứt (các) phiên",
     "XRDPconnection": "Kết nối RDP",
     "appLauncher": {

@@ -1462,6 +1462,7 @@
     "SessionTerminated": "Sitzung beendet.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Sitzungen beendet.",
+    "StartupCommand": "Startbefehl",
     "Status": "Status",
     "StatusDetail": "Einzelheiten",
     "StatusInfo": "Status-Infos",
@@ -1492,6 +1493,7 @@
     "VSCodeRemoteDescription": "Sie können Ihre lokale Visual Studio Code-Anwendung starten und eine Verbindung zur Remote-Compute-Sitzung (über SSH) mit dem unten angegebenen Passwort herstellen. Bitte kopieren Sie das Passwort, bevor Sie auf die Schaltfläche klicken. (HINWEIS: Sie müssen Visual Studio Code auf Ihrem lokalen Rechner installieren).",
     "VSCodeRemoteNoticeSSHConfig": "Um eine nahtlose Verbindung für Visual Studio Code zur Remote-Compute-Sitzung einzurichten, erstellen oder bearbeiten Sie die Datei $HOME/.ssh/config und fügen Sie den folgenden Block hinzu.",
     "VSCodeRemotePasswordTitle": "Visual Studio Code SSH-Fernzugangskennwort",
+    "ViewStartupCommand": "Startbefehl anzeigen",
     "WarningForceTerminateSessions": "Warnung: Beendigung der Sitzung(en) erzwingen",
     "XRDPconnection": "RDP-Verbindung",
     "appLauncher": {

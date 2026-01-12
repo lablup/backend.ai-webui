@@ -1461,6 +1461,7 @@
     "SessionTerminated": "Η συνεδρία τερματίστηκε.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Οι συνεδρίες τερματίστηκαν.",
+    "StartupCommand": "Εντολή εκκίνησης",
     "Status": "Κατάσταση",
     "StatusDetail": "Λεπτομέρεια",
     "StatusInfo": "Πληροφορίες κατάστασης",
@@ -1491,6 +1492,7 @@
     "VSCodeRemoteDescription": "Μπορείτε να εκκινήσετε την τοπική εφαρμογή Visual Studio Code και να συνδεθείτε στην απομακρυσμένη συνεδρία υπολογισμού (μέσω SSH) χρησιμοποιώντας τον παρακάτω κωδικό πρόσβασης. Αντιγράψτε τον κωδικό πρόσβασης πριν κάνετε κλικ στο κουμπί. (ΣΗΜΕΙΩΣΗ: Πρέπει να εγκαταστήσετε το Visual Studio Code στον τοπικό σας υπολογιστή).",
     "VSCodeRemoteNoticeSSHConfig": "Για να ρυθμίσετε μια απρόσκοπτη σύνδεση του Visual Studio Code με την απομακρυσμένη συνεδρία υπολογισμού, δημιουργήστε ή επεξεργαστείτε το αρχείο $HOME/.ssh/config και προσθέστε το ακόλουθο μπλοκ.",
     "VSCodeRemotePasswordTitle": "Κωδικός πρόσβασης απομακρυσμένου SSH του Visual Studio Code",
+    "ViewStartupCommand": "Προβολή εντολής εκκίνησης",
     "WarningForceTerminateSessions": "Προειδοποίηση: Αναγκαστικός τερματισμός συνεδρίας",
     "XRDPconnection": "Σύνδεση RDP",
     "appLauncher": {

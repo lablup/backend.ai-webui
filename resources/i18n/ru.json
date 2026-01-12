@@ -1463,6 +1463,7 @@
     "SessionTerminated": "Сессия завершена.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Сеансы завершены.",
+    "StartupCommand": "Команда запуска",
     "Status": "Статус",
     "StatusDetail": "Деталь",
     "StatusInfo": "Информация о состоянии",
@@ -1493,6 +1494,7 @@
     "VSCodeRemoteDescription": "Вы можете запустить локальное приложение Visual Studio Code и подключиться к удаленной вычислительной сессии (через SSH), используя указанный ниже пароль. Пожалуйста, скопируйте пароль перед нажатием кнопки. (ПРИМЕЧАНИЕ: Необходимо установить Visual Studio Code на локальной машине).",
     "VSCodeRemoteNoticeSSHConfig": "Чтобы настроить бесперебойное подключение Visual Studio Code к удаленной вычислительной сессии, создайте или отредактируйте файл $HOME/.ssh/config и добавьте в него следующий блок.",
     "VSCodeRemotePasswordTitle": "Пароль удаленного доступа к SSH в Visual Studio Code",
+    "ViewStartupCommand": "Показать команду запуска",
     "WarningForceTerminateSessions": "Предупреждение: принудительно завершить сеанс(ы)",
     "XRDPconnection": "RDP-соединение",
     "appLauncher": {

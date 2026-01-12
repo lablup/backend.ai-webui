@@ -1462,6 +1462,7 @@
     "SessionTerminated": "會話終止。",
     "SessionType": "会话类型",
     "SessionsTerminated": "會話終止。",
+    "StartupCommand": "啟動指令",
     "Status": "地位",
     "StatusDetail": "详细信息",
     "StatusInfo": "状态信息",
@@ -1492,6 +1493,7 @@
     "VSCodeRemoteDescription": "您可以启动本地 Visual Studio Code 应用程序，并使用下面的密码（通过 SSH）连接到远程计算会话。请在点击按钮前复制密码。(注意：您必须在本地计算机上安装 Visual Studio Code。）",
     "VSCodeRemoteNoticeSSHConfig": "要为 Visual Studio Code 设置与远程计算会话的无缝连接，请创建或编辑 $HOME/.ssh/config 文件并添加以下代码块。",
     "VSCodeRemotePasswordTitle": "Visual Studio Code 远程 SSH 密码",
+    "ViewStartupCommand": "檢視啟動指令",
     "WarningForceTerminateSessions": "警告：強制終止會話",
     "XRDPconnection": "RDP 連接",
     "appLauncher": {

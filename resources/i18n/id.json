@@ -1462,6 +1462,7 @@
     "SessionTerminated": "Sesi dihentikan.",
     "SessionType": "Jenis Sesi",
     "SessionsTerminated": "Sesi-sesi dihentikan.",
+    "StartupCommand": "Perintah startup",
     "Status": "Status",
     "StatusDetail": "Detail",
     "StatusInfo": "Info Status",
@@ -1492,6 +1493,7 @@
     "VSCodeRemoteDescription": "Anda dapat meluncurkan aplikasi Visual Studio Code lokal Anda dan terhubung ke sesi komputasi jarak jauh (melalui SSH) menggunakan kata sandi di bawah ini. Harap salin kata sandi sebelum mengklik tombol. (CATATAN: Anda harus menginstal Visual Studio Code di mesin lokal Anda).",
     "VSCodeRemoteNoticeSSHConfig": "Untuk mengatur koneksi tanpa hambatan untuk Visual Studio Code ke sesi komputasi jarak jauh, buat atau edit file $HOME/.ssh/config dan tambahkan blok berikut.",
     "VSCodeRemotePasswordTitle": "Kata sandi SSH jarak jauh Visual Studio Code",
+    "ViewStartupCommand": "Lihat perintah startup",
     "WarningForceTerminateSessions": "Peringatan: Paksa Mengakhiri Sesi",
     "XRDPconnection": "Koneksi RDP",
     "appLauncher": {

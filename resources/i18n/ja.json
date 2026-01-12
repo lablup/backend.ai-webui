@@ -1463,6 +1463,7 @@
     "SessionTerminated": "セッションが終了しました。",
     "SessionType": "セッションタイプ",
     "SessionsTerminated": "セッションは終了しました。",
+    "StartupCommand": "起動コマンド",
     "Status": "状態",
     "StatusDetail": "詳細情報",
     "StatusInfo": "ステータス情報",
@@ -1493,6 +1494,7 @@
     "VSCodeRemoteDescription": "ローカルVisual Studio Codeアプリを起動した後、以下のパスワードを入力して、演算セッションに（SSH経由で）リモート接続し、作業することができます。ボタンをクリックする前にパスワードをコピーしてください(注意: Visual Studio Codeアプリがローカルマシンにインストールされている必要があります)。",
     "VSCodeRemoteNoticeSSHConfig": "HOME/.ssh/configファイルを作成または修正して下記の内容を追加すると、Visual Studio Codeで演算セッションへのリモート接続をもっと便利にすることができます。",
     "VSCodeRemotePasswordTitle": "Visual Studio Codeリモート接続SSHパスワード",
+    "ViewStartupCommand": "起動コマンドを表示",
     "WarningForceTerminateSessions": "警告: セッションを強制終了します",
     "XRDPconnection": "RDP接続",
     "appLauncher": {

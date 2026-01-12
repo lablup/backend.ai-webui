@@ -2171,7 +2171,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 value="${JSON.stringify({
                   children: `sftp -i ./id_container -P ${this.tcpPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${this.tcpHost}`,
                   language: 'shell',
-                  wordWrap: true,
                 })}"
               ></backend-ai-react-source-code-viewer>
               <backend-ai-react-source-code-viewer
@@ -2179,7 +2178,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 value="${JSON.stringify({
                   children: `scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${this.tcpPort} -rp /path/to/source work@${this.tcpHost}:~/${this.mountedVfolderName}`,
                   language: 'shell',
-                  wordWrap: true,
                 })}"
               /></backend-ai-react-source-code-viewer>
               <backend-ai-react-source-code-viewer
@@ -2187,7 +2185,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 value="${JSON.stringify({
                   children: `rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${this.tcpPort}" /path/to/source/ work@${this.tcpHost}:~/${this.mountedVfolderName}/`,
                   language: 'shell',
-                  wordWrap: true,
                 })}"
               /></backend-ai-react-source-code-viewer>
             </div>

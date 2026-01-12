@@ -5,6 +5,7 @@ import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
@@ -20,6 +21,7 @@ import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Alert,
   Button,
@@ -42,6 +44,7 @@ import {
   BAIFlex,
   BAISessionAgentIds,
   BAISessionClusterMode,
+  BAIButton,
 } from 'backend.ai-ui';
 // import { graphql } from 'react-relay';
 import _ from 'lodash';
@@ -74,6 +77,8 @@ const SessionDetailContent: React.FC<{
   const [usageMonitorDisplayTarget, setUsageMonitorDisplayTarget] = useState<
     'max' | 'avg' | 'current'
   >('current');
+  const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
+    useToggle(false);
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
@@ -152,6 +157,8 @@ const SessionDetailContent: React.FC<{
         agent_ids
         requested_slots
         idle_checks @since(version: "24.12.0")
+        type
+        startup_command
 
         kernel_nodes {
           edges {
@@ -291,6 +298,15 @@ const SessionDetailContent: React.FC<{
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
             <BAISessionTypeTag sessionFrgmt={session} />
+            {session.type === 'batch' && session.startup_command && (
+              <Tooltip title={t('session.ViewStartupCommand')}>
+                <BAIButton
+                  type="link"
+                  icon={<InfoCircleOutlined />}
+                  onClick={() => toggleOpenCodeHighlighterModal()}
+                />
+              </Tooltip>
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.launcher.Environments')}>
             {session.kernel_nodes?.edges[0]?.node?.image ? (
@@ -422,6 +438,23 @@ const SessionDetailContent: React.FC<{
         sessionFrgmt={session}
         open={openStatusDetailModal}
         onCancel={() => setOpenStatusDetailModal(false)}
+      />
+      <CodeHighlighterModal
+        open={openCodeHighlighterModal}
+        language="shell"
+        content={session.startup_command || ''}
+        title={t('session.StartupCommand')}
+        footer={
+          <Button
+            type="primary"
+            onClick={() => {
+              toggleOpenCodeHighlighterModal();
+            }}
+          >
+            {t('button.Close')}
+          </Button>
+        }
+        onCancel={toggleOpenCodeHighlighterModal}
       />
     </BAIFlex>
   ) : (

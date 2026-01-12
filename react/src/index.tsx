@@ -2,7 +2,7 @@ import App from './App';
 import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import SharedResourceGroupSelectForCurrentProject from './components/SharedResourceGroupSelectForCurrentProject';
-import SourceCodeViewer from './components/SourceCodeViewer';
+import SourceCodeView from './components/SourceCodeView';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
   ReactWebComponentProps,
@@ -110,20 +110,15 @@ customElements.define(
 
 const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   const {
-    parsedValue: { children, language, wordWrap } = {
+    parsedValue: { children, language } = {
       children: '',
       language: '',
     },
   } = useWebComponentInfo<{
     children: string;
     language: string;
-    wordWrap?: boolean;
   }>();
-  return (
-    <SourceCodeViewer language={language} wordWrap={wordWrap ? true : false}>
-      {children}
-    </SourceCodeViewer>
-  );
+  return <SourceCodeView language={language}>{children}</SourceCodeView>;
 };
 
 customElements.define(

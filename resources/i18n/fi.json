@@ -1463,6 +1463,7 @@
     "SessionTerminated": "Istunto päättyi.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Istunnot lopetettu.",
+    "StartupCommand": "Käynnistyskomento",
     "Status": "Tila",
     "StatusDetail": "Yksityiskohta",
     "StatusInfo": "Tilatiedot",
@@ -1493,6 +1494,7 @@
     "VSCodeRemoteDescription": "Voit käynnistää paikallisen Visual Studio Code -sovelluksen ja muodostaa yhteyden etälaskentaistuntoon (SSH:n kautta) käyttämällä alla olevaa salasanaa. Kopioi salasana ennen painikkeen napsauttamista. (HUOMAUTUS: Sinun on asennettava Visual Studio Code paikalliselle koneellesi).",
     "VSCodeRemoteNoticeSSHConfig": "Jos haluat luoda saumattoman yhteyden Visual Studio Code -ohjelmistolle etälaskentaistuntoon, luo tai muokkaa $HOME/.ssh/config-tiedostoa ja lisää seuraava lohko.",
     "VSCodeRemotePasswordTitle": "Visual Studio Code SSH-etäsalasana",
+    "ViewStartupCommand": "Näytä käynnistyskomento",
     "WarningForceTerminateSessions": "Varoitus: pakota lopettamaan istunnot",
     "XRDPconnection": "RDP-yhteys",
     "appLauncher": {

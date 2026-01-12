@@ -8,7 +8,7 @@ export interface SyntaxHighlighterProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
-  ({ children, language }) => {
+  ({ children, language, ...props }) => {
     const { data, isLoading } = useHighlight(children, language);
 
     return (
@@ -21,6 +21,7 @@ export const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
           <div
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }}
             dir="ltr"
+            {...props}
           />
         )}
       </>

@@ -1,4 +1,4 @@
-import SourceCodeViewer from '../SourceCodeViewer';
+import SourceCodeView from '../SourceCodeView';
 import { Alert, Descriptions } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
@@ -119,22 +119,17 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
 
         <Descriptions title={t('session.ConnectionExample')} column={1}>
           <Descriptions.Item>
-            <SourceCodeViewer
-              wordWrap
-              language={'shell'}
-            >{`sftp -i ./id_container -P ${directAccessInfo?.sshd_ports[0]} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${directAccessInfo?.public_host}`}</SourceCodeViewer>
-          </Descriptions.Item>
-          <Descriptions.Item>
-            <SourceCodeViewer
-              wordWrap
-              language={'shell'}
-            >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${directAccessInfo?.sshd_ports[0]} -rp /path/to/source work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ?? ''}`}</SourceCodeViewer>
-          </Descriptions.Item>
-          <Descriptions.Item>
-            <SourceCodeViewer
-              wordWrap
-              language={'shell'}
-            >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${directAccessInfo?.sshd_ports[0]}" /path/to/source/ work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ? `${session?.vfolder_mounts?.[0]}/` : ''}`}</SourceCodeViewer>
+            <BAIFlex direction="column" gap="xs" style={{ width: '100%' }}>
+              <SourceCodeView
+                language={'shell'}
+              >{`sftp -i ./id_container -P ${directAccessInfo?.sshd_ports[0]} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${directAccessInfo?.public_host}`}</SourceCodeView>
+              <SourceCodeView
+                language={'shell'}
+              >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${directAccessInfo?.sshd_ports[0]} -rp /path/to/source work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ?? ''}`}</SourceCodeView>
+              <SourceCodeView
+                language={'shell'}
+              >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${directAccessInfo?.sshd_ports[0]}" /path/to/source/ work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ? `${session?.vfolder_mounts?.[0]}/` : ''}`}</SourceCodeView>
+            </BAIFlex>
           </Descriptions.Item>
         </Descriptions>
       </BAIFlex>
