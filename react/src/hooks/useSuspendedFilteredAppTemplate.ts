@@ -22,6 +22,21 @@ export type ServicePort = {
   protocol: string;
 };
 
+/**
+ * Helper function to get the icon src path for an app based on its name.
+ * Searches through the appTemplate to find a matching app entry.
+ * @param appName - The name of the app to find an icon for
+ * @param appTemplate - The app template object containing all app definitions
+ * @returns The icon src path, or default_app.svg if not found
+ */
+const getAppIconSrc = (appName: string, appTemplate: AppTemplate): string => {
+  const template = _.find(
+    _.flatten(Object.values(appTemplate)),
+    (item) => item.name === appName,
+  );
+  return template?.src || '/resources/icons/default_app.svg';
+};
+
 export const useSuspendedFilteredAppTemplate = (
   servicePorts?: ServicePort[] | null,
 ) => {
@@ -47,8 +62,7 @@ export const useSuspendedFilteredAppTemplate = (
     return {
       name: app.name,
       title: app.name,
-      // TODO: change image according to the connected app.
-      src: '/resources/icons/default_app.svg',
+      src: getAppIconSrc(app.name, appTemplate),
       ports: app.container_ports,
     };
   });
@@ -58,7 +72,7 @@ export const useSuspendedFilteredAppTemplate = (
     return {
       name: app.name,
       title: app.name,
-      src: '/resources/icons/default_app.svg',
+      src: getAppIconSrc(app.name, appTemplate),
     };
   });
 
