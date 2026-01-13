@@ -95,10 +95,8 @@ For all other props, refer to [Ant Design Alert](https://ant.design/components/a
         defaultValue: { summary: 'true' },
       },
     },
-    // Hide Ant Design props used in args
-    type: { table: { disable: true } },
-    message: { table: { disable: true } },
-    showIcon: { table: { disable: true } },
+    // Ant Design props used in Default args are shown (not hidden)
+    // Only hide props if there's a specific reason to do so
   },
 };
 
@@ -163,7 +161,7 @@ export const Default: Story = {
 
 1. **Default story**: Use `args` to enable interactive Controls, MUST include BAI-specific props
 2. **Comparison stories**: Use `render` for layouts with multiple components
-3. **ArgTypes**: Only document BAI-specific props; hide Ant Design props with `{ table: { disable: true } }`
+3. **ArgTypes**: Document BAI-specific props fully. Ant Design props used in Default `args` should remain visible (not hidden). Only hide props if there's a specific reason to do so.
 4. **No redundant `name`**: Only use when different from export name (e.g., `Default` → `name: 'Basic'`)
 5. **Use BAIFlex**: Not Ant Design's `Space` component
 
