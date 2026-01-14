@@ -9,15 +9,13 @@ const BAITag: React.FC<BAITagProps> = ({ ...tagProps }) => {
   return (
     <ConfigProvider
       theme={{
+        token: {
+          borderRadiusSM: 11,
+        },
         components: {
           Tag: {
-            borderRadiusSM: 11,
-            colorText: '#999999',
             defaultBg: 'transparent',
-            colorInfoBg: 'transparent',
-            colorWarningBg: 'transparent',
-            colorErrorBg: 'transparent',
-            colorSuccessBg: 'transparent',
+            defaultColor: '#999999',
           },
         },
       }}

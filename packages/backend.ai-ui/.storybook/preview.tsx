@@ -1,6 +1,6 @@
 import { i18n } from '../src/locale';
 import type { Preview } from '@storybook/react-vite';
-import { ConfigProvider, Skeleton } from 'antd';
+import { ConfigProvider, Skeleton, theme, Typography } from 'antd';
 import type { Locale } from 'antd/es/locale';
 import deDE from 'antd/locale/de_DE';
 import elGR from 'antd/locale/el_GR';
@@ -24,7 +24,8 @@ import viVN from 'antd/locale/vi_VN';
 import zhCN from 'antd/locale/zh_CN';
 import zhTW from 'antd/locale/zh_TW';
 import React, { Suspense, useEffect } from 'react';
-import { I18nextProvider } from 'react-i18next';
+import { I18nextProvider, useTranslation } from 'react-i18next';
+import BAIText from '../src/components/BAIText';
 
 const antdLocaleMap: Record<string, Locale> = {
   en: enUS,
@@ -66,10 +67,46 @@ const LocaleProvider: React.FC<LocaleProviderProps> = ({
   }, [locale]);
 
   const antdLocale = getAntdLocale(locale);
+  const { token } = theme.useToken();
+  const { t } = useTranslation();
+
   return (
     <Suspense fallback={<Skeleton active />}>
       <I18nextProvider i18n={i18n}>
-        <ConfigProvider locale={antdLocale}>
+        <ConfigProvider
+          locale={antdLocale}
+          modal={{
+            mask: {
+              blur: false,
+            },
+          }}
+          drawer={{
+            mask: {
+              blur: false,
+            },
+          }}
+          form={{
+            requiredMark: (label, { required }) => (
+              <>
+                {label}
+                {!required && (
+                  <BAIText
+                    type="secondary"
+                    style={{
+                      marginLeft: token.marginXXS,
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {`(${t('general.Optional')})`}
+                  </BAIText>
+                )}
+              </>
+            ),
+          }}
+          tag={{
+            variant: 'outlined',
+          }}
+        >
           <div style={{ padding: '16px' }}>{children}</div>
         </ConfigProvider>
       </I18nextProvider>

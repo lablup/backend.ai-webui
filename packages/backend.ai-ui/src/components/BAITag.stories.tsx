@@ -15,12 +15,14 @@ const meta: Meta<typeof BAITag> = {
 **BAITag** extends [Ant Design Tag](https://ant.design/components/tag) with Backend.AI-specific styling.
 
 ## BAI-Specific Styling
-| Style | Value | Description |
-|-------|-------|-------------|
-| \`borderRadiusSM\` | \`11px\` | Rounded borders for softer appearance |
-| \`defaultBg\` | \`transparent\` | Transparent backgrounds for all color variants |
-| \`colorText\` | \`#999999\` | Muted text color for better readability |
-| \`padding\` | \`token.paddingSM\` | Consistent horizontal padding using design tokens |
+| Token | Level | Value | Description |
+|-------|-------|-------|-------------|
+| \`borderRadiusSM\` | Global | \`11px\` | Rounded borders for softer appearance |
+| \`defaultBg\` | Component | \`transparent\` | Transparent background for default tag |
+| \`defaultColor\` | Component | \`#999999\` | Muted text color for better readability |
+| \`padding\` | Inline Style | \`token.paddingSM\` | Consistent horizontal padding using design tokens |
+
+> **Note:** Status color variants (success, processing, error, warning) use Ant Design's default preset colors.
 
 This component has no additional props beyond Ant Design Tag. The styling differences are applied automatically via ConfigProvider theme customization.
 
