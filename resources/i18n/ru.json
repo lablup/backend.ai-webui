@@ -1979,8 +1979,12 @@
   },
   "theme": {
     "PreviewModeAlert": "В данный момент вы используете режим предварительного просмотра темы. Пожалуйста, продолжите работу в исходном окне.",
+    "ThemeJsonConfiguration": "Конфигурация темы (JSON)",
+    "ThemeJsonConfigurationDesc": "Импортируйте JSON-файл, чтобы изменить тему, или экспортируйте текущую тему в формате JSON. Чтобы применить изменения на вашем сайте, экспортируйте JSON-файл и скопируйте его в resources/theme.json на веб‑сервере WebUI.",
     "button": {
-      "ExportToJson": "Экспорт в JSON"
+      "ExportToJson": "Экспорт в JSON",
+      "ImportFromJson": "Импорт JSON",
+      "JsonConfig": "JSON-конфигурация"
     }
   },
   "time": {

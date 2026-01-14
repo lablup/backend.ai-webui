@@ -17,6 +17,7 @@ import {
   ApiOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
+import { useSessionStorageState } from 'ahooks';
 import { MenuProps, theme, Typography } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
@@ -35,6 +36,7 @@ import {
   PackagePlus,
   LinkIcon,
   ExternalLinkIcon,
+  Palette,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -76,6 +78,7 @@ export type MenuKeys =
   | 'agent'
   | 'settings'
   | 'maintenance'
+  | 'branding'
   | 'information';
 
 type MenuItem = {
@@ -112,6 +115,10 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
+
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     {
@@ -275,6 +282,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <ToolOutlined style={{ color: token.colorInfo }} />,
       key: 'maintenance',
+    },
+    !isThemePreviewMode && {
+      label: <WebUILink to="/branding">{t('webui.menu.Branding')}</WebUILink>,
+      icon: <Palette style={{ color: token.colorInfo }} />,
+      key: 'branding',
     },
     {
       label: (

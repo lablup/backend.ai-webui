@@ -1978,8 +1978,12 @@
   },
   "theme": {
     "PreviewModeAlert": "您目前正在使用主題預覽模式。請在原視窗繼續進行您的實際工作。",
+    "ThemeJsonConfiguration": "主題 JSON 設定",
+    "ThemeJsonConfigurationDesc": "匯入 JSON 檔案以變更主題，或將目前主題匯出為 JSON。要將變更套用到您的網站，請匯出 JSON 檔案並將其複製到 WebUI 網頁伺服器的 resources/theme.json。",
     "button": {
-      "ExportToJson": "匯出 JSON"
+      "ExportToJson": "匯出 JSON",
+      "ImportFromJson": "匯入 JSON",
+      "JsonConfig": "JSON 設定"
     }
   },
   "time": {

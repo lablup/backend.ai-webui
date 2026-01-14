@@ -1977,8 +1977,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Та одоогоор сэдвийн урьдчилсан үзэх горимд байна. Жинхэнэ ажлаа эх цонхонд үргэлжлүүлнэ үү.",
+    "ThemeJsonConfiguration": "Сэдэвийн JSON тохиргоо",
+    "ThemeJsonConfigurationDesc": "Сэдвийг өөрчлөхийн тулд JSON файл импортлах эсвэл одоогийн сэдвийг JSON хэлбэрээр экспортлох. Сайтад өөрчлөлтүүдийг хэрэгжүүлэхийн тулд JSON файлыг экспортлаж, WebUI вэб серверийн resources/theme.json руу хуулна.",
     "button": {
-      "ExportToJson": "JSON-аар экспортлах"
+      "ExportToJson": "JSON-аар экспортлах",
+      "ImportFromJson": "JSON импортлах",
+      "JsonConfig": "JSON тохиргоо"
     }
   },
   "time": {

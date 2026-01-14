@@ -1979,8 +1979,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Anda sedang menggunakan mode pratinjau tema. Silakan lanjutkan pekerjaan Anda di jendela asli.",
+    "ThemeJsonConfiguration": "Konfigurasi JSON Tema",
+    "ThemeJsonConfigurationDesc": "Impor file JSON untuk mengubah tema atau ekspor tema saat ini sebagai JSON. Untuk menerapkan perubahan ke situs Anda, ekspor file JSON dan salin ke resources/theme.json di server web WebUI.",
     "button": {
-      "ExportToJson": "Ekspor JSON"
+      "ExportToJson": "Ekspor JSON",
+      "ImportFromJson": "Impor JSON",
+      "JsonConfig": "Konfigurasi JSON"
     }
   },
   "time": {

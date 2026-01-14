@@ -1979,8 +1979,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Obecnie korzystasz z trybu podglądu motywu. Kontynuuj swoją pracę w oryginalnym oknie.",
+    "ThemeJsonConfiguration": "Konfiguracja motywu (JSON)",
+    "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw lub wyeksportuj bieżący motyw jako JSON. Aby zastosować zmiany na swojej stronie, wyeksportuj plik JSON i skopiuj go do resources/theme.json na serwerze WebUI.",
     "button": {
-      "ExportToJson": "Eksportuj JSON"
+      "ExportToJson": "Eksportuj JSON",
+      "ImportFromJson": "Importuj JSON",
+      "JsonConfig": "Konfiguracja JSON"
     }
   },
   "time": {

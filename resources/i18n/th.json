@@ -1964,8 +1964,12 @@
   },
   "theme": {
     "PreviewModeAlert": "คุณกำลังอยู่ในโหมดแสดงตัวอย่างธีม โปรดดำเนินงานจริงในหน้าต่างต้นฉบับ",
+    "ThemeJsonConfiguration": "การกำหนดค่า JSON ของธีม",
+    "ThemeJsonConfigurationDesc": "นำเข้าไฟล์ JSON เพื่อเปลี่ยนธีมหรือส่งออกธีมปัจจุบันเป็น JSON หากต้องการนำการเปลี่ยนแปลงไปใช้กับไซต์ ให้ส่งออกไฟล์ JSON แล้วคัดลอกไปที่ resources/theme.json บนเว็บเซิร์ฟเวอร์ของ WebUI",
     "button": {
-      "ExportToJson": "ส่งออก JSON"
+      "ExportToJson": "ส่งออก JSON",
+      "ImportFromJson": "นำเข้า JSON",
+      "JsonConfig": "การตั้งค่า JSON"
     }
   },
   "time": {

@@ -1979,8 +1979,12 @@
   },
   "theme": {
     "PreviewModeAlert": "現在、テーマのプレビュー モードを使用しています。実際の作業は元のウィンドウで行ってください。",
+    "ThemeJsonConfiguration": "テーマのJSON設定",
+    "ThemeJsonConfigurationDesc": "テーマを変更するにはJSONファイルをインポートするか、現在のテーマをJSONとしてエクスポートしてください。変更をサイトに適用するには、エクスポートしたJSONファイルをWebUIのWebサーバー上のresources/theme.jsonにコピーしてください。",
     "button": {
-      "ExportToJson": "JSON をエクスポート"
+      "ExportToJson": "JSON をエクスポート",
+      "ImportFromJson": "JSON をインポート",
+      "JsonConfig": "JSON設定"
     }
   },
   "time": {

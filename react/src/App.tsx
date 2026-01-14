@@ -94,6 +94,8 @@ const ReservoirArtifactDetailPage = React.lazy(
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 
+const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -458,6 +460,11 @@ const router = createBrowserRouter([
         path: '/maintenance',
         element: <MaintenancePage />,
         handle: { labelKey: 'webui.menu.Maintenance' },
+      },
+      {
+        path: '/branding',
+        element: <BrandingPage />,
+        handle: { labelKey: 'webui.menu.Branding' },
       },
       {
         path: '/project',

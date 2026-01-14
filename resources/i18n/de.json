@@ -1978,8 +1978,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Sie verwenden derzeit den Theme‑Vorschau‑Modus. Bitte setzen Sie Ihre Arbeit im Originalfenster fort.",
+    "ThemeJsonConfiguration": "Theme-JSON-Konfiguration",
+    "ThemeJsonConfigurationDesc": "Importieren Sie eine JSON-Datei, um das Theme zu ändern, oder exportieren Sie das aktuelle Theme als JSON. Um die Änderungen auf Ihrer Website anzuwenden, exportieren Sie die JSON-Datei und kopieren Sie sie in resources/theme.json auf dem WebUI-Webserver.",
     "button": {
-      "ExportToJson": "Als JSON exportieren"
+      "ExportToJson": "Als JSON exportieren",
+      "ImportFromJson": "JSON importieren",
+      "JsonConfig": "JSON-Konfiguration"
     }
   },
   "time": {

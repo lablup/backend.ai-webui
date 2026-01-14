@@ -1979,8 +1979,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Käytät tällä hetkellä teeman esikatselutilaa. Jatka varsinaista työskentelyä alkuperäisessä ikkunassa.",
+    "ThemeJsonConfiguration": "Teeman JSON-määritys",
+    "ThemeJsonConfigurationDesc": "Tuo JSON-tiedosto muuttaaksesi teemaa tai vie nykyinen teema JSON-muodossa. Ota muutokset käyttöön sivustollasi viemällä JSON-tiedosto ja kopioimalla se WebUI-web-palvelimen tiedostoon resources/theme.json.",
     "button": {
-      "ExportToJson": "Vie JSON"
+      "ExportToJson": "Vie JSON",
+      "ImportFromJson": "Tuo JSON",
+      "JsonConfig": "JSON-asetukset"
     }
   },
   "time": {

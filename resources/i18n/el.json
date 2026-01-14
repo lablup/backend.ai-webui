@@ -1977,8 +1977,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Αυτήν τη στιγμή βρίσκεστε σε λειτουργία προεπισκόπησης θέματος. Παρακαλώ συνεχίστε την πραγματική εργασία σας στο αρχικό παράθυρο.",
+    "ThemeJsonConfiguration": "Ρυθμίσεις θέματος (JSON)",
+    "ThemeJsonConfigurationDesc": "Εισάγετε ένα αρχείο JSON για να αλλάξετε το θέμα ή εξάγετε το τρέχον θέμα σε JSON. Για να εφαρμόσετε τις αλλαγές στον ιστότοπό σας, εξάγετε το JSON και αντιγράψτε το στο resources/theme.json στον διακομιστή ιστού του WebUI.",
     "button": {
-      "ExportToJson": "Εξαγωγή JSON"
+      "ExportToJson": "Εξαγωγή JSON",
+      "ImportFromJson": "Εισαγωγή JSON",
+      "JsonConfig": "Διαμόρφωση JSON"
     }
   },
   "time": {

@@ -1980,8 +1980,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Şu anda tema önizleme modundasınız. Lütfen asıl çalışmanızı orijinal pencerede sürdürün.",
+    "ThemeJsonConfiguration": "Tema JSON Yapılandırması",
+    "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Değişikliklerin sitenize uygulanması için JSON dosyasını dışa aktarın ve WebUI web sunucusundaki resources/theme.json dosyasına kopyalayın.",
     "button": {
-      "ExportToJson": "JSON'u Dışa Aktar"
+      "ExportToJson": "JSON'u Dışa Aktar",
+      "ImportFromJson": "JSON'u İçe Aktar",
+      "JsonConfig": "JSON Yapılandırması"
     }
   },
   "time": {

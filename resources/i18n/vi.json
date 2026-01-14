@@ -1980,8 +1980,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Bạn đang ở chế độ xem trước giao diện. Vui lòng quay lại cửa sổ gốc để thực hiện công việc.",
+    "ThemeJsonConfiguration": "Cấu hình JSON chủ đề",
+    "ThemeJsonConfigurationDesc": "Nhập một tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Để áp dụng thay đổi lên trang của bạn, xuất tệp JSON và sao chép vào resources/theme.json trên máy chủ WebUI.",
     "button": {
-      "ExportToJson": "Xuất JSON"
+      "ExportToJson": "Xuất JSON",
+      "ImportFromJson": "Nhập JSON",
+      "JsonConfig": "Cấu hình JSON"
     }
   },
   "time": {

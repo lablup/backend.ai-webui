@@ -1980,8 +1980,12 @@
   },
   "theme": {
     "PreviewModeAlert": "Vous êtes actuellement en mode aperçu du thème. Veuillez poursuivre votre travail dans la fenêtre d'origine.",
+    "ThemeJsonConfiguration": "Configuration JSON du thème",
+    "ThemeJsonConfigurationDesc": "Importez un fichier JSON pour modifier le thème ou exportez le thème actuel au format JSON. Pour appliquer les modifications à votre site, exportez le fichier JSON et copiez-le dans resources/theme.json sur le serveur web de WebUI.",
     "button": {
-      "ExportToJson": "Exporter en JSON"
+      "ExportToJson": "Exporter en JSON",
+      "ImportFromJson": "Importer JSON",
+      "JsonConfig": "Configuration JSON"
     }
   },
   "time": {

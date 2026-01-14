@@ -5,14 +5,14 @@ import LogoSizeSettingItem from './BrandingSettingItems/LogoSizeSettingItem';
 import ThemeColorPicker, {
   ThemeConfigPath,
 } from './BrandingSettingItems/ThemeColorPicker';
+import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { ExportOutlined } from '@ant-design/icons';
-import { App } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { BAIAlert, BAIButton, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Fullscreen } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { downloadBlob } from 'src/helper/csv-util';
 import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
 
 interface BrandingSettingListProps {}
@@ -21,10 +21,10 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { message } = App.useApp();
 
-  const { userCustomThemeConfig, setUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
+
+  const { setUserCustomThemeConfig } = useUserCustomThemeConfig();
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
     setUserCustomThemeConfig('light.' + tokenName, undefined);
@@ -191,25 +191,6 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         primaryButton={
           <BAIButton
             type="primary"
-            icon={<ExportOutlined />}
-            action={async () => {
-              if (_.isEmpty(userCustomThemeConfig)) {
-                message.error(t('userSettings.theme.NoChangesMade'));
-                return;
-              }
-
-              const blob = new Blob(
-                [JSON.stringify(userCustomThemeConfig, null, 2)],
-                { type: 'application/json' },
-              );
-              downloadBlob(blob, `theme.json`);
-            }}
-          >
-            {t('theme.button.ExportToJson')}
-          </BAIButton>
-        }
-        extraButton={
-          <BAIButton
             icon={<Fullscreen />}
             action={async () => {
               const previewWindow = window.open(
@@ -228,6 +209,22 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
             {t('userSettings.theme.Preview')}
           </BAIButton>
         }
+        extraButton={
+          <BAIButton
+            icon={<SettingOutlined />}
+            action={async () => {
+              setOpenThemeConfigModal(true);
+            }}
+          >
+            {t('theme.button.JsonConfig')}
+          </BAIButton>
+        }
+      />
+      <ThemeJsonConfigModal
+        open={openThemeConfigModal}
+        onCancel={() => {
+          setOpenThemeConfigModal(false);
+        }}
       />
     </BAIFlex>
   );

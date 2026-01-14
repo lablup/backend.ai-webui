@@ -32,6 +32,7 @@ export const navigate =
         '/scheduler',
         '/settings',
         '/maintenance',
+        '/branding',
         '/information',
         '/github',
         '/import',
@@ -73,6 +74,7 @@ export const navigate =
         'environment',
         'settings',
         'maintenance',
+        'branding',
         'information',
       ].includes(page)
     ) {
