@@ -96,6 +96,8 @@ const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 
+const FairSharePage = React.lazy(() => import('./pages/FairSharePage'));
+
 interface CustomHandle {
   title?: string;
   labelKey?: string;
@@ -386,6 +388,17 @@ const router = createBrowserRouter([
         path: '/environment',
         handle: { labelKey: 'webui.menu.Environments' },
         Component: EnvironmentPage,
+      },
+      {
+        path: '/fair-share',
+        handle: { labelKey: 'webui.menu.FairShare' },
+        Component: () => {
+          return (
+            <Suspense fallback={<Skeleton active />}>
+              <FairSharePage />
+            </Suspense>
+          );
+        },
       },
       {
         path: '/scheduler',

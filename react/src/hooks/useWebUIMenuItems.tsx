@@ -37,6 +37,7 @@ import {
   LinkIcon,
   ExternalLinkIcon,
   Palette,
+  AlignHorizontalDistributeCenter,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +80,8 @@ export type MenuKeys =
   | 'settings'
   | 'maintenance'
   | 'branding'
-  | 'information';
+  | 'information'
+  | 'fair-share';
 
 type MenuItem = {
   label: ReactNode;
@@ -233,6 +235,15 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
+    },
+    {
+      label: (
+        <WebUILink to="/fair-share">{t('webui.menu.FairShare')}</WebUILink>
+      ),
+      icon: (
+        <AlignHorizontalDistributeCenter style={{ color: token.colorInfo }} />
+      ),
+      key: 'fair-share',
     },
     baiClient?.supports('pending-session-list') && {
       label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
