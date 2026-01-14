@@ -1976,6 +1976,10 @@
     "SettingTable": "Impostazione della tabella"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Le impostazioni del tema non corrispondono allo schema. Controlla il file.",
+    "FailedToReadFile": "Impossibile leggere il file.",
+    "InvalidJsonFileAlert": "Formato JSON non valido. Controlla il contenuto del file.",
+    "JsonConfigAppliedSuccessfully": "Le impostazioni del tema sono state applicate con successo.",
     "PreviewModeAlert": "Stai usando la modalità anteprima del tema. Ti preghiamo di proseguire il lavoro nella finestra originale.",
     "ThemeJsonConfiguration": "Configurazione JSON del tema",
     "ThemeJsonConfigurationDesc": "Importa un file JSON per modificare il tema o esporta il tema corrente come JSON. Per applicare le modifiche al tuo sito, esporta il file JSON e copialo in resources/theme.json nel server web di WebUI.",

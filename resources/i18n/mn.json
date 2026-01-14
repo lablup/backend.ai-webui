@@ -1976,6 +1976,10 @@
     "SettingTable": "Хүснэгтийн тохиргоо"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Сэдвийн тохиргоо схемд нийцэхгүй байна. Файлыг шалгана уу.",
+    "FailedToReadFile": "Файлыг уншиж чадсангүй.",
+    "InvalidJsonFileAlert": "JSON формат буруу байна. Файлын агуулгыг шалгана уу.",
+    "JsonConfigAppliedSuccessfully": "Сэдвийн тохиргоог амжилттай хэрэгжүүллээ.",
     "PreviewModeAlert": "Та одоогоор сэдвийн урьдчилсан үзэх горимд байна. Жинхэнэ ажлаа эх цонхонд үргэлжлүүлнэ үү.",
     "ThemeJsonConfiguration": "Сэдэвийн JSON тохиргоо",
     "ThemeJsonConfigurationDesc": "Сэдвийг өөрчлөхийн тулд JSON файл импортлах эсвэл одоогийн сэдвийг JSON хэлбэрээр экспортлох. Сайтад өөрчлөлтүүдийг хэрэгжүүлэхийн тулд JSON файлыг экспортлаж, WebUI вэб серверийн resources/theme.json руу хуулна.",

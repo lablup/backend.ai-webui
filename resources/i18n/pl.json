@@ -1978,6 +1978,10 @@
     "SettingTable": "Nakrycie stołu"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Ustawienia motywu nie pasują do schematu. Sprawdź plik.",
+    "FailedToReadFile": "Nie udało się odczytać pliku.",
+    "InvalidJsonFileAlert": "Nieprawidłowy format JSON. Sprawdź zawartość pliku.",
+    "JsonConfigAppliedSuccessfully": "Ustawienia motywu zostały pomyślnie zastosowane.",
     "PreviewModeAlert": "Obecnie korzystasz z trybu podglądu motywu. Kontynuuj swoją pracę w oryginalnym oknie.",
     "ThemeJsonConfiguration": "Konfiguracja motywu (JSON)",
     "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw lub wyeksportuj bieżący motyw jako JSON. Aby zastosować zmiany na swojej stronie, wyeksportuj plik JSON i skopiuj go do resources/theme.json na serwerze WebUI.",

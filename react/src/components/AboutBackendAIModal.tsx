@@ -1,5 +1,5 @@
-import { useCustomThemeConfig } from '../helper/customThemeConfig';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { Typography } from 'antd';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';

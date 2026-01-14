@@ -1963,6 +1963,10 @@
     "SettingTable": "การตั้งค่าตาราง"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "การตั้งค่าธีมไม่ตรงตามสคีมา โปรดตรวจสอบไฟล์",
+    "FailedToReadFile": "ไม่สามารถอ่านไฟล์ได้",
+    "InvalidJsonFileAlert": "รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาในไฟล์",
+    "JsonConfigAppliedSuccessfully": "การตั้งค่าธีมถูกนำไปใช้เรียบร้อยแล้ว",
     "PreviewModeAlert": "คุณกำลังอยู่ในโหมดแสดงตัวอย่างธีม โปรดดำเนินงานจริงในหน้าต่างต้นฉบับ",
     "ThemeJsonConfiguration": "การกำหนดค่า JSON ของธีม",
     "ThemeJsonConfigurationDesc": "นำเข้าไฟล์ JSON เพื่อเปลี่ยนธีมหรือส่งออกธีมปัจจุบันเป็น JSON หากต้องการนำการเปลี่ยนแปลงไปใช้กับไซต์ ให้ส่งออกไฟล์ JSON แล้วคัดลอกไปที่ resources/theme.json บนเว็บเซิร์ฟเวอร์ของ WebUI",

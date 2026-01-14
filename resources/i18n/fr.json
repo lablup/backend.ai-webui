@@ -1979,6 +1979,10 @@
     "SettingTable": "Paramètre de table"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Les paramètres du thème ne correspondent pas au schéma. Veuillez vérifier le fichier.",
+    "FailedToReadFile": "Impossible de lire le fichier.",
+    "InvalidJsonFileAlert": "Format JSON invalide. Veuillez vérifier le contenu du fichier.",
+    "JsonConfigAppliedSuccessfully": "Les paramètres du thème ont été appliqués avec succès.",
     "PreviewModeAlert": "Vous êtes actuellement en mode aperçu du thème. Veuillez poursuivre votre travail dans la fenêtre d'origine.",
     "ThemeJsonConfiguration": "Configuration JSON du thème",
     "ThemeJsonConfigurationDesc": "Importez un fichier JSON pour modifier le thème ou exportez le thème actuel au format JSON. Pour appliquer les modifications à votre site, exportez le fichier JSON et copiez-le dans resources/theme.json sur le serveur web de WebUI.",

@@ -1977,6 +1977,10 @@
     "SettingTable": "Sitzordnung bei Tisch"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Theme-Einstellungen stimmen nicht mit dem Schema überein. Bitte überprüfen Sie die Datei.",
+    "FailedToReadFile": "Die Datei konnte nicht gelesen werden.",
+    "InvalidJsonFileAlert": "Ungültiges JSON-Format. Bitte überprüfen Sie den Inhalt der Datei.",
+    "JsonConfigAppliedSuccessfully": "Theme-Einstellungen wurden erfolgreich angewendet.",
     "PreviewModeAlert": "Sie verwenden derzeit den Theme‑Vorschau‑Modus. Bitte setzen Sie Ihre Arbeit im Originalfenster fort.",
     "ThemeJsonConfiguration": "Theme-JSON-Konfiguration",
     "ThemeJsonConfigurationDesc": "Importieren Sie eine JSON-Datei, um das Theme zu ändern, oder exportieren Sie das aktuelle Theme als JSON. Um die Änderungen auf Ihrer Website anzuwenden, exportieren Sie die JSON-Datei und kopieren Sie sie in resources/theme.json auf dem WebUI-Webserver.",

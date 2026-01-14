@@ -1979,6 +1979,10 @@
     "SettingTable": "Tablo Ayarı"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Tema ayarları şemaya uymuyor. Lütfen dosyayı kontrol edin.",
+    "FailedToReadFile": "Dosya okunamadı.",
+    "InvalidJsonFileAlert": "Geçersiz JSON biçimi. Lütfen dosya içeriğini kontrol edin.",
+    "JsonConfigAppliedSuccessfully": "Tema ayarları başarıyla uygulandı.",
     "PreviewModeAlert": "Şu anda tema önizleme modundasınız. Lütfen asıl çalışmanızı orijinal pencerede sürdürün.",
     "ThemeJsonConfiguration": "Tema JSON Yapılandırması",
     "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Değişikliklerin sitenize uygulanması için JSON dosyasını dışa aktarın ve WebUI web sunucusundaki resources/theme.json dosyasına kopyalayın.",

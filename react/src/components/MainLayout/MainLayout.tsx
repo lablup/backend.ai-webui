@@ -1,5 +1,5 @@
-import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';

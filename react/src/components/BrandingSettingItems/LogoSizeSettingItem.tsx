@@ -1,7 +1,7 @@
 import { Col, Row, theme, Typography } from 'antd';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
-import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
+import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface LogoSizeSettingItemProps {
   logoType?: 'wide' | 'collapsed';
@@ -14,7 +14,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { getThemeValue, setUserCustomThemeConfig } =
+  const { getThemeValue, updateUserCustomThemeConfig } =
     useUserCustomThemeConfig();
 
   const sizeKey = logoType === 'wide' ? 'logo.size' : 'logo.sizeCollapsed';
@@ -22,7 +22,8 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
     logoType === 'wide'
       ? { width: 159, height: 24 }
       : { width: 24, height: 24 };
-  const logoSizeConfig = getThemeValue(sizeKey, defaultSize)!;
+  const logoSizeConfig =
+    getThemeValue<{ width: number; height: number }>(sizeKey) ?? defaultSize;
 
   return (
     <BAIFlex align="stretch" direction="column" style={{ width: '100%' }}>
@@ -40,7 +41,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
               type="number"
               defaultValue={logoSizeConfig.width.toString()}
               onCommit={(v) => {
-                setUserCustomThemeConfig(`${sizeKey}.width`, Number(v));
+                updateUserCustomThemeConfig(`${sizeKey}.width`, Number(v));
               }}
               style={{ maxWidth: 150 }}
             />
@@ -59,7 +60,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
               type="number"
               defaultValue={logoSizeConfig.height.toString()}
               onCommit={(v) => {
-                setUserCustomThemeConfig(`${sizeKey}.height`, Number(v));
+                updateUserCustomThemeConfig(`${sizeKey}.height`, Number(v));
               }}
               style={{ maxWidth: 150 }}
             />

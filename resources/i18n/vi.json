@@ -1979,6 +1979,10 @@
     "SettingTable": "Cài đặt bảng"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Cài đặt chủ đề không khớp với lược đồ. Vui lòng kiểm tra tệp.",
+    "FailedToReadFile": "Không thể đọc tệp.",
+    "InvalidJsonFileAlert": "Định dạng JSON không hợp lệ. Vui lòng kiểm tra nội dung tệp.",
+    "JsonConfigAppliedSuccessfully": "Cài đặt chủ đề đã được áp dụng thành công.",
     "PreviewModeAlert": "Bạn đang ở chế độ xem trước giao diện. Vui lòng quay lại cửa sổ gốc để thực hiện công việc.",
     "ThemeJsonConfiguration": "Cấu hình JSON chủ đề",
     "ThemeJsonConfigurationDesc": "Nhập một tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Để áp dụng thay đổi lên trang của bạn, xuất tệp JSON và sao chép vào resources/theme.json trên máy chủ WebUI.",

@@ -2,8 +2,9 @@ import { Col, ColorPicker, ColorPickerProps, Row, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';
 import { BAIFlex } from 'backend.ai-ui';
+import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
+import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 type TokenPath = `token.${keyof AliasToken & string}`;
 type ComponentPath = `components.${keyof ComponentTokenMap & string}.${string}`;
@@ -19,13 +20,18 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { getThemeValue, setUserCustomThemeConfig } =
+  const { getThemeValue, updateUserCustomThemeConfig } =
     useUserCustomThemeConfig();
 
-  const lightModeColor = getThemeValue<string>(
-    `light.${tokenName}`,
-  )?.toString();
-  const darkModeColor = getThemeValue<string>(`dark.${tokenName}`)?.toString();
+  const lightModeColor = getThemeValue<string>(`light.${tokenName}`);
+  const darkModeColor = getThemeValue<string>(`dark.${tokenName}`);
+
+  const defaultLightTokens = theme.getDesignToken({
+    algorithm: theme.defaultAlgorithm,
+  });
+  const defaultDarkTokens = theme.getDesignToken({
+    algorithm: theme.darkAlgorithm,
+  });
 
   return (
     <BAIFlex
@@ -44,9 +50,12 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
             <ColorPicker
               format="hex"
               showText
-              value={lightModeColor}
+              value={
+                lightModeColor ??
+                _.get(defaultLightTokens, _.last(_.split(tokenName, '.')) || '')
+              }
               onChangeComplete={(value) => {
-                setUserCustomThemeConfig(
+                updateUserCustomThemeConfig(
                   `light.${tokenName}`,
                   value.toHexString(),
                 );
@@ -65,9 +74,12 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
             <ColorPicker
               format="hex"
               showText
-              value={darkModeColor}
+              value={
+                darkModeColor ??
+                _.get(defaultDarkTokens, _.last(_.split(tokenName, '.')) || '')
+              }
               onChangeComplete={(value) => {
-                setUserCustomThemeConfig(
+                updateUserCustomThemeConfig(
                   `dark.${tokenName}`,
                   value.toHexString(),
                 );

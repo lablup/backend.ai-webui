@@ -45,6 +45,7 @@ interface SettingPageProps {
   showSearchBar?: boolean;
   primaryButton?: ReactNode;
   extraButton?: ReactNode;
+  onReset?: () => void;
 }
 
 const TabTitle: React.FC<{
@@ -127,6 +128,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   showSearchBar,
   primaryButton,
   extraButton,
+  onReset,
 }) => {
   'use memo';
 
@@ -282,7 +284,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         okText={t('button.Reset')}
         okButtonProps={{ danger: true }}
         onOk={() => {
-          resetSettingItems(settingGroups);
+          onReset ? onReset() : resetSettingItems(settingGroups);
           setIsOpenResetChangesModal();
         }}
         cancelText={t('button.Cancel')}

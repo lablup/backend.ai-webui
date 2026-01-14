@@ -1978,6 +1978,10 @@
     "SettingTable": "テーブルセッティング"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "テーマ設定がスキーマに準拠していません。ファイルを確認してください。",
+    "FailedToReadFile": "ファイルの読み取りに失敗しました。",
+    "InvalidJsonFileAlert": "無効なJSON形式です。ファイルの内容を確認してください。",
+    "JsonConfigAppliedSuccessfully": "テーマ設定が正常に適用されました。",
     "PreviewModeAlert": "現在、テーマのプレビュー モードを使用しています。実際の作業は元のウィンドウで行ってください。",
     "ThemeJsonConfiguration": "テーマのJSON設定",
     "ThemeJsonConfigurationDesc": "テーマを変更するにはJSONファイルをインポートするか、現在のテーマをJSONとしてエクスポートしてください。変更をサイトに適用するには、エクスポートしたJSONファイルをWebUIのWebサーバー上のresources/theme.jsonにコピーしてください。",

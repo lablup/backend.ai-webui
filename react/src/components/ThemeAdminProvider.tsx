@@ -1,4 +1,4 @@
-import { useCustomThemeConfig } from '../helper/customThemeConfig';
+import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../hooks/usePrimaryColors';
 import { theme, ConfigProvider, ConfigProviderProps, ThemeConfig } from 'antd';
 import _ from 'lodash';

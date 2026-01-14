@@ -67,7 +67,9 @@
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy"
+    "wsproxy",
+    "inmemory",
+    "sider"
   ],
   "flagWords": [
     "데이터레이크",

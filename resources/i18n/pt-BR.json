@@ -1979,6 +1979,10 @@
     "SettingTable": "Configuração de mesa"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "As configurações do tema não correspondem ao esquema. Por favor, verifique o arquivo.",
+    "FailedToReadFile": "Falha ao ler o arquivo.",
+    "InvalidJsonFileAlert": "Formato JSON inválido. Verifique o conteúdo do arquivo.",
+    "JsonConfigAppliedSuccessfully": "As configurações do tema foram aplicadas com sucesso.",
     "PreviewModeAlert": "Você está atualmente no modo de pré-visualização do tema. Por favor, continue seu trabalho na janela original.",
     "ThemeJsonConfiguration": "Configuração JSON do Tema",
     "ThemeJsonConfigurationDesc": "Importe um arquivo JSON para alterar o tema ou exporte o tema atual como JSON. Para aplicar as alterações no seu site, exporte o arquivo JSON e copie-o para resources/theme.json no servidor WebUI.",

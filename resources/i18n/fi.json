@@ -1978,6 +1978,10 @@
     "SettingTable": "Kattaus"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Teema-asetukset eivät vastaa skeemaa. Tarkista tiedosto.",
+    "FailedToReadFile": "Tiedoston lukeminen epäonnistui.",
+    "InvalidJsonFileAlert": "Virheellinen JSON-muoto. Tarkista tiedoston sisältö.",
+    "JsonConfigAppliedSuccessfully": "Teema-asetukset on otettu käyttöön.",
     "PreviewModeAlert": "Käytät tällä hetkellä teeman esikatselutilaa. Jatka varsinaista työskentelyä alkuperäisessä ikkunassa.",
     "ThemeJsonConfiguration": "Teeman JSON-määritys",
     "ThemeJsonConfigurationDesc": "Tuo JSON-tiedosto muuttaaksesi teemaa tai vie nykyinen teema JSON-muodossa. Ota muutokset käyttöön sivustollasi viemällä JSON-tiedosto ja kopioimalla se WebUI-web-palvelimen tiedostoon resources/theme.json.",

@@ -1,6 +1,6 @@
-import { useCustomThemeConfig } from '../../helper/customThemeConfig';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';

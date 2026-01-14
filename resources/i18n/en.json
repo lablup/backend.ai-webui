@@ -1985,6 +1985,10 @@
     "SettingTable": "Table Setting"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Theme settings do not match the schema. Please check the file.",
+    "FailedToReadFile": "Failed to read the file.",
+    "InvalidJsonFileAlert": "Invalid JSON format. Please check the file contents.",
+    "JsonConfigAppliedSuccessfully": "Theme settings have been successfully applied.",
     "PreviewModeAlert": "You are currently using the theme preview mode. Please proceed with your actual work in the original window.",
     "ThemeJsonConfiguration": "Theme JSON Configuration",
     "ThemeJsonConfigurationDesc": "Import a JSON file to change the theme or export the current theme as JSON. To apply the changes to your site, export the JSON file and copy it to resources/theme.json in the WebUI web server.",

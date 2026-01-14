@@ -1,11 +1,7 @@
-import { useSessionStorageState } from 'ahooks';
-import { App, ThemeConfig } from 'antd';
+import { ThemeConfig } from 'antd';
 import _ from 'lodash';
-import { useEffect, useEffectEvent, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
-type LogoConfig = {
+export type LogoConfig = {
   src: string;
   srcCollapsed: string;
   srcDark?: string;
@@ -25,10 +21,10 @@ type LogoConfig = {
     height?: number;
   };
 };
-type SiderConfig = {
+export type SiderConfig = {
   theme?: 'light' | 'dark';
 };
-type BrandingConfig = {
+export type BrandingConfig = {
   companyName?: string;
   brandName?: string;
 };
@@ -39,15 +35,10 @@ export type CustomThemeConfig = {
   sider?: SiderConfig;
   branding?: BrandingConfig;
 };
-let _customTheme:
-  | {
-      light: ThemeConfig;
-      dark: ThemeConfig;
-      logo: LogoConfig;
-      sider?: SiderConfig;
-      branding?: BrandingConfig;
-    }
-  | undefined;
+
+let _customTheme: CustomThemeConfig | undefined;
+
+export const getCustomTheme = () => _customTheme;
 
 export const loadCustomThemeConfig = () => {
   fetch('resources/theme.json')
@@ -77,100 +68,4 @@ export const loadCustomThemeConfig = () => {
 
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
-};
-
-export const useCustomThemeConfig = () => {
-  const [customThemeConfig, setCustomThemeConfig] = useState<
-    CustomThemeConfig | undefined
-  >(_customTheme);
-  const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
-  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
-    defaultValue: false,
-  });
-
-  const addEventListener = useEffectEvent(() => {
-    if (isThemePreviewMode) {
-      const themePreviewModehandler = (e: StorageEvent) => {
-        if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
-          window.location.reload();
-        }
-      };
-      window.addEventListener('storage', themePreviewModehandler);
-      return () => {
-        window.removeEventListener('storage', themePreviewModehandler);
-      };
-    }
-
-    if (!customThemeConfig) {
-      const handler = () => {
-        setCustomThemeConfig(_customTheme);
-      };
-      document.addEventListener('custom-theme-loaded', handler);
-
-      return () => {
-        document.removeEventListener('custom-theme-loaded', handler);
-      };
-    }
-  });
-
-  useEffect(() => {
-    addEventListener();
-  }, []);
-
-  return isThemePreviewMode
-    ? _.merge({}, customThemeConfig, userCustomThemeConfig)
-    : customThemeConfig;
-};
-
-export const useUserCustomThemeConfig = () => {
-  'use memo';
-  const { t } = useTranslation();
-  const { message } = App.useApp();
-  const themeConfig = useCustomThemeConfig();
-  const [userCustomThemeConfig, setUserCustomThemeConfig] =
-    useBAISettingUserState('custom_theme_config');
-
-  const mergedThemeConfig = themeConfig
-    ? _.merge({}, themeConfig, userCustomThemeConfig)
-    : undefined;
-
-  const updateThemeConfig = (path: string, value: unknown) => {
-    if (!themeConfig) {
-      message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
-      return;
-    }
-
-    setUserCustomThemeConfig((prev) => {
-      const newConfig = _.cloneDeep({
-        ...themeConfig,
-        ...prev,
-      });
-      if (value) {
-        _.set(newConfig, path, value);
-      } else {
-        const defaultValue = _.get(themeConfig, path);
-        if (defaultValue !== undefined) {
-          _.set(newConfig, path, defaultValue);
-        } else {
-          _.unset(newConfig, path);
-        }
-      }
-      return newConfig;
-    });
-  };
-
-  const getThemeValue = <T>(path: string, defaultValue?: T): T | undefined => {
-    return (
-      _.get(userCustomThemeConfig, path) ??
-      _.get(themeConfig, path) ??
-      defaultValue
-    );
-  };
-
-  return {
-    themeConfig,
-    userCustomThemeConfig: mergedThemeConfig,
-    setUserCustomThemeConfig: updateThemeConfig,
-    getThemeValue,
-  };
 };

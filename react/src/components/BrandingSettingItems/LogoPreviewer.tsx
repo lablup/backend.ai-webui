@@ -4,7 +4,8 @@ import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';
 import _ from 'lodash';
 import { ImagePlus } from 'lucide-react';
-import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
+import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
+import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
@@ -28,7 +29,8 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const { styles } = useStyles();
   const { message } = App.useApp();
 
-  const { themeConfig, getThemeValue, setUserCustomThemeConfig } =
+  const themeConfig = useCustomThemeConfig();
+  const { getThemeValue, updateUserCustomThemeConfig } =
     useUserCustomThemeConfig();
   const logoThemeKey = getLogoThemeKey(mode);
   const currentLogoPath = getThemeValue<string>(`logo.${logoThemeKey}`);
@@ -43,7 +45,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
           <BAIUncontrolledInput
             defaultValue={currentLogoPath}
             onCommit={(value) => {
-              setUserCustomThemeConfig(`logo.${logoThemeKey}`, value);
+              updateUserCustomThemeConfig(`logo.${logoThemeKey}`, value);
             }}
           />
           <Tooltip title={t('userSettings.logo.CreateURLWithImage')}>
@@ -62,7 +64,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                   const base64 = e.target?.result as string;
-                  setUserCustomThemeConfig(`logo.${logoThemeKey}`, base64);
+                  updateUserCustomThemeConfig(`logo.${logoThemeKey}`, base64);
                 };
                 reader.onerror = () => {
                   message.error(t('userSettings.logo.FailedToReadFile'));
@@ -72,7 +74,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 return false;
               }}
               onRemove={() => {
-                setUserCustomThemeConfig(
+                updateUserCustomThemeConfig(
                   `logo.${logoThemeKey}`,
                   themeConfig?.logo?.[logoThemeKey],
                 );

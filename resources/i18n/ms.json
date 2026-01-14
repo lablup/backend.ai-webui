@@ -1977,6 +1977,10 @@
     "SettingTable": "Tetapan Meja"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "Tetapan tema tidak sepadan dengan skema. Sila semak fail.",
+    "FailedToReadFile": "Gagal membaca fail.",
+    "InvalidJsonFileAlert": "Format JSON tidak sah. Sila periksa kandungan fail.",
+    "JsonConfigAppliedSuccessfully": "Tetapan tema telah berjaya diterapkan.",
     "PreviewModeAlert": "Anda sedang menggunakan mod pratonton tema. Sila teruskan kerja sebenar anda di tetingkap asal.",
     "ThemeJsonConfiguration": "Konfigurasi Tema JSON",
     "ThemeJsonConfigurationDesc": "Import fail JSON untuk menukar tema atau eksport tema semasa sebagai JSON. Untuk menerapkan perubahan pada laman anda, eksport fail JSON dan salin ke resources/theme.json pada pelayan web WebUI.",

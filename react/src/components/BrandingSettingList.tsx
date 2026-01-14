@@ -8,12 +8,18 @@ import ThemeColorPicker, {
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { SettingOutlined } from '@ant-design/icons';
-import { BAIAlert, BAIButton, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAIButton,
+  BAIFlex,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useUserCustomThemeConfig } from 'src/helper/customThemeConfig';
+import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
+import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface BrandingSettingListProps {}
 
@@ -24,23 +30,37 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const { setUserCustomThemeConfig } = useUserCustomThemeConfig();
+  const themeConfig = useCustomThemeConfig();
+  const { updateUserCustomThemeConfig, resetThemeConfig } =
+    useUserCustomThemeConfig();
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
-    setUserCustomThemeConfig('light.' + tokenName, undefined);
-    setUserCustomThemeConfig('dark.' + tokenName, undefined);
+    updateUserCustomThemeConfig(
+      'light.' + tokenName,
+      _.get(themeConfig?.light, tokenName) ?? undefined,
+    );
+    updateUserCustomThemeConfig(
+      'dark.' + tokenName,
+      _.get(themeConfig?.dark, tokenName) ?? undefined,
+    );
   };
 
   const resetLogoThemeConfig = (
     mode: 'light' | 'dark' | 'lightCollapsed' | 'darkCollapsed',
   ) => {
-    setUserCustomThemeConfig('logo.' + getLogoThemeKey(mode), undefined);
+    updateUserCustomThemeConfig(
+      'logo.' + getLogoThemeKey(mode),
+      _.get(themeConfig?.logo, getLogoThemeKey(mode)) ?? undefined,
+    );
   };
 
   const resetLogoSizeConfig = (logoType: 'wide' | 'collapsed') => {
-    setUserCustomThemeConfig(
+    updateUserCustomThemeConfig(
       logoType === 'wide' ? 'logo.size' : 'logo.sizeCollapsed',
-      undefined,
+      _.get(
+        themeConfig?.logo,
+        logoType === 'wide' ? 'size' : 'sizeCollapsed',
+      ) ?? undefined,
     );
   };
 
@@ -187,6 +207,9 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       <SettingList
         showSearchBar
         showResetButton
+        onReset={() => {
+          resetThemeConfig();
+        }}
         settingGroups={settingGroups}
         primaryButton={
           <BAIButton
@@ -220,12 +243,14 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           </BAIButton>
         }
       />
-      <ThemeJsonConfigModal
-        open={openThemeConfigModal}
-        onCancel={() => {
-          setOpenThemeConfigModal(false);
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <ThemeJsonConfigModal
+          open={openThemeConfigModal}
+          onRequestClose={() => {
+            setOpenThemeConfigModal(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

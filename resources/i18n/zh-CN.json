@@ -1979,6 +1979,10 @@
     "SettingTable": "桌面设置"
   },
   "theme": {
+    "CannotApplyInvalidJsonConfig": "主题设置不符合模式。请检查该文件。",
+    "FailedToReadFile": "无法读取文件。",
+    "InvalidJsonFileAlert": "JSON 格式无效。请检查文件内容。",
+    "JsonConfigAppliedSuccessfully": "主题设置已成功应用。",
     "PreviewModeAlert": "您当前处于主题预览模式。请在原窗口继续进行实际工作。",
     "ThemeJsonConfiguration": "主题 JSON 配置",
     "ThemeJsonConfigurationDesc": "导入 JSON 文件以更改主题，或将当前主题导出为 JSON。要将更改应用到您的站点，请导出 JSON 文件并将其复制到 WebUI Web 服务器的 resources/theme.json。",
