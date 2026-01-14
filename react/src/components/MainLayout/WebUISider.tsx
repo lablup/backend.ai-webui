@@ -149,6 +149,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             width: themeConfig?.logo?.size?.width || 159,
             height: themeConfig?.logo?.size?.height || 24,
             cursor: 'pointer',
+            display: 'block',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
@@ -169,6 +170,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             width: themeConfig?.logo?.sizeCollapsed?.width ?? 24,
             height: themeConfig?.logo?.sizeCollapsed?.height ?? 24,
             cursor: 'pointer',
+            display: 'block',
           }}
           onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
         />
