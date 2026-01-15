@@ -1,3 +1,4 @@
+import { useFetchKey } from '../hooks';
 import { ResourceSlotName } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
@@ -20,7 +21,6 @@ import {
 import _ from 'lodash';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFetchKey } from 'src/hooks';
 
 interface MyResourceWithinResourceGroupProps extends BAIFlexProps {
   fetchKey?: string;
