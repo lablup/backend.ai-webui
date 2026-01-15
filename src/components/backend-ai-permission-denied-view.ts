@@ -134,7 +134,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
               unelevated
               fullwidth
               id="go-to-summary"
-              label="${_t('button.GoBackToSummaryPage')}"
+              label="${_t('button.GoBackToStartPage')}"
               @click="${() => this._moveTo('start')}"
             ></mwc-button>
           </div>

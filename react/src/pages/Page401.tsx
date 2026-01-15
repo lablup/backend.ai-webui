@@ -40,7 +40,7 @@ const Page401 = () => {
             type="primary"
             onClick={() => webuiNavigate('/start')}
           >
-            {t('button.GoBackToSummaryPage')}
+            {t('button.GoBackToStartPage')}
           </Button>
         </BAIFlex>
       </BAIFlex>
