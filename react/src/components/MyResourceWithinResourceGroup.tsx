@@ -144,12 +144,8 @@ const MyResourceWithinResourceGroup: React.FC<
             ?.remaining?.[key as ResourceSlotName],
         );
 
-        // Filter out if both using and remaining have no values
-        if (
-          (usingCurrent === 0 || !isFinite(usingCurrent)) &&
-          (remainingCurrent === 0 || !isFinite(remainingCurrent))
-        )
-          return null;
+        // Skip displaying if both used and free are not finite numbers
+        if (!isFinite(usingCurrent) && !isFinite(remainingCurrent)) return null;
 
         return {
           key,
