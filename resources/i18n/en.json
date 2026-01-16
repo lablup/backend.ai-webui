@@ -1120,6 +1120,7 @@
     "Metadata": "Metadata",
     "MinResource": "Min Resource",
     "Model": "Model",
+    "ModelFolder": "Model Folder",
     "ModelNameIsRequired": "Model name is required to create a service",
     "ModelPath": "Model Path",
     "Path": "Path",

@@ -1115,6 +1115,7 @@
     "Metadata": "Metadaten",
     "MinResource": "Min. Ressource",
     "Model": "Modell",
+    "ModelFolder": "Modellordner",
     "ModelNameIsRequired": "Zum Erstellen eines Dienstes ist ein Modellname erforderlich",
     "ModelPath": "Modellpfad",
     "Path": "Weg",

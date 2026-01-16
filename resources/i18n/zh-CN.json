@@ -1115,6 +1115,7 @@
     "Metadata": "元数据",
     "MinResource": "最小资源",
     "Model": "模型",
+    "ModelFolder": "模型文件夹",
     "ModelNameIsRequired": "创建服务时需要模型名称",
     "ModelPath": "模型路径",
     "Path": "小路",

@@ -1104,6 +1104,7 @@
     "Metadata": "ข้อมูลเมตา",
     "MinResource": "ทรัพยากรขั้นต่ำ",
     "Model": "โมเดล",
+    "ModelFolder": "โฟลเดอร์โมเดล",
     "ModelNameIsRequired": "ต้องระบุชื่อรุ่นเพื่อสร้างบริการ",
     "ModelPath": "เส้นทางโมเดล",
     "Path": "เส้นทาง",

@@ -1115,6 +1115,7 @@
     "Metadata": "Meta veriler",
     "MinResource": "Minimum Kaynak",
     "Model": "Modeli",
+    "ModelFolder": "Model Klasörü",
     "ModelNameIsRequired": "Hizmet oluşturmak için model adı gereklidir",
     "ModelPath": "Model Yolu",
     "Path": "Yol",

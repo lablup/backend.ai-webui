@@ -1115,6 +1115,7 @@
     "Metadata": "metadata",
     "MinResource": "Tài nguyên tối thiểu",
     "Model": "Người mẫu",
+    "ModelFolder": "Thư mục mô hình",
     "ModelNameIsRequired": "Cần có tên mẫu để tạo dịch vụ",
     "ModelPath": "Đường dẫn mẫu",
     "Path": "Con đường",

@@ -1115,6 +1115,7 @@
     "Metadata": "Metadados",
     "MinResource": "Recurso mínimo",
     "Model": "Modelo",
+    "ModelFolder": "Pasta do modelo",
     "ModelNameIsRequired": "O nome do modelo é obrigatório para criar um serviço",
     "ModelPath": "Caminho do modelo",
     "Path": "Caminho",

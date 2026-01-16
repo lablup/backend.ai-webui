@@ -2,9 +2,11 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { useBackendAIImageMetaData } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 import ModelTryContentButton from './ModelTryContentButton';
+import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -21,9 +23,12 @@ import {
 } from 'antd';
 import {
   BAIFlex,
+  BAILink,
   BAIModal,
   BAIModalProps,
   BAIResourceNumberWithIcon,
+  filterOutEmpty,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -32,6 +37,7 @@ import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useCurrentUserRole } from 'src/hooks/backendai';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
@@ -48,8 +54,12 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
   const [imageMetaData] = useBackendAIImageMetaData();
+  const { generateFolderPath } = useFolderExplorerOpener();
+
   const screen = Grid.useBreakpoint();
   const { models: modelMetadataList } = useModelCardMetadata();
+  const userRole = useCurrentUserRole();
+
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
@@ -77,8 +87,11 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           host
         }
         vfolder_node @since(version: "24.09.*") {
+          id
+          name
           ...ModelCloneModalVFolderFragment
           ...ModelTryContentButtonVFolderFragment
+          ...VFolderNodeIdenticonFragment
         }
         error_msg @since(version: "24.03.7")
       }
@@ -94,18 +107,20 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
     <BAIModal
       {...props}
       title={
-        model_card?.title ? (
-          model_card?.title
-        ) : (
-          <div style={{ color: token.colorTextSecondary }}>
-            <FolderX
-              style={{
-                marginRight: token.marginXXS,
-              }}
-            />
-            {model_card?.name}
-          </div>
-        )
+        <BAIFlex direction="row" align="center" gap={'xs'}>
+          {model_card?.title ? (
+            model_card?.title
+          ) : (
+            <div style={{ color: token.colorTextSecondary }}>
+              <FolderX
+                style={{
+                  marginRight: token.marginXXS,
+                }}
+              />
+              {model_card?.name}
+            </div>
+          )}
+        </BAIFlex>
       }
       centered
       onCancel={onRequestClose}
@@ -202,34 +217,22 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                   style={{ width: '100%' }}
                 >
                   {model_card?.category && (
-                    <Tag bordered={false} style={{ marginRight: 0 }}>
-                      {model_card?.category}
-                    </Tag>
+                    <Tag style={{ marginRight: 0 }}>{model_card?.category}</Tag>
                   )}
                   {model_card?.task && (
-                    <Tag
-                      bordered={false}
-                      color="success"
-                      style={{ marginRight: 0 }}
-                    >
+                    <Tag color="success" style={{ marginRight: 0 }}>
                       {model_card?.task}
                     </Tag>
                   )}
                   {model_card?.label &&
                     _.map(model_card?.label, (label) => (
-                      <Tag
-                        key={label}
-                        bordered={false}
-                        color="blue"
-                        style={{ marginRight: 0 }}
-                      >
+                      <Tag key={label} color="blue" style={{ marginRight: 0 }}>
                         {label}
                       </Tag>
                     ))}
                   {model_card?.license && (
                     <Tag
                       icon={<BankOutlined />}
-                      bordered={false}
                       color="geekblue"
                       style={{ marginRight: 0 }}
                     >
@@ -249,7 +252,36 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     column={2}
                     size="small"
                     bordered
-                    items={[
+                    items={filterOutEmpty([
+                      userRole === 'superadmin' && {
+                        key: 'vfolder.id',
+                        label: t('modelStore.ModelFolder'),
+                        children: model_card?.vfolder_node?.id ? (
+                          <BAIFlex direction="row" align="center" gap={'xs'}>
+                            <ErrorBoundaryWithNullFallback>
+                              <Suspense fallback={<Skeleton active />}>
+                                <BAILink
+                                  type="hover"
+                                  to={generateFolderPath(
+                                    toLocalId(model_card.vfolder_node.id),
+                                  )}
+                                >
+                                  <BAIFlex gap={'xs'}>
+                                    <VFolderNodeIdenticon
+                                      vfolderNodeIdenticonFrgmt={
+                                        model_card.vfolder_node
+                                      }
+                                    />
+                                    {model_card.vfolder_node.name}
+                                  </BAIFlex>
+                                </BAILink>
+                              </Suspense>
+                            </ErrorBoundaryWithNullFallback>
+                          </BAIFlex>
+                        ) : (
+                          '-'
+                        ),
+                      },
                       {
                         key: 'author',
                         label: t('modelStore.Author'),
@@ -339,7 +371,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                           </BAIFlex>
                         ),
                       },
-                    ]}
+                    ])}
                   />
                   {model_card?.readme ? (
                     <Card

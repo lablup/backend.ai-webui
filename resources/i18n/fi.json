@@ -1114,6 +1114,7 @@
     "Metadata": "Metatiedot",
     "MinResource": "Vähimmäisresurssi",
     "Model": "Malli",
+    "ModelFolder": "Mallikansio",
     "ModelNameIsRequired": "Mallin nimi vaaditaan palvelun luomiseen",
     "ModelPath": "Mallin polku",
     "Path": "Polku",

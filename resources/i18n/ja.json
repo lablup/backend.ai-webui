@@ -1114,6 +1114,7 @@
     "Metadata": "メタデータ",
     "MinResource": "最小リソース",
     "Model": "モデル",
+    "ModelFolder": "モデルフォルダ",
     "ModelNameIsRequired": "サービスを作成するにはモデル名が必要です",
     "ModelPath": "モデルパス",
     "Path": "パス",

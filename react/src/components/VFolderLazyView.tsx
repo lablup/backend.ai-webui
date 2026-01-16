@@ -1,12 +1,11 @@
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { useWebUINavigate } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { VFolder } from './VFolderSelect';
-import { FolderOutlined } from '@ant-design/icons';
+import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { Typography } from 'antd';
+import { BAIFlex, toLocalId } from 'backend.ai-ui';
 import React from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+import { VFolderLazyViewQuery } from 'src/__generated__/VFolderLazyViewQuery.graphql';
 
 interface VFolderLazyViewProps {
   uuid: string;
@@ -16,49 +15,47 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   uuid,
   clickable,
 }) => {
-  const currentProject = useCurrentProjectValue();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const location = useLocation();
 
   const webuiNavigate = useWebUINavigate();
-  const { data: vFolders } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery'],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      search.set('group_id', currentProject.id);
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders?${search.toString()}`,
-      }) as Promise<VFolder[]>;
-    },
-    staleTime: 1000,
-  });
 
-  const vFolder = vFolders?.find(
-    // `id` of `/folders` API is not UUID, but UUID without `-`
-    (vFolder) => vFolder.id === uuid?.replaceAll('-', ''),
+  const { vfolder_node } = useLazyLoadQuery<VFolderLazyViewQuery>(
+    graphql`
+      query VFolderLazyViewQuery($id: String!) {
+        vfolder_node(id: $id) {
+          id @required(action: THROW)
+          name
+          ...VFolderNodeIdenticonFragment
+        }
+      }
+    `,
+    { id: uuid },
   );
 
   return (
-    vFolder &&
-    (clickable ? (
-      <Typography.Link
-        onClick={() => {
-          webuiNavigate({
-            pathname: location.pathname,
-            search: new URLSearchParams({
-              folder: vFolder.id,
-            }).toString(),
-          });
-        }}
-      >
-        <FolderOutlined /> {vFolder.name}
-      </Typography.Link>
-    ) : (
-      <div>
-        <FolderOutlined /> {vFolder.name}
-      </div>
-    ))
+    <>
+      {vfolder_node && (
+        <BAIFlex align="center" gap="xs">
+          <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder_node} />
+          {clickable ? (
+            <Typography.Link
+              onClick={() => {
+                webuiNavigate({
+                  pathname: location.pathname,
+                  search: new URLSearchParams({
+                    folder: toLocalId(vfolder_node.id),
+                  }).toString(),
+                });
+              }}
+            >
+              {vfolder_node.name}
+            </Typography.Link>
+          ) : (
+            <Typography.Text>{vfolder_node.name}</Typography.Text>
+          )}
+        </BAIFlex>
+      )}
+    </>
   );
 };
 

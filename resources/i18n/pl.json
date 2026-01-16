@@ -1114,6 +1114,7 @@
     "Metadata": "Metadane",
     "MinResource": "Minimalny zasób",
     "Model": "Model",
+    "ModelFolder": "Folder modeli",
     "ModelNameIsRequired": "Aby utworzyć usługę, wymagana jest nazwa modelu",
     "ModelPath": "Ścieżka modelu",
     "Path": "Ścieżka",

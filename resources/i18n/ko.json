@@ -1118,6 +1118,7 @@
     "Metadata": "메타데이터",
     "MinResource": "최소 리소스",
     "Model": "모델",
+    "ModelFolder": "모델 폴더",
     "ModelNameIsRequired": "서비스를 만들려면 모델 이름이 필요합니다.",
     "ModelPath": "모델 경로",
     "Path": "길",
