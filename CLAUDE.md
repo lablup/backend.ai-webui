@@ -172,6 +172,14 @@ Custom instructions are located in the `.github/` directory:
   - Language-specific guidelines (Korean, Japanese, Chinese)
   - Backend.AI platform context awareness
 
+- **`.github/instructions/storybook.instructions.md`** - Storybook story guidelines
+  - CSF 3 format with TypeScript
+  - Meta configuration (title, tags, parameters, argTypes)
+  - Story patterns (args-based, render function, Relay fragment)
+  - Documentation best practices
+  - Story organization and naming conventions
+  - Complete templates and checklists
+
 ### How It Works
 
 - GitHub Copilot automatically applies these instructions when working in this repository
@@ -190,6 +198,7 @@ When reviewing or writing code:
 4. **Composability**: Check for proper component composition, avoid props drilling
 5. **Custom Hooks**: Verify `useFetchKey` and `BAIUnmountAfterClose` are used where appropriate
 6. **Error Handling**: Use pre-defined error boundaries instead of creating new ones
+7. **Storybook Stories**: Follow CSF 3 format, include `tags: ['autodocs']`, document with argTypes and descriptions
 
 ## Other guidelines
 
@@ -199,3 +208,4 @@ Read and follow below guides:
 - @.github/copilot-instructions.md
 - @.github/instructions/react.instructions.md
 - @.github/instructions/i18n.instructions.md
+- @.github/instructions/storybook.instructions.md
