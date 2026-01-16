@@ -136,7 +136,7 @@ const ReservoirArtifactDetailPage = () => {
             }
           }
           latestVersion: revisions(
-            first: 1
+            limit: 1
             orderBy: { field: VERSION, direction: DESC }
           ) {
             edges {

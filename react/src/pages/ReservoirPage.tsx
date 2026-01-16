@@ -26,6 +26,7 @@ import {
   BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAIImportFromHuggingFaceModal,
   INITIAL_FETCH_KEY,
+  filterOutEmpty,
   toLocalId,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -54,10 +55,13 @@ const getStatusFilter = (status: string) => {
 };
 
 type ArtifactNode = NonNullable<
-  ReservoirPageQuery$data['artifacts']
->['edges'][number]['node'];
+  NonNullable<
+    NonNullable<ReservoirPageQuery$data['artifacts']>['edges']
+  >[number]
+>['node'];
 
 const ReservoirPage: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const navigate = useNavigate();
@@ -136,67 +140,63 @@ const ReservoirPage: React.FC = () => {
   //     }
   //   `);
 
-  const queryRef = useLazyLoadQuery<ReservoirPageQuery>(
-    graphql`
-      query ReservoirPageQuery(
-        $order: [ArtifactOrderBy!]
-        $limit: Int!
-        $offset: Int!
-        $filter: ArtifactFilter!
-      ) {
-        defaultArtifactRegistry(artifactType: MODEL) {
-          name
-          type
-        }
-        total: artifacts(
-          limit: 0
-          offset: 0
-          filter: { availability: [ALIVE, DELETED] }
+  const { defaultArtifactRegistry, total, artifacts } =
+    useLazyLoadQuery<ReservoirPageQuery>(
+      graphql`
+        query ReservoirPageQuery(
+          $order: [ArtifactOrderBy!]
+          $limit: Int
+          $offset: Int
+          $filter: ArtifactFilter
         ) {
-          count
-        }
-        artifacts(
-          orderBy: $order
-          limit: $limit
-          offset: $offset
-          filter: $filter
-        ) {
-          count
-          edges {
-            node {
-              id
-              ...BAIArtifactTableArtifactFragment
-              ...BAIImportArtifactModalArtifactFragment
-              ...BAIDeactivateArtifactsModalArtifactsFragment
-              ...BAIActivateArtifactsModalArtifactsFragment
-              revisions(
-                first: 1
-                orderBy: { field: VERSION, direction: DESC }
-              ) {
-                edges {
-                  node {
-                    id
-                    ...BAIImportArtifactModalArtifactRevisionFragment
+          defaultArtifactRegistry(artifactType: MODEL) {
+            name
+            type
+          }
+          total: artifacts(filter: { availability: [ALIVE, DELETED] }) {
+            count
+          }
+          artifacts(
+            orderBy: $order
+            limit: $limit
+            offset: $offset
+            filter: $filter
+          ) {
+            count
+            edges {
+              node {
+                id
+                ...BAIArtifactTableArtifactFragment
+                ...BAIImportArtifactModalArtifactFragment
+                ...BAIDeactivateArtifactsModalArtifactsFragment
+                ...BAIActivateArtifactsModalArtifactsFragment
+                revisions(
+                  limit: 1
+                  orderBy: { field: VERSION, direction: DESC }
+                ) {
+                  edges {
+                    node {
+                      id
+                      ...BAIImportArtifactModalArtifactRevisionFragment
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey:
-        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
-  );
+      `,
+      deferredQueryVariables,
+      {
+        fetchKey:
+          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
+    );
 
-  const { artifacts, defaultArtifactRegistry, total } = queryRef;
   const isAvailableUsingHuggingFace =
     defaultArtifactRegistry?.type === 'HUGGINGFACE';
   const mode = queryParams.mode;
@@ -226,8 +226,10 @@ const ReservoirPage: React.FC = () => {
               title="MODEL"
               value={total.count}
               prefix={<Brain size={16} />}
-              valueStyle={{
-                color: token.colorPrimary,
+              styles={{
+                content: {
+                  color: token.colorPrimary,
+                },
               }}
             />
           </Card>
@@ -376,7 +378,9 @@ const ReservoirPage: React.FC = () => {
             </BAIFlex>
           </BAIFlex>
           <BAIArtifactTable
-            artifactFragment={artifacts.edges.map((edge) => edge.node)}
+            artifactFragment={filterOutEmpty(
+              artifacts.edges.map((e) => e?.node) ?? [],
+            )}
             onClickPull={(artifactId: string, revisionId: string) => {
               artifacts.edges.forEach((artifact) => {
                 if (artifact.node.id === artifactId) {

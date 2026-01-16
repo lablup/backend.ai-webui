@@ -89,7 +89,6 @@ const BAIArtifactTable = ({
   ...tableProps
 }: BAIArtifactTableProps) => {
   const { token } = theme.useToken();
-  // const navigate = useNavigate();
   const { t } = useTranslation();
 
   const artifact = useFragment<BAIArtifactTableArtifactFragment$key>(
@@ -104,7 +103,7 @@ const BAIArtifactTable = ({
         availability
         ...BAIArtifactTypeTagFragment
         latestVersion: revisions(
-          first: 1
+          limit: 1
           orderBy: { field: VERSION, direction: DESC }
         ) {
           edges {
@@ -193,18 +192,16 @@ const BAIArtifactTable = ({
         return (
           <BAIFlex gap={'xs'} wrap="wrap" align="center">
             <BAIText monospace>{latestVersion.version}</BAIText>
-            <BAIFlex>
-              <BAIArtifactStatusTag artifactRevisionFrgmt={latestVersion} />
-              {latestVersion.status === 'SCANNED' ? (
-                <BAIArtifactRevisionDownloadButton
-                  title={t('comp:BAIArtifactTable.PullLatestVersion')}
-                  revisionsFrgmt={[latestVersion]}
-                  disabled={record.availability !== 'ALIVE'}
-                  size="small"
-                  onClick={() => onClickPull(record.id, latestVersion.id)}
-                />
-              ) : null}
-            </BAIFlex>
+            <BAIArtifactStatusTag artifactRevisionFrgmt={latestVersion} />
+            {latestVersion.status === 'SCANNED' ? (
+              <BAIArtifactRevisionDownloadButton
+                title={t('comp:BAIArtifactTable.PullLatestVersion')}
+                revisionsFrgmt={[latestVersion]}
+                disabled={record.availability !== 'ALIVE'}
+                size="small"
+                onClick={() => onClickPull(record.id, latestVersion.id)}
+              />
+            ) : null}
           </BAIFlex>
         );
       },

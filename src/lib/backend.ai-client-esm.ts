@@ -813,7 +813,6 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.12.0')) {
       this._features['mount-by-id'] = true;
-      this._features['reservoir'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.13.0')) {
       this._features['pending-session-list'] = true;
@@ -821,6 +820,9 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.13.2')) {
       this._features['copy-on-terminal'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('25.14.0')) {
+      this._features['reservoir'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.15.0')) {
       this._features['agent-stats'] = true;
