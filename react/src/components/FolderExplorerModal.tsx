@@ -84,6 +84,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       query FolderExplorerModalQuery($vfolderGlobalId: String!) {
         vfolder_node(id: $vfolderGlobalId) {
           group
+          group_name
           unmanaged_path @since(version: "25.04.0")
           permissions
           host
@@ -263,7 +264,17 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
               />
             ) : currentProject?.id !== vfolder_node?.group &&
               !!vfolder_node?.group ? (
-              <Alert title={t('data.NotInProject')} type="warning" showIcon />
+              <Alert
+                title={
+                  vfolder_node.group_name
+                    ? t('data.NotInProject', {
+                        projectName: vfolder_node.group_name,
+                      })
+                    : t('data.BelongsToDifferentProject')
+                }
+                type="info"
+                showIcon
+              />
             ) : null}
 
             {xl ? (
