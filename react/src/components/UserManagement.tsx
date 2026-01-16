@@ -1,10 +1,15 @@
 import { UserManagementModifyMutation } from '../__generated__/UserManagementModifyMutation.graphql';
-import { UserManagementQuery } from '../__generated__/UserManagementQuery.graphql';
+import {
+  UserManagementQuery,
+  UserManagementQuery$data,
+} from '../__generated__/UserManagementQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
+import PurgeUsersModal from './PurgeUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Button, theme, Popconfirm, App } from 'antd';
 import {
   filterOutEmpty,
@@ -18,8 +23,12 @@ import {
   BAIFetchKeyButton,
   isValidUUID,
   BAIUserNodes,
-  useFetchKey,
+  BAIButton,
+  BAITrashBinIcon,
+  BAIText,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
@@ -31,6 +40,10 @@ import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginat
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface UserManagementProps {}
+
+type UserNode = NonNullable<
+  NonNullable<UserManagementQuery$data['user_nodes']>['edges']
+>[number];
 
 const UserManagement: React.FC<UserManagementProps> = () => {
   'use memo';
@@ -60,6 +73,9 @@ const UserManagement: React.FC<UserManagementProps> = () => {
     string | null
   >(null);
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
+  const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
+  const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
+    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -111,6 +127,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               id @required(action: THROW)
               email @required(action: THROW)
               ...BAIUserNodesFragment
+              ...PurgeUsersModalFragment
             }
           }
         }
@@ -231,6 +248,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               setTablePaginationOption({
                 current: 1,
               });
+              setSelectedUserList([]);
             }}
             optionType="button"
             options={[
@@ -331,6 +349,29 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           />
         </BAIFlex>
         <BAIFlex gap="xs">
+          {selectedUserList.length > 0 && (
+            <BAIFlex gap="xs">
+              <BAIText>
+                {t('general.NSelected', { count: selectedUserList.length })}
+              </BAIText>
+              <BAIButton
+                icon={<EditIcon style={{ color: token.colorInfo }} />}
+                style={{
+                  backgroundColor: token.colorInfoBg,
+                }}
+              />
+              {queryParams.status === 'inactive' && (
+                <BAIButton
+                  icon={<BAITrashBinIcon />}
+                  style={{
+                    color: token.colorError,
+                    background: token.colorErrorBg,
+                  }}
+                  onClick={togglePurgeUsersModal}
+                />
+              )}
+            </BAIFlex>
+          )}
           <BAIFetchKeyButton
             loading={deferredFetchKey !== fetchKey}
             value={fetchKey}
@@ -366,11 +407,27 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 current,
                 pageSize,
               });
+              setSelectedUserList([]);
             }
           },
         }}
+        rowSelection={{
+          type: 'checkbox',
+          onChange: (keys) => {
+            const userNodes = _.chain(user_nodes?.edges).compact().value();
+            setSelectedUserList(() => {
+              return userNodes.filter(
+                (edge) => edge.node && keys.includes(edge?.node.id),
+              );
+            });
+          },
+          selectedRowKeys: _.compact(
+            selectedUserList.map((user) => user?.node?.id),
+          ),
+        }}
         onChangeOrder={(nextOrder) => {
           setQueryParams({ order: nextOrder });
+          setSelectedUserList([]);
         }}
         order={queryParams.order}
         loading={
@@ -404,6 +461,20 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           }
         }}
       />
+      <BAIUnmountAfterClose>
+        <PurgeUsersModal
+          open={openPurgeUsersModal}
+          onOk={() => {
+            togglePurgeUsersModal();
+            setSelectedUserList([]);
+            updateFetchKey();
+          }}
+          onCancel={() => {
+            togglePurgeUsersModal();
+          }}
+          usersFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

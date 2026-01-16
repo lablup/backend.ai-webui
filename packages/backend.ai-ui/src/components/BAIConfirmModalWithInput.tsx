@@ -13,6 +13,7 @@ export interface BAIConfirmModalWithInputProps
   content: React.ReactNode;
   title: React.ReactNode;
   icon?: React.ReactNode;
+  inputLabel?: React.ReactNode;
   okButtonProps?: Omit<BAIModalProps['okButtonProps'], 'disabled' | 'danger'>;
   inputProps?: InputProps;
 }
@@ -25,6 +26,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
   onOk,
   onCancel,
   inputProps,
+  inputLabel,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -67,6 +69,8 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         <Form form={form} style={{ width: '100%' }} preserve={false}>
           <Form.Item
             name="confirmText"
+            layout="vertical"
+            label={inputLabel}
             rules={[
               {
                 required: true,

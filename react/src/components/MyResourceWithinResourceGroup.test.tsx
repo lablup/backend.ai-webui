@@ -30,13 +30,6 @@ jest.mock('ahooks', () => ({
   useControllableValue: () => ['free', jest.fn()],
 }));
 
-jest.mock('../hooks', () => {
-  const isoDate = new Date().toISOString();
-  return {
-    useFetchKey: () => [isoDate, jest.fn(), isoDate],
-  };
-});
-
 jest.mock('../hooks/useCurrentProject', () => ({
   useCurrentProjectValue: () => ({ name: 'test-project' }),
   useCurrentResourceGroupValue: () => 'default',
@@ -138,51 +131,60 @@ jest.mock('../hooks/useResourceLimitAndRemaining', () => ({
   ]),
 }));
 
-jest.mock('backend.ai-ui', () => ({
-  useResourceSlotsDetails: () => ({
-    isLoading: false,
-    resourceSlotsInRG: {
-      cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
-      mem: { human_readable_name: 'Memory', display_unit: 'GiB' },
-      'cuda.device': { human_readable_name: 'CUDA GPU', display_unit: 'GPU' },
+jest.mock('backend.ai-ui', () => {
+  const isoDate = new Date().toISOString();
+  return {
+    useResourceSlotsDetails: () => ({
+      isLoading: false,
+      resourceSlotsInRG: {
+        cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
+        mem: { human_readable_name: 'Memory', display_unit: 'GiB' },
+        'cuda.device': {
+          human_readable_name: 'CUDA GPU',
+          display_unit: 'GPU',
+        },
+      },
+    }),
+    useFetchKey: () => [isoDate, jest.fn(), isoDate],
+    convertToNumber: (value: any) => parseFloat(value) || 0,
+    processMemoryValue: (value: any) => {
+      if (!value || value === 'Infinity' || value === Infinity) return value;
+      return (
+        parseFloat(value.replace ? value.replace(/[^0-9.]/g, '') : value) || 0
+      );
     },
-  }),
-  convertToNumber: (value: any) => parseFloat(value) || 0,
-  processMemoryValue: (value: any) => {
-    if (!value || value === 'Infinity' || value === Infinity) return value;
-    return (
-      parseFloat(value.replace ? value.replace(/[^0-9.]/g, '') : value) || 0
-    );
-  },
-  BAIFlex: ({ children }: any) => <div data-testid="bai-flex">{children}</div>,
-  BAIBoardItemTitle: ({ title, extra }: any) => (
-    <div data-testid="board-title">
-      <div>{title}</div>
-      <div data-testid="board-extra">{extra}</div>
-    </div>
-  ),
-  ResourceStatistics: ({ resourceData }: any) => (
-    <div data-testid="resource-statistics">
-      {resourceData.cpu && (
-        <div data-testid="cpu-data">
-          CPU: {resourceData.cpu.used.current}/{resourceData.cpu.free.current}
-        </div>
-      )}
-      {resourceData.memory && (
-        <div data-testid="memory-data">
-          Memory: {resourceData.memory.used.current}/
-          {resourceData.memory.free.current}
-        </div>
-      )}
-      {resourceData.accelerators?.map((acc: any, idx: number) => (
-        <div key={idx} data-testid="gpu-data">
-          GPU: {acc.used.current}/{acc.free.current}
-        </div>
-      ))}
-    </div>
-  ),
-  BAIFetchKeyButton: () => <button data-testid="refresh-btn">Refresh</button>,
-}));
+    BAIFlex: ({ children }: any) => (
+      <div data-testid="bai-flex">{children}</div>
+    ),
+    BAIBoardItemTitle: ({ title, extra }: any) => (
+      <div data-testid="board-title">
+        <div>{title}</div>
+        <div data-testid="board-extra">{extra}</div>
+      </div>
+    ),
+    ResourceStatistics: ({ resourceData }: any) => (
+      <div data-testid="resource-statistics">
+        {resourceData.cpu && (
+          <div data-testid="cpu-data">
+            CPU: {resourceData.cpu.used.current}/{resourceData.cpu.free.current}
+          </div>
+        )}
+        {resourceData.memory && (
+          <div data-testid="memory-data">
+            Memory: {resourceData.memory.used.current}/
+            {resourceData.memory.free.current}
+          </div>
+        )}
+        {resourceData.accelerators?.map((acc: any, idx: number) => (
+          <div key={idx} data-testid="gpu-data">
+            GPU: {acc.used.current}/{acc.free.current}
+          </div>
+        ))}
+      </div>
+    ),
+    BAIFetchKeyButton: () => <button data-testid="refresh-btn">Refresh</button>,
+  };
+});
 
 jest.mock('./SharedResourceGroupSelectForCurrentProject', () => {
   const MockedComponent = () => (

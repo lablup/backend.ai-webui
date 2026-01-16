@@ -1,4 +1,3 @@
-import { useFetchKey } from '../hooks';
 import { ResourceSlotName } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
