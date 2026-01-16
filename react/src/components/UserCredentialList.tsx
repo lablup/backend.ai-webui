@@ -6,7 +6,6 @@ import {
   UserCredentialListQuery$data,
   UserCredentialListQuery$variables,
 } from '../__generated__/UserCredentialListQuery.graphql';
-import { INITIAL_FETCH_KEY } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -27,6 +26,7 @@ import {
   useBAILogger,
   useUpdatableState,
   BAIText,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

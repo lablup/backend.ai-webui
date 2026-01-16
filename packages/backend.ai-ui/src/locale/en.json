@@ -182,6 +182,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Change File Extension",
     "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",

@@ -5,6 +5,8 @@ import {
   BAIFlex,
   filterOutNullAndUndefined,
   BAIFetchKeyButton,
+  useFetchKey,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useDeferredValue, useMemo } from 'react';
@@ -15,7 +17,7 @@ import {
   PendingSessionNodeListQuery,
   PendingSessionNodeListQuery$variables,
 } from 'src/__generated__/PendingSessionNodeListQuery.graphql';
-import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from 'src/hooks';
+import { useWebUINavigate } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';

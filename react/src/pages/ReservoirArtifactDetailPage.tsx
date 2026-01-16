@@ -16,6 +16,7 @@ import {
   BAIText,
   convertToDecimalUnit,
   filterOutNullAndUndefined,
+  INITIAL_FETCH_KEY,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -31,7 +32,6 @@ import {
   ReservoirArtifactDetailPageQuery$data,
   ReservoirArtifactDetailPageQuery$variables,
 } from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
-import { INITIAL_FETCH_KEY } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { JsonParam, useQueryParams, withDefault } from 'use-query-params';

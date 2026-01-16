@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "тест"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Изменить расширение файла",
     "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",

@@ -1,10 +1,6 @@
 import { UserManagementModifyMutation } from '../__generated__/UserManagementModifyMutation.graphql';
 import { UserManagementQuery } from '../__generated__/UserManagementQuery.graphql';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
@@ -22,6 +18,8 @@ import {
   BAIFetchKeyButton,
   isValidUUID,
   BAIUserNodes,
+  useFetchKey,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';

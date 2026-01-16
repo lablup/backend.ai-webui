@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
     "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",

@@ -7,7 +7,6 @@ import {
   convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
@@ -32,6 +31,8 @@ import {
   mergeFilterValues,
   ResourceTypeIcon,
   useResourceSlotsDetails,
+  useFetchKey,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useDeferredValue, useMemo } from 'react';

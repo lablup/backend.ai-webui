@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "เปลี่ยนนามสกุลไฟล์",
     "ChangeFileExtensionDesc": "การเปลี่ยนนามสกุลไฟล์อาจทำให้ไฟล์ไม่สามารถใช้งานได้หรือเปิดไม่ถูกต้อง \nคุณต้องการดำเนินการต่อหรือไม่?",

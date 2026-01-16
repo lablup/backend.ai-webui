@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Хавтас сонгох"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
     "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",

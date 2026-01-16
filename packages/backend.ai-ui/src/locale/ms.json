@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "ujian"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Tukar Sambungan Fail",
     "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",

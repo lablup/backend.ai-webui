@@ -1,7 +1,6 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
-import { useDateISOState } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
@@ -46,11 +45,6 @@ export const useBackendAIConnectedState = () => {
   }, []);
 
   return time;
-};
-
-export const INITIAL_FETCH_KEY = 'first';
-export const useFetchKey = () => {
-  return [...useDateISOState(INITIAL_FETCH_KEY), INITIAL_FETCH_KEY] as const;
 };
 
 export const useCurrentDomainValue = () => {

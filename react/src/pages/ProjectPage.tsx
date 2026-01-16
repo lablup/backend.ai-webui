@@ -12,6 +12,7 @@ import {
   BAIPropertyFilter,
   BAIText,
   filterOutEmpty,
+  INITIAL_FETCH_KEY,
   isValidUUID,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -25,7 +26,6 @@ import {
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from 'src/__generated__/ProjectPageQuery.graphql';
-import { INITIAL_FETCH_KEY } from 'src/hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
 type ProjectNode = NonNullable<

@@ -4,7 +4,6 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { INITIAL_FETCH_KEY, useFetchKey } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIProgressWithLabel from './BAIProgressWithLabel';
 import DoubleTag from './DoubleTag';
@@ -18,6 +17,8 @@ import {
   BAIPureStorageIcon,
   BAITable,
   BAIFetchKeyButton,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Server } from 'lucide-react';

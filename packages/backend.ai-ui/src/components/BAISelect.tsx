@@ -47,6 +47,26 @@ const useStyles = createStyles(({ css, token }) => ({
       opacity: 0.5;
     }
 
+    /* Change the color of secondary/success/warning/danger text to placeholder color when the dropdown is open */
+    &.ant-select-open
+      .ant-select-content
+      .ant-select-content-value
+      .ant-typography-secondary,
+    &.ant-select-open
+      .ant-select-content
+      .ant-select-content-value
+      .ant-typography-success,
+    &.ant-select-open
+      .ant-select-content
+      .ant-select-content-value
+      .ant-typography-warning,
+    &.ant-select-open
+      .ant-select-content
+      .ant-select-content-value
+      .ant-typography-danger {
+      color: ${token.colorTextPlaceholder};
+    }
+
     /* TODO: re-enable this style after fixing flickering when theme changes */
     /* Add a gradient effect to the right side of the dropdown to indicate more content */
     /* & .ant-select-content::after {
@@ -151,12 +171,19 @@ function BAISelect<
       <Select<ValueType, OptionType>
         {...selectProps}
         loading={isPending || selectProps.loading}
-        onSearch={async (value) => {
-          selectProps.onSearch?.(value);
-          startTransition(async () => {
-            await searchAction?.(value);
-          });
-        }}
+        showSearch={
+          selectProps.showSearch && _.isObject(selectProps.showSearch)
+            ? {
+                ...selectProps.showSearch,
+                onSearch: async (value) => {
+                  _.get(selectProps.showSearch, 'onSearch')?.(value);
+                  startTransition(async () => {
+                    await searchAction?.(value);
+                  });
+                },
+              }
+            : false
+        }
         ref={ref}
         className={classNames(
           selectProps.className,

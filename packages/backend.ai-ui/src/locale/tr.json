@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:FileExplorer": {
     "Controls": "Kontroller",
     "CreateANewFolder": "Yeni bir klasör oluşturun",

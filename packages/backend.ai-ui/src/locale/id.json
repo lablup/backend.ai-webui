@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "tes"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Ubah ekstensi file",
     "ChangeFileExtensionDesc": "Mengubah ekstensi file dapat menyebabkan file menjadi tidak dapat digunakan atau dibuka secara tidak benar. \nApakah Anda ingin melanjutkan?",

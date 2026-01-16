@@ -11,11 +11,11 @@ import {
   processMemoryValue,
   BAIFetchKeyButton,
   useResourceSlotsDetails,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useFetchKey } from 'src/hooks';
 
 interface MyResourceProps extends BAIFlexProps {
   fetchKey?: string;

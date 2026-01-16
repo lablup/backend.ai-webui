@@ -17,6 +17,7 @@ import {
   BAIFetchKeyButton,
   BAIFlexProps,
   useResourceSlotsDetails,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';

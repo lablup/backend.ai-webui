@@ -7,18 +7,19 @@ import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { Skeleton, theme } from 'antd';
-import { filterOutEmpty, useInterval } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+  useInterval,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

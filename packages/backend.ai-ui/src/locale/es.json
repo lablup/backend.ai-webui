@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "prueba"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Cambiar la extensión del archivo",
     "ChangeFileExtensionDesc": "Cambiar la extensión del archivo puede hacer que el archivo se vuelva inutilizable o se abra incorrectamente. \n¿Quieres continuar?",

@@ -1,4 +1,3 @@
-import { INITIAL_FETCH_KEY } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useToggle } from 'ahooks';
 import {
@@ -26,6 +25,7 @@ import {
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAIImportFromHuggingFaceModal,
+  INITIAL_FETCH_KEY,
   toLocalId,
   useUpdatableState,
 } from 'backend.ai-ui';

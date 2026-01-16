@@ -13,6 +13,7 @@ import {
   BAIModal,
   BAIModalProps,
   toGlobalId,
+  useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -20,11 +21,7 @@ import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { FolderExplorerModalQuery } from 'src/__generated__/FolderExplorerModalQuery.graphql';
-import {
-  useCurrentDomainValue,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from 'src/hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';

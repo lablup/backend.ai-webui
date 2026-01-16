@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Αλλαγή επέκτασης αρχείου",
     "ChangeFileExtensionDesc": "Η αλλαγή της επέκτασης του αρχείου μπορεί να προκαλέσει λανθασμένα το αρχείο. \nΘέλετε να προχωρήσετε;",

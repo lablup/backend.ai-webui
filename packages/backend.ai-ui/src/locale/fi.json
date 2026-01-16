@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Valitse kansio"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "Vaihda tiedoston laajennus",
     "ChangeFileExtensionDesc": "Tiedoston laajennuksen muuttaminen voi aiheuttaa tiedoston käyttökelvottoman tai avoimen väärin. \nHaluatko edetä?",

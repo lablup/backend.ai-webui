@@ -13,7 +13,7 @@ import SessionNodes, {
 } from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { INITIAL_FETCH_KEY, useFetchKey, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -37,7 +37,9 @@ import {
   BAISessionsIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  INITIAL_FETCH_KEY,
   mergeFilterValues,
+  useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PowerOffIcon } from 'lucide-react';

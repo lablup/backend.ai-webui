@@ -10,7 +10,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -42,6 +42,7 @@ import {
   BAIText,
   ResourceTypeIcon,
   useResourceSlotsDetails,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

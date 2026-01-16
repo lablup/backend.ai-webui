@@ -1,7 +1,7 @@
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
-import { INITIAL_FETCH_KEY, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -44,6 +44,7 @@ import {
   BAIFlex,
   BAISessionAgentIds,
   BAISessionClusterMode,
+  INITIAL_FETCH_KEY,
   BAIButton,
 } from 'backend.ai-ui';
 // import { graphql } from 'react-relay';

@@ -4,11 +4,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
-import {
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -44,6 +40,8 @@ import {
   BAIPropertyFilter,
   BAIModal,
   useBAILogger,
+  useFetchKey,
+  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useDeferredValue, useMemo } from 'react';

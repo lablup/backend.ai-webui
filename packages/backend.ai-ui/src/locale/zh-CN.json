@@ -179,6 +179,9 @@
   "comp:BAITestButton": {
     "Test": "测试"
   },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:FileExplorer": {
     "ChangeFileExtension": "更改文件扩展名",
     "ChangeFileExtensionDesc": "更改文件扩展名可能会导致文件变得无法使用或不正确打开。\n你想继续吗？",
