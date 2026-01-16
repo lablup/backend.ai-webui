@@ -1,5 +1,3 @@
-import antdThemeJsonSchema from '../../../../resources/antdThemeConfig.schema.json';
-import themeJsonSchema from '../../../../resources/theme.schema.json';
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import { Editor as MonacoEditor, type Monaco } from '@monaco-editor/react';
 import { Alert, App, Skeleton, theme, Upload } from 'antd';
@@ -149,7 +147,28 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
           fixedOverflowWidgets: true,
         }}
         loading={<Skeleton active style={{ height: '100%' }} />}
-        beforeMount={(monaco) => {
+        beforeMount={async (monaco) => {
+          const loadSchema = async (url: string) => {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(
+                `Failed to load schema from ${url}: ${response.status} ${response.statusText}`,
+              );
+            }
+            return response
+              .json()
+              .then((schema) => schema)
+              .catch((error) => {
+                throw new Error(
+                  `Invalid JSON schema at ${url}: ${error.message}`,
+                );
+              });
+          };
+
+          const [themeSchema, antdSchema] = await Promise.all([
+            loadSchema('/resources/theme.schema.json'),
+            loadSchema('/resources/antdThemeConfig.schema.json'),
+          ]);
           monacoRef.current = monaco;
           monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
             validate: true,
@@ -159,12 +178,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 // Schema URIs must match Monaco's inmemory model path resolution for $ref to work
                 uri: 'inmemory://model/theme.schema.json',
                 fileMatch: ['*'],
-                schema: themeJsonSchema,
+                schema: themeSchema,
               },
               {
                 uri: 'inmemory://model/antdThemeConfig.schema.json',
                 fileMatch: ['*'],
-                schema: antdThemeJsonSchema,
+                schema: antdSchema,
               },
             ],
           });

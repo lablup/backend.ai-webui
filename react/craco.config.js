@@ -208,14 +208,28 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
-      // Remove ModuleScopePlugin for development environment
+      // Configure ModuleScopePlugin to allow backend.ai-ui package
       if (env === 'development') {
-        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
-          (plugin) =>
-            !(
+        const backendAiUiEntryFile = path.resolve(
+          __dirname,
+          '../packages/backend.ai-ui/src/index.ts',
+        );
+
+        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.map(
+          (plugin) => {
+            if (
               plugin instanceof ModuleScopePlugin ||
-              plugin.name === 'ModuleScopePlugin'
-            ),
+              plugin.constructor.name === 'ModuleScopePlugin'
+            ) {
+              // Preserve existing allowedFiles and add backend.ai-ui entry file
+              const existingAllowedFiles = Array.from(plugin.allowedFiles);
+              return new ModuleScopePlugin(paths.appSrc, [
+                ...existingAllowedFiles,
+                backendAiUiEntryFile, // Allow backend.ai-ui/src (via entry file)
+              ]);
+            }
+            return plugin;
+          },
         );
       }
 
