@@ -6,14 +6,8 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
-import AgentDetailModal from './AgentDetailModal';
-import AgentSettingModal from './AgentSettingModal';
 import BAIRadioGroup from './BAIRadioGroup';
-import {
-  InfoCircleOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Button, TableProps, Tag, theme, Tooltip } from 'antd';
 import {
@@ -57,9 +51,6 @@ const AgentList: React.FC<AgentListProps> = ({
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
-  const [openDetailDrawer, setOpenDetailDrawer] = useState<boolean>(false);
-  const [openSettingModal, setOpenSettingModal] = useState<boolean>(false);
-  const [openInfoModal, setOpenInfoModal] = useState<boolean>(false);
   const [queryParams, setQueryParams] = useQueryStates({
     status: parseAsString.withDefault('ALIVE'),
     filter: parseAsString,
@@ -125,7 +116,6 @@ const AgentList: React.FC<AgentListProps> = ({
               id
               ...BAIAgentTableFragment
               ...AgentDetailModalFragment
-              ...AgentSettingModalFragment
               ...AgentDetailDrawerFragment
             }
           }
@@ -143,47 +133,6 @@ const AgentList: React.FC<AgentListProps> = ({
     },
   );
 
-  const controlColumn: BAIColumnType<AgentNodeInList> = {
-    title: t('general.Control'),
-    key: 'control',
-    fixed: 'left',
-    render: (_value, record) => {
-      return (
-        <BAIFlex>
-          <Button
-            style={{
-              color: token.colorInfo,
-            }}
-            type="text"
-            icon={<InfoCircleOutlined />}
-            onClick={() => {
-              const targetAgent = _.find(
-                agent_nodes?.edges,
-                (e) => e?.node?.id === record.id,
-              )?.node;
-              setCurrentAgentInfo(targetAgent || null);
-              setOpenInfoModal(true);
-            }}
-          />
-          <Button
-            style={{
-              color: token.colorInfo,
-            }}
-            type="text"
-            icon={<SettingOutlined />}
-            onClick={() => {
-              const targetAgent = _.find(
-                agent_nodes?.edges,
-                (e) => e?.node?.id === record.id,
-              )?.node;
-              setCurrentAgentInfo(targetAgent || null);
-              setOpenSettingModal(true);
-            }}
-          />
-        </BAIFlex>
-      );
-    },
-  };
   const regionColumn: BAIColumnType<AgentNodeInList> = {
     title: t('agent.Region'),
     key: 'region',
@@ -321,7 +270,6 @@ const AgentList: React.FC<AgentListProps> = ({
           agent_nodes?.edges.map((e) => e?.node) ?? [],
         )}
         onClickAgentName={(agent) => {
-          setOpenDetailDrawer(true);
           const targetAgent = _.find(
             agent_nodes?.edges,
             (e) => e?.node?.id === agent.id,
@@ -330,7 +278,6 @@ const AgentList: React.FC<AgentListProps> = ({
         }}
         customizeColumns={(baseColumns) => [
           baseColumns[0],
-          controlColumn,
           regionColumn,
           ...baseColumns.slice(3),
         ]}
@@ -364,31 +311,11 @@ const AgentList: React.FC<AgentListProps> = ({
         }}
         {...tableProps}
       />
-      <AgentDetailModal
-        agentDetailModalFrgmt={currentAgentInfo}
-        open={openInfoModal}
-        onRequestClose={() => {
-          setCurrentAgentInfo(null);
-          setOpenInfoModal(false);
-        }}
-      />
-      <AgentSettingModal
-        agentSettingModalFrgmt={currentAgentInfo}
-        open={openSettingModal}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-          }
-          setOpenSettingModal(false);
-          setCurrentAgentInfo(null);
-        }}
-      />
       <BAIUnmountAfterClose>
         <AgentDetailDrawer
-          agentNodeFragment={currentAgentInfo}
-          open={openDetailDrawer}
+          agentNodeFrgmt={currentAgentInfo}
+          open={!!currentAgentInfo}
           onRequestClose={() => {
-            setOpenDetailDrawer(false);
             setCurrentAgentInfo(null);
           }}
         />

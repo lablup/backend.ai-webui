@@ -8,12 +8,12 @@ import { AgentDetailDrawerFragment$key } from 'src/__generated__/AgentDetailDraw
 
 interface AgentDetailDrawerProps extends DrawerProps {
   onRequestClose?: () => void;
-  agentNodeFragment?: AgentDetailDrawerFragment$key | null;
+  agentNodeFrgmt?: AgentDetailDrawerFragment$key | null;
 }
 
 const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
   onRequestClose,
-  agentNodeFragment,
+  agentNodeFrgmt,
   ...drawerProps
 }) => {
   'use memo';
@@ -27,11 +27,11 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
       @refetchable(queryName: "AgentDetailDrawerRefetchQuery") {
         ... on AgentNode {
           id
-          ...AgentDetailDrawerContentFragment @alias(as: "agentNodeFragment")
+          ...AgentDetailDrawerContentFragment @alias(as: "agentNodeFrgmt")
         }
       }
     `,
-    agentNodeFragment,
+    agentNodeFrgmt,
   );
 
   const [rescanGPUAllocationMap] = useMutation(graphql`
@@ -53,12 +53,13 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
           },
           onError: (error) => logger.error(error),
         });
-        refetch(
-          {},
-          {
-            fetchPolicy: 'network-only',
-          },
-        );
+        agentNodeFrgmt &&
+          refetch(
+            {},
+            {
+              fetchPolicy: 'network-only',
+            },
+          );
       });
     }
   });
@@ -97,10 +98,8 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
       }
     >
       <Suspense fallback={<Skeleton active />}>
-        {agent?.agentNodeFragment && (
-          <AgentDetailDrawerContent
-            agentNodeFragment={agent?.agentNodeFragment}
-          />
+        {agent?.agentNodeFrgmt && (
+          <AgentDetailDrawerContent agentNodeFrgmt={agent?.agentNodeFrgmt} />
         )}
       </Suspense>
     </Drawer>

@@ -4,18 +4,29 @@ import {
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
 import { App, Form, FormInstance, Switch } from 'antd';
-import { BAIModal, BAIModalProps, toLocalId } from 'backend.ai-ui';
+import {
+  BAIAdminResourceGroupSelect,
+  BAIModal,
+  BAIModalProps,
+  toLocalId,
+} from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+import { AgentSettingModalQuery } from 'src/__generated__/AgentSettingModalQuery.graphql';
 
 interface AgentSettingModalProps extends BAIModalProps {
-  agentSettingModalFrgmt?: AgentSettingModalFragment$key | null;
+  agentNodeFrgmt?: AgentSettingModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
 const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
-  agentSettingModalFrgmt = null,
+  agentNodeFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -24,14 +35,28 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   const formRef = useRef<FormInstance<AgentSettingModalFragment$data> | null>(
     null,
   );
+
+  const queryRef = useLazyLoadQuery<AgentSettingModalQuery>(
+    graphql`
+      query AgentSettingModalQuery {
+        ...BAIAdminResourceGroupSelect_scalingGroupsV2Fragment
+      }
+    `,
+    {},
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
+
   const agent = useFragment(
     graphql`
       fragment AgentSettingModalFragment on AgentNode {
         id
+        scaling_group
         schedulable
       }
     `,
-    agentSettingModalFrgmt,
+    agentNodeFrgmt,
   );
 
   const [commitModifyAgentSetting, isInFlightCommitModifyAgentSetting] =
@@ -50,10 +75,10 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   return (
     <BAIModal
       {...modalProps}
-      title={`${t('agent.AgentSetting')}: ${toLocalId(agent?.id ?? '')}`}
+      title={t('agent.AgentSetting')}
       onCancel={() => onRequestClose()}
       destroyOnHidden
-      width={300}
+      width={400}
       confirmLoading={isInFlightCommitModifyAgentSetting}
       onOk={() => {
         formRef.current
@@ -64,7 +89,15 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
                 id: toLocalId(agent?.id ?? ''),
                 props: {
                   schedulable: values.schedulable,
+                  scaling_group: values.scaling_group,
                 },
+              },
+              updater: (store) => {
+                const agentRecord = store.get(agent?.id || '');
+                if (agentRecord) {
+                  agentRecord.setValue(values.schedulable, 'schedulable');
+                  agentRecord.setValue(values.scaling_group, 'scaling_group');
+                }
               },
               onCompleted(res, errors) {
                 if (!res?.modify_agent?.ok || errors) {
@@ -89,6 +122,13 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
         preserve={false}
         initialValues={{ ...agent }}
       >
+        <Form.Item
+          name="scaling_group"
+          label={t('agent.ResourceGroup')}
+          required={true}
+        >
+          <BAIAdminResourceGroupSelect queryRef={queryRef} />
+        </Form.Item>
         <Form.Item
           name="schedulable"
           label={t('agent.Schedulable')}

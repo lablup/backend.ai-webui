@@ -1,3 +1,4 @@
+import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
@@ -18,13 +19,13 @@ import { AgentDetailDrawerContentFragment$key } from 'src/__generated__/AgentDet
 import { useSuspendedBackendaiClient } from 'src/hooks';
 
 interface AgentDetailDrawerContentProps {
-  agentNodeFragment?: AgentDetailDrawerContentFragment$key | null;
+  agentNodeFrgmt?: AgentDetailDrawerContentFragment$key | null;
 }
 
 type TabKey = 'resources';
 
 const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
-  agentNodeFragment,
+  agentNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -49,31 +50,35 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         ...AgentStatusTagFragment
         ...AgentComputePluginsFragment
         ...AgentResourcesFragment
+        ...AgentActionButtonsFragment
       }
     `,
-    agentNodeFragment,
+    agentNodeFrgmt,
   );
 
   const regionData = _.split(agent?.region || '', '/');
 
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
-      <BAIFlex direction="column" align="stretch">
-        <Typography.Title
-          level={3}
-          style={{
-            margin: 0,
-            color: ['TERMINATED'].includes(agent?.status || '')
-              ? token.colorTextSecondary
-              : undefined,
-          }}
-          copyable
-        >
-          {toLocalId(agent?.id || '')}
-        </Typography.Title>
-        <Typography.Text type="secondary" copyable>
-          {agent?.addr}
-        </Typography.Text>
+      <BAIFlex justify="between">
+        <BAIFlex direction="column" align="stretch">
+          <Typography.Title
+            level={3}
+            style={{
+              margin: 0,
+              color: ['TERMINATED'].includes(agent?.status || '')
+                ? token.colorTextSecondary
+                : undefined,
+            }}
+            copyable
+          >
+            {toLocalId(agent?.id || '')}
+          </Typography.Title>
+          <Typography.Text type="secondary" copyable>
+            {agent?.addr}
+          </Typography.Text>
+        </BAIFlex>
+        <AgentActionButtons agentNodeFrgmt={agent} size="large" />
       </BAIFlex>
 
       <Descriptions

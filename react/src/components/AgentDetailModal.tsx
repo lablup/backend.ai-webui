@@ -11,7 +11,6 @@ import {
   BAIModalProps,
   BAIProgressWithLabel,
   convertToBinaryUnit,
-  toLocalId,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
@@ -28,12 +27,12 @@ type LiveStat = {
 };
 
 interface AgentDetailModalProps extends BAIModalProps {
-  agentDetailModalFrgmt?: AgentDetailModalFragment$key | null;
+  agentNodeFrgmt?: AgentDetailModalFragment$key | null;
   onRequestClose: () => void;
 }
 
 const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
-  agentDetailModalFrgmt = null,
+  agentNodeFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -49,7 +48,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
         occupied_slots
       }
     `,
-    agentDetailModalFrgmt,
+    agentNodeFrgmt,
   );
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
   const parsedAvailableSlots = JSON.parse(agent?.available_slots || '{}');
@@ -58,7 +57,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     <BAIModal
       {...modalProps}
       centered
-      title={`${t('agent.DetailedInformation')}: ${toLocalId(agent?.id || '')}`}
+      title={t('agent.DetailedInformation')}
       onCancel={onRequestClose}
       destroyOnHidden
       footer={null}
