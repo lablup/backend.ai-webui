@@ -12,6 +12,7 @@ import { useResourceSlotsDetails } from '../../hooks';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAIIntervalView from '../BAIIntervalView';
+import BAILink from '../BAILink';
 import BAIProgressWithLabel from '../BAIProgressWithLabel';
 import { ResourceTypeIcon } from '../BAIResourceNumberWithIcon';
 import BAITag from '../BAITag';
@@ -49,6 +50,7 @@ const isEnableSorter = (key: string) => {
 export interface BAIAgentTableProps
   extends Omit<BAITableProps<any>, 'dataSource' | 'columns' | 'onChangeOrder'> {
   agentsFragment: BAIAgentTableFragment$key;
+  onClickAgentName?: (agent: AgentNodeInList) => void;
   onChangeOrder?: (
     order: (typeof availableAgentSorterValues)[number] | undefined,
   ) => void;
@@ -59,6 +61,7 @@ export interface BAIAgentTableProps
 
 const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   agentsFragment,
+  onClickAgentName,
   onChangeOrder,
   customizeColumns,
   ...tableProps
@@ -100,7 +103,18 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       render: (value, record) => {
         return (
           <BAIFlex direction="column" align="start">
-            <Typography.Text>{value}</Typography.Text>
+            {onClickAgentName ? (
+              <BAILink
+                type="hover"
+                onClick={() => {
+                  onClickAgentName(record);
+                }}
+              >
+                {value}
+              </BAILink>
+            ) : (
+              <Typography.Text>{value}</Typography.Text>
+            )}
             <Typography.Text type="secondary">{record?.addr}</Typography.Text>
           </BAIFlex>
         );

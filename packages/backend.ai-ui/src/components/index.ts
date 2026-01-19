@@ -84,7 +84,7 @@ export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
-export type { DoubleTagObjectValue } from './BAIDoubleTag';
+export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
 export * from './Table';

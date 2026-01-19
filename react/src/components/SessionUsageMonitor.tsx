@@ -1,17 +1,13 @@
 import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
-import {
-  convertToBinaryUnit,
-  convertToDecimalUnit,
-  toFixedFloorWithoutTrailingZeros,
-} from '../helper';
+import { convertToBinaryUnit, convertToDecimalUnit } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
-import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
+import SimpleProgressWithLabel from './SimpleProgressWithLabel';
+import { ProgressProps, Typography, Row, Col } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,
   useResourceSlotsDetails,
-  BAIProgressWithLabel,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -22,81 +18,6 @@ interface SessionUsageMonitorProps extends ProgressProps {
   size?: 'small' | 'default';
   displayTarget?: 'max' | 'avg' | 'current';
 }
-
-interface SessionUtilItemProps {
-  size: 'small' | 'default';
-  title: React.ReactNode;
-  percent: string;
-  tooltipTitle?: React.ReactNode;
-  description?: React.ReactNode;
-}
-
-const SessionUtilItem: React.FC<SessionUtilItemProps> = ({
-  size,
-  title,
-  percent,
-  tooltipTitle,
-  description,
-}) => {
-  const { token } = theme.useToken();
-
-  const formattedPercent = toFixedFloorWithoutTrailingZeros(percent || 0, 1);
-  const percentLabel = formattedPercent + '%';
-
-  if (size === 'default') {
-    return (
-      <>
-        <BAIFlex justify="between">
-          <Typography.Text>{title}</Typography.Text>
-          {description && (
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
-              {description}
-            </Typography.Text>
-          )}
-        </BAIFlex>
-        <BAIProgressWithLabel
-          percent={_.toNumber(percent)}
-          valueLabel={percentLabel}
-          strokeColor="#BFBFBF"
-          progressStyle={{ border: 'none' }}
-          showInfo={false}
-          labelStyle={{
-            height: token.sizeXS,
-          }}
-        />
-      </>
-    );
-  }
-
-  return (
-    <Tooltip title={tooltipTitle || title} placement="left">
-      <BAIFlex direction="row" gap={'xxs'}>
-        <BAIFlex
-          style={{
-            // Max width is 140px (even if over 100%), min width is 3px
-            width: _.min([
-              _.max([Math.round(_.toNumber(percent) * 1.4), 3]),
-              140,
-            ]),
-            height: 12,
-            backgroundColor: '#BFBFBF',
-          }}
-        ></BAIFlex>
-        <Typography.Text
-          style={{
-            fontSize: token.fontSizeSM,
-            lineHeight: `${token.fontSizeSM}px`,
-          }}
-        >
-          {_.toNumber(percent).toFixed(0) + '%'}
-        </Typography.Text>
-      </BAIFlex>
-    </Tooltip>
-  );
-};
 
 const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   sessionFrgmt,
@@ -159,7 +80,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
           CPUOccupiedSlot * 100,
         );
         return (
-          <SessionUtilItem
+          <SimpleProgressWithLabel
             key={'cpu'}
             size={size}
             title={mergedResourceSlots?.['cpu']?.human_readable_name}
@@ -176,7 +97,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
         );
       })(),
     sortedLiveStat?.mem && sortedLiveStat?.mem?.[displayTargetName] && (
-      <SessionUtilItem
+      <SimpleProgressWithLabel
         key={'mem'}
         size={size}
         title={mergedResourceSlots?.['mem']?.human_readable_name}
@@ -225,7 +146,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
           deviceKey = undefined;
         }
         return deviceKey && value?.[displayTargetName] ? (
-          <SessionUtilItem
+          <SimpleProgressWithLabel
             key={key}
             size={size}
             title={
