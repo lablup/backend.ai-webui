@@ -218,6 +218,7 @@ const AgentList: React.FC<AgentListProps> = ({
             value={queryParams.status}
             onChange={(e) => {
               setQueryParams({ status: e.target.value });
+              setTablePaginationOption({ current: 1 });
             }}
           />
 
@@ -252,6 +253,7 @@ const AgentList: React.FC<AgentListProps> = ({
             value={queryParams.filter || undefined}
             onChange={(value) => {
               setQueryParams({ filter: value || null });
+              setTablePaginationOption({ current: 1 });
             }}
           />
         </BAIFlex>
