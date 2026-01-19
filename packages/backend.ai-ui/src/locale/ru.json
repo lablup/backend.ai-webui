@@ -50,8 +50,10 @@
     "Controls": "Управление",
     "Deactivate": "Деактивировать",
     "PullLatestVersion": "Вытащите последнюю версию",
+    "Registry": "Реестр",
     "Scanned": "Сканируется",
     "Size": "Размер",
+    "Source": "Источник",
     "Updated": "Обновлено",
     "Version": "Версия"
   },

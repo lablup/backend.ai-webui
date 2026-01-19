@@ -50,8 +50,10 @@
     "Controls": "Controls",
     "Deactivate": "Deactivate",
     "PullLatestVersion": "Pull latest version",
+    "Registry": "Registry",
     "Scanned": "Scanned",
     "Size": "Size",
+    "Source": "Source",
     "Updated": "Updated",
     "Version": "Version"
   },

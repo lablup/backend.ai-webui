@@ -50,8 +50,10 @@
     "Controls": "コントロール",
     "Deactivate": "無効にします",
     "PullLatestVersion": "最新バージョンをプルします",
+    "Registry": "レジストリ",
     "Scanned": "スキャン",
     "Size": "サイズ",
+    "Source": "ソース",
     "Updated": "更新",
     "Version": "バージョン"
   },

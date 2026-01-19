@@ -50,8 +50,10 @@
     "Controls": "控件",
     "Deactivate": "停用",
     "PullLatestVersion": "拉最新版本",
+    "Registry": "镜像仓库",
     "Scanned": "扫描",
     "Size": "尺寸",
+    "Source": "来源",
     "Updated": "更新",
     "Version": "版本"
   },

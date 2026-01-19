@@ -50,8 +50,10 @@
     "Controls": "Hallintalaitteet",
     "Deactivate": "Deaktivoida",
     "PullLatestVersion": "Vedä uusin versio",
+    "Registry": "Rekisteri",
     "Scanned": "Skannattu",
     "Size": "Koko",
+    "Source": "Lähde",
     "Updated": "Päivitetty",
     "Version": "Versio"
   },

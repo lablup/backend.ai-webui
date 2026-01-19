@@ -189,7 +189,7 @@ const OPERATOR_SHORT_LABELS: Partial<Record<FilterOperator, string>> = {
 
 const DEFAULT_OPERATOR_BY_TYPE: Record<FilterPropertyType, FilterOperator> = {
   string: 'contains',
-  number: 'eq',
+  number: 'equals',
   boolean: 'eq',
   enum: 'eq',
 };

@@ -33,6 +33,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import {
+  ArtifactStatus,
   ReservoirArtifactDetailPageQuery,
   ReservoirArtifactDetailPageQuery$data,
   ReservoirArtifactDetailPageQuery$variables,
@@ -131,7 +132,10 @@ const ReservoirArtifactDetailPage = () => {
               first: null
               last: null
               filter: { status: { equals: PULLING } }
-              orderBy: { field: VERSION, direction: DESC }
+              orderBy: [
+                { field: VERSION, direction: DESC }
+                { field: UPDATED_AT, direction: DESC }
+              ]
             )
               @connection(
                 key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
@@ -148,7 +152,10 @@ const ReservoirArtifactDetailPage = () => {
             }
             latestVersion: revisions(
               limit: 1
-              orderBy: { field: VERSION, direction: DESC }
+              orderBy: [
+                { field: VERSION, direction: DESC }
+                { field: UPDATED_AT, direction: DESC }
+              ]
             ) {
               edges {
                 node {
@@ -164,7 +171,10 @@ const ReservoirArtifactDetailPage = () => {
             revisions(
               offset: $offset
               limit: $limit
-              orderBy: { field: VERSION, direction: DESC }
+              orderBy: [
+                { field: VERSION, direction: DESC }
+                { field: UPDATED_AT, direction: DESC }
+              ]
               filter: $filter
             ) {
               count
@@ -223,7 +233,7 @@ const ReservoirArtifactDetailPage = () => {
               revisionsFrgmt={[record]}
               loading={status === 'PULLING' || status === 'VERIFYING'}
               onClick={() => {
-                artifact?.revisions.edges.forEach((edge) => {
+                artifact?.revisions?.edges?.forEach((edge) => {
                   if (edge.node.id === record.id) {
                     setSelectedRevisions([edge.node]);
                   }
@@ -238,13 +248,13 @@ const ReservoirArtifactDetailPage = () => {
               size="small"
               revisionsFrgmt={_.map(
                 _.filter(
-                  artifact?.revisions.edges,
+                  artifact?.revisions?.edges,
                   (edge) => edge.node.id === record.id,
                 ),
                 'node',
               )}
               onClick={() => {
-                artifact?.revisions.edges.forEach((edge) => {
+                artifact?.revisions?.edges?.forEach((edge) => {
                   if (edge.node.id === record.id) {
                     setSelectedImportRevisions([edge.node]);
                   }
@@ -258,7 +268,7 @@ const ReservoirArtifactDetailPage = () => {
               title={t('reservoirPage.RemoveThisVersion')}
               revisionsFrgmt={[record]}
               onClick={() => {
-                artifact?.revisions.edges.forEach((edge) => {
+                artifact?.revisions?.edges?.forEach((edge) => {
                   if (edge.node.id === record.id) {
                     setSelectedDeleteRevisions([edge.node]);
                   }
@@ -366,7 +376,7 @@ const ReservoirArtifactDetailPage = () => {
           <Descriptions.Item label={t('reservoirPage.Registry')}>
             <Typography>
               {artifact?.registry
-                ? `${artifact.registry.name}(${artifact.registry.url})`
+                ? `${artifact.registry.name} (${artifact.registry.url})`
                 : 'N/A'}
             </Typography>
           </Descriptions.Item>
@@ -408,40 +418,22 @@ const ReservoirArtifactDetailPage = () => {
                   propertyLabel: t('reservoirPage.Status'),
                   key: 'status',
                   type: 'enum',
-                  options: [
-                    {
-                      label: 'SCANNED',
-                      value: 'SCANNED',
-                    },
-                    {
-                      label: 'PULLING',
-                      value: 'PULLING',
-                    },
-                    {
-                      label: 'PULLED',
-                      value: 'PULLED',
-                    },
-                    {
-                      label: 'VERIFYING',
-                      value: 'VERIFYING',
-                    },
-                    {
-                      label: 'NEEDS_APPROVAL',
-                      value: 'NEEDS_APPROVAL',
-                    },
-                    {
-                      label: 'FAILED',
-                      value: 'FAILED',
-                    },
-                    {
-                      label: 'AVAILABLE',
-                      value: 'AVAILABLE',
-                    },
-                    {
-                      label: 'REJECTED',
-                      value: 'REJECTED',
-                    },
-                  ],
+                  options: _.map(
+                    [
+                      'SCANNED',
+                      'PULLING',
+                      'PULLED',
+                      'VERIFYING',
+                      'NEEDS_APPROVAL',
+                      'FAILED',
+                      'AVAILABLE',
+                      'REJECTED',
+                    ] satisfies ArtifactStatus[],
+                    (v) => ({
+                      label: v,
+                      value: v,
+                    }),
+                  ),
                 },
                 {
                   fixedOperator: 'contains',
@@ -450,10 +442,16 @@ const ReservoirArtifactDetailPage = () => {
                   type: 'string',
                 },
                 {
-                  propertyLabel: t('reservoirPage.ArtifactID'),
-                  key: 'artifactId',
-                  valueMode: 'scalar',
-                  type: 'string',
+                  propertyLabel: t('reservoirPage.Size'),
+                  key: 'size',
+                  type: 'number',
+                  operators: [
+                    'equals',
+                    'greaterThan',
+                    'greaterOrEqual',
+                    'lessThan',
+                    'lessOrEqual',
+                  ],
                 },
               ]}
             />
@@ -513,14 +511,14 @@ const ReservoirArtifactDetailPage = () => {
           </BAIFlex>
           <BAIArtifactRevisionTable
             artifactRevisionFrgmt={filterOutNullAndUndefined(
-              artifact?.revisions.edges.map((e) => e.node),
+              artifact?.revisions?.edges?.map((e) => e.node),
             )}
             latestRevisionFrgmt={artifact?.latestVersion.edges[0].node}
             loading={deferredQueryVariables !== queryVariables}
             pagination={{
               current: tablePaginationOption.current,
               pageSize: tablePaginationOption.pageSize,
-              total: artifact?.revisions.count ?? 0,
+              total: artifact?.revisions?.count ?? 0,
               onChange: (page, pageSize) => {
                 if (_.isNumber(page) && _.isNumber(pageSize)) {
                   setTablePaginationOption({

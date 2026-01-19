@@ -11,12 +11,12 @@ import {
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
-import { BAITable, BAITableProps } from '../Table';
+import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
 import { SyncOutlined } from '@ant-design/icons';
-import { Button, TableColumnsType, theme, Typography } from 'antd';
+import { Button, theme, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
@@ -101,10 +101,21 @@ const BAIArtifactTable = ({
         updatedAt
         scannedAt
         availability
+        registry {
+          name
+          url
+        }
+        source {
+          name
+          url
+        }
         ...BAIArtifactTypeTagFragment
         latestVersion: revisions(
           limit: 1
-          orderBy: { field: VERSION, direction: DESC }
+          orderBy: [
+            { field: VERSION, direction: DESC }
+            { field: UPDATED_AT, direction: DESC }
+          ]
         ) {
           edges {
             node {
@@ -122,7 +133,7 @@ const BAIArtifactTable = ({
     artifactFragment,
   );
 
-  const columns: TableColumnsType<Artifact> = [
+  const columns: Array<BAIColumnType<Artifact>> = [
     {
       title: t('comp:BAIArtifactRevisionTable.Name'),
       dataIndex: 'name',
@@ -250,6 +261,42 @@ const BAIArtifactTable = ({
           </Typography.Text>
         );
       },
+    },
+    {
+      title: t('comp:BAIArtifactTable.Registry'),
+      dataIndex: 'registry.name',
+      key: 'registry.name',
+      render: (_value, record: Artifact) => {
+        return record?.source ? (
+          <Typography>
+            {record?.registry
+              ? `${record.registry.name} (${record.registry.url})`
+              : 'N/A'}
+          </Typography>
+        ) : (
+          '-'
+        );
+      },
+      defaultHidden: true,
+    },
+    {
+      title: t('comp:BAIArtifactTable.Source'),
+      dataIndex: 'source.name',
+      key: 'source.name',
+      render: (_value, record: Artifact) => {
+        return record?.source ? (
+          <Typography.Link
+            href={record.source.url ?? ''}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {record.source.name || 'N/A'}
+          </Typography.Link>
+        ) : (
+          '-'
+        );
+      },
+      defaultHidden: true,
     },
   ];
 

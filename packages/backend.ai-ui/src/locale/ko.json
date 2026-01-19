@@ -50,8 +50,10 @@
     "Controls": "제어",
     "Deactivate": "비활성화",
     "PullLatestVersion": "최신 버전을 가져옵니다",
+    "Registry": "레지스트리",
     "Scanned": "스캔",
     "Size": "크기",
+    "Source": "소스",
     "Updated": "업데이트",
     "Version": "버전"
   },

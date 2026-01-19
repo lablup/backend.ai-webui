@@ -39,10 +39,12 @@ import {
   ReservoirPageQuery,
   ReservoirPageQuery$data,
   ReservoirPageQuery$variables,
+  ArtifactType,
 } from 'src/__generated__/ReservoirPageQuery.graphql';
 import BAIRadioGroup from 'src/components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from 'src/components/ScanArtifactModelsFromHuggingFaceModal';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import {
   withDefault,
   JsonParam,
@@ -84,6 +86,9 @@ const ReservoirPage: React.FC = () => {
   const [openHuggingFaceModal, { toggle: toggleOpenHuggingFaceModal }] =
     useToggle();
   const deferredOpenHuggingFaceModal = useDeferredValue(openHuggingFaceModal);
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ReservoirPage',
+  );
 
   const {
     baiPaginationOption,
@@ -173,7 +178,10 @@ const ReservoirPage: React.FC = () => {
                 ...BAIActivateArtifactsModalArtifactsFragment
                 revisions(
                   limit: 1
-                  orderBy: { field: VERSION, direction: DESC }
+                  orderBy: [
+                    { field: VERSION, direction: DESC }
+                    { field: UPDATED_AT, direction: DESC }
+                  ]
                 ) {
                   edges {
                     node {
@@ -305,6 +313,26 @@ const ReservoirPage: React.FC = () => {
                     key: 'registry',
                     propertyLabel: t('reservoirPage.Registry'),
                     type: 'string',
+                  },
+                  {
+                    fixedOperator: 'equals',
+                    key: 'type',
+                    propertyLabel: t('reservoirPage.Type'),
+                    type: 'enum',
+                    valueMode: 'scalar',
+                    operators: ['equals', 'in'],
+                    strictSelection: true,
+                    options: _.map(
+                      [
+                        'MODEL',
+                        // TODO: Temporarily disabled until reservoir supports other types.
+                        // 'PACKAGE', 'IMAGE'
+                      ] satisfies ArtifactType[],
+                      (v) => ({
+                        label: v,
+                        value: v,
+                      }),
+                    ),
                   },
                 ]}
               />
@@ -446,6 +474,10 @@ const ReservoirPage: React.FC = () => {
                   setTablePaginationOption({ current, pageSize });
                 }
               },
+            }}
+            tableSettings={{
+              columnOverrides: columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
             }}
           />
         </BAIFlex>
