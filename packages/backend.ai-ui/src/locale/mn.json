@@ -39,8 +39,6 @@
     "Control": "Удирдах",
     "LatestVersion": "Хамгийн сүүлийн үеийн хувилбар",
     "Name": "Нэр",
-    "PullThisVersion": "Энэ хувилбарыг татаж",
-    "RemoveThisVersion": "Энэ хувилбарыг арилгах",
     "Size": "Хэмжээ",
     "Status": "Байдал",
     "Updated": "Шинэчилсэн цаг нь",
@@ -89,17 +87,6 @@
     "PullVersion": "Хувилбарыг ашиглах",
     "Size": "Хэмжээ",
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
-    "Version": "Таамаглал"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Загварын ID-г оруулна уу. (e.g. overai / gpt-oss-20b)",
-    "EnterAVersion": "Хувилбарыг оруулна уу. (Үндсэн: Үндсэн)",
-    "Failed to import model from hugging face": "Нүүрээ тэвэрч авахаас загварыг импортлох боломжгүй байна",
-    "Import": "Импортлох",
-    "ModalDescription": "Загварын ID болон хувилбарыг зааж өгөх замаар нүүрээ тэвэрч, загварчлалыг импортлох.",
-    "ModalTitle": "Тэвэрч буй царайг импортлох",
-    "ModelID": "Загвар он",
-    "SuccessfullyImportedModelFromHuggingFace": "Нүүр царайг тэвэрч авахаас шууд импортлохыг хүссэн",
     "Version": "Таамаглал"
   },
   "comp:BAIProjectBulkEditModal": {

@@ -39,8 +39,6 @@
     "Control": "제어",
     "LatestVersion": "최신 버전",
     "Name": "이름",
-    "PullThisVersion": "해당 버전 가져오기",
-    "RemoveThisVersion": "해당 버전 제거하기",
     "Size": "크기",
     "Status": "상태",
     "Updated": "업데이트",
@@ -89,17 +87,6 @@
     "PullVersion": "버전 가져오기",
     "Size": "크기",
     "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
-    "Version": "버전"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "모델 ID를 입력하십시오. (예 : OpenAI/GPT-SOSS-20B)",
-    "EnterAVersion": "버전을 입력하십시오. (기본값 : main)",
-    "Failed to import model from hugging face": "허깅 페이스에서 모델을 가져오는데 실패했습니다.",
-    "Import": "가져오기",
-    "ModalDescription": "특정 모델 ID와 버전을 통해 허깅 페이스에서 모델을 가져옵니다.",
-    "ModalTitle": "허깅 페이스에서 가져오기",
-    "ModelID": "모델 ID",
-    "SuccessfullyImportedModelFromHuggingFace": "허깅 페이스에서 모델 가져오기 요청을 성공적으로 보냈습니다.",
     "Version": "버전"
   },
   "comp:BAIProjectBulkEditModal": {

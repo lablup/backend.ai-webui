@@ -71,6 +71,7 @@
     "Apply": "Başvurmak",
     "AutoRefresh": "Otomatik yenileme",
     "Cancel": "İptal etmek",
+    "ChangeProject": "Projeyi değiştir",
     "Clear": "Silmek",
     "ClearLogs": "Günlükleri Temizle",
     "ClickForMoreDetails": "Daha fazla ayrıntı için tıklayın",
@@ -820,6 +821,22 @@
     "WrongURLType": "Yanlış URL Türü",
     "YouCanCreateNotebookCode": "Doğrudan Backend.AI üzerinde çalıştırabileceğiniz aşağıdakine benzer bir rozet kodu oluşturmak için not defteri URL'sini girin."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Mevcut proje başarıyla değiştirildi.",
+    "FailedToImport": "Artefakt(lar) içe aktarılamadı",
+    "FailedToImportArtifact": "Artefakt {{ name }} ({{ version }}) içe aktarılamadı.",
+    "FailedToImportModelFromHuggingFace": "Hugging Face'ten model alınamadı.",
+    "FailedToRetrieveModelStoreProject": "Model projesine özel proje alınamadı.",
+    "FolderMountForModelStore": "Model mağazası için klasör bağlama",
+    "Import": "İçe aktar",
+    "ImportToFolder": "Klasöre içe aktar",
+    "ImportingArtifact": "Artefakt {{name}} ({{version}}) içe aktarılıyor",
+    "ModelStoreProjectRequired": "Model mağazası için özel bir proje gerekiyor.",
+    "ModelStoreProjectRequiredDescription": "Mevcut projeyi yalnızca Model Store için ayrılmış bir projeye dönüştürmek istiyor musunuz?",
+    "NoArtifactsSelected": "İçe aktarılacak artefakt seçilmedi.",
+    "OverwriteWarning": "Aynı ada sahip dosyalar varsa, mevcut dosyaların üzerine yazılacaktır.",
+    "SuccessfullyImported": "Artefakt(lar) başarıyla içe aktarıldı."
+  },
   "information": {
     "APIVersion": "API sürümü",
     "CannotRead": "Okunamıyor",
@@ -1228,9 +1245,11 @@
     "Name": "İsim",
     "PullLatestVersion": "En son ({{version}}) sürümü çekin",
     "PullSelectedVersions": "Seçilen sürümleri çekin",
+    "PullThisVersion": "Bu sürümü çek",
     "PullingArtifact": "Artefakt {{name}}: {{version}}",
     "Registry": "Sicil",
     "RemoveSelectedVersions": "Seçilen sürümleri kaldırın",
+    "RemoveThisVersion": "Bu sürümü kaldır",
     "ReservoirArtifacts": "Rezervuar eserleri",
     "Size": "Boyut",
     "Source": "Kaynak",
@@ -1363,6 +1382,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Model kimliğini girin. (örn: openai/gpt-oss-20b)",
+    "EnterAVersion": "Sürümü girin. (Varsayılan: main)",
+    "FailedToScanModelFromHuggingFace": "Hugging Face'ten artefakt modelleri taranamadı.",
+    "ModalDescription": "Belirli bir model kimliği ve sürümü kullanarak Hugging Face'te modeli tarar.",
+    "ModelID": "Model Kimliği",
+    "ModelStoreFolderMountTooltip": "Hugging Face modelini seçilen klasöre kaydeder. Sadece 'model store' kullanımına ayrılmış projelerde kullanılabilir.",
+    "Scan": "Tara",
+    "ScanFromHuggingFace": "Hugging Face'ten tara",
+    "SuccessfullyScannedModel": "Hugging Face'te model tarama isteği başarıyla gönderildi.",
+    "Version": "Sürüm"
   },
   "scheduler": {
     "PendingSessions": "Bekleyen seanslar"

@@ -426,3 +426,13 @@ export const isValidUUID = (uuid: string) => {
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
   return regex.test(uuid);
 };
+
+export const convertToUUID = (id: string): string => {
+  if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
+    return id;
+  }
+  return id.replace(
+    /([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{12})/,
+    '$1-$2-$3-$4-$5',
+  );
+};

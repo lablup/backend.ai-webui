@@ -71,6 +71,7 @@
     "Apply": "Menerapkan",
     "AutoRefresh": "Penyegaran otomatis",
     "Cancel": "Batalkan",
+    "ChangeProject": "Ubah proyek",
     "Clear": "Menghapus",
     "ClearLogs": "Hapus Log",
     "ClickForMoreDetails": "Klik untuk detail lebih lanjut",
@@ -819,6 +820,22 @@
     "WrongURLType": "Jenis URL Salah",
     "YouCanCreateNotebookCode": "Lencana ini memungkinkan eksekusi langsung notebook Anda di Backend.AI. Salin kode ini untuk menggunakannya di mana pun."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Proyek saat ini berhasil diubah.",
+    "FailedToImport": "Gagal mengimpor artefak",
+    "FailedToImportArtifact": "Gagal mengimpor artefak {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "Gagal mengambil model dari Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "Gagal mengambil proyek khusus untuk model.",
+    "FolderMountForModelStore": "Mount folder untuk Model Store",
+    "Import": "Impor",
+    "ImportToFolder": "Impor ke Folder",
+    "ImportingArtifact": "Mengimpor artefak {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Diperlukan proyek khusus untuk Model Store",
+    "ModelStoreProjectRequiredDescription": "Apakah Anda ingin mengubah proyek saat ini menjadi proyek khusus Model Store?",
+    "NoArtifactsSelected": "Tidak ada artefak yang dipilih untuk diimpor",
+    "OverwriteWarning": "File yang ada akan ditimpa jika terdapat file dengan nama yang sama.",
+    "SuccessfullyImported": "Berhasil mengimpor artefak"
+  },
   "information": {
     "APIVersion": "Versi API",
     "CannotRead": "Tidak dapat membaca",
@@ -1226,9 +1243,11 @@
     "Name": "Nama",
     "PullLatestVersion": "Tarik versi terbaru ({{{version}})",
     "PullSelectedVersions": "Tarik versi yang dipilih",
+    "PullThisVersion": "Tarik versi ini",
     "PullingArtifact": "Menarik Artifact {{name}}: {{version}}",
     "Registry": "Registri",
     "RemoveSelectedVersions": "Hapus versi yang dipilih",
+    "RemoveThisVersion": "Hapus versi ini",
     "ReservoirArtifacts": "Artefak reservoir",
     "Size": "Ukuran",
     "Source": "Sumber",
@@ -1361,6 +1380,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori",
     "SharedMemory": "Memori bersama",
     "Updated": "Preset sumber daya diperbarui"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Masukkan ID model. (Contoh: openai/gpt-oss-20b)",
+    "EnterAVersion": "Masukkan versi. (Nilai bawaan: main)",
+    "FailedToScanModelFromHuggingFace": "Gagal memindai model artefak dari Hugging Face",
+    "ModalDescription": "Pindai model di Hugging Face dengan ID model dan versi tertentu.",
+    "ModelID": "ID model",
+    "ModelStoreFolderMountTooltip": "Simpan model Hugging Face ke folder yang dipilih. Hanya tersedia untuk proyek khusus Model Store dalam mode penggunaan model.",
+    "Scan": "Pindai",
+    "ScanFromHuggingFace": "Pindai dari Hugging Face",
+    "SuccessfullyScannedModel": "Permintaan pemindaian model ke Hugging Face berhasil dikirim.",
+    "Version": "Versi"
   },
   "scheduler": {
     "PendingSessions": "Sesi yang tertunda"

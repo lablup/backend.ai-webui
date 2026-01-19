@@ -1,3 +1,4 @@
+import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {
   BAIArtifactRevisionDeleteButton,
@@ -5,6 +6,7 @@ import {
   BAIArtifactRevisionTable,
   BAIArtifactTypeTag,
   BAICard,
+  BAIColumnType,
   BAIDeleteArtifactRevisionsModal,
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey,
   BAIFetchKeyButton,
@@ -18,6 +20,8 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   useUpdatableState,
+  ArtifactRevision,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -27,11 +31,13 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import {
   ReservoirArtifactDetailPageQuery,
   ReservoirArtifactDetailPageQuery$data,
   ReservoirArtifactDetailPageQuery$variables,
 } from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
+import ImportArtifactRevisionToFolderModal from 'src/components/ImportArtifactRevisionToFolderModal';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
@@ -62,6 +68,10 @@ const ReservoirArtifactDetailPage = () => {
     useState<BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey>([]);
   const [selectedRevisions, setSelectedRevisions] =
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
+  const [selectedImportRevisions, setSelectedImportRevisions] =
+    useState<ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key>(
+      [],
+    );
   const [queryParams, setQuery] = useQueryParams({
     filter: withDefault(JsonParam, {}),
   });
@@ -94,101 +104,172 @@ const ReservoirArtifactDetailPage = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { artifact } = useLazyLoadQuery<ReservoirArtifactDetailPageQuery>(
-    graphql`
-      query ReservoirArtifactDetailPageQuery(
-        $id: ID!
-        $offset: Int!
-        $limit: Int!
-        $filter: ArtifactRevisionFilter!
-      ) {
-        artifact(id: $id) {
-          id
-          name
-          ...BAIArtifactTypeTagFragment
-          description
-          registry {
+  const { artifact, groups } =
+    useLazyLoadQuery<ReservoirArtifactDetailPageQuery>(
+      graphql`
+        query ReservoirArtifactDetailPageQuery(
+          $id: ID!
+          $offset: Int!
+          $limit: Int!
+          $filter: ArtifactRevisionFilter!
+        ) {
+          artifact(id: $id) {
+            id
             name
-            url
-          }
-          source {
-            name
-            url
-          }
-          updatedAt
-          pullingArtifactRevisions: revisions(
-            first: null
-            last: null
-            filter: { status: { equals: PULLING } }
-            orderBy: { field: VERSION, direction: DESC }
-          )
-            @connection(
-              key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
+            ...BAIArtifactTypeTagFragment
+            description
+            registry {
+              name
+              url
+            }
+            source {
+              name
+              url
+            }
+            updatedAt
+            pullingArtifactRevisions: revisions(
+              first: null
+              last: null
+              filter: { status: { equals: PULLING } }
+              orderBy: { field: VERSION, direction: DESC }
+            )
+              @connection(
+                key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
+              ) {
+              __id
+              count
+              edges {
+                node {
+                  id
+                  status
+                  ...BAIPullingArtifactRevisionAlertFragment
+                }
+              }
+            }
+            latestVersion: revisions(
+              limit: 1
+              orderBy: { field: VERSION, direction: DESC }
             ) {
-            __id
-            count
-            edges {
-              node {
-                id
-                status
-                ...BAIPullingArtifactRevisionAlertFragment
+              edges {
+                node {
+                  id
+                  size
+                  version
+                  status
+                  ...BAIImportArtifactModalArtifactRevisionFragment
+                  ...BAIArtifactRevisionTableLatestRevisionFragment
+                }
               }
             }
-          }
-          latestVersion: revisions(
-            limit: 1
-            orderBy: { field: VERSION, direction: DESC }
-          ) {
-            edges {
-              node {
-                id
-                size
-                version
-                status
-                ...BAIImportArtifactModalArtifactRevisionFragment
-                ...BAIArtifactRevisionTableLatestRevisionFragment
+            revisions(
+              offset: $offset
+              limit: $limit
+              orderBy: { field: VERSION, direction: DESC }
+              filter: $filter
+            ) {
+              count
+              edges {
+                node {
+                  id
+                  status
+                  ...BAIArtifactRevisionTableArtifactRevisionFragment
+                  ...BAIImportArtifactModalArtifactRevisionFragment
+                  ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment
+                  ...BAIArtifactRevisionDeleteButtonFragment
+                  ...BAIArtifactRevisionDownloadButtonFragment
+                  ...ImportArtifactRevisionToFolderButtonFragment
+                  ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment
+                }
               }
             }
+            ...BAIImportArtifactModalArtifactFragment
+            ...BAIDeleteArtifactRevisionsModalArtifactFragment
           }
-          revisions(
-            offset: $offset
-            limit: $limit
-            orderBy: { field: VERSION, direction: DESC }
-            filter: $filter
-          ) {
-            count
-            edges {
-              node {
-                id
-                status
-                ...BAIArtifactRevisionTableArtifactRevisionFragment
-                ...BAIImportArtifactModalArtifactRevisionFragment
-                ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment
-                ...BAIArtifactRevisionDeleteButtonFragment
-                ...BAIArtifactRevisionDownloadButtonFragment
-              }
-            }
+          groups(is_active: true, type: ["MODEL_STORE"]) {
+            ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment
           }
-          ...BAIImportArtifactModalArtifactFragment
-          ...BAIDeleteArtifactRevisionsModalArtifactFragment
         }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey:
-        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
-  );
+      `,
+      deferredQueryVariables,
+      {
+        fetchKey:
+          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
+    );
 
   const latestArtifact = artifact?.latestVersion.edges[0]?.node;
   const pullingArtifacts = filterOutNullAndUndefined(
     artifact?.pullingArtifactRevisions.edges.map((e) => e?.node),
   );
+
+  // Custom column for artifact revision table
+  const controlColumn: BAIColumnType<ArtifactRevision> = {
+    key: 'control',
+    title: t('general.Control'),
+    fixed: true,
+    required: true,
+    render: (__, record) => {
+      const status = record.status;
+
+      return (
+        <BAIFlex gap={'xs'}>
+          <Tooltip title={t('reservoirPage.PullThisVersion')}>
+            <BAIArtifactRevisionDownloadButton
+              size="small"
+              revisionsFrgmt={[record]}
+              loading={status === 'PULLING' || status === 'VERIFYING'}
+              onClick={() => {
+                artifact?.revisions.edges.forEach((edge) => {
+                  if (edge.node.id === record.id) {
+                    setSelectedRevisions([edge.node]);
+                  }
+                });
+              }}
+            />
+          </Tooltip>
+          <Tooltip
+            title={t('importArtifactRevisionToFolderModal.ImportToFolder')}
+          >
+            <ImportArtifactRevisionToFolderButton
+              size="small"
+              revisionsFrgmt={_.map(
+                _.filter(
+                  artifact?.revisions.edges,
+                  (edge) => edge.node.id === record.id,
+                ),
+                'node',
+              )}
+              onClick={() => {
+                artifact?.revisions.edges.forEach((edge) => {
+                  if (edge.node.id === record.id) {
+                    setSelectedImportRevisions([edge.node]);
+                  }
+                });
+              }}
+            />
+          </Tooltip>
+          <Tooltip title={t('reservoirPage.RemoveThisVersion')}>
+            <BAIArtifactRevisionDeleteButton
+              size="small"
+              title={t('reservoirPage.RemoveThisVersion')}
+              revisionsFrgmt={[record]}
+              onClick={() => {
+                artifact?.revisions.edges.forEach((edge) => {
+                  if (edge.node.id === record.id) {
+                    setSelectedDeleteRevisions([edge.node]);
+                  }
+                });
+              }}
+            />
+          </Tooltip>
+        </BAIFlex>
+      );
+    },
+  };
 
   return (
     <div>
@@ -381,6 +462,7 @@ const ReservoirArtifactDetailPage = () => {
                 <Text>{selectedRevisionIdList.length} selected</Text>
                 <Tooltip title={t('reservoirPage.PullSelectedVersions')}>
                   <BAIArtifactRevisionDownloadButton
+                    type="default"
                     revisionsFrgmt={selectedRevisionIdList.flatMap(
                       (arr) => arr.data,
                     )}
@@ -392,15 +474,32 @@ const ReservoirArtifactDetailPage = () => {
                     }}
                   />
                 </Tooltip>
-                <Tooltip title={t('reservoirPage.RemoveSelectedVersions')}>
-                  <BAIArtifactRevisionDeleteButton
+                <Tooltip
+                  title={t(
+                    'importArtifactRevisionToFolderModal.ImportToFolder',
+                  )}
+                >
+                  <ImportArtifactRevisionToFolderButton
+                    type="default"
                     revisionsFrgmt={selectedRevisionIdList.flatMap(
                       (arr) => arr.data,
                     )}
+                    onClick={() => {
+                      if (!artifact) return;
+                      setSelectedImportRevisions(
+                        _.flatMap(selectedRevisionIdList, (arr) => arr.data),
+                      );
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title={t('reservoirPage.RemoveSelectedVersions')}>
+                  <BAIArtifactRevisionDeleteButton
                     style={{
                       borderColor: token.colorBorder,
-                      backgroundColor: token.colorBgContainer,
                     }}
+                    revisionsFrgmt={selectedRevisionIdList.flatMap(
+                      (arr) => arr.data,
+                    )}
                     onClick={() => {
                       if (!artifact) return;
                       setSelectedDeleteRevisions(
@@ -418,20 +517,6 @@ const ReservoirArtifactDetailPage = () => {
             )}
             latestRevisionFrgmt={artifact?.latestVersion.edges[0].node}
             loading={deferredQueryVariables !== queryVariables}
-            onClickDownload={(revisionId: string) => {
-              artifact?.revisions.edges.forEach((edge) => {
-                if (edge.node.id === revisionId) {
-                  return setSelectedRevisions([edge.node]);
-                }
-              });
-            }}
-            onClickDelete={(revisionId: string) => {
-              artifact?.revisions.edges.forEach((edge) => {
-                if (edge.node.id === revisionId) {
-                  return setSelectedDeleteRevisions([edge.node]);
-                }
-              });
-            }}
             pagination={{
               current: tablePaginationOption.current,
               pageSize: tablePaginationOption.pageSize,
@@ -494,6 +579,12 @@ const ReservoirArtifactDetailPage = () => {
               },
               selectedRowKeys: selectedRevisionIdList.map((arr) => arr.id),
             }}
+            customizeColumns={(baseColumns) => [
+              baseColumns[0], // Version
+              baseColumns[1], // Status
+              controlColumn,
+              ...baseColumns.slice(2),
+            ]}
           />
         </BAIFlex>
       </BAICard>
@@ -582,6 +673,72 @@ const ReservoirArtifactDetailPage = () => {
           setSelectedDeleteRevisions([]);
         }}
         open={!!artifact && !_.isEmpty(selectedDeleteRevisions)}
+      />
+      <ImportArtifactRevisionToFolderModal
+        selectedArtifactRevisionFrgmt={selectedImportRevisions}
+        modelStoreProjectsFrgmt={groups?.[0] ?? undefined}
+        onOk={(_e, tasks, vfolderId) => {
+          setSelectedImportRevisions([]);
+          updateFetchKey();
+          tasks.forEach((task) => {
+            upsertNotification({
+              message: t(
+                'importArtifactRevisionToFolderModal.ImportingArtifact',
+                {
+                  name: task.artifact.name,
+                  version: task.version,
+                },
+              ),
+              type: 'info',
+              open: true,
+              duration: 0,
+              backgroundTask: {
+                status: 'pending',
+                taskId: task.taskId,
+                promise: null,
+                percent: 0,
+                onChange: {
+                  resolved: (_data, _notification) => {
+                    return {
+                      type: 'success',
+                      message: t(
+                        'importArtifactRevisionToFolderModal.SuccessfullyImportedArtifact',
+                        {
+                          name: task.artifact.name,
+                          version: task.version,
+                        },
+                      ),
+                      showIcon: true,
+                      toText: vfolderId
+                        ? t('data.folders.OpenAFolder')
+                        : t('reservoirPage.GoToArtifact'),
+                      to: vfolderId
+                        ? {
+                            search: new URLSearchParams({
+                              folder: toLocalId(vfolderId),
+                            }).toString(),
+                          }
+                        : `/reservoir/${task.artifact.id}`,
+                    };
+                  },
+                  rejected: (_data, _notification) => {
+                    return t(
+                      'importArtifactRevisionToFolderModal.FailedToImportArtifact',
+                      {
+                        name: task.artifact.name,
+                        version: task.version,
+                      },
+                    );
+                  },
+                },
+              },
+            });
+          });
+        }}
+        onCancel={() => {
+          setSelectedImportRevisions([]);
+        }}
+        open={!!artifact && !_.isEmpty(selectedImportRevisions)}
       />
     </div>
   );

@@ -39,8 +39,6 @@
     "Control": "ควบคุม",
     "LatestVersion": "เวอร์ชันล่าสุด",
     "Name": "ชื่อ",
-    "PullThisVersion": "ดึงเวอร์ชันนี้",
-    "RemoveThisVersion": "ลบเวอร์ชันนี้",
     "Size": "ขนาด",
     "Status": "สถานะ",
     "Updated": "อัปเดต",
@@ -89,17 +87,6 @@
     "PullVersion": "Pull Version",
     "Size": "ขนาด",
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
-    "Version": "รุ่น"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "ป้อนรหัสรุ่น (เช่น OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "ป้อนเวอร์ชัน (ค่าเริ่มต้น: หลัก)",
-    "Failed to import model from hugging face": "ไม่สามารถนำเข้าโมเดลจากการกอดใบหน้า",
-    "Import": "นำเข้า",
-    "ModalDescription": "นำเข้าโมเดลจากการกอดใบหน้าโดยการระบุ ID รุ่นและเวอร์ชัน",
-    "ModalTitle": "นำเข้าจากการกอดใบหน้า",
-    "ModelID": "ID รุ่น",
-    "SuccessfullyImportedModelFromHuggingFace": "ร้องขอการนำเข้าโมเดลจากการกอดอย่างประสบความสำเร็จ",
     "Version": "รุ่น"
   },
   "comp:BAIProjectBulkEditModal": {

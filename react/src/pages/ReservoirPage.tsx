@@ -24,7 +24,6 @@ import {
   BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
-  BAIImportFromHuggingFaceModal,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
@@ -42,6 +41,7 @@ import {
   ReservoirPageQuery$variables,
 } from 'src/__generated__/ReservoirPageQuery.graphql';
 import BAIRadioGroup from 'src/components/BAIRadioGroup';
+import ScanArtifactModelsFromHuggingFaceModal from 'src/components/ScanArtifactModelsFromHuggingFaceModal';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import {
   withDefault,
@@ -83,6 +83,7 @@ const ReservoirPage: React.FC = () => {
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
   const [openHuggingFaceModal, { toggle: toggleOpenHuggingFaceModal }] =
     useToggle();
+  const deferredOpenHuggingFaceModal = useDeferredValue(openHuggingFaceModal);
 
   const {
     baiPaginationOption,
@@ -328,6 +329,11 @@ const ReservoirPage: React.FC = () => {
                       style={{
                         color:
                           mode === 'ALIVE' ? token.colorError : token.colorInfo,
+                        backgroundColor:
+                          mode === 'ALIVE'
+                            ? token.colorErrorBg
+                            : token.colorInfoBg,
+                        borderColor: token.colorBorder,
                       }}
                       onClick={() => {
                         if (mode === 'ALIVE') {
@@ -525,9 +531,9 @@ const ReservoirPage: React.FC = () => {
           setSelectedRevision([]);
         }}
       />
-      <BAIImportFromHuggingFaceModal
-        open={openHuggingFaceModal}
-        onOk={(_e, artifactId) => {
+      <ScanArtifactModelsFromHuggingFaceModal
+        open={deferredOpenHuggingFaceModal}
+        onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
           navigate(`/reservoir/${toLocalId(artifactId)}`);
         }}

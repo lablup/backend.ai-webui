@@ -71,6 +71,7 @@
     "Apply": "申请",
     "AutoRefresh": "自动刷新",
     "Cancel": "取消",
+    "ChangeProject": "切换项目",
     "Clear": "删除",
     "ClearLogs": "清除日志",
     "ClickForMoreDetails": "点击以获取更多详细信息",
@@ -820,6 +821,22 @@
     "WrongURLType": "错误的网址类型",
     "YouCanCreateNotebookCode": "此徽章可在 Backend.AI 上直接运行您的笔记本。复制代码即可在任何地方使用。"
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "当前项目已成功更改。",
+    "FailedToImport": "导入工件失败",
+    "FailedToImportArtifact": "无法导入工件 {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "无法从 Hugging Face 获取模型。",
+    "FailedToRetrieveModelStoreProject": "获取模型项目的专属项目失败。",
+    "FolderMountForModelStore": "用于模型存储的文件夹挂载",
+    "Import": "导入",
+    "ImportToFolder": "导入到文件夹",
+    "ImportingArtifact": "正在导入制品 {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "需要一个专用于模型存储的项目",
+    "ModelStoreProjectRequiredDescription": "是否将当前项目转换为模型商店专用项目？",
+    "NoArtifactsSelected": "未选择任何要导入的工件",
+    "OverwriteWarning": "如果已存在同名文件，现有文件将被覆盖。",
+    "SuccessfullyImported": "已成功导入工件"
+  },
   "information": {
     "APIVersion": "接口版本",
     "CannotRead": "无法阅读",
@@ -1228,9 +1245,11 @@
     "Name": "姓名",
     "PullLatestVersion": "拉最新（{{version}}）版本",
     "PullSelectedVersions": "拉选定的版本",
+    "PullThisVersion": "拉取此版本",
     "PullingArtifact": "拉动伪影{{name}}: {{version}}",
     "Registry": "注册表",
     "RemoveSelectedVersions": "删除选定的版本",
+    "RemoveThisVersion": "删除此版本",
     "ReservoirArtifacts": "水库工件",
     "Size": "尺寸",
     "Source": "来源",
@@ -1363,6 +1382,18 @@
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
     "SharedMemory": "共享内存",
     "Updated": "资源预设已更新"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "请输入模型 ID。（例如：openai/gpt-oss-20b）",
+    "EnterAVersion": "请输入版本（默认：main）",
+    "FailedToScanModelFromHuggingFace": "从 Hugging Face 扫描 artifact 模型失败",
+    "ModalDescription": "通过指定模型 ID 和版本从 Hugging Face 扫描模型。",
+    "ModelID": "模型 ID",
+    "ModelStoreFolderMountTooltip": "将 Hugging Face 模型保存到所选文件夹。仅适用于处于“模型使用”模式的模型存储专用项目。",
+    "Scan": "扫描",
+    "ScanFromHuggingFace": "从 Hugging Face 扫描",
+    "SuccessfullyScannedModel": "已成功向 Hugging Face 发送模型扫描请求。",
+    "Version": "版本"
   },
   "scheduler": {
     "PendingSessions": "等待会议"

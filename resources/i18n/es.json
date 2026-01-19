@@ -71,6 +71,7 @@
     "Apply": "Solicitar",
     "AutoRefresh": "Actualización automática",
     "Cancel": "Cancelar",
+    "ChangeProject": "Cambiar proyecto",
     "Clear": "Borrar",
     "ClearLogs": "Borrar registros",
     "ClickForMoreDetails": "Haga clic para más detalles",
@@ -820,6 +821,22 @@
     "WrongURLType": "Tipo de URL incorrecto",
     "YouCanCreateNotebookCode": "Esta insignia habilita la ejecución directa de tu notebook en Backend.AI. Copia el código para usarlo en cualquier lugar."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Proyecto actual cambiado con éxito.",
+    "FailedToImport": "Error al importar artefacto(s)",
+    "FailedToImportArtifact": "No se pudo importar el artefacto {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "No se pudo obtener el modelo de Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "No se pudo obtener el proyecto dedicado al modelo.",
+    "FolderMountForModelStore": "Montaje de carpeta para el repositorio de modelos",
+    "Import": "Importar",
+    "ImportToFolder": "Importar a la carpeta",
+    "ImportingArtifact": "Importando el artefacto {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Se requiere un proyecto dedicado para Model Store.",
+    "ModelStoreProjectRequiredDescription": "¿Desea convertir el proyecto actual en un proyecto exclusivo para Model Store?",
+    "NoArtifactsSelected": "No se han seleccionado artefactos para importar",
+    "OverwriteWarning": "Los archivos existentes se sobrescribirán si hay archivos con el mismo nombre.",
+    "SuccessfullyImported": "Artefacto(s) importado(s) correctamente."
+  },
   "information": {
     "APIVersion": "Versión API",
     "CannotRead": "No se puede leer",
@@ -1228,9 +1245,11 @@
     "Name": "Nombre",
     "PullLatestVersion": "Pull Last ({{version}}) versión",
     "PullSelectedVersions": "Tire de versiones seleccionadas",
+    "PullThisVersion": "Descargar esta versión",
     "PullingArtifact": "Tirar de artefacto {{name}}: {{version}}",
     "Registry": "Registro",
     "RemoveSelectedVersions": "Eliminar versiones seleccionadas",
+    "RemoveThisVersion": "Eliminar esta versión",
     "ReservoirArtifacts": "Artefactos de embalse",
     "Size": "Tamaño",
     "Source": "Fuente",
@@ -1363,6 +1382,18 @@
     "SHMEMShouldBeSmallerThanMemory": "La memoria compartida debe ser menor que la memoria",
     "SharedMemory": "Memoria compartida",
     "Updated": "Preajuste de recursos actualizado"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Introduzca el ID del modelo. (p. ej.: openai/gpt-oss-20b)",
+    "EnterAVersion": "Introduzca la versión. (Predeterminado: main)",
+    "FailedToScanModelFromHuggingFace": "No se pudieron escanear los artefactos de modelos de Hugging Face.",
+    "ModalDescription": "Escanea un modelo en Hugging Face mediante un ID de modelo y una versión específicos.",
+    "ModelID": "ID del modelo",
+    "ModelStoreFolderMountTooltip": "Guarda el modelo de Hugging Face en la carpeta seleccionada. Disponible solo en proyectos exclusivos de la tienda de modelos en el modo \"Uso de modelos\".",
+    "Scan": "Escanear",
+    "ScanFromHuggingFace": "Escanear desde Hugging Face",
+    "SuccessfullyScannedModel": "Se envió con éxito la solicitud para escanear el modelo en Hugging Face.",
+    "Version": "Versión"
   },
   "scheduler": {
     "PendingSessions": "Sesiones pendientes"

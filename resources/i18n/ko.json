@@ -73,6 +73,7 @@
     "Apply": "적용",
     "AutoRefresh": "자동 새로고침",
     "Cancel": "취소",
+    "ChangeProject": "프로젝트 변경",
     "Clear": "삭제",
     "ClearLogs": "로그 삭제",
     "ClickForMoreDetails": "클릭하여 자세히 보기",
@@ -823,6 +824,22 @@
     "WrongURLType": "잘못된 URL 형식입니다.",
     "YouCanCreateNotebookCode": "입력한 노트북을 Backend.AI에서 바로 실행할 수 있는 배지입니다. 코드를 복사해서 사용해보세요."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "현재 프로젝트를 성공적으로 변경했습니다.",
+    "FailedToImport": "아티팩트 가져오기에 실패했습니다.",
+    "FailedToImportArtifact": "아티팩트 {{ name }} ({{ version }})를 가져오는 데 실패했습니다.",
+    "FailedToImportModelFromHuggingFace": "허깅 페이스에서 모델을 가져오는데 실패했습니다.",
+    "FailedToRetrieveModelStoreProject": "모델 프로젝트 전용 프로젝트를 가져오는 데 실패했습니다.",
+    "FolderMountForModelStore": "모델 스토어용 폴더 마운트",
+    "Import": "가져오기",
+    "ImportToFolder": "폴더로 가져오기",
+    "ImportingArtifact": "아티팩트 {{name}} ({{version}}) 가져오는 중...",
+    "ModelStoreProjectRequired": "모델 스토어 전용 프로젝트가 필요합니다",
+    "ModelStoreProjectRequiredDescription": "현재 프로젝트를 모델 스토어 전용 프로젝트로 전환하시겠습니까?",
+    "NoArtifactsSelected": "가져올 아티팩트가 선택되지 않았습니다",
+    "OverwriteWarning": "동일한 이름의 파일이 이미 존재할 경우 기존 파일이 덮어써집니다.",
+    "SuccessfullyImported": "아티팩트를 성공적으로 가져왔습니다."
+  },
   "information": {
     "APIVersion": "API 버전",
     "CannotRead": "읽을 수 없음",
@@ -1231,9 +1248,11 @@
     "Name": "이름",
     "PullLatestVersion": "최신 ({{version}}) 버전을 가져옵니다",
     "PullSelectedVersions": "선택한 버전 가져오기",
+    "PullThisVersion": "해당 버전 가져오기",
     "PullingArtifact": "아티팩트 가져오는 중 {{name}}: {{version}}",
     "Registry": "레지스트리",
     "RemoveSelectedVersions": "선택한 버전 제거하기",
+    "RemoveThisVersion": "해당 버전 제거하기",
     "ReservoirArtifacts": "리저버 아티팩트",
     "Size": "크기",
     "Source": "소스",
@@ -1366,6 +1385,18 @@
     "SHMEMShouldBeSmallerThanMemory": "공유 메모리는 메모리보다 작아야 합니다",
     "SharedMemory": "공유 메모리",
     "Updated": "자원 프리셋이 수정되었습니다"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "모델 ID를 입력하십시오. (예 : openai/gpt-oss-20b)",
+    "EnterAVersion": "버전을 입력하십시오. (기본값 : main)",
+    "FailedToScanModelFromHuggingFace": "허깅 페이스에서 아티팩트 모델 스캔에 실패했습니다.",
+    "ModalDescription": "특정 모델 ID와 버전을 통해 허깅 페이스에서 모델을 스캔합니다.",
+    "ModelID": "모델 ID",
+    "ModelStoreFolderMountTooltip": "허깅 페이스 모델을 선택된 폴더에 저장합니다. 모델 사용 방식의 모델 스토어 전용 프로젝트에서만 사용 가능합니다.",
+    "Scan": "스캔하기",
+    "ScanFromHuggingFace": "허깅 페이스에서 스캔하기",
+    "SuccessfullyScannedModel": "허깅 페이스에서 모델 스캔하기 요청을 성공적으로 보냈습니다.",
+    "Version": "버전"
   },
   "scheduler": {
     "PendingSessions": "대기 세션"

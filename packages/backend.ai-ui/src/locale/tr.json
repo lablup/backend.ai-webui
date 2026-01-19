@@ -39,8 +39,6 @@
     "Control": "Kontrol",
     "LatestVersion": "En son sürüm",
     "Name": "İsim",
-    "PullThisVersion": "Bu sürümü çekin",
-    "RemoveThisVersion": "Bu sürümü kaldır",
     "Size": "Boyut",
     "Status": "Durum",
     "Updated": "Güncellenmiş",
@@ -89,17 +87,6 @@
     "PullVersion": "Çekme sürümü",
     "Size": "Boyut",
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
-    "Version": "Versiyon"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Bir model kimliği girin. (örn. Openai/GPT-OSS-20B)",
-    "EnterAVersion": "Bir sürüm girin. (Varsayılan: Main)",
-    "Failed to import model from hugging face": "Modelin sarılma yüzünden ithal edilemedi",
-    "Import": "İçe aktarmak",
-    "ModalDescription": "Model kimliğini ve sürümünü belirterek bir modeli kucaklamadan içe aktarın.",
-    "ModalTitle": "Sarılma Yüzünden İthalat",
-    "ModelID": "Model kimliği",
-    "SuccessfullyImportedModelFromHuggingFace": "Sarılma yüzünden başarılı bir şekilde model ithalatını istedi",
     "Version": "Versiyon"
   },
   "comp:BAIProjectBulkEditModal": {

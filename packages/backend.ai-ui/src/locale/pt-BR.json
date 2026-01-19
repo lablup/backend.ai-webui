@@ -39,8 +39,6 @@
     "Control": "Controlar",
     "LatestVersion": "Versão mais recente",
     "Name": "Nome",
-    "PullThisVersion": "Puxe esta versão",
-    "RemoveThisVersion": "Remova esta versão",
     "Size": "Tamanho",
     "Status": "Status",
     "Updated": "Atualizado",
@@ -89,17 +87,6 @@
     "PulledVersionsAreExcluded": "As versões puxadas são excluídas.",
     "Source": "Fonte",
     "Type": "Tipo"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Digite um ID de modelo. (por exemplo, OpenAI/GPT-20B)",
-    "EnterAVersion": "Digite uma versão. (Padrão: Main)",
-    "Failed to import model from hugging face": "Falhou ao importar o modelo de abraçar o rosto",
-    "Import": "Importar",
-    "ModalDescription": "Importe um modelo de abraçar o rosto especificando o ID e a versão do modelo.",
-    "ModalTitle": "Importar de abraçar o rosto",
-    "ModelID": "ID do modelo",
-    "SuccessfullyImportedModelFromHuggingFace": "Solicitou com sucesso a importação do modelo de abraçar o rosto",
-    "Version": "Versão"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",

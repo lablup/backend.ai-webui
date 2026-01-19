@@ -39,8 +39,6 @@
     "Control": "Contrôle",
     "LatestVersion": "Dernière version",
     "Name": "Nom",
-    "PullThisVersion": "Tirez cette version",
-    "RemoveThisVersion": "Supprimer cette version",
     "Size": "Taille",
     "Status": "Statut",
     "Updated": "Mis à jour",
@@ -89,17 +87,6 @@
     "PullVersion": "Version de traction",
     "Size": "Taille",
     "SuccessFullyPulled": "Pull demandé avec succès pour les versions {{count}}.",
-    "Version": "Version"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Entrez un ID de modèle. (par exemple OpenAI / GPT-OSS-20B)",
-    "EnterAVersion": "Entrez une version. (par défaut: Main)",
-    "Failed to import model from hugging face": "Échec de l'importation du modèle à partir de l'étreinte",
-    "Import": "Importer",
-    "ModalDescription": "Importez un modèle à partir de l'étreinte Face en spécifiant l'ID et la version du modèle.",
-    "ModalTitle": "Importer à partir du visage étreint",
-    "ModelID": "ID de modèle",
-    "SuccessfullyImportedModelFromHuggingFace": "A demandé avec succès l'importation de modèle à partir de l'étreinte",
     "Version": "Version"
   },
   "comp:BAIProjectBulkEditModal": {

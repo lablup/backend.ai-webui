@@ -71,6 +71,7 @@
     "Apply": "Өргөдөл гаргах",
     "AutoRefresh": "Автоматаар шинэчлэх",
     "Cancel": "Цуцлах",
+    "ChangeProject": "Төслийг солих",
     "Clear": "Устгах",
     "ClearLogs": "Бүртгэлийг арилгах",
     "ClickForMoreDetails": "Дэлгэрэнгүй мэдээллийг дарна уу",
@@ -818,6 +819,22 @@
     "WrongURLType": "Буруу URL төрөл",
     "YouCanCreateNotebookCode": "Энэхүү шошго нь таны тэмдэглэлийн дэвтрийг Backend.AI дээр шууд ажиллуулах боломжийг олгоно. Кодыг хаана ч ашиглахын тулд хуулж аваарай."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Одоогийн төсөл амжилттай өөрчлөгдлөө.",
+    "FailedToImport": "Артефакт(ууд)-ыг импортлох нь амжилтгүй боллоо",
+    "FailedToImportArtifact": "Артефакт {{ name }} ({{ version }})-ыг импортлоход амжилтгүй боллоо.",
+    "FailedToImportModelFromHuggingFace": "Hugging Face-аас загвар татаж чадсангүй.",
+    "FailedToRetrieveModelStoreProject": "Модел төслийн зориулалтын төслийг авч чадаагүй.",
+    "FolderMountForModelStore": "Модель агуулахын хавтасны холболт",
+    "Import": "Импортлах",
+    "ImportToFolder": "Хавтас руу импорт хийх",
+    "ImportingArtifact": "Артефакт {{name}} ({{version}}) импортолж байна",
+    "ModelStoreProjectRequired": "Модель дэлгүүрийн тусгай төсөл шаардлагатай.",
+    "ModelStoreProjectRequiredDescription": "Одоогийн төслөө зөвхөн моделийн дэлгүүрт зориулсан төсөл болгох уу?",
+    "NoArtifactsSelected": "Импортлоход артефакт сонгогдоогүй.",
+    "OverwriteWarning": "Аль хэдийн адил нэртэй файл байгаа бол тэдгээр файлуудыг дээгүүр нь бичнэ.",
+    "SuccessfullyImported": "Артефакт(ууд) амжилттай импортлагдлаа"
+  },
   "information": {
     "APIVersion": "API хувилбар",
     "CannotRead": "Унших боломжгүй",
@@ -1226,9 +1243,11 @@
     "Name": "Нэр",
     "PullLatestVersion": "СУРГАЛТЫН СУРГАЛТ ({{version}}) хувилбар",
     "PullSelectedVersions": "Сонгосон хувилбарыг татаж аваарай",
+    "PullThisVersion": "Энэ хувилбарыг татаж авах",
     "PullingArtifact": "Artifact {{name}}: {{version}}",
     "Registry": "Шлах",
     "RemoveSelectedVersions": "Сонгосон хувилбаруудыг устгана уу",
+    "RemoveThisVersion": "Энэ хувилбарыг устгах",
     "ReservoirArtifacts": "Усан сангийн олдворууд",
     "Size": "Хэмжээ",
     "Source": "Язгуур",
@@ -1360,6 +1379,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Хуваалцсан санах ой санах ойноос бага байх ёстой",
     "SharedMemory": "Хуваалцсан санах ой",
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Моделийн ID-г оруулна уу. (Жишээ: openai/gpt-oss-20b)",
+    "EnterAVersion": "Хувилбарыг оруулна уу. (Анхдагч: main)",
+    "FailedToScanModelFromHuggingFace": "Hugging Face-ээс артефакт загваруудыг сканлахад амжилтгүй боллоо",
+    "ModalDescription": "Тодорхой модель ID ба хувилбарыг ашиглан Hugging Face-аас модель скан хийнэ.",
+    "ModelID": "Моделийн ID",
+    "ModelStoreFolderMountTooltip": "Hugging Face моделийг сонгогдсон хавтас руу хадгална. Энэ нь зөвхөн модел ашиглах горимтой, моделын агуулахад зориулагдсан төслүүдэд л боломжтой.",
+    "Scan": "Скан хийх",
+    "ScanFromHuggingFace": "Hugging Face-аас сканлах",
+    "SuccessfullyScannedModel": "Hugging Face дээр загварыг сканлах хүсэлтийг амжилттай илгээлээ.",
+    "Version": "Хувилбар"
   },
   "scheduler": {
     "PendingSessions": "Хүлээгдэж буй хуралдаанууд"

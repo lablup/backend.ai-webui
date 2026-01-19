@@ -2,7 +2,10 @@ export { default as BAISessionTypeTag } from './BAISessionTypeTag';
 export { default as BAISessionAgentIds } from './BAISessionAgentIds';
 export type { BAISessionTypeTagProps } from './BAISessionTypeTag';
 export { default as BAIArtifactRevisionTable } from './BAIArtifactRevisionTable';
-export type { BAIArtifactRevisionTableProps } from './BAIArtifactRevisionTable';
+export type {
+  BAIArtifactRevisionTableProps,
+  ArtifactRevision,
+} from './BAIArtifactRevisionTable';
 export { default as BAIArtifactTable } from './BAIArtifactTable';
 export type { BAIArtifactTableProps } from './BAIArtifactTable';
 export { default as BAIImportArtifactModal } from './BAIImportArtifactModal';

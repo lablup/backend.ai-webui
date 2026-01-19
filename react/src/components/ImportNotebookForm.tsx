@@ -1,7 +1,6 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { CloudDownloadOutlined } from '@ant-design/icons';
 import {
   App,
   Divider,
@@ -17,6 +16,7 @@ import {
   generateRandomString,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
+import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -120,7 +120,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
         <Input placeholder={t('import.NotebookURL')} />
       </Form.Item>
       <BAIButton
-        icon={<CloudDownloadOutlined />}
+        icon={<FolderInput />}
         type="primary"
         block
         action={async () => {

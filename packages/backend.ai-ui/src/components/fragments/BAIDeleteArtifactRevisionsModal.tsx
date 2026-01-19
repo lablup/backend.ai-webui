@@ -16,7 +16,7 @@ import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, message, Modal, ModalProps, Tooltip } from 'antd';
+import { Alert, message, Modal, ModalProps, theme, Tooltip } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -46,6 +46,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   ...modalProps
 }: BAIDeleteArtifactRevisionsModalProps) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [cleanupVersion, isInflightCleanupVersion] =
     useMutation<BAIDeleteArtifactRevisionsModalCleanupVersionMutation>(graphql`
@@ -175,7 +176,12 @@ const BAIDeleteArtifactRevisionsModal = ({
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
                 >
-                  <QuestionCircleFilled />
+                  <QuestionCircleFilled
+                    style={{
+                      color: token.colorInfo,
+                      marginRight: token.marginXS,
+                    }}
+                  />
                 </Tooltip>
               }
               showIcon

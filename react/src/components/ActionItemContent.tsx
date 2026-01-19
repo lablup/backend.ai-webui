@@ -1,5 +1,4 @@
 import WebUILink from './WebUILink';
-// import useResizeObserver from '@react-hook/resize-observer';
 import { Button, Divider, Typography, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';

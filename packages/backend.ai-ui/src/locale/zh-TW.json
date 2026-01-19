@@ -39,8 +39,6 @@
     "Control": "控制",
     "LatestVersion": "最新版本",
     "Name": "姓名",
-    "PullThisVersion": "拉這個版本",
-    "RemoveThisVersion": "刪除此版本",
     "Size": "尺寸",
     "Status": "地位",
     "Updated": "更新",
@@ -89,17 +87,6 @@
     "PullVersion": "拉版本",
     "Size": "尺寸",
     "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
-    "Version": "版本"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "輸入模型ID。 （例如OpenAI/GPT-OSS-20B）",
-    "EnterAVersion": "輸入版本。（默認：main）",
-    "Failed to import model from hugging face": "無法從擁抱面孔中導入模型",
-    "Import": "進口",
-    "ModalDescription": "通過指定模型ID和版本來從擁抱面中導入模型。",
-    "ModalTitle": "從擁抱臉上進口",
-    "ModelID": "模型ID",
-    "SuccessfullyImportedModelFromHuggingFace": "成功要求從擁抱臉部進口模型",
     "Version": "版本"
   },
   "comp:BAIProjectBulkEditModal": {

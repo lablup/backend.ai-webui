@@ -39,8 +39,6 @@
     "Control": "Control",
     "LatestVersion": "Latest Version",
     "Name": "Name",
-    "PullThisVersion": "Pull this version",
-    "RemoveThisVersion": "Remove this version",
     "Size": "Size",
     "Status": "Status",
     "Updated": "Updated",
@@ -89,17 +87,6 @@
     "PullVersion": "Pull Version",
     "Size": "Size",
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
-    "Version": "Version"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Enter a model ID. (e.g. openai/gpt-oss-20b)",
-    "EnterAVersion": "Enter a version. (default: main)",
-    "Failed to import model from hugging face": "Failed to import model from hugging face",
-    "Import": "Import",
-    "ModalDescription": "Import a model from Hugging Face by specifying the Model ID and Version.",
-    "ModalTitle": "Import From Hugging Face",
-    "ModelID": "Model ID",
-    "SuccessfullyImportedModelFromHuggingFace": "Successfully requested import of model from Hugging Face",
     "Version": "Version"
   },
   "comp:BAIProjectBulkEditModal": {

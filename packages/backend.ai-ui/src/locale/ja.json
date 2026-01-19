@@ -39,8 +39,6 @@
     "Control": "コントロール",
     "LatestVersion": "最新バージョン",
     "Name": "名前",
-    "PullThisVersion": "このバージョンをプルします",
-    "RemoveThisVersion": "このバージョンを削除します",
     "Size": "サイズ",
     "Status": "状態",
     "Updated": "更新",
@@ -89,17 +87,6 @@
     "PullVersion": "プルバージョン",
     "Size": "サイズ",
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
-    "Version": "バージョン"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "モデルIDを入力します。 （例：openai/gpt-oss-20b）",
-    "EnterAVersion": "バージョンを入力します。 （デフォルト：メイン）",
-    "Failed to import model from hugging face": "顔を抱きしめてモデルをインポートできませんでした",
-    "Import": "インポート",
-    "ModalDescription": "モデルIDとバージョンを指定することにより、顔を抱きしめることからモデルをインポートします。",
-    "ModalTitle": "抱きしめる顔からのインポート",
-    "ModelID": "モデルID",
-    "SuccessfullyImportedModelFromHuggingFace": "抱き合った顔からモデルのインポートを正常にリクエストしました",
     "Version": "バージョン"
   },
   "comp:BAIProjectBulkEditModal": {

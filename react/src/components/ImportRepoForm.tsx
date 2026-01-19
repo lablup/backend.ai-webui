@@ -1,6 +1,5 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import StorageSelect from './StorageSelect';
-import { CloudDownloadOutlined } from '@ant-design/icons';
 import {
   App,
   Form,
@@ -16,6 +15,7 @@ import {
   useErrorMessageResolver,
   useGetAvailableFolderName,
 } from 'backend.ai-ui';
+import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
@@ -339,7 +339,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       </Form.Item>
       <Form.Item>
         <BAIButton
-          icon={<CloudDownloadOutlined />}
+          icon={<FolderInput />}
           action={async () => {
             try {
               const values = await formRef.current?.validateFields();

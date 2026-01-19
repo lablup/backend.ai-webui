@@ -295,7 +295,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               buttonText={t('data.CreateFolder')}
               icon={<BAINewFolderIcon />}
               type="simple"
-              onClick={() => toggleCreateModal()}
+              onClick={() => {
+                toggleCreateModal();
+              }}
               style={{
                 height: '100%',
               }}
@@ -409,7 +411,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button type="primary" onClick={() => toggleCreateModal()}>
+            <Button
+              type="primary"
+              onClick={() => {
+                toggleCreateModal();
+              }}
+            >
               {t('data.CreateFolder')}
             </Button>
           </BAIFlex>
@@ -689,13 +696,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       </BAICard>
       <FolderCreateModal
         open={isOpenCreateModal}
+        initialValues={{
+          usage_mode:
+            queryParams.mode === 'model'
+              ? 'model'
+              : queryParams.mode === 'automount'
+                ? 'automount'
+                : 'general',
+        }}
         onRequestClose={(success) => {
           if (success) {
             updateFetchKey();
           }
           toggleCreateModal();
         }}
-        usageMode={queryParams.mode === 'model' ? 'model' : undefined}
       />
       <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}

@@ -71,6 +71,7 @@
     "Apply": "応募する",
     "AutoRefresh": "自動更新",
     "Cancel": "キャンセル",
+    "ChangeProject": "プロジェクトを変更",
     "Clear": "消去",
     "ClearLogs": "ログをクリアする",
     "ClickForMoreDetails": "詳細については、クリックしてください",
@@ -819,6 +820,22 @@
     "WrongURLType": "間違ったURLタイプ",
     "YouCanCreateNotebookCode": "このバッジを使うと、ノートブックを Backend.AI 上で直接実行できます。コードをコピーして任意の場所でご利用ください。"
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "現在のプロジェクトを正常に変更しました。",
+    "FailedToImport": "アーティファクトのインポートに失敗しました",
+    "FailedToImportArtifact": "アーティファクト {{ name }} ({{ version }}) のインポートに失敗しました。",
+    "FailedToImportModelFromHuggingFace": "Hugging Face からモデルを取得できませんでした。",
+    "FailedToRetrieveModelStoreProject": "モデル専用プロジェクトの取得に失敗しました。",
+    "FolderMountForModelStore": "モデルストア用フォルダのマウント",
+    "Import": "インポート",
+    "ImportToFolder": "フォルダにインポート",
+    "ImportingArtifact": "アーティファクト {{name}} ({{version}}) をインポート中",
+    "ModelStoreProjectRequired": "モデルストア専用のプロジェクトが必要です",
+    "ModelStoreProjectRequiredDescription": "現在のプロジェクトをモデルストア専用プロジェクトに切り替えますか？",
+    "NoArtifactsSelected": "インポートするアーティファクトが選択されていません",
+    "OverwriteWarning": "同名のファイルが既に存在する場合、既存のファイルは上書きされます。",
+    "SuccessfullyImported": "アーティファクトを正常にインポートしました"
+  },
   "information": {
     "APIVersion": "APIバージョン",
     "CannotRead": "読み取ることができません",
@@ -1227,9 +1244,11 @@
     "Name": "名前",
     "PullLatestVersion": "最新の（{{version}}）バージョンをプルします",
     "PullSelectedVersions": "選択したバージョンをプルします",
+    "PullThisVersion": "このバージョンをプル",
     "PullingArtifact": "artifactを引く{{name}}: {{version}}",
     "Registry": "レジストリ",
     "RemoveSelectedVersions": "選択したバージョンを削除します",
+    "RemoveThisVersion": "このバージョンを削除",
     "ReservoirArtifacts": "貯水池アーティファクト",
     "Size": "サイズ",
     "Source": "ソース",
@@ -1362,6 +1381,18 @@
     "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない",
     "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "モデルIDを入力してください。（例：openai/gpt-oss-20b）",
+    "EnterAVersion": "バージョンを入力してください（デフォルト: main）",
+    "FailedToScanModelFromHuggingFace": "Hugging Face のアーティファクトモデルのスキャンに失敗しました",
+    "ModalDescription": "特定のモデルIDとバージョンを指定してHugging Faceのモデルをスキャンします。",
+    "ModelID": "モデルID",
+    "ModelStoreFolderMountTooltip": "Hugging Faceモデルを選択したフォルダに保存します。モデル利用方式が「モデルストア専用」のプロジェクトでのみ利用可能です。",
+    "Scan": "スキャンする",
+    "ScanFromHuggingFace": "Hugging Faceからスキャン",
+    "SuccessfullyScannedModel": "Hugging Faceでのモデルスキャンのリクエストを正常に送信しました。",
+    "Version": "バージョン"
   },
   "scheduler": {
     "PendingSessions": "保留中のセッション"

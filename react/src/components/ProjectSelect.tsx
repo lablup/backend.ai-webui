@@ -116,11 +116,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       popupMatchSelectWidth={false}
       {...selectProps}
       value={value}
-      optionFilterProp="projectName"
+      showSearch={{
+        optionFilterProp: 'projectName',
+      }}
       options={
         _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
       }
-      style={{}}
     />
   );
 };

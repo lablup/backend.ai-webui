@@ -71,6 +71,7 @@
     "Apply": "Áp dụng",
     "AutoRefresh": "Tự động làm mới",
     "Cancel": "Huỷ bỏ",
+    "ChangeProject": "Thay đổi dự án",
     "Clear": "Xóa bỏ",
     "ClearLogs": "Xóa các bản ghi",
     "ClickForMoreDetails": "Bấm để biết thêm chi tiết",
@@ -820,6 +821,22 @@
     "WrongURLType": "Loại URL sai",
     "YouCanCreateNotebookCode": "Nhập URL sổ ghi chép để tạo mã huy hiệu như bên dưới mà bạn có thể chạy trực tiếp trên Backend.AI."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Đã thay đổi dự án hiện tại thành công.",
+    "FailedToImport": "Nhập artifact thất bại",
+    "FailedToImportArtifact": "Không thể nhập artifact {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "Không thể lấy mô hình từ Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "Không thể lấy dự án chuyên dụng cho mô hình.",
+    "FolderMountForModelStore": "Gắn thư mục cho kho mô hình",
+    "Import": "Nhập",
+    "ImportToFolder": "Nhập vào thư mục",
+    "ImportingArtifact": "Đang nhập artifact {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Cần một dự án riêng cho kho mô hình.",
+    "ModelStoreProjectRequiredDescription": "Bạn có muốn chuyển dự án hiện tại sang dự án chỉ dành cho kho mô hình không?",
+    "NoArtifactsSelected": "Không có mục nào được chọn để nhập",
+    "OverwriteWarning": "Các tệp hiện có sẽ bị ghi đè nếu đã có tệp cùng tên.",
+    "SuccessfullyImported": "Đã nhập artifact thành công"
+  },
   "information": {
     "APIVersion": "Phiên bản API",
     "CannotRead": "Không thể đọc",
@@ -1228,9 +1245,11 @@
     "Name": "Tên",
     "PullLatestVersion": "Kéo phiên bản mới nhất ({{version}})",
     "PullSelectedVersions": "Kéo các phiên bản được chọn",
+    "PullThisVersion": "Tải phiên bản này",
     "PullingArtifact": "Kéo artifact {{name}}: {{version}}",
     "Registry": "Đăng ký",
     "RemoveSelectedVersions": "Xóa các phiên bản đã chọn",
+    "RemoveThisVersion": "Xóa phiên bản này",
     "ReservoirArtifacts": "Cổ vật hồ chứa",
     "Size": "Kích cỡ",
     "Source": "Nguồn",
@@ -1363,6 +1382,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ",
     "SharedMemory": "Bộ nhớ chia sẻ",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Vui lòng nhập ID mô hình. (Ví dụ: openai/gpt-oss-20b)",
+    "EnterAVersion": "Nhập phiên bản. (Mặc định: main)",
+    "FailedToScanModelFromHuggingFace": "Không thể quét các mô hình artifact từ Hugging Face",
+    "ModalDescription": "Quét mô hình trên Hugging Face theo ID mô hình và phiên bản cụ thể.",
+    "ModelID": "ID mô hình",
+    "ModelStoreFolderMountTooltip": "Lưu mô hình Hugging Face vào thư mục đã chọn. Chỉ khả dụng trong các dự án dành riêng cho kho mô hình (model-store) ở chế độ sử dụng mô hình.",
+    "Scan": "Quét",
+    "ScanFromHuggingFace": "Quét từ Hugging Face",
+    "SuccessfullyScannedModel": "Đã gửi yêu cầu quét mô hình trên Hugging Face thành công.",
+    "Version": "Phiên bản"
   },
   "scheduler": {
     "PendingSessions": "Phiên đang chờ xử lý"

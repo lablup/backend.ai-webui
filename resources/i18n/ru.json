@@ -71,6 +71,7 @@
     "Apply": "Применить",
     "AutoRefresh": "Автообновление",
     "Cancel": "Отмена",
+    "ChangeProject": "Сменить проект",
     "Clear": "Удалить",
     "ClearLogs": "Очистить журналы",
     "ClickForMoreDetails": "Нажмите для получения более подробной информации",
@@ -819,6 +820,22 @@
     "WrongURLType": "Неверный тип URL",
     "YouCanCreateNotebookCode": "Этот значок позволяет запускать ваш ноутбук напрямую на Backend.AI. Скопируйте код, чтобы использовать его где угодно."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Текущий проект успешно изменён.",
+    "FailedToImport": "Не удалось импортировать артефакт(ы)",
+    "FailedToImportArtifact": "Не удалось импортировать артефакт {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "Не удалось получить модель с Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "Не удалось получить проект, предназначенный для моделей.",
+    "FolderMountForModelStore": "Монтирование папки для хранилища моделей",
+    "Import": "Импорт",
+    "ImportToFolder": "Импорт в папку",
+    "ImportingArtifact": "Импортируется артефакт {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Требуется отдельный проект для Model Store.",
+    "ModelStoreProjectRequiredDescription": "Перевести текущий проект в проект, предназначенный только для хранилища моделей?",
+    "NoArtifactsSelected": "Нет выбранных артефактов для импорта",
+    "OverwriteWarning": "Файлы с теми же именами будут перезаписаны, если они уже существуют.",
+    "SuccessfullyImported": "Артефакты успешно импортированы"
+  },
   "information": {
     "APIVersion": "Версия API",
     "CannotRead": "Не могу считать",
@@ -1227,9 +1244,11 @@
     "Name": "Имя",
     "PullLatestVersion": "Вытащите последнюю версию ({{version}})",
     "PullSelectedVersions": "Вытащите выбранные версии",
+    "PullThisVersion": "Загрузить эту версию",
     "PullingArtifact": "Вытягивание артефакта {{name}}: {{version}}",
     "Registry": "Реестр",
     "RemoveSelectedVersions": "Удалить выбранные версии",
+    "RemoveThisVersion": "Удалить эту версию",
     "ReservoirArtifacts": "Артефакты водохранилища",
     "Size": "Размер",
     "Source": "Источник",
@@ -1362,6 +1381,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Общая память должна быть меньше памяти",
     "SharedMemory": "Общая память",
     "Updated": "Предустановка ресурса обновлена"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Введите ID модели. (например: openai/gpt-oss-20b)",
+    "EnterAVersion": "Введите версию. (По умолчанию: main)",
+    "FailedToScanModelFromHuggingFace": "Не удалось просканировать модели артефактов с Hugging Face",
+    "ModalDescription": "Сканировать модель на Hugging Face по ID модели и версии.",
+    "ModelID": "ID модели",
+    "ModelStoreFolderMountTooltip": "Сохраняет модель Hugging Face в выбранную папку. Доступно только для проектов хранилища моделей в режиме «использование модели».",
+    "Scan": "Сканировать",
+    "ScanFromHuggingFace": "Сканировать с Hugging Face",
+    "SuccessfullyScannedModel": "Запрос на сканирование модели на Hugging Face успешно отправлен.",
+    "Version": "Версия"
   },
   "scheduler": {
     "PendingSessions": "В ожидании сессий"

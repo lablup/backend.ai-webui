@@ -71,6 +71,7 @@
     "Apply": "Bewerbung",
     "AutoRefresh": "Automatische Aktualisierung",
     "Cancel": "Stornieren",
+    "ChangeProject": "Projekt wechseln",
     "Clear": "Löschen",
     "ClearLogs": "Protokolle löschen",
     "ClickForMoreDetails": "Klicken Sie für weitere Details",
@@ -820,6 +821,22 @@
     "WrongURLType": "Falscher URL-Typ",
     "YouCanCreateNotebookCode": "Dieses Abzeichen ermöglicht die direkte Ausführung Ihres Notebooks auf Backend.AI. Kopieren Sie den Code, um ihn überall zu verwenden."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Das aktuelle Projekt wurde erfolgreich geändert.",
+    "FailedToImport": "Import von Artefakt(en) fehlgeschlagen",
+    "FailedToImportArtifact": "Import des Artefakts {{ name }} ({{ version }}) fehlgeschlagen",
+    "FailedToImportModelFromHuggingFace": "Fehler beim Abrufen des Modells von Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "Fehler beim Abrufen des für das Modellprojekt vorgesehenen Projekts.",
+    "FolderMountForModelStore": "Ordner-Mount für Modell-Store",
+    "Import": "Importieren",
+    "ImportToFolder": "In Ordner importieren",
+    "ImportingArtifact": "Importiere Artefakt {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Ein eigenes Projekt für den Modell-Store wird benötigt.",
+    "ModelStoreProjectRequiredDescription": "Möchten Sie das aktuelle Projekt in ein nur für den Model Store vorgesehenes Projekt umwandeln?",
+    "NoArtifactsSelected": "Keine Artefakte für den Import ausgewählt",
+    "OverwriteWarning": "Vorhandene Dateien werden überschrieben, wenn Dateien mit demselben Namen bereits existieren.",
+    "SuccessfullyImported": "Artefakt(e) erfolgreich importiert"
+  },
   "information": {
     "APIVersion": "API-Version",
     "CannotRead": "Kann nicht lesen",
@@ -1228,9 +1245,11 @@
     "Name": "Name",
     "PullLatestVersion": "Pull lasting ({{version}}) Version",
     "PullSelectedVersions": "Ziehen Sie ausgewählte Versionen",
+    "PullThisVersion": "Diese Version herunterladen",
     "PullingArtifact": "Artefakt ziehen {{name}}: {{version}}",
     "Registry": "Registrierung",
     "RemoveSelectedVersions": "Entfernen Sie ausgewählte Versionen",
+    "RemoveThisVersion": "Diese Version entfernen",
     "ReservoirArtifacts": "Reservoir -Artefakte",
     "Size": "Größe",
     "Source": "Quelle",
@@ -1361,6 +1380,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
     "SharedMemory": "Gemeinsamer Speicher",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Geben Sie die Modell-ID ein. (z. B.: openai/gpt-oss-20b)",
+    "EnterAVersion": "Geben Sie die Version ein. (Standard: main)",
+    "FailedToScanModelFromHuggingFace": "Scannen von Artefaktmodellen von Hugging Face fehlgeschlagen",
+    "ModalDescription": "Modell auf Hugging Face anhand einer bestimmten Modell‑ID und -Version scannen.",
+    "ModelID": "Modell‑ID",
+    "ModelStoreFolderMountTooltip": "Speichert das Hugging Face-Modell im ausgewählten Ordner. Nur in Model-Store-exklusiven Projekten im Modus „Modellnutzung“ verfügbar.",
+    "Scan": "Scannen",
+    "ScanFromHuggingFace": "Von Hugging Face scannen",
+    "SuccessfullyScannedModel": "Anfrage zum Scannen des Modells bei Hugging Face erfolgreich gesendet.",
+    "Version": "Version"
   },
   "scheduler": {
     "PendingSessions": "Ausstehende Sitzungen"

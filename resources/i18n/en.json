@@ -74,6 +74,7 @@
     "Apply": "Apply",
     "AutoRefresh": "Auto refresh",
     "Cancel": "Cancel",
+    "ChangeProject": "Change Project",
     "Clear": "Clear",
     "ClearLogs": "Clear Logs",
     "ClickForMoreDetails": "Click for more details",
@@ -410,7 +411,7 @@
       "CloneFolder": "Clone folder",
       "Cloneable": "Cloneable",
       "Control": "Controls",
-      "CreateModelFolderOnlyInExclusiveProject": "Model project folders can only be created in model store–exclusive projects.",
+      "CreateModelFolderOnlyInExclusiveProject": "Model project folders can only be created in model-store–exclusive projects.",
       "CreatedAt": "Created At",
       "Delete": "Delete",
       "DeleteAFolder": "Delete folder",
@@ -825,6 +826,23 @@
     "WrongURLType": "Wrong URL Type",
     "YouCanCreateNotebookCode": "This badge enables direct execution of your notebook on Backend.AI. Copy the code to use it anywhere."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Current project changed successfully.",
+    "FailedToImport": "Failed to imported artifact(s)",
+    "FailedToImportArtifact": "Failed to import artifact {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "Failed to import model from hugging face.",
+    "FailedToRetrieveModelStoreProject": "Failed to retrieve the model-store-exclusive project.",
+    "FolderMountForModelStore": "Folder mount for Model Store",
+    "Import": "Import",
+    "ImportToFolder": "Import to Folder",
+    "ImportingArtifact": "Importing artifact {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Model-store-exclusive project is required",
+    "ModelStoreProjectRequiredDescription": "Do you want to convert the current project to a model-store-exclusive project?",
+    "NoArtifactsSelected": "No artifacts selected for import",
+    "OverwriteWarning": "Existing files will be overwritten if files with the same name already exist.",
+    "SuccessfullyImported": "Successfully imported artifact(s)",
+    "SuccessfullyImportedArtifact": "Successfully imported artifact {{name}} ({{version}})"
+  },
   "information": {
     "APIVersion": "API version",
     "CannotRead": "Cannot Read",
@@ -1233,9 +1251,11 @@
     "Name": "Name",
     "PullLatestVersion": "Pull Latest({{version}}) version",
     "PullSelectedVersions": "Pull Selected Versions",
+    "PullThisVersion": "Pull this version",
     "PullingArtifact": "Pulling artifact {{name}}: {{version}}",
     "Registry": "Registry",
     "RemoveSelectedVersions": "Remove Selected Versions",
+    "RemoveThisVersion": "Remove this version",
     "ReservoirArtifacts": "Reservoir Artifacts",
     "Size": "Size",
     "Source": "Source",
@@ -1368,6 +1388,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
     "SharedMemory": "Shared Memory",
     "Updated": "Resource preset updated"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Enter a model ID. (e.g. openai/gpt-oss-20b)",
+    "EnterAVersion": "Enter a version. (default: main)",
+    "FailedToScanModelFromHuggingFace": "Failed to scan artifact models from Hugging Face",
+    "ModalDescription": "Scan a model from Hugging Face by specifying the Model ID and Version.",
+    "ModelID": "Model ID",
+    "ModelStoreFolderMountTooltip": "Saves the Hugging Face model to the selected folder. Available only for model-store–exclusive projects in model-usage mode.",
+    "Scan": "Scan",
+    "ScanFromHuggingFace": "Scan from Hugging Face",
+    "SuccessfullyScannedModel": "Model scan request to Hugging Face sent successfully.",
+    "Version": "Version"
   },
   "scheduler": {
     "PendingSessions": "Pending Sessions"

@@ -1,11 +1,12 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
 import { BAITrashBinIcon } from '../../icons';
-import { Button, ButtonProps, theme } from 'antd';
+import BAIButton, { BAIButtonProps } from '../BAIButton';
+import { theme } from 'antd';
 import _ from 'lodash';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIArtifactRevisionDeleteButtonProps
-  extends Omit<ButtonProps, 'icon'> {
+  extends Omit<BAIButtonProps, 'icon'> {
   revisionsFrgmt: BAIArtifactRevisionDeleteButtonFragment$key;
   loading?: boolean;
 }
@@ -15,6 +16,7 @@ const BAIArtifactRevisionDeleteButton = ({
   ...buttonProps
 }: BAIArtifactRevisionDeleteButtonProps) => {
   const { token } = theme.useToken();
+
   const revisions = useFragment<BAIArtifactRevisionDeleteButtonFragment$key>(
     graphql`
       fragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision
@@ -24,20 +26,25 @@ const BAIArtifactRevisionDeleteButton = ({
     `,
     revisionsFrgmt,
   );
+
   const isDeletable = revisions.some(
     (revision) =>
       revision.status !== 'SCANNED' && revision.status !== 'PULLING',
   );
 
+  const isDisabled =
+    buttonProps.disabled || buttonProps.loading || !isDeletable;
+
   return (
-    <Button
+    <BAIButton
       icon={<BAITrashBinIcon />}
-      disabled={buttonProps.disabled || buttonProps.loading || !isDeletable}
+      disabled={isDisabled}
+      type="text"
       style={{
-        color: isDeletable ? token.colorError : token.colorTextDisabled,
-        backgroundColor: isDeletable
-          ? token.colorErrorBg
-          : token.colorBgContainerDisabled,
+        color: isDisabled ? token.colorTextDisabled : token.colorError,
+        background: isDisabled
+          ? token.colorBgContainerDisabled
+          : token.colorErrorBg,
         ...buttonProps.style,
       }}
       {..._.omit(buttonProps, ['style', 'disabled', 'loading'])}

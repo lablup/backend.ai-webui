@@ -39,8 +39,6 @@
     "Control": "Ελεγχος",
     "LatestVersion": "Τελευταία έκδοση",
     "Name": "Ονομα",
-    "PullThisVersion": "Τραβήξτε αυτήν την έκδοση",
-    "RemoveThisVersion": "Καταργήστε αυτήν την έκδοση",
     "Size": "Μέγεθος",
     "Status": "Κατάσταση",
     "Updated": "Ενημερωμένος",
@@ -89,17 +87,6 @@
     "PullVersion": "Εκδοχή έλξης",
     "Size": "Μέγεθος",
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
-    "Version": "Εκδοχή"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Εισαγάγετε ένα αναγνωριστικό μοντέλου. (π.χ. OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "Εισαγάγετε μια έκδοση. (προεπιλογή: κύρια)",
-    "Failed to import model from hugging face": "Αποτυχία εισαγωγής μοντέλου από το πρόσωπο αγκάλιασμα",
-    "Import": "Εισαγωγή",
-    "ModalDescription": "Εισαγάγετε ένα μοντέλο από το αγκάλιασμα προσδιορίζοντας το αναγνωριστικό μοντέλου και την έκδοση.",
-    "ModalTitle": "Εισαγωγή από αγκαλιά πρόσωπο",
-    "ModelID": "Μοντέλο ταυτότητας",
-    "SuccessfullyImportedModelFromHuggingFace": "Ζήτησε επιτυχώς εισαγωγή μοντέλου από το αγκάλιασμα πρόσωπο",
     "Version": "Εκδοχή"
   },
   "comp:BAIProjectBulkEditModal": {

@@ -39,8 +39,6 @@
     "Control": "Hallinta",
     "LatestVersion": "Uusin versio",
     "Name": "Nimi",
-    "PullThisVersion": "Vedä tämä versio",
-    "RemoveThisVersion": "Poista tämä versio",
     "Size": "Koko",
     "Status": "Status",
     "Updated": "Päivitetty",
@@ -89,17 +87,6 @@
     "PullVersion": "Vetää versio",
     "Size": "Koko",
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
-    "Version": "Versio"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Syötä mallitunnus. (esim. OpenAi/GPT-OSS-20b)",
-    "EnterAVersion": "Kirjoita versio. (Oletus: Main)",
-    "Failed to import model from hugging face": "Mallin tuonti epäonnistui kasvojen halaamisesta",
-    "Import": "Tuoda",
-    "ModalDescription": "Tuo malli halaamisesta kasvoista määrittelemällä mallitunnus ja versio.",
-    "ModalTitle": "Tuo halaus kasvoista",
-    "ModelID": "Mallitunnus",
-    "SuccessfullyImportedModelFromHuggingFace": "Onnistuneesti pyydetty mallin tuonti halaamisesta",
     "Version": "Versio"
   },
   "comp:BAIProjectBulkEditModal": {

@@ -71,6 +71,7 @@
     "Apply": "Hae",
     "AutoRefresh": "Automaattinen päivitys",
     "Cancel": "Peruuta",
+    "ChangeProject": "Vaihda projekti",
     "Clear": "Poistaa",
     "ClearLogs": "Tyhjennä lokit",
     "ClickForMoreDetails": "Napsauta saadaksesi lisätietoja",
@@ -820,6 +821,22 @@
     "WrongURLType": "Väärä URL-tyyppi",
     "YouCanCreateNotebookCode": "Tämä badge mahdollistaa muistikirjasi suorittamisen suoraan Backend.AI:ssä. Kopioi koodi käyttääksesi sitä missä tahansa."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Nykyinen projekti vaihdettiin onnistuneesti.",
+    "FailedToImport": "Artefaktin(ien) tuonti epäonnistui",
+    "FailedToImportArtifact": "Artefaktin {{ name }} ({{ version }}) tuonti epäonnistui.",
+    "FailedToImportModelFromHuggingFace": "Mallin hakeminen Hugging Facesta epäonnistui.",
+    "FailedToRetrieveModelStoreProject": "Malliprojekteille varattua projektia ei voitu hakea.",
+    "FolderMountForModelStore": "Kansion liittäminen mallivarastoon",
+    "Import": "Tuo",
+    "ImportToFolder": "Tuo kansioon",
+    "ImportingArtifact": "Tuodaan artefaktia {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Mallikauppaa varten tarvitaan erillinen projekti.",
+    "ModelStoreProjectRequiredDescription": "Haluatko muuttaa nykyisen projektin mallivaraston yksinomaiseksi projektiksi?",
+    "NoArtifactsSelected": "Tuotavia artefakteja ei ole valittu",
+    "OverwriteWarning": "Saman nimiset tiedostot korvataan, jos ne ovat jo olemassa.",
+    "SuccessfullyImported": "Artefaktit tuotiin onnistuneesti."
+  },
   "information": {
     "APIVersion": "API-versio",
     "CannotRead": "Ei voi lukea",
@@ -1227,9 +1244,11 @@
     "Name": "Nimi",
     "PullLatestVersion": "Vedä uusin ({{version}}) versio",
     "PullSelectedVersions": "Vedä valittuja versioita",
+    "PullThisVersion": "Hae tämä versio",
     "PullingArtifact": "Artefaktin vetäminen {{name}}: {{version}}",
     "Registry": "Rekisteröinti",
     "RemoveSelectedVersions": "Poista valitut versiot",
+    "RemoveThisVersion": "Poista tämä versio",
     "ReservoirArtifacts": "Säiliön esineitä",
     "Size": "Koko",
     "Source": "Lähde",
@@ -1362,6 +1381,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin",
     "SharedMemory": "Jaettu muisti",
     "Updated": "Resurssien esiasetus päivitetty"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Syötä mallin tunnus (esim. openai/gpt-oss-20b)",
+    "EnterAVersion": "Syötä versio. (Oletus: main)",
+    "FailedToScanModelFromHuggingFace": "Artefaktimallien skannaus Hugging Facesta epäonnistui.",
+    "ModalDescription": "Skannaa mallin Hugging Facesta tietyn malli-ID:n ja version perusteella.",
+    "ModelID": "Mallin tunnus",
+    "ModelStoreFolderMountTooltip": "Tallenna Hugging Face -malli valittuun kansioon. Käytettävissä vain Model Store -projekteissa, jotka ovat mallin käyttö -tilassa.",
+    "Scan": "Skannaa",
+    "ScanFromHuggingFace": "Skannaa Hugging Face -palvelusta",
+    "SuccessfullyScannedModel": "Pyyntö mallin skannaamisesta Hugging Facelle lähetettiin onnistuneesti.",
+    "Version": "Versio"
   },
   "scheduler": {
     "PendingSessions": "Vireillä olevat istunnot"

@@ -39,8 +39,6 @@
     "Control": "Контроль",
     "LatestVersion": "Последняя версия",
     "Name": "Имя",
-    "PullThisVersion": "Вытащите эту версию",
-    "RemoveThisVersion": "Удалить эту версию",
     "Size": "Размер",
     "Status": "Статус",
     "Updated": "Обновлено",
@@ -89,17 +87,6 @@
     "PullVersion": "Потянуть версию",
     "Size": "Размер",
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
-    "Version": "Версия"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Введите идентификатор модели. (например, OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "Введите версию. (по умолчанию: главное)",
-    "Failed to import model from hugging face": "Не удалось импортировать модель от обнимающего лица",
-    "Import": "Импорт",
-    "ModalDescription": "Импортируйте модель от обнимающего лица, указав идентификатор модели и версию.",
-    "ModalTitle": "Импорт от обнимающегося лица",
-    "ModelID": "Идентификатор модели",
-    "SuccessfullyImportedModelFromHuggingFace": "Успешно запросил импорт модели от обнимающегося лица",
     "Version": "Версия"
   },
   "comp:BAIProjectBulkEditModal": {

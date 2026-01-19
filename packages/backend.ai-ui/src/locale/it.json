@@ -39,8 +39,6 @@
     "Control": "Controllare",
     "LatestVersion": "Ultima versione",
     "Name": "Nome",
-    "PullThisVersion": "Tira questa versione",
-    "RemoveThisVersion": "Rimuovi questa versione",
     "Size": "Misurare",
     "Status": "Stato",
     "Updated": "Aggiornato",
@@ -89,17 +87,6 @@
     "PullVersion": "Pull versione",
     "Size": "Misurare",
     "SuccessFullyPulled": "Pullo correttamente richiesto per le versioni {{count}}.",
-    "Version": "Versione"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Immettere un ID modello. (ad es. OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "Immettere una versione. (Predefinito: Main)",
-    "Failed to import model from hugging face": "Impossibile importare il modello da abbracciare la faccia",
-    "Import": "Importare",
-    "ModalDescription": "Importa un modello da abbracciare la faccia specificando l'ID modello e la versione.",
-    "ModalTitle": "Importazione da abbracciare la faccia",
-    "ModelID": "Modello ID",
-    "SuccessfullyImportedModelFromHuggingFace": "Ha richiesto con successo l'importazione di modello da abbraccio",
     "Version": "Versione"
   },
   "comp:BAIProjectBulkEditModal": {

@@ -57,6 +57,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const [key, checkUpdate] = useUpdatableState('first');
   const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
+
   // const { vfolder_list } = useLazyLoadQuery<VFolderSelectQuery>(
   //   graphql`
   //     # query VFolderSelectQuery($group_id: UUID) {
@@ -169,8 +170,8 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         </Tooltip>
       ) : null}
       <FolderCreateModal
-        usageMode="model"
         open={isOpenCreateModal}
+        initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);
           if (result) {

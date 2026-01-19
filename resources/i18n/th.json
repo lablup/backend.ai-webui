@@ -71,6 +71,7 @@
     "Apply": "นำมาใช้",
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
     "Cancel": "ยกเลิก",
+    "ChangeProject": "เปลี่ยนโปรเจ็กต์",
     "Clear": "ล้าง",
     "ClearLogs": "ล้างบันทึก",
     "ClickForMoreDetails": "คลิกเพื่อดูรายละเอียดเพิ่มเติม",
@@ -809,6 +810,22 @@
     "WrongURLType": "ประเภท URL ไม่ถูกต้อง",
     "YouCanCreateNotebookCode": "ป้ายนี้ช่วยให้รันโน้ตบุ๊กบน Backend.AI ได้โดยตรง คัดลอกโค้ดเพื่อนำไปใช้ได้ทุกที่"
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "เปลี่ยนโปรเจกต์ปัจจุบันเรียบร้อยแล้ว",
+    "FailedToImport": "ไม่สามารถนำเข้าอาร์ติแฟกต์ได้",
+    "FailedToImportArtifact": "ไม่สามารถนำเข้า artifact {{ name }} ({{ version }}) ได้",
+    "FailedToImportModelFromHuggingFace": "ไม่สามารถดึงโมเดลจาก Hugging Face ได้",
+    "FailedToRetrieveModelStoreProject": "ไม่สามารถดึงโปรเจกต์ที่สงวนไว้สำหรับโมเดลได้",
+    "FolderMountForModelStore": "การเชื่อมต่อโฟลเดอร์สำหรับคลังโมเดล",
+    "Import": "นำเข้า",
+    "ImportToFolder": "นำเข้าไปยังโฟลเดอร์",
+    "ImportingArtifact": "กำลังนำเข้าอาร์ติแฟกต์ {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "จำเป็นต้องมีโปรเจ็กต์เฉพาะสำหรับ Model Store",
+    "ModelStoreProjectRequiredDescription": "ต้องการเปลี่ยนโปรเจกต์ปัจจุบันให้เป็นโปรเจกต์สำหรับ Model Store เท่านั้นหรือไม่?",
+    "NoArtifactsSelected": "ยังไม่ได้เลือกอาร์ติแฟกต์สำหรับนำเข้า",
+    "OverwriteWarning": "ไฟล์ที่มีอยู่จะถูกเขียนทับ หากมีไฟล์ชื่อเดียวกันอยู่แล้ว",
+    "SuccessfullyImported": "นำเข้าอาร์ติแฟกต์เรียบร้อยแล้ว"
+  },
   "information": {
     "APIVersion": "เวอร์ชัน API",
     "CannotRead": "ไม่สามารถอ่านได้",
@@ -1217,9 +1234,11 @@
     "Name": "ชื่อ",
     "PullLatestVersion": "ดึงเวอร์ชันล่าสุด ({{version}})",
     "PullSelectedVersions": "ดึงเวอร์ชันที่เลือก",
+    "PullThisVersion": "ดึงเวอร์ชันนี้",
     "PullingArtifact": "การดึง Artifact {{name}}: {{version}}",
     "Registry": "การลงทะเบียน",
     "RemoveSelectedVersions": "ลบเวอร์ชันที่เลือก",
+    "RemoveThisVersion": "ลบเวอร์ชันนี้",
     "ReservoirArtifacts": "สิ่งประดิษฐ์อ่างเก็บน้ำ",
     "Size": "ขนาด",
     "Source": "แหล่งที่มา",
@@ -1352,6 +1371,18 @@
     "SHMEMShouldBeSmallerThanMemory": "หน่วยความจำร่วมต้องน้อยกว่าหน่วยความจำ",
     "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน",
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "กรุณาใส่ ID ของโมเดล (เช่น: openai/gpt-oss-20b)",
+    "EnterAVersion": "กรุณาใส่เวอร์ชัน (ค่าเริ่มต้น: main)",
+    "FailedToScanModelFromHuggingFace": "ไม่สามารถสแกนโมเดลอาร์ติแฟ็กต์จาก Hugging Face ได้",
+    "ModalDescription": "สแกนโมเดลจาก Hugging Face โดยใช้ ID โมเดลและเวอร์ชันที่ระบุ",
+    "ModelID": "รหัสโมเดล",
+    "ModelStoreFolderMountTooltip": "บันทึกโมเดล Hugging Face ลงในโฟลเดอร์ที่เลือกได้ ใช้ได้เฉพาะในโปรเจกต์ที่เป็นคลังโมเดล (model store) ซึ่งตั้งค่าโหมดการใช้งานเป็นแบบโมเดลเท่านั้น",
+    "Scan": "สแกน",
+    "ScanFromHuggingFace": "สแกนจาก Hugging Face",
+    "SuccessfullyScannedModel": "ส่งคำขอสแกนโมเดลไปยัง Hugging Face สำเร็จแล้ว",
+    "Version": "เวอร์ชัน"
   },
   "scheduler": {
     "PendingSessions": "รอการประชุม"

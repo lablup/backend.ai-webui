@@ -39,8 +39,6 @@
     "Control": "Điều khiển",
     "LatestVersion": "Phiên bản mới nhất",
     "Name": "Tên",
-    "PullThisVersion": "Kéo phiên bản này",
-    "RemoveThisVersion": "Xóa phiên bản này",
     "Size": "Kích cỡ",
     "Status": "Trạng thái",
     "Updated": "Cập nhật",
@@ -89,17 +87,6 @@
     "PullVersion": "Phiên bản kéo",
     "Size": "Kích cỡ",
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
-    "Version": "Phiên bản"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Nhập ID mô hình. (ví dụ: OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "Nhập một phiên bản. (Mặc định: Chính)",
-    "Failed to import model from hugging face": "Không thể nhập mô hình từ khuôn mặt ôm",
-    "Import": "Nhập khẩu",
-    "ModalDescription": "Nhập một mô hình từ Hugging Face bằng cách chỉ định ID mô hình và phiên bản.",
-    "ModalTitle": "Nhập khẩu từ khuôn mặt ôm",
-    "ModelID": "Mô hình ID",
-    "SuccessfullyImportedModelFromHuggingFace": "Yêu cầu nhập khẩu thành công mô hình từ khuôn mặt ôm",
     "Version": "Phiên bản"
   },
   "comp:BAIProjectBulkEditModal": {

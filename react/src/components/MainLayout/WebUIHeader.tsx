@@ -132,7 +132,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
               <LoginSessionExtendButton data-testid="button-extend-login-session" />
               {gridBreakpoint.md && (
                 <Divider
-                  type="vertical"
+                  orientation="vertical"
                   style={{ borderColor: 'transparent' }}
                 />
               )}

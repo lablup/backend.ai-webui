@@ -41,8 +41,6 @@ export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
 export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
-export { default as BAIImportFromHuggingFaceModal } from './BAIImportFromHuggingFaceModal';
-export type { BAIImportFromHuggingFaceModalProps } from './BAIImportFromHuggingFaceModal';
 export {
   default as BAINotificationItem,
   NotificationItemTemplate,

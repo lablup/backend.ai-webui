@@ -16,7 +16,7 @@ import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, App, Modal, ModalProps, Tooltip } from 'antd';
+import { Alert, App, Modal, ModalProps, theme, Tooltip } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -58,6 +58,7 @@ const BAIImportArtifactModal = ({
 }: BAIImportArtifactModalProps) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { token } = theme.useToken();
   const selectedArtifact =
     useFragment<BAIImportArtifactModalArtifactFragment$key>(
       graphql`
@@ -206,7 +207,12 @@ const BAIImportArtifactModal = ({
                     'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
                   )}
                 >
-                  <QuestionCircleFilled />
+                  <QuestionCircleFilled
+                    style={{
+                      color: token.colorInfo,
+                      marginRight: token.marginXS,
+                    }}
+                  />
                 </Tooltip>
               }
               showIcon

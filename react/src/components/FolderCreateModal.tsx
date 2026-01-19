@@ -69,9 +69,21 @@ interface FolderCreateFormItemsType {
   cloneable: boolean;
 }
 
+type HiddenFormItemsType =
+  | keyof FolderCreateFormItemsType
+  | 'usage_mode_general'
+  | 'usage_mode_model'
+  | 'usage_mode_automount'
+  | 'type_user'
+  | 'type_project'
+  | 'permission_rw'
+  | 'permission_ro';
+
 interface FolderCreateModalProps extends BAIModalProps {
   onRequestClose: (response?: FolderCreationResponse) => void;
-  usageMode?: 'general' | 'model' | 'automount';
+  initialValidate?: boolean;
+  initialValues?: Partial<FolderCreateFormItemsType>;
+  hiddenFormItems?: HiddenFormItemsType[];
 }
 export interface FolderCreationResponse {
   id: string;
@@ -91,9 +103,12 @@ export interface FolderCreationResponse {
 
 const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
-  usageMode,
+  initialValidate = false,
+  initialValues: initialValuesFromProps = {},
+  hiddenFormItems = [],
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { styles } = useStyles();
   const { token } = theme.useToken();
@@ -110,6 +125,21 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
   const { getErrorMessage } = useErrorMessageResolver();
+
+  const INITIAL_FORM_VALUES: FolderCreateFormItemsType = {
+    name: '',
+    host: undefined,
+    group: currentProject.id,
+    usage_mode: 'general',
+    type: 'user',
+    permission: 'rw',
+    cloneable: false,
+  };
+
+  const mergedInitialValues: FolderCreateFormItemsType = {
+    ...INITIAL_FORM_VALUES,
+    ...initialValuesFromProps,
+  };
 
   const { data: allowedTypes, isFetching: isFetchingAllowedTypes } =
     useTanQuery({
@@ -142,16 +172,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       });
     },
   });
-
-  const INITIAL_FORM_VALUES: FolderCreateFormItemsType = {
-    name: '',
-    host: undefined,
-    group: currentProject.id,
-    usage_mode: usageMode ?? 'general',
-    type: 'user',
-    permission: 'rw',
-    cloneable: false,
-  };
 
   const handleOk = async () => {
     await formRef.current
@@ -232,14 +252,24 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }}
       destroyOnHidden
       {...modalProps}
+      afterOpenChange={(open) => {
+        if (open && initialValidate) {
+          formRef.current?.validateFields();
+        }
+      }}
     >
       <Form
         className={styles.form}
         ref={formRef}
-        initialValues={INITIAL_FORM_VALUES}
+        initialValues={mergedInitialValues}
         labelCol={{ span: 8 }}
       >
-        <Form.Item label={t('data.UsageMode')} name={'usage_mode'} required>
+        <Form.Item
+          label={t('data.UsageMode')}
+          name={'usage_mode'}
+          required
+          hidden={_.includes(hiddenFormItems, 'usage_mode')}
+        >
           <Radio.Group
             onChange={() => {
               // Only validate name field if it has a value to prevent excessive validation
@@ -251,22 +281,27 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               }
             }}
           >
-            <Radio value={'general'} data-testid="general-usage-mode">
-              {t('data.General')}
-            </Radio>
-            {baiClient._config.enableModelFolders ? (
-              <Radio value={'model'} data-testid="model-usage-mode">
-                {t('data.Models')}
+            {!_.includes(hiddenFormItems, 'usage_mode_general') && (
+              <Radio value={'general'} data-testid="general-usage-mode">
+                {t('data.General')}
               </Radio>
-            ) : null}
-            <Radio value={'automount'} data-testid="automount-usage-mode">
-              <BAIFlex gap="xxs">
-                {t('data.AutoMount')}
-                <QuestionIconWithTooltip
-                  title={t('data.AutomountFolderCreationDesc')}
-                />
-              </BAIFlex>
-            </Radio>
+            )}
+            {baiClient._config.enableModelFolders &&
+              !_.includes(hiddenFormItems, 'usage_mode_model') && (
+                <Radio value={'model'} data-testid="model-usage-mode">
+                  {t('data.Models')}
+                </Radio>
+              )}
+            {!_.includes(hiddenFormItems, 'usage_mode_automount') && (
+              <Radio value={'automount'} data-testid="automount-usage-mode">
+                <BAIFlex gap="xxs">
+                  {t('data.AutoMount')}
+                  <QuestionIconWithTooltip
+                    title={t('data.AutomountFolderCreationDesc')}
+                  />
+                </BAIFlex>
+              </Radio>
+            )}
           </Radio.Group>
         </Form.Item>
         <Divider />
@@ -276,6 +311,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           name={'name'}
           // required check is handled in the name validator
           required
+          hidden={_.includes(hiddenFormItems, 'name')}
           rules={[
             {
               pattern: /^[a-zA-Z0-9-_.]+$/,
@@ -317,7 +353,12 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         </Form.Item>
         <Divider />
 
-        <Form.Item label={t('data.folders.Location')} name={'host'} required>
+        <Form.Item
+          label={t('data.folders.Location')}
+          name={'host'}
+          required
+          hidden={_.includes(hiddenFormItems, 'host')}
+        >
           <Suspense fallback={<Skeleton.Input active />}>
             <StorageSelect
               onChange={(value) => {
@@ -344,6 +385,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 name={'type'}
                 required
                 style={{ flex: 1, marginBottom: 0 }}
+                hidden={_.includes(hiddenFormItems, 'type')}
                 rules={[
                   ({ getFieldValue }) => ({
                     validator(__, value) {
@@ -400,38 +442,40 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                    * allowedTypes comes from ETCD and contains all registered types regardless of permissions,
                    * so we need both checks for proper access control
                    */}
-                  {_.includes(allowedTypes, 'user') ? (
-                    <Radio value={'user'} data-testid="user-type">
-                      {t('data.User')}
-                    </Radio>
-                  ) : null}
+                  {_.includes(allowedTypes, 'user') &&
+                    !_.includes(hiddenFormItems, 'type_user') && (
+                      <Radio value={'user'} data-testid="user-type">
+                        {t('data.User')}
+                      </Radio>
+                    )}
                   {(userRole === 'admin' || userRole === 'superadmin') &&
-                  _.includes(allowedTypes, 'group') ? (
-                    <Radio
-                      value={'project'}
-                      data-testid="project-type"
-                      disabled={shouldDisableProject}
-                    >
-                      <Tooltip
-                        title={
-                          shouldDisableProject
-                            ? usageMode === 'model'
-                              ? t(
-                                  'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                                )
-                              : t(
-                                  'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
-                                )
-                            : undefined
-                        }
+                    _.includes(allowedTypes, 'group') &&
+                    !_.includes(hiddenFormItems, 'type_project') && (
+                      <Radio
+                        value={'project'}
+                        data-testid="project-type"
+                        disabled={shouldDisableProject}
                       >
-                        <BAIFlex gap="xxs">
-                          {t('data.Project')}
-                          {shouldDisableProject && <TriangleAlertIcon />}
-                        </BAIFlex>
-                      </Tooltip>
-                    </Radio>
-                  ) : null}
+                        <Tooltip
+                          title={
+                            shouldDisableProject
+                              ? usageMode === 'model'
+                                ? t(
+                                    'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                                  )
+                                : t(
+                                    'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
+                                  )
+                              : undefined
+                          }
+                        >
+                          <BAIFlex gap="xxs">
+                            {t('data.Project')}
+                            {shouldDisableProject && <TriangleAlertIcon />}
+                          </BAIFlex>
+                        </Tooltip>
+                      </Radio>
+                    )}
                 </Radio.Group>
               </Form.Item>
             );
@@ -459,6 +503,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 name={'permission'}
                 required
                 dependencies={['usage_mode', 'type']}
+                hidden={_.includes(hiddenFormItems, 'permission')}
                 rules={[
                   () => ({
                     validator(__, value) {
@@ -477,29 +522,33 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 ]}
               >
                 <Radio.Group>
-                  <Radio
-                    value={'rw'}
-                    data-testid="rw-permission"
-                    disabled={shouldDisableRWPermission}
-                  >
-                    <Tooltip
-                      title={
-                        shouldDisableRWPermission
-                          ? t(
-                              'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                            )
-                          : undefined
-                      }
+                  {!_.includes(hiddenFormItems, 'permission_rw') && (
+                    <Radio
+                      value={'rw'}
+                      data-testid="rw-permission"
+                      disabled={shouldDisableRWPermission}
                     >
-                      <BAIFlex gap="xxs">
-                        {t('data.ReadWrite')}
-                        {shouldDisableRWPermission && <TriangleAlertIcon />}
-                      </BAIFlex>
-                    </Tooltip>
-                  </Radio>
-                  <Radio value={'ro'} data-testid="ro-permission">
-                    {t('data.ReadOnly')}
-                  </Radio>
+                      <Tooltip
+                        title={
+                          shouldDisableRWPermission
+                            ? t(
+                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                              )
+                            : undefined
+                        }
+                      >
+                        <BAIFlex gap="xxs">
+                          {t('data.ReadWrite')}
+                          {shouldDisableRWPermission && <TriangleAlertIcon />}
+                        </BAIFlex>
+                      </Tooltip>
+                    </Radio>
+                  )}
+                  {!_.includes(hiddenFormItems, 'permission_ro') && (
+                    <Radio value={'ro'} data-testid="ro-permission">
+                      {t('data.ReadOnly')}
+                    </Radio>
+                  )}
                 </Radio.Group>
               </Form.Item>
             );
@@ -515,6 +564,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   <Form.Item
                     label={t('data.folders.Cloneable')}
                     name={'cloneable'}
+                    hidden={_.includes(hiddenFormItems, 'cloneable')}
                   >
                     <Switch defaultChecked={false} />
                   </Form.Item>

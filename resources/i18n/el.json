@@ -71,6 +71,7 @@
     "Apply": "Εφαρμογή",
     "AutoRefresh": "Αυτόματη ανανέωση",
     "Cancel": "Ματαίωση",
+    "ChangeProject": "Αλλαγή έργου",
     "Clear": "Διαγράφω",
     "ClearLogs": "Εκκαθάριση αρχείων καταγραφής",
     "ClickForMoreDetails": "Κάντε κλικ για περισσότερες λεπτομέρειες",
@@ -817,6 +818,22 @@
     "WrongURLType": "Λάθος τύπος διεύθυνσης URL",
     "YouCanCreateNotebookCode": "Αυτό το σήμα επιτρέπει την άμεση εκτέλεση του σημειωματάριού σας στο Backend.AI. Αντιγράψτε τον κώδικα για να τον χρησιμοποιήσετε οπουδήποτε."
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "Το τρέχον έργο άλλαξε με επιτυχία.",
+    "FailedToImport": "Αποτυχία εισαγωγής αντικειμένου/αντικειμένων",
+    "FailedToImportArtifact": "Αποτυχία εισαγωγής του artifact {{ name }} ({{ version }})",
+    "FailedToImportModelFromHuggingFace": "Αποτυχία λήψης του μοντέλου από το Hugging Face.",
+    "FailedToRetrieveModelStoreProject": "Αποτυχία ανάκτησης του έργου που προορίζεται αποκλειστικά για μοντέλα.",
+    "FolderMountForModelStore": "Προσάρτηση φακέλου για το αποθετήριο μοντέλων",
+    "Import": "Εισαγωγή",
+    "ImportToFolder": "Εισαγωγή σε φάκελο",
+    "ImportingArtifact": "Εισαγωγή αντικειμένου {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "Απαιτείται ένα έργο αποκλειστικά για το Model Store.",
+    "ModelStoreProjectRequiredDescription": "Θέλετε να μετατρέψετε το τρέχον έργο σε έργο αποκλειστικά για το Model Store;",
+    "NoArtifactsSelected": "Δεν έχουν επιλεγεί αρχεία για εισαγωγή",
+    "OverwriteWarning": "Τα υπάρχοντα αρχεία θα αντικατασταθούν εάν υπάρχουν αρχεία με το ίδιο όνομα.",
+    "SuccessfullyImported": "Επιτυχής εισαγωγή αντικειμένου(ων)"
+  },
   "information": {
     "APIVersion": "Έκδοση API",
     "CannotRead": "Δεν μπορώ να διαβάσω",
@@ -1225,9 +1242,11 @@
     "Name": "Ονομα",
     "PullLatestVersion": "Τραβήξτε το τελευταίο ({{version}}) έκδοση",
     "PullSelectedVersions": "Τραβήξτε επιλεγμένες εκδόσεις",
+    "PullThisVersion": "Κατεβάστε αυτή την έκδοση",
     "PullingArtifact": "Τράβηγμα Artifact {{name}}: {{version}}",
     "Registry": "Αρχείο",
     "RemoveSelectedVersions": "Αφαιρέστε τις επιλεγμένες εκδόσεις",
+    "RemoveThisVersion": "Αφαίρεση αυτής της έκδοσης",
     "ReservoirArtifacts": "Αντικείμενα δεξαμενής",
     "Size": "Μέγεθος",
     "Source": "Πηγή",
@@ -1360,6 +1379,18 @@
     "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη",
     "SharedMemory": "Κοινόχρηστη μνήμη",
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "Εισαγάγετε το ID του μοντέλου. (π.χ.: openai/gpt-oss-20b)",
+    "EnterAVersion": "Εισαγάγετε την έκδοση. (Προεπιλογή: main)",
+    "FailedToScanModelFromHuggingFace": "Απέτυχε η σάρωση των αρχείων μοντέλων από το Hugging Face",
+    "ModalDescription": "Σαρώνει ένα μοντέλο στο Hugging Face με συγκεκριμένο ID μοντέλου και έκδοση.",
+    "ModelID": "ID μοντέλου",
+    "ModelStoreFolderMountTooltip": "Αποθηκεύει το μοντέλο Hugging Face στον επιλεγμένο φάκελο. Διατίθεται μόνο για έργα αποκλειστικά Model Store με τρόπο χρήσης 'μοντέλου'.",
+    "Scan": "Σάρωση",
+    "ScanFromHuggingFace": "Σάρωση από το Hugging Face",
+    "SuccessfullyScannedModel": "Το αίτημα σάρωσης μοντέλου από το Hugging Face στάλθηκε με επιτυχία.",
+    "Version": "Έκδοση"
   },
   "scheduler": {
     "PendingSessions": "Εκκρεμείς συνεδρίες"

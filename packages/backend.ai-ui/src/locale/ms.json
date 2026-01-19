@@ -39,8 +39,6 @@
     "Control": "Kawalan",
     "LatestVersion": "Versi terkini",
     "Name": "Nama",
-    "PullThisVersion": "Tarik versi ini",
-    "RemoveThisVersion": "Keluarkan versi ini",
     "Size": "Saiz",
     "Status": "Status",
     "Updated": "Dikemas kini",
@@ -89,17 +87,6 @@
     "PullVersion": "Tarik versi",
     "Size": "Saiz",
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
-    "Version": "Versi"
-  },
-  "comp:BAIImportFromHuggingFaceModal": {
-    "EnterAModelID": "Masukkan ID Model. (mis. OpenAI/GPT-OSS-20B)",
-    "EnterAVersion": "Masukkan versi. (Lalai: Utama)",
-    "Failed to import model from hugging face": "Gagal mengimport model daripada memeluk muka",
-    "Import": "Import",
-    "ModalDescription": "Import model dari memeluk muka dengan menentukan ID dan versi model.",
-    "ModalTitle": "Import dari muka yang memeluk",
-    "ModelID": "ID Model",
-    "SuccessfullyImportedModelFromHuggingFace": "Berjaya meminta import model dari memeluk muka",
     "Version": "Versi"
   },
   "comp:BAIProjectBulkEditModal": {

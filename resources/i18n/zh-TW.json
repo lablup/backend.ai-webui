@@ -71,6 +71,7 @@
     "Apply": "申请",
     "AutoRefresh": "自動重新整理",
     "Cancel": "取消",
+    "ChangeProject": "切換專案",
     "Clear": "刪除",
     "ClearLogs": "清除日誌",
     "ClickForMoreDetails": "點擊以獲取更多詳細信息",
@@ -819,6 +820,22 @@
     "WrongURLType": "錯誤的網址類型",
     "YouCanCreateNotebookCode": "此徽章可讓您的筆記本在 Backend.AI 上直接執行。複製程式碼以在任何地方使用。"
   },
+  "importArtifactRevisionToFolderModal": {
+    "CurrentProjectChangedSuccessfully": "已成功變更目前專案。",
+    "FailedToImport": "無法匯入工件",
+    "FailedToImportArtifact": "無法匯入工件 {{ name }}（{{ version }}）",
+    "FailedToImportModelFromHuggingFace": "無法從 Hugging Face 取得模型。",
+    "FailedToRetrieveModelStoreProject": "無法取得模型專用專案。",
+    "FolderMountForModelStore": "模型商店資料夾掛載",
+    "Import": "匯入",
+    "ImportToFolder": "匯入至資料夾",
+    "ImportingArtifact": "正在匯入工件 {{name}} ({{version}})",
+    "ModelStoreProjectRequired": "需要一個專門用於模型商店的專案",
+    "ModelStoreProjectRequiredDescription": "是否要將目前專案轉為僅供模型商店使用？",
+    "NoArtifactsSelected": "未選取任何要匯入的項目",
+    "OverwriteWarning": "若已存在同名檔案，現有檔案將被覆蓋。",
+    "SuccessfullyImported": "已成功匯入產出物"
+  },
   "information": {
     "APIVersion": "接口版本",
     "CannotRead": "無法閱讀",
@@ -1227,9 +1244,11 @@
     "Name": "姓名",
     "PullLatestVersion": "拉最新（{{version}}）版本",
     "PullSelectedVersions": "拉選定的版本",
+    "PullThisVersion": "拉取此版本",
     "PullingArtifact": "拉動偽影{{name}}: {{version}}",
     "Registry": "註冊表",
     "RemoveSelectedVersions": "刪除選定的版本",
+    "RemoveThisVersion": "移除此版本",
     "ReservoirArtifacts": "水庫工件",
     "Size": "尺寸",
     "Source": "來源",
@@ -1362,6 +1381,18 @@
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
     "SharedMemory": "共享內存",
     "Updated": "資源預設已更新"
+  },
+  "scanArtifactModelsFromHuggingFaceModal": {
+    "EnterAModelID": "請輸入模型 ID（例如：openai/gpt-oss-20b）",
+    "EnterAVersion": "請輸入版本（預設：main）",
+    "FailedToScanModelFromHuggingFace": "無法掃描來自 Hugging Face 的 artifact 模型",
+    "ModalDescription": "使用指定的模型 ID 和版本在 Hugging Face 上掃描模型。",
+    "ModelID": "模型 ID",
+    "ModelStoreFolderMountTooltip": "將 Hugging Face 模型儲存到所選資料夾。僅在以「模型使用」為模式的模型商店專用專案中可用。",
+    "Scan": "掃描",
+    "ScanFromHuggingFace": "從 Hugging Face 掃描",
+    "SuccessfullyScannedModel": "已成功向 Hugging Face 發送模型掃描請求。",
+    "Version": "版本"
   },
   "scheduler": {
     "PendingSessions": "等待會議"
