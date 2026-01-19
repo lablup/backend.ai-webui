@@ -5,8 +5,6 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import BAIProgressWithLabel from './BAIProgressWithLabel';
-import DoubleTag from './DoubleTag';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
@@ -17,6 +15,8 @@ import {
   BAIPureStorageIcon,
   BAITable,
   BAIFetchKeyButton,
+  BAIProgressWithLabel,
+  BAIDoubleTag,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -146,7 +146,7 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs">
             {platform.icon}
-            <DoubleTag
+            <BAIDoubleTag
               values={[
                 {
                   label: 'Backend',

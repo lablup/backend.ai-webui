@@ -1,5 +1,5 @@
 import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
-import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
+import { BAIDoubleTag, DoubleTagObjectValue } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -53,7 +53,7 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
     .compact()
     .value();
 
-  return <DoubleTag values={tagValues} />;
+  return <BAIDoubleTag values={tagValues} />;
 };
 
 export default VFolderPermissionTag;

@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "分配",
+    "Architecture": "架构",
+    "DiskPerc": "磁盘使用率 %",
+    "Endpoint": "端点",
+    "NoAvailableLiveStat": "暂无可用实时统计",
+    "Region": "区域",
+    "ResourceGroup": "资源组",
+    "Running": "运行中",
+    "Schedulable": "可调度",
+    "Starts": "启动次数",
+    "Status": "状态",
+    "Utilization": "利用率"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "已允许",
     "Permission": "权限"

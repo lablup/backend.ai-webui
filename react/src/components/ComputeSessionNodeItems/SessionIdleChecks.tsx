@@ -4,13 +4,13 @@ import {
   formatDurationAsDays,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
-import DoubleTag from '../DoubleTag';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import {
   useResourceSlotsDetails,
   useMemoizedJSONParse,
   BAIFlex,
+  BAIDoubleTag,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -237,7 +237,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
 
             {value.remaining >= 0 ? (
               // TODO: support real-time update by using useIntervalValue when idle_checks returns remaining time as date
-              <DoubleTag
+              <BAIDoubleTag
                 values={[
                   {
                     label: getRemainingTimeTypeLabel(value.remaining_time_type),

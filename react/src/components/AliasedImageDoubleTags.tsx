@@ -1,9 +1,8 @@
 import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import { Tag } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -50,7 +49,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
           aliasedTag,
           preserveDotStartCase(tag.key + tagValue),
         ) || isCustomized ? (
-          <DoubleTag
+          <BAIDoubleTag
             key={tag.key}
             highlightKeyword={highlightKeyword}
             values={[

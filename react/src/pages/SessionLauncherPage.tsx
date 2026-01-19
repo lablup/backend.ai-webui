@@ -1,4 +1,3 @@
-import BAIIntervalView from '../components/BAIIntervalView';
 import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
@@ -75,6 +74,7 @@ import {
   useBAILogger,
   BAIResourceNumberWithIcon,
   useUpdatableState,
+  BAIIntervalView,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';

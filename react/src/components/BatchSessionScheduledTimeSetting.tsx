@@ -1,10 +1,9 @@
-import BAIIntervalView from './BAIIntervalView';
 import DatePickerISO, { DatePickerISOProps } from './DatePickerISO';
 import { useWebComponentInfo } from './DefaultProviders';
 import { useToggle } from 'ahooks';
 import { Typography, Checkbox, theme } from 'antd';
 import { GetRef } from 'antd/lib';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

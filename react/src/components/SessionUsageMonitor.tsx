@@ -6,12 +6,12 @@ import {
 } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
-import BAIProgressWithLabel from './BAIProgressWithLabel';
 import { ProgressProps, Tooltip, Typography, theme, Row, Col } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,
   useResourceSlotsDetails,
+  BAIProgressWithLabel,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo } from 'react';

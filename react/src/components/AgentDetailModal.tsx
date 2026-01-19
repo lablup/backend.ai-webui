@@ -1,16 +1,17 @@
 import { AgentDetailModalFragment$key } from '../__generated__/AgentDetailModalFragment.graphql';
 import {
-  convertToBinaryUnit,
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import BAIProgressWithLabel from './BAIProgressWithLabel';
 import { Col, Row, theme, Typography } from 'antd';
 import {
   useResourceSlotsDetails,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIProgressWithLabel,
+  convertToBinaryUnit,
+  toLocalId,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
@@ -41,13 +42,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const agent = useFragment(
     graphql`
-      fragment AgentDetailModalFragment on Agent {
+      fragment AgentDetailModalFragment on AgentNode {
         id
         live_stat
         available_slots
         occupied_slots
-        cpu_cur_pct
-        mem_cur_bytes
       }
     `,
     agentDetailModalFrgmt,
@@ -59,7 +58,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
     <BAIModal
       {...modalProps}
       centered
-      title={`${t('agent.DetailedInformation')}: ${agent?.id}`}
+      title={`${t('agent.DetailedInformation')}: ${toLocalId(agent?.id || '')}`}
       onCancel={onRequestClose}
       destroyOnHidden
       footer={null}
@@ -100,21 +99,13 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Typography.Title>
                 <BAIProgressWithLabel
-                  percent={
-                    (_.toNumber(
-                      convertToBinaryUnit(_.toString(agent?.mem_cur_bytes), 'g')
-                        ?.number,
-                    ) /
-                      _.toNumber(
-                        convertToBinaryUnit(parsedAvailableSlots?.mem, 'g')
-                          ?.number,
-                      )) *
-                      100 || 0
-                  }
+                  percent={parsedLiveStat?.node?.mem?.pct || 0}
                   valueLabel={`${
-                    convertToBinaryUnit(_.toString(agent?.mem_cur_bytes), 'g')
-                      ?.displayValue
-                  } / ${convertToBinaryUnit(parsedAvailableSlots?.mem, 'g')?.displayValue}`}
+                    convertToBinaryUnit(
+                      _.toString(parsedLiveStat?.node?.mem?.current || 0),
+                      'g',
+                    )?.displayValue
+                  } / ${convertToBinaryUnit(_.toString(parsedLiveStat?.node?.mem?.capacity || 0), 'g')?.displayValue}`}
                 />
               </BAIFlex>
             ) : null}

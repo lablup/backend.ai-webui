@@ -5,10 +5,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import CopyableCodeText from './CopyableCodeText';
-import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Divider, Tag, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -99,7 +98,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
                 aliasedTag,
                 preserveDotStartCase(tag.key + tagValue),
               ) ? (
-              <DoubleTag
+              <BAIDoubleTag
                 key={`${tag.key}-${index}`}
                 values={[
                   {

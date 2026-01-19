@@ -12,7 +12,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import DoubleTag from './DoubleTag';
 import ImageInstallModal from './ImageInstallModal';
 import { ImageTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
@@ -36,6 +35,7 @@ import {
   BAITable,
   BAIResourceNumberWithIcon,
   useUpdatableState,
+  BAIDoubleTag,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Key, useMemo, useState, useTransition } from 'react';
@@ -241,7 +241,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                     aliasedTag,
                     preserveDotStartCase(tag.key + tagValue),
                   ) || isCustomized ? (
-                    <DoubleTag
+                    <BAIDoubleTag
                       key={tag.key}
                       highlightKeyword={imageSearch}
                       values={[

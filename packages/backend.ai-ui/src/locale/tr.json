@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Tahsis",
+    "Architecture": "Mimari",
+    "DiskPerc": "Disk %",
+    "Endpoint": "Uç Nokta",
+    "NoAvailableLiveStat": "Canlı istatistik yok",
+    "Region": "Bölge",
+    "ResourceGroup": "Kaynak Grubu",
+    "Running": "Çalışıyor",
+    "Schedulable": "Zamanlanabilir",
+    "Starts": "Başlangıçlar",
+    "Status": "Durum",
+    "Utilization": "Kullanım"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "İzin verildi",
     "Permission": "İzin"

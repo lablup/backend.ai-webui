@@ -2,7 +2,6 @@ import { newLineToBrElement } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
-import DoubleTag from './DoubleTag';
 import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
@@ -14,7 +13,7 @@ import {
   Row,
   Col,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface InformationProps {}
@@ -82,7 +81,7 @@ const Information: React.FC<InformationProps> = () => {
                   align="start"
                 >
                   Backend.AI {baiClient.managerVersion}
-                  <DoubleTag
+                  <BAIDoubleTag
                     values={[
                       t('information.Installation'),
                       baiClient.managerVersion,

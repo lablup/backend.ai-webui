@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Выделение",
+    "Architecture": "Архитектура",
+    "DiskPerc": "Диск %",
+    "Endpoint": "Конечная точка",
+    "NoAvailableLiveStat": "Живая статистика недоступна",
+    "Region": "Регион",
+    "ResourceGroup": "Группа ресурсов",
+    "Running": "Запущено",
+    "Schedulable": "Доступно для планирования",
+    "Starts": "Запуски",
+    "Status": "Статус",
+    "Utilization": "Использование"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Разрешено",
     "Permission": "Разрешение"

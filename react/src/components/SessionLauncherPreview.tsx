@@ -9,7 +9,6 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
-import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
@@ -30,7 +29,7 @@ import {
   Button,
   App,
 } from 'antd';
-import { BAIAlert, BAICard, BAIFlex } from 'backend.ai-ui';
+import { BAIAlert, BAICard, BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -263,7 +262,7 @@ const SessionLauncherPreview: React.FC<{
                               aliasedTag,
                               preserveDotStartCase(tag.key + tagValue),
                             ) || isCustomized ? (
-                              <DoubleTag
+                              <BAIDoubleTag
                                 key={tag.key}
                                 values={[
                                   {

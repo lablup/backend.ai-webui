@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Alocação",
+    "Architecture": "Arquitetura",
+    "DiskPerc": "Disco %",
+    "Endpoint": "Endpoint",
+    "NoAvailableLiveStat": "Nenhuma estatística em tempo real disponível",
+    "Region": "Região",
+    "ResourceGroup": "Grupo de Recursos",
+    "Running": "Em execução",
+    "Schedulable": "Agendável",
+    "Starts": "Início",
+    "Status": "Status",
+    "Utilization": "Utilização"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Permitido",
     "Permission": "Permissão"

@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Alokasi",
+    "Architecture": "Arsitektur",
+    "DiskPerc": "Disk %",
+    "Endpoint": "Endpoint",
+    "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
+    "Region": "Wilayah",
+    "ResourceGroup": "Grup Sumber Daya",
+    "Running": "Berjalan",
+    "Schedulable": "Dapat dijadwalkan",
+    "Starts": "Mulai",
+    "Status": "Status",
+    "Utilization": "Utilisasi"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Diizinkan",
     "Permission": "Izin"

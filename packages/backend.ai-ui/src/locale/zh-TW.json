@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "分配",
+    "Architecture": "架構",
+    "DiskPerc": "磁碟使用率 (%)",
+    "Endpoint": "端點",
+    "NoAvailableLiveStat": "沒有可用的即時統計",
+    "Region": "區域",
+    "ResourceGroup": "資源群組",
+    "Running": "執行中",
+    "Schedulable": "可排程",
+    "Starts": "開始時間",
+    "Status": "狀態",
+    "Utilization": "使用率"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "允許",
     "Permission": "權限"

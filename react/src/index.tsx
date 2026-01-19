@@ -1,5 +1,4 @@
 import App from './App';
-import BAIIntervalView from './components/BAIIntervalView';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import SharedResourceGroupSelectForCurrentProject from './components/SharedResourceGroupSelectForCurrentProject';
 import SourceCodeView from './components/SourceCodeView';
@@ -11,7 +10,7 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { ConfigProvider, Tag, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';

@@ -1,8 +1,7 @@
 import { SessionReservationFragment$key } from '../../__generated__/SessionReservationFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
-import BAIIntervalView from '../BAIIntervalView';
-import DoubleTag from '../DoubleTag';
 import { Typography } from 'antd';
+import { BAIDoubleTag, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +45,7 @@ const SessionReservation: React.FC<{
               {intervalValue}
             </Typography.Text>
           ) : (
-            <DoubleTag
+            <BAIDoubleTag
               values={[
                 { label: t('session.ElapsedTime') },
                 { label: intervalValue },

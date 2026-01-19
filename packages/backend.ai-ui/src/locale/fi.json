@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Allokointi",
+    "Architecture": "Arkkitehtuuri",
+    "DiskPerc": "Levy %",
+    "Endpoint": "Päätepiste",
+    "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
+    "Region": "Alue",
+    "ResourceGroup": "Resurssiryhmä",
+    "Running": "Käynnissä",
+    "Schedulable": "Ajastettava",
+    "Starts": "Käynnistykset",
+    "Status": "Tila",
+    "Utilization": "Käyttöaste"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",
     "Permission": "Oikeus"

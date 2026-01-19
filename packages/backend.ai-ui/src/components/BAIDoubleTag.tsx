@@ -1,6 +1,7 @@
-import TextHighlighter from './TextHighlighter';
+import BAIFlex from './BAIFlex';
+import BAIText from './BAIText';
+import BAITextHighlighter from './BAITextHighlighter';
 import { Tag } from 'antd';
-import { BAIFlex, BAIText } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 
@@ -10,10 +11,15 @@ export type DoubleTagObjectValue = {
   style?: React.CSSProperties; // style 속성 추가
 };
 
-const DoubleTag: React.FC<{
+export interface BAIDoubleTagProps {
   values?: Array<string> | Array<DoubleTagObjectValue>;
   highlightKeyword?: string;
-}> = ({ values = [], highlightKeyword }) => {
+}
+
+const BAIDoubleTag: React.FC<BAIDoubleTagProps> = ({
+  values = [],
+  highlightKeyword,
+}) => {
   if (values.length === 0) return null;
   let objectValues: Array<DoubleTagObjectValue>;
   if (
@@ -54,9 +60,9 @@ const DoubleTag: React.FC<{
               ellipsis={{ tooltip: true }}
             >
               {!_.isUndefined(highlightKeyword) ? (
-                <TextHighlighter keyword={highlightKeyword}>
+                <BAITextHighlighter keyword={highlightKeyword}>
                   {objValue.label}
-                </TextHighlighter>
+                </BAITextHighlighter>
               ) : (
                 objValue.label
               )}
@@ -68,4 +74,4 @@ const DoubleTag: React.FC<{
   );
 };
 
-export default DoubleTag;
+export default BAIDoubleTag;

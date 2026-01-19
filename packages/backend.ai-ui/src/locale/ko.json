@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "할당 정보",
+    "Architecture": "아키텍처",
+    "DiskPerc": "디스크 %",
+    "Endpoint": "엔드포인트",
+    "NoAvailableLiveStat": "표시할 사용량 없음",
+    "Region": "지역",
+    "ResourceGroup": "자원 그룹",
+    "Running": "실행중",
+    "Schedulable": "스케줄링 가능",
+    "Starts": "시작",
+    "Status": "상태",
+    "Utilization": "사용량"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "허용",
     "Permission": "권한"

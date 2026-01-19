@@ -52,6 +52,12 @@ export interface BAIClient {
   accessKey: string;
   _config: BackendAIConfig;
   supports: (feature: string) => boolean;
+  utils: {
+    elapsedTime: (
+      start: string | Date | number,
+      end?: string | Date | number | null,
+    ) => string;
+  };
 }
 
 export type BackendAIConfig = {

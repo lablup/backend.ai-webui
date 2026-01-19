@@ -11,7 +11,6 @@ import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import BAIProgressWithLabel from './BAIProgressWithLabel';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -31,6 +30,7 @@ import {
   mergeFilterValues,
   ResourceTypeIcon,
   useResourceSlotsDetails,
+  BAIProgressWithLabel,
   useFetchKey,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';

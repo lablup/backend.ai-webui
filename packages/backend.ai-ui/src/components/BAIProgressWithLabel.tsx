@@ -1,5 +1,5 @@
+import BAIFlex from './BAIFlex';
 import { ProgressProps, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 

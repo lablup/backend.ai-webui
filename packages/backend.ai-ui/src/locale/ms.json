@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Peruntukan",
+    "Architecture": "Seni Bina",
+    "DiskPerc": "Cakera %",
+    "Endpoint": "Titik akhir",
+    "NoAvailableLiveStat": "Tiada statistik langsung tersedia",
+    "Region": "Wilayah",
+    "ResourceGroup": "Kumpulan Sumber",
+    "Running": "Berjalan",
+    "Schedulable": "Boleh dijadualkan",
+    "Starts": "Bermula",
+    "Status": "Status",
+    "Utilization": "Penggunaan"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Dibenarkan",
     "Permission": "Kebenaran"

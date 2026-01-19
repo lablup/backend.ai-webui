@@ -33,7 +33,10 @@ import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
 
-export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 6;
+// Z-index for header in MainLayout. Should be higher than any other elements in the page content.
+// Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
+// we use a safe fixed value of 100. See: https://github.com/react-component/table/blob/master/src/utils/fixUtil.ts
+export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 100;
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {

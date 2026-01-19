@@ -1,11 +1,10 @@
 import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import DoubleTag, { DoubleTagObjectValue } from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Tag, TagProps, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -21,7 +20,7 @@ const ImageAliasNameAndBaseVersionTags: React.FC<
   const [, { getImageAliasName, getBaseVersion, tagAlias }] =
     useBackendAIImageMetaData();
   return (
-    <DoubleTag
+    <BAIDoubleTag
       values={[
         {
           label: tagAlias(getImageAliasName(image)),
@@ -103,7 +102,7 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
           aliasedTag,
           preserveDotStartCase(tag.key + tag.value),
         ) ? (
-          <DoubleTag
+          <BAIDoubleTag
             key={tag.key}
             highlightKeyword={highlightKeyword}
             values={[

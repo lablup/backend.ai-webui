@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Κατανομή",
+    "Architecture": "Αρχιτεκτονική",
+    "DiskPerc": "Χρήση δίσκου %",
+    "Endpoint": "Σημείο τερματισμού",
+    "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
+    "Region": "Περιοχή",
+    "ResourceGroup": "Ομάδα πόρων",
+    "Running": "Εκτελείται",
+    "Schedulable": "Προγραμματιζόμενο",
+    "Starts": "Εκκινήσεις",
+    "Status": "Κατάσταση",
+    "Utilization": "Χρήση"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Επιτρέπεται",
     "Permission": "Δικαίωμα"

@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Phân bổ",
+    "Architecture": "Kiến trúc",
+    "DiskPerc": "Sử dụng đĩa (%)",
+    "Endpoint": "Điểm cuối",
+    "NoAvailableLiveStat": "Không có số liệu trực tiếp",
+    "Region": "Khu vực",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "Running": "Đang chạy",
+    "Schedulable": "Có thể lên lịch",
+    "Starts": "Bắt đầu",
+    "Status": "Trạng thái",
+    "Utilization": "Mức sử dụng"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Được phép",
     "Permission": "Quyền"

@@ -64,6 +64,8 @@ export { default as BAIResourceGroupSelect } from './BAIResourceGroupSelect';
 export type { BAIResourceGroupSelectProps } from './BAIResourceGroupSelect';
 export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
 export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
+export { default as BAIAgentTable } from './BAIAgentTable';
+export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
 export { default as BAIVFolderSelect } from './BAIVFolderSelect';
 export type {
   BAIVFolderSelectProps,

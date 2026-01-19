@@ -1,4 +1,4 @@
-import { useIntervalValue } from 'backend.ai-ui';
+import { useIntervalValue } from '../hooks';
 import _ from 'lodash';
 import React from 'react';
 

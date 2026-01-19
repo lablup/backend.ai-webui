@@ -4,7 +4,7 @@ import {
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
 import { App, Form, FormInstance, Switch } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, toLocalId } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -26,7 +26,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   );
   const agent = useFragment(
     graphql`
-      fragment AgentSettingModalFragment on Agent {
+      fragment AgentSettingModalFragment on AgentNode {
         id
         schedulable
       }
@@ -50,7 +50,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   return (
     <BAIModal
       {...modalProps}
-      title={`${t('agent.AgentSetting')}: ${agent?.id}`}
+      title={`${t('agent.AgentSetting')}: ${toLocalId(agent?.id ?? '')}`}
       onCancel={() => onRequestClose()}
       destroyOnHidden
       width={300}
@@ -61,7 +61,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           .then((values) => {
             commitModifyAgentSetting({
               variables: {
-                id: agent?.id || '',
+                id: toLocalId(agent?.id ?? ''),
                 props: {
                   schedulable: values.schedulable,
                 },
@@ -83,7 +83,12 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
           .catch(() => {});
       }}
     >
-      <Form ref={formRef} preserve={false} initialValues={{ ...agent }}>
+      <Form
+        layout="vertical"
+        ref={formRef}
+        preserve={false}
+        initialValues={{ ...agent }}
+      >
         <Form.Item
           name="schedulable"
           label={t('agent.Schedulable')}

@@ -4,7 +4,6 @@ import {
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
-import DoubleTag from '../DoubleTag';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnType } from 'antd/lib/table';
@@ -13,6 +12,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIUnmountAfterClose,
+  BAIDoubleTag,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ScrollTextIcon } from 'lucide-react';
@@ -111,7 +111,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         return (
           <>
             {record?.status_info !== '' ? (
-              <DoubleTag
+              <BAIDoubleTag
                 values={[
                   { label: status, color: _.get(kernelStatusTagColor, status) },
                   {

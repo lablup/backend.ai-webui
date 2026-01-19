@@ -1,5 +1,19 @@
 {
   "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Хуваарилалт",
+    "Architecture": "Архитектур",
+    "DiskPerc": "Диск %",
+    "Endpoint": "Эцсийн цэг",
+    "NoAvailableLiveStat": "Амьд статистик байхгүй",
+    "Region": "Бүс",
+    "ResourceGroup": "Ресурсын бүлэг",
+    "Running": "Ажиллаж байна",
+    "Schedulable": "Хуваарьчилж болох",
+    "Starts": "Эхлэлт",
+    "Status": "Төлөв",
+    "Utilization": "Ашиглалт"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Зөвшөөрсөн",
     "Permission": "Зөвшөөрөл"

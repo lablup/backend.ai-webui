@@ -12,7 +12,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
-import DoubleTag from './DoubleTag';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
@@ -27,7 +26,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { BAIFlex, BAISelect } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -648,7 +647,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         (requirement) => !requirement.startsWith('customized_'),
                       )
                       .map((requirement, idx) => (
-                        <DoubleTag
+                        <BAIDoubleTag
                           key={idx}
                           values={_.split(
                             metadata?.tagAlias[requirement] || requirement,
@@ -680,7 +679,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         extraFilterValues.push('Customized');
                         extraFilterValues.push(tag);
                         requirementTags.push(
-                          <DoubleTag
+                          <BAIDoubleTag
                             key={requirementTags.length + 1}
                             highlightKeyword={versionSearch}
                             values={[
@@ -739,7 +738,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                     aliasedTag,
                                     preserveDotStartCase(tag.key + tagValue),
                                   ) || isCustomized ? (
-                                    <DoubleTag
+                                    <BAIDoubleTag
                                       key={tag.key}
                                       highlightKeyword={versionSearch}
                                       values={[
