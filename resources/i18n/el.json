@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Δείχνει μια επισκόπηση όλων των παραγόντων που εκτελούνται σήμερα στο σύστημα."
   },
   "agent": {
+    "AcceleratorAllocations": "Κατανομές επιταχυντών",
     "Agent": "Πράκτορας",
     "AgentInfo": "Πληροφορίες πράκτορα",
     "AgentSetting": "Ρυθμίσεις πράκτορα",
@@ -34,7 +35,7 @@
     "Starts": "Ξεκινά",
     "StartsAt": "Ξεκίνησε στις",
     "Status": "Κατάσταση",
-    "StatusChanged": "Κατάσταση ενημερώθηκε",
+    "StatusChanged": "Τροποποιήθηκε",
     "Terminated": "Τερματίστηκε",
     "Utilization": "Χρήση"
   },

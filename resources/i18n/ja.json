@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "現在システムで実行されているすべてのエージェントの概要を示しています。"
   },
   "agent": {
+    "AcceleratorAllocations": "アクセラレータの割り当て",
     "Agent": "代理店",
     "AgentInfo": "エージェント情報",
     "AgentSetting": "エージェント設定",
@@ -34,7 +35,7 @@
     "Starts": "開始",
     "StartsAt": "開始時刻",
     "Status": "状態",
-    "StatusChanged": "ステータスが変更されました",
+    "StatusChanged": "変更済み",
     "Terminated": "終了しました",
     "Utilization": "使用量"
   },

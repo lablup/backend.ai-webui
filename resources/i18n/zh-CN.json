@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的一目了然概述。"
   },
   "agent": {
+    "AcceleratorAllocations": "加速器分配",
     "Agent": "代理",
     "AgentInfo": "代理信息",
     "AgentSetting": "代理设置",
@@ -34,7 +35,7 @@
     "Starts": "开始",
     "StartsAt": "启动时间",
     "Status": "地位",
-    "StatusChanged": "状态已更改",
+    "StatusChanged": "已更改",
     "Terminated": "已终止",
     "Utilization": "利用率"
   },

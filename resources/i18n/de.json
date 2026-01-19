@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Zeigt einen Überblick auf einen Blick über alle im System ausgeführten Agenten."
   },
   "agent": {
+    "AcceleratorAllocations": "Beschleunigerzuweisungen",
     "Agent": "Agent",
     "AgentInfo": "Agentinformationen",
     "AgentSetting": "Agent-Einstellungen",
@@ -34,7 +35,7 @@
     "Starts": "Startet",
     "StartsAt": "Gestartet am",
     "Status": "Status",
-    "StatusChanged": "Status geändert",
+    "StatusChanged": "Geändert",
     "Terminated": "Beendet",
     "Utilization": "Inanspruchnahme"
   },

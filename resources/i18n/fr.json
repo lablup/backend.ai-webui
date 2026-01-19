@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Affiche un aperçu de tous les agents qui s'exécute actuellement dans le système."
   },
   "agent": {
+    "AcceleratorAllocations": "Allocations d'accélérateurs",
     "Agent": "Agent",
     "AgentInfo": "Informations sur l'agent",
     "AgentSetting": "Paramètres de l'agent",
@@ -34,7 +35,7 @@
     "Starts": "Départs",
     "StartsAt": "Démarré le",
     "Status": "Statut",
-    "StatusChanged": "Statut modifié",
+    "StatusChanged": "Modifié",
     "Terminated": "Terminé",
     "Utilization": "Utilisation"
   },

@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan sepintas lalu semua ejen yang sedang berjalan dalam sistem."
   },
   "agent": {
+    "AcceleratorAllocations": "Peruntukan Akselerator",
     "Agent": "Ejen",
     "AgentInfo": "Maklumat Ejen",
     "AgentSetting": "Tetapan Agen",
@@ -34,7 +35,7 @@
     "Starts": "Bermula",
     "StartsAt": "Mula pada",
     "Status": "Status",
-    "StatusChanged": "Status berubah",
+    "StatusChanged": "Diubah",
     "Terminated": "Ditamatkan",
     "Utilization": "Penggunaan"
   },

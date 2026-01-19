@@ -1,8 +1,10 @@
-import { BAIDoubleTag, BAIDoubleTagProps } from 'backend.ai-ui';
+import { BAIDoubleTag, BAIDoubleTagProps, BAIFlex } from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { AgentStatusTagFragment$key } from 'src/__generated__/AgentStatusTagFragment.graphql';
 
-interface AgentStatusTagProps extends BAIDoubleTagProps {
+interface AgentStatusTagProps extends Omit<BAIDoubleTagProps, 'values'> {
   agentNodeFrgmt?: AgentStatusTagFragment$key | null;
 }
 
@@ -11,10 +13,14 @@ const AgentStatusTag: React.FC<AgentStatusTagProps> = ({
   ...doubleTagProps
 }) => {
   'use memo';
+
+  const { t } = useTranslation();
+
   const agent = useFragment(
     graphql`
       fragment AgentStatusTagFragment on AgentNode {
         status
+        status_changed
         version
       }
     `,
@@ -37,15 +43,28 @@ const AgentStatusTag: React.FC<AgentStatusTagProps> = ({
   };
 
   return (
-    <BAIDoubleTag
-      values={[
-        { label: agent?.status || '', color: getStatusColor(agent?.status) },
-        {
-          label: agent?.version || '',
-        },
-      ]}
-      {...doubleTagProps}
-    />
+    <BAIFlex gap="xs" wrap="wrap">
+      <BAIDoubleTag
+        values={[
+          { label: agent?.status || '', color: getStatusColor(agent?.status) },
+          {
+            label: agent?.version || '',
+          },
+        ]}
+        {...doubleTagProps}
+      />
+      <BAIDoubleTag
+        values={[
+          {
+            label: t('agent.StatusChanged'),
+          },
+          {
+            label: dayjs(agent?.status_changed).format('lll'),
+          },
+        ]}
+        {...doubleTagProps}
+      />
+    </BAIFlex>
   );
 };
 

@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
   },
   "agent": {
+    "AcceleratorAllocations": "Kiihdyttimien varaukset",
     "Agent": "Agentti",
     "AgentInfo": "Agentin tiedot",
     "AgentSetting": "Agentin asetukset",
@@ -34,7 +35,7 @@
     "Starts": "Alkaa",
     "StartsAt": "Aloitusaika",
     "Status": "Tila",
-    "StatusChanged": "Tila muuttui",
+    "StatusChanged": "Muutettu",
     "Terminated": "Lopetettu",
     "Utilization": "Käyttö"
   },

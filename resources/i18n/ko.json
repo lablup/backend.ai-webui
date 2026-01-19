@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."
   },
   "agent": {
+    "AcceleratorAllocations": "가속기 할당",
     "Agent": "에이전트",
     "AgentInfo": "에이전트 정보",
     "AgentSetting": "에이전트 설정",
@@ -34,7 +35,7 @@
     "Starts": "시작",
     "StartsAt": "생성일",
     "Status": "상태",
-    "StatusChanged": "상태 변경일",
+    "StatusChanged": "변경일",
     "Terminated": "종료됨",
     "Utilization": "사용량"
   },

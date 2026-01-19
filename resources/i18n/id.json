@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
   },
   "agent": {
+    "AcceleratorAllocations": "Alokasi Akselerator",
     "Agent": "Agen",
     "AgentInfo": "Info Agen",
     "AgentSetting": "Pengaturan Agen",
@@ -34,7 +35,7 @@
     "Starts": "Mulai",
     "StartsAt": "Dimulai pada",
     "Status": "Status",
-    "StatusChanged": "Status diubah",
+    "StatusChanged": "Diubah",
     "Terminated": "Dihentikan",
     "Utilization": "Pemanfaatan"
   },

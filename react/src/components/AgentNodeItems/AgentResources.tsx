@@ -1,5 +1,5 @@
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
-import { Col, Descriptions, Grid, Row } from 'antd';
+import { Col, Descriptions, Row } from 'antd';
 import {
   BAIFlex,
   BAIText,
@@ -24,7 +24,6 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { md } = Grid.useBreakpoint();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const agent = useFragment(
@@ -33,6 +32,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
         occupied_slots
         available_slots
         live_stat
+        gpu_alloc_map
       }
     `,
     agentNodeFrgmt,
@@ -47,15 +47,8 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
   const parsedLiveStat = JSON.parse(agent?.live_stat || '{}');
 
   return (
-    <Descriptions
-      bordered
-      column={md ? 2 : 1}
-      labelStyle={{ wordBreak: 'keep-all' }}
-    >
-      <Descriptions.Item
-        label={t('agent.ResourceAllocation')}
-        span={md ? 2 : 1}
-      >
+    <Descriptions bordered column={1} labelStyle={{ wordBreak: 'keep-all' }}>
+      <Descriptions.Item label={t('agent.ResourceAllocation')}>
         <Row gutter={[16, 16]}>
           {_.map(
             parsedAvailableSlots,
@@ -75,11 +68,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                         size="default"
                         title={
                           <BAIFlex gap="xxs">
-                            <ResourceTypeIcon
-                              key={key}
-                              type={key}
-                              showTooltip={false}
-                            />
+                            <ResourceTypeIcon key={key} type={key} />
                             {mergedResourceSlots?.['cpu']?.human_readable_name}
                           </BAIFlex>
                         }
@@ -113,11 +102,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                         size="default"
                         title={
                           <BAIFlex gap="xxs">
-                            <ResourceTypeIcon
-                              key={key}
-                              type={key}
-                              showTooltip={false}
-                            />
+                            <ResourceTypeIcon key={key} type={key} />
                             {mergedResourceSlots?.['mem']?.human_readable_name}
                           </BAIFlex>
                         }
@@ -145,11 +130,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                       size="default"
                       title={
                         <BAIFlex gap="xxs">
-                          <ResourceTypeIcon
-                            key={key}
-                            type={key}
-                            showTooltip={false}
-                          />
+                          <ResourceTypeIcon key={key} type={key} />
                           {mergedResourceSlots?.[key]?.human_readable_name}
                         </BAIFlex>
                       }
@@ -167,7 +148,30 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
           )}
         </Row>
       </Descriptions.Item>
-      <Descriptions.Item label={t('agent.Utilization')} span={md ? 2 : 1}>
+      {!_.isEmpty(agent?.gpu_alloc_map) && (
+        <Descriptions.Item label={t('agent.AcceleratorAllocations')}>
+          <Row gutter={[16, 8]}>
+            {_.map(
+              agent?.gpu_alloc_map as Record<string, number> | null,
+              (count, deviceId) => (
+                <Col xs={24} sm={12} key={deviceId}>
+                  <BAIFlex justify="between" gap="xxs">
+                    <BAIText
+                      ellipsis={{ tooltip: true }}
+                      style={{ maxWidth: 140 }}
+                      copyable
+                    >
+                      {deviceId}
+                    </BAIText>
+                    <BAIText>{count}</BAIText>
+                  </BAIFlex>
+                </Col>
+              ),
+            )}
+          </Row>
+        </Descriptions.Item>
+      )}
+      <Descriptions.Item label={t('agent.Utilization')}>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} key={'cpu_util'}>
             <SimpleProgressWithLabel

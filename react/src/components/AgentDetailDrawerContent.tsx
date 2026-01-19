@@ -45,6 +45,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         schedulable
         first_contact
         region
+        scaling_group
         ...AgentStatusTagFragment
         ...AgentComputePluginsFragment
         ...AgentResourcesFragment
@@ -80,16 +81,15 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         column={md ? 2 : 1}
         labelStyle={{ wordBreak: 'keep-all' }}
       >
-        <Descriptions.Item label={t('agent.Status')}>
-          <AgentStatusTag agentNodeFrgmt={agent} />
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.StatusChanged')}>
-          {dayjs(agent?.status_changed).format('lll ')}
+        <Descriptions.Item label={t('agent.ResourceGroup')} span={md ? 2 : 1}>
+          {agent?.scaling_group}
         </Descriptions.Item>
         <Descriptions.Item label={t('agent.Region')}>
-          {regionData.length > 1
-            ? _.join([regionData?.[0], regionData?.[1]], ' / ')
-            : regionData?.[0]}
+          <Typography.Text style={{ minWidth: 200 }}>
+            {regionData.length > 1
+              ? _.join([regionData?.[0], regionData?.[1]], ' / ')
+              : regionData?.[0]}
+          </Typography.Text>
         </Descriptions.Item>
         <Descriptions.Item label={t('agent.Schedulable')}>
           {agent?.schedulable ? (
@@ -97,6 +97,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
           ) : (
             <CloseOutlined style={{ color: token.colorTextDisabled }} />
           )}
+        </Descriptions.Item>
+        <Descriptions.Item label={t('agent.Status')} span={md ? 2 : 1}>
+          <AgentStatusTag agentNodeFrgmt={agent} />
         </Descriptions.Item>
         <Descriptions.Item label={t('agent.ComputePlugins')} span={md ? 2 : 1}>
           <BAIFlex gap="sm" wrap="wrap">

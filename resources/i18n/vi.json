@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Hiển thị tổng quan at-a-glance của tất cả các tác nhân hiện đang chạy trong hệ thống."
   },
   "agent": {
+    "AcceleratorAllocations": "Phân bổ thiết bị tăng tốc",
     "Agent": "Đại lý",
     "AgentInfo": "Thông tin agent",
     "AgentSetting": "Cài đặt đại lý",
@@ -34,7 +35,7 @@
     "Starts": "Bắt đầu",
     "StartsAt": "Bắt đầu lúc",
     "Status": "Trạng thái",
-    "StatusChanged": "Trạng thái đã thay đổi",
+    "StatusChanged": "Đã thay đổi",
     "Terminated": "Đã chấm dứt",
     "Utilization": "Sử dụng"
   },

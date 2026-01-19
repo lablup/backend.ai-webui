@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Показывает обзор всех агентов, работающих в настоящее время в системе."
   },
   "agent": {
+    "AcceleratorAllocations": "Выделенные ускорители",
     "Agent": "Агент",
     "AgentInfo": "Информация об агенте",
     "AgentSetting": "Настройки агента",
@@ -34,7 +35,7 @@
     "Starts": "Начинается",
     "StartsAt": "Запущено",
     "Status": "Статус",
-    "StatusChanged": "Статус изменён",
+    "StatusChanged": "Изменено",
     "Terminated": "Прекращено",
     "Utilization": "Утилизация"
   },

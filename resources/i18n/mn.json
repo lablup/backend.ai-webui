@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Системд ажиллаж байгаа бүх агентуудын тоймыг нэг дор харуулна."
   },
   "agent": {
+    "AcceleratorAllocations": "Хурдасгагчийн хуваарилалт",
     "Agent": "Агент",
     "AgentInfo": "Агентын мэдээлэл",
     "AgentSetting": "Агент тохиргоо",
@@ -34,7 +35,7 @@
     "Starts": "Эхлэв",
     "StartsAt": "Эхэлсэн огноо",
     "Status": "Статус",
-    "StatusChanged": "Төлөв өөрчлөгдсөн",
+    "StatusChanged": "Өөрчлөгдсөн",
     "Terminated": "Цуцлагдсан",
     "Utilization": "Ашиглалт"
   },

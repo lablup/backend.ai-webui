@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "แสดงภาพรวม at-a-glance ของตัวแทนทั้งหมดที่ทำงานอยู่ในระบบ"
   },
   "agent": {
+    "AcceleratorAllocations": "การจัดสรรตัวเร่งความเร็ว",
     "Agent": "ตัวแทน",
     "AgentInfo": "ข้อมูลเอเจนต์",
     "AgentSetting": "การตั้งค่าตัวแทน",
@@ -34,7 +35,7 @@
     "Starts": "เริ่มต้น",
     "StartsAt": "เริ่มเมื่อ",
     "Status": "สถานะ",
-    "StatusChanged": "สถานะเปลี่ยนแปลงแล้ว",
+    "StatusChanged": "เปลี่ยนแปลงแล้ว",
     "Terminated": "ยุติแล้ว",
     "Utilization": "การใช้งาน"
   },

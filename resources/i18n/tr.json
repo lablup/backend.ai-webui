@@ -5,6 +5,7 @@
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
   },
   "agent": {
+    "AcceleratorAllocations": "Hızlandırıcı Tahsisleri",
     "Agent": "Ajan",
     "AgentInfo": "Ajan Bilgileri",
     "AgentSetting": "Temsilci Ayarları",
@@ -34,7 +35,7 @@
     "Starts": "başlar",
     "StartsAt": "Başlama Zamanı",
     "Status": "Durum",
-    "StatusChanged": "Durum değişti",
+    "StatusChanged": "Değiştirildi",
     "Terminated": "Sonlandırılmış",
     "Utilization": "Kullanım"
   },

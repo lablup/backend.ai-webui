@@ -1,9 +1,9 @@
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import { Drawer, DrawerProps, Skeleton } from 'antd';
-import { BAIFetchKeyButton } from 'backend.ai-ui';
-import { Suspense, useTransition } from 'react';
+import { BAIFetchKeyButton, toLocalId, useBAILogger } from 'backend.ai-ui';
+import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
+import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
 import { AgentDetailDrawerFragment$key } from 'src/__generated__/AgentDetailDrawerFragment.graphql';
 
 interface AgentDetailDrawerProps extends DrawerProps {
@@ -18,6 +18,7 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [agent, refetch] = useRefetchableFragment(
@@ -25,13 +26,45 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
       fragment AgentDetailDrawerFragment on Node
       @refetchable(queryName: "AgentDetailDrawerRefetchQuery") {
         ... on AgentNode {
-          row_id
+          id
           ...AgentDetailDrawerContentFragment @alias(as: "agentNodeFragment")
         }
       }
     `,
     agentNodeFragment,
   );
+
+  const [rescanGPUAllocationMap] = useMutation(graphql`
+    mutation AgentDetailDrawerRescanGPUAllocationMapMutation(
+      $agentId: String!
+    ) {
+      rescan_gpu_alloc_maps(agent_id: $agentId) {
+        task_id
+      }
+    }
+  `);
+
+  const initialFetch = useEffectEvent(() => {
+    if (agent?.id) {
+      startRefetchTransition(() => {
+        rescanGPUAllocationMap({
+          variables: {
+            agentId: toLocalId(agent.id),
+          },
+          onError: (error) => logger.error(error),
+        });
+        refetch(
+          {},
+          {
+            fetchPolicy: 'network-only',
+          },
+        );
+      });
+    }
+  });
+  useEffect(() => {
+    initialFetch();
+  }, []);
 
   return (
     <Drawer
@@ -46,6 +79,12 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
           value=""
           onChange={() => {
             startRefetchTransition(() => {
+              rescanGPUAllocationMap({
+                variables: {
+                  agentId: toLocalId(agent?.id || ''),
+                },
+                onError: (error) => logger.error(error),
+              });
               refetch(
                 {},
                 {
