@@ -1,3 +1,4 @@
+import { getMenuItem } from '../test-util-antd';
 import type { SessionLauncher } from './SessionLauncher';
 import { Page, expect, Locator } from '@playwright/test';
 
@@ -50,6 +51,58 @@ export class AppLauncherModal {
     const sessionDetailDrawer = await sessionLauncher.openSessionDetailDrawer();
 
     // Click the app launcher button (has BAIAppIcon with aria-label="app")
+    const appLauncherButton = sessionDetailDrawer
+      .getByRole('button')
+      .filter({ has: page.getByLabel('app') })
+      .first();
+
+    await expect(appLauncherButton).toBeVisible({ timeout: 5000 });
+    await appLauncherButton.click();
+
+    const modal = new AppLauncherModal(page);
+    await modal.waitForOpen();
+
+    return modal;
+  }
+
+  /**
+   * Opens the app launcher modal using only the session name.
+   * This is a lightweight alternative to openFromSession() that doesn't require
+   * a SessionLauncher object. Useful for session reuse scenarios where the session
+   * is already running and we just need to open the modal.
+   *
+   * @param page - Playwright Page instance
+   * @param sessionName - Name of the existing RUNNING session
+   * @returns AppLauncherModal instance ready for interaction
+   *
+   * @example
+   * ```typescript
+   * const modal = await AppLauncherModal.openBySessionName(page, 'my-session');
+   * await modal.clickApp('ttyd');
+   * ```
+   */
+  static async openBySessionName(
+    page: Page,
+    sessionName: string,
+  ): Promise<AppLauncherModal> {
+    // Navigate to session list
+    await getMenuItem(page, 'Sessions').click();
+    await expect(page.locator('.ant-table')).toBeVisible({ timeout: 10000 });
+
+    // Find session row and click to open drawer
+    const sessionRow = page.locator('tr').filter({ hasText: sessionName });
+    await expect(sessionRow).toBeVisible({ timeout: 10000 });
+
+    const sessionNameLink = sessionRow.getByText(sessionName);
+    await sessionNameLink.click();
+
+    // Wait for drawer to open
+    const sessionDetailDrawer = page
+      .locator('.ant-drawer')
+      .filter({ hasText: 'Session Info' });
+    await expect(sessionDetailDrawer).toBeVisible({ timeout: 10000 });
+
+    // Click the app launcher button
     const appLauncherButton = sessionDetailDrawer
       .getByRole('button')
       .filter({ has: page.getByLabel('app') })

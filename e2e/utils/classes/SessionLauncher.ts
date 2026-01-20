@@ -34,6 +34,8 @@ export interface SessionLauncherOptions {
   waitForRunning?: boolean;
   /** Timeout for waiting for RUNNING status (ms) */
   runningTimeout?: number;
+  /** Reuse an existing session instead of creating a new one */
+  reuseExistingSession?: boolean;
 }
 
 /**
@@ -54,6 +56,7 @@ const DEFAULT_OPTIONS: Required<SessionLauncherOptions> = {
   closeAppLauncherAfterCreate: true,
   waitForRunning: true,
   runningTimeout: 180000, // 3 minutes
+  reuseExistingSession: false,
 };
 
 /**
@@ -224,6 +227,16 @@ export class SessionLauncher {
   withWaitForRunning(wait: boolean = true, timeout: number = 180000): this {
     this.options.waitForRunning = wait;
     this.options.runningTimeout = timeout;
+    return this;
+  }
+
+  /**
+   * Reuse an existing session instead of creating a new one
+   * When enabled, attachToSession() will be called instead of create()
+   * @param reuse - Whether to reuse (default: true)
+   */
+  withReuseExistingSession(reuse: boolean = true): this {
+    this.options.reuseExistingSession = reuse;
     return this;
   }
 
@@ -477,6 +490,82 @@ export class SessionLauncher {
     await expect(sessionDetailDrawer).toBeVisible({ timeout: 10000 });
 
     return sessionDetailDrawer;
+  }
+
+  /**
+   * Attach to an existing session instead of creating a new one.
+   * This is useful for test development/debugging to skip session creation time.
+   * The session must already exist and be in RUNNING state.
+   *
+   * @throws Error if session name is not set
+   * @throws Error if session is not found
+   * @throws Error if session is not in RUNNING state
+   *
+   * @example
+   * ```typescript
+   * const launcher = new SessionLauncher(page)
+   *   .withSessionName('existing-session')
+   *   .withReuseExistingSession(true);
+   * await launcher.attachToSession();
+   * ```
+   */
+  async attachToSession(): Promise<void> {
+    if (!this.options.sessionName) {
+      throw new Error('Session name is required for attachToSession()');
+    }
+
+    // Navigate to session list
+    await this.navigateToSessionList();
+
+    // Find the session row
+    const sessionRow = this.getSessionRow();
+    const isVisible = await sessionRow
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+
+    if (!isVisible) {
+      throw new Error(
+        `Session '${this.options.sessionName}' not found. ` +
+          `Make sure the session exists and is visible in the session list.`,
+      );
+    }
+
+    // Verify session is RUNNING
+    const runningStatus = sessionRow.getByText('RUNNING');
+    const isRunning = await runningStatus
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+
+    if (!isRunning) {
+      throw new Error(
+        `Session '${this.options.sessionName}' is not in RUNNING state. ` +
+          `Only RUNNING sessions can be reused.`,
+      );
+    }
+
+    console.log(
+      `[SESSION REUSE] Attached to existing session: ${this.options.sessionName}`,
+    );
+  }
+
+  /**
+   * Create a new session or attach to an existing one based on options.
+   * If reuseExistingSession is true, calls attachToSession(), otherwise calls create().
+   *
+   * @example
+   * ```typescript
+   * const launcher = new SessionLauncher(page)
+   *   .withSessionName('my-session')
+   *   .withReuseExistingSession(process.env.E2E_REUSE_SESSION === 'true');
+   * await launcher.createOrAttach();
+   * ```
+   */
+  async createOrAttach(): Promise<void> {
+    if (this.options.reuseExistingSession) {
+      await this.attachToSession();
+    } else {
+      await this.create();
+    }
   }
 
   // ============================================================
