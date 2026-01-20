@@ -29,11 +29,10 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 
-interface WebUISiderProps
-  extends Pick<
-    BAISiderProps,
-    'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
-  > {}
+interface WebUISiderProps extends Pick<
+  BAISiderProps,
+  'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
+> {}
 
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';

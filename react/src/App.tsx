@@ -94,6 +94,9 @@ const ReservoirArtifactDetailPage = React.lazy(
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 // Deployment pages
+// const DeploymentListPage = React.lazy(
+//   () => import('./pages/Deployments/DeploymentListPage'),
+// );
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
 );

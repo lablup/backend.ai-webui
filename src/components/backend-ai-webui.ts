@@ -137,7 +137,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Number }) minibarWidth = 88;
   @property({ type: Number }) sidebarWidth = 250;
   @property({ type: Number }) sidepanelWidth = 250;
-  @property({ type: Object }) supports = Object();
   @property({ type: Array }) availablePages = [
     'start',
     'dashboard',
@@ -641,6 +640,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       {
         page: 'agent-summary',
         available: !this.isHideAgents,
+      },
+      {
+        page: 'serving',
+        available: !globalThis.backendaiclient.supports('deployment'),
+      },
+      {
+        page: 'deployment',
+        available: !!globalThis.backendaiclient.supports('deployment'),
       },
     ];
 
