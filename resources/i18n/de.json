@@ -556,6 +556,9 @@
       "Used": "gebraucht"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Wählen Sie Bereitstellung"
+  },
   "desktopNotification": {
     "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",
     "PermissionDenied": "Sie haben den Benachrichtigungszugriff abgelehnt. \nUm Warnungen zu verwenden, lassen Sie diese bitte in Ihren Browsereinstellungen zu."

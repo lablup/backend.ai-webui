@@ -556,6 +556,9 @@
       "Used": "käytetty"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Valitse käyttöönotto"
+  },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",
     "PermissionDenied": "Olet kiistänyt ilmoituskäytön. \nJos haluat käyttää hälytyksiä, salli se selaimen asetuksissa."

@@ -556,6 +556,9 @@
       "Used": "đã sử dụng"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Chọn triển khai"
+  },
   "desktopNotification": {
     "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",
     "PermissionDenied": "Bạn đã từ chối truy cập thông báo. \nĐể sử dụng cảnh báo, vui lòng cho phép nó trong cài đặt trình duyệt của bạn."

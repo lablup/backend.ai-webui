@@ -556,6 +556,9 @@
       "Used": "utilizado"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Selecione a implantação"
+  },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",
     "PermissionDenied": "Você negou acesso à notificação. \nPara usar alertas, deixe -o nas configurações do navegador."

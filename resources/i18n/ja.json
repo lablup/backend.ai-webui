@@ -555,6 +555,9 @@
       "Used": "使用中"
     }
   },
+  "deployment": {
+    "SelectDeployment": "展開を選択します"
+  },
   "desktopNotification": {
     "NotSupported": "このブラウザは通知をサポートしていません。",
     "PermissionDenied": "通知アクセスを拒否しました。\nアラートを使用するには、ブラウザの設定で許可してください。"

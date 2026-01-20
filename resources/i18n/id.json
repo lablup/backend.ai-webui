@@ -555,6 +555,9 @@
       "Used": "digunakan"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Pilih penempatan"
+  },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
     "PermissionDenied": "Anda telah menolak akses pemberitahuan. \nUntuk menggunakan lansiran, harap diizinkan di pengaturan browser Anda."

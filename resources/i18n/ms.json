@@ -555,6 +555,9 @@
       "Used": "digunakan"
     }
   },
+  "deployment": {
+    "SelectDeployment": "Pilih penyebaran"
+  },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",
     "PermissionDenied": "Anda telah menafikan akses pemberitahuan. \nUntuk menggunakan makluman, sila berikannya dalam tetapan penyemak imbas anda."
