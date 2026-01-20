@@ -166,12 +166,12 @@
     "BeforeVerification": "ก่อนการตรวจสอบ",
     "ConcurrentSessions": "เซสชันพร้อมกัน",
     "ContainerGID": "GID คอนเทนเนอร์",
-    "ContainerGIDTooltip": "รหัสกลุ่มหลักที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
+    "ContainerGIDTooltip": "รหัสกลุ่มแบบตัวเลขเริ่มต้นที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
     "ContainerSupplementaryGIDs": "GID เสริม",
     "ContainerSupplementaryGIDsPlaceholder": "ป้อน GID คั่นด้วยเครื่องหมายจุลภาคหรือช่องว่าง",
-    "ContainerSupplementaryGIDsTooltip": "รหัสกลุ่มเพิ่มเติมสำหรับกระบวนการคอนเทนเนอร์",
+    "ContainerSupplementaryGIDsTooltip": "รหัสกลุ่มตัวเลขเพิ่มเติมที่กำหนดให้กับกระบวนการในคอนเทนเนอร์",
     "ContainerUID": "UID คอนเทนเนอร์",
-    "ContainerUIDTooltip": "รหัสผู้ใช้ที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
+    "ContainerUIDTooltip": "รหัสผู้ใช้แบบตัวเลขที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
     "Create": "สร้าง",
     "CreatePolicy": "สร้างนโยบาย",
     "CreateResourcePolicy": "สร้างนโยบายทรัพยากร",
@@ -194,6 +194,7 @@
     "ExportCSV": "ส่งออก CSV",
     "ExportCSVFile": "ส่งออกไฟล์ CSV",
     "FailedToDeleteUsers": "ไม่สามารถลบผู้ใช้อย่างถาวรได้: {{users}}",
+    "FailedToUpdateUsers": "ไม่สามารถอัปเดตผู้ใช้ได้: {{users}}",
     "FileName": "ชื่อไฟล์",
     "For900Seconds": "สำหรับ 900 วินาที",
     "FullName": "ชื่อเต็ม",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "สถานะผู้ใช้มีการเปลี่ยนแปลง",
     "TooltipForRequirePasswordChange": "หากเปิดใช้งานตัวเลือกนี้ ผู้ใช้จะต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป",
     "TypePermanentlyDelete": "กรุณาพิมพ์ \"{{text}}\".",
+    "UpdateUsers": "อัปเดตผู้ใช้",
+    "UpdateUsersWarningAlertTitle": "การตั้งค่า UID หรือ GID อาจทำให้ไม่สามารถใช้งานการเมานท์โฟลเดอร์ที่สร้างไว้ก่อนหน้านี้ได้",
+    "UpdatedUsers": "อัปเดตแล้ว {{count}} จากผู้ใช้ทั้งหมด {{total}} คน",
     "UserAccountCreated": "สร้างบัญชีผู้ใช้สำเร็จแล้ว",
     "UserAccountCreatedError": "มีบัญชีผู้ใช้ที่มีอีเมลหรือชื่อผู้ใช้เดียวกันอยู่แล้ว",
     "UserDetail": "รายละเอียดผู้ใช้",
@@ -262,9 +266,11 @@
     "WrongEmail": "อีเมลไม่ถูกต้อง",
     "YouAreAboutToDeleteCredential": "คุณกำลังจะลบข้อมูลรับรองของผู้ใช้รายนี้:",
     "validation": {
-      "PleaseEnterUnder2_31": "กรุณากรอกค่าที่น้อยกว่า 2³¹",
+      "PleaseEnterPositiveAndUnder2_31": "กรุณาใส่จำนวนบวกที่น้อยกว่า 2^31",
+      "PleaseEnterPositiveInteger": "กรุณาใส่ค่าที่เป็นจำนวนบวก",
       "PleaseEnterUniqueNumbers": "กรุณากรอกตัวเลขที่ไม่ซ้ำกัน",
-      "PleaseEnterValidNumber": "กรุณากรอกตัวเลขที่ถูกต้อง"
+      "PleaseEnterValidNumber": "กรุณากรอกตัวเลขที่ถูกต้อง",
+      "PleaseSelectDomain": "กรุณาเลือกโดเมนก่อน"
     }
   },
   "dashboard": {

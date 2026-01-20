@@ -166,12 +166,12 @@
     "BeforeVerification": "驗證之前",
     "ConcurrentSessions": "並發會話",
     "ContainerGID": "容器GID",
-    "ContainerGIDTooltip": "分配給容器內程序的主要群組ID",
+    "ContainerGIDTooltip": "預設分配給容器內進程的數值群組 ID",
     "ContainerSupplementaryGIDs": "附加GID",
     "ContainerSupplementaryGIDsPlaceholder": "用逗號或空格分隔輸入GID",
-    "ContainerSupplementaryGIDsTooltip": "分配給容器程序的附加群組ID",
+    "ContainerSupplementaryGIDsTooltip": "分配給容器進程的額外數字群組 ID",
     "ContainerUID": "容器UID",
-    "ContainerUIDTooltip": "分配給容器內程序的使用者ID",
+    "ContainerUIDTooltip": "分配給容器內進程的數值使用者 ID",
     "Create": "創造",
     "CreatePolicy": "創建策略",
     "CreateResourcePolicy": "創建資源策略",
@@ -194,6 +194,7 @@
     "ExportCSV": "導出 CSV",
     "ExportCSVFile": "導出 CSV 文件",
     "FailedToDeleteUsers": "無法永久刪除使用者：{{users}}",
+    "FailedToUpdateUsers": "更新使用者失敗：{{users}}",
     "FileName": "文件名",
     "For900Seconds": "900 秒",
     "FullName": "全名",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "啟用此選項後，使用者在下次登入時需更改密碼。",
     "TypePermanentlyDelete": "請輸入 \"{{text}}\".",
+    "UpdateUsers": "更新使用者",
+    "UpdateUsersWarningAlertTitle": "設定 UID 或 GID（或多個）可能會限制先前建立之資料夾掛載的使用。",
+    "UpdatedUsers": "已更新 {{count}} / {{total}} 位使用者。",
     "UserAccountCreated": "用戶帳戶已成功創建",
     "UserAccountCreatedError": "已存在相同電子郵件或使用者名稱的帳號。",
     "UserDetail": "用戶詳情",
@@ -262,9 +266,11 @@
     "WrongEmail": "電子郵件格式錯誤",
     "YouAreAboutToDeleteCredential": "您將要刪除該使用者的憑證：",
     "validation": {
-      "PleaseEnterUnder2_31": "請輸入小於2³¹的值",
+      "PleaseEnterPositiveAndUnder2_31": "請輸入小於 2^31 的正數",
+      "PleaseEnterPositiveInteger": "請輸入正數。",
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
-      "PleaseEnterValidNumber": "請輸入有效的數字"
+      "PleaseEnterValidNumber": "請輸入有效的數字",
+      "PleaseSelectDomain": "請先選擇網域。"
     }
   },
   "dashboard": {

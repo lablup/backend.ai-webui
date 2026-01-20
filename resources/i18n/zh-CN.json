@@ -166,12 +166,12 @@
     "BeforeVerification": "验证之前",
     "ConcurrentSessions": "并发会话",
     "ContainerGID": "容器GID",
-    "ContainerGIDTooltip": "分配给容器内进程的主组ID",
+    "ContainerGIDTooltip": "分配给容器内进程的默认数值组 ID",
     "ContainerSupplementaryGIDs": "附加GID",
     "ContainerSupplementaryGIDsPlaceholder": "用逗号或空格分隔输入GID",
-    "ContainerSupplementaryGIDsTooltip": "分配给容器进程的附加组ID",
+    "ContainerSupplementaryGIDsTooltip": "分配给容器进程的额外数字组 ID",
     "ContainerUID": "容器UID",
-    "ContainerUIDTooltip": "分配给容器内进程的用户ID",
+    "ContainerUIDTooltip": "分配给容器内进程的数值用户 ID",
     "Create": "创造",
     "CreatePolicy": "创建策略",
     "CreateResourcePolicy": "创建资源策略",
@@ -194,6 +194,7 @@
     "ExportCSV": "导出 CSV",
     "ExportCSVFile": "导出 CSV 文件",
     "FailedToDeleteUsers": "无法永久删除用户：{{users}}",
+    "FailedToUpdateUsers": "更新用户失败：{{users}}",
     "FileName": "文件名",
     "For900Seconds": "900 秒",
     "FullName": "全名",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "启用此选项后，用户下次登录时需更改密码。",
     "TypePermanentlyDelete": "请输入“{{text}}”。",
+    "UpdateUsers": "更新用户",
+    "UpdateUsersWarningAlertTitle": "设置 UID 或 GID 可能会限制对已创建文件夹挂载的访问。",
+    "UpdatedUsers": "已更新 {{count}} / {{total}} 名用户。",
     "UserAccountCreated": "用户帐户已成功创建",
     "UserAccountCreatedError": "具有相同邮箱或用户名的账号已存在。",
     "UserDetail": "用户详情",
@@ -262,9 +266,11 @@
     "WrongEmail": "无效的邮箱地址",
     "YouAreAboutToDeleteCredential": "您将要删除该用户的凭据：",
     "validation": {
-      "PleaseEnterUnder2_31": "请输入小于2³¹的值",
+      "PleaseEnterPositiveAndUnder2_31": "请输入小于 2^31 的正数",
+      "PleaseEnterPositiveInteger": "请输入正数。",
       "PleaseEnterUniqueNumbers": "请输入不重复的数字",
-      "PleaseEnterValidNumber": "请输入有效的数字"
+      "PleaseEnterValidNumber": "请输入有效的数字",
+      "PleaseSelectDomain": "请先选择域。"
     }
   },
   "dashboard": {

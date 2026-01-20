@@ -166,12 +166,12 @@
     "BeforeVerification": "Πριν από την επαλήθευση",
     "ConcurrentSessions": "Ταυτόχρονες συνεδρίες",
     "ContainerGID": "GID κοντέινερ",
-    "ContainerGIDTooltip": "Κύριο ID ομάδας που εκχωρείται σε διεργασίες εντός του κοντέινερ",
+    "ContainerGIDTooltip": "Προεπιλεγμένο αριθμητικό αναγνωριστικό ομάδας (GID) που εκχωρείται στις διεργασίες εντός του container",
     "ContainerSupplementaryGIDs": "Συμπληρωματικά GID",
     "ContainerSupplementaryGIDsPlaceholder": "Εισάγετε GID χωρισμένα με κόμματα ή κενά",
-    "ContainerSupplementaryGIDsTooltip": "Επιπλέον ID ομάδων για διεργασίες κοντέινερ",
+    "ContainerSupplementaryGIDsTooltip": "Επιπλέον αριθμητικά αναγνωριστικά ομάδας (GID) που εκχωρούνται στις διεργασίες του κοντέινερ",
     "ContainerUID": "UID κοντέινερ",
-    "ContainerUIDTooltip": "ID χρήστη που εκχωρείται σε διεργασίες εντός του κοντέινερ",
+    "ContainerUIDTooltip": "Αριθμητικό αναγνωριστικό χρήστη (UID) που εκχωρείται στις διεργασίες εντός του κοντέινερ",
     "Create": "Δημιουργώ",
     "CreatePolicy": "Δημιουργία πολιτικής",
     "CreateResourcePolicy": "Δημιουργία πολιτικής πόρων",
@@ -194,6 +194,7 @@
     "ExportCSV": "εξαγωγή CSV",
     "ExportCSVFile": "Εξαγωγή αρχείου CSV",
     "FailedToDeleteUsers": "Η μόνιμη διαγραφή του/των χρηστών απέτυχε: {{users}}",
+    "FailedToUpdateUsers": "Αποτυχία ενημέρωσης χρηστών: {{users}}",
     "FileName": "Ονομα αρχείου",
     "For900Seconds": "για 900 δευτερόλεπτα",
     "FullName": "Πλήρες όνομα",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "Η κατάσταση του χρήστη έχει αλλάξει.",
     "TooltipForRequirePasswordChange": "Εάν ενεργοποιηθεί αυτή η επιλογή, ο χρήστης θα πρέπει να αλλάξει τον κωδικό πρόσβασης κατά την επόμενη σύνδεση.",
     "TypePermanentlyDelete": "Παρακαλώ πληκτρολογήστε \"{{text}}\".",
+    "UpdateUsers": "Ενημέρωση χρηστών",
+    "UpdateUsersWarningAlertTitle": "Η ρύθμιση του UID ή των GID(s) μπορεί να περιορίσει τη χρήση ήδη δημιουργημένων προσαρτήσεων φακέλων.",
+    "UpdatedUsers": "Ενημερώθηκαν {{count}} από τους {{total}} χρήστες.",
     "UserAccountCreated": "Ο λογαριασμός χρήστη δημιουργήθηκε με επιτυχία",
     "UserAccountCreatedError": "Υπάρχει ήδη λογαριασμός με το ίδιο email ή όνομα χρήστη.",
     "UserDetail": "Λεπτομέρεια χρήστη",
@@ -262,9 +266,11 @@
     "WrongEmail": "Λανθασμένο email",
     "YouAreAboutToDeleteCredential": "Πρόκειται να διαγράψετε τα διαπιστευτήρια αυτού του χρήστη:",
     "validation": {
-      "PleaseEnterUnder2_31": "Παρακαλώ εισάγετε τιμή μικρότερη από 2³¹",
+      "PleaseEnterPositiveAndUnder2_31": "Παρακαλώ εισαγάγετε μια θετική τιμή μικρότερη από 2^31",
+      "PleaseEnterPositiveInteger": "Εισαγάγετε μια θετική τιμή.",
       "PleaseEnterUniqueNumbers": "Παρακαλώ εισάγετε μοναδικούς αριθμούς",
-      "PleaseEnterValidNumber": "Παρακαλώ εισάγετε έγκυρο αριθμό"
+      "PleaseEnterValidNumber": "Παρακαλώ εισάγετε έγκυρο αριθμό",
+      "PleaseSelectDomain": "Παρακαλώ επιλέξτε πρώτα το domain."
     }
   },
   "dashboard": {

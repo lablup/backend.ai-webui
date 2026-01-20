@@ -166,12 +166,12 @@
     "BeforeVerification": "Vor Überprüfung",
     "ConcurrentSessions": "Gleichzeitige Sitzungen",
     "ContainerGID": "Container-GID",
-    "ContainerGIDTooltip": "Primäre Gruppen-ID, die Prozessen im Container zugewiesen wird",
+    "ContainerGIDTooltip": "Standardmäßige numerische Gruppen‑ID (GID), die Prozessen im Container zugewiesen wird",
     "ContainerSupplementaryGIDs": "Ergänzende GIDs",
     "ContainerSupplementaryGIDsPlaceholder": "GIDs durch Komma oder Leerzeichen getrennt eingeben",
-    "ContainerSupplementaryGIDsTooltip": "Zusätzliche Gruppen-IDs für Container-Prozesse",
+    "ContainerSupplementaryGIDsTooltip": "Zusätzliche numerische Gruppen-IDs für Containerprozesse",
     "ContainerUID": "Container-UID",
-    "ContainerUIDTooltip": "Benutzer-ID, die Prozessen im Container zugewiesen wird",
+    "ContainerUIDTooltip": "Numerische Benutzer‑ID, die Prozessen im Container zugewiesen wird",
     "Create": "Erstellen",
     "CreatePolicy": "Richtlinie erstellen",
     "CreateResourcePolicy": "Ressourcenrichtlinie erstellen",
@@ -194,6 +194,7 @@
     "ExportCSV": "CSV-Datei exportieren",
     "ExportCSVFile": "CSV-Datei exportieren",
     "FailedToDeleteUsers": "Konnte Benutzer nicht dauerhaft löschen: {{users}}",
+    "FailedToUpdateUsers": "Aktualisierung der Benutzer fehlgeschlagen: {{users}}",
     "FileName": "Dateiname",
     "For900Seconds": "für 900 Sekunden",
     "FullName": "Vollständiger Name",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "Der Benutzerstatus hat sich geändert.",
     "TooltipForRequirePasswordChange": "Wenn Sie diese Option aktivieren, muss der Benutzer bei der nächsten Anmeldung sein Passwort ändern.",
     "TypePermanentlyDelete": "Bitte geben Sie \"{{text}}\" ein.",
+    "UpdateUsers": "Benutzer aktualisieren",
+    "UpdateUsersWarningAlertTitle": "Das Festlegen von UID oder GID(s) kann die Verwendung zuvor erstellter Ordner-Mounts einschränken.",
+    "UpdatedUsers": "Aktualisiert {{count}} von {{total}} Benutzern.",
     "UserAccountCreated": "Benutzerkonto wurde erfolgreich erstellt",
     "UserAccountCreatedError": "Ein Benutzerkonto mit derselben E-Mail-Adresse oder demselben Benutzernamen existiert bereits.",
     "UserDetail": "Benutzerdetails",
@@ -262,9 +266,11 @@
     "WrongEmail": "Ungültige E‑Mail‑Adresse",
     "YouAreAboutToDeleteCredential": "Sie sind dabei, die Anmeldeinformationen dieses Benutzers zu löschen:",
     "validation": {
-      "PleaseEnterUnder2_31": "Bitte geben Sie einen Wert unter 2³¹ ein",
+      "PleaseEnterPositiveAndUnder2_31": "Bitte geben Sie einen positiven Wert kleiner als 2^31 ein.",
+      "PleaseEnterPositiveInteger": "Bitte geben Sie einen positiven Wert ein.",
       "PleaseEnterUniqueNumbers": "Bitte geben Sie eindeutige Zahlen ein",
-      "PleaseEnterValidNumber": "Bitte geben Sie eine gültige Zahl ein"
+      "PleaseEnterValidNumber": "Bitte geben Sie eine gültige Zahl ein",
+      "PleaseSelectDomain": "Bitte wählen Sie zuerst eine Domain aus."
     }
   },
   "dashboard": {

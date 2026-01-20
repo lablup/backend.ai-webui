@@ -166,12 +166,12 @@
     "BeforeVerification": "Перед проверкой",
     "ConcurrentSessions": "Параллельные сеансы",
     "ContainerGID": "GID контейнера",
-    "ContainerGIDTooltip": "Основной ID группы, назначенный процессам внутри контейнера",
+    "ContainerGIDTooltip": "Идентификатор группы (GID) по умолчанию, присваиваемый процессам внутри контейнера",
     "ContainerSupplementaryGIDs": "Дополнительные GID",
     "ContainerSupplementaryGIDsPlaceholder": "Введите GID через запятую или пробел",
-    "ContainerSupplementaryGIDsTooltip": "Дополнительные ID групп для процессов контейнера",
+    "ContainerSupplementaryGIDsTooltip": "Дополнительные числовые GID, назначаемые процессам контейнера",
     "ContainerUID": "UID контейнера",
-    "ContainerUIDTooltip": "ID пользователя, назначенный процессам внутри контейнера",
+    "ContainerUIDTooltip": "Числовой идентификатор пользователя (UID), назначаемый процессам внутри контейнера",
     "Create": "Создавать",
     "CreatePolicy": "Создать политику",
     "CreateResourcePolicy": "Создать политику ресурсов",
@@ -194,6 +194,7 @@
     "ExportCSV": "экспорт CSV",
     "ExportCSVFile": "Экспорт файла CSV",
     "FailedToDeleteUsers": "Не удалось безвозвратно удалить пользователя(ей): {{users}}",
+    "FailedToUpdateUsers": "Не удалось обновить пользователей: {{users}}",
     "FileName": "Имя файла",
     "For900Seconds": "на 900 секунд",
     "FullName": "ФИО",
@@ -246,6 +247,9 @@
     "StatusUpdatedSuccessfully": "Статус пользователя изменился.",
     "TooltipForRequirePasswordChange": "При включении этой опции пользователь будет обязан сменить пароль при следующем входе.",
     "TypePermanentlyDelete": "Пожалуйста, введите \"{{text}}\".",
+    "UpdateUsers": "Обновить пользователей",
+    "UpdateUsersWarningAlertTitle": "Задание UID или GID(ов) может ограничить использование ранее созданных точек монтирования.",
+    "UpdatedUsers": "Обновлено {{count}} из {{total}} пользователей.",
     "UserAccountCreated": "Учетная запись пользователя успешно создана",
     "UserAccountCreatedError": "Учетная запись с таким же адресом электронной почты или именем пользователя уже существует.",
     "UserDetail": "Сведения о пользователе",
@@ -262,9 +266,11 @@
     "WrongEmail": "Неверный адрес электронной почты",
     "YouAreAboutToDeleteCredential": "Вы собираетесь удалить учетные данные этого пользователя:",
     "validation": {
-      "PleaseEnterUnder2_31": "Пожалуйста, введите значение меньше 2³¹",
+      "PleaseEnterPositiveAndUnder2_31": "Введите положительное значение меньше 2^31",
+      "PleaseEnterPositiveInteger": "Введите положительное значение.",
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",
-      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число"
+      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число",
+      "PleaseSelectDomain": "Пожалуйста, сначала выберите домен."
     }
   },
   "dashboard": {

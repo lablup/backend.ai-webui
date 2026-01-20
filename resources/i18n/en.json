@@ -169,12 +169,12 @@
     "BeforeVerification": "Before Verification",
     "ConcurrentSessions": "Concurrent Sessions",
     "ContainerGID": "Container GID",
-    "ContainerGIDTooltip": "Default group ID assigned to processes inside the container",
+    "ContainerGIDTooltip": "Default numeric group ID assigned to processes inside the container",
     "ContainerSupplementaryGIDs": "Supplementary GID",
     "ContainerSupplementaryGIDsPlaceholder": "Enter GIDs separated by commas or spaces",
-    "ContainerSupplementaryGIDsTooltip": "Additional group IDs assigned to container processes",
+    "ContainerSupplementaryGIDsTooltip": "Additional numeric group IDs assigned to container processes",
     "ContainerUID": "Container UID",
-    "ContainerUIDTooltip": "User ID assigned to processes inside the container",
+    "ContainerUIDTooltip": "Numeric User ID assigned to processes inside the container",
     "Create": "Create",
     "CreatePolicy": "Create Policy",
     "CreateResourcePolicy": "Create Resource Policy",
@@ -197,6 +197,7 @@
     "ExportCSV": "export CSV",
     "ExportCSVFile": "Export CSV File",
     "FailedToDeleteUsers": "Failed to permanently delete the user(s): {{users}}",
+    "FailedToUpdateUsers": "Failed to update users: {{users}}",
     "FileName": "File name",
     "For900Seconds": "for 900 seconds",
     "FullName": "Full Name",
@@ -249,6 +250,9 @@
     "StatusUpdatedSuccessfully": "The user status has changed.",
     "TooltipForRequirePasswordChange": "When enabled, the user must change their password at next login.",
     "TypePermanentlyDelete": "Please type \"{{text}}\".",
+    "UpdateUsers": "Update Users",
+    "UpdateUsersWarningAlertTitle": "Setting UID or GID(s) may restrict the use of previously created folder mounts.",
+    "UpdatedUsers": "Updated {{count}} out of {{total}} users.",
     "UserAccountCreated": "User account is successfully created",
     "UserAccountCreatedError": "A user account with the same email or username already exists.",
     "UserDetail": "User Detail",
@@ -265,9 +269,11 @@
     "WrongEmail": "Wrong Email",
     "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:",
     "validation": {
-      "PleaseEnterUnder2_31": "Please enter a value less than 2^31.",
+      "PleaseEnterPositiveAndUnder2_31": "Please enter a positive value less than 2^31",
+      "PleaseEnterPositiveInteger": "Please enter a positive value.",
       "PleaseEnterUniqueNumbers": "Enter a unique number.",
-      "PleaseEnterValidNumber": "Please enter a valid number."
+      "PleaseEnterValidNumber": "Please enter a valid number.",
+      "PleaseSelectDomain": "Please select domain first."
     }
   },
   "dashboard": {

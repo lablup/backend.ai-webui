@@ -165,12 +165,12 @@
     "BeforeVerification": "Sebelum pengesahan",
     "ConcurrentSessions": "Sesi Serentak",
     "ContainerGID": "GID kontena",
-    "ContainerGIDTooltip": "ID kumpulan utama yang ditetapkan kepada proses dalam kontena",
+    "ContainerGIDTooltip": "ID kumpulan berangka lalai yang diberikan kepada proses di dalam kontena",
     "ContainerSupplementaryGIDs": "GID tambahan",
     "ContainerSupplementaryGIDsPlaceholder": "Masukkan GID dipisahkan dengan koma atau ruang",
-    "ContainerSupplementaryGIDsTooltip": "ID kumpulan tambahan untuk proses kontena",
+    "ContainerSupplementaryGIDsTooltip": "ID kumpulan bernombor tambahan yang diberikan kepada proses kontena",
     "ContainerUID": "UID kontena",
-    "ContainerUIDTooltip": "ID pengguna yang ditetapkan kepada proses dalam kontena",
+    "ContainerUIDTooltip": "ID pengguna berangka yang ditetapkan kepada proses dalam kontena",
     "Create": "Buat",
     "CreatePolicy": "Buat Dasar",
     "CreateResourcePolicy": "Buat Dasar Sumber",
@@ -193,6 +193,7 @@
     "ExportCSV": "eksport CSV",
     "ExportCSVFile": "Eksport Fail CSV",
     "FailedToDeleteUsers": "Gagal memadamkan pengguna secara kekal: {{users}}",
+    "FailedToUpdateUsers": "Gagal mengemas kini pengguna: {{users}}",
     "FileName": "Nama fail",
     "For900Seconds": "selama 900 saat",
     "FullName": "Nama penuh",
@@ -245,6 +246,9 @@
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika pilihan ini diaktifkan, pengguna perlu menukar kata laluan mereka semasa log masuk seterusnya.",
     "TypePermanentlyDelete": "Sila taip \"{{text}}\".",
+    "UpdateUsers": "Kemas kini Pengguna",
+    "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) mungkin menghadkan penggunaan pemasangan folder yang telah dibuat sebelum ini.",
+    "UpdatedUsers": "Dikemas kini {{count}} daripada {{total}} pengguna.",
     "UserAccountCreated": "Akaun pengguna berjaya dibuat",
     "UserAccountCreatedError": "Akaun pengguna dengan alamat e-mel atau nama pengguna yang sama sudah wujud.",
     "UserDetail": "Maklumat Pengguna",
@@ -261,9 +265,11 @@
     "WrongEmail": "E-mel tidak sah",
     "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:",
     "validation": {
-      "PleaseEnterUnder2_31": "Sila masukkan nilai kurang daripada 2³¹",
+      "PleaseEnterPositiveAndUnder2_31": "Sila masukkan nilai positif kurang daripada 2^31",
+      "PleaseEnterPositiveInteger": "Sila masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",
-      "PleaseEnterValidNumber": "Sila masukkan nombor yang sah"
+      "PleaseEnterValidNumber": "Sila masukkan nombor yang sah",
+      "PleaseSelectDomain": "Sila pilih domain terlebih dahulu."
     }
   },
   "dashboard": {
