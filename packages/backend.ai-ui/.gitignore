@@ -16,6 +16,9 @@ yarn-error.log*
 
 !/public
 
+# Allow storybook assets
+!.storybook/public
+
 merged_schema.graphql
 
 **/__generated__/*.graphql.ts
