@@ -8,6 +8,7 @@ This component demonstrates **Pattern B**: Using `useLazyLoadQuery` + `useLazyPa
 
 - **Value Type**: `id` (Global ID) or `row_id` (UUID)
 - **Relay Hooks**: `useLazyLoadQuery` + `useLazyPaginatedQuery`
+- **Dynamic First**: ✅ Uses `first: _.castArray(value).length` to fetch all selected values
 - **Multiple Mode**: Full support
 - **Queries**: 2 (ValueQuery for selected items + PaginatedQuery for options)
 - **Search**: State-based with filter string
@@ -113,12 +114,14 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       graphql\`
         query BAIVFolderSelectValueQuery(
           $selectedFilter: String
+          $first: Int!
           $skipSelectedVFolder: Boolean!
           $scopeId: ScopeField
         ) {
           vfolder_nodes(
             scope_id: $scopeId
             filter: $selectedFilter
+            first: $first
             permission: "read_attribute"
           ) @skip(if: $skipSelectedVFolder) {
             edges {
@@ -150,6 +153,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
           ],
           '&',
         ),
+        first: _.castArray(deferredControllableValue).length,
         skipSelectedVFolder: _.isEmpty(deferredControllableValue),
         scopeId: currentProjectId ? \`project:\${currentProjectId}\` : undefined,
       },
@@ -391,12 +395,14 @@ const { vfolder_nodes: selectedVFolderNodes } =
     graphql\`
       query BAIVFolderSelectValueQuery(
         $selectedFilter: String
+        $first: Int!
         $skipSelectedVFolder: Boolean!
         $scopeId: ScopeField
       ) {
         vfolder_nodes(
           scope_id: $scopeId
           filter: $selectedFilter
+          first: $first
           permission: "read_attribute"
         ) @skip(if: $skipSelectedVFolder) {
           edges {
@@ -411,6 +417,7 @@ const { vfolder_nodes: selectedVFolderNodes } =
     \`,
     {
       selectedFilter: /* ... */,
+      first: _.castArray(deferredControllableValue).length,
       skipSelectedVFolder: _.isEmpty(deferredControllableValue),
       scopeId: currentProjectId ? \`project:\${currentProjectId}\` : undefined,
     },
@@ -423,6 +430,10 @@ const { vfolder_nodes: selectedVFolderNodes } =
   );
 ```
 
+- **Dynamic `first` parameter**: Fetch exactly the number of selected items
+  - `first: _.castArray(deferredControllableValue).length`
+  - Ensures all selected values are fetched, regardless of count
+  - No over-fetching or under-fetching
 - **@skip directive**: Skip query when no selection (optimization)
 - **fetchPolicy**: `store-or-network` when has selection, `store-only` when empty
 - **Purpose**: Get labels for currently selected IDs
@@ -657,6 +668,7 @@ Three loading conditions:
 
 ## Advantages
 
+✅ **Dynamic first parameter**: Fetch exactly the number of selected items
 ✅ **Flexible value type**: Support both Global ID and row_id
 ✅ **Multiple selection**: Full support with proper label handling
 ✅ **Optimistic updates**: Smooth UX during async operations

@@ -19,42 +19,54 @@ description: >
 ## Quick Start Decision Tree
 
 ```
-START: What type of value does your select use?
+START: Does your select need dynamic query parameters?
 
 ┌─────────────────────────────────────────────────────────────┐
-│ Q: Is the select value the same as the display label?      │
-│    (e.g., entity's name field is both value and label)     │
+│ Q: Do you need dynamic control over query parameters?      │
+│    (filter, limit, first, order, etc.)                     │
+│    OR need external refetch capability?                    │
 └─────────────────────────────────────────────────────────────┘
                          │
           ┌──────────────┴──────────────┐
           │                             │
-         YES                           NO
+         NO                            YES
           │                             │
           ▼                             ▼
    ┌─────────────┐             ┌─────────────┐
    │  Pattern A  │             │  Pattern B  │
-   │  (Simple)   │             │  (Complex)  │
+   │  (Simple)   │             │ (Dynamic)   │
    └─────────────┘             └─────────────┘
           │                             │
           ▼                             ▼
-Reference:                    Reference:
-BAIAdminResourceGroupSelect   BAIVFolderSelect
+Reference:                    References:
+BAIAdminResourceGroupSelect   BAIUserSelect (email-based)
+                              BAIVFolderSelect (id-based)
 ```
 
 ## Pattern Comparison
 
-| Criteria | Pattern A (Name-Based) | Pattern B (ID-Based) |
-|----------|----------------------|-------------------|
-| **Value Type** | String (name) | String (id/row_id) |
+| Criteria | Pattern A (Simple) | Pattern B (Dynamic) |
+|----------|-------------------|-------------------|
+| **Value Type** | String (name) | Any (name, email, id, row_id, etc.) |
 | **Relay Hook** | usePaginationFragment | useLazyLoadQuery + useLazyPaginatedQuery |
 | **Queries** | 1 fragment | 2 queries |
+| **Dynamic First** | ❌ Not needed | ✅ **Default** (fetches all selected values) |
+| **Dynamic Parameters** | ❌ Limited | ✅ Full control (filter, first, limit, order, etc.) |
 | **Multiple Mode** | Single only | Full support |
-| **Global ID** | Not needed | Conversion required |
+| **Global ID** | Not needed | Can handle (if needed) |
 | **Optimistic UI** | Not needed | Required |
 | **State Management** | Simple | Complex |
 | **Ref Export** | No | Yes (refetch support) |
-| **Complexity** | 🟢 ~100 lines | 🟡 ~350 lines |
-| **Use Case** | Name is unique identifier | ID different from name |
+| **Complexity** | 🟢 ~100 lines | 🟡 ~300-350 lines |
+| **Use Case** | Simple, static requirements | Dynamic filters, external refetch, multiple props control |
+
+### Pattern B Examples by Value Type
+
+| Example | Value Type | Special Features |
+|---------|-----------|------------------|
+| **BAIUserSelect** | Email | Dynamic `first`, email filtering |
+| **BAIVFolderSelect** | ID / row_id | Dynamic `first`, Global ID conversion, scope filtering |
+| **Custom Select** | Name | Can use Pattern B even with name if dynamic control needed |
 
 ## Implementation Checklists
 
@@ -108,7 +120,7 @@ graphql\`
 ### Pattern B Checklist (ID-Based Value)
 
 **Component Setup:**
-- [ ] Import `useLazyLoadQuery`, `useDeferredValue`, `useTransition`
+- [ ] Import `useLazyLoadQuery`, `useDeferredValue`, `useTransition`, `useOptimistic`
 - [ ] Import `useLazyPaginatedQuery`, `useFetchKey` custom hooks
 - [ ] Import `useControllableValue` from 'ahooks'
 - [ ] Import `toLocalId`, `mergeFilterValues` helpers
@@ -116,21 +128,23 @@ graphql\`
 
 **State Management:**
 - [ ] `useControllableValue` for value and open
-- [ ] `useDeferredValue` for controllableValue, open, fetchKey
+- [ ] `useDeferredValue` for controllableValue, open, and fetchKey
 - [ ] `useState` for searchStr and optimisticValueWithLabel
+- [ ] `useOptimistic` for optimisticSearchStr (immediate UI feedback)
 - [ ] `useTransition` for refetch
 - [ ] `useFetchKey` for cache invalidation
 
 **GraphQL Queries:**
 
-Query 1 - Selected Values:
+Query 1 - Selected Values (with Dynamic First):
 ```typescript
 graphql\`
   query YourComponentValueQuery(
     $selectedFilter: String
+    $first: Int!
     $skipSelected: Boolean!
   ) {
-    yourEntities(filter: $selectedFilter)
+    yourEntities(filter: $selectedFilter, first: $first)
       @skip(if: $skipSelected) {
       edges {
         node {
@@ -142,6 +156,13 @@ graphql\`
     }
   }
 \`
+
+// Variables
+{
+  selectedFilter: /* filter based on selected values */,
+  first: _.castArray(deferredControllableValue).length, // 🔑 Dynamic
+  skipSelected: _.isEmpty(deferredControllableValue),
+}
 ```
 
 Query 2 - Paginated Options:
@@ -173,10 +194,12 @@ graphql\`
 
 **Query Checklist:**
 - [ ] ValueQuery with @skip directive
+- [ ] **ValueQuery with dynamic `$first` parameter (REQUIRED for Pattern B)**
 - [ ] PaginatedQuery with offset/limit
-- [ ] selectedFilter uses toLocalId() for Global IDs
-- [ ] Both queries have id, row_id, name
+- [ ] selectedFilter uses toLocalId() for Global IDs (if using Global IDs)
+- [ ] Both queries have required fields (id, name, or email)
 - [ ] count field in PaginatedQuery
+- [ ] **Variables include `first: _.castArray(value).length` (REQUIRED for Pattern B)**
 
 **Value-to-Label Mapping:**
 - [ ] Build `controllableValueWithLabel` from selected query
@@ -185,7 +208,8 @@ graphql\`
 - [ ] Fallback to value as label when no data
 
 **Optimistic Updates:**
-- [ ] `useState` for optimisticValueWithLabel
+- [ ] `useOptimistic` for optimisticSearchStr (search input feedback)
+- [ ] `useState` for optimisticValueWithLabel (selection feedback)
 - [ ] Switch between optimistic and real value based on deferred comparison
 - [ ] Preserve labels in onChange (handle React element labels)
 
@@ -193,10 +217,11 @@ graphql\`
 - [ ] `labelInValue` prop
 - [ ] `value` with optimistic switching
 - [ ] `onChange` with label preservation
-- [ ] `searchAction` with setState
+- [ ] `searchAction` with `setOptimisticSearchStr` then `setSearchStr`
+- [ ] `showSearch.searchValue` set to `optimisticSearchStr` for immediate feedback
 - [ ] `endReached={() => loadNext()}`
 - [ ] `labelRender`/`optionRender` for custom display
-- [ ] `loading` with three conditions
+- [ ] `loading` with three conditions (no need for searchStr comparison)
 
 **Ref Export:**
 - [ ] `useImperativeHandle` for refetch
@@ -204,6 +229,58 @@ graphql\`
 - [ ] Export ref interface type
 
 ## Common Patterns
+
+### Dynamic First Parameter (Default in Pattern B)
+
+**Pattern B always uses dynamic `first` parameter** to ensure all selected values are fetched:
+
+```typescript
+const { entity_nodes: selectedNodes } =
+  useLazyLoadQuery<YourComponentValueQuery>(
+    graphql`
+      query YourComponentValueQuery(
+        $selectedFilter: String
+        $first: Int!
+        $skipSelected: Boolean!
+      ) {
+        entity_nodes(filter: $selectedFilter, first: $first)
+          @skip(if: $skipSelected) {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
+      }
+    `,
+    {
+      selectedFilter: /* ... */,
+      first: _.castArray(deferredControllableValue).length, // 🔑 Dynamic
+      skipSelected: _.isEmpty(deferredControllableValue),
+    },
+  );
+```
+
+**Why this is the default in Pattern B:**
+- ✅ Fetch exactly the number of selected items
+- ✅ No over-fetching (performance)
+- ✅ No under-fetching (data completeness)
+- ✅ Works with any selection count (1, 10, 100, etc.)
+- ✅ Essential for multiple selection mode
+- ✅ Prevents data loss when users select many items
+
+**Without dynamic first (NOT Pattern B):**
+```typescript
+// ❌ Bad: Hardcoded limit (Pattern A approach, not suitable for Pattern B)
+first: 10  // Fails if user selects 50 items
+
+// ❌ Bad: No first parameter
+// May return only default number of results (usually 10)
+
+// ✅ Good: Pattern B always uses dynamic first
+first: _.castArray(deferredControllableValue).length
+```
 
 ### Multiple Mode Support
 
@@ -217,15 +294,58 @@ _.castArray(controllableValue).map((value) => {
 ### Search with Transitions
 
 ```typescript
+// Pattern A: Refetch with transition
 searchAction={async (value) => {
-  // Pattern A: Refetch
   selectRef.current?.scrollTo(0);
   refetch({ filter: value ? { name: { contains: value } } : null });
-
-  // Pattern B: State update
-  setSearchStr(value);
 }}
+
+// Pattern B: Optimistic search with useOptimistic
+const [searchStr, setSearchStr] = useState<string>();
+const [optimisticSearchStr, setOptimisticSearchStr] = useOptimistic(
+  searchStr,
+  (_s, newS: string) => newS,
+);
+
+// Use searchStr (actual state) in query filter
+filter: mergeFilterValues([
+  mergedFilter,
+  searchStr ? `email ilike "%${searchStr}%"` : null,
+])
+
+// searchAction sets optimistic value first, then actual value
+// BAISelect already wraps searchAction in startTransition
+searchAction={async (value) => {
+  setOptimisticSearchStr(value);  // Optimistic update for UI
+  await selectProps.searchAction?.(value);
+  setSearchStr(value);  // Actual state update
+}}
+
+// Pass optimisticSearchStr to showSearch for immediate UI feedback
+showSearch={{
+  searchValue: optimisticSearchStr,
+  autoClearSearchValue: true,
+  filterOption: false,
+  ...(_.isObject(selectProps.showSearch)
+    ? _.omit(selectProps.showSearch, ['searchValue'])
+    : {}),
+}}
+
+// No need to show loading for search - transition handles it
+loading={
+  loading ||
+  controllableValue !== deferredControllableValue ||
+  isPendingRefetch
+}
 ```
+
+**Why useOptimistic for search?**
+- ✅ Input field shows optimistic value immediately (best UX)
+- ✅ Query uses actual searchStr (executes when transition commits)
+- ✅ Works seamlessly with BAISelect's built-in startTransition
+- ✅ React automatically manages optimistic → actual state transition
+- ✅ No need for deferredValue or manual loading state for search
+- ✅ Cleaner than debounce and integrates with React Concurrent Features
 
 ### Global ID Conversion
 
@@ -258,6 +378,71 @@ const [open, setOpen] = useControllableValue(props, {
 });
 ```
 
+## Pattern B: Dynamic Query Parameters
+
+### Core Capabilities
+
+Pattern B (Dynamic) provides full control over GraphQL query parameters through props:
+
+**1. Dynamic First Parameter (Default Behavior)**
+```typescript
+// ALWAYS fetch all selected values in Pattern B
+first: _.castArray(deferredControllableValue).length
+```
+This is **not optional** - it's the defining characteristic of Pattern B that ensures data completeness.
+
+**2. Dynamic Filter**
+```typescript
+// Combine multiple filters dynamically
+filter={mergeFilterValues([
+  'status == "ACTIVE"',
+  searchStr ? `name ilike "%${searchStr}%"` : null,
+  props.filter,  // External filter from props
+])}
+```
+
+**3. Dynamic Limit**
+```typescript
+// Control pagination size via props
+{ limit: props.pageSize || 10 }
+```
+
+**4. Dynamic Order**
+```typescript
+// Control sort order via props
+order: props.sortBy || '-created_at'
+```
+
+**5. External Refetch**
+```typescript
+// Expose refetch via ref
+const selectRef = useRef<YourSelectRef>(null);
+selectRef.current?.refetch();
+```
+
+### When Pattern B is Essential
+
+Even if your value is a simple name (not ID), use Pattern B when you need:
+
+- ✅ Dynamic filter from parent component
+- ✅ External refetch capability
+- ✅ Control over fetchPolicy
+- ✅ Multiple selection with optimistic updates
+- ✅ Dynamic pagination size
+- ✅ Custom sort order
+
+**Example: Name-based but needs Pattern B**
+```typescript
+// Even though value is 'name', we need Pattern B for dynamic features
+<YourEntitySelect
+  value={selectedNames}           // Name-based value
+  filter={externalFilter}         // 🔑 Dynamic filter
+  pageSize={20}                   // 🔑 Dynamic limit
+  sortBy="name"                   // 🔑 Dynamic order
+  ref={selectRef}                 // 🔑 Refetch capability
+/>
+```
+
 ## Best Practices
 
 ### Performance
@@ -276,6 +461,20 @@ const [open, setOpen] = useControllableValue(props, {
    const deferredValue = useDeferredValue(value);
    const deferredFetchKey = useDeferredValue(fetchKey);
    ```
+
+   **Search optimization with useOptimistic:**
+   ```typescript
+   const [searchStr, setSearchStr] = useState<string>();
+   const [optimisticSearchStr, setOptimisticSearchStr] = useOptimistic(
+     searchStr,
+     (_s, newS: string) => newS,
+   );
+   ```
+   - Use `optimisticSearchStr` in UI (searchValue prop)
+   - Use `searchStr` in query filters
+   - Keeps input responsive - immediate visual feedback
+   - Query executes when transition commits
+   - More integrated with React Concurrent Features than debounce
 
 3. **Optimize fetchPolicy**
    ```typescript
@@ -319,14 +518,19 @@ const [open, setOpen] = useControllableValue(props, {
      controllableValue !== deferredControllableValue ||
      isPendingRefetch
    }
+   // Note: No need for searchStr comparison -
+   // useOptimistic handles search UI updates automatically
    ```
 
 ## Common Pitfalls & Solutions
 
 | Pitfall | Impact | Solution |
 |---------|--------|----------|
+| Missing `first` parameter | Incomplete selected values | **REQUIRED in Pattern B**: Add `$first: Int!` parameter |
+| Hardcoded `first: 10` | Missing data for >10 selections | **Pattern B always uses**: `_.castArray(value).length` |
 | Missing `_.castArray` | Single mode breaks | Always normalize values |
 | Not using `deferredValue` | Suspense flicker | Defer controllable values |
+| Not using `useOptimistic` for search | Poor search UX | Use `useOptimistic` for immediate feedback |
 | Missing `@skip` directive | Unnecessary queries | Add skip when empty |
 | Not preserving labels | Lost labels on tag removal | Check if label is string or element |
 | Hardcoded valuePropName | Inflexible component | Use prop: `'id' \| 'row_id'` |
@@ -418,23 +622,31 @@ const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
 
 ### When to Use Which Pattern
 
-**Pattern A** when:
-- ✅ Entity name is unique
+**Pattern A (Simple)** when:
+- ✅ Simple, static requirements
 - ✅ Single selection sufficient
-- ✅ Simple implementation preferred
-- ✅ No Global ID conversion needed
+- ✅ No need for dynamic query parameters
+- ✅ Minimal code preferred
+- ✅ No external refetch needed
 
-**Pattern B** when:
-- ✅ ID different from display name
+**Pattern B (Dynamic)** when:
+- ✅ Need dynamic query parameters (filter, first, limit, order, etc.)
 - ✅ Multiple selection required
-- ✅ Need external refetch capability
-- ✅ Global ID conversion needed
+- ✅ Need external refetch capability via ref
+- ✅ Need to control fetchPolicy dynamically
 - ✅ Optimistic UI updates important
+- ✅ Complex filter combinations needed
+- ✅ Value different from display name (or needs special handling)
+- ✅ Even name-based values if dynamic control needed
+
+**Key insight:** Pattern B is not about the value type (email vs ID vs name), but about **dynamic control** over query parameters and component behavior.
 
 ### Reference Files
 
-- **Pattern A**: `references/patterns/BAIAdminResourceGroupSelect.md`
-- **Pattern B**: `references/patterns/BAIVFolderSelect.md`
+- **Pattern A (Simple)**: `references/patterns/BAIAdminResourceGroupSelect.md`
+- **Pattern B (Dynamic)**:
+  - Email-based with Dynamic First: `references/patterns/BAIUserSelect.md`
+  - ID-based with Dynamic First & Global ID Conversion: `references/patterns/BAIVFolderSelect.md`
 - **Base Component**: `references/base/BAISelect.md`
 - **Hooks**: `references/hooks/` (useFetchKey, useLazyPaginatedQuery, useEventNotStable)
 - **Helpers**: `references/helpers/` (relay-helpers, mergeFilterValues)
