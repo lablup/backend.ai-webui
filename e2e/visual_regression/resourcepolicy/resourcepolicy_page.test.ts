@@ -1,12 +1,12 @@
 import { loginAsAdmin } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   await page.setViewportSize({
     width: 1800,
     height: 1400,
   });
-  await loginAsAdmin(page);
+  await loginAsAdmin(page, request);
   await page
     .getByRole('link', { name: 'Resource Policy', exact: true })
     .click();

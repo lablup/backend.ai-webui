@@ -32,6 +32,7 @@ import {
   BAIDomainSelect,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useBAILogger,
@@ -587,7 +588,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('credential.Domain')}
             rules={[{ required: true }]}
           >
-            <BAIDomainSelect />
+            <BAIDomainSelect
+              onChange={() => {
+                formRef.current?.setFieldValue('group_ids', []);
+              }}
+            />
           </Form.Item>
           <Suspense
             fallback={
@@ -657,26 +662,41 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
           </Form.Item>
+
           <Form.Item
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
+            rules={[
+              {
+                type: 'number',
+                min: 1,
+                message: t('credential.validation.PleaseEnterPositiveInteger'),
+              },
+            ]}
           >
             <InputNumber
               style={{ width: '100%' }}
               max={SIGNED_32BIT_MAX_INT}
-              min={0}
+              min={1}
             />
           </Form.Item>
           <Form.Item
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
+            rules={[
+              {
+                type: 'number',
+                min: 1,
+                message: t('credential.validation.PleaseEnterPositiveInteger'),
+              },
+            ]}
           >
             <InputNumber
               style={{ width: '100%' }}
               max={SIGNED_32BIT_MAX_INT}
-              min={0}
+              min={1}
             />
           </Form.Item>
           <Form.Item
@@ -689,14 +709,17 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   if (
                     _.isEmpty(values) ||
                     _.every(values, (v) => {
-                      return _.toNumber(v) <= SIGNED_32BIT_MAX_INT;
+                      const num = _.toNumber(v);
+                      return num > 0 && num <= SIGNED_32BIT_MAX_INT;
                     })
                   ) {
                     return Promise.resolve();
                   } else {
                     return Promise.reject(
                       new Error(
-                        t('credential.validation.PleaseEnterUnder2_31'),
+                        t(
+                          'credential.validation.PleaseEnterPositiveAndUnder2_31',
+                        ),
                       ),
                     );
                   }
@@ -737,7 +760,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               }),
             ]}
           >
-            <Select
+            <BAISelect
               mode="tags"
               tokenSeparators={[',', ' ']}
               open={false}

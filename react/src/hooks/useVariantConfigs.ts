@@ -14,13 +14,11 @@ export const useRuntimeEnvVarConfigs = (): Record<
 
   return {
     vllm: {
-      requiredEnvVars: [
+      optionalEnvVars: [
         {
           variable: 'BACKEND_MODEL_NAME',
           placeholder: t('modelService.VllmModelName'),
         },
-      ],
-      optionalEnvVars: [
         {
           variable: 'VLLM_QUANTIZATION',
           placeholder: t('modelService.VllmQuantization'),
@@ -40,13 +38,11 @@ export const useRuntimeEnvVarConfigs = (): Record<
       ],
     },
     sglang: {
-      requiredEnvVars: [
+      optionalEnvVars: [
         {
           variable: 'BACKEND_MODEL_NAME',
           placeholder: t('modelService.SglangModelName'),
         },
-      ],
-      optionalEnvVars: [
         {
           variable: 'SGLANG_QUANTIZATION',
           placeholder: t('modelService.SglangQuantization'),
@@ -66,13 +62,12 @@ export const useRuntimeEnvVarConfigs = (): Record<
       ],
     },
     nim: {
-      requiredEnvVars: [
+      optionalEnvVars: [
         {
           variable: 'NGC_API_KEY',
           placeholder: t('modelService.NimApiKey'),
         },
       ],
-      optionalEnvVars: [],
     },
   };
 };

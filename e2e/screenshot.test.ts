@@ -29,8 +29,8 @@ const routes = [
 test.describe.configure({ mode: 'parallel' });
 test.describe.skip('Screenshot all routes', () => {
   let screenshotPath: string;
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsAdmin(page, request);
     screenshotPath = process.env.SCREENSHOT_PATH
       ? path.resolve(process.env.SCREENSHOT_PATH)
       : path.resolve(__dirname + '/screenshots');

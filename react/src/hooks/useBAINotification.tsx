@@ -24,7 +24,39 @@ const useStyle = createStyles(({ css }) => ({
   `,
 }));
 
-export interface NotificationState
+// Helper type to ensure promise and onChange.resolved have matching types
+type BackgroundTaskConfig<T> = {
+  taskId?: string;
+  percent?: number;
+  status: 'pending' | 'rejected' | 'resolved';
+  onChange?: {
+    pending?:
+      | string
+      | Partial<NotificationState<any>>
+      | ((
+          data: unknown,
+          notification: NotificationStateForOnChange,
+        ) => string | Partial<NotificationState<any>>);
+    resolved?:
+      | string
+      | Partial<NotificationState<any>>
+      | ((
+          data: T,
+          notification: NotificationStateForOnChange,
+        ) => string | Partial<NotificationState<any>>);
+    rejected?:
+      | string
+      | Partial<NotificationState<any>>
+      | ((
+          data: unknown,
+          notification: NotificationStateForOnChange,
+        ) => string | Partial<NotificationState<any>>);
+  };
+  renderDataMessage?: (message?: string) => React.ReactNode;
+  promise?: Promise<T> | null;
+};
+
+export interface NotificationState<T = any>
   extends Omit<ArgsProps, 'placement' | 'key' | 'icon'> {
   key: React.Key;
   created?: string;
@@ -34,36 +66,7 @@ export interface NotificationState
   open?: boolean;
   icon?: 'folder';
   node?: BAINodeNotificationItemFragment$key;
-  backgroundTask?: {
-    taskId?: string;
-    percent?: number;
-    status: 'pending' | 'rejected' | 'resolved';
-    onChange?: {
-      pending?:
-        | string
-        | Partial<NotificationState>
-        | ((
-            data: unknown,
-            notification: NotificationStateForOnChange,
-          ) => string | Partial<NotificationState>);
-      resolved?:
-        | string
-        | Partial<NotificationState>
-        | ((
-            data: unknown,
-            notification: NotificationStateForOnChange,
-          ) => string | Partial<NotificationState>);
-      rejected?:
-        | string
-        | Partial<NotificationState>
-        | ((
-            data: unknown,
-            notification: NotificationStateForOnChange,
-          ) => string | Partial<NotificationState>);
-    };
-    renderDataMessage?: (message?: string) => React.ReactNode;
-    promise?: Promise<unknown> | null;
-  };
+  backgroundTask?: BackgroundTaskConfig<T>;
   extraDescription?: ReactNode | null;
   onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
@@ -333,8 +336,8 @@ export const useSetBAINotification = () => {
    * @param options - Options for the notification.
    */
   const upsertNotification = useCallback(
-    (
-      params: Partial<Omit<NotificationState, 'created'>>,
+    <T = any,>(
+      params: Partial<Omit<NotificationState<T>, 'created'>>,
       options: NotificationOptions = {},
     ) => {
       const { skipDesktopNotification = false } = params;
@@ -347,7 +350,7 @@ export const useSetBAINotification = () => {
           : -1;
         const existingNotification =
           existingIndex > -1 ? prevNotifications[existingIndex] : undefined;
-        let newNotification: NotificationState = _.merge(
+        let newNotification: NotificationState<T> = _.merge(
           {}, // start with empty object
           existingNotification,
           params,
@@ -355,7 +358,7 @@ export const useSetBAINotification = () => {
             key: params.key || uuidv4(),
             created: existingNotification?.created ?? new Date().toISOString(),
           },
-        );
+        ) as NotificationState<T>;
 
         if (!skipOverrideByStatus) {
           const overrideData = generateOverrideByStatus(newNotification);
@@ -499,8 +502,8 @@ export const useSetBAINotification = () => {
   };
 };
 
-function generateOverrideByStatus(
-  notification?: NotificationState,
+function generateOverrideByStatus<T = any>(
+  notification?: NotificationState<T>,
   dataOrError?: any,
 ) {
   const currentHandler =

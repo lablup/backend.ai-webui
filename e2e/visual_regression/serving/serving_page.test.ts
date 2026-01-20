@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Serving page Visual Regression Test', () => {
   test.describe('Serving page', () => {
-    test.beforeEach(async ({ page }) => {
-      await loginAsVisualRegressionUser2(page);
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsVisualRegressionUser2(page, request);
       await page.getByRole('link', { name: 'Serving' }).click();
       await page.getByText('Active', { exact: true }).waitFor();
     });
@@ -67,8 +67,8 @@ test.describe('Serving page Visual Regression Test', () => {
   });
 
   test.describe('Routing Info page', () => {
-    test.beforeEach(async ({ page }) => {
-      await loginAsVisualRegressionUser2(page);
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsVisualRegressionUser2(page, request);
       await page.getByRole('link', { name: 'Serving' }).click();
       await page.getByText('Active', { exact: true }).waitFor();
       await page.getByRole('link', { name: 'service_test2' }).click();

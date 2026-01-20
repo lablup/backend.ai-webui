@@ -2,6 +2,7 @@ import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
+import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
@@ -12,9 +13,11 @@ import {
   BAILink,
   BAIModal,
   BAIModalProps,
+  BAIUnmountAfterClose,
   toGlobalId,
   useFetchKey,
   useInterval,
+  VFolderFile,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -60,10 +63,13 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { xl } = Grid.useBreakpoint();
   const { styles } = useStyles();
+
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -108,6 +114,10 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { upsertNotification, closeNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deletingFilePaths, setDeletingFilePaths] = useState<Array<string>>([]);
+  const [editingFile, setEditingFile] = useState<{
+    file: VFolderFile;
+    currentPath: string;
+  } | null>(null);
   const { uploadStatus, uploadFiles } = useFileUploadManager(
     vfolder_node?.id,
     vfolder_node?.name || undefined,
@@ -197,6 +207,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}
       enableWrite={hasWriteContentPermission}
+      enableEdit={hasWriteContentPermission}
       tableProps={{
         scroll: xl
           ? { x: 'max-content' }
@@ -206,6 +217,9 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
         paddingBottom: xl ? token.paddingLG : 0,
       }}
       fileDropContainerRef={bodyRef}
+      onClickEditFile={(file, currentPath) => {
+        setEditingFile({ file, currentPath });
+      }}
     />
   ) : null;
 
@@ -305,6 +319,21 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
           </BAIFlex>
         )}
       </Suspense>
+      <BAIUnmountAfterClose>
+        <VFolderTextFileEditorModal
+          open={!!editingFile}
+          targetVFolderId={vfolderID}
+          currentPath={editingFile?.currentPath || '.'}
+          fileInfo={editingFile?.file || null}
+          uploadFiles={uploadFiles}
+          onRequestClose={(success) => {
+            if (success) {
+              fileExplorerRef.current?.refetch();
+            }
+            setEditingFile(null);
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIModal>
   );
 };

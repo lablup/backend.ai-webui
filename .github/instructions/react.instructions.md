@@ -11,7 +11,7 @@ These instructions apply to React components in the `/react` directory.
 ### 'use memo' Directive (Recommended)
 
 - This project uses the new **React Compiler**.
-- We actively use React directives such as `use memo` and `use client` at the top of files or components.
+- We actively use React directives such as `use memo` and `use client` at the top components (NOT files).
 - `use memo` is **intentional and valid** in this codebase.
 - Even if tooling or TypeScript/ESLint shows something like:
   - `Unknown directive: 'use memo'.`

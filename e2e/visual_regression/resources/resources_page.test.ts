@@ -1,12 +1,12 @@
 import { loginAsVisualRegressionAdmin } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   await page.setViewportSize({
     width: 2000,
     height: 1200,
   });
-  await loginAsVisualRegressionAdmin(page);
+  await loginAsVisualRegressionAdmin(page, request);
   await page.getByRole('link', { name: 'Resources', exact: true }).click();
   await page.waitForLoadState('networkidle');
 });

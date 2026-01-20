@@ -6,6 +6,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import PurgeUsersModal from './PurgeUsersModal';
+import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -76,6 +77,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
   const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
   const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
     useToggle(false);
+  const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
+    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -128,6 +131,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               email @required(action: THROW)
               ...BAIUserNodesFragment
               ...PurgeUsersModalFragment
+              ...UpdateUsersModalFragment
             }
           }
         }
@@ -206,7 +210,19 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                     status: isActive ? 'inactive' : 'active',
                   },
                 },
-                onCompleted: () => {
+                onCompleted: (res, errors) => {
+                  const errorMessage = errors?.[0]?.message;
+                  const notOkMessage =
+                    res?.modify_user?.ok === false
+                      ? res.modify_user.msg
+                      : undefined;
+                  if (res.modify_user?.ok === false || errors?.[0]) {
+                    message.error(
+                      notOkMessage || errorMessage || t('error.UnknownError'),
+                    );
+                    logger.error(res.modify_user?.msg, errorMessage);
+                    return;
+                  }
                   message.success(t('credential.StatusUpdatedSuccessfully'));
                   updateFetchKey();
                 },
@@ -359,6 +375,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 style={{
                   backgroundColor: token.colorInfoBg,
                 }}
+                onClick={toggleUpdateUsersModal}
               />
               {queryParams.status === 'inactive' && (
                 <BAIButton
@@ -473,6 +490,20 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             togglePurgeUsersModal();
           }}
           usersFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UpdateUsersModal
+          open={openUpdateUsersModal}
+          onOk={() => {
+            toggleUpdateUsersModal();
+            setSelectedUserList([]);
+            updateFetchKey();
+          }}
+          onCancel={() => {
+            toggleUpdateUsersModal();
+          }}
+          userFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>

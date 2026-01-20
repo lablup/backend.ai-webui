@@ -55,6 +55,7 @@ export interface BAIFileExplorerProps {
   enableDownload?: boolean;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  enableEdit?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
   ref?: React.Ref<BAIFileExplorerRef>;
   onDeleteFilesInBackground?: (
@@ -64,6 +65,7 @@ export interface BAIFileExplorerProps {
   ) => void;
   // FIXME: need to delete when `delete-file-async` API returns deleting file paths
   deletingFilePaths?: Array<string>;
+  onClickEditFile?: (file: VFolderFile, currentPath: string) => void;
 }
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
@@ -75,11 +77,15 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  enableEdit = false,
   onDeleteFilesInBackground,
   deletingFilePaths,
+  onClickEditFile,
   style,
   ref,
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -214,8 +220,10 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
+              onClickEdit={() => onClickEditFile?.(record, currentPath)}
               enableDownload={enableDownload}
               enableDelete={enableDelete}
+              enableEdit={enableEdit}
               deleteButtonProps={{ loading: isPendingDelete }}
             />
           </Suspense>

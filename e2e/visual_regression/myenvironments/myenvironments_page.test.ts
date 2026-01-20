@@ -2,12 +2,12 @@ import { loginAsVisualRegressionUser2 } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
 test.describe('Summary page Visual Regression Test', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, request }) => {
     await page.setViewportSize({
       width: 2000,
       height: 1200,
     });
-    await loginAsVisualRegressionUser2(page);
+    await loginAsVisualRegressionUser2(page, request);
     await page.getByRole('link', { name: 'My Environments' }).click();
     await page.waitForLoadState('networkidle');
   });

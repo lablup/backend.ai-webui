@@ -1,20 +1,25 @@
+import { filterOutEmpty } from '../../../helper';
+import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { BAITrashBinIcon } from '../../../icons';
-import { BAIButtonProps } from '../../BAIButton';
+import BAIButton, { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
-import { useMutation } from '@tanstack/react-query';
-import { App, Button, theme } from 'antd';
-import { DownloadIcon } from 'lucide-react';
+import { MoreOutlined } from '@ant-design/icons';
+import { App, theme, Dropdown, Tooltip } from 'antd';
+import type { MenuProps } from 'antd';
+import { DownloadIcon, EditIcon } from 'lucide-react';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface FileItemControlsProps {
   selectedItem: VFolderFile;
   onClickDelete: () => void;
+  onClickEdit?: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
+  enableEdit?: boolean;
   downloadButtonProps?: BAIButtonProps;
   deleteButtonProps?: BAIButtonProps;
 }
@@ -22,18 +27,22 @@ interface FileItemControlsProps {
 const FileItemControls: React.FC<FileItemControlsProps> = ({
   selectedItem,
   onClickDelete,
+  onClickEdit,
   enableDownload = false,
   enableDelete = false,
+  enableEdit = false,
   downloadButtonProps,
   deleteButtonProps,
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
 
-  const downloadFileMutation = useMutation({
+  const downloadFileMutation = useTanMutation({
     mutationFn: async ({
       fileName,
       currentFolder,
@@ -73,31 +82,46 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
     },
   });
 
-  const handleDownload = () => {
-    if (!selectedItem || downloadFileMutation.isPending) return;
+  const isDirectory = selectedItem.type === 'DIRECTORY';
 
-    downloadFileMutation.mutate({
-      fileName: `${currentPath}/${selectedItem.name}`,
-      currentFolder: targetVFolderId,
-      archive: selectedItem.type === 'DIRECTORY',
-    });
-  };
+  const dropdownMenuItems: MenuProps['items'] = filterOutEmpty([
+    {
+      key: 'fileEdit',
+      icon: <EditIcon />,
+      label: isDirectory ? (
+        <Tooltip title={t('comp:FileExplorer.UnsupportedFileFormat')}>
+          <span>{t('comp:FileExplorer.EditFile')}</span>
+        </Tooltip>
+      ) : (
+        t('comp:FileExplorer.EditFile')
+      ),
+      disabled: !enableEdit || isDirectory,
+      onClick: (e) => {
+        e.domEvent.stopPropagation();
+        onClickEdit?.();
+      },
+    },
+  ]);
 
   return (
     <BAIFlex gap="xs">
-      <Button
+      <BAIButton
         type="text"
         size="small"
         icon={<DownloadIcon color={token.colorInfo} />}
-        disabled={!enableDownload || downloadFileMutation.isPending}
-        loading={downloadFileMutation.isPending}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDownload();
+        disabled={!enableDownload}
+        onClick={(e) => e.stopPropagation()}
+        action={async () => {
+          if (!selectedItem) return;
+          await downloadFileMutation.mutateAsync({
+            fileName: `${currentPath}/${selectedItem.name}`,
+            currentFolder: targetVFolderId,
+            archive: isDirectory,
+          });
         }}
         {...downloadButtonProps}
       />
-      <Button
+      <BAIButton
         type="text"
         size="small"
         icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
@@ -108,6 +132,23 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         }}
         {...deleteButtonProps}
       />
+      <Dropdown
+        menu={{
+          items: dropdownMenuItems,
+        }}
+        trigger={['click']}
+      >
+        <BAIButton
+          type="text"
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          icon={<MoreOutlined />}
+          aria-label={t('comp:FileExplorer.MoreOptions')}
+          style={{ color: token.colorTextSecondary }}
+        />
+      </Dropdown>
     </BAIFlex>
   );
 };

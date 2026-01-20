@@ -1,4 +1,5 @@
 import useControllableState_deprecated from '../hooks/useControllableState';
+import { useThemeMode } from '../hooks/useThemeMode';
 import { loadLanguage, LanguageName } from '@uiw/codemirror-extensions-langs';
 import CodeMirror, {
   ReactCodeMirrorProps,
@@ -23,6 +24,8 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   lineWrapping = false,
   ...CodeMirrorProps
 }) => {
+  const { isDarkMode } = useThemeMode();
+
   const [script, setScript] = useControllableState_deprecated<string>({
     defaultValue: '',
     value,
@@ -32,7 +35,7 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
 
   return (
     <CodeMirror
-      theme={'dark'}
+      theme={isDarkMode ? 'dark' : 'light'}
       extensions={
         lineWrapping ? [EditorView.lineWrapping, ...extensions] : extensions
       }

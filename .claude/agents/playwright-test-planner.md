@@ -100,5 +100,42 @@ application features:
 - Include negative testing scenarios
 - Ensure scenarios are independent and can be run in any order
 
+**Test Design Principles - No Fallback Logic**:
+- **DO NOT** design tests with visibility checks and fallback logic
+- Each step should be direct and deterministic - if an element should be present, it must be present
+- Tests should **fail fast** when expected elements are missing, not silently continue
+- Never design "defensive" tests that try to handle missing UI elements with alternative paths
+
+```markdown
+## ❌ BAD Test Step Design (Fallback Logic)
+1. Check if "Submit" button is visible
+2. If visible, click "Submit" button
+3. If not visible, click "Save" button instead
+
+## ✅ GOOD Test Step Design (Direct)
+1. Click "Submit" button
+```
+
+**Critical: Never Use `networkidle` for Waiting**
+- **`'networkidle'` is DISCOURAGED** by Playwright official documentation
+- From Playwright docs: _"'networkidle' - DISCOURAGED wait until there are no network connections for at least 500 ms. Don't use this method for testing, rely on web assertions to assess readiness instead."_
+- When designing test steps, always plan for waiting on specific UI elements or assertions, not network idle states
+- Tests should wait for:
+  - Specific elements to be visible: "Wait for dashboard header to appear"
+  - Specific text to be present: "Verify 'Welcome' message is displayed"
+  - URL changes: "Wait for URL to change to /dashboard"
+
+```markdown
+## ❌ BAD Test Step Design (networkidle)
+1. Navigate to dashboard page
+2. Wait for network to be idle
+3. Click on settings button
+
+## ✅ GOOD Test Step Design (element-based waiting)
+1. Navigate to dashboard page
+2. Verify dashboard header is visible
+3. Click on settings button
+```
+
 **Output Format**: Always save the complete test plan as a markdown file with clear headings, numbered steps, and
 professional formatting suitable for sharing with development and QA teams.

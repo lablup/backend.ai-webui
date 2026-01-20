@@ -2,6 +2,7 @@ import SourceCodeView from '../SourceCodeView';
 import { Alert, Descriptions } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { SFTPConnectionInfoModalFragment$key } from 'src/__generated__/SFTPConnectionInfoModalFragment.graphql';
@@ -28,10 +29,14 @@ type DirectAccessInfo = {
 
 interface SFTPConnectionInfoModalProps extends BAIModalProps {
   sessionFrgmt: SFTPConnectionInfoModalFragment$key;
+  host?: string;
+  port?: number;
 }
 
 const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
   sessionFrgmt,
+  host,
+  port,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -58,6 +63,7 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           public_host: res.public_host.replace(/^https?:\/\//, ''),
         }));
     },
+    enabled: _.isEmpty(host) || _.isEmpty(port),
   });
 
   const readAndDownloadSSHKey = async () => {
@@ -78,9 +84,13 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
     element.click();
   };
 
+  const displayHost = host || directAccessInfo?.public_host;
+  const displayPorts = port || directAccessInfo?.sshd_ports.join(', ');
+  const firstSshdPort = port || directAccessInfo?.sshd_ports[0];
+
   return (
     <BAIModal
-      width={'50%'}
+      width={800}
       title={t('session.SFTPConnection')}
       {...modalProps}
       okText={t('session.appLauncher.DownloadSSHKey')}
@@ -110,10 +120,10 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
         >
           <Descriptions.Item label={t('session.User')}>work</Descriptions.Item>
           <Descriptions.Item label={t('session.Host')}>
-            {directAccessInfo?.public_host}
+            {displayHost}
           </Descriptions.Item>
           <Descriptions.Item label={t('session.Port')}>
-            {directAccessInfo?.sshd_ports.join(', ')}
+            {displayPorts}
           </Descriptions.Item>
         </Descriptions>
 
@@ -122,10 +132,10 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
             <BAIFlex direction="column" gap="xs" style={{ width: '100%' }}>
               <SourceCodeView
                 language={'shell'}
-              >{`sftp -i ./id_container -P ${directAccessInfo?.sshd_ports[0]} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${directAccessInfo?.public_host}`}</SourceCodeView>
+              >{`sftp -i ./id_container -P ${firstSshdPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${displayHost}`}</SourceCodeView>
               <SourceCodeView
                 language={'shell'}
-              >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${directAccessInfo?.sshd_ports[0]} -rp /path/to/source work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ?? ''}`}</SourceCodeView>
+              >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${firstSshdPort} -rp /path/to/source work@${displayHost}:~/${session?.vfolder_mounts?.[0] ?? ''}`}</SourceCodeView>
               <SourceCodeView
                 language={'shell'}
               >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${directAccessInfo?.sshd_ports[0]}" /path/to/source/ work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ? `${session?.vfolder_mounts?.[0]}/` : ''}`}</SourceCodeView>

@@ -11,10 +11,10 @@ const PASSWORD = 'testing@123';
 const NEW_PASSWORD = 'new-password@123';
 
 test.describe('Create user', () => {
-  test.afterEach(async ({ page }, testInfo) => {
+  test.afterEach(async ({ page, request }, testInfo) => {
     // check if the test failed because the created user is already exist
     if (['failed', 'timedOut'].includes(testInfo.status ?? '')) {
-      await loginAsAdmin(page);
+      await loginAsAdmin(page, request);
       await page.getByRole('menuitem', { name: 'Users' }).click();
       await page
         .locator('vaadin-grid-cell-content')
@@ -45,8 +45,11 @@ test.describe('Create user', () => {
       ).not.toBeVisible();
     }
   });
-  test.skip('admin should be able to create a new user', async ({ page }) => {
-    await loginAsAdmin(page);
+  test.skip('admin should be able to create a new user', async ({
+    page,
+    request,
+  }) => {
+    await loginAsAdmin(page, request);
     await page.getByRole('menuitem', { name: 'Users' }).click();
     await page.getByRole('button', { name: 'Create User' }).click();
     // Create a User
@@ -68,13 +71,16 @@ test.describe('Create user', () => {
       .click();
     //Login as the created user
     await logout(page);
-    await loginAsCreatedAccount(page, EMAIL, PASSWORD);
+    await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
   });
 });
 
 test.describe('Delete user', () => {
-  test.skip('admin should be able to delete a user', async ({ page }) => {
-    await loginAsAdmin(page);
+  test.skip('admin should be able to delete a user', async ({
+    page,
+    request,
+  }) => {
+    await loginAsAdmin(page, request);
     await page.getByRole('menuitem', { name: 'Users' }).click();
     await page
       .locator('#active-user-list vaadin-grid-cell-content')
@@ -106,9 +112,12 @@ test.describe('Delete user', () => {
 });
 
 test.describe('Update user', () => {
-  test.skip('admin should be able to update a user', async ({ page }) => {
+  test.skip('admin should be able to update a user', async ({
+    page,
+    request,
+  }) => {
     // undo delete user
-    await loginAsAdmin(page);
+    await loginAsAdmin(page, request);
     await page.getByRole('menuitem', { name: 'Users' }).click();
     await page.getByRole('tab', { name: 'INACTIVE' }).click();
     await page
@@ -163,11 +172,11 @@ test.describe('Update user', () => {
     ).toBeVisible();
     await page.getByRole('button', { name: 'OK' }).click();
     await logout(page);
-    await loginAsCreatedAccount(page, EMAIL, NEW_PASSWORD);
+    await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
     await expect(page).toHaveURL(/.*summary/);
     // Delete the user. Same test as above 'Delete user'
     await logout(page);
-    await loginAsAdmin(page);
+    await loginAsAdmin(page, request);
     await page.getByRole('menuitem', { name: 'Users' }).click();
     await page
       .locator('#active-user-list vaadin-grid-cell-content')

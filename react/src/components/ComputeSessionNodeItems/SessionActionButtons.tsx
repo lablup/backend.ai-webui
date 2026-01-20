@@ -5,6 +5,7 @@ import {
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
@@ -310,7 +311,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 icon={<BAITerminalAppIcon />}
                 onClick={() => {
                   onAction?.('terminal');
-                  appLauncher.runTerminal();
+                  appLauncher.runTerminal({});
                 }}
                 title={
                   isButtonTitleMode
@@ -394,15 +395,17 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 
       <Suspense fallback={null}>
         {isVisible('appLauncher') && (
-          <BAIUnmountAfterClose>
-            <AppLauncherModal
-              sessionFrgmt={session}
-              open={openAppLauncherModal}
-              onRequestClose={() => {
-                setOpenAppLauncherModal(false);
-              }}
-            />
-          </BAIUnmountAfterClose>
+          <ErrorBoundaryWithNullFallback>
+            <BAIUnmountAfterClose>
+              <AppLauncherModal
+                sessionFrgmt={session}
+                open={openAppLauncherModal}
+                onRequestClose={() => {
+                  setOpenAppLauncherModal(false);
+                }}
+              />
+            </BAIUnmountAfterClose>
+          </ErrorBoundaryWithNullFallback>
         )}
         {isVisible('logs') && (
           <BAIUnmountAfterClose>

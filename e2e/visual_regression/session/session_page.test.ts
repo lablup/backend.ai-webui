@@ -1,9 +1,9 @@
 import { loginAsVisualRegressionUser2 } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   // login to visual regression server
-  await loginAsVisualRegressionUser2(page);
+  await loginAsVisualRegressionUser2(page, request);
   await page.waitForLoadState('networkidle');
   await page.setViewportSize({
     width: 1920,
