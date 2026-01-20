@@ -543,12 +543,13 @@ type BackendAIConfig = {
   endpoint: string;
   _endpointHost: string;
   accessKey: string;
+  secretKey: string;
   _secretKey: string;
   _userId: string;
   _password: string;
   _proxyURL: string;
   _proxyToken: string;
-  _connectionMode: string;
+  connectionMode: string;
   _session_id: string;
   domainName: string;
   default_session_environment: string;

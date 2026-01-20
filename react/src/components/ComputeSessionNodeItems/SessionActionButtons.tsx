@@ -310,7 +310,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 icon={<BAITerminalAppIcon />}
                 onClick={() => {
                   onAction?.('terminal');
-                  appLauncher.runTerminal();
+                  appLauncher.runTerminal({});
                 }}
                 title={
                   isButtonTitleMode
