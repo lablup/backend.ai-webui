@@ -70,6 +70,7 @@
     "Threshold": "Threshold"
   },
   "button": {
+    "Action": "Action",
     "Add": "Add",
     "Apply": "Apply",
     "AutoRefresh": "Auto refresh",
@@ -579,7 +580,11 @@
     "CreatedAt": "Created At",
     "CreatedBy": "Created By",
     "CreatorEmail": "Creator Email",
+    "Custom": "Custom",
+    "CustomExpirationDate": "Custom Expiration Date",
+    "CustomExpiredDate": "Custom Expiration Date",
     "DefaultDeploymentStrategy": "Deployment Strategy",
+    "DeleteDeployment": "Delete Deployment",
     "DeploymentAndNetwork": "Deployment & Network",
     "DeploymentDetail": "Deployment Detail",
     "DeploymentInfo": "Deployment Info",
@@ -599,7 +604,7 @@
     "ExpertMode": "Expert Mode",
     "ExpertModeDescription": "Direct configuration based",
     "ExpertModeTooltip": "Expert mode allows direct configuration of all deployment settings",
-    "ExpiredDate": "Expired Date",
+    "ExpirationDate": "Expiration Date",
     "GenerateNewToken": "Generate New Token",
     "GenerateToken": "Generate Token",
     "Hibernate": "Hibernate",
@@ -611,6 +616,7 @@
     "ModeRequired": "Mode selection is required",
     "ModeWarning": "Mode cannot be changed after creation",
     "ModeWarningDescription": "Please choose carefully as this setting is permanent",
+    "ModifyDeployment": "Modify Deployment",
     "Name": "Name",
     "NumberOfDesiredReplicas": "Number of Desired Replicas",
     "Owner": "Owner",
@@ -649,6 +655,7 @@
     "TrafficRatio": "Traffic Ratio",
     "TrafficRatioEditDescription": "Total traffic ratio must equal 100%",
     "TrafficRatioEditWarning": "Editing traffic ratios",
+    "TypeDeploymentNameToDelete": "Type deployment name to delete",
     "URL": "URL",
     "UpdatedAt": "Updated At",
     "Weight": "Weight",
@@ -718,7 +725,6 @@
       "OpenToPublic": "Open to Public",
       "PleaseCompleteForm": "Please complete the form to proceed",
       "PreferredDomainName": "Preferred Domain Name",
-      "PreferredDomainNamePlaceholder": "my-model.example.com",
       "ResetFormConfirm": "Do you want to reset all form values? This action cannot be undone.",
       "ResourceAllocation": "Resource Allocation",
       "ResourceConfig": "Resource Configuration",
@@ -1214,6 +1220,12 @@
     "50chars": "(maximum 50 chars)",
     "512chars": "(maximum 512 chars)",
     "64chars": "(maximum 64 chars)"
+  },
+  "message": {
+    "FailedToDelete": "Failed to delete",
+    "FailedToUpdate": "Failed to update",
+    "SuccessfullyDeleted": "Successfully deleted",
+    "SuccessfullyUpdated": "Successfully updated"
   },
   "modelService": {
     "AFolderWithSimilarNameExists": "A folder with a similar name already exists",
