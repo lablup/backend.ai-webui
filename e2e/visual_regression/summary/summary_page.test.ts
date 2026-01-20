@@ -2,12 +2,12 @@ import { loginAsVisualRegressionAdmin } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
 // Skip this test because this page will be replaced with a NEO design
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
   await page.setViewportSize({
     width: 1500,
     height: 1200,
   });
-  await loginAsVisualRegressionAdmin(page);
+  await loginAsVisualRegressionAdmin(page, request);
   await page.getByRole('link', { name: 'Summary' }).first().click();
   await page.waitForLoadState('networkidle');
 });

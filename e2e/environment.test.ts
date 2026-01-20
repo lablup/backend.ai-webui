@@ -3,8 +3,8 @@ import { findColumnIndex } from './utils/test-util-antd';
 import { expect, test } from '@playwright/test';
 
 test.describe('environment ', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsAdmin(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsAdmin(page, request);
     await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
     await page
       .getByRole('menuitem', { name: 'file-done Environments' })
@@ -22,8 +22,8 @@ test.describe('environment ', () => {
   });
 
   // skip this test because there is no way to uninstall the image in WebUI
-  test.skip('user can install image', async ({ page }) => {
-    await loginAsAdmin(page);
+  test.skip('user can install image', async ({ page, request }) => {
+    await loginAsAdmin(page, request);
     await navigateTo(page, 'environment');
     const imageListTable = page.locator('.ant-table-content');
     await expect(imageListTable).toBeVisible();

@@ -2,16 +2,27 @@ import { FolderCreationModal } from './classes/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 
-export const webuiEndpoint = process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
-export const webServerEndpoint = process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
+export const webuiEndpoint =
+  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
+export const webServerEndpoint =
+  process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
 
 export async function login(
   page: Page,
+  request: APIRequestContext,
   username: string,
   password: string,
   endpoint: string,
 ) {
+  // Modify config.toml to enable session-based login with manual endpoint input
+  await modifyConfigToml(page, request, {
+    general: {
+      connectionMode: 'SESSION',
+      apiEndpoint: '',
+    },
+  });
+
   await page.goto(webuiEndpoint);
   await page.getByLabel('Email or Username').fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
@@ -43,41 +54,49 @@ export const userInfo = {
   },
 };
 
-export async function loginAsAdmin(page: Page) {
+export async function loginAsAdmin(page: Page, request: APIRequestContext) {
   await login(
     page,
+    request,
     userInfo.admin.email,
     userInfo.admin.password,
     webServerEndpoint,
   );
 }
-export async function loginAsDomainAdmin(page: Page) {
+export async function loginAsDomainAdmin(
+  page: Page,
+  request: APIRequestContext,
+) {
   await login(
     page,
+    request,
     userInfo.domainAdmin.email,
     userInfo.domainAdmin.password,
     webServerEndpoint,
   );
 }
-export async function loginAsUser(page: Page) {
+export async function loginAsUser(page: Page, request: APIRequestContext) {
   await login(
     page,
+    request,
     userInfo.user.email,
     userInfo.user.password,
     webServerEndpoint,
   );
 }
-export async function loginAsUser2(page: Page) {
+export async function loginAsUser2(page: Page, request: APIRequestContext) {
   await login(
     page,
+    request,
     userInfo.user2.email,
     userInfo.user2.password,
     webServerEndpoint,
   );
 }
-export async function loginAsMonitor(page: Page) {
+export async function loginAsMonitor(page: Page, request: APIRequestContext) {
   await login(
     page,
+    request,
     userInfo.monitor.email,
     userInfo.monitor.password,
     webServerEndpoint,
@@ -85,24 +104,33 @@ export async function loginAsMonitor(page: Page) {
 }
 export async function loginAsCreatedAccount(
   page: Page,
+  request: APIRequestContext,
   email: string,
   password: string,
 ) {
-  await login(page, email, password, webServerEndpoint);
+  await login(page, request, email, password, webServerEndpoint);
 }
 
-export async function loginAsVisualRegressionAdmin(page: Page) {
+export async function loginAsVisualRegressionAdmin(
+  page: Page,
+  request: APIRequestContext,
+) {
   await login(
     page,
+    request,
     userInfo.admin.email,
     userInfo.admin.password,
     visualRegressionWebserverEndpoint,
   );
 }
 
-export async function loginAsVisualRegressionUser2(page: Page) {
+export async function loginAsVisualRegressionUser2(
+  page: Page,
+  request: APIRequestContext,
+) {
   await login(
     page,
+    request,
     userInfo.user2.email,
     userInfo.user2.password,
     visualRegressionWebserverEndpoint,

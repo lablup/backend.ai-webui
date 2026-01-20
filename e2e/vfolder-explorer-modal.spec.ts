@@ -26,8 +26,8 @@ const openFolderExplorer = async (
 };
 
 test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsUser(page, request);
     await navigateTo(page, 'data');
   });
 
@@ -127,27 +127,27 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 test.describe('FolderExplorerModal - User Modal Interaction', () => {
   const testFolderName = 'e2e-test-folder-layout-' + new Date().getTime();
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeAll(async ({ browser, request }) => {
     // Create the folder once before all tests in this serial group
     const context = await browser.newContext();
     const page = await context.newPage();
-    await loginAsUser(page);
+    await loginAsUser(page, request);
     await createVFolderAndVerify(page, testFolderName);
     await context.close();
   });
 
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsUser(page, request);
     // Always navigate to data page to ensure clean state
     await navigateTo(page, 'data');
   });
 
-  test.afterAll(async ({ browser }) => {
+  test.afterAll(async ({ browser, request }) => {
     // Create a new context and page for cleanup
     const context = await browser.newContext();
     const page = await context.newPage();
 
-    await loginAsUser(page);
+    await loginAsUser(page, request);
 
     // Clean up folder created during tests
     try {

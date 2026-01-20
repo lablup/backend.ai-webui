@@ -13,8 +13,8 @@ import {
 import { test, expect } from '@playwright/test';
 
 test.describe('VFolder ', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsUser(page, request);
   });
   const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
   test.describe('vFolder Creation', () => {
@@ -131,10 +131,10 @@ test.describe('VFolder sharing', () => {
     await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
   });
 
-  test('User can share vFolder', async ({ page, browser }) => {
+  test('User can share vFolder', async ({ page, browser, request }) => {
     await shareVFolderAndVerify(page, sharingFolderName, userInfo.user2.email);
     const user2_page = await browser.newPage();
-    await loginAsUser2(user2_page);
+    await loginAsUser2(user2_page, request);
     await acceptAllInvitationAndVerifySpecificFolder(
       user2_page,
       sharingFolderName,

@@ -208,7 +208,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               dataIndex: ['environments', 'version'],
               render: (_version, record) => {
                 const imageStr =
-                  record.environments.version || record.environments.manual;
+                  record.environments?.version || record.environments?.manual;
                 return (
                   imageStr && (
                     <Tooltip title={imageStr} placement="right">

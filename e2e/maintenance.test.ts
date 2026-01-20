@@ -5,8 +5,8 @@ import {
 } from './utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-  await loginAsAdmin(page);
+test.beforeEach(async ({ page, request }) => {
+  await loginAsAdmin(page, request);
   await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
   await page.getByRole('menuitem', { name: 'tool Maintenance' }).click();
   await page.waitForLoadState('networkidle');

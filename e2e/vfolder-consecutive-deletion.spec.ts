@@ -13,8 +13,8 @@ test.describe.serial('VFolder Consecutive Deletion - User Operations', () => {
   const folder2Name = 'e2e-test-consecutive-2-' + new Date().getTime();
   const folder3Name = 'e2e-test-consecutive-3-' + new Date().getTime();
 
-  test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+  test.beforeEach(async ({ page, request }) => {
+    await loginAsUser(page, request);
   });
 
   test('User can create and permanently delete multiple VFolders consecutively', async ({
