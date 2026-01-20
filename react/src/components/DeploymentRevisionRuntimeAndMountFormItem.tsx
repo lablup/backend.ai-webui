@@ -4,7 +4,7 @@ import EnvVarFormList from './EnvVarFormList';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { MinusOutlined } from '@ant-design/icons';
-import { Form, Input, Select, theme } from 'antd';
+import { Form, FormItemProps, Input, Select, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
@@ -12,11 +12,12 @@ import { useTranslation } from 'react-i18next';
 
 interface DeploymentRevisionRuntimeAndMountFormItemProps {
   initialVfolderId?: string;
+  formItemProps?: FormItemProps;
 }
 
 const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
   DeploymentRevisionRuntimeAndMountFormItemProps
-> = ({ initialVfolderId }) => {
+> = ({ initialVfolderId, formItemProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -37,7 +38,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
   return (
     <>
       <Form.Item
-        name={['initialRevision', 'modelRuntimeConfig', 'runtimeVariant']}
+        name={[formItemProps?.name, 'modelRuntimeConfig', 'runtimeVariant']}
         required
         label={t('deployment.launcher.RuntimeVariant')}
       >
@@ -53,7 +54,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
         />
       </Form.Item>
       <Form.Item
-        name={['initialRevision', 'modelMountConfig', 'vfolderId']}
+        name={[formItemProps?.name, 'modelMountConfig', 'vfolderId']}
         label={t('deployment.launcher.ModelStorageToMount')}
         rules={[
           {
@@ -71,13 +72,13 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
       </Form.Item>
       <Form.Item
         dependencies={[
-          ['initialRevision', 'modelRuntimeConfig', 'runtimeVariant'],
+          [formItemProps?.name, 'modelRuntimeConfig', 'runtimeVariant'],
         ]}
         noStyle
       >
         {({ getFieldValue }) =>
           getFieldValue([
-            'initialRevision',
+            formItemProps?.name,
             'modelRuntimeConfig',
             'runtimeVariant',
           ]) === 'custom' && (
@@ -89,7 +90,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
             >
               <Form.Item
                 name={[
-                  'initialRevision',
+                  formItemProps?.name,
                   'modelMountConfig',
                   'mountDestination',
                 ]}
@@ -107,7 +108,11 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
                 rotate={290}
               />
               <Form.Item
-                name={['initialRevision', 'modelMountConfig', 'definitionPath']}
+                name={[
+                  formItemProps?.name,
+                  'modelMountConfig',
+                  'definitionPath',
+                ]}
                 label={t('deployment.launcher.DefinitionPath')}
                 style={{ width: '50%' }}
                 labelCol={{ style: { flex: 1 } }}
@@ -120,7 +125,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
       </Form.Item>
       <Form.Item
         noStyle
-        dependencies={[['initialRevision', 'modelMountConfig', 'vfolderId']]}
+        dependencies={[[formItemProps?.name, 'modelMountConfig', 'vfolderId']]}
       >
         {({ getFieldValue }) => {
           return (
@@ -130,7 +135,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
               rowFilter={(vf) =>
                 vf.id !==
                   getFieldValue([
-                    'initialRevision',
+                    formItemProps?.name,
                     'modelMountConfig',
                     'vfolderId',
                   ]) &&
@@ -152,7 +157,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
         {/* TODO: Add auto-complete and validation according to variable types. */}
         <EnvVarFormList
           name={[
-            'initialRevision',
+            formItemProps?.name,
             'modelRuntimeConfig',
             'inferenceRuntimeConfig',
           ]}
@@ -166,7 +171,7 @@ const DeploymentRevisionRuntimeAndMountFormItem: React.FC<
         tooltip={t('deployment.launcher.EnvironmentVariablesHelp')}
       >
         <EnvVarFormList
-          name={['initialRevision', 'modelRuntimeConfig', 'environ']}
+          name={[formItemProps?.name, 'modelRuntimeConfig', 'environ']}
           formItemProps={{
             validateTrigger: ['onChange', 'onBlur'],
           }}
