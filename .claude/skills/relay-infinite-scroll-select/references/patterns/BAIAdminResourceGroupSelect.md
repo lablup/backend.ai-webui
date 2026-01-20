@@ -31,7 +31,7 @@ import TotalFooter from '../TotalFooter';
 import { Skeleton } from 'antd';
 import { GetRef } from 'antd/lib';
 import _ from 'lodash';
-import { useRef } from 'react';
+import { useOptimistic, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePaginationFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
@@ -48,6 +48,9 @@ const BAIAdminResourceGroupSelect = ({
 }: BAIAdminResourceGroupSelectProps) => {
   const { t } = useTranslation();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const [searchStr, setSearchStr] = useState<string>();
+  const [optimisticSearchStr, setOptimisticSearchStr] =
+    useOptimistic(searchStr);
 
   const { data, loadNext, isLoadingNext, refetch, hasNext } =
     usePaginationFragment<
@@ -86,14 +89,24 @@ const BAIAdminResourceGroupSelect = ({
     <BAISelect
       ref={selectRef}
       placeholder={t('comp:BAIAdminResourceGroupSelect.PlaceHolder')}
-      showSearch={{
-        autoClearSearchValue: true,
-        filterOption: false,
-      }}
+      showSearch={
+        selectPropsWithoutLoading.showSearch === false
+          ? false
+          : {
+              searchValue: optimisticSearchStr,
+              autoClearSearchValue: true,
+              filterOption: false,
+              ...(_.isObject(selectPropsWithoutLoading.showSearch)
+                ? _.omit(selectPropsWithoutLoading.showSearch, ['searchValue'])
+                : {}),
+            }
+      }
       loading={loading}
       options={selectOptions}
       {...selectPropsWithoutLoading}
       searchAction={async (value) => {
+        setOptimisticSearchStr(value);
+        setSearchStr(value);
         selectRef.current?.scrollTo(0);
         refetch({
           filter: value
@@ -171,8 +184,35 @@ const selectOptions = _.map(data.allScalingGroupsV2.edges, (item) => ({
 Simple mapping from edges to options. **No labelInValue needed** since value and label are the same.
 
 ### 3. Search Implementation
+
+**State Management:**
+```typescript
+const [searchStr, setSearchStr] = useState<string>();
+const [optimisticSearchStr, setOptimisticSearchStr] =
+  useOptimistic(searchStr);
+```
+
+**showSearch Configuration:**
+```typescript
+showSearch={
+  selectPropsWithoutLoading.showSearch === false
+    ? false
+    : {
+        searchValue: optimisticSearchStr,
+        autoClearSearchValue: true,
+        filterOption: false,
+        ...(_.isObject(selectPropsWithoutLoading.showSearch)
+          ? _.omit(selectPropsWithoutLoading.showSearch, ['searchValue'])
+          : {}),
+      }
+}
+```
+
+**searchAction:**
 ```typescript
 searchAction={async (value) => {
+  setOptimisticSearchStr(value);  // Immediate UI feedback
+  setSearchStr(value);             // Actual state for query
   selectRef.current?.scrollTo(0);  // Reset scroll position
   refetch({
     filter: value
@@ -187,9 +227,13 @@ searchAction={async (value) => {
 }}
 ```
 
-- Scroll to top on search for better UX
-- Use `refetch` to reload data with new filter
-- Filter structure matches GraphQL schema
+**Key Points:**
+- ✅ `useOptimistic` for immediate search input feedback
+- ✅ Conditional `showSearch` allows disabling with `showSearch={false}`
+- ✅ Merge user-provided `showSearch` config (except `searchValue`)
+- ✅ Scroll to top on search for better UX
+- ✅ Use `refetch` to reload data with new filter
+- ✅ Filter structure matches GraphQL schema
 
 ### 4. Infinite Scroll
 ```typescript

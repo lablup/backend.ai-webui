@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Chọn người dùng"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"
   },

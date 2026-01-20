@@ -75,3 +75,9 @@ export type {
   VFolderNode,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIUserSelect } from './BAIUserSelect';
+export type {
+  BAIUserSelectProps,
+  UserNode,
+  BAIUserSelectRef,
+} from './BAIUserSelect';

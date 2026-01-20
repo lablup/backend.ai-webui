@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Valitse käyttäjä"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
   },
