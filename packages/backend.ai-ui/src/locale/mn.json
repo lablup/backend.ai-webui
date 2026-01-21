@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} сонгогдсон",
+    "Optional": "Заавал биш",
     "TotalItems": "Нийт {{total}} зүйлүүд",
     "button": {
       "Cancel": "Цуаах",

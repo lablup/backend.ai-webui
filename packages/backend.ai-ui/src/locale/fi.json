@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} valittu",
+    "Optional": "Valinnainen",
     "TotalItems": "Yhteensä {{total}} kohteet",
     "button": {
       "Cancel": "Peruuttaa",

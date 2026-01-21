@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}}개 선택됨",
+    "Optional": "선택",
     "TotalItems": "총 {{total}} 항목",
     "button": {
       "Cancel": "취소",

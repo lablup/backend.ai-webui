@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} เลือก",
+    "Optional": "ไม่บังคับ",
     "TotalItems": "รวม {{total}} รายการ",
     "button": {
       "Cancel": "ยกเลิก",

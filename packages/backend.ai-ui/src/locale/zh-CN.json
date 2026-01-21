@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}}选择",
+    "Optional": "可选",
     "TotalItems": "总计{{total}}项目",
     "button": {
       "Cancel": "取消",

@@ -251,6 +251,7 @@
   },
   "general": {
     "NSelected": "{{count}} selecionado",
+    "Optional": "Opcional",
     "TotalItems": "Total {{total}} itens",
     "button": {
       "Cancel": "Cancelar",

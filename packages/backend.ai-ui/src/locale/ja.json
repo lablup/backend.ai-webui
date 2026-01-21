@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}}選択",
+    "Optional": "任意",
     "TotalItems": "Total {{total}}アイテム",
     "button": {
       "Cancel": "キャンセル",

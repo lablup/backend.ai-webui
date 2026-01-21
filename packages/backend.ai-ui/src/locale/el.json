@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} Επιλεγμένη",
+    "Optional": "Προαιρετικό",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
     "button": {
       "Cancel": "Ματαίωση",

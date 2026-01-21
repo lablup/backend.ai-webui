@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} dipilih",
+    "Optional": "Pilihan",
     "TotalItems": "Jumlah {{total}} item",
     "button": {
       "Cancel": "Batalkan",

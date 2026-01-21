@@ -247,6 +247,7 @@
   },
   "general": {
     "NSelected": "{{count}} seçildi",
+    "Optional": "İsteğe bağlı",
     "TotalItems": "Total {{total}} öğeleri",
     "button": {
       "Cancel": "İptal etmek",

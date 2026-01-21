@@ -252,6 +252,7 @@
   },
   "general": {
     "NSelected": "{{count}} Đã chọn",
+    "Optional": "Không bắt buộc",
     "TotalItems": "Tổng số {{total}} các mục",
     "button": {
       "Cancel": "Hủy bỏ",
