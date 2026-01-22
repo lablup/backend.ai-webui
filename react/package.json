@@ -85,75 +85,11 @@
     "eject": "react-scripts eject",
     "relay": "relay-compiler",
     "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'pnpm run relay --watch'",
-    "lint": "eslint ./src '../resources/i18n/*.json' '../resources/device_metadata.json' --max-warnings=0",
+    "lint": "eslint ./src --max-warnings=0",
     "format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended",
-      "plugin:react/recommended",
-      "plugin:relay/recommended",
-      "plugin:react-hooks/recommended"
-    ],
-    "plugins": [
-      "relay",
-      "import"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.test.*",
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "no-console": "off"
-        }
-      }
-    ],
-    "rules": {
-      "new-cap": "off",
-      "prefer-promise-reject-errors": "off",
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
-      "import/no-duplicates": "error",
-      "relay/graphql-syntax": "off",
-      "relay/unused-fields": "off",
-      "relay/must-colocate-fragment-spreads": "off",
-      "comma-spacing": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ],
-      "no-restricted-imports": [
-        "error",
-        {
-          "patterns": [
-            "backend.ai-ui/*",
-            "!backend.ai-ui/dist",
-            "@lobehub/fluent-emoji"
-          ],
-          "paths": [
-            {
-              "name": "antd-style",
-              "importNames": [
-                "useThemeMode"
-              ],
-              "message": "Use 'src/hooks/useThemeMode' instead of 'antd-style' for useThemeMode."
-            }
-          ]
-        }
-      ],
-      "no-console": [
-        "warn"
-      ]
-    }
   },
   "browserslist": {
     "production": [
@@ -206,12 +142,11 @@
     "babel-plugin-relay": "^20.1.1",
     "babel-preset-react-app": "^10.1.0",
     "caniuse-lite": "^1.0.30001766",
-    "eslint": "^8.57.1",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint": "^9.18.0",
+    "eslint-config-bai": "workspace:*",
     "eslint-plugin-relay": "^2.0.0",
     "eslint-plugin-storybook": "^0.11.6",
+    "globals": "^16.0.0",
     "html-webpack-plugin": "5.6.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.2.0",
