@@ -836,11 +836,11 @@ class Client {
       // Instead of adding conditional logic in all related components, make it supported starting from version 25.17.0 or later.
       this._features['reservoir'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('25.18.0')) {
-      this._features['admin-resource-group-select'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('25.18.2')) {
       this._features['allow-only-ro-permission-for-model-project-folder'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.1.0')) {
+      this._features['admin-resource-group-select'] = true;
     }
   }
 
