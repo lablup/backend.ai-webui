@@ -29,7 +29,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   // Detect changes in form value to update the isUnlimited state.
   useEffect(() => {
     const fieldValue = form.getFieldValue(name);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     setIsUnlimited(fieldValue === unlimitedValue);
   }, [form, name, unlimitedValue]);
 

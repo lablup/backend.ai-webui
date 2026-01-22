@@ -273,10 +273,9 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setDataSource(orderedOptions);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(columnOptions);
     }
   }, [columnOptions, initialColumnOrder]);

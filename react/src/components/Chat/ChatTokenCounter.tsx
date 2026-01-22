@@ -47,8 +47,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   const lastAssistantTokenCount = useTokenCount(lastAssistantMessageString);
   const tokenPerSecond = useMemo(() => {
     return lastAssistantTokenCount > 0 && startTime
-      ? // eslint-disable-next-line react-hooks/purity
-        lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
+      ? lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
       : 0;
   }, [lastAssistantTokenCount, startTime]);
 
