@@ -156,7 +156,7 @@ export const useSetCurrentProject = () => {
       });
 
       // To sync with baiClient
-      // eslint-disable-next-line react-hooks/immutability
+
       baiClient.current_group = projectName;
       // @ts-ignore
       globalThis.backendaiutils._writeRecentProjectGroup(projectName);
