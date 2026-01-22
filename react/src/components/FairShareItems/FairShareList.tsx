@@ -1,3 +1,4 @@
+import DomainFairShareTable from './DomainFairShareTable';
 import ResourceGroupFairShareTable from './ResourceGroupFairShareTable';
 import { Skeleton, Steps, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -35,6 +36,7 @@ const FairShareList: React.FC = () => {
 
   const [selectedResourceGroup, setSelectedResourceGroup] =
     useState<string>('');
+  const [selectedDomain, setSelectedDomain] = useState<string>('');
 
   const stepItems: Array<StepItem & { key: FairShareStepKey }> = [
     {
@@ -46,6 +48,7 @@ const FairShareList: React.FC = () => {
       onClick: () => {
         setCurrentStep(0);
         setSelectedResourceGroup('');
+        setSelectedDomain('');
       },
     },
     {
@@ -53,7 +56,15 @@ const FairShareList: React.FC = () => {
       title: t('fairShare.Domain'),
       content: !selectedResourceGroup
         ? t('fairShare.step.PleaseSelectResourceGroup')
-        : t('fairShare.step.DomainDescription'),
+        : !selectedDomain
+          ? t('fairShare.step.DomainDescription')
+          : selectedDomain,
+      onClick: () => {
+        if (selectedResourceGroup) {
+          setCurrentStep(1);
+          setSelectedDomain('');
+        }
+      },
     },
     {
       key: 'project',
@@ -87,6 +98,17 @@ const FairShareList: React.FC = () => {
             onClickGroupName={(name) => {
               setSelectedResourceGroup(name);
               setCurrentStep(1);
+            }}
+          />
+        </Suspense>
+      )}
+      {stepItems[currentStep].key === 'domain' && (
+        <Suspense fallback={<Skeleton active />}>
+          <DomainFairShareTable
+            selectedResourceGroupName={selectedResourceGroup || ''}
+            onClickDomainName={(name) => {
+              setSelectedDomain(name);
+              setCurrentStep(2);
             }}
           />
         </Suspense>
