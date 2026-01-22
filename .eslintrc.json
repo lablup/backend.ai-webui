@@ -3,6 +3,9 @@
     "browser": true,
     "es2021": true
   },
+  "ignorePatterns": [
+    "packages/eslint-config-bai/**"
+  ],
   "extends": [
     "eslint:recommended",
     "google",
