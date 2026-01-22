@@ -15,7 +15,7 @@ test.describe.parallel('config.toml', () => {
       // modify config.toml to blocklist some menu items
       const requestConfig = {
         menu: {
-          blocklist: 'start,serving,job',
+          blocklist: 'start,serving,session',
         },
       };
       await modifyConfigToml(page, request, requestConfig);
@@ -33,7 +33,7 @@ test.describe.parallel('config.toml', () => {
       ).toBeHidden();
 
       // check if the pages show 404 content when accessed directly
-      await page.goto(`${webuiEndpoint}/summary`);
+      await page.goto(`${webuiEndpoint}/start`);
       await expect(page.getByAltText('404 Not Found')).toBeVisible();
       await page.goto(`${webuiEndpoint}/serving`);
       await expect(page.getByAltText('404 Not Found')).toBeVisible();

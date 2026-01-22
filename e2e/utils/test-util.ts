@@ -1,6 +1,88 @@
 import { FolderCreationModal } from './classes/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
+import _ from 'lodash';
+
+/**
+ * Custom merge function that handles explicit undefined values.
+ * Unlike lodash merge, this preserves undefined values when explicitly set.
+ *
+ * @param target - The target object to merge into
+ * @param source - The source object to merge from
+ * @returns The merged object
+ *
+ * @example
+ * const target = { a: 1, b: { c: 2, d: 3 } };
+ * const source = { b: { c: undefined, e: 4 } };
+ * mergeWithUndefined(target, source);
+ * // Result: { a: 1, b: { c: undefined, d: 3, e: 4 } }
+ */
+function mergeWithUndefined<T extends object>(target: T, source: object): T {
+  const result = _.cloneDeep(target);
+
+  Object.keys(source).forEach((key) => {
+    const sourceValue = (source as any)[key];
+    const targetValue = (result as any)[key];
+
+    if (sourceValue === undefined) {
+      // Explicitly set undefined
+      (result as any)[key] = undefined;
+    } else if (
+      _.isPlainObject(sourceValue) &&
+      _.isPlainObject(targetValue) &&
+      !Array.isArray(sourceValue)
+    ) {
+      // Recursively merge nested objects
+      (result as any)[key] = mergeWithUndefined(targetValue, sourceValue);
+    } else {
+      // Directly assign other values (including arrays, null, primitives)
+      (result as any)[key] = sourceValue;
+    }
+  });
+
+  return result;
+}
+
+// Theme configuration types based on theme.schema.json
+type ThemeLogoConfig = {
+  src?: string;
+  srcCollapsed?: string;
+  srcDark?: string;
+  srcCollapsedDark?: string;
+  alt?: string;
+  href?: string;
+  size?: {
+    width?: number;
+    height?: number;
+  };
+  sizeCollapsed?: {
+    width?: number;
+    height?: number;
+  };
+};
+
+type ThemeSiderConfig = {
+  theme?: 'dark' | 'light' | 'auto';
+};
+
+type ThemeBrandingConfig = {
+  companyName?: string;
+  brandName?: string;
+};
+
+type AntdThemeConfig = {
+  token?: Record<string, any>;
+  components?: Record<string, any>;
+};
+
+export type ThemeConfig = {
+  $schema?: string;
+  light?: AntdThemeConfig;
+  dark?: AntdThemeConfig;
+  logo?: ThemeLogoConfig;
+  sider?: ThemeSiderConfig;
+  branding?: ThemeBrandingConfig;
+};
 
 export const webuiEndpoint =
   process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
@@ -506,22 +588,120 @@ export async function deleteSession(page: Page, sessionName: string) {
  * e.g. { "environments": { "showNonInstalledImages": "true" } }
  */
 
+// Store the accumulated config modifications in a WeakMap keyed by page
+const configCache = new WeakMap<Page, any>();
+
 export async function modifyConfigToml(
   page: Page,
   request: APIRequestContext,
   configColumn: Record<string, Record<string, any>>,
 ) {
-  const configToml = await (
-    await request.get(`${webuiEndpoint}/config.toml`)
-  ).text();
-  const config = TOML.parse(configToml);
-  Object.assign(config, configColumn);
+  // Get or initialize the cached config for this page
+  let config = configCache.get(page);
 
+  if (!config) {
+    // First time: fetch the original config from the server
+    const configToml = await (
+      await request.get(`${webuiEndpoint}/config.toml`)
+    ).text();
+    config = TOML.parse(configToml);
+  }
+
+  // Deep merge the new configuration into the existing config
+  // Use custom merge that preserves explicit undefined values
+  config = mergeWithUndefined(config, configColumn);
+
+  // Cache the updated config
+  configCache.set(page, config);
+
+  // Clear all existing route handlers for config.toml
+  await page.unroute(`${webuiEndpoint}/config.toml`);
+
+  // Set up the new route handler with the current config
+  // IMPORTANT: Use a closure to capture the current config value
+  const configToServe = config;
   await page.route(`${webuiEndpoint}/config.toml`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'text/plain',
-      body: TOML.stringify(config),
+      body: TOML.stringify(configToServe),
+    });
+  });
+}
+
+/**
+ * Modify specific properties in the webui theme.json file
+ *
+ * @param page - The Playwright page instance
+ * @param request - The API request context
+ * @param themeConfig - The theme configuration object to merge
+ *
+ * @example
+ * // Modify light mode primary color
+ * await modifyThemeJson(page, request, {
+ *   light: {
+ *     token: {
+ *       colorPrimary: '#FF0000',
+ *       colorLink: '#FF0000',
+ *     },
+ *   },
+ * });
+ *
+ * @example
+ * // Remove logo href (set to undefined explicitly)
+ * await modifyThemeJson(page, request, {
+ *   logo: {
+ *     href: undefined,
+ *   },
+ * });
+ *
+ * @example
+ * // Modify branding
+ * await modifyThemeJson(page, request, {
+ *   branding: {
+ *     companyName: 'Test Company',
+ *     brandName: 'Test Brand',
+ *   },
+ * });
+ */
+
+// Store the accumulated theme modifications in a WeakMap keyed by page
+const themeCache = new WeakMap<Page, ThemeConfig>();
+
+export async function modifyThemeJson(
+  page: Page,
+  request: APIRequestContext,
+  themeConfig: ThemeConfig,
+) {
+  // Get or initialize the cached theme for this page
+  let theme = themeCache.get(page);
+
+  if (!theme) {
+    // First time: fetch the original theme from the server
+    const themeJson = await (
+      await request.get(`${webuiEndpoint}/resources/theme.json`)
+    ).text();
+    theme = JSON.parse(themeJson) as ThemeConfig;
+  }
+
+  // Deep merge the new theme configuration into the existing theme
+  // Use custom merge that preserves explicit undefined values
+  theme = mergeWithUndefined(theme, themeConfig);
+
+  // Cache the updated theme
+  themeCache.set(page, theme);
+
+  // Clear all existing route handlers for theme.json
+  await page.unroute(`${webuiEndpoint}/resources/theme.json`);
+
+  // Set up the new route handler with the current theme
+  // IMPORTANT: Use a closure to capture the current theme value
+  const themeToServe = theme;
+  await page.route(`${webuiEndpoint}/resources/theme.json`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(themeToServe),
     });
   });
 }
