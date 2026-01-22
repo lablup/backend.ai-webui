@@ -7,6 +7,14 @@ export const react = [
   reactPlugin.configs.flat["jsx-runtime"],
 
   {
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
+
+  {
     plugins: {
       "react-hooks": reactHooksPlugin,
     },
@@ -32,11 +40,6 @@ export const react = [
 
   {
     files: ["**/*.tsx", "**/*.jsx"],
-    settings: {
-      react: {
-        version: "detect",
-      },
-    },
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
