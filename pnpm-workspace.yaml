@@ -1,6 +1,7 @@
 packages:
   - react
   - packages/backend.ai-ui
+  - packages/eslint-config-bai
 
 ignoredBuiltDependencies:
   - "@vaadin/vaadin-usage-statistics"
