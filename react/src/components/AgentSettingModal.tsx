@@ -42,7 +42,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   const queryRef = useLazyLoadQuery<AgentSettingModalQuery>(
     graphql`
       query AgentSettingModalQuery {
-        ...BAIAdminResourceGroupSelect_scalingGroupsV2Fragment
+        ...BAIAdminResourceGroupSelect_allResourceGroupsFragment
       }
     `,
     {},

@@ -24,7 +24,7 @@ const BAIAdminResourceGroupSelectWithQuery = (
   const queryRef = useLazyLoadQuery<BAIAdminResourceGroupSelectStoriesQuery>(
     graphql`
       query BAIAdminResourceGroupSelectStoriesQuery {
-        ...BAIAdminResourceGroupSelect_scalingGroupsV2Fragment
+        ...BAIAdminResourceGroupSelect_allResourceGroupsFragment
       }
     `,
     {},
