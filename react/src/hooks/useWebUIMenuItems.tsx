@@ -44,6 +44,7 @@ import {
   LinkIcon,
   ExternalLinkIcon,
   Palette,
+  AlignHorizontalDistributeCenter,
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +89,8 @@ export type MenuKeys =
   | 'settings'
   | 'maintenance'
   | 'branding'
-  | 'information';
+  | 'information'
+  | 'fair-share';
 
 // Convert menu key to URL path
 // Most keys map directly to /${key}, with exceptions for backward compatibility
@@ -303,6 +305,15 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent',
+    },
+    {
+      label: (
+        <WebUILink to="/fair-share">{t('webui.menu.FairShare')}</WebUILink>
+      ),
+      icon: (
+        <AlignHorizontalDistributeCenter style={{ color: token.colorInfo }} />
+      ),
+      key: 'fair-share',
     },
     {
       label: <WebUILink to="/project">{t('webui.menu.Project')}</WebUILink>,

@@ -87,8 +87,8 @@ const ReservoirArtifactDetailPage = React.lazy(
 );
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
-
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
+const FairSharePage = React.lazy(() => import('./pages/FairSharePage'));
 
 /**
  * MainLayout children routes - these are the actual page routes
@@ -365,6 +365,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         </Suspense>
       ) : (
         <WebUINavigate to={'/error'} replace />
+      );
+    },
+  },
+  {
+    path: '/fair-share',
+    handle: { labelKey: 'webui.menu.FairShare' },
+    Component: () => {
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <FairSharePage />
+        </Suspense>
       );
     },
   },
