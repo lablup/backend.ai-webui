@@ -1,6 +1,12 @@
 import { useSuspendedBackendaiClient } from '.';
+import { useCurrentUserRole } from './backendai';
 import { useBAISettingUserState } from './useBAISetting';
-import { PluginPage, useWebUIPluginValue } from './useWebUIPluginState';
+import { useCustomThemeConfig } from './useCustomThemeConfig';
+import {
+  PluginPage,
+  useWebUIPluginLoadedValue,
+  useWebUIPluginValue,
+} from './useWebUIPluginState';
 import {
   PlayCircleOutlined,
   DashboardOutlined,
@@ -19,6 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
 import { MenuProps, theme, Typography } from 'antd';
+import { GetProp } from 'antd/lib';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
   BAIEndpointsIcon,
@@ -42,6 +49,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import WebUILink from 'src/components/WebUILink';
+import { ROUTER_STATIC_PATHS, ROUTER_DYNAMIC_PATTERNS } from 'src/routes';
 
 export type MenuGroupName =
   | 'none'
@@ -56,8 +64,9 @@ export type MenuKeys =
   // generalMenu keys
   | 'start'
   | 'dashboard'
-  | 'summary'
-  | 'job'
+  | 'summary' // 'alias to dashboard' for backward compatibility
+  | 'session'
+  | 'job' // 'alias to session' for backward compatibility
   | 'serving'
   | 'model-store'
   | 'ai-agent'
@@ -81,6 +90,15 @@ export type MenuKeys =
   | 'branding'
   | 'information';
 
+// Convert menu key to URL path
+// Most keys map directly to /${key}, with exceptions for backward compatibility
+export const getPathFromMenuKey = (key: MenuKeys): string => {
+  // 'job' is an alias for '/session' (backward compatibility)
+  if (key === 'job') return '/session';
+  if (key === 'summary') return '/dashboard';
+  return `/${key}`;
+};
+
 type MenuItem = {
   label: ReactNode;
   icon: React.ReactNode;
@@ -91,6 +109,7 @@ type MenuItem = {
 interface WebUIGeneralMenuItemType extends MenuItemType {
   group: MenuGroupName;
   key: MenuKeys;
+  labelText: string;
 }
 
 export interface UseWebUIMenuItemsProps {
@@ -102,6 +121,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const { hideGroupName = false } = props || {};
   const plugins = useWebUIPluginValue();
+  const isPluginLoaded = useWebUIPluginLoadedValue();
+  const currentUserRole = useCurrentUserRole();
 
   const location = useLocation();
   const { t } = useTranslation();
@@ -120,91 +141,110 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     defaultValue: false,
   });
 
+  // Helper to create menu item with labelText reused in label
+  const createMenuItem = (
+    to: GetProp<typeof WebUILink, 'to'>,
+    labelText: string,
+    icon: React.ReactNode,
+    key: MenuKeys,
+    group: MenuGroupName,
+  ): WebUIGeneralMenuItemType => ({
+    label: <WebUILink to={to}>{labelText}</WebUILink>,
+    icon,
+    key,
+    group,
+    labelText,
+  });
+
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
-    {
-      label: <WebUILink to="/start">{t('webui.menu.Start')}</WebUILink>,
-      icon: <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
-      key: 'start',
-      group: 'none',
-    },
-    {
-      label: <WebUILink to="/dashboard">{t('webui.menu.Dashboard')}</WebUILink>,
-      icon: <DashboardOutlined style={{ color: token.colorPrimary }} />,
-      key: 'dashboard',
-      group: 'none',
-    },
-    {
-      label: <WebUILink to={'/session'}>{t('webui.menu.Sessions')}</WebUILink>,
-      icon: <BAISessionsIcon style={{ color: token.colorPrimary }} />,
-      key: 'job',
-      group: 'workload',
-    },
-    {
-      label: <WebUILink to="/serving">{t('webui.menu.Serving')}</WebUILink>,
-      icon: <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
-      key: 'serving',
-      group: 'service',
-    },
-    {
-      label: <WebUILink to="/model-store">{t('data.ModelStore')}</WebUILink>,
-      icon: <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
-      key: 'model-store',
-      group: 'service',
-    },
-    experimentalAIAgents && {
-      label: <WebUILink to="/ai-agent">{t('webui.menu.AIAgents')}</WebUILink>,
-      icon: <BotMessageSquare style={{ color: token.colorPrimary }} />,
-      key: 'ai-agent',
-      group: 'playground',
-    },
-    {
-      label: <WebUILink to="/chat">{t('webui.menu.Chat')}</WebUILink>,
-      icon: <MessageOutlined style={{ color: token.colorPrimary }} />,
-      key: 'chat',
-      group: 'playground',
-    },
-    {
-      label: <WebUILink to="/data">{t('webui.menu.Data')}</WebUILink>,
-      icon: <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
-      key: 'data',
-      group: 'storage',
-    },
-    {
-      label: (
-        <WebUILink to="/my-environment">
-          {t('webui.menu.MyEnvironments')}
-        </WebUILink>
+    createMenuItem(
+      '/start',
+      t('webui.menu.Start'),
+      <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      'start',
+      'none',
+    ),
+    createMenuItem(
+      '/dashboard',
+      t('webui.menu.Dashboard'),
+      <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      'dashboard',
+      'none',
+    ),
+    createMenuItem(
+      '/session',
+      t('webui.menu.Sessions'),
+      <BAISessionsIcon style={{ color: token.colorPrimary }} />,
+      'session',
+      'workload',
+    ),
+    createMenuItem(
+      '/serving',
+      t('webui.menu.Serving'),
+      <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
+      'serving',
+      'service',
+    ),
+    createMenuItem(
+      '/model-store',
+      t('data.ModelStore'),
+      <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
+      'model-store',
+      'service',
+    ),
+    experimentalAIAgents &&
+      createMenuItem(
+        '/ai-agent',
+        t('webui.menu.AIAgents'),
+        <BotMessageSquare style={{ color: token.colorPrimary }} />,
+        'ai-agent',
+        'playground',
       ),
-      icon: <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
-      key: 'my-environment',
-      group: 'workload',
-    },
-    !isHideAgents && {
-      label: (
-        <WebUILink to="/agent-summary">
-          {t('webui.menu.AgentSummary')}
-        </WebUILink>
+    createMenuItem(
+      '/chat',
+      t('webui.menu.Chat'),
+      <MessageOutlined style={{ color: token.colorPrimary }} />,
+      'chat',
+      'playground',
+    ),
+    createMenuItem(
+      '/data',
+      t('webui.menu.Data'),
+      <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
+      'data',
+      'storage',
+    ),
+    createMenuItem(
+      '/my-environment',
+      t('webui.menu.MyEnvironments'),
+      <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
+      'my-environment',
+      'workload',
+    ),
+    !isHideAgents &&
+      createMenuItem(
+        '/agent-summary',
+        t('webui.menu.AgentSummary'),
+        <HddOutlined style={{ color: token.colorPrimary }} />,
+        'agent-summary',
+        'metrics',
       ),
-      icon: <HddOutlined style={{ color: token.colorPrimary }} />,
-      key: 'agent-summary',
-      group: 'metrics',
-    },
-    {
-      label: (
-        <WebUILink to="/statistics">{t('webui.menu.Statistics')}</WebUILink>
-      ),
-      icon: <BarChartOutlined style={{ color: token.colorPrimary }} />,
-      key: 'statistics',
-      group: 'metrics',
-    },
+    createMenuItem(
+      '/statistics',
+      t('webui.menu.Statistics'),
+      <BarChartOutlined style={{ color: token.colorPrimary }} />,
+      'statistics',
+      'metrics',
+    ),
     !!fasttrackEndpoint && {
       label: t('webui.menu.FastTrack'),
       icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
-      key: 'pipeline',
+      key: 'pipeline' as MenuKeys,
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
       },
-      group: 'mlops',
+      group: 'mlops' as MenuGroupName,
+      labelText: t('webui.menu.FastTrack'),
     },
   ]);
 
@@ -413,11 +453,153 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       return false;
     }) || 'storage-settings' === location.pathname.split('/')[1];
 
+  // Get the first available menu item from groupedGeneralMenu
+  // (after blocklist filtering, excluding disabled/inactive items)
+  // This reflects the actual order shown in the UI
+  const firstAvailableMenuItem = (() => {
+    for (const item of groupedGeneralMenu) {
+      // Non-group item (direct menu item)
+      if (item && 'key' in item && item.key && !item.disabled) {
+        return item as WebUIGeneralMenuItemType;
+      }
+      // Group item with children
+      if (
+        item &&
+        'type' in item &&
+        item.type === 'group' &&
+        'children' in item
+      ) {
+        // Find first non-disabled child
+        const firstActiveChild = _.find(
+          item.children as Array<WebUIGeneralMenuItemType>,
+          (child) => child?.key && !child.disabled,
+        );
+        if (firstActiveChild) {
+          return firstActiveChild;
+        }
+      }
+    }
+    return null;
+  })();
+
+  // Check if current page is in blocklist
+  const currentPathKey = location.pathname.split('/')[1] || '';
+  const currentMenuKey = currentPathKey;
+  // Root path '/' should not be blocked (it redirects to first available menu)
+  const isCurrentPageBlocked =
+    currentPathKey !== '' && _.includes(blockList, currentMenuKey);
+
+  // Compute all valid paths from menu items + plugins + static routes
+  const allValidPaths = (() => {
+    const paths = new Set<string>();
+
+    // Add paths from all menus
+    [generalMenu, adminMenu, superAdminMenu].forEach((menu) => {
+      menu?.forEach((item) => {
+        if (item && 'key' in item && item.key) {
+          paths.add(item.key as string);
+        }
+      });
+    });
+
+    // Add plugin pages
+    plugins?.page?.forEach((page) => {
+      if (page?.url) {
+        paths.add(page.url);
+      }
+    });
+
+    // Add static routes from router configuration
+    ROUTER_STATIC_PATHS.forEach((route) => paths.add(route));
+
+    return paths;
+  })();
+
+  // Check if current page matches dynamic route patterns from router configuration
+  const fullPath = location.pathname.slice(1); // Remove leading '/'
+  const matchesDynamicRoute = ROUTER_DYNAMIC_PATTERNS.some((pattern) =>
+    pattern.test(fullPath),
+  );
+
+  // Check if current page is not found
+  // Only check after plugins are loaded to avoid false positives
+  const isCurrentPageNotFound = (() => {
+    // Root path is always valid (redirects to first available menu)
+    if (currentPathKey === '') return false;
+
+    // If plugins haven't loaded yet, assume page is valid to prevent flickering
+    if (!isPluginLoaded) return false;
+
+    // Check if path is in valid paths set
+    if (allValidPaths.has(currentPathKey)) return false;
+
+    // Check if path matches a dynamic route pattern
+    if (matchesDynamicRoute) return false;
+
+    return true;
+  })();
+
+  // Collect admin-only and superadmin-only page keys
+  const adminOnlyPageKeys = new Set(
+    adminMenu
+      ?.filter((item): item is MenuItemType => item !== null && 'key' in item)
+      .map((item) => item.key as string) ?? [],
+  );
+  const superAdminOnlyPageKeys = new Set(
+    superAdminMenu
+      ?.filter((item): item is MenuItemType => item !== null && 'key' in item)
+      .map((item) => item.key as string) ?? [],
+  );
+
+  // Check if current page requires higher permission than user has
+  // - Regular users cannot access admin or superadmin pages
+  // - Admin users cannot access superadmin-only pages
+  const isCurrentPageUnauthorized = (() => {
+    if (currentPathKey === '') return false;
+
+    const isAdminOnlyPage = adminOnlyPageKeys.has(currentMenuKey);
+    const isSuperAdminOnlyPage = superAdminOnlyPageKeys.has(currentMenuKey);
+
+    // Regular users (not admin, not superadmin) cannot access admin or superadmin pages
+    if (
+      currentUserRole !== 'admin' &&
+      currentUserRole !== 'superadmin' &&
+      (isAdminOnlyPage || isSuperAdminOnlyPage)
+    ) {
+      return true;
+    }
+
+    // Admin users cannot access superadmin-only pages
+    if (currentUserRole === 'admin' && isSuperAdminOnlyPage) {
+      return true;
+    }
+
+    return false;
+  })();
+
+  // Get theme config for custom logo href
+  const themeConfig = useCustomThemeConfig();
+
+  // Default menu path considering theme config's logo href
+  // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'
+  const defaultMenuPath =
+    themeConfig?.logo?.href ||
+    (firstAvailableMenuItem?.key
+      ? getPathFromMenuKey(firstAvailableMenuItem.key)
+      : '/start');
+
   return {
     generalMenu,
     adminMenu,
     superAdminMenu,
     groupedGeneralMenu,
     isSelectedAdminCategoryMenu,
+    firstAvailableMenuItem,
+    defaultMenuPath,
+    isCurrentPageBlocked,
+    isCurrentPageNotFound,
+    isCurrentPageUnauthorized,
+    isPluginLoaded,
+    blockList,
   };
 };

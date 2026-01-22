@@ -94,7 +94,7 @@
     "Finish": "Hoàn thành",
     "ForceTerminate": "Buộc chấm dứt",
     "Generate": "Tạo ra",
-    "GoBackToStartPage": "Quay về trang bắt đầu",
+    "GoBackToStartPage": "Quay lại trang {{title}}",
     "Move": "Di chuyển",
     "Next": "Kế tiếp",
     "No": "Không",
@@ -2217,7 +2217,7 @@
     "LearnMore": "Tìm hiểu thêm &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Bạn không có quyền truy cập trang này. <br /> Nhấp vào nút bên dưới để chuyển hướng đến trang tóm tắt.",
+    "AdminOnlyPage": "Bạn không có quyền truy cập trang này.",
     "CleanUpLoginSession": "Dọn dẹp phiên đăng nhập ...",
     "CleanUpNow": "Dọn dẹp ngay bây giờ ...",
     "DescNotFound": "Xin lỗi, không thể tìm thấy trang bạn đang tìm.",
@@ -2254,6 +2254,7 @@
       "Environments&Presets": "Môi trường & Cài đặt sẵn",
       "Experiments": "Thí nghiệm",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "Trang đầu",
       "FullName": "Họ và tên",
       "FullNameInvalid": "Tên đầy đủ không được vượt quá 64 ký tự",
       "FullNameUpdated": "Tên đầy đủ được cập nhật thành công.",

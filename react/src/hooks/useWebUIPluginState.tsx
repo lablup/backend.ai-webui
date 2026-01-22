@@ -18,9 +18,14 @@ export type WebUIPluginType = {
 };
 
 const webUIPluginsState = atom<WebUIPluginType | undefined>(undefined);
+const pluginLoadedState = atom<boolean>(false);
 
 export const useWebUIPluginValue = () => {
   return useAtomValue(webUIPluginsState);
+};
+
+export const useWebUIPluginLoadedValue = () => {
+  return useAtomValue(pluginLoadedState);
 };
 
 export const useSetupWebUIPluginEffect = ({
@@ -29,14 +34,23 @@ export const useSetupWebUIPluginEffect = ({
   // TODO: fetch and load plugins in this hook instead of relying on webUIRef
   webUIRef: React.RefObject<any>;
 }) => {
+  'use memo';
   const [, setWebUIPlugins] = useAtom(webUIPluginsState);
+  const [, setPluginLoaded] = useAtom(pluginLoadedState);
   useEffect(() => {
-    const handler = () => {
+    const configHandler = () => {
       setWebUIPlugins(webUIRef.current?.plugins);
     };
-    document.addEventListener('backend-ai-config-loaded', handler);
-    return () => {
-      document.removeEventListener('backend-ai-config-loaded', handler);
+    const pluginHandler = () => {
+      setPluginLoaded(true);
+      // Also update plugins in case they changed after loading
+      setWebUIPlugins(webUIRef.current?.plugins);
     };
-  }, [webUIRef, setWebUIPlugins]);
+    document.addEventListener('backend-ai-config-loaded', configHandler);
+    document.addEventListener('backend-ai-plugin-loaded', pluginHandler);
+    return () => {
+      document.removeEventListener('backend-ai-config-loaded', configHandler);
+      document.removeEventListener('backend-ai-plugin-loaded', pluginHandler);
+    };
+  }, [webUIRef, setWebUIPlugins, setPluginLoaded]);
 };

@@ -94,7 +94,7 @@
     "Finish": "结束",
     "ForceTerminate": "强制终止",
     "Generate": "产生",
-    "GoBackToStartPage": "返回开始页",
+    "GoBackToStartPage": "返回 {{title}} 页面",
     "Move": "移动",
     "Next": "下一页",
     "No": "不",
@@ -2217,7 +2217,7 @@
     "LearnMore": "了解更多信息 &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "您无权访问此页面。 <br /> 单击下面的按钮重定向到摘要页面。",
+    "AdminOnlyPage": "您没有权限访问此页面。",
     "CleanUpLoginSession": "清理登录会话...",
     "CleanUpNow": "现在清理...",
     "DescNotFound": "抱歉，找不到您要找的页面。",
@@ -2254,6 +2254,7 @@
       "Environments&Presets": "环境和预设",
       "Experiments": "实验",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "首页",
       "FullName": "全名",
       "FullNameInvalid": "全名不应超过 64 个字符",
       "FullNameUpdated": "全名更新成功。",

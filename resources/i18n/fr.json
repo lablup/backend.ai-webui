@@ -94,6 +94,7 @@
     "Finish": "Finir",
     "ForceTerminate": "Forcer l'arrêt",
     "Generate": "produire",
+    "GoBackToStartPage": "Retour à la page {{title}}",
     "Move": "Déplacer",
     "Next": "Suivant",
     "No": "Non",
@@ -2216,7 +2217,7 @@
     "LearnMore": "En savoir plus &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Vous n'êtes pas autorisé à accéder à cette page. <br /> Cliquez sur le bouton ci-dessous pour rediriger vers la page de résumé.",
+    "AdminOnlyPage": "Vous n'êtes pas autorisé à accéder à cette page.",
     "CleanUpLoginSession": "Rafraîchi la session de connexion...",
     "CleanUpNow": "En cours de rafraîchissement...",
     "DescNotFound": "Désolé, la page que vous recherchez est introuvable.",
@@ -2253,6 +2254,7 @@
       "Environments&Presets": "Environnements et préréglages",
       "Experiments": "Expériences",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "Première",
       "FullName": "Nom et prénom",
       "FullNameInvalid": "Le nom complet ne doit pas dépasser 64 caractères",
       "FullNameUpdated": "Le nom complet a été mis à jour avec succès.",

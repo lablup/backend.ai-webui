@@ -1,4 +1,8 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../hooks/useWebUIMenuItems';
 import { Button, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { Trans, useTranslation } from 'react-i18next';
@@ -6,7 +10,14 @@ import { Trans, useTranslation } from 'react-i18next';
 const Page401 = () => {
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
+  const { firstAvailableMenuItem } = useWebUIMenuItems();
   useSuspendedBackendaiClient(); //monkey patch for flickering
+
+  const defaultPagePath = firstAvailableMenuItem
+    ? getPathFromMenuKey(firstAvailableMenuItem.key)
+    : '/start';
+  const defaultPageTitle =
+    firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
   return (
     <BAIFlex
       direction="column"
@@ -38,9 +49,9 @@ const Page401 = () => {
           <Button
             size="large"
             type="primary"
-            onClick={() => webuiNavigate('/start')}
+            onClick={() => webuiNavigate(defaultPagePath)}
           >
-            {t('button.GoBackToStartPage')}
+            {t('button.GoBackToStartPage', { title: defaultPageTitle })}
           </Button>
         </BAIFlex>
       </BAIFlex>

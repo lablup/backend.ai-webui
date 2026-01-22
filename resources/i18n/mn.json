@@ -94,7 +94,7 @@
     "Finish": "Дуусах",
     "ForceTerminate": "Хүчээр цуцлах",
     "Generate": "Үүсгэх",
-    "GoBackToStartPage": "Эх хуудас руу буцах",
+    "GoBackToStartPage": "{{title}} хуудас руу буцах",
     "Next": "Дараачийн",
     "No": "Үгүй",
     "OK": "БОЛЖ БАЙНА УУ",
@@ -2214,7 +2214,7 @@
     "LearnMore": "Дэлгэрэнгүй үзэх &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Танд энэ хуудсанд нэвтрэх эрх байхгүй байна. <br /> Хураангуй хуудсанд дахин чиглүүлэхийн тулд доорх товчийг дарна уу.",
+    "AdminOnlyPage": "Танд энэ хуудсанд хандах эрх байхгүй.",
     "CleanUpLoginSession": "Нэвтрэх Session цэвэрлэх ...",
     "CleanUpNow": "Одоо цэвэрлэ ...",
     "DescNotFound": "Уучлаарай, таны хайж буй хуудас олдсонгүй.",
@@ -2251,6 +2251,7 @@
       "Environments&Presets": "Environment болон урьдчилсан тохиргоо",
       "Experiments": "Туршилт",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "Эхний",
       "FullName": "Бүтэн нэр",
       "FullNameInvalid": "Бүтэн нэр 64 тэмдэгтээс хэтрэхгүй байх ёстой",
       "FullNameUpdated": "Бүтэн нэр амжилттай шинэчлэгдлээ.",

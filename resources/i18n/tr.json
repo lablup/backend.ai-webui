@@ -94,7 +94,7 @@
     "Finish": "Bitiş",
     "ForceTerminate": "Sonlandırmaya Zorla",
     "Generate": "üret",
-    "GoBackToStartPage": "Başlangıç sayfasına geri dön",
+    "GoBackToStartPage": "{{title}} sayfasına geri dönün",
     "Move": "Hareket",
     "Next": "Sonraki",
     "No": "Hayır",
@@ -2217,7 +2217,7 @@
     "LearnMore": "Daha Fazla Bilgi &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Bu sayfaya erişim izniniz yok. <br /> Özet sayfasına yönlendirmek için aşağıdaki butona tıklayın.",
+    "AdminOnlyPage": "Bu sayfaya erişim izniniz yok.",
     "CleanUpLoginSession": "Oturum açma oturumunu temizle...",
     "CleanUpNow": "Şimdi temizle...",
     "DescNotFound": "Üzgünüz, aradığınız sayfa bulunamadı.",
@@ -2254,6 +2254,7 @@
       "Environments&Presets": "Ortamlar ve Ön Ayarlar",
       "Experiments": "deneyler",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "İlk",
       "FullName": "Ad Soyad",
       "FullNameInvalid": "Tam ad 64 karakteri geçmemelidir",
       "FullNameUpdated": "Tam ad başarıyla güncellendi.",

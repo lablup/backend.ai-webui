@@ -97,7 +97,7 @@
     "Finish": "Finish",
     "ForceTerminate": "Force Terminate",
     "Generate": "Generate",
-    "GoBackToStartPage": "Go back to Start page",
+    "GoBackToStartPage": "Go back to the {{title}} page",
     "Move": "Move",
     "Next": "Next",
     "No": "No",
@@ -2225,7 +2225,7 @@
     "LearnMore": "Learn More &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",
+    "AdminOnlyPage": "You don't have permission to access this page.",
     "CleanUpLoginSession": "Clean up login session...",
     "CleanUpNow": "Clean up now...",
     "DescNotFound": "Sorry, the page you are looking for could not be found.",
@@ -2262,6 +2262,7 @@
       "Environments&Presets": "Environments & Presets",
       "Experiments": "Experiments",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "First",
       "FullName": "Full Name",
       "FullNameInvalid": "Full name should not exceed 64 characters",
       "FullNameUpdated": "Full name is successfully updated.",

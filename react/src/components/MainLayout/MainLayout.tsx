@@ -2,6 +2,8 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import Page401 from '../../pages/Page401';
+import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
@@ -241,25 +243,29 @@ function MainLayout() {
               </Suspense>
               <Suspense>
                 <ErrorBoundaryWithNullFallback>
-                  {isHiddenBreadcrumb ? (
-                    <div
-                      style={{
-                        marginBottom: token.marginMD,
-                      }}
-                    />
-                  ) : (
-                    <WebUIBreadcrumb
-                      style={{
-                        marginBottom: token.marginMD,
-                        marginLeft: token.paddingContentHorizontalLG * -1,
-                        marginRight: token.paddingContentHorizontalLG * -1,
-                      }}
-                    />
-                  )}
+                  <PageAccessGuard emptyErrorPage>
+                    {isHiddenBreadcrumb ? (
+                      <div
+                        style={{
+                          marginBottom: token.marginMD,
+                        }}
+                      />
+                    ) : (
+                      <WebUIBreadcrumb
+                        style={{
+                          marginBottom: token.marginMD,
+                          marginLeft: token.paddingContentHorizontalLG * -1,
+                          marginRight: token.paddingContentHorizontalLG * -1,
+                        }}
+                      />
+                    )}
+                  </PageAccessGuard>
                 </ErrorBoundaryWithNullFallback>
                 <BAIErrorBoundary>
                   <AutoAdminPrimaryColorProvider>
-                    <Outlet />
+                    <PageAccessGuard>
+                      <Outlet />
+                    </PageAccessGuard>
                   </AutoAdminPrimaryColorProvider>
                 </BAIErrorBoundary>
               </Suspense>
@@ -272,6 +278,45 @@ function MainLayout() {
     </LayoutWithPageTestId>
   );
 }
+
+/**
+ * Component that guards page access based on permissions and route validity.
+ * - Unauthorized (401): User lacks permission (e.g., regular user accessing admin page)
+ * - Blocked (404): Page is in the blocklist configuration (treated as not found)
+ * - Not Found (404): Page path is not valid (not in menu, not a plugin page, not a static route)
+ *
+ * @param emptyErrorPage - If true, renders nothing instead of error pages (401/404)
+ */
+const PageAccessGuard = ({
+  children,
+  emptyErrorPage = false,
+}: {
+  children: React.ReactNode;
+  emptyErrorPage?: boolean;
+}) => {
+  const {
+    isCurrentPageBlocked,
+    isCurrentPageNotFound,
+    isCurrentPageUnauthorized,
+  } = useWebUIMenuItems();
+
+  const hasError =
+    isCurrentPageUnauthorized || isCurrentPageBlocked || isCurrentPageNotFound;
+
+  if (hasError && emptyErrorPage) {
+    return null;
+  }
+
+  if (isCurrentPageUnauthorized) {
+    return <Page401 />;
+  }
+
+  if (isCurrentPageBlocked || isCurrentPageNotFound) {
+    return <Page404 />;
+  }
+
+  return children;
+};
 
 const AutoAdminPrimaryColorProvider = ({
   children,

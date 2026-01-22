@@ -15,7 +15,7 @@ test.describe.parallel('config.toml', () => {
       // modify config.toml to blocklist some menu items
       const requestConfig = {
         menu: {
-          blocklist: 'summary, serving, job',
+          blocklist: 'start,serving,job',
         },
       };
       await modifyConfigToml(page, request, requestConfig);
@@ -23,7 +23,7 @@ test.describe.parallel('config.toml', () => {
 
       // check if the menu items are hidden
       await expect(
-        page.getByTestId('webui-breadcrumb').getByText('Summary'),
+        page.getByTestId('webui-breadcrumb').getByText('Start'),
       ).toBeHidden();
       await expect(
         page.getByRole('menuitem', { name: 'Sessions' }),
@@ -32,13 +32,13 @@ test.describe.parallel('config.toml', () => {
         page.getByRole('menuitem', { name: 'Serving' }),
       ).toBeHidden();
 
-      // check if the pages are not accessible
+      // check if the pages show 404 content when accessed directly
       await page.goto(`${webuiEndpoint}/summary`);
-      await expect(page).toHaveURL(/.*error/);
+      await expect(page.getByAltText('404 Not Found')).toBeVisible();
       await page.goto(`${webuiEndpoint}/serving`);
-      await expect(page).toHaveURL(/.*error/);
+      await expect(page.getByAltText('404 Not Found')).toBeVisible();
       await page.goto(`${webuiEndpoint}/job`);
-      await expect(page).toHaveURL(/.*error/);
+      await expect(page.getByAltText('404 Not Found')).toBeVisible();
 
       requestConfig.menu.blocklist = '';
       await modifyConfigToml(page, request, requestConfig);
@@ -61,8 +61,11 @@ test.describe.parallel('config.toml', () => {
     'showNonInstalledImages: Allow users to select non-installed images when creating sessions',
     { tag: ['@session'] },
     async ({ page, request }) => {
-      // Step 1: Enable showNonInstalledImages in config
+      // Step 1: Enable showNonInstalledImages in config and clear blocklist
       const requestConfig = {
+        menu: {
+          blocklist: '', // Clear any blocklist from config.toml
+        },
         environments: {
           showNonInstalledImages: true,
         },
@@ -135,7 +138,9 @@ test.describe.parallel('config.toml', () => {
 
       // Step 3: Navigate to Start page and open session launcher
       const startPage = new StartPage(page);
-      await startPage.goto();
+      // Navigate directly to start page instead of using menu
+      await page.goto(`${webuiEndpoint}/start`);
+      await page.waitForLoadState('domcontentloaded');
 
       // Click Start Interactive Session button
       const interactiveSessionCard = startPage.getInteractiveSessionCard();
@@ -190,9 +195,12 @@ test.describe.parallel('config.toml', () => {
       requestConfig.environments.showNonInstalledImages = false;
       await modifyConfigToml(page, request, requestConfig);
       await page.reload();
+      // Wait for navigation to complete after reload
+      await page.waitForLoadState('domcontentloaded');
 
-      // Go to session launcher again
-      await startPage.goto();
+      // Go to session launcher again - navigate directly to start page
+      await page.goto(`${webuiEndpoint}/start`);
+      await page.waitForLoadState('domcontentloaded');
       const interactiveSessionCard2 = startPage.getInteractiveSessionCard();
       const startButton2 = startPage.getStartButtonFromCard(
         interactiveSessionCard2,

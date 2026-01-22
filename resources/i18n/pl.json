@@ -94,7 +94,7 @@
     "Finish": "koniec",
     "ForceTerminate": "Wymuś zakończenie",
     "Generate": "Generować",
-    "GoBackToStartPage": "Wróć do strony startowej",
+    "GoBackToStartPage": "Wróć do strony {{title}}",
     "Move": "Przeprowadzka",
     "Next": "Następny",
     "No": "Nie",
@@ -2216,7 +2216,7 @@
     "LearnMore": "Dowiedz się więcej &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Nie masz uprawnień dostępu do tej strony. <br /> Kliknij przycisk poniżej, aby przekierować na stronę podsumowania.",
+    "AdminOnlyPage": "Nie masz uprawnień, aby uzyskać dostęp do tej strony.",
     "CleanUpLoginSession": "Wyczyść sesję logowania...",
     "CleanUpNow": "Posprzątaj teraz...",
     "DescNotFound": "Przepraszamy, nie można znaleźć strony, której szukasz.",
@@ -2253,6 +2253,7 @@
       "Environments&Presets": "Środowiska i ustawienia wstępne",
       "Experiments": "Eksperymenty",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "Pierwsza",
       "FullName": "Pełne imię i nazwisko",
       "FullNameInvalid": "Pełna nazwa nie powinna przekraczać 64 znaków",
       "FullNameUpdated": "Pełna nazwa została pomyślnie zaktualizowana.",

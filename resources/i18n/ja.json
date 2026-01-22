@@ -94,7 +94,7 @@
     "Finish": "終了",
     "ForceTerminate": "強制終了",
     "Generate": "生む",
-    "GoBackToStartPage": "スタートページに戻る",
+    "GoBackToStartPage": "{{title}}ページに戻る",
     "Next": "次のページ",
     "No": "番号",
     "OK": "確認",
@@ -2216,7 +2216,7 @@
     "LearnMore": "詳細&gt;"
   },
   "webui": {
-    "AdminOnlyPage": "このページにアクセスする権限がありません。 <br />下のボタンをクリックして、概要ページにリダイレクトします。",
+    "AdminOnlyPage": "このページにアクセスする権限がありません。",
     "CleanUpLoginSession": "ログインセッションをクリーンアップします...",
     "CleanUpNow": "今すぐクリーンアップ...",
     "DescNotFound": "申し訳ありませんが、お探しのページが見つかりませんでした。",
@@ -2253,6 +2253,7 @@
       "Environments&Presets": "環境とプリセット",
       "Experiments": "実験",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "最初",
       "FullName": "フルネーム",
       "FullNameInvalid": "フルネームは64文字を超えてはなりません",
       "FullNameUpdated": "フルネームが正常に更新されました。",

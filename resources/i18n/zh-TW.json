@@ -94,7 +94,7 @@
     "Finish": "結束",
     "ForceTerminate": "強制終止",
     "Generate": "產生",
-    "GoBackToStartPage": "返回開始頁面",
+    "GoBackToStartPage": "返回 {{title}} 頁面",
     "Move": "移动",
     "Next": "下一页",
     "No": "不",
@@ -2215,7 +2215,7 @@
     "LearnMore": "了解更多信息 &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "您無權訪問此頁面。 <br /> 單擊下面的按鈕重定向到摘要頁面。",
+    "AdminOnlyPage": "您沒有權限存取此頁面。",
     "CleanUpLoginSession": "清理登錄會話...",
     "CleanUpNow": "現在清理...",
     "DescNotFound": "抱歉，找不到您要找的頁面。",
@@ -2252,6 +2252,7 @@
       "Environments&Presets": "環境和預設",
       "Experiments": "實驗",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "第一",
       "FullName": "全名",
       "FullNameInvalid": "全名不應超過 64 個字符",
       "FullNameUpdated": "全名更新成功。",

@@ -94,7 +94,7 @@
     "Finish": "Selesai",
     "ForceTerminate": "Paksa Tamatkan",
     "Generate": "Menjana",
-    "GoBackToStartPage": "Kembali ke Laman Mula",
+    "GoBackToStartPage": "Kembali ke halaman {{title}}",
     "Next": "Seterusnya",
     "No": "Tidak",
     "OK": "okey",
@@ -2215,7 +2215,7 @@
     "LearnMore": "Ketahui Lebih Lanjut &gt;"
   },
   "webui": {
-    "AdminOnlyPage": "Anda tidak mempunyai kebenaran untuk mengakses halaman ini. <br /> Klik butang di bawah untuk mengalihkan ke halaman ringkasan.",
+    "AdminOnlyPage": "Anda tidak mempunyai kebenaran untuk mengakses halaman ini.",
     "CleanUpLoginSession": "Bersihkan sesi log masuk ...",
     "CleanUpNow": "Bersihkan sekarang ...",
     "DescNotFound": "Maaf, halaman yang anda cari tidak dapat dijumpai.",
@@ -2252,6 +2252,7 @@
       "Environments&Presets": "Persekitaran & Pratetap",
       "Experiments": "Eksperimen",
       "FastTrack": "FastTrack",
+      "FirstPageNameAlias": "Pertama",
       "FullName": "Nama penuh",
       "FullNameInvalid": "Nama penuh tidak boleh melebihi 64 aksara",
       "FullNameUpdated": "Nama penuh berjaya dikemas kini.",
