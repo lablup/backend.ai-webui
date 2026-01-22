@@ -897,10 +897,13 @@ export function listenToBackgroundTask<
 }
 
 /**
- * Converts an order string (e.g., 'name' or '-name') to a GraphQL OrderBy array.
+ * Converts an order string (e.g., 'name' or '-name') to a GraphQL v2 (Strawberry) OrderBy array.
+ * If the order string contains commas (from array dataIndex like ['spec', 'weight']),
+ * only the last part is used as the field name.
  *
  * @template TOrderBy - The type of the order by object (e.g., ResourceGroupOrderBy)
  * @param order - The order string. Prefix with '-' for descending order.
+ * @param fieldNameMap - Optional mapping from client field names to server field names.
  * @returns An array containing a single OrderBy object, or undefined if order is null/undefined.
  *
  * @example
@@ -910,6 +913,14 @@ export function listenToBackgroundTask<
  * @example
  * convertToOrderBy<ResourceGroupOrderBy>('-name')
  * // => [{ field: 'NAME', direction: 'DESC' }]
+ *
+ * @example
+ * // With field name mapping for server compatibility
+ * convertToOrderBy<DomainFairShareOrderBy>(
+ *   '-calculationSnapshot,fairShareFactor',
+ *   { fairShareFactor: 'FAIR_SHARE_FACTOR' }
+ * )
+ * // => [{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]
  */
 export const convertToOrderBy = <
   TOrderBy extends { field: string; direction?: string },
@@ -918,12 +929,16 @@ export const convertToOrderBy = <
 ): ReadonlyArray<TOrderBy> | undefined => {
   if (!order) return undefined;
 
-  const isDescending = order.startsWith('-');
-  const fieldName = (isDescending ? order.slice(1) : order).toUpperCase();
+  // If order contains comma-separated values, extract the last one
+  const orderParts = order.split(',');
+  const lastOrder = orderParts[orderParts.length - 1].trim();
+
+  const isDescending = lastOrder.startsWith('-');
+  const rawFieldName = isDescending ? lastOrder.slice(1) : lastOrder;
 
   return [
     {
-      field: fieldName,
+      field: _.snakeCase(rawFieldName).toUpperCase(),
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];
