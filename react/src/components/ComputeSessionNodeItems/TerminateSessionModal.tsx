@@ -81,7 +81,7 @@ const sendRequest = async (
     if (!resp.ok) {
       throw body;
     }
-  } catch (e) {
+  } catch {
     return resp;
   }
   return body;

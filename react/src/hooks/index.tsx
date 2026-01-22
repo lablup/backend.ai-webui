@@ -366,7 +366,7 @@ export const useBackendAIImageMetaData = () => {
       // remove architecture string and split by '-'
       const tags = _.split(_.first(_.split(tag, '@')), '-');
       return { key, tags };
-    } catch (error) {
+    } catch {
       return {
         key: '',
         tags: [],

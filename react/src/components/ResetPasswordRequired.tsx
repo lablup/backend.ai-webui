@@ -21,7 +21,7 @@ const ResetPasswordRequired = () => {
   };
   try {
     parsedValue = JSON.parse(value || '');
-  } catch (error) {
+  } catch {
     parsedValue = {
       open: false,
       currentPassword: '',

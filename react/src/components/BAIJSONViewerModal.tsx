@@ -25,7 +25,7 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
           formattedJson: JSON.stringify(JSON.parse(json), null, 2),
           hasError: false,
         };
-      } catch (e) {
+      } catch {
         return {
           formattedJson: json,
           hasError: true,
