@@ -2,19 +2,19 @@ import BAIFlex from './BAIFlex';
 import { List, Typography, theme } from 'antd';
 import React, { ReactNode } from 'react';
 
-export interface NotificationItemTemplateStyles {
+export interface BAINotificationItemStyles {
   title?: React.CSSProperties;
   description?: React.CSSProperties;
   action?: React.CSSProperties;
   footer?: React.CSSProperties;
 }
 
-export interface NotificationItemTemplateProps {
+export interface BAINotificationItemProps {
   title?: ReactNode;
   description?: ReactNode;
   action?: ReactNode;
   footer?: ReactNode;
-  styles?: NotificationItemTemplateStyles;
+  styles?: BAINotificationItemStyles;
 }
 
 const isPrimitiveContent = (
@@ -26,7 +26,7 @@ const isPrimitiveContent = (
   );
 };
 
-const NotificationItemTemplate: React.FC<NotificationItemTemplateProps> = ({
+const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
   title,
   description,
   action,
@@ -96,6 +96,6 @@ const NotificationItemTemplate: React.FC<NotificationItemTemplateProps> = ({
   );
 };
 
-export { NotificationItemTemplate };
+export { BAINotificationItem };
 
-export default NotificationItemTemplate;
+export default BAINotificationItem;
