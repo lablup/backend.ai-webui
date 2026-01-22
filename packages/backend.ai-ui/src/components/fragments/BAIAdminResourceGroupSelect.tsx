@@ -37,7 +37,8 @@ const BAIAdminResourceGroupSelect = ({
         )
         @refetchable(queryName: "BAIAdminResourceGroupSelectPaginationQuery") {
           allScalingGroupsV2(first: $first, after: $after, filter: $filter)
-            @connection(key: "BAIAdminResourceGroupSelect_allScalingGroupsV2") {
+            @connection(key: "BAIAdminResourceGroupSelect_allScalingGroupsV2")
+            @since(version: "25.18.0") {
             count
             edges {
               node {
