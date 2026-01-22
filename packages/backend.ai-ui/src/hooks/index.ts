@@ -42,7 +42,7 @@ export function useMemoizedJSONParse<T = any>(
 
     try {
       return JSON.parse(jsonString);
-    } catch (err) {
+    } catch {
       return fallbackValue;
     }
   }, [jsonString, fallbackValue]);

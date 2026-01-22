@@ -277,7 +277,7 @@ const ContainerRegistryEditorModal: React.FC<
                     return Promise.reject(t('registry.DescURLStartString'));
                   try {
                     new URL(value);
-                  } catch (e) {
+                  } catch {
                     return Promise.reject(t('registry.DescURLFormat'));
                   }
                 }
@@ -437,7 +437,7 @@ const ContainerRegistryEditorModal: React.FC<
                       if (value) {
                         try {
                           JSON.parse(value);
-                        } catch (e) {
+                        } catch {
                           return Promise.reject(
                             t('registry.DescExtraJsonFormat'),
                           );

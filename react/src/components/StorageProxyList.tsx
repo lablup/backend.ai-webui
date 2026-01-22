@@ -230,7 +230,7 @@ const StorageProxyList = () => {
             record.performance_metric || '{}',
           );
           perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch (e) {
+        } catch {
           perfMetricDisabled = true;
         }
         return (

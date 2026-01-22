@@ -113,7 +113,7 @@ const ConfigurationsSettingList = () => {
         } else {
           message.error(t('settings.FailedToSaveSettings'));
         }
-      } catch (e) {
+      } catch {
         message.error(t('settings.FailedToSaveSettings'));
       }
     }

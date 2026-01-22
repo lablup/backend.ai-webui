@@ -59,6 +59,6 @@ export default [
   },
 
   {
-    ignores: ["**/__generated__/**", "build/**"],
+    ignores: ["**/__generated__/**", "build/**", "**/*.tsx_", "**/*.ts_"],
   },
 ];

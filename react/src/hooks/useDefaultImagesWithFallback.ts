@@ -102,6 +102,7 @@ export const useDefaultFileBrowserImageWithFallback = () => {
 
   useEffect(() => {
     getImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return defaultFileBrowserImage;
@@ -153,6 +154,7 @@ export const useDefaultSystemSSHImageWithFallback = () => {
 
   useEffect(() => {
     getImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { systemSSHImage, systemSSHImageInfo };

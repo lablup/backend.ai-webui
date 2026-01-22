@@ -119,6 +119,7 @@ const StartPage: React.FC = () => {
 
   useEffect(() => {
     badgeEventHandler();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
