@@ -826,6 +826,7 @@
     "ReadyToImport": "İçe Aktarmaya Hazır",
     "RepoWillBeFolder": "İçe aktarılan GitHub depoları klasörlere dönüştürülür ve oturum başladığında eklenebilir.",
     "RepositoryNotFound": "Depo bulunamadı.",
+    "StartWithOptions": "Seçeneklerle başlat",
     "StorageHost": "Depolama Sunucusu",
     "VFolderUsageMode": "Klasör Kullanım Modu",
     "WrongURLType": "Yanlış URL Türü",

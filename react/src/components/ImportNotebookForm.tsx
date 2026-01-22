@@ -1,19 +1,23 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
+import { EllipsisOutlined } from '@ant-design/icons';
 import {
   App,
   Divider,
+  Dropdown,
   Form,
   FormInstance,
   FormProps,
   Input,
+  Space,
   Typography,
 } from 'antd';
 import {
   BAIButton,
   BAIFlex,
   generateRandomString,
+  useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import { FolderInput } from 'lucide-react';
@@ -32,9 +36,20 @@ const regularizeGithubURL = (url: string) => {
 
 const notebookURLPattern = new RegExp('^(https?)://([\\w./-]{1,}).ipynb$');
 
+const createLauncherValue = (notebookURL: string, defaultEnv: string) => {
+  return {
+    sessionName: `imported-notebook-${generateRandomString(5)}`,
+    environments: {
+      version: defaultEnv,
+    },
+    bootstrap_script: '#!/bin/sh\ncurl -O ' + notebookURL,
+  };
+};
+
 interface ImportNotebookFormProps extends FormProps {
   initialUrl?: string;
 }
+
 const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   initialUrl,
   ...props
@@ -51,18 +66,16 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
   const { getErrorMessage } = useErrorMessageResolver();
+  const { logger } = useBAILogger();
 
   const handleNotebookImport = async (url: string) => {
     const notebookURL = regularizeGithubURL(url);
     const fileName = notebookURL.split('/').pop();
 
-    const launcherValue: StartSessionWithDefaultValue = {
-      sessionName: `imported-notebook-${generateRandomString(5)}`,
-      environments: {
-        version: baiClient._config.default_import_environment,
-      },
-      bootstrap_script: '#!/bin/sh\ncurl -O ' + notebookURL,
-    };
+    const launcherValue: StartSessionWithDefaultValue = createLauncherValue(
+      notebookURL,
+      baiClient._config.default_import_environment,
+    );
 
     const results = await startSessionWithDefault(launcherValue);
     if (results.fulfilled && results.fulfilled.length > 0) {
@@ -119,16 +132,55 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
       >
         <Input placeholder={t('import.NotebookURL')} />
       </Form.Item>
-      <BAIButton
-        icon={<FolderInput />}
-        type="primary"
-        block
-        action={async () => {
-          formRef.current?.submit();
-        }}
-      >
-        {t('import.GetAndRunNotebook')}
-      </BAIButton>
+      <Space.Compact style={{ width: '100%' }}>
+        <BAIButton
+          icon={<FolderInput />}
+          type="primary"
+          block
+          action={async () => {
+            formRef.current?.submit();
+          }}
+        >
+          {t('import.GetAndRunNotebook')}
+        </BAIButton>
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: 'custom',
+                label: t('import.StartWithOptions'),
+                onClick: () => {
+                  formRef.current
+                    ?.validateFields()
+                    .then(() => {
+                      const url =
+                        formRef.current?.getFieldValue('url') ||
+                        initialUrl ||
+                        '';
+                      const notebookURL = regularizeGithubURL(url);
+                      const launcherValue = createLauncherValue(
+                        notebookURL,
+                        baiClient._config.default_import_environment,
+                      );
+                      const params = new URLSearchParams();
+                      params.set('formValues', JSON.stringify(launcherValue));
+                      params.set('step', '4');
+                      webuiNavigate({
+                        pathname: '/session/start',
+                        search: params.toString(),
+                      });
+                    })
+                    .catch((error) => {
+                      logger.error(error);
+                    });
+                },
+              },
+            ],
+          }}
+        >
+          <BAIButton icon={<EllipsisOutlined />} type="primary" />
+        </Dropdown>
+      </Space.Compact>
       <BAIFlex
         direction="column"
         wrap="wrap"

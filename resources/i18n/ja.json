@@ -825,6 +825,7 @@
     "ReadyToImport": "インポートする準備ができました",
     "RepoWillBeFolder": "インポートされたGitHubリポジトリはフォルダーに変換され、セッションの開始時にマウントできます。",
     "RepositoryNotFound": "リポジトリが見つかりません。",
+    "StartWithOptions": "オプション付きで開始",
     "StorageHost": "ストレージホスト",
     "VFolderUsageMode": "フォルダ利用モード",
     "WrongURLType": "間違ったURLタイプ",

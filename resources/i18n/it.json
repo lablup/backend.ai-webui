@@ -825,6 +825,7 @@
     "ReadyToImport": "Pronto per l'importazione",
     "RepoWillBeFolder": "I repository GitHub importati vengono convertiti in cartelle e possono essere montati all'avvio della sessione.",
     "RepositoryNotFound": "Repository non trovato.",
+    "StartWithOptions": "Avvia con opzioni",
     "StorageHost": "Host di archiviazione",
     "VFolderUsageMode": "Modalità di utilizzo della cartella",
     "WrongURLType": "Tipo di URL errato",

@@ -826,6 +826,7 @@
     "ReadyToImport": "Bereit zum Importieren",
     "RepoWillBeFolder": "Importierte GitHub-Repositorys werden in Ordner konvertiert und können beim Sitzungsstart gemountet werden.",
     "RepositoryNotFound": "Repository nicht gefunden.",
+    "StartWithOptions": "Mit Optionen starten",
     "StorageHost": "Speicherhost",
     "VFolderUsageMode": "Ordnernutzungsmodus",
     "WrongURLType": "Falscher URL-Typ",

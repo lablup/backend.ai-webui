@@ -826,6 +826,7 @@
     "ReadyToImport": "Sẵn sàng nhập",
     "RepoWillBeFolder": "Các kho lưu trữ GitHub đã nhập được chuyển đổi thành các thư mục và có thể được gắn kết khi phiên bắt đầu.",
     "RepositoryNotFound": "Không tìm thấy kho lưu trữ.",
+    "StartWithOptions": "Bắt đầu với các tùy chọn",
     "StorageHost": "Máy chủ lưu trữ",
     "VFolderUsageMode": "Chế độ sử dụng thư mục",
     "WrongURLType": "Loại URL sai",

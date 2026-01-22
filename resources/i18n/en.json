@@ -831,6 +831,7 @@
     "ReadyToImport": "Ready To Import",
     "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
     "RepositoryNotFound": "Repository Not Found.",
+    "StartWithOptions": "Start with options",
     "StorageHost": "Storage Host",
     "VFolderUsageMode": "Folder Usage Mode",
     "WrongURLType": "Wrong URL Type",

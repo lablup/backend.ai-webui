@@ -824,6 +824,7 @@
     "ReadyToImport": "Импортлоход бэлэн байна",
     "RepoWillBeFolder": "Импортоор оруулсан GitHub репозиторыг фолдер болгон хөрвүүлдэг бөгөөд Session эхлэхэд холбож болдог.",
     "RepositoryNotFound": "Репозитор олдсонгүй.",
+    "StartWithOptions": "Сонголттой эхлүүлэх",
     "StorageHost": "Хадгалах хост",
     "VFolderUsageMode": "Хавтас ашиглалтын горим",
     "WrongURLType": "Буруу URL төрөл",

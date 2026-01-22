@@ -829,6 +829,7 @@
     "ReadyToImport": "가져올 준비가 완료되었습니다.",
     "RepoWillBeFolder": "가져온 GitHub 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
     "RepositoryNotFound": "저장소를 찾을 수 없습니다.",
+    "StartWithOptions": "설정 후 실행",
     "StorageHost": "스토리지 호스트",
     "VFolderUsageMode": "폴더 사용 방식",
     "WrongURLType": "잘못된 URL 형식입니다.",

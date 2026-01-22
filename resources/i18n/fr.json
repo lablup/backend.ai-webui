@@ -825,6 +825,7 @@
     "ReadyToImport": "Prêt à importer",
     "RepoWillBeFolder": "Les dépôts GitHub importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",
     "RepositoryNotFound": "Dépôt introuvable.",
+    "StartWithOptions": "Démarrer avec des options",
     "StorageHost": "Hôte de stockage",
     "VFolderUsageMode": "Mode d'utilisation du dossier",
     "WrongURLType": "Type d'URL incorrect",

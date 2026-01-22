@@ -825,6 +825,7 @@
     "ReadyToImport": "Siap Impor",
     "RepoWillBeFolder": "Repositori GitHub yang diimpor dikonversi ke folder dan dapat dipasang saat sesi dimulai.",
     "RepositoryNotFound": "Repositori tidak ditemukan.",
+    "StartWithOptions": "Mulai dengan opsi",
     "StorageHost": "Host Penyimpanan",
     "VFolderUsageMode": "Mode Penggunaan Folder",
     "WrongURLType": "Jenis URL Salah",

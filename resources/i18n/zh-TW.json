@@ -825,6 +825,7 @@
     "ReadyToImport": "準備進口",
     "RepoWillBeFolder": "導入的 GitHub 存儲庫轉換為文件夾，並且可以在會話開始時掛載。",
     "RepositoryNotFound": "找不到儲存庫。",
+    "StartWithOptions": "從選項開始",
     "StorageHost": "儲存主機",
     "VFolderUsageMode": "資料夾使用模式",
     "WrongURLType": "錯誤的網址類型",

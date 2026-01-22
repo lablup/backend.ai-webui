@@ -826,6 +826,7 @@
     "ReadyToImport": "准备进口",
     "RepoWillBeFolder": "导入的 GitHub 存储库转换为文件夹，并且可以在会话开始时挂载。",
     "RepositoryNotFound": "未找到仓库。",
+    "StartWithOptions": "使用选项启动",
     "StorageHost": "存储主机",
     "VFolderUsageMode": "文件夹使用模式",
     "WrongURLType": "错误的网址类型",

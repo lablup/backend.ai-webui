@@ -233,7 +233,7 @@ const ReservoirPage: React.FC = () => {
           >
             <Statistic
               title="MODEL"
-              value={total.count}
+              value={total?.count}
               prefix={<Brain size={16} />}
               styles={{
                 content: {

@@ -826,6 +826,7 @@
     "ReadyToImport": "Valmis tuomaan",
     "RepoWillBeFolder": "Tuodut GitHub-arkistot muunnetaan kansioiksi ja ne voidaan asentaa istunnon alkaessa.",
     "RepositoryNotFound": "Repositoriota ei löytynyt.",
+    "StartWithOptions": "Käynnistä asetuksilla",
     "StorageHost": "Tallennuspalvelin",
     "VFolderUsageMode": "Kansion käyttötila",
     "WrongURLType": "Väärä URL-tyyppi",

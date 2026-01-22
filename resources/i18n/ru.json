@@ -825,6 +825,7 @@
     "ReadyToImport": "Готовы к импорту",
     "RepoWillBeFolder": "Импортированные репозитории GitHub преобразуются в папки и могут быть подключены при запуске сеанса.",
     "RepositoryNotFound": "Репозиторий не найден.",
+    "StartWithOptions": "Запустить с параметрами",
     "StorageHost": "Хост хранения",
     "VFolderUsageMode": "Режим использования папки",
     "WrongURLType": "Неверный тип URL",

@@ -815,6 +815,7 @@
     "ReadyToImport": "พร้อมนำเข้า",
     "RepoWillBeFolder": "พื้นที่เก็บข้อมูล GitHub ที่นำเข้าจะถูกแปลงเป็นโฟลเดอร์และสามารถเมาท์ได้เมื่อเริ่มเซสชัน",
     "RepositoryNotFound": "ไม่พบที่เก็บ.",
+    "StartWithOptions": "เริ่มด้วยตัวเลือก",
     "StorageHost": "โฮสต์ที่เก็บข้อมูล",
     "VFolderUsageMode": "โหมดการใช้งานโฟลเดอร์",
     "WrongURLType": "ประเภท URL ไม่ถูกต้อง",

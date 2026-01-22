@@ -825,6 +825,7 @@
     "ReadyToImport": "Gotowy do importu",
     "RepoWillBeFolder": "Zaimportowane repozytoria GitHub są konwertowane na foldery i można je zamontować po rozpoczęciu sesji.",
     "RepositoryNotFound": "Nie znaleziono repozytorium.",
+    "StartWithOptions": "Uruchom z opcjami",
     "StorageHost": "Host pamięci masowej",
     "VFolderUsageMode": "Tryb użycia folderu",
     "WrongURLType": "Nieprawidłowy typ adresu URL",
