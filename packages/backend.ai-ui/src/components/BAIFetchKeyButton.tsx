@@ -63,7 +63,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setDisplayLoading(true);
 
       return () => {
