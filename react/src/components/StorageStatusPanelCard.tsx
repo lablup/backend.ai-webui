@@ -141,7 +141,6 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
             title={
               invitationCount > 0 ? (
                 // Add <a></a> to make tooltip clickable
-                // eslint-disable-next-line
                 <a
                   onClick={() => {
                     onRequestBadgeClick?.();

@@ -39,6 +39,7 @@ export const useCustomThemeConfig = () => {
 
   useEffect(() => {
     addEventListener();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return isThemePreviewMode ? userCustomThemeConfig : customThemeConfig;

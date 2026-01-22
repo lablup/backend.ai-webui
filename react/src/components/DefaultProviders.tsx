@@ -230,7 +230,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     let parsedValue: any;
     try {
       parsedValue = JSON.parse(value || '');
-    } catch (error) {
+    } catch {
       parsedValue = {};
     }
     return {

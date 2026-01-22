@@ -99,7 +99,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
 
     try {
       parsedUrl = new URL(sanitizedUrl);
-    } catch (error) {
+    } catch {
       message.error(t('import.InvalidGitHubURL'));
       return null;
     }
@@ -133,7 +133,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           message.error(t('import.FailedToFetchRepositoryInformation'));
           return null;
         }
-      } catch (error) {
+      } catch {
         message.error(t('import.FailedToFetchRepositoryInformation'));
         return null;
       }
@@ -157,7 +157,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
 
     try {
       parsedUrl = new URL(sanitizedUrl);
-    } catch (error) {
+    } catch {
       message.error(t('import.InvalidGitLabURL'));
       return null;
     }
