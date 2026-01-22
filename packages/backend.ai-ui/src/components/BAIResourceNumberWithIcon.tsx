@@ -28,6 +28,17 @@ export interface BAIResourceNumberWithIconProps {
   max?: string;
 }
 
+/**
+ * Displays a resource value with its corresponding icon and unit.
+ * Supports various resource types (CPU, memory, accelerators) with automatic formatting.
+ *
+ * @param type - Resource type (e.g., 'cpu', 'mem', 'cuda.device', 'rocm.device')
+ * @param value - Resource amount as string
+ * @param max - Optional maximum value, supports 'Infinity' for unlimited resources
+ * @param hideTooltip - When true, hides the tooltip on the resource icon
+ * @param opts - Additional options like shmem for memory resources
+ * @param extra - Extra content to display after the resource number
+ */
 const BAIResourceNumberWithIcon = ({
   type,
   extra,
