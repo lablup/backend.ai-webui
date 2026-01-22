@@ -1,5 +1,6 @@
 import { reactConfig } from "eslint-config-bai";
 import storybookPlugin from "eslint-plugin-storybook";
+import globals from "globals";
 
 export default [
   ...reactConfig,
@@ -14,9 +15,24 @@ export default [
   },
 
   {
-    files: ["**/*.test.*", "**/*.stories.*"],
+    files: ["**/*.test.*", "**/*.stories.*", "**/__test__/**"],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
     rules: {
       "no-console": "off",
+    },
+  },
+
+  {
+    files: ["**/*.snap"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        exports: "writable",
+      },
     },
   },
 
