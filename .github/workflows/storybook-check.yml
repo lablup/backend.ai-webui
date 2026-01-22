@@ -1,0 +1,86 @@
+name: Storybook Story Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "packages/backend.ai-ui/src/components/**/*.tsx"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-missing-stories:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get changed component files
+        id: changed-files
+        uses: dorny/paths-filter@v3
+        with:
+          list-files: json
+          filters: |
+            components:
+              - 'packages/backend.ai-ui/src/components/**/*.tsx'
+              - '!packages/backend.ai-ui/src/components/**/*.stories.tsx'
+              - '!packages/backend.ai-ui/src/components/**/*.test.tsx'
+
+      - name: Check for missing story files
+        id: check-stories
+        if: steps.changed-files.outputs.components == 'true'
+        shell: bash
+        run: |
+          changed_files='${{ steps.changed-files.outputs.components_files }}'
+          missing_stories=()
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            case "$file" in
+              *.stories.tsx|*.test.tsx) continue ;;
+              *.tsx) ;;
+              *) continue ;;
+            esac
+            [ ! -f "$file" ] && continue
+            story_file="${file%.tsx}.stories.tsx"
+            if [ ! -f "$story_file" ]; then
+              missing_stories+=("$file")
+            fi
+          done < <(echo "$changed_files" | jq -r '.[]')
+
+          if [ ${#missing_stories[@]} -gt 0 ]; then
+            echo "has_missing=true" >> $GITHUB_OUTPUT
+            missing_list=""
+            for component in "${missing_stories[@]}"; do
+              story_file="${component%.tsx}.stories.tsx"
+              missing_list="${missing_list}- \`${component}\` -> missing \`${story_file}\`"$'\n'
+            done
+            echo "missing_list<<EOF" >> $GITHUB_OUTPUT
+            echo "$missing_list" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "missing_count=${#missing_stories[@]}" >> $GITHUB_OUTPUT
+          else
+            echo "has_missing=false" >> $GITHUB_OUTPUT
+            echo "missing_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR with missing stories
+        if: steps.check-stories.outputs.has_missing == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: storybook-check
+          message: |
+            ### Missing Storybook Stories
+
+            The following **${{ steps.check-stories.outputs.missing_count }}** component(s) are missing Story files:
+
+            ${{ steps.check-stories.outputs.missing_list }}
+            > [Storybook guidelines](https://github.com/lablup/backend.ai-webui/blob/main/.github/instructions/storybook.instructions.md)
+
+      - name: Remove comment when all stories exist
+        if: steps.changed-files.outputs.components == 'true' && steps.check-stories.outputs.has_missing != 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: storybook-check
+          delete: true
