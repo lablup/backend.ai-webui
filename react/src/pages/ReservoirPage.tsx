@@ -171,7 +171,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id
+                id @since(version: "25.17.0")
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment

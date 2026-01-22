@@ -821,9 +821,6 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.2')) {
       this._features['copy-on-terminal'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('25.14.0')) {
-      this._features['reservoir'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('25.15.0')) {
       this._features['agent-stats'] = true;
     }
@@ -835,6 +832,9 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('25.17.0')) {
       this._features['background-file-delete'] = true;
+      // The 'reservoir' feature is introduced with 25.14.0, but ArtifactRegistry.id is introduced with 25.17.0.
+      // Instead of adding conditional logic in all related components, make it supported starting from version 25.17.0 or later.
+      this._features['reservoir'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.18.2')) {
       this._features['allow-only-ro-permission-for-model-project-folder'] = true;
