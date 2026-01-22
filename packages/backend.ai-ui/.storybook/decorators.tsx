@@ -24,6 +24,7 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   const { token } = theme.useToken();
   const antdLocale = getAntdLocale(locale);
   const currentThemeConfig = themeConfigs[themeStyle];
+  const isWebUIStyle = themeStyle === 'webui';
 
   return (
     <ConfigProvider
@@ -35,37 +36,35 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
         algorithm:
           themeMode === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
-      modal={{
-        mask: {
-          blur: false,
+      {...(isWebUIStyle && {
+        modal: {
+          mask: { blur: false },
         },
-      }}
-      drawer={{
-        mask: {
-          blur: false,
+        drawer: {
+          mask: { blur: false },
         },
-      }}
-      tag={{
-        variant: 'outlined',
-      }}
-      form={{
-        requiredMark: (label, { required }) => (
-          <>
-            {label}
-            {!required && (
-              <BAIText
-                type="secondary"
-                style={{
-                  marginLeft: token.marginXXS,
-                  wordBreak: 'keep-all',
-                }}
-              >
-                {`(${t('general.Optional')})`}
-              </BAIText>
-            )}
-          </>
-        ),
-      }}
+        tag: {
+          variant: 'outlined',
+        },
+        form: {
+          requiredMark: (label, { required }) => (
+            <>
+              {label}
+              {!required && (
+                <BAIText
+                  type="secondary"
+                  style={{
+                    marginLeft: token.marginXXS,
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  {`(${t('general.Optional')})`}
+                </BAIText>
+              )}
+            </>
+          ),
+        },
+      })}
     >
       <div style={{ padding: '16px' }}>{children}</div>
     </ConfigProvider>

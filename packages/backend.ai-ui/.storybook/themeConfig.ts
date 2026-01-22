@@ -1,4 +1,4 @@
-import webuiThemeJson from '../../../resources/theme.json';
+import webuiThemeJson from './theme.json';
 import type { ThemeConfig } from 'antd';
 
 export type ThemeMode = 'light' | 'dark';
