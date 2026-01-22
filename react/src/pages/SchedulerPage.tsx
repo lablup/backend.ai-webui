@@ -1,18 +1,20 @@
-import { Skeleton } from 'antd';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Skeleton, theme, Tooltip } from 'antd';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import { Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
+import FairShareList from 'src/components/FairShareItems/FairShareList';
 import { useWebUINavigate } from 'src/hooks';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-const tabParam = withDefault(StringParam, 'pending-sessions');
+const tabParam = withDefault(StringParam, 'fair-share');
 
 interface SchedulerPageProps {}
 
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [curTabKey] = useQueryParam('tab', tabParam);
   const webUINavigate = useWebUINavigate();
 
@@ -22,7 +24,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       onTabChange={(key) => {
         webUINavigate(
           {
-            pathname: '/scheduler',
+            pathname: '/fair-share',
             search: new URLSearchParams({
               tab: key,
             }).toString(),
@@ -34,17 +36,26 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
           },
         );
       }}
-      tabList={filterOutEmpty([
+      tabList={[
         {
-          key: 'pending-sessions',
-          label: t('scheduler.PendingSessions'),
+          key: 'fair-share',
+          tab: (
+            <BAIFlex gap="xxs">
+              {t('fairShare.FairShareSetting')}
+              <Tooltip
+                title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+              >
+                <QuestionCircleOutlined style={{ fontSize: token.fontSize }} />
+              </Tooltip>
+            </BAIFlex>
+          ),
         },
-      ])}
+      ]}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'pending-sessions' && (
+        {curTabKey === 'fair-share' && (
           <BAIErrorBoundary>
-            <PendingSessionNodeList />
+            <FairShareList />
           </BAIErrorBoundary>
         )}
       </Suspense>

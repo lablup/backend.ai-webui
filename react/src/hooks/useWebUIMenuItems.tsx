@@ -77,6 +77,7 @@ export type MenuKeys =
   | 'statistics'
   | 'pipeline'
   // adminMenu keys
+  | 'admin-session'
   | 'credential'
   | 'environment'
   | 'scheduler'
@@ -262,6 +263,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     //   icon: <DashboardOutlined style={{ color: token.colorInfo }} />,
     //   key: 'admin-dashboard',
     // },
+    {
+      label: (
+        <WebUILink to="/admin-session">{t('webui.menu.Sessions')}</WebUILink>
+      ),
+      icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      key: 'admin-session',
+    },
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
