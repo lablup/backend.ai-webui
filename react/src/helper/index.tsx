@@ -478,6 +478,96 @@ export const removeArchitectureFromImageFullName = (
   return fullName?.replace(/@[^@]+$/, '');
 };
 
+/**
+ * Find the best matching image from a list of images based on the given image string.
+ * Uses a 3-tier matching strategy:
+ * 1. Exact match: registry/namespace:tag@arch
+ * 2. Partial match without architecture: registry/namespace:tag (matches first available architecture)
+ * 3. Partial match without tag: registry/namespace (selects first image in list, assumes sorted by version)
+ *
+ * @param imageString - The image identifier to search for (various formats supported)
+ * @param images - Array of images to search within
+ * @param options - Optional configuration
+ * @returns The best matching image, or undefined if no match found
+ *
+ * @example
+ * // Exact match
+ * findMatchingImage('cr.backend.ai/lablup/python:3.9-ubuntu@x86_64', images);
+ *
+ * // Match without architecture (first available arch)
+ * findMatchingImage('cr.backend.ai/lablup/python:3.9-ubuntu', images);
+ *
+ * // Match without tag (latest version)
+ * findMatchingImage('cr.backend.ai/lablup/python', images);
+ */
+export function findMatchingImage<
+  T extends {
+    registry?: string | null;
+    namespace?: string | null;
+    name?: string | null;
+    tag?: string | null;
+    architecture?: string | null;
+  },
+>(
+  imageString: string | undefined | null,
+  images: readonly T[],
+  options?: {
+    /**
+     * Custom function to get the environment name (registry/namespace) from an image.
+     * Defaults to `${image.registry}/${image.namespace ?? image.name}`
+     */
+    getEnvironmentName?: (image: T) => string;
+  },
+): T | undefined {
+  // Early return for invalid input
+  if (!imageString || !images || images.length === 0) {
+    return undefined;
+  }
+
+  const getEnvName =
+    options?.getEnvironmentName ??
+    ((image: T) => `${image.registry}/${image.namespace ?? image.name}`);
+
+  // Tier 1: Exact match (registry/namespace:tag@arch)
+  const exactMatch = images.find(
+    (image) => getImageFullName(image) === imageString,
+  );
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  // Parse the input string to determine matching strategy
+  const { registryAndNamespace, hasTag, hasArch } =
+    parseImageString(imageString);
+
+  // Tier 2: Match without architecture (registry/namespace:tag)
+  if (!hasArch && hasTag) {
+    const partialMatch = images.find((image) => {
+      const fullName = getImageFullName(image);
+      return (
+        fullName &&
+        removeArchitectureFromImageFullName(fullName) === imageString
+      );
+    });
+    if (partialMatch) {
+      return partialMatch;
+    }
+  }
+
+  // Tier 3: Match by environment name only (registry/namespace)
+  // Returns the first matching image (caller should ensure list is sorted by version if needed)
+  if (!hasTag) {
+    const envMatch = images.find(
+      (image) => getEnvName(image) === registryAndNamespace,
+    );
+    if (envMatch) {
+      return envMatch;
+    }
+  }
+
+  return undefined;
+}
+
 export const localeCompare = (a?: string | null, b?: string | null) => {
   if (a === null || a === undefined) return -1;
   if (b === null || b === undefined) return 1;

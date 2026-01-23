@@ -12,6 +12,7 @@ import {
   isValidIPOrCidr,
   parseImageString,
   removeArchitectureFromImageFullName,
+  findMatchingImage,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -779,5 +780,269 @@ describe('removeArchitectureFromImageFullName', () => {
     expect(
       removeArchitectureFromImageFullName('registry/name@special:tag@x86_64'),
     ).toBe('registry/name@special:tag');
+  });
+});
+
+describe('findMatchingImage', () => {
+  // Sample images for testing
+  const mockImages = [
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'lablup/python',
+      tag: '3.9-ubuntu',
+      architecture: 'x86_64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'lablup/python',
+      tag: '3.9-ubuntu',
+      architecture: 'aarch64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'lablup/python',
+      tag: '3.8-ubuntu',
+      architecture: 'x86_64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'lablup/tensorflow',
+      tag: '2.9-cuda',
+      architecture: 'x86_64',
+    },
+  ];
+
+  // Images with deprecated 'name' field instead of 'namespace'
+  const mockImagesWithNameField = [
+    {
+      registry: 'cr.backend.ai',
+      name: 'lablup/python',
+      tag: '3.9-ubuntu',
+      architecture: 'x86_64',
+    },
+  ];
+
+  describe('Tier 1: Exact match', () => {
+    it('should find exact match with full image string', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu@x86_64',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[0]);
+    });
+
+    it('should find exact match for different architecture', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu@aarch64',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[1]);
+    });
+
+    it('should find exact match for different image', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/tensorflow:2.9-cuda@x86_64',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[3]);
+    });
+  });
+
+  describe('Tier 2: Partial match without architecture', () => {
+    it('should find match by registry/namespace:tag', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[0]); // First matching arch (x86_64)
+    });
+
+    it('should find match for different tag', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.8-ubuntu',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[2]);
+    });
+  });
+
+  describe('Tier 3: Partial match without tag', () => {
+    it('should find match by registry/namespace only', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[0]); // First in list
+    });
+
+    it('should find match for different environment', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/tensorflow',
+        mockImages,
+      );
+      expect(result).toBe(mockImages[3]);
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should return undefined for empty string', () => {
+      expect(findMatchingImage('', mockImages)).toBeUndefined();
+    });
+
+    it('should return undefined for null', () => {
+      expect(findMatchingImage(null, mockImages)).toBeUndefined();
+    });
+
+    it('should return undefined for undefined', () => {
+      expect(findMatchingImage(undefined, mockImages)).toBeUndefined();
+    });
+
+    it('should return undefined for empty image list', () => {
+      expect(
+        findMatchingImage('cr.backend.ai/lablup/python:3.9-ubuntu@x86_64', []),
+      ).toBeUndefined();
+    });
+
+    it('should return undefined when no match found', () => {
+      expect(
+        findMatchingImage('nonexistent/image:tag@arch', mockImages),
+      ).toBeUndefined();
+    });
+
+    it('should return undefined when partial match not found', () => {
+      expect(
+        findMatchingImage('cr.backend.ai/nonexistent', mockImages),
+      ).toBeUndefined();
+    });
+  });
+
+  describe('Registry with port', () => {
+    const imagesWithPort = [
+      {
+        registry: '192.168.0.1:7080',
+        namespace: 'lablup/python',
+        tag: '3.9',
+        architecture: 'x86_64',
+      },
+      {
+        registry: '192.168.0.1:7080',
+        namespace: 'lablup/python',
+        tag: '3.9',
+        architecture: 'aarch64',
+      },
+    ];
+
+    it('should correctly match exact image with registry port', () => {
+      const result = findMatchingImage(
+        '192.168.0.1:7080/lablup/python:3.9@x86_64',
+        imagesWithPort,
+      );
+      expect(result).toBe(imagesWithPort[0]);
+    });
+
+    it('should correctly match partial image without arch with registry port', () => {
+      const result = findMatchingImage(
+        '192.168.0.1:7080/lablup/python:3.9',
+        imagesWithPort,
+      );
+      expect(result).toBe(imagesWithPort[0]);
+    });
+
+    it('should correctly match image by registry/namespace only with port', () => {
+      const result = findMatchingImage(
+        '192.168.0.1:7080/lablup/python',
+        imagesWithPort,
+      );
+      expect(result).toBe(imagesWithPort[0]);
+    });
+  });
+
+  describe('Backward compatibility with deprecated name field', () => {
+    it('should work with images using name field instead of namespace', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu@x86_64',
+        mockImagesWithNameField,
+      );
+      expect(result).toBe(mockImagesWithNameField[0]);
+    });
+
+    it('should match by environment name using name field', () => {
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python',
+        mockImagesWithNameField,
+      );
+      expect(result).toBe(mockImagesWithNameField[0]);
+    });
+  });
+
+  describe('Custom getEnvironmentName option', () => {
+    it('should use custom getEnvironmentName function', () => {
+      const customImages = [
+        {
+          registry: 'custom-registry',
+          namespace: 'custom-namespace',
+          tag: '1.0',
+          architecture: 'x86_64',
+          customEnvName: 'my-custom-env',
+        },
+      ];
+
+      const result = findMatchingImage('my-custom-env', customImages, {
+        getEnvironmentName: (image) =>
+          (image as (typeof customImages)[0]).customEnvName,
+      });
+      expect(result).toBe(customImages[0]);
+    });
+  });
+
+  describe('Priority of matching tiers', () => {
+    it('should prefer exact match over partial match', () => {
+      // Create images where both exact and partial could match
+      const images = [
+        {
+          registry: 'cr.backend.ai',
+          namespace: 'lablup/python',
+          tag: '3.9-ubuntu',
+          architecture: 'aarch64',
+        },
+        {
+          registry: 'cr.backend.ai',
+          namespace: 'lablup/python',
+          tag: '3.9-ubuntu',
+          architecture: 'x86_64',
+        },
+      ];
+
+      // Exact match should return the specific architecture
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu@x86_64',
+        images,
+      );
+      expect(result?.architecture).toBe('x86_64');
+    });
+
+    it('should prefer tier 2 over tier 3 when applicable', () => {
+      const images = [
+        {
+          registry: 'cr.backend.ai',
+          namespace: 'lablup/python',
+          tag: '3.8-ubuntu',
+          architecture: 'x86_64',
+        },
+        {
+          registry: 'cr.backend.ai',
+          namespace: 'lablup/python',
+          tag: '3.9-ubuntu',
+          architecture: 'x86_64',
+        },
+      ];
+
+      // Tier 2 match should find specific tag
+      const result = findMatchingImage(
+        'cr.backend.ai/lablup/python:3.9-ubuntu',
+        images,
+      );
+      expect(result?.tag).toBe('3.9-ubuntu');
+    });
   });
 });
