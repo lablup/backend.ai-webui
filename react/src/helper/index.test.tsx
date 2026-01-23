@@ -10,6 +10,8 @@ import {
   isValidIP,
   isCidrRange,
   isValidIPOrCidr,
+  parseImageString,
+  removeArchitectureFromImageFullName,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -553,5 +555,229 @@ describe('isValidIPOrCidr', () => {
   it('should reject invalid values', () => {
     expect(isValidIPOrCidr('invalid')).toBe(false);
     expect(isValidIPOrCidr('192.168.1.0/33')).toBe(false);
+  });
+});
+
+describe('parseImageString', () => {
+  describe('full image string with registry, namespace, tag, and architecture', () => {
+    it('should parse standard image string', () => {
+      const result = parseImageString(
+        'registry.example.com/lablup/python:3.9-ubuntu@x86_64',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: 'registry.example.com/lablup/python',
+        tag: '3.9-ubuntu',
+        architecture: 'x86_64',
+        hasTag: true,
+        hasArch: true,
+      });
+    });
+
+    it('should parse image string with registry port', () => {
+      const result = parseImageString(
+        'myregistry.org:5000/namespace/image:1.0@aarch64',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: 'myregistry.org:5000/namespace/image',
+        tag: '1.0',
+        architecture: 'aarch64',
+        hasTag: true,
+        hasArch: true,
+      });
+    });
+
+    it('should parse image string with IP address and port as registry', () => {
+      const result = parseImageString(
+        '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: '192.168.0.1:7080/abc/def/training',
+        tag: '01-py3-abc-v1-def',
+        architecture: 'x86_64',
+        hasTag: true,
+        hasArch: true,
+      });
+    });
+
+    it('should parse image string with IPv6 address as registry', () => {
+      const result = parseImageString(
+        '[::1]:5000/python:3.6-cuda9-ubuntu@x86_64',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: '[::1]:5000/python',
+        tag: '3.6-cuda9-ubuntu',
+        architecture: 'x86_64',
+        hasTag: true,
+        hasArch: true,
+      });
+    });
+  });
+
+  describe('image string without architecture', () => {
+    it('should parse image string with tag but no architecture', () => {
+      const result = parseImageString(
+        'node03.spccluster.skku.edu:7081/repo/r-base:4.5.1',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: 'node03.spccluster.skku.edu:7081/repo/r-base',
+        tag: '4.5.1',
+        architecture: undefined,
+        hasTag: true,
+        hasArch: false,
+      });
+    });
+
+    it('should parse image string with complex tag but no architecture', () => {
+      const result = parseImageString('127.0.0.1:5000/python:3.6-cuda9-ubuntu');
+      expect(result).toEqual({
+        registryAndNamespace: '127.0.0.1:5000/python',
+        tag: '3.6-cuda9-ubuntu',
+        architecture: undefined,
+        hasTag: true,
+        hasArch: false,
+      });
+    });
+  });
+
+  describe('image string without tag (registry/namespace only)', () => {
+    it('should parse image string with only registry and namespace', () => {
+      const result = parseImageString(
+        'node03.spccluster.skku.edu:7081/repo/r-base',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: 'node03.spccluster.skku.edu:7081/repo/r-base',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+
+    it('should parse image string with IP registry and namespace only', () => {
+      const result = parseImageString('192.168.0.1:5000/lablup/python');
+      expect(result).toEqual({
+        registryAndNamespace: '192.168.0.1:5000/lablup/python',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+
+    it('should correctly distinguish port from tag in registry-only strings', () => {
+      // The colon in "myregistry.org:5000" should NOT be treated as a tag separator
+      const result = parseImageString('myregistry.org:5000/namespace');
+      expect(result).toEqual({
+        registryAndNamespace: 'myregistry.org:5000/namespace',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle simple image name without registry', () => {
+      const result = parseImageString('python:3.9');
+      expect(result).toEqual({
+        registryAndNamespace: 'python',
+        tag: '3.9',
+        architecture: undefined,
+        hasTag: true,
+        hasArch: false,
+      });
+    });
+
+    it('should handle image with only name', () => {
+      const result = parseImageString('python');
+      expect(result).toEqual({
+        registryAndNamespace: 'python',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+
+    it('should handle deeply nested namespace', () => {
+      const result = parseImageString(
+        'registry.gitlab.com/user/workspace/python/img:3.6-cuda9-ubuntu@x86_64',
+      );
+      expect(result).toEqual({
+        registryAndNamespace: 'registry.gitlab.com/user/workspace/python/img',
+        tag: '3.6-cuda9-ubuntu',
+        architecture: 'x86_64',
+        hasTag: true,
+        hasArch: true,
+      });
+    });
+
+    it('should handle empty string input', () => {
+      const result = parseImageString('');
+      expect(result).toEqual({
+        registryAndNamespace: '',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+
+    it('should handle null/undefined input defensively', () => {
+      // TypeScript would catch this, but runtime might not
+      const result = parseImageString(null as unknown as string);
+      expect(result).toEqual({
+        registryAndNamespace: '',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+
+      const result2 = parseImageString(undefined as unknown as string);
+      expect(result2).toEqual({
+        registryAndNamespace: '',
+        tag: undefined,
+        architecture: undefined,
+        hasTag: false,
+        hasArch: false,
+      });
+    });
+  });
+});
+
+describe('removeArchitectureFromImageFullName', () => {
+  it('should remove architecture suffix from full image name', () => {
+    expect(
+      removeArchitectureFromImageFullName(
+        'registry.example.com/python:3.9@x86_64',
+      ),
+    ).toBe('registry.example.com/python:3.9');
+  });
+
+  it('should remove architecture from image with port in registry', () => {
+    expect(
+      removeArchitectureFromImageFullName(
+        '192.168.0.1:7080/namespace:tag@aarch64',
+      ),
+    ).toBe('192.168.0.1:7080/namespace:tag');
+  });
+
+  it('should return same string if no architecture present', () => {
+    expect(
+      removeArchitectureFromImageFullName('registry.example.com/python:3.9'),
+    ).toBe('registry.example.com/python:3.9');
+  });
+
+  it('should handle undefined input', () => {
+    expect(removeArchitectureFromImageFullName(undefined)).toBe(undefined);
+  });
+
+  it('should only remove the last @ and everything after it', () => {
+    // Edge case: @ in other parts should not be affected (though unusual)
+    expect(
+      removeArchitectureFromImageFullName('registry/name@special:tag@x86_64'),
+    ).toBe('registry/name@special:tag');
   });
 });
