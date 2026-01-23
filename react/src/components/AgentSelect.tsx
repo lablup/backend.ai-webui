@@ -155,7 +155,6 @@ const AgentSelect: React.FC<Props> = ({
 
   useEffect(() => {
     changeToAutoWhenInvalidValueEffectEvent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, agentOptions]);
 
   return (

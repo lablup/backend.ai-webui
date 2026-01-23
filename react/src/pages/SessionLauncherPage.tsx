@@ -302,7 +302,6 @@ const SessionLauncherPage = () => {
     return () => {
       id && clearTimeout(id);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const mergedInitialValues: SessionLauncherFormValue = useMemo(() => {

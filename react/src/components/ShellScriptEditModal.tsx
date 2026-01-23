@@ -113,6 +113,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     }
   };
 
+  // eslint-disable-next-line react-hooks/void-use-memo
   useMemo(() => {
     fetchScript();
     //eslint-disable-next-line
