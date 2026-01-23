@@ -33,7 +33,6 @@ export function useInterval(
     };
     document.addEventListener('visibilitychange', handler);
     return () => document.removeEventListener('visibilitychange', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseWhenHidden, delay]);
 
   // Determine the effective delay based on page visibility
@@ -45,7 +44,6 @@ export function useInterval(
       const id = setInterval(tick, effectiveDelay);
       return () => clearInterval(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveDelay]);
 }
 
@@ -74,7 +72,6 @@ export function useIntervalValue<T>(
     if (triggerKey) {
       updateCalculator();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerKey]);
 
   useInterval(

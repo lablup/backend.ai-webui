@@ -25,7 +25,6 @@ export const useUserCustomThemeConfig = () => {
   });
   useEffect(() => {
     initializeThemeConfig();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeConfig]);
 
   const updateThemeConfig = (path: string, value: unknown) => {

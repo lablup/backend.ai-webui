@@ -111,6 +111,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useEffect(() => {
     setSelectedFolderList([]);
+
     // Reset selectedRowKeys when currentProject changes
   }, [currentProject.id]);
 
