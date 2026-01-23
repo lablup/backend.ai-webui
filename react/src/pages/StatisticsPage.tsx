@@ -3,23 +3,24 @@ import UserSessionsMetrics from '../components/UserSessionsMetrics';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface ResourcesPageProps {}
-
-const tabParam = withDefault(StringParam, 'allocation-history');
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
 
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
-    updateType: 'replace',
-  });
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parseAsString
+      .withDefault('allocation-history')
+      .withOptions({ history: 'replace' }),
+  );
 
   return (
     <BAICard

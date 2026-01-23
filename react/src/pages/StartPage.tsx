@@ -20,17 +20,12 @@ import {
   BAIAlert,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 import { MenuKeys } from 'src/hooks/useWebUIMenuItems';
-import {
-  useQueryParams,
-  withDefault,
-  StringParam,
-  JsonParam,
-} from 'use-query-params';
 
 interface StartPageBoardItem extends BAIBoardItem {
   requiredMenuKey: MenuKeys;
@@ -61,10 +56,15 @@ const StartPage: React.FC = () => {
   const [vFolderInvitations] = useVFolderInvitations();
 
   // Parse query parameters
-  const [queryParams, setQueryParams] = useQueryParams({
-    type: withDefault(StringParam, undefined),
-    data: withDefault(JsonParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      type: parseAsString,
+      data: parseAsJson<{ url?: string; branch?: string }>(),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   // Handle legacy GitHub URL format (for backward compatibility)
   const legacyGithubPath = useMemo(() => {
@@ -92,8 +92,8 @@ const StartPage: React.FC = () => {
       setIsOpenStartURLModal(true);
 
       setQueryParams({
-        type: undefined,
-        data: undefined,
+        type: null,
+        data: null,
       });
     } else if (legacyGithubPath) {
       // Handle legacy format: /github?owner/repo/path/notebook.ipynb (via redirect)
@@ -106,14 +106,10 @@ const StartPage: React.FC = () => {
       setIsOpenStartURLModal(true);
 
       // clear legacy query parameter
-      setQueryParams(
-        {
-          type: undefined,
-          data: undefined,
-        },
-        // clear legacy query parameter
-        'replace',
-      );
+      setQueryParams({
+        type: null,
+        data: null,
+      });
     }
   });
 

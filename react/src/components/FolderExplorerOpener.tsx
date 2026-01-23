@@ -1,12 +1,18 @@
+import { parseAsString, useQueryState } from 'nuqs';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { StringParam, useQueryParam } from 'use-query-params';
 
 const FolderExplorerModal = React.lazy(() => import('./FolderExplorerModal'));
 
 const FolderExplorerOpener = () => {
-  const [folderId, setFolderId] = useQueryParam('folder', StringParam);
-  const [, setCurrentPath] = useQueryParam('path', StringParam);
+  const [folderId, setFolderId] = useQueryState(
+    'folder',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
+  const [, setCurrentPath] = useQueryState(
+    'path',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
   const normalizedFolderId = folderId?.replaceAll('-', '');
 
   return (
@@ -14,8 +20,8 @@ const FolderExplorerOpener = () => {
       vfolderID={normalizedFolderId || ''}
       open={!!normalizedFolderId}
       onRequestClose={() => {
-        setFolderId(null, 'replaceIn');
-        setCurrentPath(null, 'replaceIn');
+        setFolderId(null);
+        setCurrentPath(null);
       }}
       destroyOnHidden
     />
@@ -25,7 +31,7 @@ const FolderExplorerOpener = () => {
 export default FolderExplorerOpener;
 
 export const useFolderExplorerOpener = () => {
-  const [, setFolderId] = useQueryParam('folder', StringParam);
+  const [, setFolderId] = useQueryState('folder', parseAsString);
 
   const location = useLocation();
   // a function to generate new path with folder id based on current path

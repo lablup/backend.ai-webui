@@ -2,11 +2,14 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import ContainerLogModalWithLazyQueryLoader from './ComputeSessionNodeItems/ContainerLogModalWithLazyQueryLoader';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useState, useEffect, useTransition } from 'react';
-import { useQueryParam, StringParam } from 'use-query-params';
 
 const SessionDetailAndContainerLogOpenerLegacy = () => {
-  const [sessionId, setSessionId] = useQueryParam('sessionDetail', StringParam);
+  const [sessionId, setSessionId] = useQueryState(
+    'sessionDetail',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
   const [containerLogModalSessionId, setContainerLogModalSessionId] =
     useState<string>();
   const [isPendingLogModalOpen, startLogModalOpenTransition] = useTransition();
@@ -34,7 +37,7 @@ const SessionDetailAndContainerLogOpenerLegacy = () => {
             open={!!sessionId}
             sessionId={sessionId || undefined}
             onClose={() => {
-              setSessionId(null, 'replaceIn');
+              setSessionId(null);
             }}
           />
         </BAIUnmountAfterClose>

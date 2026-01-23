@@ -31,15 +31,10 @@ import {
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import {
-  StringParam,
-  useQueryParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 type Keypair = NonNullable<
   NonNullable<UserCredentialListQuery$data['keypair_list']>['items'][number]
@@ -51,14 +46,17 @@ const UserCredentialList: React.FC = () => {
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
-  const [action, setAction] = useQueryParam('action', StringParam);
+  const [action, setAction] = useQueryState('action', parseAsString);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [queryParams, setQueryParams] = useQueryParams({
-    activeType: withDefault(StringParam, 'active'),
-    order: withDefault(StringParam, undefined),
-    filter: withDefault(StringParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      activeType: parseAsString.withDefault('active'),
+      order: parseAsString,
+      filter: parseAsString,
+    },
+    { history: 'replace' },
+  );
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
@@ -165,7 +163,7 @@ const UserCredentialList: React.FC = () => {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenUserKeypairSettingModal(true);
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setAction(undefined);
+      setAction(null);
     }
   }, [action, setAction]);
 
@@ -176,7 +174,7 @@ const UserCredentialList: React.FC = () => {
           <BAIRadioGroup
             value={queryParams.activeType}
             onChange={(value) => {
-              setQueryParams({ activeType: value.target.value }, 'replaceIn');
+              setQueryParams({ activeType: value.target.value });
               setTablePaginationOption({
                 current: 1,
                 pageSize: tablePaginationOption.pageSize,
@@ -231,7 +229,7 @@ const UserCredentialList: React.FC = () => {
             ]}
             value={queryParams.filter}
             onChange={(value) => {
-              setQueryParams({ filter: value }, 'replaceIn');
+              setQueryParams({ filter: value ?? null });
             }}
           />
         </BAIFlex>
@@ -553,7 +551,7 @@ const UserCredentialList: React.FC = () => {
           },
         }}
         onChangeOrder={(nextOrder) => {
-          setQueryParams({ order: nextOrder }, 'replaceIn');
+          setQueryParams({ order: nextOrder ?? null });
         }}
       />
       <KeypairInfoModal

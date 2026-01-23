@@ -4,17 +4,18 @@ import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { withDefault, StringParam, useQueryParam } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'keypair');
 
 interface ResourcePolicyPageProps {}
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   const { t } = useTranslation();
-  const [curTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('keypair'),
+  );
   const webUINavigate = useWebUINavigate();
 
   return (

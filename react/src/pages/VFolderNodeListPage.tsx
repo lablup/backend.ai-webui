@@ -41,6 +41,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
   useDeferredValue,
@@ -55,7 +56,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
@@ -128,12 +128,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: withDefault(StringParam, undefined),
-    statusCategory: withDefault(StringParam, 'active'),
-    mode: withDefault(StringParam, 'all'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString.withDefault('-created_at'),
+      filter: parseAsString,
+      statusCategory: parseAsString.withDefault('active'),
+      mode: parseAsString.withDefault('all'),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
