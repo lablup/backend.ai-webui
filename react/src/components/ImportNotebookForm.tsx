@@ -144,6 +144,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           {t('import.GetAndRunNotebook')}
         </BAIButton>
         <Dropdown
+          trigger={['click']}
           menu={{
             items: [
               {

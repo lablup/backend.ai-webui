@@ -1,7 +1,10 @@
-import { App, Image, Tooltip } from 'antd';
+import { useWebUINavigate } from '../hooks';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { App, Dropdown, Image, Space, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,
+  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -36,6 +39,8 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
+
+  const webuiNavigate = useWebUINavigate();
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -91,75 +96,106 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
     } else return '';
   };
 
+  // Helper to create launcher value for SFTP session
+  const createSftpLauncherValue = (): StartSessionWithDefaultValue => ({
+    sessionName: `sftp-${toLocalId(vfolder?.id || '')}`,
+    sessionType: 'system',
+    ...(baiClient._config?.systemSSHImage &&
+    baiClient._config?.allow_manual_image_name_for_session
+      ? {
+          environments: {
+            manual: baiClient._config.systemSSHImage,
+          },
+        }
+      : {
+          environments: {
+            version: systemSSHImage || '',
+          },
+        }),
+    cluster_mode: 'single-node',
+    cluster_size: 1,
+    mount_ids: [toLocalId(vfolder?.id || '').replaceAll('-', '')],
+    resourceGroup: sftpScalingGroupByCurrentProject?.[0],
+  });
+
   return (
     <Tooltip title={getTooltipTitle()}>
-      <BAIButton
-        disabled={
-          _.isEmpty(sftpScalingGroupByCurrentProject) ||
-          !systemSSHImage ||
-          !hasAccessPermission
-        }
-        icon={
-          <Image
-            width="18px"
-            src="/resources/icons/sftp.png"
-            alt="SSH / SFTP"
-            preview={false}
-          />
-        }
-        action={async () => {
-          const sftpSessionConf: StartSessionWithDefaultValue = {
-            // If the resource setting is not included when the session is created,
-            // it is created with the value determined by the server.
-            sessionName: `sftp-${vfolder?.row_id}`,
-            sessionType: 'system',
-            // use default system SSH image if configured and allowed
-            ...(baiClient._config?.systemSSHImage &&
-            baiClient._config?.allow_manual_image_name_for_session
-              ? {
-                  environments: {
-                    manual: baiClient._config.systemSSHImage,
-                  },
+      <Space.Compact>
+        <BAIButton
+          disabled={
+            _.isEmpty(sftpScalingGroupByCurrentProject) ||
+            !systemSSHImage ||
+            !hasAccessPermission
+          }
+          icon={
+            <Image
+              width="18px"
+              src="/resources/icons/sftp.png"
+              alt="SSH / SFTP"
+              preview={false}
+            />
+          }
+          action={async () => {
+            const sftpSessionConf = createSftpLauncherValue();
+            await startSessionWithDefault(sftpSessionConf)
+              .then((results) => {
+                if (results?.fulfilled && results.fulfilled.length > 0) {
+                  // set notification key for handling duplicate session creation
+                  upsertSessionNotification(results.fulfilled, [
+                    {
+                      key: `sftp-${toLocalId(vfolder?.id || '')}`,
+                    },
+                  ]);
                 }
-              : // otherwise use the first image found
-                {
-                  environments: {
-                    version: systemSSHImage || '',
-                  },
-                }),
-            cluster_mode: 'single-node',
-            cluster_size: 1,
-            mount_ids: [vfolder?.row_id?.replaceAll('-', '') || ''],
-            resourceGroup: sftpScalingGroupByCurrentProject?.[0],
-          };
-
-          await startSessionWithDefault(sftpSessionConf)
-            .then((results) => {
-              if (results?.fulfilled && results.fulfilled.length > 0) {
-                // set notification key for handling duplicate session creation
-                upsertSessionNotification(results.fulfilled, [
-                  {
-                    key: `sftp-${vfolder?.row_id}`,
-                  },
-                ]);
-              }
-              if (results?.rejected && results.rejected.length > 0) {
-                const error = results.rejected[0].reason;
-                modal.error({
-                  title: error?.title,
-                  content: getErrorMessage(error),
-                });
-              }
-            })
-            .catch((error) => {
-              logger.error('Unexpected error during session creation:', error);
-              message.error(t('error.UnexpectedError'));
-            });
-        }}
-        {...buttonProps}
-      >
-        {showTitle && t('data.explorer.RunSSH/SFTPserver')}
-      </BAIButton>
+                if (results?.rejected && results.rejected.length > 0) {
+                  const error = results.rejected[0].reason;
+                  modal.error({
+                    title: error?.title,
+                    content: getErrorMessage(error),
+                  });
+                }
+              })
+              .catch((error) => {
+                logger.error(
+                  'Unexpected error during session creation:',
+                  error,
+                );
+                message.error(t('error.UnexpectedError'));
+              });
+          }}
+          {...buttonProps}
+        >
+          {showTitle && t('data.explorer.RunSSH/SFTPserver')}
+        </BAIButton>
+        <Dropdown
+          disabled={
+            _.isEmpty(sftpScalingGroupByCurrentProject) ||
+            !systemSSHImage ||
+            !hasAccessPermission
+          }
+          trigger={['click']}
+          menu={{
+            items: [
+              {
+                key: 'custom',
+                label: t('import.StartWithOptions'),
+                onClick: () => {
+                  const launcherValue = createSftpLauncherValue();
+                  const params = new URLSearchParams();
+                  params.set('formValues', JSON.stringify(launcherValue));
+                  params.set('step', '4');
+                  webuiNavigate({
+                    pathname: '/session/start',
+                    search: params.toString(),
+                  });
+                },
+              },
+            ],
+          }}
+        >
+          <BAIButton icon={<EllipsisOutlined />} />
+        </Dropdown>
+      </Space.Compact>
     </Tooltip>
   );
 };
