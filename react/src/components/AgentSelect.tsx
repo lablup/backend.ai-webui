@@ -140,7 +140,8 @@ const AgentSelect: React.FC<Props> = ({
     : undefined;
 
   const changeToAutoWhenInvalidValueEffectEvent = useEffectEvent(() => {
-    if (fallbackToAuto && value) {
+    // skip while searching
+    if (_.isEmpty(searchStr) && fallbackToAuto && value) {
       const valueArray = _.castArray(value);
       const validValues = agentOptions.map((option) => option.value);
       const newValue = valueArray.filter((v) =>

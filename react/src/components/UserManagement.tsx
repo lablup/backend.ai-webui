@@ -224,6 +224,9 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                     return;
                   }
                   message.success(t('credential.StatusUpdatedSuccessfully'));
+                  setSelectedUserList((prev) => {
+                    return prev.filter((user) => user?.node?.id !== record?.id);
+                  });
                   updateFetchKey();
                 },
                 onError: (error) => {

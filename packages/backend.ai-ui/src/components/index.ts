@@ -41,13 +41,10 @@ export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
 export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
-export {
-  default as BAINotificationItem,
-  NotificationItemTemplate,
-} from './BAINotificationItem';
+export { default as BAINotificationItem } from './BAINotificationItem';
 export type {
-  NotificationItemTemplateProps,
-  NotificationItemTemplateStyles,
+  BAINotificationItemProps,
+  BAINotificationItemStyles,
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';

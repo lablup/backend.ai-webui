@@ -106,9 +106,6 @@ const loadPage =
       case 'edu-applauncher':
         import('./components/backend-ai-edu-applauncher.js');
         break;
-      case 'unauthorized':
-        import('./components/backend-ai-permission-denied-view.js');
-        break;
       case 'error':
       default:
         if (typeof globalThis.backendaiPages !== 'undefined') {

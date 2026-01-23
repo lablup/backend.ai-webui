@@ -20,6 +20,20 @@ interface BAIFetchKeyButtonProps
   hidden?: boolean;
   pauseWhenHidden?: boolean;
 }
+
+/**
+ * A refresh button that manages fetch keys for data refetching with auto-update capabilities.
+ * Extends Ant Design Button with fetch key management, auto-refresh, and last update time display.
+ *
+ * @param value - Current fetch key value
+ * @param loading - Loading state of the data fetch
+ * @param lastLoadTime - Timestamp of the last successful load
+ * @param showLastLoadTime - When true, shows "Last updated: X ago" in tooltip
+ * @param autoUpdateDelay - Auto-refresh interval in milliseconds, null to disable
+ * @param onChange - Callback fired when fetch key should be updated
+ * @param hidden - When true, hides the button completely
+ * @param pauseWhenHidden - When true, pauses auto-update when button is hidden
+ */
 const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   loading,
   onChange,

@@ -1,8 +1,11 @@
+import { useWebUINavigate } from '../hooks';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { App, Image, Tooltip } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { App, Dropdown, Image, Space, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,
+  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -34,6 +37,8 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
+  const webuiNavigate = useWebUINavigate();
+
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
@@ -55,7 +60,6 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     graphql`
       fragment FileBrowserButtonFragment on VirtualFolderNode {
         id
-        row_id
         host
       }
     `,
@@ -77,73 +81,101 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     } else return '';
   };
 
+  // Helper to create launcher value for filebrowser
+  const createFilebrowserLauncherValue = (): StartSessionWithDefaultValue => ({
+    sessionName: `filebrowser-${toLocalId(vfolder.id || '')}`,
+    sessionType: 'interactive',
+    environments: {
+      version: filebrowserImage || '',
+    },
+    allocationPreset: 'minimum-required',
+    cluster_mode: 'single-node',
+    cluster_size: 1,
+    mount_ids: [toLocalId(vfolder.id || '').replaceAll('-', '')],
+  });
+
   return (
     <Tooltip title={getTooltipTitle()}>
-      <BAIButton
-        icon={
-          <Image
-            width="18px"
-            src="/resources/icons/filebrowser.svg"
-            alt="File Browser"
-            preview={false}
-            style={
-              filebrowserImage
-                ? undefined
-                : {
-                    filter: 'grayscale(100%)',
-                  }
-            }
-          />
-        }
-        disabled={!filebrowserImage || !hasAccessPermission}
-        action={async () => {
-          if (!filebrowserImage) {
-            return;
+      <Space.Compact>
+        <BAIButton
+          icon={
+            <Image
+              width="18px"
+              src="/resources/icons/filebrowser.svg"
+              alt="File Browser"
+              preview={false}
+              style={
+                filebrowserImage
+                  ? undefined
+                  : {
+                      filter: 'grayscale(100%)',
+                    }
+              }
+            />
           }
-          const fileBrowserFormValue: StartSessionWithDefaultValue = {
-            // If the resource setting is not included when the session is created,
-            // it is created with the value determined by the server.
-            sessionName: `filebrowser-${vfolder.row_id}`,
-            sessionType: 'interactive',
-            // use default file browser image if configured and allowed
-            environments: {
-              version: filebrowserImage,
-            },
-            allocationPreset: 'minimum-required',
-            cluster_mode: 'single-node',
-            cluster_size: 1,
-            mount_ids: [vfolder.row_id?.replaceAll('-', '') || ''],
-          };
-
-          await startSessionWithDefault(fileBrowserFormValue)
-            .then((results) => {
-              if (results?.fulfilled && results.fulfilled.length > 0) {
-                upsertSessionNotification(results.fulfilled, [
-                  {
-                    key: `filebrowser-${vfolder.row_id}`,
-                    extraData: {
-                      appName: 'filebrowser',
-                    } as PrimaryAppOption,
-                  },
-                ]);
-              }
-              if (results?.rejected && results.rejected.length > 0) {
-                const error = results.rejected[0].reason;
-                modal.error({
-                  title: error?.title,
-                  content: getErrorMessage(error),
-                });
-              }
-            })
-            .catch((error) => {
-              logger.error('Unexpected error during session creation:', error);
-              message.error(t('error.UnexpectedError'));
-            });
-        }}
-        {...buttonProps}
-      >
-        {showTitle && t('data.explorer.ExecuteFileBrowser')}
-      </BAIButton>
+          disabled={!filebrowserImage || !hasAccessPermission}
+          action={async () => {
+            if (!filebrowserImage) {
+              return;
+            }
+            const fileBrowserFormValue = createFilebrowserLauncherValue();
+            await startSessionWithDefault(fileBrowserFormValue)
+              .then((results) => {
+                if (results?.fulfilled && results.fulfilled.length > 0) {
+                  upsertSessionNotification(results.fulfilled, [
+                    {
+                      key: `filebrowser-${toLocalId(vfolder.id || '')}`,
+                      extraData: {
+                        appName: 'filebrowser',
+                      } as PrimaryAppOption,
+                    },
+                  ]);
+                }
+                if (results?.rejected && results.rejected.length > 0) {
+                  const error = results.rejected[0].reason;
+                  modal.error({
+                    title: error?.title,
+                    content: getErrorMessage(error),
+                  });
+                }
+              })
+              .catch((error) => {
+                logger.error(
+                  'Unexpected error during session creation:',
+                  error,
+                );
+                message.error(t('error.UnexpectedError'));
+              });
+          }}
+          {...buttonProps}
+        >
+          {showTitle && t('data.explorer.ExecuteFileBrowser')}
+        </BAIButton>
+        <Dropdown
+          disabled={!filebrowserImage || !hasAccessPermission}
+          trigger={['click']}
+          menu={{
+            items: [
+              {
+                key: 'custom',
+                label: t('import.StartWithOptions'),
+                onClick: () => {
+                  const launcherValue = createFilebrowserLauncherValue();
+                  const params = new URLSearchParams();
+                  params.set('formValues', JSON.stringify(launcherValue));
+                  params.set('step', '4');
+                  webuiNavigate({
+                    pathname: '/session/start',
+                    search: params.toString(),
+                  });
+                },
+              },
+            ],
+          }}
+        >
+          <BAIButton icon={<EllipsisOutlined />} />
+        </Dropdown>
+      </Space.Compact>
     </Tooltip>
   );
 };

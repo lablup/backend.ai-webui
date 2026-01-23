@@ -5,7 +5,9 @@ import {
 import {
   getImageFullName,
   localeCompare,
+  parseImageString,
   preserveDotStartCase,
+  removeArchitectureFromImageFullName,
 } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -169,11 +171,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
       | ImageGroup['environmentGroups'][0]
       | undefined;
     let matchedImageByVersion: Image | undefined;
-    let version = form.getFieldValue('environments')?.version;
-    // FIXME: manually add architecture based on amd64
-    if (version && version.indexOf('@') < 0) {
-      version += '@x86_64';
-    }
+    const version = form.getFieldValue('environments')?.version;
+
+    // 1. Try exact full name matching (registry/namespace:tag@arch)
     version &&
       _.find(imageGroups, (group) => {
         matchedEnvironmentByVersion = _.find(
@@ -188,6 +188,49 @@ const ImageEnvironmentSelectFormItems: React.FC<
         );
         return !!matchedEnvironmentByVersion; // break iteration
       });
+
+    // 2. If no exact match, try partial matching
+    if (!matchedEnvironmentByVersion && version) {
+      const { registryAndNamespace, hasTag, hasArch } =
+        parseImageString(version);
+
+      if (!hasArch && hasTag) {
+        // version is "registry/namespace:tag" format without architecture
+        _.find(imageGroups, (group) => {
+          matchedEnvironmentByVersion = _.find(
+            group.environmentGroups,
+            (environment) => {
+              matchedImageByVersion = _.find(environment.images, (image) => {
+                const fullName = getImageFullName(image);
+                // Match by removing architecture from fullName
+                return (
+                  removeArchitectureFromImageFullName(fullName) === version
+                );
+              });
+              return !!matchedImageByVersion;
+            },
+          );
+          return !!matchedEnvironmentByVersion;
+        });
+      } else if (!hasTag) {
+        // version is "registry/namespace" format (no tag, no architecture)
+        // Select the latest version (first image in sorted array)
+        _.find(imageGroups, (group) => {
+          matchedEnvironmentByVersion = _.find(
+            group.environmentGroups,
+            (environment) => {
+              if (environment.environmentName === registryAndNamespace) {
+                // images are already sorted by version (latest first)
+                matchedImageByVersion = environment.images[0];
+                return true;
+              }
+              return false;
+            },
+          );
+          return !!matchedEnvironmentByVersion;
+        });
+      }
+    }
 
     // if matchedEnvironmentByVersion is not existed, select first values
     let nextEnvironment: ImageGroup['environmentGroups'][0] | undefined;

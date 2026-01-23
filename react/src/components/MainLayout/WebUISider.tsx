@@ -69,6 +69,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     adminMenu,
     superAdminMenu,
     isSelectedAdminCategoryMenu,
+    isCurrentPageUnauthorized,
+    defaultMenuPath,
   } = useWebUIMenuItems({
     hideGroupName: props.collapsed,
   });
@@ -104,7 +106,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           shape="circle"
           icon={<ArrowLeftIcon />}
           onClick={() => {
-            webuiNavigate(goBackPath ? goBackPath : '/start');
+            webuiNavigate(goBackPath || defaultMenuPath);
           }}
           aria-label={t('webui.menu.GoBack')}
           style={{
@@ -151,7 +153,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             cursor: 'pointer',
             display: 'block',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(defaultMenuPath)}
         />
       }
       theme={currentSiderTheme}
@@ -172,7 +174,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             cursor: 'pointer',
             display: 'block',
           }}
-          onClick={() => webuiNavigate(themeConfig?.logo?.href || '/start')}
+          onClick={() => webuiNavigate(defaultMenuPath)}
         />
       }
       {...props}
@@ -197,7 +199,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           paddingBottom: token.paddingSM,
         }}
       >
-        {!isSelectedAdminCategoryMenu && (
+        {(!isSelectedAdminCategoryMenu || isCurrentPageUnauthorized) && (
           <BAIMenu
             collapsed={props.collapsed}
             selectedKeys={[

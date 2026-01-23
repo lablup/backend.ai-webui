@@ -15,6 +15,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { PayloadError } from 'relay-runtime';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
@@ -70,30 +71,52 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
           foldersByPermission.deletable,
           (vfolder: VFolderType) =>
             deleteMutation.mutateAsync(vfolder.id).catch((error) => {
-              message.error(getErrorMessage(error));
-              return Promise.reject();
+              return Promise.reject({ vfolder, error });
             }),
         );
         Promise.allSettled(promises).then((results) => {
-          const success = results.every(
-            (result) => result.status === 'fulfilled',
-          );
-          if (success) {
+          const fulfilled = results.filter((r) => r.status === 'fulfilled');
+          const rejected = results.filter((r) => r.status === 'rejected');
+
+          if (rejected.length > 0) {
+            const failedVfolderNames = rejected
+              .map((r) => {
+                const reason = r.reason;
+                return reason?.vfolder?.name || '';
+              })
+              .join(', ');
+
+            failedVfolderNames &&
+              message.error(
+                t('data.folders.FailedToDeleteFolders', {
+                  folderNames: failedVfolderNames,
+                }),
+              );
+
+            const error =
+              rejected[0]?.reason?.error?.isError && rejected[0].reason.error;
+            error && message.error(getErrorMessage(error as PayloadError));
+          }
+
+          if (fulfilled.length > 0) {
             if (foldersByPermission.deletable?.length === 1) {
               message.success(
                 t('data.folders.FolderDeleted', {
                   folderName: foldersByPermission.deletable?.[0]?.name,
                 }),
               );
-            } else {
-              message.success(
-                t('data.folders.MultipleFolderDeleted', {
-                  folderLength: foldersByPermission.deletable?.length,
-                }),
-              );
+              onRequestClose?.(true);
+              return;
             }
+            message.success(
+              t('data.folders.MultipleFolderDeleted', {
+                count: fulfilled.length,
+                total: foldersByPermission.deletable?.length,
+              }),
+            );
+            onRequestClose?.(true);
+            return;
           }
-          onRequestClose?.(success);
         });
       }}
       {...baiModalProps}

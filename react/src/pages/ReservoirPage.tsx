@@ -171,7 +171,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id
+                id @since(version: "25.17.0")
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment
@@ -233,7 +233,7 @@ const ReservoirPage: React.FC = () => {
           >
             <Statistic
               title="MODEL"
-              value={total.count}
+              value={total?.count}
               prefix={<Brain size={16} />}
               styles={{
                 content: {

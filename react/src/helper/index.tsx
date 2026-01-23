@@ -395,6 +395,89 @@ export const getImageFullName = (
     : undefined;
 };
 
+/**
+ * Parse an image string to extract its components.
+ * Image string format: registry/namespace:tag@arch
+ * - registry can include port (e.g., myregistry.org:5000)
+ * - tag is the part after the last "/" and after ":"
+ * - arch is after "@"
+ *
+ * @param imageString - The image string to parse
+ * @returns Parsed components: registryAndNamespace, tag, architecture, and flags
+ */
+export const parseImageString = (
+  imageString: string,
+): {
+  registryAndNamespace: string;
+  tag: string | undefined;
+  architecture: string | undefined;
+  hasTag: boolean;
+  hasArch: boolean;
+} => {
+  // Defensive validation for invalid input
+  if (!imageString || typeof imageString !== 'string') {
+    return {
+      registryAndNamespace: '',
+      tag: undefined,
+      architecture: undefined,
+      hasTag: false,
+      hasArch: false,
+    };
+  }
+
+  // Check for architecture (after @)
+  const hasArch = imageString.includes('@');
+  let architecture: string | undefined;
+  let withoutArch = imageString;
+
+  if (hasArch) {
+    const atIndex = imageString.lastIndexOf('@');
+    architecture = imageString.slice(atIndex + 1);
+    withoutArch = imageString.slice(0, atIndex);
+  }
+
+  // Check for tag - must be after the last "/"
+  // This handles registry with port like "myregistry.org:5000/namespace:tag"
+  const lastSlashIndex = withoutArch.lastIndexOf('/');
+  const afterLastSlash =
+    lastSlashIndex >= 0 ? withoutArch.slice(lastSlashIndex) : withoutArch;
+  const hasTag = afterLastSlash.includes(':');
+
+  let registryAndNamespace: string;
+  let tag: string | undefined;
+
+  if (hasTag) {
+    // Find the ":" after the last "/"
+    const tagColonIndex =
+      lastSlashIndex >= 0
+        ? lastSlashIndex + afterLastSlash.indexOf(':')
+        : afterLastSlash.indexOf(':');
+    registryAndNamespace = withoutArch.slice(0, tagColonIndex);
+    tag = withoutArch.slice(tagColonIndex + 1);
+  } else {
+    registryAndNamespace = withoutArch;
+  }
+
+  return {
+    registryAndNamespace,
+    tag,
+    architecture,
+    hasTag,
+    hasArch,
+  };
+};
+
+/**
+ * Remove architecture suffix from an image full name.
+ * @param fullName - The full image name (e.g., "registry/namespace:tag@arch")
+ * @returns The image name without architecture (e.g., "registry/namespace:tag")
+ */
+export const removeArchitectureFromImageFullName = (
+  fullName: string | undefined,
+): string | undefined => {
+  return fullName?.replace(/@[^@]+$/, '');
+};
+
 export const localeCompare = (a?: string | null, b?: string | null) => {
   if (a === null || a === undefined) return -1;
   if (b === null || b === undefined) return 1;

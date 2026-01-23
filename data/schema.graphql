@@ -457,10 +457,10 @@ type AgentSystemInfo
   """
   List of compute plugin metadata supported by this agent.
   Each plugin represents a specific accelerator or resource type (e.g., CUDA).
-  Expressed as a JSON object where keys are plugin names and values contain
+  Entries contain plugin names and their associated metadata with
   plugin-specific configuration and capabilities.
   """
-  computePlugins: JSON!
+  computePlugins: ComputePlugins!
 }
 
 """Added in 26.1.0. Strawberry-based Agent type replacing AgentNode."""
@@ -511,6 +511,9 @@ type AgentV2 implements Node
   quota management, and workload isolation across different user groups or projects.
   """
   scalingGroup: String!
+
+  """Added in 26.1.0. Load the container count for this agent."""
+  containerCount: Int!
 }
 
 """
@@ -1011,6 +1014,35 @@ type ArtifactVerificationResult
 }
 
 """
+Added in 26.1.0.
+
+A collection of metadata from an artifact verifier.
+Contains key-value pairs providing additional information about the verification.
+"""
+type ArtifactVerifierMetadata
+  @join__type(graph: STRAWBERRY)
+{
+  """List of metadata entries. Each entry contains a key-value pair."""
+  entries: [ArtifactVerifierMetadataEntry!]!
+}
+
+"""
+Added in 26.1.0.
+
+A single key-value entry representing metadata from an artifact verifier.
+Contains additional information about the verification process.
+"""
+type ArtifactVerifierMetadataEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The key identifier for this metadata entry."""
+  key: String!
+
+  """The value for this metadata entry."""
+  value: String!
+}
+
+"""
 Added in 25.17.0.
 
 Result from a single malware verifier containing scan results and metadata.
@@ -1036,8 +1068,8 @@ type ArtifactVerifierResult
   """Total number of files scanned"""
   scannedCount: Int!
 
-  """Additional metadata from the verifier"""
-  metadata: JSON!
+  """Added in 26.1.0. Additional metadata from the verifier."""
+  metadata: ArtifactVerifierMetadata!
 
   """Fatal error message if the verifier failed to complete"""
   error: String
@@ -1448,7 +1480,11 @@ input ClearImageCustomResourceLimitKey
   @join__type(graph: GRAPHENE)
 {
   image_canonical: String!
-  architecture: String! = "x86_64"
+
+  """
+  Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+  """
+  architecture: String = null
 }
 
 """Added in 25.6.0."""
@@ -1540,6 +1576,35 @@ type ComputeContainerList implements PaginatedList
 {
   items: [ComputeContainer]!
   total_count: Int!
+}
+
+"""
+Added in 26.1.0. A single compute plugin entry representing one plugin and its metadata.
+"""
+type ComputePluginEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Name of the compute plugin (e.g., 'cuda', 'rocm', 'tpu'). This identifier corresponds to the accelerator or resource type supported by the agent.
+  """
+  pluginName: String!
+
+  """
+  Plugin value string containing plugin-specific information. The content varies by plugin type and may include version or configuration details.
+  """
+  value: String!
+}
+
+"""
+Added in 26.1.0. A collection of compute plugins available on an agent. Each entry specifies a plugin name and its associated metadata.
+"""
+type ComputePlugins
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  List of compute plugins. Each entry contains a plugin name and its metadata. The list includes all accelerator and resource type plugins installed on the agent.
+  """
+  entries: [ComputePluginEntry!]!
 }
 
 type ComputeSession implements Item
@@ -2094,8 +2159,8 @@ input CreateNotificationChannelInput
 {
   name: String!
   description: String = null
-  channelType: NotificationChannelType! = WEBHOOK
-  config: WebhookConfigInput!
+  channelType: NotificationChannelType!
+  spec: NotificationChannelSpecInput!
   enabled: Boolean! = true
 }
 
@@ -2377,7 +2442,7 @@ input DelegateImportArtifactsInput
   """
   Options controlling import behavior such as forcing re-download. Added in 26.1.0.
   """
-  options: ImportArtifactsOptionsGQL! = {force: false}
+  options: ImportArtifactsOptionsGQL = null
 }
 
 """
@@ -2796,8 +2861,12 @@ input DeploymentHistoryFilter
 {
   id: UUIDFilter = null
   deploymentId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -3279,6 +3348,24 @@ input DomainUsageBucketOrderBy
   direction: OrderDirection! = DESC
 }
 
+"""Input for email message settings"""
+input EmailMessageInput
+  @join__type(graph: STRAWBERRY)
+{
+  fromEmail: String!
+  toEmails: [String!]!
+  subjectTemplate: String = null
+}
+
+"""Input for email notification channel configuration"""
+input EmailSpecInput
+  @join__type(graph: STRAWBERRY)
+{
+  smtp: SMTPConnectionInput!
+  message: EmailMessageInput!
+  auth: SMTPAuthInput = null
+}
+
 type Endpoint implements Item
   @join__implements(graph: GRAPHENE, interface: "Item")
   @join__type(graph: GRAPHENE)
@@ -3440,6 +3527,48 @@ type EndpointTokenList implements PaginatedList
   total_count: Int!
 }
 
+"""
+Added in 26.1.0. A single environment variable entry with name and value.
+"""
+type EnvironmentVariableEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """Environment variable name (e.g., CUDA_VISIBLE_DEVICES)."""
+  name: String!
+
+  """Environment variable value."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A single environment variable entry with name and value.
+"""
+input EnvironmentVariableEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Environment variable name (e.g., CUDA_VISIBLE_DEVICES)."""
+  name: String!
+
+  """Environment variable value."""
+  value: String!
+}
+
+"""Added in 26.1.0. A collection of environment variable entries."""
+type EnvironmentVariables
+  @join__type(graph: STRAWBERRY)
+{
+  """List of environment variable entries."""
+  entries: [EnvironmentVariableEntry!]!
+}
+
+"""Added in 26.1.0. A collection of environment variable entries."""
+input EnvironmentVariablesInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of environment variable entries."""
+  entries: [EnvironmentVariableEntryInput!]!
+}
+
 """Added in 24.03.4."""
 input ExtraMountInput
   @join__type(graph: GRAPHENE)
@@ -3537,15 +3666,47 @@ type FairShareCalculationSnapshot
 }
 
 """
+Added in 26.1.0. Fair share calculation configuration for a resource group. Defines parameters for computing fair share factors across domains, projects, and users.
+"""
+type FairShareScalingGroupSpec
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Half-life for exponential decay in days. Determines how quickly historical usage loses significance. Default is 7 days.
+  """
+  halfLifeDays: Int!
+
+  """
+  Total lookback period in days for usage aggregation. Only usage within this window is considered. Default is 28 days.
+  """
+  lookbackDays: Int!
+
+  """
+  Granularity of decay buckets in days. Usage is aggregated into buckets of this size. Default is 1 day.
+  """
+  decayUnitDays: Int!
+
+  """
+  Default weight for entities without explicit weight in this resource group. Default is 1.0.
+  """
+  defaultWeight: Decimal!
+
+  """
+  Weights for each resource type when calculating normalized usage. If a resource type is not specified, default weight (1.0) is used.
+  """
+  resourceWeights: ResourceSlot!
+}
+
+"""
 Added in 26.1.0. Configuration parameters that control how fair share factors are calculated. These parameters determine the decay rate, lookback period, and resource weighting for usage aggregation.
 """
 type FairShareSpec
   @join__type(graph: STRAWBERRY)
 {
   """
-  Base weight multiplier for this entity. Higher weight values result in higher scheduling priority. Default is 1.0. A weight of 2.0 means this entity is twice as important as one with weight 1.0.
+  Base weight multiplier for this entity. Higher weight values result in higher scheduling priority. Null means using resource group's default_weight.
   """
-  weight: Decimal!
+  weight: Decimal
 
   """
   Half-life for exponential decay in days. Determines how quickly historical usage loses significance. For example, with half_life_days=7, usage from 7 days ago contributes half as much as today's usage.
@@ -3949,7 +4110,7 @@ input ImportArtifactsInput
   """
   Options controlling import behavior such as forcing re-download. Added in 26.1.0.
   """
-  options: ImportArtifactsOptionsGQL! = {force: false}
+  options: ImportArtifactsOptionsGQL = null
 }
 
 """
@@ -4479,16 +4640,8 @@ type ModelReplica implements Node
   """Traffic weight for load balancing between replicas."""
   weight: Int!
 
-  """
-  Detailed information about the routing node including error or success messages.
-  """
-  detail: JSON!
-
   """Timestamp when the replica was created."""
   createdAt: DateTime!
-
-  """Live statistics of the routing node (CPU utilization, etc.)."""
-  liveStat: JSON!
 
   """
   The session ID associated with the replica. This can be null right after replica creation.
@@ -4607,10 +4760,8 @@ type ModelRuntimeConfig
   """Framework-specific configuration in JSON format."""
   inferenceRuntimeConfig: JSON
 
-  """
-  Environment variables for the service, e.g. {"CUDA_VISIBLE_DEVICES": "0"}.
-  """
-  environ: JSON
+  """Environment variables for the service, e.g. CUDA_VISIBLE_DEVICES=0."""
+  environ: EnvironmentVariables
 }
 
 """Added in 25.19.0"""
@@ -4620,10 +4771,8 @@ input ModelRuntimeConfigInput
   runtimeVariant: String!
   inferenceRuntimeConfig: JSON = null
 
-  """
-  Environment variables for the service, e.g. {"CUDA_VISIBLE_DEVICES": "0"}
-  """
-  environ: JSON = null
+  """Environment variables for the service."""
+  environ: EnvironmentVariablesInput = null
 }
 
 """
@@ -5220,7 +5369,14 @@ type Mutation
   ): RescanImages @join__field(graph: GRAPHENE)
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage @join__field(graph: GRAPHENE)
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage @join__field(graph: GRAPHENE)
-  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage @join__field(graph: GRAPHENE)
+  modify_image(
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    props: ModifyImageInput!
+    target: String!
+  ): ModifyImage @join__field(graph: GRAPHENE)
 
   """Added in 25.6.0"""
   clear_image_custom_resource_limit(key: ClearImageCustomResourceLimitKey!): ClearImageCustomResourceLimitPayload @join__field(graph: GRAPHENE)
@@ -5229,7 +5385,13 @@ type Mutation
   forget_image_by_id(image_id: String!): ForgetImageById @join__field(graph: GRAPHENE)
 
   """Deprecated since 25.4.0. Use `forget_image_by_id` instead."""
-  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
+  forget_image(
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    reference: String!
+  ): ForgetImage @join__field(graph: GRAPHENE) @deprecated(reason: "Deprecated since 25.4.0. Use `forget_image_by_id` instead.")
 
   """Added in 25.4.0"""
   purge_image_by_id(
@@ -5241,7 +5403,15 @@ type Mutation
 
   """Added in 24.03.1"""
   untag_image_from_registry(image_id: String!): UntagImageFromRegistry @join__field(graph: GRAPHENE)
-  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage @join__field(graph: GRAPHENE)
+  alias_image(
+    alias: String!
+
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
+    target: String!
+  ): AliasImage @join__field(graph: GRAPHENE)
   dealias_image(alias: String!): DealiasImage @join__field(graph: GRAPHENE)
   clear_images(registry: String): ClearImages @join__field(graph: GRAPHENE)
 
@@ -5747,6 +5917,26 @@ type Mutation
 
   """Added in 25.19.0. Update the traffic status of a route."""
   updateRouteTrafficStatus(input: UpdateRouteTrafficStatusInput!): UpdateRouteTrafficStatusPayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.1.0. Upsert domain fair share weight (superadmin only). Creates a new record if it doesn't exist, or updates the weight if it does.
+  """
+  upsertDomainFairShareWeight(input: UpsertDomainFairShareWeightInput!): UpsertDomainFairShareWeightPayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.1.0. Upsert project fair share weight (superadmin only). Creates a new record if it doesn't exist, or updates the weight if it does.
+  """
+  upsertProjectFairShareWeight(input: UpsertProjectFairShareWeightInput!): UpsertProjectFairShareWeightPayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.1.0. Upsert user fair share weight (superadmin only). Creates a new record if it doesn't exist, or updates the weight if it does.
+  """
+  upsertUserFairShareWeight(input: UpsertUserFairShareWeightInput!): UpsertUserFairShareWeightPayload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.1.0. Update fair share configuration for a resource group (superadmin only). Only provided fields are updated; others retain their existing values.
+  """
+  updateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload! @join__field(graph: STRAWBERRY)
 }
 
 """Added in 24.12.0."""
@@ -5814,7 +6004,7 @@ type NotificationChannel implements Node
   name: String!
   description: String
   channelType: NotificationChannelType!
-  config: WebhookConfigGQL!
+  spec: NotificationChannelSpec!
   enabled: Boolean!
   createdAt: DateTime!
 }
@@ -5870,11 +6060,29 @@ enum NotificationChannelOrderField
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
+"""Interface for notification channel specifications"""
+interface NotificationChannelSpec
+  @join__type(graph: STRAWBERRY)
+{
+  channelType: NotificationChannelType!
+}
+
+"""
+Input for notification channel configuration. Exactly one of webhook or email must be set.
+"""
+input NotificationChannelSpecInput
+  @join__type(graph: STRAWBERRY)
+{
+  webhook: WebhookSpecInput
+  email: EmailSpecInput
+}
+
 """Notification channel types"""
 enum NotificationChannelType
   @join__type(graph: STRAWBERRY)
 {
   WEBHOOK @join__enumValue(graph: STRAWBERRY)
+  EMAIL @join__enumValue(graph: STRAWBERRY)
 }
 
 """Notification rule"""
@@ -5951,6 +6159,7 @@ enum NotificationRuleType
   SESSION_STARTED @join__enumValue(graph: STRAWBERRY)
   SESSION_TERMINATED @join__enumValue(graph: STRAWBERRY)
   ARTIFACT_DOWNLOAD_COMPLETED @join__enumValue(graph: STRAWBERRY)
+  ENDPOINT_LIFECYCLE_CHANGED @join__enumValue(graph: STRAWBERRY)
 }
 
 """Added in 25.14.0"""
@@ -6528,7 +6737,11 @@ type Query
     """Added in 24.03.1"""
     id: String
     reference: String
-    architecture: String = "x86_64"
+
+    """
+    Changed to nullable in 26.1. If not provided, defaults to the Manager's architecture.
+    """
+    architecture: String = null
   ): Image @join__field(graph: GRAPHENE)
   images(
     """
@@ -6719,7 +6932,7 @@ type Query
   """Added in 25.5.0."""
   total_resource_slot(
     """
-    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
+    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
     Default value is null.
     """
     statuses: [String] = null
@@ -6955,11 +7168,8 @@ type Query
   """Added in 25.14.0"""
   reservoirRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): ReservoirRegistryConnection! @join__field(graph: STRAWBERRY)
 
-  """Added in 25.18.0. List scaling groups for a specific project"""
-  scalingGroupsV2(project: ID!, filter: ScalingGroupFilter = null, orderBy: [ScalingGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ScalingGroupV2Connection! @join__field(graph: STRAWBERRY)
-
-  """Added in 25.18.0. List all scaling groups"""
-  allScalingGroupsV2(filter: ScalingGroupFilter = null, orderBy: [ScalingGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ScalingGroupV2Connection! @join__field(graph: STRAWBERRY)
+  """Added in 26.1.0. List resource groups"""
+  resourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection! @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   defaultArtifactRegistry(artifactType: ArtifactType!): ArtifactRegistry @join__field(graph: STRAWBERRY)
@@ -7192,14 +7402,12 @@ type ResourceConfig
   @join__type(graph: STRAWBERRY)
 {
   """
-  JSON describing allocated resources. Example: {"cpu": "1", "mem": "1073741824", "cuda.device": "0"}.
+  Added in 26.1.0. Allocated compute resources including CPU, memory, and accelerators.
   """
-  resourceSlots: JSON!
+  resourceSlots: ResourceSlot!
 
-  """
-  Additional resource options such as shared memory. Example: {"shmem": "64m"}.
-  """
-  resourceOpts: JSON
+  """Added in 26.1.0. Additional resource options such as shared memory."""
+  resourceOpts: ResourceOpts
   resourceGroup: ScalingGroupNode!
 }
 
@@ -7209,15 +7417,66 @@ input ResourceConfigInput
 {
   resourceGroup: ResourceGroupInput!
 
-  """
-  Resources allocated for the deployment. Example: "resourceSlots": "{\"cpu\": \"1\", \"mem\": \"1073741824\", \"cuda.device\": \"0\"}"
-  """
-  resourceSlots: JSON!
+  """Added in 26.1.0. Resources allocated for the deployment."""
+  resourceSlots: ResourceSlotInput!
 
   """
-  Additional options for the resources. This is especially used for shared memory configurations. Example: "resourceOpts": "{\"shmem\": \"64m\"}"
+  Added in 26.1.0. Additional options for the resources such as shared memory.
   """
-  resourceOpts: JSON = null
+  resourceOpts: ResourceOptsInput = null
+}
+
+"""Added in 26.1.0. Resource group with structured configuration"""
+type ResourceGroup implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """
+  Unique name identifying the resource group.
+  Used as primary key and referenced by agents, sessions, and resource presets.
+  """
+  name: String!
+
+  """
+  Added in 26.1.0. Fair share calculation configuration for this resource group. Defines decay parameters and resource weights for fair share factor computation.
+  """
+  fairShareSpec: FairShareScalingGroupSpec!
+}
+
+"""Added in 26.1.0. Resource group connection"""
+type ResourceGroupConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ResourceGroupEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type ResourceGroupEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ResourceGroup!
+}
+
+"""Added in 26.1.0. Filter for resource groups"""
+input ResourceGroupFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  AND: [ResourceGroupFilter!] = null
+  OR: [ResourceGroupFilter!] = null
+  NOT: [ResourceGroupFilter!] = null
 }
 
 """Added in 25.19.0"""
@@ -7225,6 +7484,21 @@ input ResourceGroupInput
   @join__type(graph: STRAWBERRY)
 {
   name: String!
+}
+
+"""Added in 26.1.0. Order by specification for resource groups"""
+input ResourceGroupOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: ResourceGroupOrderField!
+  direction: OrderDirection! = ASC
+}
+
+"""Added in 26.1.0. Fields available for ordering resource groups"""
+enum ResourceGroupOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
 }
 
 type ResourceLimit
@@ -7241,6 +7515,52 @@ input ResourceLimitInput
   key: String
   min: String
   max: String @deprecated(reason: "Deprecated since 25.14.0. The max slot limit validation has been removed as it was deemed obsolete.")
+}
+
+"""
+Added in 26.1.0. A collection of additional resource options for a deployment. Contains key-value pairs for resource configuration like shared memory.
+"""
+type ResourceOpts
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource option entries. Each entry contains a key-value pair."""
+  entries: [ResourceOptsEntry!]!
+}
+
+"""
+Added in 26.1.0. A single key-value entry representing a resource option. Contains additional resource configuration such as shared memory settings.
+"""
+type ResourceOptsEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The name of this resource option. Example: 'shmem'."""
+  name: String!
+
+  """The value for this resource option. Example: '64m'."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A single key-value entry representing a resource option.
+"""
+input ResourceOptsEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """The name of this resource option (e.g., 'shmem')."""
+  name: String!
+
+  """The value for this resource option (e.g., '64m')."""
+  value: String!
+}
+
+"""
+Added in 26.1.0. A collection of additional resource options for input.
+"""
+input ResourceOptsInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource option entries."""
+  entries: [ResourceOptsEntryInput!]!
 }
 
 type ResourcePreset
@@ -7282,9 +7602,49 @@ type ResourceSlotEntry
   resourceType: String!
 
   """
-  Quantity of the resource as a decimal string to preserve precision. For 'cpu': number of cores (e.g., '2.0', '0.5'). For 'mem': bytes (e.g., '4294967296' for 4GB). For accelerators: device count or share fraction.
+  Quantity of the resource. For 'cpu': number of cores (e.g., 2.0, 0.5). For 'mem': bytes (e.g., 4294967296 for 4GB). For accelerators: device count or share fraction.
   """
+  quantity: Decimal!
+}
+
+"""
+Added in 26.1.0. A single entry representing one resource type and its allocated quantity.
+"""
+input ResourceSlotEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Resource type identifier (e.g., 'cpu', 'mem', 'cuda.device')."""
+  resourceType: String!
+
+  """Quantity of the resource as a decimal string."""
   quantity: String!
+}
+
+"""
+Added in 26.1.0. A collection of compute resource allocations for input.
+"""
+input ResourceSlotInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of resource allocations."""
+  entries: [ResourceSlotEntryInput!]!
+}
+
+"""
+Added in 26.1.0. Input for a single resource weight entry. Specifies how much a resource type contributes to fair share calculations.
+"""
+input ResourceWeightEntryInput
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Resource type identifier (e.g., 'cpu', 'mem', 'cuda.shares'). Must match the resource types used in the cluster.
+  """
+  resourceType: String!
+
+  """
+  Weight multiplier for this resource type in fair share calculations. Higher weight means this resource contributes more to the normalized usage. Set to null to remove this resource type (revert to default weight 1.0). Example: 0.001 for memory (bytes) to normalize against CPU cores.
+  """
+  weight: Decimal = null
 }
 
 """
@@ -7446,8 +7806,12 @@ input RouteHistoryFilter
   id: UUIDFilter = null
   routeId: UUIDFilter = null
   deploymentId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -7601,20 +7965,6 @@ type ScalingGroupConnection
   count: Int
 }
 
-"""Added in 25.18.0. Driver configuration for resource allocation"""
-type ScalingGroupDriverConfig
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Agent resource driver implementation name.
-  'static' uses a predefined set of agents registered to this scaling group.
-  """
-  name: String!
-
-  """Driver-specific configuration options. Contents vary by driver type."""
-  options: JSON!
-}
-
 """
 Added in 24.12.0. A Relay edge containing a `ScalingGroup` and its cursor.
 """
@@ -7626,56 +7976,6 @@ type ScalingGroupEdge
 
   """A cursor for use in pagination"""
   cursor: String!
-}
-
-"""Added in 25.18.0. Filter for scaling groups"""
-input ScalingGroupFilter
-  @join__type(graph: STRAWBERRY)
-{
-  name: StringFilter = null
-  description: StringFilter = null
-  isActive: Boolean = null
-  isPublic: Boolean = null
-  driver: String = null
-  scheduler: String = null
-  useHostNetwork: Boolean = null
-  AND: [ScalingGroupFilter!] = null
-  OR: [ScalingGroupFilter!] = null
-  NOT: [ScalingGroupFilter!] = null
-}
-
-"""Added in 25.18.0. Metadata information for a scaling group"""
-type ScalingGroupMetadata
-  @join__type(graph: STRAWBERRY)
-{
-  """Human-readable description of the scaling group's purpose"""
-  description: String!
-
-  """Timestamp when the scaling group was created"""
-  createdAt: DateTime!
-}
-
-"""Added in 25.18.0. Network configuration for a scaling group"""
-type ScalingGroupNetworkConfig
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  App-proxy coordinator API server address.
-  Manager uses this address to communicate with the app-proxy coordinator
-  for managing service routes, endpoint registration, and proxying client connections
-  to session services.
-  """
-  wsproxyAddr: String!
-
-  """Authentication token for the App-proxy coordinator API server."""
-  wsproxyApiToken: String!
-
-  """
-  Whether session containers use the host's network namespace
-  instead of isolated container networking.
-  Enables direct host port binding but reduces isolation.
-  """
-  useHostNetwork: Boolean!
 }
 
 """Added in 24.12.0."""
@@ -7698,210 +7998,6 @@ type ScalingGroupNode implements Node
   scheduler: String @join__field(graph: GRAPHENE)
   scheduler_opts: JSONString @join__field(graph: GRAPHENE)
   use_host_network: Boolean @join__field(graph: GRAPHENE)
-}
-
-"""Added in 25.18.0. Order by specification for scaling groups"""
-input ScalingGroupOrderBy
-  @join__type(graph: STRAWBERRY)
-{
-  field: ScalingGroupOrderField!
-  direction: OrderDirection! = ASC
-}
-
-enum ScalingGroupOrderField
-  @join__type(graph: STRAWBERRY)
-{
-  NAME @join__enumValue(graph: STRAWBERRY)
-  CREATED_AT @join__enumValue(graph: STRAWBERRY)
-  IS_ACTIVE @join__enumValue(graph: STRAWBERRY)
-  IS_PUBLIC @join__enumValue(graph: STRAWBERRY)
-}
-
-"""Added in 25.18.0. Scheduler configuration for session scheduling"""
-type ScalingGroupSchedulerConfig
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Scheduling algorithm implementation.
-  'fifo' schedules oldest pending sessions first,
-  'lifo' schedules newest first,
-  'drf' (Dominant Resource Fairness) balances resource usage across users.
-  """
-  name: ScalingGroupSchedulerType!
-
-  """
-  Detailed scheduler behavior configuration including session type restrictions,
-  timeouts, agent selection strategy, and resource allocation policies.
-  """
-  options: ScalingGroupSchedulerOptions!
-}
-
-"""Added in 25.18.0. Scheduler configuration options"""
-type ScalingGroupSchedulerOptions
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Session types that can be scheduled in this scaling group.
-  Valid values: 'interactive' , 'batch', 'inference'.
-  Requests for unlisted types are rejected.
-  """
-  allowedSessionTypes: [String!]!
-
-  """
-  Maximum time in seconds a session can wait in PENDING state
-  before automatic cancellation.
-  Zero means no timeout.
-  Used to prevent indefinite resource waiting when no agents are available.
-  """
-  pendingTimeout: Float!
-
-  """
-  Scheduler-specific configuration options.
-  Contents depend on the scheduler implementation (fifo/lifo/drf).
-  Used for advanced scheduling behavior customization.
-  """
-  config: JSON!
-
-  """
-  Algorithm for selecting target agents when scheduling sessions.
-  'dispersed' spreads sessions across available agents,
-  'concentrated' packs sessions onto fewer agents,
-  'roundrobin' cycles through agents sequentially.
-  """
-  agentSelectionStrategy: String!
-
-  """
-  Configuration for the agent selection strategy.
-  Structure varies by strategy - for example,
-  concentrated strategy may specify endpoint spreading rules.
-  """
-  agentSelectorConfig: JSON!
-
-  """
-  Whether inference service replicas should be distributed across different agents
-  instead of co-locating on same agent.
-  When true, forces replica spreading.
-  Applied only when using concentrated agent selection strategy.
-  Improves fault tolerance for model serving.
-  """
-  enforceSpreadingEndpointReplica: Boolean!
-
-  """
-  Whether agents accept session requests that allocate fractional resources
-  (e.g., 0.5 GPU) causing resource fragmentation.
-  When false, agents reject sessions that would prevent future efficient resource allocation.
-  """
-  allowFractionalResourceFragmentation: Boolean!
-
-  """
-  List of route health statuses that trigger automatic cleanup of service routes.
-  Valid values: 'healthy', 'unhealthy', 'degraded'.
-  Default: ['unhealthy'].
-  """
-  routeCleanupTargetStatuses: [String!]!
-}
-
-"""
-Added in 25.18.0. Scheduler type for session scheduling.
-
-- FIFO: First-In-First-Out - Schedules oldest pending sessions first
-- LIFO: Last-In-First-Out - Schedules newest pending sessions first
-- DRF: Dominant Resource Fairness - Balances resource usage across users
-"""
-enum ScalingGroupSchedulerType
-  @join__type(graph: STRAWBERRY)
-{
-  FIFO @join__enumValue(graph: STRAWBERRY)
-  LIFO @join__enumValue(graph: STRAWBERRY)
-  DRF @join__enumValue(graph: STRAWBERRY)
-}
-
-"""Added in 25.18.0. Status information for a scaling group"""
-type ScalingGroupStatus
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Whether the scaling group can accept new session creation requests.
-  Inactive scaling groups are excluded from scheduling and cannot start new sessions.
-  """
-  isActive: Boolean!
-
-  """
-  Whether this scaling group is available for regular user sessions
-  (interactive/batch/inference).
-  When false, the scaling group is reserved for internal SYSTEM-type sessions only,
-  such as management or infrastructure sessions.
-  """
-  isPublic: Boolean!
-}
-
-"""Added in 25.18.0. Scaling group with structured configuration"""
-type ScalingGroupV2 implements Node
-  @join__implements(graph: STRAWBERRY, interface: "Node")
-  @join__type(graph: STRAWBERRY)
-{
-  """The Globally Unique ID of this object"""
-  id: ID!
-
-  """
-  Unique name identifying the scaling group.
-  Used as primary key and referenced by agents, sessions, and resource presets.
-  """
-  name: String!
-
-  """
-  Operational status controlling whether this scaling group accepts new sessions
-  and its visibility to users without explicit access grants.
-  """
-  status: ScalingGroupStatus!
-
-  """
-  Administrative metadata including human-readable description
-  and creation timestamp for audit and documentation purposes.
-  """
-  metadata: ScalingGroupMetadata!
-
-  """
-  Network configuration for connecting clients to interactive session services
-  (terminals, notebooks, web apps) through WebSocket proxy infrastructure.
-  """
-  network: ScalingGroupNetworkConfig!
-
-  """
-  Agent resource management driver determining how compute agents are provisioned
-  and registered to this scaling group (static registration vs dynamic provisioning).
-  """
-  driver: ScalingGroupDriverConfig!
-
-  """
-  Session scheduling configuration controlling queue management,
-  agent selection strategy, resource allocation policies,
-  and session lifecycle timeouts.
-  """
-  scheduler: ScalingGroupSchedulerConfig!
-}
-
-"""Added in 25.18.0. Scaling group connection"""
-type ScalingGroupV2Connection
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ScalingGroupV2Edge!]!
-  count: Int!
-}
-
-"""An edge in a connection."""
-type ScalingGroupV2Edge
-  @join__type(graph: STRAWBERRY)
-{
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: ScalingGroupV2!
 }
 
 type ScalingRule
@@ -8149,8 +8245,12 @@ input SessionSchedulingHistoryFilter
 {
   id: UUIDFilter = null
   sessionId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
   result: [SchedulingResult!] = null
   errorCode: StringFilter = null
+  message: StringFilter = null
   createdAt: DateTimeFilter = null
   updatedAt: DateTimeFilter = null
 }
@@ -8174,6 +8274,24 @@ type SetQuotaScope
   @join__type(graph: GRAPHENE)
 {
   quota_scope: QuotaScope
+}
+
+"""Input for SMTP authentication credentials"""
+input SMTPAuthInput
+  @join__type(graph: STRAWBERRY)
+{
+  username: String = null
+  password: String = null
+}
+
+"""Input for SMTP server connection settings"""
+input SMTPConnectionInput
+  @join__type(graph: STRAWBERRY)
+{
+  host: String!
+  port: Int!
+  useTls: Boolean! = true
+  timeout: Int! = 30
 }
 
 """
@@ -8534,7 +8652,7 @@ input UpdateNotificationChannelInput
   id: ID!
   name: String
   description: String
-  config: WebhookConfigInput
+  spec: NotificationChannelSpecInput
   enabled: Boolean
 }
 
@@ -8602,6 +8720,47 @@ type UpdateReservoirRegistryPayload
   reservoir: ReservoirRegistry!
 }
 
+"""
+Added in 26.1.0. Input for updating resource group fair share configuration. All fields are optional - only provided fields will be updated, others retain existing values.
+"""
+input UpdateResourceGroupFairShareSpecInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the resource group to update."""
+  resourceGroup: String!
+
+  """
+  Half-life for exponential decay in days. Leave null to keep existing value.
+  """
+  halfLifeDays: Int = null
+
+  """Total lookback period in days. Leave null to keep existing value."""
+  lookbackDays: Int = null
+
+  """
+  Granularity of decay buckets in days. Leave null to keep existing value.
+  """
+  decayUnitDays: Int = null
+
+  """Default weight for entities. Leave null to keep existing value."""
+  defaultWeight: Decimal = null
+
+  """
+  Resource weights for fair share calculation. Each entry specifies a resource type and its weight multiplier. Only provided resource types are updated (partial update). Set weight to null to remove that resource type (revert to default). Leave the entire list null to keep all existing values.
+  """
+  resourceWeights: [ResourceWeightEntryInput!] = null
+}
+
+"""
+Added in 26.1.0. Payload for resource group fair share spec update mutation.
+"""
+type UpdateResourceGroupFairShareSpecPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The updated resource group with new fair share configuration."""
+  resourceGroup: ResourceGroup!
+}
+
 """Added in 25.19.0. Input for updating route traffic status."""
 input UpdateRouteTrafficStatusInput
   @join__type(graph: STRAWBERRY)
@@ -8664,6 +8823,63 @@ type UpsertDomainConfigPayload
 }
 
 """
+Added in 26.1.0. Input for upserting domain fair share weight. The weight parameter affects scheduling priority - higher weight = higher priority. Set weight to null to use resource group's default_weight.
+"""
+input UpsertDomainFairShareWeightInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the scaling group (resource group) for this fair share."""
+  resourceGroup: String!
+
+  """Name of the domain to update weight for."""
+  domainName: String!
+
+  """
+  Priority weight multiplier. Higher weight = higher priority allocation ratio. Set to null to use resource group's default_weight.
+  """
+  weight: Decimal = null
+}
+
+"""Added in 26.1.0. Payload for domain fair share weight upsert mutation."""
+type UpsertDomainFairShareWeightPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The updated or created domain fair share record."""
+  domainFairShare: DomainFairShare!
+}
+
+"""
+Added in 26.1.0. Input for upserting project fair share weight. The weight parameter affects scheduling priority - higher weight = higher priority. Set weight to null to use resource group's default_weight.
+"""
+input UpsertProjectFairShareWeightInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the scaling group (resource group) for this fair share."""
+  resourceGroup: String!
+
+  """UUID of the project to update weight for."""
+  projectId: UUID!
+
+  """Name of the domain the project belongs to."""
+  domainName: String!
+
+  """
+  Priority weight multiplier. Higher weight = higher priority allocation ratio. Set to null to use resource group's default_weight.
+  """
+  weight: Decimal = null
+}
+
+"""
+Added in 26.1.0. Payload for project fair share weight upsert mutation.
+"""
+type UpsertProjectFairShareWeightPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The updated or created project fair share record."""
+  projectFairShare: ProjectFairShare!
+}
+
+"""
 Added in 25.16.0.
 Input for creating or updating user-level app configuration.
 The provided extra_config object will completely replace the existing configuration;
@@ -8687,6 +8903,38 @@ type UpsertUserConfigPayload
   @join__type(graph: STRAWBERRY)
 {
   appConfig: AppConfig!
+}
+
+"""
+Added in 26.1.0. Input for upserting user fair share weight. The weight parameter affects scheduling priority - higher weight = higher priority. Set weight to null to use resource group's default_weight.
+"""
+input UpsertUserFairShareWeightInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the scaling group (resource group) for this fair share."""
+  resourceGroup: String!
+
+  """UUID of the project the user belongs to."""
+  projectId: UUID!
+
+  """UUID of the user to update weight for."""
+  userUuid: UUID!
+
+  """Name of the domain the user belongs to."""
+  domainName: String!
+
+  """
+  Priority weight multiplier. Higher weight = higher priority allocation ratio. Set to null to use resource group's default_weight.
+  """
+  weight: Decimal = null
+}
+
+"""Added in 26.1.0. Payload for user fair share weight upsert mutation."""
+type UpsertUserFairShareWeightPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The updated or created user fair share record."""
+  userFairShare: UserFairShare!
 }
 
 """
@@ -9442,14 +9690,8 @@ type VirtualFolderPermissionList implements PaginatedList
   total_count: Int!
 }
 
-type WebhookConfigGQL
-  @join__type(graph: STRAWBERRY)
-{
-  url: String!
-}
-
 """Input for webhook configuration"""
-input WebhookConfigInput
+input WebhookSpecInput
   @join__type(graph: STRAWBERRY)
 {
   url: String!

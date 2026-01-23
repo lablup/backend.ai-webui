@@ -201,6 +201,7 @@
     "DuplicatedFiles": "Overwrite Confirmation",
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
     "EditFile": "Edit File",
+    "FileTooLargeToEdit": "In-browser editing is restricted because the file size exceeds {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder created successfully.",
     "FolderName": "Folder Name",
     "MaxFolderNameLength": "Folder name must be 255 characters or less.",
@@ -255,6 +256,7 @@
   },
   "general": {
     "NSelected": "{{count}} selected",
+    "Optional": "Optional",
     "TotalItems": "Total {{total}} items",
     "button": {
       "Cancel": "Cancel",

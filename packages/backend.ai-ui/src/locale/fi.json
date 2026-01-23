@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "EditFile": "Muokkaa tiedostoa",
+    "FileTooLargeToEdit": "Selaimessa muokkaaminen on rajoitettu, koska tiedostokoko ylittää {{size}}MB.",
     "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
     "FolderName": "Kansionimi",
     "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}} valittu",
+    "Optional": "Valinnainen",
     "TotalItems": "Yhteensä {{total}} kohteet",
     "button": {
       "Cancel": "Peruuttaa",

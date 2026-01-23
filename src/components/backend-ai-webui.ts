@@ -165,7 +165,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'information',
     'github',
     'import',
-    'unauthorized',
     'session',
     'session/start',
     'interactive-login',
@@ -620,51 +619,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         passive: false,
       },
     );
-    // redirect to unauthorized page when user's role is neither admin nor superadmin
-    if (!this.is_admin && !this.is_superadmin) {
-      if (
-        this.adminOnlyPages.includes(this._page) ||
-        this.superAdminOnlyPages.includes(this._page) ||
-        this._page === 'unauthorized'
-      ) {
-        this._page = 'unauthorized';
-        this._moveTo('/unauthorized');
-      }
-    }
-
-    // redirect to unauthorize page when admin user tries to access superadmin only page
-    if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
-      this._page = 'unauthorized';
-      this._moveTo('/unauthorized');
-    }
+    // Note: Unauthorized page redirect logic is handled in React (MainLayout/PageAccessGuard)
     this.optionalPages = [
       {
         page: 'agent-summary',
         available: !this.isHideAgents,
       },
     ];
-
-    // redirect to error page when blocked by config option or the page is not available page.
-    if (
-      this.optionalPages
-        .filter((item) => !item.available)
-        .map((item) => item.page)
-        .includes(this._page) ||
-      this.blockedMenuItem.includes(this._page) ||
-      this.inactiveMenuItem.includes(this._page) ||
-      (!this.availablePages.includes(this._page) &&
-        !this.plugins?.['menuitem']?.includes(this._page))
-    ) {
-      this._page = 'error';
-      this._moveTo('/error');
-    }
-    // since we need to add search params, redirect to the start page after error validation
-    // if you move this block to the previous error-validation block, it may cause an error
-    if (this._page === 'start') {
-      const url = new URL(window.location.href);
-      const hasSearchParam = url.search.length > 0;
-      this._moveTo(hasSearchParam ? `/start${url.search}` : '/start');
-    }
+    // Note: Redirect logic for blocked pages is handled in React (MainLayout/BlockedPageRedirector)
   }
 
   showUpdateNotifier(): void {

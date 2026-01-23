@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Confirmación de sobrescribencia",
     "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",
     "EditFile": "Editar archivo",
+    "FileTooLargeToEdit": "La edición en el navegador está restringida porque el tamaño del archivo excede {{size}}MB.",
     "FolderCreatedSuccessfully": "Carpeta creada con éxito.",
     "FolderName": "Nombre de carpeta",
     "MaxFolderNameLength": "El nombre de la carpeta debe ser de 255 caracteres o menos.",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}} seleccionado",
+    "Optional": "Opcional",
     "TotalItems": "Total {{total}} elementos",
     "button": {
       "Cancel": "Cancelar",

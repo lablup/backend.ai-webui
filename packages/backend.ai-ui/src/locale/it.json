@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
     "EditFile": "Modifica file",
+    "FileTooLargeToEdit": "La modifica nel browser è limitata perché la dimensione del file supera {{size}}MB.",
     "FolderCreatedSuccessfully": "Cartella creata correttamente.",
     "FolderName": "Nome della cartella",
     "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}} selezionato",
+    "Optional": "Opzionale",
     "TotalItems": "Totali {{total}} elementi",
     "button": {
       "Cancel": "Cancellare",

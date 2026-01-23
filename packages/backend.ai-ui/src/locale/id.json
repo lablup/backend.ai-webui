@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
     "EditFile": "Edit File",
+    "FileTooLargeToEdit": "Pengeditan di browser dibatasi karena ukuran file melebihi {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
     "FolderName": "Nama folder",
     "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}} dipilih",
+    "Optional": "Opsional",
     "TotalItems": "Total {{total}} item",
     "button": {
       "Cancel": "Membatalkan",

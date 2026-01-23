@@ -198,6 +198,7 @@
     "DuplicatedFiles": "覆蓋確認",
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
     "EditFile": "編輯檔案",
+    "FileTooLargeToEdit": "由於檔案大小超過{{size}}MB,瀏覽器內編輯受到限制。",
     "FolderCreatedSuccessfully": "文件夾成功創建了。",
     "FolderName": "文件夾名稱",
     "MaxFolderNameLength": "文件夾名稱必須為255個字符或更小。",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}}選擇",
+    "Optional": "選填",
     "TotalItems": "總計{{total}}項目",
     "button": {
       "Cancel": "取消",

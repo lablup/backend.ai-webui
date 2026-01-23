@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
     "EditFile": "Edytuj plik",
+    "FileTooLargeToEdit": "Edycja w przeglądarce jest ograniczona, ponieważ rozmiar pliku przekracza {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
     "FolderName": "Nazwa folderu",
     "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}}",
+    "Optional": "Opcjonalne",
     "TotalItems": "Total {{total}}",
     "button": {
       "Cancel": "Anulować",

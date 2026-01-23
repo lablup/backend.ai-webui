@@ -198,6 +198,7 @@
     "DuplicatedFiles": "覆盖确认",
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
     "EditFile": "编辑文件",
+    "FileTooLargeToEdit": "由于文件大小超过{{size}}MB,浏览器内编辑受到限制。",
     "FolderCreatedSuccessfully": "文件夹成功创建了。",
     "FolderName": "文件夹名称",
     "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
@@ -252,6 +253,7 @@
   },
   "general": {
     "NSelected": "{{count}}选择",
+    "Optional": "可选",
     "TotalItems": "总计{{total}}项目",
     "button": {
       "Cancel": "取消",

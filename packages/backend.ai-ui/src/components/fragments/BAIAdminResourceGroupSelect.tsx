@@ -1,5 +1,5 @@
 import { BAIAdminResourceGroupSelectPaginationQuery } from '../../__generated__/BAIAdminResourceGroupSelectPaginationQuery.graphql';
-import { BAIAdminResourceGroupSelect_scalingGroupsV2Fragment$key } from '../../__generated__/BAIAdminResourceGroupSelect_scalingGroupsV2Fragment.graphql';
+import { BAIAdminResourceGroupSelect_resourceGroupsFragment$key } from '../../__generated__/BAIAdminResourceGroupSelect_resourceGroupsFragment.graphql';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { Skeleton } from 'antd';
@@ -12,7 +12,7 @@ import { graphql } from 'relay-runtime';
 
 export interface BAIAdminResourceGroupSelectProps
   extends Omit<BAISelectProps, 'options' | 'labelInValue'> {
-  queryRef: BAIAdminResourceGroupSelect_scalingGroupsV2Fragment$key;
+  queryRef: BAIAdminResourceGroupSelect_resourceGroupsFragment$key;
 }
 
 const BAIAdminResourceGroupSelect = ({
@@ -26,18 +26,19 @@ const BAIAdminResourceGroupSelect = ({
   const { data, loadNext, isLoadingNext, refetch, hasNext } =
     usePaginationFragment<
       BAIAdminResourceGroupSelectPaginationQuery,
-      BAIAdminResourceGroupSelect_scalingGroupsV2Fragment$key
+      BAIAdminResourceGroupSelect_resourceGroupsFragment$key
     >(
       graphql`
-        fragment BAIAdminResourceGroupSelect_scalingGroupsV2Fragment on Query
+        fragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query
         @argumentDefinitions(
           first: { type: "Int", defaultValue: 10 }
           after: { type: "String" }
-          filter: { type: "ScalingGroupFilter" }
+          filter: { type: "ResourceGroupFilter" }
         )
         @refetchable(queryName: "BAIAdminResourceGroupSelectPaginationQuery") {
-          allScalingGroupsV2(first: $first, after: $after, filter: $filter)
-            @connection(key: "BAIAdminResourceGroupSelect_allScalingGroupsV2") {
+          resourceGroups(first: $first, after: $after, filter: $filter)
+            @connection(key: "BAIAdminResourceGroupSelect_resourceGroups")
+            @since(version: "26.1.0") {
             count
             edges {
               node {
@@ -51,7 +52,7 @@ const BAIAdminResourceGroupSelect = ({
       queryRef,
     );
 
-  const selectOptions = _.map(data.allScalingGroupsV2.edges, (item) => ({
+  const selectOptions = _.map(data.resourceGroups.edges, (item) => ({
     label: item.node.name,
     value: item.node.name, // since scaling group uses name as primary key, use name as value
   }));
@@ -89,11 +90,11 @@ const BAIAdminResourceGroupSelect = ({
         ) : undefined
       }
       footer={
-        _.isNumber(data.allScalingGroupsV2.count) &&
-        data.allScalingGroupsV2.count > 0 ? (
+        _.isNumber(data.resourceGroups.count) &&
+        data.resourceGroups.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={data.allScalingGroupsV2.count}
+            total={data.resourceGroups.count}
           />
         ) : undefined
       }
