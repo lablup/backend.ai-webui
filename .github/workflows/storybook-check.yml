@@ -14,7 +14,7 @@ jobs:
   check-missing-stories:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get changed component files
         id: changed-files
@@ -38,9 +38,12 @@ jobs:
           while IFS= read -r file; do
             [ -z "$file" ] && continue
             case "$file" in
-              *.stories.tsx|*.test.tsx) continue ;;
-              *.tsx) ;;
+              packages/backend.ai-ui/src/components/*.tsx) ;;
               *) continue ;;
+            esac
+            # Skip story and test files
+            case "$file" in
+              *.stories.tsx|*.test.tsx) continue ;;
             esac
             [ ! -f "$file" ] && continue
             story_file="${file%.tsx}.stories.tsx"
