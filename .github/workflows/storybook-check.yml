@@ -41,7 +41,6 @@ jobs:
               packages/backend.ai-ui/src/components/*.tsx) ;;
               *) continue ;;
             esac
-            # Skip story and test files
             case "$file" in
               *.stories.tsx|*.test.tsx) continue ;;
             esac
