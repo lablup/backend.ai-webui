@@ -1,6 +1,6 @@
 {
   "name": "backend-ai-webui-react",
-  "version": "26.1.0-rc.2",
+  "version": "26.1.0",
   "private": true,
   "dependencies": {
     "@ai-sdk/openai": "^2.0.89",
