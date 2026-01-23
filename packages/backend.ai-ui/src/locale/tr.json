@@ -196,6 +196,7 @@
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
     "EditFile": "Dosyayı Düzenle",
+    "FileTooLargeToEdit": "Dosya boyutu {{size}}MB'ı aştığı için tarayıcı içi düzenleme kısıtlanmıştır.",
     "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
     "FolderName": "Klasör adı",
     "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",

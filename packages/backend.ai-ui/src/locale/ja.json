@@ -198,6 +198,7 @@
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
     "EditFile": "ファイルを編集",
+    "FileTooLargeToEdit": "ファイルサイズが{{size}}MBを超えているため、ブラウザでの編集が制限されています。",
     "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
     "FolderName": "フォルダー名",
     "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",

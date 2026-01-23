@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Überschreibung der Bestätigung",
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
     "EditFile": "Datei bearbeiten",
+    "FileTooLargeToEdit": "Die Bearbeitung im Browser ist eingeschränkt, da die Dateigröße {{size}}MB überschreitet.",
     "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
     "FolderName": "Ordner Name",
     "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",

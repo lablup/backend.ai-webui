@@ -1,4 +1,4 @@
-import { filterOutEmpty } from '../../../helper';
+import { convertToBinaryUnit } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { BAITrashBinIcon } from '../../../icons';
 import BAIButton, { BAIButtonProps } from '../../BAIButton';
@@ -8,10 +8,11 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { MoreOutlined } from '@ant-design/icons';
 import { App, theme, Dropdown, Tooltip } from 'antd';
-import type { MenuProps } from 'antd';
 import { DownloadIcon, EditIcon } from 'lucide-react';
-import { use } from 'react';
+import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
 
 interface FileItemControlsProps {
   selectedItem: VFolderFile;
@@ -83,25 +84,10 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
   });
 
   const isDirectory = selectedItem.type === 'DIRECTORY';
+  const isFileTooLarge = selectedItem.size > MAX_EDITABLE_FILE_SIZE;
+  const isEditDisabled = !enableEdit || isDirectory || isFileTooLarge;
 
-  const dropdownMenuItems: MenuProps['items'] = filterOutEmpty([
-    {
-      key: 'fileEdit',
-      icon: <EditIcon />,
-      label: isDirectory ? (
-        <Tooltip title={t('comp:FileExplorer.UnsupportedFileFormat')}>
-          <span>{t('comp:FileExplorer.EditFile')}</span>
-        </Tooltip>
-      ) : (
-        t('comp:FileExplorer.EditFile')
-      ),
-      disabled: !enableEdit || isDirectory,
-      onClick: (e) => {
-        e.domEvent.stopPropagation();
-        onClickEdit?.();
-      },
-    },
-  ]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <BAIFlex gap="xs">
@@ -133,10 +119,53 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         {...deleteButtonProps}
       />
       <Dropdown
-        menu={{
-          items: dropdownMenuItems,
-        }}
         trigger={['click']}
+        open={dropdownOpen}
+        disabled={isDirectory}
+        onOpenChange={setDropdownOpen}
+        popupRender={() => {
+          return (
+            <BAIFlex
+              direction="column"
+              align="stretch"
+              style={{
+                padding: 4,
+                backgroundColor: token.colorBgElevated,
+                borderRadius: token.borderRadiusLG,
+                boxShadow: token.boxShadowSecondary,
+              }}
+            >
+              <Tooltip
+                title={
+                  isEditDisabled
+                    ? isDirectory
+                      ? t('comp:FileExplorer.UnsupportedFileFormat')
+                      : t('comp:FileExplorer.FileTooLargeToEdit', {
+                          size: convertToBinaryUnit(
+                            MAX_EDITABLE_FILE_SIZE,
+                            'auto',
+                          )?.numberFixed,
+                        })
+                    : undefined
+                }
+              >
+                <BAIButton
+                  type="text"
+                  icon={<EditIcon />}
+                  disabled={isEditDisabled}
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    setDropdownOpen(false);
+                    onClickEdit?.();
+                  }}
+                  style={{ justifyContent: 'start' }}
+                >
+                  {t('comp:FileExplorer.EditFile')}
+                </BAIButton>
+              </Tooltip>
+            </BAIFlex>
+          );
+        }}
       >
         <BAIButton
           type="text"
@@ -146,7 +175,6 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
           }}
           icon={<MoreOutlined />}
           aria-label={t('comp:FileExplorer.MoreOptions')}
-          style={{ color: token.colorTextSecondary }}
         />
       </Dropdown>
     </BAIFlex>

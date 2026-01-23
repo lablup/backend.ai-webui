@@ -198,6 +198,7 @@
     "DuplicatedFiles": "덮어쓰기 확인",
     "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
     "EditFile": "파일 편집",
+    "FileTooLargeToEdit": "파일 용량이 {{size}}MB를 초과하여 브라우저 편집이 제한됩니다.",
     "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
     "FolderName": "폴더 이름",
     "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",

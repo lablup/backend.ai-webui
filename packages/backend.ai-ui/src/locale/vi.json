@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
     "EditFile": "Chỉnh sửa tệp",
+    "FileTooLargeToEdit": "Chỉnh sửa trên trình duyệt bị hạn chế vì kích thước tệp vượt quá {{size}}MB.",
     "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
     "FolderName": "Tên thư mục",
     "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",

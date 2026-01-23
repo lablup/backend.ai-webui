@@ -198,6 +198,7 @@
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "EditFile": "Edit Fail",
+    "FileTooLargeToEdit": "Penyuntingan dalam pelayar dihadkan kerana saiz fail melebihi {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
     "FolderName": "Nama folder",
     "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",

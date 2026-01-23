@@ -197,6 +197,7 @@
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
     "EditFile": "Editar arquivo",
+    "FileTooLargeToEdit": "A edição no navegador é restrita porque o tamanho do arquivo excede {{size}}MB.",
     "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
     "FolderName": "Nome da pasta",
     "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
