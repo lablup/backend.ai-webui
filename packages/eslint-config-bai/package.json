@@ -5,9 +5,7 @@
   "type": "module",
   "main": "./index.js",
   "exports": {
-    ".": "./index.js",
-    "./base": "./base.js",
-    "./react": "./react.js"
+    ".": "./index.js"
   },
   "files": [
     "*.js"
