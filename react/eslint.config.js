@@ -1,10 +1,11 @@
-import { reactConfig } from "eslint-config-bai";
+import { base, react } from "eslint-config-bai";
 import relayPlugin from "eslint-plugin-relay";
 import storybookPlugin from "eslint-plugin-storybook";
 import globals from "globals";
 
 export default [
-  ...reactConfig,
+  ...base,
+  ...react,
 
   {
     languageOptions: {
