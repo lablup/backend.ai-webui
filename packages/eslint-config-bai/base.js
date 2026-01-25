@@ -1,6 +1,5 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
-import globals from "globals";
 
 export const base = [
   {
@@ -17,14 +16,6 @@ export const base = [
   ...tseslint.configs.recommended,
 
   {
-    languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      globals: {
-        ...globals.browser,
-        ...globals.es2021,
-      },
-    },
     rules: {
       "no-console": "warn",
 

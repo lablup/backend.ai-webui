@@ -5,6 +5,17 @@ import globals from "globals";
 export default [
   ...reactConfig,
 
+  {
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.es2016,
+      },
+    },
+  },
+
   ...storybookPlugin.configs["flat/recommended"],
 
   {
