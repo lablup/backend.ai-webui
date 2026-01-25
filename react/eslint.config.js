@@ -7,6 +7,17 @@ export default [
   ...reactConfig,
 
   {
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.es2016,
+      },
+    },
+  },
+
+  {
     plugins: {
       relay: relayPlugin,
     },
