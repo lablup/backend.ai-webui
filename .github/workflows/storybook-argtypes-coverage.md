@@ -69,7 +69,11 @@ For each changed component file:
 
 ### Step 3: Generate Report
 
-If there are uncovered props, create a PR comment with this format:
+If there are uncovered props, use the `add_comment` tool to create a PR comment.
+
+**IMPORTANT**: When calling `add_comment`, you MUST specify the `item_number` parameter with the PR number from the github context (available as `pull-request-number` in the system prompt). For example, if the context shows `pull-request-number: #5128`, pass `item_number: 5128`.
+
+Use this format for the comment body:
 
 ```markdown
 ### Storybook ArgTypes Coverage Report
