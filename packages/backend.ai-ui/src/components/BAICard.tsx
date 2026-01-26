@@ -21,6 +21,8 @@ export interface BAICardProps extends Omit<CardProps, 'extra'> {
   onClickExtraButton?: () => void;
   /** React ref for the card container */
   ref?: React.Ref<HTMLDivElement> | undefined;
+  /** TEST PROP: This is a test prop to verify the storybook-argtypes-coverage workflow */
+  testPropForWorkflow?: string;
 }
 
 /**
