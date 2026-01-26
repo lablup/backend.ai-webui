@@ -66,6 +66,12 @@
     "SuccessfullyUpdated": "Quy tắc tỷ lệ tự động đã được cập nhật thành công.",
     "Threshold": "Ngưỡng"
   },
+  "bulkEdit": {
+    "Clear": "Xóa",
+    "Edit": "Chỉnh sửa",
+    "KeepAsIs": "Giữ nguyên",
+    "UndoChanges": "Hoàn tác thay đổi"
+  },
   "button": {
     "Add": "Thêm vào",
     "Apply": "Áp dụng",

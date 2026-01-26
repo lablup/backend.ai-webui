@@ -66,6 +66,12 @@
     "SuccessfullyUpdated": "Automaattinen skaalaussääntö on päivitetty onnistuneesti.",
     "Threshold": "Kynnys"
   },
+  "bulkEdit": {
+    "Clear": "Tyhjennä",
+    "Edit": "Muokkaa",
+    "KeepAsIs": "Pidä ennallaan",
+    "UndoChanges": "Kumoa muutokset"
+  },
   "button": {
     "Add": "Lisää",
     "Apply": "Hae",

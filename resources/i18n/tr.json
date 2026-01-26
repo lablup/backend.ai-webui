@@ -66,6 +66,12 @@
     "SuccessfullyUpdated": "Otomatik ölçeklendirme kuralı başarıyla güncellendi.",
     "Threshold": "Eşik"
   },
+  "bulkEdit": {
+    "Clear": "Temizle",
+    "Edit": "Düzenle",
+    "KeepAsIs": "Olduğu gibi bırak",
+    "UndoChanges": "Değişiklikleri geri al"
+  },
   "button": {
     "Add": "Ekle",
     "Apply": "Başvurmak",

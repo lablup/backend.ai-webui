@@ -1,3 +1,4 @@
+import BulkEditFormItem from './BulkEditFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { App, Form, InputNumber, theme } from 'antd';
@@ -184,7 +185,6 @@ const UpdateUsersModal = ({
           }
           style={{ marginBottom: token.marginSM }}
         />
-        {/* TODO: We need to create a Form.Item component that can distinguish between keeping the default value and clearing the value. */}
         <Form ref={formRef} layout="vertical" preserve={false}>
           <Suspense
             fallback={
@@ -193,14 +193,18 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <Form.Item name="domain_name" label={t('credential.Domain')}>
+            <BulkEditFormItem
+              name="domain_name"
+              label={t('credential.Domain')}
+              optional
+            >
               <BAIDomainSelect
                 onChange={() => {
                   formRef.current?.setFieldValue('group_ids', []);
                 }}
                 allowClear
               />
-            </Form.Item>
+            </BulkEditFormItem>
           </Suspense>
           <Suspense
             fallback={
@@ -211,9 +215,10 @@ const UpdateUsersModal = ({
           >
             <Form.Item noStyle dependencies={['domain_name']}>
               {({ getFieldValue }) => (
-                <Form.Item
+                <BulkEditFormItem
                   name="group_ids"
                   label={t('credential.Projects')}
+                  optional
                   validateStatus={
                     !getFieldValue('domain_name') ? 'warning' : undefined
                   }
@@ -229,11 +234,11 @@ const UpdateUsersModal = ({
                     disableDefaultFilter
                     disabled={!getFieldValue('domain_name')}
                   />
-                </Form.Item>
+                </BulkEditFormItem>
               )}
             </Form.Item>
           </Suspense>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
+          <BulkEditFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
               options={[
                 {
@@ -254,7 +259,7 @@ const UpdateUsersModal = ({
                 },
               ]}
             />
-          </Form.Item>
+          </BulkEditFormItem>
           <Suspense
             fallback={
               <Form.Item label={t('resourcePolicy.ResourcePolicy')}>
@@ -262,17 +267,19 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <Form.Item
+            <BulkEditFormItem
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
+              optional
             >
               <UserResourcePolicySelect allowClear />
-            </Form.Item>
+            </BulkEditFormItem>
           </Suspense>
-          <Form.Item
+          <BulkEditFormItem
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
+            optional
             rules={[
               {
                 type: 'number',
@@ -286,11 +293,12 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BulkEditFormItem>
+          <BulkEditFormItem
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
+            optional
             rules={[
               {
                 type: 'number',
@@ -304,11 +312,12 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BulkEditFormItem>
+          <BulkEditFormItem
             name="container_gids"
             label={t('credential.ContainerSupplementaryGIDs')}
             tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
+            optional
             rules={[
               () => ({
                 validator(_rule, values) {
@@ -375,7 +384,7 @@ const UpdateUsersModal = ({
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}
             />
-          </Form.Item>
+          </BulkEditFormItem>
         </Form>
       </BAIFlex>
     </BAIModal>

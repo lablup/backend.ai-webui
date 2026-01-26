@@ -68,6 +68,12 @@
     "SuccessfullyUpdated": "오토스케일링 규칙이 수정되었습니다.",
     "Threshold": "기준값"
   },
+  "bulkEdit": {
+    "Clear": "지우기",
+    "Edit": "편집",
+    "KeepAsIs": "그대로 유지",
+    "UndoChanges": "변경 취소"
+  },
   "button": {
     "Add": "추가",
     "Apply": "적용",

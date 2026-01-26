@@ -66,6 +66,12 @@
     "SuccessfullyUpdated": "Aturan penskalaan otomatis telah berhasil diperbarui.",
     "Threshold": "Ambang"
   },
+  "bulkEdit": {
+    "Clear": "Hapus",
+    "Edit": "Edit",
+    "KeepAsIs": "Pertahankan",
+    "UndoChanges": "Batalkan perubahan"
+  },
   "button": {
     "Add": "Tambah",
     "Apply": "Menerapkan",

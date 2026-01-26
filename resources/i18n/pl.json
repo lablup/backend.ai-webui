@@ -66,6 +66,12 @@
     "SuccessfullyUpdated": "Reguła automatycznego skalowania została pomyślnie zaktualizowana.",
     "Threshold": "Próg"
   },
+  "bulkEdit": {
+    "Clear": "Wyczyść",
+    "Edit": "Edytuj",
+    "KeepAsIs": "Pozostaw bez zmian",
+    "UndoChanges": "Cofnij zmiany"
+  },
   "button": {
     "Add": "Dodaj",
     "Apply": "Zastosuj",
