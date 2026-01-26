@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "選擇專案"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "允許的資料夾主機",
     "AllowedResourceGroups": "允許的資源群組",

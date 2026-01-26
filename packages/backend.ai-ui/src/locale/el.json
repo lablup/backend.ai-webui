@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Επιλέξτε έργο"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Επιτρεπόμενοι hosts φακέλων",
     "AllowedResourceGroups": "Επιτρεπόμενες ομάδες πόρων",

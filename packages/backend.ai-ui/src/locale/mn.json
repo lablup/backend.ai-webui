@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Төсөл сонгох"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Зөвшөөрөгдсөн хавтас хостууд",
     "AllowedResourceGroups": "Зөвшөөрөгдсөн нөөцийн бүлгүүд",

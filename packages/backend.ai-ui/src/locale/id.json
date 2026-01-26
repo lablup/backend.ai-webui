@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Pilih Proyek"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Host Folder yang Diizinkan",
     "AllowedResourceGroups": "Grup Sumber Daya yang Diizinkan",

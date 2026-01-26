@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Выберите проект"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Разрешённые хосты для папок",
     "AllowedResourceGroups": "Разрешённые группы ресурсов",
