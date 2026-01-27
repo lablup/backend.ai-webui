@@ -7,7 +7,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -19,53 +18,50 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
-  DomainFairShareOrderBy,
-  DomainFairShareTableQuery,
-  DomainFairShareTableQuery$variables,
-} from 'src/__generated__/DomainFairShareTableQuery.graphql';
+  ProjectFairShareOrderBy,
+  ProjectFairShareTableQuery,
+  ProjectFairShareTableQuery$variables,
+} from 'src/__generated__/ProjectFairShareTableQuery.graphql';
 import { convertToOrderBy } from 'src/helper';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
-type DomainFairShare = NonNullable<
-  DomainFairShareTableQuery['response']
->['domainFairShares']['edges'][number]['node'];
+type ProjectFairShare = NonNullable<
+  ProjectFairShareTableQuery['response']
+>['projectFairShares']['edges'][number]['node'];
 
-const availableDomainFairShareSorterKeys = [
-  'domainName',
-  'fairShareFactor',
-  'createdAt',
-] as const;
-const availableDomainFairShareSorterValues = [
-  ...availableDomainFairShareSorterKeys,
-  ...availableDomainFairShareSorterKeys.map((key) => `-${key}` as const),
+const availableProjectFairShareSorterKeys = [] as const;
+const availableProjectFairShareSorterValues = [
+  ...availableProjectFairShareSorterKeys,
+  ...availableProjectFairShareSorterKeys.map((key) => `-${key}`),
 ] as const;
 const isEnableSorter = (key: string) => {
-  return _.includes(availableDomainFairShareSorterKeys, key);
+  return _.includes(availableProjectFairShareSorterValues, key);
 };
 
-interface DomainFairShareTableProps extends BAITableProps<DomainFairShare> {
+interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
   resourceGroupName: string;
-  onClickDomainName?: (domainName: string) => void;
+  domainName: string;
+  onClickProjectName: (id: string) => void;
 }
 
-const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
+const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   resourceGroupName,
-  onClickDomainName,
+  domainName,
+  // onClickProjectName,
   ...tableProps
 }) => {
-  'use memo';
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const [selectedDomain, setSelectedDomain] = useState('');
-  const [selectedDomainList, setSelectedDomainList] = useState<string[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [selectedProjectIdList, setSelectedProjectIdList] = useState<string[]>(
+    [],
+  );
   const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
   const [openBulkWeightSettingModal, setOpenBulkWeightSettingModal] =
     useState(false);
@@ -79,55 +75,56 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     pageSize: 10,
   });
 
+  // const resourceGroupNameFilter: ProjectFairShareTableQuery$variables['filter'] =
+  //   resourceGroupName ? { resourceGroup: { equals: resourceGroupName } } : {};
+  // const domainNameFilter: ProjectFairShareTableQuery$variables['filter'] =
+  //   domainName ? { domainName: { equals: domainName } } : {};
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableDomainFairShareSorterValues),
+      order: parseAsStringLiteral(availableProjectFairShareSorterValues),
       filter: parseAsString,
     },
-    {
-      history: 'replace',
-    },
+    { history: 'replace' },
   );
-  const resourceGroupNameFilter: DomainFairShareTableQuery$variables['filter'] =
-    resourceGroupName ? { resourceGroup: { equals: resourceGroupName } } : {};
-  const queryVariables: DomainFairShareTableQuery$variables = {
+  const queryVariables: ProjectFairShareTableQuery$variables = {
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    orderBy: convertToOrderBy<DomainFairShareOrderBy>(queryParams.order) || [
-      { field: 'DOMAIN_NAME', direction: 'DESC' },
+    orderBy: convertToOrderBy<ProjectFairShareOrderBy>(queryParams.order) || [
+      { field: 'FAIR_SHARE_FACTOR', direction: 'ASC' },
     ],
     filter: {
-      ...resourceGroupNameFilter,
+      // FIXME: server error (empty response) occurs when both filters are applied.
+      // ...resourceGroupNameFilter,
+      // ...domainNameFilter,
       ...(JSON.parse(
         queryParams.filter || '{}',
-      ) as DomainFairShareTableQuery$variables['filter']),
+      ) as ProjectFairShareTableQuery$variables['filter']),
     },
   };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { domainFairShares } = useLazyLoadQuery<DomainFairShareTableQuery>(
+  const { projectFairShares } = useLazyLoadQuery<ProjectFairShareTableQuery>(
     graphql`
-      query DomainFairShareTableQuery(
-        $filter: DomainFairShareFilter
-        $orderBy: [DomainFairShareOrderBy!]
+      query ProjectFairShareTableQuery(
+        $filter: ProjectFairShareFilter
+        $orderBy: [ProjectFairShareOrderBy!]
         $offset: Int
         $limit: Int
       ) {
-        domainFairShares(
+        projectFairShares(
           filter: $filter
           orderBy: $orderBy
           offset: $offset
           limit: $limit
         ) {
+          count
           edges {
             node {
               id
-              resourceGroup
-              domainName
+              projectId
               spec {
                 weight
               }
@@ -144,7 +141,6 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               updatedAt
             }
           }
-          count
         }
       }
     `,
@@ -158,33 +154,17 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     },
   );
 
-  const columns: ColumnsType<DomainFairShare> = [
+  const columns: ColumnsType<ProjectFairShare> = [
     {
+      // FIXME: show project name instead of project ID
+      key: 'projectId',
       title: t('fairShare.Name'),
-      key: 'domainName',
+      dataIndex: 'projectId',
       fixed: 'left',
-      dataIndex: 'domainName',
-      sorter: isEnableSorter('domainName'),
-      render: (name) => (
-        <BAIFlex gap="xxs" align="center">
-          <Tooltip
-            title={t('fairShare.GoToSubComponent', {
-              sub: t('fairShare.Project'),
-            })}
-          >
-            <BAILink
-              icon={<ChevronRight />}
-              onClick={() => onClickDomainName?.(name)}
-            >
-              {name}
-            </BAILink>
-          </Tooltip>
-        </BAIFlex>
-      ),
     },
     {
-      title: t('general.Control'),
       key: 'control',
+      title: t('general.Control'),
       fixed: 'left',
       render: (_text, record) => (
         <BAIFlex direction="row" gap="xxs">
@@ -192,7 +172,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
             type="text"
             icon={<SettingOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
-              setSelectedDomain(record.domainName);
+              setSelectedProjectId(record?.projectId);
               setOpenWeightSettingModal(true);
             }}
           />
@@ -278,11 +258,11 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       <BAIFlex direction="column" align="start">
         <Typography.Title level={4} style={{ margin: 0 }}>
           {t('fairShare.FairShareSettingTitleWithName', {
-            name: t('fairShare.Domain'),
+            name: t('fairShare.Project'),
           })}
         </Typography.Title>
         <Typography.Text type="secondary">
-          {<Trans i18nKey={t('fairShare.DomainDescription')} />}
+          {<Trans i18nKey={t('fairShare.ProjectDescription')} />}
         </Typography.Text>
       </BAIFlex>
 
@@ -290,7 +270,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         <BAIGraphQLPropertyFilter
           filterProperties={[
             {
-              key: 'domainName',
+              key: 'projectId',
               propertyLabel: t('fairShare.Name'),
               type: 'string',
             },
@@ -306,10 +286,10 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
           }}
         />
         <BAIFlex gap="sm">
-          {selectedDomainList?.length > 0 && (
+          {selectedProjectIdList?.length > 0 && (
             <>
               {t('general.NSelected', {
-                count: selectedDomainList.length,
+                count: selectedProjectIdList.length,
               })}
               <Tooltip title={t('general.BulkEdit')} placement="topLeft">
                 <Button
@@ -335,10 +315,10 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       </BAIFlex>
 
       <BAITable
-        rowKey={'domainName'}
+        rowKey={'projectId'}
         scroll={{ x: 'max-content' }}
         dataSource={filterOutEmpty(
-          _.map(domainFairShares?.edges, (edge) => edge?.node),
+          _.map(projectFairShares?.edges, (edge) => edge?.node),
         )}
         columns={columns}
         loading={
@@ -348,13 +328,13 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         rowSelection={{
           type: 'checkbox',
           onChange: (selectedRowKeys) => {
-            setSelectedDomainList(selectedRowKeys as string[]);
+            setSelectedProjectIdList(selectedRowKeys as string[]);
           },
-          selectedRowKeys: selectedDomainList,
+          selectedRowKeys: selectedProjectIdList,
         }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: domainFairShares?.count || 0,
+          total: projectFairShares?.count || 0,
           current: tablePaginationOption.current,
           style: {
             marginRight: token.marginXS,
@@ -378,7 +358,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               : orderKey;
           setQueryParams({
             order: orderString
-              ? (orderString as (typeof availableDomainFairShareSorterValues)[number])
+              ? (orderString as (typeof availableProjectFairShareSorterValues)[number])
               : null,
           });
         }}
@@ -394,15 +374,18 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
                 startRefetchTransition(() => {
                   updateFetchKey();
                 });
-                openBulkWeightSettingModal && setSelectedDomainList([]);
+                openBulkWeightSettingModal && setSelectedProjectIdList([]);
               }
-              setSelectedDomain('');
+              setSelectedProjectId('');
               setOpenWeightSettingModal(false);
               setOpenBulkWeightSettingModal(false);
             }}
             resourceGroupName={resourceGroupName}
-            domainNames={
-              openBulkWeightSettingModal ? selectedDomainList : [selectedDomain]
+            domainNames={[domainName]}
+            projectIds={
+              openBulkWeightSettingModal
+                ? selectedProjectIdList
+                : [selectedProjectId]
             }
             isBulkEdit={openBulkWeightSettingModal}
           />
@@ -412,4 +395,4 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   );
 };
 
-export default DomainFairShareTable;
+export default ProjectFairShareTable;

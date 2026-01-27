@@ -756,6 +756,7 @@
     "Name": "Nimi",
     "PleaseInputFieldWithFieldName": "Syötä {{field}}",
     "Project": "Projekti",
+    "ProjectDescription": "Projekti määrittelee konfiguroidun painon ja aggregointijakson aikana kertyvän käytön. <br />Projektin painoa käytetään kyseiseen toimialueeseen kuuluvien käyttäjien prioriteettikertoimen laskemiseen. <br /> Eri projekteissa olevat käyttäjät eivät vaikuta toistensa prioriteettilaskelmiin.",
     "ResourceGroup": "Resurssiryhmä",
     "ResourceGroupDescription": "Resurssiryhmät määrittävät Fair Share -ajoituksen laajuuden. <br /> Jokaisella resurssiryhmällä on oma laskentarajansa, jossa Fair Share -aikatauluttaja arvioi ja vertaa käyttäjien prioriteetteja. <br /> Prioriteettilaskelmat rajoittuvat saman ryhmän käyttäjiin. Eri resurssiryhmien käyttäjien ajoitusprioriteetit eivät vaikuta toisiinsa.",
     "ResourceWeights": "Resurssipaino",
