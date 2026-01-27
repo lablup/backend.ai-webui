@@ -773,7 +773,11 @@
     "Weight": "權重",
     "WeightDescription": "決定 Fair Share 排程優先權的基礎乘數。數值越高優先權越高。預設為 '1.0'。權重 '2.0' 的優先權是 '1.0' 的兩倍。",
     "step": {
-      "Description": "Fair Share 設定依據資源群組，並按網域、專案與使用者的階層結構進行。要進行下層設定，請點選表格中的各項目以進入。"
+      "Description": "Fair Share 設定依據資源群組，並按網域、專案與使用者的階層結構進行。要進行下層設定，請點選表格中的各項目以進入。",
+      "PleaseSelectDomain": "請選擇網域。",
+      "PleaseSelectProject": "請選擇一個專案。",
+      "ProjectDescription": "設定並修改每個專案的 Fair Share 權重。",
+      "UserDescription": "設定與修改每位使用者的公平分享權重。"
     }
   },
   "fairShrae": {},
