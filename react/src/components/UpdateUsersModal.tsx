@@ -1,10 +1,10 @@
-import BulkEditFormItem from './BulkEditFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { App, Form, InputNumber, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIAlert,
+  BAIBulkEditFormItem,
   BAIDomainSelect,
   BAIFlex,
   BAIModal,
@@ -193,7 +193,7 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <BulkEditFormItem
+            <BAIBulkEditFormItem
               name="domain_name"
               label={t('credential.Domain')}
               optional
@@ -204,7 +204,7 @@ const UpdateUsersModal = ({
                 }}
                 allowClear
               />
-            </BulkEditFormItem>
+            </BAIBulkEditFormItem>
           </Suspense>
           <Suspense
             fallback={
@@ -215,7 +215,7 @@ const UpdateUsersModal = ({
           >
             <Form.Item noStyle dependencies={['domain_name']}>
               {({ getFieldValue }) => (
-                <BulkEditFormItem
+                <BAIBulkEditFormItem
                   name="group_ids"
                   label={t('credential.Projects')}
                   optional
@@ -234,11 +234,11 @@ const UpdateUsersModal = ({
                     disableDefaultFilter
                     disabled={!getFieldValue('domain_name')}
                   />
-                </BulkEditFormItem>
+                </BAIBulkEditFormItem>
               )}
             </Form.Item>
           </Suspense>
-          <BulkEditFormItem name="status" label={t('credential.UserStatus')}>
+          <BAIBulkEditFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
               options={[
                 {
@@ -259,7 +259,7 @@ const UpdateUsersModal = ({
                 },
               ]}
             />
-          </BulkEditFormItem>
+          </BAIBulkEditFormItem>
           <Suspense
             fallback={
               <Form.Item label={t('resourcePolicy.ResourcePolicy')}>
@@ -267,15 +267,15 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <BulkEditFormItem
+            <BAIBulkEditFormItem
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
               optional
             >
               <UserResourcePolicySelect allowClear />
-            </BulkEditFormItem>
+            </BAIBulkEditFormItem>
           </Suspense>
-          <BulkEditFormItem
+          <BAIBulkEditFormItem
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
@@ -293,8 +293,8 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </BulkEditFormItem>
-          <BulkEditFormItem
+          </BAIBulkEditFormItem>
+          <BAIBulkEditFormItem
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
@@ -312,8 +312,8 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </BulkEditFormItem>
-          <BulkEditFormItem
+          </BAIBulkEditFormItem>
+          <BAIBulkEditFormItem
             name="container_gids"
             label={t('credential.ContainerSupplementaryGIDs')}
             tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
@@ -384,7 +384,7 @@ const UpdateUsersModal = ({
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}
             />
-          </BulkEditFormItem>
+          </BAIBulkEditFormItem>
         </Form>
       </BAIFlex>
     </BAIModal>

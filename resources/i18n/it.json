@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "La regola di ridimensionamento automatico è stata aggiornata con successo.",
     "Threshold": "Soglia"
   },
-  "bulkEdit": {
-    "Clear": "Cancella",
-    "Edit": "Modifica",
-    "KeepAsIs": "Mantieni invariato",
-    "UndoChanges": "Annulla modifiche"
-  },
   "button": {
     "Add": "Inserisci",
     "Apply": "Applicare",

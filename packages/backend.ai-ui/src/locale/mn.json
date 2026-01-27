@@ -14,6 +14,12 @@
     "Status": "Төлөв",
     "Utilization": "Ашиглалт"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Цэвэрлэх",
+    "Edit": "Засах",
+    "KeepAsIs": "Хэвээр үлдээх",
+    "UndoChanges": "Өөрчлөлтийг буцаах"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Зөвшөөрсөн",
     "Permission": "Зөвшөөрөл"

@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "Die automatische Skalierungsregel wurde erfolgreich aktualisiert.",
     "Threshold": "Schwelle"
   },
-  "bulkEdit": {
-    "Clear": "Löschen",
-    "Edit": "Bearbeiten",
-    "KeepAsIs": "Unverändert lassen",
-    "UndoChanges": "Änderungen rückgängig machen"
-  },
   "button": {
     "Add": "Hinzufügen",
     "Apply": "Bewerbung",

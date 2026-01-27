@@ -14,6 +14,12 @@
     "Status": "Status",
     "Utilization": "Utilisasi"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Hapus",
+    "Edit": "Edit",
+    "KeepAsIs": "Pertahankan",
+    "UndoChanges": "Batalkan perubahan"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Diizinkan",
     "Permission": "Izin"

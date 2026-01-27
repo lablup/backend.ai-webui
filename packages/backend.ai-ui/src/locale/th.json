@@ -14,6 +14,12 @@
     "Status": "สถานะ",
     "Utilization": "การใช้งาน"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "ล้าง",
+    "Edit": "แก้ไข",
+    "KeepAsIs": "เก็บไว้ตามเดิม",
+    "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "อนุญาตแล้ว",
     "Permission": "สิทธิ์"

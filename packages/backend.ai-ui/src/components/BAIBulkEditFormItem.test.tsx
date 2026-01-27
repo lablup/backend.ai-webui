@@ -1,18 +1,17 @@
-import '../__test__/matchMedia.mock.js';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Form } from 'antd';
 import React from 'react';
-import BulkEditFormItem from './BulkEditFormItem';
+import BAIBAIBulkEditFormItem from './BAIBAIBulkEditFormItem';
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'bulkEdit.Clear': 'Clear',
-        'bulkEdit.Edit': 'Edit',
-        'bulkEdit.KeepAsIs': 'Keep as is',
-        'bulkEdit.UndoChanges': 'Undo changes',
+        'comp:BAIBAIBulkEditFormItem.Clear': 'Clear',
+        'comp:BAIBAIBulkEditFormItem.Edit': 'Edit',
+        'comp:BAIBAIBulkEditFormItem.KeepAsIs': 'Keep as is',
+        'comp:BAIBAIBulkEditFormItem.UndoChanges': 'Undo changes',
       };
       return translations[key] || key;
     },
@@ -24,13 +23,13 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Form>{children}</Form>
 );
 
-describe('BulkEditFormItem', () => {
+describe('BAIBulkEditFormItem', () => {
   it('should render in "keep" mode by default', () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field">
+        <BAIBulkEditFormItem name="testField" label="Test Field">
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -41,9 +40,9 @@ describe('BulkEditFormItem', () => {
   it('should show Clear button for optional fields in keep mode', () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field" optional>
+        <BAIBulkEditFormItem name="testField" label="Test Field" optional>
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -53,9 +52,9 @@ describe('BulkEditFormItem', () => {
   it('should not show Clear button for non-optional fields', () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field" optional={false}>
+        <BAIBulkEditFormItem name="testField" label="Test Field" optional={false}>
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -65,9 +64,9 @@ describe('BulkEditFormItem', () => {
   it('should switch to edit mode when Edit button is clicked', async () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field">
+        <BAIBulkEditFormItem name="testField" label="Test Field">
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -82,9 +81,9 @@ describe('BulkEditFormItem', () => {
   it('should switch to clear mode when Clear button is clicked', async () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field" optional>
+        <BAIBulkEditFormItem name="testField" label="Test Field" optional>
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -99,9 +98,9 @@ describe('BulkEditFormItem', () => {
   it('should revert to keep mode when Undo button is clicked', async () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field">
+        <BAIBulkEditFormItem name="testField" label="Test Field">
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -126,9 +125,9 @@ describe('BulkEditFormItem', () => {
   it('should disable children input in keep mode', () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field">
+        <BAIBulkEditFormItem name="testField" label="Test Field">
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 
@@ -139,9 +138,9 @@ describe('BulkEditFormItem', () => {
   it('should enable children input in edit mode', async () => {
     render(
       <TestWrapper>
-        <BulkEditFormItem name="testField" label="Test Field">
+        <BAIBulkEditFormItem name="testField" label="Test Field">
           <input data-testid="test-input" />
-        </BulkEditFormItem>
+        </BAIBulkEditFormItem>
       </TestWrapper>,
     );
 

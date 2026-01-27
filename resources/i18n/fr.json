@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "La règle de mise à l'échelle automatique a été mise à jour avec succès.",
     "Threshold": "Seuil"
   },
-  "bulkEdit": {
-    "Clear": "Effacer",
-    "Edit": "Modifier",
-    "KeepAsIs": "Conserver tel quel",
-    "UndoChanges": "Annuler les modifications"
-  },
   "button": {
     "Add": "Ajouter",
     "Apply": "Appliquer",

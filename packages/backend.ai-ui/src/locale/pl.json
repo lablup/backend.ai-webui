@@ -14,6 +14,12 @@
     "Status": "Status",
     "Utilization": "Wykorzystanie"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Wyczyść",
+    "Edit": "Edytuj",
+    "KeepAsIs": "Pozostaw bez zmian",
+    "UndoChanges": "Cofnij zmiany"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Dozwolone",
     "Permission": "Uprawnienie"

@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "自動スケーリングルールが正常に更新されました。",
     "Threshold": "しきい値"
   },
-  "bulkEdit": {
-    "Clear": "クリア",
-    "Edit": "編集",
-    "KeepAsIs": "そのまま維持",
-    "UndoChanges": "変更を元に戻す"
-  },
   "button": {
     "Add": "追加",
     "Apply": "応募する",

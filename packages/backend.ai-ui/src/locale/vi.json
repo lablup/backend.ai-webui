@@ -14,6 +14,12 @@
     "Status": "Trạng thái",
     "Utilization": "Mức sử dụng"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Xóa",
+    "Edit": "Chỉnh sửa",
+    "KeepAsIs": "Giữ nguyên",
+    "UndoChanges": "Hoàn tác thay đổi"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Được phép",
     "Permission": "Quyền"

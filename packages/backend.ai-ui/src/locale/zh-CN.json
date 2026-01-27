@@ -14,6 +14,12 @@
     "Status": "状态",
     "Utilization": "利用率"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "清除",
+    "Edit": "编辑",
+    "KeepAsIs": "保持原样",
+    "UndoChanges": "撤销更改"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "已允许",
     "Permission": "权限"

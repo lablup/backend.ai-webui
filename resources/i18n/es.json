@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "La regla de escala automática se ha actualizado con éxito.",
     "Threshold": "Límite"
   },
-  "bulkEdit": {
-    "Clear": "Limpiar",
-    "Edit": "Editar",
-    "KeepAsIs": "Mantener como está",
-    "UndoChanges": "Deshacer cambios"
-  },
   "button": {
     "Add": "Añadir",
     "Apply": "Solicitar",

@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "自动缩放规则已成功更新。",
     "Threshold": "临界点"
   },
-  "bulkEdit": {
-    "Clear": "清除",
-    "Edit": "编辑",
-    "KeepAsIs": "保持原样",
-    "UndoChanges": "撤销更改"
-  },
   "button": {
     "Add": "添加",
     "Apply": "申请",

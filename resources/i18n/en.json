@@ -69,12 +69,6 @@
     "SuccessfullyUpdated": "Auto scaling rule has been successfully updated.",
     "Threshold": "Threshold"
   },
-  "bulkEdit": {
-    "Clear": "Clear",
-    "Edit": "Edit",
-    "KeepAsIs": "Keep as is",
-    "UndoChanges": "Undo changes"
-  },
   "button": {
     "Add": "Add",
     "Apply": "Apply",

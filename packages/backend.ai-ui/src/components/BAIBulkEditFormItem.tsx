@@ -1,9 +1,9 @@
 import { UndoOutlined } from '@ant-design/icons';
-import { Form, FormItemProps, Space, Button } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { Button, Form, FormItemProps, Space } from 'antd';
 import _ from 'lodash';
-import React, { useState, useEffect, ReactElement, cloneElement } from 'react';
+import React, { cloneElement, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import BAIFlex from './BAIFlex';
 
 /**
  * Represents the different edit modes for bulk editing.
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
  */
 type BulkEditMode = 'keep' | 'edit' | 'clear';
 
-export interface BulkEditFormItemProps extends FormItemProps {
+export interface BAIBulkEditFormItemProps extends FormItemProps {
   /**
    * Whether this field is optional (allows clearing)
    */
@@ -25,7 +25,7 @@ export interface BulkEditFormItemProps extends FormItemProps {
 }
 
 /**
- * BulkEditFormItem is a custom Form.Item component designed for bulk editing scenarios.
+ * BAIBulkEditFormItem is a custom Form.Item component designed for bulk editing scenarios.
  * 
  * ## Features
  * - **Keep as is**: Maintains current values without changes (default state)
@@ -34,15 +34,15 @@ export interface BulkEditFormItemProps extends FormItemProps {
  * 
  * ## Usage
  * ```tsx
- * <BulkEditFormItem name="domain_name" label="Domain" optional>
+ * <BAIBulkEditFormItem name="domain_name" label="Domain" optional>
  *   <BAISelect options={[...]} />
- * </BulkEditFormItem>
+ * </BAIBulkEditFormItem>
  * ```
  * 
- * @param {BulkEditFormItemProps} props - Component props extending FormItemProps
+ * @param {BAIBulkEditFormItemProps} props - Component props extending FormItemProps
  * @returns {JSX.Element} A Form.Item with bulk editing controls
  */
-const BulkEditFormItem: React.FC<BulkEditFormItemProps> = ({
+const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
   name,
   optional = false,
   children,
@@ -102,7 +102,7 @@ const BulkEditFormItem: React.FC<BulkEditFormItemProps> = ({
             size="small"
             onClick={() => handleModeChange('clear')}
           >
-            {t('bulkEdit.Clear')}
+            {t('comp:BAIBulkEditFormItem.Clear')}
           </Button>
         )}
         {mode === 'keep' && (
@@ -111,7 +111,7 @@ const BulkEditFormItem: React.FC<BulkEditFormItemProps> = ({
             type="primary"
             onClick={() => handleModeChange('edit')}
           >
-            {t('bulkEdit.Edit')}
+            {t('comp:BAIBulkEditFormItem.Edit')}
           </Button>
         )}
         {showUndo && (
@@ -120,12 +120,12 @@ const BulkEditFormItem: React.FC<BulkEditFormItemProps> = ({
             icon={<UndoOutlined />}
             onClick={() => handleModeChange('keep')}
           >
-            {t('bulkEdit.UndoChanges')}
+            {t('comp:BAIBulkEditFormItem.UndoChanges')}
           </Button>
         )}
         {mode === 'keep' && (
           <span style={{ color: '#8c8c8c', fontSize: '12px' }}>
-            {t('bulkEdit.KeepAsIs')}
+            {t('comp:BAIBulkEditFormItem.KeepAsIs')}
           </span>
         )}
       </Space>
@@ -133,4 +133,4 @@ const BulkEditFormItem: React.FC<BulkEditFormItemProps> = ({
   );
 };
 
-export default BulkEditFormItem;
+export default BAIBulkEditFormItem;

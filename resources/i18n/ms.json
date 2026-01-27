@@ -66,12 +66,6 @@
     "SuccessfullyUpdated": "Peraturan penskalaan automatik telah berjaya dikemas kini.",
     "Threshold": "Ambang"
   },
-  "bulkEdit": {
-    "Clear": "Kosongkan",
-    "Edit": "Edit",
-    "KeepAsIs": "Kekalkan seperti semula",
-    "UndoChanges": "Batal perubahan"
-  },
   "button": {
     "Add": "Tambah",
     "Apply": "Mohon",

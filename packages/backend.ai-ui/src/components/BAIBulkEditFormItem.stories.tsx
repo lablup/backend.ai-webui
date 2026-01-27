@@ -1,27 +1,27 @@
-import BulkEditFormItem from './BulkEditFormItem';
+import BAIBAIBulkEditFormItem from './BAIBAIBulkEditFormItem';
+import BAISelect from './BAISelect';
 import { Form, Input, Select } from 'antd';
-import type { Meta, StoryObj } from '@storybook/react';
-import { BAISelect } from 'backend.ai-ui';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 
 /**
- * BulkEditFormItem is a custom Form.Item component for bulk editing scenarios.
+ * BAIBAIBulkEditFormItem is a custom Form.Item component for bulk editing scenarios.
  * 
  * Key features:
  * - **Keep as is**: Maintains current values without changes (default)
  * - **Clear**: Unsets the value for all items (only for optional fields)
  * - **Undo changes**: Reverts to "Keep as is" state
  */
-const meta: Meta<typeof BulkEditFormItem> = {
-  title: 'Components/BulkEditFormItem',
-  component: BulkEditFormItem,
+const meta: Meta<typeof BAIBulkEditFormItem> = {
+  title: 'Components/BAIBulkEditFormItem',
+  component: BAIBulkEditFormItem,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: `
-**BulkEditFormItem** is a specialized Form.Item wrapper for bulk editing operations.
+**BAIBulkEditFormItem** is a specialized Form.Item wrapper for bulk editing operations.
 
 ## Features
 - Keep as is mode (default): Disabled input, no changes sent
@@ -32,12 +32,12 @@ const meta: Meta<typeof BulkEditFormItem> = {
 ## Usage
 \`\`\`tsx
 <Form>
-  <BulkEditFormItem name="domain_name" label="Domain" optional>
+  <BAIBulkEditFormItem name="domain_name" label="Domain" optional>
     <BAISelect options={domainOptions} />
-  </BulkEditFormItem>
-  <BulkEditFormItem name="status" label="Status">
+  </BAIBulkEditFormItem>
+  <BAIBulkEditFormItem name="status" label="Status">
     <BAISelect options={statusOptions} />
-  </BulkEditFormItem>
+  </BAIBulkEditFormItem>
 </Form>
 \`\`\`
 
@@ -96,7 +96,7 @@ const meta: Meta<typeof BulkEditFormItem> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BulkEditFormItem>;
+type Story = StoryObj<typeof BAIBulkEditFormItem>;
 
 /**
  * Basic usage with a required field.
@@ -156,7 +156,7 @@ export const WithSelect: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Using BulkEditFormItem with a Select component for choosing from predefined options.',
+        story: 'Using BAIBulkEditFormItem with a Select component for choosing from predefined options.',
       },
     },
   },
@@ -184,13 +184,13 @@ export const MultipleFields: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example showing multiple BulkEditFormItem fields in a single form with different configurations.',
+        story: 'Example showing multiple BAIBulkEditFormItem fields in a single form with different configurations.',
       },
     },
   },
   render: () => (
     <>
-      <BulkEditFormItem name="domain" label="Domain" optional>
+      <BAIBulkEditFormItem name="domain" label="Domain" optional>
         <BAISelect
           placeholder="Select domain"
           options={[
@@ -198,8 +198,8 @@ export const MultipleFields: Story = {
             { value: 'custom', label: 'Custom' },
           ]}
         />
-      </BulkEditFormItem>
-      <BulkEditFormItem name="status" label="Status">
+      </BAIBulkEditFormItem>
+      <BAIBulkEditFormItem name="status" label="Status">
         <Select
           placeholder="Select status"
           options={[
@@ -207,10 +207,10 @@ export const MultipleFields: Story = {
             { value: 'inactive', label: 'Inactive' },
           ]}
         />
-      </BulkEditFormItem>
-      <BulkEditFormItem name="notes" label="Notes" optional>
+      </BAIBulkEditFormItem>
+      <BAIBulkEditFormItem name="notes" label="Notes" optional>
         <Input.TextArea rows={3} placeholder="Add notes" />
-      </BulkEditFormItem>
+      </BAIBulkEditFormItem>
     </>
   ),
 };
