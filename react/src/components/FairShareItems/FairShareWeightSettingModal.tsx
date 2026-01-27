@@ -14,9 +14,11 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyDomainWeightMutation.graphql';
 import { FairShareWeightSettingModal_BulkModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyProjectWeightMutation.graphql';
+import { FairShareWeightSettingModal_BulkModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyUserWeightMutation.graphql';
 import { FairShareWeightSettingModal_DomainFragment$key } from 'src/__generated__/FairShareWeightSettingModal_DomainFragment.graphql';
 import { FairShareWeightSettingModal_ModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyDomainWeightMutation.graphql';
 import { FairShareWeightSettingModal_ModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyProjectWeightMutation.graphql';
+import { FairShareWeightSettingModal_ModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyUserWeightMutation.graphql';
 import { FairShareWeightSettingModal_ProjectFragment$key } from 'src/__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
 
 interface FairShareWeightSettingModalProps extends BAIModalProps {
@@ -120,6 +122,32 @@ const FairShareWeightSettingModal: React.FC<
           $input: BulkUpsertProjectFairShareWeightInput!
         ) {
           bulkUpsertProjectFairShareWeight(input: $input) {
+            upsertedCount
+          }
+        }
+      `,
+    );
+
+  const [commitModifyUserWeight, isInflightCommitModifyUserWeight] =
+    useMutation<FairShareWeightSettingModal_ModifyUserWeightMutation>(graphql`
+      mutation FairShareWeightSettingModal_ModifyUserWeightMutation(
+        $input: UpsertUserFairShareWeightInput!
+      ) {
+        upsertUserFairShareWeight(input: $input) {
+          userFairShare {
+            id
+          }
+        }
+      }
+    `);
+
+  const [commitBulkModifyUserWeight, isInflightBulkModifyUserWeight] =
+    useMutation<FairShareWeightSettingModal_BulkModifyUserWeightMutation>(
+      graphql`
+        mutation FairShareWeightSettingModal_BulkModifyUserWeightMutation(
+          $input: BulkUpsertUserFairShareWeightInput!
+        ) {
+          bulkUpsertUserFairShareWeight(input: $input) {
             upsertedCount
           }
         }
@@ -309,7 +337,9 @@ const FairShareWeightSettingModal: React.FC<
           isInflightCommitModifyDomainWeight ||
           isInflightBulkModifyDomainWeight ||
           isInflightCommitModifyProjectWeight ||
-          isInflightBulkModifyProjectWeight,
+          isInflightBulkModifyProjectWeight ||
+          isInflightCommitModifyUserWeight ||
+          isInflightBulkModifyUserWeight,
       }}
       onOk={handleOk}
       {...modalProps}
@@ -355,6 +385,22 @@ const FairShareWeightSettingModal: React.FC<
             <BAIFlex wrap="wrap" gap="xs">
               {_.map(projectFairShares, (project) => (
                 <Tag key={project.projectId}>{project.projectId}</Tag>
+              ))}
+            </BAIFlex>
+          ) : (
+            <Input disabled />
+          )}
+        </Form.Item>
+        <Form.Item
+          label={t('fairShare.User')}
+          name="userId"
+          required={editTarget === 'user'}
+          hidden={editTarget !== 'user'}
+        >
+          {isBulkEdit ? (
+            <BAIFlex wrap="wrap" gap="xs">
+              {_.map(userIds, (id) => (
+                <Tag key={id}>{id}</Tag>
               ))}
             </BAIFlex>
           ) : (

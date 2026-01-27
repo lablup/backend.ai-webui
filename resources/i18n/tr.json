@@ -772,7 +772,11 @@
     "Weight": "Ağırlık",
     "WeightDescription": "Fair Share zamanlama önceliğini belirleyen çarpan. Daha yüksek ağırlık daha yüksek öncelik sağlar. Varsayılan değer '1.0'dır. '2.0' ağırlığı, '1.0'ın iki katı önceliğe sahiptir.",
     "step": {
-      "Description": "Fair Share ayarları, kaynak grubu bazında domain, proje ve kullanıcı hiyerarşisine göre düzenlenir. Alt düzey ayarlara erişmek için tablodaki ilgili öğeye tıklayın."
+      "Description": "Fair Share ayarları, kaynak grubu bazında domain, proje ve kullanıcı hiyerarşisine göre düzenlenir. Alt düzey ayarlara erişmek için tablodaki ilgili öğeye tıklayın.",
+      "PleaseSelectDomain": "Lütfen bir domain seçin.",
+      "PleaseSelectProject": "Lütfen bir proje seçin.",
+      "ProjectDescription": "Her proje için Fair Share ağırlıklarını yapılandırın ve değiştirin.",
+      "UserDescription": "Her kullanıcı için Fair Share ağırlıklarını yapılandırın ve değiştirin."
     }
   },
   "fairShrae": {},
