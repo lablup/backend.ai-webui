@@ -8,6 +8,8 @@ export interface BAITestComponentProps {
   bold?: boolean;
   /** Size of the text */
   size?: 'small' | 'medium' | 'large';
+  /** Custom color for the text */
+  color?: string;
 }
 
 const sizeMap = {
@@ -20,12 +22,14 @@ const BAITestComponent: React.FC<BAITestComponentProps> = ({
   message = 'Hello from BAITestComponent',
   bold = false,
   size = 'medium',
+  color,
 }) => {
   return (
     <Typography.Text
       style={{
         fontWeight: bold ? 'bold' : 'normal',
         fontSize: sizeMap[size],
+        color,
       }}
     >
       {message}
