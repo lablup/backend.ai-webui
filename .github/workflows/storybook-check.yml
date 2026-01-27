@@ -69,11 +69,31 @@ jobs:
             console.log('🌿 Branch:', branch);
 
             // Trigger the Agentic Workflow
+            // Note: .md workflow files need to be triggered by ID, not filename
+            const WORKFLOW_NAME = 'Storybook Coverage Checker';
+
             try {
+              // 1. Look up workflow by name to get ID
+              const { data: workflows } = await github.rest.actions.listRepoWorkflows({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+
+              const agenticWorkflow = workflows.workflows.find(
+                w => w.name === WORKFLOW_NAME
+              );
+
+              if (!agenticWorkflow) {
+                throw new Error(`Workflow '${WORKFLOW_NAME}' not found`);
+              }
+
+              console.log(`📋 Found workflow: ${agenticWorkflow.name} (ID: ${agenticWorkflow.id})`);
+
+              // 2. Trigger workflow using ID
               await github.rest.actions.createWorkflowDispatch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                workflow_id: 'storybook-argtypes-coverage.md',
+                workflow_id: agenticWorkflow.id,
                 ref: branch,
               });
 
