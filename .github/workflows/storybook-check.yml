@@ -2,22 +2,29 @@ name: Storybook Story Check
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - "packages/backend.ai-ui/src/components/**/*.tsx"
 
 permissions:
   contents: read
   pull-requests: write
+  actions: write
 
 jobs:
-  check-missing-stories:
+  detect-and-trigger:
+    name: Detect Changes & Trigger Analysis
     runs-on: ubuntu-latest
+    # Skip draft PRs
+    if: github.event.pull_request.draft == false
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Get changed component files
-        id: changed-files
+      - name: Filter component changes
+        id: filter
         uses: dorny/paths-filter@v3
         with:
           list-files: json
@@ -27,60 +34,67 @@ jobs:
               - '!packages/backend.ai-ui/src/components/**/*.stories.tsx'
               - '!packages/backend.ai-ui/src/components/**/*.test.tsx'
 
-      - name: Check for missing story files
-        id: check-stories
-        if: steps.changed-files.outputs.components == 'true'
-        shell: bash
+      - name: Extract component names
+        id: extract
+        if: steps.filter.outputs.components == 'true'
         run: |
-          changed_files='${{ steps.changed-files.outputs.components_files }}'
-          missing_stories=()
-
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            case "$file" in
-              *.stories.tsx|*.test.tsx) continue ;;
-              *.tsx) ;;
-              *) continue ;;
-            esac
-            [ ! -f "$file" ] && continue
-            story_file="${file%.tsx}.stories.tsx"
-            if [ ! -f "$story_file" ]; then
-              missing_stories+=("$file")
+          FILES='${{ steps.filter.outputs.components_files }}'
+          NAMES=$(echo "$FILES" | jq -r '.[]' | while read file; do
+            basename=$(basename "$file" .tsx)
+            if [ "$basename" != "index" ]; then
+              echo "$basename"
             fi
-          done < <(echo "$changed_files" | jq -r '.[]')
+          done | sort -u | tr '\n' ' ')
+          echo "names=$NAMES" >> $GITHUB_OUTPUT
+          echo "Detected components: $NAMES"
 
-          if [ ${#missing_stories[@]} -gt 0 ]; then
-            echo "has_missing=true" >> $GITHUB_OUTPUT
-            missing_list=""
-            for component in "${missing_stories[@]}"; do
-              story_file="${component%.tsx}.stories.tsx"
-              missing_list="${missing_list}- \`${component}\` -> missing \`${story_file}\`"$'\n'
-            done
-            echo "missing_list<<EOF" >> $GITHUB_OUTPUT
-            echo "$missing_list" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-            echo "missing_count=${#missing_stories[@]}" >> $GITHUB_OUTPUT
-          else
-            echo "has_missing=false" >> $GITHUB_OUTPUT
-            echo "missing_count=0" >> $GITHUB_OUTPUT
-          fi
+      - name: No changes - Skip
+        if: steps.filter.outputs.components != 'true'
+        run: |
+          echo "## ✅ No Component Changes" >> $GITHUB_STEP_SUMMARY
+          echo "No component files were modified. Skipping Storybook analysis." >> $GITHUB_STEP_SUMMARY
 
-      - name: Comment on PR with missing stories
-        if: steps.check-stories.outputs.has_missing == 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Trigger Claude Analysis
+        if: steps.filter.outputs.components == 'true'
+        uses: actions/github-script@v7
         with:
-          header: storybook-check
-          message: |
-            ### Missing Storybook Stories
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const components = '${{ steps.extract.outputs.names }}';
+            const prNumber = context.payload.pull_request.number;
+            const branch = context.payload.pull_request.head.ref;
 
-            The following **${{ steps.check-stories.outputs.missing_count }}** component(s) are missing Story files:
+            console.log('🔍 Component changes detected:', components);
+            console.log('📋 PR Number:', prNumber);
+            console.log('🌿 Branch:', branch);
 
-            ${{ steps.check-stories.outputs.missing_list }}
-            > [Storybook guidelines](https://github.com/lablup/backend.ai-webui/blob/main/.github/instructions/storybook.instructions.md)
+            // Trigger the Agentic Workflow
+            try {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'storybook-argtypes-coverage.md',
+                ref: branch,
+              });
 
-      - name: Remove comment when all stories exist
-        if: steps.changed-files.outputs.components == 'true' && steps.check-stories.outputs.has_missing != 'true'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: storybook-check
-          delete: true
+              console.log('✅ Successfully triggered Storybook Coverage Checker');
+              core.notice(`Triggered analysis for: ${components}`);
+            } catch (error) {
+              console.log('⚠️ Could not trigger workflow:', error.message);
+              core.warning(`Failed to trigger Agentic Workflow: ${error.message}`);
+            }
+
+      - name: Create summary
+        if: steps.filter.outputs.components == 'true'
+        run: |
+          echo "## 🔍 Storybook Analysis Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Components:** ${{ steps.extract.outputs.names }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The **Storybook Coverage Checker** will analyze:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✨ Story file existence" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔄 Props interface changes" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 argTypes coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "📋 See PR comments for detailed analysis and \`/bui-story\` commands." >> $GITHUB_STEP_SUMMARY

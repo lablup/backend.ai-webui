@@ -3,13 +3,15 @@ description: |
   This workflow analyzes React component files to check:
   1. If Storybook story files exist for changed components
   2. If Props are properly documented in story argTypes
-  When issues are found, it leaves a PR comment with Claude commands to fix them.
+  When issues are found, it leaves a PR comment with unified `/bui-story` command suggestions.
+  The `/bui-story` command auto-detects whether to create or update story files.
 
 on:
-  pull_request:
-    types: [ready_for_review, opened, synchronize]
   workflow_dispatch:
   stop-after: +6mo
+
+# NOTE: This workflow is triggered by GitHub Actions (storybook-check.yml)
+# when component files are changed in a PR. Do not add pull_request trigger here.
 
 timeout-minutes: 10
 
@@ -83,65 +85,75 @@ If there are any issues (missing stories OR uncovered props), use the `add_comme
 Use this format for the comment body:
 
 ```markdown
-### Storybook Coverage Report
+## 📖 Storybook Update Suggestion
 
-#### Missing Story Files
+### Analysis Results
 
-The following components need story files:
+| Component | Changes | Action |
+|-----------|---------|--------|
+| `BAICard` | Added `loading` prop | 🔄 Update |
+| `BAIModal` | New component | ✨ Create |
+| `BAIFlex` | Changed `gap` type | 🔄 Update |
 
-| Component | Action |
-|-----------|--------|
-| `MyButton.tsx` | Create story file |
+### Commands
 
-**Create with Claude:**
+**Batch execution:**
 \`\`\`
-@claude /create-bui-component-story packages/backend.ai-ui/src/components/MyButton.tsx
+@claude /bui-story BAICard BAIModal BAIFlex
 \`\`\`
 
----
-
-#### Uncovered Props (argTypes)
-
-The following components have props not documented in argTypes:
-
-| Component | Props Interface | Uncovered Props |
-|-----------|-----------------|-----------------|
-| BAICard | `BAICardProps` | `newProp`, `anotherProp` |
+**Individual execution:**
+- \`@claude /bui-story BAICard\`
+- \`@claude /bui-story BAIModal\`
+- \`@claude /bui-story BAIFlex\`
 
 <details>
-<summary><strong>BAICard</strong> - 2 uncovered prop(s)</summary>
+<summary><strong>Detailed Changes</strong></summary>
 
+#### BAICard (🔄 Update)
 **Component**: `packages/backend.ai-ui/src/components/BAICard.tsx`
 **Story**: `packages/backend.ai-ui/src/components/BAICard.stories.tsx`
 
 **Uncovered Props:**
 | Prop | Type | Optional | Description |
 |------|------|----------|-------------|
-| `newProp` | `string` | Yes | JSDoc description |
+| `loading` | `boolean` | Yes | Shows loading skeleton |
 
-**Update with Claude:**
-\`\`\`
-@claude /enhance-component-docs packages/backend.ai-ui/src/components/BAICard.stories.tsx
-\`\`\`
+---
+
+#### BAIModal (✨ Create)
+**Component**: `packages/backend.ai-ui/src/components/BAIModal.tsx`
+**Story**: Not found - needs creation
+
+**Props to document:**
+| Prop | Type | Optional | Description |
+|------|------|----------|-------------|
+| `centered` | `boolean` | Yes | Center modal vertically |
+| `destroyOnClose` | `boolean` | Yes | Destroy content on close |
 
 </details>
 
 ---
 
-> [Storybook guidelines](https://github.com/lablup/backend.ai-webui/blob/main/.github/instructions/storybook.instructions.md)
+> 📚 [Storybook guidelines](https://github.com/lablup/backend.ai-webui/blob/main/.github/instructions/storybook.instructions.md)
 ```
 
 ## Report Structure
 
-The report should have two sections:
+The report uses a unified format with:
 
-1. **Missing Story Files** - Components without `.stories.tsx` files
-   - Suggest: `@claude /create-bui-component-story <component-path>`
+1. **Analysis Results** - Table showing all components with their changes and required action
+   - ✨ Create: Story file does not exist
+   - 🔄 Update: Story exists but props changed
+   - ✅ Skip: Story is up to date (do not include in report)
 
-2. **Uncovered Props** - Components with story files but missing argTypes
-   - Suggest: `@claude /enhance-component-docs <story-path>`
+2. **Commands** - Using the unified `/bui-story` command
+   - **Batch execution**: `@claude /bui-story Component1 Component2 Component3`
+   - **Individual execution**: List each component separately
 
-Only include sections that have issues. If no missing stories, omit that section. If no uncovered props, omit that section.
+3. **Detailed Changes** - Collapsible section with detailed prop information
+
+Only include components that need action (Create or Update). Skip components that are already up to date.
 
 ## Control Type Inference
 
