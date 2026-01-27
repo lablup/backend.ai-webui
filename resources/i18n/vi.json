@@ -758,6 +758,7 @@
     "Name": "Tên",
     "PleaseInputFieldWithFieldName": "Vui lòng nhập {{field}}",
     "Project": "Dự án",
+    "ProjectDescription": "Dự án xác định trọng số được cấu hình và mức sử dụng tích lũy trong khoảng thời gian tổng hợp. <br />Trọng số dự án được sử dụng để tính hệ số ưu tiên cho người dùng thuộc miền đó. <br />Người dùng trong các dự án khác nhau không ảnh hưởng đến phép tính ưu tiên của nhau.",
     "ResourceGroup": "Nhóm tài nguyên",
     "ResourceGroupDescription": "Nhóm Tài nguyên xác định phạm vi cho việc lập lịch Fair Share. <br /> Mỗi Nhóm Tài nguyên duy trì một ranh giới tính toán độc lập, nơi Bộ lập lịch Fair Share đánh giá và so sánh mức độ ưu tiên của người dùng. <br /> Việc tính mức độ ưu tiên được cô lập trong phạm vi người dùng cùng một nhóm. Người dùng ở các Nhóm Tài nguyên khác nhau không ảnh hưởng đến mức độ ưu tiên lập lịch của nhau.",
     "ResourceWeights": "Trọng số tài nguyên",

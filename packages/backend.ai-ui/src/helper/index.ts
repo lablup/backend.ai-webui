@@ -321,7 +321,8 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
 type KnownGlobalIdType =
   | 'VirtualFolderNode'
   | 'ComputeSessionNode'
-  | 'UserNode';
+  | 'UserNode'
+  | 'ProjectNode';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);

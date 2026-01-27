@@ -13,7 +13,9 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { FairShareWeightSettingModalQuery } from 'src/__generated__/FairShareWeightSettingModalQuery.graphql';
 import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyDomainWeightMutation.graphql';
+import { FairShareWeightSettingModal_BulkModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyProjectWeightMutation.graphql';
 import { FairShareWeightSettingModal_ModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyDomainWeightMutation.graphql';
+import { FairShareWeightSettingModal_ModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyProjectWeightMutation.graphql';
 
 interface FairShareWeightSettingModalProps extends BAIModalProps {
   resourceGroupName: string;
@@ -55,6 +57,15 @@ const FairShareWeightSettingModal: React.FC<
             spec {
               weight
             }
+            projectFairShares {
+              edges {
+                node {
+                  spec {
+                    weight
+                  }
+                }
+              }
+            }
           }
         }
       `,
@@ -67,6 +78,8 @@ const FairShareWeightSettingModal: React.FC<
           modalProps?.open && !isBulkEdit ? 'store-and-network' : 'store-only',
       },
     );
+  const projectWeight =
+    domainFairShare?.projectFairShares?.edges?.[0]?.node?.spec?.weight;
 
   const [commitModifyDomainWeight, isInflightCommitModifyDomainWeight] =
     useMutation<FairShareWeightSettingModal_ModifyDomainWeightMutation>(graphql`
@@ -94,10 +107,43 @@ const FairShareWeightSettingModal: React.FC<
       `,
     );
 
+  const [commitModifyProjectWeight, isInflightCommitModifyProjectWeight] =
+    useMutation<FairShareWeightSettingModal_ModifyProjectWeightMutation>(
+      graphql`
+        mutation FairShareWeightSettingModal_ModifyProjectWeightMutation(
+          $input: UpsertProjectFairShareWeightInput!
+        ) {
+          upsertProjectFairShareWeight(input: $input) {
+            projectFairShare {
+              id
+            }
+          }
+        }
+      `,
+    );
+
+  const [commitBulkModifyProjectWeight, isInflightBulkModifyProjectWeight] =
+    useMutation<FairShareWeightSettingModal_BulkModifyProjectWeightMutation>(
+      graphql`
+        mutation FairShareWeightSettingModal_BulkModifyProjectWeightMutation(
+          $input: BulkUpsertProjectFairShareWeightInput!
+        ) {
+          bulkUpsertProjectFairShareWeight(input: $input) {
+            upsertedCount
+          }
+        }
+      `,
+    );
+
+  const editTarget =
+    !projectIds || _.isEmpty(projectIds) ? 'domain' : 'project';
+
   const INITIAL_FORM_VALUES = {
     resourceGroup: resourceGroupName,
     domainName: domainNames[0] || '',
-    weight: isBulkEdit ? undefined : domainFairShare?.spec?.weight || 1,
+    projectId: projectIds?.[0] || '',
+    weight:
+      editTarget === 'domain' ? domainFairShare?.spec?.weight : projectWeight,
   };
 
   const formRef = useRef<FormInstance<typeof INITIAL_FORM_VALUES>>(null);
@@ -107,69 +153,139 @@ const FairShareWeightSettingModal: React.FC<
       ?.validateFields()
       .then((response) => {
         if (isBulkEdit) {
-          commitBulkModifyDomainWeight({
-            variables: {
-              input: {
-                resourceGroup: resourceGroupName,
-                inputs: _.map(domainNames, (name) => ({
-                  domainName: name,
-                  weight: response?.weight,
-                })),
+          if (editTarget === 'domain') {
+            commitBulkModifyDomainWeight({
+              variables: {
+                input: {
+                  resourceGroup: response?.resourceGroup,
+                  inputs: _.map(domainNames, (name) => ({
+                    domainName: name,
+                    weight: response?.weight,
+                  })),
+                },
               },
-            },
-            onCompleted: (res, errors) => {
-              if (!res?.bulkUpsertDomainFairShareWeight) {
-                message.error(t('dialog.ErrorOccurred'));
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error);
+              onCompleted: (res, errors) => {
+                if (!res?.bulkUpsertDomainFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
                 }
-                return;
-              }
-              message.success(
-                t('fairShare.FairShareSettingsSuccessfullyUpdated'),
-              );
-              onRequestClose?.(true);
-            },
-            onError: (error) => {
-              message.error(error.message);
-              logger.error(error);
-            },
-          });
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
+          } else if (editTarget === 'project') {
+            commitBulkModifyProjectWeight({
+              variables: {
+                input: {
+                  resourceGroup: response?.resourceGroup,
+                  inputs: _.map(projectIds, (id) => ({
+                    domainName: response?.domainName,
+                    projectId: id,
+                    weight: response?.weight,
+                  })),
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.bulkUpsertProjectFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
+          }
         } else {
-          commitModifyDomainWeight({
-            variables: {
-              input: {
-                resourceGroup: resourceGroupName,
-                domainName: response?.domainName,
-                weight: response?.weight,
+          if (editTarget === 'domain') {
+            commitModifyDomainWeight({
+              variables: {
+                input: {
+                  resourceGroup: response?.resourceGroup,
+                  domainName: response?.domainName,
+                  weight: response?.weight,
+                },
               },
-            },
-            onCompleted: (res, errors) => {
-              if (!res?.upsertDomainFairShareWeight) {
-                message.error(t('dialog.ErrorOccurred'));
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error);
+              onCompleted: (res, errors) => {
+                if (!res?.upsertDomainFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
                 }
-                return;
-              }
-              message.success(
-                t('fairShare.FairShareSettingsSuccessfullyUpdated'),
-              );
-              onRequestClose?.(true);
-            },
-            onError: (error) => {
-              message.error(error.message);
-              logger.error(error);
-            },
-          });
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
+          } else if (editTarget === 'project') {
+            commitModifyProjectWeight({
+              variables: {
+                input: {
+                  resourceGroup: response?.resourceGroup,
+                  domainName: response?.domainName,
+                  projectId: response?.projectId,
+                  weight: response?.weight,
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.upsertProjectFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
+          }
         }
       })
       .catch((error) => {
@@ -180,13 +296,18 @@ const FairShareWeightSettingModal: React.FC<
   return (
     <BAIModal
       title={t('fairShare.FairShareSettingTitleWithName', {
-        name: t('fairShare.Domain'),
+        name:
+          editTarget === 'domain'
+            ? t('fairShare.Domain')
+            : t('fairShare.Project'),
       })}
       onCancel={() => onRequestClose?.(false)}
       okButtonProps={{
         loading:
           isInflightCommitModifyDomainWeight ||
-          isInflightBulkModifyDomainWeight,
+          isInflightBulkModifyDomainWeight ||
+          isInflightCommitModifyProjectWeight ||
+          isInflightBulkModifyProjectWeight,
       }}
       onOk={handleOk}
       {...modalProps}
@@ -210,12 +331,28 @@ const FairShareWeightSettingModal: React.FC<
           label={t('fairShare.Domain')}
           name="domainName"
           required
-          hidden={!!projectIds && !_.isEmpty(projectIds)}
+          hidden={editTarget !== 'domain'}
         >
           {isBulkEdit ? (
             <BAIFlex wrap="wrap" gap="xs">
               {_.map(domainNames, (name) => (
                 <Tag key={name}>{name}</Tag>
+              ))}
+            </BAIFlex>
+          ) : (
+            <Input disabled />
+          )}
+        </Form.Item>
+        <Form.Item
+          label={t('fairShare.Project')}
+          name="projectId"
+          required={editTarget !== 'domain'}
+          hidden={editTarget !== 'project'}
+        >
+          {isBulkEdit ? (
+            <BAIFlex wrap="wrap" gap="xs">
+              {_.map(projectIds, (id) => (
+                <Tag key={id}>{id}</Tag>
               ))}
             </BAIFlex>
           ) : (
