@@ -104,7 +104,7 @@ status: {
 ```typescript
 // Example: BAIAlert.tsx
 export interface BAIAlertProps extends AlertProps {
-  ghostInfoBg?: boolean;  // ✅ BAI-specific: NOT in AlertProps
+  ghostInfoBg?: boolean;  // BAI-specific: NOT in AlertProps
 }
 // AlertProps (message, type, closable, showIcon, etc.) are NOT BAI-specific
 ```
@@ -246,7 +246,7 @@ export const Default: Story = {
 export const AllTypes: Story = { ... };  // 'type' is Ant Design prop
 export const Closable: Story = { ... };  // 'closable' is Ant Design prop
 
-// ✅ GOOD: Only stories for BAI-specific props
+// GOOD: Only stories for BAI-specific props
 export const GhostInfoBackground: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
@@ -277,13 +277,13 @@ Located in `packages/backend.ai-ui/src/components/`.
 After processing all components, output a summary:
 
 ```markdown
-## 📖 BUI Story Results
+## BUI Story Results
 
 | Component | Action | Path | Status |
 |-----------|--------|------|--------|
-| BAICard | ✨ Created | .../BAICard.stories.tsx | ✅ |
-| BAIModal | 🔄 Updated | .../BAIModal.stories.tsx | ✅ |
-| BAIFlex | ⏭️ Skipped | .../BAIFlex.stories.tsx | Up-to-date |
+| BAICard | Created | .../BAICard.stories.tsx | Done |
+| BAIModal | Updated | .../BAIModal.stories.tsx | Done |
+| BAIFlex | Skipped | .../BAIFlex.stories.tsx | Up-to-date |
 
 ### Changes Made
 - **BAICard**: Created new story with 3 BAI-specific props

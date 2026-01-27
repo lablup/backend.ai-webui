@@ -63,7 +63,7 @@ For each component file:
 
 2. **Check if story file exists**:
    - Story file path: `{component_path%.tsx}.stories.tsx`
-   - If not exists: Mark as "✨ Create"
+   - If not exists: Mark as "Create"
 
 3. **If story exists, read and analyze**:
    - Extract `argTypes` from the meta configuration
@@ -134,7 +134,7 @@ loading: {
 
 ## Important Notes
 
-1. **Always create a comment**: Even if all stories are up-to-date, create a report showing "✅ Up-to-date" status
+1. **Always create a comment**: Even if all stories are up-to-date, create a report showing "Up-to-date" status
 2. **Commands section**: Only include commands for components that need action (Create or Update)
 3. **Details notation**:
    - `+propName`: Added prop (in component, not in story)

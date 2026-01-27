@@ -57,20 +57,14 @@ jobs:
         if: steps.filter.outputs.components != 'true'
         run: echo "No component changes detected. Skipping analysis."
 
-      - name: Trigger Claude Analysis
+      - name: Trigger Copilot Analysis
         if: steps.filter.outputs.components == 'true'
         uses: actions/github-script@v7
         with:
           script: |
             const WORKFLOW_NAME = 'Storybook Coverage Checker';
             const branch = context.payload.pull_request.head.ref;
-            const prNumber = context.payload.pull_request.number;
 
-            console.log(`PR #${prNumber} is ready for review`);
-            console.log(`Changed components: ${{ steps.extract.outputs.components }}`);
-            console.log(`Looking up workflow: ${WORKFLOW_NAME}`);
-
-            // 1. Look up workflow by name to get ID (ID can change, name is stable)
             const { data: workflows } = await github.rest.actions.listRepoWorkflows({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -80,23 +74,14 @@ jobs:
               w => w.name === WORKFLOW_NAME
             );
 
-            if (!agenticWorkflow) {
-              console.log(`Workflow "${WORKFLOW_NAME}" not found. Skipping.`);
-              console.log('Available workflows:', workflows.workflows.map(w => w.name).join(', '));
-              return;
-            }
+            if (!agenticWorkflow) return;
 
-            console.log(`Found workflow ID: ${agenticWorkflow.id}`);
-
-            // 2. Trigger workflow using ID
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: agenticWorkflow.id,
               ref: branch,
             });
-
-            console.log(`Triggered "${WORKFLOW_NAME}" on branch: ${branch}`);
 
       - name: Create summary
         if: steps.filter.outputs.components == 'true'
