@@ -771,12 +771,17 @@
     "TotalUsage": "Total Usage",
     "TotalUsageDescription": "Total resource usage during the lookback period.",
     "User": "User",
+    "UserDescription": "User defines the configured weight and cumulative usage during the aggregation period. <br />The user weight is used to calculate the priority coefficient for individual users within a project. <br /> Users in different projects do not affect each other's priority calculations.",
     "Weight": "Weight",
     "WeightDescription": "The multiplier that determines Fair Share scheduling priority. Higher weight results in higher priority. Default value is '1.0'. A weight of '2.0' has twice the priority of '1.0'.",
     "step": {
       "DomainDescription": "Configure and modify Fair Share weights for each Domain.",
+      "PleaseSelectDomain": "Please select a domain.",
+      "PleaseSelectProject": "Please select a project.",
       "PleaseSelectResourceGroup": "Please select a resource group.",
-      "ResourceGroupDescription": "Configure and modify the core parameters of the Fair Share algorithm"
+      "ProjectDescription": "Configure and modify Fair Share weights for each Project.",
+      "ResourceGroupDescription": "Configure and modify the core parameters of the Fair Share algorithm",
+      "UserDescription": "Configure and modify Fair Share weights for each User."
     }
   },
   "fairShrae": {},

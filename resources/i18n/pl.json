@@ -769,8 +769,12 @@
     "WeightDescription": "Mnożnik określający priorytet w planowaniu Fair Share. Wyższa waga daje wyższy priorytet. Wartość domyślna to '1.0'. Waga '2.0' ma dwukrotnie wyższy priorytet niż '1.0'.",
     "step": {
       "DomainDescription": "Skonfiguruj i modyfikuj wagi Fair Share dla każdej domeny.",
+      "PleaseSelectDomain": "Proszę wybrać domenę.",
+      "PleaseSelectProject": "Wybierz projekt.",
       "PleaseSelectResourceGroup": "Wybierz grupę zasobów.",
-      "ResourceGroupDescription": "Skonfiguruj i zmodyfikuj podstawowe parametry algorytmu Fair Share"
+      "ProjectDescription": "Skonfiguruj i zmodyfikuj wagi Fair Share dla każdego Projektu.",
+      "ResourceGroupDescription": "Skonfiguruj i zmodyfikuj podstawowe parametry algorytmu Fair Share",
+      "UserDescription": "Konfiguruj i modyfikuj wagi Fair Share dla poszczególnych użytkowników."
     }
   },
   "fairShrae": {},

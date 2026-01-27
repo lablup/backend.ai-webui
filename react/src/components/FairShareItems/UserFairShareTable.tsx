@@ -7,7 +7,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -19,49 +18,50 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useState, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
-  ProjectFairShareOrderBy,
-  ProjectFairShareTableQuery,
-  ProjectFairShareTableQuery$variables,
-} from 'src/__generated__/ProjectFairShareTableQuery.graphql';
+  UserFairShareOrderBy,
+  UserFairShareTableQuery,
+  UserFairShareTableQuery$variables,
+} from 'src/__generated__/UserFairShareTableQuery.graphql';
 import { convertToOrderBy } from 'src/helper';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
-type ProjectFairShare = NonNullable<
-  ProjectFairShareTableQuery['response']
->['projectFairShares']['edges'][number]['node'];
+type UserFairShare = NonNullable<
+  UserFairShareTableQuery['response']
+>['userFairShares']['edges'][number]['node'];
 
-const availableProjectFairShareSorterKeys = [] as const;
-const availableProjectFairShareSorterValues = [
-  ...availableProjectFairShareSorterKeys,
-  ...availableProjectFairShareSorterKeys.map((key) => `-${key}`),
+const availableUserFairShareSorterKeys = [] as const;
+const availableUserFairShareSorterValues = [
+  ...availableUserFairShareSorterKeys,
+  ...availableUserFairShareSorterKeys.map((key) => `-${key}`),
 ] as const;
 const isEnableSorter = (key: string) => {
-  return _.includes(availableProjectFairShareSorterValues, key);
+  return _.includes(availableUserFairShareSorterValues, key);
 };
 
-interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
+interface UserFairShareTableProps extends BAITableProps<UserFairShare> {
   resourceGroupName: string;
   domainName: string;
-  onClickProjectName: (id: string) => void;
+  projectId: string;
 }
 
-const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
+const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
   resourceGroupName,
   domainName,
-  onClickProjectName,
+  projectId,
   ...tableProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const [selectedProjectId, setSelectedProjectId] = useState('');
-  const [selectedProjectIdList, setSelectedProjectIdList] = useState<string[]>(
+  const [selectedUserUuid, setSelectedUserUuid] = useState('');
+  const [selectedUserUuidList, setSelectedUserUuidList] = useState<string[]>(
     [],
   );
   const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
@@ -77,30 +77,23 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
     pageSize: 10,
   });
 
-  // const resourceGroupNameFilter: ProjectFairShareTableQuery$variables['filter'] =
-  //   resourceGroupName ? { resourceGroup: { equals: resourceGroupName } } : {};
-  // const domainNameFilter: ProjectFairShareTableQuery$variables['filter'] =
-  //   domainName ? { domainName: { equals: domainName } } : {};
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableProjectFairShareSorterValues),
+      order: parseAsStringLiteral(availableUserFairShareSorterValues),
       filter: parseAsString,
     },
     { history: 'replace' },
   );
-  const queryVariables: ProjectFairShareTableQuery$variables = {
+  const queryVariables: UserFairShareTableQuery$variables = {
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    orderBy: convertToOrderBy<ProjectFairShareOrderBy>(queryParams.order) || [
+    orderBy: convertToOrderBy<UserFairShareOrderBy>(queryParams.order) || [
       { field: 'FAIR_SHARE_FACTOR', direction: 'ASC' },
     ],
     filter: {
-      // FIXME: server error (empty response) occurs when both filters are applied.
-      // ...resourceGroupNameFilter,
-      // ...domainNameFilter,
       ...(JSON.parse(
         queryParams.filter || '{}',
-      ) as ProjectFairShareTableQuery$variables['filter']),
+      ) as UserFairShareTableQuery$variables['filter']),
     },
   };
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -108,15 +101,15 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { projectFairShares } = useLazyLoadQuery<ProjectFairShareTableQuery>(
+  const { userFairShares } = useLazyLoadQuery<UserFairShareTableQuery>(
     graphql`
-      query ProjectFairShareTableQuery(
-        $filter: ProjectFairShareFilter
-        $orderBy: [ProjectFairShareOrderBy!]
+      query UserFairShareTableQuery(
+        $filter: UserFairShareFilter
+        $orderBy: [UserFairShareOrderBy!]
         $offset: Int
         $limit: Int
       ) {
-        projectFairShares(
+        userFairShares(
           filter: $filter
           orderBy: $orderBy
           offset: $offset
@@ -126,7 +119,9 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
           edges {
             node {
               id
+              userUuid
               projectId
+              domainName
               spec {
                 weight
               }
@@ -156,29 +151,13 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
     },
   );
 
-  const columns: ColumnsType<ProjectFairShare> = [
+  const columns: ColumnsType<UserFairShare> = [
     {
-      // FIXME: show project name instead of project ID
-      key: 'projectId',
+      // FIXME: show user name instead of user UUID
+      key: 'userUuid',
       title: t('fairShare.Name'),
-      dataIndex: 'projectId',
+      dataIndex: 'userUuid',
       fixed: 'left',
-      render: (id) => (
-        <BAIFlex gap="xxs" align="center">
-          <Tooltip
-            title={t('fairShare.GoToSubComponent', {
-              sub: t('fairShare.Project'),
-            })}
-          >
-            <BAILink
-              icon={<ChevronRight />}
-              onClick={() => onClickProjectName?.(id)}
-            >
-              {id}
-            </BAILink>
-          </Tooltip>
-        </BAIFlex>
-      ),
     },
     {
       key: 'control',
@@ -190,7 +169,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
             type="text"
             icon={<SettingOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
-              setSelectedProjectId(record?.projectId);
+              setSelectedUserUuid(record?.userUuid);
               setOpenWeightSettingModal(true);
             }}
           />
@@ -276,11 +255,11 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       <BAIFlex direction="column" align="start">
         <Typography.Title level={4} style={{ margin: 0 }}>
           {t('fairShare.FairShareSettingTitleWithName', {
-            name: t('fairShare.Project'),
+            name: t('fairShare.User'),
           })}
         </Typography.Title>
         <Typography.Text type="secondary">
-          {<Trans i18nKey={t('fairShare.ProjectDescription')} />}
+          {<Trans i18nKey={t('fairShare.UserDescription')} />}
         </Typography.Text>
       </BAIFlex>
 
@@ -288,7 +267,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         <BAIGraphQLPropertyFilter
           filterProperties={[
             {
-              key: 'projectId',
+              key: 'userUuid',
               propertyLabel: t('fairShare.Name'),
               type: 'string',
             },
@@ -304,10 +283,10 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
           }}
         />
         <BAIFlex gap="sm">
-          {selectedProjectIdList?.length > 0 && (
+          {selectedUserUuidList?.length > 0 && (
             <>
               {t('general.NSelected', {
-                count: selectedProjectIdList.length,
+                count: selectedUserUuidList.length,
               })}
               <Tooltip title={t('general.BulkEdit')} placement="topLeft">
                 <Button
@@ -333,10 +312,10 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       </BAIFlex>
 
       <BAITable
-        rowKey={'projectId'}
+        rowKey={'userUuid'}
         scroll={{ x: 'max-content' }}
         dataSource={filterOutEmpty(
-          _.map(projectFairShares?.edges, (edge) => edge?.node),
+          _.map(userFairShares?.edges, (edge) => edge?.node),
         )}
         columns={columns}
         loading={
@@ -346,13 +325,13 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         rowSelection={{
           type: 'checkbox',
           onChange: (selectedRowKeys) => {
-            setSelectedProjectIdList(selectedRowKeys as string[]);
+            setSelectedUserUuidList(selectedRowKeys as string[]);
           },
-          selectedRowKeys: selectedProjectIdList,
+          selectedRowKeys: selectedUserUuidList,
         }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: projectFairShares?.count || 0,
+          total: userFairShares?.count || 0,
           current: tablePaginationOption.current,
           style: {
             marginRight: token.marginXS,
@@ -376,7 +355,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               : orderKey;
           setQueryParams({
             order: orderString
-              ? (orderString as (typeof availableProjectFairShareSorterValues)[number])
+              ? (orderString as (typeof availableUserFairShareSorterValues)[number])
               : null,
           });
         }}
@@ -392,18 +371,19 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
                 startRefetchTransition(() => {
                   updateFetchKey();
                 });
-                openBulkWeightSettingModal && setSelectedProjectIdList([]);
+                openBulkWeightSettingModal && setSelectedUserUuidList([]);
               }
-              setSelectedProjectId('');
+              setSelectedUserUuid('');
               setOpenWeightSettingModal(false);
               setOpenBulkWeightSettingModal(false);
             }}
             resourceGroupName={resourceGroupName}
             domainNames={[domainName]}
-            projectIds={
+            projectIds={[projectId]}
+            userIds={
               openBulkWeightSettingModal
-                ? selectedProjectIdList
-                : [selectedProjectId]
+                ? selectedUserUuidList
+                : [selectedUserUuid]
             }
             isBulkEdit={openBulkWeightSettingModal}
           />
@@ -413,4 +393,4 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   );
 };
 
-export default ProjectFairShareTable;
+export default UserFairShareTable;

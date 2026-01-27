@@ -770,8 +770,12 @@
     "WeightDescription": "O multiplicador que determina a prioridade no agendamento Fair Share. Maior peso resulta em maior prioridade. O valor padrão é '1.0'. Um peso de '2.0' tem o dobro da prioridade de '1.0'.",
     "step": {
       "DomainDescription": "Configure e modifique os pesos de Fair Share para cada Domínio.",
+      "PleaseSelectDomain": "Selecione um domínio.",
+      "PleaseSelectProject": "Por favor, selecione um projeto.",
       "PleaseSelectResourceGroup": "Selecione um grupo de recursos.",
-      "ResourceGroupDescription": "Configure e modifique os parâmetros principais do algoritmo Fair Share"
+      "ProjectDescription": "Configure e modifique os pesos de Fair Share para cada Project.",
+      "ResourceGroupDescription": "Configure e modifique os parâmetros principais do algoritmo Fair Share",
+      "UserDescription": "Configure e modifique os pesos do Fair Share para cada usuário."
     }
   },
   "fairShrae": {},

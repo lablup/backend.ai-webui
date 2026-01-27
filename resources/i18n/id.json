@@ -771,8 +771,12 @@
     "WeightDescription": "Pengali dasar yang menentukan prioritas penjadwalan Fair Share. Nilai lebih tinggi menghasilkan prioritas lebih tinggi. Nilai default adalah '1.0'. Bobot '2.0' memiliki dua kali prioritas dibanding '1.0'.",
     "step": {
       "DomainDescription": "Konfigurasikan dan ubah bobot Fair Share untuk setiap Domain.",
+      "PleaseSelectDomain": "Silakan pilih domain.",
+      "PleaseSelectProject": "Silakan pilih proyek.",
       "PleaseSelectResourceGroup": "Silakan pilih grup sumber daya.",
-      "ResourceGroupDescription": "Konfigurasikan dan ubah parameter inti algoritme Fair Share"
+      "ProjectDescription": "Konfigurasikan dan ubah bobot Fair Share untuk setiap proyek.",
+      "ResourceGroupDescription": "Konfigurasikan dan ubah parameter inti algoritme Fair Share",
+      "UserDescription": "Atur dan sesuaikan bobot Fair Share untuk setiap pengguna."
     }
   },
   "fairShrae": {},
