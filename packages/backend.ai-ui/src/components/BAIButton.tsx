@@ -3,6 +3,8 @@ import React, { useTransition } from 'react';
 
 export interface BAIButtonProps extends ButtonProps {
   action?: () => Promise<void>;
+  /** Test prop for workflow verification - to be removed */
+  test?: boolean;
 }
 
 const BAIButton: React.FC<BAIButtonProps> = ({ action, ...props }) => {

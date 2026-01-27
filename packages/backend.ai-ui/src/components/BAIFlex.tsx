@@ -12,6 +12,8 @@ export interface BAIFlexProps
   justify?: 'start' | 'end' | 'center' | 'between' | 'around';
   align?: 'start' | 'end' | 'center' | 'baseline' | 'stretch';
   gap?: GapProp;
+  /** Test prop for workflow verification - to be removed */
+  test?: boolean;
 }
 
 const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(

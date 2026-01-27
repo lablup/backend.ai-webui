@@ -12,6 +12,8 @@ import Draggable from 'react-draggable';
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {
   draggable?: boolean; // modal can be draggle
+  /** Test prop for workflow verification - to be removed */
+  test?: boolean;
 }
 
 const useStyles = createStyles(({ css }) => ({
