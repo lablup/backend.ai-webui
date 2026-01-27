@@ -25,7 +25,7 @@
 
 name: "Storybook Coverage Checker"
 "on":
-  workflow_dispatch: null
+  workflow_dispatch: {}
 
 permissions: {}
 
