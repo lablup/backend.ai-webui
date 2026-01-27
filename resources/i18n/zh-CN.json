@@ -772,8 +772,12 @@
     "WeightDescription": "用于确定公平共享（Fair Share）调度优先级的基础乘数。较高的值会获得更高的优先级。默认值为 '1.0'。权重为 '2.0' 的优先级是 '1.0' 的两倍。",
     "step": {
       "DomainDescription": "配置并修改每个域的公平份额权重。",
+      "PleaseSelectDomain": "请选择一个域。",
+      "PleaseSelectProject": "请选择项目。",
       "PleaseSelectResourceGroup": "请选择资源组。",
-      "ResourceGroupDescription": "配置和修改公平分配算法的核心参数"
+      "ProjectDescription": "配置并修改每个项目的公平共享权重。",
+      "ResourceGroupDescription": "配置和修改公平分配算法的核心参数",
+      "UserDescription": "为每位用户配置和修改公平份额权重。"
     }
   },
   "fairShrae": {},

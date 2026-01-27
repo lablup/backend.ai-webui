@@ -767,8 +767,12 @@
     "WeightDescription": "Ο πολλαπλασιαστής που καθορίζει την προτεραιότητα στον προγραμματισμό Fair Share. Μεγαλύτερο βάρος συνεπάγεται υψηλότερη προτεραιότητα. Η προεπιλεγμένη τιμή είναι '1.0'. Το βάρος '2.0' έχει διπλάσια προτεραιότητα σε σχέση με το '1.0'.",
     "step": {
       "DomainDescription": "Ρυθμίστε και τροποποιήστε τα βάρη Fair Share για κάθε τομέα.",
+      "PleaseSelectDomain": "Παρακαλώ επιλέξτε έναν τομέα.",
+      "PleaseSelectProject": "Επιλέξτε ένα έργο.",
       "PleaseSelectResourceGroup": "Επιλέξτε ομάδα πόρων.",
-      "ResourceGroupDescription": "Ρυθμίστε και τροποποιήστε τις βασικές παραμέτρους του αλγορίθμου Fair Share"
+      "ProjectDescription": "Ρυθμίστε και τροποποιήστε τα βάρη Fair Share για κάθε Project.",
+      "ResourceGroupDescription": "Ρυθμίστε και τροποποιήστε τις βασικές παραμέτρους του αλγορίθμου Fair Share",
+      "UserDescription": "Ρυθμίστε και τροποποιήστε τα βάρη Fair Share για κάθε χρήστη."
     }
   },
   "fairShrae": {},

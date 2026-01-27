@@ -769,8 +769,12 @@
     "WeightDescription": "Множитель, задающий приоритет в алгоритме планирования Fair Share. Больший вес даёт более высокий приоритет. Значение по умолчанию — '1.0'. Вес '2.0' даёт вдвое больший приоритет, чем '1.0'.",
     "step": {
       "DomainDescription": "Настройте и изменяйте веса Fair Share для каждого домена.",
+      "PleaseSelectDomain": "Пожалуйста, выберите домен.",
+      "PleaseSelectProject": "Выберите проект.",
       "PleaseSelectResourceGroup": "Выберите группу ресурсов.",
-      "ResourceGroupDescription": "Настройте и измените основные параметры алгоритма Fair Share"
+      "ProjectDescription": "Настройте и изменяйте веса Fair Share для каждого проекта.",
+      "ResourceGroupDescription": "Настройте и измените основные параметры алгоритма Fair Share",
+      "UserDescription": "Настройте и изменяйте веса Fair Share для каждого пользователя."
     }
   },
   "fairShrae": {},

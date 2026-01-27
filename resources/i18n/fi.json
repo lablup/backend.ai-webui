@@ -770,8 +770,12 @@
     "WeightDescription": "Kerroin, joka määrittää Fair Share -aikataulutuksen prioriteetin. Suurempi painokerroin antaa korkeamman prioriteetin. Oletusarvo on '1.0'. Paino '2.0' antaa kaksinkertaisen prioriteetin verrattuna arvoon '1.0'.",
     "step": {
       "DomainDescription": "Määritä ja muokkaa kunkin toimialueen Fair Share -painoja.",
+      "PleaseSelectDomain": "Valitse toimialue.",
+      "PleaseSelectProject": "Valitse projekti.",
       "PleaseSelectResourceGroup": "Valitse resurssiryhmä.",
-      "ResourceGroupDescription": "Määritä ja muokkaa Fair Share -algoritmin keskeisiä parametreja"
+      "ProjectDescription": "Määritä ja muokkaa kunkin projektin Fair Sharen painoja.",
+      "ResourceGroupDescription": "Määritä ja muokkaa Fair Share -algoritmin keskeisiä parametreja",
+      "UserDescription": "Määritä ja muokkaa Fair Share -painoja kullekin käyttäjälle."
     }
   },
   "fairShrae": {},

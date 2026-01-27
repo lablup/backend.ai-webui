@@ -761,8 +761,12 @@
     "WeightDescription": "ตัวคูณฐานที่กำหนดลำดับความสำคัญสำหรับการจัดตารางแบบ Fair Share ยิ่งค่าสูง จะมีลำดับความสำคัญสูงขึ้น ค่าเริ่มต้นคือ '1.0' น้ำหนัก '2.0' จะมีลำดับความสำคัญเป็นสองเท่าของ '1.0'",
     "step": {
       "DomainDescription": "ตั้งค่าและปรับน้ำหนัก Fair Share สำหรับแต่ละโดเมน",
+      "PleaseSelectDomain": "โปรดเลือกโดเมน.",
+      "PleaseSelectProject": "กรุณาเลือกโปรเจ็กต์.",
       "PleaseSelectResourceGroup": "กรุณาเลือกกลุ่มทรัพยากร",
-      "ResourceGroupDescription": "กำหนดค่าและแก้ไขพารามิเตอร์หลักของอัลกอริทึม Fair Share"
+      "ProjectDescription": "กำหนดค่าและปรับแต่งน้ำหนัก Fair Share สำหรับแต่ละโปรเจกต์",
+      "ResourceGroupDescription": "กำหนดค่าและแก้ไขพารามิเตอร์หลักของอัลกอริทึม Fair Share",
+      "UserDescription": "กำหนดและแก้ไขน้ำหนัก Fair Share สำหรับผู้ใช้แต่ละคน"
     }
   },
   "fairShrae": {},

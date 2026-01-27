@@ -768,8 +768,12 @@
     "WeightDescription": "Fair Share хуваарилалтын давуу байдлыг тодорхойлдог үржүүлэгч. Илүү их жин нь илүү өндөр давуу байдал өгнө. Анхдагч утга нь '1.0'. '2.0' жин нь '1.0'-ынхаас хоёр дахин их давуу байдаг.",
     "step": {
       "DomainDescription": "Domain бүрийн Fair Share жинг тохируулах, өөрчлөх.",
+      "PleaseSelectDomain": "Домен сонгоно уу.",
+      "PleaseSelectProject": "Төслийг сонгоно уу.",
       "PleaseSelectResourceGroup": "Нөөцийн бүлгийг сонгоно уу.",
-      "ResourceGroupDescription": "Fair Share алгоритмын үндсэн параметрүүдийг тохируулж, өөрчлөх"
+      "ProjectDescription": "Төсөл бүрийн Fair Share жингийг тохируулж, өөрчилнө.",
+      "ResourceGroupDescription": "Fair Share алгоритмын үндсэн параметрүүдийг тохируулж, өөрчлөх",
+      "UserDescription": "Хэрэглэгч бүрийн Fair Share жинг тохируулж, өөрчилнө."
     }
   },
   "fairShrae": {},

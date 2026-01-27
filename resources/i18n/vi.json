@@ -772,8 +772,12 @@
     "WeightDescription": "Hệ số nhân cơ bản xác định mức ưu tiên lập lịch Fair Share. Giá trị lớn hơn sẽ dẫn đến mức ưu tiên cao hơn. Mặc định là '1.0'. Trọng số '2.0' có mức ưu tiên gấp hai lần '1.0'.",
     "step": {
       "DomainDescription": "Cấu hình và điều chỉnh trọng số Fair Share cho từng Domain.",
+      "PleaseSelectDomain": "Vui lòng chọn một miền.",
+      "PleaseSelectProject": "Vui lòng chọn dự án.",
       "PleaseSelectResourceGroup": "Vui lòng chọn nhóm tài nguyên.",
-      "ResourceGroupDescription": "Cấu hình và điều chỉnh các tham số cốt lõi của thuật toán Fair Share"
+      "ProjectDescription": "Cấu hình và điều chỉnh trọng số Fair Share cho từng dự án.",
+      "ResourceGroupDescription": "Cấu hình và điều chỉnh các tham số cốt lõi của thuật toán Fair Share",
+      "UserDescription": "Cấu hình và điều chỉnh trọng số Fair Share cho từng Người dùng."
     }
   },
   "fairShrae": {},

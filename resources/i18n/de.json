@@ -772,8 +772,12 @@
     "WeightDescription": "Der Basis-Multiplikator, der die Fair-Share-Scheduling-Priorität bestimmt. Höhere Werte führen zu höherer Priorität. Standard ist '1.0'. Ein Gewicht von '2.0' hat die doppelte Priorität gegenüber '1.0'.",
     "step": {
       "DomainDescription": "Fair-Share-Gewichte für jede Domain konfigurieren und ändern.",
+      "PleaseSelectDomain": "Bitte wählen Sie eine Domain.",
+      "PleaseSelectProject": "Bitte wählen Sie ein Projekt aus.",
       "PleaseSelectResourceGroup": "Bitte wählen Sie eine Ressourcengruppe aus.",
-      "ResourceGroupDescription": "Konfigurieren und Anpassen der Kernparameter des Fair-Share-Algorithmus"
+      "ProjectDescription": "Fair-Share-Gewichte für jedes Projekt konfigurieren und ändern.",
+      "ResourceGroupDescription": "Konfigurieren und Anpassen der Kernparameter des Fair-Share-Algorithmus",
+      "UserDescription": "Fair-Share-Gewichte für jeden Benutzer konfigurieren und anpassen."
     }
   },
   "fairShrae": {},

@@ -771,8 +771,12 @@
     "WeightDescription": "Fair Shareスケジューリングの優先度を決定する基本倍率。値が大きいほど優先度が高くなります。デフォルトは '1.0'。重み '2.0' は '1.0' の2倍の優先度です。",
     "step": {
       "DomainDescription": "各ドメインのフェアシェア重みを設定・変更します。",
+      "PleaseSelectDomain": "ドメインを選択してください。",
+      "PleaseSelectProject": "プロジェクトを選択してください。",
       "PleaseSelectResourceGroup": "リソースグループを選択してください。",
-      "ResourceGroupDescription": "Fair Share アルゴリズムのコアパラメータを設定・変更する"
+      "ProjectDescription": "各プロジェクトのFair Share重みを設定・変更します。",
+      "ResourceGroupDescription": "Fair Share アルゴリズムのコアパラメータを設定・変更する",
+      "UserDescription": "各ユーザーの Fair Share の重みを設定および変更します。"
     }
   },
   "fairShrae": {},

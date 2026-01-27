@@ -1,6 +1,7 @@
 import DomainFairShareTable from './DomainFairShareTable';
 import ProjectFairShareTable from './ProjectFairShareTable';
 import ResourceGroupFairShareTable from './ResourceGroupFairShareTable';
+import UserFairShareTable from './UserFairShareTable';
 import { Skeleton, Steps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
@@ -38,7 +39,7 @@ const FairShareList: React.FC = () => {
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>('');
   const [selectedDomainName, setSelectedDomainName] = useState<string>('');
-  const [_selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
 
   const stepItems: Array<StepItem & { key: FairShareStepKey }> = [
     {
@@ -71,9 +72,25 @@ const FairShareList: React.FC = () => {
     {
       key: 'project',
       title: t('fairShare.Project'),
-      content: '',
+      content: !selectedDomainName
+        ? t('fairShare.step.PleaseSelectDomain')
+        : !selectedProjectId
+          ? t('fairShare.step.ProjectDescription')
+          : selectedProjectId,
+      onClick: () => {
+        if (selectedDomainName) {
+          setCurrentStep(2);
+          setSelectedProjectId('');
+        }
+      },
     },
-    { key: 'user', title: t('fairShare.User'), content: '' },
+    {
+      key: 'user',
+      title: t('fairShare.User'),
+      content: !selectedProjectId
+        ? t('fairShare.step.PleaseSelectProject')
+        : t('fairShare.step.UserDescription'),
+    },
   ];
 
   return (
@@ -124,6 +141,15 @@ const FairShareList: React.FC = () => {
               setSelectedProjectId(id);
               setCurrentStep(3);
             }}
+          />
+        </Suspense>
+      )}
+      {stepItems[currentStep].key === 'user' && (
+        <Suspense fallback={<Skeleton active />}>
+          <UserFairShareTable
+            resourceGroupName={selectedResourceGroupName}
+            domainName={selectedDomainName}
+            projectId={selectedProjectId}
           />
         </Suspense>
       )}

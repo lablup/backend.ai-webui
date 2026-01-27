@@ -774,8 +774,12 @@
     "WeightDescription": "Fair Share 스케줄링 우선순위를 결정하는 배율입니다. 가중치가 높을수록 높은 우선순위를 받습니다. 기본값은 '1.0'이며, 가중치 '2.0'은 '1.0'보다 2배 높은 우선순위를 가집니다.",
     "step": {
       "DomainDescription": "Domain별 Fair Share 가중치를 확인하고 수정합니다.",
+      "PleaseSelectDomain": "도메인을 선택해 주세요.",
+      "PleaseSelectProject": "프로젝트를 선택해 주세요.",
       "PleaseSelectResourceGroup": "자원 그룹을 선택해 주세요.",
-      "ResourceGroupDescription": "Fair Share 알고리즘의 핵심 파라미터를 확인하고 수정합니다."
+      "ProjectDescription": "프로젝트별 Fair Share 가중치를 확인하고 수정합니다.",
+      "ResourceGroupDescription": "Fair Share 알고리즘의 핵심 파라미터를 확인하고 수정합니다.",
+      "UserDescription": "사용자별 Fair Share 가중치를 확인하고 수정합니다."
     }
   },
   "fairShrae": {},

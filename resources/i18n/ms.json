@@ -769,8 +769,12 @@
     "WeightDescription": "Pengganda yang menentukan keutamaan penjadualan Fair Share. Bobot yang lebih tinggi memberi keutamaan lebih tinggi. Nilai lalai ialah '1.0'. Bobot '2.0' mempunyai dua kali keutamaan berbanding '1.0'.",
     "step": {
       "DomainDescription": "Konfigurasikan dan ubah suai pemberat Fair Share untuk setiap Domain.",
+      "PleaseSelectDomain": "Sila pilih domain.",
+      "PleaseSelectProject": "Sila pilih projek.",
       "PleaseSelectResourceGroup": "Sila pilih kumpulan sumber.",
-      "ResourceGroupDescription": "Konfigurasikan dan ubah suai parameter teras algoritma Fair Share"
+      "ProjectDescription": "Konfigurasikan dan laraskan berat Fair Share untuk setiap Projek.",
+      "ResourceGroupDescription": "Konfigurasikan dan ubah suai parameter teras algoritma Fair Share",
+      "UserDescription": "Konfigurasikan dan ubah berat Fair Share untuk setiap pengguna."
     }
   },
   "fairShrae": {},
