@@ -10,7 +10,7 @@ Generate or update Storybook story files for Backend.AI UI (BUI) components.
 ## Usage
 
 ```
-/create-bui-component-story <component-names...>
+/manage-bui-component-story <component-names...>
 ```
 
 ## Arguments
@@ -23,13 +23,13 @@ Generate or update Storybook story files for Backend.AI UI (BUI) components.
 
 ```bash
 # Single component
-/create-bui-component-story BAIButton
+/manage-bui-component-story BAIButton
 
 # Multiple components (batch)
-/create-bui-component-story BAIButton BAICard BAIModal
+/manage-bui-component-story BAIButton BAICard BAIModal
 
 # With full path
-/create-bui-component-story packages/backend.ai-ui/src/components/BAIButton.tsx
+/manage-bui-component-story packages/backend.ai-ui/src/components/BAIButton.tsx
 ```
 
 ## What this command does

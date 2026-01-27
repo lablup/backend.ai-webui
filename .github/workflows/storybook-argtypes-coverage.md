@@ -95,7 +95,7 @@ For each component file:
 
 ### Commands
 
-`@claude` /create-bui-component-story BAICard BAIFlex
+`@claude` /manage-bui-component-story BAICard BAIFlex
 
 <details>
 <summary><strong>Detailed Changes</strong></summary>
