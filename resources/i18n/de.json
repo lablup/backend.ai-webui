@@ -774,7 +774,11 @@
     "Weight": "Gewicht",
     "WeightDescription": "Der Basis-Multiplikator, der die Fair-Share-Scheduling-Priorität bestimmt. Höhere Werte führen zu höherer Priorität. Standard ist '1.0'. Ein Gewicht von '2.0' hat die doppelte Priorität gegenüber '1.0'.",
     "step": {
-      "Description": "Die Fair-Share-Einstellungen erfolgen je Ressourcengruppe entlang der Hierarchie Domain → Projekt → Benutzer. Klicken Sie in der Tabelle auf einen Eintrag, um zu den Untereinstellungen zu wechseln."
+      "Description": "Die Fair-Share-Einstellungen erfolgen je Ressourcengruppe entlang der Hierarchie Domain → Projekt → Benutzer. Klicken Sie in der Tabelle auf einen Eintrag, um zu den Untereinstellungen zu wechseln.",
+      "PleaseSelectDomain": "Bitte wählen Sie eine Domain.",
+      "PleaseSelectProject": "Bitte wählen Sie ein Projekt aus.",
+      "ProjectDescription": "Fair-Share-Gewichte für jedes Projekt konfigurieren und ändern.",
+      "UserDescription": "Fair-Share-Gewichte für jeden Benutzer konfigurieren und anpassen."
     }
   },
   "fairShrae": {},

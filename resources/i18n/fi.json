@@ -772,7 +772,11 @@
     "Weight": "Paino",
     "WeightDescription": "Kerroin, joka määrittää Fair Share -aikataulutuksen prioriteetin. Suurempi painokerroin antaa korkeamman prioriteetin. Oletusarvo on '1.0'. Paino '2.0' antaa kaksinkertaisen prioriteetin verrattuna arvoon '1.0'.",
     "step": {
-      "Description": "Fair Share -asetukset määritellään resurssiryhmittäin domainien, projektien ja käyttäjien hierarkiassa. Siirry alitason asetuksiin napsauttamalla taulukon kutakin kohtaa."
+      "Description": "Fair Share -asetukset määritellään resurssiryhmittäin domainien, projektien ja käyttäjien hierarkiassa. Siirry alitason asetuksiin napsauttamalla taulukon kutakin kohtaa.",
+      "PleaseSelectDomain": "Valitse toimialue.",
+      "PleaseSelectProject": "Valitse projekti.",
+      "ProjectDescription": "Määritä ja muokkaa kunkin projektin Fair Sharen painoja.",
+      "UserDescription": "Määritä ja muokkaa Fair Share -painoja kullekin käyttäjälle."
     }
   },
   "fairShrae": {},
