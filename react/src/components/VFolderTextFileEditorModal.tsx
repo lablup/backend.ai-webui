@@ -1,12 +1,8 @@
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useThemeMode } from '../hooks/useThemeMode';
-import {
-  Editor as MonacoEditor,
-  type Monaco,
-  type OnMount,
-} from '@monaco-editor/react';
+import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Skeleton, App } from 'antd';
+import { Skeleton, App, theme } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,
@@ -19,8 +15,14 @@ import {
   BAIText,
   BAIAlert,
 } from 'backend.ai-ui';
-import { useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const MonacoEditor = React.lazy(() =>
+  import('@monaco-editor/react').then((module) => ({
+    default: module.Editor,
+  })),
+);
 
 interface VFolderTextFileEditorModalProps
   extends Omit<
@@ -66,6 +68,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const { message } = App.useApp();
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
+  const { token } = theme.useToken();
 
   const queryClient = useQueryClient();
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -129,6 +132,16 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     },
   });
 
+  const skeletonWithPadding = (
+    <Skeleton
+      active
+      style={{
+        alignSelf: 'start',
+        paddingInline: token.paddingContentHorizontal,
+        paddingBlock: token.paddingContentVertical,
+      }}
+    />
+  );
   return (
     <BAIModal
       width={'100%'}
@@ -137,8 +150,8 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
       cancelText={t('button.Cancel')}
       {...modalProps}
       title={
-        <BAIFlex align="center" gap="xs">
-          <BAIText>{t('data.explorer.EditFile')}</BAIText>
+        <>
+          {t('data.explorer.EditFile')}
           {fileInfo && (
             <BAIText type="secondary" style={{ fontWeight: 'normal' }}>
               - {fileInfo.name}
@@ -146,61 +159,69 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
                 ` (${convertToDecimalUnit(fileInfo.size, 'auto')?.displayValue})`}
             </BAIText>
           )}
-        </BAIFlex>
+        </>
       }
       onCancel={() => onRequestClose()}
       onOk={() => saveMutation.mutate()}
       confirmLoading={saveMutation.isPending}
       okButtonProps={{ disabled: !!loadError }}
+      styles={{
+        body: {
+          paddingBlock: 0,
+          paddingInline: 0,
+        },
+      }}
     >
       <BAIFlex
         direction="column"
         gap="md"
-        style={{ height: 'calc(100vh - 250px)' }}
+        style={{ height: 'calc(100vh - 180px)' }}
       >
-        {loadError ? (
-          <BAIAlert
-            type="error"
-            showIcon
-            title={t('data.explorer.FailedToLoadFile')}
-            description={t('data.explorer.FailedToLoadFileDescription')}
-          />
-        ) : isFetching ? (
-          <Skeleton active />
-        ) : (
-          <MonacoEditor
-            defaultValue={fileContent ?? ''}
-            beforeMount={(monaco) => {
-              if (fileInfo?.name) {
-                const { detectedMimeType } = detectLanguageAndMimeType(
-                  monaco,
-                  fileInfo.name,
-                );
-                detectedMimeTypeRef.current = detectedMimeType;
-              }
-            }}
-            onMount={(editor, monaco) => {
-              editorRef.current = editor;
-              if (fileInfo?.name) {
-                const { detectedLanguage } = detectLanguageAndMimeType(
-                  monaco,
-                  fileInfo.name,
-                );
-                const model = editor.getModel();
-                if (model) {
-                  monaco.editor.setModelLanguage(model, detectedLanguage);
+        <Suspense fallback={skeletonWithPadding}>
+          {loadError ? (
+            <BAIAlert
+              type="error"
+              showIcon
+              title={t('data.explorer.FailedToLoadFile')}
+              description={t('data.explorer.FailedToLoadFileDescription')}
+            />
+          ) : isFetching ? (
+            skeletonWithPadding
+          ) : (
+            <MonacoEditor
+              defaultValue={fileContent ?? ''}
+              beforeMount={(monaco) => {
+                if (fileInfo?.name) {
+                  const { detectedMimeType } = detectLanguageAndMimeType(
+                    monaco,
+                    fileInfo.name,
+                  );
+                  detectedMimeTypeRef.current = detectedMimeType;
                 }
-              }
-            }}
-            theme={isDarkMode ? 'vs-dark' : 'light'}
-            loading={<Skeleton active />}
-            width={'100%'}
-            height={'100%'}
-            options={{
-              fixedOverflowWidgets: true,
-            }}
-          />
-        )}
+              }}
+              onMount={(editor, monaco) => {
+                editorRef.current = editor;
+                if (fileInfo?.name) {
+                  const { detectedLanguage } = detectLanguageAndMimeType(
+                    monaco,
+                    fileInfo.name,
+                  );
+                  const model = editor.getModel();
+                  if (model) {
+                    monaco.editor.setModelLanguage(model, detectedLanguage);
+                  }
+                }
+              }}
+              theme={isDarkMode ? 'vs-dark' : 'light'}
+              loading={skeletonWithPadding}
+              width={'100%'}
+              height={'100%'}
+              options={{
+                fixedOverflowWidgets: true,
+              }}
+            />
+          )}
+        </Suspense>
       </BAIFlex>
     </BAIModal>
   );

@@ -1,5 +1,5 @@
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
-import { Editor as MonacoEditor, type Monaco } from '@monaco-editor/react';
+import type { Monaco } from '@monaco-editor/react';
 import { Alert, App, Skeleton, theme, Upload } from 'antd';
 import {
   BAIButton,
@@ -9,11 +9,17 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';
 import { useThemeMode } from 'src/hooks/useThemeMode';
 import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
+
+const MonacoEditor = React.lazy(() =>
+  import('@monaco-editor/react').then((module) => ({
+    default: module.Editor,
+  })),
+);
 
 interface ThemeJsonConfigModalProps extends BAIModalProps {
   onRequestClose: () => void;
@@ -37,6 +43,17 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
     JSON.stringify(userCustomThemeConfig ?? {}, null, 2) ?? '',
   );
   const monacoRef = useRef<Monaco | null>(null);
+
+  const skeletonWithPadding = (
+    <Skeleton
+      active
+      style={{
+        alignSelf: 'start',
+        paddingInline: token.paddingContentHorizontal,
+        paddingBlock: token.paddingContentVertical,
+      }}
+    />
+  );
 
   return (
     <BAIModal
@@ -128,67 +145,73 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          paddingBlock: 0,
+          paddingInline: 0,
         },
       }}
     >
       <Alert
+        banner
+        type="info"
         description={t('theme.ThemeJsonConfigurationDesc')}
         showIcon
-        style={{ marginBottom: token.marginMD, flexShrink: 0 }}
+        style={{ flexShrink: 0 }}
       />
-      <MonacoEditor
-        language="json"
-        height={'100%'}
-        theme={isDarkMode ? 'vs-dark' : 'vs'}
-        value={editorValue}
-        onChange={(v) => setEditorValue(v ?? '')}
-        options={{
-          minimap: { enabled: false },
-          fixedOverflowWidgets: true,
-        }}
-        loading={<Skeleton active style={{ height: '100%' }} />}
-        beforeMount={async (monaco) => {
-          const loadSchema = async (url: string) => {
-            const response = await fetch(url);
-            if (!response.ok) {
-              throw new Error(
-                `Failed to load schema from ${url}: ${response.status} ${response.statusText}`,
-              );
-            }
-            return response
-              .json()
-              .then((schema) => schema)
-              .catch((error) => {
+      <Suspense fallback={skeletonWithPadding}>
+        <MonacoEditor
+          language="json"
+          height={'100%'}
+          theme={isDarkMode ? 'vs-dark' : 'vs'}
+          value={editorValue}
+          onChange={(v) => setEditorValue(v ?? '')}
+          options={{
+            minimap: { enabled: false },
+            fixedOverflowWidgets: true,
+          }}
+          loading={skeletonWithPadding}
+          beforeMount={async (monaco) => {
+            const loadSchema = async (url: string) => {
+              const response = await fetch(url);
+              if (!response.ok) {
                 throw new Error(
-                  `Invalid JSON schema at ${url}: ${error.message}`,
+                  `Failed to load schema from ${url}: ${response.status} ${response.statusText}`,
                 );
-              });
-          };
+              }
+              return response
+                .json()
+                .then((schema) => schema)
+                .catch((error) => {
+                  throw new Error(
+                    `Invalid JSON schema at ${url}: ${error.message}`,
+                  );
+                });
+            };
 
-          const [themeSchema, antdSchema] = await Promise.all([
-            loadSchema('/resources/theme.schema.json'),
-            loadSchema('/resources/antdThemeConfig.schema.json'),
-          ]);
-          monacoRef.current = monaco;
-          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-            validate: true,
-            schemaValidation: 'error',
-            schemas: [
-              {
-                // Schema URIs must match Monaco's inmemory model path resolution for $ref to work
-                uri: 'inmemory://model/theme.schema.json',
-                fileMatch: ['*'],
-                schema: themeSchema,
-              },
-              {
-                uri: 'inmemory://model/antdThemeConfig.schema.json',
-                fileMatch: ['*'],
-                schema: antdSchema,
-              },
-            ],
-          });
-        }}
-      />
+            const [themeSchema, antdSchema] = await Promise.all([
+              loadSchema('/resources/theme.schema.json'),
+              loadSchema('/resources/antdThemeConfig.schema.json'),
+            ]);
+            monacoRef.current = monaco;
+            monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+              validate: true,
+              schemaValidation: 'error',
+              schemas: [
+                {
+                  // Schema URIs must match Monaco's inmemory model path resolution for $ref to work
+                  uri: 'inmemory://model/theme.schema.json',
+                  fileMatch: ['*'],
+                  schema: themeSchema,
+                },
+                {
+                  uri: 'inmemory://model/antdThemeConfig.schema.json',
+                  fileMatch: ['*'],
+                  schema: antdSchema,
+                },
+              ],
+            });
+          }}
+        />
+      </Suspense>
     </BAIModal>
   );
 };
