@@ -12,7 +12,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type UserConfigScript = {
@@ -113,10 +113,9 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     }
   };
 
-  // eslint-disable-next-line react-hooks/void-use-memo
-  useMemo(() => {
-    fetchScript();
-    //eslint-disable-next-line
+  const fetchScriptEffectEvent = useEffectEvent(fetchScript);
+  useEffect(() => {
+    fetchScriptEffectEvent();
   }, [shellInfo]);
 
   const saveScript = ({ closeAfter = true } = {}) => {
