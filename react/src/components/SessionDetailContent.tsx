@@ -19,6 +19,7 @@ import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -80,6 +81,10 @@ const SessionDetailContent: React.FC<{
   >('current');
   const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
     useToggle(false);
+  const [
+    openSessionSchedulingHistoryModal,
+    { toggle: toggleOpenSessionSchedulingHistoryModal },
+  ] = useToggle(false);
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
@@ -295,6 +300,11 @@ const SessionDetailContent: React.FC<{
                   />
                 </Tooltip>
               ) : null}
+              <BAIButton
+                onClick={() => toggleOpenSessionSchedulingHistoryModal()}
+              >
+                see histories
+              </BAIButton>
             </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
@@ -456,6 +466,11 @@ const SessionDetailContent: React.FC<{
           </Button>
         }
         onCancel={toggleOpenCodeHighlighterModal}
+      />
+      <SessionSchedulingHistoryModal
+        sessionId={id}
+        open={openSessionSchedulingHistoryModal}
+        onCancel={toggleOpenSessionSchedulingHistoryModal}
       />
     </BAIFlex>
   ) : (

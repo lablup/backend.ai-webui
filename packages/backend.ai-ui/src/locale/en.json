@@ -233,6 +233,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Ended At",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "StartedAt": "Started At",
+    "Step": "Step"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",
     "ContainerGIDs": "Container GIDs",
