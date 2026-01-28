@@ -10,7 +10,7 @@ import React, { cloneElement, isValidElement, ReactNode } from 'react';
  */
 export interface BAICardProps extends Omit<CardProps, 'extra'> {
   /** Visual status of the card affecting border color and extra button icons */
-  status?: 'success' | 'error' | 'warning' | 'default' | 'info';
+  status?: 'success' | 'error' | 'warning' | 'default';
   /** Custom content to display in the header area */
   extra?: ReactNode;
   /** Title for the extra button that appears in the header */
@@ -19,8 +19,8 @@ export interface BAICardProps extends Omit<CardProps, 'extra'> {
   showDivider?: boolean;
   /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
-  /** Whether the card is in a loading state */
-  loading?: boolean;
+  /** React ref for the card container */
+  ref?: React.Ref<HTMLDivElement> | undefined;
 }
 
 /**
@@ -156,6 +156,5 @@ const BAICard: React.FC<BAICardProps> = ({
 };
 
 BAICard.displayName = 'BAICard';
-// TODO: test modification for workflow verification
 
 export default BAICard;

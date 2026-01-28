@@ -4,7 +4,6 @@ import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';
 
-// TODO: test modification for workflow verification
 interface BAIRadioGroupProps extends RadioGroupProps {}
 
 const useStyle = createStyles(({ css, token }) => ({
