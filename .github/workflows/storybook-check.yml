@@ -74,7 +74,10 @@ jobs:
               w => w.name === WORKFLOW_NAME
             );
 
-            if (!agenticWorkflow) return;
+            if (!agenticWorkflow) {
+              core.warning('Storybook Coverage Checker workflow not found');
+              return;
+            }
 
             await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
