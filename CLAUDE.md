@@ -90,10 +90,20 @@ e2e/                    # End-to-end tests
   - Format: `prefix(JIRA-ISSUE-NUMBER): title`
   - GitHub PR content starts with `Resolves #1234(FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number
 
-- Use the gh command for detailed GitHub information.
-- Use the Lablup Jira CLI command `lj` to find GitHub issues cloned from Jira issue numbers or to find dedicated Teams threads.
-- Use Atlassian MCP command for detailed Jira issue information.
-- Branch creation, commits, and pushes are done through graphite commands. Follow graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
+- **CRITICAL - MCP Tool Requirements (No CLI alternatives)**:
+  - **Jira**: Use Atlassian MCP (`mcp__Atlassian__*`) for ALL operations
+    - `mcp__Atlassian__searchJiraIssuesUsingJql` - Search/query issues
+    - `mcp__Atlassian__getJiraIssue` - Get issue details
+    - `mcp__Atlassian__createJiraIssue` - Create issues
+    - `mcp__Atlassian__editJiraIssue` - Update issues
+  - **GitHub**: Use GitHub MCP (`mcp__github__*`) or `gh` CLI
+    - `mcp__github__search_issues` - Search issues
+    - `mcp__github__issue_read` - Get issue details
+  - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
+    - Do NOT use `git commit`, `git push`, `git checkout -b` directly
+    - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`
+- If MCP authentication fails, re-authenticate and retry before proceeding.
+- Follow Graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
 
 ### Configuration
 

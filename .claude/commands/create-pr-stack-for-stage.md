@@ -6,7 +6,7 @@ model: claude-sonnet-4-5
 
 # Create a PR Stack for Staged Changes
 
-Create a new graphite stack branch for currently staged changes, following the project's commit message patterns and workflow.
+Create a new graphite stack branch for currently staged changes, following the project's commit message patterns and Graphite best practices.
 
 The associated Jira issue is specified by `$ARGUMENTS`.
 
@@ -14,98 +14,200 @@ The associated Jira issue is specified by `$ARGUMENTS`.
 - If only a number is provided, it is assumed to be from the `FR` project.
 - If a link is provided, the issue key will be extracted from the link.
 
+## Graphite Best Practices
+
+### Why Stacked PRs?
+- **Smaller, focused PRs**: Each PR should address a distinct part of the feature (tens or hundreds of lines, not thousands)
+- **Parallel development**: Continue working while previous PRs are in review
+- **Faster reviews**: Reviewers can give feedback one piece at a time
+- **Clear history**: Each PR has a clear purpose, making reverts and debugging easier
+
+### Key Principles
+- Break large changes into **logical, reviewable chunks**
+- Each PR in the stack should be **independently understandable**
+- Stack PRs when changes are **dependent**; create separate stacks for **independent** changes
+- Keep trunk (`main`) up-to-date with regular `gt sync`
+
 ## Process
 
-1. **Analyze current staged changes**
-   - Check `git status` to see staged files
-   - Review `git diff --cached` to understand changes
-   - Determine appropriate commit message based on changes
+### 1. Pre-flight Checks
+Before creating a new stack branch:
+```
+# Check current stack state
+mcp__graphite__run_gt_cmd with args: ["log", "short"]
 
-2. **Create new stack branch**
-   - Use `gt branch create <branch-name>` following naming convention
-   - Branch names: `feat/FR-XXXX-description` or `fix/FR-XXXX-description`
+# Sync with trunk to avoid conflicts later
+mcp__graphite__run_gt_cmd with args: ["sync"]
+```
 
-3. **Commit with proper message format**
-   - Follow pattern: `prefix(FR-XXXX): description (#PR-number)`
-   - Prefixes based on change type:
-     - `feat`: New features or improvements
-     - `fix`: Bug fixes  
-     - `refactor`: Code refactoring
-     - `style`: Design/UI changes
-     - `chore`: Other maintenance tasks
+### 2. Analyze Current Staged Changes
+- Check `git status` to see staged files
+- Review `git diff --cached` to understand changes
+- **Evaluate if changes should be split** into multiple PRs for better reviewability
+- Determine appropriate commit message based on changes
 
-4. **Submit for review (REQUIRES USER CONFIRMATION)**
-   - **IMPORTANT**: Use `AskUserQuestion` tool to get user confirmation before running `gt stack submit`
-   - **Do NOT use text-based prompts** (e.g., "Proceed? [y/n]")
-   - Present commit message and changes for review
-   - Example format:
-     ```
-     AskUserQuestion({
-       questions: [{
-         question: "Ready to create PR with this commit?",
-         header: "Confirm Submit",
-         multiSelect: false,
-         options: [
-           {
-             label: "Yes, Create PR (Recommended)",
-             description: "Branch: feat/FR-1234-description\nCommit: feat(FR-1234): description\n\nFiles changed: 5 files\nRun: gt stack submit"
-           },
-           {
-             label: "Edit Commit Message",
-             description: "Modify the commit message before submitting"
-           },
-           {
-             label: "Cancel",
-             description: "Don't create PR yet"
-           }
-         ]
-       }]
-     })
-     ```
-   - Only run `gt stack submit` after user confirms with the first option
+### 3. Create New Stack Branch
+Use Graphite MCP to create a branch stacked on the current branch:
+```
+mcp__graphite__run_gt_cmd with args: ["create", "--all", "--message", "commit message"]
+```
 
-5. **After submit**
-- Please update PR description based on jira issue and changes of PR
-- Ensure PR description includes `Resolves #YYYY ([FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX))` on top. (YYYY is a number of "GitHub Issue URL" custom filed in related Jira item)
+**Branch Naming** (auto-generated from commit message):
+- Pattern: `username/prefix-jira-description`
+- Examples: `user/feat-fr-1234-add-user-api`, `user/fix-fr-1234-null-check`
 
-6. **Update Jira issue after PR creation**
-   - If Sprint is empty, find and assign it to the currently active (open) sprint in the FR project
-   - If Assignee is empty, assign it to the current Jira MCP connected account
-   - Use Atlassian MCP commands to update the issue:
-     ```
-     # First, get current user info for assignee
-     mcp__Atlassian__atlassianUserInfo
-     
-     # Search for issues in active sprint to find the sprint ID
-     mcp__Atlassian__searchJiraIssuesUsingJql with JQL:
-     "project = FR AND sprint in openSprints() ORDER BY created DESC"
-     
-     # Get sprint ID from existing issue in active sprint
-     mcp__Atlassian__getJiraIssue with fields: ["customfield_10020"]
-     
-     # Update both assignee and sprint in single call (CORRECT FORMAT)
-     mcp__Atlassian__editJiraIssue with fields:
-     {
-       "assignee": {"accountId": "user_account_id"},
-       "customfield_10020": sprint_id
-     }
-     ```
+### 4. Commit Message Format
+Follow conventional commit format with Jira issue reference:
+```
+prefix(FR-XXXX): description
+```
 
-   **CRITICAL Field Format Notes**:
-   - Sprint field (`customfield_10020`): Use **numeric ID directly** (e.g., `1570`)
-   - **NEVER use array format** `[1570]` - this causes Bad Request error
-   - Assignee field: Use object format `{"accountId": "account_id"}`
-   - Both fields can be updated in a single API call with correct formats
+**Prefixes:**
+- `feat`: New features or improvements
+- `fix`: Bug fixes
+- `refactor`: Code refactoring
+- `style`: Design/UI changes
+- `chore`: Other maintenance tasks
+- `e2e`: Add E2E test cases
 
-## Example Workflow
-```bash
-# Check staged changes
-git status
-git diff --cached
+### 5. Submit for Review (REQUIRES USER CONFIRMATION)
 
-# Create new branch for staged changes
-gt create feat/FR-1234-implement-feature  -m "feat(FR-1234): implement new feature functionality"
-gt stack submit
+**IMPORTANT**: Use `AskUserQuestion` tool to get user confirmation before submitting.
+
+Present the following information for review:
+- Branch name and commit message
+- Files changed
+- Current stack structure
+
+Example confirmation format:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Ready to submit this PR stack?",
+    header: "Confirm Submit",
+    multiSelect: false,
+    options: [
+      {
+        label: "Submit Current Branch Only (Recommended)",
+        description: "Branch: feat/FR-1234-description\nCommit: feat(FR-1234): description\n\nVia MCP: gt submit"
+      },
+      {
+        label: "Submit Entire Stack",
+        description: "Submit all branches in the current stack\nVia MCP: gt submit --stack"
+      },
+      {
+        label: "Edit Commit Message",
+        description: "Modify the commit message before submitting"
+      },
+      {
+        label: "Cancel",
+        description: "Don't submit yet"
+      }
+    ]
+  }]
+})
+```
+
+**Submit Commands:**
+- Single branch: `mcp__graphite__run_gt_cmd with args: ["submit"]`
+- Entire stack: `mcp__graphite__run_gt_cmd with args: ["submit", "--stack"]`
+
+### 6. After Submit
+- Update PR description based on Jira issue and changes
+- Ensure PR description includes: `Resolves #YYYY ([FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX))`
+  - YYYY is the GitHub Issue number from Jira's "GitHub Issue URL" custom field
+
+### 7. Update Jira Issue
+- **CRITICAL**: Use Atlassian MCP tools **ONLY**. Do NOT use `lj` CLI for modifications.
+- **Refer to `.claude/atlassian-config.md` for field IDs and configuration values**
+- If Sprint is empty, assign to the currently active sprint
+- If Assignee is empty, assign to the current user
+
+## Stack Management Commands
+
+### Viewing Stack Structure
+```
+# View current stack as a tree
+mcp__graphite__run_gt_cmd with args: ["log"]
+
+# Concise list view
+mcp__graphite__run_gt_cmd with args: ["log", "short"]
+# or
+mcp__graphite__run_gt_cmd with args: ["ls"]
+```
+
+### Navigating the Stack
+```
+# Interactive branch picker
+mcp__graphite__run_gt_cmd with args: ["checkout"]
+
+# Go to stack top (tip-most branch)
+mcp__graphite__run_gt_cmd with args: ["top"]
+
+# Go to stack bottom (closest to trunk)
+mcp__graphite__run_gt_cmd with args: ["bottom"]
+
+# Move up/down one level
+mcp__graphite__run_gt_cmd with args: ["up"]
+mcp__graphite__run_gt_cmd with args: ["down"]
+```
+
+### Updating a PR (Mid-Stack Changes)
+When you need to update a PR that has children stacked on it:
+```
+# Checkout the branch to modify
+mcp__graphite__run_gt_cmd with args: ["checkout", "branch-name"]
+
+# Make your changes, then amend (auto-restacks children)
+mcp__graphite__run_gt_cmd with args: ["modify", "--all"]
+
+# Or add a new commit instead of amending
+mcp__graphite__run_gt_cmd with args: ["modify", "--commit", "--all", "--message", "fix: address review feedback"]
+
+# Push updates
+mcp__graphite__run_gt_cmd with args: ["submit", "--stack"]
+```
+
+### Syncing with Trunk
+Run regularly to stay up-to-date and avoid conflicts:
+```
+mcp__graphite__run_gt_cmd with args: ["sync"]
+```
+
+This command:
+- Fetches and updates local `main` from remote
+- Rebases all open PR branches onto new `main`
+- Offers to delete merged/closed branches
+
+### Handling Conflicts
+If `gt sync` or `gt restack` encounters conflicts:
+```
+# 1. Resolve conflicts in your editor
+# 2. Stage the fixes
+git add <resolved-files>
+
+# 3. Continue the operation
+mcp__graphite__run_gt_cmd with args: ["continue"]
+
+# Or abort if needed
+mcp__graphite__run_gt_cmd with args: ["abort"]
+```
+
+### Reordering PRs in a Stack
+```
+# Opens editor to reorder branches
+mcp__graphite__run_gt_cmd with args: ["reorder"]
+```
+
+### Inserting a PR Mid-Stack
+```
+# Create a new branch between current and its child
+mcp__graphite__run_gt_cmd with args: ["create", "--insert", "--all", "--message", "commit message"]
+```
+
+### Moving a Branch to Different Parent
+```
+mcp__graphite__run_gt_cmd with args: ["move", "--onto", "target-branch"]
 ```
 
 ## Commit Message Examples
@@ -116,11 +218,23 @@ Based on recent patterns:
 - `style(FR-1257): fix broken UI of create session panel`
 - `chore(FR-1153): replace CPU and MEM icons in React`
 
-## Notes
-- Always check that staged changes are logically related
-- Use descriptive commit messages explaining the purpose
-- Follow graphite stacked PR strategy for related changes
-- Link to Jira issue when available
-- **NEVER run `gt submit` or `gt stack submit` without user confirmation**
-- Always present the planned commit message and changes for review first
-- Do not include "Claude Code sign"
+## Important Notes
+
+### Do's
+- Break large features into multiple small, focused PRs
+- Run Graphite sync regularly via `mcp__graphite__run_gt_cmd` to stay current with trunk
+- Use the Graphite modify command via `mcp__graphite__run_gt_cmd` to update commits (auto-restacks children)
+- Use the Graphite log command via `mcp__graphite__run_gt_cmd` to visualize your stack structure
+- Consider reviewability when deciding PR boundaries
+
+### Don'ts
+- **NEVER** run submit commands without user confirmation
+- Don't create mega-PRs with thousands of lines
+- Don't let stacks get too deep (3-5 PRs is usually manageable)
+- Don't include "Claude Code sign" in commits
+- Don't use direct `gt` CLI commands; use `mcp__graphite__run_gt_cmd` MCP tool
+
+### Authentication & Tools
+- Use `mcp__graphite__run_gt_cmd` for all Graphite operations
+- Use Atlassian MCP for all Jira operations (see `.claude/atlassian-config.md`)
+- If authentication fails, re-authenticate before proceeding

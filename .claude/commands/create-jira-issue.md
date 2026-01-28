@@ -20,8 +20,8 @@ This command accept $ARGUMENTS to specify the type of changes to analyze:
 ### Change Detection
 Based on the argument provided:
 - **stage**: Use `git diff --cached` to get staged changes
-- **pr**: Use `gt parent` to find the parent branch of current branch, then use `git diff <parent-branch>...HEAD` to get changes in current branch only
-- **branch**: Use `git diff main...HEAD` to get all branch changes  
+- **pr**: Use Graphite MCP tool `mcp__graphite__run_gt_cmd` with args `["parent"]` to find the parent branch of current branch, then use `git diff <parent-branch>...HEAD` to get changes in current branch only
+- **branch**: Use `git diff main...HEAD` to get all branch changes
 - **commit**: Use `git diff HEAD~1..HEAD` to get latest commit changes
 
 ### Jira Issue Creation
@@ -105,11 +105,14 @@ Current Claude Code commands use inconsistent text-based prompts ("Proceed? [y/n
 - Only proceed with creation after user selects the confirmation option
 
 ### Issue Creation
-- Use the "Atlassian MCP" command to create a Jira issue of proper type.
-- Default values:
+- **CRITICAL**: Use Atlassian MCP tools **ONLY** for all Jira operations. Do **NOT** use `lj` CLI or any other CLI tools for Jira issue creation/modification.
+- If Atlassian MCP authentication fails, re-authenticate and retry before proceeding.
+- **Refer to `.claude/atlassian-config.md` for field IDs and configuration values**
+- Use `mcp__Atlassian__createJiraIssue` for creating issues
+- Use `mcp__Atlassian__editJiraIssue` for updating issues
+- Default values (see `.claude/atlassian-config.md` for details):
   - Jira Project: **FR**
-  - GitHub Repository (`customfield_10173`): The PR to resolve this issue should be created in this repository.
-    - Default: `{"id":"10232"}` (backend.ai-webui)
+  - GitHub Repository (`customfield_10173`): `{"id":"10232"}` (backend.ai-webui)
 - After creating the issue, open it in your browser to review using `open` cli command.
 
 ## Usage Examples
