@@ -95,6 +95,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         </Tooltip>
         <Dropdown
           disabled={!enableWrite}
+          trigger={['click']}
           popupRender={() => {
             return (
               <BAIFlex
