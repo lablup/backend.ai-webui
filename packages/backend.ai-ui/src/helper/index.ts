@@ -1,3 +1,4 @@
+import { theme } from 'antd';
 import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import _ from 'lodash';
@@ -440,3 +441,21 @@ export const convertToUUID = (id: string): string => {
 };
 
 export * from './useDebouncedDeferredValue';
+
+export type SemanticColor =
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'default';
+
+export const useSemanticColorMap = (): Record<SemanticColor, string> => {
+  const { token } = theme.useToken();
+  return {
+    success: token.colorSuccess,
+    info: token.colorInfo,
+    warning: token.colorWarning,
+    error: token.colorError,
+    default: token.colorBorder,
+  };
+};

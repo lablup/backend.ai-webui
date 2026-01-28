@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "选择资源组"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "CreatedAt": "创建时间",
+    "From": "从",
+    "Phase": "阶段",
+    "Result": "结果",
+    "StatusTransition": "状态转换",
+    "To": "到",
+    "UpdatedAt": "更新时间"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "没有可用的资源数据"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "结束时间",
+    "ErrorCode": "错误代码",
+    "Message": "消息",
+    "Result": "结果",
+    "StartedAt": "开始时间",
+    "Step": "步骤"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "允许的客户端IP",

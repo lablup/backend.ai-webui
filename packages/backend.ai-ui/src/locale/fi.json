@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "CreatedAt": "Luotu",
+    "From": "Alkaen",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agentti"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Päättymisaika",
+    "ErrorCode": "Virhekoodi",
+    "Message": "Viesti",
+    "Result": "Tulos",
+    "StartedAt": "Aloitusaika",
+    "Step": "Vaihe"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",

@@ -9,12 +9,13 @@ import {
 import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAITag } from 'backend.ai-ui';
 import _ from 'lodash';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { useSuspendedBackendaiClient } from 'src/hooks';
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
@@ -59,6 +60,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
@@ -78,8 +80,33 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
       ? session?.queue_position + 1
       : undefined;
   return session ? (
-    _.isEmpty(session.status_info) || !showInfo ? (
-      <BAIFlex wrap="nowrap">
+    baiClient.supports('session-scheduling-history') ? (
+      <BAIFlex gap="xs">
+        <BAITag
+          style={{
+            margin: 0,
+            zIndex: 1,
+            paddingLeft: token.paddingSM,
+          }}
+          icon={isTransitional(session) ? <LoadingOutlined spin /> : undefined}
+          color={
+            session.status ? _.get(statusTagColor, session.status) : undefined
+          }
+        >
+          {session.status}
+        </BAITag>
+        {displayQuePosition ? (
+          <Tooltip title={t('session.PendingPosition')}>
+            <BAITag
+              style={{
+                margin: 0,
+              }}
+            >{`#${displayQuePosition}`}</BAITag>
+          </Tooltip>
+        ) : null}
+      </BAIFlex>
+    ) : _.isEmpty(session.status_info) || !showInfo ? (
+      <BAIFlex wrap="nowrap" gap="xs">
         <Tooltip title={showTooltip ? session.status_info : undefined}>
           <Tag
             color={
@@ -108,12 +135,11 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         </Tooltip>
         {displayQuePosition ? (
           <Tooltip title={t('session.PendingPosition')}>
-            <Tag
+            <BAITag
               style={{
-                borderRadius: 11,
                 margin: 0,
               }}
-            >{`#${displayQuePosition}`}</Tag>
+            >{`#${displayQuePosition}`}</BAITag>
           </Tooltip>
         ) : null}
       </BAIFlex>
@@ -167,12 +193,11 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         </BAIFlex>
         {displayQuePosition ? (
           <Tooltip title={t('session.PendingPosition')}>
-            <Tag
+            <BAITag
               style={{
-                borderRadius: 11,
                 margin: 0,
               }}
-            >{`#${displayQuePosition}`}</Tag>
+            >{`#${displayQuePosition}`}</BAITag>
           </Tooltip>
         ) : null}
       </BAIFlex>

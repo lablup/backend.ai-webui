@@ -23,8 +23,13 @@ import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  HistoryOutlined,
+  InfoCircleOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -74,6 +79,9 @@ const SessionDetailContent: React.FC<{
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsSessionSchedulingHistory = baiClient.supports(
+    'session-scheduling-history',
+  );
 
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
@@ -84,6 +92,10 @@ const SessionDetailContent: React.FC<{
   >('current');
   const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
     useToggle(false);
+  const [
+    openSessionSchedulingHistoryModal,
+    { toggle: toggleOpenSessionSchedulingHistoryModal },
+  ] = useToggle(false);
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
@@ -287,8 +299,13 @@ const SessionDetailContent: React.FC<{
           )}
           <Descriptions.Item label={t('session.Status')}>
             <BAIFlex>
-              <SessionStatusTag sessionFrgmt={session} showInfo />
-              {session?.status_data && session?.status_data !== '{}' ? (
+              <SessionStatusTag
+                sessionFrgmt={session}
+                showInfo={!supportsSessionSchedulingHistory}
+              />
+              {!supportsSessionSchedulingHistory &&
+              session?.status_data &&
+              session?.status_data !== '{}' ? (
                 <Tooltip title={t('button.ClickForMoreDetails')}>
                   <Button
                     type="link"
@@ -299,6 +316,15 @@ const SessionDetailContent: React.FC<{
                   />
                 </Tooltip>
               ) : null}
+              {supportsSessionSchedulingHistory && (
+                <Tooltip title={t('session.SessionSchedulingHistory')}>
+                  <BAIButton
+                    type="link"
+                    onClick={() => toggleOpenSessionSchedulingHistoryModal()}
+                    icon={<HistoryOutlined />}
+                  />
+                </Tooltip>
+              )}
             </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
@@ -439,11 +465,6 @@ const SessionDetailContent: React.FC<{
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}
       />
-      <SessionStatusDetailModal
-        sessionFrgmt={session}
-        open={openStatusDetailModal}
-        onCancel={() => setOpenStatusDetailModal(false)}
-      />
       <CodeHighlighterModal
         open={openCodeHighlighterModal}
         language="shell"
@@ -460,6 +481,16 @@ const SessionDetailContent: React.FC<{
           </Button>
         }
         onCancel={toggleOpenCodeHighlighterModal}
+      />
+      <SessionSchedulingHistoryModal
+        sessionId={id}
+        open={openSessionSchedulingHistoryModal}
+        onCancel={toggleOpenSessionSchedulingHistoryModal}
+      />
+      <SessionStatusDetailModal
+        sessionFrgmt={session}
+        open={openStatusDetailModal}
+        onCancel={() => setOpenStatusDetailModal(false)}
       />
     </BAIFlex>
   ) : (
