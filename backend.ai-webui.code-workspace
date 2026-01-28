@@ -52,5 +52,11 @@
       },
       "inputs": [],
     },
+    "i18n-ally.localesPaths": [
+      "resources/i18n",
+      "packages/backend.ai-ui/src/locale",
+      "scripts/temp-releases/webui-25.19.0-rc.2/resources/i18n",
+      "scripts/temp-releases/webui-26.1.0-rc.2/resources/i18n",
+    ],
   },
 }
