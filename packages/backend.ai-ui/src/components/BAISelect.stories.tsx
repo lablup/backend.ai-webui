@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAISelect> = {
-  title: 'Components/BAISelect',
+  title: 'Select/BAISelect',
   component: BAISelect,
   tags: ['autodocs'],
   parameters: {

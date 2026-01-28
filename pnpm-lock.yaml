@@ -589,6 +589,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.7.0
         version: 4.7.0(vite@6.4.1(@types/node@22.19.3)(jiti@1.21.6)(terser@5.31.4)(yaml@2.8.1))
+      '@vueless/storybook-dark-mode':
+        specifier: ^9.0.10
+        version: 9.0.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       babel-jest:
         specifier: ^30.2.0
         version: 30.2.0(@babel/core@7.28.5)
@@ -6519,6 +6522,10 @@ packages:
 
   '@vue/shared@3.5.13':
     resolution: {integrity: sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==}
+
+  '@vueless/storybook-dark-mode@9.0.10':
+    resolution: {integrity: sha512-coAGV22wivHupfxnMHOLvAXdKp6mzk2I7f0tV0zHLW23qIKY2545g1A2LFfSbYx6JwDOvJr/+nFSRbcvxnbuaw==}
+    engines: {node: '>=20'}
 
   '@web/config-loader@0.3.1':
     resolution: {integrity: sha512-IYjHXUgSGGNpO3YJQ9foLcazbJlAWDdJGRe9be7aOhon0Nd6Na5JIOJAej7jsMu76fKHr4b4w2LfIdNQ4fJ8pA==}
@@ -23626,6 +23633,16 @@ snapshots:
       typescript: 5.9.3
 
   '@vue/shared@3.5.13': {}
+
+  '@vueless/storybook-dark-mode@9.0.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+    dependencies:
+      '@storybook/global': 5.0.0
+      '@storybook/icons': 1.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      fast-deep-equal: 3.1.3
+      memoizerific: 1.11.3
+    transitivePeerDependencies:
+      - react
+      - react-dom
 
   '@web/config-loader@0.3.1': {}
 

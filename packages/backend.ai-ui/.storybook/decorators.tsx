@@ -1,23 +1,37 @@
 import BAIText from '../src/components/BAIText';
 import { i18n } from '../src/locale';
 import { getAntdLocale } from './localeConfig';
-import { themeConfigs, type ThemeMode, type ThemeStyle } from './themeConfig';
+import { themeConfigs, type ThemeStyle } from './themeConfig';
 import type { Decorator } from '@storybook/react-vite';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
 import { ConfigProvider, Skeleton, theme } from 'antd';
 import React, { Suspense, useEffect } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 
 interface StorybookProviderProps {
   locale: string;
-  themeMode: ThemeMode;
   themeStyle: ThemeStyle;
+  isDarkMode: boolean;
   children: React.ReactNode;
 }
 
+const ThemedContainer: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { token } = theme.useToken();
+
+  useEffect(() => {
+    document.body.style.backgroundColor = token.colorBgLayout;
+    document.body.style.color = token.colorText;
+  }, [token.colorBgLayout, token.colorText]);
+
+  return <>{children}</>;
+};
+
 const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   locale,
-  themeMode,
   themeStyle,
+  isDarkMode,
   children,
 }) => {
   const { t } = useTranslation();
@@ -30,11 +44,8 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
     <ConfigProvider
       locale={antdLocale}
       theme={{
-        ...(themeMode === 'dark'
-          ? currentThemeConfig.dark
-          : currentThemeConfig.light),
-        algorithm:
-          themeMode === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        ...(isDarkMode ? currentThemeConfig.dark : currentThemeConfig.light),
+        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
       {...(isWebUIStyle && {
         modal: {
@@ -66,15 +77,15 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
         },
       })}
     >
-      <div style={{ padding: '16px' }}>{children}</div>
+      <ThemedContainer>{children}</ThemedContainer>
     </ConfigProvider>
   );
 };
 
 const StorybookProvider: React.FC<StorybookProviderProps> = ({
   locale,
-  themeMode,
   themeStyle,
+  isDarkMode,
   children,
 }) => {
   useEffect(() => {
@@ -86,8 +97,8 @@ const StorybookProvider: React.FC<StorybookProviderProps> = ({
       <I18nextProvider i18n={i18n}>
         <GlobalConfigProvider
           locale={locale}
-          themeMode={themeMode}
           themeStyle={themeStyle}
+          isDarkMode={isDarkMode}
         >
           {children}
         </GlobalConfigProvider>
@@ -97,13 +108,14 @@ const StorybookProvider: React.FC<StorybookProviderProps> = ({
 };
 
 export const withGlobalProvider: Decorator = (Story, context) => {
-  const { locale, themeMode, themeStyle } = context.globals;
+  const { locale, themeStyle } = context.globals;
+  const isDarkMode = useDarkMode();
 
   return (
     <StorybookProvider
       locale={locale}
-      themeMode={themeMode}
       themeStyle={themeStyle}
+      isDarkMode={isDarkMode}
     >
       <Story />
     </StorybookProvider>

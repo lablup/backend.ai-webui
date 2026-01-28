@@ -4,7 +4,7 @@ import BAINotificationItem from './BAINotificationItem';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAINotificationItem> = {
-  title: 'Components/BAINotificationItem',
+  title: 'Notification/BAINotificationItem',
   component: BAINotificationItem,
   tags: ['autodocs'],
   parameters: {

@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tag } from 'antd';
 
 const meta: Meta<typeof BAITag> = {
-  title: 'Components/BAITag',
+  title: 'Tag/BAITag',
   component: BAITag,
   tags: ['autodocs'],
   parameters: {

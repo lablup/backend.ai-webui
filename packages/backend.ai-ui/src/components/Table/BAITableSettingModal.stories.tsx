@@ -21,7 +21,7 @@ const locales = {
 } as const;
 
 const meta: Meta<typeof BAITableSettingModal> = {
-  title: 'Components/BAITable/BAITableSettingModal',
+  title: 'Table/BAITableSettingModal',
   component: BAITableSettingModal,
   tags: ['autodocs'], // Enable autodocs for this component
   parameters: {

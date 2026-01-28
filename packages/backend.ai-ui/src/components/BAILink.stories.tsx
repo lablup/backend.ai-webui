@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 const meta: Meta<typeof BAILink> = {
-  title: 'Components/BAILink',
+  title: 'Link/BAILink',
   component: BAILink,
   tags: ['autodocs'],
   parameters: {

@@ -9,7 +9,7 @@ import { theme } from 'antd';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIConfirmModalWithInput> = {
-  title: 'Components/BAIConfirmModalWithInput',
+  title: 'Modal/BAIConfirmModalWithInput',
   component: BAIConfirmModalWithInput,
   tags: ['autodocs'],
   parameters: {

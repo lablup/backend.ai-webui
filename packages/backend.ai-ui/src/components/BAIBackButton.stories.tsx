@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 const meta: Meta<typeof BAIBackButton> = {
-  title: 'Components/BAIBackButton',
+  title: 'Button/BAIBackButton',
   component: BAIBackButton,
   tags: ['autodocs'],
   parameters: {

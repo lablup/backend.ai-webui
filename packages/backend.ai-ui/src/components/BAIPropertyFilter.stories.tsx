@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 // import { action } from '@storybook/addon-actions';
 
 const meta: Meta<typeof BAIPropertyFilter> = {
-  title: 'Components/BAIPropertyFilter',
+  title: 'Filter/BAIPropertyFilter',
   component: BAIPropertyFilter,
   tags: ['autodocs'],
   parameters: {

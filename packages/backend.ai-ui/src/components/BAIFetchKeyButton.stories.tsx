@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIFetchKeyButton> = {
-  title: 'Components/BAIFetchKeyButton',
+  title: 'Button/BAIFetchKeyButton',
   component: BAIFetchKeyButton,
   tags: ['autodocs'],
   parameters: {

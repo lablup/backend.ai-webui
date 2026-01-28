@@ -1,12 +1,21 @@
 import { withGlobalProvider } from './decorators';
+import { DocsContainer } from './DocsContainer';
 import { localeItems } from './localeConfig';
+import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
 import type { Preview } from '@storybook/react-vite';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [withGlobalProvider],
   parameters: {
+    darkMode: {
+      dark: storybookDarkTheme,
+      light: storybookLightTheme,
+      current: 'light',
+      stylePreview: true,
+    },
     docs: {
+      container: DocsContainer,
       extractComponentDescription: (_component: any, { notes }: any) => {
         return notes?.markdown || notes?.text || null;
       },
@@ -20,18 +29,6 @@ const preview: Preview = {
       toolbar: {
         icon: 'globe',
         items: localeItems,
-        showName: true,
-        dynamicTitle: true,
-      },
-    },
-    themeMode: {
-      name: 'Theme',
-      description: 'Light or dark theme',
-      toolbar: {
-        items: [
-          { value: 'light', title: 'Light', icon: 'sun' },
-          { value: 'dark', title: 'Dark', icon: 'moon' },
-        ],
         showName: true,
         dynamicTitle: true,
       },
@@ -52,7 +49,6 @@ const preview: Preview = {
   },
   initialGlobals: {
     locale: 'en',
-    themeMode: 'light',
     themeStyle: 'default',
   },
 };

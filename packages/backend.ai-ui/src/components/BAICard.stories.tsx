@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, Space, Typography } from 'antd';
 
 const meta: Meta<typeof BAICard> = {
-  title: 'Components/BAICard',
+  title: 'Card/BAICard',
   component: BAICard,
   tags: ['autodocs'],
   parameters: {

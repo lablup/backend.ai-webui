@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { action } from 'storybook/internal/actions';
 
 const meta: Meta<typeof BAIButton> = {
-  title: 'Components/BAIButton',
+  title: 'Button/BAIButton',
   component: BAIButton,
   tags: ['autodocs'],
   parameters: {

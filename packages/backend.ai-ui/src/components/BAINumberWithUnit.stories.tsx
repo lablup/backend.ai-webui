@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from 'antd';
 
 const meta: Meta<typeof BAINumberWithUnit> = {
-  title: 'Components/BAINumberWithUnit',
+  title: 'Statistic/BAINumberWithUnit',
   component: BAINumberWithUnit,
   tags: ['autodocs'],
   parameters: {

@@ -23,7 +23,7 @@ const locales = {
 } as const;
 
 const meta: Meta<typeof BAITable> = {
-  title: 'Components/BAITable',
+  title: 'Table/BAITable',
   component: BAITable,
   tags: ['autodocs'], // Enable autodocs for this component
   parameters: {

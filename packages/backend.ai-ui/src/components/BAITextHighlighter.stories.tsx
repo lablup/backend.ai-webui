@@ -5,7 +5,7 @@ import { Card, Input } from 'antd';
 import React from 'react';
 
 const meta: Meta<typeof BAITextHighlighter> = {
-  title: 'Components/BAITextHighlighter',
+  title: 'Text/BAITextHighlighter',
   component: BAITextHighlighter,
   tags: ['autodocs'],
   parameters: {

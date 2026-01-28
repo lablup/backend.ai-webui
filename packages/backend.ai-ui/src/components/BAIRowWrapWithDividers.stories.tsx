@@ -7,7 +7,7 @@ import { Card, Tag, Button, Space, Typography } from 'antd';
  * only between items that are on the same row. Useful for creating visually separated content that adapts to different screen sizes.
  */
 const meta: Meta<typeof BAIRowWrapWithDividers> = {
-  title: 'Components/BAIRowWrapWithDividers',
+  title: 'Row/BAIRowWrapWithDividers',
   component: BAIRowWrapWithDividers,
   tags: ['autodocs'],
   parameters: {

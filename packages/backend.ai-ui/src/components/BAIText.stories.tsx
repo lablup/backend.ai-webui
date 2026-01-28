@@ -7,7 +7,7 @@ import { Space, Card } from 'antd';
  * and CSS-based ellipsis with Safari compatibility for single and multi-line text truncation.
  */
 const meta: Meta<typeof BAIText> = {
-  title: 'Components/BAIText',
+  title: 'Text/BAIText',
   component: BAIText,
   tags: ['autodocs'],
   parameters: {

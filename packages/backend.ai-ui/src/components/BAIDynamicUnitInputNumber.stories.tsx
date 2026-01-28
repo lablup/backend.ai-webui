@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Form } from 'antd';
 
 const meta: Meta<typeof DynamicUnitInputNumber> = {
-  title: 'Components/Input/DynamicUnitInputNumber',
+  title: 'Input/DynamicUnitInputNumber',
   component: DynamicUnitInputNumber,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout

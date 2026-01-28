@@ -3,7 +3,7 @@ import BAIFlex from './BAIFlex';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAIAlert> = {
-  title: 'Components/BAIAlert',
+  title: 'Alert/BAIAlert',
   component: BAIAlert,
   tags: ['autodocs'],
   parameters: {

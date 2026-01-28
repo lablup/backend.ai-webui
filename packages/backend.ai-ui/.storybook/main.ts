@@ -9,7 +9,11 @@ const config: StorybookConfig = {
     },
     '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
-  addons: ['@storybook/addon-docs', '@storybook/addon-onboarding'],
+  addons: [
+    '@storybook/addon-docs',
+    '@storybook/addon-onboarding',
+    '@vueless/storybook-dark-mode',
+  ],
   framework: {
     name: '@storybook/react-vite',
     options: {},

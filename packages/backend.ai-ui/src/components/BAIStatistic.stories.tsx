@@ -3,7 +3,7 @@ import BAIStatistic from './BAIStatistic';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAIStatistic> = {
-  title: 'Components/BAIStatistic',
+  title: 'Statistic/BAIStatistic',
   component: BAIStatistic,
   tags: ['autodocs'],
   parameters: {

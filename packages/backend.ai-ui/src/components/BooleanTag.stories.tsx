@@ -3,7 +3,7 @@ import BooleanTag from './BooleanTag';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BooleanTag> = {
-  title: 'Components/BooleanTag',
+  title: 'Tag/BooleanTag',
   component: BooleanTag,
   tags: ['autodocs'],
   parameters: {

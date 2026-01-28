@@ -129,7 +129,7 @@ const mockDeviceMetaData: DeviceMetaData = {
 };
 
 const meta: Meta<typeof BAIResourceNumberWithIcon> = {
-  title: 'Components/BAIResourceNumberWithIcon',
+  title: 'Statistic/BAIResourceNumberWithIcon',
   component: BAIResourceNumberWithIcon,
   tags: ['autodocs'],
   parameters: {

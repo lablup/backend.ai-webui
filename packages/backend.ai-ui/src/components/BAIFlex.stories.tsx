@@ -2,7 +2,7 @@ import BAIFlex, { BAIFlexProps } from './BAIFlex';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAIFlex> = {
-  title: 'Layout/BAIFlex',
+  title: 'Flex/BAIFlex',
   component: BAIFlex,
   parameters: {
     layout: 'centered',

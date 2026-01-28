@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIModal> = {
-  title: 'Components/BAIModal',
+  title: 'Modal/BAIModal',
   component: BAIModal,
   tags: ['autodocs'],
   parameters: {

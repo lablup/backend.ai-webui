@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
-  title: 'Components/BAIGraphQLPropertyFilter',
+  title: 'Filter/BAIGraphQLPropertyFilter',
   component: BAIGraphQLPropertyFilter,
   tags: ['autodocs'],
   parameters: {

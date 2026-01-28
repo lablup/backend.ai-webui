@@ -8,7 +8,7 @@ import { Button, Space, Tag, Typography } from 'antd';
  * It provides a consistent sticky header layout with proper spacing and styling.
  */
 const meta: Meta<typeof BAIBoardItemTitle> = {
-  title: 'Components/BAIBoardItemTitle',
+  title: 'Board/BAIBoardItemTitle',
   component: BAIBoardItemTitle,
   tags: ['autodocs'],
   parameters: {
