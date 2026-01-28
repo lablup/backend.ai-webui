@@ -48,7 +48,7 @@ jobs:
       - name: Check workflow file timestamps
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
-          GH_AW_WORKFLOW_FILE: "storybook-argtypes-coverage.lock.yml"
+          GH_AW_WORKFLOW_FILE: "storybook-coverage-checker.lock.yml"
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -518,7 +518,7 @@ jobs:
           
           Use GitHub CLI to find the PR for this branch:
           ```bash
-          gh pr list --head $(git branch --show-current) --state open --json number,title --limit 1
+          gh pr list --head "$(git branch --show-current)" --state open --json number,title --limit 1
           ```
           
           ### Step 2: Get Changed Component Files
@@ -1114,7 +1114,7 @@ jobs:
     timeout-minutes: 15
     env:
       GH_AW_ENGINE_ID: "copilot"
-      GH_AW_WORKFLOW_ID: "storybook-argtypes-coverage"
+      GH_AW_WORKFLOW_ID: "storybook-coverage-checker"
       GH_AW_WORKFLOW_NAME: "Storybook Coverage Checker"
     outputs:
       process_safe_outputs_processed_count: ${{ steps.process_safe_outputs.outputs.processed_count }}

@@ -40,17 +40,11 @@ You are a Storybook coverage analyzer. When a PR is ready for review, analyze ch
 
 ### Step 1: Find the PR
 
-Use GitHub CLI to find the PR for this branch:
-```bash
-gh pr list --head $(git branch --show-current) --state open --json number,title --limit 1
-```
+Use the GitHub MCP server tools (configured via `tools.github.toolsets: [pull_requests, repos]`) to find the pull request for the current branch. Query open pull requests whose head ref matches the current branch name and select the most recent one.
 
 ### Step 2: Get Changed Component Files
 
-Get the list of changed files in the PR:
-```bash
-gh pr view <PR_NUMBER> --json files --jq '.files[].path' | grep -E '^packages/backend.ai-ui/src/components/.*\.tsx$' | grep -v '\.stories\.tsx$' | grep -v '\.test\.tsx$'
-```
+Using the same GitHub tools, retrieve the list of files changed in the identified pull request (for example, via the pull request "files" API). From that list, keep only component files under `packages/backend.ai-ui/src/components/` that end with `.tsx`, excluding any paths ending with `.stories.tsx` or `.test.tsx`.
 
 ### Step 3: Analyze Each Component
 
@@ -141,7 +135,7 @@ loading: {
    - `-propName`: Removed prop (in story, not in component)
    - `~propName`: Changed prop (type mismatch)
 4. **BAI-specific props**: Focus on props defined in the component's own interface, not inherited from Ant Design
-5. **Use `github_pull_request_comment`**: This tool requires `item_number` to be set in the tools configuration
+5. **Use `add_comment`**: This safe-output tool will automatically comment on the relevant pull request when configured with `target: "*"`, so `item_number` is not required
 
 ## Example Analysis
 
