@@ -62,7 +62,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const WORKFLOW_NAME = 'Storybook Coverage Checker';
+            const WORKFLOW_FILE = 'storybook-coverage-checker.lock.yml';
             const branch = context.payload.pull_request.head.ref;
 
             const { data: workflows } = await github.rest.actions.listRepoWorkflows({
@@ -71,11 +71,11 @@ jobs:
             });
 
             const agenticWorkflow = workflows.workflows.find(
-              w => w.name === WORKFLOW_NAME
+              w => w.path === `.github/workflows/${WORKFLOW_FILE}`
             );
 
             if (!agenticWorkflow) {
-              core.warning('Storybook Coverage Checker workflow not found');
+              core.warning(`Workflow file ${WORKFLOW_FILE} not found`);
               return;
             }
 
