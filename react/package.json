@@ -2,6 +2,7 @@
   "name": "backend-ai-webui-react",
   "version": "26.2.0-alpha.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@ai-sdk/openai": "^2.0.89",
     "@ai-sdk/react": "^2.0.125",
@@ -111,6 +112,7 @@
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
     "@craco/craco": "^7.1.0",
+    "@eslint/js": "^9.18.0",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-interactions": "^8.6.14",
     "@storybook/addon-links": "^8.6.15",
@@ -141,9 +143,13 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "babel-plugin-relay": "^20.1.1",
     "babel-preset-react-app": "^10.1.0",
+    "baseline-browser-mapping": "^2.9.16",
     "caniuse-lite": "^1.0.30001766",
     "eslint": "^9.18.0",
     "eslint-config-bai": "workspace:*",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-relay": "^2.0.0",
     "eslint-plugin-storybook": "^0.11.6",
     "globals": "^16.0.0",
@@ -161,6 +167,7 @@
     "relay-test-utils": "^20.1.1",
     "storybook": "^8.6.15",
     "stream-browserify": "^3.0.0",
+    "typescript-eslint": "^8.23.0",
     "webpack": "^5.104.1"
   }
 }
