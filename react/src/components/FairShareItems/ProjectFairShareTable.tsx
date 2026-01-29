@@ -19,6 +19,7 @@ import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+import { FairShareWeightSettingModal_LegacyResourceGroupFragment$key } from 'src/__generated__/FairShareWeightSettingModal_LegacyResourceGroupFragment.graphql';
 import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
@@ -42,6 +43,7 @@ const isEnableSorter = (key: string) => {
 
 interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
   projectFairShareNodeFragment: ProjectFairShareTableFragment$key | null;
+  legacyResourceGroupFragment?: FairShareWeightSettingModal_LegacyResourceGroupFragment$key | null;
   openBulkSettingModal: boolean;
   selectedRows: Array<ProjectFairShare>;
   onRowSelect: (rows: Array<ProjectFairShare>) => void;
@@ -51,6 +53,7 @@ interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
 
 const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   projectFairShareNodeFragment,
+  legacyResourceGroupFragment,
   openBulkSettingModal: openBulkWeightSettingModal,
   selectedRows,
   onRowSelect,
@@ -254,6 +257,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
                 ? [selectedProject]
                 : null
           }
+          legacyResourceGroupFrgmt={legacyResourceGroupFragment}
           onRequestClose={(success) => {
             if (success) {
               afterWeightUpdate?.(true);

@@ -40,8 +40,7 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableResourceGroupSorterKeys, key);
 };
 
-interface ResourceGroupFairShareTableProps
-  extends BAITableProps<ResourceGroup> {
+interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
   resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
   onClickGroupName?: (resourceGroupName: string) => void;
 }

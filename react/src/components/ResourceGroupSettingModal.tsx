@@ -389,6 +389,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                   label: 'DRF',
                   value: 'drf',
                 },
+                {
+                  label: 'Fair Share',
+                  value: 'fair-share',
+                },
               ]}
             />
           </Form.Item>

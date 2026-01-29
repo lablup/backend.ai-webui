@@ -23,6 +23,7 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from 'src/__generated__/DomainFairShareTableFragment.graphql';
+import { FairShareWeightSettingModal_LegacyResourceGroupFragment$key } from 'src/__generated__/FairShareWeightSettingModal_LegacyResourceGroupFragment.graphql';
 
 export type DomainFairShare = NonNullable<
   DomainFairShareTableFragment$data[number]
@@ -43,6 +44,7 @@ const isEnableSorter = (key: string) => {
 
 interface DomainFairShareTableProps extends BAITableProps<DomainFairShare> {
   domainFairShareNodeFragment: DomainFairShareTableFragment$key | null;
+  legacyResourceGroupFragment?: FairShareWeightSettingModal_LegacyResourceGroupFragment$key | null;
   openBulkSettingModal: boolean;
   selectedRows: Array<DomainFairShare>;
   onRowSelect: (rowKeys: Array<DomainFairShare>) => void;
@@ -52,6 +54,7 @@ interface DomainFairShareTableProps extends BAITableProps<DomainFairShare> {
 
 const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   domainFairShareNodeFragment,
+  legacyResourceGroupFragment,
   openBulkSettingModal: openBulkWeightSettingModal,
   selectedRows,
   onRowSelect,
@@ -255,6 +258,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
                 ? [selectedDomain]
                 : null
           }
+          legacyResourceGroupFrgmt={legacyResourceGroupFragment}
           isBulkEdit={openBulkWeightSettingModal}
           open={openWeightSettingModal || openBulkWeightSettingModal}
           onRequestClose={(success) => {
