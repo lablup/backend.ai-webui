@@ -1,11 +1,12 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import { App, Form, Input, InputNumber, Tag, theme } from 'antd';
+import { Alert, App, Form, Input, InputNumber, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
-  BAIAlert,
+  BAIBulkEditFormItem,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAITagList,
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -16,15 +17,18 @@ import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from 'src/
 import { FairShareWeightSettingModal_BulkModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyProjectWeightMutation.graphql';
 import { FairShareWeightSettingModal_BulkModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyUserWeightMutation.graphql';
 import { FairShareWeightSettingModal_DomainFragment$key } from 'src/__generated__/FairShareWeightSettingModal_DomainFragment.graphql';
+import { FairShareWeightSettingModal_LegacyResourceGroupFragment$key } from 'src/__generated__/FairShareWeightSettingModal_LegacyResourceGroupFragment.graphql';
 import { FairShareWeightSettingModal_ModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyDomainWeightMutation.graphql';
 import { FairShareWeightSettingModal_ModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyProjectWeightMutation.graphql';
 import { FairShareWeightSettingModal_ModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyUserWeightMutation.graphql';
 import { FairShareWeightSettingModal_ProjectFragment$key } from 'src/__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
+import { FairShareWeightSettingModal_UserFragment$key } from 'src/__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 
 interface FairShareWeightSettingModalProps extends BAIModalProps {
   domainFairShareFrgmt?: FairShareWeightSettingModal_DomainFragment$key | null;
   projectFairShareFrgmt?: FairShareWeightSettingModal_ProjectFragment$key | null;
-  isBulkEdit?: boolean;
+  userFairShareFrgmt?: FairShareWeightSettingModal_UserFragment$key | null;
+  legacyResourceGroupFrgmt?: FairShareWeightSettingModal_LegacyResourceGroupFragment$key | null;
   onRequestClose?: (success: boolean) => void;
 }
 
@@ -33,7 +37,8 @@ const FairShareWeightSettingModal: React.FC<
 > = ({
   domainFairShareFrgmt,
   projectFairShareFrgmt,
-  isBulkEdit = false,
+  userFairShareFrgmt,
+  legacyResourceGroupFrgmt,
   onRequestClose,
   ...modalProps
 }) => {
@@ -43,6 +48,16 @@ const FairShareWeightSettingModal: React.FC<
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+
+  const legacyResourceGroup = useFragment(
+    graphql`
+      fragment FairShareWeightSettingModal_LegacyResourceGroupFragment on ScalingGroup {
+        scheduler
+        name
+      }
+    `,
+    legacyResourceGroupFrgmt,
+  );
 
   const domainFairShares = useFragment(
     graphql`
@@ -72,6 +87,22 @@ const FairShareWeightSettingModal: React.FC<
       }
     `,
     projectFairShareFrgmt,
+  );
+  const userFairShares = useFragment(
+    graphql`
+      fragment FairShareWeightSettingModal_UserFragment on UserFairShare
+      @relay(plural: true) {
+        id
+        resourceGroup
+        domainName
+        projectId
+        userUuid
+        spec {
+          weight
+        }
+      }
+    `,
+    userFairShareFrgmt,
   );
 
   const [commitModifyDomainWeight, isInflightCommitModifyDomainWeight] =
@@ -154,23 +185,38 @@ const FairShareWeightSettingModal: React.FC<
       `,
     );
 
+  const isBulkEdit =
+    (domainFairShares?.length || 0) > 1 ||
+    (projectFairShares?.length || 0) > 1 ||
+    (userFairShares?.length || 0) > 1 ||
+    false;
+
   const editTarget =
-    !_.isEmpty(domainFairShares) && domainFairShares ? 'domain' : 'project';
+    !_.isEmpty(domainFairShares) && domainFairShares
+      ? 'domain'
+      : !_.isEmpty(projectFairShares) && projectFairShares
+        ? 'project'
+        : 'user';
 
   const INITIAL_FORM_VALUES = {
     resourceGroup:
       domainFairShares?.[0]?.resourceGroup ||
       projectFairShares?.[0]?.resourceGroup ||
+      userFairShares?.[0]?.resourceGroup ||
       '',
     domainName:
       domainFairShares?.[0]?.domainName ||
       projectFairShares?.[0]?.domainName ||
+      userFairShares?.[0]?.domainName ||
       '',
-    projectId: projectFairShares?.[0]?.projectId || '',
+    projectId:
+      projectFairShares?.[0]?.projectId || userFairShares?.[0]?.projectId || '',
+    userId: userFairShares?.[0]?.userUuid || '',
     weight: isBulkEdit
       ? undefined
       : domainFairShares?.[0]?.spec?.weight ||
         projectFairShares?.[0]?.spec?.weight ||
+        userFairShares?.[0]?.spec?.weight ||
         1,
   };
 
@@ -188,7 +234,9 @@ const FairShareWeightSettingModal: React.FC<
                   resourceGroup: response.resourceGroup,
                   inputs: _.map(domainFairShares, (domain) => ({
                     domainName: domain.domainName,
-                    weight: response?.weight,
+                    weight: _.isUndefined(response?.weight)
+                      ? domain?.spec?.weight
+                      : response?.weight,
                   })),
                 },
               },
@@ -223,7 +271,9 @@ const FairShareWeightSettingModal: React.FC<
                   inputs: _.map(projectFairShares, (project) => ({
                     domainName: project.domainName,
                     projectId: project.projectId,
-                    weight: response?.weight,
+                    weight: _.isUndefined(response?.weight)
+                      ? project?.spec?.weight
+                      : response?.weight,
                   })),
                 },
               },
@@ -237,6 +287,46 @@ const FairShareWeightSettingModal: React.FC<
                   return;
                 }
                 if (!res?.bulkUpsertProjectFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
+          editTarget === 'user' &&
+            commitBulkModifyUserWeight({
+              variables: {
+                input: {
+                  resourceGroup: response.resourceGroup,
+                  inputs: _.map(userFairShares, (user) => {
+                    return {
+                      domainName: user.domainName,
+                      projectId: user.projectId,
+                      userUuid: user.userUuid,
+                      weight: _.isUndefined(response?.weight)
+                        ? user?.spec?.weight
+                        : response?.weight,
+                    };
+                  }),
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                    logger.error(error);
+                  }
+                  return;
+                }
+                if (!res?.bulkUpsertUserFairShareWeight) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -316,6 +406,39 @@ const FairShareWeightSettingModal: React.FC<
                 logger.error(error);
               },
             });
+          editTarget === 'user' &&
+            commitModifyUserWeight({
+              variables: {
+                input: {
+                  resourceGroup: response.resourceGroup,
+                  domainName: response?.domainName,
+                  projectId: response?.projectId,
+                  userUuid: response?.userId,
+                  weight: response?.weight,
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (errors && errors?.length > 0) {
+                  const errorMsgList = _.map(errors, (error) => error.message);
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  return;
+                }
+                if (!res?.upsertUserFairShareWeight) {
+                  message.error(t('dialog.ErrorOccurred'));
+                  return;
+                }
+                message.success(
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
+                );
+                onRequestClose?.(true);
+              },
+              onError: (error) => {
+                message.error(error.message);
+                logger.error(error);
+              },
+            });
         }
       })
       .catch((error) => {
@@ -329,8 +452,11 @@ const FairShareWeightSettingModal: React.FC<
         name:
           editTarget === 'domain'
             ? t('fairShare.Domain')
-            : t('fairShare.Project'),
+            : editTarget === 'project'
+              ? t('fairShare.Project')
+              : t('fairShare.User'),
       })}
+      {...modalProps}
       onCancel={() => onRequestClose?.(false)}
       okButtonProps={{
         loading:
@@ -342,10 +468,20 @@ const FairShareWeightSettingModal: React.FC<
           isInflightBulkModifyUserWeight,
       }}
       onOk={handleOk}
-      {...modalProps}
     >
-      <BAIAlert
-        type="warning"
+      {legacyResourceGroup &&
+        legacyResourceGroup?.scheduler !== 'fair-share' && (
+          <Alert
+            type="warning"
+            description={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
+              resourceGroup: legacyResourceGroup?.name || '',
+            })}
+            showIcon
+            style={{ marginBottom: token.marginMD }}
+          />
+        )}
+      <Alert
+        type="info"
         description={t('fairShare.FairShareSettingDescription')}
         showIcon
         style={{ marginBottom: token.marginMD }}
@@ -363,14 +499,13 @@ const FairShareWeightSettingModal: React.FC<
           label={t('fairShare.Domain')}
           name="domainName"
           required
-          hidden={_.isEmpty(domainFairShares)}
+          hidden={editTarget !== 'domain'}
         >
           {isBulkEdit ? (
-            <BAIFlex wrap="wrap" gap="xs">
-              {_.map(domainFairShares, (domain) => (
-                <Tag key={domain.domainName}>{domain.domainName}</Tag>
-              ))}
-            </BAIFlex>
+            <BAITagList
+              items={_.map(domainFairShares, (domain) => domain.domainName)}
+              popoverTitle={t('fairShare.Domain')}
+            />
           ) : (
             <Input disabled />
           )}
@@ -378,15 +513,14 @@ const FairShareWeightSettingModal: React.FC<
         <Form.Item
           label={t('fairShare.Project')}
           name="projectId"
-          required={editTarget !== 'domain'}
+          required={editTarget === 'project'}
           hidden={editTarget !== 'project'}
         >
           {isBulkEdit ? (
-            <BAIFlex wrap="wrap" gap="xs">
-              {_.map(projectFairShares, (project) => (
-                <Tag key={project.projectId}>{project.projectId}</Tag>
-              ))}
-            </BAIFlex>
+            <BAITagList
+              items={_.map(projectFairShares, (project) => project.projectId)}
+              popoverTitle={t('fairShare.Project')}
+            />
           ) : (
             <Input disabled />
           )}
@@ -398,36 +532,44 @@ const FairShareWeightSettingModal: React.FC<
           hidden={editTarget !== 'user'}
         >
           {isBulkEdit ? (
-            <BAIFlex wrap="wrap" gap="xs">
-              {_.map(userIds, (id) => (
-                <Tag key={id}>{id}</Tag>
-              ))}
-            </BAIFlex>
+            <BAITagList
+              items={_.map(userFairShares, (user) => user.userUuid)}
+              popoverTitle={t('fairShare.User')}
+            />
           ) : (
             <Input disabled />
           )}
         </Form.Item>
-        <Form.Item
-          label={
-            <BAIFlex gap="xxs">
-              {t('fairShare.Weight')}
-              <QuestionIconWithTooltip
-                title={t('fairShare.WeightDescription')}
-              ></QuestionIconWithTooltip>
-            </BAIFlex>
-          }
-          name="weight"
-          rules={[
-            {
-              required: true,
-              message: t('fairShare.PleaseInputFieldWithFieldName', {
-                field: t('fairShare.DefaultWeight'),
-              }),
-            },
-          ]}
-        >
-          <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
-        </Form.Item>
+        {isBulkEdit ? (
+          <BAIBulkEditFormItem
+            showClear
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.Weight')}
+                <QuestionIconWithTooltip
+                  title={t('fairShare.WeightDescription')}
+                ></QuestionIconWithTooltip>
+              </BAIFlex>
+            }
+            name="weight"
+          >
+            <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+          </BAIBulkEditFormItem>
+        ) : (
+          <Form.Item
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.Weight')}
+                <QuestionIconWithTooltip
+                  title={t('fairShare.WeightDescription')}
+                ></QuestionIconWithTooltip>
+              </BAIFlex>
+            }
+            name="weight"
+          >
+            <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+          </Form.Item>
+        )}
       </Form>
     </BAIModal>
   );

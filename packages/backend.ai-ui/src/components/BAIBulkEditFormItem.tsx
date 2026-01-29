@@ -240,14 +240,14 @@ const ControlWrapper = React.forwardRef<ControlWrapperRef, ControlWrapperProps>(
       trigger: 'onOpenChange',
     });
 
-    useImperativeHandle(ref, () => {
-      return {
-        ...(innerRef.current || {}),
-        open: () => {
-          setOpen(true);
-        },
-      };
-    });
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        innerRef.current?.focus?.();
+      },
+      open: () => {
+        setOpen(true);
+      },
+    }));
 
     // eslint-disable-next-line react-hooks/refs
     const clonedChild = cloneElement(children, {

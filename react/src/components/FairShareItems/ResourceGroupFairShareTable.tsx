@@ -7,7 +7,6 @@ import {
   BAIFlex,
   BAILink,
   BAIProgressWithLabel,
-  BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
@@ -40,8 +39,7 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableResourceGroupSorterKeys, key);
 };
 
-interface ResourceGroupFairShareTableProps
-  extends BAITableProps<ResourceGroup> {
+interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
   resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
   onClickGroupName?: (resourceGroupName: string) => void;
 }
@@ -81,10 +79,9 @@ const ResourceGroupFairShareTable: React.FC<
           decayUnitDays
           defaultWeight
           resourceWeights {
-            entries {
-              resourceType
-              quantity
-            }
+            resourceType
+            weight
+            usesDefault
           }
         }
         resourceInfo {
@@ -201,6 +198,61 @@ const ResourceGroupFairShareTable: React.FC<
     {
       title: (
         <BAIFlex gap="xxs">
+          {t('fairShare.ResourceWeights')}
+          <QuestionIconWithTooltip
+            title={t('fairShare.ResourceWeightsDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'resourceWeights',
+      sorter: isEnableSorter('resourceWeights'),
+      dataIndex: ['fairShareSpec', 'resourceWeights'],
+      render: (entries) => {
+        return _.isEmpty(entries)
+          ? '-'
+          : _.map(
+              entries,
+              (rw: {
+                resourceType: string;
+                weight: string;
+                usesDefault: boolean;
+              }) => (
+                <BAIFlex
+                  key={rw.resourceType}
+                  direction="column"
+                  align="stretch"
+                >
+                  <BAIFlex gap="xxs">
+                    <ResourceTypeIcon type={rw.resourceType} showTooltip />
+                    {rw.weight}
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                    >
+                      {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
+                    </Typography.Text>
+                  </BAIFlex>
+                </BAIFlex>
+              ),
+            );
+      },
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
+          {t('fairShare.DefaultWeight')}
+          <QuestionIconWithTooltip
+            title={t('fairShare.DefaultWeightDescription')}
+          />
+        </BAIFlex>
+      ),
+      key: 'defaultWeight',
+      sorter: isEnableSorter('defaultWeight'),
+      dataIndex: ['fairShareSpec', 'defaultWeight'],
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs">
           {t('fairShare.DecayUnitDays')}
           <QuestionIconWithTooltip
             title={t('fairShare.DecayUnitDaysDescription')}
@@ -238,43 +290,6 @@ const ResourceGroupFairShareTable: React.FC<
       sorter: isEnableSorter('lookbackDays'),
       dataIndex: ['fairShareSpec', 'lookbackDays'],
       render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
-    },
-    {
-      title: (
-        <BAIFlex gap="xxs">
-          {t('fairShare.DefaultWeight')}
-          <QuestionIconWithTooltip
-            title={t('fairShare.DefaultWeightDescription')}
-          />
-        </BAIFlex>
-      ),
-      key: 'defaultWeight',
-      sorter: isEnableSorter('defaultWeight'),
-      dataIndex: ['fairShareSpec', 'defaultWeight'],
-    },
-    {
-      title: (
-        <BAIFlex gap="xxs">
-          {t('fairShare.ResourceWeights')}
-          <QuestionIconWithTooltip
-            title={t('fairShare.ResourceWeightsDescription')}
-          />
-        </BAIFlex>
-      ),
-      key: 'resourceWeights',
-      sorter: isEnableSorter('resourceWeights'),
-      dataIndex: ['fairShareSpec', 'resourceWeights', 'entries'],
-      render: (entries) => {
-        return _.isEmpty(entries)
-          ? '-'
-          : _.map(entries, (rw: any) => (
-              <BAIResourceNumberWithIcon
-                key={rw.resourceType}
-                type={rw.resourceType}
-                value={rw.quantity}
-              />
-            ));
-      },
     },
   ];
 

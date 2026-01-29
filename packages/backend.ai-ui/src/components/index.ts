@@ -79,6 +79,8 @@ export type { UserNodeInList } from './BAIUserNodes';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
+export { default as BAITagList } from './BAITagList';
+export type { BAITagListProps } from './BAITagList';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
