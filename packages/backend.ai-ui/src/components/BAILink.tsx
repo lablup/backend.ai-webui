@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
@@ -34,8 +34,14 @@ const BAILink: React.FC<BAILinkProps> = ({
   ...linkProps
 }) => {
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   return type !== 'disabled' && to ? (
-    <Link className={type ? styles?.[type] : undefined} to={to} {...linkProps}>
+    <Link
+      className={type ? styles?.[type] : undefined}
+      to={to}
+      {...linkProps}
+      style={{ fontFamily: token.fontFamily, ...linkProps.style }}
+    >
       {children}
     </Link>
   ) : (

@@ -1,5 +1,41 @@
 import BAIText from '../src/components/BAIText';
 import { i18n } from '../src/locale';
+import dayjs from 'dayjs';
+import 'dayjs/locale/de';
+import 'dayjs/locale/el';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fi';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/id';
+import 'dayjs/locale/it';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/mn';
+import 'dayjs/locale/ms';
+import 'dayjs/locale/pl';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/pt-br';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/th';
+import 'dayjs/locale/tr';
+import 'dayjs/locale/vi';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh-tw';
+import duration from 'dayjs/plugin/duration';
+import localeData from 'dayjs/plugin/localeData';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
+
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(duration);
 import { getAntdLocale } from './localeConfig';
 import { themeConfigs, type ThemeStyle } from './themeConfig';
 import type { Decorator } from '@storybook/react-vite';
@@ -90,6 +126,7 @@ const StorybookProvider: React.FC<StorybookProviderProps> = ({
 }) => {
   useEffect(() => {
     i18n.changeLanguage(locale);
+    dayjs.locale(locale);
   }, [locale]);
 
   return (

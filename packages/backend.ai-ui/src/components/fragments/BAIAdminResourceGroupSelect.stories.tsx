@@ -38,7 +38,7 @@ export const Default: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ScalingGroupV2Connection: () => ({
+        ResourceGroupConnection: () => ({
           count: 3,
           edges: [
             { node: { id: 'rg-1', name: 'default' } },
@@ -59,7 +59,7 @@ export const Empty: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ScalingGroupV2Connection: () => ({
+        ResourceGroupConnection: () => ({
           count: 0,
           edges: [],
         }),
@@ -76,7 +76,7 @@ export const WithCustomPlaceholder: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ScalingGroupV2Connection: () => ({
+        ResourceGroupConnection: () => ({
           count: 5,
           edges: [
             { node: { id: 'rg-1', name: 'development' } },
@@ -99,7 +99,7 @@ export const Disabled: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ScalingGroupV2Connection: () => ({
+        ResourceGroupConnection: () => ({
           count: 3,
           edges: [
             { node: { id: 'rg-1', name: 'default' } },
