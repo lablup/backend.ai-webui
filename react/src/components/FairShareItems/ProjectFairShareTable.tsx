@@ -1,22 +1,20 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, theme, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { theme, Tooltip } from 'antd';
 import {
+  BAIButton,
+  BAIColumnsType,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
-  BAIUnmountAfterClose,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import {
@@ -42,19 +40,17 @@ const isEnableSorter = (key: string) => {
 
 interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
   projectFairShareNodeFragment: ProjectFairShareTableFragment$key | null;
-  openBulkSettingModal: boolean;
   selectedRows: Array<ProjectFairShare>;
   onRowSelect: (rows: Array<ProjectFairShare>) => void;
-  afterWeightUpdate?: (success: boolean) => void;
+  onOpenWeightSetting?: (row: ProjectFairShare) => void;
   onClickProjectName?: (projectId: string) => void;
 }
 
 const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   projectFairShareNodeFragment,
-  openBulkSettingModal: openBulkWeightSettingModal,
   selectedRows,
   onRowSelect,
-  afterWeightUpdate,
+  onOpenWeightSetting,
   onClickProjectName,
   ...tableProps
 }) => {
@@ -62,10 +58,6 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
-  const [selectedProject, setSelectedProject] =
-    useState<ProjectFairShare | null>(null);
-  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -104,7 +96,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
     projectFairShareNodeFragment,
   );
 
-  const columns: ColumnsType<ProjectFairShare> = [
+  const columns: BAIColumnsType<ProjectFairShare> = [
     {
       // FIXME: show project name instead of project ID
       title: t('fairShare.Name'),
@@ -134,12 +126,11 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       fixed: 'left',
       render: (_text, record) => (
         <BAIFlex direction="row" gap="xxs">
-          <Button
+          <BAIButton
             type="text"
             icon={<SettingOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
-              setSelectedProject(record);
-              setOpenWeightSettingModal(true);
+              onOpenWeightSetting?.(record);
             }}
           />
         </BAIFlex>
@@ -243,28 +234,6 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
           });
         }}
       />
-
-      <BAIUnmountAfterClose>
-        <FairShareWeightSettingModal
-          open={openWeightSettingModal || openBulkWeightSettingModal}
-          projectFairShareFrgmt={
-            openBulkWeightSettingModal
-              ? selectedRows
-              : selectedProject
-                ? [selectedProject]
-                : null
-          }
-          onRequestClose={(success) => {
-            if (success) {
-              afterWeightUpdate?.(true);
-            }
-            setSelectedProject(null);
-            setOpenWeightSettingModal(false);
-            afterWeightUpdate?.(false);
-          }}
-          isBulkEdit={openBulkWeightSettingModal}
-        />
-      </BAIUnmountAfterClose>
     </>
   );
 };
