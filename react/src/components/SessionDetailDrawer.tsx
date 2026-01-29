@@ -10,8 +10,6 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-// import { StringParam, useQueryParam } from 'use-query-params';
-
 interface SessionDetailDrawerProps extends DrawerProps {
   sessionId?: string;
 }

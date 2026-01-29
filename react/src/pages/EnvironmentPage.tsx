@@ -4,16 +4,17 @@ import ResourcePresetList from '../components/ResourcePresetList';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'image');
 
 const EnvironmentPage = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('image'),
+  );
   const baiClient = useSuspendedBackendaiClient();
 
   return (

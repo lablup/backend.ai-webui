@@ -60,6 +60,7 @@ import {
   BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -68,12 +69,6 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-import {
-  JsonParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 const ServiceValidationView = React.lazy(
   () => import('./ServiceValidationView'),
@@ -157,12 +152,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { t } = useTranslation();
 
   // Setup query parameters for URL synchronization
-  const FormValuesParam = withDefault(JsonParam, {});
   const [{ model, formValues: formValuesFromQueryParams }, setQuery] =
-    useQueryParams({
-      model: StringParam,
-      formValues: FormValuesParam,
-    });
+    useQueryStates(
+      {
+        model: parseAsString,
+        formValues: parseAsJson<Record<string, unknown>>().withDefault({}),
+      },
+      { history: 'replace' },
+    );
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -737,22 +734,19 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here.
       const currentValue = form.getFieldsValue();
-      setQuery(
-        {
-          formValues: _.assign(
-            _.omit(currentValue, [
-              'environments.image',
-              'environments.customizedTag',
-              'vfoldersAliasMap',
-              'envvars',
-            ]),
-            {
-              envvars: sanitizeSensitiveEnv(form.getFieldValue('envvars')),
-            },
-          ),
-        },
-        'replaceIn',
-      );
+      setQuery({
+        formValues: _.assign(
+          _.omit(currentValue, [
+            'environments.image',
+            'environments.customizedTag',
+            'vfoldersAliasMap',
+            'envvars',
+          ]),
+          {
+            envvars: sanitizeSensitiveEnv(form.getFieldValue('envvars')),
+          },
+        ),
+      });
     },
     {
       leading: false,

@@ -1,17 +1,16 @@
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
 import { Alert, Form, Select, Skeleton } from 'antd';
 import { useUpdatableState, BAIFlex, BAIFetchKeyButton } from 'backend.ai-ui';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createEnumParam, useQueryParam, withDefault } from 'use-query-params';
 
 export type Period = '1D' | '1W';
-const periodParam = withDefault(createEnumParam<Period>(['1D', '1W']), '1D');
 
 const AllocationHistory: React.FC = () => {
-  const [selectedPeriod, setSelectedPeriod] = useQueryParam(
+  const [selectedPeriod, setSelectedPeriod] = useQueryState(
     'period',
-    periodParam,
+    parseAsStringLiteral(['1D', '1W'] as const).withDefault('1D'),
   );
   const { t } = useTranslation();
 

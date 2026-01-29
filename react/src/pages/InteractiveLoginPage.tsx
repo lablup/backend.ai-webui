@@ -6,10 +6,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button, Card, Descriptions } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { StringParam, useQueryParam } from 'use-query-params';
 
 const InteractiveLoginPage = () => {
   return (
@@ -29,8 +29,8 @@ const Children = () => {
   useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const { pathname, search } = useLocation();
-  const [callback] = useQueryParam('callback', StringParam);
-  const [name] = useQueryParam('name', StringParam);
+  const [callback] = useQueryState('callback', parseAsString);
+  const [name] = useQueryState('name', parseAsString);
   const { t } = useTranslation();
 
   return (
