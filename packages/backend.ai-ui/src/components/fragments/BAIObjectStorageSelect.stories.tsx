@@ -1,25 +1,25 @@
 import RelayResolver from '../../tests/RelayResolver';
-import BAIBucketSelect from './BAIBucketSelect';
+import BAIObjectStorageSelect from './BAIObjectStorageSelect';
 import { Meta, StoryObj } from '@storybook/react-vite';
 
-const sampleBuckets = [
-  { node: { id: 'bucket-1', namespace: 'my-bucket-1' } },
-  { node: { id: 'bucket-2', namespace: 'my-bucket-2' } },
-  { node: { id: 'bucket-3', namespace: 'data-storage' } },
-  { node: { id: 'bucket-4', namespace: 'ml-datasets' } },
-  { node: { id: 'bucket-5', namespace: 'backups' } },
+const sampleObjectStorages = [
+  { node: { id: 'storage-1', name: 'S3 Main Storage' } },
+  { node: { id: 'storage-2', name: 'Azure Blob Storage' } },
+  { node: { id: 'storage-3', name: 'MinIO Dev Storage' } },
+  { node: { id: 'storage-4', name: 'Google Cloud Storage' } },
+  { node: { id: 'storage-5', name: 'Local Storage' } },
 ];
 
-const sampleManyBuckets = Array.from({ length: 20 }, (_, i) => ({
+const sampleManyStorages = Array.from({ length: 15 }, (_, i) => ({
   node: {
-    id: `bucket-${i + 1}`,
-    namespace: `bucket-${i + 1}`,
+    id: `storage-${i + 1}`,
+    name: `Object Storage ${i + 1}`,
   },
 }));
 
 /**
- * BAIBucketSelect is a specialized Select component that fetches and displays
- * object storage buckets (namespaces) using GraphQL with pagination support.
+ * BAIObjectStorageSelect is a specialized Select component that fetches and displays
+ * object storage systems using GraphQL with pagination support.
  *
  * Key features:
  * - Automatic data fetching via GraphQL query with pagination
@@ -27,60 +27,42 @@ const sampleManyBuckets = Array.from({ length: 20 }, (_, i) => ({
  * - Infinite scroll support
  * - Total count footer
  *
- * @see BAIBucketSelect.tsx for implementation details
+ * @see BAIObjectStorageSelect.tsx for implementation details
  */
-const meta: Meta<typeof BAIBucketSelect> = {
-  title: 'Fragments/BAIBucketSelect',
-  component: BAIBucketSelect,
+const meta: Meta<typeof BAIObjectStorageSelect> = {
+  title: 'Fragments/BAIObjectStorageSelect',
+  component: BAIObjectStorageSelect,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component: `
-**BAIBucketSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display object storage buckets (namespaces).
+**BAIObjectStorageSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display object storage systems.
 
 ## BAI-Specific Props
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| \`objectStorageId\` | \`string\` | **required** | Object storage ID to fetch buckets from |
 | \`fetchKey\` | \`string\` | - | Optional key to trigger refetch |
 
 ## Features
-- Fetches buckets from GraphQL query \`BAIBucketSelectQuery\`
+- Fetches object storages from GraphQL query \`BAIObjectStorageSelectQuery\`
 - Pagination support with \`useLazyPaginatedQuery\` hook
 - Search functionality with debounced loading state
 - Infinite scroll via \`endReached\` callback
 - Total count footer with loading indicator
-- Automatic option selection via \`autoSelectOption\`
+- Custom label rendering with \`BAIText\` component
 
 ## GraphQL Query
 \`\`\`graphql
-query BAIBucketSelectQuery(
-  $offset: Int!
-  $limit: Int!
-  $objectStorageId: ID!
-  $first: Int
-  $last: Int
-  $before: String
-  $after: String
-) {
-  objectStorage(id: $objectStorageId) {
-    namespaces(
-      offset: $offset
-      limit: $limit
-      first: $first
-      last: $last
-      before: $before
-      after: $after
-    ) {
-      count
-      edges {
-        node {
-          id
-          namespace
-        }
+query BAIObjectStorageSelectQuery($offset: Int!, $limit: Int!) {
+  objectStorages(offset: $offset, limit: $limit) {
+    count
+    edges {
+      node {
+        id
+        name
       }
     }
   }
@@ -89,9 +71,8 @@ query BAIBucketSelectQuery(
 
 ## Usage
 \`\`\`tsx
-<BAIBucketSelect
-  objectStorageId="storage-1"
-  placeholder="Select a bucket"
+<BAIObjectStorageSelect
+  placeholder="Select storage"
   onChange={(value) => console.log(value)}
 />
 \`\`\`
@@ -102,13 +83,6 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
     },
   },
   argTypes: {
-    objectStorageId: {
-      control: { type: 'text' },
-      description: 'Object storage ID to fetch buckets from',
-      table: {
-        type: { summary: 'string' },
-      },
-    },
     fetchKey: {
       control: { type: 'text' },
       description: 'Optional key to trigger refetch when changed',
@@ -121,6 +95,7 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
       description: 'Placeholder text when no value is selected',
       table: {
         type: { summary: 'string' },
+        defaultValue: { summary: '"Select Storage"' },
       },
     },
     disabled: {
@@ -147,10 +122,10 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
 };
 
 export default meta;
-type Story = StoryObj<typeof BAIBucketSelect>;
+type Story = StoryObj<typeof BAIObjectStorageSelect>;
 
 /**
- * Basic usage with 5 sample buckets.
+ * Basic usage with 5 sample object storages.
  */
 export const Default: Story = {
   name: 'Basic',
@@ -158,28 +133,30 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Basic usage showing 5 buckets from an object storage. The component automatically fetches and displays available namespaces.',
+          'Basic usage showing 5 object storage systems. The component automatically fetches and displays available storages with search functionality.',
       },
     },
   },
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 5,
-            edges: sampleBuckets,
+            edges: sampleObjectStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect objectStorageId="storage-1" style={{ width: '300px' }} />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect />
+      </div>
     </RelayResolver>
   ),
 };
 
 /**
- * Empty state when no buckets are available.
+ * Empty state when no object storages are available.
  */
 export const Empty: Story = {
   name: 'EmptyState',
@@ -187,22 +164,24 @@ export const Empty: Story = {
     docs: {
       description: {
         story:
-          'Shows the component when no buckets are available in the object storage.',
+          'Shows the component when no object storage systems are configured.',
       },
     },
   },
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 0,
             edges: [],
           },
         }),
       }}
     >
-      <BAIBucketSelect objectStorageId="storage-1" style={{ width: '300px' }} />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect />
+      </div>
     </RelayResolver>
   ),
 };
@@ -223,19 +202,17 @@ export const Disabled: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 5,
-            edges: sampleBuckets,
+            edges: sampleObjectStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        disabled
-        style={{ width: '300px' }}
-      />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect disabled />
+      </div>
     </RelayResolver>
   ),
 };
@@ -256,19 +233,17 @@ export const WithClearButton: Story = {
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 5,
-            edges: sampleBuckets,
+            edges: sampleObjectStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect allowClear />
+      </div>
     </RelayResolver>
   ),
 };
@@ -282,59 +257,55 @@ export const WithCustomPlaceholder: Story = {
     docs: {
       description: {
         story:
-          'Demonstrates using a custom placeholder instead of the default.',
+          'Demonstrates using a custom placeholder instead of the default "Select Storage".',
       },
     },
   },
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 5,
-            edges: sampleBuckets,
+            edges: sampleObjectStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        placeholder="Choose a bucket..."
-        style={{ width: '300px' }}
-      />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect placeholder="Choose storage system..." />
+      </div>
     </RelayResolver>
   ),
 };
 
 /**
- * Select with many bucket options showing pagination.
+ * Select with many storage options showing pagination.
  */
-export const ManyBuckets: Story = {
+export const ManyStorages: Story = {
   name: 'ManyOptions',
   parameters: {
     docs: {
       description: {
         story:
-          'Demonstrates the component with 20 buckets, showing pagination and infinite scroll behavior with total count footer.',
+          'Demonstrates the component with 15 object storages, showing pagination and infinite scroll behavior with total count footer.',
       },
     },
   },
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
-            count: 20,
-            edges: sampleManyBuckets,
+        Query: () => ({
+          objectStorages: {
+            count: 15,
+            edges: sampleManyStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect allowClear />
+      </div>
     </RelayResolver>
   ),
 };
@@ -348,27 +319,24 @@ export const WithSearch: Story = {
     docs: {
       description: {
         story:
-          'Shows built-in search functionality. Type to filter buckets by namespace name. Search includes debounced loading state.',
+          'Shows built-in search functionality. Type to filter storages by name. Search includes debounced loading state.',
       },
     },
   },
   render: () => (
     <RelayResolver
       mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
+        Query: () => ({
+          objectStorages: {
             count: 5,
-            edges: sampleBuckets,
+            edges: sampleObjectStorages,
           },
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        placeholder="Search buckets..."
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <div style={{ width: '300px' }}>
+        <BAIObjectStorageSelect placeholder="Search storages..." allowClear />
+      </div>
     </RelayResolver>
   ),
 };

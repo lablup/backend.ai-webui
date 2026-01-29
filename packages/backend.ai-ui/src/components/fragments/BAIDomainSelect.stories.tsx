@@ -16,12 +16,6 @@ const sampleAllDomains = [
   { name: 'inactive-domain' },
 ];
 
-const BAIDomainSelectWithQuery = (
-  props: Omit<React.ComponentProps<typeof BAIDomainSelect>, never>,
-) => {
-  return <BAIDomainSelect {...props} />;
-};
-
 /**
  * BAIDomainSelect is a specialized Select component that fetches and displays
  * Backend.AI domains using GraphQL.
@@ -143,7 +137,7 @@ export const Default: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery />
+        <BAIDomainSelect />
       </div>
     </RelayResolver>
   ),
@@ -171,7 +165,7 @@ export const AllDomains: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery activeOnly={false} />
+        <BAIDomainSelect activeOnly={false} />
       </div>
     </RelayResolver>
   ),
@@ -198,7 +192,7 @@ export const Empty: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery />
+        <BAIDomainSelect />
       </div>
     </RelayResolver>
   ),
@@ -226,7 +220,7 @@ export const Disabled: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery disabled />
+        <BAIDomainSelect disabled />
       </div>
     </RelayResolver>
   ),
@@ -254,7 +248,7 @@ export const WithClearButton: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery allowClear />
+        <BAIDomainSelect allowClear />
       </div>
     </RelayResolver>
   ),
@@ -282,7 +276,7 @@ export const WithCustomPlaceholder: Story = {
       }}
     >
       <div style={{ width: '300px' }}>
-        <BAIDomainSelectWithQuery placeholder="Choose a domain..." />
+        <BAIDomainSelect placeholder="Choose a domain..." />
       </div>
     </RelayResolver>
   ),
@@ -315,7 +309,7 @@ export const ManyDomains: Story = {
         }}
       >
         <div style={{ width: '300px' }}>
-          <BAIDomainSelectWithQuery showSearch allowClear />
+          <BAIDomainSelect showSearch allowClear />
         </div>
       </RelayResolver>
     );
