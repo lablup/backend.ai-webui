@@ -107,7 +107,10 @@ const StorybookProvider: React.FC<StorybookProviderProps> = ({
   );
 };
 
-export const withGlobalProvider: Decorator = (Story, context) => {
+const WithGlobalProvider: React.FC<{
+  Story: React.ComponentType;
+  context: Parameters<Decorator>[1];
+}> = ({ Story, context }) => {
   const { locale, themeStyle } = context.globals;
   const isDarkMode = useDarkMode();
 
@@ -121,3 +124,7 @@ export const withGlobalProvider: Decorator = (Story, context) => {
     </StorybookProvider>
   );
 };
+
+export const withGlobalProvider: Decorator = (Story, context) => (
+  <WithGlobalProvider Story={Story} context={context} />
+);
