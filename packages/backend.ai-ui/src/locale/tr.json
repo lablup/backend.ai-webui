@@ -14,6 +14,12 @@
     "Status": "Durum",
     "Utilization": "Kullanım"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Temizle",
+    "Edit": "Düzenle",
+    "KeepAsIs": "Olduğu gibi bırak",
+    "UndoChanges": "Değişiklikleri geri al"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "İzin verildi",
     "Permission": "İzin"

@@ -14,6 +14,12 @@
     "Status": "Tila",
     "Utilization": "Käyttöaste"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Tyhjennä",
+    "Edit": "Muokkaa",
+    "KeepAsIs": "Pidä ennallaan",
+    "UndoChanges": "Kumoa muutokset"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",
     "Permission": "Oikeus"

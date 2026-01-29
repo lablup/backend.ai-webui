@@ -14,6 +14,12 @@
     "Status": "ステータス",
     "Utilization": "使用率"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "クリア",
+    "Edit": "編集",
+    "KeepAsIs": "そのまま維持",
+    "UndoChanges": "変更を元に戻す"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "許可済み",
     "Permission": "権限"

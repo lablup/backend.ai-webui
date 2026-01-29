@@ -4,6 +4,7 @@ import { App, Form, InputNumber, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIAlert,
+  BAIBulkEditFormItem,
   BAIDomainSelect,
   BAIFlex,
   BAIModal,
@@ -184,7 +185,6 @@ const UpdateUsersModal = ({
           }
           style={{ marginBottom: token.marginSM }}
         />
-        {/* TODO: We need to create a Form.Item component that can distinguish between keeping the default value and clearing the value. */}
         <Form ref={formRef} layout="vertical" preserve={false}>
           <Suspense
             fallback={
@@ -193,14 +193,18 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <Form.Item name="domain_name" label={t('credential.Domain')}>
+            <BAIBulkEditFormItem
+              name="domain_name"
+              label={t('credential.Domain')}
+              optional
+            >
               <BAIDomainSelect
                 onChange={() => {
                   formRef.current?.setFieldValue('group_ids', []);
                 }}
                 allowClear
               />
-            </Form.Item>
+            </BAIBulkEditFormItem>
           </Suspense>
           <Suspense
             fallback={
@@ -211,9 +215,10 @@ const UpdateUsersModal = ({
           >
             <Form.Item noStyle dependencies={['domain_name']}>
               {({ getFieldValue }) => (
-                <Form.Item
+                <BAIBulkEditFormItem
                   name="group_ids"
                   label={t('credential.Projects')}
+                  optional
                   validateStatus={
                     !getFieldValue('domain_name') ? 'warning' : undefined
                   }
@@ -229,11 +234,11 @@ const UpdateUsersModal = ({
                     disableDefaultFilter
                     disabled={!getFieldValue('domain_name')}
                   />
-                </Form.Item>
+                </BAIBulkEditFormItem>
               )}
             </Form.Item>
           </Suspense>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
+          <BAIBulkEditFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
               options={[
                 {
@@ -254,7 +259,7 @@ const UpdateUsersModal = ({
                 },
               ]}
             />
-          </Form.Item>
+          </BAIBulkEditFormItem>
           <Suspense
             fallback={
               <Form.Item label={t('resourcePolicy.ResourcePolicy')}>
@@ -262,17 +267,19 @@ const UpdateUsersModal = ({
               </Form.Item>
             }
           >
-            <Form.Item
+            <BAIBulkEditFormItem
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
+              optional
             >
               <UserResourcePolicySelect allowClear />
-            </Form.Item>
+            </BAIBulkEditFormItem>
           </Suspense>
-          <Form.Item
+          <BAIBulkEditFormItem
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
+            optional
             rules={[
               {
                 type: 'number',
@@ -286,11 +293,12 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIBulkEditFormItem>
+          <BAIBulkEditFormItem
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
+            optional
             rules={[
               {
                 type: 'number',
@@ -304,11 +312,12 @@ const UpdateUsersModal = ({
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIBulkEditFormItem>
+          <BAIBulkEditFormItem
             name="container_gids"
             label={t('credential.ContainerSupplementaryGIDs')}
             tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
+            optional
             rules={[
               () => ({
                 validator(_rule, values) {
@@ -375,7 +384,7 @@ const UpdateUsersModal = ({
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}
             />
-          </Form.Item>
+          </BAIBulkEditFormItem>
         </Form>
       </BAIFlex>
     </BAIModal>

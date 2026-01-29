@@ -14,6 +14,12 @@
     "Status": "상태",
     "Utilization": "사용량"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "지우기",
+    "Edit": "편집",
+    "KeepAsIs": "그대로 유지",
+    "UndoChanges": "변경 취소"
+  },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "허용",
     "Permission": "권한"
