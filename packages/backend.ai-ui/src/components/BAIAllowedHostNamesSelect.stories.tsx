@@ -1,10 +1,9 @@
 import BAIAllowedHostNamesSelect from './BAIAllowedHostNamesSelect';
-import { BAIClient, BAIClientProvider } from './provider/BAIClientProvider';
+import { BAIConfigProvider } from './provider';
+import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider } from 'antd';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 const sampleHostNames = [
   'host1.example.com',
@@ -34,26 +33,15 @@ const StoryProvider = ({
 }: {
   children: ReactNode;
   allowed?: string[];
-}) => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { refetchOnWindowFocus: false, retry: false },
-    },
-  });
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider locale={enUS}>
-        <BAIClientProvider
-          clientPromise={createMockClient(allowed)}
-          anonymousClientFactory={mockAnonymousClientFactory}
-        >
-          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-        </BAIClientProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
-  );
-};
+}) => (
+  <BAIConfigProvider
+    locale={{ lang: 'en', antdLocale: enUS }}
+    clientPromise={createMockClient(allowed)}
+    anonymousClientFactory={mockAnonymousClientFactory}
+  >
+    {children}
+  </BAIConfigProvider>
+);
 
 // =============================================================================
 // Meta Configuration
