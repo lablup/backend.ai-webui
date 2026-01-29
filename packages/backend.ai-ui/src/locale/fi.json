@@ -57,6 +57,11 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Tyhjennä",
+    "KeepAsIs": "Pidä ennallaan",
+    "UndoChanges": "Kumoa muutokset"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",

@@ -57,6 +57,11 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Xóa",
+    "KeepAsIs": "Giữ nguyên",
+    "UndoChanges": "Hoàn tác thay đổi"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",

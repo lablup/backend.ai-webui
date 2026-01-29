@@ -57,6 +57,11 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Hapus",
+    "KeepAsIs": "Pertahankan",
+    "UndoChanges": "Batalkan perubahan"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",

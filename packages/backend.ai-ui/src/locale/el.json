@@ -57,6 +57,11 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Καθαρισμός",
+    "KeepAsIs": "Διατήρηση ως έχει",
+    "UndoChanges": "Αναίρεση αλλαγών"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
     "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",

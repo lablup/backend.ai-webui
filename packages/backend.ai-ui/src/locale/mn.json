@@ -57,6 +57,11 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Цэвэрлэх",
+    "KeepAsIs": "Хэвээр үлдээх",
+    "UndoChanges": "Өөрчлөлтийг буцаах"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
     "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",

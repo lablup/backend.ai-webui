@@ -57,6 +57,11 @@
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Kosongkan",
+    "KeepAsIs": "Kekalkan seperti semula",
+    "UndoChanges": "Batal perubahan"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Adakah anda pasti mahu menyahaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Adakah anda pasti mahu menyahaktifkan {{count}} artifak?",

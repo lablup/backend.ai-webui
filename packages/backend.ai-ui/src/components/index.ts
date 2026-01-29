@@ -1,5 +1,7 @@
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
+export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
+export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
