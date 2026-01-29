@@ -89,8 +89,16 @@ module.exports = proxy = class Proxy extends ai.backend.Client {
     ) {
       app = app + '&arguments=' + encodeURI(JSON.stringify(args));
     }
+    // Determine the endpoint based on app type
+    // TCP apps (vnc, xrdp, sshd, etc.) use tcpproxy, HTTP apps use httpproxy
+    const appName = app.split('&')[0]; // Extract app name before query params
+    const tcpApps = ['vnc', 'xrdp', 'sshd', 'vscode-desktop'];
+    const endpoint = tcpApps.includes(appName) ? 'tcpproxy' : 'httpproxy';
     let queryString =
-      `/stream/${this.sessionPrefix}/` + sessionName + '/httpproxy?app=' + app;
+      `/stream/${this.sessionPrefix}/` +
+      sessionName +
+      `/${endpoint}?app=` +
+      app;
     if (typeof params !== 'undefined') {
       queryString =
         queryString +
