@@ -129,7 +129,7 @@ function useModels(
           throw new Error('Invalid response format');
         }
         return result;
-      } catch (error) {
+      } catch {
         return { data: [], error: -1 };
       }
     },

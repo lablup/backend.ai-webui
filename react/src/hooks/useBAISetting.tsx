@@ -67,7 +67,7 @@ export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
 const isJson = (str: any) => {
   try {
     JSON.parse(str);
-  } catch (e) {
+  } catch {
     return false;
   }
   return true;
