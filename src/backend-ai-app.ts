@@ -33,6 +33,7 @@ export const navigate =
         '/settings',
         '/maintenance',
         '/branding',
+        '/fair-share',
         '/information',
         '/github',
         '/import',
@@ -75,6 +76,7 @@ export const navigate =
         'settings',
         'maintenance',
         'branding',
+        'fair-share',
         'information',
       ].includes(page)
     ) {

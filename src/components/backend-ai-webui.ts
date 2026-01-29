@@ -175,6 +175,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'reservoir',
     'project',
     'branding',
+    'fair-share',
   ];
   @property({ type: Array }) adminOnlyPages = [
     'experiment',
@@ -192,6 +193,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'information',
     'project',
     'branding',
+    'fair-share',
   ];
   @property({ type: Array }) optionalPages;
   @property({ type: Number }) timeoutSec = 5;
