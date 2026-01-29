@@ -172,7 +172,7 @@ function BAISelect<
         {...selectProps}
         loading={isPending || selectProps.loading}
         showSearch={
-          selectProps.showSearch && _.isObject(selectProps.showSearch)
+          _.isObject(selectProps.showSearch)
             ? {
                 ...selectProps.showSearch,
                 onSearch: async (value) => {
@@ -182,7 +182,7 @@ function BAISelect<
                   });
                 },
               }
-            : false
+            : selectProps.showSearch
         }
         ref={ref}
         className={classNames(
