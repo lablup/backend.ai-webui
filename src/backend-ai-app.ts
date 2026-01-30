@@ -26,6 +26,7 @@ export const navigate =
         '/agent',
         '/storage-settings',
         '/resource',
+        '/admin-session',
         '/user',
         '/credential',
         '/environment',
@@ -67,6 +68,7 @@ export const navigate =
     // you can do here
     if (
       [
+        'admin-session',
         'agent',
         'resource',
         'user',
