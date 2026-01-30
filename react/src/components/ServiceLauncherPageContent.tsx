@@ -888,7 +888,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item
                           label={t('modelService.ServiceName')}
                           name="serviceName"
-                          validateDebounce={500}
                           rules={endpoint ? [] : validationRules}
                         >
                           <Input disabled={!!endpoint} />
