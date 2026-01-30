@@ -128,7 +128,10 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    activeOnly: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -136,9 +139,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -156,7 +157,10 @@ export const AllDomains: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    activeOnly: false,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -164,9 +168,7 @@ export const AllDomains: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect activeOnly={false} />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -183,7 +185,7 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -191,9 +193,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -211,7 +211,10 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    disabled: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -219,9 +222,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect disabled />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -239,7 +240,10 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -247,9 +251,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect allowClear />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -267,7 +269,10 @@ export const WithCustomPlaceholder: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Choose a domain...',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -275,9 +280,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIDomainSelect placeholder="Choose a domain..." />
-      </div>
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -295,7 +298,11 @@ export const ManyDomains: Story = {
       },
     },
   },
-  render: () => {
+  args: {
+    showSearch: true,
+    allowClear: true,
+  },
+  render: (args) => {
     const manyDomains = Array.from({ length: 15 }, (_, i) => ({
       name: `domain-${i + 1}`,
     }));
@@ -308,9 +315,7 @@ export const ManyDomains: Story = {
           }),
         }}
       >
-        <div style={{ width: '300px' }}>
-          <BAIDomainSelect showSearch allowClear />
-        </div>
+        <BAIDomainSelect {...args} style={{ width: '300px' }} />
       </RelayResolver>
     );
   },

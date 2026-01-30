@@ -162,7 +162,10 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -173,7 +176,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIBucketSelect objectStorageId="storage-1" style={{ width: '300px' }} />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -191,7 +194,10 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -202,7 +208,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIBucketSelect objectStorageId="storage-1" style={{ width: '300px' }} />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -220,7 +226,11 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+    disabled: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -231,11 +241,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        disabled
-        style={{ width: '300px' }}
-      />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -253,7 +259,11 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -264,11 +274,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -286,7 +292,11 @@ export const WithCustomPlaceholder: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+    placeholder: 'Choose a bucket...',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -297,11 +307,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        placeholder="Choose a bucket..."
-        style={{ width: '300px' }}
-      />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -319,7 +325,11 @@ export const ManyBuckets: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -330,11 +340,7 @@ export const ManyBuckets: Story = {
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -352,7 +358,12 @@ export const WithSearch: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    objectStorageId: 'storage-1',
+    placeholder: 'Search buckets...',
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ObjectStorage: () => ({
@@ -363,12 +374,7 @@ export const WithSearch: Story = {
         }),
       }}
     >
-      <BAIBucketSelect
-        objectStorageId="storage-1"
-        placeholder="Search buckets..."
-        allowClear
-        style={{ width: '300px' }}
-      />
+      <BAIBucketSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
