@@ -51,7 +51,7 @@ const createMockClient = (
       }
       return Promise.resolve({});
     },
-  } as unknown as BAIClient;
+  } as Partial<BAIClient> as BAIClient;
 
   return Promise.resolve(mockClient);
 };
