@@ -831,7 +831,6 @@ const ResourceAllocationFormItems: React.FC<
                             <BAIDynamicUnitInputNumberWithSlider
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
-                              prefix={'MEM'}
                               extraMarks={{
                                 ...(remaining.mem
                                   ? {

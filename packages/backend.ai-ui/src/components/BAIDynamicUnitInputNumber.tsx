@@ -17,6 +17,8 @@ export interface BAIDynamicUnitInputNumberProps
   units?: string[];
   roundStep?: number;
   onChange?: (value: string) => void;
+  addonPrefix?: React.ReactNode;
+  addonSuffix?: React.ReactNode;
   ref?: RefObject<HTMLInputElement | null>;
 }
 
@@ -27,6 +29,8 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   min = '0m',
   max = '300p',
   roundStep,
+  addonPrefix,
+  addonSuffix,
   ...inputNumberProps
 }) => {
   const [value, setValue] = useControllableValue<string | null | undefined>(
@@ -78,7 +82,14 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   }, [ref, numValue, _unitFromValue, setValue]);
 
   return (
-    <Space.Compact size={inputNumberProps?.size} block>
+    <Space.Compact
+      size={inputNumberProps?.size}
+      block
+      style={{
+        display: 'flex',
+      }}
+    >
+      {addonPrefix && <Space.Addon>{addonPrefix}</Space.Addon>}
       <InputNumber
         {...inputNumberProps}
         ref={(node) => {
@@ -88,6 +99,9 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           );
         }}
         stringMode
+        style={{
+          ...inputNumberProps?.style,
+        }}
         onBlur={() => {
           if (_.isNumber(roundStep) && roundStep > 0) {
             const nextRoundedNumValue =
@@ -217,10 +231,11 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
         suffixIcon={units.length > 1 ? undefined : null}
         open={units.length > 1 ? undefined : false}
         style={{
-          width: 75,
+          flex: 1,
           cursor: units.length > 1 ? undefined : 'default',
         }}
       />
+      {addonSuffix && <Space.Addon>{addonSuffix}</Space.Addon>}
     </Space.Compact>
   );
 };

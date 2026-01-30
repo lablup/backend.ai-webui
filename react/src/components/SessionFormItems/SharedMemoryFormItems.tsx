@@ -186,11 +186,8 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   <BAIDynamicUnitInputNumber
                     min={min}
                     size="small"
-                    prefix={'SHM'}
+                    addonPrefix={'SHM'}
                     max={getFieldValue(['resource', 'mem']) || '0g'}
-                    style={{
-                      width: 150,
-                    }}
                     onChange={onChangeResourceShmem}
                   />
                 </Form.Item>
