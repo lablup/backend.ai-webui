@@ -2,8 +2,9 @@ import BAIAllowedHostNamesSelect from './BAIAllowedHostNamesSelect';
 import { BAIConfigProvider } from './provider';
 import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { type ReactNode } from 'react';
+import { Suspense, type ReactNode, useMemo } from 'react';
 
 const sampleHostNames = [
   'host1.example.com',
@@ -33,15 +34,22 @@ const StoryProvider = ({
 }: {
   children: ReactNode;
   allowed?: string[];
-}) => (
-  <BAIConfigProvider
-    locale={{ lang: 'en', antdLocale: enUS }}
-    clientPromise={createMockClient(allowed)}
-    anonymousClientFactory={mockAnonymousClientFactory}
-  >
-    {children}
-  </BAIConfigProvider>
-);
+}) => {
+  const clientPromise = useMemo(() => createMockClient(allowed), [allowed]);
+  const storyQueryClient = useMemo(() => new QueryClient(), []);
+
+  return (
+    <BAIConfigProvider
+      locale={{ lang: 'en', antdLocale: enUS }}
+      clientPromise={clientPromise}
+      anonymousClientFactory={mockAnonymousClientFactory}
+    >
+      <QueryClientProvider client={storyQueryClient}>
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      </QueryClientProvider>
+    </BAIConfigProvider>
+  );
+};
 
 // =============================================================================
 // Meta Configuration
@@ -151,12 +159,12 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Select a host',
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect
-        placeholder="Select a host"
-        style={{ width: 300 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -174,13 +182,13 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Select a host',
+    allowClear: true,
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect
-        placeholder="Select a host"
-        allowClear
-        style={{ width: 300 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -198,13 +206,13 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Select a host',
+    disabled: true,
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect
-        placeholder="Select a host"
-        disabled
-        style={{ width: 300 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -222,14 +230,14 @@ export const MultipleSelection: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Select hosts',
+    mode: 'multiple' as const,
+    allowClear: true,
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect
-        placeholder="Select hosts"
-        mode="multiple"
-        allowClear
-        style={{ width: 400 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 400 }} />
     </StoryProvider>
   ),
 };
@@ -247,12 +255,12 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'No hosts available',
+  },
+  render: (args) => (
     <StoryProvider allowed={[]}>
-      <BAIAllowedHostNamesSelect
-        placeholder="No hosts available"
-        style={{ width: 300 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -270,7 +278,12 @@ export const ManyHosts: Story = {
       },
     },
   },
-  render: () => {
+  args: {
+    placeholder: 'Select from 20 hosts',
+    showSearch: true,
+    allowClear: true,
+  },
+  render: (args) => {
     const manyHosts = Array.from(
       { length: 20 },
       (_, i) => `host${i + 1}.example.com`,
@@ -278,12 +291,7 @@ export const ManyHosts: Story = {
 
     return (
       <StoryProvider allowed={manyHosts}>
-        <BAIAllowedHostNamesSelect
-          placeholder="Select from 20 hosts"
-          showSearch
-          allowClear
-          style={{ width: 300 }}
-        />
+        <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
       </StoryProvider>
     );
   },
@@ -302,14 +310,14 @@ export const WithSearch: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Search and select a host',
+    showSearch: true,
+    allowClear: true,
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIAllowedHostNamesSelect
-        placeholder="Search and select a host"
-        showSearch
-        allowClear
-        style={{ width: 300 }}
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };

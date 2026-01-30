@@ -2,8 +2,9 @@ import BAIProjectResourceGroupSelect from './BAIProjectResourceGroupSelect';
 import { BAIConfigProvider } from './provider';
 import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { type ReactNode } from 'react';
+import { Suspense, type ReactNode, useMemo } from 'react';
 
 // =============================================================================
 // Mock Data
@@ -68,15 +69,25 @@ const StoryProvider = ({
   children: ReactNode;
   scalingGroups?: Array<{ name: string }>;
   volumeInfo?: typeof sampleVolumeInfo;
-}) => (
-  <BAIConfigProvider
-    locale={{ lang: 'en', antdLocale: enUS }}
-    clientPromise={createMockClient(scalingGroups, volumeInfo)}
-    anonymousClientFactory={mockAnonymousClientFactory}
-  >
-    {children}
-  </BAIConfigProvider>
-);
+}) => {
+  const clientPromise = useMemo(
+    () => createMockClient(scalingGroups, volumeInfo),
+    [scalingGroups, volumeInfo],
+  );
+  const storyQueryClient = useMemo(() => new QueryClient(), []);
+
+  return (
+    <BAIConfigProvider
+      locale={{ lang: 'en', antdLocale: enUS }}
+      clientPromise={clientPromise}
+      anonymousClientFactory={mockAnonymousClientFactory}
+    >
+      <QueryClientProvider client={storyQueryClient}>
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      </QueryClientProvider>
+    </BAIConfigProvider>
+  );
+};
 
 // =============================================================================
 // Meta Configuration
@@ -197,13 +208,13 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select resource group',
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        placeholder="Select resource group"
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -221,14 +232,14 @@ export const AutoSelectDefault: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    autoSelectDefault: true,
+    placeholder: 'Select resource group',
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        autoSelectDefault
-        placeholder="Select resource group"
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -246,14 +257,14 @@ export const WithSearch: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Search resource groups',
+    showSearch: true,
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        placeholder="Search resource groups"
-        showSearch
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -271,13 +282,13 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    placeholder: 'No resource groups available',
+  },
+  render: (args) => (
     <StoryProvider scalingGroups={[]}>
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        placeholder="No resource groups available"
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -295,16 +306,16 @@ export const AutoSelectWithoutDefault: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    autoSelectDefault: true,
+    placeholder: 'Select resource group',
+  },
+  render: (args) => (
     <StoryProvider
       scalingGroups={[{ name: 'gpu-cluster' }, { name: 'cpu-only' }]}
     >
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        autoSelectDefault
-        placeholder="Select resource group"
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -322,14 +333,14 @@ export const WithCustomFilter: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select GPU resource group',
+    filter: (name: string) => name.includes('gpu'),
+  },
+  render: (args) => (
     <StoryProvider>
-      <BAIProjectResourceGroupSelect
-        projectName="test-project"
-        filter={(name) => name.includes('gpu')}
-        placeholder="Select GPU resource group"
-        style={{ width: 300 }}
-      />
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };
@@ -347,19 +358,19 @@ export const ManyOptions: Story = {
       },
     },
   },
-  render: () => {
+  args: {
+    projectName: 'test-project',
+    placeholder: 'Select from 15 resource groups',
+    showSearch: true,
+  },
+  render: (args) => {
     const manyGroups = Array.from({ length: 15 }, (_, i) => ({
       name: `resource-group-${i + 1}`,
     }));
 
     return (
       <StoryProvider scalingGroups={manyGroups}>
-        <BAIProjectResourceGroupSelect
-          projectName="test-project"
-          placeholder="Select from 15 resource groups"
-          showSearch
-          style={{ width: 300 }}
-        />
+        <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
       </StoryProvider>
     );
   },
