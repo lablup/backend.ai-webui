@@ -1,208 +1,308 @@
+// spec: e2e/credential/user_crud.test-plan.md
+import { PurgeUsersModal } from './utils/classes/PurgeUsersModal';
+import {
+  KeyPairModal,
+  UserInfoModal,
+  UserSettingModal,
+} from './utils/classes/UserSettingModal';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
+  navigateTo,
+  webServerEndpoint,
   webuiEndpoint,
 } from './utils/test-util';
 import test, { expect } from '@playwright/test';
 
 const EMAIL = 'e2e-test-user@lablup.com';
+const USERNAME = 'e2e-test-user';
 const PASSWORD = 'testing@123';
 const NEW_PASSWORD = 'new-password@123';
+const MODIFIED_USERNAME = 'modified-e2e-test-user';
 
-test.describe('Create user', () => {
-  test.afterEach(async ({ page, request }, testInfo) => {
-    // check if the test failed because the created user is already exist
-    if (['failed', 'timedOut'].includes(testInfo.status ?? '')) {
-      await loginAsAdmin(page, request);
-      await page.getByRole('menuitem', { name: 'Users' }).click();
-      await page
-        .locator('vaadin-grid-cell-content')
-        .filter({ hasText: 'User ID' })
-        .first()
-        .locator('input')
-        .last()
-        .fill(EMAIL);
+test.describe.serial('User CRUD Operations', () => {
+  // Cleanup function to delete the test user if it exists
+  async function cleanupTestUser(page: any) {
+    // Check if user exists in Active users
+    const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+    const isVisible = await userRow
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+
+    if (isVisible) {
+      // Deactivate the user
+      await userRow.getByRole('button', { name: 'Deactivate' }).click();
+      const popconfirm = page.locator('.ant-popconfirm');
+      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
       await page.waitForTimeout(1000);
-      // check if the user is already exist in the active user list
-      expect(
-        page.getByRole('gridcell', { name: EMAIL }),
-        'User already exist. Please check the user list',
-      ).not.toBeVisible();
-      // check if the user is already exist in the inactive user list
-      await page.getByRole('tab', { name: 'Inactive' }).click();
-      await page
-        .locator('vaadin-grid-cell-content')
-        .filter({ hasText: 'User ID' })
-        .last()
-        .locator('input')
-        .last()
-        .fill(EMAIL);
-      await page.waitForTimeout(1000);
-      expect(
-        page.getByRole('gridcell', { name: EMAIL }),
-        'User already exist. Please check the user list',
-      ).not.toBeVisible();
     }
-  });
-  test.skip('admin should be able to create a new user', async ({
-    page,
-    request,
-  }) => {
-    await loginAsAdmin(page, request);
-    await page.getByRole('menuitem', { name: 'Users' }).click();
-    await page.getByRole('button', { name: 'Create User' }).click();
-    // Create a User
-    const emailInput = await page
-      .locator('#new-user-dialog label')
-      .filter({ hasText: 'Email' })
-      .locator('input');
-    const passwordInput = await page
-      .locator('#new-user-dialog label')
-      .filter({ hasText: 'Password' })
-      .locator('input');
 
-    await emailInput.fill(EMAIL);
-    await passwordInput.first().fill(PASSWORD);
-    await passwordInput.last().fill(PASSWORD);
-    await page
-      .locator('#new-user-dialog button')
-      .filter({ hasText: 'Create User' })
-      .click();
-    //Login as the created user
+    // Switch to Inactive filter and check if user exists there
+    await page.getByText('Inactive', { exact: true }).click();
+    const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
+    const isInactiveVisible = await inactiveUserRow
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+
+    if (isInactiveVisible) {
+      // Permanently delete the user
+      await inactiveUserRow.getByRole('checkbox').click();
+      await page.getByRole('button', { name: 'trash bin' }).click();
+
+      const purgeModal = new PurgeUsersModal(page);
+      await purgeModal.waitForVisible();
+      await purgeModal.confirmDeletion();
+
+      // Wait for deletion to complete
+      await page.waitForTimeout(1000);
+    }
+
+    // Return to Active filter
+    await page.getByText('Active', { exact: true }).click();
+  }
+
+  test('Admin can create a new user', async ({ page, request }) => {
+    // 1. Login as admin
+    await loginAsAdmin(page, request);
+
+    // 2. Navigate to credential page
+    await navigateTo(page, 'credential');
+
+    // 3. Wait for Users tab to be visible
+    await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+
+    // 4. Clean up any existing test user from previous runs
+    await cleanupTestUser(page);
+
+    // 5. Click "Create User" button
+    await page.getByRole('button', { name: 'Create User' }).click();
+
+    // 6. Create user using the modal class
+    const userSettingModal = new UserSettingModal(page);
+    await userSettingModal.createUser(EMAIL, USERNAME, PASSWORD);
+
+    // 7. Handle the key pair modal that appears after user creation
+    const keyPairModal = new KeyPairModal(page);
+    await keyPairModal.waitForVisible();
+    await keyPairModal.close();
+
+    // 8. Verify user setting modal is also closed
+    await userSettingModal.waitForHidden();
+
+    // 9. Verify new user appears in the Active users list
+    await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // 10. Logout and login as the created user to verify account works
     await logout(page);
     await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
-  });
-});
 
-test.describe('Delete user', () => {
-  test.skip('admin should be able to delete a user', async ({
+    // 11. Verify login was successful by checking user dropdown is visible
+    await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+  });
+
+  test('Admin can update user information (password change)', async ({
     page,
     request,
   }) => {
+    // 1. Login as admin
     await loginAsAdmin(page, request);
-    await page.getByRole('menuitem', { name: 'Users' }).click();
-    await page
-      .locator('#active-user-list vaadin-grid-cell-content')
-      .filter({ hasText: 'User ID' })
-      .locator('input')
-      .last()
-      .fill(EMAIL);
-    await page.waitForTimeout(1000);
-    await expect(page.getByRole('gridcell', { name: EMAIL })).toBeVisible();
-    await page.getByRole('button', { name: 'delete' }).click();
-    await page.getByRole('button', { name: 'Okay' }).click();
-    await expect(
-      page
-        .locator('.ant-notification-notice')
-        .getByText('Signout is seccessfully'),
-    ).toBeVisible();
-    // check if the user is deleted
-    //TODO: find a better way to check the test is failed. The below code is not working
-    // expect(
-    //   await loginAsCreatedAccount(page, EMAIL, PASSWORD),
-    // ).toThrow();
-    await logout(page);
-    await page.getByLabel('Email or Username').fill(EMAIL);
-    await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
-    await page.getByRole('textbox', { name: 'Endpoint' }).fill(webuiEndpoint);
-    await page.getByLabel('Login', { exact: true }).click();
-    await expect(page).not.toHaveURL(/.*summary/);
-  });
-});
 
-test.describe('Update user', () => {
-  test.skip('admin should be able to update a user', async ({
-    page,
-    request,
-  }) => {
-    // undo delete user
-    await loginAsAdmin(page, request);
-    await page.getByRole('menuitem', { name: 'Users' }).click();
-    await page.getByRole('tab', { name: 'INACTIVE' }).click();
-    await page
-      .locator('vaadin-grid-cell-content')
-      .filter({ hasText: 'User ID' })
-      .locator('input')
-      .last()
-      .fill(EMAIL);
-    await page.getByRole('button', { name: 'settings' }).click();
-    await page.waitForTimeout(1000);
-    await page.getByLabel('Modify User Detail').getByText('Deleted').click();
-    await page
-      .getByLabel('Modify User Detail')
-      .getByText('Active', { exact: true })
-      .click();
-    await page.getByRole('button', { name: 'OK' }).click();
-    await page.waitForTimeout(1000);
-    await page.getByRole('tab', { name: 'CREDENTIALS' }).click();
-    await page.getByRole('tab', { name: 'INACTIVE' }).click();
-    await page
-      .locator('vaadin-grid-cell-content')
-      .filter({ hasText: 'User ID' })
-      .last()
-      .locator('input')
-      .last()
-      .fill(EMAIL);
-    await page.waitForTimeout(1000);
-    await page.getByLabel('redo').scrollIntoViewIfNeeded();
-    await page.getByLabel('redo').click();
-    // update active user information
-    await page.getByRole('tab', { name: 'USERS' }).click();
-    await page.getByRole('tab', { name: 'ACTIVE' }).first().click();
-    await page
-      .locator('vaadin-grid-cell-content')
-      .filter({ hasText: 'User ID' })
-      .first()
-      .locator('input')
-      .last()
-      .fill(EMAIL);
-    await page.waitForTimeout(1000);
-    // modify the user information
-    await page.getByRole('button', { name: 'settings' }).click();
-    await page.getByLabel('User Name').fill('modified-e2e-test-user');
-    await page.getByLabel('New Password').first().fill(NEW_PASSWORD);
-    await page.getByLabel('New Password (again)').first().fill(NEW_PASSWORD);
-    await page.getByRole('button', { name: 'OK' }).click();
-    // check if the user information is updated
-    await page.getByRole('button', { name: 'assignment' }).click();
-    await expect(
-      page.getByLabel('User Detail').getByText('modified-e2e-test-user'),
-      'User name is not updated',
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'OK' }).click();
+    // 2. Navigate to credential page
+    await navigateTo(page, 'credential');
+
+    // 3. Locate the user in the table
+    const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+    await expect(userRow).toBeVisible();
+
+    // 4. Click the Edit button to open the modify modal
+    await userRow.getByRole('button', { name: 'Edit' }).click();
+
+    // 5. Update user name and password using the modal class
+    const editModal = UserSettingModal.forEdit(page);
+    await editModal.waitForVisible();
+    await editModal.fillUserName(MODIFIED_USERNAME);
+    await editModal.fillNewPasswords(NEW_PASSWORD);
+    await editModal.clickOk();
+
+    // 6. Wait for modal to close
+    await editModal.waitForHidden();
+
+    // 7. Verify success by checking user info
+    await userRow.getByRole('button', { name: 'info-circle' }).click();
+    const userInfoModal = new UserInfoModal(page);
+    await userInfoModal.waitForVisible();
+    await userInfoModal.verifyUserName(MODIFIED_USERNAME);
+    await userInfoModal.close();
+
+    // 8. Verify the new password works by logging in
     await logout(page);
     await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
-    await expect(page).toHaveURL(/.*summary/);
-    // Delete the user. Same test as above 'Delete user'
-    await logout(page);
+    await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+  });
+
+  test('Admin can deactivate a user', async ({ page, request }) => {
+    // 1. Login as admin
     await loginAsAdmin(page, request);
-    await page.getByRole('menuitem', { name: 'Users' }).click();
-    await page
-      .locator('#active-user-list vaadin-grid-cell-content')
-      .filter({ hasText: 'User ID' })
-      .locator('input')
-      .last()
-      .fill(EMAIL);
+
+    // 2. Navigate to credential page
+    await navigateTo(page, 'credential');
+
+    // 3. Ensure "Active" filter is selected (should be default)
+    const activeRadio = page.getByRole('radio', {
+      name: 'Active',
+      exact: true,
+    });
+    await expect(activeRadio).toBeChecked();
+
+    // 4. Locate the user to deactivate in the table
+    const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+    await expect(userRow).toBeVisible();
+
+    // 5. Click the "Deactivate" button (Ban icon) in the Control column
+    await userRow.getByRole('button', { name: 'Deactivate' }).click();
+
+    // 6. Verify popconfirm dialog appears
+    const popconfirm = page.locator('.ant-popconfirm');
+    await expect(popconfirm.getByText('Deactivate User')).toBeVisible();
+
+    // 7. Confirm deactivation
+    await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+
+    // 8. Wait for the action to complete
     await page.waitForTimeout(1000);
-    await expect(page.getByRole('gridcell', { name: EMAIL })).toBeVisible();
-    await page.getByRole('button', { name: 'delete' }).click();
-    await page.getByRole('button', { name: 'Okay' }).click();
-    await expect(
-      page
-        .locator('.ant-notification-notice')
-        .getByText('Signout is seccessfully'),
-    ).toBeVisible();
-    // check if the user is deleted
-    //TODO: find a better way to check the test is failed. The below code is not working
-    // expect(
-    //   await loginAsCreatedAccount(page, EMAIL, PASSWORD),
-    // ).toThrow();
+
+    // 9. Verify user disappears from Active users list
+    await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden({
+      timeout: 10000,
+    });
+
+    // 10. Switch to "Inactive" filter and verify the deactivated user appears there
+    await page.getByText('Inactive', { exact: true }).click();
+    await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+      timeout: 10000,
+    });
+  });
+
+  test('Admin can reactivate an inactive user', async ({ page, request }) => {
+    // 1. Login as admin
+    await loginAsAdmin(page, request);
+
+    // 2. Navigate to credential page
+    await navigateTo(page, 'credential');
+
+    // 3. Switch to "Inactive" filter
+    await page.getByText('Inactive', { exact: true }).click();
+
+    // 4. Locate the inactive user in the table
+    const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+    await expect(userRow).toBeVisible();
+
+    // 5. Click the "Activate" button (Undo icon) in the Control column
+    await userRow.getByRole('button', { name: 'Activate' }).click();
+
+    // 6. Verify popconfirm dialog appears
+    const popconfirm = page.locator('.ant-popconfirm');
+    await expect(popconfirm.getByText('Activate User')).toBeVisible();
+
+    // 7. Confirm activation
+    await popconfirm.getByRole('button', { name: 'Activate' }).click();
+
+    // 8. Wait for the action to complete
+    await page.waitForTimeout(1000);
+
+    // 9. Verify user disappears from Inactive users list
+    await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden({
+      timeout: 10000,
+    });
+
+    // 10. Switch to "Active" filter and verify the activated user appears there
+    await page.getByText('Active', { exact: true }).click();
+    await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // 11. Verify the reactivated user can log in
     await logout(page);
+    await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
+    await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+  });
+
+  test('Admin can deactivate and permanently delete (purge) a user', async ({
+    page,
+    request,
+  }) => {
+    // 1. Login as admin
+    await loginAsAdmin(page, request);
+
+    // 2. Navigate to credential page
+    await navigateTo(page, 'credential');
+
+    // 3. Deactivate the user first (required before purging)
+    const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+    await expect(userRow).toBeVisible();
+    await userRow.getByRole('button', { name: 'Deactivate' }).click();
+    const popconfirm = page.locator('.ant-popconfirm');
+    await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+    await page.waitForTimeout(1000);
+
+    // 4. Switch to "Inactive" filter
+    await page.getByText('Inactive', { exact: true }).click();
+
+    // 5. Wait for the inactive users list to load
+    await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // 6. Select the user by clicking its checkbox
+    const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
+    await inactiveUserRow.getByRole('checkbox').click();
+
+    // 7. Verify selection count appears
+    await expect(page.getByText('1 selected')).toBeVisible();
+
+    // 8. Click the trash bin button to open purge modal
+    await page.getByRole('button', { name: 'trash bin' }).click();
+
+    // 9. Use PurgeUsersModal class to handle the deletion
+    const purgeModal = new PurgeUsersModal(page);
+    await purgeModal.waitForVisible();
+
+    // 10. Verify modal shows the user email
+    await purgeModal.verifyUserEmailDisplayed(EMAIL);
+
+    // 11. Confirm the deletion
+    await purgeModal.confirmDeletion();
+
+    // 12. Verify success message appears
+    await expect(
+      page.getByText(/Permanently deleted \d+ out of \d+ users/),
+    ).toBeVisible({ timeout: 10000 });
+
+    // 13. Verify user completely disappears from inactive users list
+    await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden({
+      timeout: 10000,
+    });
+  });
+
+  test('Deleted user cannot log in', async ({ page }) => {
+    // 1. Attempt to login as the deleted user
+    await page.goto(webuiEndpoint);
     await page.getByLabel('Email or Username').fill(EMAIL);
     await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
-    await page.getByRole('textbox', { name: 'Endpoint' }).fill(webuiEndpoint);
+    await page
+      .getByRole('textbox', { name: 'Endpoint' })
+      .fill(webServerEndpoint);
     await page.getByLabel('Login', { exact: true }).click();
-    await expect(page).not.toHaveURL(/.*summary/);
+
+    // 2. Verify "Login information mismatch" error notification appears
+    await expect(
+      page.getByRole('alert').getByText('Login information mismatch'),
+    ).toBeVisible({ timeout: 10000 });
+
+    // 3. Verify user is still on login page
+    await expect(page.getByLabel('Email or Username')).toBeVisible();
   });
 });
