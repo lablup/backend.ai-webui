@@ -107,61 +107,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     {
-      title: t('resourcePolicy.MaxVFolderCount'),
-      dataIndex: 'max_vfolder_count',
-      key: 'max_vfolder_count',
-      render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
-      sorter: (a, b) =>
-        numberSorterWithInfinityValue(
-          a?.max_vfolder_count,
-          b?.max_vfolder_count,
-          0,
-        ),
-    },
-    {
-      title: t('resourcePolicy.MaxSessionCountPerModelSession'),
-      dataIndex: 'max_session_count_per_model_session',
-      key: 'max_session_count_per_model_session',
-      sorter: (a, b) =>
-        (a?.max_session_count_per_model_session ?? 0) -
-        (b?.max_session_count_per_model_session ?? 0),
-    },
-    {
-      title: t('resourcePolicy.MaxQuotaScopeSize'),
-      dataIndex: 'max_quota_scope_size',
-      key: 'max_quota_scope_size',
-      render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
-      sorter: (a, b) =>
-        numberSorterWithInfinityValue(
-          a?.max_quota_scope_size,
-          b?.max_quota_scope_size,
-          -1,
-        ),
-    },
-    {
-      title: t('resourcePolicy.MaxCustomizedImageCount'),
-      key: 'max_customized_image_count',
-      dataIndex: 'max_customized_image_count',
-      sorter: (a, b) =>
-        (a?.max_customized_image_count ?? 0) -
-        (b?.max_customized_image_count ?? 0),
-    },
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      sorter: (a, b) => localeCompare(a?.id, b?.id),
-    },
-    {
-      title: t('resourcePolicy.CreatedAt'),
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (text) => dayjs(text).format('lll'),
-      sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
-    },
-    {
       title: t('general.Control'),
-      fixed: 'right',
+      fixed: 'left',
       key: 'control',
       render: (_text: any, row: UserResourcePolicies) => (
         <BAIFlex direction="row" align="stretch">
@@ -236,6 +183,59 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           </Popconfirm>
         </BAIFlex>
       ),
+    },
+    {
+      title: t('resourcePolicy.MaxVFolderCount'),
+      dataIndex: 'max_vfolder_count',
+      key: 'max_vfolder_count',
+      render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_vfolder_count,
+          b?.max_vfolder_count,
+          0,
+        ),
+    },
+    {
+      title: t('resourcePolicy.MaxSessionCountPerModelSession'),
+      dataIndex: 'max_session_count_per_model_session',
+      key: 'max_session_count_per_model_session',
+      sorter: (a, b) =>
+        (a?.max_session_count_per_model_session ?? 0) -
+        (b?.max_session_count_per_model_session ?? 0),
+    },
+    {
+      title: t('resourcePolicy.MaxQuotaScopeSize'),
+      dataIndex: 'max_quota_scope_size',
+      key: 'max_quota_scope_size',
+      render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_quota_scope_size,
+          b?.max_quota_scope_size,
+          -1,
+        ),
+    },
+    {
+      title: t('resourcePolicy.MaxCustomizedImageCount'),
+      key: 'max_customized_image_count',
+      dataIndex: 'max_customized_image_count',
+      sorter: (a, b) =>
+        (a?.max_customized_image_count ?? 0) -
+        (b?.max_customized_image_count ?? 0),
+    },
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      sorter: (a, b) => localeCompare(a?.id, b?.id),
+    },
+    {
+      title: t('resourcePolicy.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text) => dayjs(text).format('lll'),
+      sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
   ]);
 
