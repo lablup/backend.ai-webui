@@ -13,22 +13,23 @@ import { App, Button, Skeleton, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
 import { filterOutEmpty } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
-
-const tabParam = withDefault(StringParam, 'general');
 
 const UserPreferencesPage = () => {
   'use memo';
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('general'),
+  );
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',

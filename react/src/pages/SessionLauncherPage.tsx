@@ -79,6 +79,12 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
+import {
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
 import React, {
   useEffect,
   useEffectEvent,
@@ -90,13 +96,6 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useStartSession } from 'src/hooks/useStartSession';
-import {
-  JsonParam,
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
@@ -206,9 +205,6 @@ const SessionLauncherPage = () => {
 
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
-  const StepParam = withDefault(NumberParam, 0);
-  const FormValuesParam = withDefault(JsonParam, defaultFormValues);
-  const AppOptionParam = withDefault(JsonParam, {});
   const [
     {
       step: currentStep,
@@ -218,12 +214,18 @@ const SessionLauncherPage = () => {
       // appOption: appOptionFromQueryParams,
     },
     setQuery,
-  ] = useQueryParams({
-    step: StepParam,
-    formValues: FormValuesParam,
-    redirectTo: StringParam,
-    appOption: AppOptionParam,
-  });
+  ] = useQueryStates(
+    {
+      step: parseAsInteger.withDefault(0),
+      formValues:
+        parseAsJson<typeof defaultFormValues>().withDefault(defaultFormValues),
+      redirectTo: parseAsString,
+      appOption: parseAsJson<AppOption>().withDefault({}),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const { search } = useLocation();
   const webuiNavigate = useWebUINavigate();

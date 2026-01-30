@@ -44,10 +44,10 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
@@ -69,10 +69,13 @@ const ContainerRegistryList: React.FC<{
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
 
-  const [queryParams, setQueryParams] = useQueryParams({
-    filter: withDefault(StringParam, undefined),
-    order: withDefault(StringParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      filter: parseAsString,
+      order: parseAsString,
+    },
+    { history: 'replace' },
+  );
 
   const {
     baiPaginationOption,
@@ -447,7 +450,7 @@ const ContainerRegistryList: React.FC<{
           ]}
           value={queryParams.filter}
           onChange={(value) => {
-            setQueryParams({ filter: value }, 'replaceIn');
+            setQueryParams({ filter: value ?? null });
           }}
         />
         <BAIFlex gap="xs">
@@ -498,7 +501,7 @@ const ContainerRegistryList: React.FC<{
           ),
         }}
         onChangeOrder={(order) => {
-          setQueryParams({ order }, 'replaceIn');
+          setQueryParams({ order: order ?? null });
         }}
         loading={
           deferredQueryVariables !== queryVariables ||

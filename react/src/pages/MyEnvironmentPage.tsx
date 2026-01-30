@@ -1,15 +1,16 @@
 import CustomizedImageList from '../components/CustomizedImageList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import { BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'image');
 
 const MyEnvironmentPage = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('image'),
+  );
 
   return (
     <BAICard
