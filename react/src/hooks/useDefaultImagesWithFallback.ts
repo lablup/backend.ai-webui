@@ -8,7 +8,7 @@ import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
 } from 'src/__generated__/useDefaultImagesWithFallbackQuery.graphql';
-import { getImageFullName } from 'src/helper';
+import { findMatchingImage, getImageFullName } from 'src/helper';
 
 const IMAGES_QUERY = graphql`
   query useDefaultImagesWithFallbackQuery($installed: Boolean) {
@@ -88,9 +88,20 @@ export const useDefaultFileBrowserImageWithFallback = () => {
           ),
         )
         .then(async (filebrowserImages) => {
-          const firstImage = _.first(filebrowserImages);
+          const baiClient = await backendaiClientPromise;
+          const configValue = baiClient._config?.defaultFileBrowserImage;
+          const validImages =
+            filebrowserImages?.filter(
+              (image): image is NonNullable<typeof image> => image != null,
+            ) ?? [];
+
+          // Use findMatchingImage if config value exists, otherwise take first filtered image
+          const matchedImage = configValue
+            ? findMatchingImage(configValue, validImages)
+            : _.first(validImages);
+
           setDefaultFileBrowserImage(
-            firstImage ? getImageFullName(firstImage) : null,
+            matchedImage ? getImageFullName(matchedImage) : null,
           );
         })
         .catch(() => {
@@ -140,9 +151,22 @@ export const useDefaultSystemSSHImageWithFallback = () => {
           ),
         )
         .then(async (sshImages) => {
-          const firstImage = _.first(sshImages);
-          setSystemSSHImage(firstImage ? getImageFullName(firstImage) : null);
-          setSystemSSHImageInfo(firstImage || undefined);
+          const baiClient = await backendaiClientPromise;
+          const configValue = baiClient._config?.systemSSHImage;
+          const validImages =
+            sshImages?.filter(
+              (image): image is NonNullable<typeof image> => image != null,
+            ) ?? [];
+
+          // Use findMatchingImage if config value exists, otherwise take first filtered image
+          const matchedImage = configValue
+            ? findMatchingImage(configValue, validImages)
+            : _.first(validImages);
+
+          setSystemSSHImage(
+            matchedImage ? getImageFullName(matchedImage) : null,
+          );
+          setSystemSSHImageInfo(matchedImage || undefined);
         })
         .catch(() => {
           // in case of error, set null to disable SFTP button
