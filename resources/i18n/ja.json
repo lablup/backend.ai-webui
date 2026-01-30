@@ -755,6 +755,7 @@
     "GoToSubComponent": "{{sub}}に移動",
     "HalfLifeDays": "半減期",
     "HalfLifeDaysDescription": "使用量の反映率が半減する期間。7日と設定すると、7日前の使用量は50%、14日前は25%で計算されます。減衰単位の倍数で指定する必要があります。",
+    "Id": "ID",
     "LookbackDays": "参照期間",
     "LookbackDaysDescription": "Fair Share計算に反映される利用履歴の期間。この期間より前の利用は計算に含まれません。半減期の倍数で指定する必要があります。",
     "ModifiedAt": "更新日時",
@@ -767,13 +768,18 @@
     "ResourceWeights": "リソース重み",
     "ResourceWeightsDescription": "各リソースタイプの重み",
     "SchedulerDescription": "フェアシェアスケジューラは、過去のリソース使用状況に基づいてセッションの実行優先度を決定するスケジューリング方式です。これまでのリソース消費が少ないユーザーに高い優先度を割り当て、すべてのユーザーが時間をかけて公平にリソースへアクセスできるようにします。\n<br /> <br />\n管理者はドメイン、プロジェクト、ユーザーの各レベルで重みを設定して特定のグループにより多くのリソースを割り当てることができます。優先度は0.0から1.0の範囲の値で表され、1.0に近いほど優先度が高くなります。",
+    "SchedulerDoesNotAppliedToResourceGroup": "選択したリソースグループ（{{resourceGroup}}）ではフェアシェアスケジューラが有効になっていません。スケジューラを使用するには、リソースグループの設定を更新してください。",
     "TotalUsage": "総使用量",
     "TotalUsageDescription": "参照期間中の合計リソース使用量。",
     "User": "ユーザー",
     "Weight": "重み",
     "WeightDescription": "Fair Shareスケジューリングの優先度を決定する基本倍率。値が大きいほど優先度が高くなります。デフォルトは '1.0'。重み '2.0' は '1.0' の2倍の優先度です。",
     "step": {
-      "Description": "Fair Share設定はリソースグループごとに、ドメイン・プロジェクト・ユーザーの階層構造に従って行われます。下位設定に移動するには、テーブルの各項目をクリックしてください。"
+      "Description": "Fair Share設定はリソースグループごとに、ドメイン・プロジェクト・ユーザーの階層構造に従って行われます。下位設定に移動するには、テーブルの各項目をクリックしてください。",
+      "PleaseSelectDomain": "ドメインを選択してください。",
+      "PleaseSelectProject": "プロジェクトを選択してください。",
+      "ProjectDescription": "各プロジェクトのFair Share重みを設定・変更します。",
+      "UserDescription": "各ユーザーの Fair Share の重みを設定および変更します。"
     }
   },
   "fairShrae": {},

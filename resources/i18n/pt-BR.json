@@ -755,6 +755,7 @@
     "GoToSubComponent": "Mover para {{sub}}",
     "HalfLifeDays": "Meia-vida",
     "HalfLifeDaysDescription": "O período no qual a taxa de reflexão de uso é reduzida pela metade. Se definido como 7 dias, o uso de 7 dias atrás é calculado em 50% e o uso de 14 dias atrás em 25%. Deve ser definido como um múltiplo da unidade de decaimento.",
+    "Id": "ID",
     "LookbackDays": "Período retroativo",
     "LookbackDaysDescription": "O intervalo do histórico de uso considerado nos cálculos do Fair Share. O uso anterior a este período é excluído dos cálculos. Deve ser definido como um múltiplo da meia-vida.",
     "Name": "Nome",
@@ -766,13 +767,18 @@
     "ResourceWeights": "Peso do Recurso",
     "ResourceWeightsDescription": "O peso para cada tipo de recurso.",
     "SchedulerDescription": "O Escalonador Fair Share é um método de escalonamento que determina a prioridade de execução das sessões com base no uso histórico de recursos. Ele atribui prioridade mais alta a usuários que consumiram menos recursos, garantindo que todos tenham acesso justo aos recursos ao longo do tempo.\n<br /> <br />\nAdministradores podem configurar pesos nos níveis de Domínio, Projeto e Usuário para alocar mais recursos a grupos específicos. A prioridade é expressa por um valor entre 0,0 e 1,0, onde valores mais próximos de 1,0 indicam prioridade maior.",
+    "SchedulerDoesNotAppliedToResourceGroup": "O Agendador Fair Share não está habilitado para o grupo de recursos selecionado ({{resourceGroup}}). Para usar o Agendador, atualize as configurações do grupo de recursos.",
     "TotalUsage": "Uso total",
     "TotalUsageDescription": "Uso total de recursos durante o período de análise.",
     "User": "Usuário",
     "Weight": "Peso",
     "WeightDescription": "O multiplicador que determina a prioridade no agendamento Fair Share. Maior peso resulta em maior prioridade. O valor padrão é '1.0'. Um peso de '2.0' tem o dobro da prioridade de '1.0'.",
     "step": {
-      "Description": "A configuração do Fair Share é feita por grupo de recursos, seguindo a hierarquia domínio > projeto > usuário. Para acessar as configurações subordinadas, clique em cada item da tabela."
+      "Description": "A configuração do Fair Share é feita por grupo de recursos, seguindo a hierarquia domínio > projeto > usuário. Para acessar as configurações subordinadas, clique em cada item da tabela.",
+      "PleaseSelectDomain": "Selecione um domínio.",
+      "PleaseSelectProject": "Por favor, selecione um projeto.",
+      "ProjectDescription": "Configure e modifique os pesos de Fair Share para cada Project.",
+      "UserDescription": "Configure e modifique os pesos do Fair Share para cada usuário."
     }
   },
   "fairShrae": {},

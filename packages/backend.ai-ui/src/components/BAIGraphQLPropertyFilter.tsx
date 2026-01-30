@@ -328,6 +328,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   combinationMode = 'AND',
   ...containerProps
 }) => {
+  'use memo';
+
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue<GraphQLFilter | undefined>({

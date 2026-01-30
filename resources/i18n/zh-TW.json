@@ -755,6 +755,7 @@
     "GoToSubComponent": "移動到 {{sub}}",
     "HalfLifeDays": "半衰期",
     "HalfLifeDaysDescription": "使用量反映率減半的週期。若設為 7 天，7 天前的使用量按 50% 計算，14 天前則按 25% 計算。必須設定為衰減單位的整數倍。",
+    "Id": "識別碼",
     "LookbackDays": "回溯期間",
     "LookbackDaysDescription": "計入 Fair Share 計算的使用歷史範圍。此期間之前的使用不予計入。必須為半衰期的倍數。",
     "ModifiedAt": "修改時間",
@@ -767,13 +768,18 @@
     "ResourceWeights": "資源權重",
     "ResourceWeightsDescription": "各資源類型的權重。",
     "SchedulerDescription": "公平分配排程器（Fair Share Scheduler）是一種根據歷史資源使用量決定會話執行優先順序的排程方法。它會將較高的優先權分配給過去消耗較少資源的使用者，確保所有使用者能隨時間公平地存取資源。<br /> <br />\n管理員可以在網域（Domain）、專案（Project）和使用者（User）層級設定權重，以將更多資源分配給特定群組。優先權以 0.0 到 1.0 的值表示，數值越接近 1.0 表示優先權越高。",
+    "SchedulerDoesNotAppliedToResourceGroup": "所選資源群組（{{resourceGroup}}）未啟用公平分享排程器。若要使用排程器，請更新該資源群組的設定。",
     "TotalUsage": "總使用量",
     "TotalUsageDescription": "回溯天數內的總資源使用量。",
     "User": "使用者",
     "Weight": "權重",
     "WeightDescription": "決定 Fair Share 排程優先權的基礎乘數。數值越高優先權越高。預設為 '1.0'。權重 '2.0' 的優先權是 '1.0' 的兩倍。",
     "step": {
-      "Description": "Fair Share 設定依據資源群組，並按網域、專案與使用者的階層結構進行。要進行下層設定，請點選表格中的各項目以進入。"
+      "Description": "Fair Share 設定依據資源群組，並按網域、專案與使用者的階層結構進行。要進行下層設定，請點選表格中的各項目以進入。",
+      "PleaseSelectDomain": "請選擇網域。",
+      "PleaseSelectProject": "請選擇一個專案。",
+      "ProjectDescription": "設定並修改每個專案的 Fair Share 權重。",
+      "UserDescription": "設定與修改每位使用者的公平分享權重。"
     }
   },
   "fairShrae": {},
