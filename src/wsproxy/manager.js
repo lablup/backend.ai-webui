@@ -280,6 +280,44 @@ class Manager extends EventEmitter {
       );
     });
 
+    this.app.get('/vnc', (req, res) => {
+      let port = req.query.port;
+      let url = 'vnc://' + this.proxyBaseHost + ':' + port;
+      res.send(
+        htmldeco(
+          'Connect with your VNC client',
+          'host: ' +
+            this.proxyBaseHost +
+            '<br/>port: ' +
+            port +
+            '<br/>URL : <a href="' +
+            url +
+            '">' +
+            url +
+            '</a>',
+        ),
+      );
+    });
+
+    this.app.get('/xrdp', (req, res) => {
+      let port = req.query.port;
+      let url = 'rdp://' + this.proxyBaseHost + ':' + port;
+      res.send(
+        htmldeco(
+          'Connect with your RDP client',
+          'host: ' +
+            this.proxyBaseHost +
+            '<br/>port: ' +
+            port +
+            '<br/>URL : <a href="' +
+            url +
+            '">' +
+            url +
+            '</a>',
+        ),
+      );
+    });
+
     this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
       let path = req.query.redirect || '';
