@@ -57,6 +57,11 @@
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "クリア",
+    "KeepAsIs": "そのまま維持",
+    "UndoChanges": "変更を元に戻す"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}を無効にしたいですか？",
     "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",

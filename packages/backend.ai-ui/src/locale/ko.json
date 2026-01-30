@@ -57,6 +57,11 @@
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "지우기",
+    "KeepAsIs": "그대로 유지",
+    "UndoChanges": "변경 취소"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}를 비활성화 하시겠습니까?",
     "AreYouSureYouWantToDeactivateSome": "{{count}}개의 아티팩트를 비활성화 하시겠습니까?",
