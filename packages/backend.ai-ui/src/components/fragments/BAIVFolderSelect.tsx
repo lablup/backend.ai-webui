@@ -14,6 +14,7 @@ import _ from 'lodash';
 import {
   useDeferredValue,
   useImperativeHandle,
+  useOptimistic,
   useRef,
   useState,
   useTransition,
@@ -70,6 +71,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   );
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>();
+  const [optimisticSearchStr, setOptimisticSearchStr] =
+    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const mergedFilter = mergeFilterValues([
     excludeDeleted ? excludeDeletedStatusFilter : null,
@@ -241,11 +244,12 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       }
       {...selectProps}
       searchAction={async (value) => {
-        setSearchStr(value);
+        setOptimisticSearchStr(value);
         await selectProps.searchAction?.(value);
+        setSearchStr(value);
       }}
       showSearch={{
-        searchValue: searchStr,
+        searchValue: optimisticSearchStr,
         autoClearSearchValue: true,
         filterOption: false,
         ...(_.isObject(selectProps.showSearch)
