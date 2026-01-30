@@ -370,7 +370,6 @@ const SessionLauncherPage = () => {
         .catch(() => {})
         .finally(() => setFinalStepLastValidateTime());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, form, setFinalStepLastValidateTime, steps.length]);
 
   useEffect(() => {

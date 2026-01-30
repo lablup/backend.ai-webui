@@ -18,7 +18,7 @@ const TOTPActivateModalWithToken = () => {
   };
   try {
     parsedValue = JSON.parse(value || '');
-  } catch (error) {
+  } catch {
     parsedValue = {
       open: false,
       totp_registration_token: '',
