@@ -45,13 +45,28 @@ export interface BAIAlertProps extends AlertProps {
 
 ## Step 2: Determine Story Category
 
-| Component Type | Title Pattern |
-|----------------|---------------|
-| General UI Component | `Components/[Name]` |
-| Input Component | `Components/Input/[Name]` |
-| Layout Component | `Layout/[Name]` |
-| Table Sub-component | `Components/BAITable/[Name]` |
-| Relay Fragment Component | `Fragments/[Name]` |
+Check existing story files' `title` values to determine the correct category. Use the same category as similar components.
+
+| Category | Components | Title Pattern |
+|----------|------------|---------------|
+| Alert | BAIAlert, BAIAlertIconWithTooltip | `Alert/[Name]` |
+| Board | BAIBoardItemTitle | `Board/[Name]` |
+| Button | BAIButton, BAIBackButton, BAIFetchKeyButton | `Button/[Name]` |
+| Card | BAICard | `Card/[Name]` |
+| Filter | BAIPropertyFilter, BAIGraphQLPropertyFilter | `Filter/[Name]` |
+| Flex | BAIFlex | `Flex/[Name]` |
+| Input | DynamicUnitInputNumber, DynamicUnitInputNumberWithSlider | `Input/[Name]` |
+| Link | BAILink | `Link/[Name]` |
+| Modal | BAIModal, BAIConfirmModalWithInput | `Modal/[Name]` |
+| Notification | BAINotificationItem | `Notification/[Name]` |
+| Row | BAIRowWrapWithDividers | `Row/[Name]` |
+| Select | BAISelect | `Select/[Name]` |
+| Statistic | BAIStatistic, BAINumberWithUnit, BAIResourceNumberWithIcon, BAIProgressWithLabel | `Statistic/[Name]` |
+| Tag | BAITag, BooleanTag, BAIDoubleTag | `Tag/[Name]` |
+| Text | BAIText, BAITextHighlighter | `Text/[Name]` |
+| Relay Fragment | (components using GraphQL fragments) | `Fragments/[Name]` |
+
+If no existing category fits, create a new one following the `[Category]/[Name]` pattern.
 
 ## Step 3: Generate Story File
 
