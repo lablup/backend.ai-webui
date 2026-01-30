@@ -113,7 +113,8 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -121,7 +122,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -139,7 +140,8 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -147,7 +149,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -165,7 +167,10 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    disabled: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -173,7 +178,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect disabled style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -191,7 +196,10 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -199,7 +207,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect allowClear style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -216,7 +224,10 @@ export const WithCustomPlaceholder: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Choose a resource policy...',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -224,10 +235,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect
-        placeholder="Choose a resource policy..."
-        style={{ width: '300px' }}
-      />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -245,7 +253,10 @@ export const ManyPolicies: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -253,7 +264,7 @@ export const ManyPolicies: Story = {
         }),
       }}
     >
-      <BAIProjectResourcePolicySelect allowClear style={{ width: '300px' }} />
+      <BAIProjectResourcePolicySelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };

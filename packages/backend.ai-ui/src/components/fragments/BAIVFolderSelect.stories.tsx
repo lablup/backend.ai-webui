@@ -1,6 +1,33 @@
-import RelayResolver from '../../tests/RelayResolver';
+import { RelayResolverProps } from '../../tests/RelayResolver';
 import BAIVFolderSelect from './BAIVFolderSelect';
 import { Meta, StoryObj } from '@storybook/react-vite';
+import { Suspense } from 'react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+
+/**
+ * BAIVFolderSelect uses dual GraphQL queries (ValueQuery + PaginatedQuery)
+ * and re-fetches on selection. The shared RelayResolver only queues 1 resolver,
+ * which is insufficient. This dedicated resolver queues enough resolvers
+ * to handle multiple operations.
+ */
+const VFolderRelayResolver = ({
+  children,
+  mockResolvers = {},
+}: RelayResolverProps) => {
+  const environment = createMockEnvironment();
+  for (let i = 0; i < 20; i++) {
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, mockResolvers),
+    );
+  }
+
+  return (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback="Loading...">{children}</Suspense>
+    </RelayEnvironmentProvider>
+  );
+};
 
 const sampleVFolders = [
   {
@@ -276,8 +303,9 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
-    <RelayResolver
+  args: {},
+  render: (args) => (
+    <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
           vfolder_nodes: {
@@ -287,10 +315,8 @@ export const Default: Story = {
         }),
       }}
     >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect />
-      </div>
-    </RelayResolver>
+      <BAIVFolderSelect {...args} style={{ width: '400px' }} />
+    </VFolderRelayResolver>
   ),
 };
 
@@ -307,8 +333,9 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
-    <RelayResolver
+  args: {},
+  render: (args) => (
+    <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
           vfolder_nodes: {
@@ -318,103 +345,8 @@ export const Empty: Story = {
         }),
       }}
     >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Disabled state of the select.
- */
-export const Disabled: Story = {
-  name: 'DisabledState',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Shows the component in a disabled state where users cannot interact with it.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 5,
-            edges: sampleVFolders,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect disabled />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with clear button enabled.
- */
-export const WithClearButton: Story = {
-  name: 'ClearButton',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Select with allowClear enabled, allowing users to clear their selection.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 5,
-            edges: sampleVFolders,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect allowClear />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with custom placeholder text.
- */
-export const WithCustomPlaceholder: Story = {
-  name: 'CustomPlaceholder',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates overriding the default internationalized placeholder.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 5,
-            edges: sampleVFolders,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect placeholder="Choose a virtual folder..." />
-      </div>
-    </RelayResolver>
+      <BAIVFolderSelect {...args} style={{ width: '400px' }} />
+    </VFolderRelayResolver>
   ),
 };
 
@@ -431,8 +363,11 @@ export const ManyVFolders: Story = {
       },
     },
   },
-  render: () => (
-    <RelayResolver
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
+    <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
           vfolder_nodes: {
@@ -442,41 +377,8 @@ export const ManyVFolders: Story = {
         }),
       }}
     >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect allowClear />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with search functionality enabled.
- */
-export const WithSearch: Story = {
-  name: 'SearchEnabled',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Shows built-in search functionality. Type to filter vfolders by name. Search includes debounced loading state.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 5,
-            edges: sampleVFolders,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect placeholder="Search folders..." allowClear />
-      </div>
-    </RelayResolver>
+      <BAIVFolderSelect {...args} style={{ width: '400px' }} />
+    </VFolderRelayResolver>
   ),
 };
 
@@ -493,8 +395,11 @@ export const WithClickableNames: Story = {
       },
     },
   },
-  render: () => (
-    <RelayResolver
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
+    <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
           vfolder_nodes: {
@@ -504,13 +409,12 @@ export const WithClickableNames: Story = {
         }),
       }}
     >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect
-          onClickVFolder={(id: string) => alert(`Clicked vfolder: ${id}`)}
-          allowClear
-        />
-      </div>
-    </RelayResolver>
+      <BAIVFolderSelect
+        {...args}
+        onClickVFolder={(id: string) => alert(`Clicked vfolder: ${id}`)}
+        style={{ width: '400px' }}
+      />
+    </VFolderRelayResolver>
   ),
 };
 
@@ -527,8 +431,12 @@ export const WithRowId: Story = {
       },
     },
   },
-  render: () => (
-    <RelayResolver
+  args: {
+    valuePropName: 'row_id' as const,
+    allowClear: true,
+  },
+  render: (args) => (
+    <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
           vfolder_nodes: {
@@ -538,75 +446,7 @@ export const WithRowId: Story = {
         }),
       }}
     >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect valuePropName="row_id" allowClear />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with project scoping enabled.
- */
-export const WithProjectScoping: Story = {
-  name: 'ProjectScoped',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates vfolder selection scoped to a specific project. Only vfolders belonging to the specified project are shown.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 3,
-            edges: sampleVFolders.slice(0, 3),
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect
-          currentProjectId="project-abc123"
-          placeholder="Select folder in project..."
-          allowClear
-        />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with deleted vfolders excluded.
- */
-export const ExcludeDeleted: Story = {
-  name: 'ExcludeDeletedVFolders',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates automatic filtering of deleted or deleting vfolders using the excludeDeleted prop. Only active vfolders are shown.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          vfolder_nodes: {
-            count: 5,
-            edges: sampleVFolders,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '400px' }}>
-        <BAIVFolderSelect excludeDeleted allowClear />
-      </div>
-    </RelayResolver>
+      <BAIVFolderSelect {...args} style={{ width: '400px' }} />
+    </VFolderRelayResolver>
   ),
 };

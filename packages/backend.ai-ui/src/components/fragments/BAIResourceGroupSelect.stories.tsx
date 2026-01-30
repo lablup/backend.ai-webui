@@ -127,7 +127,8 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -135,9 +136,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -154,7 +153,8 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -162,9 +162,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -182,7 +180,8 @@ export const WithDuplicates: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -190,9 +189,7 @@ export const WithDuplicates: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -210,7 +207,10 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    disabled: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -218,9 +218,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect disabled />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -238,7 +236,10 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -246,9 +247,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect allowClear />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -266,7 +265,10 @@ export const WithCustomPlaceholder: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Choose a resource group...',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -274,9 +276,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect placeholder="Choose a resource group..." />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -294,7 +294,10 @@ export const ManyResourceGroups: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -302,9 +305,7 @@ export const ManyResourceGroups: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIResourceGroupSelect allowClear />
-      </div>
+      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
