@@ -1,4 +1,3 @@
-import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
   KeypairResourcePolicyListQuery,
@@ -9,12 +8,10 @@ import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
-  InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -31,6 +28,7 @@ import {
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -60,10 +58,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<string>();
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
-  const [currentResourcePolicy, setCurrentResourcePolicy] =
-    useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
-  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
-    useTransition();
 
   const { keypair_resource_policies } =
     useLazyLoadQuery<KeypairResourcePolicyListQuery>(
@@ -77,10 +71,11 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_containers_per_session
             idle_timeout
             allowed_vfolder_hosts
-            max_pending_session_count @since(version: "24.03.4")
-            max_concurrent_sftp_sessions @since(version: "24.03.4")
+            created_at
+            max_pending_session_count
+            max_concurrent_sftp_sessions
+            default_for_unspecified
             ...KeypairResourcePolicySettingModalFragment
-            ...KeypairResourcePolicyInfoModalFragment
             ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
           }
         }
@@ -114,128 +109,11 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       sorter: (a, b) => localeCompare(a?.name, b?.name),
     },
     {
-      title: t('resourcePolicy.ResourcePolicy'),
-      dataIndex: 'total_resource_slots',
-      key: 'total_resource_slots',
-      render: (_text, row) => (
-        <BAIFlex gap={'xxs'}>
-          {!_.isEmpty(JSON.parse(row?.total_resource_slots || '{}'))
-            ? _.map(
-                JSON.parse(row?.total_resource_slots || '{}'),
-                (value, type) => {
-                  return (
-                    <BAIResourceNumberWithIcon
-                      key={type}
-                      // @ts-ignore
-                      type={type}
-                      value={_.toString(value)}
-                    />
-                  );
-                },
-              )
-            : '-'}
-        </BAIFlex>
-      ),
-    },
-    {
-      title: t('resourcePolicy.Concurrency'),
-      dataIndex: 'max_concurrent_sessions',
-      key: 'max_concurrent_sessions',
-      sorter: (a, b) =>
-        a?.max_concurrent_sessions && b?.max_concurrent_sessions
-          ? a.max_concurrent_sessions - b.max_concurrent_sessions
-          : 1,
-      render: (text) => (text ? text : '∞'),
-    },
-    {
-      title: t('resourcePolicy.ClusterSize'),
-      dataIndex: 'max_containers_per_session',
-      key: 'max_containers_per_session',
-      sorter: (a, b) =>
-        a?.max_containers_per_session && b?.max_containers_per_session
-          ? a.max_containers_per_session - b.max_containers_per_session
-          : 1,
-      render: (text) => (text === SIGNED_32BIT_MAX_INT ? '∞' : text),
-    },
-    {
-      title: t('resourcePolicy.IdleTimeout'),
-      dataIndex: 'idle_timeout',
-      key: 'idle_timeout',
-      sorter: (a, b) =>
-        a?.idle_timeout && b?.idle_timeout
-          ? a.idle_timeout - b.idle_timeout
-          : 1,
-      render: (text) => (text ? text : '∞'),
-    },
-    {
-      title: t('session.MaxSessionLifetime'),
-      dataIndex: 'max_session_lifetime',
-      key: 'max_session_lifetime',
-      sorter: (a, b) =>
-        numberSorterWithInfinityValue(
-          a?.max_session_lifetime,
-          b?.max_session_lifetime,
-          0,
-        ),
-      render: (text) => (text ? text : '∞'),
-    },
-    {
-      title: t('resourcePolicy.StorageNodes'),
-      dataIndex: 'allowed_vfolder_hosts',
-      key: 'allowed_vfolder_hosts',
-      render: (text, row) => {
-        return (
-          <>
-            {text && row ? (
-              <BAIAllowedVfolderHostsWithPermission
-                allowedHostPermissionFrgmtFromKeyPair={row}
-              />
-            ) : (
-              '-'
-            )}
-          </>
-        );
-      },
-    },
-    {
-      title: t('resourcePolicy.MaxPendingSessionCount'),
-      dataIndex: 'max_pending_session_count',
-      key: 'max_pending_session_count',
-      sorter: (a, b) =>
-        numberSorterWithInfinityValue(
-          a?.max_pending_session_count,
-          b?.max_pending_session_count,
-          0,
-        ),
-      render: (text) => (text ? text : '∞'),
-    },
-    {
-      title: t('resourcePolicy.MaxConcurrentSFTPSessions'),
-      dataIndex: 'max_concurrent_sftp_sessions',
-      key: 'max_concurrent_sftp_sessions',
-      sorter: (a, b) =>
-        numberSorterWithInfinityValue(
-          a?.max_concurrent_sftp_sessions,
-          b?.max_concurrent_sftp_sessions,
-          0,
-        ),
-      render: (text) => (text ? text : '∞'),
-    },
-    {
       title: t('general.Control'),
       key: 'control',
-      fixed: 'right',
+      fixed: 'left',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<InfoCircleOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              startInfoModalOpenTransition(() => {
-                setCurrentResourcePolicy(row || null);
-              });
-            }}
-          />
           <Button
             type="text"
             icon={<SettingOutlined />}
@@ -330,6 +208,132 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           />
         </BAIFlex>
       ),
+    },
+    {
+      title: t('resourcePolicy.DefaultForUnspecified'),
+      dataIndex: 'default_for_unspecified',
+      key: 'default_for_unspecified',
+      sorter: (a, b) =>
+        localeCompare(a?.default_for_unspecified, b?.default_for_unspecified),
+    },
+    {
+      title: t('resourcePolicy.ResourcePolicy'),
+      dataIndex: 'total_resource_slots',
+      key: 'total_resource_slots',
+      render: (_text, row) => (
+        <BAIFlex gap={'xxs'}>
+          {!_.isEmpty(JSON.parse(row?.total_resource_slots || '{}'))
+            ? _.map(
+                JSON.parse(row?.total_resource_slots || '{}'),
+                (value, type) => {
+                  return (
+                    <BAIResourceNumberWithIcon
+                      key={type}
+                      // @ts-ignore
+                      type={type}
+                      value={_.toString(value)}
+                    />
+                  );
+                },
+              )
+            : '-'}
+        </BAIFlex>
+      ),
+    },
+    {
+      title: t('resourcePolicy.StorageNodes'),
+      dataIndex: 'allowed_vfolder_hosts',
+      key: 'allowed_vfolder_hosts',
+      render: (text, row) => {
+        return (
+          <>
+            {text && row ? (
+              <BAIAllowedVfolderHostsWithPermission
+                allowedHostPermissionFrgmtFromKeyPair={row}
+              />
+            ) : (
+              '-'
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: t('resourcePolicy.Concurrency'),
+      dataIndex: 'max_concurrent_sessions',
+      key: 'max_concurrent_sessions',
+      sorter: (a, b) =>
+        a?.max_concurrent_sessions && b?.max_concurrent_sessions
+          ? a.max_concurrent_sessions - b.max_concurrent_sessions
+          : 1,
+      render: (text) => (text ? text : '∞'),
+    },
+    {
+      title: t('resourcePolicy.ClusterSize'),
+      dataIndex: 'max_containers_per_session',
+      key: 'max_containers_per_session',
+      sorter: (a, b) =>
+        a?.max_containers_per_session && b?.max_containers_per_session
+          ? a.max_containers_per_session - b.max_containers_per_session
+          : 1,
+      render: (text) => (text === SIGNED_32BIT_MAX_INT ? '∞' : text),
+    },
+    {
+      title: t('resourcePolicy.IdleTimeout'),
+      dataIndex: 'idle_timeout',
+      key: 'idle_timeout',
+      sorter: (a, b) =>
+        a?.idle_timeout && b?.idle_timeout
+          ? a.idle_timeout - b.idle_timeout
+          : 1,
+      render: (text) => (text ? text : '∞'),
+    },
+    {
+      title: t('session.MaxSessionLifetime'),
+      dataIndex: 'max_session_lifetime',
+      key: 'max_session_lifetime',
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_session_lifetime,
+          b?.max_session_lifetime,
+          0,
+        ),
+      render: (text) => (text ? text : '∞'),
+    },
+    {
+      title: t('resourcePolicy.MaxPendingSessionCount'),
+      dataIndex: 'max_pending_session_count',
+      key: 'max_pending_session_count',
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_pending_session_count,
+          b?.max_pending_session_count,
+          0,
+        ),
+      render: (text) => (text ? text : '∞'),
+    },
+    {
+      title: t('resourcePolicy.MaxConcurrentSFTPSessions'),
+      dataIndex: 'max_concurrent_sftp_sessions',
+      key: 'max_concurrent_sftp_sessions',
+      sorter: (a, b) =>
+        numberSorterWithInfinityValue(
+          a?.max_concurrent_sftp_sessions,
+          b?.max_concurrent_sftp_sessions,
+          0,
+        ),
+      render: (text) => (text ? text : '∞'),
+    },
+    {
+      title: t('resourcePolicy.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (value) => <span>{dayjs(value).format('lll')}</span>,
+      sorter: (a, b) => {
+        const date1 = dayjs(a?.created_at);
+        const date2 = dayjs(b?.created_at);
+        return date1.diff(date2);
+      },
     },
   ]);
 
@@ -479,14 +483,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           }}
         />
       </Suspense>
-      <KeypairResourcePolicyInfoModal
-        open={!!currentResourcePolicy || isPendingInfoModalOpen}
-        onRequestClose={() => {
-          setCurrentResourcePolicy(null);
-        }}
-        loading={isPendingInfoModalOpen}
-        resourcePolicyFrgmt={currentResourcePolicy || null}
-      />
     </BAIFlex>
   );
 };
