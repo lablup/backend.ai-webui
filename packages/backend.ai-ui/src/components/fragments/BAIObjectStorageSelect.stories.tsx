@@ -137,7 +137,8 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -148,9 +149,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -168,7 +167,8 @@ export const Empty: Story = {
       },
     },
   },
-  render: () => (
+  args: {},
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -179,9 +179,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -199,7 +197,10 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    disabled: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -210,9 +211,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect disabled />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -230,7 +229,10 @@ export const WithClearButton: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -241,9 +243,7 @@ export const WithClearButton: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect allowClear />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -261,7 +261,10 @@ export const WithCustomPlaceholder: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    placeholder: 'Choose storage system...',
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -272,9 +275,7 @@ export const WithCustomPlaceholder: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect placeholder="Choose storage system..." />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };
@@ -292,7 +293,10 @@ export const ManyStorages: Story = {
       },
     },
   },
-  render: () => (
+  args: {
+    allowClear: true,
+  },
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         Query: () => ({
@@ -303,40 +307,7 @@ export const ManyStorages: Story = {
         }),
       }}
     >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect allowClear />
-      </div>
-    </RelayResolver>
-  ),
-};
-
-/**
- * Select with search functionality enabled.
- */
-export const WithSearch: Story = {
-  name: 'SearchEnabled',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Shows built-in search functionality. Type to filter storages by name. Search includes debounced loading state.',
-      },
-    },
-  },
-  render: () => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          objectStorages: {
-            count: 5,
-            edges: sampleObjectStorages,
-          },
-        }),
-      }}
-    >
-      <div style={{ width: '300px' }}>
-        <BAIObjectStorageSelect placeholder="Search storages..." allowClear />
-      </div>
+      <BAIObjectStorageSelect {...args} style={{ width: '300px' }} />
     </RelayResolver>
   ),
 };

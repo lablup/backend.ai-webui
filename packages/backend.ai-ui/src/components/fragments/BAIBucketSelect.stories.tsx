@@ -344,37 +344,3 @@ export const ManyBuckets: Story = {
     </RelayResolver>
   ),
 };
-
-/**
- * Select with search functionality enabled.
- */
-export const WithSearch: Story = {
-  name: 'SearchEnabled',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Shows built-in search functionality. Type to filter buckets by namespace name. Search includes debounced loading state.',
-      },
-    },
-  },
-  args: {
-    objectStorageId: 'storage-1',
-    placeholder: 'Search buckets...',
-    allowClear: true,
-  },
-  render: (args) => (
-    <RelayResolver
-      mockResolvers={{
-        ObjectStorage: () => ({
-          namespaces: {
-            count: 5,
-            edges: sampleBuckets,
-          },
-        }),
-      }}
-    >
-      <BAIBucketSelect {...args} style={{ width: '300px' }} />
-    </RelayResolver>
-  ),
-};
