@@ -413,13 +413,13 @@ const ReservoirPage: React.FC = () => {
           </BAIFlex>
           <BAIArtifactTable
             artifactFragment={filterOutEmpty(
-              artifacts.edges.map((e) => e?.node) ?? [],
+              artifacts?.edges.map((e) => e?.node) ?? [],
             )}
             onClickPull={(artifactId: string, revisionId: string) => {
-              artifacts.edges.forEach((artifact) => {
+              artifacts?.edges.forEach((artifact) => {
                 if (artifact.node.id === artifactId) {
                   setSelectedArtifact(artifact.node);
-                  artifact.node.revisions.edges.forEach((revision) => {
+                  artifact.node.revisions?.edges.forEach((revision) => {
                     if (revision.node.id === revisionId) {
                       setSelectedRevision([revision.node]);
                       return;
@@ -430,7 +430,7 @@ const ReservoirPage: React.FC = () => {
               });
             }}
             onClickDelete={(artifactId: string) => {
-              artifacts.edges.forEach((edge) => {
+              artifacts?.edges.forEach((edge) => {
                 if (edge.node.id === artifactId) {
                   setSelectedArtifacts([edge.node]);
                   return;
@@ -438,7 +438,7 @@ const ReservoirPage: React.FC = () => {
               });
             }}
             onClickRestore={(artifactId: string) => {
-              artifacts.edges.forEach((edge) => {
+              artifacts?.edges.forEach((edge) => {
                 if (edge.node.id === artifactId) {
                   setSelectedRestoreArtifacts([edge.node]);
                   return;
@@ -448,12 +448,12 @@ const ReservoirPage: React.FC = () => {
             rowSelection={{
               type: 'checkbox',
               onChange: (keys) => {
-                const artifactIdList = artifacts.edges.map((e) => e.node.id);
+                const artifactIdList = artifacts?.edges.map((e) => e.node.id);
                 setSelectedArtifactIdList((prev) => {
                   const _filtered = prev.filter(
                     (v) => !artifactIdList.includes(v.id),
                   );
-                  const _selected = artifacts.edges
+                  const _selected = artifacts?.edges
                     .filter((e) => keys.includes(e.node.id))
                     .map((arr) => ({
                       id: arr.node.id,
@@ -468,7 +468,7 @@ const ReservoirPage: React.FC = () => {
             pagination={{
               pageSize: tablePaginationOption.pageSize,
               current: tablePaginationOption.current,
-              total: artifacts.count,
+              total: artifacts?.count,
               onChange: (current, pageSize) => {
                 if (_.isNumber(current) && _.isNumber(pageSize)) {
                   setTablePaginationOption({ current, pageSize });

@@ -367,10 +367,10 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       `,
       {
         modelStoreScopeId: `domain:${currentDomain}`,
-        modelStoreScopeFilter: `usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${folderName ? ` & name like "%${folderName}%"` : ''}`,
+        modelStoreScopeFilter: `usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${folderName ? ` & name like "${folderName}%"` : ''}`,
         permission: 'read_attribute',
         currentUserScopeId: `user:${currentUser.uuid}`,
-        currentUserScopeFilter: `ownership_type == "user" & usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${folderName ? ` & name like "%${folderName}%"` : ''}`,
+        currentUserScopeFilter: `ownership_type == "user" & usage_mode == "model" & status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"${folderName ? ` & name like "${folderName}%"` : ''}`,
       },
       {
         fetchPolicy:
