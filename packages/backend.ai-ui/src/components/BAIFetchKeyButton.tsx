@@ -2,7 +2,7 @@ import { omitNullAndUndefinedFields } from '../helper';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Button, ButtonProps, Tooltip } from 'antd';
+import { Button, Tooltip, type ButtonProps } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useEffect, useLayoutEffect, useState } from 'react';

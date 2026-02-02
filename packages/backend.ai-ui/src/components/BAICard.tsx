@@ -1,8 +1,9 @@
 import BAIFlex from './BAIFlex';
 import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
-import { Button, Card, CardProps, theme } from 'antd';
+import { Button, Card, theme, type CardProps } from 'antd';
 import _ from 'lodash';
-import React, { cloneElement, isValidElement, ReactNode } from 'react';
+import React, { cloneElement, isValidElement } from 'react';
+import type { ReactNode } from 'react';
 
 /**
  * Props interface for BAICard component.

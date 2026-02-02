@@ -14,7 +14,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
 import { createStyles } from 'antd-style';
-import { RcFile } from 'antd/es/upload';
+import type { RcFile } from 'antd/es/upload';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

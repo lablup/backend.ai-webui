@@ -3,9 +3,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   AutoComplete,
-  AutoCompleteProps,
   Button,
-  GetRef,
   Input,
   Select,
   Space,
@@ -13,8 +11,10 @@ import {
   Tooltip,
   theme,
 } from 'antd';
+import type { AutoCompleteProps, GetRef } from 'antd';
 import _ from 'lodash';
-import React, { ComponentProps, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // GraphQL Filter Types

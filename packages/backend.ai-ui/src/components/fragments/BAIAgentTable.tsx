@@ -21,7 +21,7 @@ import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import { ResourceSlotName, useConnectedBAIClient } from '../provider';
 import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { theme, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';

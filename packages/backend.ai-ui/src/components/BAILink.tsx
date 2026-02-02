@@ -1,7 +1,7 @@
 import { theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router-dom';
 
 const useStyles = createStyles(({ css, token }) => ({
   hover: css`

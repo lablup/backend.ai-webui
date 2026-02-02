@@ -1,7 +1,7 @@
 import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip, Progress } from 'antd';
 import _ from 'lodash';
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface BAIStatisticProps {

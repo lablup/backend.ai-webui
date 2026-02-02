@@ -1,4 +1,4 @@
-import { Alert, AlertProps } from 'antd';
+import { Alert, type AlertProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';

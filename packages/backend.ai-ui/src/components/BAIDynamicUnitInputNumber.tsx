@@ -1,6 +1,12 @@
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from 'ahooks';
-import { InputNumber, InputNumberProps, Select, Space, Typography } from 'antd';
+import {
+  InputNumber,
+  Select,
+  Space,
+  Typography,
+  type InputNumberProps,
+} from 'antd';
 import _ from 'lodash';
 import React, { RefObject, useEffect, useRef } from 'react';
 

@@ -12,17 +12,17 @@ import {
   Button,
   Pagination,
   Table,
-  TablePaginationConfig,
-  TableProps,
+  type TablePaginationConfig,
+  type TableProps,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { AnyObject, GetProps } from 'antd/es/_util/type';
-import { ColumnType, ColumnsType } from 'antd/es/table';
+import type { AnyObject, GetProps } from 'antd/es/_util/type';
+import type { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Resizable, ResizeCallbackData } from 'react-resizable';
+import { Resizable, type ResizeCallbackData } from 'react-resizable';
 
 /**
  * Configuration interface for BAITable pagination

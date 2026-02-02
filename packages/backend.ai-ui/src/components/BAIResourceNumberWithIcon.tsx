@@ -13,7 +13,7 @@ import { ResourceSlotName, useBAIDeviceMetaData } from './provider';
 import { theme, Tooltip } from 'antd';
 import _ from 'lodash';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export type ResourceOpts = {
   shmem?: number;

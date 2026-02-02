@@ -1,6 +1,6 @@
 import { BAIClientContext, BAIAnonymousClientContext } from './context';
 import type { BAIClient } from './types';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export interface BAIClientProviderProps {
   clientPromise: Promise<BAIClient>;

@@ -1,4 +1,4 @@
-import { theme, Tooltip, TooltipProps } from 'antd';
+import { theme, Tooltip, type TooltipProps } from 'antd';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 

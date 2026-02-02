@@ -1,7 +1,7 @@
 import { BAIAdminResourceGroupSelectStoriesQuery } from '../../__generated__/BAIAdminResourceGroupSelectStoriesQuery.graphql';
 import RelayResolver from '../../tests/RelayResolver';
 import BAIAdminResourceGroupSelect from './BAIAdminResourceGroupSelect';
-import { Meta, StoryObj } from '@storybook/react-vite/*';
+import type { Meta, StoryObj } from '@storybook/react-vite/*';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Story = StoryObj<typeof BAIAdminResourceGroupSelect>;

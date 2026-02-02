@@ -1,6 +1,6 @@
 import { BAIDeviceMetaDataContext } from './context';
 import { DeviceMetaData } from './types';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export interface BAIMetaDataProviderProps {
   deviceMetaData?: DeviceMetaData;

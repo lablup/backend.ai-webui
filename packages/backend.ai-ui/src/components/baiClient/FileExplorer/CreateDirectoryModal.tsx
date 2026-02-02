@@ -1,7 +1,14 @@
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd';
+import {
+  App,
+  Form,
+  Input,
+  Modal,
+  type FormInstance,
+  type ModalProps,
+} from 'antd';
 import React, { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -5,7 +5,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, GetProps, Input, theme, Typography } from 'antd';
+import { App, Form, Input, theme, Typography, type GetProps } from 'antd';
 import { createStyles } from 'antd-style';
 import _ from 'lodash';
 import { CornerDownLeftIcon } from 'lucide-react';

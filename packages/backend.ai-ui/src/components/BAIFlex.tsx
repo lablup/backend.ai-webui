@@ -1,5 +1,5 @@
 import { theme } from 'antd';
-import React, { CSSProperties, PropsWithChildren } from 'react';
+import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
