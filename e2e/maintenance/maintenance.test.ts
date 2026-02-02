@@ -12,39 +12,43 @@ test.beforeEach(async ({ page, request }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test.describe('test maintenance page', () => {
-  test.describe('Recalculate Usage', () => {
-    test('click the Recalculate Usage button', async ({ page }) => {
-      await page.getByRole('button', { name: 'Recalculate Usage' }).click();
+test.describe(
+  'test maintenance page',
+  { tag: ['@regression', '@maintenance', '@functional'] },
+  () => {
+    test.describe('Recalculate Usage', () => {
+      test('click the Recalculate Usage button', async ({ page }) => {
+        await page.getByRole('button', { name: 'Recalculate Usage' }).click();
 
-      await expect(getNotificationMessageBox(page)).toContainText(
-        'Recalculate Usage',
-      );
-      // skip the Recalculating message because it's too fast
-      await expect(getNotificationDescriptionBox(page)).toContainText(
-        'Recalculation finished',
-      );
+        await expect(getNotificationMessageBox(page)).toContainText(
+          'Recalculate Usage',
+        );
+        // skip the Recalculating message because it's too fast
+        await expect(getNotificationDescriptionBox(page)).toContainText(
+          'Recalculation finished',
+        );
+      });
     });
-  });
 
-  test.describe('Rescan Images', () => {
-    test.setTimeout(90 * 1000);
-    test('click the Rescan Images button', async ({ page }) => {
-      await page.getByRole('button', { name: 'Rescan Images' }).click();
+    test.describe('Rescan Images', () => {
+      test.setTimeout(90 * 1000);
+      test('click the Rescan Images button', async ({ page }) => {
+        await page.getByRole('button', { name: 'Rescan Images' }).click();
 
-      await expect(getNotificationMessageBox(page)).toContainText(
-        'Rescan Images',
-      );
+        await expect(getNotificationMessageBox(page)).toContainText(
+          'Rescan Images',
+        );
 
-      await expect(getNotificationDescriptionBox(page)).toContainText(
-        'Rescanning...',
-      );
-      await expect(getNotificationDescriptionBox(page)).toContainText(
-        'Rescanning image finished.',
-        {
-          timeout: 60 * 1000,
-        },
-      );
+        await expect(getNotificationDescriptionBox(page)).toContainText(
+          'Rescanning...',
+        );
+        await expect(getNotificationDescriptionBox(page)).toContainText(
+          'Rescanning image finished.',
+          {
+            timeout: 60 * 1000,
+          },
+        );
+      });
     });
-  });
-});
+  },
+);

@@ -14,36 +14,43 @@ test.beforeEach(async ({ page, request }) => {
   await page.getByRole('tab', { name: 'Agent' }).click();
 });
 
-test.describe('Agent list', () => {
-  let agentListTable: Locator;
+test.describe(
+  'Agent list',
+  { tag: ['@regression', '@agent', '@functional'] },
+  () => {
+    let agentListTable: Locator;
 
-  test.beforeEach(async ({ page }) => {
-    const firstCard = await page
-      .locator('.ant-layout-content .ant-card')
-      .first();
-    agentListTable = await firstCard.locator('.ant-table');
-  });
+    test.beforeEach(async ({ page }) => {
+      const firstCard = await page
+        .locator('.ant-layout-content .ant-card')
+        .first();
+      agentListTable = await firstCard.locator('.ant-table');
+    });
 
-  test('should have at least one connected agent', async ({ page }) => {
-    const firstCard = await page
-      .locator('.ant-layout-content .ant-card')
-      .first();
-    await checkActiveTab(firstCard.locator('.ant-tabs'), 'Agent');
+    test('should have at least one connected agent', async ({ page }) => {
+      const firstCard = await page
+        .locator('.ant-layout-content .ant-card')
+        .first();
+      await checkActiveTab(firstCard.locator('.ant-tabs'), 'Agent');
 
-    await page.getByText('Connected', { exact: true }).click();
-    await expect(page.getByRole('main')).toContainText('Connected');
+      await page.getByText('Connected', { exact: true }).click();
+      await expect(page.getByRole('main')).toContainText('Connected');
 
-    const rows = await agentListTable.locator('.ant-table-row');
-    const rowCount = await rows.count();
-    expect(rowCount).toBeGreaterThan(0);
-    const firstRow = rows.first();
+      const rows = await agentListTable.locator('.ant-table-row');
+      const rowCount = await rows.count();
+      expect(rowCount).toBeGreaterThan(0);
+      const firstRow = rows.first();
 
-    const columnIndex = await findColumnIndex(agentListTable, 'ID / Endpoint');
-    const specificColumn = await firstRow
-      .locator('.ant-table-cell')
-      .nth(columnIndex);
-    const columnText = await specificColumn.textContent();
-    const firstAgentId = columnText?.split('tcp://')[0];
-    expect(firstAgentId).toBeTruthy();
-  });
-});
+      const columnIndex = await findColumnIndex(
+        agentListTable,
+        'ID / Endpoint',
+      );
+      const specificColumn = await firstRow
+        .locator('.ant-table-cell')
+        .nth(columnIndex);
+      const columnText = await specificColumn.textContent();
+      const firstAgentId = columnText?.split('tcp://')[0];
+      expect(firstAgentId).toBeTruthy();
+    });
+  },
+);
