@@ -1,8 +1,8 @@
-import { loginAsAdmin } from './utils/test-util';
+import { loginAsAdmin } from '../utils/test-util';
 import {
   getNotificationDescriptionBox,
   getNotificationMessageBox,
-} from './utils/test-util-antd';
+} from '../utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page, request }) => {

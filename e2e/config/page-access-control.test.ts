@@ -6,7 +6,7 @@ import {
   modifyConfigToml,
   modifyThemeJson,
   webuiEndpoint,
-} from './utils/test-util';
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(

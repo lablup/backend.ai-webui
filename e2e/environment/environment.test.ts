@@ -1,5 +1,5 @@
-import { loginAsAdmin, navigateTo } from './utils/test-util';
-import { findColumnIndex } from './utils/test-util-antd';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { findColumnIndex } from '../utils/test-util-antd';
 import { expect, test } from '@playwright/test';
 
 test.describe(

@@ -8,7 +8,7 @@ import {
   deleteForeverAndVerifyFromTrash,
   modifyConfigToml,
   webuiEndpoint,
-} from './utils/test-util';
+} from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
 const openFolderExplorer = async (

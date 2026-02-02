@@ -5,7 +5,7 @@ import {
   createVFolderAndVerify,
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
-} from './utils/test-util';
+} from '../utils/test-util';
 import { test } from '@playwright/test';
 
 test.describe.serial(

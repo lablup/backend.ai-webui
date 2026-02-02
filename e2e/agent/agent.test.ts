@@ -1,5 +1,5 @@
-import { loginAsAdmin } from './utils/test-util';
-import { checkActiveTab, findColumnIndex } from './utils/test-util-antd';
+import { loginAsAdmin } from '../utils/test-util';
+import { checkActiveTab, findColumnIndex } from '../utils/test-util-antd';
 import { test, expect, Locator } from '@playwright/test';
 
 test.beforeEach(async ({ page, request }) => {
