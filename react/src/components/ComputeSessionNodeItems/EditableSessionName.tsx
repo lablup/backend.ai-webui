@@ -181,11 +181,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
             flex: 1,
           }}
         >
-          <Form.Item
-            name="sessionName"
-            rules={validationRules}
-            validateDebounce={200}
-          >
+          <Form.Item name="sessionName" rules={validationRules}>
             <Input
               size="large"
               value={optimisticName || ''}

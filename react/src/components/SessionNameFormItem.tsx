@@ -18,7 +18,6 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
     <Form.Item
       label={t('session.launcher.SessionName')}
       name="sessionName"
-      validateDebounce={200}
       // Original rule : /^(?=.{4,64}$)\w[\w.-]*\w$/
       // https://github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/api/session.py#L355-L356
       rules={validationRules}
