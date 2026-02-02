@@ -1,18 +1,19 @@
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
 import { Card, Skeleton } from 'antd';
 import { filterOutEmpty } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'configurations';
 
-const tabParam = withDefault(StringParam, 'configurations');
-
 const ConfigurationsPage = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('configurations'),
+  );
 
   return (
     <Card

@@ -49,6 +49,7 @@ import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import _ from 'lodash';
 import { GlobeIcon } from 'lucide-react';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import React, {
   ReactNode,
   Suspense,
@@ -61,8 +62,6 @@ import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { useDeviceMetaData } from 'src/hooks/backendai';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 export const jotaiStore = createStore();
 dayjs.extend(weekday);
@@ -309,12 +308,10 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                           <StyleProvider container={shadowRoot} cache={cache}>
                             <Suspense fallback="">
                               <BrowserRouter>
-                                <QueryParamProvider
-                                  adapter={ReactRouter6Adapter}
-                                >
+                                <NuqsAdapter>
                                   <RoutingEventHandler />
                                   {children}
-                                </QueryParamProvider>
+                                </NuqsAdapter>
                               </BrowserRouter>
                             </Suspense>
                           </StyleProvider>
@@ -434,7 +431,7 @@ export const DefaultProvidersForReactRoot: React.FC<
               }}
             >
               <BAIMetaDataWrapper>
-                <QueryParamProvider adapter={ReactRouter6Adapter}>
+                <NuqsAdapter>
                   <App {...commonAppProps}>
                     {/* <StyleProvider container={shadowRoot} cache={cache}> */}
                     <Suspense>
@@ -445,7 +442,7 @@ export const DefaultProvidersForReactRoot: React.FC<
                     </Suspense>
                     {/* </StyleProvider> */}
                   </App>
-                </QueryParamProvider>
+                </NuqsAdapter>
               </BAIMetaDataWrapper>
             </BAIConfigProvider>
           </QueryClientProvider>

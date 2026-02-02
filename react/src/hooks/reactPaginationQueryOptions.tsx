@@ -2,21 +2,19 @@
 import { LazyLoadQueryOptions } from '../helper/types';
 import type { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
-import { parseAsInteger, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
 import { useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
   useRelayEnvironment,
 } from 'react-relay';
-import {
-  ArrayParam,
-  NumberParam,
-  ObjectParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 export type SorterInterface = Pick<SorterResult<any>, 'field' | 'order'>;
 
@@ -90,12 +88,17 @@ export const useRelayPaginationQueryOptions = <
 }) => {
   const [isPending, setIsPending] = useState(false);
 
-  const [params, setParams] = useQueryParams({
-    page: NumberParam,
-    pageSize: NumberParam,
-    order: ArrayParam,
-    filter: ObjectParam,
-  });
+  const [params, setParams] = useQueryStates(
+    {
+      page: parseAsInteger,
+      pageSize: parseAsInteger,
+      order: parseAsArrayOf(parseAsString),
+      filter: parseAsJson<F>(),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const page = params.page || defaultVariables.page;
   const pageSize = params.pageSize || defaultVariables.pageSize;
@@ -142,9 +145,9 @@ export const useRelayPaginationQueryOptions = <
           page: newPage,
           pageSize: newPageSize,
           // eslint-disable-next-line
-          order: newOrder as [], // TODO: not use as []
+          order: newOrder as string[], // TODO: not use as []
           // eslint-disable-next-line
-          filter: newFilter as {}, // TODO: not use as {}
+          filter: newFilter as F, // TODO: not use as {}
         });
         setRefreshedQueryOptions((prev) => ({
           ...prev,
@@ -205,12 +208,17 @@ export const useBAIPaginationQueryOptions = ({
     filter?: string;
   }) => any;
 }) => {
-  const [params, setParams] = useQueryParams({
-    page: NumberParam,
-    pageSize: NumberParam,
-    filter: StringParam,
-    order: StringParam,
-  });
+  const [params, setParams] = useQueryStates(
+    {
+      page: parseAsInteger,
+      pageSize: parseAsInteger,
+      filter: parseAsString,
+      order: parseAsString,
+    },
+    {
+      history: 'replace',
+    },
+  );
   const page = params.page || defaultVariables.page;
   const pageSize = params.pageSize || defaultVariables.pageSize;
   const order = params.order || defaultVariables.order;
@@ -246,8 +254,8 @@ export const useBAIPaginationQueryOptions = ({
         setParams({
           page: newPage,
           pageSize: newPageSize,
-          order: newOrder,
-          filter: newFilter,
+          order: newOrder ?? null,
+          filter: newFilter ?? null,
         });
         setRefreshedQueryOptions((prev) => ({
           ...prev,
@@ -340,13 +348,21 @@ export const useBAIPaginationOptionState = (
   }, [pageSize, current]);
 };
 
+/**
+ * @deprecated Use useBAIPaginationOptionStateOnSearchParam instead
+ */
 export const useBAIPaginationOptionStateOnSearchParamLegacy = (
   initialOptions: InitialPaginationOption,
 ): BAIPaginationOptionState => {
-  const [{ pageSize, current }, setOptions] = useQueryParams({
-    current: withDefault(NumberParam, initialOptions.current),
-    pageSize: withDefault(NumberParam, initialOptions.pageSize),
-  });
+  const [{ pageSize, current }, setQueryParams] = useQueryStates(
+    {
+      current: parseAsInteger.withDefault(initialOptions.current),
+      pageSize: parseAsInteger.withDefault(initialOptions.pageSize),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const memoizedOptions = useMemo<{
     baiPaginationOption: BAIPaginationOption;
@@ -376,13 +392,7 @@ export const useBAIPaginationOptionStateOnSearchParamLegacy = (
           current,
         })
       ) {
-        setOptions(
-          (current) => ({
-            ...current,
-            ...pagination,
-          }),
-          'replaceIn',
-        );
+        setQueryParams(pagination);
       }
     },
   };

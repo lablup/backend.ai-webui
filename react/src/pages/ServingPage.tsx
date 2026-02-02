@@ -16,10 +16,10 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const ServingPage: React.FC = () => {
   const { t } = useTranslation();
@@ -28,11 +28,16 @@ const ServingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: StringParam,
-    lifecycleStage: withDefault(StringParam, 'active'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString.withDefault('-created_at'),
+      filter: parseAsString,
+      lifecycleStage: parseAsString.withDefault('active'),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const {
     baiPaginationOption,
@@ -145,7 +150,7 @@ const ServingPage: React.FC = () => {
               <BAIRadioGroup
                 value={queryParams.lifecycleStage}
                 onChange={(e) => {
-                  setQuery({ lifecycleStage: e.target.value }, 'replaceIn');
+                  setQuery({ lifecycleStage: e.target.value });
                   setTablePaginationOption({ current: 1 });
                 }}
                 optionType="button"
@@ -182,7 +187,7 @@ const ServingPage: React.FC = () => {
                 ])}
                 value={queryParams.filter || undefined}
                 onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
+                  setQuery({ filter: value ?? null });
                   setTablePaginationOption({ current: 1 });
                 }}
               />
@@ -205,7 +210,7 @@ const ServingPage: React.FC = () => {
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
               onChangeOrder={(order) => {
-                setQuery({ order }, 'replaceIn');
+                setQuery({ order });
               }}
               onDeleted={() => {
                 updateFetchKey();

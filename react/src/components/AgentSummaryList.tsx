@@ -35,11 +35,11 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']
@@ -69,11 +69,14 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     pageSize: 20,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, undefined),
-    filter: withDefault(StringParam, undefined),
-    status: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString,
+      filter: parseAsString,
+      status: parseAsString.withDefault('ALIVE'),
+    },
+    { history: 'replace' },
+  );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
@@ -382,7 +385,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             value={queryParams.status}
             onChange={(e) => {
               const value = e.target.value;
-              setQuery({ status: value }, 'replaceIn');
+              setQuery({ status: value });
             }}
           />
 
@@ -411,7 +414,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             ]}
             value={queryParams.filter}
             onChange={(value) => {
-              setQuery({ filter: value }, 'replaceIn');
+              setQuery({ filter: value ?? null });
               setTablePaginationOption({ current: 1 });
             }}
           />
@@ -449,7 +452,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           },
         }}
         onChangeOrder={(order) => {
-          setQuery({ order }, 'replaceIn');
+          setQuery({ order: order ?? null });
         }}
         tableSettings={{
           columnOverrides: columnOverrides,

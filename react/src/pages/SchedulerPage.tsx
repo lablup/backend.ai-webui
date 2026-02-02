@@ -1,19 +1,20 @@
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
 import { useWebUINavigate } from 'src/hooks';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'pending-sessions');
 
 interface SchedulerPageProps {}
 
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
   const { t } = useTranslation();
-  const [curTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsString.withDefault('pending-sessions'),
+  );
   const webUINavigate = useWebUINavigate();
 
   return (

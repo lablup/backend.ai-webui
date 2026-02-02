@@ -31,6 +31,7 @@ import {
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -45,12 +46,6 @@ import BAIRadioGroup from 'src/components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from 'src/components/ScanArtifactModelsFromHuggingFaceModal';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import {
-  withDefault,
-  JsonParam,
-  StringParam,
-  useQueryParams,
-} from 'use-query-params';
 
 const getStatusFilter = (status: string) => {
   return { availability: [status] };
@@ -99,10 +94,15 @@ const ReservoirPage: React.FC = () => {
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    filter: withDefault(JsonParam, {}),
-    mode: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      filter: parseAsJson<Record<string, unknown>>().withDefault({}),
+      mode: parseAsString.withDefault('ALIVE'),
+    },
+    {
+      history: 'replace',
+    },
+  );
   const jsonStringFilter = JSON.stringify(queryParams.filter);
 
   const queryVariables: ReservoirPageQuery$variables = useMemo(

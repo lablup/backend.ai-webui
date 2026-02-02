@@ -27,6 +27,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
 import { Download } from 'lucide-react';
+import { parseAsJson, useQueryStates } from 'nuqs';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -41,7 +42,6 @@ import {
 import ImportArtifactRevisionToFolderModal from 'src/components/ImportArtifactRevisionToFolderModal';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
 
 dayjs.extend(relativeTime);
 
@@ -73,9 +73,14 @@ const ReservoirArtifactDetailPage = () => {
     useState<ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key>(
       [],
     );
-  const [queryParams, setQuery] = useQueryParams({
-    filter: withDefault(JsonParam, {}),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      filter: parseAsJson<Record<string, unknown>>().withDefault({}),
+    },
+    {
+      history: 'replace',
+    },
+  );
   const jsonStringFilter = JSON.stringify(queryParams.filter);
   const {
     baiPaginationOption,

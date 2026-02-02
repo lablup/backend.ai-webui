@@ -13,10 +13,10 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface UserSessionsMetricsProps {}
 
@@ -27,13 +27,13 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
 
   const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
-  const [startDate, setStartDate] = useQueryParam(
+  const [startDate, setStartDate] = useQueryState(
     'startDate',
-    withDefault(StringParam, dayjs().format('YYYY-MM-DD 00:00:00')),
+    parseAsString.withDefault(dayjs().format('YYYY-MM-DD 00:00:00')),
   );
-  const [endDate, setEndDate] = useQueryParam(
+  const [endDate, setEndDate] = useQueryState(
     'endDate',
-    withDefault(StringParam, dayjs().format('YYYY-MM-DD 23:59:59')),
+    parseAsString.withDefault(dayjs().format('YYYY-MM-DD 23:59:59')),
   );
   const userInfo = useCurrentUserInfo();
   const dayDiff = dayjs(endDate).diff(dayjs(startDate), 'day');
