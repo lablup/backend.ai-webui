@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 interface FilePart {
   type: 'file';
   url: string;
-  mediaType?: string;
+  mediaType?: 'audio' | 'video' | 'image' | 'file';
   filename?: string;
 }
 

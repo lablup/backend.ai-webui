@@ -10,8 +10,10 @@ import {
 } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
-interface BAIErrorBoundaryProps
-  extends Omit<ErrorBoundaryPropsWithRender, 'fallbackRender'> {
+interface BAIErrorBoundaryProps extends Omit<
+  ErrorBoundaryPropsWithRender,
+  'fallbackRender'
+> {
   style?: React.CSSProperties;
 }
 
@@ -27,7 +29,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
       fallbackRender={({ error, resetErrorBoundary }) => {
         const isLoginSessionExpiredError =
           isExpiredLoginSession ||
-          error?.name === 'AuthorizationError' ||
+          (error as Error)?.name === 'AuthorizationError' ||
           (error as any)?.statusCode === 401;
         return (
           <BAIFlex
@@ -84,7 +86,9 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                             >
                               {t('errorBoundary.ResetErrorBoundary')}
                             </Button>
-                            <Typography.Text>{error.message}</Typography.Text>
+                            <Typography.Text>
+                              {(error as Error).message}
+                            </Typography.Text>
                           </BAIFlex>
                         }
                         title={t('errorBoundary.DisplayOnlyDevEnv')}
