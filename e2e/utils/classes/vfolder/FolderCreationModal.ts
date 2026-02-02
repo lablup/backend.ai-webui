@@ -1,4 +1,4 @@
-import { getFormItemControlByLabel } from '../test-util-antd';
+import { getFormItemControlByLabel } from '../../test-util-antd';
 import { expect, Locator, Page } from '@playwright/test';
 
 export class FolderCreationModal {
