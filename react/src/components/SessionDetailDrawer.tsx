@@ -59,7 +59,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   return (
     <Drawer
       title={t('session.SessionInfo')}
-      width={800}
+      size={800}
       extra={
         <BAIFetchKeyButton
           loading={isPendingReload}

@@ -37,7 +37,7 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <Avatar icon={avatar} style={{ fontSize: token.fontSizeHeading3 }} />
+        <Avatar style={{ fontSize: token.fontSizeHeading3 }}>{avatar}</Avatar>
         <BAIFlex
           direction="column"
           align={placement.left ? 'start' : 'end'}

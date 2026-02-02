@@ -41,7 +41,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   return (
     <Drawer
-      width={DRAWER_WIDTH}
+      size={DRAWER_WIDTH}
       title={t('notification.Notifications')}
       mask={false}
       className="webui-notification-drawer"

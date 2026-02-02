@@ -59,7 +59,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
           <Typography.Text>{tokenPerSecond.toFixed(1)}</Typography.Text>{' '}
           <Typography.Text type="secondary">TPS</Typography.Text>
         </span>{' '}
-        <Divider type="vertical" />
+        <Divider orientation="vertical" />
         <span>
           <Typography.Text>{totalTokenCount}</Typography.Text>{' '}
           <Typography.Text type="secondary"> tokens</Typography.Text>
