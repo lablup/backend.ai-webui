@@ -57,6 +57,11 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Temizle",
+    "KeepAsIs": "Olduğu gibi bırak",
+    "UndoChanges": "Değişiklikleri geri al"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}} 'ı devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureYouWantToDeactivateSome": "{{count}} artefaktları devre dışı bırakmak istediğinizden emin misiniz?",

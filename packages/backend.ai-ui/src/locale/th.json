@@ -57,6 +57,11 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "ล้าง",
+    "KeepAsIs": "เก็บไว้ตามเดิม",
+    "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",

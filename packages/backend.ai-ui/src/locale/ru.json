@@ -57,6 +57,11 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Очистить",
+    "KeepAsIs": "Оставить как есть",
+    "UndoChanges": "Отменить изменения"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",

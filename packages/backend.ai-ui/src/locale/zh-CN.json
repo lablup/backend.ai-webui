@@ -57,6 +57,11 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "清除",
+    "KeepAsIs": "保持原样",
+    "UndoChanges": "撤销更改"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您确定要停用{{name}}吗？",
     "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",

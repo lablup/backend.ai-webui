@@ -57,6 +57,11 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Effacer",
+    "KeepAsIs": "Conserver tel quel",
+    "UndoChanges": "Annuler les modifications"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Êtes-vous sûr de vouloir désactiver {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Êtes-vous sûr de vouloir désactiver les artefacts {{count}}?",
