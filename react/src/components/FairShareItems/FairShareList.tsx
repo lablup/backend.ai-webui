@@ -11,6 +11,7 @@ import ProjectFairShareTable, {
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
 } from './ResourceGroupFairShareTable';
+import UsageBucketModal from './UsageBucketModal';
 import UserFairShareTable, {
   availableUserFairShareSorterValues,
   UserFairShare,
@@ -31,7 +32,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Ban } from 'lucide-react';
+import { Ban, ChartNoAxesCombined } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -84,6 +85,7 @@ const FairShareList: React.FC = () => {
     Array<DomainFairShare | ProjectFairShare | UserFairShare>
   >([]);
   const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
+  const [openUsageModal, setOpenUsageModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -514,12 +516,25 @@ const FairShareList: React.FC = () => {
               setTablePaginationOption({ current: 1 });
             }}
           />
-          <BAIFlex gap="sm">
+          <BAIFlex gap="xs">
             {selectedRows?.length > 0 && (
               <>
                 {t('general.NSelected', {
                   count: selectedRows.length,
                 })}
+                <Tooltip
+                  title={t('general.ShowUsageGraph')}
+                  placement="topLeft"
+                >
+                  <BAIButton
+                    icon={
+                      <ChartNoAxesCombined style={{ color: token.colorInfo }} />
+                    }
+                    onClick={() => {
+                      setOpenUsageModal(true);
+                    }}
+                  />
+                </Tooltip>
                 <Tooltip title={t('general.BulkEdit')} placement="topLeft">
                   <BAIButton
                     icon={
@@ -733,6 +748,28 @@ const FairShareList: React.FC = () => {
             setSelectedRows([]);
             setOpenWeightSettingModal(false);
           }}
+        />
+      </BAIUnmountAfterClose>
+
+      <BAIUnmountAfterClose>
+        <UsageBucketModal
+          open={openUsageModal}
+          domainFairShareFrgmt={
+            currentStep === 'domain'
+              ? (selectedRows as Array<DomainFairShare>)
+              : undefined
+          }
+          projectFairShareFrgmt={
+            currentStep === 'project'
+              ? (selectedRows as Array<ProjectFairShare>)
+              : undefined
+          }
+          userFairShareFrgmt={
+            currentStep === 'user'
+              ? (selectedRows as Array<UserFairShare>)
+              : undefined
+          }
+          onRequestClose={() => setOpenUsageModal(false)}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>

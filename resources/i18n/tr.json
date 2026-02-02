@@ -770,6 +770,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "Seçili kaynak grubu ({{resourceGroup}}) için Fair Share Scheduler etkin değil. Planlayıcıyı kullanmak için lütfen kaynak grubu ayarlarını güncelleyin.",
     "TotalUsage": "Toplam Kullanım",
     "TotalUsageDescription": "İnceleme dönemi boyunca toplam kaynak kullanımı.",
+    "UsageHistory": "Kullanım Geçmişi",
     "User": "Kullanıcı",
     "UserDescription": "Kullanıcı, agregasyon dönemi sırasında ayarlanan ağırlığı ve kümülatif kullanımı belirler. Kullanıcı ağırlığı, bireysel kullanıcıların öncelik katsayısını hesaplamak için kullanılır.",
     "Weight": "Ağırlık",
@@ -780,6 +781,13 @@
       "PleaseSelectProject": "Lütfen bir proje seçin.",
       "ProjectDescription": "Her proje için Fair Share ağırlıklarını yapılandırın ve değiştirin.",
       "UserDescription": "Her kullanıcı için Fair Share ağırlıklarını yapılandırın ve değiştirin."
+    },
+    "usageBucket": {
+      "Last30Days": "Son 30 Gün",
+      "Last7Days": "Son 7 Gün",
+      "Last90Days": "Son 90 Gün",
+      "NoDataAvailable": "Seçilen dönem için kullanım verisi yok",
+      "SelectDateRange": "Tarih Aralığı Seç"
     }
   },
   "fairShrae": {},
@@ -826,6 +834,7 @@
     "ResourceGroup": "Kaynak Grubu",
     "SecretKey": "Gizli anahtar",
     "Session": "Oturum",
+    "ShowUsageGraph": "Kullanımı göster",
     "StorageProxies": "Depolar",
     "TotalItems": "Toplam {{toplam}} öğe",
     "Username": "Kullanıcı adı",

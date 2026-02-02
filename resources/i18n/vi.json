@@ -772,6 +772,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "Bộ lập lịch chia sẻ công bằng chưa được bật cho nhóm tài nguyên được chọn ({{resourceGroup}}). Để sử dụng bộ lập lịch, vui lòng cập nhật cài đặt nhóm tài nguyên.",
     "TotalUsage": "Tổng sử dụng",
     "TotalUsageDescription": "Tổng mức sử dụng tài nguyên trong khoảng thời gian xem lại.",
+    "UsageHistory": "Lịch sử sử dụng",
     "User": "Người dùng",
     "UserDescription": "Người dùng xác định trọng số đã cấu hình và mức sử dụng tích lũy trong kỳ tổng hợp. Trọng số người dùng được sử dụng để tính hệ số ưu tiên cho từng người dùng.",
     "Weight": "Trọng số",
@@ -782,6 +783,13 @@
       "PleaseSelectProject": "Vui lòng chọn dự án.",
       "ProjectDescription": "Cấu hình và điều chỉnh trọng số Fair Share cho từng dự án.",
       "UserDescription": "Cấu hình và điều chỉnh trọng số Fair Share cho từng Người dùng."
+    },
+    "usageBucket": {
+      "Last30Days": "30 ngày gần nhất",
+      "Last7Days": "7 ngày gần nhất",
+      "Last90Days": "90 ngày gần đây",
+      "NoDataAvailable": "Không có dữ liệu sử dụng cho khoảng thời gian đã chọn",
+      "SelectDateRange": "Chọn khoảng thời gian"
     }
   },
   "fairShrae": {},
@@ -828,6 +836,7 @@
     "ResourceGroup": "Nhóm tài nguyên",
     "SecretKey": "Chìa khoá bí mật",
     "Session": "Phiên họp",
+    "ShowUsageGraph": "Hiển thị mức sử dụng",
     "StorageProxies": "Kho lưu trữ",
     "TotalItems": "Tổng số {{total}} mặt hàng",
     "Username": "tên tài khoản",

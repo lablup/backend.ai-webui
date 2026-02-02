@@ -771,6 +771,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "所選資源群組（{{resourceGroup}}）未啟用公平分享排程器。若要使用排程器，請更新該資源群組的設定。",
     "TotalUsage": "總使用量",
     "TotalUsageDescription": "回溯天數內的總資源使用量。",
+    "UsageHistory": "使用紀錄",
     "User": "使用者",
     "UserDescription": "使用者定義聚合期間的權重與累積使用量。使用者權重用於計算個別使用者的優先係數。",
     "Weight": "權重",
@@ -781,6 +782,13 @@
       "PleaseSelectProject": "請選擇一個專案。",
       "ProjectDescription": "設定並修改每個專案的 Fair Share 權重。",
       "UserDescription": "設定與修改每位使用者的公平分享權重。"
+    },
+    "usageBucket": {
+      "Last30Days": "過去 30 天",
+      "Last7Days": "最近7天",
+      "Last90Days": "過去 90 天",
+      "NoDataAvailable": "所選期間無使用資料",
+      "SelectDateRange": "選擇日期範圍"
     }
   },
   "fairShrae": {},
@@ -827,6 +835,7 @@
     "ResourceGroup": "資源組",
     "SecretKey": "密鑰",
     "Session": "會話",
+    "ShowUsageGraph": "顯示使用量",
     "StorageProxies": "存儲",
     "TotalItems": "{{总计}}项目总数",
     "Username": "用戶名",
