@@ -8,83 +8,98 @@ This directory contains End-to-End tests for Backend.AI WebUI. Tests are automat
 
 ```
 e2e/
-├── critical/                       # 핵심 필수 기능 테스트 (@critical)
-│   ├── auth/                       # 인증 및 로그인
-│   ├── user/                       # 사용자 관리 (CRUD)
-│   ├── vfolder/                    # 가상 폴더 관리
-│   ├── session/                    # 컴퓨트 세션 라이프사이클
-│   │   └── session-lifecycle.test.ts   ✅ 구현됨
-│   └── serving/                    # 서비스 엔드포인트
-│       └── endpoint-lifecycle.test.ts  ✅ 구현됨
+├── auth/                           # 인증 관련 테스트
+│   └── login.test.ts               # 로그인, 로그인 전/후, 실패 케이스
 │
-├── features/                       # 추가 기능 테스트
-│   ├── resource/                   # 리소스 관리 및 정책
-│   ├── environment/                # 환경 및 이미지 관리
-│   ├── project/                    # 프로젝트 관리
-│   ├── data/                       # 데이터 가져오기/내보내기
-│   └── dashboard/                  # 대시보드 인터랙션
+├── user/                           # 사용자 관리 테스트
+│   └── user-crud.test.ts           # 사용자 생성, 수정, 삭제, Purge
 │
-├── integration/                    # 통합 테스트
-│   ├── user-session-vfolder.test.ts
-│   ├── project-resource-session.test.ts
-│   └── end-to-end-workflows.test.ts
+├── vfolder/                        # 가상 폴더 관리 테스트
+│   ├── vfolder-crud.test.ts        # VFolder 생성, 수정, 삭제, 공유
+│   ├── vfolder-explorer-modal.test.ts  # 폴더 탐색기 모달
+│   └── vfolder-consecutive-deletion.test.ts  # 연속 삭제 테스트
 │
-├── edge-cases/                     # 엣지 케이스 및 에러 처리
-│   ├── error-handling.test.ts
-│   ├── concurrent-operations.test.ts
-│   ├── network-failures.test.ts
-│   └── permission-violations.test.ts
+├── session/                        # 세션 관리 테스트
+│   ├── session-creation.test.ts    # 세션 생성 (Interactive/Batch)
+│   └── session-lifecycle.test.ts   # 세션 라이프사이클
 │
-├── performance/                    # 성능 테스트
-│   ├── load-testing.test.ts
-│   └── stress-testing.test.ts
+├── serving/                        # 서비스 엔드포인트 테스트
+│   └── endpoint-lifecycle.test.ts  # 엔드포인트 라이프사이클
+│
+├── environment/                    # 환경 및 이미지 관리 테스트
+│   └── environment.test.ts         # 이미지 리스트, 리소스 제한, 앱 관리
+│
+├── agent/                          # 에이전트 관리 테스트
+│   └── agent.test.ts               # 에이전트 리스트 및 상태
+│
+├── maintenance/                    # Maintenance page tests
+│   └── maintenance.test.ts         # Recalculate Usage, Rescan Images
+│
+├── app-launcher/                   # 앱 런처 테스트
+│   ├── app-launcher-basic.test.ts  # 앱 런처 기본 인터랙션
+│   └── app-launcher-launch.test.ts # 앱 실행 테스트
+│
+├── config/                         # 설정 및 접근 제어 테스트
+│   ├── config.test.ts              # config.toml 설정
+│   └── page-access-control.test.ts # 페이지 접근 제어 (404/401)
 │
 ├── visual_regression/              # Visual regression tests
 │   └── [existing structure]
 │
 └── utils/                          # Utilities
     ├── classes/                    # Page Object Model classes
-    │   ├── base/                   ✅ 구현됨
+    │   ├── base/
     │   │   ├── BasePage.ts
     │   │   └── BaseModal.ts
-    │   ├── session/                ✅ 구현됨
-    │   │   └── SessionDetailPage.ts
-    │   ├── serving/                ✅ 구현됨
+    │   ├── common/
+    │   │   ├── StartPage.ts
+    │   │   └── NotificationHandler.ts
+    │   ├── session/
+    │   │   ├── SessionLauncher.ts
+    │   │   ├── SessionDetailPage.ts
+    │   │   └── AppLauncherModal.ts
+    │   ├── user/
+    │   │   ├── UserSettingModal.ts
+    │   │   ├── KeyPairModal.ts
+    │   │   ├── UserInfoModal.ts
+    │   │   └── PurgeUsersModal.ts
+    │   ├── vfolder/
+    │   │   ├── FolderCreationModal.ts
+    │   │   └── FolderExplorerModal.ts
+    │   ├── serving/
     │   │   └── EndpointPage.ts
     │   └── ...
-    ├── fixtures/                   # 테스트 픽스처
-    ├── helpers/                    # 헬퍼 함수
-    ├── test-util.ts               # 기존 유틸리티
-    ├── test-util-antd.ts          # Ant Design 유틸리티
-    └── tags.ts                    # 테스트 태그 정의
+    ├── test-util.ts                # Common utilities
+    └── test-util-antd.ts           # Ant Design utilities
 ```
 
-## 🏷️ Test Tags
+## Test Tags
 
-### 실행 우선순위
-- `@smoke` - 가장 중요한 핵심 경로 (~5분)
-- `@critical` - 중요 기능 테스트 (~15분)
-- `@regression` - 전체 회귀 테스트 (~1시간)
+### Execution Priority
+- `@smoke` - Most critical core paths (~5 min, for PR checks)
+- `@critical` - Important feature tests (~15 min, before merge)
+- `@regression` - Full regression tests (~1 hour, nightly)
 
-### 기능 영역
-- `@auth` - 인증
-- `@user` - 사용자 관리
-- `@vfolder` - 가상 폴더
-- `@session` - 세션 관리
-- `@serving` - 서비스 엔드포인트
-- `@resource` - 리소스 관리
-- `@environment` - 환경 관리
-- `@project` - 프로젝트 관리
+### Feature Areas
+- `@auth` - Authentication
+- `@user` - User management
+- `@vfolder` - Virtual folders
+- `@session` - Session management
+- `@serving` - Service endpoints
+- `@environment` - Environment management
+- `@agent` - Agent management
+- `@maintenance` - Maintenance
+- `@app-launcher` - App launcher
+- `@config` - Configuration and access control
 
-### 테스트 타입
-- `@functional` - 기능 테스트
-- `@visual` - 시각적 회귀 테스트
-- `@integration` - 통합 테스트
-- `@performance` - 성능 테스트
+### Test Types
+- `@functional` - Functional tests
+- `@visual` - Visual regression tests
+- `@integration` - Integration tests
 
-## 🚀 Running Tests
+## Running Tests
 
-### 모든 테스트 실행
+### Run all tests
 ```bash
 pnpm exec playwright test
 ```
@@ -94,18 +109,31 @@ pnpm exec playwright test
 # Run smoke tests only (for PR checks)
 pnpm exec playwright test --grep @smoke
 
-# Critical tests 실행
+# Run critical tests (before merge)
 pnpm exec playwright test --grep @critical
 
+# Run regression tests (nightly builds)
+pnpm exec playwright test --grep @regression
+
 # Run specific feature tests
+pnpm exec playwright test --grep @auth
 pnpm exec playwright test --grep @session
+pnpm exec playwright test --grep @vfolder
 pnpm exec playwright test --grep @serving
+```
+
+### Run specific directory
+```bash
+pnpm exec playwright test e2e/auth/
+pnpm exec playwright test e2e/session/
+pnpm exec playwright test e2e/vfolder/
 ```
 
 ### Run specific file
 ```bash
-pnpm exec playwright test e2e/critical/session/session-lifecycle.test.ts
-pnpm exec playwright test e2e/critical/serving/endpoint-lifecycle.test.ts
+pnpm exec playwright test e2e/auth/login.test.ts
+pnpm exec playwright test e2e/session/session-lifecycle.test.ts
+pnpm exec playwright test e2e/serving/endpoint-lifecycle.test.ts
 ```
 
 ### Exclude visual regression
@@ -167,10 +195,10 @@ export class MyModal extends BaseModal {
 
 ```typescript
 import { test, expect } from '@playwright/test';
-import { loginAsAdmin, navigateTo } from '../../utils/test-util';
-import { MyPage } from '../../utils/classes/MyPage';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { MyPage } from '../utils/classes/MyPage';
 
-test.describe('My Feature', { tag: ['@critical', '@myfeature'] }, () => {
+test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] }, () => {
   let myPage: MyPage;
 
   test.beforeEach(async ({ page, request }) => {
@@ -188,18 +216,42 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature'] }, () => {
 });
 ```
 
+### File Naming Convention
+
+- 모든 테스트 파일은 `.test.ts` 확장자를 사용합니다
+- kebab-case를 사용합니다
+- 기능-동작 형태를 따릅니다: `{feature}-{action}.test.ts`
+  - 예: `user-crud.test.ts`, `session-lifecycle.test.ts`
+
 ## Current Implementation Status
 
-### ✅ Completed (Phase 1)
+### Completed
 
 #### Base Infrastructure
-- ✅ Directory structure (critical, features, integration, etc.)
-- ✅ Base POM classes (BasePage, BaseModal)
-- ✅ Test organization by priority and feature
+- Feature-based directory structure (auth, user, vfolder, session, serving, etc.)
+- Base POM classes (BasePage, BaseModal)
+- Consistent tag strategy (@smoke, @critical, @regression)
+- Standardized naming conventions
+
+#### Authentication (@auth)
+- Login tests
+- Login failure cases
+
+#### User Management (@user)
+- User CRUD tests
+- User Purge tests
+
+#### VFolder Management (@vfolder)
+- VFolder CRUD tests
+- VFolder sharing tests
+- Folder explorer modal tests
+- Consecutive deletion tests
 
 #### Session Management (@session)
-- ✅ SessionDetailPage POM class
-- ✅ Session lifecycle tests
+- SessionDetailPage POM class
+- SessionLauncher POM class
+- Session creation tests (Interactive/Batch)
+- Session lifecycle tests
   - Create, monitor, terminate interactive session
   - Batch session auto-completion
   - Container logs viewing
@@ -218,19 +270,25 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature'] }, () => {
   - Environment variable configuration
   - Validation error handling
 
-### 🔄 In Progress
+#### App Launcher (@app-launcher)
+- App launcher basic interaction tests
+- App launch tests
 
-- VFolder file operations tests
-- Resource management tests
+#### Environment Management (@environment)
+- Image list rendering
+- Resource limit modification
+- App management
 
-### 📋 Planned (Phase 2-3)
+#### Agent Management (@agent)
+- Agent list tests
 
-- Environment management tests
-- Project management tests
-- Dashboard interaction tests
-- Integration tests
-- Edge case tests
-- Performance tests
+#### Maintenance (@maintenance)
+- Recalculate Usage tests
+- Rescan Images tests
+
+#### Configuration (@config)
+- config.toml settings tests
+- Page access control tests (404/401)
 
 ## Backend.AI Domain Constraints
 
@@ -259,25 +317,48 @@ Consider Backend.AI domain constraints when writing tests:
 
 자세한 내용은 계획 문서를 참조하세요: `/Users/codejong/.claude/plans/expressive-greeting-pinwheel.md`
 
-## 📊 Coverage Goals
-
-| Phase | Target Coverage | Timeline |
-|-------|----------------|----------|
-| Phase 1 | 35% → 55% | Sprint 1-2 (4주) |
-| Phase 2 | 55% → 70% | Sprint 3-4 (4주) |
-| Phase 3 | 70% → 80%+ | Sprint 5-6 (4주) |
-
 ## 🤝 Contributing
 
-1. 새로운 테스트는 적절한 디렉토리에 배치
-2. POM 패턴을 따라 클래스 작성
-3. 적절한 태그 추가 (`@critical`, `@feature`)
-4. Cleanup 로직 포함 (afterEach)
-5. 도메인 제약사항 준수
+새로운 테스트를 작성할 때 다음 가이드라인을 따르세요:
+
+1. **디렉토리 구조**: 테스트를 적절한 기능 디렉토리에 배치
+   - 인증: `auth/`
+   - 사용자 관리: `user/`
+   - 가상 폴더: `vfolder/`
+   - 세션 관리: `session/`
+   - 서비스 엔드포인트: `serving/`
+   - 환경 관리: `environment/`
+   - 에이전트: `agent/`
+   - 유지보수: `maintenance/`
+   - 앱 런처: `app-launcher/`
+   - 설정: `config/`
+
+2. **파일 명명 규칙**:
+   - `.test.ts` 확장자 사용 (`.spec.ts` 사용하지 않음)
+   - kebab-case 사용
+   - 기능-동작 형태: `{feature}-{action}.test.ts`
+
+3. **태그 추가**: 모든 `test.describe` 블록에 적절한 태그 추가
+   ```typescript
+   test.describe('Feature Name', { tag: ['@priority', '@feature', '@type'] }, () => {
+     // tests
+   });
+   ```
+   - Priority: `@smoke`, `@critical`, `@regression`
+   - Feature: `@auth`, `@user`, `@vfolder`, `@session`, etc.
+   - Type: `@functional`, `@visual`, `@integration`
+
+4. **POM Pattern**: All tests follow Page Object Model pattern
+   - Inherit from base classes (`BasePage`, `BaseModal`)
+   - Write reusable methods
+   - Encapsulate locators in POM classes
+
+5. **Cleanup**: Include cleanup logic after tests (`afterEach`, `afterAll`)
+
+6. **Domain Constraints**: Adhere to Backend.AI domain constraints
 
 ## Resources
 
 - [Playwright Documentation](https://playwright.dev/docs/intro)
 - [Page Object Model Pattern](https://playwright.dev/docs/pom)
 - [Test Fixtures](https://playwright.dev/docs/test-fixtures)
-- [Backend.AI Domain Constraints](/.claude/plans/expressive-greeting-pinwheel.md)
