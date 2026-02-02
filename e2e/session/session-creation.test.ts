@@ -1,6 +1,6 @@
-import { StartPage } from './utils/classes/StartPage';
-import { loginAsAdmin, loginAsUser, navigateTo } from './utils/test-util';
-import { getMenuItem } from './utils/test-util-antd';
+import { StartPage } from '../utils/classes/common/StartPage';
+import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+import { getMenuItem } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 
 const getStartSessionButton = (page: Page) => {

@@ -1,8 +1,8 @@
 // spec: e2e/AppLauncher-Test-Plan.md
 // Section 1: App Launcher Modal - Basic Interaction
-import { AppLauncherModal } from './utils/classes/AppLauncherModal';
-import { SessionLauncher } from './utils/classes/SessionLauncher';
-import { loginAsUser } from './utils/test-util';
+import { AppLauncherModal } from '../utils/classes/session/AppLauncherModal';
+import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
+import { loginAsUser } from '../utils/test-util';
 import { test, expect, BrowserContext, Page } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });

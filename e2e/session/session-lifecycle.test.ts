@@ -1,5 +1,5 @@
-import { SessionLauncher } from '../../utils/classes/SessionLauncher';
 import { SessionDetailPage } from '../../utils/classes/session/SessionDetailPage';
+import { SessionLauncher } from '../../utils/classes/session/SessionLauncher';
 import { loginAsAdmin, navigateTo } from '../../utils/test-util';
 import { test, expect } from '@playwright/test';
 

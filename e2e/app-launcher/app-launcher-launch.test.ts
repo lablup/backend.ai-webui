@@ -1,8 +1,8 @@
 // spec: e2e/AppLauncher-Test-Plan.md
 // Section 2: App Launcher - Basic App Launch Tests
-import { AppLauncherModal } from './utils/classes/AppLauncherModal';
-import { SessionLauncher } from './utils/classes/SessionLauncher';
-import { loginAsUser, modifyConfigToml } from './utils/test-util';
+import { AppLauncherModal } from '../utils/classes/session/AppLauncherModal';
+import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
+import { loginAsUser, modifyConfigToml } from '../utils/test-util';
 import { test, expect, Page, BrowserContext } from '@playwright/test';
 
 /**

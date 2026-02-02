@@ -1,5 +1,5 @@
 // spec: FolderExplorerModal-Test-Plan.md
-import { FolderExplorerModal } from './utils/classes/FolderExplorerModal';
+import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
 import {
   loginAsUser,
   navigateTo,

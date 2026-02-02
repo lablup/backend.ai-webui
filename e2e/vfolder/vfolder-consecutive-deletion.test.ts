@@ -1,5 +1,5 @@
 // Test to verify consecutive folder deletions work correctly with filter clearing
-import { NotificationHandler } from './utils/classes/NotificationHandler';
+import { NotificationHandler } from '../utils/classes/common/NotificationHandler';
 import {
   loginAsUser,
   createVFolderAndVerify,

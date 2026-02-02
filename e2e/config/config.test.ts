@@ -1,4 +1,4 @@
-import { StartPage } from './utils/classes/StartPage';
+import { StartPage } from '../utils/classes/common/StartPage';
 import {
   loginAsAdmin,
   modifyConfigToml,

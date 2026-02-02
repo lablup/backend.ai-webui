@@ -1,10 +1,10 @@
 // spec: e2e/credential/user_crud.test-plan.md
-import { PurgeUsersModal } from './utils/classes/PurgeUsersModal';
+import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
 import {
   KeyPairModal,
   UserInfoModal,
   UserSettingModal,
-} from './utils/classes/UserSettingModal';
+} from '../utils/classes/user/UserSettingModal';
 import {
   loginAsAdmin,
   loginAsCreatedAccount,

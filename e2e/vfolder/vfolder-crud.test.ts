@@ -1,4 +1,4 @@
-import { FolderCreationModal } from './utils/classes/FolderCreationModal';
+import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
