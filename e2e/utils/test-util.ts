@@ -1,4 +1,4 @@
-import { FolderCreationModal } from './classes/FolderCreationModal';
+import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
 import _ from 'lodash';
