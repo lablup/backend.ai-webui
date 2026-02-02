@@ -8,40 +8,40 @@ This directory contains End-to-End tests for Backend.AI WebUI. Tests are automat
 
 ```
 e2e/
-├── auth/                           # 인증 관련 테스트
-│   └── login.test.ts               # 로그인, 로그인 전/후, 실패 케이스
+├── auth/                           # Authentication tests
+│   └── login.spec.ts               # Login, pre/post login, failure cases
 │
-├── user/                           # 사용자 관리 테스트
-│   └── user-crud.test.ts           # 사용자 생성, 수정, 삭제, Purge
+├── user/                           # User management tests
+│   └── user-crud.spec.ts           # User create, update, delete, Purge
 │
-├── vfolder/                        # 가상 폴더 관리 테스트
-│   ├── vfolder-crud.test.ts        # VFolder 생성, 수정, 삭제, 공유
-│   ├── vfolder-explorer-modal.test.ts  # 폴더 탐색기 모달
-│   └── vfolder-consecutive-deletion.test.ts  # 연속 삭제 테스트
+├── vfolder/                        # Virtual folder management tests
+│   ├── vfolder-crud.spec.ts        # VFolder create, update, delete, share
+│   ├── vfolder-explorer-modal.spec.ts  # Folder explorer modal
+│   └── vfolder-consecutive-deletion.spec.ts  # Consecutive deletion test
 │
-├── session/                        # 세션 관리 테스트
-│   ├── session-creation.test.ts    # 세션 생성 (Interactive/Batch)
-│   └── session-lifecycle.test.ts   # 세션 라이프사이클
+├── session/                        # Session management tests
+│   ├── session-creation.spec.ts    # Session creation (Interactive/Batch)
+│   └── session-lifecycle.spec.ts   # Session lifecycle
 │
-├── serving/                        # 서비스 엔드포인트 테스트
-│   └── endpoint-lifecycle.test.ts  # 엔드포인트 라이프사이클
+├── serving/                        # Service endpoint tests
+│   └── endpoint-lifecycle.spec.ts  # Endpoint lifecycle
 │
-├── environment/                    # 환경 및 이미지 관리 테스트
-│   └── environment.test.ts         # 이미지 리스트, 리소스 제한, 앱 관리
+├── environment/                    # Environment and image management tests
+│   └── environment.spec.ts         # Image list, resource limits, app management
 │
-├── agent/                          # 에이전트 관리 테스트
-│   └── agent.test.ts               # 에이전트 리스트 및 상태
+├── agent/                          # Agent management tests
+│   └── agent.spec.ts               # Agent list and status
 │
 ├── maintenance/                    # Maintenance page tests
-│   └── maintenance.test.ts         # Recalculate Usage, Rescan Images
+│   └── maintenance.spec.ts         # Recalculate Usage, Rescan Images
 │
-├── app-launcher/                   # 앱 런처 테스트
-│   ├── app-launcher-basic.test.ts  # 앱 런처 기본 인터랙션
-│   └── app-launcher-launch.test.ts # 앱 실행 테스트
+├── app-launcher/                   # App launcher tests
+│   ├── app-launcher-basic.spec.ts  # App launcher basic interaction
+│   └── app-launcher-launch.spec.ts # App launch tests
 │
-├── config/                         # 설정 및 접근 제어 테스트
-│   ├── config.test.ts              # config.toml 설정
-│   └── page-access-control.test.ts # 페이지 접근 제어 (404/401)
+├── config/                         # Configuration and access control tests
+│   ├── config.spec.ts              # config.toml settings
+│   └── page-access-control.spec.ts # Page access control (404/401)
 │
 ├── visual_regression/              # Visual regression tests
 │   └── [existing structure]
@@ -131,9 +131,9 @@ pnpm exec playwright test e2e/vfolder/
 
 ### Run specific file
 ```bash
-pnpm exec playwright test e2e/auth/login.test.ts
-pnpm exec playwright test e2e/session/session-lifecycle.test.ts
-pnpm exec playwright test e2e/serving/endpoint-lifecycle.test.ts
+pnpm exec playwright test e2e/auth/login.spec.ts
+pnpm exec playwright test e2e/session/session-lifecycle.spec.ts
+pnpm exec playwright test e2e/serving/endpoint-lifecycle.spec.ts
 ```
 
 ### Exclude visual regression
@@ -218,10 +218,10 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] },
 
 ### File Naming Convention
 
-- 모든 테스트 파일은 `.test.ts` 확장자를 사용합니다
-- kebab-case를 사용합니다
-- 기능-동작 형태를 따릅니다: `{feature}-{action}.test.ts`
-  - 예: `user-crud.test.ts`, `session-lifecycle.test.ts`
+- All test files use `.spec.ts` extension
+- Use kebab-case
+- Follow feature-action format: `{feature}-{action}.spec.ts`
+  - Examples: `user-crud.spec.ts`, `session-lifecycle.spec.ts`
 
 ## Current Implementation Status
 
@@ -312,33 +312,31 @@ Consider Backend.AI domain constraints when writing tests:
 - Image minimum resource requirements must be met
 
 ### RBAC Constraints
-- ✅ superadmin, admin, monitor, user 역할별 권한
-- ✅ 역할별 UI 가시성 및 작업 제한
+- Role-based permissions: superadmin, admin, monitor, user
+- UI visibility and operation restrictions per role
 
-자세한 내용은 계획 문서를 참조하세요: `/Users/codejong/.claude/plans/expressive-greeting-pinwheel.md`
+## Contributing
 
-## 🤝 Contributing
+Follow these guidelines when writing new tests:
 
-새로운 테스트를 작성할 때 다음 가이드라인을 따르세요:
+1. **Directory Structure**: Place tests in appropriate feature directories
+   - Authentication: `auth/`
+   - User management: `user/`
+   - Virtual folders: `vfolder/`
+   - Session management: `session/`
+   - Service endpoints: `serving/`
+   - Environment management: `environment/`
+   - Agents: `agent/`
+   - Maintenance: `maintenance/`
+   - App launcher: `app-launcher/`
+   - Configuration: `config/`
 
-1. **디렉토리 구조**: 테스트를 적절한 기능 디렉토리에 배치
-   - 인증: `auth/`
-   - 사용자 관리: `user/`
-   - 가상 폴더: `vfolder/`
-   - 세션 관리: `session/`
-   - 서비스 엔드포인트: `serving/`
-   - 환경 관리: `environment/`
-   - 에이전트: `agent/`
-   - 유지보수: `maintenance/`
-   - 앱 런처: `app-launcher/`
-   - 설정: `config/`
+2. **File Naming Convention**:
+   - Use `.spec.ts` extension (not `.test.ts`)
+   - Use kebab-case
+   - Follow feature-action format: `{feature}-{action}.spec.ts`
 
-2. **파일 명명 규칙**:
-   - `.test.ts` 확장자 사용 (`.spec.ts` 사용하지 않음)
-   - kebab-case 사용
-   - 기능-동작 형태: `{feature}-{action}.test.ts`
-
-3. **태그 추가**: 모든 `test.describe` 블록에 적절한 태그 추가
+3. **Add Tags**: Add appropriate tags to all `test.describe` blocks
    ```typescript
    test.describe('Feature Name', { tag: ['@priority', '@feature', '@type'] }, () => {
      // tests

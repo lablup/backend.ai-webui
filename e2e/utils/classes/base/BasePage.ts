@@ -86,17 +86,10 @@ export abstract class BasePage {
   }
 
   /**
-   * Wait for network to be idle
-   */
-  protected async waitForNetworkIdle(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
-  }
-
-  /**
    * Navigate to a specific path
    */
   protected async navigateTo(path: string): Promise<void> {
     await this.page.goto(path);
-    await this.waitForNetworkIdle();
+    await this.page.waitForLoadState('domcontentloaded');
   }
 }

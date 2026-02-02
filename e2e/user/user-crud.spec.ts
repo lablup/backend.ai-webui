@@ -12,14 +12,16 @@ import {
   navigateTo,
   webServerEndpoint,
   webuiEndpoint,
-} from './utils/test-util';
+} from '../utils/test-util';
 import test, { expect } from '@playwright/test';
 
-const EMAIL = 'e2e-test-user@lablup.com';
-const USERNAME = 'e2e-test-user';
+// Generate unique identifiers for this test run to avoid conflicts
+const TEST_RUN_ID = Date.now().toString(36);
+const EMAIL = `e2e-test-user-${TEST_RUN_ID}@lablup.com`;
+const USERNAME = `e2e-test-user-${TEST_RUN_ID}`;
 const PASSWORD = 'testing@123';
 const NEW_PASSWORD = 'new-password@123';
-const MODIFIED_USERNAME = 'modified-e2e-test-user';
+const MODIFIED_USERNAME = `modified-e2e-user-${TEST_RUN_ID}`;
 
 test.describe.serial(
   'User CRUD',
@@ -38,7 +40,8 @@ test.describe.serial(
         await userRow.getByRole('button', { name: 'Deactivate' }).click();
         const popconfirm = page.locator('.ant-popconfirm');
         await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
-        await page.waitForTimeout(1000);
+        // Wait for user to disappear from the Active list
+        await expect(userRow).toBeHidden({ timeout: 10000 });
       }
 
       // Switch to Inactive filter and check if user exists there
@@ -57,8 +60,8 @@ test.describe.serial(
         await purgeModal.waitForVisible();
         await purgeModal.confirmDeletion();
 
-        // Wait for deletion to complete
-        await page.waitForTimeout(1000);
+        // Wait for user to disappear from the list after deletion
+        await expect(inactiveUserRow).toBeHidden({ timeout: 10000 });
       }
 
       // Return to Active filter
@@ -174,10 +177,7 @@ test.describe.serial(
       // 7. Confirm deactivation
       await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
 
-      // 8. Wait for the action to complete
-      await page.waitForTimeout(1000);
-
-      // 9. Verify user disappears from Active users list
+      // 8. Verify user disappears from Active users list
       await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
         {
           timeout: 10000,
@@ -215,10 +215,7 @@ test.describe.serial(
       // 7. Confirm activation
       await popconfirm.getByRole('button', { name: 'Activate' }).click();
 
-      // 8. Wait for the action to complete
-      await page.waitForTimeout(1000);
-
-      // 9. Verify user disappears from Inactive users list
+      // 8. Verify user disappears from Inactive users list
       await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
         {
           timeout: 10000,
@@ -253,7 +250,8 @@ test.describe.serial(
       await userRow.getByRole('button', { name: 'Deactivate' }).click();
       const popconfirm = page.locator('.ant-popconfirm');
       await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
-      await page.waitForTimeout(1000);
+      // Wait for user to disappear from Active list before switching filters
+      await expect(userRow).toBeHidden({ timeout: 10000 });
 
       // 4. Switch to "Inactive" filter
       await page.getByText('Inactive', { exact: true }).click();
