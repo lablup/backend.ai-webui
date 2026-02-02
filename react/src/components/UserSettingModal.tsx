@@ -455,7 +455,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <Checkbox />
+            <Checkbox>{t('general.Enable')}</Checkbox>
           </Form.Item>
           <Form.Item
             name="description"
@@ -507,7 +507,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <Checkbox />
+            <Checkbox>{t('general.Allow')}</Checkbox>
           </Form.Item>
           {!!isTOTPSupported && (
             <Form.Item

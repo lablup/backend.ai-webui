@@ -76,6 +76,7 @@ dep:
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
+	@mkdir -p ./app
 	@if [ ! -d "./build/rollup/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
 		make compile; \
 		make compile_wsproxy; \
