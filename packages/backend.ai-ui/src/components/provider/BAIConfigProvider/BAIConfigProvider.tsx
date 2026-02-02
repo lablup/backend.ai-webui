@@ -1,5 +1,5 @@
 import { BAILocale, i18n } from '../../../locale';
-import { BAIClient, BAIClientProvider } from '../BAIClientProvider';
+import { type BAIClient, BAIClientProvider } from '../BAIClientProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ConfigProvider, type ConfigProviderProps } from 'antd';
 import dayjs from 'dayjs';
