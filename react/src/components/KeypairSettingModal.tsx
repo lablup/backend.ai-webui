@@ -2,7 +2,7 @@ import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSetti
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { App, Col, Form, Input, InputNumber, ModalProps, Row } from 'antd';
+import { App, Col, Form, Input, InputNumber, type ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { BAIModal } from 'backend.ai-ui';
 import { useRef } from 'react';

@@ -1,5 +1,5 @@
 import BAIFlex from './BAIFlex';
-import { ProgressProps, Typography, theme } from 'antd';
+import { Typography, theme, type ProgressProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 

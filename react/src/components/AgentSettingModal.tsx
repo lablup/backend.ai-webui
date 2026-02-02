@@ -3,7 +3,7 @@ import {
   AgentSettingModalFragment$key,
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
-import { App, Form, FormInstance, Switch } from 'antd';
+import { App, Form, type FormInstance, Switch } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,

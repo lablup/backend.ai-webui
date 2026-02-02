@@ -1,5 +1,5 @@
 import { useAllowedHostNames } from '../hooks';
-import { Select, SelectProps } from 'antd';
+import { Select, type SelectProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 

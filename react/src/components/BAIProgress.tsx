@@ -1,5 +1,5 @@
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import { ProgressProps, theme, Typography } from 'antd';
+import { type ProgressProps, theme, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { ReactNode } from 'react';

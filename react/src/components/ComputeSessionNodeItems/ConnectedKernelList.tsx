@@ -6,7 +6,7 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/lib/table';
+import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

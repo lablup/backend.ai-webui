@@ -14,7 +14,7 @@ import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
-import { App, AppProps, theme, Typography } from 'antd';
+import { App, type AppProps, theme, Typography } from 'antd';
 import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';

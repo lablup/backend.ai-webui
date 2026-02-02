@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Typography, Alert, Checkbox, Input, theme } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
   BAIModal,

@@ -5,7 +5,15 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import HiddenFormItem from './HiddenFormItem';
-import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Checkbox,
+  type FormInstance,
+  App,
+  theme,
+} from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';

@@ -24,7 +24,7 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
-import { MenuProps, theme, Typography } from 'antd';
+import { type MenuProps, theme, Typography } from 'antd';
 import { GetProp } from 'antd/lib';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {

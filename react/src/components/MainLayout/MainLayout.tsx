@@ -17,7 +17,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider, Layout, LayoutProps, theme } from 'antd';
+import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';

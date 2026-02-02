@@ -5,7 +5,7 @@ import VFolderTable, {
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
-import { App, Form, FormItemProps, Input } from 'antd';
+import { App, Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';

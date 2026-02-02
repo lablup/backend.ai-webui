@@ -12,7 +12,14 @@ import {
   ControlOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
+import {
+  Dropdown,
+  Button,
+  theme,
+  type MenuProps,
+  Popover,
+  Tooltip,
+} from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import { isEmpty } from 'lodash';
 import {

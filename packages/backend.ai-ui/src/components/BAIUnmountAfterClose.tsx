@@ -1,4 +1,4 @@
-import { DrawerProps, ModalProps } from 'antd';
+import type { DrawerProps, ModalProps } from 'antd';
 import React, { useState, useLayoutEffect } from 'react';
 
 interface BAIUnmountModalAfterCloseProps {

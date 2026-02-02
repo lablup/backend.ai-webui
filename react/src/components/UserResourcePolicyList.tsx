@@ -21,7 +21,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

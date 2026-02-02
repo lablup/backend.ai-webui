@@ -1,4 +1,4 @@
-import { ConfigProvider, Grid, SiderProps, theme } from 'antd';
+import { ConfigProvider, Grid, type SiderProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { BAIFlex } from 'backend.ai-ui';
 import classNames from 'classnames';

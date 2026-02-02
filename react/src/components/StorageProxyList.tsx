@@ -6,7 +6,7 @@ import {
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
+import { Button, type TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,

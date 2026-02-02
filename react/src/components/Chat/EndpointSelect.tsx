@@ -7,7 +7,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
-import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
+import { type GetRef, type SelectProps, Skeleton, Tooltip } from 'antd';
 import { BAIFlex, BAILink, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';

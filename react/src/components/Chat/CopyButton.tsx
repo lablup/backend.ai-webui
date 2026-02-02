@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Tooltip } from 'antd';
+import { Button, type ButtonProps, Tooltip } from 'antd';
 import { CopyConfig } from 'antd/es/typography/Base';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';

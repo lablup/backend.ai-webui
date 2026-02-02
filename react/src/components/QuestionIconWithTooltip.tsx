@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { theme, Tooltip, TooltipProps } from 'antd';
+import { theme, Tooltip, type TooltipProps } from 'antd';
 import React from 'react';
 
 interface QuestionIconWithTooltipProps extends Omit<TooltipProps, 'children'> {

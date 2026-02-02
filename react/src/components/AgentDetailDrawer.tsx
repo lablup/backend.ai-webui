@@ -1,5 +1,5 @@
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
-import { Drawer, DrawerProps, Skeleton } from 'antd';
+import { Drawer, type DrawerProps, Skeleton } from 'antd';
 import { BAIFetchKeyButton, toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

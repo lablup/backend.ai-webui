@@ -3,7 +3,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import SessionStatusTag from './SessionStatusTag';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Descriptions, ModalProps, Tag, Typography, theme } from 'antd';
+import { Descriptions, type ModalProps, Tag, Typography, theme } from 'antd';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

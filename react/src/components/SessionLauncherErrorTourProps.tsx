@@ -1,5 +1,5 @@
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Tour, TourProps } from 'antd';
+import { Tour, type TourProps } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

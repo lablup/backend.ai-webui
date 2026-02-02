@@ -1,6 +1,6 @@
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import CopyableCodeText from './CopyableCodeText';
-import { Descriptions, DescriptionsProps, Button } from 'antd';
+import { Descriptions, type DescriptionsProps, Button } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

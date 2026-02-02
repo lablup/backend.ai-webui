@@ -1,13 +1,15 @@
 // @ts-ignore
 import BAIFlex from './BAIFlex';
 import { HolderOutlined } from '@ant-design/icons';
-import { Modal, ModalProps, theme } from 'antd';
+import { Modal, theme, type ModalProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { useState, useRef } from 'react';
-import type { DraggableData, DraggableEvent } from 'react-draggable';
-import Draggable from 'react-draggable';
+import Draggable, {
+  type DraggableData,
+  type DraggableEvent,
+} from 'react-draggable';
 
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export interface BAIModalProps extends ModalProps {

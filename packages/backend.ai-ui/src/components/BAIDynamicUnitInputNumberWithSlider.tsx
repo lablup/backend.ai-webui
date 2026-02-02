@@ -10,7 +10,7 @@ import BAIDynamicUnitInputNumber, {
 import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
-import { SliderMarks } from 'antd/es/slider';
+import type { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 

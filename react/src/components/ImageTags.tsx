@@ -3,7 +3,7 @@ import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
-import { Tag, TagProps, theme } from 'antd';
+import { Tag, type TagProps, theme } from 'antd';
 import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';

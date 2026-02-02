@@ -1,4 +1,4 @@
-import { Switch, SwitchProps, Typography } from 'antd';
+import { Switch, type SwitchProps, Typography } from 'antd';
 import { BAIFlex, useInterval } from 'backend.ai-ui';
 import React from 'react';
 

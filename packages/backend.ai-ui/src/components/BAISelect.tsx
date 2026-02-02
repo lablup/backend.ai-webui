@@ -1,8 +1,15 @@
 import BAIFlex from './BAIFlex';
-import { Divider, Select, SelectProps, theme, Tooltip, Typography } from 'antd';
+import {
+  Divider,
+  Select,
+  theme,
+  Tooltip,
+  Typography,
+  type SelectProps,
+} from 'antd';
 import { createStyles } from 'antd-style';
-import { BaseOptionType, DefaultOptionType } from 'antd/es/select';
-import { GetRef } from 'antd/lib';
+import type { BaseOptionType, DefaultOptionType } from 'antd/es/select';
+import type { GetRef } from 'antd/lib';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { useLayoutEffect, useRef, useTransition } from 'react';

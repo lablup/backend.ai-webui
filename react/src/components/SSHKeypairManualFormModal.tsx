@@ -1,6 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, FormInstance, Input, Typography } from 'antd';
+import { Form, type FormInstance, Input, Typography } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

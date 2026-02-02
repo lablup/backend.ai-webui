@@ -4,7 +4,15 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
-import { App, Form, FormInstance, message, InputNumber, Row, Col } from 'antd';
+import {
+  App,
+  Form,
+  type FormInstance,
+  message,
+  InputNumber,
+  Row,
+  Col,
+} from 'antd';
 import {
   useResourceSlotsDetails,
   BAIModal,

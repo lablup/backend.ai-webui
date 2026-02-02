@@ -26,7 +26,7 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import type { ColumnsType } from 'antd/lib/table';
 import {
   BAIUserUnionIcon,
   BAIFlex,

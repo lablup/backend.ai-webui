@@ -1,5 +1,5 @@
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-import { Form, FormItemProps, Input } from 'antd';
+import { Form, type FormItemProps, Input } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

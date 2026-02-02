@@ -1,6 +1,11 @@
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import { theme, ConfigProvider, ConfigProviderProps, ThemeConfig } from 'antd';
+import {
+  theme,
+  ConfigProvider,
+  type ConfigProviderProps,
+  type ThemeConfig,
+} from 'antd';
 import _ from 'lodash';
 import React, { useContext } from 'react';
 

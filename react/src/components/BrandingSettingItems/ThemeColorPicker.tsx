@@ -1,4 +1,4 @@
-import { Col, ColorPicker, ColorPickerProps, Row, theme } from 'antd';
+import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';
 import { BAIFlex } from 'backend.ai-ui';
