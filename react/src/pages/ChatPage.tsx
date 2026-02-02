@@ -228,7 +228,7 @@ const PureChatPage = ({ id }: { id: string }) => {
       >
         {id && (
           <BAIFlex
-            direction="column"
+            direction="row"
             align="stretch"
             gap={'xs'}
             style={{
