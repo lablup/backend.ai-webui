@@ -9,7 +9,7 @@ import AgentDetailDrawer from './AgentDetailDrawer';
 import BAIRadioGroup from './BAIRadioGroup';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Button, TableProps, Tag, theme, Tooltip } from 'antd';
+import { Button, type TableProps, Tag, theme, Tooltip } from 'antd';
 import {
   BAIFlex,
   BAIPropertyFilter,

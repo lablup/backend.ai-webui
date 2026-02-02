@@ -1,4 +1,4 @@
-import { App, Form, FormInstance, Input, theme } from 'antd';
+import { App, Form, type FormInstance, Input, theme } from 'antd';
 import {
   BAIFlex,
   BAIModal,

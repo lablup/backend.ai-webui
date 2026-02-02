@@ -1,7 +1,7 @@
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { FormInstance, message, Form, Select, DatePicker } from 'antd';
+import { type FormInstance, message, Form, Select, DatePicker } from 'antd';
 import {
   BAIModalProps,
   ESMClientErrorResponse,

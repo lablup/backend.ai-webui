@@ -1,4 +1,4 @@
-import { Form, FormItemProps } from 'antd';
+import { Form, type FormItemProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 

@@ -1,6 +1,6 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, Input, message, Alert, FormInstance } from 'antd';
+import { Form, Input, message, Alert, type FormInstance } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

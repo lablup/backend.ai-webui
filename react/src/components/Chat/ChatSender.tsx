@@ -6,7 +6,7 @@ import {
   SenderProps,
 } from '@ant-design/x';
 import { Attachment } from '@ant-design/x/es/attachments';
-import { Badge, Button, GetRef, UploadProps } from 'antd';
+import { Badge, Button, type GetRef, type UploadProps } from 'antd';
 import { isEmpty } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

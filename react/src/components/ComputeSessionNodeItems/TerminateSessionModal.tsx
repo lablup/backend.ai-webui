@@ -9,7 +9,7 @@ import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { Card, Checkbox, ModalProps, Typography } from 'antd';
+import { Card, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
 import _ from 'lodash';

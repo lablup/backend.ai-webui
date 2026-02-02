@@ -1,5 +1,5 @@
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { theme, ConfigProvider, ConfigProviderProps } from 'antd';
+import { theme, ConfigProvider, type ConfigProviderProps } from 'antd';
 import _ from 'lodash';
 import React, { useContext } from 'react';
 

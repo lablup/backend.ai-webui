@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin, SpinProps } from 'antd';
+import { Spin, type SpinProps } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React from 'react';
 

@@ -25,7 +25,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

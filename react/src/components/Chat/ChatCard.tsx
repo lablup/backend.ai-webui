@@ -22,7 +22,7 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, CardProps, theme } from 'antd';
+import { Alert, App, Card, type CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAILogger,

@@ -1,4 +1,4 @@
-import { Form, FormItemProps } from 'antd';
+import { Form, type FormItemProps } from 'antd';
 import React, { useEffect } from 'react';
 
 interface HiddenFormItemProps extends Omit<FormItemProps, 'children'> {

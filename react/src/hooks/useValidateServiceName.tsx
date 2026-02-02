@@ -1,6 +1,6 @@
 import { useValidateServiceNameQuery } from '../__generated__/useValidateServiceNameQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
-import { FormItemProps } from 'antd';
+import { type FormItemProps } from 'antd';
 import type { RuleObject } from 'antd/es/form';
 import _ from 'lodash';
 import { useMemo } from 'react';

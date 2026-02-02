@@ -1,4 +1,4 @@
-import { Tabs, TabsProps } from 'antd';
+import { Tabs, type TabsProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';

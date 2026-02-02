@@ -1,6 +1,6 @@
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import { SorterResult } from 'antd/lib/table/interface';
+import type { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
 import { parseAsInteger, useQueryStates } from 'nuqs';
 import { useMemo, useState } from 'react';

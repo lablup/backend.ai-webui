@@ -1,5 +1,5 @@
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { Slider, SliderSingleProps } from 'antd';
+import { Slider, type SliderSingleProps } from 'antd';
 import _, { isNumber } from 'lodash';
 import React from 'react';
 

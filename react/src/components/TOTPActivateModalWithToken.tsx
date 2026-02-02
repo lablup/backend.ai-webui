@@ -2,7 +2,7 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import { TOTPActivateForm, TOTPActivateFormData } from './TOTPActivateModal';
-import { FormInstance, message } from 'antd';
+import { type FormInstance, message } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

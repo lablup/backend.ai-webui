@@ -1,4 +1,4 @@
-import { ConfigProvider, Menu, MenuProps, theme } from 'antd';
+import { ConfigProvider, Menu, type MenuProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';

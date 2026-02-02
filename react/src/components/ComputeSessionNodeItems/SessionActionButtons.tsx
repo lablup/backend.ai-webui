@@ -11,7 +11,7 @@ import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { Tooltip, Button, theme, Space, ButtonProps } from 'antd';
+import { Tooltip, Button, theme, Space, type ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,

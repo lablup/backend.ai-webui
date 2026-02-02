@@ -1,4 +1,4 @@
-import { ThemeConfig } from 'antd';
+import { type ThemeConfig } from 'antd';
 import _ from 'lodash';
 
 export type LogoConfig = {

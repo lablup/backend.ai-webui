@@ -1,5 +1,11 @@
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Form, Input, Popconfirm, PopconfirmProps, Typography } from 'antd';
+import {
+  Form,
+  Input,
+  Popconfirm,
+  type PopconfirmProps,
+  Typography,
+} from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';

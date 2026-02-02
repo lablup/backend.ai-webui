@@ -22,7 +22,7 @@ import {
   TablePaginationConfig,
   Tooltip,
 } from 'antd';
-import { ColumnType } from 'antd/lib/table';
+import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

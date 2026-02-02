@@ -22,7 +22,7 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

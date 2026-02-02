@@ -1,4 +1,4 @@
-import { ModalProps, Typography, theme } from 'antd';
+import { type ModalProps, Typography, theme } from 'antd';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

@@ -12,7 +12,7 @@ import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, FormInstance, Input, InputNumber } from 'antd';
+import { App, Form, type FormInstance, Input, InputNumber } from 'antd';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,

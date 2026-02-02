@@ -3,7 +3,7 @@ import { convertToBinaryUnit, convertToDecimalUnit } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import SimpleProgressWithLabel from './SimpleProgressWithLabel';
-import { ProgressProps, Typography, Row, Col } from 'antd';
+import { type ProgressProps, Typography, Row, Col } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,

@@ -1,4 +1,4 @@
-import { Form, Checkbox, FormItemProps } from 'antd';
+import { Form, Checkbox, type FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex } from 'backend.ai-ui';
 import React, {

@@ -27,7 +27,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle, useDebounceFn } from 'ahooks';
 import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

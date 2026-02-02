@@ -1,7 +1,7 @@
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps, theme } from 'antd';
+import { Select, type SelectProps, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 

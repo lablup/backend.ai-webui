@@ -1,6 +1,6 @@
 import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, ButtonProps } from 'antd';
+import { Button, type ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 

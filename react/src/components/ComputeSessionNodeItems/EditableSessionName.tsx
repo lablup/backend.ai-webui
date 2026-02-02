@@ -5,7 +5,7 @@ import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-import { theme, Form, Input, App, GetProps, Typography } from 'antd';
+import { theme, Form, Input, App, type GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
