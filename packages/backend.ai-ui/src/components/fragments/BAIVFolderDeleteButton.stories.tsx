@@ -3,6 +3,7 @@ import RelayResolver from '../../tests/RelayResolver';
 import BAIFlex from '../BAIFlex';
 import BAIVFolderDeleteButton from './BAIVFolderDeleteButton';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -62,6 +63,13 @@ For other props, refer to [Ant Design Button](https://ant.design/components/butt
         defaultValue: { summary: 'false' },
       },
     },
+    onClick: {
+      action: 'clicked',
+      description: 'Click handler',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
   },
 };
 
@@ -74,9 +82,10 @@ type Story = StoryObj<typeof BAIVFolderDeleteButton>;
 
 interface QueryResolverProps {
   disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const QueryResolver = ({ disabled = false }: QueryResolverProps) => {
+const QueryResolver = ({ disabled = false, onClick }: QueryResolverProps) => {
   const { vfolder_nodes } =
     useLazyLoadQuery<BAIVFolderDeleteButtonStoriesQuery>(
       graphql`
@@ -98,7 +107,11 @@ const QueryResolver = ({ disabled = false }: QueryResolverProps) => {
   return (
     vfolders &&
     vfolders.length > 0 && (
-      <BAIVFolderDeleteButton vfolderFrgmt={vfolders} disabled={disabled} />
+      <BAIVFolderDeleteButton
+        vfolderFrgmt={vfolders}
+        disabled={disabled}
+        onClick={onClick}
+      />
     )
   );
 };
@@ -112,6 +125,7 @@ const QueryResolver = ({ disabled = false }: QueryResolverProps) => {
  */
 export const Default: Story = {
   name: 'Deletable',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -120,7 +134,7 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         VirtualFolderConnection: () => ({
@@ -143,7 +157,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -153,6 +167,7 @@ export const Default: Story = {
  */
 export const NotDeletable: Story = {
   name: 'NotDeletable',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -161,7 +176,7 @@ export const NotDeletable: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         VirtualFolderConnection: () => ({
@@ -180,7 +195,7 @@ export const NotDeletable: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -190,6 +205,7 @@ export const NotDeletable: Story = {
  */
 export const MixedPermissions: Story = {
   name: 'MixedPermissions',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -198,7 +214,7 @@ export const MixedPermissions: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         VirtualFolderConnection: () => ({
@@ -226,7 +242,7 @@ export const MixedPermissions: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -236,6 +252,9 @@ export const MixedPermissions: Story = {
  */
 export const Disabled: Story = {
   name: 'DisabledState',
+  args: {
+    disabled: true,
+  },
   parameters: {
     docs: {
       description: {
@@ -244,7 +263,7 @@ export const Disabled: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         VirtualFolderConnection: () => ({
@@ -262,7 +281,7 @@ export const Disabled: Story = {
         }),
       }}
     >
-      <QueryResolver disabled />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };

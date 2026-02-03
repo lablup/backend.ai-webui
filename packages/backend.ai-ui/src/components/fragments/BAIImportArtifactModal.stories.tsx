@@ -65,8 +65,8 @@ The modal is typically used with artifact revision selection:
 
 For other props, refer to [Ant Design Modal](https://ant.design/components/modal).
 
-## Note
-In Storybook, the mutation will not execute. Click "Cancel" to close the modal.
+## Storybook
+Mutation is mocked and will execute successfully, closing the modal on completion.
         `,
       },
     },
@@ -241,6 +241,16 @@ export const Default: Story = {
             },
           ],
         }),
+        ImportArtifactsPayload: () => ({
+          tasks: [
+            {
+              taskId: 'task-1',
+              artifactRevision: {
+                version: 'v1.0.0',
+              },
+            },
+          ],
+        }),
       }}
     >
       <QueryResolver />
@@ -310,6 +320,16 @@ export const WithExcludedRevisions: Story = {
             },
           ],
         }),
+        ImportArtifactsPayload: () => ({
+          tasks: [
+            {
+              taskId: 'task-1',
+              artifactRevision: {
+                version: 'v1.0.0',
+              },
+            },
+          ],
+        }),
       }}
     >
       <QueryResolver />
@@ -350,6 +370,16 @@ export const SingleRevision: Story = {
                 version: 'latest',
                 size: '10737418240', // 10GB
                 status: 'SCANNED',
+              },
+            },
+          ],
+        }),
+        ImportArtifactsPayload: () => ({
+          tasks: [
+            {
+              taskId: 'task-1',
+              artifactRevision: {
+                version: 'latest',
               },
             },
           ],
@@ -406,6 +436,9 @@ export const AllExcluded: Story = {
               },
             },
           ],
+        }),
+        ImportArtifactsPayload: () => ({
+          tasks: [],
         }),
       }}
     >

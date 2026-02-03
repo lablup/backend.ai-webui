@@ -49,8 +49,8 @@ const meta: Meta<typeof BAIProjectBulkEditModal> = {
 
 For other props, refer to [BAIModal](/?path=/docs/modal-baimodal--docs).
 
-## Note
-In Storybook, the mutation will not execute. Click "Cancel" to close the modal.
+## Storybook
+Mutation is mocked and will execute successfully, closing the modal on completion.
         `,
       },
     },
@@ -147,7 +147,20 @@ export const Default: Story = {
     },
   },
   render: () => (
-    <RelayResolver>
+    <RelayResolver
+      mockResolvers={{
+        Query: () => ({
+          project_resource_policies: [
+            { id: 'policy-1', name: 'default' },
+            { id: 'policy-2', name: 'premium' },
+            { id: 'policy-3', name: 'unlimited' },
+          ],
+        }),
+        ModifyGroup: () => ({
+          ok: true,
+        }),
+      }}
+    >
       <QueryResolver />
     </RelayResolver>
   ),

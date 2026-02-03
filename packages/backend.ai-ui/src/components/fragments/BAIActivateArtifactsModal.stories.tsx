@@ -53,8 +53,8 @@ The modal is typically used with a table selection:
 
 For other props, refer to [Ant Design Modal](https://ant.design/components/modal).
 
-## Note
-In Storybook, the mutation will not execute. Click "Cancel" to close the modal.
+## Storybook
+Mutation is mocked and will execute successfully, closing the modal on completion.
         `,
       },
     },
@@ -164,6 +164,14 @@ export const Default: Story = {
                 id: 'QXJ0aWZhY3Q6YXJ0aWZhY3QtMQ==',
                 name: 'my-model-v1.0',
               },
+            },
+          ],
+        }),
+        RestoreArtifactsPayload: () => ({
+          artifacts: [
+            {
+              id: 'QXJ0aWZhY3Q6YXJ0aWZhY3QtMQ==',
+              availability: 'AVAILABLE',
             },
           ],
         }),

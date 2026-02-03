@@ -3,6 +3,7 @@ import RelayResolver from '../../tests/RelayResolver';
 import BAIFlex from '../BAIFlex';
 import BAIArtifactRevisionDeleteButton from './BAIArtifactRevisionDeleteButton';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -63,6 +64,13 @@ For other props, refer to [BAIButton](?path=/docs/button-baibutton--docs).
         defaultValue: { summary: 'false' },
       },
     },
+    onClick: {
+      action: 'clicked',
+      description: 'Click handler',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
   },
 };
 
@@ -75,9 +83,10 @@ type Story = StoryObj<typeof BAIArtifactRevisionDeleteButton>;
 
 interface QueryResolverProps {
   loading?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
-const QueryResolver = ({ loading = false }: QueryResolverProps) => {
+const QueryResolver = ({ loading = false, onClick }: QueryResolverProps) => {
   const { artifactRevisions } =
     useLazyLoadQuery<BAIArtifactRevisionDeleteButtonStoriesQuery>(
       graphql`
@@ -102,6 +111,7 @@ const QueryResolver = ({ loading = false }: QueryResolverProps) => {
       <BAIArtifactRevisionDeleteButton
         revisionsFrgmt={revisions}
         loading={loading}
+        onClick={onClick}
       />
     )
   );
@@ -116,6 +126,7 @@ const QueryResolver = ({ loading = false }: QueryResolverProps) => {
  */
 export const Default: Story = {
   name: 'Deletable',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -124,7 +135,7 @@ export const Default: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ArtifactRevisionConnection: () => ({
@@ -143,7 +154,7 @@ export const Default: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -153,6 +164,7 @@ export const Default: Story = {
  */
 export const NotDeletable: Story = {
   name: 'NotDeletable',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -161,7 +173,7 @@ export const NotDeletable: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ArtifactRevisionConnection: () => ({
@@ -180,7 +192,7 @@ export const NotDeletable: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -190,6 +202,7 @@ export const NotDeletable: Story = {
  */
 export const MixedStatus: Story = {
   name: 'MixedStatus',
+  args: {},
   parameters: {
     docs: {
       description: {
@@ -198,7 +211,7 @@ export const MixedStatus: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ArtifactRevisionConnection: () => ({
@@ -222,7 +235,7 @@ export const MixedStatus: Story = {
         }),
       }}
     >
-      <QueryResolver />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
@@ -232,6 +245,9 @@ export const MixedStatus: Story = {
  */
 export const Loading: Story = {
   name: 'LoadingState',
+  args: {
+    loading: true,
+  },
   parameters: {
     docs: {
       description: {
@@ -239,7 +255,7 @@ export const Loading: Story = {
       },
     },
   },
-  render: () => (
+  render: (args) => (
     <RelayResolver
       mockResolvers={{
         ArtifactRevisionConnection: () => ({
@@ -253,7 +269,7 @@ export const Loading: Story = {
         }),
       }}
     >
-      <QueryResolver loading />
+      <QueryResolver {...args} />
     </RelayResolver>
   ),
 };
