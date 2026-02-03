@@ -100,13 +100,14 @@ const StorageSelect: React.FC<Props> = ({
         });
       }}
       showSearch={
-        showSearch === true
-          ? {
+        showSearch === false
+          ? false
+          : {
+              ...(typeof showSearch === 'object' ? showSearch : {}),
               searchValue: controllableSearchValue,
               onSearch: setControllableSearchValue,
               filterOption: true,
             }
-          : showSearch
       }
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
