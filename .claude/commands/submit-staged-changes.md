@@ -35,29 +35,26 @@ If no argument is provided, the prefix will be inferred from the changes.
 
 ## Detailed Process
 
-### Step 0: Verify MCP Authentication
+### Step 0: Verify MCP Authentication (MUST BE FIRST)
 
-Verify that MCP tools are authenticated before starting the workflow.
+> **⚠️ CRITICAL**: This step MUST be executed BEFORE any other operation. Do NOT skip or defer this step. Do NOT read files, check git status, or perform any other action until MCP authentication is verified.
+
+Verify that Atlassian MCP is authenticated before starting the workflow.
 
 ```
-# Test Atlassian MCP authentication
+# Test Atlassian MCP authentication - THIS MUST BE THE VERY FIRST TOOL CALL
 mcp__Atlassian__atlassianUserInfo
-
-# Test Graphite MCP authentication
-mcp__graphite__run_gt_cmd with args: ["--version"]
 ```
 
 **If authentication fails:**
-- Inform the user which MCP service needs re-authentication
+- **STOP IMMEDIATELY** - Do not proceed with any other steps
+- Inform the user that Atlassian MCP needs re-authentication
 - Provide guidance on how to re-authenticate:
   ```
   ⚠️ MCP Authentication Required
 
-  The following MCP service(s) need re-authentication:
-  - [ ] Atlassian: Re-authenticate via MCP settings
-  - [ ] Graphite: Re-authenticate via MCP settings
-
-  Please re-authenticate and run the command again.
+  Atlassian MCP needs re-authentication.
+  Please re-authenticate via MCP settings and run the command again.
   ```
 - Exit the workflow without making any changes
 
@@ -252,10 +249,11 @@ See `.claude/atlassian-config.md` for:
 ## Error Handling
 
 ### MCP Authentication Failure
-If Atlassian or Graphite MCP authentication fails:
-1. Inform the user about the authentication issue
-2. Ask them to re-authenticate
-3. Retry the failed operation
+If Atlassian MCP authentication fails:
+1. **STOP IMMEDIATELY** - Do not proceed with any other steps
+2. Inform the user about the authentication issue
+3. Ask them to re-authenticate via MCP settings
+4. Exit the workflow - user must run the command again after re-authentication
 
 ### No Staged Changes
 If `git diff --cached` returns empty:
