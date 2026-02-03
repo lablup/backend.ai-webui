@@ -145,6 +145,7 @@ const QueryResolver = () => {
  * Single artifact deactivation
  */
 export const Default: Story = {
+  name: 'Basic',
   parameters: {
     docs: {
       description: {

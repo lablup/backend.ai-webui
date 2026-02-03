@@ -176,8 +176,7 @@ const QueryResolver = () => {
           selectedArtifactFrgmt={artifactNode ?? null}
           selectedArtifactRevisionFrgmt={revisionNodes}
           open={open}
-          onOk={(_e, tasks) => {
-            console.log('Import tasks:', tasks);
+          onOk={() => {
             setOpen(false);
           }}
           onCancel={() => setOpen(false)}
