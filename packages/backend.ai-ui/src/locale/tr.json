@@ -86,6 +86,26 @@
     "LastUpdated": "Son güncelleme",
     "Refresh": "Yenile"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "sonra",
+      "Before": "önce",
+      "GreaterThan": "daha büyük",
+      "GreaterThanOrEqual": "büyük veya eşit",
+      "IContains": "içerir",
+      "IEndsWith": "ile biter",
+      "IEquals": "eşit",
+      "INotContains": "içermez",
+      "INotEndsWith": "ile bitmez",
+      "INotEquals": "eşit değil",
+      "INotStartsWith": "ile başlamaz",
+      "IStartsWith": "ile başlar",
+      "In": "içinde",
+      "LessThan": "daha küçük",
+      "LessThanOrEqual": "küçük veya eşit",
+      "NotIn": "içinde değil"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
     "FailedToPullVersions": "Sürümleri çekemedi.",

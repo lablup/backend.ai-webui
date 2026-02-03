@@ -86,6 +86,26 @@
     "LastUpdated": "Τελευταία ενημέρωση",
     "Refresh": "Ανανέωση"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "μετά",
+      "Before": "πριν",
+      "GreaterThan": "μεγαλύτερο από",
+      "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
+      "IContains": "περιέχει",
+      "IEndsWith": "τελειώνει με",
+      "IEquals": "ίσο με",
+      "INotContains": "δεν περιέχει",
+      "INotEndsWith": "δεν τελειώνει με",
+      "INotEquals": "όχι ίσο με",
+      "INotStartsWith": "δεν αρχίζει με",
+      "IStartsWith": "αρχίζει με",
+      "In": "σε",
+      "LessThan": "μικρότερο από",
+      "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotIn": "όχι σε"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
     "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",

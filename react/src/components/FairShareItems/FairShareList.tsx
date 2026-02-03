@@ -521,14 +521,12 @@ const FairShareList: React.FC = () => {
               currentStep === 'project' && {
                 key: 'projectId',
                 propertyLabel: t('fairShare.Name'),
-                type: 'string',
-                fixedOperator: 'in',
+                type: 'uuid',
               },
               currentStep === 'user' && {
                 key: 'userUuid',
                 propertyLabel: t('fairShare.Name'),
-                type: 'string',
-                fixedOperator: 'in',
+                type: 'uuid',
               },
             ])}
             value={deferredQueryParams.filter || {}}

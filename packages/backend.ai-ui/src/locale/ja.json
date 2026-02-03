@@ -86,6 +86,26 @@
     "LastUpdated": "最終更新",
     "Refresh": "更新"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "後",
+      "Before": "前",
+      "GreaterThan": "より大きい",
+      "GreaterThanOrEqual": "以上",
+      "IContains": "含む",
+      "IEndsWith": "で終わる",
+      "IEquals": "等しい",
+      "INotContains": "含まない",
+      "INotEndsWith": "で終わらない",
+      "INotEquals": "等しくない",
+      "INotStartsWith": "で始まらない",
+      "IStartsWith": "で始まる",
+      "In": "含まれる",
+      "LessThan": "より小さい",
+      "LessThanOrEqual": "以下",
+      "NotIn": "含まれない"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}バージョンは除外されます。",
     "FailedToPullVersions": "バージョンを引くことができませんでした。",
