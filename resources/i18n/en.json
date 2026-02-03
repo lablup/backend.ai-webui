@@ -1292,6 +1292,7 @@
     "Domain": "Domain",
     "Driver": "Driver",
     "DriverOptions": "Driver Options",
+    "EnterAPIToken": "Enter API Token",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "Information": "Information",
     "ModifyResourceGroup": "Modify Resource Group",
@@ -1320,6 +1321,7 @@
     "SelectScheduler": "Select Scheduler",
     "TimeoutSeconds": "Seconds",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
+    "WsproxyAPIToken": "WSProxy API Token",
     "WsproxyAddress": "WSProxy Server Address"
   },
   "resourcePolicy": {

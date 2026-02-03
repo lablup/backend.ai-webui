@@ -1284,6 +1284,7 @@
     "Domain": "Домэйн",
     "Driver": "Жолооч",
     "DriverOptions": "Жолоочийн сонголтууд",
+    "EnterAPIToken": "API токен оруулна уу",
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "Information": "Мэдээлэл",
     "ModifyResourceGroup": "Нөөцийн бүлгийг өөрчлөх",
@@ -1312,6 +1313,7 @@
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
     "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
+    "WsproxyAPIToken": "WSProxy API токен",
     "WsproxyAddress": "WSProxy серверийн хаяг"
   },
   "resourcePolicy": {

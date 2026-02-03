@@ -1285,6 +1285,7 @@
     "Domain": "域名",
     "Driver": "司機",
     "DriverOptions": "驅動程序選項",
+    "EnterAPIToken": "輸入 API 令牌",
     "EnterValidResourceGroupName": "輸入有效的資源組名稱",
     "Information": "資訊",
     "ModifyResourceGroup": "修改資源組",
@@ -1313,6 +1314,7 @@
     "SelectScheduler": "選擇調度程序",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "輸入要刪除的資源組名稱",
+    "WsproxyAPIToken": "WSProxy API 令牌",
     "WsproxyAddress": "WSProxy 服务器地址"
   },
   "resourcePolicy": {

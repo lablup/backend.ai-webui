@@ -1284,6 +1284,7 @@
     "Domain": "Domain",
     "Driver": "Driver",
     "DriverOptions": "Opsi Driver",
+    "EnterAPIToken": "Masukkan token API",
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "Information": "Informasi",
     "ModifyResourceGroup": "Ubah Grup Sumber Daya",
@@ -1312,6 +1313,7 @@
     "SelectScheduler": "Pilih Penjadwal",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
+    "WsproxyAPIToken": "Token API WSProxy",
     "WsproxyAddress": "Alamat Server WSProxy"
   },
   "resourcePolicy": {

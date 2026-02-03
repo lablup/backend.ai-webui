@@ -1288,6 +1288,7 @@
     "Domain": "도메인",
     "Driver": "드라이버",
     "DriverOptions": "드라이버 옵션",
+    "EnterAPIToken": "API 토큰 입력",
     "EnterValidResourceGroupName": "올바른 자원 그룹 이름을 입력해 주세요.",
     "Information": "정보",
     "ModifyResourceGroup": "자원 그룹 수정",
@@ -1316,6 +1317,7 @@
     "SelectScheduler": "스케줄러 선택",
     "TimeoutSeconds": "초",
     "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",
+    "WsproxyAPIToken": "WSProxy API 토큰",
     "WsproxyAddress": "WSProxy 서버 주소"
   },
   "resourcePolicy": {

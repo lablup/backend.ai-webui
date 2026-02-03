@@ -1286,6 +1286,7 @@
     "Domain": "Lãnh địa",
     "Driver": "Người lái xe",
     "DriverOptions": "Tùy chọn trình điều khiển",
+    "EnterAPIToken": "Nhập token API",
     "EnterValidResourceGroupName": "Nhập tên nhóm tài nguyên hợp lệ",
     "Information": "Thông tin",
     "ModifyResourceGroup": "Sửa đổi nhóm tài nguyên",
@@ -1314,6 +1315,7 @@
     "SelectScheduler": "Chọn bộ lập lịch",
     "TimeoutSeconds": "Giây",
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
+    "WsproxyAPIToken": "Token API WSProxy",
     "WsproxyAddress": "Địa chỉ máy chủ WSProxy"
   },
   "resourcePolicy": {

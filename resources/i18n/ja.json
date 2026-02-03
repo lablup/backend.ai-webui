@@ -1285,6 +1285,7 @@
     "Domain": "ドメイン",
     "Driver": "運転者",
     "DriverOptions": "ドライバーオプション",
+    "EnterAPIToken": "APIトークンを入力",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
     "Information": "情報",
     "ModifyResourceGroup": "リソースグループの変更",
@@ -1313,6 +1314,7 @@
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
+    "WsproxyAPIToken": "WSProxy APIトークン",
     "WsproxyAddress": "WSProxy サーバアドレス"
   },
   "resourcePolicy": {

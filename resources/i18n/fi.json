@@ -1285,6 +1285,7 @@
     "Domain": "Verkkotunnus",
     "Driver": "Kuljettaja",
     "DriverOptions": "Kuljettajan vaihtoehdot",
+    "EnterAPIToken": "Syötä API-avain",
     "EnterValidResourceGroupName": "Syötä kelvollinen resurssiryhmän nimi",
     "Information": "Tiedot",
     "ModifyResourceGroup": "Resurssiryhmän muokkaaminen",
@@ -1313,6 +1314,7 @@
     "SelectScheduler": "Valitse Ajastin",
     "TimeoutSeconds": "Sekuntia",
     "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
+    "WsproxyAPIToken": "WSProxy API -avain",
     "WsproxyAddress": "WSProxy-palvelimen osoite"
   },
   "resourcePolicy": {

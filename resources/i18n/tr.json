@@ -1286,6 +1286,7 @@
     "Domain": "Etki Alanı",
     "Driver": "sürücü",
     "DriverOptions": "Sürücü Seçenekleri",
+    "EnterAPIToken": "API jetonunu girin",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
     "Information": "Bilgi",
     "ModifyResourceGroup": "Kaynak Grubunu Değiştir",
@@ -1314,6 +1315,7 @@
     "SelectScheduler": "Zamanlayıcı Seç",
     "TimeoutSeconds": "saniye",
     "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
+    "WsproxyAPIToken": "WSProxy API Jetonu",
     "WsproxyAddress": "WSProxy Sunucu Adresi"
   },
   "resourcePolicy": {

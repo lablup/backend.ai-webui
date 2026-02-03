@@ -1286,6 +1286,7 @@
     "Domain": "Bereich",
     "Driver": "Treiber",
     "DriverOptions": "Treiberoptionen",
+    "EnterAPIToken": "API-Token eingeben",
     "EnterValidResourceGroupName": "Geben Sie einen gültigen Ressourcengruppennamen ein",
     "Information": "Information",
     "ModifyResourceGroup": "Ressourcengruppe ändern",
@@ -1314,6 +1315,7 @@
     "SelectScheduler": "Wählen Sie Planer",
     "TimeoutSeconds": "Sekunden",
     "TypeResourceGroupNameToDelete": "Geben Sie den Namen der zu löschenden Ressourcengruppe ein",
+    "WsproxyAPIToken": "WSProxy-API-Token",
     "WsproxyAddress": "WSProxy-Server-Adresse"
   },
   "resourcePolicy": {

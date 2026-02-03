@@ -1286,6 +1286,7 @@
     "Domain": "Dominio",
     "Driver": "Conductor",
     "DriverOptions": "Opciones del conductor",
+    "EnterAPIToken": "Introduzca el token de la API",
     "EnterValidResourceGroupName": "Introduzca un nombre de grupo de recursos válido",
     "Information": "Información",
     "ModifyResourceGroup": "Modificar grupo de recursos",
@@ -1314,6 +1315,7 @@
     "SelectScheduler": "Seleccione Programador",
     "TimeoutSeconds": "Segundos",
     "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar",
+    "WsproxyAPIToken": "Token API de WSProxy",
     "WsproxyAddress": "Dirección del servidor WSProxy"
   },
   "resourcePolicy": {

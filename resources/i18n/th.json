@@ -1275,6 +1275,7 @@
     "Domain": "โดเมน",
     "Driver": "ไดรเวอร์",
     "DriverOptions": "ตัวเลือกไดรเวอร์",
+    "EnterAPIToken": "กรอกโทเค็น API",
     "EnterValidResourceGroupName": "ป้อนชื่อกลุ่มทรัพยากรที่ถูกต้อง",
     "Information": "ข้อมูล",
     "ModifyResourceGroup": "แก้ไขกลุ่มทรัพยากร",
@@ -1303,6 +1304,7 @@
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
     "TimeoutSeconds": "วินาที",
     "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ",
+    "WsproxyAPIToken": "โทเค็น API ของ WSProxy",
     "WsproxyAddress": "ที่อยู่เซิร์ฟเวอร์ WSProxy"
   },
   "resourcePolicy": {

@@ -1283,6 +1283,7 @@
     "Domain": "Τομέας",
     "Driver": "Οδηγός",
     "DriverOptions": "Επιλογές προγράμματος οδήγησης",
+    "EnterAPIToken": "Εισάγετε το API token",
     "EnterValidResourceGroupName": "Εισαγάγετε έγκυρο όνομα ομάδας πόρων",
     "Information": "Πληροφορίες",
     "ModifyResourceGroup": "Τροποποίηση ομάδας πόρων",
@@ -1311,6 +1312,7 @@
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
     "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
+    "WsproxyAPIToken": "Διακριτικό API WSProxy",
     "WsproxyAddress": "Διεύθυνση διακομιστή WSProxy"
   },
   "resourcePolicy": {
