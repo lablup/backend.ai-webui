@@ -511,12 +511,16 @@ export class SessionLauncher {
    */
   private async configureBatchOptions(): Promise<void> {
     if (this.options.batchCommand) {
-      const commandInput = this.page.locator(
-        'textarea[id*="batch"][id*="command"], #batch_command',
-      );
-      if (await commandInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await commandInput.fill(this.options.batchCommand);
-      }
+      const commandInput = this.page.getByRole('textbox', {
+        name: 'Startup Command',
+      });
+      // Wait for the input to be visible with a longer timeout
+      await commandInput.waitFor({ state: 'visible', timeout: 5000 });
+      await commandInput.fill(this.options.batchCommand);
+      // Trigger blur event to ensure form validation
+      await commandInput.blur();
+      // Wait for form validation to complete
+      await this.page.waitForTimeout(500);
     }
 
     // TODO: Add schedule date configuration if needed
