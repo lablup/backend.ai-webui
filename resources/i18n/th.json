@@ -698,11 +698,14 @@
     "WrongAPIServerAddress": "ที่อยู่เซิร์ฟเวอร์ API ไม่ถูกต้อง"
   },
   "errorBoundary": {
+    "DebugInfo": "ข้อมูลดีบัก:",
     "DisplayOnlyDevEnv": "บล็อกข้อผิดพลาดนี้จะแสดงเฉพาะในสภาพแวดล้อมการพัฒนา WebUI เท่านั้น",
+    "ErrorMessage": "ข้อความแสดงข้อผิดพลาด:",
     "ExpiredLoginSessionReLogin": "เข้าสู่ระบบ",
     "ExpiredLoginSessionTitle": "เซสชั่นการเข้าสู่ระบบของคุณหมดอายุแล้ว",
     "ReloadPage": "โหลดหน้าใหม่",
     "ResetErrorBoundary": "รีเซ็ต ErrorBoundary",
+    "StackTrace": "รายละเอียด Stack Trace:",
     "Title": "เกิดข้อผิดพลาด"
   },
   "explorer": {

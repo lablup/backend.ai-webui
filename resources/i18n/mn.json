@@ -707,11 +707,14 @@
     "WrongAPIServerAddress": "API серверийн хаяг буруу байна."
   },
   "errorBoundary": {
+    "DebugInfo": "Алдааг оношлох мэдээлэл:",
     "DisplayOnlyDevEnv": "Энэ алдааны блок нь зөвхөн WebUI хөгжүүлэлтийн орчинд харагдана.",
+    "ErrorMessage": "Алдааны мэдэгдэл:",
     "ExpiredLoginSessionReLogin": "Нэвтрэх",
     "ExpiredLoginSessionTitle": "Таны нэвтрэх хугацаа дууссан.",
     "ReloadPage": "Хуудсыг дахин ачаална уу",
     "ResetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
+    "StackTrace": "Стэк мөр:",
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {

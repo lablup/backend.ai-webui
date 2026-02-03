@@ -706,11 +706,14 @@
     "WrongAPIServerAddress": "Λάθος διεύθυνση διακομιστή API."
   },
   "errorBoundary": {
+    "DebugInfo": "Πληροφορίες αποσφαλμάτωσης:",
     "DisplayOnlyDevEnv": "Αυτό το μπλοκ σφάλματος εμφανίζεται μόνο στο περιβάλλον ανάπτυξης WebUI.",
+    "ErrorMessage": "Μήνυμα σφάλματος:",
     "ExpiredLoginSessionReLogin": "Σύνδεση",
     "ExpiredLoginSessionTitle": "Η περίοδος σύνδεσής σας έχει λήξει.",
     "ReloadPage": "Επαναφόρτωση της σελίδας",
     "ResetErrorBoundary": "Επαναφορά ErrorBoundary",
+    "StackTrace": "Ιχνη στοίβας:",
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {

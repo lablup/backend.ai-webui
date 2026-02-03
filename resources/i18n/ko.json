@@ -711,11 +711,14 @@
     "WrongAPIServerAddress": "잘못된 API 서버 주소"
   },
   "errorBoundary": {
+    "DebugInfo": "디버그 정보:",
     "DisplayOnlyDevEnv": "이 에러 블록은 WebUI 개발 환경에서만 표시됩니다.",
+    "ErrorMessage": "오류 메시지:",
     "ExpiredLoginSessionReLogin": "로그인",
     "ExpiredLoginSessionTitle": "로그인 세션이 만료되었습니다.",
     "ReloadPage": "페이지 새로고침",
     "ResetErrorBoundary": "ErrorBoundary 초기화",
+    "StackTrace": "스택 트레이스:",
     "Title": "에러가 발생했습니다."
   },
   "explorer": {

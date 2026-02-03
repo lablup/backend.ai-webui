@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "错误的 API 服务器地址。"
   },
   "errorBoundary": {
+    "DebugInfo": "除錯資訊：",
     "DisplayOnlyDevEnv": "此错误块仅在 WebUI 开发环境中显示。",
+    "ErrorMessage": "錯誤訊息：",
     "ExpiredLoginSessionReLogin": "登录",
     "ExpiredLoginSessionTitle": "您的登录会话已过期。",
     "ReloadPage": "重新载入页面",
     "ResetErrorBoundary": "重置错误边界",
+    "StackTrace": "堆疊追蹤：",
     "Title": "发生错误。"
   },
   "explorer": {

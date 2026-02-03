@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Mauvaise adresse du serveur API."
   },
   "errorBoundary": {
+    "DebugInfo": "Informations de débogage :",
     "DisplayOnlyDevEnv": "Ce bloc d'erreur n'est affiché que dans l'environnement de développement WebUI.",
+    "ErrorMessage": "Message d'erreur :",
     "ExpiredLoginSessionReLogin": "Connexion",
     "ExpiredLoginSessionTitle": "Votre session de connexion a expiré.",
     "ReloadPage": "Recharger la page",
     "ResetErrorBoundary": "Réinitialisation de la limite d'erreur",
+    "StackTrace": "Trace de la pile :",
     "Title": "Une erreur s'est produite."
   },
   "explorer": {

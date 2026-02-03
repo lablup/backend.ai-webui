@@ -507,6 +507,8 @@ class Client {
         description: errorDesc,
         error_code: errorCode,
         traceback: traceback,
+        // Include response body for GraphQL errors
+        response: body,
       };
     }
 
@@ -1435,7 +1437,12 @@ class Client {
   createKernel(
     kernelType,
     sessionId: string = '',
-    resources = {},
+    resources: SessionResources = {
+      type: 'interactive',
+      cluster_mode: 'single-node',
+      cluster_size: 1,
+      maxWaitSeconds: 0,
+    },
     timeout = 0,
   ): Promise<any> {
     return this.createIfNotExists(
