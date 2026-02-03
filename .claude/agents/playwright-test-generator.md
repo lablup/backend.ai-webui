@@ -20,6 +20,7 @@ application behavior.
 - Immediately after reading the test log, invoke `generator_write_test` with the generated source code
   - File should contain single test
   - File name must be fs-friendly scenario name (use kebab-case with `.spec.ts` extension)
+  - Place test files in appropriate feature directory: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
   - Test must be placed in a describe matching the top-level test plan item
   - **Test title must use user-scenario-based naming convention**
     - Format: `[Actor] can/cannot [action] [when/with/in condition]`
@@ -28,6 +29,7 @@ application behavior.
   - Includes a comment with the step text before each step execution. Do not duplicate comments if step requires
     multiple actions.
   - Always use best practices from the log when generating tests.
+  - **Include resource cleanup in `afterEach`** for tests that create resources (sessions, endpoints, users)
 
 **Critical: Avoid Unnecessary Visibility Checks and Fallback Logic**
 - **DO NOT** create visibility check variables like `isSomethingVisible` with fallback logic
@@ -81,6 +83,60 @@ await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 await page.goto('/dashboard');
 await page.waitForSelector('[data-testid="dashboard-loaded"]');
 ```
+
+**Guideline: Avoid Using `page.waitForTimeout()` for Polling or Readiness**
+- **Avoid `page.waitForTimeout()` for polling/readiness** - it often causes flaky tests and wastes time
+- Prefer Playwright's `expect.poll()` for status checking or element-based waiting
+- Use short `waitForTimeout()` delays only as a last resort for brief stabilization
+
+```typescript
+// ❌ BAD: Manual polling with waitForTimeout
+let status = await getStatus();
+while (status !== 'READY') {
+  await page.waitForTimeout(1000);
+  status = await getStatus();
+}
+
+// ✅ GOOD: Use expect.poll() for status waiting
+await expect.poll(async () => await getStatus(), { timeout: 60000 }).toBe('READY');
+```
+
+**Resource Cleanup Pattern:**
+- Tests that create resources (sessions, endpoints, users) MUST include cleanup
+- Prefer `afterEach` for isolated tests; use `afterAll` when a single expensive resource is shared across serial tests
+- Track created resources and clean them up appropriately
+
+```typescript
+// ✅ GOOD: Test with proper cleanup
+test.describe('Session Tests', { tag: ['@session'] }, () => {
+  let createdSessionName: string | null = null;
+
+  test.afterEach(async ({ page }) => {
+    if (createdSessionName) {
+      try {
+        const launcher = new SessionLauncher(page);
+        launcher.withSessionName(createdSessionName);
+        await launcher.terminate();
+      } catch { /* ignore cleanup errors */ }
+    }
+  });
+
+  test('User can create session', async ({ page }) => {
+    const launcher = new SessionLauncher(page);
+    await launcher.withSessionName('test-session').create();
+    createdSessionName = launcher.getSessionName();
+    // ... assertions
+  });
+});
+```
+
+**Project-Specific Conventions:**
+- Test files use `.spec.ts` extension (per `e2e/E2E-TEST-NAMING-GUIDELINES.md`)
+- Tests are organized in feature directories: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+- POM classes are in `e2e/utils/classes/{feature}/`
+- Use `loginAsAdmin` or `loginAsUser` from `test-util.ts` for authentication
+- Use `navigateTo(page, 'route')` for navigation
+- Use tags for categorization: `@critical`, `@session`, `@serving`, `@functional`
 
    <example-generation>
    For following plan:
