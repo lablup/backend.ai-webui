@@ -771,6 +771,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler tidak diaktifkan untuk grup sumber daya yang dipilih ({{resourceGroup}}). Untuk menggunakan penjadwal ini, silakan perbarui pengaturan grup sumber daya.",
     "TotalUsage": "Total penggunaan",
     "TotalUsageDescription": "Total penggunaan sumber daya selama beberapa hari terakhir.",
+    "UsageHistory": "Riwayat Penggunaan",
     "User": "Pengguna",
     "UserDescription": "Pengguna menentukan bobot yang dikonfigurasi dan penggunaan kumulatif selama periode agregasi. Bobot pengguna digunakan untuk menghitung koefisien prioritas bagi masing-masing pengguna.",
     "Weight": "Bobot",
@@ -781,6 +782,13 @@
       "PleaseSelectProject": "Silakan pilih proyek.",
       "ProjectDescription": "Konfigurasikan dan ubah bobot Fair Share untuk setiap proyek.",
       "UserDescription": "Atur dan sesuaikan bobot Fair Share untuk setiap pengguna."
+    },
+    "usageBucket": {
+      "Last30Days": "30 Hari Terakhir",
+      "Last7Days": "7 Hari Terakhir",
+      "Last90Days": "90 Hari Terakhir",
+      "NoDataAvailable": "Tidak ada data penggunaan untuk periode yang dipilih",
+      "SelectDateRange": "Pilih Rentang Tanggal"
     }
   },
   "fairShrae": {},
@@ -827,6 +835,7 @@
     "ResourceGroup": "Grup Sumber Daya",
     "SecretKey": "Kunci Rahasia",
     "Session": "Sesi",
+    "ShowUsageGraph": "Tampilkan Penggunaan",
     "StorageProxies": "Penyimpanan",
     "TotalItems": "Total item {{total}}",
     "Username": "Nama pengguna",

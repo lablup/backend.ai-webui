@@ -770,6 +770,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler ei ole käytössä valitussa resurssiryhmässä ({{resourceGroup}}). Ota se käyttöön päivittämällä resurssiryhmän asetukset.",
     "TotalUsage": "Kokonaiskäyttö",
     "TotalUsageDescription": "Resurssien kokonaiskäyttö tarkastelujaksolla.",
+    "UsageHistory": "Käyttöhistoria",
     "User": "Käyttäjä",
     "UserDescription": "Käyttäjä määrittää asetetun painon ja aggregointijakson aikana kertyneen käytön. Käyttäjän painoa käytetään yksittäisten käyttäjien prioriteettikertoimen laskemiseen.",
     "Weight": "Paino",
@@ -780,6 +781,13 @@
       "PleaseSelectProject": "Valitse projekti.",
       "ProjectDescription": "Määritä ja muokkaa kunkin projektin Fair Sharen painoja.",
       "UserDescription": "Määritä ja muokkaa Fair Share -painoja kullekin käyttäjälle."
+    },
+    "usageBucket": {
+      "Last30Days": "Viimeiset 30 päivää",
+      "Last7Days": "Viimeiset 7 päivää",
+      "Last90Days": "Viimeiset 90 päivää",
+      "NoDataAvailable": "Ei käyttötietoja valitulta ajanjaksolta",
+      "SelectDateRange": "Valitse päivämääräväli"
     }
   },
   "fairShrae": {},
@@ -826,6 +834,7 @@
     "ResourceGroup": "Resurssiryhmä",
     "SecretKey": "Salainen avain",
     "Session": "Istunto",
+    "ShowUsageGraph": "Näytä käyttö",
     "StorageProxies": "Varastot",
     "TotalItems": "Yhteensä {{total}} kohteita",
     "Username": "Käyttäjätunnus",

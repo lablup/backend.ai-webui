@@ -91,6 +91,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         createdAt
         updatedAt
         ...FairShareWeightSettingModal_ProjectFragment
+        ...UsageBucketModal_ProjectFragment
       }
     `,
     projectFairShareNodeFragment,

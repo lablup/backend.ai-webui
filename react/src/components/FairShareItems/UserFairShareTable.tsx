@@ -89,6 +89,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
         updatedAt
 
         ...FairShareWeightSettingModal_UserFragment
+        ...UsageBucketModal_UserFragment
       }
     `,
     userFairShareNodeFragment,

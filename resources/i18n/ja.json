@@ -771,6 +771,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "選択したリソースグループ（{{resourceGroup}}）ではフェアシェアスケジューラが有効になっていません。スケジューラを使用するには、リソースグループの設定を更新してください。",
     "TotalUsage": "総使用量",
     "TotalUsageDescription": "参照期間中の合計リソース使用量。",
+    "UsageHistory": "利用履歴",
     "User": "ユーザー",
     "UserDescription": "ユーザーは集計期間中の設定済みウェイトと累積使用量を定義します。ユーザーウェイトは個々のユーザーの優先度係数を計算するために使用されます。",
     "Weight": "重み",
@@ -781,6 +782,13 @@
       "PleaseSelectProject": "プロジェクトを選択してください。",
       "ProjectDescription": "各プロジェクトのFair Share重みを設定・変更します。",
       "UserDescription": "各ユーザーの Fair Share の重みを設定および変更します。"
+    },
+    "usageBucket": {
+      "Last30Days": "過去30日間",
+      "Last7Days": "過去7日間",
+      "Last90Days": "過去90日間",
+      "NoDataAvailable": "選択した期間の使用状況データはありません。",
+      "SelectDateRange": "日付範囲を選択"
     }
   },
   "fairShrae": {},
@@ -827,6 +835,7 @@
     "ResourceGroup": "リソースグループ",
     "SecretKey": "シークレットキー",
     "Session": "セッション",
+    "ShowUsageGraph": "使用状況を表示",
     "StorageProxies": "ストレージ",
     "TotalItems": "合計{{total}}項目",
     "Username": "ユーザー名",

@@ -769,6 +769,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler tidak diaktifkan untuk kumpulan sumber yang dipilih ({{resourceGroup}}). Untuk menggunakan penjadual ini, sila kemas kini tetapan kumpulan sumber.",
     "TotalUsage": "Jumlah Penggunaan",
     "TotalUsageDescription": "Jumlah penggunaan sumber semasa tempoh rujukan.",
+    "UsageHistory": "Sejarah Penggunaan",
     "User": "Pengguna",
     "UserDescription": "Pengguna menentukan berat yang dikonfigurasikan dan jumlah penggunaan terkumpul sepanjang tempoh pengagregatan. Berat pengguna digunakan untuk mengira pekali keutamaan bagi setiap pengguna.",
     "Weight": "Berat",
@@ -779,6 +780,13 @@
       "PleaseSelectProject": "Sila pilih projek.",
       "ProjectDescription": "Konfigurasikan dan laraskan berat Fair Share untuk setiap Projek.",
       "UserDescription": "Konfigurasikan dan ubah berat Fair Share untuk setiap pengguna."
+    },
+    "usageBucket": {
+      "Last30Days": "30 Hari Terakhir",
+      "Last7Days": "7 Hari Terakhir",
+      "Last90Days": "90 Hari Terakhir",
+      "NoDataAvailable": "Tiada data penggunaan tersedia untuk tempoh yang dipilih",
+      "SelectDateRange": "Pilih Julat Tarikh"
     }
   },
   "fairShrae": {},
@@ -825,6 +833,7 @@
     "ResourceGroup": "Kumpulan Sumber",
     "SecretKey": "Kunci Rahsia",
     "Session": "Sesi",
+    "ShowUsageGraph": "Tunjukkan Penggunaan",
     "StorageProxies": "Stor",
     "TotalItems": "Jumlah {{total}} item",
     "Username": "Nama pengguna",

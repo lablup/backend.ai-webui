@@ -770,6 +770,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "El planificador Fair Share no está habilitado para el grupo de recursos seleccionado ({{resourceGroup}}). Para usar el planificador, actualice la configuración del grupo de recursos.",
     "TotalUsage": "Uso total",
     "TotalUsageDescription": "Uso total de recursos durante el período de referencia.",
+    "UsageHistory": "Historial de uso",
     "User": "Usuario",
     "UserDescription": "El usuario define el peso configurado y el uso acumulado durante el período de agregación. El peso del usuario se utiliza para calcular el coeficiente de prioridad de cada usuario.",
     "Weight": "Peso",
@@ -780,6 +781,13 @@
       "PleaseSelectProject": "Seleccione un proyecto.",
       "ProjectDescription": "Configurar y modificar los pesos de Fair Share para cada proyecto.",
       "UserDescription": "Configurar y modificar los pesos de Fair Share para cada usuario."
+    },
+    "usageBucket": {
+      "Last30Days": "Últimos 30 días",
+      "Last7Days": "Últimos 7 días",
+      "Last90Days": "Últimos 90 días",
+      "NoDataAvailable": "No hay datos de uso disponibles para el período seleccionado.",
+      "SelectDateRange": "Seleccionar rango de fechas"
     }
   },
   "fairShrae": {},
@@ -826,6 +834,7 @@
     "ResourceGroup": "Grupo de recursos",
     "SecretKey": "Clave secreta",
     "Session": "Sesión",
+    "ShowUsageGraph": "Mostrar uso",
     "StorageProxies": "Almacenes",
     "TotalItems": "Total {{total}} artículos",
     "Username": "Nombre de usuario",

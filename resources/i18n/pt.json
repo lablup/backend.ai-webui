@@ -772,6 +772,7 @@
     "SchedulerDoesNotAppliedToResourceGroup": "O Escalonador Fair Share não está ativado para o grupo de recursos selecionado ({{resourceGroup}}). Para usar o escalonador, atualize as configurações do grupo de recursos.",
     "TotalUsage": "Uso total",
     "TotalUsageDescription": "Uso total de recursos nos últimos dias analisados.",
+    "UsageHistory": "Histórico de Uso",
     "User": "Usuário",
     "UserDescription": "O utilizador define o peso configurado e o uso acumulado durante o período de agregação. O peso do utilizador é usado para calcular o coeficiente de prioridade para utilizadores individuais.",
     "Weight": "Peso",
@@ -782,6 +783,13 @@
       "PleaseSelectProject": "Selecione um projeto.",
       "ProjectDescription": "Configurar e modificar os pesos do Fair Share para cada projeto.",
       "UserDescription": "Configure e modifique os pesos do Fair Share para cada usuário."
+    },
+    "usageBucket": {
+      "Last30Days": "Últimos 30 dias",
+      "Last7Days": "Últimos 7 dias",
+      "Last90Days": "Últimos 90 dias",
+      "NoDataAvailable": "Nenhum dado de uso disponível para o período selecionado",
+      "SelectDateRange": "Selecionar intervalo de datas"
     }
   },
   "fairShrae": {},
@@ -828,6 +836,7 @@
     "ResourceGroup": "Grupo de Recursos",
     "SecretKey": "Chave secreta",
     "Session": "Sessão",
+    "ShowUsageGraph": "Mostrar uso",
     "StorageProxies": "Armazéns",
     "TotalItems": "Total de itens {{total}}",
     "Username": "Nome do usuário",
