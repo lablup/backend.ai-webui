@@ -1,6 +1,5 @@
 import { base, react } from "eslint-config-bai";
 import relayPlugin from "eslint-plugin-relay";
-import storybookPlugin from "eslint-plugin-storybook";
 import globals from "globals";
 
 export default [
@@ -29,8 +28,6 @@ export default [
     },
   },
 
-  ...storybookPlugin.configs["flat/recommended"],
-
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
@@ -55,7 +52,7 @@ export default [
   },
 
   {
-    files: ["**/*.test.*", "**/*.stories.*"],
+    files: ["**/*.test.*"],
     rules: {
       "no-console": "off",
     },
