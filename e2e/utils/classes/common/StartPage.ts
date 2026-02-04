@@ -1,4 +1,4 @@
-import { getMenuItem } from '../test-util-antd';
+import { getMenuItem } from '../../test-util-antd';
 import { Locator, Page } from '@playwright/test';
 
 export class StartPage {

@@ -1,5 +1,5 @@
-import { navigateTo } from '../test-util';
-import { getMenuItem } from '../test-util-antd';
+import { navigateTo } from '../../test-util';
+import { getMenuItem } from '../../test-util-antd';
 import { Page, Locator, expect } from '@playwright/test';
 
 /**
