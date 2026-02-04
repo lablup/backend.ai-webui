@@ -53,6 +53,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);

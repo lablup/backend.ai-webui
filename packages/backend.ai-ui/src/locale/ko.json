@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "프로젝트를 선택해주세요"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "허용된 호스트",
     "AllowedResourceGroups": "허용된 리소스 그룹",

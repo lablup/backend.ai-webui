@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
     "UpdateMultipleProjects": "プロジェクトを一括更新"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "プロジェクトを選択"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "許可済みフォルダホスト",
     "AllowedResourceGroups": "許可されたリソースグループ",
