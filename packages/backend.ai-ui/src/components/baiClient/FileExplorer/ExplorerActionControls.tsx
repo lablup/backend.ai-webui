@@ -59,6 +59,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { token } = theme.useToken();
   const { styles } = useStyles();
   const { uploadFiles } = useUploadVFolderFiles();
+  const [openUploadDropdown, { toggle: toggleUploadDropdown }] =
+    useToggle(false);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const lastFileListRef = useRef<Array<RcFile>>([]);
@@ -96,6 +98,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         <Dropdown
           disabled={!enableWrite}
           trigger={['click']}
+          open={openUploadDropdown}
+          onOpenChange={toggleUploadDropdown}
           popupRender={() => {
             return (
               <BAIFlex
@@ -120,7 +124,11 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                   multiple
                   showUploadList={false}
                 >
-                  <Button type="text" icon={<FileAddOutlined />}>
+                  <Button
+                    type="text"
+                    icon={<FileAddOutlined />}
+                    onClick={() => toggleUploadDropdown()}
+                  >
                     {t('comp:FileExplorer.UploadFiles')}
                   </Button>
                 </Upload>
@@ -135,7 +143,11 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                   }}
                   showUploadList={false}
                 >
-                  <Button type="text" icon={<FolderAddOutlined />}>
+                  <Button
+                    type="text"
+                    icon={<FolderAddOutlined />}
+                    onClick={() => toggleUploadDropdown()}
+                  >
                     {t('comp:FileExplorer.UploadFolder')}
                   </Button>
                 </Upload>
