@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "テスト"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "ユーザーを選択"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"
   },

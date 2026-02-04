@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "測試"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "選擇使用者"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "選擇資料夾"
   },

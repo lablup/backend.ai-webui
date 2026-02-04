@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Хэрэглэгч сонгох"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
   },

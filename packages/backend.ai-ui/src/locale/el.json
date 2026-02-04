@@ -187,6 +187,9 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Επιλογή χρήστη"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"
   },
