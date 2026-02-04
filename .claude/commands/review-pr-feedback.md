@@ -15,16 +15,46 @@ The `$ARGUMENTS` specifies the PR number to review. If not provided, uses the cu
 ## Workflow Overview
 
 ```
-1. Fetch PR review comments
-2. Analyze and categorize feedback
-3. Present summary to user
-4. Apply approved fixes
-5. Resolve review threads
+1. Sync and update branch
+2. Fetch PR review comments
+3. Analyze and categorize feedback
+4. Present summary to user
+5. Apply approved fixes
+6. Amend and push changes
+7. Reply to review comments
+8. Resolve review threads
+9. Display summary
 ```
 
 ## Detailed Process
 
-### Step 1: Fetch PR Information
+### Step 1: Sync and Update Branch
+
+First, ensure the branch is up to date with the remote and main branch:
+
+```bash
+# Sync with remote and restack on main
+mcp__graphite__run_gt_cmd with args: ["sync"]
+```
+
+Or using git commands:
+
+```bash
+# Fetch latest from remote
+git fetch origin
+
+# Update main branch
+git checkout main
+git pull origin main
+
+# Switch back to PR branch
+git checkout [BRANCH_NAME]
+
+# Rebase on main
+git rebase main
+```
+
+### Step 2: Fetch PR Information
 
 ```bash
 # Get current branch if no PR number provided
@@ -37,7 +67,7 @@ gh pr view [PR_NUMBER] --json number,title,url
 gh api repos/lablup/backend.ai-webui/pulls/[PR_NUMBER]/comments --jq '.[] | {id: .id, path: .path, line: .line, body: .body, user: .user.login}'
 ```
 
-### Step 2: Analyze and Categorize Feedback
+### Step 3: Analyze and Categorize Feedback
 
 Categorize each review comment into:
 
@@ -50,7 +80,7 @@ Categorize each review comment into:
 | **Clarification Needed** | Comment misunderstands the intent | Explain in reply |
 | **Not Applicable** | Comment doesn't apply to this context | Explain in reply |
 
-### Step 3: Present Summary to User
+### Step 4: Present Summary to User
 
 Present a clear summary table:
 
@@ -94,7 +124,7 @@ AskUserQuestion({
 })
 ```
 
-### Step 4: Apply Fixes
+### Step 5: Apply Fixes
 
 For each approved fix:
 
@@ -106,14 +136,14 @@ For each approved fix:
 git add [modified_files]
 ```
 
-### Step 5: Amend and Push (if code changes made)
+### Step 6: Amend and Push (if code changes made)
 
 ```
 mcp__graphite__run_gt_cmd with args: ["modify", "--all"]
 mcp__graphite__run_gt_cmd with args: ["submit", "--no-interactive"]
 ```
 
-### Step 6: Reply to Comments
+### Step 7: Reply to Comments
 
 For each comment, add an appropriate reply:
 
@@ -133,7 +163,7 @@ gh api repos/lablup/backend.ai-webui/pulls/[PR_NUMBER]/comments/[COMMENT_ID]/rep
 | Clarification | "[Explanation of intent/design decision]" |
 | Not Applicable | "[Reason why this doesn't apply to current context]" |
 
-### Step 7: Resolve Review Threads
+### Step 8: Resolve Review Threads
 
 Get thread IDs and resolve them:
 
@@ -162,7 +192,7 @@ mutation {
 }'
 ```
 
-### Step 8: Display Summary
+### Step 9: Display Summary
 
 ```
 ✅ Review Feedback Processed!
