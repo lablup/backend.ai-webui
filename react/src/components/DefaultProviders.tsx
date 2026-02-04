@@ -174,6 +174,8 @@ export const useCurrentLanguage = () => {
     // For changing locale globally, use dayjs.locale instead of dayjs().locale
     dayjs.locale(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    document.documentElement.lang = lang;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -185,6 +187,7 @@ export const useCurrentLanguage = () => {
       i18n?.changeLanguage(lang);
       // For changing locale globally, use dayjs.locale instead of dayjs().locale
       dayjs.locale(lang);
+      document.documentElement.lang = lang;
     };
     window.addEventListener('langChanged', handler);
     return () => window.removeEventListener('langChanged', handler);
