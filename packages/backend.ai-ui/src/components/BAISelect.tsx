@@ -180,9 +180,12 @@ function BAISelect<
         {...selectProps}
         loading={isPending || selectProps.loading}
         showSearch={
-          selectProps.showSearch && _.isObject(selectProps.showSearch)
-            ? {
-                ...selectProps.showSearch,
+          selectProps.showSearch === false
+            ? false
+            : {
+                ...(_.isObject(selectProps.showSearch)
+                  ? selectProps.showSearch
+                  : {}),
                 onSearch: async (value) => {
                   _.get(selectProps.showSearch, 'onSearch')?.(value);
                   startTransition(async () => {
@@ -190,7 +193,6 @@ function BAISelect<
                   });
                 },
               }
-            : false
         }
         ref={ref}
         className={classNames(

@@ -1,6 +1,6 @@
 import BAITag from './BAITag';
-import { describe, expect, it } from '@jest/globals';
 import { render, screen, act } from '@testing-library/react';
+
 describe('BAITag', () => {
   describe('Basic Rendering', () => {
     it('should render tag with children text', () => {
@@ -92,12 +92,12 @@ describe('BAITag', () => {
     });
 
     it('should handle bordered property', () => {
-      render(<BAITag bordered>Bordered Tag</BAITag>);
+      render(<BAITag variant="outlined">Bordered Tag</BAITag>);
       expect(screen.getByText('Bordered Tag')).toBeInTheDocument();
     });
 
     it('should handle bordered={false} property', () => {
-      render(<BAITag bordered={false}>No Border Tag</BAITag>);
+      render(<BAITag variant="filled">No Border Tag</BAITag>);
       expect(screen.getByText('No Border Tag')).toBeInTheDocument();
     });
   });
