@@ -46,6 +46,7 @@ const useStyles = createStyles(({ css, token }) => ({
   `,
   customStyle: css`
     /* Change the opacity of images and tags in the select option when the dropdown is open */
+    &.ant-select-open .ant-select-content .ant-select-content-value .ant-badge,
     &.ant-select-open .ant-select-content .ant-select-content-value img,
     &.ant-select-open
       .ant-select-content
