@@ -54,14 +54,30 @@ steps:
       version: 10
   - run: pnpm install --frozen-lockfile
   - run: pnpm exec playwright install --with-deps
+  - name: Run E2E tests
+    id: e2e-tests
+    continue-on-error: true
+    run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
+  - name: Save test results
+    run: |
+      mkdir -p /tmp/gh-aw/e2e-results
+      cp -r playwright-report /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+      cp -r test-results /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+      echo "TEST_EXIT_CODE=${{ steps.e2e-tests.outcome == 'success' && '0' || '1' }}" >> /tmp/gh-aw/e2e-results/summary.env
+  - uses: actions/upload-artifact@v4
+    if: always()
+    with:
+      name: playwright-report
+      path: playwright-report/
+      retention-days: 30
 
 tools:
   github:
     toolsets: [default, issues, pull_requests]
   edit:
   bash:
-    - "pnpm playwright test e2e*"
     - "ls*"
+    - "cat*"
     - "git status*"
   playwright:
 ---
@@ -71,14 +87,15 @@ tools:
 You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwright E2E at 09:00 KST (00:00 UTC) or on manual dispatch, report any failures, and try to heal them by opening a draft PR against `main`.
 
 ## Environment
-- Dependencies and Playwright browsers are pre-installed in the `setup` phase.
+- Dependencies and Playwright browsers are pre-installed in the `steps` phase.
+- E2E tests have already been executed in the `steps` phase before the agent starts.
+- Test results are available at `/tmp/gh-aw/e2e-results/` directory.
 - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
-- Prefer existing `e2e/envs/.env.playwright`; otherwise fall back to defaults in `e2e/envs/.env.playwright.sample`. Never leak secrets in logs/issues.
+- Never leak secrets in logs/issues.
 
 ## Execution plan
-1) Prep: Dependencies and Playwright browsers are already installed. Verify the env file used.
-2) Test: run `pnpm playwright test e2e/ --grep-invert @visual` to exclude visual regression tests. Save the full Playwright HTML report as an artifact.
-3) Failure analysis:
+1) Analyze: Read test results from `/tmp/gh-aw/e2e-results/`. Check `summary.env` for overall status and `playwright-report/` for detailed results.
+2) Failure analysis:
    - Collect failing specs (file, title, error, screenshot/video paths).
    - Review recent WebUI changes: Use GitHub MCP to fetch recent commits and merged PRs on `main` branch (last 7 days or ~20 commits).
    - For each failure, determine the likely cause category:
@@ -86,14 +103,14 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
      - **Backend change**: If the failure appears unrelated to recent WebUI changes (e.g., API response changes, new required fields, authentication issues).
      - **Server/config issue**: If the failure suggests environment problems (e.g., timeout, connection refused, missing resources, permission errors).
    - Summarize findings in Markdown with cause category for each failure.
-4) Issue creation:
+3) Issue creation:
    - Open/refresh a single issue via `safe-outputs.create-issue` (title prefix `e2e:`) with:
      - Commit SHA, workflow run link, env file used
      - Failing cases list with **cause analysis** (WebUI PR / Backend / Server issue)
      - Related PRs if applicable (link to PR numbers)
      - Repro command
    - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
-5) Healing attempt (temporarily disabled; uncomment when ready):
+4) Healing attempt (temporarily disabled; uncomment when ready):
 <!--
   - Scope fixes to failing specs only. Avoid touching snapshots unless required.
   - Create branch from `main` named `e2e-healer/<yyyy-mm-dd>-<shortsha>`.
@@ -101,7 +118,7 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
   - If fixes pass, use `safe-outputs.create-pull-request` to open a **draft** PR against `main` with title prefix `e2e-healer:`. Reference the issue, include failing cases, applied changes, and rerun results. Exclude generated reports/artifacts from the branch.
   - If not fixed, leave a concise comment on the issue (via `safe-outputs.add-comment`) with diagnostics and next hints.
 -->
-6) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
+5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
 
 ## Output expectations
 - Always produce a short run summary (pass/fail, counts, env source) in the workflow log.

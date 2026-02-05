@@ -109,6 +109,22 @@ jobs:
           version: 10
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps
+      - continue-on-error: true
+        id: e2e-tests
+        name: Run E2E tests
+        run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
+      - name: Save test results
+        run: |
+          mkdir -p /tmp/gh-aw/e2e-results
+          cp -r playwright-report /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+          cp -r test-results /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+          echo "TEST_EXIT_CODE=${{ steps.e2e-tests.outcome == 'success' && '0' || '1' }}" >> /tmp/gh-aw/e2e-results/summary.env
+      - if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
       - name: Configure Git credentials
         env:
@@ -563,14 +579,15 @@ jobs:
           You are an AI ops engineer for `__GH_AW_GITHUB_REPOSITORY__`. Run weekday Playwright E2E at 09:00 KST (00:00 UTC) or on manual dispatch, report any failures, and try to heal them by opening a draft PR against `main`.
           
           ## Environment
-          - Dependencies and Playwright browsers are pre-installed in the `setup` phase.
+          - Dependencies and Playwright browsers are pre-installed in the `steps` phase.
+          - E2E tests have already been executed in the `steps` phase before the agent starts.
+          - Test results are available at `/tmp/gh-aw/e2e-results/` directory.
           - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
-          - Prefer existing `e2e/envs/.env.playwright`; otherwise fall back to defaults in `e2e/envs/.env.playwright.sample`. Never leak secrets in logs/issues.
+          - Never leak secrets in logs/issues.
           
           ## Execution plan
-          1) Prep: Dependencies and Playwright browsers are already installed. Verify the env file used.
-          2) Test: run `pnpm playwright test e2e/ --grep-invert @visual` to exclude visual regression tests. Save the full Playwright HTML report as an artifact.
-          3) Failure analysis:
+          1) Analyze: Read test results from `/tmp/gh-aw/e2e-results/`. Check `summary.env` for overall status and `playwright-report/` for detailed results.
+          2) Failure analysis:
              - Collect failing specs (file, title, error, screenshot/video paths).
              - Review recent WebUI changes: Use GitHub MCP to fetch recent commits and merged PRs on `main` branch (last 7 days or ~20 commits).
              - For each failure, determine the likely cause category:
@@ -578,16 +595,16 @@ jobs:
                - **Backend change**: If the failure appears unrelated to recent WebUI changes (e.g., API response changes, new required fields, authentication issues).
                - **Server/config issue**: If the failure suggests environment problems (e.g., timeout, connection refused, missing resources, permission errors).
              - Summarize findings in Markdown with cause category for each failure.
-          4) Issue creation:
+          3) Issue creation:
              - Open/refresh a single issue via `safe-outputs.create-issue` (title prefix `e2e:`) with:
                - Commit SHA, workflow run link, env file used
                - Failing cases list with **cause analysis** (WebUI PR / Backend / Server issue)
                - Related PRs if applicable (link to PR numbers)
                - Repro command
              - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
-          5) Healing attempt (temporarily disabled; uncomment when ready):
+          4) Healing attempt (temporarily disabled; uncomment when ready):
           
-          6) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
+          5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
           
           ## Output expectations
           - Always produce a short run summary (pass/fail, counts, env source) in the workflow log.
@@ -742,6 +759,7 @@ jobs:
         # --allow-tool github
         # --allow-tool safeoutputs
         # --allow-tool shell(cat)
+        # --allow-tool shell(cat*)
         # --allow-tool shell(date)
         # --allow-tool shell(echo)
         # --allow-tool shell(git add:*)
@@ -757,7 +775,6 @@ jobs:
         # --allow-tool shell(head)
         # --allow-tool shell(ls)
         # --allow-tool shell(ls*)
-        # --allow-tool shell(pnpm playwright test e2e*)
         # --allow-tool shell(pwd)
         # --allow-tool shell(sort)
         # --allow-tool shell(tail)
@@ -769,7 +786,7 @@ jobs:
         run: |
           set -o pipefail
           sudo -E awf --env-all --container-workdir "${GITHUB_WORKSPACE}" --mount /tmp:/tmp:rw --mount "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}:rw" --mount /usr/bin/date:/usr/bin/date:ro --mount /usr/bin/gh:/usr/bin/gh:ro --mount /usr/bin/yq:/usr/bin/yq:ro --mount /usr/local/bin/copilot:/usr/local/bin/copilot:ro --mount /home/runner/.copilot:/home/runner/.copilot:rw --allow-domains api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,bun.sh,cdn.playwright.dev,deb.nodesource.com,deno.land,get.pnpm.io,github.com,host.docker.internal,nodejs.org,npm,npm.pkg.github.com,npmjs.com,npmjs.org,playwright.download.prss.microsoft.com,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.yarnpkg.com,skimdb.npmjs.com,www.npmjs.com,www.npmjs.org,yarnpkg.com --log-level info --proxy-logs-dir /tmp/gh-aw/sandbox/firewall/logs --image-tag 0.7.0 \
-            -- /usr/local/bin/copilot --add-dir /tmp/gh-aw/ --log-level all --log-dir /tmp/gh-aw/sandbox/agent/logs/ --add-dir "${GITHUB_WORKSPACE}" --disable-builtin-mcps --allow-tool github --allow-tool safeoutputs --allow-tool 'shell(cat)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(git add:*)' --allow-tool 'shell(git branch:*)' --allow-tool 'shell(git checkout:*)' --allow-tool 'shell(git commit:*)' --allow-tool 'shell(git merge:*)' --allow-tool 'shell(git rm:*)' --allow-tool 'shell(git status)' --allow-tool 'shell(git status*)' --allow-tool 'shell(git switch:*)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(ls)' --allow-tool 'shell(ls*)' --allow-tool 'shell(pnpm playwright test e2e*)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --allow-tool write --allow-all-paths --prompt "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)"${GH_AW_MODEL_AGENT_COPILOT:+ --model "$GH_AW_MODEL_AGENT_COPILOT"} \
+            -- /usr/local/bin/copilot --add-dir /tmp/gh-aw/ --log-level all --log-dir /tmp/gh-aw/sandbox/agent/logs/ --add-dir "${GITHUB_WORKSPACE}" --disable-builtin-mcps --allow-tool github --allow-tool safeoutputs --allow-tool 'shell(cat)' --allow-tool 'shell(cat*)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(git add:*)' --allow-tool 'shell(git branch:*)' --allow-tool 'shell(git checkout:*)' --allow-tool 'shell(git commit:*)' --allow-tool 'shell(git merge:*)' --allow-tool 'shell(git rm:*)' --allow-tool 'shell(git status)' --allow-tool 'shell(git status*)' --allow-tool 'shell(git switch:*)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(ls)' --allow-tool 'shell(ls*)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --allow-tool write --allow-all-paths --prompt "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)"${GH_AW_MODEL_AGENT_COPILOT:+ --model "$GH_AW_MODEL_AGENT_COPILOT"} \
             2>&1 | tee /tmp/gh-aw/agent-stdio.log
         env:
           COPILOT_AGENT_RUNNER_TYPE: STANDALONE
