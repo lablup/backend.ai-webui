@@ -44,11 +44,10 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableUserSorterKeys, key);
 };
 
-interface BAIUserNodesProps
-  extends Omit<
-    BAITableProps<UserNodeInList>,
-    'dataSource' | 'columns' | 'onChangeOrder'
-  > {
+interface BAIUserNodesProps extends Omit<
+  BAITableProps<UserNodeInList>,
+  'dataSource' | 'columns' | 'onChangeOrder'
+> {
   usersFrgmt: BAIUserNodesFragment$key;
   customizeColumns?: (
     baseColumns: BAIColumnType<UserNodeInList>[],
@@ -119,6 +118,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
       {
         key: 'id',
         title: 'ID',
+        exportKey: 'uuid',
         render: (__, record) => (
           <BAIText
             copyable
@@ -154,6 +154,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
       {
         key: 'project',
         title: t('comp:UserNodes.Project'),
+        exportKey: 'project_name',
         render: (__, record) => {
           return (
             <BAIText ellipsis style={{ maxWidth: 200 }}>
@@ -175,6 +176,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         key: 'resource_policy',
         title: t('comp:UserNodes.ResourcePolicy'),
         dataIndex: 'resource_policy',
+        exportKey: 'resource_policy_name',
         sorter: isEnableSorter('resource_policy'),
       },
       {

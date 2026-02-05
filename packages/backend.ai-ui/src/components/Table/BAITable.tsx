@@ -5,11 +5,16 @@ import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIConfigProvider } from '../provider';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
+import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
 import BAITableSettingModal from './BAITableSettingModal';
-import { LoadingOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  MoreOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import { useControllableValue, useDebounce } from 'ahooks';
 import {
-  Button,
+  Dropdown,
   Pagination,
   Table,
   type TablePaginationConfig,
@@ -69,6 +74,11 @@ export interface BAITableSettings {
   ) => void;
 }
 
+export interface BAIExportSettings {
+  supportedFields: string[];
+  onExport: (selectedExportKeys: string[]) => Promise<void>;
+}
+
 /**
  * Extended column type for BAITable with additional properties
  * Extends Ant Design's ColumnType with custom BAI-specific features
@@ -80,6 +90,10 @@ export interface BAIColumnType<
   defaultHidden?: boolean;
   /** Whether this column is required and cannot be hidden by users */
   required?: boolean;
+  /** Key(s) to use for CSV export. If not provided, dataIndex will be used.
+   * When multiple columns share the same exportKey(s), they are grouped
+   * together in the export modal (toggling one toggles all). */
+  exportKey?: string | string[];
 }
 
 export interface BAIColumnGroupType<RecordType = AnyObject> extends Omit<
@@ -187,6 +201,8 @@ export interface BAITableProps<
   onChangeOrder?: (order?: string) => void;
   /** Table settings including column visibility controls */
   tableSettings?: BAITableSettings;
+  /** CSV Export settings */
+  exportSettings?: BAIExportSettings;
   /** Array of column configurations using BAIColumnType */
   columns?: BAIColumnsType<RecordType>;
   spinnerLoading?: boolean;
@@ -231,6 +247,7 @@ const BAITable = <RecordType extends object = any>({
   order,
   onChangeOrder,
   tableSettings,
+  exportSettings,
   ...tableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
@@ -250,6 +267,7 @@ const BAITable = <RecordType extends object = any>({
   );
   const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
     useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useControllableValue(
     tableProps.pagination ? tableProps.pagination : {},
     {
@@ -463,14 +481,36 @@ const BAITable = <RecordType extends object = any>({
             current={currentPage}
             pageSize={currentPageSize}
           ></Pagination>
-          {tableSettings && (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => setIsColumnSettingModalOpen(true)}
-              size={tableProps.size || 'small'}
-            />
-          )}
+          <BAIFlex>
+            {tableSettings && (
+              <BAIButton
+                type="text"
+                icon={<SettingOutlined />}
+                onClick={() => setIsColumnSettingModalOpen(true)}
+                size={tableProps.size || 'small'}
+              />
+            )}
+            {exportSettings && (
+              <Dropdown
+                trigger={['click']}
+                menu={{
+                  items: [
+                    {
+                      key: 'export-csv',
+                      label: t('comp:BAITable.ExportCSV'),
+                      onClick: () => setIsExportModalOpen(true),
+                    },
+                  ],
+                }}
+              >
+                <BAIButton
+                  type="text"
+                  icon={<MoreOutlined />}
+                  size={tableProps.size || 'small'}
+                />
+              </Dropdown>
+            )}
+          </BAIFlex>
           {tableProps.pagination && tableProps.pagination.extraContent}
         </BAIFlex>
       )}
@@ -506,6 +546,19 @@ const BAITable = <RecordType extends object = any>({
             columns={columns || []}
             columnOverrides={columnOverrides}
             disableSorter
+          />
+        </BAIUnmountAfterClose>
+      )}
+      {exportSettings && (
+        <BAIUnmountAfterClose>
+          <BAITableColumnCSVExportModal
+            open={isExportModalOpen}
+            onRequestClose={() => {
+              setIsExportModalOpen(false);
+            }}
+            columns={columns || []}
+            supportedFields={exportSettings.supportedFields}
+            onExport={exportSettings.onExport}
           />
         </BAIUnmountAfterClose>
       )}

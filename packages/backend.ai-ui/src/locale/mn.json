@@ -207,6 +207,8 @@
     "Unlimited": "Хязгааргүй"
   },
   "comp:BAITable": {
+    "Export": "Экспорт",
+    "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",

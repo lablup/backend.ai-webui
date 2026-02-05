@@ -207,6 +207,8 @@
     "Unlimited": "Απεριόριστος"
   },
   "comp:BAITable": {
+    "Export": "Εξαγωγή",
+    "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
     "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",

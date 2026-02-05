@@ -207,6 +207,8 @@
     "Unlimited": "Không giới hạn"
   },
   "comp:BAITable": {
+    "Export": "Xuất",
+    "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",
     "InvalidPageNumber": "Số trang không hợp lệ",
     "SearchTableColumn": "Các cột bảng tìm kiếm",

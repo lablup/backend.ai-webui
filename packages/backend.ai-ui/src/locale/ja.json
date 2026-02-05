@@ -207,6 +207,8 @@
     "Unlimited": "無制限"
   },
   "comp:BAITable": {
+    "Export": "エクスポート",
+    "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",
     "InvalidPageNumber": "無効なページ番号です",
     "SearchTableColumn": "テーブル列を検索します",

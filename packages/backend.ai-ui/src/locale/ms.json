@@ -207,6 +207,8 @@
     "Unlimited": "Tidak terhad"
   },
   "comp:BAITable": {
+    "Export": "Eksport",
+    "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",
     "InvalidPageNumber": "Nombor halaman tidak sah",
     "SearchTableColumn": "Lajur jadual carian",

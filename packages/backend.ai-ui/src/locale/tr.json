@@ -207,6 +207,8 @@
     "Unlimited": "Sınırsız"
   },
   "comp:BAITable": {
+    "Export": "Dışa aktar",
+    "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
     "SearchTableColumn": "Arama Tablosu sütunları",

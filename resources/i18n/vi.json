@@ -878,6 +878,7 @@
     "Enabled": "Đã bật",
     "ErrorOccurred": "Có gì đó đã sai. \nVui lòng thử lại sau.",
     "ExtendLoginSession": "Gia hạn phiên đăng nhập",
+    "FailedToExportCSV": "Không thể xuất CSV",
     "Folder": "Thư mục",
     "Folders": "Thư mục",
     "General": "Tổng quan",

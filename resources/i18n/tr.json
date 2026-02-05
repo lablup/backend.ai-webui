@@ -876,6 +876,7 @@
     "Enabled": "Etkin",
     "ErrorOccurred": "Bir şeyler ters gitti. \nLütfen daha sonra tekrar deneyin.",
     "ExtendLoginSession": "Oturum açma oturumunu uzatma",
+    "FailedToExportCSV": "CSV dışa aktarma başarısız oldu",
     "Folder": "Klasör",
     "Folders": "klasörler",
     "General": "Genel",
