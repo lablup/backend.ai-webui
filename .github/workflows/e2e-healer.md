@@ -45,18 +45,24 @@ safe-outputs:
   add-comment:
     target: "*"
 
+steps:
+  - uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+  - uses: pnpm/action-setup@v4
+    with:
+      version: 9
+  - run: pnpm install --frozen-lockfile
+  - run: pnpm exec playwright install --with-deps
+
 tools:
   github:
     toolsets: [default, issues, pull_requests]
   edit:
   bash:
-    - "pnpm install*"
-    - "pnpm run build*"
-    - "pnpm exec playwright install*"
     - "pnpm playwright test e2e*"
     - "ls*"
     - "git status*"
-    - "serve -s*"
   playwright:
 ---
 
@@ -65,11 +71,12 @@ tools:
 You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwright E2E at 09:00 KST (00:00 UTC) or on manual dispatch, report any failures, and try to heal them by opening a draft PR against `main`.
 
 ## Environment
-- Use `pnpm exec playwright install --with-deps` once per run if browsers are missing.
+- Dependencies and Playwright browsers are pre-installed in the `setup` phase.
+- Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
 - Prefer existing `e2e/envs/.env.playwright`; otherwise fall back to defaults in `e2e/envs/.env.playwright.sample`. Never leak secrets in logs/issues.
 
 ## Execution plan
-1) Prep: `pnpm install` (root) if needed. Build with `pnpm run build`, then `serve -s build/rollup -l 3000` and use `E2E_WEBUI_ENDPOINT`. `pnpm exec playwright install --with-deps` when browsers are absent. List env file used.
+1) Prep: Dependencies and Playwright browsers are already installed. Verify the env file used.
 2) Test: run `pnpm playwright test e2e/ --grep-invert @visual` to exclude visual regression tests. Save the full Playwright HTML report as an artifact.
 3) Failure analysis:
    - Collect failing specs (file, title, error, screenshot/video paths).
