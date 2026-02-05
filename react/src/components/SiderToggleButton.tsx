@@ -1,3 +1,4 @@
+import { useKeyboardShortcutTextStyles } from '../hooks/useKeyboardShortcut';
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { Button, ConfigProvider, theme, Tooltip, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -19,7 +20,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
   hidden,
 }) => {
   const { t } = useTranslation();
-
+  const { styles } = useKeyboardShortcutTextStyles();
   const { token } = theme.useToken();
   return (
     <BAIFlex
@@ -45,9 +46,10 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
         <Tooltip
           title={
             <>
-              {collapsed ? t('button.Expand') : t('button.Collapse')}
+              {collapsed ? t('button.Expand') : t('button.Collapse')}{' '}
               <Typography.Text
                 code
+                className={styles.shortcutText}
                 style={{
                   color: 'inherit',
                 }}

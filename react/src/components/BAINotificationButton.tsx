@@ -10,11 +10,14 @@ import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
-import useKeyboardShortcut from 'src/hooks/useKeyboardShortcut';
+import useKeyboardShortcut, {
+  useKeyboardShortcutTextStyles,
+} from 'src/hooks/useKeyboardShortcut';
 
 export const isOpenDrawerState = atom(false);
 
 const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
+  const { styles } = useKeyboardShortcutTextStyles();
   const [notifications, { upsertNotification, clearNotification }] =
     useBAINotificationState();
   useBAINotificationEffect();
@@ -67,14 +70,15 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
         <Tooltip
           title={
             <>
-              {t('notification.Notifications')}
+              {t('notification.Notifications')}{' '}
               <Typography.Text
-                keyboard
+                code
+                className={styles.shortcutText}
                 style={{
                   color: 'inherit',
                 }}
               >
-                ]
+                {']'}
               </Typography.Text>
             </>
           }
