@@ -113,9 +113,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   <BAIDomainSelect
                     style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
-                    onChange={(_value, domain: any) => {
+                    onChange={(selectedDomainName) => {
                       startTransition(() => {
-                        setSelectedDomainName(domain?.domainName);
+                        setSelectedDomainName(selectedDomainName);
                         setSelectedProjectId(undefined);
                       });
                     }}
