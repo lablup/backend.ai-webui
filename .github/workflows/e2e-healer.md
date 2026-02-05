@@ -19,13 +19,24 @@ timeout-minutes: 120
 engine: copilot
 
 env:
-  E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
-  E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
-  E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
-  E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
-  E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
-  E2E_WEBSERVER_ENDPOINT: ${{ vars.E2E_WEBSERVER_ENDPOINT }}
+  # Endpoints
   E2E_WEBUI_ENDPOINT: ${{ vars.E2E_WEBUI_ENDPOINT }}
+  E2E_WEBSERVER_ENDPOINT: ${{ vars.E2E_WEBSERVER_ENDPOINT }}
+  # Admin credentials
+  E2E_ADMIN_EMAIL: ${{ vars.E2E_ADMIN_EMAIL }}
+  E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+  # User credentials
+  E2E_USER_EMAIL: ${{ vars.E2E_USER_EMAIL }}
+  E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+  # User2 credentials
+  E2E_USER2_EMAIL: ${{ vars.E2E_USER2_EMAIL }}
+  E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
+  # Monitor credentials
+  E2E_MONITOR_EMAIL: ${{ vars.E2E_MONITOR_EMAIL }}
+  E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
+  # Domain admin credentials
+  E2E_DOMAIN_ADMIN_EMAIL: ${{ vars.E2E_DOMAIN_ADMIN_EMAIL }}
+  E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
 
 network:
   allowed:
@@ -57,7 +68,9 @@ steps:
   - name: Run E2E tests
     id: e2e-tests
     continue-on-error: true
-    run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
+    # TODO: Remove single test restriction after environment validation
+    # Full test: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
+    run: pnpm playwright test e2e/auth/login.spec.ts --reporter=html,json --output=test-results
   - name: Save test results
     run: |
       mkdir -p /tmp/gh-aw/e2e-results
