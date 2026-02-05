@@ -873,6 +873,7 @@
     "Enabled": "Ενεργοποιήθηκε",
     "ErrorOccurred": "Κάτι πήγε στραβά. \nΔοκιμάστε ξανά αργότερα.",
     "ExtendLoginSession": "Επέκταση μιας περιόδου σύνδεσης",
+    "FailedToExportCSV": "Αποτυχία εξαγωγής CSV",
     "Folder": "Φάκελος",
     "Folders": "Φάκελοι",
     "General": "Γενικά",

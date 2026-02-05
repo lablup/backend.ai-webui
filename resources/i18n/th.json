@@ -867,6 +867,7 @@
     "Enabled": "เปิดใช้งาน",
     "ErrorOccurred": "มีบางอย่างผิดปกติ \nโปรดลองอีกครั้งในภายหลัง",
     "ExtendLoginSession": "ขยายเซสชันการเข้าสู่ระบบ",
+    "FailedToExportCSV": "ไม่สามารถส่งออก CSV ได้",
     "Folder": "โฟลเดอร์",
     "Folders": "โฟลเดอร์",
     "General": "ทั่วไป",

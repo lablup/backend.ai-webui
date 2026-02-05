@@ -878,6 +878,7 @@
     "Enabled": "aktiviert",
     "ErrorOccurred": "Etwas lief schief. \nBitte versuchen Sie es später erneut.",
     "ExtendLoginSession": "Eine Anmeldesitzung verlängern",
+    "FailedToExportCSV": "CSV-Export fehlgeschlagen",
     "Folder": "Ordner",
     "Folders": "Ordner",
     "General": "Allgemein",

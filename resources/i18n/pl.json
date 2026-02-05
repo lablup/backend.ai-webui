@@ -875,6 +875,7 @@
     "Enabled": "Włączone",
     "ErrorOccurred": "Coś poszło nie tak. \nSpróbuj ponownie później.",
     "ExtendLoginSession": "Przedłużanie sesji logowania",
+    "FailedToExportCSV": "Nie udało się wyeksportować CSV",
     "Folder": "Folder",
     "Folders": "Lornetka składana",
     "General": "Ogólne",

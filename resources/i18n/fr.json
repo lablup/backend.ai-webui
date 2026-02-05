@@ -876,6 +876,7 @@
     "Enabled": "Activée",
     "ErrorOccurred": "Quelque chose s'est mal passé. \nVeuillez réessayer plus tard.",
     "ExtendLoginSession": "Prolonger une session de connexion",
+    "FailedToExportCSV": "Échec de l'exportation CSV",
     "Folder": "Dossier",
     "Folders": "Dossiers",
     "General": "Général",

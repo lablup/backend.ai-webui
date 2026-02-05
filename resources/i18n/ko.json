@@ -881,6 +881,7 @@
     "Enabled": "활성화",
     "ErrorOccurred": "문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     "ExtendLoginSession": "로그인 세션 연장",
+    "FailedToExportCSV": "CSV 내보내기에 실패했습니다",
     "Folder": "폴더",
     "Folders": "폴더",
     "General": "일반",

@@ -877,6 +877,7 @@
     "Enabled": "Diaktifkan",
     "ErrorOccurred": "Ada yang salah. \nSilakan coba lagi nanti.",
     "ExtendLoginSession": "Memperpanjang sesi masuk",
+    "FailedToExportCSV": "Gagal mengekspor CSV",
     "Folder": "Folder",
     "Folders": "Folder",
     "General": "Umum",

@@ -876,6 +876,7 @@
     "Enabled": "Käytössä",
     "ErrorOccurred": "Jotain meni pieleen. \nYritä myöhemmin uudelleen.",
     "ExtendLoginSession": "Sisäänkirjautumisistunnon laajentaminen",
+    "FailedToExportCSV": "CSV-vienti epäonnistui",
     "Folder": "Kansio",
     "Folders": "Kansiot",
     "General": "Yleistä",

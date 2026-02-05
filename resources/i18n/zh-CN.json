@@ -878,6 +878,7 @@
     "Enabled": "启用",
     "ErrorOccurred": "出了点问题。\n请稍后再试。",
     "ExtendLoginSession": "延长登录会话",
+    "FailedToExportCSV": "CSV导出失败",
     "Folder": "文件夹",
     "Folders": "文件夹",
     "General": "一般情况",

@@ -878,6 +878,7 @@
     "Enabled": "Habilitado",
     "ErrorOccurred": "Algo deu errado. \nPor favor, tente novamente mais tarde.",
     "ExtendLoginSession": "Prolongar uma sessão de início de sessão",
+    "FailedToExportCSV": "Falha ao exportar CSV",
     "Folder": "Pasta",
     "Folders": "Pastas",
     "General": "Geral",
