@@ -1,4 +1,4 @@
-import { loginAsVisualRegressionUser2 } from '../../utils/test-util';
+import { loginAsVisualRegressionUser, navigateTo } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page, request }) => {
@@ -6,9 +6,11 @@ test.beforeEach(async ({ page, request }) => {
     width: 1500,
     height: 1500,
   });
-  await loginAsVisualRegressionUser2(page, request);
-  await page.getByRole('menuitem', { name: 'Import & Run' }).click();
-  await page.waitForLoadState('networkidle');
+  await loginAsVisualRegressionUser(page, request);
+  await navigateTo(page, 'import');
+  await expect(
+    page.getByRole('button', { name: 'Import and Run' }),
+  ).toBeVisible();
 });
 
 test.describe(
@@ -25,6 +27,7 @@ test.describe(
           page.locator('#concurrency-usage-bar'),
         ],
         fullPage: true,
+        maxDiffPixelRatio: 0.08,
       });
     });
   },

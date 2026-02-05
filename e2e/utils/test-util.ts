@@ -88,7 +88,6 @@ export const webuiEndpoint =
   process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
 export const webServerEndpoint =
   process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
-export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
 
 export async function login(
   page: Page,
@@ -133,6 +132,26 @@ export const userInfo = {
   domainAdmin: {
     email: process.env.E2E_DOMAIN_ADMIN_EMAIL || 'domain-admin@lablup.com',
     password: process.env.E2E_DOMAIN_ADMIN_PASSWORD || 'cWbsM_vB',
+  },
+  visualRegressionAdmin: {
+    email:
+      process.env.E2E_ADMIN_EMAIL_FOR_VISUAL ||
+      process.env.E2E_ADMIN_EMAIL ||
+      'admin@lablup.com',
+    password:
+      process.env.E2E_ADMIN_PASSWORD_FOR_VISUAL ||
+      process.env.E2E_ADMIN_PASSWORD ||
+      'wJalrXUt',
+  },
+  visualRegressionUser: {
+    email:
+      process.env.E2E_USER_EMAIL_FOR_VISUAL ||
+      process.env.E2E_USER_EMAIL ||
+      'user@lablup.com',
+    password:
+      process.env.E2E_USER_PASSWORD_FOR_VISUAL ||
+      process.env.E2E_USER_PASSWORD ||
+      'C8qnIo29',
   },
 };
 
@@ -200,22 +219,22 @@ export async function loginAsVisualRegressionAdmin(
   await login(
     page,
     request,
-    userInfo.admin.email,
-    userInfo.admin.password,
-    visualRegressionWebserverEndpoint,
+    userInfo.visualRegressionAdmin.email,
+    userInfo.visualRegressionAdmin.password,
+    webServerEndpoint,
   );
 }
 
-export async function loginAsVisualRegressionUser2(
+export async function loginAsVisualRegressionUser(
   page: Page,
   request: APIRequestContext,
 ) {
   await login(
     page,
     request,
-    userInfo.user2.email,
-    userInfo.user2.password,
-    visualRegressionWebserverEndpoint,
+    userInfo.visualRegressionUser.email,
+    userInfo.visualRegressionUser.password,
+    webServerEndpoint,
   );
 }
 
