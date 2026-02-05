@@ -20,8 +20,14 @@ test.beforeEach(async ({ page, request }) => {
   await page.getByRole('link', { name: 'AI Agents' }).click();
   await page.waitForLoadState('networkidle');
 });
-test(`ai agents full page`, async ({ page }) => {
-  await expect(page).toHaveScreenshot('ai_agents_page.png', {
-    fullPage: true,
-  });
-});
+test.describe(
+  'AI Agents page Visual Regression Test',
+  { tag: ['@regression', '@visual'] },
+  () => {
+    test('ai agents full page', async ({ page }) => {
+      await expect(page).toHaveScreenshot('ai_agents_page.png', {
+        fullPage: true,
+      });
+    });
+  },
+);

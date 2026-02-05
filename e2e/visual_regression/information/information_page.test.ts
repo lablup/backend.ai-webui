@@ -11,8 +11,14 @@ test.beforeEach(async ({ page, request }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test('Information page Visual Regression Test', async ({ page }) => {
-  await expect(page).toHaveScreenshot('information_page.png', {
-    fullPage: true,
-  });
-});
+test.describe(
+  'Information page Visual Regression Test',
+  { tag: ['@regression', '@visual'] },
+  () => {
+    test('Information page screenshot', async ({ page }) => {
+      await expect(page).toHaveScreenshot('information_page.png', {
+        fullPage: true,
+      });
+    });
+  },
+);

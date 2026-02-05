@@ -7,6 +7,12 @@ test.beforeEach(async ({ page, request }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test('Maintenance page Visual Regression Test', async ({ page }) => {
-  await expect(page).toHaveScreenshot('maintenance_page.png');
-});
+test.describe(
+  'Maintenance page Visual Regression Test',
+  { tag: ['@regression', '@maintenance', '@visual'] },
+  () => {
+    test('Maintenance page screenshot', async ({ page }) => {
+      await expect(page).toHaveScreenshot('maintenance_page.png');
+    });
+  },
+);
