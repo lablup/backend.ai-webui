@@ -25,7 +25,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe(
   'Session Lifecycle Management',
-  { tag: ['@critical', '@session'] },
+  { tag: ['@critical', '@session', '@functional'] },
   () => {
     // Run tests sequentially to avoid resource exhaustion
     test.describe.configure({ mode: 'serial' });

@@ -16,9 +16,15 @@ test.beforeEach(async ({ page, request }) => {
   await page.getByText('My Sessions').waitFor();
 });
 
-test(`dashboard full page`, async ({ page }) => {
-  await expect(page).toHaveScreenshot('dashboard_page.png', {
-    fullPage: true,
-    mask: [page.locator('td.ant-table-cell')],
-  });
-});
+test.describe(
+  'Dashboard page Visual Regression Test',
+  { tag: ['@regression', '@visual'] },
+  () => {
+    test('dashboard full page', async ({ page }) => {
+      await expect(page).toHaveScreenshot('dashboard_page.png', {
+        fullPage: true,
+        mask: [page.locator('td.ant-table-cell')],
+      });
+    });
+  },
+);
