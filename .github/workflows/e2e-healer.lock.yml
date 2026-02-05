@@ -24,6 +24,10 @@
 
 name: "E2E Watchdog & Healer"
 "on":
+  pull_request:
+    paths:
+    - .github/workflows/e2e-healer.md
+    - .github/workflows/e2e-healer.lock.yml
   schedule:
   - cron: "0 0 * * 1-5"
   workflow_dispatch:
@@ -31,7 +35,8 @@ name: "E2E Watchdog & Healer"
 permissions: read-all
 
 concurrency:
-  group: "gh-aw-${{ github.workflow }}"
+  group: "gh-aw-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
 
 run-name: "E2E Watchdog & Healer"
 
@@ -46,6 +51,9 @@ env:
 
 jobs:
   activation:
+    needs: pre_activation
+    if: >
+      (needs.pre_activation.outputs.activated == 'true') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id))
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -72,8 +80,6 @@ jobs:
     needs: activation
     runs-on: ubuntu-latest
     permissions: read-all
-    concurrency:
-      group: "gh-aw-copilot-${{ github.workflow }}"
     env:
       GH_AW_MCP_LOG_DIR: /tmp/gh-aw/mcp-logs/safeoutputs
       GH_AW_SAFE_OUTPUTS: /tmp/gh-aw/safeoutputs/outputs.jsonl
@@ -965,8 +971,6 @@ jobs:
     if: needs.agent.outputs.output_types != '' || needs.agent.outputs.has_patch == 'true'
     runs-on: ubuntu-latest
     permissions: {}
-    concurrency:
-      group: "gh-aw-copilot-${{ github.workflow }}"
     timeout-minutes: 10
     outputs:
       success: ${{ steps.parse_results.outputs.success }}
@@ -1112,6 +1116,29 @@ jobs:
           name: threat-detection.log
           path: /tmp/gh-aw/threat-detection/detection.log
           if-no-files-found: ignore
+
+  pre_activation:
+    if: (github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id)
+    runs-on: ubuntu-slim
+    outputs:
+      activated: ${{ steps.check_membership.outputs.is_team_member == 'true' }}
+    steps:
+      - name: Setup Scripts
+        uses: githubnext/gh-aw/actions/setup@3de4a6a6d15bb07764b207e40da8c7047474a335 # v0.34.5
+        with:
+          destination: /tmp/gh-aw/actions
+      - name: Check team membership for workflow
+        id: check_membership
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        env:
+          GH_AW_REQUIRED_ROLES: admin,maintainer,write
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { setupGlobals } = require('/tmp/gh-aw/actions/setup_globals.cjs');
+            setupGlobals(core, github, context, exec, io);
+            const { main } = require('/tmp/gh-aw/actions/check_membership.cjs');
+            await main();
 
   safe_outputs:
     needs:
