@@ -106,7 +106,7 @@ jobs:
           node-version: "20"
       - uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
         with:
-          version: 9
+          version: 10
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps
 

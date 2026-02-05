@@ -51,7 +51,7 @@ steps:
       node-version: '20'
   - uses: pnpm/action-setup@v4
     with:
-      version: 9
+      version: 10
   - run: pnpm install --frozen-lockfile
   - run: pnpm exec playwright install --with-deps
 
