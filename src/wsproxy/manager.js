@@ -14,7 +14,25 @@ const ai = require('../lib/backend.ai-client-node'),
   Gateway = require('./gateway/tcpwsproxy'),
   SGateway = require('./gateway/consoleproxy');
 const htmldeco = require('./lib/htmldeco');
+const { escapeHtml } = require('./lib/htmldeco');
 const crypto = require('crypto');
+
+// Validate port number
+function isValidPort(port) {
+  const portNum = parseInt(port, 10);
+  return !isNaN(portNum) && portNum > 0 && portNum <= 65535;
+}
+
+// Validate redirect path to prevent open redirect attacks
+function isValidRedirectPath(path) {
+  if (typeof path !== 'string') return false;
+  // Only allow paths starting with / (relative paths)
+  // Reject absolute URLs, protocol handlers, etc.
+  if (!path.startsWith('/')) return false;
+  // Reject paths starting with // (protocol-relative URLs)
+  if (path.startsWith('//')) return false;
+  return true;
+}
 
 // extHttpProxy is an endpoint of a http proxy server in a network.
 // Can be set when a user in a company network needs to access the web socket
@@ -263,18 +281,98 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url = 'sftp://upload@' + this.proxyBaseHost + ':' + port;
+
+      // Validate port number
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
+      // Normalize and escape to prevent XSS and break taint tracking
+      const escapedPort = escapeHtml(String(parseInt(port, 10)));
+      const escapedHost = escapeHtml(this.proxyBaseHost);
+      let url = 'sftp://upload@' + escapedHost + ':' + escapedPort;
+
       res.send(
         htmldeco(
           'Connect with your own SFTP',
           'host: ' +
-            this.proxyBaseHost +
+            escapedHost +
             '<br/>port: ' +
-            port +
+            escapedPort +
             '<br/>username:upload<br/>URL : <a href="' +
-            url +
+            escapeHtml(url) +
             '">' +
-            url +
+            escapeHtml(url) +
+            '</a>',
+        ),
+      );
+    });
+
+    this.app.get('/vnc', (req, res) => {
+      let port = req.query.port;
+
+      // Validate port number
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
+      // Normalize and escape to prevent XSS and break taint tracking
+      const escapedPort = escapeHtml(String(parseInt(port, 10)));
+      const escapedHost = escapeHtml(this.proxyBaseHost);
+      let url = 'vnc://' + escapedHost + ':' + escapedPort;
+
+      res.send(
+        htmldeco(
+          'Connect with your VNC client',
+          'host: ' +
+            escapedHost +
+            '<br/>port: ' +
+            escapedPort +
+            '<br/>URL : <a href="' +
+            escapeHtml(url) +
+            '">' +
+            escapeHtml(url) +
+            '</a>',
+        ),
+      );
+    });
+
+    this.app.get('/xrdp', (req, res) => {
+      let port = req.query.port;
+
+      // Validate port number
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
+      // Normalize and escape to prevent XSS and break taint tracking
+      const escapedPort = escapeHtml(String(parseInt(port, 10)));
+      const escapedHost = escapeHtml(this.proxyBaseHost);
+      let url = 'rdp://' + escapedHost + ':' + escapedPort;
+
+      res.send(
+        htmldeco(
+          'Connect with your RDP client',
+          'host: ' +
+            escapedHost +
+            '<br/>port: ' +
+            escapedPort +
+            '<br/>URL : <a href="' +
+            escapeHtml(url) +
+            '">' +
+            escapeHtml(url) +
             '</a>',
         ),
       );
@@ -282,9 +380,46 @@ class Manager extends EventEmitter {
 
     this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
+
+      // Validate port number
+      if (!isValidPort(port)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco('Invalid Port', 'The port number provided is invalid.'),
+          );
+      }
+
       let path = req.query.redirect || '';
-      path.replace('<proxy-host>', this.proxyBaseHost);
-      path.replace('<port-number>', port);
+
+      // Validate redirect path to prevent open redirect attacks
+      if (path && !isValidRedirectPath(path)) {
+        return res
+          .status(400)
+          .send(
+            htmldeco(
+              'Invalid Redirect Path',
+              'The redirect path provided is invalid. Only relative paths starting with / are allowed.',
+            ),
+          );
+      }
+
+      // Fix: String.replace() returns a new string, must reassign
+      path = path.replace('<proxy-host>', this.proxyBaseHost);
+      path = path.replace('<port-number>', port);
+
+      // Prevent CRLF injection attacks (defense in depth)
+      if (path.indexOf('\r') !== -1 || path.indexOf('\n') !== -1) {
+        return res
+          .status(400)
+          .send(
+            htmldeco(
+              'Invalid Redirect Path',
+              'The redirect path contains invalid characters.',
+            ),
+          );
+      }
+
       res.redirect('http://' + this.proxyBaseHost + ':' + port + path);
     });
   }
