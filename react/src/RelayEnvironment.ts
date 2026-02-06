@@ -16,6 +16,20 @@ import {
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
+/**
+ * Check if the manager version is not compatible with the given version(s).
+ * Used for client-side GraphQL directive handling.
+ */
+const isNotCompatibleWithVersion = (version: string | string[]): boolean => {
+  // @ts-ignore
+  const client = globalThis.backendaiclient;
+  if (!client?.isManagerVersionCompatibleWith) return false;
+  if (Array.isArray(version)) {
+    return version.some((v) => !client.isManagerVersionCompatibleWith(v));
+  }
+  return !client.isManagerVersionCompatibleWith(version);
+};
+
 const waitForBAIClient = async () => {
   //@ts-ignore
   if (globalThis.backendaiclient === undefined) {
@@ -35,14 +49,14 @@ const waitForBAIClient = async () => {
   // @ts-ignore
   return globalThis.backendaiclient;
 };
-const getSubscriptionEndpoint = async () => {
+const getSubscriptionEndpoint = async (): Promise<string> => {
   const baliClient = await waitForBAIClient();
-  let api_endpoint: string = baliClient._config.endpoint;
+  let api_endpoint = baliClient?._config.endpoint;
   if (api_endpoint) {
     api_endpoint = api_endpoint.replace(/^"+|"+$/g, ''); // Remove leading and trailing quotes
     api_endpoint += '/func/admin/gql';
   }
-  return api_endpoint;
+  return api_endpoint || '';
 };
 
 const fetchFn: FetchFunction = async (
@@ -56,12 +70,7 @@ const fetchFn: FetchFunction = async (
   const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
     request.text || '',
     variables,
-    (version) => {
-      // @ts-ignore
-      return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
-        version,
-      );
-    },
+    isNotCompatibleWithVersion,
   );
 
   const reqBody = {
@@ -133,12 +142,7 @@ function fetchForSubscribe(
     const transformedOperation = manipulateGraphQLQueryWithClientDirectives(
       operation.text || '',
       variables,
-      (version) => {
-        // @ts-ignore
-        return !globalThis.backendaiclient?.isManagerVersionCompatibleWith(
-          version,
-        );
-      },
+      isNotCompatibleWithVersion,
     );
 
     return subscriptionsClient.subscribe(
