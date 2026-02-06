@@ -63,6 +63,11 @@ steps:
   - uses: pnpm/action-setup@v4
     with:
       version: 10
+  - name: Print E2E endpoints
+    run: |
+      echo "=== E2E Test Configuration ==="
+      echo "E2E_WEBUI_ENDPOINT: $E2E_WEBUI_ENDPOINT"
+      echo "E2E_WEBSERVER_ENDPOINT: $E2E_WEBSERVER_ENDPOINT"
   - run: pnpm install --frozen-lockfile
   - run: pnpm exec playwright install --with-deps
   - name: Run E2E tests
@@ -104,7 +109,18 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
 - E2E tests have already been executed in the `steps` phase before the agent starts.
 - Test results are available at `/tmp/gh-aw/e2e-results/` directory.
 - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
-- Never leak secrets in logs/issues.
+
+## CRITICAL: Secret Protection Rules
+**NEVER include any of the following in issues, PRs, comments, or logs:**
+- Passwords, API keys, tokens, or any credential values
+- Email addresses used for authentication (E2E_*_EMAIL values)
+- Any environment variable values that contain sensitive data
+- URLs with embedded credentials or tokens
+
+**When reporting issues:**
+- Use `[REDACTED]` for any sensitive values
+- Only mention that credentials are "configured" or "missing", never show actual values
+- For endpoints, you may show the URL but redact any auth tokens in query strings
 
 ## Execution plan
 1) Analyze: Read test results from `/tmp/gh-aw/e2e-results/`. Check `summary.env` for overall status and `playwright-report/` for detailed results.
