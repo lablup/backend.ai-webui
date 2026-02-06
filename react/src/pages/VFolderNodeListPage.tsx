@@ -165,9 +165,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const usageModeFilter = getUsageModeFilter(queryParams.mode);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+
   const queryVariables: VFolderNodeListPageQuery$variables = useMemo(
     () => ({
-      projectId: currentProject.id,
+      scopeId: `project:${currentProject.id}`,
       offset: baiPaginationOption.offset,
       first: baiPaginationOption.first,
       filter: mergeFilterValues([
@@ -206,7 +207,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     useLazyLoadQuery<VFolderNodeListPageQuery>(
       graphql`
         query VFolderNodeListPageQuery(
-          $projectId: UUID
+          $scopeId: ScopeField
           $offset: Int
           $first: Int
           $filter: String
@@ -216,7 +217,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           $filterForDeletedCount: String
         ) {
           vfolder_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             offset: $offset
             first: $first
             filter: $filter
@@ -240,7 +241,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             count
           }
           active: vfolder_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: $filterForActiveCount
@@ -249,7 +250,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             count
           }
           deleted: vfolder_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: $filterForDeletedCount

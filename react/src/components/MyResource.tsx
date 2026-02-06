@@ -39,6 +39,9 @@ const MyResource: React.FC<MyResourceProps> = ({
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
+  if (!currentProject.name) {
+    throw new Error('Project name is required for MyResource');
+  }
   const [
     {
       checkPresetInfo,

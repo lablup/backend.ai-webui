@@ -78,6 +78,9 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for FolderExplorerModal');
+  }
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const { unitedAllowedPermissionByVolume } =

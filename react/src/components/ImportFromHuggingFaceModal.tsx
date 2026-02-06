@@ -104,6 +104,9 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance<Service>>(null);
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for ImportFromHuggingFaceModal');
+  }
   const webuiNavigate = useWebUINavigate();
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
   const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
@@ -121,7 +124,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         }
       }
     `,
-    { id: currentProject?.id },
+    { id: currentProject.id },
   );
 
   const huggingFaceModelInfo = useSuspenseTanQuery<{

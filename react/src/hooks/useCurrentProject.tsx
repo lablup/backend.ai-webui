@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { backendaiUtils } from '../global-stores';
+import { useRecentProjectGroup } from './backendai';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
@@ -30,17 +31,41 @@ interface VHostInfo {
   };
 }
 
+interface CurrentProject {
+  name: string | undefined | null;
+  id: string | undefined | null;
+}
+
 interface ScalingGroupsResponse {
   scaling_groups: ScalingGroupItem[];
 }
 
-// TODO: check undefined and add error handling
-const currentProjectAtom = atomWithDefault(() => {
+const emptyCurrentProject: CurrentProject = {
+  name: undefined,
+  id: undefined,
+};
+
+// Handle async cases differently for suspense vs non-suspense scenarios
+const currentProjectAtom = atomWithDefault((): CurrentProject => {
+  const client = globalThis?.backendaiclient;
+
+  if (!client) {
+    // Server value not confirmed yet - return undefined for "not yet confirmed"
+    return emptyCurrentProject;
+  }
+
+  // For suspense handling:
+  // - If we confirmed value doesn't exist, return null
+  // - If value exists, return that value (which might be undefined)
+  const name = client.current_group;
+  const id =
+    typeof client.current_group_id === 'function'
+      ? client.current_group_id()
+      : client.current_group_id;
+
   return {
-    // @ts-ignore
-    name: globalThis?.backendaiclient?.current_group,
-    // @ts-ignore
-    id: globalThis?.backendaiclient?.current_group_id(),
+    name: name ?? null,
+    id: id ?? null,
   };
 });
 
@@ -97,18 +122,31 @@ export const useCurrentResourceGroupState = () => {
   ] as const;
 };
 
+const emptyResourceGroupsResult = {
+  nonSftpResourceGroups: undefined,
+  vhostInfo: undefined,
+  sftpResourceGroups: undefined,
+};
+
 const resourceGroupsForCurrentProjectAtom = atom(async (get) => {
   // NOTE: cannot use hook inside atom
   const currentProject = get(currentProjectAtom);
+
+  // Skip API calls if project info is not available yet
+  if (!currentProject.name || !currentProject.id) {
+    return emptyResourceGroupsResult;
+  }
+
+  const client = globalThis?.backendaiclient;
+  if (!client) {
+    return emptyResourceGroupsResult;
+  }
+
   const [resourceGroupsResult, vhostInfoResult] = await Promise.allSettled([
-    // @ts-ignore
-    globalThis.backendaiclient.scalingGroup.list(
+    client.scalingGroup.list(
       currentProject.name,
     ) as Promise<ScalingGroupsResponse>,
-    // @ts-ignore
-    globalThis.backendaiclient.vfolder.list_hosts(
-      currentProject.id,
-    ) as Promise<VHostInfo>,
+    client.vfolder.list_hosts(currentProject.id) as Promise<VHostInfo>,
   ]);
 
   const resourceGroups =
@@ -148,6 +186,8 @@ export const useAllowedStorageHostsForCurrentProject = () => {};
 export const useSetCurrentProject = () => {
   const set = useSetAtom(currentProjectAtom);
   const baiClient = useSuspendedBackendaiClient();
+  const { writeRecentProjectGroup } = useRecentProjectGroup();
+
   return useCallback(
     ({
       projectName,
@@ -164,8 +204,14 @@ export const useSetCurrentProject = () => {
       // To sync with baiClient
       // eslint-disable-next-line react-hooks/immutability
       baiClient.current_group = projectName;
+<<<<<<< HEAD
       backendaiUtils._writeRecentProjectGroup(projectName);
+=======
+
+      // Write recent project group using the new hook
+      writeRecentProjectGroup(projectName);
+>>>>>>> 51dcde593 (feat(FR-2028): support for undefined and null types in the `useCurrentProjectValue`.)
     },
-    [set, baiClient],
+    [set, baiClient, writeRecentProjectGroup],
   );
 };

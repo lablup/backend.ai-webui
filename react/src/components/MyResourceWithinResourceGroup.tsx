@@ -41,6 +41,11 @@ const MyResourceWithinResourceGroup: React.FC<
   const { token } = theme.useToken();
 
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.name) {
+    throw new Error(
+      'Project name is required for MyResourceWithinResourceGroup',
+    );
+  }
   const currentResourceGroup = useCurrentResourceGroupValue();
   const deferredCurrentResourceGroup = useDeferredValue(
     currentResourceGroup || 'default',

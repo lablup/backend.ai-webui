@@ -47,6 +47,12 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const { styles } = useStyles();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.name) {
+    throw new Error('Project name is required for StorageStatusPanelCard');
+  }
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for StorageStatusPanelCard');
+  }
   const deferredFetchKey = useDeferredValue(fetchKey);
   const [invitations, { updateInvitations }] = useVFolderInvitations();
   const invitationCount = invitations.length;
@@ -64,9 +70,12 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   };
 
   const { data: vfolders } = useSuspenseTanQuery({
-    queryKey: ['vfolders', { deferredFetchKey, id: currentProject?.id }],
+    queryKey: ['vfolders', { deferredFetchKey, id: currentProject.id }],
     queryFn: () => {
-      return baiClient.vfolder.list(currentProject?.id);
+      if (!currentProject?.id) {
+        throw new Error('Project ID is required for StorageStatusPanelCard');
+      }
+      return baiClient.vfolder.list(currentProject.id);
     },
   });
   // FIXME: vfolder_node query does not provide a information about the vfolder's owner.
@@ -101,7 +110,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         }
       `,
       {
-        name: currentProject?.name,
+        name: currentProject.name,
       },
     );
 
