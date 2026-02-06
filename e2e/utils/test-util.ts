@@ -90,6 +90,15 @@ export const webServerEndpoint =
   process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 export const visualRegressionWebserverEndpoint = 'http://10.122.10.216:8090';
 
+/**
+ * Check if running against a local development environment.
+ * Config modification tests only work reliably in local environments
+ * because external deployments (e.g., Amplify) may cache config.toml
+ * before route interception can take effect.
+ */
+export const isLocalEnvironment =
+  webuiEndpoint.includes('127.0.0.1') || webuiEndpoint.includes('localhost');
+
 export async function login(
   page: Page,
   request: APIRequestContext,
@@ -601,21 +610,27 @@ export async function modifyConfigToml(
   let config = configCache.get(page);
 
   if (!config) {
-    // First time: fetch the original config via browser context
-    // Navigate to the page first to establish browser context, then use page.evaluate()
-    // This bypasses bot protection (TLS fingerprinting) that blocks Node.js HTTP clients
-    // Retry up to 3 times to handle transient connection resets
+    // First time: Use a completely separate browser context to fetch original config
+    // This prevents any cache pollution between the fetch and the main test
+    const browser = page.context().browser();
+    if (!browser) {
+      throw new Error('Browser instance not available');
+    }
+
+    const tempContext = await browser.newContext();
+    const tempPage = await tempContext.newPage();
+
     const maxRetries = 3;
     let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        // Navigate to establish browser context (waitUntil: 'commit' for faster initial load)
-        await page.goto(webuiEndpoint, { waitUntil: 'commit' });
+        // Navigate temp page to fetch config
+        await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
 
-        // Fetch config.toml from within the browser context
-        const configToml = await page.evaluate(async () => {
-          const res = await fetch('/config.toml');
+        // Fetch config.toml from within the browser context (bypasses bot protection)
+        const configToml = await tempPage.evaluate(async () => {
+          const res = await fetch('/config.toml', { cache: 'no-store' });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
@@ -625,13 +640,15 @@ export async function modifyConfigToml(
         lastError = error;
         if (attempt < maxRetries) {
           // Wait briefly before retrying
-          await page.waitForTimeout(500);
+          await tempPage.waitForTimeout(500);
         }
       }
     }
 
+    // Close temp context entirely
+    await tempContext.close();
+
     if (!config) {
-      // All retries failed - throw error to fail the test explicitly
       throw new Error(
         `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
       );
@@ -646,12 +663,12 @@ export async function modifyConfigToml(
   configCache.set(page, config);
 
   // Clear all existing route handlers for config.toml
-  await page.unroute(`${webuiEndpoint}/config.toml`);
+  await page.unroute('**/config.toml**');
 
   // Set up the new route handler with the current config
   // IMPORTANT: Use a closure to capture the current config value
   const configToServe = config;
-  await page.route(`${webuiEndpoint}/config.toml`, async (route) => {
+  await page.route('**/config.toml**', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'text/plain',

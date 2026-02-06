@@ -1,10 +1,15 @@
 import { StartPage } from '../utils/classes/common/StartPage';
 import {
+  isLocalEnvironment,
   loginAsAdmin,
   modifyConfigToml,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
+
+// Config modification tests only work reliably in local environments.
+// External deployments (e.g., Amplify) cache config.toml before route interception.
+test.skip(!isLocalEnvironment, 'Config tests require local environment');
 
 test.describe.parallel(
   'config.toml',
@@ -21,6 +26,7 @@ test.describe.parallel(
             blocklist: 'start,serving,session',
           },
         };
+
         await modifyConfigToml(page, request, requestConfig);
         await loginAsAdmin(page, request);
 
