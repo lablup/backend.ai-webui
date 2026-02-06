@@ -19,7 +19,6 @@ import './backend-ai-login';
 import BackendAIMetadataStore from './backend-ai-metadata-store';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
-import './backend-ai-resource-broker';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
@@ -231,8 +230,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.shadowRoot?.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot?.querySelector('#app-launcher');
-    globalThis.resourceBroker =
-      this.shadowRoot?.querySelector('#resource-broker');
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
@@ -889,10 +886,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         block
       ></lablup-terms-of-service>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
-      <backend-ai-resource-broker
-        id="resource-broker"
-        ?active="${this.is_connected}"
-      ></backend-ai-resource-broker>
       <backend-ai-react-signout-modal
         value="${this.isOpenSignoutDialog ? 'true' : 'false'}"
         @close="${() => {
