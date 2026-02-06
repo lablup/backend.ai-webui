@@ -91,10 +91,14 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   // );
 
   const { data } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', key],
+    queryKey: ['VFolderSelectQuery', key, currentProject.id],
     queryFn: () => {
+      const projectId = currentProject.id;
+      if (!projectId) {
+        throw new Error('Project ID is required for VFolderSelect');
+      }
       const search = new URLSearchParams();
-      search.set('group_id', currentProject.id);
+      search.set('group_id', projectId);
       return baiRequestWithPromise({
         method: 'GET',
         url: `/folders?${search.toString()}`,

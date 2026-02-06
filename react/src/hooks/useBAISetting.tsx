@@ -12,7 +12,7 @@ import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
 import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
-interface UserSettings {
+export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
@@ -39,6 +39,7 @@ interface UserSettings {
     | 'TotalResourceWithinResourceGroup';
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
+  [key: `projectGroup.${string}`]: string;
 
   max_concurrent_uploads?: number;
   container_log_auto_refresh_enabled?: boolean;

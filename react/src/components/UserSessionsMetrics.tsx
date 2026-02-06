@@ -76,7 +76,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
           !_.startsWith(metric, 'cpu') &&
           !_.startsWith(metric, 'mem')
         ) {
-          const prefix = metric.split('_').slice(0, -1).join('_');
+          const prefix = _.split(metric, '_').slice(0, -1).join('_');
           if (!acc.acceleratorGroups[prefix]) {
             acc.acceleratorGroups[prefix] = [];
           }

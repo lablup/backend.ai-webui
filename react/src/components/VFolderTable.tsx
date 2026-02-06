@@ -171,6 +171,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
+
+  if (!currentProject.id) {
+    throw new Error('Project is required for VFolderTable');
+  }
+
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const { data: allFolderList } = useSuspenseTanQuery({
