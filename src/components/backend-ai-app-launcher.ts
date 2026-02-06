@@ -788,6 +788,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         status: 'rejected',
       };
       this.notification.show(false, undefined, `session-app-${sessionUuid}`);
+      return;
     }
   }
 

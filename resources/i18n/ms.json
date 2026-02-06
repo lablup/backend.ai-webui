@@ -708,11 +708,14 @@
     "WrongAPIServerAddress": "Alamat pelayan API salah."
   },
   "errorBoundary": {
+    "DebugInfo": "Maklumat Debug:",
     "DisplayOnlyDevEnv": "Blok ralat ini hanya dipaparkan dalam persekitaran pembangunan WebUI.",
+    "ErrorMessage": "Mesej Ralat:",
     "ExpiredLoginSessionReLogin": "Log masuk",
     "ExpiredLoginSessionTitle": "Sesi log masuk anda telah tamat tempoh.",
     "ReloadPage": "Muat semula halaman",
     "ResetErrorBoundary": "Tetapkan Semula ErrorBoundary",
+    "StackTrace": "Jejak ralat:",
     "Title": "Ralat telah berlaku."
   },
   "explorer": {

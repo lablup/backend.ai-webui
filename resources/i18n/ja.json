@@ -708,11 +708,14 @@
     "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。"
   },
   "errorBoundary": {
+    "DebugInfo": "デバッグ情報:",
     "DisplayOnlyDevEnv": "このエラーブロックはWebUI開発環境でのみ表示されます。",
+    "ErrorMessage": "エラーメッセージ：",
     "ExpiredLoginSessionReLogin": "ログイン",
     "ExpiredLoginSessionTitle": "ログインセッションの有効期限が切れました。",
     "ReloadPage": "ページの更新",
     "ResetErrorBoundary": "ErrorBoundaryの初期化",
+    "StackTrace": "スタックトレース:",
     "Title": "エラーが発生しました。"
   },
   "explorer": {

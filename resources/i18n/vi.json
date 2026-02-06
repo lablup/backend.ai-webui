@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Địa chỉ máy chủ API sai."
   },
   "errorBoundary": {
+    "DebugInfo": "Thông tin gỡ lỗi:",
     "DisplayOnlyDevEnv": "Khối lỗi này chỉ được hiển thị trong môi trường phát triển WebUI.",
+    "ErrorMessage": "Thông báo lỗi:",
     "ExpiredLoginSessionReLogin": "Đăng nhập",
     "ExpiredLoginSessionTitle": "Phiên đăng nhập của bạn đã hết hạn.",
     "ReloadPage": "Tải lại trang",
     "ResetErrorBoundary": "Đặt lại ranh giới lỗi",
+    "StackTrace": "Dấu vết ngăn xếp:",
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {

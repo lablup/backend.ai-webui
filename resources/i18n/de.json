@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Falsche API-Serveradresse."
   },
   "errorBoundary": {
+    "DebugInfo": "Debug-Info:",
     "DisplayOnlyDevEnv": "Dieser Fehlerblock wird nur in der WebUI-Entwicklungsumgebung angezeigt.",
+    "ErrorMessage": "Fehlermeldung:",
     "ExpiredLoginSessionReLogin": "Anmeldung",
     "ExpiredLoginSessionTitle": "Ihre Anmeldesitzung ist abgelaufen.",
     "ReloadPage": "Laden Sie die Seite neu",
     "ResetErrorBoundary": "ErrorBoundary zurücksetzen",
+    "StackTrace": "Stack-Trace:",
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {

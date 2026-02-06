@@ -714,11 +714,14 @@
     "WrongAPIServerAddress": "Wrong API server address."
   },
   "errorBoundary": {
+    "DebugInfo": "Debug Info:",
     "DisplayOnlyDevEnv": "This error block is displayed only in WebUI development environment.",
+    "ErrorMessage": "Error Message:",
     "ExpiredLoginSessionReLogin": "Login",
     "ExpiredLoginSessionTitle": "Your login session has expired.",
     "ReloadPage": "Reload the page",
     "ResetErrorBoundary": "Reset ErrorBoundary",
+    "StackTrace": "Stack Trace:",
     "Title": "An error has occurred."
   },
   "explorer": {

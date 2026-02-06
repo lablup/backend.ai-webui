@@ -1,7 +1,10 @@
-// import { createClient } from "graphql-ws";
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
-// import { createClient } from 'graphql-ws';
+import type {
+  GraphQLFormattedError,
+  GraphQLFormattedErrorExtensions,
+} from 'graphql';
 import { createClient } from 'graphql-sse';
+import type { GraphQLSingularResponse, PayloadError } from 'relay-runtime';
 import {
   Environment,
   Network,
@@ -13,6 +16,42 @@ import {
   Variables,
   Observable,
 } from 'relay-runtime';
+
+/**
+ * Extended GraphQL error extensions with custom fields
+ */
+interface ExtendedGraphQLErrorExtensions extends GraphQLFormattedErrorExtensions {
+  rawErrorMessage?: string;
+}
+
+/**
+ * Backend.AI client error with GraphQL response
+ */
+interface BackendAIClientError extends Error {
+  isError?: boolean;
+  statusCode?: number;
+  response?: GraphQLSingularResponse;
+}
+
+/**
+ * Custom error with GraphQL error information
+ */
+interface GraphQLErrorWithSource extends Error {
+  name: string;
+  graphQLErrors: ReadonlyArray<PayloadError>;
+  source: GraphQLSingularResponse;
+}
+
+/**
+ * Type guard to check if response has errors
+ */
+function hasErrors(
+  response: GraphQLSingularResponse,
+): response is
+  | Extract<GraphQLSingularResponse, { errors: PayloadError[] }>
+  | Extract<GraphQLSingularResponse, { errors?: PayloadError[] }> {
+  return 'errors' in response && Array.isArray(response.errors);
+}
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
@@ -80,23 +119,54 @@ const fetchFn: FetchFunction = async (
     // @ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo)
-      .catch((err: any) => {
+      .catch((err: BackendAIClientError) => {
         if (err.isError && err.statusCode === 401) {
           const error = new Error('GraphQL Authorization Error');
           error.name = 'AuthorizationError';
           throw error;
         }
+
+        // If the error has a response with GraphQL errors (HTTP 400/500 with errors)
+        // Return it as a valid GraphQL response instead of throwing
+        if (err.response && hasErrors(err.response)) {
+          return err.response;
+        }
+
+        // Preserve other errors and re-throw them
+        throw err;
       })) || {};
 
-  if (result.errors) {
+  if (hasErrors(result)) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
     // so we store the original message in the extensions.rawErrorMessage field.
     // https://github.com/facebook/relay/releases/tag/v18.1.0
-    result.errors.forEach((error: any) => {
-      if (error.extensions && error.message) {
-        error.extensions.rawErrorMessage = error.message;
+    result.errors?.forEach((error) => {
+      // Cast to GraphQLFormattedError to access extensions property
+      const formattedError = error as GraphQLFormattedError;
+      if (formattedError.extensions && formattedError.message) {
+        (
+          formattedError.extensions as ExtendedGraphQLErrorExtensions
+        ).rawErrorMessage = formattedError.message;
       }
     });
+
+    // Create a custom error with GraphQL error messages
+    const errorMessages =
+      result.errors?.map((e: PayloadError) => e.message).join('\n') ?? '';
+    const graphQLError: GraphQLErrorWithSource = Object.assign(
+      new Error(`GraphQL Error:\n${errorMessages}`),
+      {
+        name: 'GraphQLError',
+        graphQLErrors: result.errors ?? [],
+        source: result,
+      },
+    );
+
+    // If there's no data, throw the error immediately
+    // Otherwise, return the result and let Relay handle it
+    if (!result.data || Object.keys(result.data).length === 0) {
+      throw graphQLError;
+    }
   }
 
   return result;
@@ -124,7 +194,7 @@ const subscriptionsClient = createClient({
 function fetchForSubscribe(
   operation: RequestParameters,
   variables: Variables,
-): Observable<any> {
+): Observable<GraphQLSingularResponse> {
   return Observable.create((sink) => {
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'));
@@ -146,7 +216,7 @@ function fetchForSubscribe(
         query: transformedOperation,
         variables,
       },
-      sink,
+      sink as Parameters<typeof subscriptionsClient.subscribe>[1],
     );
   });
 }

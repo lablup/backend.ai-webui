@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Dirección del servidor API incorrecta."
   },
   "errorBoundary": {
+    "DebugInfo": "Información de depuración:",
     "DisplayOnlyDevEnv": "Este bloque de error sólo se muestra en el entorno de desarrollo WebUI.",
+    "ErrorMessage": "Mensaje de error:",
     "ExpiredLoginSessionReLogin": "Inicio de sesión",
     "ExpiredLoginSessionTitle": "Su sesión ha expirado.",
     "ReloadPage": "Recargar la página",
     "ResetErrorBoundary": "Restablecer ErrorBoundary",
+    "StackTrace": "Traza de pila:",
     "Title": "Se ha producido un error."
   },
   "explorer": {

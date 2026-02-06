@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Nieprawidłowy adres serwera API."
   },
   "errorBoundary": {
+    "DebugInfo": "Informacje debugowania:",
     "DisplayOnlyDevEnv": "Ten blok błędu jest wyświetlany tylko w środowisku programistycznym WebUI.",
+    "ErrorMessage": "Komunikat o błędzie:",
     "ExpiredLoginSessionReLogin": "Logowanie",
     "ExpiredLoginSessionTitle": "Sesja logowania wygasła.",
     "ReloadPage": "Przeładuj stronę",
     "ResetErrorBoundary": "Reset ErrorBoundary",
+    "StackTrace": "Stos wywołań:",
     "Title": "Wystąpił błąd."
   },
   "explorer": {

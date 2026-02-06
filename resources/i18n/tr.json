@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Yanlış API sunucu adresi."
   },
   "errorBoundary": {
+    "DebugInfo": "Hata Ayıklama Bilgileri:",
     "DisplayOnlyDevEnv": "Bu hata bloğu yalnızca WebUI geliştirme ortamında görüntülenir.",
+    "ErrorMessage": "Hata mesajı:",
     "ExpiredLoginSessionReLogin": "Giriş",
     "ExpiredLoginSessionTitle": "Giriş oturumunuzun süresi doldu.",
     "ReloadPage": "Sayfayı yeniden yükle",
     "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
+    "StackTrace": "Yığın İzleme:",
     "Title": "Bir hata oluştu."
   },
   "explorer": {
