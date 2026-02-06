@@ -16,9 +16,15 @@ const RelayResolver = ({
   mockResolvers = {},
 }: RelayResolverProps) => {
   const environment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation, mockResolvers),
-  );
+
+  const queueResolver = () => {
+    environment.mock.queueOperationResolver((operation) => {
+      queueResolver();
+      return MockPayloadGenerator.generate(operation, mockResolvers);
+    });
+  };
+
+  queueResolver();
 
   return (
     <RelayEnvironmentProvider environment={environment}>
