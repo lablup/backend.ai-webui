@@ -220,7 +220,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
     return terminateApp(
       session,
       baiClient._config.accessKey,
-      currentProject.id,
+      currentProject.id || '',
       baiClient,
     )
       .catch((e) => {
@@ -283,7 +283,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                   `,
                   {
                     id: session.id,
-                    project_id: currentProject.id,
+                    project_id: currentProject.id || '',
                   },
                 ).toPromise();
               });

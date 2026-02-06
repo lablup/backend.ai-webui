@@ -127,7 +127,7 @@ const ResourceAllocationFormItems: React.FC<
         }
       `,
       {
-        projectID: currentProject.id,
+        projectID: currentProject.id || '',
       },
       {
         fetchPolicy:
@@ -158,7 +158,7 @@ const ResourceAllocationFormItems: React.FC<
 
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
+      currentProjectName: currentProject.name || '',
       currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
@@ -525,7 +525,7 @@ const ResourceAllocationFormItems: React.FC<
         ]}
       >
         <BAIProjectResourceGroupSelect
-          projectName={currentProject.name}
+          projectName={currentProject.name || ''}
           showSearch
         />
       </Form.Item>

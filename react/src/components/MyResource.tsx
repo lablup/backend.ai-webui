@@ -42,7 +42,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       remainingWithoutResourceGroup,
     },
   ] = useResourceLimitAndRemaining({
-    currentProjectName: currentProject.name,
+    currentProjectName: currentProject.name || '',
     ignorePerContainerConfig: true,
     fetchKey: `${fetchKey}${internalFetchKey}`,
   });

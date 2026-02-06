@@ -49,7 +49,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      currentProject.id || '',
       currentUserAccessKey,
     );
   const { vhostInfo: vhostInfoByCurrentProject } =

@@ -143,7 +143,7 @@ const ComputeSessionListPage = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables: ComputeSessionListPageQuery$variables = {
-    projectId: currentProject.id,
+    projectId: currentProject.id || '',
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
@@ -223,8 +223,9 @@ const ComputeSessionListPage = () => {
       `,
     deferredQueryVariables,
     {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
+      fetchPolicy: !currentProject.id
+        ? 'store-only'
+        : deferredFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
       fetchKey: deferredFetchKey,

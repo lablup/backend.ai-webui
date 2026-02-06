@@ -46,7 +46,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      currentProject.id || '',
       currentUserAccessKey,
     );
 

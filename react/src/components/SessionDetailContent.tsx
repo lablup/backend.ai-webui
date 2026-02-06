@@ -115,16 +115,22 @@ const SessionDetailContent: React.FC<{
       id: toGlobalId('ComputeSessionNode', id),
       // uuid: id,
       project_id:
-        legacy_session?.group_id || deprecatedProjectId || currentProject.id,
+        legacy_session?.group_id ||
+        deprecatedProjectId ||
+        currentProject.id ||
+        '',
     },
     {
       fetchPolicy:
-        // Only use network when sessionFrgmt is not provided on initial fetch
-        fetchKey === INITIAL_FETCH_KEY
-          ? sessionFrgmt
-            ? 'store-only'
-            : 'store-and-network' // initial fetch
-          : 'network-only',
+        // Skip network request if no project_id available
+        !(legacy_session?.group_id || deprecatedProjectId || currentProject.id)
+          ? 'store-only'
+          : // Only use network when sessionFrgmt is not provided on initial fetch
+            fetchKey === INITIAL_FETCH_KEY
+            ? sessionFrgmt
+              ? 'store-only'
+              : 'store-and-network' // initial fetch
+            : 'network-only',
       fetchKey: fetchKey,
     },
   );

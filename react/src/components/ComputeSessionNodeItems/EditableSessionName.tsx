@@ -159,7 +159,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   `,
                   {
                     sessionId: session.id,
-                    project_id: currentProject.id,
+                    project_id: currentProject.id || '',
                   },
                 )
                   .toPromise()

@@ -161,9 +161,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const usageModeFilter = getUsageModeFilter(queryParams.mode);
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+
   const queryVariables: VFolderNodeListPageQuery$variables = useMemo(
     () => ({
-      projectId: currentProject.id,
+      projectId: currentProject.id || '',
       offset: baiPaginationOption.offset,
       first: baiPaginationOption.first,
       filter: mergeFilterValues([
@@ -257,8 +258,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       `,
       deferredQueryVariables,
       {
-        fetchPolicy:
-          deferredFetchKey === 'initial-fetch'
+        fetchPolicy: !currentProject.id
+          ? 'store-only'
+          : deferredFetchKey === 'initial-fetch'
             ? 'store-and-network'
             : 'network-only',
         fetchKey:

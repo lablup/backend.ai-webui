@@ -62,7 +62,10 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const { data: vfolders } = useSuspenseTanQuery({
     queryKey: ['vfolders', { deferredFetchKey, id: currentProject?.id }],
     queryFn: () => {
-      return baiClient.vfolder.list(currentProject?.id);
+      if (!currentProject?.id) {
+        return Promise.resolve([]);
+      }
+      return baiClient.vfolder.list(currentProject.id);
     },
   });
   // FIXME: vfolder_node query does not provide a information about the vfolder's owner.
@@ -97,7 +100,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         }
       `,
       {
-        name: currentProject?.name,
+        name: currentProject?.name || '',
       },
     );
 
