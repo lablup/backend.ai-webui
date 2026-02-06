@@ -97,7 +97,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           },
         ]}
         activeTabKey={currentSettingType}
-        // eslint-disable-next-line
         //@ts-ignore
         onTabChange={(v) => {
           startTransition(() => {

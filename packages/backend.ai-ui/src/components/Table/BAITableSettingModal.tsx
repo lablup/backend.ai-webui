@@ -276,7 +276,6 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(orderedOptions);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(columnOptions);
     }
   }, [columnOptions, initialColumnOrder]);

@@ -15,6 +15,9 @@ const {
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 
 module.exports = {
+  eslint: {
+    enable: false, // Disable ESLint webpack plugin for ESLint 9 compatibility. Use CLI lint instead.
+  },
   devServer: (devServerConfig, { env, paths }) => {
     devServerConfig.watchFiles = {
       paths: [
