@@ -133,7 +133,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   const INITIAL_FORM_VALUES: FolderCreateFormItemsType = {
     name: '',
     host: undefined,
-    group: currentProject.id,
+    group: currentProject.id || undefined,
     usage_mode: 'general',
     type: 'user',
     permission: 'rw',
