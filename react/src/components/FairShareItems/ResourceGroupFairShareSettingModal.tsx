@@ -137,9 +137,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                   return;
                 }
                 message.success(
-                  t('fairShare.FairShareSettingsSuccessfullyUpdated', {
-                    resourceGroupName: resourceGroup?.name,
-                  }),
+                  t('fairShare.FairShareSettingsSuccessfullyUpdated'),
                 );
                 onRequestClose?.();
               },
