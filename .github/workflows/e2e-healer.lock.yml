@@ -114,8 +114,19 @@ jobs:
           version: 10
       - name: Print E2E endpoints
         run: "echo \"=== E2E Test Configuration ===\"\necho \"E2E_WEBUI_ENDPOINT: $E2E_WEBUI_ENDPOINT\"\necho \"E2E_WEBSERVER_ENDPOINT: $E2E_WEBSERVER_ENDPOINT\"\n"
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - id: playwright-version
+        name: Get Playwright version
+        run: echo "version=$(pnpm exec playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+      - id: playwright-cache
+        name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+          path: ~/.cache/ms-playwright
+      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
       - continue-on-error: true
         id: e2e-tests
         name: Run E2E tests

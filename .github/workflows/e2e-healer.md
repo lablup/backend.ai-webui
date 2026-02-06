@@ -68,8 +68,19 @@ steps:
       echo "=== E2E Test Configuration ==="
       echo "E2E_WEBUI_ENDPOINT: $E2E_WEBUI_ENDPOINT"
       echo "E2E_WEBSERVER_ENDPOINT: $E2E_WEBSERVER_ENDPOINT"
-  - run: pnpm install --frozen-lockfile
-  - run: pnpm exec playwright install --with-deps
+  - run: pnpm install --frozen-lockfile --prefer-offline
+  - name: Get Playwright version
+    id: playwright-version
+    run: echo "version=$(pnpm exec playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+  - name: Cache Playwright browsers
+    uses: actions/cache@v4
+    id: playwright-cache
+    with:
+      path: ~/.cache/ms-playwright
+      key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+  - name: Install Playwright browsers
+    if: steps.playwright-cache.outputs.cache-hit != 'true'
+    run: pnpm exec playwright install --with-deps chromium
   - name: Run E2E tests
     id: e2e-tests
     continue-on-error: true
