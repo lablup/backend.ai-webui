@@ -205,11 +205,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       `,
       {
         domain_name: baiClient._config.domainName,
-        group_id: currentProject.id,
+        group_id: currentProject.id || '',
         keypair_resource_policy_name: keypair?.resource_policy || '',
       },
       {
-        fetchPolicy: 'store-and-network',
+        fetchPolicy: currentProject.id ? 'store-and-network' : 'store-only',
         fetchKey: fetchKey,
       },
     );

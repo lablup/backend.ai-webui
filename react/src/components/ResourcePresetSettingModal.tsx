@@ -293,7 +293,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             name="scaling_group_name"
           >
             <BAIProjectResourceGroupSelect
-              projectName={currentProject.name}
+              projectName={currentProject.name || ''}
               allowClear
               popupMatchSelectWidth={false}
             />

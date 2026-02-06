@@ -117,7 +117,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         }
       }
     `,
-    { id: currentProject?.id },
+    { id: currentProject?.id || '' },
+    {
+      fetchPolicy: currentProject?.id ? 'store-and-network' : 'store-only',
+    },
   );
 
   const huggingFaceModelInfo = useSuspenseTanQuery<{

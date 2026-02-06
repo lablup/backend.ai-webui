@@ -79,7 +79,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      currentProject.id || '',
       currentUserAccessKey,
     );
   const bodyRef = useRef<HTMLDivElement | null>(null);

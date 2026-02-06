@@ -45,7 +45,7 @@ const MyResourceWithinResourceGroup: React.FC<
   const [isPending, startTransition] = useTransition();
 
   const [{ checkPresetInfo }] = useResourceLimitAndRemaining({
-    currentProjectName: currentProject.name,
+    currentProjectName: currentProject.name || '',
     currentResourceGroup: deferredCurrentResourceGroup,
     fetchKey: `${fetchKey}${internalFetchKey}`,
   });

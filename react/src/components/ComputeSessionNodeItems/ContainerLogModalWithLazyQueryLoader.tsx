@@ -25,10 +25,11 @@ const ContainerLogModalWithLazyQueryLoader: React.FC<{
       `,
       {
         sessionId,
-        project_id: currentProject.id,
+        project_id: currentProject.id || '',
       },
       {
-        fetchPolicy: sessionId ? 'network-only' : 'store-only',
+        fetchPolicy:
+          sessionId && currentProject.id ? 'network-only' : 'store-only',
       },
     );
 
