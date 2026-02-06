@@ -9,6 +9,7 @@ import {
   loginAsAdmin,
   loginAsCreatedAccount,
   logout,
+  modifyConfigToml,
   navigateTo,
   webServerEndpoint,
   webuiEndpoint,
@@ -294,8 +295,17 @@ test.describe.serial(
       );
     });
 
-    test('Deleted user cannot log in', async ({ page }) => {
-      // 1. Attempt to login as the deleted user
+    test('Deleted user cannot log in', async ({ page, request }) => {
+      // 1. Modify config.toml to enable session-based login with manual endpoint input
+      await modifyConfigToml(page, request, {
+        general: {
+          connectionMode: 'SESSION',
+          apiEndpoint: '',
+          apiEndpointText: '',
+        },
+      });
+
+      // 2. Attempt to login as the deleted user
       await page.goto(webuiEndpoint);
       await page.getByLabel('Email or Username').fill(EMAIL);
       await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
@@ -304,12 +314,12 @@ test.describe.serial(
         .fill(webServerEndpoint);
       await page.getByLabel('Login', { exact: true }).click();
 
-      // 2. Verify "Login information mismatch" error notification appears
+      // 3. Verify "Login information mismatch" error notification appears
       await expect(
         page.getByRole('alert').getByText('Login information mismatch'),
       ).toBeVisible({ timeout: 10000 });
 
-      // 3. Verify user is still on login page
+      // 4. Verify user is still on login page
       await expect(page.getByLabel('Email or Username')).toBeVisible();
     });
   },

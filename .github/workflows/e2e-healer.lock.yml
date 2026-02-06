@@ -19,23 +19,46 @@
 #   gh aw compile
 # For more information: https://github.com/githubnext/gh-aw/blob/main/.github/aw/github-agentic-workflows.md
 #
-# Analyze component changes and check Storybook story coverage
+# Run Playwright E2E tests on weekdays at 09:00 KST (00:00 UTC), report failures as GitHub issues,
+# and attempt automated healing via Playwright planner to open a draft PR against main.
 
-name: "Storybook Coverage Checker"
+name: "E2E Watchdog & Healer"
 "on":
+  pull_request:
+    paths:
+    - .github/workflows/e2e-healer.md
+    - .github/workflows/e2e-healer.lock.yml
+  schedule:
+  - cron: "0 0 * * 1-5"
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pull-requests: read
+permissions: read-all
 
 concurrency:
-  group: "gh-aw-${{ github.workflow }}"
+  group: "gh-aw-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
 
-run-name: "Storybook Coverage Checker"
+run-name: "E2E Watchdog & Healer"
+
+env:
+  E2E_ADMIN_EMAIL: ${{ vars.E2E_ADMIN_EMAIL }}
+  E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+  E2E_DOMAIN_ADMIN_EMAIL: ${{ vars.E2E_DOMAIN_ADMIN_EMAIL }}
+  E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
+  E2E_MONITOR_EMAIL: ${{ vars.E2E_MONITOR_EMAIL }}
+  E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
+  E2E_USER2_EMAIL: ${{ vars.E2E_USER2_EMAIL }}
+  E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
+  E2E_USER_EMAIL: ${{ vars.E2E_USER_EMAIL }}
+  E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+  E2E_WEBSERVER_ENDPOINT: ${{ vars.E2E_WEBSERVER_ENDPOINT }}
+  E2E_WEBUI_ENDPOINT: ${{ vars.E2E_WEBUI_ENDPOINT }}
 
 jobs:
   activation:
+    needs: pre_activation
+    if: >
+      (needs.pre_activation.outputs.activated == 'true') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id))
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -50,7 +73,7 @@ jobs:
       - name: Check workflow file timestamps
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
-          GH_AW_WORKFLOW_FILE: "storybook-coverage-checker.lock.yml"
+          GH_AW_WORKFLOW_FILE: "e2e-healer.lock.yml"
         with:
           script: |
             const { setupGlobals } = require('/tmp/gh-aw/actions/setup_globals.cjs');
@@ -61,11 +84,7 @@ jobs:
   agent:
     needs: activation
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    concurrency:
-      group: "gh-aw-copilot-${{ github.workflow }}"
+    permissions: read-all
     env:
       GH_AW_MCP_LOG_DIR: /tmp/gh-aw/mcp-logs/safeoutputs
       GH_AW_SAFE_OUTPUTS: /tmp/gh-aw/safeoutputs/outputs.jsonl
@@ -87,6 +106,44 @@ jobs:
           persist-credentials: false
       - name: Create gh-aw temp directory
         run: bash /tmp/gh-aw/actions/create_gh_aw_tmp_dir.sh
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
+      - uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
+        with:
+          version: 10
+      - name: Print E2E endpoints
+        run: "echo \"=== E2E Test Configuration ===\"\necho \"E2E_WEBUI_ENDPOINT: $E2E_WEBUI_ENDPOINT\"\necho \"E2E_WEBSERVER_ENDPOINT: $E2E_WEBSERVER_ENDPOINT\"\n"
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - id: playwright-version
+        name: Get Playwright version
+        run: echo "version=$(pnpm exec playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+      - id: playwright-cache
+        name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+          path: ~/.cache/ms-playwright
+      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - continue-on-error: true
+        id: e2e-tests
+        name: Run E2E tests
+        run: pnpm playwright test e2e/auth/login.spec.ts --reporter=html,json --output=test-results
+      - name: Save test results
+        run: |
+          mkdir -p /tmp/gh-aw/e2e-results
+          cp -r playwright-report /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+          cp -r test-results /tmp/gh-aw/e2e-results/ 2>/dev/null || true
+          echo "TEST_EXIT_CODE=${{ steps.e2e-tests.outcome == 'success' && '0' || '1' }}" >> /tmp/gh-aw/e2e-results/summary.env
+      - if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
       - name: Configure Git credentials
         env:
           REPO_NAME: ${{ github.repository }}
@@ -145,16 +202,56 @@ jobs:
             const determineAutomaticLockdown = require('/tmp/gh-aw/actions/determine_automatic_lockdown.cjs');
             await determineAutomaticLockdown(github, context, core);
       - name: Downloading container images
-        run: bash /tmp/gh-aw/actions/download_docker_images.sh ghcr.io/github/github-mcp-server:v0.26.3
+        run: bash /tmp/gh-aw/actions/download_docker_images.sh ghcr.io/github/github-mcp-server:v0.26.3 mcr.microsoft.com/playwright/mcp
       - name: Write Safe Outputs Config
         run: |
           mkdir -p /tmp/gh-aw/safeoutputs
           mkdir -p /tmp/gh-aw/mcp-logs/safeoutputs
           cat > /tmp/gh-aw/safeoutputs/config.json << 'EOF'
-          {"add_comment":{"max":1,"target":"*"},"missing_tool":{"max":0},"noop":{"max":1}}
+          {"add_comment":{"max":1,"target":"*"},"create_issue":{"max":1},"create_pull_request":{},"missing_tool":{"max":0},"noop":{"max":1}}
           EOF
           cat > /tmp/gh-aw/safeoutputs/tools.json << 'EOF'
           [
+            {
+              "description": "Create a new GitHub issue for tracking bugs, feature requests, or tasks. Use this for actionable work items that need assignment, labeling, and status tracking. For reports, announcements, or status updates that don't require task tracking, use create_discussion instead. CONSTRAINTS: Maximum 1 issue(s) can be created. Title will be prefixed with \"e2e: \". Labels [automation e2e playwright] will be automatically added.",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "body": {
+                    "description": "Detailed issue description in Markdown. Do NOT repeat the title as a heading since it already appears as the issue's h1. Include context, reproduction steps, or acceptance criteria as appropriate.",
+                    "type": "string"
+                  },
+                  "labels": {
+                    "description": "Labels to categorize the issue (e.g., 'bug', 'enhancement'). Labels must exist in the repository.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "parent": {
+                    "description": "Parent issue number for creating sub-issues. This is the numeric ID from the GitHub URL (e.g., 42 in github.com/owner/repo/issues/42). Can also be a temporary_id (e.g., 'aw_abc123def456') from a previously created issue in the same workflow run.",
+                    "type": [
+                      "number",
+                      "string"
+                    ]
+                  },
+                  "temporary_id": {
+                    "description": "Unique temporary identifier for referencing this issue before it's created. Format: 'aw_' followed by 12 hex characters (e.g., 'aw_abc123def456'). Use '#aw_ID' in body text to reference other issues by their temporary_id; these are replaced with actual issue numbers after creation.",
+                    "type": "string"
+                  },
+                  "title": {
+                    "description": "Concise issue title summarizing the bug, feature, or task. The title appears as the main heading, so keep it brief and descriptive.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "body"
+                ],
+                "type": "object"
+              },
+              "name": "create_issue"
+            },
             {
               "description": "Add a comment to an existing GitHub issue, pull request, or discussion. Use this to provide feedback, answer questions, or add information to an existing conversation. For creating new items, use create_issue, create_discussion, or create_pull_request instead. CONSTRAINTS: Maximum 1 comment(s) can be added. Target: *.",
               "inputSchema": {
@@ -176,6 +273,39 @@ jobs:
                 "type": "object"
               },
               "name": "add_comment"
+            },
+            {
+              "description": "Create a new GitHub pull request to propose code changes. Use this after making file edits to submit them for review and merging. The PR will be created from the current branch with your committed changes. For code review comments on an existing PR, use create_pull_request_review_comment instead. CONSTRAINTS: Maximum 1 pull request(s) can be created. Title will be prefixed with \"e2e-healer: \". Labels [automation e2e] will be automatically added. PRs will be created as drafts.",
+              "inputSchema": {
+                "additionalProperties": false,
+                "properties": {
+                  "body": {
+                    "description": "Detailed PR description in Markdown. Include what changes were made, why, testing notes, and any breaking changes. Do NOT repeat the title as a heading.",
+                    "type": "string"
+                  },
+                  "branch": {
+                    "description": "Source branch name containing the changes. If omitted, uses the current working branch.",
+                    "type": "string"
+                  },
+                  "labels": {
+                    "description": "Labels to categorize the PR (e.g., 'enhancement', 'bugfix'). Labels must exist in the repository.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "title": {
+                    "description": "Concise PR title describing the changes. Follow repository conventions (e.g., conventional commits). The title appears as the main heading.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "body"
+                ],
+                "type": "object"
+              },
+              "name": "create_pull_request"
             },
             {
               "description": "Report that a tool or capability needed to complete the task is not available. Use this when you cannot accomplish what was requested because the required functionality is missing or access is restricted.",
@@ -238,6 +368,68 @@ jobs:
                 }
               }
             },
+            "create_issue": {
+              "defaultMax": 1,
+              "fields": {
+                "body": {
+                  "required": true,
+                  "type": "string",
+                  "sanitize": true,
+                  "maxLength": 65000
+                },
+                "labels": {
+                  "type": "array",
+                  "itemType": "string",
+                  "itemSanitize": true,
+                  "itemMaxLength": 128
+                },
+                "parent": {
+                  "issueOrPRNumber": true
+                },
+                "repo": {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                "temporary_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "required": true,
+                  "type": "string",
+                  "sanitize": true,
+                  "maxLength": 128
+                }
+              }
+            },
+            "create_pull_request": {
+              "defaultMax": 1,
+              "fields": {
+                "body": {
+                  "required": true,
+                  "type": "string",
+                  "sanitize": true,
+                  "maxLength": 65000
+                },
+                "branch": {
+                  "required": true,
+                  "type": "string",
+                  "sanitize": true,
+                  "maxLength": 256
+                },
+                "labels": {
+                  "type": "array",
+                  "itemType": "string",
+                  "itemSanitize": true,
+                  "itemMaxLength": 128
+                },
+                "title": {
+                  "required": true,
+                  "type": "string",
+                  "sanitize": true,
+                  "maxLength": 128
+                }
+              }
+            },
             "missing_tool": {
               "defaultMax": 20,
               "fields": {
@@ -297,13 +489,19 @@ jobs:
                   "-e",
                   "GITHUB_LOCKDOWN_MODE=${{ steps.determine-automatic-lockdown.outputs.lockdown == 'true' && '1' || '0' }}",
                   "-e",
-                  "GITHUB_TOOLSETS=pull_requests,repos",
+                  "GITHUB_TOOLSETS=context,repos,issues,pull_requests",
                   "ghcr.io/github/github-mcp-server:v0.26.3"
                 ],
                 "tools": ["*"],
                 "env": {
                   "GITHUB_PERSONAL_ACCESS_TOKEN": "\${GITHUB_MCP_SERVER_TOKEN}"
                 }
+              },
+              "playwright": {
+                "type": "local",
+                "command": "docker",
+                "args": ["run", "-i", "--rm", "--init", "--network", "host", "mcr.microsoft.com/playwright/mcp", "--output-dir", "/tmp/gh-aw/mcp-logs/playwright", "--allowed-hosts", "localhost;localhost:*;127.0.0.1;127.0.0.1:*", "--allowed-origins", "localhost;localhost:*;127.0.0.1;127.0.0.1:*"],
+                "tools": ["*"]
               },
               "safeoutputs": {
                 "type": "local",
@@ -349,7 +547,7 @@ jobs:
               version: "",
               agent_version: "0.0.374",
               cli_version: "v0.34.5",
-              workflow_name: "Storybook Coverage Checker",
+              workflow_name: "E2E Watchdog & Healer",
               experimental: false,
               supports_tools_allowlist: true,
               supports_http_transport: true,
@@ -363,7 +561,7 @@ jobs:
               event_name: context.eventName,
               staged: false,
               network_mode: "defaults",
-              allowed_domains: [],
+              allowed_domains: ["node","npm","playwright"],
               firewall_enabled: true,
               awf_version: "v0.7.0",
               steps: {
@@ -390,159 +588,63 @@ jobs:
         env:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
           GH_AW_SAFE_OUTPUTS: ${{ env.GH_AW_SAFE_OUTPUTS }}
-          GH_AW_GITHUB_RUN_ID: ${{ github.run_id }}
+          GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           bash /tmp/gh-aw/actions/create_prompt_first.sh
           cat << 'PROMPT_EOF' > "$GH_AW_PROMPT"
-          # Storybook Coverage Checker
+          # E2E Watchdog & Healer
           
-          You are a Storybook coverage analyzer. When a PR is ready for review, analyze changed component files and check if their Storybook stories are up-to-date.
+          You are an AI ops engineer for `__GH_AW_GITHUB_REPOSITORY__`. Run weekday Playwright E2E at 09:00 KST (00:00 UTC) or on manual dispatch, report any failures, and try to heal them by opening a draft PR against `main`.
           
-          **NOTE:** This workflow is triggered by GitHub Actions (`storybook-check.yml`) when a PR changes from draft to ready for review.
+          ## Environment
+          - Dependencies and Playwright browsers are pre-installed in the `steps` phase.
+          - E2E tests have already been executed in the `steps` phase before the agent starts.
+          - Test results are available at `/tmp/gh-aw/e2e-results/` directory.
+          - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
           
-          ## Your Task
+          ## CRITICAL: Secret Protection Rules
+          **NEVER include any of the following in issues, PRs, comments, or logs:**
+          - Passwords, API keys, tokens, or any credential values
+          - Email addresses used for authentication (E2E_*_EMAIL values)
+          - Any environment variable values that contain sensitive data
+          - URLs with embedded credentials or tokens
           
-          1. **Identify the PR**: Find the most recent open PR on this branch
-          2. **Get Changed Files**: Identify component files changed in the PR
-          3. **Analyze Each Component**: For each changed component file:
-             - Check if a `.stories.tsx` file exists
-             - Parse the component's Props interface
-             - Parse the story's argTypes (if story exists)
-             - Compare props vs argTypes coverage
-          4. **Generate Report**: Create a PR comment with analysis results
+          **When reporting issues:**
+          - Use `[REDACTED]` for any sensitive values
+          - Only mention that credentials are "configured" or "missing", never show actual values
+          - For endpoints, you may show the URL but redact any auth tokens in query strings
           
-          ## Analysis Steps
+          ## Execution plan
+          1) Analyze: Read test results from `/tmp/gh-aw/e2e-results/`. Check `summary.env` for overall status and `playwright-report/` for detailed results.
+          2) Failure analysis:
+             - Collect failing specs (file, title, error, screenshot/video paths).
+             - Review recent WebUI changes: Use GitHub MCP to fetch recent commits and merged PRs on `main` branch (last 7 days or ~20 commits).
+             - For each failure, determine the likely cause category:
+               - **WebUI change**: If a recent PR modified related components/pages, mention the PR number and title.
+               - **Backend change**: If the failure appears unrelated to recent WebUI changes (e.g., API response changes, new required fields, authentication issues).
+               - **Server/config issue**: If the failure suggests environment problems (e.g., timeout, connection refused, missing resources, permission errors).
+             - Summarize findings in Markdown with cause category for each failure.
+          3) Issue creation:
+             - Open/refresh a single issue via `safe-outputs.create-issue` (title prefix `e2e:`) with:
+               - Commit SHA, workflow run link, env file used
+               - Failing cases list with **cause analysis** (WebUI PR / Backend / Server issue)
+               - Related PRs if applicable (link to PR numbers)
+               - Repro command
+             - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
+          4) Healing attempt (temporarily disabled; uncomment when ready):
           
-          ### Step 1: Find the PR
+          5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
           
-          Use the GitHub MCP server tools (configured via `tools.github.toolsets: [pull_requests, repos]`) to find the pull request for the current branch. Query open pull requests whose head ref matches the current branch name and select the most recent one.
-          
-          ### Step 2: Get Changed Component Files
-          
-          Using the same GitHub tools, retrieve the list of files changed in the identified pull request (for example, via the pull request "files" API). From that list, keep only component files under `packages/backend.ai-ui/src/components/` that end with `.tsx`, excluding any paths ending with `.stories.tsx` or `.test.tsx`.
-          
-          ### Step 3: Analyze Each Component
-          
-          For each component file:
-          
-          1. **Read the component file** to extract the Props interface:
-             - Look for `interface *Props` or `type *Props`
-             - Extract all prop names and their types
-             - Identify BAI-specific props (not inherited from Ant Design)
-          
-          2. **Check if story file exists**:
-             - Story file path: `{component_path%.tsx}.stories.tsx`
-             - If not exists: Mark as "Create"
-          
-          3. **If story exists, read and analyze**:
-             - Extract `argTypes` from the meta configuration
-             - Compare with component props
-             - Identify:
-               - `+propName`: Props in component but not in argTypes (added)
-               - `-propName`: Props in argTypes but not in component (removed)
-               - `~propName`: Props with different types (changed)
-          
-          4. **Determine status**:
-             - `Create`: No story file exists
-             - `Update`: Story exists but has differences
-             - `Up-to-date`: Story matches component props
-          
-          ## PR Comment Format
-          
-          **ALWAYS** create a PR comment with the following format, even if all components are up-to-date:
-          
-          ```markdown
-          ## Storybook Coverage Report
-          
-          ### Analysis Results
-          
-          | Component | Status | Details |
-          |-----------|--------|---------|
-          | BAICard | Update | +`loading`, -`oldProp`, ~`status` type changed |
-          | BAIModal | Up-to-date | All props covered |
-          | BAIFlex | Create | No story file |
-          
-          ### Commands
-          
-          `@claude` /manage-bui-component-story BAICard BAIFlex
-          
-          <details>
-          <summary><strong>Detailed Changes</strong></summary>
-          
-          #### BAICard (Update)
-          **Component**: `packages/backend.ai-ui/src/components/BAICard.tsx`
-          **Story**: `packages/backend.ai-ui/src/components/BAICard.stories.tsx`
-          
-          **Changes:**
-          | Change | Prop | Type | Description |
-          |--------|------|------|-------------|
-          | + Added | `loading` | `boolean` | Shows loading state |
-          | - Removed | `oldProp` | `string` | No longer exists in component |
-          | ~ Changed | `status` | `'default' \| 'success'` → `'default' \| 'success' \| 'warning'` | Type expanded |
-          
-          **Suggested argType for `loading`:**
-          ```typescript
-          loading: {
-            control: { type: 'boolean' },
-            description: 'Shows loading state',
-            table: {
-              type: { summary: 'boolean' },
-              defaultValue: { summary: 'false' },
-            },
-          },
-          ```
-          
-          </details>
-          
-          ---
-          
-          > [Storybook guidelines](https://github.com/lablup/backend.ai-webui/blob/main/.github/instructions/storybook.instructions.md)
-          
-          > AI generated by [Storybook Coverage Checker](https://github.com/lablup/backend.ai-webui/actions/runs/__GH_AW_GITHUB_RUN_ID__)
-          ```
-          
-          ## Important Notes
-          
-          1. **Always create a comment**: Even if all stories are up-to-date, create a report showing "Up-to-date" status
-          2. **Commands section**: Only include commands for components that need action (Create or Update)
-          3. **Details notation**:
-             - `+propName`: Added prop (in component, not in story)
-             - `-propName`: Removed prop (in story, not in component)
-             - `~propName`: Changed prop (type mismatch)
-          4. **BAI-specific props**: Focus on props defined in the component's own interface, not inherited from Ant Design
-          5. **Use `add_comment`**: This safe-output tool will automatically comment on the relevant pull request when configured with `target: "*"`, so `item_number` is not required
-          
-          ## Example Analysis
-          
-          Given a component like:
-          ```typescript
-          export interface BAICardProps extends CardProps {
-            status?: 'default' | 'success' | 'warning' | 'error';
-            extraButtonTitle?: string;
-            loading?: boolean;  // NEW
-          }
-          ```
-          
-          And a story with:
-          ```typescript
-          argTypes: {
-            status: { ... },
-            extraButtonTitle: { ... },
-            oldProp: { ... },  // REMOVED from component
-          }
-          ```
-          
-          Result:
-          - `+loading`: Added (in component, not in argTypes)
-          - `-oldProp`: Removed (in argTypes, not in component)
-          - Status: Update
+          ## Output expectations
+          - Always produce a short run summary (pass/fail, counts, env source) in the workflow log.
+          - Issues/PRs must use safe outputs (no direct write APIs). One issue max per run; reuse if already open for current failures.
           
           PROMPT_EOF
       - name: Substitute placeholders
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
-          GH_AW_GITHUB_RUN_ID: ${{ github.run_id }}
+          GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           script: |
             const substitutePlaceholders = require('/tmp/gh-aw/actions/substitute_placeholders.cjs');
@@ -551,7 +653,7 @@ jobs:
             return await substitutePlaceholders({
               file: process.env.GH_AW_PROMPT,
               substitutions: {
-                GH_AW_GITHUB_RUN_ID: process.env.GH_AW_GITHUB_RUN_ID
+                GH_AW_GITHUB_REPOSITORY: process.env.GH_AW_GITHUB_REPOSITORY
               }
             });
       - name: Append XPIA security instructions to prompt
@@ -564,6 +666,16 @@ jobs:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
         run: |
           cat "/tmp/gh-aw/prompts/temp_folder_prompt.md" >> "$GH_AW_PROMPT"
+      - name: Append playwright output directory instructions to prompt
+        env:
+          GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
+        run: |
+          cat "/tmp/gh-aw/prompts/playwright_prompt.md" >> "$GH_AW_PROMPT"
+      - name: Append edit tool accessibility instructions to prompt
+        env:
+          GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
+        run: |
+          cat "/tmp/gh-aw/prompts/edit_tool_prompt.md" >> "$GH_AW_PROMPT"
       - name: Append safe outputs instructions to prompt
         env:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
@@ -577,7 +689,7 @@ jobs:
           <instructions>
           To create or modify GitHub resources (issues, discussions, pull requests, etc.), you MUST call the appropriate safe output tool. Simply writing content will NOT work - the workflow requires actual tool calls.
           
-          **Available tools**: add_comment, missing_tool, noop
+          **Available tools**: add_comment, create_issue, create_pull_request, missing_tool, noop
           
           **Critical**: Tool calls write structured data that downstream jobs process. Without tool calls, follow-up actions will be skipped.
           </instructions>
@@ -659,7 +771,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
-          GH_AW_GITHUB_RUN_ID: ${{ github.run_id }}
+          GH_AW_GITHUB_REPOSITORY: ${{ github.repository }}
         with:
           script: |
             const { setupGlobals } = require('/tmp/gh-aw/actions/setup_globals.cjs');
@@ -676,22 +788,34 @@ jobs:
         # --allow-tool github
         # --allow-tool safeoutputs
         # --allow-tool shell(cat)
+        # --allow-tool shell(cat*)
         # --allow-tool shell(date)
         # --allow-tool shell(echo)
+        # --allow-tool shell(git add:*)
+        # --allow-tool shell(git branch:*)
+        # --allow-tool shell(git checkout:*)
+        # --allow-tool shell(git commit:*)
+        # --allow-tool shell(git merge:*)
+        # --allow-tool shell(git rm:*)
+        # --allow-tool shell(git status)
+        # --allow-tool shell(git status*)
+        # --allow-tool shell(git switch:*)
         # --allow-tool shell(grep)
         # --allow-tool shell(head)
         # --allow-tool shell(ls)
+        # --allow-tool shell(ls*)
         # --allow-tool shell(pwd)
         # --allow-tool shell(sort)
         # --allow-tool shell(tail)
         # --allow-tool shell(uniq)
         # --allow-tool shell(wc)
         # --allow-tool shell(yq)
-        timeout-minutes: 20
+        # --allow-tool write
+        timeout-minutes: 120
         run: |
           set -o pipefail
-          sudo -E awf --env-all --container-workdir "${GITHUB_WORKSPACE}" --mount /tmp:/tmp:rw --mount "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}:rw" --mount /usr/bin/date:/usr/bin/date:ro --mount /usr/bin/gh:/usr/bin/gh:ro --mount /usr/bin/yq:/usr/bin/yq:ro --mount /usr/local/bin/copilot:/usr/local/bin/copilot:ro --mount /home/runner/.copilot:/home/runner/.copilot:rw --allow-domains api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,github.com,host.docker.internal,raw.githubusercontent.com,registry.npmjs.org --log-level info --proxy-logs-dir /tmp/gh-aw/sandbox/firewall/logs --image-tag 0.7.0 \
-            -- /usr/local/bin/copilot --add-dir /tmp/gh-aw/ --log-level all --log-dir /tmp/gh-aw/sandbox/agent/logs/ --add-dir "${GITHUB_WORKSPACE}" --disable-builtin-mcps --allow-tool github --allow-tool safeoutputs --allow-tool 'shell(cat)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(ls)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --prompt "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)"${GH_AW_MODEL_AGENT_COPILOT:+ --model "$GH_AW_MODEL_AGENT_COPILOT"} \
+          sudo -E awf --env-all --container-workdir "${GITHUB_WORKSPACE}" --mount /tmp:/tmp:rw --mount "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}:rw" --mount /usr/bin/date:/usr/bin/date:ro --mount /usr/bin/gh:/usr/bin/gh:ro --mount /usr/bin/yq:/usr/bin/yq:ro --mount /usr/local/bin/copilot:/usr/local/bin/copilot:ro --mount /home/runner/.copilot:/home/runner/.copilot:rw --allow-domains api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,bun.sh,cdn.playwright.dev,deb.nodesource.com,deno.land,get.pnpm.io,github.com,host.docker.internal,nodejs.org,npm,npm.pkg.github.com,npmjs.com,npmjs.org,playwright.download.prss.microsoft.com,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.yarnpkg.com,skimdb.npmjs.com,www.npmjs.com,www.npmjs.org,yarnpkg.com --log-level info --proxy-logs-dir /tmp/gh-aw/sandbox/firewall/logs --image-tag 0.7.0 \
+            -- /usr/local/bin/copilot --add-dir /tmp/gh-aw/ --log-level all --log-dir /tmp/gh-aw/sandbox/agent/logs/ --add-dir "${GITHUB_WORKSPACE}" --disable-builtin-mcps --allow-tool github --allow-tool safeoutputs --allow-tool 'shell(cat)' --allow-tool 'shell(cat*)' --allow-tool 'shell(date)' --allow-tool 'shell(echo)' --allow-tool 'shell(git add:*)' --allow-tool 'shell(git branch:*)' --allow-tool 'shell(git checkout:*)' --allow-tool 'shell(git commit:*)' --allow-tool 'shell(git merge:*)' --allow-tool 'shell(git rm:*)' --allow-tool 'shell(git status)' --allow-tool 'shell(git status*)' --allow-tool 'shell(git switch:*)' --allow-tool 'shell(grep)' --allow-tool 'shell(head)' --allow-tool 'shell(ls)' --allow-tool 'shell(ls*)' --allow-tool 'shell(pwd)' --allow-tool 'shell(sort)' --allow-tool 'shell(tail)' --allow-tool 'shell(uniq)' --allow-tool 'shell(wc)' --allow-tool 'shell(yq)' --allow-tool write --allow-all-paths --prompt "$(cat /tmp/gh-aw/aw-prompts/prompt.txt)"${GH_AW_MODEL_AGENT_COPILOT:+ --model "$GH_AW_MODEL_AGENT_COPILOT"} \
             2>&1 | tee /tmp/gh-aw/agent-stdio.log
         env:
           COPILOT_AGENT_RUNNER_TYPE: STANDALONE
@@ -733,7 +857,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           GH_AW_SAFE_OUTPUTS: ${{ env.GH_AW_SAFE_OUTPUTS }}
-          GH_AW_ALLOWED_DOMAINS: "api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,github.com,host.docker.internal,raw.githubusercontent.com,registry.npmjs.org"
+          GH_AW_ALLOWED_DOMAINS: "api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,bun.sh,cdn.playwright.dev,deb.nodesource.com,deno.land,get.pnpm.io,github.com,host.docker.internal,nodejs.org,npm,npm.pkg.github.com,npmjs.com,npmjs.org,playwright.download.prss.microsoft.com,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.yarnpkg.com,skimdb.npmjs.com,www.npmjs.com,www.npmjs.org,yarnpkg.com"
           GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_API_URL: ${{ github.api_url }}
         with:
@@ -801,6 +925,7 @@ jobs:
             /tmp/gh-aw/mcp-logs/
             /tmp/gh-aw/sandbox/firewall/logs/
             /tmp/gh-aw/agent-stdio.log
+            /tmp/gh-aw/aw.patch
           if-no-files-found: ignore
 
   conclusion:
@@ -853,7 +978,7 @@ jobs:
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
           GH_AW_NOOP_MAX: 1
-          GH_AW_WORKFLOW_NAME: "Storybook Coverage Checker"
+          GH_AW_WORKFLOW_NAME: "E2E Watchdog & Healer"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
@@ -866,7 +991,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Storybook Coverage Checker"
+          GH_AW_WORKFLOW_NAME: "E2E Watchdog & Healer"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
@@ -882,7 +1007,7 @@ jobs:
           GH_AW_COMMENT_ID: ${{ needs.activation.outputs.comment_id }}
           GH_AW_COMMENT_REPO: ${{ needs.activation.outputs.comment_repo }}
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          GH_AW_WORKFLOW_NAME: "Storybook Coverage Checker"
+          GH_AW_WORKFLOW_NAME: "E2E Watchdog & Healer"
           GH_AW_AGENT_CONCLUSION: ${{ needs.agent.result }}
           GH_AW_DETECTION_CONCLUSION: ${{ needs.detection.result }}
         with:
@@ -898,8 +1023,6 @@ jobs:
     if: needs.agent.outputs.output_types != '' || needs.agent.outputs.has_patch == 'true'
     runs-on: ubuntu-latest
     permissions: {}
-    concurrency:
-      group: "gh-aw-copilot-${{ github.workflow }}"
     timeout-minutes: 10
     outputs:
       success: ${{ steps.parse_results.outputs.success }}
@@ -928,8 +1051,8 @@ jobs:
       - name: Setup threat detection
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
-          WORKFLOW_NAME: "Storybook Coverage Checker"
-          WORKFLOW_DESCRIPTION: "Analyze component changes and check Storybook story coverage"
+          WORKFLOW_NAME: "E2E Watchdog & Healer"
+          WORKFLOW_DESCRIPTION: "Run Playwright E2E tests on weekdays at 09:00 KST (00:00 UTC), report failures as GitHub issues,\nand attempt automated healing via Playwright planner to open a draft PR against main."
           HAS_PATCH: ${{ needs.agent.outputs.has_patch }}
         with:
           script: |
@@ -1046,22 +1169,46 @@ jobs:
           path: /tmp/gh-aw/threat-detection/detection.log
           if-no-files-found: ignore
 
+  pre_activation:
+    if: (github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id)
+    runs-on: ubuntu-slim
+    outputs:
+      activated: ${{ steps.check_membership.outputs.is_team_member == 'true' }}
+    steps:
+      - name: Setup Scripts
+        uses: githubnext/gh-aw/actions/setup@3de4a6a6d15bb07764b207e40da8c7047474a335 # v0.34.5
+        with:
+          destination: /tmp/gh-aw/actions
+      - name: Check team membership for workflow
+        id: check_membership
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        env:
+          GH_AW_REQUIRED_ROLES: admin,maintainer,write
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { setupGlobals } = require('/tmp/gh-aw/actions/setup_globals.cjs');
+            setupGlobals(core, github, context, exec, io);
+            const { main } = require('/tmp/gh-aw/actions/check_membership.cjs');
+            await main();
+
   safe_outputs:
     needs:
+      - activation
       - agent
       - detection
     if: ((!cancelled()) && (needs.agent.result != 'skipped')) && (needs.detection.outputs.success == 'true')
     runs-on: ubuntu-slim
     permissions:
-      contents: read
+      contents: write
       discussions: write
       issues: write
       pull-requests: write
     timeout-minutes: 15
     env:
       GH_AW_ENGINE_ID: "copilot"
-      GH_AW_WORKFLOW_ID: "storybook-coverage-checker"
-      GH_AW_WORKFLOW_NAME: "Storybook Coverage Checker"
+      GH_AW_WORKFLOW_ID: "e2e-healer"
+      GH_AW_WORKFLOW_NAME: "E2E Watchdog & Healer"
     outputs:
       process_safe_outputs_processed_count: ${{ steps.process_safe_outputs.outputs.processed_count }}
       process_safe_outputs_temporary_id_map: ${{ steps.process_safe_outputs.outputs.temporary_id_map }}
@@ -1081,12 +1228,37 @@ jobs:
           mkdir -p /tmp/gh-aw/safeoutputs/
           find "/tmp/gh-aw/safeoutputs/" -type f -print
           echo "GH_AW_AGENT_OUTPUT=/tmp/gh-aw/safeoutputs/agent_output.json" >> "$GITHUB_ENV"
+      - name: Download patch artifact
+        continue-on-error: true
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: agent-artifacts
+          path: /tmp/gh-aw/
+      - name: Checkout repository
+        if: ((!cancelled()) && (needs.agent.result != 'skipped')) && (contains(needs.agent.outputs.output_types, 'create_pull_request'))
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          token: ${{ github.token }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Configure Git credentials
+        if: ((!cancelled()) && (needs.agent.result != 'skipped')) && (contains(needs.agent.outputs.output_types, 'create_pull_request'))
+        env:
+          REPO_NAME: ${{ github.repository }}
+          SERVER_URL: ${{ github.server_url }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          # Re-authenticate git with GitHub token
+          SERVER_URL_STRIPPED="${SERVER_URL#https://}"
+          git remote set-url origin "https://x-access-token:${{ github.token }}@${SERVER_URL_STRIPPED}/${REPO_NAME}.git"
+          echo "Git configured with standard GitHub Actions identity"
       - name: Process Safe Outputs
         id: process_safe_outputs
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"max\":1,\"target\":\"*\"}}"
+          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"max\":1,\"target\":\"*\"},\"create_issue\":{\"labels\":[\"automation\",\"e2e\",\"playwright\"],\"max\":1,\"title_prefix\":\"e2e: \"},\"create_pull_request\":{\"base_branch\":\"${{ github.ref_name }}\",\"draft\":true,\"labels\":[\"automation\",\"e2e\"],\"max\":1,\"max_patch_size\":1024,\"title_prefix\":\"e2e-healer: \"}}"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
