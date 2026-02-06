@@ -217,6 +217,7 @@ export type BackendAIClient = {
     get: (key: string) => Promise<any>;
     set: (key: string, value: any) => Promise<any>;
     delete: (key: string, prefix: boolean) => Promise<any>;
+    list: (prefix: string) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
   current_group_id: () => string;
