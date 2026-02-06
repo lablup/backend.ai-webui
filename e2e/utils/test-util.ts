@@ -602,19 +602,39 @@ export async function modifyConfigToml(
 
   if (!config) {
     // First time: fetch the original config via browser context
-    // Using page.evaluate to avoid ECONNRESET from bot protection on external deployments
-    try {
-      const configToml = await page.evaluate(async (endpoint) => {
-        const res = await fetch(`${endpoint}/config.toml`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.text();
-      }, webuiEndpoint);
-      config = TOML.parse(configToml);
-    } catch (error) {
-      // If fetching config.toml fails, use a minimal default configuration
+    // Navigate to the page first to establish browser context, then use page.evaluate()
+    // This bypasses bot protection (TLS fingerprinting) that blocks Node.js HTTP clients
+    // Retry up to 3 times to handle transient connection resets
+    const maxRetries = 3;
+    let lastError: unknown = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Navigate to establish browser context (waitUntil: 'commit' for faster initial load)
+        await page.goto(webuiEndpoint, { waitUntil: 'commit' });
+
+        // Fetch config.toml from within the browser context
+        const configToml = await page.evaluate(async () => {
+          const res = await fetch('/config.toml');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.text();
+        });
+        config = TOML.parse(configToml);
+        break; // Success, exit retry loop
+      } catch (error) {
+        lastError = error;
+        if (attempt < maxRetries) {
+          // Wait briefly before retrying
+          await page.waitForTimeout(500);
+        }
+      }
+    }
+
+    if (!config) {
+      // All retries failed, use a minimal default configuration
       console.log(
-        `Failed to fetch config.toml from ${webuiEndpoint}, using default config:`,
-        error,
+        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts, using default config:`,
+        lastError,
       );
       config = {
         general: {
