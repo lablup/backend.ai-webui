@@ -82,6 +82,7 @@ const ServingPage: React.FC = () => {
         ) {
           total_count
           items {
+            project
             ...EndpointListFragment
           }
         }
