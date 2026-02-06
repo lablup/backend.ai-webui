@@ -18,7 +18,7 @@ export type {
 export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
 export type {
   StringFilter,
-  NumberFilter,
+  IntFilter,
   BooleanFilter,
   EnumFilter,
   BaseFilter,

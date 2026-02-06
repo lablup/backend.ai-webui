@@ -86,6 +86,26 @@
     "LastUpdated": "Dikemaskini terakhir",
     "Refresh": "Segarkan"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "selepas",
+      "Before": "sebelum",
+      "GreaterThan": "lebih besar daripada",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "IContains": "mengandungi",
+      "IEndsWith": "berakhir dengan",
+      "IEquals": "sama dengan",
+      "INotContains": "tidak mengandungi",
+      "INotEndsWith": "tidak berakhir dengan",
+      "INotEquals": "tidak sama dengan",
+      "INotStartsWith": "tidak bermula dengan",
+      "IStartsWith": "bermula dengan",
+      "In": "dalam",
+      "LessThan": "kurang daripada",
+      "LessThanOrEqual": "kurang atau sama",
+      "NotIn": "tidak dalam"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",

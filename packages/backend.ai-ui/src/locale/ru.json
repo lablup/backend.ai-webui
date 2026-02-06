@@ -86,6 +86,26 @@
     "LastUpdated": "Обновлено",
     "Refresh": "Обновить"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "после",
+      "Before": "до",
+      "GreaterThan": "больше",
+      "GreaterThanOrEqual": "больше или равно",
+      "IContains": "содержит",
+      "IEndsWith": "заканчивается на",
+      "IEquals": "равно",
+      "INotContains": "не содержит",
+      "INotEndsWith": "не заканчивается на",
+      "INotEquals": "не равно",
+      "INotStartsWith": "не начинается с",
+      "IStartsWith": "начинается с",
+      "In": "в",
+      "LessThan": "меньше",
+      "LessThanOrEqual": "меньше или равно",
+      "NotIn": "не в"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} версии исключены.",
     "FailedToPullVersions": "Не удалось вытащить версии.",

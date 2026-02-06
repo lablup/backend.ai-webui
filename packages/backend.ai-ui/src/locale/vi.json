@@ -86,6 +86,26 @@
     "LastUpdated": "Cập nhật lần cuối",
     "Refresh": "Làm mới"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "sau",
+      "Before": "trước",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "IContains": "chứa",
+      "IEndsWith": "kết thúc bằng",
+      "IEquals": "bằng",
+      "INotContains": "không chứa",
+      "INotEndsWith": "không kết thúc bằng",
+      "INotEquals": "không bằng",
+      "INotStartsWith": "không bắt đầu bằng",
+      "IStartsWith": "bắt đầu bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotIn": "không trong"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
     "FailedToPullVersions": "Không thể kéo phiên bản.",

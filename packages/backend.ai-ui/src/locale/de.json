@@ -86,6 +86,26 @@
     "LastUpdated": "Zuletzt aktualisiert",
     "Refresh": "Aktualisieren"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "nach",
+      "Before": "vor",
+      "GreaterThan": "größer als",
+      "GreaterThanOrEqual": "größer oder gleich",
+      "IContains": "enthält",
+      "IEndsWith": "endet mit",
+      "IEquals": "gleich",
+      "INotContains": "enthält nicht",
+      "INotEndsWith": "endet nicht mit",
+      "INotEquals": "ungleich",
+      "INotStartsWith": "beginnt nicht mit",
+      "IStartsWith": "beginnt mit",
+      "In": "enthalten in",
+      "LessThan": "kleiner als",
+      "LessThanOrEqual": "kleiner oder gleich",
+      "NotIn": "nicht enthalten in"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
     "FailedToPullVersions": "Versäumte, Versionen zu ziehen.",

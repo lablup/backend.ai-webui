@@ -86,6 +86,26 @@
     "LastUpdated": "Viimeksi päivitetty",
     "Refresh": "Päivitä"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "jälkeen",
+      "Before": "ennen",
+      "GreaterThan": "suurempi kuin",
+      "GreaterThanOrEqual": "suurempi tai yhtä suuri",
+      "IContains": "sisältää",
+      "IEndsWith": "päättyy",
+      "IEquals": "yhtä suuri",
+      "INotContains": "ei sisällä",
+      "INotEndsWith": "ei pääty",
+      "INotEquals": "ei yhtä suuri",
+      "INotStartsWith": "ei ala",
+      "IStartsWith": "alkaa",
+      "In": "sisällä",
+      "LessThan": "pienempi kuin",
+      "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotIn": "ei sisällä"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versiot jätetään pois.",
     "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",
