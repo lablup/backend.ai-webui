@@ -631,28 +631,10 @@ export async function modifyConfigToml(
     }
 
     if (!config) {
-      // All retries failed, use a minimal default configuration
-      console.log(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts, using default config:`,
-        lastError,
+      // All retries failed - throw error to fail the test explicitly
+      throw new Error(
+        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
       );
-      config = {
-        general: {
-          apiEndpoint: '',
-          apiEndpointText: '',
-          connectionMode: 'SESSION',
-          allowChangeSigninMode: false,
-          signupSupport: false,
-          allowSignout: false,
-        },
-        resources: {
-          openPortToPublic: false,
-          allowPreferredPort: false,
-        },
-        environments: {
-          showNonInstalledImages: false,
-        },
-      };
     }
   }
 
