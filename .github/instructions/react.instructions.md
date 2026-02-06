@@ -26,21 +26,54 @@ These instructions apply to React components in the `/react` directory.
   - **Never** “fix” or “rename” `use memo` to something else.
   - **Never** add comments suggesting that `use memo` is unknown, invalid, or deprecated.
 
-### Code style for React files
+### Placement Rules for 'use memo'
 
-- Keep React directives (`use memo`, `use client`, etc.) at the very top of the file or at the beginning of the component body, before other statements.
-- Do not wrap `use memo` in conditional logic or function calls; it must stay as a simple directive string.
-- When in doubt about `use memo`, assume it is correct and keep it as-is.
+The `'use memo'` directive has **strict placement requirements**:
+
+- **Must be at the very beginning of a function body**, before any other code
+- Comments before the directive are allowed
+- Must use double or single quotes: `"use memo"` or `'use memo'` (**not backticks**)
+- Cannot be placed conditionally or later in the function
+- Only the first directive is processed; additional directives are ignored
 
 ```typescript
-'use memo';
+// ✅ Good: 'use memo' at the very beginning of function body
+function MyComponent({ data }: Props) {
+  'use memo';
 
-import React from 'react';
-
-const MyComponent: React.FC<Props> = ({ data }) => {
+  const [state, setState] = useState(0);
   // Component logic - React Compiler handles optimization
   return <div>{data}</div>;
+}
+
+// ✅ Good: Comments before 'use memo' are OK
+const AnotherComponent: React.FC<Props> = ({ data }) => {
+  // This component is optimized by React Compiler
+  'use memo';
+
+  return <div>{data}</div>;
 };
+
+// ❌ Bad: 'use memo' after other statements
+function BadComponent({ data }: Props) {
+  const value = 'test'; // ❌ Code before directive
+  'use memo';
+  return <div>{data}</div>;
+}
+
+// ❌ Bad: 'use memo' in conditional
+function ConditionalBad({ data }: Props) {
+  if (condition) {
+    'use memo'; // ❌ Cannot be conditional
+  }
+  return <div>{data}</div>;
+}
+
+// ❌ Bad: Using backticks
+function BacktickBad({ data }: Props) {
+  `use memo`; // ❌ Must use quotes, not backticks
+  return <div>{data}</div>;
+}
 ```
 
 ### Manual Optimization Hooks (Use Sparingly)
@@ -91,6 +124,167 @@ const handler = useEffectEvent(() => doSomething(a, b, c));
 useEffect(() => {
   subscribe(handler);
 }, []);
+```
+
+## Rules of Hooks
+
+All React Hooks (useState, useEffect, useContext, useMemo, useCallback, useLazyLoadQuery, etc.) must follow these fundamental rules:
+
+### Rule 1: Only Call Hooks at the Top Level
+
+**Don't call Hooks inside loops, conditions, nested functions, or try/catch/finally blocks.**
+
+Always use Hooks at the top level of your React function, before any early returns.
+
+**Why this matters:** React relies on the order in which Hooks are called to maintain state correctly between re-renders. Calling Hooks conditionally breaks this order.
+
+```typescript
+// ✅ Good: Hooks at the top level
+function MyComponent({ condition }: Props) {
+  const [count, setCount] = useState(0);
+  const theme = useContext(ThemeContext);
+  const data = useLazyLoadQuery(query, {});
+
+  if (condition) {
+    return <div>Condition met</div>;
+  }
+
+  return <div>{count}</div>;
+}
+
+// ❌ Bad: Hook inside a condition
+function BadComponent({ condition }: Props) {
+  if (condition) {
+    const [count, setCount] = useState(0); // ❌ Conditional Hook call
+  }
+  return <div>Content</div>;
+}
+
+// ❌ Bad: Hook inside a loop
+function BadLoop({ items }: Props) {
+  const results = [];
+  for (let i = 0; i < items.length; i++) {
+    const data = useQuery(items[i]); // ❌ Hook in loop
+    results.push(data);
+  }
+  return <div>{results}</div>;
+}
+
+// ❌ Bad: Hook after early return
+function BadEarlyReturn({ condition }: Props) {
+  if (condition) {
+    return <div>Early return</div>;
+  }
+
+  const [count, setCount] = useState(0); // ❌ After conditional return
+  return <div>{count}</div>;
+}
+
+// ❌ Bad: Hook in event handler
+function BadEventHandler() {
+  function handleClick() {
+    const theme = useContext(ThemeContext); // ❌ Hook in event handler
+  }
+  return <button onClick={handleClick}>Click</button>;
+}
+
+// ❌ Bad: Hook in try/catch block
+function BadTryCatch() {
+  try {
+    const data = useQuery(query); // ❌ Hook in try block
+  } catch (error) {
+    // ...
+  }
+  return <div>Content</div>;
+}
+```
+
+### Rule 2: Only Call Hooks from React Functions
+
+**Don't call Hooks from regular JavaScript functions.**
+
+**✅ Call Hooks from:**
+- React function components
+- Custom Hooks (functions starting with `use`)
+
+**❌ Don't call Hooks from:**
+- Regular JavaScript functions
+- Class components
+- Event handlers
+
+```typescript
+// ✅ Good: Hook in component
+function MyComponent() {
+  const [count, setCount] = useState(0);
+  return <div>{count}</div>;
+}
+
+// ✅ Good: Hook in custom Hook
+function useCounter() {
+  const [count, setCount] = useState(0);
+  return { count, setCount };
+}
+
+// ❌ Bad: Hook in regular function
+function calculateTotal() { // Not a component or custom Hook
+  const [count, setCount] = useState(0); // ❌
+  return count;
+}
+```
+
+### Workarounds for Conditional Logic
+
+When you need conditional behavior with Hooks:
+
+```typescript
+// ✅ Good: Call Hook unconditionally, use result conditionally
+function MyComponent({ userId }: Props) {
+  const userData = useUserData(userId); // Always called
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{userData.name}</div>;
+}
+
+// ✅ Good: Move conditional logic inside the Hook
+function useOptionalFeature(enabled: boolean) {
+  const [value, setValue] = useState(null); // Always called
+
+  useEffect(() => {
+    if (enabled) { // Condition inside the Hook
+      // Do something
+    }
+  }, [enabled]);
+
+  return value;
+}
+
+// ✅ Good: Use array.map instead of loop
+function UserList({ userIds }: Props) {
+  return (
+    <div>
+      {userIds.map((id) => (
+        <UserItem key={id} userId={id} /> // Component uses hooks
+      ))}
+    </div>
+  );
+}
+```
+
+### ESLint Plugin
+
+**Use `eslint-plugin-react-hooks`** to automatically catch violations:
+
+```json
+{
+  "plugins": ["react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
 ```
 
 ## React Composability
