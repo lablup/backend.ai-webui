@@ -4,6 +4,7 @@ export type {
   BAIColumnType,
   BAIColumnsType,
   BAITableSettings,
+  BAITablePaginationConfig,
   BAITableColumnOverrideItem,
   BAITableColumnOverrideRecord,
 } from './BAITable';
