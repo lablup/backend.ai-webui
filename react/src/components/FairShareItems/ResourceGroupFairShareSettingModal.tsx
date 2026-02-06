@@ -3,6 +3,7 @@ import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIAlert,
+  BAICard,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -45,10 +46,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
           lookbackDays
           defaultWeight
           resourceWeights {
-            entries {
-              resourceType
-              quantity
-            }
+            resourceType
+            weight
+            usesDefault
           }
         }
       }
@@ -63,7 +63,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
     mutation ResourceGroupFairShareSettingModalMutation(
       $input: UpdateResourceGroupFairShareSpecInput!
     ) {
-      updateResourceGroupFairShareSpec(input: $input) {
+      adminUpdateResourceGroupFairShareSpec(input: $input) {
         resourceGroup {
           id
           name
@@ -86,10 +86,10 @@ const ResourceGroupFairShareSettingModal: React.FC<
     lookbackDays: resourceGroup?.fairShareSpec?.lookbackDays ?? 28,
     defaultWeight: resourceGroup?.fairShareSpec?.defaultWeight ?? 1,
     resourceWeights: _.reduce(
-      resourceGroup?.fairShareSpec?.resourceWeights?.entries,
+      resourceGroup?.fairShareSpec?.resourceWeights,
       (acc, entry) => {
         if (entry?.resourceType) {
-          acc[entry.resourceType] = entry.quantity;
+          acc[entry.resourceType] = entry.weight;
         }
         return acc;
       },
@@ -118,14 +118,14 @@ const ResourceGroupFairShareSettingModal: React.FC<
                   resourceWeights: _.map(
                     response?.resourceWeights || {},
                     (quantity, resourceType) => ({
-                      resourceType,
+                      resourceType: resourceType,
                       weight: quantity,
                     }),
                   ),
                 },
               },
               onCompleted: (res, errors) => {
-                if (!res?.updateResourceGroupFairShareSpec) {
+                if (!res?.adminUpdateResourceGroupFairShareSpec) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -311,14 +311,12 @@ const ResourceGroupFairShareSettingModal: React.FC<
           </Col>
         </Row>
 
-        <Form.Item
-          label={t('fairShare.ResourceWeights')}
-          name="resourceWeights"
-        >
-          <Row gutter={[24, 16]}>
-            {_.map(
-              resourceGroup?.fairShareSpec?.resourceWeights?.entries,
-              (entry) => {
+        <Form.Item label={t('fairShare.ResourceWeights')}>
+          <BAICard
+            styles={{ body: { paddingBottom: 0, paddingTop: token.padding } }}
+          >
+            <Row gutter={[24, 16]}>
+              {_.map(resourceGroup?.fairShareSpec?.resourceWeights, (entry) => {
                 return (
                   <Col
                     span={12}
@@ -332,21 +330,6 @@ const ResourceGroupFairShareSettingModal: React.FC<
                         _.upperCase(entry?.resourceType || '')
                       }
                       name={['resourceWeights', entry?.resourceType]}
-                      rules={[
-                        {
-                          required: true,
-                          message: t(
-                            'fairShare.PleaseInputFieldWithFieldName',
-                            {
-                              field: `${
-                                _.get(mergedResourceSlots, entry?.resourceType)
-                                  ?.description ||
-                                _.upperCase(entry?.resourceType || '')
-                              } ${t('fairShare.Weight')}`,
-                            },
-                          ),
-                        },
-                      ]}
                     >
                       <InputNumber
                         min={1}
@@ -356,9 +339,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     </Form.Item>
                   </Col>
                 );
-              },
-            )}
-          </Row>
+              })}
+            </Row>
+          </BAICard>
         </Form.Item>
       </Form>
     </BAIModal>

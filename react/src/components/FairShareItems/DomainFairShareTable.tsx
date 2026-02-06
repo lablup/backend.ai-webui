@@ -1,22 +1,20 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, theme, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { theme, Tooltip } from 'antd';
 import {
+  BAIButton,
+  BAIColumnsType,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
-  BAIUnmountAfterClose,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import {
@@ -43,31 +41,24 @@ const isEnableSorter = (key: string) => {
 
 interface DomainFairShareTableProps extends BAITableProps<DomainFairShare> {
   domainFairShareNodeFragment: DomainFairShareTableFragment$key | null;
-  openBulkSettingModal: boolean;
   selectedRows: Array<DomainFairShare>;
   onRowSelect: (rowKeys: Array<DomainFairShare>) => void;
-  afterWeightUpdate?: (success: boolean) => void;
+  onOpenWeightSetting?: (row: DomainFairShare) => void;
   onClickDomainName?: (domainName: string) => void;
 }
 
 const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   domainFairShareNodeFragment,
-  openBulkSettingModal: openBulkWeightSettingModal,
   selectedRows,
   onRowSelect,
+  onOpenWeightSetting,
   onClickDomainName,
-  afterWeightUpdate,
   ...tableProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
-  const [selectedDomain, setSelectedDomain] = useState<DomainFairShare | null>(
-    null,
-  );
-  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -106,7 +97,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     domainFairShareNodeFragment,
   );
 
-  const columns: ColumnsType<DomainFairShare> = [
+  const columns: BAIColumnsType<DomainFairShare> = [
     {
       title: t('fairShare.Name'),
       key: 'domainName',
@@ -136,12 +127,11 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       fixed: 'left',
       render: (_text, record) => (
         <BAIFlex direction="row" gap="xxs">
-          <Button
+          <BAIButton
             type="text"
             icon={<SettingOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
-              setSelectedDomain(record);
-              setOpenWeightSettingModal(true);
+              onOpenWeightSetting?.(record);
             }}
           />
         </BAIFlex>
@@ -222,52 +212,28 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   ];
 
   return (
-    <>
-      <BAITable
-        rowKey={'domainName'}
-        scroll={{ x: 'max-content' }}
-        {...tableProps}
-        dataSource={domainFairShares || []}
-        columns={columns}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: (_selectedRowKeys, selectedRows) => {
-            onRowSelect(selectedRows);
-          },
-          selectedRowKeys: _.map(selectedRows, 'domainName'),
-        }}
-        order={queryParams.order}
-        onChangeOrder={(order) => {
-          setQueryParams({
-            order:
-              (order as (typeof availableDomainFairShareSorterValues)[number]) ||
-              null,
-          });
-        }}
-      />
-
-      <BAIUnmountAfterClose>
-        <FairShareWeightSettingModal
-          domainFairShareFrgmt={
-            openBulkWeightSettingModal
-              ? selectedRows
-              : selectedDomain
-                ? [selectedDomain]
-                : null
-          }
-          isBulkEdit={openBulkWeightSettingModal}
-          open={openWeightSettingModal || openBulkWeightSettingModal}
-          onRequestClose={(success) => {
-            if (success) {
-              afterWeightUpdate?.(true);
-            }
-            setSelectedDomain(null);
-            setOpenWeightSettingModal(false);
-            afterWeightUpdate?.(false);
-          }}
-        />
-      </BAIUnmountAfterClose>
-    </>
+    <BAITable
+      rowKey={'domainName'}
+      scroll={{ x: 'max-content' }}
+      {...tableProps}
+      dataSource={domainFairShares || []}
+      columns={columns}
+      rowSelection={{
+        type: 'checkbox',
+        onChange: (_selectedRowKeys, selectedRows) => {
+          onRowSelect(selectedRows);
+        },
+        selectedRowKeys: _.map(selectedRows, 'domainName'),
+      }}
+      order={queryParams.order}
+      onChangeOrder={(order) => {
+        setQueryParams({
+          order:
+            (order as (typeof availableDomainFairShareSorterValues)[number]) ||
+            null,
+        });
+      }}
+    />
   );
 };
 
