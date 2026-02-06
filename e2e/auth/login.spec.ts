@@ -1,12 +1,21 @@
 import {
   loginAsAdmin,
+  modifyConfigToml,
   userInfo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, request }) => {
+  // Modify config.toml to enable session-based login with manual endpoint input
+  await modifyConfigToml(page, request, {
+    general: {
+      connectionMode: 'SESSION',
+      apiEndpoint: '',
+      apiEndpointText: '',
+    },
+  });
   await page.goto(webuiEndpoint);
 });
 
