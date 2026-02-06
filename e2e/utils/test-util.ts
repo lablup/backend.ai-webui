@@ -102,6 +102,7 @@ export async function login(
     general: {
       connectionMode: 'SESSION',
       apiEndpoint: '',
+      apiEndpointText: '',
     },
   });
 
@@ -593,18 +594,46 @@ const configCache = new WeakMap<Page, any>();
 
 export async function modifyConfigToml(
   page: Page,
-  request: APIRequestContext,
+  _request: APIRequestContext,
   configColumn: Record<string, Record<string, any>>,
 ) {
   // Get or initialize the cached config for this page
   let config = configCache.get(page);
 
   if (!config) {
-    // First time: fetch the original config from the server
-    const configToml = await (
-      await request.get(`${webuiEndpoint}/config.toml`)
-    ).text();
-    config = TOML.parse(configToml);
+    // First time: fetch the original config via browser context
+    // Using page.evaluate to avoid ECONNRESET from bot protection on external deployments
+    try {
+      const configToml = await page.evaluate(async (endpoint) => {
+        const res = await fetch(`${endpoint}/config.toml`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      }, webuiEndpoint);
+      config = TOML.parse(configToml);
+    } catch (error) {
+      // If fetching config.toml fails, use a minimal default configuration
+      console.log(
+        `Failed to fetch config.toml from ${webuiEndpoint}, using default config:`,
+        error,
+      );
+      config = {
+        general: {
+          apiEndpoint: '',
+          apiEndpointText: '',
+          connectionMode: 'SESSION',
+          allowChangeSigninMode: false,
+          signupSupport: false,
+          allowSignout: false,
+        },
+        resources: {
+          openPortToPublic: false,
+          allowPreferredPort: false,
+        },
+        environments: {
+          showNonInstalledImages: false,
+        },
+      };
+    }
   }
 
   // Deep merge the new configuration into the existing config
@@ -670,18 +699,69 @@ const themeCache = new WeakMap<Page, ThemeConfig>();
 
 export async function modifyThemeJson(
   page: Page,
-  request: APIRequestContext,
+  _request: APIRequestContext,
   themeConfig: ThemeConfig,
 ) {
   // Get or initialize the cached theme for this page
   let theme = themeCache.get(page);
 
   if (!theme) {
-    // First time: fetch the original theme from the server
-    const themeJson = await (
-      await request.get(`${webuiEndpoint}/resources/theme.json`)
-    ).text();
-    theme = JSON.parse(themeJson) as ThemeConfig;
+    // First time: fetch the original theme via browser context
+    // Using page.evaluate to avoid ECONNRESET from bot protection on external deployments
+    try {
+      const themeJson = await page.evaluate(async (endpoint) => {
+        const res = await fetch(`${endpoint}/resources/theme.json`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      }, webuiEndpoint);
+      theme = JSON.parse(themeJson) as ThemeConfig;
+    } catch (error) {
+      // If fetching theme.json fails, use a minimal default theme configuration
+      console.log(
+        `Failed to fetch theme.json from ${webuiEndpoint}, using default theme:`,
+        error,
+      );
+      theme = {
+        light: {
+          token: {
+            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            colorPrimary: '#FF7A00',
+            colorLink: '#FF7A00',
+            colorText: '#141414',
+            colorInfo: '#028DF2',
+            colorError: '#FF4D4F',
+            colorSuccess: '#00BD9B',
+          },
+          components: {},
+        },
+        dark: {
+          token: {
+            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            colorPrimary: '#DC6B03',
+            colorLink: '#DC6B03',
+            colorText: '#FFF',
+            colorInfo: '#009BDD',
+            colorError: '#DC4446',
+            colorSuccess: '#03A487',
+            colorFillSecondary: '#262626',
+          },
+          components: {},
+        },
+        logo: {
+          src: '/manifest/backend.ai-webui-white.svg',
+          srcCollapsed: '/manifest/backend.ai-brand-simple-white.svg',
+          srcDark: '/manifest/backend.ai-webui-black.svg',
+          srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
+          alt: 'Backend.AI Logo',
+          href: '/start',
+        },
+        sider: {},
+        branding: {
+          companyName: 'Lablup Inc.',
+          brandName: 'Backend.AI',
+        },
+      };
+    }
   }
 
   // Deep merge the new theme configuration into the existing theme
