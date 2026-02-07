@@ -300,6 +300,48 @@ async function clearAllFilters(page: Page) {
   }
 }
 
+/**
+ * Select a property filter and search for a value in BAIPropertyFilter component
+ * @param page - Playwright Page object
+ * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
+ * @param searchValue - Value to search for
+ * @param testId - Test ID of the filter component (default: 'vfolder-filter')
+ */
+async function selectPropertyFilter(
+  page: Page,
+  propertyName: string,
+  searchValue: string,
+  testId: string = 'vfolder-filter',
+) {
+  const filterContainer = page.getByTestId(testId);
+
+  // The BAIPropertyFilter has two inputs with distinct aria-labels:
+  // 1. Property selector (Select) - aria-label="Filter property selector"
+  // 2. Search input (Input.Search wrapped in AutoComplete) - aria-label="Filter value search"
+
+  // For Ant Design Select, we need to click the parent container (.ant-select)
+  // instead of the inner combobox input to avoid "element intercepts pointer" errors
+  const propertySelectInput = filterContainer.getByRole('combobox', {
+    name: 'Filter property selector',
+  });
+
+  // Click the parent Select container by going up one level from the input
+  await propertySelectInput.locator('..').click();
+
+  // Select the property option from the dropdown
+  await page.getByRole('option', { name: propertyName }).click();
+
+  // Fill in the search value using aria-label
+  // Note: Input.Search inside AutoComplete has role="combobox", not "searchbox"
+  const searchInput = filterContainer.getByRole('combobox', {
+    name: 'Filter value search',
+  });
+  await searchInput.fill(searchValue);
+
+  // Click search button
+  await page.getByRole('button', { name: 'search' }).click();
+}
+
 export async function verifyVFolder(
   page: Page,
   folderName: string,
@@ -307,12 +349,7 @@ export async function verifyVFolder(
 ) {
   await page.getByRole('link', { name: 'Data' }).click();
   await page.getByRole('tab', { name: statusTab }).click();
-  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  await selectPropertyFilter(page, 'Name', folderName);
   await expect(
     page
       .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
@@ -364,11 +401,7 @@ export async function createVFolderAndVerify(
 
 export async function moveToTrashAndVerify(page: Page, folderName: string) {
   await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  await selectPropertyFilter(page, 'Name', folderName);
 
   await page
     .getByRole('row', { name: `VFolder Identicon ${folderName}` })
@@ -392,38 +425,38 @@ export async function deleteForeverAndVerifyFromTrash(
   await clearAllFilters(page);
 
   // Set filter to search by Name
-  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  await selectPropertyFilter(page, 'Name', folderName);
 
   // Verify the folder row exists before attempting deletion
-  const folderRow = page.getByRole('row', {
+  const folderRowToDelete = page.getByRole('row', {
     name: `VFolder Identicon ${folderName}`,
   });
 
-  await expect(folderRow).toBeVisible({ timeout: 5000 });
+  await expect(folderRowToDelete).toBeVisible({ timeout: 5000 });
 
   // Delete forever
-  await folderRow.getByRole('button').nth(1).click();
+  await folderRowToDelete.getByRole('button').nth(1).click();
   await page.locator('#confirmText').click();
   await page.locator('#confirmText').fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
+  // Wait for the deletion notification to appear and disappear
+  // This ensures the backend has completed the deletion before verification
+  const deletionNotification = page.getByRole('alert').filter({
+    hasText: /deleted forever/i,
+  });
+  await expect(deletionNotification).toBeVisible({ timeout: 10000 });
+  await expect(deletionNotification).toBeHidden({ timeout: 10000 });
+
   // Verify deletion - clear filters again and search
   await clearAllFilters(page);
-  await page.getByTestId('vfolder-filter').locator('div').nth(2).click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  await selectPropertyFilter(page, 'Name', folderName);
 
-  await expect(
-    page
-      .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
-      .filter({ hasText: folderName }),
-  ).toHaveCount(0);
+  // Verify the folder is either deleted (not visible) or in DELETE-ONGOING status
+  const folderRowAfterDelete = page.getByRole('row').filter({
+    has: page.getByRole('cell', { name: `VFolder Identicon ${folderName}` }),
+  });
+  await expect(folderRowAfterDelete).toBeHidden();
 
   // Clean up the search filter
   await removeSearchButton(page, folderName);
