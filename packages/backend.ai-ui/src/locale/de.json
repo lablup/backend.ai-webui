@@ -178,6 +178,8 @@
     "Unlimited": "Unbegrenzt"
   },
   "comp:BAITable": {
+    "Export": "Exportieren",
+    "ExportCSV": "Als CSV exportieren",
     "GoToFirstPage": "Zur ersten Seite",
     "InvalidPageNumber": "Ungültige Seitenzahl",
     "SearchTableColumn": "Suchtabellenspalten",
