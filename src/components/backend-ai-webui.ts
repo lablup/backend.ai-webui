@@ -582,6 +582,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
+    // Apply menu config (blockList and inactiveList) to client config
+    globalThis.backendaiclient._config.blockList = this.blockedMenuItem || [];
+    globalThis.backendaiclient._config.inactiveList =
+      this.inactiveMenuItem || [];
     if (
       typeof globalThis.backendaiclient !== 'undefined' &&
       globalThis.backendaiclient != null &&
