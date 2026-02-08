@@ -190,6 +190,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Select User"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
   },

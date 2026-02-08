@@ -1,9 +1,9 @@
-import { BAIVFolderSelectPaginatedQuery } from '../../__generated__/BAIVFolderSelectPaginatedQuery.graphql';
-import { BAIVFolderSelectValueQuery } from '../../__generated__/BAIVFolderSelectValueQuery.graphql';
+import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
+import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
+import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAILink from '../BAILink';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import BAIText from '../BAIText';
@@ -14,6 +14,7 @@ import _ from 'lodash';
 import {
   useDeferredValue,
   useImperativeHandle,
+  useOptimistic,
   useRef,
   useState,
   useTransition,
@@ -21,37 +22,35 @@ import {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type VFolderNode = NonNullable<
+export type UserNode = NonNullable<
   NonNullable<
-    BAIVFolderSelectPaginatedQuery['response']['vfolder_nodes']
+    BAIUserSelectPaginatedQuery['response']['user_nodes']
   >['edges'][number]
 >['node'];
 
-export interface BAIVFolderSelectRef {
+export interface BAIUserSelectRef {
   refetch: () => void;
 }
 
-export interface BAIVFolderSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue' | 'ref'> {
-  currentProjectId?: string;
-  onClickVFolder?: (value: string) => void;
+export interface BAIUserSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue' | 'ref'
+> {
   filter?: string;
-  valuePropName?: 'id' | 'row_id';
-  excludeDeleted?: boolean;
-  ref?: React.Ref<BAIVFolderSelectRef>;
+  excludeInactive?: boolean;
+  valuePropName?: 'id' | 'email';
+  onChange?: (value: string | string[] | undefined, option: any) => void;
+  ref?: React.Ref<BAIUserSelectRef>;
 }
 
-// Exclude deleted or deleting vfolders
-const excludeDeletedStatusFilter =
-  'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"';
+// Default filter for active users only
+const defaultActiveUserFilter = 'is_active == true';
 
-const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
+const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   loading,
-  currentProjectId,
-  onClickVFolder,
   filter,
-  excludeDeleted,
-  valuePropName = 'id',
+  excludeInactive = false,
+  valuePropName = 'email',
   ref,
   ...selectProps
 }) => {
@@ -60,19 +59,27 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined
-  >(selectProps);
+  >(selectProps, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
     selectProps,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
     },
   );
+
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>();
+  const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
+  const [optimisticSearchStr, setOptimisticSearchStr] =
+    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const mergedFilter = mergeFilterValues([
-    excludeDeleted ? excludeDeletedStatusFilter : null,
+    excludeInactive ? defaultActiveUserFilter : null,
     filter,
   ]);
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -81,26 +88,22 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   // Defer query refetch to prevent flickering during user selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  const { vfolder_nodes: selectedVFolderNodes } =
-    useLazyLoadQuery<BAIVFolderSelectValueQuery>(
+  const { user_nodes: selectedUserNodes } =
+    useLazyLoadQuery<BAIUserSelectValueQuery>(
       graphql`
-        query BAIVFolderSelectValueQuery(
+        query BAIUserSelectValueQuery(
           $selectedFilter: String
           $first: Int!
-          $skipSelectedVFolder: Boolean!
-          $scopeId: ScopeField
+          $skipSelected: Boolean!
         ) {
-          vfolder_nodes(
-            scope_id: $scopeId
-            filter: $selectedFilter
-            first: $first
-            permission: "read_attribute"
-          ) @skip(if: $skipSelectedVFolder) {
+          user_nodes(filter: $selectedFilter, first: $first)
+            @skip(if: $skipSelected) {
             edges {
               node {
-                name
                 id
-                row_id
+                email
+                username
+                full_name
               }
             }
           }
@@ -112,11 +115,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
             !_.isEmpty(deferredControllableValue)
               ? mergeFilterValues(
                   _.castArray(deferredControllableValue).map((value) => {
-                    // When valuePropName is 'id', convert Global ID to local UUID
-                    // When valuePropName is 'row_id', use the value directly
-                    const filterValue =
-                      valuePropName === 'id' ? toLocalId(value) : value;
-                    return `${valuePropName} == "${filterValue}"`;
+                    return `email == "${value}"`;
                   }),
                   '|',
                 )
@@ -126,8 +125,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
           '&',
         ),
         first: _.castArray(deferredControllableValue).length,
-        skipSelectedVFolder: _.isEmpty(deferredControllableValue),
-        scopeId: currentProjectId ? `project:${currentProjectId}` : undefined,
+        skipSelected:
+          _.isEmpty(deferredControllableValue) || valuePropName === 'id',
       },
       {
         fetchPolicy: !_.isEmpty(deferredControllableValue)
@@ -138,29 +137,29 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIVFolderSelectPaginatedQuery, VFolderNode>(
+    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, UserNode>(
       graphql`
-        query BAIVFolderSelectPaginatedQuery(
+        query BAIUserSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
-          $scopeId: ScopeField
           $filter: String
-          $permission: VFolderPermissionValueField
+          $order: String
         ) {
-          vfolder_nodes(
-            scope_id: $scopeId
+          user_nodes(
             offset: $offset
             first: $limit
             filter: $filter
-            permission: $permission
-            order: "-created_at"
+            order: $order
           ) {
             count
             edges {
               node {
                 id
-                name
-                row_id
+                email
+                username
+                full_name
+                status
+                role
               }
             }
           }
@@ -170,19 +169,20 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       {
         filter: mergeFilterValues([
           mergedFilter,
-          searchStr ? `name ilike "%${searchStr}%"` : null,
+          debouncedDeferredValue
+            ? `email ilike "%${debouncedDeferredValue}%"`
+            : null,
         ]),
-        scopeId: currentProjectId ? `project:${currentProjectId}` : undefined,
-        permission: 'read_attribute' as const,
+        order: 'email',
       },
       {
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.vfolder_nodes?.count ?? undefined,
+        getTotal: (result) => result.user_nodes?.count ?? undefined,
         getItem: (result) =>
-          result.vfolder_nodes?.edges?.map((edge) => edge?.node),
+          result.user_nodes?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
@@ -201,20 +201,20 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   );
 
   const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.name,
+    label: item?.[valuePropName],
     value: item?.[valuePropName],
   }));
 
-  const controllableValueWithLabel = selectedVFolderNodes?.edges
+  const controllableValueWithLabel = selectedUserNodes?.edges
     ? // Sort by deferredControllableValue order to maintain selection order
       _.castArray(deferredControllableValue)
         .map((value) => {
-          const edge = selectedVFolderNodes.edges.find(
+          const edge = selectedUserNodes.edges.find(
             (edge) => edge?.node?.[valuePropName] === value,
           );
           return edge
             ? {
-                label: edge.node?.name,
+                label: edge.node?.[valuePropName],
                 value: edge.node?.[valuePropName],
               }
             : null;
@@ -236,83 +236,58 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   return (
     <BAISelect
       ref={selectRef}
-      placeholder={t('comp:BAIVFolderSelect.SelectFolder')}
+      placeholder={t('comp:BAIUserSelect.SelectUser')}
       loading={
         loading ||
         controllableValue !== deferredControllableValue ||
+        searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
       {...selectProps}
       searchAction={async (value) => {
+        setOptimisticSearchStr(value);
         setSearchStr(value);
         await selectProps.searchAction?.(value);
       }}
-      showSearch={{
-        searchValue: searchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }}
-      labelRender={({ label, value }) => {
-        return onClickVFolder ? (
-          <BAILink onClick={() => onClickVFolder(_.toString(value))}>
-            {label}
-          </BAILink>
-        ) : (
-          <>
-            {label}
-            <BAIText type="secondary">
-              &nbsp; (
-              <BAIText
-                ellipsis
-                type="secondary"
-                style={{
-                  width: 80,
-                }}
-                monospace
-              >
-                {valuePropName === 'id'
-                  ? toLocalId(_.toString(value))
-                  : _.toString(value)}
-              </BAIText>
-              )
-            </BAIText>
-          </>
-        );
-      }}
-      optionRender={({ label, value }) => (
-        <>
-          {label}
-          <BAIText type="secondary">
-            &nbsp; (
-            <BAIText
-              ellipsis
-              style={{
-                width: 80,
-              }}
-              type="secondary"
-              monospace
-            >
-              {valuePropName === 'id'
-                ? toLocalId(_.toString(value))
-                : _.toString(value)}
-            </BAIText>
-            )
-          </BAIText>
-        </>
-      )}
+      showSearch={
+        selectProps.showSearch === false
+          ? false
+          : {
+              searchValue: optimisticSearchStr,
+              autoClearSearchValue: true,
+              ...(_.isObject(selectProps.showSearch)
+                ? _.omit(selectProps.showSearch, ['searchValue'])
+                : {}),
+              filterOption: false,
+            }
+      }
       value={
         controllableValue !== deferredControllableValue
           ? optimisticValueWithLabel
           : controllableValueWithLabel
       }
       labelInValue
+      labelRender={({ label }) => {
+        return valuePropName === 'id' && _.isString(label) ? (
+          <BAIText monospace>{toLocalId(label)}</BAIText>
+        ) : (
+          label
+        );
+      }}
+      optionRender={({ label }) => {
+        return valuePropName === 'id' && _.isString(label) ? (
+          <BAIText monospace>{toLocalId(label)}</BAIText>
+        ) : (
+          label
+        );
+      }}
       onChange={(value, option) => {
+        // _.castArray to handle both single and multiple mode uniformly
+        const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
+
         // In multiple mode, when removing tags, value.label is a React element
         // So we need to find the original label from availableOptions
-        const valueWithOriginalLabel = _.castArray(value).map((v) => {
+        const valueWithOriginalLabel = valueArray.map((v) => {
           // If label is string, use it directly; if React element, find from options
           const label = _.isString(v.label)
             ? v.label
@@ -323,11 +298,11 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
             value: v.value,
           };
         });
+
         setOptimisticValueWithLabel(valueWithOriginalLabel);
-        setControllableValue(
-          _.castArray(value).map((v) => _.toString(v.value)),
-          option,
-        );
+
+        const emailArray = valueArray.map((v) => _.toString(v.value));
+        setControllableValue(emailArray, option);
       }}
       options={availableOptions}
       endReached={() => {
@@ -341,11 +316,10 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
         ) : undefined
       }
       footer={
-        _.isNumber(result.vfolder_nodes?.count) &&
-        result.vfolder_nodes.count > 0 ? (
+        _.isNumber(result.user_nodes?.count) && result.user_nodes.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={result.vfolder_nodes.count}
+            total={result.user_nodes.count}
           />
         ) : undefined
       }
@@ -353,4 +327,4 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   );
 };
 
-export default BAIVFolderSelect;
+export default BAIUserSelect;
