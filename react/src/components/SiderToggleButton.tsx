@@ -1,7 +1,7 @@
 import { useKeyboardShortcutTextStyles } from '../hooks/useKeyboardShortcut';
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
-import { Button, ConfigProvider, theme, Tooltip, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { Button, ConfigProvider, theme, Tooltip } from 'antd';
+import { BAIFlex, BAIText } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
           title={
             <>
               {collapsed ? t('button.Expand') : t('button.Collapse')}{' '}
-              <Typography.Text
+              <BAIText
                 code
                 className={styles.shortcutText}
                 style={{
@@ -55,7 +55,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
                 }}
               >
                 {'['}
-              </Typography.Text>
+              </BAIText>
             </>
           }
           placement="right"

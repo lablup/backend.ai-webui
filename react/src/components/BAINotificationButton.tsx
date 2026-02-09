@@ -6,6 +6,7 @@ import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
+import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';
@@ -71,7 +72,7 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
           title={
             <>
               {t('notification.Notifications')}{' '}
-              <Typography.Text
+              <BAIText
                 code
                 className={styles.shortcutText}
                 style={{
@@ -79,7 +80,7 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
                 }}
               >
                 {']'}
-              </Typography.Text>
+              </BAIText>
             </>
           }
           placement="left"
