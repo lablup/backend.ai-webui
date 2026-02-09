@@ -1,14 +1,9 @@
 ---
 description: |
-  Run Playwright E2E tests on weekdays at 09:00 KST (00:00 UTC), report failures as GitHub issues,
-  and attempt automated healing via Playwright planner to open a draft PR against main.
+  Run Playwright E2E tests on weekdays at 09:00 KST (00:00 UTC) and report failures as GitHub issues.
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/e2e-healer.md'
-      - '.github/workflows/e2e-healer.lock.yml'
   schedule:
     - cron: "0 0 * * 1-5"
 
@@ -49,10 +44,6 @@ safe-outputs:
     title-prefix: "e2e: "
     labels: [automation, e2e, playwright]
     max: 1
-  create-pull-request:
-    title-prefix: "e2e-healer: "
-    labels: [automation, e2e]
-    draft: true
   add-comment:
     target: "*"
 
@@ -84,9 +75,7 @@ steps:
   - name: Run E2E tests
     id: e2e-tests
     continue-on-error: true
-    # TODO: Remove single test restriction after environment validation
-    # Full test: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
-    run: pnpm playwright test e2e/auth/login.spec.ts --reporter=html,json --output=test-results
+    run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
   - name: Save test results
     run: |
       mkdir -p /tmp/gh-aw/e2e-results
@@ -102,18 +91,16 @@ steps:
 
 tools:
   github:
-    toolsets: [default, issues, pull_requests]
-  edit:
+    toolsets: [default, issues]
   bash:
     - "ls*"
     - "cat*"
     - "git status*"
-  playwright:
 ---
 
-# E2E Watchdog & Healer
+# E2E Watchdog
 
-You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwright E2E at 09:00 KST (00:00 UTC) or on manual dispatch, report any failures, and try to heal them by opening a draft PR against `main`.
+You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwright E2E tests at 09:00 KST (00:00 UTC) or on manual dispatch, and report any failures as GitHub issues.
 
 ## Environment
 - Dependencies and Playwright browsers are pre-installed in the `steps` phase.
@@ -122,7 +109,7 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
 - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
 
 ## CRITICAL: Secret Protection Rules
-**NEVER include any of the following in issues, PRs, comments, or logs:**
+**NEVER include any of the following in issues, comments, or logs:**
 - Passwords, API keys, tokens, or any credential values
 - Email addresses used for authentication (E2E_*_EMAIL values)
 - Any environment variable values that contain sensitive data
@@ -150,16 +137,8 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
      - Related PRs if applicable (link to PR numbers)
      - Repro command
    - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
-4) Healing attempt (temporarily disabled; uncomment when ready):
-<!--
-  - Scope fixes to failing specs only. Avoid touching snapshots unless required.
-  - Create branch from `main` named `e2e-healer/<yyyy-mm-dd>-<shortsha>`.
-  - Use Playwright planner to reason about fixes, edit code, and rerun only the previously failing specs, then the full `pnpm playwright test e2e/ --grep-invert @visual` if fixes look stable.
-  - If fixes pass, use `safe-outputs.create-pull-request` to open a **draft** PR against `main` with title prefix `e2e-healer:`. Reference the issue, include failing cases, applied changes, and rerun results. Exclude generated reports/artifacts from the branch.
-  - If not fixed, leave a concise comment on the issue (via `safe-outputs.add-comment`) with diagnostics and next hints.
--->
-5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
+4) Housekeeping: keep output minimal and focused on actionable information.
 
 ## Output expectations
 - Always produce a short run summary (pass/fail, counts, env source) in the workflow log.
-- Issues/PRs must use safe outputs (no direct write APIs). One issue max per run; reuse if already open for current failures.
+- Issues must use safe outputs (no direct write APIs). One issue max per run; reuse if already open for current failures.
