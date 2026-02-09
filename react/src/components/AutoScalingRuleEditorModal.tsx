@@ -25,8 +25,10 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface AutoScalingRuleEditorModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
+interface AutoScalingRuleEditorModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onClose' | 'onCancel'
+> {
   endpoint_id: string;
   autoScalingRuleFrgmt?: AutoScalingRuleEditorModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
@@ -277,13 +279,13 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             options={[
               {
                 label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleUp')}</BAIFlex>
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleOut')}</BAIFlex>
                 ),
                 value: 'up',
               },
               {
                 label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleDown')}</BAIFlex>
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleIn')}</BAIFlex>
                 ),
                 value: 'down',
               },
