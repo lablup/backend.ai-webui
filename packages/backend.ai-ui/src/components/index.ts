@@ -62,6 +62,8 @@ export {
 export type { BAIResourceNumberWithIconProps } from './BAIResourceNumberWithIcon';
 export { default as BAINumberWithUnit } from './BAINumberWithUnit';
 export { default as BAIAllowedHostNamesSelect } from './BAIAllowedHostNamesSelect';
+export { default as BAIDynamicStepInputNumber } from './BAIDynamicStepInputNumber';
+export type { BAIDynamicStepInputNumberProps } from './BAIDynamicStepInputNumber';
 export { default as BAIDynamicUnitInputNumber } from './BAIDynamicUnitInputNumber';
 export type { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber';
 export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnitInputNumberWithSlider';
