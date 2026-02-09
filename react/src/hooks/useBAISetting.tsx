@@ -2,7 +2,7 @@ import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
 import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 

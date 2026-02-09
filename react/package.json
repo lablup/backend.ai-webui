@@ -45,6 +45,7 @@
     "i18next-http-backend": "^3.0.2",
     "jotai": "^2.16.2",
     "jotai-effect": "^2.2.3",
+    "jotai-family": "^1.0.1",
     "katex": "^0.16.28",
     "lodash": "^4.17.23",
     "lucide-react": "^0.552.0",

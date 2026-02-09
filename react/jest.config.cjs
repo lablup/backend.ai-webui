@@ -9,11 +9,15 @@ module.exports = {
       __dirname,
       '../packages/backend.ai-ui/src',
     ),
+    '^backend\\.ai-ui/dist/locale/.*$': '<rootDir>/__test__/buiLanguage.mock.js',
     '^backend\\.ai-ui/(.*)$': path.resolve(
       __dirname,
       '../packages/backend.ai-ui/src/$1',
     ),
+    '^src/(.*)$': '<rootDir>/src/$1',
+    '^.*/helper/bui-language$': '<rootDir>/__test__/buiLanguage.mock.js',
     '\\.svg': '<rootDir>/__test__/svg.mock.js',
+    '\\.(css|less|scss|sass)\\?raw$': '<rootDir>/__test__/rawCss.mock.js',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transformIgnorePatterns: [
