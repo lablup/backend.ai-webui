@@ -21,6 +21,7 @@ test.describe.parallel(
             blocklist: 'start,serving,session',
           },
         };
+
         await modifyConfigToml(page, request, requestConfig);
         await loginAsAdmin(page, request);
 
