@@ -48,6 +48,7 @@ export const useSuspenseTanQuery = <
   }>({
     fetchKey,
   });
+
   // eslint-disable-next-line react-hooks/refs
   if (fetchKey !== promiseInfoRef.current.fetchKey) {
     const observer = new QueryObserver(queryClient, {

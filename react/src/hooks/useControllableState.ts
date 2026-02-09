@@ -110,6 +110,5 @@ function useMemoizedFn<T extends noop>(fn: T) {
 function useUpdate() {
   const [, setState] = useState({});
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   return useCallback(() => setState({}), []);
 }

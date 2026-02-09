@@ -243,7 +243,7 @@ const FileUploadManager: React.FC = () => {
                 ],
               },
             }));
-          } catch (error) {
+          } catch {
             // Error case - use the captured fileName regardless of error structure
             throttledUploadRequests.flush();
             delete pendingDeltaBytesRef.current[vFolderId];
@@ -442,7 +442,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   },
                 });
                 upload.start();
-              } catch (error) {
+              } catch {
                 // Handle synchronous errors from tus.Upload constructor or start()
                 reject(
                   new Error(`Failed to initialize upload for ${fileName}`),
@@ -450,7 +450,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
               }
             },
           );
-        } catch (error) {
+        } catch {
           // Handle API errors or any other errors
           // Always throw with a consistent error message
           throw new Error(`Failed to prepare upload for ${fileName}`);

@@ -273,7 +273,6 @@ export const useBAINotificationEffect = () => {
       }
     });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_notifications, upsertNotification]);
 };
 

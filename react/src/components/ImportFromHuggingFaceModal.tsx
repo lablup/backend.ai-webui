@@ -165,7 +165,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     if (!baiModalProps.open) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHuggingFaceURL(undefined);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setTypedURL('');
     }
   }, [baiModalProps.open]);

@@ -141,9 +141,7 @@ export const useRelayPaginationQueryOptions = <
         setParams({
           page: newPage,
           pageSize: newPageSize,
-          // eslint-disable-next-line
           order: newOrder as [], // TODO: not use as []
-          // eslint-disable-next-line
           filter: newFilter as {}, // TODO: not use as {}
         });
         setRefreshedQueryOptions((prev) => ({

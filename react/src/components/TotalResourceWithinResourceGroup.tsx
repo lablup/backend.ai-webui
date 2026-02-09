@@ -138,7 +138,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       try {
         occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
         availableSlots = JSON.parse(agent.available_slots || '{}');
-      } catch (e) {
+      } catch {
         return;
       }
 

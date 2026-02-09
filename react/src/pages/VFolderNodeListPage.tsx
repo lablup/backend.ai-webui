@@ -111,8 +111,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useEffect(() => {
     setSelectedFolderList([]);
+
     // Reset selectedRowKeys when currentProject changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject.id]);
 
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);

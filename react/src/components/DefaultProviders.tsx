@@ -173,9 +173,8 @@ export const useCurrentLanguage = () => {
     setTimeout(() => i18n?.changeLanguage(lang), 0);
     // For changing locale globally, use dayjs.locale instead of dayjs().locale
     dayjs.locale(lang);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     document.documentElement.lang = lang;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -230,7 +229,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     let parsedValue: any;
     try {
       parsedValue = JSON.parse(value || '');
-    } catch (error) {
+    } catch {
       parsedValue = {};
     }
     return {
