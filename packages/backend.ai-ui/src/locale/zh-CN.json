@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "项目资源策略",
     "UpdateMultipleProjects": "批量更新项目"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "选择项目"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "允许的文件夹主机",
     "AllowedResourceGroups": "允许的资源组",

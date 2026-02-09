@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Proje seç"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "İzin Verilen Klasör Sunucuları",
     "AllowedResourceGroups": "İzin Verilen Kaynak Grupları",

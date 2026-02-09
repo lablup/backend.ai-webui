@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Chọn dự án"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Máy chủ thư mục được cho phép",
     "AllowedResourceGroups": "Nhóm tài nguyên được phép",

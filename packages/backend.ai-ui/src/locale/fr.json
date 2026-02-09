@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Politique de ressources du projet",
     "UpdateMultipleProjects": "Mettre à jour plusieurs projets"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Sélectionner un projet"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Hôtes autorisés pour les dossiers",
     "AllowedResourceGroups": "Groupes de ressources autorisés",

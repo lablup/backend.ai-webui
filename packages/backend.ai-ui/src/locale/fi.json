@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Valitse projekti"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Sallitut kansioisäntäkoneet",
     "AllowedResourceGroups": "Sallitut resurssiryhmät",

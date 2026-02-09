@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "เลือกโปรเจกต์"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "โฮสต์ที่อนุญาตสำหรับโฟลเดอร์",
     "AllowedResourceGroups": "กลุ่มทรัพยากรที่ได้รับอนุญาต",

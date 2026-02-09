@@ -101,6 +101,9 @@
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",
     "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
   },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Projekt auswählen"
+  },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Zugelassene Hosts für Ordner",
     "AllowedResourceGroups": "Zugelassene Ressourcengruppen",

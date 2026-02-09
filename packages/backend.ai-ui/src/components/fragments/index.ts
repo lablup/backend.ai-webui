@@ -81,3 +81,9 @@ export type {
   UserNode,
   BAIUserSelectRef,
 } from './BAIUserSelect';
+export { default as BAIProjectSelect } from './BAIProjectSelect';
+export type {
+  BAIProjectSelectProps,
+  ProjectNode,
+  BAIProjectSelectRef,
+} from './BAIProjectSelect';
