@@ -27,7 +27,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `pnpm run test` - Run Jest tests
 - `pnpm run test` (in /react directory) - Run React-specific tests
-- E2E tests require full Backend.AI cluster running first
+- E2E tests: some require a Backend.AI cluster, but **mock-based visual regression tests** only need `pnpm run server:d`
+- `pnpm exec playwright test e2e/visual_regression/ --project=chromium` - Run mock-based visual regression tests
 
 ### Electron App
 
@@ -137,6 +138,82 @@ e2e/                    # End-to-end tests
 - Production build: `build/rollup/`
 - Electron app: `build/electron-app/`
 - Static assets copied to build directories
+
+## Mock-based Visual Regression Tests
+
+Backend.AI 클러스터 없이 Playwright `page.route()` 네트워크 인터셉션으로 대시보드 등의 페이지를 렌더링하고 스크린샷을 비교하는 테스트입니다.
+
+### 실행 방법
+
+```bash
+# dev server 실행 필수
+pnpm run server:d
+
+# 테스트 실행
+pnpm exec playwright test e2e/visual_regression/dashboard/ --project=chromium
+
+# 브라우저 창 확인
+pnpm exec playwright test e2e/visual_regression/dashboard/ --project=chromium --headed
+
+# 스냅샷 baseline 갱신 (UI 변경 후)
+pnpm exec playwright test e2e/visual_regression/dashboard/ --project=chromium --update-snapshots
+```
+
+### 파일 구조
+
+```
+e2e/
+  mocks/
+    mock-api.ts                          # 핵심 오케스트레이터
+    fixtures/
+      login-responses.ts                 # REST 로그인 응답 (role별)
+      server-info.ts                     # 서버 버전, resource-slots
+      graphql/
+        login-flow-queries.ts            # 로그인 GQL 응답 (keypair, user, group 등)
+        dashboard-queries.ts             # DashboardPageQuery GQL 응답
+  visual_regression/
+    dashboard/
+      mocked_dashboard_page.test.ts      # 대시보드 테스트 (user + superadmin)
+      snapshot/                          # baseline 스크린샷 (git 추적)
+```
+
+### 핵심 API
+
+| 함수 | 설명 |
+|------|------|
+| `mockLogin(page, request, { role })` | mock 설정 + 로그인 UI 상호작용까지 한번에 수행. 테스트에서 주로 사용 |
+| `setupMockApi(page, request, { role })` | mock route만 설정 (로그인 없이) |
+
+### 새 페이지의 mock 테스트 추가 방법
+
+1. **페이지가 필요로 하는 API 파악**: 브라우저 DevTools Network 탭이나 `page.on('request')` 로깅으로 확인
+2. **GQL fixture 추가**: `e2e/mocks/fixtures/graphql/`에 해당 페이지 쿼리의 mock 응답 함수 작성
+3. **mock-api.ts에 matcher 등록**: `matchGraphQLQuery()` 함수에 `operationName` 또는 query 텍스트 키워드 매칭 추가
+4. **REST endpoint 추가**: `handleMockRoute()`에 path + method 매칭 추가
+5. **테스트 작성**: `mockLogin()` → `navigateTo()` → assertion → `toHaveScreenshot()`
+
+### mock-api.ts가 인터셉트하는 주요 엔드포인트
+
+**REST**:
+- `POST /server/login`, `/server/login-check` — 로그인 플로우
+- `GET /func/` — 서버 버전 (feature flag 결정)
+- `GET /func/config/resource-slots` — 리소스 슬롯 타입
+- `GET /func/config/resource-slots/details` — 리소스 슬롯 상세 메타데이터
+- `POST /func/resource/check-presets` — 리소스 프리셋 및 사용량
+- `GET /func/scaling-groups` — 스케일링 그룹 목록
+- `GET /func/folders/_/hosts` — vfolder 호스트 정보
+
+**GraphQL (POST /func/admin/gql)**:
+- 로그인 플로우: `keypair`, `user` (full_name), `groups` (is_active)
+- Relay 쿼리: `DashboardPageQuery`, `ProjectSelectorQuery`, `NoResourceGroupAlertQuery` 등
+- Legacy 쿼리: `compute_session_list`, `keypair_resource_policy`, `agent_summary_list` 등
+
+### 주의사항
+
+- **REST 응답은 raw JSON body**: `_wrapWithPromise()`로 호출되는 REST API는 response body를 그대로 반환. `resource_slots` 같은 필드는 object로 반환해야 함 (JSON string이 아님)
+- **GQL 응답은 `{ data: { ... } }` 형태**: `query()`로 호출되는 GQL은 response에서 `.data`를 추출
+- **GQL 매칭 순서 중요**: 특정 패턴이 먼저, 일반 패턴이 나중에 와야 함 (예: `keypair_resource_policies` → `keypair_resource_policy`)
+- **role별 분기**: `MockRole` (`'user' | 'admin' | 'superadmin'`)에 따라 서버 버전, 사용자 정보, 대시보드 쿼리 응답이 달라짐
 
 ## Important Notes
 
