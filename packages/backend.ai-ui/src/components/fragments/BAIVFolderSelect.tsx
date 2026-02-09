@@ -1,6 +1,7 @@
 import { BAIVFolderSelectPaginatedQuery } from '../../__generated__/BAIVFolderSelectPaginatedQuery.graphql';
 import { BAIVFolderSelectValueQuery } from '../../__generated__/BAIVFolderSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
+import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAILink from '../BAILink';
@@ -14,6 +15,7 @@ import _ from 'lodash';
 import {
   useDeferredValue,
   useImperativeHandle,
+  useOptimistic,
   useRef,
   useState,
   useTransition,
@@ -31,8 +33,10 @@ export interface BAIVFolderSelectRef {
   refetch: () => void;
 }
 
-export interface BAIVFolderSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue' | 'ref'> {
+export interface BAIVFolderSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue' | 'ref'
+> {
   currentProjectId?: string;
   onClickVFolder?: (value: string) => void;
   filter?: string;
@@ -66,10 +70,14 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>();
+  const deferredSearchStr = useDebouncedDeferredValue(searchStr);
+  const [optimisticSearchStr, setOptimisticSearchStr] =
+    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const mergedFilter = mergeFilterValues([
     excludeDeleted ? excludeDeletedStatusFilter : null,
@@ -170,7 +178,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       {
         filter: mergeFilterValues([
           mergedFilter,
-          searchStr ? `name ilike "%${searchStr}%"` : null,
+          deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : null,
         ]),
         scopeId: currentProjectId ? `project:${currentProjectId}` : undefined,
         permission: 'read_attribute' as const,
@@ -240,21 +248,27 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       loading={
         loading ||
         controllableValue !== deferredControllableValue ||
+        searchStr !== deferredSearchStr ||
         isPendingRefetch
       }
       {...selectProps}
       searchAction={async (value) => {
+        setOptimisticSearchStr(value);
         setSearchStr(value);
         await selectProps.searchAction?.(value);
       }}
-      showSearch={{
-        searchValue: searchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }}
+      showSearch={
+        selectProps.showSearch === false
+          ? false
+          : {
+              searchValue: optimisticSearchStr,
+              autoClearSearchValue: true,
+              ...(_.isObject(selectProps.showSearch)
+                ? _.omit(selectProps.showSearch, ['searchValue'])
+                : {}),
+              filterOption: false,
+            }
+      }
       labelRender={({ label, value }) => {
         return onClickVFolder ? (
           <BAILink onClick={() => onClickVFolder(_.toString(value))}>
@@ -312,7 +326,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       onChange={(value, option) => {
         // In multiple mode, when removing tags, value.label is a React element
         // So we need to find the original label from availableOptions
-        const valueWithOriginalLabel = _.castArray(value).map((v) => {
+        const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
+        const valueWithOriginalLabel = castedValue.map((v) => {
           // If label is string, use it directly; if React element, find from options
           const label = _.isString(v.label)
             ? v.label
@@ -325,7 +340,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
         });
         setOptimisticValueWithLabel(valueWithOriginalLabel);
         setControllableValue(
-          _.castArray(value).map((v) => _.toString(v.value)),
+          castedValue.map((v) => _.toString(v.value)),
           option,
         );
       }}
