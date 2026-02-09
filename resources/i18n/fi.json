@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Väärä API-palvelimen osoite."
   },
   "errorBoundary": {
+    "DebugInfo": "Vianmääritystiedot:",
     "DisplayOnlyDevEnv": "Tämä virhelohko näytetään vain WebUI-kehitysympäristössä.",
+    "ErrorMessage": "Virheilmoitus:",
     "ExpiredLoginSessionReLogin": "Kirjaudu sisään",
     "ExpiredLoginSessionTitle": "Kirjautumisistuntosi on päättynyt.",
     "ReloadPage": "Lataa sivu uudelleen",
     "ResetErrorBoundary": "Nollaa ErrorBoundary",
+    "StackTrace": "Pinon jäljitys:",
     "Title": "On tapahtunut virhe."
   },
   "explorer": {

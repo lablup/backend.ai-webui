@@ -14,7 +14,7 @@ export const useMergedAllowedStorageHostPermission = (
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
       graphql`
         query useMergedAllowedStorageHostPermission_KeypairQuery(
-          $domainName: String!
+          $domainName: String
           $accessKey: String
         ) {
           keypair(domain_name: $domainName, access_key: $accessKey)

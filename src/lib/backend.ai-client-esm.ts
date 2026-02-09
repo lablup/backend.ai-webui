@@ -507,6 +507,8 @@ class Client {
         description: errorDesc,
         error_code: errorCode,
         traceback: traceback,
+        // Include response body for GraphQL errors
+        response: body,
       };
     }
 
@@ -1429,22 +1431,6 @@ class Client {
       null,
     );
     return this._wrapWithPromise(rqst, false, null, timeout);
-  }
-
-  // legacy aliases (DO NOT USE for new codes)
-  createKernel(
-    kernelType,
-    sessionId: string = '',
-    resources = {},
-    timeout = 0,
-  ): Promise<any> {
-    return this.createIfNotExists(
-      kernelType,
-      sessionId,
-      resources,
-      timeout,
-      'x86_64',
-    );
   }
 
   // legacy aliases (DO NOT USE for new codes)

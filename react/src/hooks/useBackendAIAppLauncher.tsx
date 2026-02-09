@@ -64,7 +64,8 @@ export const useBackendAIAppLauncher = (
 
   const getWSProxyVersion = async (): Promise<'v1' | 'v2'> => {
     // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
-    if (baiClient.debug === true) {
+    // @ts-ignore
+    if (globalThis?.backendaiwebui?.debug === true) {
       if (debugOptions?.forceUseV1Proxy) return 'v1';
       else if (debugOptions?.forceUseV2Proxy) return 'v2';
     }

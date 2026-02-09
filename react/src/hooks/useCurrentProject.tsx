@@ -29,6 +29,7 @@ interface ScalingGroupsResponse {
   scaling_groups: ScalingGroupItem[];
 }
 
+// TODO: check undefined and add error handling
 const currentProjectAtom = atomWithDefault(() => {
   return {
     // @ts-ignore

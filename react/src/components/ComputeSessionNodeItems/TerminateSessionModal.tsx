@@ -22,8 +22,10 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
-interface TerminateSessionModalProps
-  extends Omit<ModalProps, 'onOk' | 'onCancel'> {
+interface TerminateSessionModalProps extends Omit<
+  ModalProps,
+  'onOk' | 'onCancel'
+> {
   sessionFrgmts?: TerminateSessionModalFragment$key;
   onRequestClose: (success: boolean) => void;
 }
@@ -93,7 +95,8 @@ const getWSProxyVersion = async (
   baiClient: BackendAIClient,
 ) => {
   // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
-  if (baiClient.debug === true) {
+  // @ts-ignore
+  if (globalThis?.backendaiwebui?.debug === true) {
     if (globalThis.appLauncher?.forceUseV1Proxy?.checked) return 'v1';
     else if (globalThis.appLauncher?.forceUseV2Proxy?.checked) return 'v2';
   }

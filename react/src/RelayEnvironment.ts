@@ -1,6 +1,5 @@
-// import { createClient } from "graphql-ws";
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
-// import { createClient } from 'graphql-ws';
+import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
 import {
   Environment,
@@ -12,6 +11,7 @@ import {
   RequestParameters,
   Variables,
   Observable,
+  GraphQLSingularResponse,
 } from 'relay-runtime';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
@@ -86,13 +86,14 @@ const fetchFn: FetchFunction = async (
           error.name = 'AuthorizationError';
           throw error;
         }
+        throw err;
       })) || {};
 
   if (result.errors) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
     // so we store the original message in the extensions.rawErrorMessage field.
     // https://github.com/facebook/relay/releases/tag/v18.1.0
-    result.errors.forEach((error: any) => {
+    result.errors.forEach((error: GraphQLFormattedError) => {
       if (error.extensions && error.message) {
         error.extensions.rawErrorMessage = error.message;
       }
@@ -124,7 +125,7 @@ const subscriptionsClient = createClient({
 function fetchForSubscribe(
   operation: RequestParameters,
   variables: Variables,
-): Observable<any> {
+): Observable<GraphQLSingularResponse> {
   return Observable.create((sink) => {
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'));
@@ -146,7 +147,7 @@ function fetchForSubscribe(
         query: transformedOperation,
         variables,
       },
-      sink,
+      sink as Parameters<typeof subscriptionsClient.subscribe>[1],
     );
   });
 }

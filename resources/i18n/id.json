@@ -708,11 +708,14 @@
     "WrongAPIServerAddress": "Alamat server API salah."
   },
   "errorBoundary": {
+    "DebugInfo": "Info debug:",
     "DisplayOnlyDevEnv": "Blok kesalahan ini hanya ditampilkan di lingkungan pengembangan WebUI.",
+    "ErrorMessage": "Pesan Kesalahan:",
     "ExpiredLoginSessionReLogin": "Masuk",
     "ExpiredLoginSessionTitle": "Sesi login Anda telah kedaluwarsa.",
     "ReloadPage": "Muat ulang halaman",
     "ResetErrorBoundary": "Setel Ulang Batas Kesalahan",
+    "StackTrace": "Jejak tumpukan:",
     "Title": "Telah terjadi kesalahan."
   },
   "explorer": {

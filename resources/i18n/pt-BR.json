@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Endereço do servidor API incorreto."
   },
   "errorBoundary": {
+    "DebugInfo": "Informações de depuração:",
     "DisplayOnlyDevEnv": "Este bloco de erro é apresentado apenas no ambiente de desenvolvimento da WebUI.",
+    "ErrorMessage": "Mensagem de erro:",
     "ExpiredLoginSessionReLogin": "Iniciar sessão",
     "ExpiredLoginSessionTitle": "A sua sessão de início de sessão expirou.",
     "ReloadPage": "Recarregar a página",
     "ResetErrorBoundary": "Repor ErrorBoundary",
+    "StackTrace": "Pilha de chamadas:",
     "Title": "Ocorreu um erro."
   },
   "explorer": {

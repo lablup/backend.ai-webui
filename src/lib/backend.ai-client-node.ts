@@ -1199,16 +1199,6 @@ class Client {
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
-  // legacy aliases (DO NOT USE for new codes)
-  createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-    return this.createIfNotExists(
-      kernelType,
-      sessionId,
-      resources,
-      timeout,
-      'x86_64',
-    );
-  }
 
   // legacy aliases (DO NOT USE for new codes)
   destroyKernel(sessionId, ownerKey = null) {

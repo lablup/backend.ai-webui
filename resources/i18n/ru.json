@@ -709,11 +709,14 @@
     "WrongAPIServerAddress": "Неверный адрес сервера API."
   },
   "errorBoundary": {
+    "DebugInfo": "Отладочная информация:",
     "DisplayOnlyDevEnv": "Данный блок ошибок отображается только в среде разработки WebUI.",
+    "ErrorMessage": "Сообщение об ошибке:",
     "ExpiredLoginSessionReLogin": "Вход в систему",
     "ExpiredLoginSessionTitle": "Срок действия вашей сессии входа в систему истек.",
     "ReloadPage": "Перезагрузить страницу",
     "ResetErrorBoundary": "Сброс границы ошибки",
+    "StackTrace": "Стек вызовов:",
     "Title": "Произошла ошибка."
   },
   "explorer": {

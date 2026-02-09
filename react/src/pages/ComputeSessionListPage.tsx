@@ -156,7 +156,7 @@ const ComputeSessionListPage = () => {
   const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
     graphql`
         query ComputeSessionListPageQuery(
-          $projectId: UUID!
+          $projectId: UUID
           $first: Int = 20
           $offset: Int = 0
           $filter: String

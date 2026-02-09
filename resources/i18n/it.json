@@ -708,11 +708,14 @@
     "WrongAPIServerAddress": "Indirizzo del server API errato."
   },
   "errorBoundary": {
+    "DebugInfo": "Informazioni di debug:",
     "DisplayOnlyDevEnv": "Questo blocco di errore viene visualizzato solo nell'ambiente di sviluppo WebUI.",
+    "ErrorMessage": "Messaggio di errore:",
     "ExpiredLoginSessionReLogin": "Accesso",
     "ExpiredLoginSessionTitle": "La sessione di accesso è scaduta.",
     "ReloadPage": "Ricarica la pagina",
     "ResetErrorBoundary": "Azzeramento di ErrorBoundary",
+    "StackTrace": "Traccia dello stack:",
     "Title": "Si è verificato un errore."
   },
   "explorer": {

@@ -123,11 +123,7 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   protected render(): import('lit-element').TemplateResult;
   stateChanged(state: any): void;
 }
-declare global {
-  interface HTMLElementTagNameMap {
-    'backend-ai-webui': BackendAIWebUI;
-  }
-}
+
 export {};
 
 export interface SessionResources {
