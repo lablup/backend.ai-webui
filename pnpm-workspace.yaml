@@ -23,6 +23,11 @@ patchedDependencies:
   "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
   "@rc-component/form": react/patches/@rc-component__form.patch
 
+gitBranchLockfile: true
+
+mergeGitBranchLockfilesBranchPattern:
+  - main
+
 minimumReleaseAge: 10080
 
 minimumReleaseAgeExclude:
