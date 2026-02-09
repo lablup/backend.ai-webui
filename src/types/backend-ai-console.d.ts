@@ -2,7 +2,6 @@ import './backend-ai-app-launcher';
 import './backend-ai-dialog';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
-import './backend-ai-resource-broker';
 import './backend-ai-settings-store';
 import './backend-ai-splash';
 import './lablup-notification';

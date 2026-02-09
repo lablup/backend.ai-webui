@@ -138,19 +138,6 @@ const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
 
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
 
-  React.useEffect(() => {
-    if (
-      // @ts-ignore
-      currentResourceGroupByProject !== globalThis.resourceBroker.scaling_group
-    ) {
-      props.dispatchEvent('change', currentResourceGroupByProject);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentResourceGroupByProject,
-    // @ts-ignore
-    globalThis.resourceBroker.scaling_group,
-  ]);
   return (
     <BAIFlex
       direction="column"
