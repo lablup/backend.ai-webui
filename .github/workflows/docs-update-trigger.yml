@@ -1,0 +1,64 @@
+name: Trigger docs-webui update
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-docs-update:
+    runs-on: ubuntu-latest
+    # Skip pre-releases (rc tags)
+    if: "!github.event.release.prerelease"
+    steps:
+      - name: Checkout webui repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files since previous release
+        id: changed
+        run: |
+          CURRENT_TAG="${{ github.event.release.tag_name }}"
+
+          # Find the previous non-prerelease tag
+          PREV_TAG=$(git tag --sort=-creatordate | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | grep -v "${CURRENT_TAG}" | head -1)
+
+          if [ -z "${PREV_TAG}" ]; then
+            echo "No previous release tag found. Listing all react/src/ files."
+            CHANGED_FILES=$(git ls-files 'react/src/' | tr '\n' ',')
+          else
+            echo "Comparing ${PREV_TAG}..${CURRENT_TAG}"
+            CHANGED_FILES=$(git diff --name-only "${PREV_TAG}" "${CURRENT_TAG}" -- 'react/src/' | tr '\n' ',')
+          fi
+
+          CHANGED_FILES="${CHANGED_FILES%,}"
+          echo "files=${CHANGED_FILES}" >> "$GITHUB_OUTPUT"
+
+          FILE_COUNT=$(echo "${CHANGED_FILES}" | tr ',' '\n' | grep -c . || true)
+          echo "Changed react/src/ files: ${FILE_COUNT}"
+
+          if [ -z "${CHANGED_FILES}" ]; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch to docs-webui
+        if: steps.changed.outputs.has_changes == 'true'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DOCS_WEBUI_PAT }}
+          repository: lablup/backend.ai-docs-webui
+          event-type: webui-release
+          client-payload: >-
+            {
+              "changed_files": "${{ steps.changed.outputs.files }}",
+              "release_tag": "${{ github.event.release.tag_name }}",
+              "release_name": "${{ github.event.release.name }}",
+              "release_url": "${{ github.event.release.html_url }}",
+              "commit_sha": "${{ github.sha }}",
+              "pusher": "${{ github.actor }}"
+            }
