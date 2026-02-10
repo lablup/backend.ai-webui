@@ -13,13 +13,11 @@ such as the folder name and ID, the NFS host name where the folder is located
 
 ![](images/data_page.png)
 
-There are two types of storage folders: `User` and `Project`. You can
-distinguish between them in the 'Type' column.
+ストレージフォルダには、`ユーザー`と`プロジェクト`の2つのタイプがあります。「種類」列で区別できます。
 
-A User folder is created directly by an individual ユーザー for personal use.
-A Project folder is created by a domain 管理者istrator for each project.
-Regular ユーザーs cannot create project folders themselves; they can only use
-project folders that have been created by an 管理者istrator.
+ユーザーフォルダは、個々のユーザーが個人的に使用するために直接作成したフォルダです。
+プロジェクトフォルダは、ドメイン管理者が各プロジェクトに対して作成したフォルダです。
+一般ユーザーは自分でプロジェクトフォルダを作成できません。管理者が作成したプロジェクトフォルダのみ使用できます。
 
 ![](images/vfolder_status.png)
 
@@ -90,6 +88,20 @@ Click the folder name to open a file explorer and view the contents of the folde
    directory contains an excessive number of files. If a folder contains a large number of files, some may
    not be shown on the screen. In such cases, please use the terminal or other applications to view all files
    in the directory.
+
+### テキストファイルを編集
+
+フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、テキストファイルのアクション列にある「ファイルを編集」ボタンをクリックします。
+
+![](images/folder_explorer_edit_button.png)
+
+テキストファイルエディタがコードエディタインターフェースとともにモーダルで開きます。エディタはファイル拡張子に基づいてファイルタイプを自動検出し、適切な構文ハイライトを適用します(例: Python、JavaScript、Markdown)。モーダルのタイトルにはファイル名とサイズが表示されます。
+
+![](images/text_file_editor_modal.png)
+
+エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
+
+   ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
 
 ## フォルダー名を変更
 

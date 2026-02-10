@@ -13,13 +13,11 @@ such as the folder name and ID, the NFS host name where the folder is located
 
 ![](images/data_page.png)
 
-There are two types of storage folders: `User` and `Project`. You can
-distinguish between them in the 'Type' column.
+โฟลเดอร์จัดเก็บมีสองประเภท: `ผู้ใช้` และ `โปรเจกต์` คุณสามารถแยกความแตกต่างได้ในคอลัมน์ 'ประเภท'
 
-A User folder is created directly by an individual ผู้ใช้ for personal use.
-A Project folder is created by a domain ผู้ดูแลระบบistrator for each project.
-Regular ผู้ใช้s cannot create project folders themselves; they can only use
-project folders that have been created by an ผู้ดูแลระบบistrator.
+โฟลเดอร์ผู้ใช้ถูกสร้างขึ้นโดยตรงโดยผู้ใช้แต่ละรายเพื่อใช้งานส่วนตัว
+โฟลเดอร์โปรเจกต์ถูกสร้างโดยผู้ดูแลระบบโดเมนสำหรับแต่ละโปรเจกต์
+ผู้ใช้ทั่วไปไม่สามารถสร้างโฟลเดอร์โปรเจกต์ด้วยตนเองได้ พวกเขาสามารถใช้เฉพาะโฟลเดอร์โปรเจกต์ที่สร้างโดยผู้ดูแลระบบเท่านั้น
 
 ![](images/vfolder_status.png)
 
@@ -93,6 +91,20 @@ of mounting folders into a compute session.
    directory contains an excessive number of files. If a folder contains a large number of files, some may
    not be shown on the screen. In such cases, please use the terminal or other applications to view all files
    in the directory.
+
+### แก้ไขไฟล์ข้อความ
+
+คุณสามารถแก้ไขไฟล์ข้อความได้โดยตรงในโฟลเดอร์เอ็กซ์พลอเรอร์ คลิกที่ชื่อโฟลเดอร์เพื่อเปิดไฟล์เอ็กซ์พลอเรอร์ จากนั้นคลิกที่ปุ่ม 'แก้ไขไฟล์' ในคอลัมน์การกระทำสำหรับไฟล์ข้อความใด ๆ
+
+![](images/folder_explorer_edit_button.png)
+
+โปรแกรมแก้ไขไฟล์ข้อความจะเปิดขึ้นในโมดัลพร้อมอินเทอร์เฟซตัวแก้ไขโค้ด ตัวแก้ไขจะตรวจจับประเภทไฟล์โดยอัตโนมัติตามนามสกุลไฟล์และใช้การเน้นไวยากรณ์ที่เหมาะสม (เช่น Python, JavaScript, Markdown) หัวเรื่องโมดัลจะแสดงชื่อไฟล์และขนาด
+
+![](images/text_file_editor_modal.png)
+
+ตัวแก้ไขรองรับทั้งธีมสว่างและธีมมืดที่ตรงกับการตั้งค่า UI ของคุณ คุณสามารถแก้ไขเนื้อหาไฟล์ จากนั้นคลิก 'บันทึก' เพื่ออัปโหลดไฟล์ที่แก้ไข หรือ 'ยกเลิก' เพื่อยกเลิกการเปลี่ยนแปลง
+
+   ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อคุณมีสิทธิ์ write_content บนโฟลเดอร์จัดเก็บ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
 
 ## เปลี่ยนชื่อโฟลเดอร์
 
