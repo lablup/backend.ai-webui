@@ -59,6 +59,14 @@ const useStyles = createStyles(({ css, token }) => {
         border: 1px solid ${token.colorBorderSecondary} !important;
       }
 
+      &:has([data-bai-board-item-status='error']) > div:first-child {
+        border-color: ${token.colorError} !important;
+      }
+
+      &:has([data-bai-board-item-status='warning']) > div:first-child {
+        border-color: ${token.colorWarning} !important;
+      }
+
       & > div:first-child > div:first-child > div:first-child {
         margin-bottom: var(--token-margin);
         background-color: var(--token-colorBgContainer) !important;

@@ -1,6 +1,8 @@
 import { base, react } from "eslint-config-bai";
 import jsonSchemaValidator from "eslint-plugin-json-schema-validator";
 import storybookPlugin from "eslint-plugin-storybook";
+import jsonSchemaValidator from "eslint-plugin-json-schema-validator";
+import jsoncParser from "jsonc-eslint-parser";
 import globals from "globals";
 import jsoncParser from "jsonc-eslint-parser";
 
