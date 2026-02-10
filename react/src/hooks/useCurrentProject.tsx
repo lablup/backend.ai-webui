@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { backendaiUtils } from '../global-stores';
 import { useRecentProjectGroup } from './backendai';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
@@ -204,13 +203,9 @@ export const useSetCurrentProject = () => {
       // To sync with baiClient
       // eslint-disable-next-line react-hooks/immutability
       baiClient.current_group = projectName;
-<<<<<<< HEAD
-      backendaiUtils._writeRecentProjectGroup(projectName);
-=======
 
       // Write recent project group using the new hook
       writeRecentProjectGroup(projectName);
->>>>>>> 51dcde593 (feat(FR-2028): support for undefined and null types in the `useCurrentProjectValue`.)
     },
     [set, baiClient, writeRecentProjectGroup],
   );

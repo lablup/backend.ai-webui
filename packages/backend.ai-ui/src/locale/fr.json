@@ -57,6 +57,9 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Effacer",
     "KeepAsIs": "Conserver tel quel",

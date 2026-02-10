@@ -93,6 +93,7 @@ export type {
   BAISchedulingResultBadgeProps,
   SchedulingResult,
 } from './BAISchedulingResultBadge';
+export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

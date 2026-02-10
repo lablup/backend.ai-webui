@@ -57,6 +57,9 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Очистить",
     "KeepAsIs": "Оставить как есть",
