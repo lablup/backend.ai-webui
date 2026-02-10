@@ -57,6 +57,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "清除",
     "KeepAsIs": "保持原样",
@@ -257,7 +260,7 @@
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} {{total}}项目"
+    "Total": "{{start}} - {{end}} {{total}}项目"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "没有可用的资源数据"

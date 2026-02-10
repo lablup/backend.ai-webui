@@ -57,6 +57,9 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Tyhjennä",
     "KeepAsIs": "Pidä ennallaan",

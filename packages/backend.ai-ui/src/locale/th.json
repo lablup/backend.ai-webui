@@ -57,6 +57,9 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "ล้าง",
     "KeepAsIs": "เก็บไว้ตามเดิม",

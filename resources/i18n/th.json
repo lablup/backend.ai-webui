@@ -728,6 +728,7 @@
     "LoginSucceededManagerNotResponding": "เข้าสู่ระบบสำเร็จแต่ผู้จัดการไม่ตอบสนอง",
     "MaximumVfolderCreation": "คุณไม่สามารถสร้าง vfolder เพิ่มได้เนื่องจากนโยบายทรัพยากร",
     "NetworkConnectionFailed": "การเชื่อมต่อเครือข่ายล้มเหลว ตรวจสอบสถานะเครือข่าย",
+    "NoCurrentProject": "ไม่มีโปรเจกต์ปัจจุบัน",
     "NotFoundBasePath": "ไม่พบ \nโปรดตรวจสอบเส้นทางฐานของคุณ",
     "OnlyIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มเท่านั้น",
     "OnlyPositiveIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มบวกเท่านั้น",

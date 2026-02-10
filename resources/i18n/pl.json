@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "Logowanie powiodło się, ale menedżer nie odpowiada.",
     "MaximumVfolderCreation": "Nie można utworzyć więcej folderów wirtualnych ze względu na zasady dotyczące zasobów",
     "NetworkConnectionFailed": "Połączenie sieciowe nie powiodło się. Sprawdź stan sieci.",
+    "NoCurrentProject": "Brak bieżącego projektu",
     "NotFoundBasePath": "Nie znaleziono. Sprawdź ścieżkę podstawową.",
     "OnlyIntegersAreAllowed": "Dozwolone są tylko liczby całkowite.",
     "OnlyPositiveIntegersAreAllowed": "Dozwolone są tylko pozytywne liczby całkowite.",

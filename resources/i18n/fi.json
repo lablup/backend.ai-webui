@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistuu, mutta johtaja ei vastaa.",
     "MaximumVfolderCreation": "Et voi luoda lisää v-kansioita resurssikäytännön vuoksi.",
     "NetworkConnectionFailed": "Verkkoyhteys epäonnistui. Tarkista verkon tila.",
+    "NoCurrentProject": "Ei aktiivista projektia",
     "NotFoundBasePath": "Ei löydy. Ole hyvä ja tarkista tukipolkusi.",
     "OnlyIntegersAreAllowed": "Vain kokonaisluvut ovat sallittuja.",
     "OnlyPositiveIntegersAreAllowed": "Vain positiiviset kokonaisluvut ovat sallittuja.",

@@ -57,6 +57,9 @@
     "Updated": "Aktualisiert",
     "Version": "Version"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Löschen",
     "KeepAsIs": "Unverändert lassen",

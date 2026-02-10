@@ -738,6 +738,7 @@
     "LoginSucceededManagerNotResponding": "Accesso riuscito ma il gestore non risponde.",
     "MaximumVfolderCreation": "Non è possibile creare altre vfolders a causa del criterio delle risorse.",
     "NetworkConnectionFailed": "Connessione di rete fallita. Controllare lo stato della rete.",
+    "NoCurrentProject": "Nessun progetto corrente",
     "NotFoundBasePath": "Non trovato. Controllare il percorso di base.",
     "OnlyIntegersAreAllowed": "Sono ammessi solo numeri interi.",
     "OnlyPositiveIntegersAreAllowed": "Sono consentiti solo numeri interi positivi.",

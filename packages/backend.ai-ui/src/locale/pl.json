@@ -57,6 +57,9 @@
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Wyczyść",
     "KeepAsIs": "Pozostaw bez zmian",

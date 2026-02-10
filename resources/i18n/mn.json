@@ -734,6 +734,7 @@
     "LoginSucceededManagerNotResponding": "Нэвтрэлт амжилттай болсон боловч менежер хариу өгөхгүй байна.",
     "MaximumVfolderCreation": "Нөөцийн бодлогын улмаас та илүү олон v хавтас үүсгэх боломжгүй",
     "NetworkConnectionFailed": "Сүлжээний холболт амжилтгүй боллоо. \nСүлжээний статусыг шалгана уу.",
+    "NoCurrentProject": "Одоогийн төсөл байхгүй",
     "NotFoundBasePath": "Олдсонгүй. \nСуурь замаа шалгана уу.",
     "OnlyIntegersAreAllowed": "Зөвхөн бүхэл тоо зөвшөөрнө.",
     "OnlyPositiveIntegersAreAllowed": "Зөвхөн эерэг бүхэл тоо зөвшөөрөгдсөн.",
