@@ -219,3 +219,4 @@ Read and follow below guides:
 - @.github/instructions/react.instructions.md
 - @.github/instructions/i18n.instructions.md
 - @.github/instructions/storybook.instructions.md
+- @.github/instructions/docs.instructions.md
