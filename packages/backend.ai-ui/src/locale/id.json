@@ -57,6 +57,9 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Hapus",
     "KeepAsIs": "Pertahankan",

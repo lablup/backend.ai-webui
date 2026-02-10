@@ -1,5 +1,7 @@
 import { base, react } from "eslint-config-bai";
 import storybookPlugin from "eslint-plugin-storybook";
+import jsonSchemaValidator from "eslint-plugin-json-schema-validator";
+import jsoncParser from "jsonc-eslint-parser";
 import globals from "globals";
 
 export default [
@@ -45,6 +47,19 @@ export default [
       globals: {
         exports: "writable",
       },
+    },
+  },
+
+  {
+    files: ["**/*.json"],
+    languageOptions: {
+      parser: jsoncParser,
+    },
+    plugins: {
+      "json-schema-validator": jsonSchemaValidator,
+    },
+    rules: {
+      ...jsonSchemaValidator.configs.recommended.rules,
     },
   },
 

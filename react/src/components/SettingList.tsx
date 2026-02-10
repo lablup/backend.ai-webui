@@ -141,11 +141,9 @@ const SettingList: React.FC<SettingPageProps> = ({
   const [activeTabKey, setActiveTabKey] = useState('all');
 
   const searchedItemFilter = (item: SettingItemProps) => {
-    return (
-      item.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-      (typeof item.description === 'string' &&
-        item.description.toLowerCase().includes(searchValue.toLowerCase()))
-    );
+    return _([item.title, item.description])
+      .map((val) => (typeof val === 'string' ? val.toLowerCase() : ''))
+      .some((val) => val.includes(searchValue.toLowerCase()));
   };
 
   const changedItemValidator = (item: SettingItemProps) => {
