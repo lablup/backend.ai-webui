@@ -188,7 +188,7 @@ test.describe(
       });
 
       // 6. Verify URL no longer has folder parameter
-      await expect(page).toHaveURL(/\/data($|\?(?!.*folder=))/);
+      await expect(page).toHaveURL(/\/data\/?($|\?(?!.*folder=))/);
     });
 
     test('User can access File Browser from VFolder explorer modal', async ({

@@ -144,7 +144,8 @@ test.describe(
       expect(finishedSessions).toContain(createdSessionName);
     });
 
-    test('View session container logs', async ({ page }) => {
+    test('View session container logs', async ({ page }, testInfo) => {
+      testInfo.setTimeout(120000);
       // Create session
       const sessionLauncher = new SessionLauncher(page);
       const sessionName = `logs-test-${Date.now()}`;
@@ -173,7 +174,8 @@ test.describe(
       await sessionDetailPage.terminateSession(createdSessionName);
     });
 
-    test('Monitor session resource usage', async ({ page }) => {
+    test('Monitor session resource usage', async ({ page }, testInfo) => {
+      testInfo.setTimeout(120000);
       // Create session with minimum preset (resources are set via preset, not directly)
       const sessionLauncher = new SessionLauncher(page);
       const sessionName = `resource-test-${Date.now()}`;

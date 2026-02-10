@@ -564,7 +564,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             }
           }
         });
+      } else {
+        // No page plugins to load, dispatch event immediately
+        document.dispatchEvent(
+          new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
+        );
       }
+    } else {
+      // No plugin config, dispatch event immediately
+      document.dispatchEvent(
+        new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
+      );
     }
     this.loginPanel.refreshWithConfig(config);
     const event = new CustomEvent('backend-ai-config-loaded');
