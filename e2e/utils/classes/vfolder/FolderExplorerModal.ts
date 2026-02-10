@@ -99,4 +99,12 @@ export class FolderExplorerModal {
     await expect(closeButton).toBeVisible();
     return closeButton;
   }
+
+  async verifyFileVisible(fileName: string): Promise<void> {
+    await expect(
+      this.modal.getByRole('cell', { name: fileName, exact: true }),
+    ).toBeVisible({
+      timeout: 10000,
+    });
+  }
 }
