@@ -1,12 +1,12 @@
 import { useEventListener } from 'ahooks';
 import { createStyles } from 'antd-style';
 
-export const useKeyboardShortcutTextStyles = createStyles(() => ({
+export const useKeyboardShortcutTextStyles = createStyles(({ token }) => ({
   shortcutText: {
     code: {
       margin: 0,
-      border: '1px solid rgba(255, 255, 255, 0.6)',
-      borderRadius: 4,
+      border: `${token.lineWidth}px solid ${token.colorBorder}`,
+      borderRadius: token.borderRadiusSM,
     },
   },
 }));
