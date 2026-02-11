@@ -28,7 +28,7 @@ import { Resizable, type ResizeCallbackData } from 'react-resizable';
  * Configuration interface for BAITable pagination
  * Extends Ant Design's TablePaginationConfig but omits 'position' property
  */
-interface BAITablePaginationConfig
+export interface BAITablePaginationConfig
   extends Omit<TablePaginationConfig, 'position'> {
   /** Additional content to display in the pagination area */
   extraContent?: ReactNode;
