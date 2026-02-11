@@ -86,6 +86,26 @@
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
     "Refresh": "Шинэчлэх"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "дараа",
+      "Before": "өмнө",
+      "GreaterThan": "их",
+      "GreaterThanOrEqual": "их эсвэл тэнцүү",
+      "IContains": "агуулсан",
+      "IEndsWith": "төгсдөг",
+      "IEquals": "тэнцүү",
+      "INotContains": "агуулаагүй",
+      "INotEndsWith": "төгсдөггүй",
+      "INotEquals": "тэнцүү биш",
+      "INotStartsWith": "эхэлдэггүй",
+      "IStartsWith": "эхэлдэг",
+      "In": "дотор",
+      "LessThan": "бага",
+      "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotIn": "дотор биш"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
     "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй.",

@@ -86,6 +86,26 @@
     "LastUpdated": "อัปเดตล่าสุด",
     "Refresh": "รีเฟรช"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "หลัง",
+      "Before": "ก่อน",
+      "GreaterThan": "มากกว่า",
+      "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
+      "IContains": "ประกอบด้วย",
+      "IEndsWith": "ลงท้ายด้วย",
+      "IEquals": "เท่ากับ",
+      "INotContains": "ไม่มี",
+      "INotEndsWith": "ไม่ลงท้ายด้วย",
+      "INotEquals": "ไม่เท่ากับ",
+      "INotStartsWith": "ไม่เริ่มต้นด้วย",
+      "IStartsWith": "เริ่มต้นด้วย",
+      "In": "ใน",
+      "LessThan": "น้อยกว่า",
+      "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotIn": "ไม่ใน"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",

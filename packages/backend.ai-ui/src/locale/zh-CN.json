@@ -86,6 +86,26 @@
     "LastUpdated": "最后更新",
     "Refresh": "刷新"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "之后",
+      "Before": "之前",
+      "GreaterThan": "大于",
+      "GreaterThanOrEqual": "大于或等于",
+      "IContains": "包含",
+      "IEndsWith": "以...结尾",
+      "IEquals": "等于",
+      "INotContains": "不包含",
+      "INotEndsWith": "不以...结尾",
+      "INotEquals": "不等于",
+      "INotStartsWith": "不以...开头",
+      "IStartsWith": "以...开头",
+      "In": "在...中",
+      "LessThan": "小于",
+      "LessThanOrEqual": "小于或等于",
+      "NotIn": "不在...中"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",
     "FailedToPullVersions": "未能拉动版本。",
