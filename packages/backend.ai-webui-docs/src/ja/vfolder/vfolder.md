@@ -13,13 +13,11 @@ such as the folder name and ID, the NFS host name where the folder is located
 
 ![](images/data_page.png)
 
-There are two types of storage folders: `User` and `Project`. You can
-distinguish between them in the 'Type' column.
+ストレージフォルダには、`ユーザー`と`プロジェクト`の2つのタイプがあります。「種類」列で区別できます。
 
-A User folder is created directly by an individual ユーザー for personal use.
-A Project folder is created by a domain 管理者istrator for each project.
-Regular ユーザーs cannot create project folders themselves; they can only use
-project folders that have been created by an 管理者istrator.
+ユーザーフォルダは、個々のユーザーが個人的に使用するために直接作成したフォルダです。
+プロジェクトフォルダは、ドメイン管理者が各プロジェクトに対して作成したフォルダです。
+一般ユーザーは自分でプロジェクトフォルダを作成できません。管理者が作成したプロジェクトフォルダのみ使用できます。
 
 ![](images/vfolder_status.png)
 
@@ -91,11 +89,24 @@ Click the folder name to open a file explorer and view the contents of the folde
    not be shown on the screen. In such cases, please use the terminal or other applications to view all files
    in the directory.
 
+### テキストファイルを編集
+
+フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、テキストファイルのコントロール列にある「ファイルを編集」ボタンをクリックします。
+
+![](images/folder_explorer_edit_button.png)
+
+テキストファイルエディタがコードエディタインターフェースとともにモーダルで開きます。エディタはファイル拡張子に基づいてファイルタイプを自動検出し、適切な構文ハイライトを適用します(例: Python、JavaScript、Markdown)。モーダルのタイトルにはファイル名とサイズが表示されます。
+
+![](images/text_file_editor_modal.png)
+
+エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
+
+   ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
+
 ## フォルダー名を変更
 
 
-If you have permission to rename the storage folder, you can rename it by
-clicking the edit button.
+ストレージフォルダの名前を変更する権限がある場合、編集ボタンをクリックして名前を変更できます。
 
 ![](images/rename_vfolder.png)
 
@@ -103,19 +114,15 @@ clicking the edit button.
 ## フォルダーを削除
 
 
-If you have permission to delete the storage folder, you can send the folder to the 'Trash'
-tab by clicking the 'trash bin' button. When you move a folder to the Trash tab, it is marked as delete-pending.
+ストレージフォルダを削除する権限がある場合、「ゴミ箱」ボタンをクリックしてフォルダを「ゴミ箱」タブに移動できます。フォルダをゴミ箱タブに移動すると、削除保留状態としてマークされます。
 
 ![](images/move_to_trash.png)
 
-In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
-please click 'trash bin' button in the same column.
+この状態では、コントロール列の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ列の「ゴミ箱」ボタンをクリックしてください。
 
 ![](images/vfolder_trash_list.png)
 
-A confirmation modal will pop up with
-an input field saying `Type folder name to delete`. Make sure you type the exact folder name correctly
-into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
+確認モーダルが表示され、`削除するフォルダ名を入力してください`という入力フィールドが表示されます。削除するフォルダ名を正確に入力し、赤い「完全に削除」ボタンをクリックしてフォルダを完全に削除します。
 
 ![](images/vfolder_delete_dialog.png)
 

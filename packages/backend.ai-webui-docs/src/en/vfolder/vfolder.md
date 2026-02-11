@@ -101,6 +101,20 @@ file system. But, it usually cannot exceed 255 characters.
    not be shown on the screen. In such cases, please use the terminal or other applications to view all files
    in the directory.
 
+### Edit Text Files
+
+You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the 'Edit File' button in the Control column for any text file.
+
+![](images/folder_explorer_edit_button.png)
+
+The text file editor opens in a modal with a code editor interface. The editor automatically detects the file type based on the file extension and applies appropriate syntax highlighting (e.g., Python, JavaScript, Markdown). The modal title displays the file name and size.
+
+![](images/text_file_editor_modal.png)
+
+The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click 'Save' to upload the modified file, or 'Cancel' to discard changes.
+
+   The Edit File button is only available when you have write_content permission on the storage folder. If the file fails to load, an error message will be displayed.
+
 ## Rename folder
 
 

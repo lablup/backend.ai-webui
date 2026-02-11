@@ -8,8 +8,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 ![](images/data_page.png)
 
-There are two types of storage folders: `User` and `Project`. You can
-distinguish between them in the 'Type' column.
+저장소 폴더에는 `사용자`와 `프로젝트` 두 가지 유형이 있습니다. '종류' 열에서 구분할 수 있습니다.
 
 사용자 폴더는 일반 사용자가 직접 생성하여 개인적으로 사용하는 폴더입니다. 프로젝트 폴더는 도메인 관리자가 프로젝트별로 생성하는 폴더입니다. 일반 사용자는 프로젝트 폴더를 직접 생성할 수 없으며, 관리자가 생성한 프로젝트 폴더만 사용할 수 있습니다.
 
@@ -30,9 +29,9 @@ distinguish between them in the 'Type' column.
     * 사용자: 현재 사용자의 폴더 사용량 / 현재 사용자의 폴더 가용량.
 
 
-   Please remind that quota is only available in storage that provides quota setting
-   (e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-   to the [Quota Setting Panel<quota-setting-panel>](#Quota Setting Panel<quota-setting-panel>) section.
+   쿼터는 쿼터 설정을 제공하는 스토리지에서만 사용할 수 있습니다
+   (예: XFS, CephFS, NetApp, Purestorage 등). 쿼터 설정에 대한 자세한 내용은
+   [쿼터 설정 패널<quota-setting-panel>](#Quota Setting Panel<quota-setting-panel>) 섹션을 참고하세요.
 
 ## 스토리지 폴더 생성
 
@@ -56,10 +55,8 @@ distinguish between them in the 'Type' column.
 - 권한: 프로젝트 폴더의 권한을 설정함. "Read-Only"로 설정된 경우, 프로젝트 멤버가 이 폴더에 쓰기 작업을 수행할 수 없음.
 - 복제 가능 여부: 사용 방식이 "모델"로 설정된 경우에만 보여짐. 생성하는 가상 폴더가 복제 가능한지 여부를 선택함.
 
-The folders created here can be [mounted <session-mounts>](#mounted <session-mounts>) when creating a compute session. 폴더 are mounted
-under the 일반 사용자's default working directory, `/home/work/`, and the file stored in the mounted
-directory will not be deleted when the compute session is terminated.
-(If you delete the folder, the file will also be deleted.)
+여기서 생성한 폴더는 연산 세션 생성 시 [마운트<session-mounts>](#mounted <session-mounts>)할 수 있습니다. 폴더는 사용자의 기본 작업 디렉토리인 `/home/work/` 아래에 마운트되며, 마운트된 디렉토리에 저장된 파일은 연산 세션이 종료되어도 삭제되지 않습니다.
+(폴더를 삭제하면 파일도 함께 삭제됩니다.)
 
 ## 폴더 내용 조회하기
 
@@ -79,6 +76,20 @@ directory will not be deleted when the compute session is terminated.
 
    원활한 성능 유지를 위해, 너무 많은 파일이 포함된 디렉토리에서는 화면에 표시되는 파일 수에 제한이 있습니다. 파일이 많은 폴더의 경우, 일부 파일이 화면에 보이지 않을 수 있습니다. 이 경우 터미널이나 기타 앱을 이용해 해당 디렉토리의 모든 파일을 확인해 주세요.
 
+### 텍스트 파일 편집
+
+폴더 탐색기에서 텍스트 파일을 직접 편집할 수 있습니다. 폴더 이름을 클릭하여 파일 탐색기를 연 다음, 텍스트 파일의 제어 열에서 '파일 편집' 버튼을 클릭합니다.
+
+![](images/folder_explorer_edit_button.png)
+
+텍스트 파일 편집기가 코드 편집기 인터페이스와 함께 모달로 열립니다. 편집기는 파일 확장자를 기반으로 파일 유형을 자동으로 감지하고 적절한 구문 강조 표시를 적용합니다(예: Python, JavaScript, Markdown). 모달 제목에는 파일 이름과 크기가 표시됩니다.
+
+![](images/text_file_editor_modal.png)
+
+편집기는 UI 환경 설정과 일치하는 라이트 및 다크 테마를 모두 지원합니다. 파일 내용을 편집한 후 '저장'을 클릭하여 수정된 파일을 업로드하거나 '취소'를 클릭하여 변경 사항을 취소할 수 있습니다.
+
+   파일 편집 버튼은 스토리지 폴더에 대한 write_content 권한이 있는 경우에만 사용할 수 있습니다. 파일 로드에 실패하면 오류 메시지가 표시됩니다.
+
 ## 폴더 이름 변경
 
 
@@ -94,13 +105,7 @@ directory will not be deleted when the compute session is terminated.
 
 ![](images/move_to_trash.png)
 
-삭제하려는 폴더 이름을 입력하는 필드를 포함한 모달이 나타나면, 입력 필드에 삭제하려는 폴더 이름을 정확하게 입력한 후, 빨간색 '영구 삭제' 버튼을 클릭하여 폴더를 완전히 삭제할 수 있습니다.
-
-![](images/vfolder_trash_list.png)
-
-A confirmation modal will pop up with
-an input field saying `Type folder name to delete`. Make sure you type the exact folder name correctly
-into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
+삭제하려는 폴더 이름을 입력하는 필드를 포함한 확인 모달이 나타납니다. `삭제할 폴더 이름을 입력하세요`라는 입력 필드에 삭제하려는 폴더 이름을 정확하게 입력한 후, 빨간색 '영구 삭제' 버튼을 클릭하여 폴더를 완전히 삭제할 수 있습니다.
 
 ![](images/vfolder_delete_dialog.png)
 
