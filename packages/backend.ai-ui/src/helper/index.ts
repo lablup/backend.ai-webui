@@ -322,7 +322,8 @@ type KnownGlobalIdType =
   | 'VirtualFolderNode'
   | 'ComputeSessionNode'
   | 'GroupNode'
-  | 'UserNode';
+  | 'UserNode'
+  | 'ProjectNode';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);

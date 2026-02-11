@@ -764,6 +764,7 @@
     "Name": "Nama",
     "PleaseInputFieldWithFieldName": "Silakan masukkan {{field}}",
     "Project": "Proyek",
+    "ProjectDescription": "Proyek menentukan bobot yang dikonfigurasikan dan penggunaan kumulatif selama periode agregasi. <br />Bobot proyek digunakan untuk menghitung koefisien prioritas bagi pengguna yang termasuk dalam domain tersebut. <br />Pengguna di proyek berbeda tidak saling memengaruhi dalam perhitungan prioritas.",
     "ResourceGroup": "Grup Sumber Daya",
     "ResourceGroupDescription": "Grup Sumber Daya menentukan ruang lingkup untuk penjadwalan Fair Share. <br /><br />Setiap Grup Sumber Daya mempertahankan batas perhitungan tersendiri di mana Penjadwal Fair Share mengevaluasi dan membandingkan prioritas pengguna. <br /><br />Perhitungan prioritas terisolasi pada pengguna dalam grup yang sama. Pengguna di Grup Sumber Daya yang berbeda tidak saling memengaruhi prioritas penjadwalan.",
     "ResourceWeights": "Bobot Sumber Daya",

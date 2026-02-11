@@ -764,6 +764,7 @@
     "Name": "名稱",
     "PleaseInputFieldWithFieldName": "請輸入 {{field}}",
     "Project": "專案",
+    "ProjectDescription": "專案定義了彙總期間內的設定權重和累計使用量。<br />專案權重用於計算屬於該網域使用者的優先係數。<br />屬於不同專案的使用者彼此間不會互相影響優先係數的計算。",
     "ResourceGroup": "資源群組",
     "ResourceGroupDescription": "資源群組定義公平分配排程的範圍。<br /><br />每個資源群組維持獨立的計算邊界，在該邊界內，公平分配排程器會評估並比較使用者的優先權。<br /><br />優先權的計算只限於同一群組內的使用者。不同資源群組的使用者不會互相影響排程優先權。",
     "ResourceWeights": "資源權重",

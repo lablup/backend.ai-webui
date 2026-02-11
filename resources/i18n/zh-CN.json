@@ -765,6 +765,7 @@
     "Name": "名称",
     "PleaseInputFieldWithFieldName": "请输入 {{field}}",
     "Project": "项目",
+    "ProjectDescription": "项目定义了聚合周期内的已配置权重和累积使用量。 <br />项目权重用于计算属于该域的用户的优先级系数。 <br />不同项目的用户不会相互影响对方的优先级计算。",
     "ResourceGroup": "资源组",
     "ResourceGroupDescription": "资源组定义了公平共享调度的作用范围。<br /><br />每个资源组维护独立的计算边界，公平共享调度器在该边界内评估并比较用户优先级。<br /><br />优先级计算仅限于同一资源组内的用户。不同资源组的用户互不影响彼此的调度优先级。",
     "ResourceWeights": "资源权重",

@@ -763,6 +763,7 @@
     "Name": "Nome",
     "PleaseInputFieldWithFieldName": "Por favor, preencha {{field}}",
     "Project": "Projeto",
+    "ProjectDescription": "O projeto define o peso configurado e o uso acumulado durante o período de agregação. <br />O peso do projeto é usado para calcular o coeficiente de prioridade dos usuários pertencentes a esse domínio. <br />Usuários em projetos diferentes não afetam os cálculos de prioridade uns dos outros.",
     "ResourceGroup": "Grupo de Recursos",
     "ResourceGroupDescription": "Grupos de Recursos definem o escopo para o agendamento Fair Share. <br /><br />Cada Grupo de Recursos mantém um limite de cálculo independente onde o Agendador Fair Share avalia e compara as prioridades dos usuários. <br /><br />Os cálculos de prioridade são isolados entre usuários do mesmo grupo. Usuários em Grupos de Recursos diferentes não afetam a prioridade de agendamento uns dos outros.",
     "ResourceWeights": "Peso do Recurso",

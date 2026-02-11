@@ -768,6 +768,7 @@
     "Name": "Name",
     "PleaseInputFieldWithFieldName": "Please input {{field}}",
     "Project": "Project",
+    "ProjectDescription": "Project defines the configured weight and cumulative usage during the aggregation period. <br />The project weight is used to calculate the priority coefficient for users belonging to that domain. <br /> Users in different projects do not affect each other's priority calculations.",
     "ResourceGroup": "Resource Group",
     "ResourceGroupDescription": "Resource Groups define the scope for Fair Share scheduling. <br /><br /> Each Resource Group maintains an independent calculation boundary where the Fair Share Scheduler evaluates and compares user priorities. <br /><br />Priority calculations are isolated to users within the same group. Users in separate Resource Groups have no impact on each other's scheduling priority.",
     "ResourceWeights": "Resource Weight",

@@ -765,6 +765,7 @@
     "Name": "Name",
     "PleaseInputFieldWithFieldName": "Bitte {{field}} eingeben.",
     "Project": "Projekt",
+    "ProjectDescription": "Das Projekt definiert das konfigurierte Gewicht und die kumulierte Nutzung während des Aggregationszeitraums. <br />Das Projektgewicht wird verwendet, um den Prioritätskoeffizienten für Benutzer dieser Domain zu berechnen. <br />Benutzer in verschiedenen Projekten beeinflussen sich nicht gegenseitig bei der Prioritätsberechnung.",
     "ResourceGroup": "Ressourcengruppe",
     "ResourceGroupDescription": "Ressourcengruppen definieren den Geltungsbereich für das Fair-Share-Scheduling. <br /><br /> Jede Ressourcengruppe hat eine eigene Berechnungsgrenze, in der der Fair-Share-Scheduler die Prioritäten der Benutzer bewertet und vergleicht. <br /><br /> Prioritätsberechnungen sind auf Benutzer innerhalb derselben Gruppe beschränkt. Benutzer in verschiedenen Ressourcengruppen beeinflussen die Scheduling-Priorität der jeweils anderen nicht.",
     "ResourceWeights": "Ressourcengewicht",

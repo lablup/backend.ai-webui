@@ -762,6 +762,7 @@
     "Name": "Nazwa",
     "PleaseInputFieldWithFieldName": "Proszę wprowadzić {{field}}",
     "Project": "Projekt",
+    "ProjectDescription": "Projekt określa skonfigurowaną wagę oraz skumulowane zużycie w okresie agregacji. <br />Waga projektu jest używana do obliczania współczynnika priorytetu dla użytkowników należących do tej domeny. <br />Użytkownicy z różnych projektów nie wpływają na wzajemne obliczanie priorytetów.",
     "ResourceGroup": "Grupa zasobów",
     "ResourceGroupDescription": "Grupy zasobów określają zakres planowania Fair Share. <br /><br />Każda grupa zasobów utrzymuje niezależną granicę obliczeń, w obrębie której planista Fair Share ocenia i porównuje priorytety użytkowników. <br /><br />Obliczania priorytetów są izolowane do użytkowników w tej samej grupie. Użytkownicy z oddzielnych grup zasobów nie wpływają na priorytety planowania innych.",
     "ResourceWeights": "Waga zasobu",

@@ -762,6 +762,7 @@
     "Name": "Nama",
     "PleaseInputFieldWithFieldName": "Sila masukkan {{field}}",
     "Project": "Projek",
+    "ProjectDescription": "Projek menentukan wajaran yang dikonfigurasikan dan penggunaan terkumpul semasa tempoh pengagregatan. <br />Wajaran projek digunakan untuk mengira pekali keutamaan bagi pengguna yang tergolong dalam domain tersebut. <br />Pengguna dalam projek yang berbeza tidak saling mempengaruhi pengiraan keutamaan masing-masing.",
     "ResourceGroup": "Kumpulan Sumber",
     "ResourceGroupDescription": "Kumpulan Sumber menentukan skop bagi penjadualan Fair Share. <br /><br />Setiap Kumpulan Sumber mengekalkan sempadan pengiraan yang berasingan di mana Penjadual Fair Share menilai dan membandingkan keutamaan pengguna. <br /><br />Pengiraan keutamaan diasingkan kepada pengguna dalam kumpulan yang sama. Pengguna dalam Kumpulan Sumber yang berbeza tidak memberi kesan kepada keutamaan penjadualan satu sama lain.",
     "ResourceWeights": "Berat Sumber",
