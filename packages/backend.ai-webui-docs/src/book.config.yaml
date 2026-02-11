@@ -1,0 +1,240 @@
+id: baidocs-webui
+title: Backend.AI WebUI User Guide
+description: Sphinx documentation by Lablup Inc. (v25.15)
+type: document
+repository: https://github.com/lablup/backend.ai-docs-webui
+languages:
+  - en
+  - ja
+  - ko
+  - th
+navigation:
+  en:
+    - title: Quickstart
+      path: quickstart.md
+    - title: Disclaimer
+      path: disclaimer.md
+    - title: Overview
+      path: overview/overview.md
+    - title: Installation
+      path: installation/installation.md
+    - title: Login
+      path: login/login.md
+    - title: Header
+      path: header/header.md
+    - title: Start
+      path: start/start.md
+    - title: Dashboard
+      path: dashboard/dashboard.md
+    - title: Summary
+      path: summary/summary.md
+    - title: Vfolder
+      path: vfolder/vfolder.md
+    - title: Session Page
+      path: session_page/session_page.md
+    - title: Sessions All
+      path: sessions_all/sessions_all.md
+    - title: Mount Vfolder
+      path: mount_vfolder/mount_vfolder.md
+    - title: Share Vfolder
+      path: share_vfolder/share_vfolder.md
+    - title: Model Serving
+      path: model_serving/model_serving.md
+    - title: Chat
+      path: chat/chat.md
+    - title: Import Run
+      path: import_run/import_run.md
+    - title: My Environments
+      path: my_environments/my_environments.md
+    - title: Agent Summary
+      path: agent_summary/agent_summary.md
+    - title: Statistics
+      path: statistics/statistics.md
+    - title: Sftp To Container
+      path: sftp_to_container/sftp_to_container.md
+    - title: User Settings
+      path: user_settings/user_settings.md
+    - title: Cluster Session
+      path: cluster_session/cluster_session.md
+    - title: Admin Menu
+      path: admin_menu/admin_menu.md
+    - title: Trouble Shooting
+      path: trouble_shooting/trouble_shooting.md
+    - title: Appendix
+      path: appendix/appendix.md
+    - title: License Agreement
+      path: license_agreement/license_agreement.md
+    - title: References
+      path: references/references.md
+  ja:
+    - title: Quickstart
+      path: quickstart.md
+    - title: Disclaimer
+      path: disclaimer.md
+    - title: Overview
+      path: overview/overview.md
+    - title: Installation
+      path: installation/installation.md
+    - title: Login
+      path: login/login.md
+    - title: Header
+      path: header/header.md
+    - title: Start
+      path: start/start.md
+    - title: Dashboard
+      path: dashboard/dashboard.md
+    - title: Summary
+      path: summary/summary.md
+    - title: Vfolder
+      path: vfolder/vfolder.md
+    - title: Session Page
+      path: session_page/session_page.md
+    - title: Sessions All
+      path: sessions_all/sessions_all.md
+    - title: Mount Vfolder
+      path: mount_vfolder/mount_vfolder.md
+    - title: Share Vfolder
+      path: share_vfolder/share_vfolder.md
+    - title: Model Serving
+      path: model_serving/model_serving.md
+    - title: Chat
+      path: chat/chat.md
+    - title: Import Run
+      path: import_run/import_run.md
+    - title: My Environments
+      path: my_environments/my_environments.md
+    - title: Agent Summary
+      path: agent_summary/agent_summary.md
+    - title: Statistics
+      path: statistics/statistics.md
+    - title: Sftp To Container
+      path: sftp_to_container/sftp_to_container.md
+    - title: ユーザー Settings
+      path: user_settings/user_settings.md
+    - title: Cluster Session
+      path: cluster_session/cluster_session.md
+    - title: 管理者 Menu
+      path: admin_menu/admin_menu.md
+    - title: Trouble Shooting
+      path: trouble_shooting/trouble_shooting.md
+    - title: Appendix
+      path: appendix/appendix.md
+    - title: License Agreement
+      path: license_agreement/license_agreement.md
+    - title: References
+      path: references/references.md
+  ko:
+    - title: Quickstart
+      path: quickstart.md
+    - title: Disclaimer
+      path: disclaimer.md
+    - title: Overview
+      path: overview/overview.md
+    - title: Installation
+      path: installation/installation.md
+    - title: Login
+      path: login/login.md
+    - title: Header
+      path: header/header.md
+    - title: Start
+      path: start/start.md
+    - title: Dashboard
+      path: dashboard/dashboard.md
+    - title: Summary
+      path: summary/summary.md
+    - title: Vfolder
+      path: vfolder/vfolder.md
+    - title: Session Page
+      path: session_page/session_page.md
+    - title: Sessions All
+      path: sessions_all/sessions_all.md
+    - title: Mount Vfolder
+      path: mount_vfolder/mount_vfolder.md
+    - title: Share Vfolder
+      path: share_vfolder/share_vfolder.md
+    - title: Model Serving
+      path: model_serving/model_serving.md
+    - title: Chat
+      path: chat/chat.md
+    - title: Import Run
+      path: import_run/import_run.md
+    - title: My Environments
+      path: my_environments/my_environments.md
+    - title: Agent Summary
+      path: agent_summary/agent_summary.md
+    - title: Statistics
+      path: statistics/statistics.md
+    - title: Sftp To Container
+      path: sftp_to_container/sftp_to_container.md
+    - title: 일반
+      path: user_settings/user_settings.md
+    - title: Cluster Session
+      path: cluster_session/cluster_session.md
+    - title: 어드민 Menu
+      path: admin_menu/admin_menu.md
+    - title: Trouble Shooting
+      path: trouble_shooting/trouble_shooting.md
+    - title: Appendix
+      path: appendix/appendix.md
+    - title: License Agreement
+      path: license_agreement/license_agreement.md
+    - title: References
+      path: references/references.md
+  th:
+    - title: Quickstart
+      path: quickstart.md
+    - title: Disclaimer
+      path: disclaimer.md
+    - title: Overview
+      path: overview/overview.md
+    - title: Installation
+      path: installation/installation.md
+    - title: Login
+      path: login/login.md
+    - title: Header
+      path: header/header.md
+    - title: Start
+      path: start/start.md
+    - title: Dashboard
+      path: dashboard/dashboard.md
+    - title: Summary
+      path: summary/summary.md
+    - title: Vfolder
+      path: vfolder/vfolder.md
+    - title: Session Page
+      path: session_page/session_page.md
+    - title: Sessions All
+      path: sessions_all/sessions_all.md
+    - title: Mount Vfolder
+      path: mount_vfolder/mount_vfolder.md
+    - title: Share Vfolder
+      path: share_vfolder/share_vfolder.md
+    - title: Model Serving
+      path: model_serving/model_serving.md
+    - title: Chat
+      path: chat/chat.md
+    - title: Import Run
+      path: import_run/import_run.md
+    - title: My Environments
+      path: my_environments/my_environments.md
+    - title: Agent Summary
+      path: agent_summary/agent_summary.md
+    - title: Statistics
+      path: statistics/statistics.md
+    - title: Sftp To Container
+      path: sftp_to_container/sftp_to_container.md
+    - title: ผู้ใช้ Settings
+      path: user_settings/user_settings.md
+    - title: Cluster Session
+      path: cluster_session/cluster_session.md
+    - title: ผู้ดูแลระบบ Menu
+      path: admin_menu/admin_menu.md
+    - title: Trouble Shooting
+      path: trouble_shooting/trouble_shooting.md
+    - title: Appendix
+      path: appendix/appendix.md
+    - title: License Agreement
+      path: license_agreement/license_agreement.md
+    - title: References
+      path: references/references.md
+emoji: 🎨

@@ -172,3 +172,6 @@ scripts/temp-releases/
 
 # ignore playwright mcp test files
 .playwright-mcp/
+
+# ignore documentation agent working files
+packages/backend.ai-webui-docs/.agent-output/
