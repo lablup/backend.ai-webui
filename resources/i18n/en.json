@@ -4,6 +4,9 @@
     "ActiveAgents": "Active Agents",
     "ActiveAgentsTooltip": "Shows an at-a-glance overview of all agents currently running in the system."
   },
+  "adminSession": {
+    "PendingSessions": "Pending Sessions"
+  },
   "agent": {
     "AcceleratorAllocations": "Accelerator Allocations",
     "Agent": "Agent",
@@ -742,6 +745,38 @@
     "VFolder": "Folder",
     "ValueRequired": "ValueRequired"
   },
+  "fairShare": {
+    "Allocations": "Allocation",
+    "Days": "days",
+    "DecayUnitDays": "Decay Unit",
+    "DecayUnitDaysDescription": "The period in days for aggregating usage.",
+    "DefaultWeight": "Default Weight",
+    "DefaultWeightDescription": "The default value applied to Domains, Projects, and Users without a specified weight.",
+    "Domain": "Domain",
+    "FairShareSetting": "Fair Share Setting",
+    "FairShareSettingDescription": "Changes are not immediately reflected in Fair Share calculations and may take approximately 5 minutes due to the calculation cycle.",
+    "FairShareSettingTitleWithName": "Fair Share Config: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Fair share settings for {{resourceGroupName}} resource group have been updated.",
+    "GoToSubComponent": "Move to {{sub}}",
+    "HalfLifeDays": "Half Life",
+    "HalfLifeDaysDescription": "The period over which the usage reflection rate decreases by half. If set to 7 days, usage from 7 days ago is calculated at 50%, and usage from 14 days ago at 25%. Must be set as a multiple of the decay unit.",
+    "LookbackDays": "Lookback",
+    "LookbackDaysDescription": "The range of usage history reflected in Fair Share calculations. Usage prior to this period is excluded from calculations. Must be set as a multiple of half-life.",
+    "Name": "Name",
+    "PleaseInputFieldWithFieldName": "Please input {{field}}",
+    "Project": "Project",
+    "ResourceGroup": "Resource Group",
+    "ResourceGroupDescription": "Resource Groups define the scope for Fair Share scheduling. <br /><br /> Each Resource Group maintains an independent calculation boundary where the Fair Share Scheduler evaluates and compares user priorities. <br /><br />Priority calculations are isolated to users within the same group. Users in separate Resource Groups have no impact on each other's scheduling priority.",
+    "ResourceWeights": "Resource Weight",
+    "ResourceWeightsDescription": "The weight for each resource type.",
+    "SchedulerDescription": "The Fair Share Scheduler is a scheduling method that determines session execution priority based on historical resource usage. It assigns higher priority to users who have consumed fewer resources, ensuring that all users can access resources fairly over time.\n<br /> <br />\nAdministrators can configure weights at the Domain, Project, and User levels to allocate more resources to specific groups. Priority is expressed as a value between 0.0 and 1.0, where values closer to 1.0 indicate higher priority.",
+    "User": "User",
+    "Weight": "weight",
+    "step": {
+      "Description": "Fair Share settings are organized per resource group according to domain, project, and user hierarchy. To access sub-settings, click an item in the table."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Access Key",
     "Active": "Active",
@@ -2270,6 +2305,7 @@
       "Environments": "Environments",
       "Environments&Presets": "Environments & Presets",
       "Experiments": "Experiments",
+      "FairShare": "Fair Share",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "First",
       "FullName": "Full Name",

@@ -140,6 +140,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Array }) availablePages = [
     'start',
     'dashboard',
+    'admin-session',
     'admin-dashboard',
     'summary',
     'verify-email',
@@ -183,6 +184,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'resource-policy',
   ];
   @property({ type: Array }) superAdminOnlyPages = [
+    'admin-session',
     'admin-dashboard',
     'agent',
     'storage-settings',

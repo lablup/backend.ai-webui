@@ -4,6 +4,9 @@
     "ActiveAgents": "活性代理",
     "ActiveAgentsTooltip": "顯示了當前在系統中運行的所有代理的一目了然的概述。"
   },
+  "adminSession": {
+    "PendingSessions": "待處理工作階段"
+  },
   "agent": {
     "AcceleratorAllocations": "加速器分配",
     "Agent": "代理",
@@ -736,6 +739,38 @@
     "VFolder": "文件夾",
     "ValueRequired": "需要值"
   },
+  "fairShare": {
+    "Allocations": "分配",
+    "Days": "天",
+    "DecayUnitDays": "衰減單位",
+    "DecayUnitDaysDescription": "彙總使用量的期間（以天為單位）",
+    "DefaultWeight": "預設權重",
+    "DefaultWeightDescription": "套用於未指定權重之網域、專案與使用者的預設值。",
+    "Domain": "網域",
+    "FairShareSetting": "公平分配設定",
+    "FairShareSettingDescription": "變更不會立即反映於公平分享計算中，約需 5 分鐘才會更新，因為計算週期的關係。",
+    "FairShareSettingTitleWithName": "公平分配設定：{{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "{{resourceGroupName}} 資源群組的公平分享設定已更新。",
+    "GoToSubComponent": "移動到 {{sub}}",
+    "HalfLifeDays": "半衰期",
+    "HalfLifeDaysDescription": "使用量反映率減半的週期。若設為 7 天，7 天前的使用量按 50% 計算，14 天前則按 25% 計算。必須設定為衰減單位的整數倍。",
+    "LookbackDays": "回溯期間",
+    "LookbackDaysDescription": "計入 Fair Share 計算的使用歷史範圍。此期間之前的使用不予計入。必須為半衰期的倍數。",
+    "Name": "名稱",
+    "PleaseInputFieldWithFieldName": "請輸入 {{field}}",
+    "Project": "專案",
+    "ResourceGroup": "資源群組",
+    "ResourceGroupDescription": "資源群組定義公平分配排程的範圍。<br /><br />每個資源群組維持獨立的計算邊界，在該邊界內，公平分配排程器會評估並比較使用者的優先權。<br /><br />優先權的計算只限於同一群組內的使用者。不同資源群組的使用者不會互相影響排程優先權。",
+    "ResourceWeights": "資源權重",
+    "ResourceWeightsDescription": "各資源類型的權重。",
+    "SchedulerDescription": "公平分配排程器（Fair Share Scheduler）是一種根據歷史資源使用量決定會話執行優先順序的排程方法。它會將較高的優先權分配給過去消耗較少資源的使用者，確保所有使用者能隨時間公平地存取資源。<br /> <br />\n管理員可以在網域（Domain）、專案（Project）和使用者（User）層級設定權重，以將更多資源分配給特定群組。優先權以 0.0 到 1.0 的值表示，數值越接近 1.0 表示優先權越高。",
+    "User": "使用者",
+    "Weight": "權重",
+    "step": {
+      "Description": "Fair Share 設定依據資源群組，並按網域、專案與使用者的階層結構進行。要進行下層設定，請點選表格中的各項目以進入。"
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "訪問密鑰",
     "Active": "積極的",
@@ -2261,6 +2296,7 @@
       "Environments": "環境",
       "Environments&Presets": "環境和預設",
       "Experiments": "實驗",
+      "FairShare": "公平份額",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "第一",
       "FullName": "全名",

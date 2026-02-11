@@ -4,6 +4,9 @@
     "ActiveAgents": "Aktive Agenten",
     "ActiveAgentsTooltip": "Zeigt einen Überblick auf einen Blick über alle im System ausgeführten Agenten."
   },
+  "adminSession": {
+    "PendingSessions": "Ausstehende Sitzungen"
+  },
   "agent": {
     "AcceleratorAllocations": "Beschleunigerzuweisungen",
     "Agent": "Agent",
@@ -737,6 +740,38 @@
     "VFolder": "Ordner",
     "ValueRequired": "WertErforderlich"
   },
+  "fairShare": {
+    "Allocations": "Zuweisung",
+    "Days": "Tage",
+    "DecayUnitDays": "Einheit der Abklingzeit",
+    "DecayUnitDaysDescription": "Zeitraum in Tagen zur Aggregation der Nutzung.",
+    "DefaultWeight": "Standardgewicht",
+    "DefaultWeightDescription": "Der Standardwert, der für Domänen, Projekte und Benutzer ohne angegebenes Gewicht gilt.",
+    "Domain": "Domäne",
+    "FairShareSetting": "Fair-Share-Einstellung",
+    "FairShareSettingDescription": "Änderungen werden nicht sofort in den Fair-Share-Berechnungen berücksichtigt. Aufgrund des Berechnungszyklus kann es etwa 5 Minuten dauern.",
+    "FairShareSettingTitleWithName": "Fair-Share-Konfiguration: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Die Fair-Share-Einstellungen für die Ressourcengruppe {{resourceGroupName}} wurden aktualisiert.",
+    "GoToSubComponent": "Verschieben nach {{sub}}",
+    "HalfLifeDays": "Halbwertszeit",
+    "HalfLifeDaysDescription": "Die Zeitspanne, in der die Gewichtung der Nutzung auf die Hälfte sinkt. Wenn auf 7 Tage gesetzt, wird die Nutzung von vor 7 Tagen mit 50% und die von vor 14 Tagen mit 25% berücksichtigt. Muss als Vielfaches der Abkling‑Einheit angegeben werden.",
+    "LookbackDays": "Rückblick",
+    "LookbackDaysDescription": "Zeitraum des Nutzungsverlaufs, der in Fair-Share-Berechnungen berücksichtigt wird. Nutzungen vor diesem Zeitraum sind von den Berechnungen ausgeschlossen. Muss als Vielfaches der Halbwertszeit festgelegt werden.",
+    "Name": "Name",
+    "PleaseInputFieldWithFieldName": "Bitte {{field}} eingeben.",
+    "Project": "Projekt",
+    "ResourceGroup": "Ressourcengruppe",
+    "ResourceGroupDescription": "Ressourcengruppen definieren den Geltungsbereich für das Fair-Share-Scheduling. <br /><br /> Jede Ressourcengruppe hat eine eigene Berechnungsgrenze, in der der Fair-Share-Scheduler die Prioritäten der Benutzer bewertet und vergleicht. <br /><br /> Prioritätsberechnungen sind auf Benutzer innerhalb derselben Gruppe beschränkt. Benutzer in verschiedenen Ressourcengruppen beeinflussen die Scheduling-Priorität der jeweils anderen nicht.",
+    "ResourceWeights": "Ressourcengewicht",
+    "ResourceWeightsDescription": "Das Gewicht für jeden Ressourcentyp.",
+    "SchedulerDescription": "Der Fair-Share-Scheduler ist ein Planungsverfahren, das die Ausführungspriorität von Sitzungen anhand des historischen Ressourcenverbrauchs bestimmt. Er vergibt höhere Priorität an Nutzer, die weniger Ressourcen verbraucht haben, und sorgt so dafür, dass alle Nutzer im Zeitverlauf fairen Zugriff auf Ressourcen erhalten.\n<br /> <br />\nAdministratoren können Gewichte auf Domain-, Projekt- und Benutzerebene konfigurieren, um bestimmten Gruppen mehr Ressourcen zuzuweisen. Die Priorität wird als Wert zwischen 0,0 und 1,0 angegeben; Werte näher bei 1,0 bedeuten höhere Priorität.",
+    "User": "Benutzer",
+    "Weight": "Gewicht",
+    "step": {
+      "Description": "Die Fair-Share-Einstellungen erfolgen je Ressourcengruppe entlang der Hierarchie Domain → Projekt → Benutzer. Klicken Sie in der Tabelle auf einen Eintrag, um zu den Untereinstellungen zu wechseln."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Zugangsschlüssel",
     "Active": "Aktiv",
@@ -2260,6 +2295,7 @@
       "Environments": "Umgebungen",
       "Environments&Presets": "Umgebungen & Voreinstellungen",
       "Experiments": "Experimente",
+      "FairShare": "Faire Zuteilung",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Erste",
       "FullName": "Vollständiger Name",

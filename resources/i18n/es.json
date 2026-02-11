@@ -4,6 +4,9 @@
     "ActiveAgents": "Agentes activos",
     "ActiveAgentsTooltip": "Muestra una descripción general de un vistazo de todos los agentes que actualmente se ejecutan en el sistema."
   },
+  "adminSession": {
+    "PendingSessions": "Sesiones pendientes"
+  },
   "agent": {
     "AcceleratorAllocations": "Asignaciones de aceleradores",
     "Agent": "Agente",
@@ -737,6 +740,38 @@
     "VFolder": "Carpeta",
     "ValueRequired": "ValorRequerido"
   },
+  "fairShare": {
+    "Allocations": "Asignación",
+    "Days": "días",
+    "DecayUnitDays": "Unidad de decaimiento",
+    "DecayUnitDaysDescription": "El período en días para la agregación del uso.",
+    "DefaultWeight": "Peso predeterminado",
+    "DefaultWeightDescription": "El valor predeterminado aplicado a Dominios, Proyectos y Usuarios sin un peso especificado.",
+    "Domain": "Dominio",
+    "FairShareSetting": "Configuración de cuota justa",
+    "FairShareSettingDescription": "Los cambios no se reflejan de inmediato en los cálculos de Fair Share y pueden tardar aproximadamente 5 minutos debido al ciclo de cálculo.",
+    "FairShareSettingTitleWithName": "Configuración de participación justa: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Se han actualizado los ajustes de reparto equitativo del grupo de recursos {{resourceGroupName}}.",
+    "GoToSubComponent": "Mover a {{sub}}",
+    "HalfLifeDays": "Vida media",
+    "HalfLifeDaysDescription": "El período durante el cual la tasa de reflejo del uso se reduce a la mitad. Si se establece en 7 días, el uso de hace 7 días se calcula al 50% y el de hace 14 días al 25%. Debe establecerse como múltiplo de la unidad de decaimiento.",
+    "LookbackDays": "Intervalo de observación",
+    "LookbackDaysDescription": "El período del historial de uso que se refleja en los cálculos de Fair Share. El uso anterior a este período queda excluido de los cálculos. Debe configurarse como un múltiplo de la vida media.",
+    "Name": "Nombre",
+    "PleaseInputFieldWithFieldName": "Por favor, introduzca {{field}}",
+    "Project": "Proyecto",
+    "ResourceGroup": "Grupo de recursos",
+    "ResourceGroupDescription": "Los Grupos de recursos definen el ámbito para la planificación Fair Share. <br /><br />Cada Grupo de recursos mantiene un límite de cálculo independiente en el que el planificador Fair Share evalúa y compara las prioridades de los usuarios. <br /><br />Los cálculos de prioridad están aislados a los usuarios dentro del mismo grupo. Los usuarios en Grupos de recursos distintos no afectan la prioridad de planificación de los demás.",
+    "ResourceWeights": "Peso del recurso",
+    "ResourceWeightsDescription": "Peso por tipo de recurso.",
+    "SchedulerDescription": "El planificador Fair Share es un método de planificación que determina la prioridad de ejecución de las sesiones en función del uso histórico de recursos. Asigna mayor prioridad a los usuarios que han consumido menos recursos, garantizando que todos los usuarios puedan acceder a los recursos de forma equitativa a lo largo del tiempo.\n<br /> <br />\nLos administradores pueden configurar pesos a nivel de Dominio, Proyecto y Usuario para asignar más recursos a grupos específicos. La prioridad se expresa mediante un valor entre 0.0 y 1.0, donde los valores más próximos a 1.0 indican mayor prioridad.",
+    "User": "Usuario",
+    "Weight": "peso",
+    "step": {
+      "Description": "La configuración de Fair Share se realiza por grupo de recursos y según la jerarquía de dominio, proyecto y usuario. Para configurar niveles inferiores, haga clic en cada elemento de la tabla."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Clave de acceso",
     "Active": "Activo",
@@ -2262,6 +2297,7 @@
       "Environments": "Entornos",
       "Environments&Presets": "Entornos y preajustes",
       "Experiments": "Experimentos",
+      "FairShare": "Reparto justo",
       "FastTrack": "Vía rápida",
       "FirstPageNameAlias": "Primero",
       "FullName": "Nombre y apellidos",

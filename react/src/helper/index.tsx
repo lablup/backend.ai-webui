@@ -895,3 +895,36 @@ export function listenToBackgroundTask<
 
   return controller.abort.bind(controller);
 }
+
+/**
+ * Converts an order string (e.g., 'name' or '-name') to a GraphQL OrderBy array.
+ *
+ * @template TOrderBy - The type of the order by object (e.g., ResourceGroupOrderBy)
+ * @param order - The order string. Prefix with '-' for descending order.
+ * @returns An array containing a single OrderBy object, or undefined if order is null/undefined.
+ *
+ * @example
+ * convertToOrderBy<ResourceGroupOrderBy>('name')
+ * // => [{ field: 'NAME', direction: 'ASC' }]
+ *
+ * @example
+ * convertToOrderBy<ResourceGroupOrderBy>('-name')
+ * // => [{ field: 'NAME', direction: 'DESC' }]
+ */
+export const convertToOrderBy = <
+  TOrderBy extends { field: string; direction?: string },
+>(
+  order: string | null | undefined,
+): ReadonlyArray<TOrderBy> | undefined => {
+  if (!order) return undefined;
+
+  const isDescending = order.startsWith('-');
+  const fieldName = (isDescending ? order.slice(1) : order).toUpperCase();
+
+  return [
+    {
+      field: fieldName,
+      direction: isDescending ? 'DESC' : 'ASC',
+    } as TOrderBy,
+  ];
+};

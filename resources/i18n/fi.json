@@ -4,6 +4,9 @@
     "ActiveAgents": "Aktiiviset edustajat",
     "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
   },
+  "adminSession": {
+    "PendingSessions": "Odotuksessa olevat istunnot"
+  },
   "agent": {
     "AcceleratorAllocations": "Kiihdyttimien varaukset",
     "Agent": "Agentti",
@@ -737,6 +740,38 @@
     "VFolder": "Kansio",
     "ValueRequired": "ValueRequired"
   },
+  "fairShare": {
+    "Allocations": "Allokaatio",
+    "Days": "päivät",
+    "DecayUnitDays": "Vähennysyksikkö",
+    "DecayUnitDaysDescription": "Ajanjakso (päivinä) käytön aggregointia varten.",
+    "DefaultWeight": "Oletuspaino",
+    "DefaultWeightDescription": "Oletusarvo, joka asetetaan toimialueille, projekteille ja käyttäjille, joille ei ole määritetty painoarvoa.",
+    "Domain": "Toimialue",
+    "FairShareSetting": "Fair Share -asetus",
+    "FairShareSettingDescription": "Muutokset eivät näy välittömästi Fair Share -laskelmissa, vaan niiden päivittyminen voi kestää noin 5 minuuttia laskentasyklin vuoksi.",
+    "FairShareSettingTitleWithName": "Fair Share -konfiguraatio: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Resurssiryhmän {{resourceGroupName}} fair share -asetukset on päivitetty.",
+    "GoToSubComponent": "Siirrä kohteeseen {{sub}}",
+    "HalfLifeDays": "Puoliintumisaika",
+    "HalfLifeDaysDescription": "Aika, jonka kuluessa käytön paino puolittuu. Jos asetetaan 7 päiväksi, 7 päivää sitten tehty käyttö lasketaan 50 %:ksi ja 14 päivää sitten tehty 25 %:ksi. Sen on oltava vaimenemisyksikön monikerta.",
+    "LookbackDays": "Takautumisaika",
+    "LookbackDaysDescription": "Käyttöhistorian ajanjakso, joka huomioidaan Fair Share -laskelmissa. Tämän ajanjakson ulkopuolinen käyttö jätetään laskelmista. On asetettava puoliintumisajan kerrannaiseksi.",
+    "Name": "Nimi",
+    "PleaseInputFieldWithFieldName": "Syötä {{field}}",
+    "Project": "Projekti",
+    "ResourceGroup": "Resurssiryhmä",
+    "ResourceGroupDescription": "Resurssiryhmät määrittävät Fair Share -aikataulutuksen laajuuden. <br /><br />Jokaisella resurssiryhmällä on oma erillinen laskentakehyksensä, jossa Fair Share -aikatauluttaja arvioi ja vertaa käyttäjien prioriteetteja. <br /><br />Prioriteettien laskenta rajoittuu saman ryhmän käyttäjiin. Eri resurssiryhmissä olevien käyttäjien prioriteetit eivät vaikuta toisiinsa.",
+    "ResourceWeights": "Resurssipaino",
+    "ResourceWeightsDescription": "Kunkin resurssityypin paino.",
+    "SchedulerDescription": "Fair Share Scheduler on aikataulutusmenetelmä, joka määrittää istunnon suoritusprioriteetin aiemman resurssikäytön perusteella. Se antaa korkeamman prioriteetin käyttäjille, jotka ovat käyttäneet vähemmän resursseja, varmistaen, että kaikki käyttäjät pääsevät resursseihin tasapuolisesti ajan myötä.\n<br /> <br />\nJärjestelmänvalvojat voivat määrittää painot Domain-, Project- ja User-tasoilla kohdentamaan enemmän resursseja tietyille ryhmille. Prioriteetti ilmaistaan arvona välillä 0.0–1.0, jossa arvo lähellä 1.0 tarkoittaa korkeampaa prioriteettia.",
+    "User": "Käyttäjä",
+    "Weight": "paino",
+    "step": {
+      "Description": "Fair Share -asetukset määritellään resurssiryhmittäin domainien, projektien ja käyttäjien hierarkiassa. Siirry alitason asetuksiin napsauttamalla taulukon kutakin kohtaa."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Access Key",
     "Active": "Aktiivinen",
@@ -2261,6 +2296,7 @@
       "Environments": "Ympäristöt",
       "Environments&Presets": "Ympäristöt & esiasetukset",
       "Experiments": "Kokeet",
+      "FairShare": "Oikeudenmukainen osuus",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Ensimmäinen",
       "FullName": "Koko nimi",

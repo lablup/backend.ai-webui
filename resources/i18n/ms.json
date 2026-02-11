@@ -4,6 +4,9 @@
     "ActiveAgents": "Ejen aktif",
     "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan sepintas lalu semua ejen yang sedang berjalan dalam sistem."
   },
+  "adminSession": {
+    "PendingSessions": "Sesi Tertunda"
+  },
   "agent": {
     "AcceleratorAllocations": "Peruntukan Akselerator",
     "Agent": "Ejen",
@@ -736,6 +739,38 @@
     "VFolder": "Folder",
     "ValueRequired": "Nilai Diperlukan"
   },
+  "fairShare": {
+    "Allocations": "Peruntukan",
+    "Days": "hari",
+    "DecayUnitDays": "Unit Peluruhan",
+    "DecayUnitDaysDescription": "Tempoh (dalam hari) untuk mengumpulkan penggunaan.",
+    "DefaultWeight": "Berat Lalai",
+    "DefaultWeightDescription": "Nilai lalai yang digunakan untuk Domain, Projek, dan Pengguna yang tidak mempunyai wajaran yang ditetapkan.",
+    "Domain": "Domain",
+    "FairShareSetting": "Tetapan Pengagihan Saksama",
+    "FairShareSettingDescription": "Perubahan tidak akan segera tercermin dalam pengiraan Fair Share dan mungkin mengambil masa kira-kira 5 minit disebabkan kitaran pengiraan.",
+    "FairShareSettingTitleWithName": "Konfigurasi Fair Share: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Tetapan perkongsian adil untuk kumpulan sumber {{resourceGroupName}} telah dikemas kini.",
+    "GoToSubComponent": "Pindahkan ke {{sub}}",
+    "HalfLifeDays": "Separuh Hayat",
+    "HalfLifeDaysDescription": "Tempoh di mana kadar pemantulan penggunaan berkurang separuh. Jika ditetapkan kepada 7 hari, penggunaan dari 7 hari yang lalu dikira sebanyak 50%, dan penggunaan dari 14 hari yang lalu sebanyak 25%. Mesti ditetapkan sebagai gandaan unit peluruhan.",
+    "LookbackDays": "Jangka masa",
+    "LookbackDaysDescription": "Julat sejarah penggunaan yang diambil kira dalam pengiraan Fair Share. Penggunaan sebelum tempoh ini dikecualikan daripada pengiraan. Perlu ditetapkan sebagai gandaan separuh hayat.",
+    "Name": "Nama",
+    "PleaseInputFieldWithFieldName": "Sila masukkan {{field}}",
+    "Project": "Projek",
+    "ResourceGroup": "Kumpulan Sumber",
+    "ResourceGroupDescription": "Kumpulan Sumber menentukan skop bagi penjadualan Fair Share. <br /><br />Setiap Kumpulan Sumber mengekalkan sempadan pengiraan yang berasingan di mana Penjadual Fair Share menilai dan membandingkan keutamaan pengguna. <br /><br />Pengiraan keutamaan diasingkan kepada pengguna dalam kumpulan yang sama. Pengguna dalam Kumpulan Sumber yang berbeza tidak memberi kesan kepada keutamaan penjadualan satu sama lain.",
+    "ResourceWeights": "Berat Sumber",
+    "ResourceWeightsDescription": "Berat bagi setiap jenis sumber.",
+    "SchedulerDescription": "Fair Share Scheduler ialah kaedah penjadualan yang menentukan keutamaan pelaksanaan sesi berdasarkan penggunaan sumber terdahulu. Ia memberi keutamaan lebih tinggi kepada pengguna yang telah menggunakan lebih sedikit sumber, memastikan semua pengguna dapat mengakses sumber secara adil dari masa ke masa.\n<br /> <br />\nPentadbir boleh menetapkan wajaran pada peringkat Domain, Projek, dan Pengguna untuk memperuntukkan lebih banyak sumber kepada kumpulan tertentu. Keutamaan dinyatakan sebagai nilai antara 0.0 dan 1.0, di mana nilai yang lebih dekat dengan 1.0 menunjukkan keutamaan yang lebih tinggi.",
+    "User": "Pengguna",
+    "Weight": "Wajaran",
+    "step": {
+      "Description": "Tetapan Fair Share dilakukan mengikut kumpulan sumber dan mengikut hierarki domain, projek, dan pengguna. Untuk membuat tetapan pada peringkat anak, klik setiap entri dalam jadual."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Kunci akses",
     "Active": "Aktif",
@@ -2260,6 +2295,7 @@
       "Environments": "Persekitaran",
       "Environments&Presets": "Persekitaran & Pratetap",
       "Experiments": "Eksperimen",
+      "FairShare": "Bahagian Saksama",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Pertama",
       "FullName": "Nama penuh",

@@ -8,7 +8,7 @@ interface BAIAlertIconWithTooltipProps extends Omit<TooltipProps, 'children'> {
 }
 const BAIAlertIconWithTooltip = ({
   iconProps,
-  type = 'error',
+  type,
   ...tooltipProps
 }: BAIAlertIconWithTooltipProps) => {
   const { token } = theme.useToken();
@@ -16,7 +16,12 @@ const BAIAlertIconWithTooltip = ({
     <Tooltip {...tooltipProps}>
       <CircleAlertIcon
         style={{
-          color: type === 'warning' ? token.colorWarning : token.colorError,
+          color:
+            type === 'warning'
+              ? token.colorWarning
+              : type === 'error'
+                ? token.colorError
+                : undefined,
           cursor: 'help',
         }}
         {...iconProps}

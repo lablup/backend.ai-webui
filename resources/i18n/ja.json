@@ -4,6 +4,9 @@
     "ActiveAgents": "アクティブなエージェント",
     "ActiveAgentsTooltip": "現在システムで実行されているすべてのエージェントの概要を示しています。"
   },
+  "adminSession": {
+    "PendingSessions": "保留中のセッション"
+  },
   "agent": {
     "AcceleratorAllocations": "アクセラレータの割り当て",
     "Agent": "代理店",
@@ -736,6 +739,38 @@
     "VFolder": "フォルダ",
     "ValueRequired": "ValueRequired"
   },
+  "fairShare": {
+    "Allocations": "割り当て",
+    "Days": "日",
+    "DecayUnitDays": "減衰単位",
+    "DecayUnitDaysDescription": "利用状況を集計する期間（日数）",
+    "DefaultWeight": "既定の重み",
+    "DefaultWeightDescription": "重みが指定されていないドメイン、プロジェクト、ユーザーに適用されるデフォルト値。",
+    "Domain": "ドメイン",
+    "FairShareSetting": "フェアシェア設定",
+    "FairShareSettingDescription": "変更は Fair Share の計算にすぐには反映されません。計算サイクルのため、反映までに約5分かかる場合があります。",
+    "FairShareSettingTitleWithName": "フェアシェア設定: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "リソースグループ「{{resourceGroupName}}」のフェアシェア設定が更新されました。",
+    "GoToSubComponent": "{{sub}}に移動",
+    "HalfLifeDays": "半減期",
+    "HalfLifeDaysDescription": "使用量の反映率が半減する期間。7日と設定すると、7日前の使用量は50%、14日前は25%で計算されます。減衰単位の倍数で指定する必要があります。",
+    "LookbackDays": "参照期間",
+    "LookbackDaysDescription": "Fair Share計算に反映される利用履歴の期間。この期間より前の利用は計算に含まれません。半減期の倍数で指定する必要があります。",
+    "Name": "名前",
+    "PleaseInputFieldWithFieldName": "{{field}}を入力してください",
+    "Project": "プロジェクト",
+    "ResourceGroup": "リソースグループ",
+    "ResourceGroupDescription": "リソースグループはフェアシェアスケジューリングの適用範囲を定義します。<br /><br />各リソースグループは、フェアシェアスケジューラがユーザーの優先度を評価・比較する独立した計算境界を維持します。<br /><br />優先度の計算は同じグループ内のユーザーに限定されます。別のリソースグループに属するユーザー同士は互いのスケジューリング優先度に影響を及ぼしません。",
+    "ResourceWeights": "リソース重み",
+    "ResourceWeightsDescription": "各リソースタイプの重み",
+    "SchedulerDescription": "フェアシェアスケジューラは、過去のリソース使用状況に基づいてセッションの実行優先度を決定するスケジューリング方式です。これまでのリソース消費が少ないユーザーに高い優先度を割り当て、すべてのユーザーが時間をかけて公平にリソースへアクセスできるようにします。\n<br /> <br />\n管理者はドメイン、プロジェクト、ユーザーの各レベルで重みを設定して特定のグループにより多くのリソースを割り当てることができます。優先度は0.0から1.0の範囲の値で表され、1.0に近いほど優先度が高くなります。",
+    "User": "ユーザー",
+    "Weight": "重み",
+    "step": {
+      "Description": "Fair Share設定はリソースグループごとに、ドメイン・プロジェクト・ユーザーの階層構造に従って行われます。下位設定に移動するには、テーブルの各項目をクリックしてください。"
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "アクセスキー",
     "Active": "アクティブ",
@@ -2261,6 +2296,7 @@
       "Environments": "環境設定",
       "Environments&Presets": "環境とプリセット",
       "Experiments": "実験",
+      "FairShare": "公平配分",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "最初",
       "FullName": "フルネーム",

@@ -87,8 +87,8 @@ const ReservoirArtifactDetailPage = React.lazy(
 );
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
-
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
+const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
 
 /**
  * MainLayout children routes - these are the actual page routes
@@ -347,6 +347,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         </Suspense>
       );
     },
+  },
+  {
+    path: '/admin-session',
+    handle: { labelKey: 'webui.menu.Sessions' },
+    Component: AdminSessionPage,
   },
   {
     path: '/environment',

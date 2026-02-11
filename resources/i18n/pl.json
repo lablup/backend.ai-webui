@@ -4,6 +4,9 @@
     "ActiveAgents": "Aktywni agenci",
     "ActiveAgentsTooltip": "Pokazuje przegląd w skrócie wszystkich agentów obecnie działających w systemie."
   },
+  "adminSession": {
+    "PendingSessions": "Oczekujące sesje"
+  },
   "agent": {
     "AcceleratorAllocations": "Przydziały akceleratorów",
     "Agent": "Agent",
@@ -736,6 +739,38 @@
     "VFolder": "Falcówka",
     "ValueRequired": "Wymagana wartość"
   },
+  "fairShare": {
+    "Allocations": "Alokacja",
+    "Days": "dni",
+    "DecayUnitDays": "Jednostka wygasania",
+    "DecayUnitDaysDescription": "Okres (w dniach) agregowania zużycia.",
+    "DefaultWeight": "Domyślna waga",
+    "DefaultWeightDescription": "Wartość domyślna stosowana dla domen, projektów i użytkowników bez określonej wagi.",
+    "Domain": "Domena",
+    "FairShareSetting": "Ustawienie sprawiedliwego przydziału",
+    "FairShareSettingDescription": "Zmiany nie są od razu uwzględniane w obliczeniach Fair Share; ich zastosowanie może potrwać około 5 minut z powodu cyklu obliczeniowego.",
+    "FairShareSettingTitleWithName": "Konfiguracja Fair Share: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Ustawienia sprawiedliwego przydziału dla grupy zasobów {{resourceGroupName}} zostały zaktualizowane.",
+    "GoToSubComponent": "Przenieś do {{sub}}",
+    "HalfLifeDays": "Okres półtrwania",
+    "HalfLifeDaysDescription": "Okres, w którym współczynnik odzwierciedlania użycia zmniejsza się o połowę. Jeśli ustawiony na 7 dni, użycie sprzed 7 dni naliczane jest w 50%, a sprzed 14 dni w 25%. Musi być ustawiony jako wielokrotność jednostki zaniku.",
+    "LookbackDays": "Okres wsteczny",
+    "LookbackDaysDescription": "Zakres historii użycia uwzględniany w obliczeniach Fair Share. Użycie sprzed tego okresu nie jest uwzględniane. Musi być ustawiony jako wielokrotność okresu półtrwania.",
+    "Name": "Nazwa",
+    "PleaseInputFieldWithFieldName": "Proszę wprowadzić {{field}}",
+    "Project": "Projekt",
+    "ResourceGroup": "Grupa zasobów",
+    "ResourceGroupDescription": "Grupy zasobów określają zakres planowania Fair Share. <br /><br />Każda grupa zasobów utrzymuje niezależną granicę obliczeń, w obrębie której planista Fair Share ocenia i porównuje priorytety użytkowników. <br /><br />Obliczania priorytetów są izolowane do użytkowników w tej samej grupie. Użytkownicy z oddzielnych grup zasobów nie wpływają na priorytety planowania innych.",
+    "ResourceWeights": "Waga zasobu",
+    "ResourceWeightsDescription": "Waga dla każdego typu zasobu.",
+    "SchedulerDescription": "Fair Share Scheduler to metoda planowania, która ustala priorytet wykonywania sesji na podstawie historycznego zużycia zasobów. Przyznaje wyższy priorytet użytkownikom, którzy zużyli mniej zasobów, zapewniając sprawiedny dostęp do zasobów dla wszystkich użytkowników w czasie.\n<br /> <br />\nAdministratorzy mogą konfigurować wagi na poziomie domeny, projektu i użytkownika, aby przydzielać więcej zasobów konkretnym grupom. Priorytet jest wyrażany jako wartość między 0.0 a 1.0, gdzie wartości bliższe 1.0 oznaczają wyższy priorytet.",
+    "User": "Użytkownik",
+    "Weight": "waga",
+    "step": {
+      "Description": "Ustawienia Fair Share są konfigurowane dla każdej grupy zasobów zgodnie z hierarchią domeny, projektu i użytkownika. Aby przejść do ustawień podrzędnych, kliknij poszczególne elementy w tabeli."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Klucz dostępu",
     "Active": "Aktywny",
@@ -2261,6 +2296,7 @@
       "Environments": "Środowiska",
       "Environments&Presets": "Środowiska i ustawienia wstępne",
       "Experiments": "Eksperymenty",
+      "FairShare": "Sprawiedliwy udział",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Pierwsza",
       "FullName": "Pełne imię i nazwisko",

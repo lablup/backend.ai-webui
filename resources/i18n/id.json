@@ -4,6 +4,9 @@
     "ActiveAgents": "Agen aktif",
     "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
   },
+  "adminSession": {
+    "PendingSessions": "Sesi Tertunda"
+  },
   "agent": {
     "AcceleratorAllocations": "Alokasi Akselerator",
     "Agent": "Agen",
@@ -736,6 +739,38 @@
     "VFolder": "Map",
     "ValueRequired": "NilaiDiperlukan"
   },
+  "fairShare": {
+    "Allocations": "Alokasi",
+    "Days": "hari",
+    "DecayUnitDays": "Satuan Peluruhan",
+    "DecayUnitDaysDescription": "Periode (dalam hari) untuk mengagregasi penggunaan.",
+    "DefaultWeight": "Bobot bawaan",
+    "DefaultWeightDescription": "Nilai default yang diterapkan pada Domain, Proyek, dan Pengguna yang tidak memiliki bobot yang ditentukan.",
+    "Domain": "Domain",
+    "FairShareSetting": "Pengaturan Pembagian Adil",
+    "FairShareSettingDescription": "Perubahan tidak langsung tercermin dalam perhitungan Fair Share dan mungkin membutuhkan waktu sekitar 5 menit karena siklus perhitungannya.",
+    "FairShareSettingTitleWithName": "Pengaturan Fair Share: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Pengaturan fair share untuk grup sumber daya {{resourceGroupName}} telah diperbarui.",
+    "GoToSubComponent": "Pindahkan ke {{sub}}",
+    "HalfLifeDays": "Waktu Paruh",
+    "HalfLifeDaysDescription": "Periode di mana tingkat refleksi penggunaan berkurang menjadi setengahnya. Jika diatur ke 7 hari, penggunaan 7 hari lalu dihitung 50% dan penggunaan 14 hari lalu 25%. Harus ditetapkan sebagai kelipatan unit peluruhan.",
+    "LookbackDays": "Periode mundur",
+    "LookbackDaysDescription": "Rentang riwayat penggunaan yang tercermin dalam perhitungan Fair Share. Penggunaan sebelum periode ini dikecualikan dari perhitungan. Harus diatur sebagai kelipatan waktu paruh.",
+    "Name": "Nama",
+    "PleaseInputFieldWithFieldName": "Silakan masukkan {{field}}",
+    "Project": "Proyek",
+    "ResourceGroup": "Grup Sumber Daya",
+    "ResourceGroupDescription": "Grup Sumber Daya menentukan ruang lingkup untuk penjadwalan Fair Share. <br /><br />Setiap Grup Sumber Daya mempertahankan batas perhitungan tersendiri di mana Penjadwal Fair Share mengevaluasi dan membandingkan prioritas pengguna. <br /><br />Perhitungan prioritas terisolasi pada pengguna dalam grup yang sama. Pengguna di Grup Sumber Daya yang berbeda tidak saling memengaruhi prioritas penjadwalan.",
+    "ResourceWeights": "Bobot Sumber Daya",
+    "ResourceWeightsDescription": "Bobot untuk setiap jenis sumber daya.",
+    "SchedulerDescription": "Fair Share Scheduler adalah metode penjadwalan yang menentukan prioritas eksekusi sesi berdasarkan penggunaan sumber daya di masa lalu. Metode ini memberikan prioritas lebih tinggi kepada pengguna yang telah menggunakan lebih sedikit sumber daya, memastikan semua pengguna dapat mengakses sumber daya secara adil dari waktu ke waktu.\n<br /> <br />\nAdministrator dapat mengonfigurasi bobot pada tingkat Domain, Proyek, dan Pengguna untuk mengalokasikan lebih banyak sumber daya ke grup tertentu. Prioritas dinyatakan sebagai nilai antara 0.0 dan 1.0, di mana nilai yang mendekati 1.0 menunjukkan prioritas lebih tinggi.",
+    "User": "Pengguna",
+    "Weight": "Bobot",
+    "step": {
+      "Description": "Pengaturan Fair Share dilakukan per grup sumber daya sesuai hierarki domain, proyek, dan pengguna. Untuk pengaturan tingkat bawah, klik setiap entri pada tabel untuk membukanya."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Kunci Akses",
     "Active": "Aktif",
@@ -2261,6 +2296,7 @@
       "Environments": "Lingkungan",
       "Environments&Presets": "Lingkungan & Preset",
       "Experiments": "Eksperimen",
+      "FairShare": "Alokasi Adil",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Pertama",
       "FullName": "Nama lengkap",

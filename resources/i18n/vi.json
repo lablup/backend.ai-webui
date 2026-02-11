@@ -4,6 +4,9 @@
     "ActiveAgents": "Đại lý tích cực",
     "ActiveAgentsTooltip": "Hiển thị tổng quan at-a-glance của tất cả các tác nhân hiện đang chạy trong hệ thống."
   },
+  "adminSession": {
+    "PendingSessions": "Phiên đang chờ"
+  },
   "agent": {
     "AcceleratorAllocations": "Phân bổ thiết bị tăng tốc",
     "Agent": "Đại lý",
@@ -737,6 +740,38 @@
     "VFolder": "Thư mục",
     "ValueRequired": "Giá trị bắt buộc"
   },
+  "fairShare": {
+    "Allocations": "Phân bổ",
+    "Days": "ngày",
+    "DecayUnitDays": "Đơn vị suy giảm",
+    "DecayUnitDaysDescription": "Khoảng thời gian (ngày) để tổng hợp mức sử dụng.",
+    "DefaultWeight": "Trọng số mặc định",
+    "DefaultWeightDescription": "Giá trị mặc định được áp dụng cho Domains, Projects và Users khi không có trọng số được chỉ định.",
+    "Domain": "Miền",
+    "FairShareSetting": "Cài đặt phân bổ công bằng",
+    "FairShareSettingDescription": "Các thay đổi sẽ không được phản ánh ngay lập tức trong tính toán Fair Share và có thể mất khoảng 5 phút do chu kỳ tính toán.",
+    "FairShareSettingTitleWithName": "Cấu hình Fair Share: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Cài đặt phân bổ công bằng cho nhóm tài nguyên {{resourceGroupName}} đã được cập nhật.",
+    "GoToSubComponent": "Di chuyển đến {{sub}}",
+    "HalfLifeDays": "Thời gian bán rã",
+    "HalfLifeDaysDescription": "Khoảng thời gian mà tỷ lệ phản ánh mức sử dụng giảm một nửa. Nếu đặt là 7 ngày, mức sử dụng cách đây 7 ngày được tính là 50% và cách đây 14 ngày là 25%. Phải được đặt thành bội số của đơn vị suy giảm.",
+    "LookbackDays": "Khoảng thời gian xem lại",
+    "LookbackDaysDescription": "Phạm vi lịch sử sử dụng được phản ánh trong các phép tính Fair Share. Lượng sử dụng trước khoảng thời gian này sẽ không được tính vào phép tính. Giá trị phải được đặt là bội số của thời gian bán rã.",
+    "Name": "Tên",
+    "PleaseInputFieldWithFieldName": "Vui lòng nhập {{field}}",
+    "Project": "Dự án",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "ResourceGroupDescription": "Nhóm Tài nguyên xác định phạm vi áp dụng cho lập lịch Fair Share. <br /><br /> Mỗi Nhóm Tài nguyên duy trì một ranh giới tính toán độc lập, nơi Trình lập lịch Fair Share đánh giá và so sánh mức ưu tiên của người dùng. <br /><br />Các phép tính ưu tiên được cô lập cho người dùng trong cùng một nhóm. Người dùng thuộc các Nhóm Tài nguyên khác nhau không ảnh hưởng tới ưu tiên lập lịch của nhau.",
+    "ResourceWeights": "Trọng số tài nguyên",
+    "ResourceWeightsDescription": "Trọng số cho từng loại tài nguyên.",
+    "SchedulerDescription": "Bộ lập lịch Fair Share là một phương pháp lập lịch xác định thứ tự ưu tiên thực thi phiên dựa trên mức sử dụng tài nguyên trong quá khứ. Nó gán ưu tiên cao hơn cho người dùng đã sử dụng ít tài nguyên hơn, đảm bảo mọi người dùng có thể truy cập tài nguyên một cách công bằng theo thời gian.\n\nQuản trị viên có thể cấu hình trọng số ở cấp miền (Domain), dự án (Project) và người dùng (User) để phân bổ nhiều tài nguyên hơn cho các nhóm cụ thể. Mức ưu tiên được biểu thị bằng giá trị từ 0.0 đến 1.0, trong đó các giá trị càng gần 1.0 thì ưu tiên càng cao.",
+    "User": "Người dùng",
+    "Weight": "Trọng số",
+    "step": {
+      "Description": "Cài đặt Fair Share được thực hiện theo cấu trúc phân cấp (miền, dự án, người dùng) cho từng nhóm tài nguyên. Để truy cập các cài đặt cấp con, hãy nhấp vào mỗi mục trong bảng."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Khóa truy cập",
     "Active": "Tích cực",
@@ -2262,6 +2297,7 @@
       "Environments": "Môi trường",
       "Environments&Presets": "Môi trường & Cài đặt sẵn",
       "Experiments": "Thí nghiệm",
+      "FairShare": "Phân bổ công bằng",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Trang đầu",
       "FullName": "Họ và tên",

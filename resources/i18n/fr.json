@@ -4,6 +4,9 @@
     "ActiveAgents": "Agents actifs",
     "ActiveAgentsTooltip": "Affiche un aperçu de tous les agents qui s'exécute actuellement dans le système."
   },
+  "adminSession": {
+    "PendingSessions": "Sessions en attente"
+  },
   "agent": {
     "AcceleratorAllocations": "Allocations d'accélérateurs",
     "Agent": "Agent",
@@ -737,6 +740,38 @@
     "VFolder": "Dossier",
     "ValueRequired": "ValeurRequis"
   },
+  "fairShare": {
+    "Allocations": "Allocation",
+    "Days": "jours",
+    "DecayUnitDays": "Unité de décroissance",
+    "DecayUnitDaysDescription": "Période en jours pour l'agrégation de l'utilisation.",
+    "DefaultWeight": "Poids par défaut",
+    "DefaultWeightDescription": "La valeur par défaut appliquée aux domaines, projets et utilisateurs sans poids spécifié.",
+    "Domain": "Domaine",
+    "FairShareSetting": "Paramètre de partage équitable",
+    "FairShareSettingDescription": "Les modifications ne sont pas prises en compte immédiatement dans les calculs de Fair Share et peuvent mettre environ 5 minutes en raison du cycle de calcul.",
+    "FairShareSettingTitleWithName": "Configuration de Fair Share : {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "Les paramètres de partage équitable du groupe de ressources {{resourceGroupName}} ont été mis à jour.",
+    "GoToSubComponent": "Déplacer vers {{sub}}",
+    "HalfLifeDays": "Demi-vie",
+    "HalfLifeDaysDescription": "La période sur laquelle le taux de pondération de l'utilisation est réduit de moitié. Par exemple, si elle est réglée à 7 jours, l'utilisation d'il y a 7 jours est prise en compte à 50 % et celle d'il y a 14 jours à 25 %. Doit être définie comme un multiple de l'unité de décroissance.",
+    "LookbackDays": "Période d'historique",
+    "LookbackDaysDescription": "La période d'historique d'utilisation prise en compte dans les calculs de Fair Share. Les usages antérieurs à cette période sont exclus des calculs. Doit être définie comme un multiple de la demi-vie.",
+    "Name": "Nom",
+    "PleaseInputFieldWithFieldName": "Veuillez saisir {{field}}",
+    "Project": "Projet",
+    "ResourceGroup": "Groupe de ressources",
+    "ResourceGroupDescription": "Les Groupes de ressources définissent le périmètre de l'ordonnancement Fair Share. <br /><br />Chaque Groupe de ressources dispose d'un périmètre de calcul indépendant dans lequel l'ordonnanceur Fair Share évalue et compare les priorités des utilisateurs. <br /><br />Les calculs de priorité sont isolés aux utilisateurs appartenant au même groupe. Les utilisateurs de Groupes de ressources distincts n'influencent pas la priorité d'ordonnancement des autres.",
+    "ResourceWeights": "Poids de la ressource",
+    "ResourceWeightsDescription": "Le poids de chaque type de ressource.",
+    "SchedulerDescription": "L'Ordonnanceur Fair Share est une méthode d'ordonnancement qui détermine la priorité d'exécution des sessions en fonction de l'historique d'utilisation des ressources. Il attribue une priorité plus élevée aux utilisateurs ayant consommé moins de ressources, garantissant que tous les utilisateurs puissent accéder aux ressources de manière équitable au fil du temps.\n<br /> <br />\nLes administrateurs peuvent configurer des poids aux niveaux Domaine, Projet et Utilisateur pour allouer davantage de ressources à certains groupes. La priorité est exprimée par une valeur comprise entre 0.0 et 1.0, les valeurs proches de 1.0 indiquant une priorité plus élevée.",
+    "User": "Utilisateur",
+    "Weight": "poids",
+    "step": {
+      "Description": "Les paramètres Fair Share sont définis par groupe de ressources selon la hiérarchie domaine → projet → utilisateur. Pour accéder aux niveaux inférieurs, cliquez sur une ligne du tableau."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Clef d'accès",
     "Active": "Actif",
@@ -2262,6 +2297,7 @@
       "Environments": "Environnements",
       "Environments&Presets": "Environnements et préréglages",
       "Experiments": "Expériences",
+      "FairShare": "Partage équitable",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "Première",
       "FullName": "Nom et prénom",

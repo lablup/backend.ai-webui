@@ -213,7 +213,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               hasAdminCategoryRole && {
                 // Go to first page of admin setting pages.
                 label: (
-                  <WebUILink to="/credential">
+                  <WebUILink to="/admin-session">
                     {t('webui.menu.AdminSettings')}
                   </WebUILink>
                 ),

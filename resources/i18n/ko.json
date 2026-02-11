@@ -4,6 +4,9 @@
     "ActiveAgents": "활성 에이전트",
     "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."
   },
+  "adminSession": {
+    "PendingSessions": "대기 세션"
+  },
   "agent": {
     "AcceleratorAllocations": "가속기 할당",
     "Agent": "에이전트",
@@ -739,6 +742,38 @@
     "VFolder": "폴더",
     "ValueRequired": "값이 필요합니다."
   },
+  "fairShare": {
+    "Allocations": "할당 정보",
+    "Days": "일",
+    "DecayUnitDays": "집계 단위",
+    "DecayUnitDaysDescription": "사용량을 집계하는 일 단위 기간입니다.",
+    "DefaultWeight": "가중치 기본값",
+    "DefaultWeightDescription": "가중치가 지정되지 않은 도메인, 프로젝트, 사용자에 적용되는 가중치 기본값입니다.",
+    "Domain": "도메인",
+    "FairShareSetting": "Fair Share 설정",
+    "FairShareSettingDescription": "변경사항은 Fair Share 계산에 바로 반영되지 않으며, 계산 주기에 따라 약 5분정도 소요될 수 있습니다.",
+    "FairShareSettingTitleWithName": "Fair Share 설정: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "{{resourceGroupName}} 자원 그룹의 fair share 설정이 수정되었습니다.",
+    "GoToSubComponent": "하위 {{sub}} 확인",
+    "HalfLifeDays": "반감기",
+    "HalfLifeDaysDescription": "과거 사용량의 반영 비율이 절반으로 줄어드는 기간입니다. 7일로 설정하면 7일 전 사용량은 50%, 14일 전 사용량은 25%의 비율로 계산됩니다. 집계 단위의 배수로 설정해야 합니다.",
+    "LookbackDays": "집계 기간",
+    "LookbackDaysDescription": "Fair Share 계산에 반영되는 사용량 기록의 조회 범위입니다. 이 기간 이전의 사용량은 계산에서 제외됩니다. 반감기의 배수로 설정해야 합니다.",
+    "Name": "이름",
+    "PleaseInputFieldWithFieldName": "{{field}}을(를) 입력해주세요.",
+    "Project": "프로젝트",
+    "ResourceGroup": "자원 그룹",
+    "ResourceGroupDescription": "자원 그룹에서는 Fair Share 알고리즘의 핵심 파라미터들을 설정할 수 있습니다. <br /><br />Fair Share 스케줄러는 각 자원 그룹별로 독립적인 계산 범위를 가지며, 동일한 자원 그룹 내 사용자들 간의 우선순위를 비교합니다. <br /><br />서로 다른 자원 그룹에 속한 사용자들은 서로의 우선순위에 영향을 주지 않습니다.",
+    "ResourceWeights": "자원별 가중치",
+    "ResourceWeightsDescription": "자원 타입별 가중치를 설정합니다.",
+    "SchedulerDescription": "Fair Share Scheduler는 과거 리소스 사용 이력을 기반으로 세션 실행 우선순위를 결정하는 스케줄링 방식입니다. 리소스를 적게 사용한 사용자에게 더 높은 우선순위를 부여하여 장기적으로 모든 사용자가 공정하게 리소스를 사용할 수 있도록 합니다.\n<br /> <br />\n관리자는 Domain, Project, User 단위로 가중치를 설정하여 특정 그룹에 더 많은 리소스 할당량을 부여할 수 있습니다. 우선순위는 0.0에서 1.0 사이의 값으로 표현되며, 1.0에 가까울수록 높은 우선순위를 의미합니다.",
+    "User": "사용자",
+    "Weight": "가중치",
+    "step": {
+      "Description": "Fair Share 설정은 자원 그룹별로 도메인, 프로젝트, 사용자 계층 구조에 따라 이루어집니다. 하위 설정을 위해서는 테이블의 각 항목을 클릭하여 이동하세요."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "접근키",
     "Active": "활성",
@@ -2265,6 +2300,7 @@
       "Environments": "실행 환경",
       "Environments&Presets": "실행환경 및 프리셋",
       "Experiments": "실험",
+      "FairShare": "Fair Share",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "첫",
       "FullName": "사용자 이름",

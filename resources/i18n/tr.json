@@ -4,6 +4,9 @@
     "ActiveAgents": "Aktif ajanlar",
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
   },
+  "adminSession": {
+    "PendingSessions": "Bekleyen Oturumlar"
+  },
   "agent": {
     "AcceleratorAllocations": "Hızlandırıcı Tahsisleri",
     "Agent": "Ajan",
@@ -737,6 +740,38 @@
     "VFolder": "Dosya",
     "ValueRequired": "DeğerGerekli"
   },
+  "fairShare": {
+    "Allocations": "Tahsis",
+    "Days": "günler",
+    "DecayUnitDays": "Azalma Birimi",
+    "DecayUnitDaysDescription": "Kullanımın toplulaştırılacağı dönem (gün)",
+    "DefaultWeight": "Varsayılan Ağırlık",
+    "DefaultWeightDescription": "Domain'lere, Projelere ve Kullanıcılara ağırlık belirtilmemişse uygulanan varsayılan değer",
+    "Domain": "Etki Alanı",
+    "FairShareSetting": "Adil Paylaşım Ayarı",
+    "FairShareSettingDescription": "Değişiklikler Fair Share hesaplamalarına hemen yansımaz ve hesaplama döngüsü nedeniyle yaklaşık 5 dakika sürebilir.",
+    "FairShareSettingTitleWithName": "Adil Paylaşım Yapılandırması: {{name}}",
+    "FairShareSettingsSuccessfullyUpdated": "{{resourceGroupName}} kaynak grubu için Fair share ayarları güncellendi.",
+    "GoToSubComponent": "Şuraya taşı: {{sub}}",
+    "HalfLifeDays": "Yarı ömür",
+    "HalfLifeDaysDescription": "Kullanım yansıma oranının yarıya indiği süre. 7 gün olarak ayarlanırsa, 7 gün önceki kullanım %50, 14 gün önceki kullanım %25 olarak hesaplanır. Azalma biriminin katı olarak ayarlanmalıdır.",
+    "LookbackDays": "Geriye Bakış",
+    "LookbackDaysDescription": "Fair Share hesaplamalarına yansıtılan kullanım geçmişi aralığı. Bu dönem öncesindeki kullanım hesaplamalara dahil edilmez. Yarılanma süresinin katı olarak ayarlanmalıdır.",
+    "Name": "Ad",
+    "PleaseInputFieldWithFieldName": "Lütfen {{field}} girin",
+    "Project": "Proje",
+    "ResourceGroup": "Kaynak Grubu",
+    "ResourceGroupDescription": "Kaynak Grupları Fair Share zamanlaması için kapsamı belirler. <br /><br />Her Kaynak Grubu, Fair Share zamanlayıcısının kullanıcı önceliklerini değerlendirdiği ve karşılaştırdığı bağımsız bir hesaplama sınırı korur. <br /><br />Öncelik hesaplamaları aynı grup içindeki kullanıcılarla sınırlıdır. Ayrı Kaynak Gruplarındaki kullanıcılar birbirlerinin zamanlama önceliğini etkilemez.",
+    "ResourceWeights": "Kaynak Ağırlığı",
+    "ResourceWeightsDescription": "Her kaynak türü için ağırlık.",
+    "SchedulerDescription": "Adil Paylaşım Zamanlayıcısı, oturum yürütme önceliğini geçmiş kaynak kullanımına göre belirleyen bir zamanlama yöntemidir. Daha az kaynak tüketmiş kullanıcılara daha yüksek öncelik vererek tüm kullanıcıların zaman içinde kaynaklara adil erişimini sağlar.\n<br /> <br />\nYöneticiler belirli gruplara daha fazla kaynak tahsis etmek için Domain, Proje ve Kullanıcı düzeylerinde ağırlıkları yapılandırabilir. Öncelik 0.0 ile 1.0 arasında bir değerle ifade edilir; 1.0'a yakın değerler daha yüksek önceliği gösterir.",
+    "User": "Kullanıcı",
+    "Weight": "ağırlık",
+    "step": {
+      "Description": "Fair Share ayarları, kaynak grubu bazında domain, proje ve kullanıcı hiyerarşisine göre düzenlenir. Alt düzey ayarlara erişmek için tablodaki ilgili öğeye tıklayın."
+    }
+  },
+  "fairShrae": {},
   "general": {
     "AccessKey": "Erişim anahtarı",
     "Active": "Aktif",
@@ -2262,6 +2297,7 @@
       "Environments": "ortamlar",
       "Environments&Presets": "Ortamlar ve Ön Ayarlar",
       "Experiments": "deneyler",
+      "FairShare": "Adil Paylaşım",
       "FastTrack": "FastTrack",
       "FirstPageNameAlias": "İlk",
       "FullName": "Ad Soyad",
