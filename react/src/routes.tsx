@@ -363,7 +363,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'webui.menu.Scheduler' },
     Component: () => {
       const baiClient = useSuspendedBackendaiClient();
-      return baiClient?.supports('pending-session-list') ? (
+      return baiClient?.supports('fair-share-scheduling') ? (
         <Suspense fallback={<Skeleton active />}>
           <SchedulerPage />
           <SessionDetailAndContainerLogOpenerLegacy />

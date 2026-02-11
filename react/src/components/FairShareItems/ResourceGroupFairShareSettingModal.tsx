@@ -3,6 +3,7 @@ import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIAlert,
+  BAICard,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -21,7 +22,7 @@ import {
 
 interface ResourceGroupFairShareTableProps extends BAIModalProps {
   resourceGroupNodeFrgmt: ResourceGroupFairShareSettingModalFragment$key | null;
-  onRequestClose?: () => void;
+  onRequestClose?: (success: boolean) => void;
 }
 
 const ResourceGroupFairShareSettingModal: React.FC<
@@ -45,10 +46,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
           lookbackDays
           defaultWeight
           resourceWeights {
-            entries {
-              resourceType
-              quantity
-            }
+            resourceType
+            weight
+            usesDefault
           }
         }
       }
@@ -63,7 +63,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
     mutation ResourceGroupFairShareSettingModalMutation(
       $input: UpdateResourceGroupFairShareSpecInput!
     ) {
-      updateResourceGroupFairShareSpec(input: $input) {
+      adminUpdateResourceGroupFairShareSpec(input: $input) {
         resourceGroup {
           id
           name
@@ -80,16 +80,16 @@ const ResourceGroupFairShareSettingModal: React.FC<
     >(null);
 
   const INITIAL_FORM_VALUES = {
-    resourceGroup: resourceGroup?.name ?? '',
+    resourceGroupName: resourceGroup?.name ?? '',
     decayUnitDays: resourceGroup?.fairShareSpec?.decayUnitDays ?? 1,
     halfLifeDays: resourceGroup?.fairShareSpec?.halfLifeDays ?? 7,
     lookbackDays: resourceGroup?.fairShareSpec?.lookbackDays ?? 28,
     defaultWeight: resourceGroup?.fairShareSpec?.defaultWeight ?? 1,
     resourceWeights: _.reduce(
-      resourceGroup?.fairShareSpec?.resourceWeights?.entries,
+      resourceGroup?.fairShareSpec?.resourceWeights,
       (acc, entry) => {
         if (entry?.resourceType) {
-          acc[entry.resourceType] = entry.quantity;
+          acc[entry.resourceType] = entry.weight;
         }
         return acc;
       },
@@ -102,7 +102,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
       title={t('fairShare.FairShareSettingTitleWithName', {
         name: t('fairShare.ResourceGroup'),
       })}
-      onCancel={onRequestClose}
+      onCancel={() => onRequestClose?.(false)}
       onOk={() => {
         formRef.current
           ?.validateFields()
@@ -110,7 +110,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             commitModifyResourceGroupFairShareSpec({
               variables: {
                 input: {
-                  resourceGroup: resourceGroup?.name ?? '',
+                  resourceGroupName: resourceGroup?.name ?? '',
                   decayUnitDays: response?.decayUnitDays,
                   halfLifeDays: response?.halfLifeDays,
                   lookbackDays: response?.lookbackDays,
@@ -118,14 +118,14 @@ const ResourceGroupFairShareSettingModal: React.FC<
                   resourceWeights: _.map(
                     response?.resourceWeights || {},
                     (quantity, resourceType) => ({
-                      resourceType,
+                      resourceType: resourceType,
                       weight: quantity,
                     }),
                   ),
                 },
               },
               onCompleted: (res, errors) => {
-                if (!res?.updateResourceGroupFairShareSpec) {
+                if (!res?.adminUpdateResourceGroupFairShareSpec) {
                   message.error(t('dialog.ErrorOccurred'));
                   return;
                 }
@@ -139,7 +139,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 message.success(
                   t('fairShare.FairShareSettingsSuccessfullyUpdated'),
                 );
-                onRequestClose?.();
+                onRequestClose?.(true);
               },
               onError: (error) => {
                 message.error(error.message);
@@ -165,51 +165,32 @@ const ResourceGroupFairShareSettingModal: React.FC<
       <Form ref={formRef} layout="vertical" initialValues={INITIAL_FORM_VALUES}>
         <Form.Item
           label={t('fairShare.ResourceGroup')}
-          name="resourceGroup"
+          name="resourceGroupName"
           required
         >
           <Input disabled />
         </Form.Item>
 
         <Row gutter={[24, 16]}>
-          <Col span={12} style={{ alignSelf: 'start' }}>
-            <Form.Item
-              label={
-                <BAIFlex gap="xxs">
-                  {t('fairShare.DecayUnitDays')}
-                  <QuestionIconWithTooltip
-                    title={t('fairShare.DecayUnitDaysDescription')}
-                  />
-                </BAIFlex>
-              }
-              name="decayUnitDays"
-              rules={[
-                {
-                  required: true,
-                  message: t('fairShare.PleaseInputFieldWithFieldName', {
-                    field: t('fairShare.DecayUnitDays'),
-                  }),
-                },
-                {
-                  validator: (_, value) => {
-                    if (value % 1 !== 0) {
-                      return Promise.reject(
-                        new Error(t('error.OnlyIntegersAreAllowed')),
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <InputNumber
-                min={1}
-                step={1}
-                suffix={t('fairShare.Days')}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
+          <Form.Item
+            hidden
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.DecayUnitDays')}
+                <QuestionIconWithTooltip
+                  title={t('fairShare.DecayUnitDaysDescription')}
+                />
+              </BAIFlex>
+            }
+            name="decayUnitDays"
+          >
+            <InputNumber
+              min={1}
+              step={1}
+              suffix={t('fairShare.Days')}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
           <Col span={12} style={{ alignSelf: 'start' }}>
             <Form.Item
               label={
@@ -312,13 +293,21 @@ const ResourceGroupFairShareSettingModal: React.FC<
         </Row>
 
         <Form.Item
-          label={t('fairShare.ResourceWeights')}
-          name="resourceWeights"
+          label={
+            <BAIFlex gap="xxs">
+              {t('fairShare.ResourceWeights')}
+              <QuestionIconWithTooltip
+                title={t('fairShare.ResourceWeightsDescription')}
+              />
+            </BAIFlex>
+          }
+          hidden={_.isEmpty(resourceGroup?.fairShareSpec?.resourceWeights)}
         >
-          <Row gutter={[24, 16]}>
-            {_.map(
-              resourceGroup?.fairShareSpec?.resourceWeights?.entries,
-              (entry) => {
+          <BAICard
+            styles={{ body: { paddingBottom: 0, paddingTop: token.padding } }}
+          >
+            <Row gutter={[24, 16]}>
+              {_.map(resourceGroup?.fairShareSpec?.resourceWeights, (entry) => {
                 return (
                   <Col
                     span={12}
@@ -332,21 +321,6 @@ const ResourceGroupFairShareSettingModal: React.FC<
                         _.upperCase(entry?.resourceType || '')
                       }
                       name={['resourceWeights', entry?.resourceType]}
-                      rules={[
-                        {
-                          required: true,
-                          message: t(
-                            'fairShare.PleaseInputFieldWithFieldName',
-                            {
-                              field: `${
-                                _.get(mergedResourceSlots, entry?.resourceType)
-                                  ?.description ||
-                                _.upperCase(entry?.resourceType || '')
-                              } ${t('fairShare.Weight')}`,
-                            },
-                          ),
-                        },
-                      ]}
                     >
                       <InputNumber
                         min={1}
@@ -356,9 +330,9 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     </Form.Item>
                   </Col>
                 );
-              },
-            )}
-          </Row>
+              })}
+            </Row>
+          </BAICard>
         </Form.Item>
       </Form>
     </BAIModal>

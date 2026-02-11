@@ -844,6 +844,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['admin-resource-group-select'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.2.0')) {
+      this._features['fair-share-scheduling'] = true;
+    }
   }
 
   /**

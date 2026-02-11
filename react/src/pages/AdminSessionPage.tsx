@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
+import SessionDetailAndContainerLogOpenerLegacy from 'src/components/SessionDetailAndContainerLogOpenerLegacy';
 import { useWebUINavigate } from 'src/hooks';
 
 const AdminSessionPage: React.FC = () => {
@@ -25,7 +26,7 @@ const AdminSessionPage: React.FC = () => {
       onTabChange={(key) => {
         webUINavigate(
           {
-            pathname: '/scheduler',
+            pathname: '/admin-session',
             search: new URLSearchParams({
               tab: key,
             }).toString(),
@@ -49,6 +50,7 @@ const AdminSessionPage: React.FC = () => {
         {queryParam.tab === 'pending-sessions' && (
           <BAIErrorBoundary>
             <PendingSessionNodeList />
+            <SessionDetailAndContainerLogOpenerLegacy />
           </BAIErrorBoundary>
         )}
       </Suspense>

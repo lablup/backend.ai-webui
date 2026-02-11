@@ -113,11 +113,10 @@ export type FilterProperty = BaseFilterProperty &
     | { defaultOperator?: never; fixedOperator?: never } // No operator preference
   );
 
-export interface BAIGraphQLPropertyFilterProps
-  extends Omit<
-    ComponentProps<typeof BAIFlex>,
-    'value' | 'onChange' | 'defaultValue'
-  > {
+export interface BAIGraphQLPropertyFilterProps extends Omit<
+  ComponentProps<typeof BAIFlex>,
+  'value' | 'onChange' | 'defaultValue'
+> {
   value?: GraphQLFilter;
   onChange?: (value: GraphQLFilter | undefined) => void;
   defaultValue?: GraphQLFilter;
@@ -198,6 +197,26 @@ function generateId(): string {
   return `filter-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
+/**
+ * Builds a nested object from a dot-notation path.
+ * e.g., "project.name" with value { eq: "test" } -> { project: { name: { eq: "test" } } }
+ */
+function buildNestedFilter(path: string, value: any): GraphQLFilter {
+  const keys = path.split('.');
+  if (keys.length === 1) {
+    return { [path]: value };
+  }
+
+  let result: any = {};
+  let current = result;
+  for (let i = 0; i < keys.length - 1; i++) {
+    current[keys[i]] = {};
+    current = current[keys[i]];
+  }
+  current[keys[keys.length - 1]] = value;
+  return result;
+}
+
 function convertConditionsToGraphQLFilter(
   conditions: FilterCondition[],
   filterProperties: FilterProperty[],
@@ -244,9 +263,8 @@ function convertConditionsToGraphQLFilter(
     }
 
     // Create a separate filter object for each condition
-    filters.push({
-      [condition.property]: filterValue,
-    });
+    // Supports dot notation for nested objects (e.g., "project.name" -> { project: { name: value } })
+    filters.push(buildNestedFilter(condition.property, filterValue));
   });
 
   // If there's only one filter, return it directly
@@ -256,6 +274,91 @@ function convertConditionsToGraphQLFilter(
 
   // Multiple filters are combined with specified mode (AND or OR)
   return { [combinationMode]: filters };
+}
+
+/**
+ * Extracts filter conditions from a nested filter object.
+ * Supports dot notation keys like "project.name" which map to { project: { name: value } }
+ */
+function extractNestedConditions(
+  filter: GraphQLFilter,
+  filterProperties: FilterProperty[],
+  currentPath: string = '',
+): FilterCondition[] {
+  const conditions: FilterCondition[] = [];
+
+  Object.keys(filter).forEach((key) => {
+    if (key === 'AND' || key === 'OR' || key === 'NOT' || key === 'DISTINCT')
+      return;
+
+    const fullPath = currentPath ? `${currentPath}.${key}` : key;
+    const filterValue = filter[key];
+
+    // Check if this path matches a property key
+    const propertyConfig = filterProperties.find((p) => p.key === fullPath);
+
+    if (propertyConfig) {
+      // Found a matching property, extract conditions
+      const propertyValueMode =
+        propertyConfig.valueMode ||
+        (propertyConfig.type === 'boolean' ? 'scalar' : 'operator');
+
+      if (propertyValueMode === 'scalar' && typeof filterValue !== 'object') {
+        conditions.push({
+          id: generateId(),
+          property: fullPath,
+          operator: propertyConfig.implicitOperator || 'eq',
+          value: String(filterValue),
+          propertyLabel: propertyConfig.propertyLabel || fullPath,
+          type: propertyConfig.type || 'string',
+        });
+      } else if (filterValue && typeof filterValue === 'object') {
+        Object.keys(filterValue).forEach((operator) => {
+          const value = filterValue[operator];
+          if (value !== null && value !== undefined) {
+            conditions.push({
+              id: generateId(),
+              property: fullPath,
+              operator: operator as FilterOperator,
+              value: Array.isArray(value) ? value.join(', ') : String(value),
+              propertyLabel: propertyConfig.propertyLabel || fullPath,
+              type: propertyConfig.type || 'string',
+            });
+          }
+        });
+      }
+    } else if (filterValue && typeof filterValue === 'object') {
+      // Check if this is a nested object (not an operator object)
+      const keys = Object.keys(filterValue);
+      const isOperatorObject = keys.some((k) =>
+        [
+          'eq',
+          'ne',
+          'lt',
+          'le',
+          'gt',
+          'ge',
+          'contains',
+          'notContains',
+          'startsWith',
+          'endsWith',
+          'ilike',
+          'in',
+          'notIn',
+          'isNull',
+        ].includes(k),
+      );
+
+      if (!isOperatorObject) {
+        // Recursively process nested object
+        conditions.push(
+          ...extractNestedConditions(filterValue, filterProperties, fullPath),
+        );
+      }
+    }
+  });
+
+  return conditions;
 }
 
 function convertGraphQLFilterToConditions(
@@ -278,44 +381,8 @@ function convertGraphQLFilterToConditions(
     return conditions;
   }
 
-  // Process property filters
-  Object.keys(filter).forEach((key) => {
-    if (key === 'AND' || key === 'OR' || key === 'NOT' || key === 'DISTINCT')
-      return;
-
-    const propertyConfig = filterProperties.find((p) => p.key === key);
-    const filterValue = filter[key];
-
-    const propertyValueMode =
-      propertyConfig?.valueMode ||
-      (propertyConfig?.type === 'boolean' ? 'scalar' : 'operator');
-
-    if (propertyValueMode === 'scalar' && typeof filterValue !== 'object') {
-      // Scalar value directly
-      conditions.push({
-        id: generateId(),
-        property: key,
-        operator: propertyConfig?.implicitOperator || 'eq',
-        value: String(filterValue),
-        propertyLabel: propertyConfig?.propertyLabel || key,
-        type: propertyConfig?.type || 'string',
-      });
-    } else if (filterValue && typeof filterValue === 'object') {
-      Object.keys(filterValue).forEach((operator) => {
-        const value = filterValue[operator];
-        if (value !== null && value !== undefined) {
-          conditions.push({
-            id: generateId(),
-            property: key,
-            operator: operator as FilterOperator,
-            value: Array.isArray(value) ? value.join(', ') : String(value),
-            propertyLabel: propertyConfig?.propertyLabel || key,
-            type: propertyConfig?.type || 'string',
-          });
-        }
-      });
-    }
-  });
+  // Process property filters (supports nested objects via dot notation)
+  conditions.push(...extractNestedConditions(filter, filterProperties));
 
   return conditions;
 }
@@ -328,6 +395,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   combinationMode = 'AND',
   ...containerProps
 }) => {
+  'use memo';
+
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const [value, setValue] = useControllableValue<GraphQLFilter | undefined>({

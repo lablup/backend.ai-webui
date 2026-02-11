@@ -550,7 +550,7 @@ export function formatDurationAsDays(
 
 export const handleRowSelectionChange = <T extends object, K extends keyof T>(
   selectedRowKeys: React.Key[],
-  currentPageItems: T[],
+  currentPageItems: readonly T[],
   setSelectedItems: React.Dispatch<React.SetStateAction<T[]>>,
   keyField: K = 'id' as unknown as K,
 ) => {
@@ -929,16 +929,17 @@ export const convertToOrderBy = <
 ): ReadonlyArray<TOrderBy> | undefined => {
   if (!order) return undefined;
 
-  // If order contains comma-separated values, extract the last one
-  const orderParts = order.split(',');
-  const lastOrder = orderParts[orderParts.length - 1].trim();
+  // Check for descending order before splitting
+  const isDescending = order.startsWith('-');
+  const cleanOrder = isDescending ? order.slice(1) : order;
 
-  const isDescending = lastOrder.startsWith('-');
-  const rawFieldName = isDescending ? lastOrder.slice(1) : lastOrder;
+  // If order contains comma-separated values, extract the last one
+  const orderParts = cleanOrder.split(',');
+  const lastOrder = orderParts[orderParts.length - 1].trim();
 
   return [
     {
-      field: _.snakeCase(rawFieldName).toUpperCase(),
+      field: _.snakeCase(lastOrder).toUpperCase(),
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];

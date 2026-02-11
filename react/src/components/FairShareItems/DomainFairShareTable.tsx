@@ -1,22 +1,20 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, theme, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { theme, Tooltip, Typography } from 'antd';
 import {
+  BAIButton,
+  BAIColumnsType,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
-  BAIUnmountAfterClose,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import {
@@ -24,8 +22,11 @@ import {
   DomainFairShareTableFragment$key,
 } from 'src/__generated__/DomainFairShareTableFragment.graphql';
 
+export type Domain = NonNullable<
+  NonNullable<DomainFairShareTableFragment$data[number]>
+>['domain'];
 export type DomainFairShare = NonNullable<
-  DomainFairShareTableFragment$data[number]
+  NonNullable<DomainFairShareTableFragment$data[number]>
 >;
 
 const availableDomainFairShareSorterKeys = [
@@ -43,31 +44,27 @@ const isEnableSorter = (key: string) => {
 
 interface DomainFairShareTableProps extends BAITableProps<DomainFairShare> {
   domainFairShareNodeFragment: DomainFairShareTableFragment$key | null;
-  openBulkSettingModal: boolean;
   selectedRows: Array<DomainFairShare>;
-  onRowSelect: (rowKeys: Array<DomainFairShare>) => void;
-  afterWeightUpdate?: (success: boolean) => void;
+  onRowSelect: (
+    selectedRowKeys: React.Key[],
+    currentPageItems: readonly DomainFairShare[],
+  ) => void;
+  onOpenWeightSetting?: (row: DomainFairShare) => void;
   onClickDomainName?: (domainName: string) => void;
 }
 
 const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   domainFairShareNodeFragment,
-  openBulkSettingModal: openBulkWeightSettingModal,
   selectedRows,
   onRowSelect,
+  onOpenWeightSetting,
   onClickDomainName,
-  afterWeightUpdate,
   ...tableProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
-  const [selectedDomain, setSelectedDomain] = useState<DomainFairShare | null>(
-    null,
-  );
-  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -78,19 +75,26 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     },
   );
 
-  const domainFairShares = useFragment(
+  const domain = useFragment(
     graphql`
       fragment DomainFairShareTableFragment on DomainFairShare
       @relay(plural: true) {
+        domain {
+          basicInfo {
+            name
+          }
+        }
         id
-        resourceGroup
+        resourceGroupName
         domainName
         spec {
           weight
+          usesDefault
         }
         calculationSnapshot {
           fairShareFactor
-          totalDecayedUsage {
+          normalizedUsage
+          averageDailyDecayedUsage {
             entries {
               resourceType
               quantity
@@ -106,14 +110,14 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     domainFairShareNodeFragment,
   );
 
-  const columns: ColumnsType<DomainFairShare> = [
+  const columns: BAIColumnsType<DomainFairShare> = [
     {
       title: t('fairShare.Name'),
       key: 'domainName',
       fixed: 'left',
       dataIndex: 'domainName',
       sorter: isEnableSorter('domainName'),
-      render: (name) => (
+      render: (_name, record) => (
         <BAIFlex gap="xxs" align="center">
           <Tooltip
             title={t('fairShare.GoToSubComponent', {
@@ -122,9 +126,11 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
           >
             <BAILink
               icon={<ChevronRight />}
-              onClick={() => onClickDomainName?.(name)}
+              onClick={() =>
+                onClickDomainName?.(record?.domain?.basicInfo?.name || '')
+              }
             >
-              {name}
+              {record?.domain?.basicInfo?.name || '-'}
             </BAILink>
           </Tooltip>
         </BAIFlex>
@@ -136,12 +142,11 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       fixed: 'left',
       render: (_text, record) => (
         <BAIFlex direction="row" gap="xxs">
-          <Button
+          <BAIButton
             type="text"
             icon={<SettingOutlined style={{ color: token.colorInfo }} />}
             onClick={() => {
-              setSelectedDomain(record);
-              setOpenWeightSettingModal(true);
+              onOpenWeightSetting?.(record);
             }}
           />
         </BAIFlex>
@@ -156,8 +161,23 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       ),
       key: 'weight',
       dataIndex: ['spec', 'weight'],
-      render: (weight) =>
-        weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-',
+      render: (weight, record) => {
+        return (
+          <BAIFlex gap="xxs">
+            <Typography.Text>
+              {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
+            </Typography.Text>
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM }}
+            >
+              {record.spec.usesDefault
+                ? `(${t('fairShare.UsingDefault')})`
+                : ''}
+            </Typography.Text>
+          </BAIFlex>
+        );
+      },
     },
     {
       title: (
@@ -179,14 +199,14 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     {
       title: (
         <BAIFlex gap="xxs">
-          {t('fairShare.TotalUsage')}
+          {t('fairShare.TotalAllocation')}
           <QuestionIconWithTooltip
-            title={t('fairShare.TotalUsageDescription')}
+            title={t('fairShare.TotalAllocationDescription')}
           />
         </BAIFlex>
       ),
       key: 'totalUsage',
-      dataIndex: ['calculationSnapshot', 'totalDecayedUsage', 'entries'],
+      dataIndex: ['calculationSnapshot', 'averageDailyDecayedUsage', 'entries'],
       render: (entries) => {
         return _.isEmpty(entries) ? (
           '-'
@@ -199,6 +219,11 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
                   key={entry.resourceType}
                   type={entry.resourceType}
                   value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
+                  extra={
+                    <Typography.Text type="secondary">
+                      / {t('fairShare.DayUnit')}
+                    </Typography.Text>
+                  }
                 />
               ),
             )}
@@ -209,65 +234,41 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     {
       title: t('general.ModifiedAt'),
       key: 'updatedAt',
-      dataIndex: 'updatedAt',
+      dataIndex: ['updatedAt'],
       render: (date) => dayjs(date).format('lll'),
     },
     {
       title: t('general.CreatedAt'),
       key: 'createdAt',
-      dataIndex: 'createdAt',
+      dataIndex: ['createdAt'],
       sorter: isEnableSorter('createdAt'),
       render: (date) => dayjs(date).format('lll'),
     },
   ];
 
   return (
-    <>
-      <BAITable
-        rowKey={'domainName'}
-        scroll={{ x: 'max-content' }}
-        {...tableProps}
-        dataSource={domainFairShares || []}
-        columns={columns}
-        rowSelection={{
-          type: 'checkbox',
-          onChange: (_selectedRowKeys, selectedRows) => {
-            onRowSelect(selectedRows);
-          },
-          selectedRowKeys: _.map(selectedRows, 'domainName'),
-        }}
-        order={queryParams.order}
-        onChangeOrder={(order) => {
-          setQueryParams({
-            order:
-              (order as (typeof availableDomainFairShareSorterValues)[number]) ||
-              null,
-          });
-        }}
-      />
-
-      <BAIUnmountAfterClose>
-        <FairShareWeightSettingModal
-          domainFairShareFrgmt={
-            openBulkWeightSettingModal
-              ? selectedRows
-              : selectedDomain
-                ? [selectedDomain]
-                : null
-          }
-          isBulkEdit={openBulkWeightSettingModal}
-          open={openWeightSettingModal || openBulkWeightSettingModal}
-          onRequestClose={(success) => {
-            if (success) {
-              afterWeightUpdate?.(true);
-            }
-            setSelectedDomain(null);
-            setOpenWeightSettingModal(false);
-            afterWeightUpdate?.(false);
-          }}
-        />
-      </BAIUnmountAfterClose>
-    </>
+    <BAITable
+      rowKey={'domainName'}
+      scroll={{ x: 'max-content' }}
+      {...tableProps}
+      dataSource={domain || []}
+      columns={columns}
+      rowSelection={{
+        type: 'checkbox',
+        onChange: (selectedRowKeys) => {
+          onRowSelect(selectedRowKeys, domain || []);
+        },
+        selectedRowKeys: _.map(selectedRows, 'domainName'),
+      }}
+      order={queryParams.order}
+      onChangeOrder={(order) => {
+        setQueryParams({
+          order:
+            (order as (typeof availableDomainFairShareSorterValues)[number]) ||
+            null,
+        });
+      }}
+    />
   );
 };
 

@@ -282,7 +282,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
     },
-    baiClient?.supports('pending-session-list') && {
+    baiClient?.supports('fair-share-scheduling') && {
       label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
       icon: <ClipboardClock style={{ color: token.colorInfo }} />,
       key: 'scheduler',

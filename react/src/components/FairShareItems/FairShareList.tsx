@@ -3,6 +3,7 @@ import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
 } from './DomainFairShareTable';
+import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ProjectFairShareTable, {
   availableProjectFairShareSorterValues,
   ProjectFairShare,
@@ -10,35 +11,35 @@ import ProjectFairShareTable, {
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
 } from './ResourceGroupFairShareTable';
+import UserFairShareTable, {
+  availableUserFairShareSorterValues,
+  UserFairShare,
+} from './UserFairShareTable';
 import { SettingOutlined } from '@ant-design/icons';
-import {
-  Alert,
-  Button,
-  Skeleton,
-  Steps,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Alert, Steps, theme, Tooltip, Typography } from 'antd';
+import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
 import {
   BAIBackButton,
+  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIText,
+  BAIUnmountAfterClose,
+  filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Ban } from 'lucide-react';
 import {
-  parseAsInteger,
+  parseAsJson,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { Suspense, useDeferredValue, useState, useTransition } from 'react';
+import { useDeferredValue, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
@@ -50,9 +51,21 @@ import {
   ProjectFairShareOrderBy,
   ResourceGroupFilter,
   ResourceGroupOrderBy,
+  UserFairShareFilter,
+  UserFairShareOrderBy,
 } from 'src/__generated__/FairShareListQuery.graphql';
-import { convertToOrderBy } from 'src/helper';
+import { convertToOrderBy, handleRowSelectionChange } from 'src/helper';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+
+const useStyles = createStyles(({ css, token }) => ({
+  step: css`
+    .ant-steps-item-finish,
+    .ant-steps-item-finish .ant-steps-panel-arrow > path {
+      background-color: ${token.colorBgContainerDisabled} !important;
+      fill: ${token.colorBgContainerDisabled} !important;
+    }
+  `,
+}));
 
 type FairShareStepKey = 'resource-group' | 'domain' | 'project' | 'user';
 
@@ -61,14 +74,14 @@ export type FairShareOrderVariables = {
   resourceGroupOrder?: FairShareListQuery$variables['resourceGroupOrder'];
   domainOrder?: FairShareListQuery$variables['domainOrder'];
   projectOrder?: FairShareListQuery$variables['projectOrder'];
-  // userOrder?: FairShareListQuery$variables['userOrder'];
+  userOrder?: FairShareListQuery$variables['userOrder'];
 };
 
 export type FairShareFilterVariables = {
   resourceGroupFilter?: ResourceGroupFilter;
   domainFilter?: DomainFairShareFilter;
   projectFilter?: ProjectFairShareFilter;
-  // userFilter?: UserFilter;
+  userFilter?: UserFairShareFilter;
 };
 type StepItem = NonNullable<StepsProps['items']>[number];
 
@@ -77,12 +90,15 @@ const FairShareList: React.FC = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { styles } = useStyles();
 
   const [selectedRows, setSelectedRows] = useState<
-    Array<DomainFairShare | ProjectFairShare>
+    Array<DomainFairShare | ProjectFairShare | UserFairShare>
   >([]);
-  const [openBulkWeightSettingModal, setOpenBulkWeightSettingModal] =
-    useState(false);
+  const [selectedSingleRow, setSelectedSingleRow] = useState<
+    DomainFairShare | ProjectFairShare | UserFairShare | null
+  >(null);
+  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -95,7 +111,6 @@ const FairShareList: React.FC = () => {
 
   const [stepQueryParams, setStepQueryParams] = useQueryStates(
     {
-      step: parseAsInteger.withDefault(0),
       resourceGroup: parseAsString.withDefault(''),
       domain: parseAsString.withDefault(''),
       project: parseAsString.withDefault(''),
@@ -104,32 +119,24 @@ const FairShareList: React.FC = () => {
     { history: 'push' },
   );
   const deferredStepQueryParams = useDeferredValue(stepQueryParams);
-  const currentStep: FairShareStepKey =
-    deferredStepQueryParams.step === 0
-      ? 'resource-group'
-      : deferredStepQueryParams.step === 1
-        ? 'domain'
-        : deferredStepQueryParams.step === 2
-          ? 'project'
-          : 'user';
+  const currentStep = !deferredStepQueryParams.resourceGroup
+    ? 'resource-group'
+    : !deferredStepQueryParams.domain
+      ? 'domain'
+      : !deferredStepQueryParams.project
+        ? 'project'
+        : 'user';
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(
-        currentStep === 'resource-group'
-          ? availableResourceGroupSorterValues
-          : currentStep === 'domain'
-            ? availableDomainFairShareSorterValues
-            : currentStep === 'project'
-              ? availableProjectFairShareSorterValues
-              : [],
-      ),
-      filter: parseAsString,
+      order: parseAsStringLiteral(getOrderTypeByStep(currentStep)),
+      filter: parseAsJson<any>((value) => value),
     },
     {
       history: 'replace',
     },
   );
+
   const orderVariables: FairShareOrderVariables = {
     resourceGroupOrder:
       currentStep === 'resource-group'
@@ -149,112 +156,168 @@ const FairShareList: React.FC = () => {
             { field: 'CREATED_AT', direction: 'DESC' },
           ]
         : undefined,
+    userOrder:
+      currentStep === 'user'
+        ? convertToOrderBy<UserFairShareOrderBy>(queryParams.order) || [
+            { field: 'CREATED_AT', direction: 'DESC' },
+          ]
+        : undefined,
   };
 
   const filterVariables: FairShareFilterVariables = {
-    resourceGroupFilter: JSON.parse(queryParams.filter || '{}'),
-    domainFilter: {
-      ...JSON.parse(queryParams.filter || '{}'),
-      ...(deferredStepQueryParams.resourceGroup
-        ? { resourceGroup: { equals: deferredStepQueryParams.resourceGroup } }
-        : {}),
-    },
-    projectFilter: {
-      ...JSON.parse(queryParams.filter || '{}'),
-      // TODO: enable filter after server side support
-      // ...(deferredStepQueryParams.resourceGroup
-      //   ? { resourceGroup: { equals: deferredStepQueryParams.resourceGroup } }
-      //   : {}),
-      // ...(deferredStepQueryParams.domain
-      //   ? { domainName: { equals: deferredStepQueryParams.domain } }
-      //   : {}),
-    },
+    resourceGroupFilter:
+      currentStep === 'resource-group'
+        ? {
+            ...(queryParams.filter || {}),
+          }
+        : undefined,
+    domainFilter:
+      currentStep === 'domain'
+        ? {
+            ...(queryParams.filter || {}),
+          }
+        : undefined,
+    projectFilter:
+      currentStep === 'project'
+        ? {
+            ...(queryParams.filter || {}),
+          }
+        : undefined,
+    userFilter:
+      currentStep === 'user'
+        ? {
+            ...(queryParams.filter || {}),
+          }
+        : undefined,
   };
-
-  const queryVariables: Omit<
-    FairShareListQuery$variables,
-    'skipResourceGroup' | 'skipDomain' | 'skipProject'
-  > = {
+  const GQLQueryVariables = {
+    resourceGroupName: stepQueryParams?.resourceGroup || '',
+    domainName: stepQueryParams?.domain || '',
+    projectId: stepQueryParams?.project || '',
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
     ...orderVariables,
     ...filterVariables,
+    skipDomain: currentStep !== 'domain',
+    skipProject: currentStep !== 'project',
+    skipUser: currentStep !== 'user',
   };
+  const deferredGQLQueryVariables = useDeferredValue(GQLQueryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const queryRef = useLazyLoadQuery<FairShareListQuery>(
-    graphql`
-      query FairShareListQuery(
-        $resourceGroupFilter: ResourceGroupFilter
-        $resourceGroupOrder: [ResourceGroupOrderBy!]
-        $domainFilter: DomainFairShareFilter
-        $domainOrder: [DomainFairShareOrderBy!]
-        $projectFilter: ProjectFairShareFilter
-        $projectOrder: [ProjectFairShareOrderBy!]
-        $limit: Int
-        $offset: Int
-        $skipResourceGroup: Boolean!
-        $skipDomain: Boolean!
-        $skipProject: Boolean!
-      ) {
-        resourceGroups(
-          filter: $resourceGroupFilter
-          orderBy: $resourceGroupOrder
-          limit: $limit
-          offset: $offset
-        ) @skip(if: $skipResourceGroup) {
-          count
-          edges {
-            node {
-              ...ResourceGroupFairShareTableFragment
+  const { resourceGroups, domains, projectFairShares, userFairShares } =
+    useLazyLoadQuery<FairShareListQuery>(
+      graphql`
+        query FairShareListQuery(
+          $resourceGroupName: String!
+          $domainName: String!
+          $projectId: String!
+          $resourceGroupFilter: ResourceGroupFilter
+          $resourceGroupOrder: [ResourceGroupOrderBy!]
+          $domainFilter: DomainFairShareFilter
+          $domainOrder: [DomainFairShareOrderBy!]
+          $projectFilter: ProjectFairShareFilter
+          $projectOrder: [ProjectFairShareOrderBy!]
+          $userFilter: UserFairShareFilter
+          $userOrder: [UserFairShareOrderBy!]
+          $limit: Int
+          $offset: Int
+          $skipDomain: Boolean!
+          $skipProject: Boolean!
+          $skipUser: Boolean!
+        ) {
+          resourceGroups: adminResourceGroups(
+            filter: $resourceGroupFilter
+            orderBy: $resourceGroupOrder
+            limit: $limit
+            offset: $offset
+          ) {
+            count
+            edges {
+              node {
+                name
+                scheduler {
+                  type
+                }
+
+                ...ResourceGroupFairShareTableFragment
+                ...FairShareWeightSettingModal_ResourceGroupFragment
+              }
+            }
+          }
+          domains: rgDomainFairShares(
+            scope: { resourceGroupName: $resourceGroupName }
+            filter: $domainFilter
+            orderBy: $domainOrder
+            limit: $limit
+            offset: $offset
+          ) @skip(if: $skipDomain) {
+            count
+            edges {
+              node {
+                ...DomainFairShareTableFragment
+              }
+            }
+          }
+          projectFairShares: rgProjectFairShares(
+            scope: {
+              resourceGroupName: $resourceGroupName
+              domainName: $domainName
+            }
+            filter: $projectFilter
+            orderBy: $projectOrder
+            limit: $limit
+            offset: $offset
+          ) @skip(if: $skipProject) {
+            count
+            edges {
+              node {
+                ...ProjectFairShareTableFragment
+              }
+            }
+          }
+          userFairShares: rgUserFairShares(
+            scope: {
+              resourceGroupName: $resourceGroupName
+              domainName: $domainName
+              projectId: $projectId
+            }
+            filter: $userFilter
+            orderBy: $userOrder
+            limit: $limit
+            offset: $offset
+          ) @skip(if: $skipUser) {
+            count
+            edges {
+              node {
+                project {
+                  basicInfo {
+                    name
+                  }
+                }
+                ...UserFairShareTableFragment
+              }
             }
           }
         }
-        domainFairShares(
-          filter: $domainFilter
-          orderBy: $domainOrder
-          limit: $limit
-          offset: $offset
-        ) @skip(if: $skipDomain) {
-          count
-          edges {
-            node {
-              ...DomainFairShareTableFragment
-            }
-          }
-        }
-        projectFairShares(
-          filter: $projectFilter
-          orderBy: $projectOrder
-          limit: $limit
-          offset: $offset
-        ) @skip(if: $skipProject) {
-          count
-          edges {
-            node {
-              ...ProjectFairShareTableFragment
-            }
-          }
-        }
-      }
-    `,
-    {
-      ...deferredQueryVariables,
-      skipResourceGroup: currentStep !== 'resource-group',
-      skipDomain: currentStep !== 'domain',
-      skipProject: currentStep !== 'project',
-    },
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
-  );
+      `,
+      deferredGQLQueryVariables,
+      {
+        fetchKey: deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
+    );
+
+  const selectedResourceGroupNode = _.find(
+    resourceGroups?.edges,
+    (edge) => edge?.node.name === deferredStepQueryParams.resourceGroup,
+  )?.node;
+  const selectedProjectName =
+    userFairShares?.edges?.[0]?.node?.project?.basicInfo?.name || '';
 
   const stepItems: Array<StepItem & { key: FairShareStepKey }> = [
     {
@@ -274,7 +337,11 @@ const FairShareList: React.FC = () => {
           {deferredStepQueryParams.resourceGroup && (
             <BAIText
               type="secondary"
-              ellipsis={{ tooltip: true }}
+              ellipsis={{
+                tooltip: {
+                  title: deferredStepQueryParams.resourceGroup,
+                },
+              }}
               style={{
                 maxWidth: '100%',
                 minWidth: 0,
@@ -287,7 +354,6 @@ const FairShareList: React.FC = () => {
       ),
       onClick: () => {
         setStepQueryParams({
-          step: 0,
           resourceGroup: null,
           domain: null,
           project: null,
@@ -310,7 +376,11 @@ const FairShareList: React.FC = () => {
           </BAIText>
           <BAIText
             type="secondary"
-            ellipsis={{ tooltip: true }}
+            ellipsis={{
+              tooltip: {
+                title: deferredStepQueryParams.domain,
+              },
+            }}
             style={{
               minWidth: 0,
               flex: 1,
@@ -323,7 +393,6 @@ const FairShareList: React.FC = () => {
       ),
       onClick: () => {
         setStepQueryParams({
-          step: 1,
           domain: null,
           project: null,
         });
@@ -331,10 +400,35 @@ const FairShareList: React.FC = () => {
     },
     {
       key: 'project',
-      title: t('fairShare.Project'),
+      title: (
+        <BAIFlex gap="xxs" align="end">
+          <BAIText
+            style={{
+              fontSize: 'inherit',
+              color: 'inherit',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            {t('fairShare.Project')}
+          </BAIText>
+          <BAIText
+            type="secondary"
+            ellipsis={{
+              tooltip: { title: selectedProjectName },
+            }}
+            style={{
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
+            {deferredStepQueryParams.project && `(${selectedProjectName})`}
+          </BAIText>
+        </BAIFlex>
+      ),
+
       onClick: () => {
         setStepQueryParams({
-          step: 2,
           project: null,
         });
       },
@@ -342,22 +436,93 @@ const FairShareList: React.FC = () => {
     { key: 'user', title: t('fairShare.User') },
   ];
 
+  const getNavigateTo = () => {
+    switch (currentStep) {
+      default:
+        return '';
+      case 'project':
+        return `?${new URLSearchParams({
+          step: '1',
+          resourceGroup: deferredStepQueryParams.resourceGroup || '',
+        })}`;
+      case 'user':
+        return `?${new URLSearchParams({
+          step: '2',
+          resourceGroup: deferredStepQueryParams.resourceGroup || '',
+          domain: deferredStepQueryParams.domain || '',
+        })}`;
+    }
+  };
+
+  const urlInitialLoadEffect = useEffectEvent(() => {
+    if (stepQueryParams.resourceGroup === '') {
+      setStepQueryParams({
+        resourceGroup: null,
+        domain: null,
+        project: null,
+      });
+    } else if (stepQueryParams.domain === '') {
+      setStepQueryParams({
+        domain: null,
+        project: null,
+      });
+    } else if (stepQueryParams.project === '') {
+      setStepQueryParams({
+        project: null,
+      });
+    } else if (stepQueryParams.user === '') {
+      setStepQueryParams({
+        user: null,
+      });
+    }
+  });
+  useEffect(() => {
+    urlInitialLoadEffect();
+  }, []);
+
+  const resetSelectedRowsEffect = useEffectEvent(() => {
+    setSelectedRows([]);
+  });
+  useEffect(() => {
+    resetSelectedRowsEffect();
+  }, [stepQueryParams]);
+
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
+      <Alert
+        type="warning"
+        title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
+          resourceGroup: selectedResourceGroupNode?.name || '',
+        })}
+        showIcon
+        style={{
+          display:
+            !selectedResourceGroupNode?.name ||
+            selectedResourceGroupNode?.scheduler?.type === 'FAIR_SHARE'
+              ? 'none'
+              : undefined,
+        }}
+      />
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
       <Steps
+        className={styles.step}
         type="panel"
-        current={deferredStepQueryParams.step}
-        onChange={() =>
+        current={stepItems.findIndex((item) => item.key === currentStep)}
+        onChange={() => {
           setQueryParams({
             order: null,
             filter: null,
-          })
-        }
+          });
+          setTablePaginationOption({ current: 1 });
+        }}
         items={_.map(stepItems, (item, idx) => ({
           ...item,
-          disabled: idx > deferredStepQueryParams.step,
-          icon: idx > deferredStepQueryParams.step ? <Ban /> : undefined,
+          disabled:
+            idx > stepItems.findIndex((item) => item.key === currentStep),
+          icon:
+            idx > stepItems.findIndex((item) => item.key === currentStep) ? (
+              <Ban />
+            ) : undefined,
         }))}
         styles={{
           itemTitle: {
@@ -367,24 +532,55 @@ const FairShareList: React.FC = () => {
       />
 
       <BAIFlex direction="column" align="stretch" gap="xs">
-        <FairShareListTitle currentStep={currentStep} />
-        <BAIFlex justify="between" align="center">
+        <FairShareListTitle
+          currentStep={currentStep}
+          navigateTo={getNavigateTo()}
+        />
+        <BAIFlex justify="between" align="center" wrap="wrap" gap="sm">
           <BAIGraphQLPropertyFilter
-            filterProperties={[
-              {
+            key={currentStep}
+            filterProperties={filterOutEmpty([
+              currentStep === 'resource-group' && {
                 key: 'name',
                 propertyLabel: t('fairShare.Name'),
                 type: 'string',
               },
-            ]}
-            value={JSON.parse(queryParams.filter || '{}')}
+              currentStep === 'domain' && {
+                key: 'domainName',
+                propertyLabel: t('fairShare.Name'),
+                type: 'string',
+              },
+              currentStep === 'project' && {
+                key: 'project.name',
+                propertyLabel: t('fairShare.Name'),
+                type: 'string',
+              },
+              ...(currentStep === 'user'
+                ? ([
+                    {
+                      key: 'user.email',
+                      propertyLabel: t('fairShare.Email'),
+                      type: 'string',
+                    },
+                    {
+                      key: 'user.username',
+                      propertyLabel: t('fairShare.Name'),
+                      type: 'string',
+                    },
+                    {
+                      key: 'user.isActive',
+                      propertyLabel: t('fairShare.ActiveStatus'),
+                      type: 'boolean',
+                    },
+                  ] as const)
+                : []),
+            ])}
+            value={queryParams.filter || {}}
             onChange={(filter) => {
-              startRefetchTransition(() => {
-                setQueryParams({
-                  filter: filter ? JSON.stringify(filter) : null,
-                });
-                setTablePaginationOption({ current: 1 });
+              setQueryParams({
+                filter: filter || null,
               });
+              setTablePaginationOption({ current: 1 });
             }}
           />
           <BAIFlex gap="sm">
@@ -394,12 +590,12 @@ const FairShareList: React.FC = () => {
                   count: selectedRows.length,
                 })}
                 <Tooltip title={t('general.BulkEdit')} placement="topLeft">
-                  <Button
+                  <BAIButton
                     icon={
                       <SettingOutlined style={{ color: token.colorInfo }} />
                     }
                     onClick={() => {
-                      setOpenBulkWeightSettingModal(true);
+                      setOpenWeightSettingModal(true);
                     }}
                   />
                 </Tooltip>
@@ -407,172 +603,249 @@ const FairShareList: React.FC = () => {
             )}
             <BAIFetchKeyButton
               autoUpdateDelay={7_000}
-              loading={isPendingRefetch}
+              loading={fetchKey !== deferredFetchKey}
               value=""
               onChange={() => {
-                startRefetchTransition(() => {
-                  updateFetchKey();
-                });
+                updateFetchKey();
               }}
             />
           </BAIFlex>
         </BAIFlex>
         {currentStep === 'resource-group' && (
-          <Suspense fallback={<Skeleton active />}>
-            <ResourceGroupFairShareTable
-              resourceGroupNodeFragment={
-                queryRef?.resourceGroups?.edges?.map((edge) => edge?.node) ||
-                null
-              }
-              onClickGroupName={(name) => {
-                setStepQueryParams({ step: 1, resourceGroup: name });
-                setQueryParams({
-                  order: null,
-                  filter: null,
-                });
-              }}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey ||
-                stepQueryParams !== deferredStepQueryParams
-              }
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                total: queryRef?.resourceGroups?.count || 0,
-                current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({
-                      current,
-                      pageSize,
-                    });
-                  }
-                },
-              }}
-            />
-          </Suspense>
+          <ResourceGroupFairShareTable
+            resourceGroupNodeFragment={
+              resourceGroups?.edges?.map((edge) => edge?.node) || null
+            }
+            onClickGroupName={(name) => {
+              setStepQueryParams({ resourceGroup: name });
+              setQueryParams({
+                order: null,
+                filter: null,
+              });
+            }}
+            afterUpdate={() => {
+              updateFetchKey();
+            }}
+            loading={
+              GQLQueryVariables !== deferredGQLQueryVariables ||
+              deferredFetchKey !== fetchKey ||
+              stepQueryParams !== deferredStepQueryParams
+            }
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              total: resourceGroups?.count || 0,
+              current: tablePaginationOption.current,
+              style: {
+                marginRight: token.marginXS,
+              },
+              onChange: (current, pageSize) => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({
+                    current,
+                    pageSize,
+                  });
+                }
+              },
+            }}
+          />
         )}
         {currentStep === 'domain' && (
-          <Suspense fallback={<Skeleton active />}>
-            <DomainFairShareTable
-              domainFairShareNodeFragment={
-                queryRef?.domainFairShares?.edges?.map((edge) => edge?.node) ||
-                null
-              }
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey ||
-                stepQueryParams !== deferredStepQueryParams
-              }
-              openBulkSettingModal={openBulkWeightSettingModal}
-              selectedRows={selectedRows as Array<DomainFairShare>}
-              onRowSelect={(rows) => {
-                setSelectedRows(rows);
-              }}
-              afterWeightUpdate={(success) => {
-                if (success) {
-                  startRefetchTransition(() => updateFetchKey());
-                  setSelectedRows([]);
+          <DomainFairShareTable
+            domainFairShareNodeFragment={
+              domains?.edges?.map((edge) => edge?.node) || null
+            }
+            loading={
+              GQLQueryVariables !== deferredGQLQueryVariables ||
+              deferredFetchKey !== fetchKey ||
+              stepQueryParams !== deferredStepQueryParams
+            }
+            selectedRows={selectedRows as Array<DomainFairShare>}
+            onRowSelect={(selectedRowKeys, currentPageItems) => {
+              handleRowSelectionChange(
+                selectedRowKeys,
+                currentPageItems,
+                setSelectedRows as React.Dispatch<
+                  React.SetStateAction<DomainFairShare[]>
+                >,
+                'domainName',
+              );
+            }}
+            onOpenWeightSetting={(row) => {
+              setSelectedSingleRow(row);
+            }}
+            onClickDomainName={(domainName) => {
+              setStepQueryParams({
+                domain: domainName,
+              });
+              setQueryParams({
+                order: null,
+                filter: null,
+              });
+            }}
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              total: domains?.count || 0,
+              current: tablePaginationOption.current,
+              style: {
+                marginRight: token.marginXS,
+              },
+              onChange: (current, pageSize) => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({
+                    current,
+                    pageSize,
+                  });
                 }
-                setOpenBulkWeightSettingModal(false);
-              }}
-              onClickDomainName={(domainName) => {
-                setStepQueryParams({
-                  step: 2,
-                  domain: domainName,
-                });
-                setQueryParams({
-                  order: null,
-                  filter: null,
-                });
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                total: queryRef?.domainFairShares?.count || 0,
-                current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({
-                      current,
-                      pageSize,
-                    });
-                  }
-                },
-              }}
-            />
-          </Suspense>
+              },
+            }}
+          />
         )}
         {currentStep === 'project' && (
-          <Suspense fallback={<Skeleton active />}>
-            <ProjectFairShareTable
-              projectFairShareNodeFragment={
-                queryRef?.projectFairShares?.edges?.map((edge) => edge?.node) ||
-                null
-              }
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey ||
-                stepQueryParams !== deferredStepQueryParams
-              }
-              openBulkSettingModal={openBulkWeightSettingModal}
-              selectedRows={selectedRows as Array<ProjectFairShare>}
-              onRowSelect={(rows) => {
-                setSelectedRows(rows);
-              }}
-              afterWeightUpdate={(success) => {
-                if (success) {
-                  startRefetchTransition(() => updateFetchKey());
-                  setSelectedRows([]);
+          <ProjectFairShareTable
+            projectFairShareNodeFragment={
+              projectFairShares?.edges?.map((edge) => edge?.node) || null
+            }
+            loading={
+              GQLQueryVariables !== deferredGQLQueryVariables ||
+              deferredFetchKey !== fetchKey ||
+              stepQueryParams !== deferredStepQueryParams
+            }
+            selectedRows={selectedRows as Array<ProjectFairShare>}
+            onRowSelect={(selectedRowKeys, currentPageItems) => {
+              handleRowSelectionChange(
+                selectedRowKeys,
+                currentPageItems,
+                setSelectedRows as React.Dispatch<
+                  React.SetStateAction<ProjectFairShare[]>
+                >,
+                'id',
+              );
+            }}
+            onOpenWeightSetting={(row) => {
+              setSelectedSingleRow(row);
+            }}
+            onClickProjectName={(name) => {
+              setStepQueryParams({
+                project: name,
+              });
+              setQueryParams({
+                order: null,
+                filter: null,
+              });
+            }}
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              total: projectFairShares?.count || 0,
+              current: tablePaginationOption.current,
+              style: {
+                marginRight: token.marginXS,
+              },
+              onChange: (current, pageSize) => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({
+                    current,
+                    pageSize,
+                  });
                 }
-                setOpenBulkWeightSettingModal(false);
-              }}
-              onClickProjectName={(name) => {
-                setStepQueryParams({
-                  step: 3,
-                  project: name,
-                });
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                total: queryRef?.projectFairShares?.count || 0,
-                current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({
-                      current,
-                      pageSize,
-                    });
-                  }
-                },
-              }}
-            />
-          </Suspense>
+              },
+            }}
+          />
+        )}
+        {currentStep === 'user' && (
+          <UserFairShareTable
+            userFairShareNodeFragment={
+              userFairShares?.edges?.map((edge) => edge?.node) || null
+            }
+            loading={
+              GQLQueryVariables !== deferredGQLQueryVariables ||
+              deferredFetchKey !== fetchKey ||
+              stepQueryParams !== deferredStepQueryParams
+            }
+            selectedRows={selectedRows as Array<UserFairShare>}
+            onRowSelect={(selectedRowKeys, currentPageItems) => {
+              handleRowSelectionChange(
+                selectedRowKeys,
+                currentPageItems,
+                setSelectedRows as React.Dispatch<
+                  React.SetStateAction<UserFairShare[]>
+                >,
+                'userUuid',
+              );
+            }}
+            onOpenWeightSetting={(row) => {
+              setSelectedSingleRow(row);
+            }}
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              total: userFairShares?.count || 0,
+              current: tablePaginationOption.current,
+              style: {
+                marginRight: token.marginXS,
+              },
+              onChange: (current, pageSize) => {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({
+                    current,
+                    pageSize,
+                  });
+                }
+              },
+            }}
+          />
         )}
       </BAIFlex>
+
+      <BAIUnmountAfterClose>
+        <FairShareWeightSettingModal
+          open={!!selectedSingleRow || openWeightSettingModal}
+          domainFairShareFrgmt={
+            currentStep === 'domain'
+              ? ((selectedSingleRow
+                  ? [selectedSingleRow]
+                  : selectedRows) as Array<DomainFairShare>)
+              : null
+          }
+          projectFairShareFrgmt={
+            currentStep === 'project'
+              ? ((selectedSingleRow
+                  ? [selectedSingleRow]
+                  : selectedRows) as Array<ProjectFairShare>)
+              : null
+          }
+          userFairShareFrgmt={
+            currentStep === 'user'
+              ? ((selectedSingleRow
+                  ? [selectedSingleRow]
+                  : selectedRows) as Array<UserFairShare>)
+              : null
+          }
+          resourceGroupFrgmt={selectedResourceGroupNode}
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+            }
+            setSelectedRows([]);
+            setSelectedSingleRow(null);
+            setOpenWeightSettingModal(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
 
 export default FairShareList;
 
-const FairShareListTitle: React.FC<{ currentStep: FairShareStepKey }> = ({
-  currentStep,
-}) => {
+const FairShareListTitle: React.FC<{
+  currentStep: FairShareStepKey;
+  navigateTo: string;
+}> = ({ currentStep, navigateTo }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
   return (
     <BAIFlex gap={'xs'}>
-      {currentStep !== 'resource-group' && <BAIBackButton to={''} />}
+      {currentStep !== 'resource-group' && <BAIBackButton to={navigateTo} />}
       <Typography.Title level={4} style={{ margin: 0 }}>
         {currentStep === 'resource-group'
           ? t('fairShare.ResourceGroup')
@@ -602,4 +875,15 @@ const FairShareListTitle: React.FC<{ currentStep: FairShareStepKey }> = ({
       />
     </BAIFlex>
   );
+};
+const getOrderTypeByStep = (currentStep: FairShareStepKey) => {
+  return currentStep === 'resource-group'
+    ? availableResourceGroupSorterValues
+    : currentStep === 'domain'
+      ? availableDomainFairShareSorterValues
+      : currentStep === 'project'
+        ? availableProjectFairShareSorterValues
+        : currentStep === 'user'
+          ? availableUserFairShareSorterValues
+          : [];
 };

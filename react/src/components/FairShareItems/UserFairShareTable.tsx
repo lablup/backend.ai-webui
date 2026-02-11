@@ -1,11 +1,10 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
-import { theme, Tooltip, Typography } from 'antd';
+import { theme, Typography } from 'antd';
 import {
   BAIButton,
   BAIColumnsType,
   BAIFlex,
-  BAILink,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -13,49 +12,47 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import {
-  ProjectFairShareTableFragment$data,
-  ProjectFairShareTableFragment$key,
-} from 'src/__generated__/ProjectFairShareTableFragment.graphql';
+  UserFairShareTableFragment$data,
+  UserFairShareTableFragment$key,
+} from 'src/__generated__/UserFairShareTableFragment.graphql';
 
-export type ProjectFairShare = NonNullable<
-  ProjectFairShareTableFragment$data[number]
+export type UserFairShare = NonNullable<
+  UserFairShareTableFragment$data[number]
 >;
 
-const availableProjectFairShareSorterKeys = [
-  'projectName',
+const availableUserFairShareSorterKeys = [
+  'email',
+  'username',
   'fairShareFactor',
   'createdAt',
 ] as const;
-export const availableProjectFairShareSorterValues = [
-  ...availableProjectFairShareSorterKeys,
-  ...availableProjectFairShareSorterKeys.map((key) => `-${key}` as const),
+export const availableUserFairShareSorterValues = [
+  ...availableUserFairShareSorterKeys,
+  ...availableUserFairShareSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 const isEnableSorter = (key: string) => {
-  return _.includes(availableProjectFairShareSorterKeys, key);
+  return _.includes(availableUserFairShareSorterKeys, key);
 };
 
-interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
-  projectFairShareNodeFragment: ProjectFairShareTableFragment$key | null;
-  selectedRows: Array<ProjectFairShare>;
+interface UserFairShareTableProps extends BAITableProps<UserFairShare> {
+  userFairShareNodeFragment: UserFairShareTableFragment$key | null;
+  selectedRows: Array<UserFairShare>;
   onRowSelect: (
     selectedRowKeys: React.Key[],
-    currentPageItems: readonly ProjectFairShare[],
+    currentPageItems: readonly UserFairShare[],
   ) => void;
-  onOpenWeightSetting?: (row: ProjectFairShare) => void;
-  onClickProjectName?: (projectId: string) => void;
+  onOpenWeightSetting?: (row: UserFairShare) => void;
 }
 
-const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
-  projectFairShareNodeFragment,
+const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
+  userFairShareNodeFragment,
   selectedRows,
   onRowSelect,
   onOpenWeightSetting,
-  onClickProjectName,
   ...tableProps
 }) => {
   'use memo';
@@ -65,26 +62,28 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableProjectFairShareSorterValues),
+      order: parseAsStringLiteral(availableUserFairShareSorterValues),
     },
     {
       history: 'replace',
     },
   );
 
-  const projectFairShares = useFragment(
+  const userFairShares = useFragment(
     graphql`
-      fragment ProjectFairShareTableFragment on ProjectFairShare
+      fragment UserFairShareTableFragment on UserFairShare
       @relay(plural: true) {
-        project {
+        user {
           basicInfo {
-            name
+            username
+            email
           }
         }
         id
         resourceGroupName
         domainName
         projectId
+        userUuid
         spec {
           weight
           usesDefault
@@ -100,35 +99,29 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         }
         createdAt
         updatedAt
-        ...FairShareWeightSettingModal_ProjectFragment
+
+        ...FairShareWeightSettingModal_UserFragment
       }
     `,
-    projectFairShareNodeFragment,
+    userFairShareNodeFragment,
   );
 
-  const columns: BAIColumnsType<ProjectFairShare> = [
+  const columns: BAIColumnsType<UserFairShare> = [
+    {
+      title: t('fairShare.Email'),
+      key: 'email',
+      fixed: 'left',
+      dataIndex: 'userEmail',
+      render: (_text, record) => record?.user?.basicInfo.email,
+      sorter: isEnableSorter('email'),
+    },
     {
       title: t('fairShare.Name'),
-      key: 'projectName',
+      key: 'username',
       fixed: 'left',
-      dataIndex: 'projectName',
-      sorter: isEnableSorter('projectName'),
-      render: (_name, record) => (
-        <BAIFlex gap="xxs" align="center">
-          <Tooltip
-            title={t('fairShare.GoToSubComponent', {
-              sub: t('fairShare.User'),
-            })}
-          >
-            <BAILink
-              icon={<ChevronRight />}
-              onClick={() => onClickProjectName?.(record?.projectId)}
-            >
-              {record?.project?.basicInfo?.name}
-            </BAILink>
-          </Tooltip>
-        </BAIFlex>
-      ),
+      dataIndex: 'userUsername',
+      render: (_text, record) => record?.user?.basicInfo.username,
+      sorter: isEnableSorter('username'),
     },
     {
       title: t('general.Control'),
@@ -239,23 +232,23 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   return (
     <>
       <BAITable
-        rowKey={'id'}
+        rowKey={'userUuid'}
         scroll={{ x: 'max-content' }}
         {...tableProps}
-        dataSource={projectFairShares || []}
+        dataSource={userFairShares || []}
         columns={columns}
         rowSelection={{
           type: 'checkbox',
           onChange: (selectedRowKeys) => {
-            onRowSelect(selectedRowKeys, projectFairShares || []);
+            onRowSelect(selectedRowKeys, userFairShares || []);
           },
-          selectedRowKeys: _.map(selectedRows, (row) => row.id),
+          selectedRowKeys: _.map(selectedRows, (row) => row.userUuid),
         }}
         order={queryParams.order}
         onChangeOrder={(order) => {
           setQueryParams({
             order:
-              (order as (typeof availableProjectFairShareSorterValues)[number]) ||
+              (order as (typeof availableUserFairShareSorterValues)[number]) ||
               null,
           });
         }}
@@ -264,4 +257,4 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   );
 };
 
-export default ProjectFairShareTable;
+export default UserFairShareTable;
