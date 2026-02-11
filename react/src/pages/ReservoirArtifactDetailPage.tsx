@@ -296,7 +296,7 @@ const ReservoirArtifactDetailPage = () => {
         </BAIFlex>
         <BAIFetchKeyButton
           value={fetchKey}
-          autoUpdateDelay={10_000}
+          autoUpdateDelay={15_000}
           loading={deferredFetchKey !== fetchKey}
           onChange={() => {
             updateFetchKey();

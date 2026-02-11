@@ -1,24 +1,22 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, theme, Tooltip, Typography } from 'antd';
+import { Button, Divider, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
   BAILink,
-  BAIProgressWithLabel,
   BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   convertToBinaryUnit,
   ResourceTypeIcon,
-  toFixedFloorWithoutTrailingZeros,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { ChevronRight } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import {
@@ -120,18 +118,12 @@ const ResourceGroupFairShareTable: React.FC<
       sorter: isEnableSorter('name'),
       render: (name) => (
         <BAIFlex gap="xxs" align="center">
-          <Tooltip
-            title={t('fairShare.GoToSubComponent', {
-              sub: t('fairShare.Domain'),
-            })}
+          <BAILink
+            icon={<ChevronRight />}
+            onClick={() => onClickGroupName?.(name)}
           >
-            <BAILink
-              icon={<ChevronRight />}
-              onClick={() => onClickGroupName?.(name)}
-            >
-              {name}
-            </BAILink>
-          </Tooltip>
+            {name}
+          </BAILink>
         </BAIFlex>
       ),
     },
@@ -152,53 +144,46 @@ const ResourceGroupFairShareTable: React.FC<
     {
       title: t('fairShare.Allocations'),
       key: 'allocations',
-      width: 300,
       render: (_value, record) => {
         const capacityEntries = record?.resourceInfo?.capacity?.entries;
         const usedEntries = record?.resourceInfo?.used?.entries;
-        return _.isEmpty(capacityEntries)
-          ? '-'
-          : _.map(capacityEntries, ({ resourceType, quantity }) => {
-              const percent =
-                quantity === 0
-                  ? 0
-                  : ((usedEntries?.find((e) => e.resourceType === resourceType)
-                      ?.quantity ?? 0) /
-                      quantity) *
-                    100;
+        return _.isEmpty(capacityEntries) ? (
+          '-'
+        ) : (
+          <BAIFlex>
+            {_.map(capacityEntries, ({ resourceType, quantity }, index) => {
               return (
-                <BAIFlex
-                  key={resourceType}
-                  justify="between"
-                  style={{ minWidth: 220 }}
-                >
-                  <BAIFlex gap="xxs">
-                    <ResourceTypeIcon key={resourceType} type={resourceType} />
-                    <Typography.Text>
-                      {resourceType === 'mem'
-                        ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
-                        : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
-                    </Typography.Text>
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.sizeXS }}
-                    >
-                      {mergedResourceSlots?.[resourceType]?.display_unit}
-                    </Typography.Text>
+                <React.Fragment key={resourceType}>
+                  <BAIFlex justify="between">
+                    <BAIFlex gap="xxs">
+                      <ResourceTypeIcon
+                        key={resourceType}
+                        type={resourceType}
+                        tooltipProps={{
+                          placement: 'left',
+                        }}
+                      />
+                      <Typography.Text>
+                        {resourceType === 'mem'
+                          ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
+                          : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
+                      </Typography.Text>
+                      <Typography.Text
+                        type="secondary"
+                        style={{ fontSize: token.sizeXS }}
+                      >
+                        {mergedResourceSlots?.[resourceType]?.display_unit}
+                      </Typography.Text>
+                    </BAIFlex>
                   </BAIFlex>
-                  <BAIProgressWithLabel
-                    percent={percent}
-                    strokeColor={
-                      percent > 80 ? token.colorError : token.colorSuccess
-                    }
-                    width={120}
-                    valueLabel={
-                      toFixedFloorWithoutTrailingZeros(percent, 1) + ' %'
-                    }
-                  />
-                </BAIFlex>
+                  {index !== capacityEntries.length - 1 && (
+                    <Divider orientation="vertical" />
+                  )}
+                </React.Fragment>
               );
-            });
+            })}
+          </BAIFlex>
+        );
       },
     },
     {
@@ -214,22 +199,28 @@ const ResourceGroupFairShareTable: React.FC<
       sorter: isEnableSorter('resourceWeights'),
       dataIndex: ['fairShareSpec', 'resourceWeights'],
       render: (entries) => {
-        return _.isEmpty(entries)
-          ? '-'
-          : _.map(
+        return _.isEmpty(entries) ? (
+          '-'
+        ) : (
+          <BAIFlex>
+            {_.map(
               entries,
-              (rw: {
-                resourceType: string;
-                weight: string;
-                usesDefault: boolean;
-              }) => (
-                <BAIFlex
-                  key={rw.resourceType}
-                  direction="column"
-                  align="stretch"
-                >
+              (
+                rw: {
+                  resourceType: string;
+                  weight: string;
+                  usesDefault: boolean;
+                },
+                index,
+              ) => (
+                <React.Fragment key={rw.resourceType}>
                   <BAIFlex gap="xxs">
-                    <ResourceTypeIcon type={rw.resourceType} showTooltip />
+                    <ResourceTypeIcon
+                      type={rw.resourceType}
+                      tooltipProps={{
+                        placement: 'left',
+                      }}
+                    />
                     {rw.weight}
                     <Typography.Text
                       type="secondary"
@@ -238,9 +229,14 @@ const ResourceGroupFairShareTable: React.FC<
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
                     </Typography.Text>
                   </BAIFlex>
-                </BAIFlex>
+                  {index !== entries.length - 1 && (
+                    <Divider orientation="vertical" />
+                  )}
+                </React.Fragment>
               ),
-            );
+            )}
+          </BAIFlex>
+        );
       },
     },
     {

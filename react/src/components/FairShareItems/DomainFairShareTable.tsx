@@ -1,6 +1,6 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
-import { theme, Tooltip, Typography } from 'antd';
+import { Divider, theme, Typography } from 'antd';
 import {
   BAIButton,
   BAIColumnsType,
@@ -119,20 +119,14 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       sorter: isEnableSorter('domainName'),
       render: (_name, record) => (
         <BAIFlex gap="xxs" align="center">
-          <Tooltip
-            title={t('fairShare.GoToSubComponent', {
-              sub: t('fairShare.Project'),
-            })}
+          <BAILink
+            icon={<ChevronRight />}
+            onClick={() =>
+              onClickDomainName?.(record?.domain?.basicInfo?.name || '')
+            }
           >
-            <BAILink
-              icon={<ChevronRight />}
-              onClick={() =>
-                onClickDomainName?.(record?.domain?.basicInfo?.name || '')
-              }
-            >
-              {record?.domain?.basicInfo?.name || '-'}
-            </BAILink>
-          </Tooltip>
+            {record?.domain?.basicInfo?.name || '-'}
+          </BAILink>
         </BAIFlex>
       ),
     },
@@ -199,9 +193,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
     {
       title: (
         <BAIFlex gap="xxs">
-          {t('fairShare.TotalAllocation')}
+          {t('fairShare.AllocationAverage')}
           <QuestionIconWithTooltip
-            title={t('fairShare.TotalAllocationDescription')}
+            title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
       ),
@@ -211,20 +205,24 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         return _.isEmpty(entries) ? (
           '-'
         ) : (
-          <BAIFlex wrap="wrap" gap="sm">
+          <BAIFlex wrap="wrap" gap="sm" align="center">
             {_.map(
               entries,
-              (entry: { resourceType: string; quantity: number }) => (
-                <BAIResourceNumberWithIcon
-                  key={entry.resourceType}
-                  type={entry.resourceType}
-                  value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
-                  extra={
-                    <Typography.Text type="secondary">
-                      / {t('fairShare.DayUnit')}
-                    </Typography.Text>
-                  }
-                />
+              (entry: { resourceType: string; quantity: number }, index) => (
+                <BAIFlex key={entry.resourceType} gap="sm" align="center">
+                  {index > 0 && (
+                    <Divider type="vertical" style={{ margin: 0 }} />
+                  )}
+                  <BAIResourceNumberWithIcon
+                    type={entry.resourceType}
+                    value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
+                    extra={
+                      <Typography.Text type="secondary">
+                        / {t('fairShare.DayUnit')}
+                      </Typography.Text>
+                    }
+                  />
+                </BAIFlex>
               ),
             )}
           </BAIFlex>

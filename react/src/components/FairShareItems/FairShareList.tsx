@@ -193,7 +193,8 @@ const FairShareList: React.FC = () => {
   const GQLQueryVariables = {
     resourceGroupName: stepQueryParams?.resourceGroup || '',
     domainName: stepQueryParams?.domain || '',
-    projectId: stepQueryParams?.project || '',
+    projectId: stepQueryParams?.project,
+    projectIdStr: stepQueryParams?.project,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
     ...orderVariables,
@@ -201,123 +202,131 @@ const FairShareList: React.FC = () => {
     skipDomain: currentStep !== 'domain',
     skipProject: currentStep !== 'project',
     skipUser: currentStep !== 'user',
+    skipParentProject: currentStep !== 'user',
   };
   const deferredGQLQueryVariables = useDeferredValue(GQLQueryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { resourceGroups, domains, projectFairShares, userFairShares } =
-    useLazyLoadQuery<FairShareListQuery>(
-      graphql`
-        query FairShareListQuery(
-          $resourceGroupName: String!
-          $domainName: String!
-          $projectId: String!
-          $resourceGroupFilter: ResourceGroupFilter
-          $resourceGroupOrder: [ResourceGroupOrderBy!]
-          $domainFilter: DomainFairShareFilter
-          $domainOrder: [DomainFairShareOrderBy!]
-          $projectFilter: ProjectFairShareFilter
-          $projectOrder: [ProjectFairShareOrderBy!]
-          $userFilter: UserFairShareFilter
-          $userOrder: [UserFairShareOrderBy!]
-          $limit: Int
-          $offset: Int
-          $skipDomain: Boolean!
-          $skipProject: Boolean!
-          $skipUser: Boolean!
+  const {
+    resourceGroups,
+    domains,
+    projectFairShares,
+    userFairShares,
+    project,
+  } = useLazyLoadQuery<FairShareListQuery>(
+    graphql`
+      query FairShareListQuery(
+        $resourceGroupName: String!
+        $domainName: String!
+        $projectId: UUID!
+        $projectIdStr: String!
+        $resourceGroupFilter: ResourceGroupFilter
+        $resourceGroupOrder: [ResourceGroupOrderBy!]
+        $domainFilter: DomainFairShareFilter
+        $domainOrder: [DomainFairShareOrderBy!]
+        $projectFilter: ProjectFairShareFilter
+        $projectOrder: [ProjectFairShareOrderBy!]
+        $userFilter: UserFairShareFilter
+        $userOrder: [UserFairShareOrderBy!]
+        $limit: Int
+        $offset: Int
+        $skipDomain: Boolean!
+        $skipProject: Boolean!
+        $skipUser: Boolean!
+        $skipParentProject: Boolean!
+      ) {
+        resourceGroups: adminResourceGroups(
+          filter: $resourceGroupFilter
+          orderBy: $resourceGroupOrder
+          limit: $limit
+          offset: $offset
         ) {
-          resourceGroups: adminResourceGroups(
-            filter: $resourceGroupFilter
-            orderBy: $resourceGroupOrder
-            limit: $limit
-            offset: $offset
-          ) {
-            count
-            edges {
-              node {
-                name
-                scheduler {
-                  type
-                }
+          count
+          edges {
+            node {
+              name
+              scheduler {
+                type
+              }
 
-                ...ResourceGroupFairShareTableFragment
-                ...FairShareWeightSettingModal_ResourceGroupFragment
-              }
-            }
-          }
-          domains: rgDomainFairShares(
-            scope: { resourceGroupName: $resourceGroupName }
-            filter: $domainFilter
-            orderBy: $domainOrder
-            limit: $limit
-            offset: $offset
-          ) @skip(if: $skipDomain) {
-            count
-            edges {
-              node {
-                ...DomainFairShareTableFragment
-              }
-            }
-          }
-          projectFairShares: rgProjectFairShares(
-            scope: {
-              resourceGroupName: $resourceGroupName
-              domainName: $domainName
-            }
-            filter: $projectFilter
-            orderBy: $projectOrder
-            limit: $limit
-            offset: $offset
-          ) @skip(if: $skipProject) {
-            count
-            edges {
-              node {
-                ...ProjectFairShareTableFragment
-              }
-            }
-          }
-          userFairShares: rgUserFairShares(
-            scope: {
-              resourceGroupName: $resourceGroupName
-              domainName: $domainName
-              projectId: $projectId
-            }
-            filter: $userFilter
-            orderBy: $userOrder
-            limit: $limit
-            offset: $offset
-          ) @skip(if: $skipUser) {
-            count
-            edges {
-              node {
-                project {
-                  basicInfo {
-                    name
-                  }
-                }
-                ...UserFairShareTableFragment
-              }
+              ...ResourceGroupFairShareTableFragment
+              ...FairShareWeightSettingModal_ResourceGroupFragment
             }
           }
         }
-      `,
-      deferredGQLQueryVariables,
-      {
-        fetchKey: deferredFetchKey,
-        fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
-            ? 'store-and-network'
-            : 'network-only',
-      },
-    );
+        domains: rgDomainFairShares(
+          scope: { resourceGroupName: $resourceGroupName }
+          filter: $domainFilter
+          orderBy: $domainOrder
+          limit: $limit
+          offset: $offset
+        ) @skip(if: $skipDomain) {
+          count
+          edges {
+            node {
+              ...DomainFairShareTableFragment
+            }
+          }
+        }
+        projectFairShares: rgProjectFairShares(
+          scope: {
+            resourceGroupName: $resourceGroupName
+            domainName: $domainName
+          }
+          filter: $projectFilter
+          orderBy: $projectOrder
+          limit: $limit
+          offset: $offset
+        ) @skip(if: $skipProject) {
+          count
+          edges {
+            node {
+              ...ProjectFairShareTableFragment
+            }
+          }
+        }
+        userFairShares: rgUserFairShares(
+          scope: {
+            resourceGroupName: $resourceGroupName
+            domainName: $domainName
+            projectId: $projectIdStr
+          }
+          filter: $userFilter
+          orderBy: $userOrder
+          limit: $limit
+          offset: $offset
+        ) @skip(if: $skipUser) {
+          count
+          edges {
+            node {
+              ...UserFairShareTableFragment
+            }
+          }
+        }
+        project: projectV2(projectId: $projectId)
+          @skip(if: $skipParentProject) {
+          basicInfo {
+            name
+          }
+        }
+      }
+    `,
+    deferredGQLQueryVariables,
+    {
+      fetchKey: deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+    },
+  );
 
   const selectedResourceGroupNode = _.find(
     resourceGroups?.edges,
     (edge) => edge?.node.name === deferredStepQueryParams.resourceGroup,
   )?.node;
-  const selectedProjectName =
-    userFairShares?.edges?.[0]?.node?.project?.basicInfo?.name || '';
+  const selectedProjectName = project?.basicInfo?.name || '';
 
   const stepItems: Array<StepItem & { key: FairShareStepKey }> = [
     {
@@ -628,7 +637,6 @@ const FairShareList: React.FC = () => {
             }}
             loading={
               GQLQueryVariables !== deferredGQLQueryVariables ||
-              deferredFetchKey !== fetchKey ||
               stepQueryParams !== deferredStepQueryParams
             }
             pagination={{
@@ -656,7 +664,6 @@ const FairShareList: React.FC = () => {
             }
             loading={
               GQLQueryVariables !== deferredGQLQueryVariables ||
-              deferredFetchKey !== fetchKey ||
               stepQueryParams !== deferredStepQueryParams
             }
             selectedRows={selectedRows as Array<DomainFairShare>}
@@ -707,7 +714,6 @@ const FairShareList: React.FC = () => {
             }
             loading={
               GQLQueryVariables !== deferredGQLQueryVariables ||
-              deferredFetchKey !== fetchKey ||
               stepQueryParams !== deferredStepQueryParams
             }
             selectedRows={selectedRows as Array<ProjectFairShare>}
@@ -758,7 +764,6 @@ const FairShareList: React.FC = () => {
             }
             loading={
               GQLQueryVariables !== deferredGQLQueryVariables ||
-              deferredFetchKey !== fetchKey ||
               stepQueryParams !== deferredStepQueryParams
             }
             selectedRows={selectedRows as Array<UserFairShare>}

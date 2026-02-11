@@ -1,16 +1,8 @@
 import BAIFlex from './BAIFlex';
+import BAISelect from './BAISelect';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import {
-  AutoComplete,
-  Button,
-  Input,
-  Select,
-  Space,
-  Tag,
-  Tooltip,
-  theme,
-} from 'antd';
+import { AutoComplete, Button, Input, Space, Tag, Tooltip, theme } from 'antd';
 import type { AutoCompleteProps, GetRef } from 'antd';
 import _ from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
@@ -204,14 +196,14 @@ const OPERATOR_SHORT_LABELS: Partial<Record<FilterOperator, string>> = {
   notStartsWith: '!^',
   endsWith: '$',
   notEndsWith: '!$',
-  iEquals: '=ⁱ',
-  iNotEquals: '≠ⁱ',
-  iContains: '⊃ⁱ',
-  iNotContains: '⊅ⁱ',
-  iStartsWith: '^ⁱ',
-  iNotStartsWith: '!^ⁱ',
-  iEndsWith: '$ⁱ',
-  iNotEndsWith: '!$ⁱ',
+  iEquals: '=',
+  iNotEquals: '≠',
+  iContains: '⊃',
+  iNotContains: '⊅',
+  iStartsWith: '^',
+  iNotStartsWith: '!^',
+  iEndsWith: '$',
+  iNotEndsWith: '!$',
   // Number/Int operators
   greaterThan: '>',
   greaterThanOrEqual: '≥',
@@ -623,7 +615,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>
       <Space.Compact>
-        <Select
+        <BAISelect
           popupMatchSelectWidth={false}
           options={propertyOptions}
           value={selectedProperty.key}
@@ -653,11 +645,11 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         />
         {/* Hide operator selector if there's only one operator available or fixedOperator is set */}
         {availableOperators.length > 1 && !selectedProperty?.fixedOperator && (
-          <Select
+          <BAISelect
             options={operatorOptions}
+            popupMatchSelectWidth={false}
             value={selectedOperator}
             onChange={setSelectedOperator}
-            style={{ minWidth: 120 }}
           />
         )}
         <Tooltip

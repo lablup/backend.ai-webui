@@ -108,7 +108,7 @@ const ServingPage: React.FC = () => {
             <BAIFetchKeyButton
               value={fetchKey}
               onChange={updateFetchKey}
-              autoUpdateDelay={7000}
+              autoUpdateDelay={7_000}
               loading={
                 deferredQueryVariables !== queryVariables ||
                 deferredFetchKey !== fetchKey

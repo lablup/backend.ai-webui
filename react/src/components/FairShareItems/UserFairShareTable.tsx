@@ -1,6 +1,6 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
-import { theme, Typography } from 'antd';
+import { Divider, theme, Typography } from 'antd';
 import {
   BAIButton,
   BAIColumnsType,
@@ -182,9 +182,9 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
     {
       title: (
         <BAIFlex gap="xxs">
-          {t('fairShare.TotalAllocation')}
+          {t('fairShare.AllocationAverage')}
           <QuestionIconWithTooltip
-            title={t('fairShare.TotalAllocationDescription')}
+            title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
       ),
@@ -194,20 +194,24 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
         return _.isEmpty(entries) ? (
           '-'
         ) : (
-          <BAIFlex wrap="wrap" gap="sm">
+          <BAIFlex wrap="wrap" gap="sm" align="center">
             {_.map(
               entries,
-              (entry: { resourceType: string; quantity: number }) => (
-                <BAIResourceNumberWithIcon
-                  key={entry.resourceType}
-                  type={entry.resourceType}
-                  value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
-                  extra={
-                    <Typography.Text type="secondary">
-                      / {t('fairShare.DayUnit')}
-                    </Typography.Text>
-                  }
-                />
+              (entry: { resourceType: string; quantity: number }, index) => (
+                <BAIFlex key={entry.resourceType} gap="sm" align="center">
+                  {index > 0 && (
+                    <Divider type="vertical" style={{ margin: 0 }} />
+                  )}
+                  <BAIResourceNumberWithIcon
+                    type={entry.resourceType}
+                    value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
+                    extra={
+                      <Typography.Text type="secondary">
+                        / {t('fairShare.DayUnit')}
+                      </Typography.Text>
+                    }
+                  />
+                </BAIFlex>
               ),
             )}
           </BAIFlex>
