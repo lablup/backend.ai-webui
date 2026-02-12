@@ -57,6 +57,9 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Καθαρισμός",
     "KeepAsIs": "Διατήρηση ως έχει",

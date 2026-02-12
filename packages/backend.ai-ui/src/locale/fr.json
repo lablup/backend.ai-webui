@@ -57,6 +57,9 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Effacer",
     "KeepAsIs": "Conserver tel quel",
@@ -240,7 +243,7 @@
     "RenameSuccess": "Le nom a été modifié avec succès.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
-    "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
+    "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
     "TypeFolderNameToDelete": "Tapez le nom du dossier ou du fichier à supprimer.",
     "UnsupportedFileFormat": "Ce format de fichier ne prend pas en charge l'édition.",
     "UploadFiles": "Télécharger des fichiers",
@@ -300,7 +303,7 @@
       "Upload": "Télécharger"
     },
     "modal": {
-      "DeleteForeverDesc": "AVERTISSEMENT : les éléments sélectionnés seront supprimés définitivement et ne seront pas restaurés.",
+      "DeleteForeverDesc": "AVERTISSEMENT : les éléments sélectionnés seront supprimés définitivement et ne seront pas restaurés.",
       "ItemSelectedWithCount": "{{count}} éléments sélectionnés.",
       "PleaseTypeToConfirm": "Veuillez saisir {{ confirmText }} pour confirmer."
     },
