@@ -1533,7 +1533,7 @@
     "ForceTerminateWarningMsg2": "Jalankan hanya ketika keadaan tidak berubah dalam jangka waktu yang terlalu lama.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak menghapus penampung sebenarnya pada agen. \nPembersihan manual mungkin diperlukan.",
     "ForceUseV1Proxy": "Memaksa penggunaan v1",
-    "ForceUseV2Proxy": "Memaksa penggunaan v1",
+    "ForceUseV2Proxy": "Paksa penggunaan Proxy V2",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memori)",
     "Gaudi2Enabled": "Gaudi 2 NPU Diaktifkan",

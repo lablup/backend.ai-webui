@@ -1534,7 +1534,7 @@
     "ForceTerminateWarningMsg2": "僅當狀態在不合理的長時間內沒有發生變化時才執行。",
     "ForceTerminateWarningMsg3": "此操作不會刪除代理程式上的實際容器。\n可能需要手動清潔。",
     "ForceUseV1Proxy": "v1的強制使用",
-    "ForceUseV2Proxy": "v1的強制使用",
+    "ForceUseV2Proxy": "強制使用 V2 代理",
     "GPU": "GPU",
     "GPU(MEM)": "GPU（内存）",
     "Gaudi2Enabled": "Gaudi 2 NPU 啟用",

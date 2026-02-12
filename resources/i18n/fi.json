@@ -1532,7 +1532,7 @@
     "ForceTerminateWarningMsg2": "Suorita vain, kun tila ei muutu kohtuuttoman pitkään.",
     "ForceTerminateWarningMsg3": "Tämä toiminto ei poista agenttien varsinaisia säilöjä. \nManuaalinen puhdistus saattaa olla tarpeen.",
     "ForceUseV1Proxy": "V1: n voimankäyttö",
-    "ForceUseV2Proxy": "V1: n voimankäyttö",
+    "ForceUseV2Proxy": "Pakota V2-proksin käyttö",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (muisti)",
     "Gaudi2Enabled": "Gaudi 2 NPU Käytössä",

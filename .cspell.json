@@ -35,6 +35,8 @@
     "cuda",
     "deepseek",
     "FGPU",
+    "httpproxy",
+    "tcpproxy",
     "filebrowser",
     "Frgmt",
     "Frgmts",

@@ -1535,7 +1535,7 @@
     "ForceTerminateWarningMsg2": "Chỉ thực hiện khi trạng thái không thay đổi trong một khoảng thời gian dài không hợp lý.",
     "ForceTerminateWarningMsg3": "Hành động này không xóa các vùng chứa thực tế trên (các) tác nhân. \nCó thể cần phải dọn dẹp thủ công.",
     "ForceUseV1Proxy": "Sử dụng V1",
-    "ForceUseV2Proxy": "Sử dụng V1",
+    "ForceUseV2Proxy": "Bắt buộc sử dụng proxy V2",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bộ nhớ)",
     "Gaudi2Enabled": "Gaudi 2 NPU Đã bật",

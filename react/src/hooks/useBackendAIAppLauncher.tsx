@@ -332,7 +332,20 @@ export const useBackendAIAppLauncher = (
     if (servicePortInfo.is_inference) {
       searchParams.set('is_inference', 'true');
     }
-    searchParams.set('protocol', servicePortInfo.protocol || 'tcp');
+    const getAppProtocol = (appName: string, defaultProtocol: string) => {
+      const protocolMap: Record<string, string> = {
+        vnc: 'vnc',
+        xrdp: 'rdp',
+        sshd: 'tcp',
+        'vscode-desktop': 'tcp',
+      };
+      return protocolMap[appName] || defaultProtocol;
+    };
+
+    searchParams.set(
+      'protocol',
+      getAppProtocol(app, servicePortInfo.protocol || 'tcp'),
+    );
 
     const rqst_proxy = {
       method: 'GET',

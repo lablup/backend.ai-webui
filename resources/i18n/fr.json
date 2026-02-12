@@ -1533,7 +1533,7 @@
     "ForceTerminateWarningMsg2": "Exécuter uniquement lorsque l’état ne change pas pendant une période de temps déraisonnablement longue.",
     "ForceTerminateWarningMsg3": "Cette action ne supprime pas les conteneurs réels sur le ou les agents. \nUn nettoyage manuel peut être nécessaire.",
     "ForceUseV1Proxy": "Force Utilisation de V1",
-    "ForceUseV2Proxy": "Force Utilisation de V1",
+    "ForceUseV2Proxy": "Forcer l'utilisation du proxy V2",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (mémoire)",
     "Gaudi2Enabled": "Gaudi 2 NPU Activé",

@@ -1533,7 +1533,7 @@
     "ForceTerminateWarningMsg2": "Yalnızca durum makul olmayan uzun bir süre boyunca değişmediğinde yürütün.",
     "ForceTerminateWarningMsg3": "Bu eylem, aracı(lar)daki gerçek kapsayıcıları silmez. \nManuel temizleme gerekebilir.",
     "ForceUseV1Proxy": "V1'in kuvvet kullanımı",
-    "ForceUseV2Proxy": "V1'in kuvvet kullanımı",
+    "ForceUseV2Proxy": "V2 proxy'yi zorla kullan",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bellek)",
     "Gaudi2Enabled": "Gaudi 2 NPU Etkinleştirilmiş",

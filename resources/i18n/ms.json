@@ -1532,7 +1532,7 @@
     "ForceTerminateWarningMsg2": "Laksanakan hanya apabila keadaan tidak berubah untuk tempoh masa yang tidak munasabah.",
     "ForceTerminateWarningMsg3": "Tindakan ini tidak memadamkan bekas sebenar pada ejen. \nPembersihan manual mungkin diperlukan.",
     "ForceUseV1Proxy": "Memaksa penggunaan v1",
-    "ForceUseV2Proxy": "Memaksa penggunaan v1",
+    "ForceUseV2Proxy": "Paksakan penggunaan Proksi V2",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memori)",
     "Gaudi2Enabled": "Gaudi 2 NPU Didayakan",

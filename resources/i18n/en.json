@@ -1539,7 +1539,7 @@
     "ForceTerminateWarningMsg2": "Execute only when the state does not change for an unreasonably long period of time.",
     "ForceTerminateWarningMsg3": "This action does not delete the actual containers on the agent(s). Manual cleanup may be required.",
     "ForceUseV1Proxy": "Force use of V1",
-    "ForceUseV2Proxy": "Force use of V1",
+    "ForceUseV2Proxy": "Force use of V2",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(Memory)",
     "Gaudi2Enabled": "Gaudi 2 NPU Enabled",

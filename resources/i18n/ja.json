@@ -1534,7 +1534,7 @@
     "ForceTerminateWarningMsg2": "状態が不当に長時間変化しない場合にのみ実行してください。",
     "ForceTerminateWarningMsg3": "このアクションでは、エージェント上の実際のコンテナは削除されません。\n手動によるクリーンアップが必要な場合があります。",
     "ForceUseV1Proxy": "V1の強制使用",
-    "ForceUseV2Proxy": "V1の強制使用",
+    "ForceUseV2Proxy": "V2プロキシの強制使用",
     "GPU": "GPU",
     "GPU(MEM)": "GPU(メモリ)",
     "Gaudi2Enabled": "Gaudi 2 NPU 有効",

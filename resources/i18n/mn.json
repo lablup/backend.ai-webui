@@ -1511,7 +1511,7 @@
     "ForceTerminateWarningMsg2": "Үндэслэлгүй удаан хугацаанд төр өөрчлөгдөөгүй үед л гүйцэтгэнэ.",
     "ForceTerminateWarningMsg3": "Энэ үйлдэл нь агент(үүд) дээрх бодит савыг устгахгүй. \nГараар цэвэрлэх шаардлагатай байж болно.",
     "ForceUseV1Proxy": "V1-ийг хүчээр ашиглах",
-    "ForceUseV2Proxy": "V1-ийг хүчээр ашиглах",
+    "ForceUseV2Proxy": "V2 проксийг албадлан ашиглах",
     "GPU": "GPU",
     "GPU(MEM)": "GPU (санах ой)",
     "Gaudi2Enabled": "Gaudi 2 NPU Идэвхжүүлсэн",
