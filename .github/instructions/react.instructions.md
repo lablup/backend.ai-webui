@@ -1003,6 +1003,29 @@ const MyComponent = () => {
 
 ## TypeScript Best Practices
 
+### Variable Naming Convention
+
+- **All variable names must start with a lowercase letter** (camelCase)
+- This applies to local variables, function parameters, state variables, constants (non-enum), and hook return values
+
+```typescript
+// ✅ Good: Variables start with lowercase
+const userName = 'John';
+const [isLoading, setIsLoading] = useState(false);
+const fetchKey = useFetchKey();
+const handleSubmit = () => { /* ... */ };
+
+// ❌ Bad: Variables starting with uppercase
+const UserName = 'John';
+const FetchKey = useFetchKey();
+const HandleSubmit = () => { /* ... */ };
+```
+
+**Exceptions:**
+- React component names (PascalCase): `const MyComponent = () => { ... }`
+- Type/Interface names (PascalCase): `interface UserProps { ... }`
+- Enum members (PascalCase): `enum Status { Active, Inactive }`
+
 ### Type Safety
 
 - Always define prop interfaces
