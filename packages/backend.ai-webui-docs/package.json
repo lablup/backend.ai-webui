@@ -1,0 +1,29 @@
+{
+  "name": "backend.ai-webui-docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pdf": "tsx scripts/generate-pdf.ts --lang all",
+    "pdf:en": "tsx scripts/generate-pdf.ts --lang en",
+    "pdf:ko": "tsx scripts/generate-pdf.ts --lang ko",
+    "pdf:ja": "tsx scripts/generate-pdf.ts --lang ja",
+    "pdf:th": "tsx scripts/generate-pdf.ts --lang th",
+    "pdf:all": "tsx scripts/generate-pdf.ts --lang all",
+    "catalog": "tsx scripts/style-catalog.ts",
+    "preview": "tsx scripts/preview-server.ts --mode sample",
+    "preview:catalog": "tsx scripts/preview-server.ts --mode catalog",
+    "preview:doc": "tsx scripts/preview-server.ts --mode document --lang en",
+    "preview:doc:ko": "tsx scripts/preview-server.ts --mode document --lang ko",
+    "preview:doc:ja": "tsx scripts/preview-server.ts --mode document --lang ja",
+    "preview:doc:th": "tsx scripts/preview-server.ts --mode document --lang th"
+  },
+  "devDependencies": {
+    "marked": "^12.0.2",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.58.0",
+    "tsx": "^4.19.0",
+    "typescript": "~5.5.4",
+    "yaml": "^2.7.0"
+  }
+}
