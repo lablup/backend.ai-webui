@@ -778,6 +778,7 @@
     "SchedulerDescription": "公平共享调度器（Fair Share Scheduler）是一种基于历史资源使用情况确定会话执行优先级的调度方法。它会将更高的优先级分配给消耗资源较少的用户，确保所有用户随着时间公平地访问资源。<br /> <br />管理员可以在域 (Domain)、项目 (Project) 和用户 (User) 级别配置权重，以向特定组分配更多资源。优先级以 0.0 到 1.0 之间的值表示，数值越接近 1.0 表示优先级越高。",
     "SchedulerDoesNotAppliedToResourceGroup": "所选资源组（{{resourceGroup}}）未启用公平共享调度器。要使用该调度器，请更新资源组设置。",
     "TotalUsage": "总使用量",
+    "UsageHistory": "使用记录",
     "User": "用户",
     "UserDescription": "用户定义聚合周期内的配置权重和累计使用量。用户权重用于计算各用户的优先级系数。",
     "UsingDefault": "默认",
@@ -789,6 +790,14 @@
       "PleaseSelectProject": "请选择项目。",
       "ProjectDescription": "配置并修改每个项目的公平共享权重。",
       "UserDescription": "为每位用户配置和修改公平份额权重。"
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "日均使用量",
+      "Last30Days": "最近30天",
+      "Last7Days": "最近7天",
+      "Last90Days": "最近90天",
+      "NoDataAvailable": "所选时间段内无使用数据",
+      "SelectDateRange": "选择日期范围"
     }
   },
   "fairShrae": {},
@@ -835,6 +844,7 @@
     "ResourceGroup": "资源组",
     "SecretKey": "密钥",
     "Session": "会话",
+    "ShowUsageGraph": "查看使用情况",
     "StorageProxies": "存储",
     "TotalItems": "{{总计}}项目总数",
     "Username": "用户名",

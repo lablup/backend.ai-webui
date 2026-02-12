@@ -776,6 +776,7 @@
     "SchedulerDescription": "El planificador Fair Share es un método de planificación que determina la prioridad de ejecución de las sesiones en función del uso histórico de recursos. Asigna mayor prioridad a los usuarios que han consumido menos recursos, garantizando que todos los usuarios puedan acceder a los recursos de forma equitativa a lo largo del tiempo.\n<br /> <br />\nLos administradores pueden configurar pesos a nivel de Dominio, Proyecto y Usuario para asignar más recursos a grupos específicos. La prioridad se expresa mediante un valor entre 0.0 y 1.0, donde los valores más próximos a 1.0 indican mayor prioridad.",
     "SchedulerDoesNotAppliedToResourceGroup": "El planificador Fair Share no está habilitado para el grupo de recursos seleccionado ({{resourceGroup}}). Para usar el planificador, actualice la configuración del grupo de recursos.",
     "TotalUsage": "Uso total",
+    "UsageHistory": "Historial de uso",
     "User": "Usuario",
     "UserDescription": "El usuario define el peso configurado y el uso acumulado durante el período de agregación. El peso del usuario se utiliza para calcular el coeficiente de prioridad de cada usuario.",
     "UsingDefault": "predeterminado",
@@ -787,6 +788,14 @@
       "PleaseSelectProject": "Seleccione un proyecto.",
       "ProjectDescription": "Configurar y modificar los pesos de Fair Share para cada proyecto.",
       "UserDescription": "Configurar y modificar los pesos de Fair Share para cada usuario."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Uso promedio diario",
+      "Last30Days": "Últimos 30 días",
+      "Last7Days": "Últimos 7 días",
+      "Last90Days": "Últimos 90 días",
+      "NoDataAvailable": "No hay datos de uso disponibles para el período seleccionado.",
+      "SelectDateRange": "Seleccionar rango de fechas"
     }
   },
   "fairShrae": {},
@@ -833,6 +842,7 @@
     "ResourceGroup": "Grupo de recursos",
     "SecretKey": "Clave secreta",
     "Session": "Sesión",
+    "ShowUsageGraph": "Mostrar uso",
     "StorageProxies": "Almacenes",
     "TotalItems": "Total {{total}} artículos",
     "Username": "Nombre de usuario",

@@ -105,6 +105,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         updatedAt
 
         ...FairShareWeightSettingModal_DomainFragment
+        ...UsageBucketModal_DomainFragment
       }
     `,
     domainFairShareNodeFragment,

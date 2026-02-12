@@ -781,6 +781,7 @@
     "SchedulerDescription": "The Fair Share Scheduler is a scheduling method that determines session execution priority based on historical resource usage. It assigns higher priority to users who have consumed fewer resources, ensuring that all users can access resources fairly over time.\n<br /> <br />\nAdministrators can configure weights at the Domain, Project, and User levels to allocate more resources to specific groups. Priority is expressed as a value between 0.0 and 1.0, where values closer to 1.0 indicate higher priority.",
     "SchedulerDoesNotAppliedToResourceGroup": "The Fair Share Scheduler is not enabled for the selected resource group ({{resourceGroup}}). To use the scheduler, please update the resource group settings.",
     "TotalUsage": "Total Usage",
+    "UsageHistory": "Usage History",
     "User": "User",
     "UserDescription": "User defines the configured weight and cumulative usage during the aggregation period. The user weight is used to calculate the priority coefficient for individual users. ",
     "UsingDefault": "default",
@@ -792,6 +793,14 @@
       "PleaseSelectProject": "Please select a project.",
       "ProjectDescription": "Configure and modify Fair Share weights for each Project.",
       "UserDescription": "Configure and modify Fair Share weights for each User."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Average Daily Usage",
+      "Last30Days": "Last 30 Days",
+      "Last7Days": "Last 7 Days",
+      "Last90Days": "Last 90 Days",
+      "NoDataAvailable": "No usage data available for the selected period",
+      "SelectDateRange": "Select Date Range"
     }
   },
   "fairShrae": {},
@@ -838,6 +847,7 @@
     "ResourceGroup": "Resource Group",
     "SecretKey": "Secret Key",
     "Session": "Session",
+    "ShowUsageGraph": "Show Usage",
     "StorageProxies": "Storages",
     "TotalItems": "Total {{total}} items",
     "Username": "Username",

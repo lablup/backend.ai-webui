@@ -775,6 +775,7 @@
     "SchedulerDescription": "Fair Share Scheduler to metoda planowania, która ustala priorytet wykonywania sesji na podstawie historycznego zużycia zasobów. Przyznaje wyższy priorytet użytkownikom, którzy zużyli mniej zasobów, zapewniając sprawiedny dostęp do zasobów dla wszystkich użytkowników w czasie.\n<br /> <br />\nAdministratorzy mogą konfigurować wagi na poziomie domeny, projektu i użytkownika, aby przydzielać więcej zasobów konkretnym grupom. Priorytet jest wyrażany jako wartość między 0.0 a 1.0, gdzie wartości bliższe 1.0 oznaczają wyższy priorytet.",
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler nie jest włączony dla wybranej grupy zasobów ({{resourceGroup}}). Aby z niego korzystać, zaktualizuj ustawienia grupy zasobów.",
     "TotalUsage": "Łączne użycie",
+    "UsageHistory": "Historia użycia",
     "User": "Użytkownik",
     "UserDescription": "Użytkownik określa wagę oraz skumulowane zużycie w okresie agregacji. Waga użytkownika służy do obliczania współczynnika priorytetu dla poszczególnych użytkowników.",
     "UsingDefault": "Domyślny",
@@ -786,6 +787,14 @@
       "PleaseSelectProject": "Wybierz projekt.",
       "ProjectDescription": "Skonfiguruj i zmodyfikuj wagi Fair Share dla każdego Projektu.",
       "UserDescription": "Konfiguruj i modyfikuj wagi Fair Share dla poszczególnych użytkowników."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Średnie dzienne wykorzystanie",
+      "Last30Days": "Ostatnie 30 dni",
+      "Last7Days": "Ostatnie 7 dni",
+      "Last90Days": "Ostatnie 90 dni",
+      "NoDataAvailable": "Brak danych o użyciu dla wybranego okresu",
+      "SelectDateRange": "Wybierz zakres dat"
     }
   },
   "fairShrae": {},
@@ -832,6 +841,7 @@
     "ResourceGroup": "Grupa zasobów",
     "SecretKey": "Sekretny klucz",
     "Session": "Sesja",
+    "ShowUsageGraph": "Pokaż wykorzystanie",
     "StorageProxies": "Magazyny",
     "TotalItems": "Łącznie {{total}} pozycji",
     "Username": "Nazwa Użytkownika",

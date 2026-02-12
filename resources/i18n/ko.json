@@ -780,6 +780,7 @@
     "SchedulerDescription": "Fair Share Scheduler는 과거 리소스 사용 이력을 기반으로 세션 실행 우선순위를 결정하는 스케줄링 방식입니다. 리소스를 적게 사용한 사용자에게 더 높은 우선순위를 부여하여 장기적으로 모든 사용자가 공정하게 리소스를 사용할 수 있도록 합니다.\n<br /> <br />\n관리자는 Domain, Project, User 단위로 가중치를 설정하여 특정 그룹에 더 많은 리소스 할당량을 부여할 수 있습니다. 우선순위는 0.0에서 1.0 사이의 값으로 표현되며, 1.0에 가까울수록 높은 우선순위를 의미합니다.",
     "SchedulerDoesNotAppliedToResourceGroup": "선택한 자원 그룹({{resourceGroup}})에 Fair Share 스케줄러가 적용되어 있지 않습니다. 스케줄러를 사용하시려면 자원 그룹 설정을 변경해 주세요.",
     "TotalUsage": "총 사용량",
+    "UsageHistory": "사용량 기록",
     "User": "사용자",
     "UserDescription": "사용자 에서는 프로젝트에 설정된 가중치와 집계 기간동안의 누적 사용량을 확인할 수 있습니다.\n사용자의 가중치는 해당 사용자의 우선순위 계수 계산에 사용됩니다.",
     "UsingDefault": "기본값",
@@ -791,6 +792,14 @@
       "PleaseSelectProject": "프로젝트를 선택해 주세요.",
       "ProjectDescription": "프로젝트별 Fair Share 가중치를 확인하고 수정합니다.",
       "UserDescription": "사용자별 Fair Share 가중치를 확인하고 수정합니다."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "일 평균 사용량",
+      "Last30Days": "최근 30일",
+      "Last7Days": "최근 7일",
+      "Last90Days": "최근 90일",
+      "NoDataAvailable": "선택한 기간에 대한 사용량 데이터가 없습니다",
+      "SelectDateRange": "기간 선택"
     }
   },
   "fairShrae": {},
@@ -837,6 +846,7 @@
     "ResourceGroup": "자원 그룹",
     "SecretKey": "비밀키",
     "Session": "세션",
+    "ShowUsageGraph": "사용량 확인",
     "StorageProxies": "스토리지",
     "TotalItems": "총 {{ total }}개",
     "Username": "사용자 이름",

@@ -777,6 +777,7 @@
     "SchedulerDescription": "フェアシェアスケジューラは、過去のリソース使用状況に基づいてセッションの実行優先度を決定するスケジューリング方式です。これまでのリソース消費が少ないユーザーに高い優先度を割り当て、すべてのユーザーが時間をかけて公平にリソースへアクセスできるようにします。\n<br /> <br />\n管理者はドメイン、プロジェクト、ユーザーの各レベルで重みを設定して特定のグループにより多くのリソースを割り当てることができます。優先度は0.0から1.0の範囲の値で表され、1.0に近いほど優先度が高くなります。",
     "SchedulerDoesNotAppliedToResourceGroup": "選択したリソースグループ（{{resourceGroup}}）ではフェアシェアスケジューラが有効になっていません。スケジューラを使用するには、リソースグループの設定を更新してください。",
     "TotalUsage": "総使用量",
+    "UsageHistory": "利用履歴",
     "User": "ユーザー",
     "UserDescription": "ユーザーは集計期間中の設定済みウェイトと累積使用量を定義します。ユーザーウェイトは個々のユーザーの優先度係数を計算するために使用されます。",
     "UsingDefault": "デフォルト",
@@ -788,6 +789,14 @@
       "PleaseSelectProject": "プロジェクトを選択してください。",
       "ProjectDescription": "各プロジェクトのFair Share重みを設定・変更します。",
       "UserDescription": "各ユーザーの Fair Share の重みを設定および変更します。"
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "1日あたりの平均使用量",
+      "Last30Days": "過去30日間",
+      "Last7Days": "過去7日間",
+      "Last90Days": "過去90日間",
+      "NoDataAvailable": "選択した期間の使用状況データはありません。",
+      "SelectDateRange": "日付範囲を選択"
     }
   },
   "fairShrae": {},
@@ -834,6 +843,7 @@
     "ResourceGroup": "リソースグループ",
     "SecretKey": "シークレットキー",
     "Session": "セッション",
+    "ShowUsageGraph": "使用状況を表示",
     "StorageProxies": "ストレージ",
     "TotalItems": "合計{{total}}項目",
     "Username": "ユーザー名",

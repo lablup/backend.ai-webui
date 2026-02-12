@@ -778,6 +778,7 @@
     "SchedulerDescription": "Der Fair-Share-Scheduler ist ein Planungsverfahren, das die Ausführungspriorität von Sitzungen anhand des historischen Ressourcenverbrauchs bestimmt. Er vergibt höhere Priorität an Nutzer, die weniger Ressourcen verbraucht haben, und sorgt so dafür, dass alle Nutzer im Zeitverlauf fairen Zugriff auf Ressourcen erhalten.\n<br /> <br />\nAdministratoren können Gewichte auf Domain-, Projekt- und Benutzerebene konfigurieren, um bestimmten Gruppen mehr Ressourcen zuzuweisen. Die Priorität wird als Wert zwischen 0,0 und 1,0 angegeben; Werte näher bei 1,0 bedeuten höhere Priorität.",
     "SchedulerDoesNotAppliedToResourceGroup": "Der Fair Share Scheduler ist für die ausgewählte Ressourcengruppe ({{resourceGroup}}) nicht aktiviert. Um den Scheduler zu verwenden, aktualisieren Sie bitte die Einstellungen der Ressourcengruppe.",
     "TotalUsage": "Gesamtnutzung",
+    "UsageHistory": "Nutzungsverlauf",
     "User": "Benutzer",
     "UserDescription": "Der Benutzer legt das konfigurierte Gewicht und die kumulative Nutzung für den Aggregationszeitraum fest. Das Benutzergewicht wird verwendet, um den Prioritätsfaktor für einzelne Benutzer zu berechnen.",
     "UsingDefault": "Standard",
@@ -789,6 +790,14 @@
       "PleaseSelectProject": "Bitte wählen Sie ein Projekt aus.",
       "ProjectDescription": "Fair-Share-Gewichte für jedes Projekt konfigurieren und ändern.",
       "UserDescription": "Fair-Share-Gewichte für jeden Benutzer konfigurieren und anpassen."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Durchschnittliche Nutzung pro Tag",
+      "Last30Days": "Letzte 30 Tage",
+      "Last7Days": "Letzte 7 Tage",
+      "Last90Days": "Letzte 90 Tage",
+      "NoDataAvailable": "Für den ausgewählten Zeitraum sind keine Nutzungsdaten verfügbar.",
+      "SelectDateRange": "Datumsbereich auswählen"
     }
   },
   "fairShrae": {},
@@ -835,6 +844,7 @@
     "ResourceGroup": "Ressourcengruppe",
     "SecretKey": "Geheimer Schlüssel",
     "Session": "Sitzung",
+    "ShowUsageGraph": "Nutzung anzeigen",
     "StorageProxies": "Speicher",
     "TotalItems": "Insgesamt {{Gesamt}} Artikel",
     "Username": "Nutzername",

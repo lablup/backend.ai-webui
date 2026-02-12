@@ -777,6 +777,7 @@
     "SchedulerDescription": "公平分配排程器（Fair Share Scheduler）是一種根據歷史資源使用量決定會話執行優先順序的排程方法。它會將較高的優先權分配給過去消耗較少資源的使用者，確保所有使用者能隨時間公平地存取資源。<br /> <br />\n管理員可以在網域（Domain）、專案（Project）和使用者（User）層級設定權重，以將更多資源分配給特定群組。優先權以 0.0 到 1.0 的值表示，數值越接近 1.0 表示優先權越高。",
     "SchedulerDoesNotAppliedToResourceGroup": "所選資源群組（{{resourceGroup}}）未啟用公平分享排程器。若要使用排程器，請更新該資源群組的設定。",
     "TotalUsage": "總使用量",
+    "UsageHistory": "使用紀錄",
     "User": "使用者",
     "UserDescription": "使用者定義聚合期間的權重與累積使用量。使用者權重用於計算個別使用者的優先係數。",
     "UsingDefault": "預設",
@@ -788,6 +789,14 @@
       "PleaseSelectProject": "請選擇一個專案。",
       "ProjectDescription": "設定並修改每個專案的 Fair Share 權重。",
       "UserDescription": "設定與修改每位使用者的公平分享權重。"
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "每日平均使用量",
+      "Last30Days": "過去 30 天",
+      "Last7Days": "最近7天",
+      "Last90Days": "過去 90 天",
+      "NoDataAvailable": "所選期間無使用資料",
+      "SelectDateRange": "選擇日期範圍"
     }
   },
   "fairShrae": {},
@@ -834,6 +843,7 @@
     "ResourceGroup": "資源組",
     "SecretKey": "密鑰",
     "Session": "會話",
+    "ShowUsageGraph": "顯示使用量",
     "StorageProxies": "存儲",
     "TotalItems": "{{总计}}项目总数",
     "Username": "用戶名",

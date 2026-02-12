@@ -776,6 +776,7 @@
     "SchedulerDescription": "L'Ordonnanceur Fair Share est une méthode d'ordonnancement qui détermine la priorité d'exécution des sessions en fonction de l'historique d'utilisation des ressources. Il attribue une priorité plus élevée aux utilisateurs ayant consommé moins de ressources, garantissant que tous les utilisateurs puissent accéder aux ressources de manière équitable au fil du temps.\n<br /> <br />\nLes administrateurs peuvent configurer des poids aux niveaux Domaine, Projet et Utilisateur pour allouer davantage de ressources à certains groupes. La priorité est exprimée par une valeur comprise entre 0.0 et 1.0, les valeurs proches de 1.0 indiquant une priorité plus élevée.",
     "SchedulerDoesNotAppliedToResourceGroup": "L'ordonnanceur Fair Share n'est pas activé pour le groupe de ressources sélectionné ({{resourceGroup}}). Pour l'utiliser, mettez à jour les paramètres du groupe de ressources.",
     "TotalUsage": "Utilisation totale",
+    "UsageHistory": "Historique d'utilisation",
     "User": "Utilisateur",
     "UserDescription": "L'utilisateur définit le poids configuré et l'utilisation cumulée pendant la période d'agrégation. Le poids de l'utilisateur est utilisé pour calculer le coefficient de priorité pour les utilisateurs individuels.",
     "UsingDefault": "Par défaut",
@@ -787,6 +788,14 @@
       "PleaseSelectProject": "Veuillez sélectionner un projet.",
       "ProjectDescription": "Configurer et modifier les poids Fair Share pour chaque Projet.",
       "UserDescription": "Configurer et modifier les pondérations Fair Share pour chaque utilisateur."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Utilisation quotidienne moyenne",
+      "Last30Days": "30 derniers jours",
+      "Last7Days": "7 derniers jours",
+      "Last90Days": "Derniers 90 jours",
+      "NoDataAvailable": "Aucune donnée d'utilisation disponible pour la période sélectionnée.",
+      "SelectDateRange": "Sélectionner une plage de dates"
     }
   },
   "fairShrae": {},
@@ -833,6 +842,7 @@
     "ResourceGroup": "Groupe de ressources",
     "SecretKey": "Clef secrète",
     "Session": "Session",
+    "ShowUsageGraph": "Afficher l'utilisation",
     "StorageProxies": "Stockages",
     "TotalItems": "Total des éléments {{total}}",
     "Username": "Nom d'utilisateur",

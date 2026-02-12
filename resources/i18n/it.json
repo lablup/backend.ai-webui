@@ -775,6 +775,7 @@
     "SchedulerDescription": "Il Fair Share Scheduler è un metodo di pianificazione che determina la priorità di esecuzione delle sessioni basandosi sul consumo storico delle risorse. Attribuisce priorità più alta agli utenti che hanno consumato meno risorse, garantendo che tutti gli utenti possano accedere alle risorse in modo equo nel tempo.\n<br /> <br />\nGli amministratori possono configurare i pesi a livello di Dominio, Progetto e Utente per allocare più risorse a gruppi specifici. La priorità è espressa come valore compreso tra 0.0 e 1.0; valori più vicini a 1.0 indicano priorità maggiore.",
     "SchedulerDoesNotAppliedToResourceGroup": "Il Fair Share Scheduler non è abilitato per il gruppo di risorse selezionato ({{resourceGroup}}). Per abilitarlo, aggiorna le impostazioni del gruppo di risorse.",
     "TotalUsage": "Utilizzo totale",
+    "UsageHistory": "Storico utilizzo",
     "User": "Utente",
     "UserDescription": "L'utente imposta il peso configurato e l'utilizzo cumulativo nel periodo di aggregazione. Il peso dell'utente viene utilizzato per calcolare il coefficiente di priorità di ciascun utente.",
     "UsingDefault": "predefinito",
@@ -786,6 +787,14 @@
       "PleaseSelectProject": "Seleziona un progetto.",
       "ProjectDescription": "Configura e modifica i pesi di Fair Share per ciascun progetto.",
       "UserDescription": "Configura e modifica i pesi di Fair Share per ciascun utente."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Utilizzo medio giornaliero",
+      "Last30Days": "Ultimi 30 giorni",
+      "Last7Days": "Ultimi 7 giorni",
+      "Last90Days": "Ultimi 90 giorni",
+      "NoDataAvailable": "Nessun dato di utilizzo disponibile per il periodo selezionato",
+      "SelectDateRange": "Seleziona intervallo di date"
     }
   },
   "fairShrae": {},
@@ -832,6 +841,7 @@
     "ResourceGroup": "Gruppo di risorse",
     "SecretKey": "Chiave segreta",
     "Session": "Sessione",
+    "ShowUsageGraph": "Mostra utilizzo",
     "StorageProxies": "Depositi",
     "TotalItems": "Totale articoli {{totale}}",
     "Username": "Nome utente",

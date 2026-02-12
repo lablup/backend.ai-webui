@@ -776,6 +776,7 @@
     "SchedulerDescription": "O Escalonador Fair Share é um método de escalonamento que determina a prioridade de execução das sessões com base no uso histórico de recursos. Ele atribui prioridade mais alta a usuários que consumiram menos recursos, garantindo que todos tenham acesso justo aos recursos ao longo do tempo.\n<br /> <br />\nAdministradores podem configurar pesos nos níveis de Domínio, Projeto e Usuário para alocar mais recursos a grupos específicos. A prioridade é expressa por um valor entre 0,0 e 1,0, onde valores mais próximos de 1,0 indicam prioridade maior.",
     "SchedulerDoesNotAppliedToResourceGroup": "O Agendador Fair Share não está habilitado para o grupo de recursos selecionado ({{resourceGroup}}). Para usar o Agendador, atualize as configurações do grupo de recursos.",
     "TotalUsage": "Uso total",
+    "UsageHistory": "Histórico de uso",
     "User": "Usuário",
     "UserDescription": "O usuário define o peso configurado e o uso acumulado durante o período de agregação. O peso do usuário é usado para calcular o coeficiente de prioridade para usuários individuais.",
     "UsingDefault": "padrão",
@@ -787,6 +788,14 @@
       "PleaseSelectProject": "Por favor, selecione um projeto.",
       "ProjectDescription": "Configure e modifique os pesos de Fair Share para cada Project.",
       "UserDescription": "Configure e modifique os pesos do Fair Share para cada usuário."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Uso Diário Médio",
+      "Last30Days": "Últimos 30 dias",
+      "Last7Days": "Últimos 7 dias",
+      "Last90Days": "Últimos 90 dias",
+      "NoDataAvailable": "Nenhum dado de uso disponível para o período selecionado",
+      "SelectDateRange": "Selecionar intervalo de datas"
     }
   },
   "fairShrae": {},
@@ -833,6 +842,7 @@
     "ResourceGroup": "Grupo de Recursos",
     "SecretKey": "Chave secreta",
     "Session": "Sessão",
+    "ShowUsageGraph": "Mostrar uso",
     "StorageProxies": "Armazéns",
     "TotalItems": "Total de itens {{total}}",
     "Username": "Nome do usuário",

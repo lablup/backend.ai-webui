@@ -776,6 +776,7 @@
     "SchedulerDescription": "Adil Paylaşım Zamanlayıcısı, oturum yürütme önceliğini geçmiş kaynak kullanımına göre belirleyen bir zamanlama yöntemidir. Daha az kaynak tüketmiş kullanıcılara daha yüksek öncelik vererek tüm kullanıcıların zaman içinde kaynaklara adil erişimini sağlar.\n<br /> <br />\nYöneticiler belirli gruplara daha fazla kaynak tahsis etmek için Domain, Proje ve Kullanıcı düzeylerinde ağırlıkları yapılandırabilir. Öncelik 0.0 ile 1.0 arasında bir değerle ifade edilir; 1.0'a yakın değerler daha yüksek önceliği gösterir.",
     "SchedulerDoesNotAppliedToResourceGroup": "Seçili kaynak grubu ({{resourceGroup}}) için Fair Share Scheduler etkin değil. Planlayıcıyı kullanmak için lütfen kaynak grubu ayarlarını güncelleyin.",
     "TotalUsage": "Toplam Kullanım",
+    "UsageHistory": "Kullanım Geçmişi",
     "User": "Kullanıcı",
     "UserDescription": "Kullanıcı, agregasyon dönemi sırasında ayarlanan ağırlığı ve kümülatif kullanımı belirler. Kullanıcı ağırlığı, bireysel kullanıcıların öncelik katsayısını hesaplamak için kullanılır.",
     "UsingDefault": "varsayılan",
@@ -787,6 +788,14 @@
       "PleaseSelectProject": "Lütfen bir proje seçin.",
       "ProjectDescription": "Her proje için Fair Share ağırlıklarını yapılandırın ve değiştirin.",
       "UserDescription": "Her kullanıcı için Fair Share ağırlıklarını yapılandırın ve değiştirin."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Günlük Ortalama Kullanım",
+      "Last30Days": "Son 30 Gün",
+      "Last7Days": "Son 7 Gün",
+      "Last90Days": "Son 90 Gün",
+      "NoDataAvailable": "Seçilen dönem için kullanım verisi yok",
+      "SelectDateRange": "Tarih Aralığı Seç"
     }
   },
   "fairShrae": {},
@@ -833,6 +842,7 @@
     "ResourceGroup": "Kaynak Grubu",
     "SecretKey": "Gizli anahtar",
     "Session": "Oturum",
+    "ShowUsageGraph": "Kullanımı göster",
     "StorageProxies": "Depolar",
     "TotalItems": "Toplam {{toplam}} öğe",
     "Username": "Kullanıcı adı",

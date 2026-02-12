@@ -775,6 +775,7 @@
     "SchedulerDescription": "Fair Share Scheduler ialah kaedah penjadualan yang menentukan keutamaan pelaksanaan sesi berdasarkan penggunaan sumber terdahulu. Ia memberi keutamaan lebih tinggi kepada pengguna yang telah menggunakan lebih sedikit sumber, memastikan semua pengguna dapat mengakses sumber secara adil dari masa ke masa.\n<br /> <br />\nPentadbir boleh menetapkan wajaran pada peringkat Domain, Projek, dan Pengguna untuk memperuntukkan lebih banyak sumber kepada kumpulan tertentu. Keutamaan dinyatakan sebagai nilai antara 0.0 dan 1.0, di mana nilai yang lebih dekat dengan 1.0 menunjukkan keutamaan yang lebih tinggi.",
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler tidak diaktifkan untuk kumpulan sumber yang dipilih ({{resourceGroup}}). Untuk menggunakan penjadual ini, sila kemas kini tetapan kumpulan sumber.",
     "TotalUsage": "Jumlah Penggunaan",
+    "UsageHistory": "Sejarah Penggunaan",
     "User": "Pengguna",
     "UserDescription": "Pengguna menentukan berat yang dikonfigurasikan dan jumlah penggunaan terkumpul sepanjang tempoh pengagregatan. Berat pengguna digunakan untuk mengira pekali keutamaan bagi setiap pengguna.",
     "UsingDefault": "lalai",
@@ -786,6 +787,14 @@
       "PleaseSelectProject": "Sila pilih projek.",
       "ProjectDescription": "Konfigurasikan dan laraskan berat Fair Share untuk setiap Projek.",
       "UserDescription": "Konfigurasikan dan ubah berat Fair Share untuk setiap pengguna."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Purata Penggunaan Harian",
+      "Last30Days": "30 Hari Terakhir",
+      "Last7Days": "7 Hari Terakhir",
+      "Last90Days": "90 Hari Terakhir",
+      "NoDataAvailable": "Tiada data penggunaan tersedia untuk tempoh yang dipilih",
+      "SelectDateRange": "Pilih Julat Tarikh"
     }
   },
   "fairShrae": {},
@@ -832,6 +841,7 @@
     "ResourceGroup": "Kumpulan Sumber",
     "SecretKey": "Kunci Rahsia",
     "Session": "Sesi",
+    "ShowUsageGraph": "Tunjukkan Penggunaan",
     "StorageProxies": "Stor",
     "TotalItems": "Jumlah {{total}} item",
     "Username": "Nama pengguna",

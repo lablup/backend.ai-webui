@@ -776,6 +776,7 @@
     "SchedulerDescription": "Fair Share Scheduler on aikataulutusmenetelmä, joka määrittää istunnon suoritusprioriteetin aiemman resurssikäytön perusteella. Se antaa korkeamman prioriteetin käyttäjille, jotka ovat käyttäneet vähemmän resursseja, varmistaen, että kaikki käyttäjät pääsevät resursseihin tasapuolisesti ajan myötä.\n<br /> <br />\nJärjestelmänvalvojat voivat määrittää painot Domain-, Project- ja User-tasoilla kohdentamaan enemmän resursseja tietyille ryhmille. Prioriteetti ilmaistaan arvona välillä 0.0–1.0, jossa arvo lähellä 1.0 tarkoittaa korkeampaa prioriteettia.",
     "SchedulerDoesNotAppliedToResourceGroup": "Fair Share Scheduler ei ole käytössä valitussa resurssiryhmässä ({{resourceGroup}}). Ota se käyttöön päivittämällä resurssiryhmän asetukset.",
     "TotalUsage": "Kokonaiskäyttö",
+    "UsageHistory": "Käyttöhistoria",
     "User": "Käyttäjä",
     "UserDescription": "Käyttäjä määrittää asetetun painon ja aggregointijakson aikana kertyneen käytön. Käyttäjän painoa käytetään yksittäisten käyttäjien prioriteettikertoimen laskemiseen.",
     "UsingDefault": "oletus",
@@ -787,6 +788,14 @@
       "PleaseSelectProject": "Valitse projekti.",
       "ProjectDescription": "Määritä ja muokkaa kunkin projektin Fair Sharen painoja.",
       "UserDescription": "Määritä ja muokkaa Fair Share -painoja kullekin käyttäjälle."
+    },
+    "usageBucket": {
+      "AverageDailyUsage": "Keskimääräinen päivittäinen käyttö",
+      "Last30Days": "Viimeiset 30 päivää",
+      "Last7Days": "Viimeiset 7 päivää",
+      "Last90Days": "Viimeiset 90 päivää",
+      "NoDataAvailable": "Ei käyttötietoja valitulta ajanjaksolta",
+      "SelectDateRange": "Valitse päivämääräväli"
     }
   },
   "fairShrae": {},
@@ -833,6 +842,7 @@
     "ResourceGroup": "Resurssiryhmä",
     "SecretKey": "Salainen avain",
     "Session": "Istunto",
+    "ShowUsageGraph": "Näytä käyttö",
     "StorageProxies": "Varastot",
     "TotalItems": "Yhteensä {{total}} kohteita",
     "Username": "Käyttäjätunnus",
