@@ -65,7 +65,7 @@ test.describe.serial(
       try {
         await moveToTrashAndVerify(page, testFolderName);
         await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch (error) {
+      } catch {
         console.log(`Could not delete ${testFolderName}, it may not exist`);
       }
 
@@ -76,7 +76,7 @@ test.describe.serial(
         if (tmpDir && fs.existsSync(tmpDir)) {
           fs.rmSync(tmpDir, { recursive: true, force: true });
         }
-      } catch (error) {
+      } catch {
         console.log(`Could not delete temporary directory ${tmpDir}`);
       }
     });

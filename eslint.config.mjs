@@ -24,6 +24,7 @@ export default [
       'react/**',
       'packages/**',
       'build/**',
+      'e2e/**',
     ],
   },
 

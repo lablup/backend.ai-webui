@@ -132,6 +132,7 @@
     "@types/estree": "1.0.5",
     "@types/hammerjs": "^2.0.46",
     "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.23",
     "@types/node": "^22.19.7",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
@@ -183,7 +184,8 @@
     "workbox-routing": "^7.4.0",
     "workbox-strategies": "^7.4.0",
     "workbox-sw": "^7.4.0",
-    "ws": "^8.19.0"
+    "ws": "^8.19.0",
+    "eslint-config-bai": "workspace:*"
   },
   "pnpm": {
     "overrides": {
@@ -207,7 +209,7 @@
       "prettier --write"
     ],
     "e2e/**/*.{js,ts}": [
-      "eslint --max-warnings=0 --cache",
+      "eslint --config e2e/eslint.config.mjs --max-warnings=0 --cache",
       "prettier --write"
     ],
     "resources/i18n/*.json": [
