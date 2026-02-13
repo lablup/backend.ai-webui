@@ -1,7 +1,7 @@
 ---
 description: Create a Jira issue for Git changes
 argument-hint: [stage, pr, branch, commit]
-model: claude-sonnet-4-5
+model: sonnet
 ---
 
 # Create a Jira issue for Git Changes
