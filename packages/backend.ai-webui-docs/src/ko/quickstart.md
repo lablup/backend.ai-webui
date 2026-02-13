@@ -6,13 +6,13 @@ Backend.AI WebUI를 사용하는 빠른 시작 가이드입니다. 이 튜토리
 ## 목표
 
 ### 파트 1. Backend.AI 기초 사용 가이드
-- [How to create a virtual folder<create_storage_folder>](#How to create a virtual folder<create_storage_folder>)
-- [How to create a session<create_session>](#How to create a session<create_session>)
-- [How to use a session<use_session>](#How to use a session<use_session>)
-- [How to delete a session<delete_session>](#How to delete a session<delete_session>)
+- [스토리지 폴더 생성](#create-storage-folder)
+- [새로운 세션 시작하기](#create_session)
+- [Jupyter Notebook 사용하기](#use_session)
+- [연산 세션 삭제하기](#delete_session)
 
 ### 파트 2. Backend.AI 고급 사용 가이드
-- [How to use terminal application with tmux<tmux_guide>](#How to use terminal application with tmux<tmux_guide>)
-- [How to install extra pip package using automount virtual folder<install_pip_pkg>](#How to install extra pip package using automount virtual folder<install_pip_pkg>)
-- [How to use SSH/sFTP <ssh-sftp-container>](#How to use SSH/sFTP <ssh-sftp-container>)
-- [How to install apt packages<installing_apt_pkg>](#How to install apt packages<installing_apt_pkg>)
+- [여러 개의 쉘 띄우기 (tmux)](#tmux_guide)
+- [자동 마운트 폴더를 이용한 pip 패키지 설치](#install_pip_pkg)
+- [연산 세션에 SSH/SFTP 접속하기](#ssh-sftp-container)
+- [apt 패키지 설치 방법](#installing_apt_pkg)

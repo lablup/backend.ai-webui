@@ -10,7 +10,7 @@ Backend.AI Web-UI는 두 가지 형태로 사용할 수 있습니다. 관리자�
 
    마이크로소프트의 인터넷 익스플로러는 더 이상 지원되지 않으며, 웹 표준 및 최신 브라우저 기능을 준수하지 않기 때문에 지원 대상에서 제외되었습니다.
 
-The stand-alone WebUI app can be downloaded from following link:
+Web-UI 단독 실행 파일 앱은 다음 링크에서 다운로드할 수 있습니다:
 https://github.com/lablup/backend.ai-webui/releases
 
 

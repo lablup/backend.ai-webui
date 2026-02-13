@@ -4,15 +4,7 @@
 
 이 문서는 Backend.AI 소프트웨어에 관한 사용권 계약 조건을 정의합니다. 래블업에서 제공하는 Backend.AI Cloud 서비스의 사용료 및 지원 플랜은 이 정책과 별도입니다.
 
-Backend.AI server components (hereinafter referred to as "Backend.AI Server")
-are distributed under the GNU Lesser General Public License v3.0 ("LGPL"), and
-API Client libraries and auxiliary components for accessing Backend.AI server
-(hereinafter "Backend.AI Client") are distributed under the MIT License. Even if
-LGPL complies, commercial contracts with Lablup Co., Ltd. ("Lablup") are
-required depending on the conditions when performing profit activities using the
-Backend.AI server. Several additional plug-ins and 어드민's GUI Control-Panel
-that apply to Backend.AI enterprise solutions are not open source, but
-commercial software.
+Backend.AI의 서버 컴포넌트들(이하 “Backend.AI 서버”)은 GNU Lesser General Public License v3.0(이하 “LGPL”)으로 배포되며, Backend.AI 서버에 접속하기 위한 API Client 라이브러리들 및 보조 컴포넌트들(이하 “Backend.AI 클라이언트”)은 MIT 라이선스로 배포됩니다. LGPL을 준수하는 경우에도 Backend.AI 서버를 이용한 수익 활동을 하는 경우 조건에 따라 래블업 주식회사(“래블업”)와의 상용 계약이 필요합니다. Backend.AI 엔터프라이즈 솔루션을 대상으로 하는 추가적인 몇몇 플러그인 및 관리 허브는 오픈소스가 아니며, 상용 소프트웨어입니다.
 
 **용어 정의**
 

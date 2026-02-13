@@ -14,41 +14,29 @@
 간혹 브라우저의 쿠키 문제 및 캐시된 데이터로 인해 로그인이 되지 않는 경우가 있습니다. 브라우저의 시크릿 모드에서 로그인을 시도해 보십시오. 만약 로그인이 된다면, 브라우저의 쿠키 및 애플리케이션 데이터를 삭제한 후 다시 로그인 해 보시기 바랍니다.
 
 
+<a id="installing_apt_pkg"></a>
+
 ### apt 패키지는 어떻게 설치하나요?
 
-Inside a compute session, 일반 사용자s cannot access `root` account and perform
-operations that require `sudo` privilege for security reasons. Therefore, it
-is not allowed to install packages with `apt` or `yum` since they require
-`sudo`. If it is really required, you can request to 어드민s to allow `sudo`
-permission.
+연산 세션 내에서 사용자는 보안상의 이유로 `root` 계정에 접근하거나 `sudo` 권한이 필요한 작업을 수행할 수 없습니다. 따라서 `sudo` 권한이 필요한 `apt` 또는 `yum`을 이용한 패키지 설치는 허용되지 않습니다. 꼭 필요한 경우에는 관리자에게 `sudo` 권한 허용을 요청할 수 있습니다.
 
-Alternatively, 일반 사용자s may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>](#guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>).
+또는 Homebrew를 이용하여 OS 패키지를 설치할 수 있습니다. 자세한 내용은 [자동 마운트 폴더에서 Homebrew 사용 가이드](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder)를 참고하십시오.
 
+
+<a id="install_pip_pkg"></a>
 
 ### pip 패키지를 설치하고 싶어요
 
-By default, when you install a pip package, it will be installed under
-`~/.local`. So, if you create a automount data folder named `.local`, you
-can keep the installed packages after a compute session is destroyed, and then
-reus them for the next compute session. Just install the packages with pip like:
+pip 패키지를 설치하면 기본적으로 `~/.local` 경로에 설치됩니다. 따라서, `.local`이라는 이름의 자동 마운트 스토리지 폴더를 생성하면, 연산 세션이 종료된 후에도 설치된 패키지를 보존하여 다음 연산 세션에서 재사용할 수 있습니다. 다음과 같이 pip를 사용하여 패키지를 설치하면 됩니다.
 
-``shell
+```shell
 $ pip install aiohttp
-``
-For more information, please refer to the [guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>](#guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>).
+```
+자세한 내용은 [자동 마운트 폴더에서 Python 패키지 설치 가이드](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder)를 참고하십시오.
 
-### I have created a compute session, but cannot launch Jupyter Notebook
+### 연산 세션을 생성했지만 Jupyter Notebook을 실행할 수 없습니다
 
-If you installed a Jupyter package with pip by yourself, it may be conflict with
-the Jupyter package that a compute session provides by default. Especially, if you
-have created `~/.local` directory, the manually installed Jupyter packages
-persists for every compute session. In this case, try to remove the `.local`
-automount folder and then try to launch Jupyter Notebook again.
+pip를 통해 Jupyter 패키지를 직접 설치한 경우, 연산 세션이 기본으로 제공하는 Jupyter 패키지와 충돌할 수 있습니다. 특히, `~/.local` 디렉터리를 생성한 경우, 직접 설치한 Jupyter 패키지가 모든 연산 세션에서 유지됩니다. 이 경우에는 `.local` 자동 마운트 폴더를 삭제한 후 Jupyter Notebook을 다시 실행해 보십시오.
 
 ### 페이지가 이상하게 표시됩니다
 
@@ -65,21 +53,20 @@ Web-UI 앱을 통한 SFTP 연결은 Web-UI 앱이 내장하고 있는 로컬 pro
 
 ### 사용자가 Jupyter Notebook 등의 앱을 띄울 수 없는 경우
 
-There may be a problem on connecting WSProxy service. Try to stop and restart
-the service by referencing the guide on start/stop/restart WSProxy service.
+WSProxy 서비스 연결에 문제가 있을 수 있습니다. WSProxy 서비스 시작/중지/재시작 가이드를 참고하여 서비스를 중지한 후 다시 시작해 보십시오.
 
 ### 표시되는 자원 양이 실제 할당된 양과 다릅니다
 
 가끔 네트워크 연결이 튀거나 Docker 데몬의 컨테이너 관리 지연 등의 사유로 Backend.AI 가 인식하는 자원의 할당양과 실제 컨테이너가 점유하고 있는 자원의 양이 달라질 수 있습니다. 이런 경우에는 다음 과정을 따라 하십시오.
 
-- 어드민 계정으로 로그인
+- 관리자 계정으로 로그인
 - Maintenance 페이지 방문.
 - RECALCULATE USAGE 버튼을 클릭하여 수동으로 자원 할당량 조정.
 
 ### 도커 레지스트리에 이미지 등록 후 세션 생성 환경에 이미지가 보이지 않을 때
 
 
-   이 기능은 super 어드민만 사용할 수 있습니다.
+   이 기능은 슈퍼관리자만 사용할 수 있습니다.
 
 사설 도커 레지스트리에 이미지가 새로 등록된 경우 Backend.AI에서 레지스트리 별 이미지 메타 데이터를 업데이트 해야 세션 생성할 때 이용할 수 있습니다. 메타 데이터 업데이트는 Maintenance 페이지의 RESCAN IMAGES 버튼을 클릭하여 수행할 수 있습니다. 만약 연결된 도커 레지스트리가 여러 개일 경우, RESCAN IMAGES 버튼을 클릭하면 모든 레지스트리에서 메타 정보를 받아 옵니다.
 

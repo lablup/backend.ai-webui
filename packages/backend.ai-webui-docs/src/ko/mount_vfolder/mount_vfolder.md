@@ -1,86 +1,122 @@
 # 연산 세션에 폴더 마운트
 
+<a id="session-mounts"></a>
 
-Backend.AI provides a function to mount storage folders when creating a compute session.
-When new compute session is started, 일반 사용자 will have access to the`/home/work/` directory.
-Normal directories and files created under `/home/work/` will disappear when the compute session is terminated.
-This is because compute sessions are dynamically created and deleted based on the container.
-To preserve data inside a container regardless of the container's lifecycle, a separate host folder must be mounted in the container, and then files must be created within the mounted folder.
+Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할 수 있는 기능을 제공합니다.
+새로운 연산 세션을 시작하면 사용자는 `/home/work/` 디렉터리에 접근할 수 있습니다.
+`/home/work/` 아래에 생성된 일반 디렉터리와 파일은 연산 세션이 종료되면 사라집니다.
+이는 연산 세션이 컨테이너 기반으로 동적으로 생성 및 삭제되기 때문입니다.
+컨테이너의 생명 주기와 관계없이 데이터를 보존하려면, 별도의 호스트 폴더를 컨테이너에 마운트한 후 마운트된 폴더 안에서 파일을 생성해야 합니다.
 
-Go to '세션 (Sessions)' page and click the '시작' button.
-After filling out the '세션 타입', '실행 환경 및 자원 할당' steps,
-navigate to the '데이터 및 폴더' step to see a list of folders that 일반 사용자s can mount.
-From this list, choose the folders to mount and add them, or select multiple folders to mount more.
-The documentation will explain how to mount two folders, `user1-ml-test` and `user2-vfolder`,
-and then create a session.
+'세션' 페이지로 이동하여 '시작' 버튼을 클릭합니다.
+'세션 타입', '실행 환경 및 자원 할당' 단계를 채운 후,
+'데이터 & 폴더' 단계로 이동하면 사용자가 마운트할 수 있는 폴더 목록을 확인할 수 있습니다.
+이 목록에서 마운트할 폴더를 선택하여 추가하거나, 여러 폴더를 선택하여 추가로 마운트할 수 있습니다.
+이 문서에서는 `user1-ml-test`와 `user2-vfolder` 두 개의 폴더를 마운트한 후 세션을 생성하는 방법을 설명합니다.
 
 ![](images/create_session_with_folders.png)
 
 
-   해당 프로젝트 내의 데이터와 폴더 정보를 살펴보면 사용 모드, 해당 폴더가 속해 있는 스토리지 호스트, 권한 등의 정보를 확인할 수 있습니다. 참고로, '데이터 & 폴더' 단계에서는 현재 사용자가 마운트 가능한 데이터 폴더만 출력됩니다. 다른 프로젝트에 속한 폴더는 해당 메뉴를 통해 조회할 수 없습니다.
+   해당 프로젝트 내의 데이터와 폴더 정보를 살펴보면 사용 모드, 해당 폴더가 속해 있는 스토리지 호스트, 권한 등의 정보를 확인할 수 있습니다.
+   참고로, '데이터 & 폴더' 단계에서는 현재 사용자가 마운트 가능한 스토리지 폴더만 출력됩니다.
+   예를 들어, 다른 프로젝트에 속한 폴더는 조회할 수 없습니다.
 
-   Clicking a 'folder name' in the '데이터 및 폴더' step will open the folder explorer for that folder.
-   From this, 일반 사용자s can view the folders that have been created, create new folders, and upload files.
-   For more detailed instructions related to folders, please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
+   '데이터 & 폴더' 단계에서 '폴더 이름'을 클릭하면 해당 폴더의 폴더 탐색기가 열립니다.
+   여기서 생성된 폴더를 확인하거나, 새 폴더를 생성하고, 파일을 업로드할 수 있습니다.
+   폴더에 관한 보다 자세한 사용법은 [폴더 탐색](#explore-folder) 섹션을 참고하세요.
 
-   Alternatively, a new virtual folder can be created by clicking the '+' button.
-   For further information on how to create a new folder in session launcher page,
-   please refer [Create storage folder<create_storage_folder>](#Create storage folder<create_storage_folder>) section.
+   '+' 버튼을 클릭하여 새로운 가상 폴더를 생성할 수도 있습니다.
+   세션 런처 페이지에서 새 폴더를 생성하는 방법에 대한 자세한 내용은
+   [스토리지 폴더 생성](#create-storage-folder) 섹션을 참고하세요.
 
-In the created session, click the created session name to open detail information drawer. Then,
-click the 'Execute Terminal App' icon button (upper right corner, second from the right) to open terminal app.
-Or you can also open terminal app from the notification.
-`ls` command will mount ``user1-ml-test` folder and `user2-vfolder` under the `user1-ml-test`
-and `user2-vfolder` folders are mounted under the home directory.
+생성된 세션에서 세션 이름을 클릭하면 상세 정보 서랍이 열립니다. 그런 다음
+오른쪽 상단의 '터미널 앱 실행' 아이콘 버튼(오른쪽에서 두 번째)을 클릭하여 터미널 앱을 열 수 있습니다.
+또는 알림에서도 터미널 앱을 열 수 있습니다.
+`ls` 명령을 실행하면 홈 디렉터리 아래에 `user1-ml-test` 폴더와 `user2-vfolder` 폴더가 마운트되어 있는 것을 확인할 수 있습니다.
 
 ![](images/execute_terminal_app.png)
 
 ![](images/execute_terminal_app2.png)
 
 
-   The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
-   For example, if folder's name is `test`, it is mounted on `/home/work/test`.
-   To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
-   Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
-   Writing a relative path will mount the folder under `/home/work/` with the path.
+   선택한 폴더는 기본적으로 연산 세션 내부의 `/home/work/` 아래에 폴더 이름으로 마운트됩니다.
+   예를 들어, 폴더 이름이 `test`인 경우 `/home/work/test`에 마운트됩니다.
+   마운트 경로를 사용자 지정하려면 '경로' 입력 필드에 절대 경로를 입력합니다.
+   `test` 폴더의 입력 필드에 `/workspace`를 입력하면 세션 내부의 `/workspace`에 마운트됩니다.
+   상대 경로를 입력하면 `/home/work/` 아래에 해당 경로로 폴더가 마운트됩니다.
 
-Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존할 수 있는 옵션을 제공합니다. 아래 예제를 통해 관련된 내용을 확인할 수 있습니다.
+Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존할 수 있는 옵션을 제공합니다.
+아래 예제를 통해 관련된 내용을 확인할 수 있습니다.
 
-Under the `user2-vfolder`, create a `test_file`.
-Fill the contents with \"file inside 일반 사용자2-vfolder\".
+`user2-vfolder` 아래에 `test_file`을 생성합니다.
+파일의 내용을 "file inside user2-vfolder"로 채웁니다.
 
 ![](images/mounted_folders_in_terminal.png)
 
-Running `ls` command against `user2-vfolder`, 일반 사용자s can confirm the file was created successfully.
-Please note the contents of the file can be chekced with `cat` command.
+`user2-vfolder`에 대해 `ls` 명령을 실행하면 파일이 정상적으로 생성된 것을 확인할 수 있습니다.
+`cat` 명령을 사용하면 파일의 내용도 확인할 수 있습니다.
 
-Now delete the compute session and go to the Storage page.
-Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
-Click the 'download' button in 'Actions' tab to download the file to the local machine and open it
-to confirm that the contents are \"file inside 일반 사용자2-vfolder\".
+이제 연산 세션을 삭제하고 스토리지 페이지로 이동합니다.
+`user2-vfolder` 폴더를 찾아 파일 탐색기를 열고 `test_file`이 존재하는지 확인합니다.
+'작업' 탭에서 '다운로드' 버튼을 클릭하여 파일을 로컬 컴퓨터에 다운로드한 후 열어서
+내용이 "file inside user2-vfolder"인지 확인합니다.
 
 ![](images/download_file_from_folder.png)
 
-연산 세션을 생성할 때 폴더를 마운트한 후, 마운트 된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.
+연산 세션을 생성할 때 폴더를 마운트한 후, 마운트된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.
 
+
+<a id="using-automount-folder"></a>
 
 ## 자동 마운트 폴더를 이용하여 연산 세션 환경 구성하기
 
-If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and [automount-folder<automount-folder>](#automount-folder<automount-folder>),
-which is independent of the compute session lifecycle, can be used to install the package.
-Configure a consistent environment regardless of the type of compute session.
+연산 세션에 사전 설치되어 있지 않은 새 프로그램이나 라이브러리가 필요한 경우, 연산 세션의 생명 주기와 독립적인 스토리지 폴더 속성과 [자동 마운트 폴더](#automount-folder)를 활용하여 패키지를 설치할 수 있습니다.
+이를 통해 연산 세션의 종류에 관계없이 일관된 환경을 구성할 수 있습니다.
 
+
+<a id="using-pip-with-automountfolder"></a>
 
 ### pip를 통한 파이썬 패키지 설치
 
-Creating a folder named `.local` allows a 일반 사용자 to install Python 일반 사용자 packages in same folder.
-`pip` by default installs the packages in the `.local` folder under the 일반 사용자's home folder
-(Please note that automount folder is mounted under 일반 사용자's home folder).
-So, to keep a Python package called `tqdm` installed at all times, regardless of the computing environment,
-a command like the following could be issued from the terminal:
+`.local`이라는 이름의 폴더를 생성하면 동일한 폴더에 Python 사용자 패키지를 설치할 수 있습니다.
+`pip`는 기본적으로 사용자의 홈 폴더 아래 `.local` 폴더에 패키지를 설치합니다
+(자동 마운트 폴더는 사용자의 홈 폴더 아래에 마운트됩니다).
+따라서 컴퓨팅 환경에 관계없이 `tqdm`이라는 Python 패키지를 항상 설치된 상태로 유지하려면 터미널에서 다음과 같은 명령을 실행합니다.
 
-``shell
+```shell
 pip install tqdm
-``
-After that, when a new compute session is created, the `.local__PROTECTED_29__tqdm__PROTECTED_30__tqdm__PROTECTED_31__PYTHONPATH__PROTECTED_32__.bashrc__PROTECTED_33__pip__PROTECTED_34__PYTHONPATH__PROTECTED_35____PROTECTED_36__apt__PROTECTED_37__yum__PROTECTED_38__root__PROTECTED_39__sudo__PROTECTED_40__root__PROTECTED_41__sudo__PROTECTED_42__.linuxbrew__PROTECTED_43__.linuxbrew__PROTECTED_44__/home/linuxbrew/.linuxbrew__PROTECTED_45____PROTECTED_46____PROTECTED_47____PROTECTED_48____PROTECTED_49__brew__PROTECTED_50__/home/linuxbrew/.linuxbrew__PROTECTED_51__.linuxbrew` folder exists.
-So, if an automount folder named ''.linuxbrew'' is created, the Homebrew packages previously installed can be used again, even if the compute session is deleted and a new compute session is created.
+```
+
+이후 새로운 연산 세션을 생성하면 `tqdm` 패키지가 설치된 `.local` 폴더가 자동으로 마운트되므로, `tqdm` 패키지를 다시 설치하지 않아도 바로 사용할 수 있습니다.
+
+
+여러 Python 버전을 사용하거나 서로 다른 Python 버전의 세션을 사용하는 경우 패키지 호환성 문제가 발생할 수 있습니다.
+이는 `.bashrc`를 통해 `PYTHONPATH` 환경 변수를 분기하여 해결할 수 있습니다.
+사용자의 `pip` 패키지가 `PYTHONPATH`에 지정된 경로에 설치되기 때문입니다.
+
+
+<a id="using-linuxbrew-with-automountfolder"></a>
+
+### Homebrew를 통한 패키지 설치
+
+Ubuntu의 `apt`나 CentOS의 `yum`과 같은 패키지 관리자는 일반적으로 `root` 권한이 필요합니다.
+보안상의 이유로 Backend.AI의 연산 세션에서는 기본적으로 `sudo` 및 `root` 접근이 차단되어 있으므로(설정에 따라 허용될 수 있음), `sudo`가 필요하지 않은 [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux)를 사용하는 것을 권장합니다.
+
+Homebrew는 다음과 같이 구성할 수 있습니다.
+
+- 데이터 & 폴더 페이지에서 `.linuxbrew` 폴더를 생성합니다.
+- 연산 세션을 생성합니다 (`.linuxbrew` 폴더가 `/home/linuxbrew/.linuxbrew`에 자동으로 마운트됩니다).
+- 연산 세션에서 Homebrew가 아직 설치되지 않은 경우 설치합니다.
+
+   ```shell
+   $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+- Homebrew 패키지는 다음과 같이 설치할 수 있습니다.
+
+   ```shell
+   $ brew install hello
+   $ hello
+   Hello, world!
+   ```
+`brew`는 `/home/linuxbrew/.linuxbrew` 아래에 패키지를 설치하며, `.linuxbrew` 폴더가 존재하면 자동으로 마운트됩니다.
+따라서 `.linuxbrew`라는 자동 마운트 폴더를 생성해 두면, 연산 세션을 삭제하고 새로운 연산 세션을 생성하더라도 이전에 설치한 Homebrew 패키지를 다시 사용할 수 있습니다.

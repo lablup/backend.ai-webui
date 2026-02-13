@@ -11,9 +11,7 @@
 
 ![](images/user_settings_page.png)
 
-There are lots of preference menu in GENERAL 탭. you can search it by search field on top of the section,
-or you may just filter that you changed by clicking `Display Only Changes`. If you want to rollback the changes to before,
-click Reset button on the right top of the section.
+GENERAL 탭에는 다양한 설정 메뉴가 있습니다. 섹션 상단의 검색 필드를 이용해 원하는 설정을 검색하거나, `Display Only Changes`를 클릭하여 변경된 항목만 필터링할 수 있습니다. 변경 사항을 이전 상태로 되돌리려면 섹션 우측 상단의 Reset 버튼을 클릭하십시오.
 
 ### 데스크톱 알림 활성화
 
@@ -45,16 +43,13 @@ UI 에 출력되는 언어를 설정합니다. 현재 Backend.AI에서는 한국
 - Portuguese: 포르투갈어를 기본 언어로 설정합니다.
 - Russian: 러시아어를 기본 언어로 설정합니다.
 - Spanish: 스페인어를 기본 언어로 설정합니다.
-- That: 태국어를 기본 언어로 설정합니다.
+- Thai: 태국어를 기본 언어로 설정합니다.
 - Turkish: 터키어를 기본 언어로 설정합니다.
 - Vietnamese: 베트남어를 기본 언어로 설정합니다.
 
 
 
-   Some of translated items may be marked as `__NOT_TRANSLATED__`, which
-   indicates the item is not yet translated for that language. Since Backend.AI
-   WebUI is open sourced, anyone who willing to make the translation better
-   can contribute: https://github.com/lablup/backend.ai-webui.
+   일부 번역 항목은 `__NOT_TRANSLATED__`로 표시될 수 있으며, 이는 해당 언어에 대한 번역이 아직 완료되지 않았음을 나타냅니다. Backend.AI WebUI는 오픈 소스이므로, 번역 개선에 기여하고자 하는 분은 누구나 참여할 수 있습니다: https://github.com/lablup/backend.ai-webui.
 
 ### 자동 업데이트 체크
 
@@ -80,13 +75,11 @@ WebUI의 새 버전이 검색될 경우 알림 창을 띄웁니다. 이 기능�
 
    Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반 키로 변환해야 할 수 있습니다.
 
-From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to provide
-flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
-two text area which corresponds to "public" and "private" key.
+22.09 버전부터, Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해 사용자 자신의 SSH 키페어를 직접 등록하는 기능을 지원합니다. 자신의 SSH 키페어를 추가하려면 `ENTER MANUALLY` 버튼을 클릭하십시오. 그러면 "public" 키와 "private" 키에 해당하는 두 개의 텍스트 영역이 표시됩니다.
 
 ![](images/add_ssh_keypair_manually_dialog.png)
 
-please enter the keys inside, and click `SAVE` button. Now you can access to backend.ai session using your own key.
+키를 입력한 후 `SAVE` 버튼을 클릭하십시오. 이제 자신의 키를 사용하여 Backend.AI 세션에 접속할 수 있습니다.
 
 ![](images/ssh_keypair_dialog_after.png)
 
@@ -97,20 +90,11 @@ please enter the keys inside, and click `SAVE` button. Now you can access to bac
 ![](images/edit_bootstrap_script.png)
 
 
-   The compute session will be at the `PREPARING` status until the bootstrap
-   script finishes its execution. Since a 일반 사용자 cannot use the session until it
-   is `RUNNING`, if the script contains a long-running tasks, it might be
-   better to remove them out of the bootstrap script and run them in a terminal
-   app.
+   부트스트랩 스크립트의 실행이 완료될 때까지 연산 세션은 `PREPARING` 상태를 유지합니다. 세션이 `RUNNING` 상태가 되어야 사용할 수 있으므로, 스크립트에 오래 걸리는 작업이 포함되어 있다면 부트스트랩 스크립트에서 제거하고 터미널 앱에서 직접 실행하는 것이 좋습니다.
 
 ### 사용자 환경 스크립트 수정
 
-You can write some config scripts to replace the default ones in a compute
-session. Files like `.bashrc`, `.tmux.conf.local`, `.vimrc`, etc. can be
-customized. The scripts are saved for each 일반 사용자 and can be used when certain
-automation tasks are required. For example, you can modify the `.bashrc`
-script to register your command aliases or specify that certain files are always
-downloaded to a specific location.
+연산 세션의 기본 설정 스크립트를 대체하는 사용자 환경 스크립트를 작성할 수 있습니다. `.bashrc`, `.tmux.conf.local`, `.vimrc` 등의 파일을 사용자 정의할 수 있습니다. 스크립트는 사용자별로 저장되며, 특정 자동화 작업이 필요할 때 활용할 수 있습니다. 예를 들어, `.bashrc` 스크립트를 수정하여 명령어 별칭을 등록하거나 특정 파일이 항상 지정된 위치에 다운로드되도록 설정할 수 있습니다.
 
 상단의 드롭다운 메뉴를 활용해서 작성할 스크립트의 종류를 선택한 후 내용을 작성하십시오. 작성이 완료되면 SAVE 또는 SAVE AND CLOSE 버튼을 클릭해서 스크립트를 저장할 수 있습니다. DELETE 버튼을 클릭하면 해당 스크립트를 삭제할 수 있습니다.
 

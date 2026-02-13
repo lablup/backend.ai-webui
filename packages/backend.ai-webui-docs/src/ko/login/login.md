@@ -1,5 +1,7 @@
 # 가입 및 로그인
 
+<a id="sign-up"></a>
+
 ## 가입
 
 WebUI를 실행하면 다음과 같은 로그인 대화창이 뜹니다. 아직 가입을 하지 않은 경우에는 가입하기 버튼을 눌러주세요.
@@ -15,6 +17,8 @@ WebUI를 실행하면 다음과 같은 로그인 대화창이 뜹니다. 아직 
 
 
    악성 사용자가 다른 사용자의 비밀번호를 추측하기 어렵게 만들기 위해, 비밀번호는 8 자 이상, 알파벳/특수문자/숫자를 1 개 이상 포함해야 합니다.
+
+<a id="log-in"></a>
 
 ## 로그인
 
@@ -32,6 +36,7 @@ ID와 암호를 입력하고 로그인 버튼을 눌러주세요. 엔드포인�
 
 ![](images/signout_button.png)
 
+<a id="when-you-forgot-your-password"></a>
 
 ## 비밀번호를 잊어버렸을 경우
 
@@ -45,13 +50,14 @@ ID와 암호를 입력하고 로그인 버튼을 눌러주세요. 엔드포인�
 
    로그인 실패가 10 회 이상 발생하면 보안상의 이유로 로그인 시도가 20 분 간 제한됩니다. 만약 20 분 후에도 로그인 제한이 계속 유지되는 경우에는 시스템 관리자에게 문의 하십시오.
 
+<a id="sidebar-menus"></a>
 
 ## 사이드바의 메뉴
 
-Change the size of the sidebar via the buttons on the right side of the sidebar.
-Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.
-Clicking it again will return the sidebar to its original width.
-You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
+사이드바 오른쪽에 있는 버튼을 통해 사이드바의 크기를 변경할 수 있습니다.
+버튼을 클릭하면 사이드바의 너비가 크게 줄어들어 콘텐츠를 더 넓게 볼 수 있습니다.
+다시 클릭하면 사이드바가 원래 너비로 돌아갑니다.
+단축키 ( `[` ) 를 사용하여 좁은 사이드바와 원래 너비 사이를 전환할 수도 있습니다.
 
 
 ![](images/menu_collapse.png)
