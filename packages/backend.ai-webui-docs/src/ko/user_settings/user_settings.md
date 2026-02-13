@@ -53,7 +53,7 @@ UI 에 출력되는 언어를 설정합니다. 현재 Backend.AI에서는 한국
 
 
 
-:::info
+:::note
 일부 번역 항목은 `__NOT_TRANSLATED__`로 표시될 수 있으며, 이는 해당 언어에 대한 번역이 아직 완료되지 않았음을 나타냅니다. Backend.AI WebUI는 오픈 소스이므로, 번역 개선에 기여하고자 하는 분은 누구나 참여할 수 있습니다: https://github.com/lablup/backend.ai-webui.
 :::
 
@@ -81,7 +81,7 @@ WebUI의 새 버전이 검색될 경우 알림 창을 띄웁니다. 이 기능�
 ![](../images/ssh_keypair_dialog.png)
 
 
-:::info
+:::note
 Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반 키로 변환해야 할 수 있습니다.
 :::
 
@@ -100,7 +100,7 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
 ![](../images/edit_bootstrap_script.png)
 
 
-:::info
+:::note
 부트스트랩 스크립트의 실행이 완료될 때까지 연산 세션은 `PREPARING` 상태를 유지합니다. 세션이 `RUNNING` 상태가 되어야 사용할 수 있으므로, 스크립트에 오래 걸리는 작업이 포함되어 있다면 부트스트랩 스크립트에서 제거하고 터미널 앱에서 직접 실행하는 것이 좋습니다.
 :::
 
@@ -131,7 +131,7 @@ Classic Backend.AI 인터페이스로 돌아가고 싶다면 다음 설정을 �
 ![](../images/user_log.png)
 
 
-:::info
+:::note
 로그인된 페이지가 하나만 존재할 경우, REFRESH 버튼을 클릭하면 제대로 작동하지 않는 것처럼 보일 수 있습니다. 로그 페이지는 서버에 대한 요청과 서버의 응답을 모아둔 것이며, 현재 페이지가 로그 페이지인 경우 명시적으로 페이지를 새로 고침하는 것 외에는 서버에 요청을 보내지 않습니다. 로그가 제대로 쌓이는지 확인하려면 다른 페이지를 열고 REFRESH 버튼을 클릭하십시오.
 :::
 
