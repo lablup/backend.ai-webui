@@ -519,7 +519,7 @@ type AgentV2 implements Node
   """
   Added in 26.2.0. List of kernels running on this agent with pagination support.
   """
-  kernels(filter: KernelFilter = null, orderBy: [KernelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelConnectionV2!
+  kernels(filter: KernelV2Filter = null, orderBy: [KernelV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelV2Connection!
 }
 
 """
@@ -1403,15 +1403,32 @@ input BlueGreenConfigInput
   promoteDelaySeconds: Int! = 0
 }
 
+"""Added in 26.2.0. Error information for a failed user in bulk creation."""
+type BulkCreateUserError
+  @join__type(graph: STRAWBERRY)
+{
+  """Original position in the input list."""
+  index: Int!
+
+  """Username of the user that failed."""
+  username: String!
+
+  """Email of the user that failed."""
+  email: String!
+
+  """Error message describing the failure."""
+  message: String!
+}
+
 """Added in 26.2.0. Payload for bulk user creation mutation."""
 type BulkCreateUsersV2Payload
   @join__type(graph: STRAWBERRY)
 {
-  """Number of users successfully created."""
-  createdCount: Int!
+  """List of successfully created users."""
+  createdUsers: [UserV2!]!
 
-  """List of newly created users."""
-  users: [UserV2!]!
+  """List of errors for users that failed to create."""
+  failed: [BulkCreateUserError!]!
 }
 
 """
@@ -4532,88 +4549,6 @@ type Image
   hash: String
 }
 
-"""
-Added in 26.2.0.
-
-Represents an alias for a container image.
-Aliases provide alternative names for images.
-"""
-type ImageAlias implements Node
-  @join__implements(graph: STRAWBERRY, interface: "Node")
-  @join__type(graph: STRAWBERRY)
-{
-  """The Globally Unique ID of this object"""
-  id: ID!
-
-  """The alias string for the image."""
-  alias: String!
-}
-
-"""
-Added in 26.2.0.
-
-Relay-style connection for paginated image alias queries.
-Includes total count for pagination UI.
-"""
-type ImageAliasConnection
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ImageAliasEdge!]!
-
-  """Total count of aliases matching the query."""
-  count: Int!
-}
-
-"""An edge in a connection."""
-type ImageAliasEdge
-  @join__type(graph: STRAWBERRY)
-{
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: ImageAlias!
-}
-
-"""
-Added in 26.2.0.
-
-Filter options for image aliases.
-Supports filtering by alias string.
-"""
-input ImageAliasFilterGQL
-  @join__type(graph: STRAWBERRY)
-{
-  alias: StringFilter = null
-}
-
-"""
-Added in 26.2.0.
-
-Specifies the field and direction for ordering image aliases in queries.
-"""
-input ImageAliasOrderByGQL
-  @join__type(graph: STRAWBERRY)
-{
-  field: ImageAliasOrderField!
-  direction: OrderDirection! = ASC
-}
-
-"""
-Added in 26.2.0.
-
-Fields available for ordering image alias queries.
-"""
-enum ImageAliasOrderField
-  @join__type(graph: STRAWBERRY)
-{
-  ALIAS @join__enumValue(graph: STRAWBERRY)
-}
-
 """Added in 25.3.0."""
 type ImageConnection
   @join__type(graph: GRAPHENE)
@@ -4628,25 +4563,6 @@ type ImageConnection
   count: Int
 }
 
-"""
-Added in 26.2.0.
-
-Relay-style connection for paginated image queries.
-Includes total count for pagination UI.
-"""
-type ImageConnectionV2
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ImageV2Edge!]!
-
-  """Total count of images matching the query."""
-  count: Int!
-}
-
 """Added in 25.3.0. A Relay edge containing a `Image` and its cursor."""
 type ImageEdge
   @join__type(graph: GRAPHENE)
@@ -4658,95 +4574,11 @@ type ImageEdge
   cursor: String!
 }
 
-"""
-Added in 26.2.0.
-
-Filter options for images based on various criteria such as status,
-name, and architecture.
-
-Supports logical operations (AND, OR, NOT) for complex filtering scenarios.
-"""
-input ImageFilterGQL
-  @join__type(graph: STRAWBERRY)
-{
-  status: [ImageStatus!] = null
-  name: StringFilter = null
-  architecture: StringFilter = null
-  AND: [ImageFilterGQL!] = null
-  OR: [ImageFilterGQL!] = null
-  NOT: [ImageFilterGQL!] = null
-}
-
-"""
-Added in 26.2.0.
-
-Identity information for an image.
-Contains the canonical name, namespace, and architecture.
-"""
-type ImageIdentityInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """Full canonical name (e.g., 'cr.backend.ai/stable/python:3.9')."""
-  canonicalName: String!
-
-  """Image namespace/path within the registry (e.g., 'stable/python')."""
-  namespace: String!
-
-  """CPU architecture (e.g., 'x86_64', 'aarch64')."""
-  architecture: String!
-}
-
 """Added in 25.19.0"""
 input ImageInput
   @join__type(graph: STRAWBERRY)
 {
   id: ID!
-}
-
-"""
-Added in 26.2.0.
-
-A key-value pair representing a Docker label on the image.
-Labels contain metadata about the image such as maintainer, version, etc.
-"""
-type ImageLabelEntry
-  @join__type(graph: STRAWBERRY)
-{
-  """The label key (e.g., 'maintainer')."""
-  key: String!
-
-  """The label value."""
-  value: String!
-}
-
-"""
-Added in 26.2.0.
-
-Metadata information for an image.
-Contains tags, labels, digest, size, status, and creation timestamp.
-"""
-type ImageMetadataInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Parsed tag components from the image reference (e.g., python=3.11, cuda=12.1).
-  """
-  tags: [ImageTagEntry!]!
-
-  """Docker labels."""
-  labels: [ImageLabelEntry!]!
-
-  """Config digest (image hash) for verification."""
-  digest: String
-
-  """Image size in bytes."""
-  sizeBytes: Int!
-
-  """Image status (ALIVE or DELETED)."""
-  status: ImageStatus!
-
-  """Timestamp when the image was created/registered."""
-  createdAt: DateTime
 }
 
 type ImageNode implements Node
@@ -4805,57 +4637,6 @@ type ImageNode implements Node
 }
 
 """
-Added in 26.2.0.
-
-Specifies the field and direction for ordering images in queries.
-"""
-input ImageOrderByGQL
-  @join__type(graph: STRAWBERRY)
-{
-  field: ImageOrderField!
-  direction: OrderDirection! = ASC
-}
-
-"""
-Added in 26.2.0.
-
-Fields available for ordering image queries.
-"""
-enum ImageOrderField
-  @join__type(graph: STRAWBERRY)
-{
-  NAME @join__enumValue(graph: STRAWBERRY)
-  CREATED_AT @join__enumValue(graph: STRAWBERRY)
-}
-
-"""
-Added in 26.2.0.
-
-Permission types for image operations.
-"""
-enum ImagePermission
-  @join__type(graph: STRAWBERRY)
-{
-  READ_ATTRIBUTE @join__enumValue(graph: STRAWBERRY)
-  UPDATE_ATTRIBUTE @join__enumValue(graph: STRAWBERRY)
-  CREATE_CONTAINER @join__enumValue(graph: STRAWBERRY)
-  FORGET_IMAGE @join__enumValue(graph: STRAWBERRY)
-}
-
-"""
-Added in 26.2.0.
-
-Permission information for an image.
-Contains the list of permissions the current user has on this image.
-"""
-type ImagePermissionInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """List of permissions the user has on this image."""
-  permissions: [ImagePermission!]!
-}
-
-"""
 Added in 25.3.0. One of ['read_attribute', 'update_attribute', 'create_container', 'forget_image'].
 """
 scalar ImagePermissionValueField
@@ -4869,76 +4650,12 @@ input ImageRefType
   architecture: String
 }
 
-"""
-Added in 26.2.0.
-
-Runtime requirements information for an image.
-Contains resource limits and supported accelerators.
-"""
-type ImageRequirementsInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """Resource slot limits (cpu, memory, accelerators, etc.)."""
-  resourceLimits: [ImageResourceLimit!]!
-
-  """List of supported accelerator types (e.g., 'cuda', 'rocm')."""
-  supportedAccelerators: [String!]!
-}
-
-"""
-Added in 26.2.0.
-
-Resource limit specification for an image.
-Defines minimum and maximum values for a resource slot.
-"""
-type ImageResourceLimit
-  @join__type(graph: STRAWBERRY)
-{
-  """Resource slot name (e.g., 'cpu', 'mem', 'cuda.shares')."""
-  key: String!
-
-  """Minimum required amount."""
-  min: String!
-
-  """Maximum allowed amount."""
-  max: String!
-}
-
-"""
-Added in 26.2.0.
-
-Scope for querying aliases within a specific image.
-"""
-input ImageScope
-  @join__type(graph: STRAWBERRY)
-{
-  """UUID of the image to scope the query to."""
-  imageId: UUID!
-}
-
 """Added in 25.4.0."""
 enum ImageStatus
   @join__type(graph: GRAPHENE)
-  @join__type(graph: STRAWBERRY)
 {
-  ALIVE @join__enumValue(graph: GRAPHENE) @join__enumValue(graph: STRAWBERRY)
-  DELETED @join__enumValue(graph: GRAPHENE) @join__enumValue(graph: STRAWBERRY)
-}
-
-"""
-Added in 26.2.0.
-
-A key-value pair representing a parsed tag component.
-Tags are extracted from the image reference (e.g., py311, cuda12.1).
-"""
-type ImageTagEntry
-  @join__type(graph: STRAWBERRY)
-{
-  """The tag key (e.g., 'python', 'cuda')."""
-  key: String!
-
-  """The tag value (e.g., '3.11', '12.1')."""
-  value: String!
+  ALIVE @join__enumValue(graph: GRAPHENE)
+  DELETED @join__enumValue(graph: GRAPHENE)
 }
 
 """Added in 25.12.0."""
@@ -4970,22 +4687,123 @@ type ImageV2 implements Node
   id: ID!
 
   """Image identity information (name, architecture)."""
-  identity: ImageIdentityInfo!
+  identity: ImageV2IdentityInfo!
 
   """Image metadata (labels, digest, size, status, created_at)."""
-  metadata: ImageMetadataInfo!
+  metadata: ImageV2MetadataInfo!
 
   """Runtime requirements (supported_accelerators)."""
-  requirements: ImageRequirementsInfo!
+  requirements: ImageV2RequirementsInfo!
 
   """Permission info for the current user. May be null."""
-  permission: ImagePermissionInfo
+  permission: ImageV2PermissionInfo
 
   """UUID of the container registry where this image is stored."""
   registryId: UUID!
 
   """Added in 26.2.0. Aliases for this image."""
-  aliases(filter: ImageAliasFilterGQL = null, orderBy: [ImageAliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null): ImageAliasConnection!
+  aliases(filter: ImageV2AliasFilterGQL = null, orderBy: [ImageV2AliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null): ImageV2AliasConnection!
+}
+
+"""
+Added in 26.2.0.
+
+Represents an alias for a container image.
+Aliases provide alternative names for images.
+"""
+type ImageV2Alias implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """The alias string for the image."""
+  alias: String!
+}
+
+"""
+Added in 26.2.0.
+
+Relay-style connection for paginated image alias queries.
+Includes total count for pagination UI.
+"""
+type ImageV2AliasConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ImageV2AliasEdge!]!
+
+  """Total count of aliases matching the query."""
+  count: Int!
+}
+
+"""An edge in a connection."""
+type ImageV2AliasEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ImageV2Alias!
+}
+
+"""
+Added in 26.2.0.
+
+Filter options for image aliases.
+Supports filtering by alias string.
+"""
+input ImageV2AliasFilterGQL
+  @join__type(graph: STRAWBERRY)
+{
+  alias: StringFilter = null
+}
+
+"""
+Added in 26.2.0.
+
+Specifies the field and direction for ordering image aliases in queries.
+"""
+input ImageV2AliasOrderByGQL
+  @join__type(graph: STRAWBERRY)
+{
+  field: ImageV2AliasOrderField!
+  direction: OrderDirection! = ASC
+}
+
+"""
+Added in 26.2.0.
+
+Fields available for ordering image alias queries.
+"""
+enum ImageV2AliasOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  ALIAS @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.2.0.
+
+Relay-style connection for paginated image queries.
+Includes total count for pagination UI.
+"""
+type ImageV2Connection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ImageV2Edge!]!
+
+  """Total count of images matching the query."""
+  count: Int!
 }
 
 """An edge in a connection."""
@@ -4997,6 +4815,216 @@ type ImageV2Edge
 
   """The item at the end of the edge"""
   node: ImageV2!
+}
+
+"""
+Added in 26.2.0.
+
+Filter options for images based on various criteria such as status,
+name, and architecture.
+
+Supports logical operations (AND, OR, NOT) for complex filtering scenarios.
+"""
+input ImageV2FilterGQL
+  @join__type(graph: STRAWBERRY)
+{
+  status: [ImageV2Status!] = null
+  name: StringFilter = null
+  architecture: StringFilter = null
+  AND: [ImageV2FilterGQL!] = null
+  OR: [ImageV2FilterGQL!] = null
+  NOT: [ImageV2FilterGQL!] = null
+}
+
+"""
+Added in 26.2.0.
+
+Identity information for an image.
+Contains the canonical name, namespace, and architecture.
+"""
+type ImageV2IdentityInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Full canonical name (e.g., 'cr.backend.ai/stable/python:3.9')."""
+  canonicalName: String!
+
+  """Image namespace/path within the registry (e.g., 'stable/python')."""
+  namespace: String!
+
+  """CPU architecture (e.g., 'x86_64', 'aarch64')."""
+  architecture: String!
+}
+
+"""
+Added in 26.2.0.
+
+A key-value pair representing a Docker label on the image.
+Labels contain metadata about the image such as maintainer, version, etc.
+"""
+type ImageV2LabelEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The label key (e.g., 'maintainer')."""
+  key: String!
+
+  """The label value."""
+  value: String!
+}
+
+"""
+Added in 26.2.0.
+
+Metadata information for an image.
+Contains tags, labels, digest, size, status, and creation timestamp.
+"""
+type ImageV2MetadataInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Parsed tag components from the image reference (e.g., python=3.11, cuda=12.1).
+  """
+  tags: [ImageV2TagEntry!]!
+
+  """Docker labels."""
+  labels: [ImageV2LabelEntry!]!
+
+  """Config digest (image hash) for verification."""
+  digest: String
+
+  """Image size in bytes."""
+  sizeBytes: Int!
+
+  """Image status (ALIVE or DELETED)."""
+  status: ImageV2Status!
+
+  """Timestamp when the image was created/registered."""
+  createdAt: DateTime
+}
+
+"""
+Added in 26.2.0.
+
+Specifies the field and direction for ordering images in queries.
+"""
+input ImageV2OrderByGQL
+  @join__type(graph: STRAWBERRY)
+{
+  field: ImageV2OrderField!
+  direction: OrderDirection! = ASC
+}
+
+"""
+Added in 26.2.0.
+
+Fields available for ordering image queries.
+"""
+enum ImageV2OrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.2.0.
+
+Permission types for image operations.
+"""
+enum ImageV2Permission
+  @join__type(graph: STRAWBERRY)
+{
+  READ_ATTRIBUTE @join__enumValue(graph: STRAWBERRY)
+  UPDATE_ATTRIBUTE @join__enumValue(graph: STRAWBERRY)
+  CREATE_CONTAINER @join__enumValue(graph: STRAWBERRY)
+  FORGET_IMAGE @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.2.0.
+
+Permission information for an image.
+Contains the list of permissions the current user has on this image.
+"""
+type ImageV2PermissionInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """List of permissions the user has on this image."""
+  permissions: [ImageV2Permission!]!
+}
+
+"""
+Added in 26.2.0.
+
+Runtime requirements information for an image.
+Contains resource limits and supported accelerators.
+"""
+type ImageV2RequirementsInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Resource slot limits (cpu, memory, accelerators, etc.)."""
+  resourceLimits: [ImageV2ResourceLimit!]!
+
+  """List of supported accelerator types (e.g., 'cuda', 'rocm')."""
+  supportedAccelerators: [String!]!
+}
+
+"""
+Added in 26.2.0.
+
+Resource limit specification for an image.
+Defines minimum and maximum values for a resource slot.
+"""
+type ImageV2ResourceLimit
+  @join__type(graph: STRAWBERRY)
+{
+  """Resource slot name (e.g., 'cpu', 'mem', 'cuda.shares')."""
+  key: String!
+
+  """Minimum required amount."""
+  min: String!
+
+  """Maximum allowed amount."""
+  max: String!
+}
+
+"""
+Added in 26.2.0.
+
+Scope for querying aliases within a specific image.
+"""
+input ImageV2Scope
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the image to scope the query to."""
+  imageId: UUID!
+}
+
+"""
+Added in 26.2.0.
+
+Status of an image in the system.
+"""
+enum ImageV2Status
+  @join__type(graph: STRAWBERRY)
+{
+  ALIVE @join__enumValue(graph: STRAWBERRY)
+  DELETED @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.2.0.
+
+A key-value pair representing a parsed tag component.
+Tags are extracted from the image reference (e.g., py311, cuda12.1).
+"""
+type ImageV2TagEntry
+  @join__type(graph: STRAWBERRY)
+{
+  """The tag key (e.g., 'python', 'cuda')."""
+  key: String!
+
+  """The tag value (e.g., '3.11', '12.1')."""
+  value: String!
 }
 
 """
@@ -5107,25 +5135,6 @@ schema (one of the key benefits of GraphQL).
 scalar JSONString
   @join__type(graph: GRAPHENE)
 
-"""
-Added in 26.2.0. Cluster configuration for a kernel in distributed sessions.
-"""
-type KernelClusterInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """The role of this kernel in the cluster (e.g., main, sub)."""
-  clusterRole: String!
-
-  """The index of this kernel within the cluster (0-based)."""
-  clusterIdx: Int!
-
-  """The local rank of this kernel for distributed computing."""
-  localRank: Int!
-
-  """The hostname assigned to this kernel within the cluster network."""
-  clusterHostname: String!
-}
-
 """Added in 24.09.0."""
 type KernelConnection
   @join__type(graph: GRAPHENE)
@@ -5140,18 +5149,6 @@ type KernelConnection
   count: Int
 }
 
-"""Added in 26.2.0. Connection type for paginated kernel results."""
-type KernelConnectionV2
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [KernelV2Edge!]!
-  count: Int!
-}
-
 """Added in 24.09.0. A Relay edge containing a `Kernel` and its cursor."""
 type KernelEdge
   @join__type(graph: GRAPHENE)
@@ -5161,49 +5158,6 @@ type KernelEdge
 
   """A cursor for use in pagination"""
   cursor: String!
-}
-
-"""Added in 26.2.0. Filter criteria for querying kernels."""
-input KernelFilter
-  @join__type(graph: STRAWBERRY)
-{
-  id: UUIDFilter = null
-  status: KernelStatusFilter = null
-  sessionId: UUIDFilter = null
-}
-
-"""Added in 26.2.0. Lifecycle and status information for a kernel."""
-type KernelLifecycleInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """
-  Current status of the kernel (e.g., PENDING, RUNNING, TERMINATED).
-  Indicates the kernel's position in its lifecycle.
-  """
-  status: KernelStatus!
-
-  """The result of the kernel execution (UNDEFINED, SUCCESS, FAILURE)."""
-  result: SessionResult!
-
-  """Timestamp when the kernel was created."""
-  createdAt: DateTime
-
-  """Timestamp when the kernel was terminated. Null if still active."""
-  terminatedAt: DateTime
-
-  """Scheduled start time for the kernel, if applicable."""
-  startsAt: DateTime
-}
-
-"""Added in 26.2.0. Network configuration for a kernel."""
-type KernelNetworkInfo
-  @join__type(graph: STRAWBERRY)
-{
-  """Collection of service ports exposed by this kernel."""
-  servicePorts: ServicePorts
-
-  """List of ports that are pre-opened for this kernel."""
-  preopenPorts: [Int!]
 }
 
 """Added in 24.09.0."""
@@ -5248,16 +5202,148 @@ type KernelNode implements Node
   preopen_ports: [Int]
 }
 
-"""Added in 26.2.0. Ordering specification for kernels."""
-input KernelOrderBy
+"""
+Added in 26.2.0. Represents a kernel (compute container) in Backend.AI.
+"""
+type KernelV2 implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
   @join__type(graph: STRAWBERRY)
 {
-  field: KernelOrderField!
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """Startup command executed when the kernel starts."""
+  startupCommand: String
+
+  """Information about the session this kernel belongs to."""
+  session: KernelV2SessionInfo!
+
+  """User and ownership information."""
+  userInfo: KernelV2UserInfo!
+
+  """Network configuration and exposed ports."""
+  network: KernelV2NetworkInfo!
+
+  """Cluster configuration for distributed computing."""
+  cluster: KernelV2ClusterInfo!
+
+  """Resource allocation and agent information."""
+  resource: KernelV2ResourceInfo!
+
+  """Lifecycle status and timestamps."""
+  lifecycle: KernelV2LifecycleInfo!
+
+  """Added in 26.2.0. The agent running this kernel."""
+  agent: AgentV2
+
+  """Added in 26.2.0. The user who owns this kernel."""
+  user: UserV2
+
+  """Added in 26.2.0. The project this kernel belongs to."""
+  project: ProjectV2
+
+  """Added in 26.2.0. The domain this kernel belongs to."""
+  domain: DomainV2
+
+  """Added in 26.2.0. The resource group this kernel is assigned to."""
+  resourceGroup: ResourceGroup
+}
+
+"""
+Added in 26.2.0. Cluster configuration for a kernel in distributed sessions.
+"""
+type KernelV2ClusterInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """The role of this kernel in the cluster (e.g., main, sub)."""
+  clusterRole: String!
+
+  """The index of this kernel within the cluster (0-based)."""
+  clusterIdx: Int!
+
+  """The local rank of this kernel for distributed computing."""
+  localRank: Int!
+
+  """The hostname assigned to this kernel within the cluster network."""
+  clusterHostname: String!
+}
+
+"""Added in 26.2.0. Connection type for paginated kernel results."""
+type KernelV2Connection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [KernelV2Edge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type KernelV2Edge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: KernelV2!
+}
+
+"""Added in 26.2.0. Filter criteria for querying kernels."""
+input KernelV2Filter
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUIDFilter = null
+  status: KernelV2StatusFilter = null
+  sessionId: UUIDFilter = null
+}
+
+"""Added in 26.2.0. Lifecycle and status information for a kernel."""
+type KernelV2LifecycleInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Current status of the kernel (e.g., PENDING, RUNNING, TERMINATED).
+  Indicates the kernel's position in its lifecycle.
+  """
+  status: KernelV2Status!
+
+  """The result of the kernel execution (UNDEFINED, SUCCESS, FAILURE)."""
+  result: SessionResult!
+
+  """Timestamp when the kernel was created."""
+  createdAt: DateTime
+
+  """Timestamp when the kernel was terminated. Null if still active."""
+  terminatedAt: DateTime
+
+  """Scheduled start time for the kernel, if applicable."""
+  startsAt: DateTime
+}
+
+"""Added in 26.2.0. Network configuration for a kernel."""
+type KernelV2NetworkInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Collection of service ports exposed by this kernel."""
+  servicePorts: ServicePorts
+
+  """List of ports that are pre-opened for this kernel."""
+  preopenPorts: [Int!]
+}
+
+"""Added in 26.2.0. Ordering specification for kernels."""
+input KernelV2OrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: KernelV2OrderField!
   direction: OrderDirection! = DESC
 }
 
 """Added in 26.2.0. Fields available for ordering kernels."""
-enum KernelOrderField
+enum KernelV2OrderField
   @join__type(graph: STRAWBERRY)
 {
   CREATED_AT @join__enumValue(graph: STRAWBERRY)
@@ -5269,7 +5355,7 @@ enum KernelOrderField
 }
 
 """Added in 26.2.0. Resource allocation information for a kernel."""
-type KernelResourceInfo
+type KernelV2ResourceInfo
   @join__type(graph: STRAWBERRY)
 {
   """
@@ -5296,7 +5382,7 @@ type KernelResourceInfo
 }
 
 """Added in 26.2.0. Information about the session this kernel belongs to."""
-type KernelSessionInfo
+type KernelV2SessionInfo
   @join__type(graph: STRAWBERRY)
 {
   """The unique identifier of the session this kernel belongs to."""
@@ -5313,7 +5399,7 @@ type KernelSessionInfo
 }
 
 """Added in 26.2.0. Status of a kernel in its lifecycle."""
-enum KernelStatus
+enum KernelV2Status
   @join__type(graph: STRAWBERRY)
 {
   PENDING @join__enumValue(graph: STRAWBERRY)
@@ -5328,15 +5414,15 @@ enum KernelStatus
 }
 
 """Added in 26.2.0. Filter for kernel status."""
-input KernelStatusFilter
+input KernelV2StatusFilter
   @join__type(graph: STRAWBERRY)
 {
-  in: [KernelStatus!] = null
-  notIn: [KernelStatus!] = null
+  in: [KernelV2Status!] = null
+  notIn: [KernelV2Status!] = null
 }
 
 """Added in 26.2.0. User and ownership information for a kernel."""
-type KernelUserInfo
+type KernelV2UserInfo
   @join__type(graph: STRAWBERRY)
 {
   """The UUID of the user who owns this kernel."""
@@ -5350,64 +5436,6 @@ type KernelUserInfo
 
   """The group (project) ID this kernel belongs to."""
   groupId: UUID
-}
-
-"""
-Added in 26.2.0. Represents a kernel (compute container) in Backend.AI.
-"""
-type KernelV2 implements Node
-  @join__implements(graph: STRAWBERRY, interface: "Node")
-  @join__type(graph: STRAWBERRY)
-{
-  """The Globally Unique ID of this object"""
-  id: ID!
-
-  """Startup command executed when the kernel starts."""
-  startupCommand: String
-
-  """Information about the session this kernel belongs to."""
-  session: KernelSessionInfo!
-
-  """User and ownership information."""
-  userInfo: KernelUserInfo!
-
-  """Network configuration and exposed ports."""
-  network: KernelNetworkInfo!
-
-  """Cluster configuration for distributed computing."""
-  cluster: KernelClusterInfo!
-
-  """Resource allocation and agent information."""
-  resource: KernelResourceInfo!
-
-  """Lifecycle status and timestamps."""
-  lifecycle: KernelLifecycleInfo!
-
-  """Added in 26.2.0. The agent running this kernel."""
-  agent: AgentV2
-
-  """Added in 26.2.0. The user who owns this kernel."""
-  user: UserV2
-
-  """Added in 26.2.0. The project this kernel belongs to."""
-  project: ProjectV2
-
-  """Added in 26.2.0. The domain this kernel belongs to."""
-  domain: DomainV2
-
-  """Added in 26.2.0. The resource group this kernel is assigned to."""
-  resourceGroup: ResourceGroup
-}
-
-"""An edge in a connection."""
-type KernelV2Edge
-  @join__type(graph: STRAWBERRY)
-{
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: KernelV2!
 }
 
 type KeyPair implements Item
@@ -8728,10 +8756,10 @@ type Query
   service_configs(services: [String]!, filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ServiceConfigConnection @join__field(graph: GRAPHENE)
 
   """Added in 25.15.0"""
-  agentStats: AgentStats! @join__field(graph: STRAWBERRY)
+  agentStats: AgentStats @join__field(graph: STRAWBERRY)
 
   """Added in 26.1.0"""
-  agentsV2(filter: AgentFilter = null, orderBy: [AgentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): AgentV2Connection! @join__field(graph: STRAWBERRY)
+  agentsV2(filter: AgentFilter = null, orderBy: [AgentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): AgentV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 25.14.0.
@@ -8755,7 +8783,7 @@ type Query
   Use filters to narrow down results by type, name, registry, or availability.
   Supports cursor-based pagination for efficient browsing of large datasets.
   """
-  artifacts(filter: ArtifactFilter = null, orderBy: [ArtifactOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactConnection! @join__field(graph: STRAWBERRY)
+  artifacts(filter: ArtifactFilter = null, orderBy: [ArtifactOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 25.14.0.
@@ -8778,7 +8806,7 @@ type Query
   Use filters to find revisions by status, version, or artifact ID.
   Supports cursor-based pagination for efficient browsing.
   """
-  artifactRevisions(filter: ArtifactRevisionFilter = null, orderBy: [ArtifactRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactRevisionConnection! @join__field(graph: STRAWBERRY)
+  artifactRevisions(filter: ArtifactRevisionFilter = null, orderBy: [ArtifactRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ArtifactRevisionConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 25.16.0.
@@ -8803,49 +8831,49 @@ type Query
   mergedAppConfig: AppConfig! @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
-  deployments(filter: DeploymentFilter = null, orderBy: [DeploymentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelDeploymentConnection! @join__field(graph: STRAWBERRY)
+  deployments(filter: DeploymentFilter = null, orderBy: [DeploymentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelDeploymentConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
   deployment(id: ID!): ModelDeployment @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
-  revisions(filter: ModelRevisionFilter = null, orderBy: [ModelRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelRevisionConnection! @join__field(graph: STRAWBERRY)
+  revisions(filter: ModelRevisionFilter = null, orderBy: [ModelRevisionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelRevisionConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
-  revision(id: ID!): ModelRevision! @join__field(graph: STRAWBERRY)
+  revision(id: ID!): ModelRevision @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
-  replicas(filter: ReplicaFilter = null, orderBy: [ReplicaOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelReplicaConnection! @join__field(graph: STRAWBERRY)
+  replicas(filter: ReplicaFilter = null, orderBy: [ReplicaOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelReplicaConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0"""
   replica(id: ID!): ModelReplica @join__field(graph: STRAWBERRY)
 
   """List available notification rule types"""
-  notificationRuleTypes: [NotificationRuleType!]! @join__field(graph: STRAWBERRY)
+  notificationRuleTypes: [NotificationRuleType!] @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   objectStorage(id: ID!): ObjectStorage @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
-  objectStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ObjectStorageConnection! @join__field(graph: STRAWBERRY)
+  objectStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ObjectStorageConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0. Get a VFS storage by ID"""
   vfsStorage(id: ID!): VFSStorage @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0. List all VFS storages"""
-  vfsStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFSStorageConnection! @join__field(graph: STRAWBERRY)
+  vfsStorages(before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFSStorageConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   huggingfaceRegistry(id: ID!): HuggingFaceRegistry @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
-  huggingfaceRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): HuggingFaceRegistryConnection! @join__field(graph: STRAWBERRY)
+  huggingfaceRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): HuggingFaceRegistryConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
   reservoirRegistry(id: ID!): ReservoirRegistry @join__field(graph: STRAWBERRY)
 
   """Added in 25.14.0"""
-  reservoirRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): ReservoirRegistryConnection! @join__field(graph: STRAWBERRY)
+  reservoirRegistries(before: String = null, after: String = null, first: Int = null, last: Int = null, offset: Int = null, limit: Int = null): ReservoirRegistryConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -8867,31 +8895,31 @@ type Query
   
   Returns the alias information including the alias string.
   """
-  imageAlias(id: ID!): ImageAlias @join__field(graph: STRAWBERRY)
+  imageAlias(id: ID!): ImageV2Alias @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List resource groups (admin only)"""
-  adminResourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection! @join__field(graph: STRAWBERRY)
+  adminResourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection @join__field(graph: STRAWBERRY)
 
   """List session scheduling history (admin only)"""
-  adminSessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection! @join__field(graph: STRAWBERRY)
+  adminSessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
 
   """List deployment history (admin only)"""
-  adminDeploymentHistories(filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection! @join__field(graph: STRAWBERRY)
+  adminDeploymentHistories(filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection @join__field(graph: STRAWBERRY)
 
   """List route history (admin only)"""
-  adminRouteHistories(filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection! @join__field(graph: STRAWBERRY)
+  adminRouteHistories(filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection @join__field(graph: STRAWBERRY)
 
   """Get a notification channel by ID (admin only)"""
   adminNotificationChannel(id: ID!): NotificationChannel @join__field(graph: STRAWBERRY)
 
   """List notification channels (admin only)"""
-  adminNotificationChannels(filter: NotificationChannelFilter = null, orderBy: [NotificationChannelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationChannelConnection! @join__field(graph: STRAWBERRY)
+  adminNotificationChannels(filter: NotificationChannelFilter = null, orderBy: [NotificationChannelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationChannelConnection @join__field(graph: STRAWBERRY)
 
   """Get a notification rule by ID (admin only)"""
   adminNotificationRule(id: ID!): NotificationRule @join__field(graph: STRAWBERRY)
 
   """List notification rules (admin only)"""
-  adminNotificationRules(filter: NotificationRuleFilter = null, orderBy: [NotificationRuleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationRuleConnection! @join__field(graph: STRAWBERRY)
+  adminNotificationRules(filter: NotificationRuleFilter = null, orderBy: [NotificationRuleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationRuleConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -8904,31 +8932,31 @@ type Query
   adminDomainAppConfig(domainName: String!): AppConfig @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get domain fair share data (admin only)."""
-  adminDomainFairShare(resourceGroupName: String!, domainName: String!): DomainFairShare! @join__field(graph: STRAWBERRY)
+  adminDomainFairShare(resourceGroupName: String!, domainName: String!): DomainFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List domain fair shares (admin only)."""
-  adminDomainFairShares(filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection! @join__field(graph: STRAWBERRY)
+  adminDomainFairShares(filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get project fair share data (admin only)."""
-  adminProjectFairShare(resourceGroupName: String!, projectId: UUID!): ProjectFairShare! @join__field(graph: STRAWBERRY)
+  adminProjectFairShare(resourceGroupName: String!, projectId: UUID!): ProjectFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List project fair shares (admin only)."""
-  adminProjectFairShares(filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection! @join__field(graph: STRAWBERRY)
+  adminProjectFairShares(filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get user fair share data (admin only)."""
-  adminUserFairShare(resourceGroupName: String!, projectId: UUID!, userUuid: UUID!): UserFairShare! @join__field(graph: STRAWBERRY)
+  adminUserFairShare(resourceGroupName: String!, projectId: UUID!, userUuid: UUID!): UserFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List user fair shares (admin only)."""
-  adminUserFairShares(filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection! @join__field(graph: STRAWBERRY)
+  adminUserFairShares(filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List domain usage buckets (admin only)."""
-  adminDomainUsageBuckets(filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  adminDomainUsageBuckets(filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List project usage buckets (admin only)."""
-  adminProjectUsageBuckets(filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  adminProjectUsageBuckets(filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List user usage buckets (admin only)."""
-  adminUserUsageBuckets(filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  adminUserUsageBuckets(filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -8941,12 +8969,12 @@ type Query
   Use filters to narrow down results by status, name, or architecture.
   Supports both cursor-based and offset-based pagination.
   """
-  adminImagesV2(filter: ImageFilterGQL = null, orderBy: [ImageOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageConnectionV2! @join__field(graph: STRAWBERRY)
+  adminImagesV2(filter: ImageV2FilterGQL = null, orderBy: [ImageV2OrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Query kernels with pagination and filtering. (admin only)
   """
-  adminKernelsV2(filter: KernelFilter = null, orderBy: [KernelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelConnectionV2! @join__field(graph: STRAWBERRY)
+  adminKernelsV2(filter: KernelV2Filter = null, orderBy: [KernelV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -8957,47 +8985,47 @@ type Query
   Use filters to search by alias string.
   Supports both cursor-based and offset-based pagination.
   """
-  adminImageAliases(filter: ImageAliasFilterGQL = null, orderBy: [ImageAliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageAliasConnection! @join__field(graph: STRAWBERRY)
+  adminImageAliases(filter: ImageV2AliasFilterGQL = null, orderBy: [ImageV2AliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageV2AliasConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Query kernels within a specific session."""
-  sessionKernelsV2(scope: SessionScope!, filter: KernelFilter = null, orderBy: [KernelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelConnectionV2! @join__field(graph: STRAWBERRY)
+  sessionKernelsV2(scope: SessionScope!, filter: KernelV2Filter = null, orderBy: [KernelV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get domain fair share data within resource group scope.
   """
-  rgDomainFairShare(scope: ResourceGroupDomainScope!, domainName: String!): DomainFairShare! @join__field(graph: STRAWBERRY)
+  rgDomainFairShare(scope: ResourceGroupDomainScope!, domainName: String!): DomainFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List domain fair shares within resource group scope."""
-  rgDomainFairShares(scope: ResourceGroupDomainScope!, filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection! @join__field(graph: STRAWBERRY)
+  rgDomainFairShares(scope: ResourceGroupDomainScope!, filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get project fair share data within resource group scope.
   """
-  rgProjectFairShare(scope: ResourceGroupProjectScope!, projectId: UUID!): ProjectFairShare! @join__field(graph: STRAWBERRY)
+  rgProjectFairShare(scope: ResourceGroupProjectScope!, projectId: UUID!): ProjectFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List project fair shares within resource group scope."""
-  rgProjectFairShares(scope: ResourceGroupProjectScope!, filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection! @join__field(graph: STRAWBERRY)
+  rgProjectFairShares(scope: ResourceGroupProjectScope!, filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get user fair share data within resource group scope."""
-  rgUserFairShare(scope: ResourceGroupUserScope!, userUuid: UUID!): UserFairShare! @join__field(graph: STRAWBERRY)
+  rgUserFairShare(scope: ResourceGroupUserScope!, userUuid: UUID!): UserFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List user fair shares within resource group scope."""
-  rgUserFairShares(scope: ResourceGroupUserScope!, filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection! @join__field(graph: STRAWBERRY)
+  rgUserFairShares(scope: ResourceGroupUserScope!, filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List domain usage buckets within resource group scope. This API is not yet implemented.
   """
-  rgDomainUsageBuckets(scope: ResourceGroupDomainScope!, filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  rgDomainUsageBuckets(scope: ResourceGroupDomainScope!, filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List project usage buckets within resource group scope. This API is not yet implemented.
   """
-  rgProjectUsageBuckets(scope: ResourceGroupProjectScope!, filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  rgProjectUsageBuckets(scope: ResourceGroupProjectScope!, filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List user usage buckets within resource group scope. This API is not yet implemented.
   """
-  rgUserUsageBuckets(scope: ResourceGroupUserScope!, filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection! @join__field(graph: STRAWBERRY)
+  rgUserUsageBuckets(scope: ResourceGroupUserScope!, filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -9009,7 +9037,7 @@ type Query
   Use filters to narrow down results by status, name, or architecture.
   Supports both cursor-based and offset-based pagination.
   """
-  containerRegistryImagesV2(scope: ContainerRegistryScope!, filter: ImageFilterGQL = null, orderBy: [ImageOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageConnectionV2! @join__field(graph: STRAWBERRY)
+  containerRegistryImagesV2(scope: ContainerRegistryScope!, filter: ImageV2FilterGQL = null, orderBy: [ImageV2OrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0.
@@ -9020,19 +9048,19 @@ type Query
   Returns image aliases that belong to the specified image.
   Supports both cursor-based and offset-based pagination.
   """
-  imageScopedAliases(scope: ImageScope!, filter: ImageAliasFilterGQL = null, orderBy: [ImageAliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageAliasConnection! @join__field(graph: STRAWBERRY)
+  imageScopedAliases(scope: ImageV2Scope!, filter: ImageV2AliasFilterGQL = null, orderBy: [ImageV2AliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageV2AliasConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get scheduling history for a specific session."""
-  sessionScopedSchedulingHistories(scope: SessionScope!, filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection! @join__field(graph: STRAWBERRY)
+  sessionScopedSchedulingHistories(scope: SessionScope!, filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get scheduling history for a specific deployment."""
-  deploymentScopedSchedulingHistories(scope: DeploymentScope!, filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection! @join__field(graph: STRAWBERRY)
+  deploymentScopedSchedulingHistories(scope: DeploymentScope!, filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get scheduling history for a specific route."""
-  routeScopedSchedulingHistories(scope: RouteScope!, filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection! @join__field(graph: STRAWBERRY)
+  routeScopedSchedulingHistories(scope: RouteScope!, filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List resource groups"""
-  resourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_resource_groups instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  resourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_resource_groups instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """
   Added in 25.16.0.
@@ -9046,43 +9074,43 @@ type Query
   domainAppConfig(domainName: String!): AppConfig @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_app_config instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. Get domain fair share data (superadmin only)."""
-  domainFairShare(resourceGroupName: String!, domainName: String!): DomainFairShare! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  domainFairShare(resourceGroupName: String!, domainName: String!): DomainFairShare @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List domain fair shares (superadmin only)."""
-  domainFairShares(filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  domainFairShares(filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. Get project fair share data (superadmin only)."""
-  projectFairShare(resourceGroupName: String!, projectId: UUID!): ProjectFairShare! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  projectFairShare(resourceGroupName: String!, projectId: UUID!): ProjectFairShare @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List project fair shares (superadmin only)."""
-  projectFairShares(filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  projectFairShares(filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. Get user fair share data (superadmin only)."""
-  userFairShare(resourceGroupName: String!, projectId: UUID!, userUuid: UUID!): UserFairShare! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  userFairShare(resourceGroupName: String!, projectId: UUID!, userUuid: UUID!): UserFairShare @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_fair_share instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List user fair shares (superadmin only)."""
-  userFairShares(filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  userFairShares(filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_fair_shares instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List domain usage buckets (superadmin only)."""
-  domainUsageBuckets(filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  domainUsageBuckets(filter: DomainUsageBucketFilter = null, orderBy: [DomainUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainUsageBucketConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_domain_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List project usage buckets (superadmin only)."""
-  projectUsageBuckets(filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  projectUsageBuckets(filter: ProjectUsageBucketFilter = null, orderBy: [ProjectUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectUsageBucketConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_project_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 26.1.0. List user usage buckets (superadmin only)."""
-  userUsageBuckets(filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  userUsageBuckets(filter: UserUsageBucketFilter = null, orderBy: [UserUsageBucketOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserUsageBucketConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_user_usage_buckets instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Get a notification channel by ID"""
   notificationChannel(id: ID!): NotificationChannel @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_channel instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """List notification channels"""
-  notificationChannels(filter: NotificationChannelFilter = null, orderBy: [NotificationChannelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationChannelConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_channels instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  notificationChannels(filter: NotificationChannelFilter = null, orderBy: [NotificationChannelOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationChannelConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_channels instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Get a notification rule by ID"""
   notificationRule(id: ID!): NotificationRule @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_rule instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """List notification rules"""
-  notificationRules(filter: NotificationRuleFilter = null, orderBy: [NotificationRuleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationRuleConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_rules instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  notificationRules(filter: NotificationRuleFilter = null, orderBy: [NotificationRuleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): NotificationRuleConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_notification_rules instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """Added in 25.14.0"""
   defaultArtifactRegistry(artifactType: ArtifactType!): ArtifactRegistry @join__field(graph: STRAWBERRY)
@@ -9099,74 +9127,74 @@ type Query
   route(id: ID!): Route @join__field(graph: STRAWBERRY)
 
   """Added in 25.19.0. List routes for a deployment with optional filters."""
-  routes(deploymentId: ID!, filter: RouteFilter = null, orderBy: [RouteOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteConnection! @join__field(graph: STRAWBERRY)
+  routes(deploymentId: ID!, filter: RouteFilter = null, orderBy: [RouteOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteConnection @join__field(graph: STRAWBERRY)
 
   """List session scheduling history (superadmin only)"""
-  sessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_session_scheduling_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  sessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_session_scheduling_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """List deployment history (superadmin only)"""
-  deploymentHistories(filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_deployment_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  deploymentHistories(filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_deployment_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """List route history (superadmin only)"""
-  routeHistories(filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_route_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
+  routeHistories(filter: RouteHistoryFilter = null, orderBy: [RouteHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RouteHistoryConnection @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_route_histories instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """
   Added in 26.2.0. Get a single user by UUID (admin only). Requires superadmin privileges. Returns an error if user is not found.
   """
-  adminUserV2(userId: UUID!): UserV2! @join__field(graph: STRAWBERRY)
+  adminUserV2(userId: UUID!): UserV2 @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List all users with filtering and pagination (admin only). Requires superadmin privileges.
   """
-  adminUsersV2(filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection! @join__field(graph: STRAWBERRY)
+  adminUsersV2(filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List users within a specific domain. Requires domain admin privileges or higher.
   """
-  domainUsersV2(scope: DomainUserV2Scope!, filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection! @join__field(graph: STRAWBERRY)
+  domainUsersV2(scope: DomainUserV2Scope!, filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get the current authenticated user's information. Returns the user associated with the current session. Returns an error if not authenticated.
   """
-  myUserV2: UserV2! @join__field(graph: STRAWBERRY)
+  myUserV2: UserV2 @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List users within a specific project. Requires project membership or higher privileges.
   """
-  projectUsersV2(scope: ProjectUserV2Scope!, filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection! @join__field(graph: STRAWBERRY)
+  projectUsersV2(scope: ProjectUserV2Scope!, filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get a single domain by name. Returns an error if domain is not found.
   """
-  domainV2(domainName: String!): DomainV2! @join__field(graph: STRAWBERRY)
+  domainV2(domainName: String!): DomainV2 @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List all domains with filtering and pagination (admin only). Requires superadmin privileges.
   """
-  adminDomainsV2(filter: DomainV2Filter = null, orderBy: [DomainV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainV2Connection! @join__field(graph: STRAWBERRY)
+  adminDomainsV2(filter: DomainV2Filter = null, orderBy: [DomainV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainV2Connection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List domains within resource group scope."""
-  rgDomainsV2(scope: ResourceGroupDomainScope!, filter: DomainV2Filter = null, orderBy: [DomainV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainV2Connection! @join__field(graph: STRAWBERRY)
+  rgDomainsV2(scope: ResourceGroupDomainScope!, filter: DomainV2Filter = null, orderBy: [DomainV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get a single project by ID. Returns an error if project is not found.
   """
-  projectV2(projectId: UUID!): ProjectV2! @join__field(graph: STRAWBERRY)
+  projectV2(projectId: UUID!): ProjectV2 @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List all projects with filtering and pagination (admin only). Requires superadmin privileges.
   """
-  adminProjectsV2(filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection! @join__field(graph: STRAWBERRY)
+  adminProjectsV2(filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List projects within a specific domain. Requires domain admin privileges or higher.
   """
-  domainProjectsV2(scope: DomainProjectV2Scope!, filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection! @join__field(graph: STRAWBERRY)
+  domainProjectsV2(scope: DomainProjectV2Scope!, filter: ProjectV2Filter = null, orderBy: [ProjectV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectV2Connection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get the domain that a project belongs to. Returns an error if project or domain is not found.
   """
-  projectDomainV2(projectId: UUID!): DomainV2! @join__field(graph: STRAWBERRY)
+  projectDomainV2(projectId: UUID!): DomainV2 @join__field(graph: STRAWBERRY)
 }
 
 type QuotaDetails
@@ -11740,7 +11768,7 @@ enum UserRoleV2
 }
 
 """
-Added in 26.2.0. Filter for UserRoleEnum fields. Supports equals, in, not_equals, and not_in operations.
+Added in 26.2.0. Filter for UserRoleV2 enum fields.Supports equals, in, not_equals, and not_in operations.
 """
 input UserRoleV2EnumFilter
   @join__type(graph: STRAWBERRY)
@@ -11771,7 +11799,7 @@ enum UserStatusV2
 }
 
 """
-Added in 26.2.0. Filter for UserStatusEnum fields. Supports equals, in, not_equals, and not_in operations.
+Added in 26.2.0. Filter for UserStatusV2 enum fields.Supports equals, in, not_equals, and not_in operations.
 """
 input UserStatusV2EnumFilter
   @join__type(graph: STRAWBERRY)
@@ -12147,7 +12175,7 @@ Added in 26.2.0. Specifies ordering for user query results. Combine field select
 input UserV2OrderBy
   @join__type(graph: STRAWBERRY)
 {
-  """The field to order by. See UserV2OrderField for available options."""
+  """The field to order by. See UserOrderField for available options."""
   field: UserV2OrderField!
 
   """Sort direction. ASC for ascending, DESC for descending."""

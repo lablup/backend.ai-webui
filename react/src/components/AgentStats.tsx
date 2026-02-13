@@ -62,7 +62,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const agentStatsData = (() => {
-    const totalResource = data.agentStats.totalResource;
+    const totalResource = data.agentStats?.totalResource;
     if (!totalResource) {
       return { cpu: null, memory: null, accelerators: [] };
     }
