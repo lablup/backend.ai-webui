@@ -3,7 +3,9 @@
 ## 모델 서비스
 
 
-   이 기능은 엔터프라이즈 전용 기능입니다.
+:::info
+이 기능은 엔터프라이즈 전용 기능입니다.
+:::
 
 Backend.AI는 모델 학습 단계에서 개발 환경 구축과 리소스 관리를 지원할 뿐만 아니라,
 23.09 버전부터 모델 서비스 기능도 지원합니다. 이 기능을 통해
@@ -58,41 +60,43 @@ Backend.AI는 모델 학습 단계에서 개발 환경 구축과 리소스 관�
 
 #### 모델 정의 파일 생성하기
 
-   .. note::
-      24.03 버전부터 모델 정의 파일 이름을 구성할 수 있습니다. 모델 정의 파일 경로에
-      다른 입력 필드를 입력하지 않으면 시스템은 `model-definition.yml` 또는
-      `model-definition.yaml`로 간주합니다.
+:::note
+24.03 버전부터 모델 정의 파일 이름을 구성할 수 있습니다. 모델 정의 파일 경로에
+다른 입력 필드를 입력하지 않으면 시스템은 `model-definition.yml` 또는
+`model-definition.yaml`로 간주합니다.
+:::
 
 모델 정의 파일은 Backend.AI 시스템이 추론용 세션을 자동으로 시작, 초기화하고 필요에 따라 스케일링할 때 필요한 설정 정보를 담고 있는 파일입니다. 이 파일을 추론 서비스 엔진을 담고 있는 컨테이너 이미지와는 독립적으로 모델 타입 폴더에 저장합니다. 이를 통해 모델을 실행하는 엔진이 다양한 모델을 필요에 따라 바꿔가며 서비스할 수 있도록 하며, 모델이 변경될 때마다 컨테이너 이미지를 새로 빌드 및 배포하지 않아도 되도록 해줍니다. 네트워크 스토리지에서 직접 모델 정의와 모델 데이터를 불러오므로, 자동 스케일링 시 배포 과정을 더 단순화 및 효율화할 수 있습니다.
 
 모델 정의 파일은 다음과 같은 형식을 따릅니다.
 
 ```yaml
-   models:
-     - name: "simple-http-server"
-       model_path: "/models"
-       service:
-         start_command:
-           - python
-           - -m
-           - http.server
-           - --directory
-           - /home/work
-           - "8000"
-         port: 8000
-         health_check:
-           path: /
-           interval: 10.0
-           max_retries: 10
-           max_wait_time: 15.0
-           expected_status_code: 200
-           initial_delay: 60.0
+models:
+  - name: "simple-http-server"
+    model_path: "/models"
+    service:
+      start_command:
+        - python
+        - -m
+        - http.server
+        - --directory
+        - /home/work
+        - "8000"
+      port: 8000
+      health_check:
+        path: /
+        interval: 10.0
+        max_retries: 10
+        max_wait_time: 15.0
+        expected_status_code: 200
+        initial_delay: 60.0
 ```
 
 **모델 정의 파일에 대한 키-값 설명**
 
-   .. note::
-      "(필수)" 표시가 없는 필드는 선택사항입니다.
+:::note
+"(필수)" 표시가 없는 필드는 선택사항입니다.
+:::
 
 - `name` (필수): 모델의 이름을 정의합니다.
 - `model_path` (필수): 모델이 정의된 경로를 지정합니다.
@@ -184,8 +188,10 @@ from traffic
 internally)
 ```
 
-   내부 상태 정보(트래픽 라우팅에 사용됨)는 사용자 인터페이스에 표시되는
-   상태와 즉시 동기화되지 않을 수 있습니다.
+:::info
+내부 상태 정보(트래픽 라우팅에 사용됨)는 사용자 인터페이스에 표시되는
+상태와 즉시 동기화되지 않을 수 있습니다.
+:::
 
 **UNHEALTHY가 되기까지의 시간**:
 
@@ -294,13 +300,17 @@ MODEL_NAME = "example-model-name"
    - 런타임에서 필요한 모든 환경 변수를 정의할 수 있습니다. 예를 들어, `MODEL_NAME`은 일반적으로 로드할 모델을 지정하는 데 사용됩니다.
 
 
-   각 섹션 헤더의 `{runtime}` 접두사는 런타임 변형 이름
-   (예: `vllm`, `nim`, `custom`)에 해당합니다. 시스템은 서비스를 생성할 때
-   선택한 런타임 변형과 이 접두사를 매칭합니다.
+:::info
+각 섹션 헤더의 `{runtime}` 접두사는 런타임 변형 이름
+(예: `vllm`, `nim`, `custom`)에 해당합니다. 시스템은 서비스를 생성할 때
+선택한 런타임 변형과 이 접두사를 매칭합니다.
+:::
 
-   "이 모델 실행" 버튼을 사용하여 모델 스토어에서 서비스를 생성하면
-   `service-definition.toml`의 설정이 자동으로 적용됩니다. 나중에 리소스
-   할당을 조정해야 하는 경우, 모델 서빙 페이지를 통해 서비스를 수정할 수 있습니다.
+:::info
+"이 모델 실행" 버튼을 사용하여 모델 스토어에서 서비스를 생성하면
+`service-definition.toml`의 설정이 자동으로 적용됩니다. 나중에 리소스
+할당을 조정해야 하는 경우, 모델 서빙 페이지를 통해 서비스를 수정할 수 있습니다.
+:::
 
 #### 모델 서비스 생성/유효성 검사
 
@@ -380,8 +390,10 @@ MODEL_NAME = "example-model-name"
 ![](../images/model-validation-dialog.png)
 
 
-   결과가 `Finished`라고 해서 실행이 성공적으로 완료되었다는 것을 보장하지는 않습니다.
-   대신 컨테이너 로그를 확인하세요.
+:::info
+결과가 `Finished`라고 해서 실행이 성공적으로 완료되었다는 것을 보장하지는 않습니다.
+대신 컨테이너 로그를 확인하세요.
+:::
 
 
 **실패한 모델 서비스 생성 처리**
@@ -476,12 +488,10 @@ MODEL_NAME = "example-model-name"
 
 ![](../images/generated_token_copy.png)
 
-============= ================
-Key           Value
-============= ================
-Content-Type  application/json
-Authorization BackendAI
-============= ================
+| Key           | Value            |
+|---------------|------------------|
+| Content-Type  | application/json |
+| Authorization | BackendAI        |
 
 #### 엔드 유저를 위한 모델 서비스 엔드포인트 접속
 
@@ -496,16 +506,20 @@ Authorization BackendAI
 `curl` 명령을 사용한 간단한 명령입니다.
 
 
-   $ export API_TOKEN="<token>"
-   $ curl -H "Content-Type: application/json" -X GET \
-   $ -H "Authorization: BackendAI $API_TOKEN" \
-   $ <model-service-endpoint>
+```bash
+$ export API_TOKEN="<token>"
+$ curl -H "Content-Type: application/json" -X GET \
+  -H "Authorization: BackendAI $API_TOKEN" \
+  <model-service-endpoint>
+```
 
 
-   기본적으로, 엔드 유저는 엔드포인트에 액세스할 수 있는
-   네트워크에 있어야 합니다. 서비스가 폐쇄된 네트워크에서 생성된 경우,
-   해당 폐쇄된 네트워크 내에서 액세스할 수 있는 엔드
-   유저만 서비스에 액세스할 수 있습니다.
+:::info
+기본적으로, 엔드 유저는 엔드포인트에 액세스할 수 있는
+네트워크에 있어야 합니다. 서비스가 폐쇄된 네트워크에서 생성된 경우,
+해당 폐쇄된 네트워크 내에서 액세스할 수 있는 엔드
+유저만 서비스에 액세스할 수 있습니다.
+:::
 
 #### 대형 언어 모델 사용
 

@@ -135,18 +135,40 @@ model-definition 파일 작성 방법에 대한 자세한 내용은
 
 ```yaml
 models:
-
-- name: "Llama-3.1-8B-Instruct"
-  model*path: "/models/Llama-3.1-8B-Instruct"
-  service:
-  pre_start_actions: - action: run_command
-  args:
-  command: - huggingface-cli - download - --local-dir - /models/Llama-3.1-8B-Instruct - --token - hf*\*\*\*\* - meta-llama/Llama-3.1-8B-Instruct
-  start_command: - /usr/bin/python - -m - vllm.entrypoints.openai.api_server - --model - /models/Llama-3.1-8B-Instruct - --served-model-name - Llama-3.1-8B-Instruct - --tensor-parallel-size - "1" - --host - "0.0.0.0" - --port - "8000" - --max-model-len - "4096"
-  port: 8000
-  health_check:
-  path: /v1/models
-  max_retries: 500
+  - name: "Llama-3.1-8B-Instruct"
+    model_path: "/models/Llama-3.1-8B-Instruct"
+    service:
+      pre_start_actions:
+        - action: run_command
+          args:
+            command:
+              - huggingface-cli
+              - download
+              - --local-dir
+              - /models/Llama-3.1-8B-Instruct
+              - --token
+              - hf_****
+              - meta-llama/Llama-3.1-8B-Instruct
+      start_command:
+        - /usr/bin/python
+        - -m
+        - vllm.entrypoints.openai.api_server
+        - --model
+        - /models/Llama-3.1-8B-Instruct
+        - --served-model-name
+        - Llama-3.1-8B-Instruct
+        - --tensor-parallel-size
+        - "1"
+        - --host
+        - "0.0.0.0"
+        - --port
+        - "8000"
+        - --max-model-len
+        - "4096"
+      port: 8000
+      health_check:
+        path: /v1/models
+        max_retries: 500
 ```
 
 model-definition 파일이 업로드되면 모델 스토어 페이지에 모델 카드가 나타납니다.
@@ -205,7 +227,9 @@ model-definition 파일을 설정한 후 모델을 수동으로 다운로드해�
 
 ![](../images/model_store_clone_dialog.png)
 
-   현재 폴더 복제는 동일한 스토리지 호스트 내에서만 지원됩니다.
+:::info
+현재 폴더 복제는 동일한 스토리지 호스트 내에서만 지원됩니다.
+:::
 
 복제가 완료되면, 새 폴더가 선택한 사용 방식에 따라 데이터 페이지의 해당 탭에 표시됩니다.
 
@@ -215,10 +239,12 @@ model-definition 파일을 설정한 후 모델을 수동으로 다운로드해�
 
 "이 모델로 서비스 만들기" 버튼을 사용하면 모델 카드에서 한 번의 클릭으로 모델 서비스를 바로 생성할 수 있습니다. 이 기능은 모델 폴더 복제와 모델 서비스 엔드포인트 생성 과정을 자동화합니다.
 
-   이 버튼을 활성화하려면 다음 조건이 충족되어야 합니다:
-   - 모델 폴더에 `model-definition.yaml`과 `service-definition.toml` 파일이 모두 존재해야 합니다. 하나라도 없으면 버튼이 비활성화되며, 어떤 파일이 필요한지 안내하는 툴팁이 표시됩니다.
-   - 모델 서비스를 생성할 수 있는 충분한 자원 쿼터가 있어야 합니다.
-   - 자원 그룹이 추론 세션 유형을 허용해야 합니다.
+:::info
+이 버튼을 활성화하려면 다음 조건이 충족되어야 합니다:
+- 모델 폴더에 `model-definition.yaml`과 `service-definition.toml` 파일이 모두 존재해야 합니다. 하나라도 없으면 버튼이 비활성화되며, 어떤 파일이 필요한지 안내하는 툴팁이 표시됩니다.
+- 모델 서비스를 생성할 수 있는 충분한 자원 쿼터가 있어야 합니다.
+- 자원 그룹이 추론 세션 유형을 허용해야 합니다.
+:::
 
 <a id="service-creation-workflow"></a>
 
@@ -246,9 +272,11 @@ model-definition 파일을 설정한 후 모델을 수동으로 다운로드해�
 
 ![](../images/model_service_created_detail.png)
 
-   이전 작업에서 복제한 폴더가 이미 존재하는 경우, 시스템이 자동으로 해당 폴더를
-   사용하여 서비스를 생성합니다. 향후 릴리스에서는 복제본이 여러 개 있을 경우
-   어떤 폴더를 사용할지 선택할 수 있는 기능이 추가될 예정입니다.
+:::info
+이전 작업에서 복제한 폴더가 이미 존재하는 경우, 시스템이 자동으로 해당 폴더를
+사용하여 서비스를 생성합니다. 향후 릴리스에서는 복제본이 여러 개 있을 경우
+어떤 폴더를 사용할지 선택할 수 있는 기능이 추가될 예정입니다.
+:::
 
 <a id="troubleshooting"></a>
 
@@ -317,7 +345,9 @@ Control 열의 휴지통 아이콘을 클릭하여 각 자원 keypair를 삭제�
 
 ![](../images/resource_policy_delete_dialog.png)
 
-   삭제할 자원 정책을 따르는 사용자(비활성 사용자 포함)가 있으면 삭제할 수 없습니다. 자원 정책을 삭제하기 전에 해당 자원 정책 아래에 남아있는 사용자가 없는지 확인하십시오.
+:::info
+삭제할 자원 정책을 따르는 사용자(비활성 사용자 포함)가 있으면 삭제할 수 없습니다. 자원 정책을 삭제하기 전에 해당 자원 정책 아래에 남아있는 사용자가 없는지 확인하십시오.
+:::
 
 특정 열을 숨기거나 표시하려면 테이블 오른쪽 하단의 '설정 (톱니바퀴)'를 클릭합니다. 표시하려는 열을 선택할 수 있는 대화 상자가 나타납니다.
 
@@ -343,7 +373,9 @@ Control 열의 휴지통 아이콘을 클릭하여 각 자원 keypair를 삭제�
 
 업데이트하려면 control 열의 '설정 (톱니바퀴)' 버튼을 클릭합니다. 삭제하려면 휴지통 버튼을 클릭합니다.
 
-   자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
+:::info
+자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
+:::
 
 keypair 자원 정책과 마찬가지로 테이블 오른쪽 하단의 '설정 (톱니바퀴)' 버튼을 클릭하여 원하는 열만 선택하고 표시할 수 있습니다.
 
@@ -370,7 +402,9 @@ Resource Policy 페이지의 Project 탭을 클릭하면 프로젝트 자원 정
 
 변경하려면 control 열의 '설정 (톱니바퀴)' 버튼을 클릭합니다. 자원 정책 이름은 편집할 수 없습니다. 삭제는 휴지통 아이콘 버튼을 클릭하여 수행할 수 있습니다.
 
-   자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
+:::info
+자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
+:::
 
 테이블 오른쪽 하단의 '설정 (톱니바퀴)' 버튼을 클릭하여 원하는 열만 선택하고 표시할 수 있습니다.
 
@@ -394,7 +428,9 @@ Session 페이지와 마찬가지로 세션 이름을 클릭하면 세션에 대
 
 관리자는 Environments 페이지의 Images 탭에서 연산 세션을 생성하는 데 사용되는 이미지를 관리할 수 있습니다. 이 탭에는 현재 Backend.AI 서버에 있는 모든 이미지의 메타 정보가 표시됩니다. 각 이미지에 대한 registry, namespace, 이미지 이름, 이미지 기반 OS, digest, 필요한 최소 자원과 같은 정보를 확인할 수 있습니다. 하나 이상의 에이전트 노드에 다운로드된 이미지의 경우 각 Status 열에 `installed` 태그가 표시됩니다.
 
-   특정 에이전트를 선택하여 이미지를 설치하는 기능은 현재 개발 중입니다.
+:::info
+특정 에이전트를 선택하여 이미지를 설치하는 기능은 현재 개발 중입니다.
+:::
 
 ![](../images/image_list_page.png)
 
@@ -402,7 +438,9 @@ Controls 패널의 '설정 (톱니바퀴)'를 클릭하여 각 이미지의 최�
 
 ![](../images/update_image_resource_setting.png)
 
-   최소 자원 요구 사항을 사전 정의된 값보다 작은 양으로 변경하지 마십시오! 이미지 메타데이터에 포함된 최소 자원 요구 사항은 테스트를 거쳐 결정된 값입니다. 변경하려는 최소 자원 양에 대해 확실하지 않다면 기본값으로 유지하십시오.
+:::info
+최소 자원 요구 사항을 사전 정의된 값보다 작은 양으로 변경하지 마십시오! 이미지 메타데이터에 포함된 최소 자원 요구 사항은 테스트를 거쳐 결정된 값입니다. 변경하려는 최소 자원 양에 대해 확실하지 않다면 기본값으로 유지하십시오.
+:::
 
 또한 Controls 열의 'Apps' 아이콘을 클릭하여 각 이미지에 지원되는 앱을 추가하거나 수정할 수 있습니다. 아이콘을 클릭하면 앱 이름과 해당 포트 번호가 표시됩니다.
 
@@ -410,9 +448,11 @@ Controls 패널의 '설정 (톱니바퀴)'를 클릭하여 각 이미지의 최�
 
 이 인터페이스에서 아래의 '+ Add' 버튼을 클릭하여 지원되는 커스텀 애플리케이션을 추가할 수 있습니다. 애플리케이션을 삭제하려면 각 행의 오른쪽에 있는 '빨간색 휴지통' 버튼을 클릭하기만 하면 됩니다.
 
-   관리되는 앱을 변경한 후에는 이미지를 다시 설치해야 합니다.
+:::info
+관리되는 앱을 변경한 후에는 이미지를 다시 설치해야 합니다.
 
-   ![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+:::
 
 <a id="manage-docker-registry"></a>
 
@@ -420,7 +460,9 @@ Controls 패널의 '설정 (톱니바퀴)'를 클릭하여 각 이미지의 최�
 
 Environments 페이지의 Registries 탭을 클릭하면 현재 연결된 Docker 레지스트리의 정보를 확인할 수 있습니다. `cr.backend.ai`가 기본으로 등록되어 있으며, Harbor에서 제공하는 레지스트리입니다.
 
-   오프라인 환경에서는 기본 레지스트리에 접근할 수 없으므로 오른쪽의 휴지통 아이콘을 클릭하여 삭제합니다.
+:::info
+오프라인 환경에서는 기본 레지스트리에 접근할 수 없으므로 오른쪽의 휴지통 아이콘을 클릭하여 삭제합니다.
+:::
 
 Controls의 새로고침 아이콘을 클릭하면 연결된 레지스트리에서 Backend.AI용 이미지 메타데이터를 업데이트합니다. 레지스트리에 저장된 이미지 중 Backend.AI용 레이블이 없는 이미지 정보는 업데이트되지 않습니다.
 
@@ -444,7 +486,9 @@ GitLab 컨테이너 레지스트리를 추가할 때는 Extra Information 필드
 - Registry URL: GitLab 레지스트리 URL (예: `https://registry.example.com`)
 - Extra Information: `{"api_endpoint": "https://gitlab.example.com"}`
 
-   `api_endpoint`는 레지스트리 URL이 아닌 GitLab 인스턴스 URL을 가리켜야 합니다.
+:::info
+`api_endpoint`는 레지스트리 URL이 아닌 GitLab 인스턴스 URL을 가리켜야 합니다.
+:::
 
 추가 구성 참고 사항:
 
@@ -545,9 +589,11 @@ STORAGES 탭에서는 어떤 종류의 마운트 볼륨(일반적으로 NFS)이 
 
 쿼터를 설정하려면 먼저 resource 페이지의 storages 탭에 액세스해야 합니다. 그런 다음 control 열의 '설정 (톱니바퀴)'를 클릭합니다.
 
-   쿼터 설정은 쿼터 설정을 제공하는 스토리지(예: XFS, CephFS, NetApp, Purestorage 등)에서만 사용할 수 있습니다. 쿼터 설정 페이지에서 스토리지와 관계없이 스토리지 사용량을 볼 수 있지만, 내부적으로 쿼터 구성을 지원하지 않는 쿼터는 구성할 수 없습니다.
+:::info
+쿼터 설정은 쿼터 설정을 제공하는 스토리지(예: XFS, CephFS, NetApp, Purestorage 등)에서만 사용할 수 있습니다. 쿼터 설정 페이지에서 스토리지와 관계없이 스토리지 사용량을 볼 수 있지만, 내부적으로 쿼터 구성을 지원하지 않는 쿼터는 구성할 수 없습니다.
 
-   ![](../images/no_support_quota_setting.png)
+![](../images/no_support_quota_setting.png)
+:::
 
 <a id="quota-setting-panel"></a>
 
@@ -598,13 +644,17 @@ Backend.AI에는 사용자와 관리자(프로젝트)가 생성한 두 가지 �
 
 ![](../images/unset_quota.png)
 
-   사용자/프로젝트별 구성이 없는 경우 사용자/프로젝트 자원 정책의 해당 값이 기본값으로 설정됩니다. 예를 들어 쿼터에 대한 hard limit 값이 설정되지 않은 경우 자원 정책의 `max_vfolder_size` 값이 기본값으로 사용됩니다.
+:::info
+사용자/프로젝트별 구성이 없는 경우 사용자/프로젝트 자원 정책의 해당 값이 기본값으로 설정됩니다. 예를 들어 쿼터에 대한 hard limit 값이 설정되지 않은 경우 자원 정책의 `max_vfolder_size` 값이 기본값으로 사용됩니다.
+:::
 
 <a id="download-session-lists"></a>
 
 ## 세션 목록 다운로드
 
-   이 기능은 현재 기본 Session 페이지에서 사용할 수 없습니다. 이 기능을 사용하려면 User Setting 페이지의 'Switch back to the Classic UI' 섹션에서 'Classic Session list page' 옵션을 활성화하십시오. 자세한 내용은 [Backend.AI 사용자 설정](#user-settings) 섹션을 참고하세요.
+:::info
+이 기능은 현재 기본 Session 페이지에서 사용할 수 없습니다. 이 기능을 사용하려면 User Setting 페이지의 'Switch back to the Classic UI' 섹션에서 'Classic Session list page' 옵션을 활성화하십시오. 자세한 내용은 [Backend.AI 사용자 설정](#user-settings) 섹션을 참고하세요.
+:::
 
 관리자용 Session 페이지에는 추가 기능이 있습니다. FINISHED 탭의 오른쪽에 `...`로 표시된 메뉴가 있습니다. 이 메뉴를 클릭하면 export CSV 하위 메뉴가 나타납니다.
 
@@ -622,7 +672,9 @@ Configuration 페이지에서 Backend.AI 서버의 주요 설정을 볼 수 있�
 
 `Digest`, `Tag`, `None` 중 하나의 옵션을 선택하여 이미지 자동 설치 및 업데이트 규칙을 변경할 수 있습니다. `Digest`는 이미지의 무결성을 확인하고 중복된 레이어를 재사용하여 이미지 다운로드 효율성을 향상시키는 일종의 체크섬입니다. `Tag`는 이미지의 무결성을 보장하지 않기 때문에 개발 옵션 전용입니다.
 
-   각 규칙의 의미를 완전히 이해하지 않는 한 규칙 선택을 변경하지 마십시오.
+:::info
+각 규칙의 의미를 완전히 이해하지 않는 한 규칙 선택을 변경하지 마십시오.
+:::
 
 ![](../images/system_setting_about_image.png)
 
@@ -634,7 +686,9 @@ scaling, 플러그인 및 엔터프라이즈 기능에 대한 설정도 변경�
 
 ![](../images/overlay_network_setting_dialog.png)
 
-   Backend.AI Cluster 세션에 대한 자세한 내용은 [Backend.AI 클러스터 연산 세션](#backendai-cluster-compute-session) 섹션을 참고하세요.
+:::info
+Backend.AI Cluster 세션에 대한 자세한 내용은 [Backend.AI 클러스터 연산 세션](#backendai-cluster-compute-session) 섹션을 참고하세요.
+:::
 
 Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편집할 수 있습니다. 스케줄러 설정의 값은 각 [자원 그룹](#scheduling-methods)에 스케줄러 설정이 없을 때 사용할 기본값입니다. 자원 그룹별 설정이 있는 경우 이 값은 무시됩니다.
 
@@ -642,9 +696,13 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 
 ![](../images/system_setting_dialog_scheduler_settings.png)
 
-   더 광범위한 설정 컨트롤을 계속 추가할 예정입니다.
+:::info
+더 광범위한 설정 컨트롤을 계속 추가할 예정입니다.
+:::
 
-   시스템 설정은 기본 설정입니다. 자원 그룹에 특정 값이 있으면 시스템 설정에서 구성된 값이 재정의됩니다.
+:::info
+시스템 설정은 기본 설정입니다. 자원 그룹에 특정 값이 있으면 시스템 설정에서 구성된 값이 재정의됩니다.
+:::
 
 <a id="server-management"></a>
 
@@ -657,7 +715,9 @@ Maintenance 페이지로 이동하면 서버를 관리하는 몇 가지 버튼�
 
 ![](../images/maintenance_page.png)
 
-   사용하지 않는 이미지 제거 또는 정기 유지 관리 일정 등록과 같이 관리에 필요한 기타 설정을 계속 추가할 예정입니다.
+:::info
+사용하지 않는 이미지 제거 또는 정기 유지 관리 일정 등록과 같이 관리에 필요한 기타 설정을 계속 추가할 예정입니다.
+:::
 
 <a id="detailed-information"></a>
 
@@ -665,6 +725,8 @@ Maintenance 페이지로 이동하면 서버를 관리하는 몇 가지 버튼�
 
 Information 페이지에서 각 기능의 여러 상세 정보와 상태를 볼 수 있습니다. Manager 버전과 API 버전을 보려면 Core 패널을 확인하십시오. Backend.AI의 각 구성 요소가 호환되는지 여부를 확인하려면 Component 패널을 확인하십시오.
 
-   이 페이지는 현재 정보를 표시하기 위한 것입니다.
+:::info
+이 페이지는 현재 정보를 표시하기 위한 것입니다.
+:::
 
 ![](../images/information_page.png)

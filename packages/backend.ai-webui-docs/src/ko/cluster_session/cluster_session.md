@@ -1,7 +1,9 @@
 # Backend.AI 클러스터 연산 세션
 
 
-   클러스터 연산 세션 기능은 Backend.AI 서버 20.09 이상에서 지원됩니다.
+:::info
+클러스터 연산 세션 기능은 Backend.AI 서버 20.09 이상에서 지원됩니다.
+:::
 
 <a id="backendai-cluster-compute-session"></a>
 

@@ -8,10 +8,10 @@
 
 여기에 나와 있는 모든 제품 및 회사 이름은 해당 소유자의 상표일 수 있습니다.
 
-| Backend.AI는 Lablup Inc.의 등록 상표입니다.
-| Backend.AI™에 대한 저작권은 Lablup Inc.에서 소유하고 있습니다.
+Backend.AI는 Lablup Inc.의 등록 상표입니다.
+Backend.AI™에 대한 저작권은 Lablup Inc.에서 소유하고 있습니다.
 
-©2015-\ |year| Lablup Inc. All rights reserved.
+©2015-|year| Lablup Inc. All rights reserved.
 
-| 문서 버전: v\ |version|.\ |version_date|
-| Last Updated (Year/Month/Day): |date|
+문서 버전: v|version|.|version_date|
+Last Updated (Year/Month/Day): |date|

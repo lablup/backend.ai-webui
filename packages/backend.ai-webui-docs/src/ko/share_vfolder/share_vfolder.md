@@ -20,8 +20,10 @@
 ![](../images/no_test_vfolder_in_B.png)
 
 
-   사용자 B의 계정에 이미 `tests`라는 이름의 폴더가 존재하는 경우, 사용자 A의
-   `tests` 폴더를 사용자 B와 공유할 수 없습니다.
+:::info
+사용자 B의 계정에 이미 `tests`라는 이름의 폴더가 존재하는 경우, 사용자 A의
+`tests` 폴더를 사용자 B와 공유할 수 없습니다.
+:::
 
 사용자 A의 계정으로 돌아가서, 목록에 있는 `tests` 폴더의 제어 열에서 공유 버튼을 클릭합니다.
 
@@ -52,10 +54,12 @@
 ![](../images/launch_session_with_test_mounted_B.png)
 
 
-   24.09 버전부터 Backend.AI는 개선된 세션 런처(NEO)를 기본으로 제공합니다.
-   이전 세션 런처를 사용하려면 [사용자 설정](#general-tab) 섹션을 참고하세요.
-   이전 세션 런처의 사용 방법은 다음 [링크](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html)를 참고하세요.
-   NEO 세션 런처에 대해 자세히 알아보려면 [세션 생성](#start-a-new-session) 섹션을 참고하세요.
+:::info
+24.09 버전부터 Backend.AI는 개선된 세션 런처(NEO)를 기본으로 제공합니다.
+이전 세션 런처를 사용하려면 [사용자 설정](#general-tab) 섹션을 참고하세요.
+이전 세션 런처의 사용 방법은 다음 [링크](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html)를 참고하세요.
+NEO 세션 런처에 대해 자세히 알아보려면 [세션 생성](#start-a-new-session) 섹션을 참고하세요.
+:::
 
 세션을 생성한 후, 웹 터미널을 열어 `tests` 폴더가 홈 폴더에 마운트되어 있는지 확인합니다. `tests` 폴더의 내용은 표시되지만, 파일을 생성하거나 삭제하려고 하면 허용되지 않습니다. 이는 사용자 A가 읽기 전용으로 공유했기 때문입니다. 쓰기 권한이 포함된 상태로 공유된 경우에는 사용자 B도 `tests` 폴더에 파일을 생성할 수 있습니다.
 
@@ -64,8 +68,10 @@
 이렇게 Backend.AI 이메일 계정을 기반으로 개인 스토리지 폴더를 다른 사용자와 공유할 수 있습니다.
 
 
-   Backend.AI는 프로젝트 멤버에게 프로젝트 폴더를 공유하는 기능도 제공합니다.
-   자세한 내용은 [프로젝트 멤버와 프로젝트 스토리지 폴더 공유](#share-project-storage-folders-with-project-members) 섹션을 참고하세요.
+:::info
+Backend.AI는 프로젝트 멤버에게 프로젝트 폴더를 공유하는 기능도 제공합니다.
+자세한 내용은 [프로젝트 멤버와 프로젝트 스토리지 폴더 공유](#share-project-storage-folders-with-project-members) 섹션을 참고하세요.
+:::
 
 
 <a id="adjust-permission-for-shared-folders"></a>
@@ -80,8 +86,10 @@
 ![](../images/modify_perm.png)
 
 
-   수정 권한이 부여된 경우에도 폴더 자체의 이름 변경은 소유자만 할 수 있습니다.
-   수정 권한에는 폴더 이름 변경 기능이 포함되지 않습니다.
+:::info
+수정 권한이 부여된 경우에도 폴더 자체의 이름 변경은 소유자만 할 수 있습니다.
+수정 권한에는 폴더 이름 변경 기능이 포함되지 않습니다.
+:::
 
 
 <a id="stop-sharing-a-folder"></a>
