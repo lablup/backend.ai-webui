@@ -7,6 +7,7 @@ import { filterOutEmpty, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
+import IdleTimeoutChecker from 'src/components/IdleTimeoutChecker';
 import { withDefault, StringParam, useQueryParam } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'keypair');
@@ -48,6 +49,10 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
           key: 'project',
           label: t('resourcePolicy.Project'),
         },
+        {
+          key: 'idleChecker',
+          label: t('resourcePolicy.IdleChecker'),
+        },
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
@@ -64,6 +69,11 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         {curTabKey === 'project' && (
           <BAIErrorBoundary>
             <ProjectResourcePolicyList />
+          </BAIErrorBoundary>
+        )}
+        {curTabKey === 'idleChecker' && (
+          <BAIErrorBoundary>
+            <IdleTimeoutChecker />
           </BAIErrorBoundary>
         )}
       </Suspense>
