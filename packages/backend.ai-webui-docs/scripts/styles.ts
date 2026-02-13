@@ -27,7 +27,8 @@ body {
   color: ${theme.textPrimary};
   margin: 0;
   padding: 0;
-  ${isCjk ? 'word-break: keep-all;' : ''}
+  text-align: justify;
+  ${isCjk ? 'word-break: keep-all;' : '-webkit-hyphens: auto; hyphens: auto;'}
   overflow-wrap: break-word;
 }
 

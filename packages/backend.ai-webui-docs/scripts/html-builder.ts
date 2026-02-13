@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import type { Chapter } from './markdown-processor.js';
-import type { PdfTheme } from './theme.js';
-import { defaultTheme } from './theme.js';
-import { generatePdfStyles } from './styles.js';
+import fs from "fs";
+import path from "path";
+import type { Chapter } from "./markdown-processor.js";
+import type { PdfTheme } from "./theme.js";
+import { defaultTheme } from "./theme.js";
+import { generatePdfStyles } from "./styles.js";
 
 export interface DocMetadata {
   title: string;
@@ -12,31 +12,34 @@ export interface DocMetadata {
 }
 
 const LANGUAGE_LABELS: Record<string, string> = {
-  en: 'English',
-  ko: '한국어',
-  ja: '日本語',
-  th: 'ภาษาไทย',
+  en: "English",
+  ko: "한국어",
+  ja: "日本語",
+  th: "ภาษาไทย",
 };
 
-const LOCALIZED_STRINGS: Record<string, { userGuide: string; tableOfContents: string }> = {
-  en: { userGuide: 'User Guide', tableOfContents: 'Table of Contents' },
-  ko: { userGuide: '사용자 가이드', tableOfContents: '목차' },
-  ja: { userGuide: 'ユーザーガイド', tableOfContents: '目次' },
-  th: { userGuide: 'คู่มือผู้ใช้', tableOfContents: 'สารบัญ' },
+const LOCALIZED_STRINGS: Record<
+  string,
+  { userGuide: string; tableOfContents: string }
+> = {
+  en: { userGuide: "User Guide", tableOfContents: "Table of Contents" },
+  ko: { userGuide: "사용자 가이드", tableOfContents: "목차" },
+  ja: { userGuide: "ユーザーガイド", tableOfContents: "目次" },
+  th: { userGuide: "คู่มือผู้ใช้", tableOfContents: "สารบัญ" },
 };
 
 function getFormattedDate(lang: string): string {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.toLocaleString(
-    lang === 'th'
-      ? 'th-TH'
-      : lang === 'ja'
-        ? 'ja-JP'
-        : lang === 'ko'
-          ? 'ko-KR'
-          : 'en-US',
-    { month: 'long' },
+    lang === "th"
+      ? "th-TH"
+      : lang === "ja"
+        ? "ja-JP"
+        : lang === "ko"
+          ? "ko-KR"
+          : "en-US",
+    { month: "long" },
   );
   return `${month} ${year}`;
 }
@@ -51,8 +54,8 @@ function buildCoverHtml(metadata: DocMetadata, logoSvg: string): string {
   <div class="cover-logo">
     ${logoSvg}
   </div>
-  <h1 class="cover-title">${metadata.title}</h1>
-  <p class="cover-subtitle">${strings.userGuide}</p>
+  <h1 class="cover-title">${metadata.title.trim().replace(/\n/g, "<br>")}</h1>
+  <!-- <p class="cover-subtitle">${strings.userGuide}</p> -->
   <hr class="cover-divider" />
   <div class="cover-meta">
     <p class="version">${metadata.version}</p>
@@ -74,20 +77,20 @@ function buildTocHtml(chapters: Chapter[], lang: string): string {
 
       // Get H2-level subsections
       const subsections = chapter.headings.filter((h) => h.level === 2);
-      let subsectionHtml = '';
+      let subsectionHtml = "";
       if (subsections.length > 0) {
         const subItems = subsections
           .map(
             (h) =>
               `<li><a href="#${h.id}"><span class="toc-text">${h.text}</span><span class="toc-pagenum" data-toc-target="${h.id}"></span></a></li>`,
           )
-          .join('\n');
+          .join("\n");
         subsectionHtml = `\n<ol class="toc-sections">\n${subItems}\n</ol>`;
       }
 
       return `<li class="toc-chapter">${chapterLink}${subsectionHtml}</li>`;
     })
-    .join('\n');
+    .join("\n");
 
   return `
 <section class="toc-section" id="toc-section">
@@ -101,23 +104,21 @@ function buildTocHtml(chapters: Chapter[], lang: string): string {
 
 function buildContentHtml(chapters: Chapter[]): string {
   return chapters
-    .map(
-      (chapter, index) => {
-        const chapterNum = index + 1;
-        const chapterTitle = chapter.title;
-        return (
-          `<section class="chapter" id="chapter-${chapter.slug}" data-chapter-num="${chapterNum}" data-chapter-title="${chapterTitle}">\n` +
-          `<a id="${chapter.slug}"></a>\n` +
-          `<div class="chapter-title-page">\n` +
-          `  <div class="chapter-number">Chapter ${chapterNum}</div>\n` +
-          `  <div class="chapter-title-text">${chapterTitle}</div>\n` +
-          `  <div class="chapter-title-divider"></div>\n` +
-          `</div>\n` +
-          `${chapter.htmlContent}\n</section>`
-        );
-      },
-    )
-    .join('\n');
+    .map((chapter, index) => {
+      const chapterNum = index + 1;
+      const chapterTitle = chapter.title;
+      return (
+        `<section class="chapter" id="chapter-${chapter.slug}" data-chapter-num="${chapterNum}" data-chapter-title="${chapterTitle}">\n` +
+        `<a id="${chapter.slug}"></a>\n` +
+        `<div class="chapter-title-page">\n` +
+        `  <div class="chapter-number">Chapter ${chapterNum}</div>\n` +
+        `  <div class="chapter-title-text">${chapterTitle}</div>\n` +
+        `  <div class="chapter-title-divider"></div>\n` +
+        `</div>\n` +
+        `${chapter.htmlContent}\n</section>`
+      );
+    })
+    .join("\n");
 }
 
 /**
@@ -132,10 +133,10 @@ export function buildFullDocument(
 ): string {
   const logoPath = path.resolve(
     docsRoot,
-    '../../manifest/backend.ai-brand-simple.svg',
+    "../../manifest/backend.ai-brand-simple.svg",
   );
   const logoSvg = fs.existsSync(logoPath)
-    ? fs.readFileSync(logoPath, 'utf-8')
+    ? fs.readFileSync(logoPath, "utf-8")
     : '<div style="font-size:48px;color:#ff9d00;font-weight:bold;">Backend.AI</div>';
 
   const coverHtml = buildCoverHtml(metadata, logoSvg);
@@ -148,7 +149,7 @@ export function buildFullDocument(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${metadata.title} (${metadata.lang})</title>
+  <title>${metadata.title.trim().replace(/\n/g, ' ')} (${metadata.lang})</title>
   <style>${styles}</style>
 </head>
 <body>

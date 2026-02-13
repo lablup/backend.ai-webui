@@ -476,7 +476,8 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   console.log('  Post-processing (header/footer + metadata)...');
   const pdfDoc = await PDFDocument.load(pdfBuffer);
 
-  pdfDoc.setTitle(`${options.title} ${options.version} (${options.lang})`);
+  const flatTitle = options.title.trim().replace(/\n/g, ' ');
+  pdfDoc.setTitle(`${flatTitle} ${options.version} (${options.lang})`);
   pdfDoc.setAuthor('Lablup Inc.');
   pdfDoc.setSubject('Backend.AI WebUI User Guide');
   pdfDoc.setCreator('Backend.AI Docs PDF Generator');
@@ -499,7 +500,7 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   console.log(`  First chapter page: ${firstChapterPage}`);
 
   stampHeaderFooter(pdfDoc, {
-    title: options.title,
+    title: options.title.trim().replace(/\n/g, ' '),
     font: latinFont,
     cjkFont,
     sections: sectionList,
