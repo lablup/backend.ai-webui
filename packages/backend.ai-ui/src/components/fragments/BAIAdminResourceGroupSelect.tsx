@@ -10,8 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { usePaginationFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
 
-export interface BAIAdminResourceGroupSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue'> {
+export interface BAIAdminResourceGroupSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue'
+> {
   queryRef: BAIAdminResourceGroupSelect_resourceGroupsFragment$key;
 }
 
@@ -52,7 +54,7 @@ const BAIAdminResourceGroupSelect = ({
       queryRef,
     );
 
-  const selectOptions = _.map(data.resourceGroups.edges, (item) => ({
+  const selectOptions = _.map(data.resourceGroups?.edges, (item) => ({
     label: item.node.name,
     value: item.node.name, // since scaling group uses name as primary key, use name as value
   }));
@@ -90,7 +92,7 @@ const BAIAdminResourceGroupSelect = ({
         ) : undefined
       }
       footer={
-        _.isNumber(data.resourceGroups.count) &&
+        _.isNumber(data.resourceGroups?.count) &&
         data.resourceGroups.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
