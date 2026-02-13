@@ -9,7 +9,15 @@ type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any
   ? A
   : never;
 
-declare namespace globalThis {
+interface BackendAIOptions {
+  get<T = any>(key: string, defaultValue?: T, namespace?: string): T;
+  set(key: string, value: any, namespace?: string): void;
+  exists(key: string, namespace?: string): boolean;
+}
+
+type BackendAIClient = import('./hooks').BackendAIClient;
+
+declare module globalThis {
   // eslint-disable-next-line no-var
   var isDarkMode: boolean;
   // eslint-disable-next-line no-var
@@ -34,6 +42,10 @@ declare namespace globalThis {
       checked: boolean;
     };
   };
+  // eslint-disable-next-line no-var
+  var backendaiclient: BackendAIClient | undefined;
+  // eslint-disable-next-line no-var
+  var backendaioptions: BackendAIOptions | undefined;
 }
 
 type DeepPartial<T> = {

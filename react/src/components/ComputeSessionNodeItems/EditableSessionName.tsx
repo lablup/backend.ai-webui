@@ -3,7 +3,6 @@ import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSes
 import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
 import { theme, Form, Input, App, type GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
@@ -38,7 +37,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
 }) => {
   'use memo';
   const relayEvn = useRelayEnvironment();
-  const currentProject = useCurrentProjectValue();
+
   const session = useFragment(
     graphql`
       fragment EditableSessionNameFragment on ComputeSessionNode {
@@ -48,6 +47,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
         priority
         user_id
         status
+        project_id @required(action: THROW)
       }
     `,
     sessionFrgmt,
@@ -146,11 +146,11 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   graphql`
                     query EditableSessionNameRefetchQuery(
                       $sessionId: GlobalIDField!
-                      $project_id: UUID!
+                      $scope_id: ScopeField
                     ) {
                       compute_session_node(
                         id: $sessionId
-                        project_id: $project_id
+                        scope_id: $scope_id
                       ) {
                         id
                         name
@@ -159,7 +159,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                   `,
                   {
                     sessionId: session.id,
-                    project_id: currentProject.id,
+                    scope_id: `project:${session.project_id}`,
                   },
                 )
                   .toPromise()

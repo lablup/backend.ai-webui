@@ -80,7 +80,6 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
             id={sessionId}
             fetchKey={fetchKey}
             sessionFrgmt={cachedSessionFrgmt}
-            deprecatedProjectId={session?.project_id}
           />
         )}
       </Suspense>
