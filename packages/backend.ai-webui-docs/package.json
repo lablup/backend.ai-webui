@@ -10,13 +10,17 @@
     "pdf:ja": "tsx scripts/generate-pdf.ts --lang ja",
     "pdf:th": "tsx scripts/generate-pdf.ts --lang th",
     "pdf:all": "tsx scripts/generate-pdf.ts --lang all",
-    "catalog": "tsx scripts/style-catalog.ts",
     "preview": "tsx scripts/preview-server.ts --mode sample",
     "preview:catalog": "tsx scripts/preview-server.ts --mode catalog",
     "preview:doc": "tsx scripts/preview-server.ts --mode document --lang en",
     "preview:doc:ko": "tsx scripts/preview-server.ts --mode document --lang ko",
     "preview:doc:ja": "tsx scripts/preview-server.ts --mode document --lang ja",
-    "preview:doc:th": "tsx scripts/preview-server.ts --mode document --lang th"
+    "preview:doc:th": "tsx scripts/preview-server.ts --mode document --lang th",
+    "preview:html": "tsx scripts/preview-server-web.ts --lang en",
+    "preview:html:ko": "tsx scripts/preview-server-web.ts --lang ko",
+    "preview:html:ja": "tsx scripts/preview-server-web.ts --lang ja",
+    "preview:html:th": "tsx scripts/preview-server-web.ts --lang th",
+    "preview:html:catalog": "tsx scripts/preview-server-web.ts --mode catalog"
   },
   "devDependencies": {
     "marked": "^12.0.2",

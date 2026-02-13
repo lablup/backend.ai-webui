@@ -144,11 +144,9 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
         () => {
           const images = Array.from(document.querySelectorAll('img'));
           if (images.length === 0) return true;
-          return images.every(
-            (img) => img.complete && (img.naturalWidth > 0 || img.src === ''),
-          );
+          return images.every((img) => img.complete);
         },
-        { timeout: 120_000 },
+        { timeout: 30_000 },
       )
       .catch(() => {
         console.warn('  Warning: Some images may not have loaded completely');

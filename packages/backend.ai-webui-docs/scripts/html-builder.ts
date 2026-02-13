@@ -131,7 +131,7 @@ export function buildFullDocument(
   const coverHtml = buildCoverHtml(metadata, logoSvg);
   const tocHtml = buildTocHtml(chapters, metadata.lang);
   const contentHtml = buildContentHtml(chapters);
-  const styles = generatePdfStyles(theme);
+  const styles = generatePdfStyles(theme, metadata.lang);
 
   return `<!DOCTYPE html>
 <html lang="${metadata.lang}">

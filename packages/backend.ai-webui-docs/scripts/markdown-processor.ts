@@ -2,6 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { Marked } from 'marked';
+import {
+  processAdmonitions,
+  processCodeBlockMeta,
+  parseHighlightLines,
+  escapeHtml as escapeHtmlExt,
+  stripHtmlTags,
+} from './markdown-extensions.js';
 
 export interface Heading {
   level: number;
@@ -37,7 +44,7 @@ const PATH_FALLBACKS: Record<string, string> = {
   'ผู้ดูแลระบบ_menu/ผู้ดูแลระบบ_menu.md': 'admin_menu/admin_menu.md',
 };
 
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .toLowerCase()
     .replace(/<[^>]+>/g, '') // remove angle bracket tags like <anchor>
@@ -47,7 +54,7 @@ function slugify(text: string): string {
     .replace(/^-|-$/g, ''); // trim dashes
 }
 
-function resolveMarkdownPath(
+export function resolveMarkdownPath(
   lang: string,
   configPath: string,
   srcDir: string,
@@ -98,7 +105,7 @@ function rewriteImagePaths(
  * Strip RST grid table borders (+------+------+) and clean up
  * so that marked can parse the pipe rows as markdown tables.
  */
-function normalizeRstTables(markdown: string): string {
+export function normalizeRstTables(markdown: string): string {
   const lines = markdown.split('\n');
   const result: string[] = [];
   let inRstTable = false;
@@ -154,7 +161,7 @@ function normalizeRstTables(markdown: string): string {
 /**
  * Replace Sphinx template variables used in disclaimer.md
  */
-function substituteTemplateVars(
+export function substituteTemplateVars(
   markdown: string,
   version: string,
 ): string {
@@ -179,7 +186,7 @@ function substituteTemplateVars(
  * Convert 3-space indented note blocks into markdown blockquotes.
  * Must distinguish from list continuations and code blocks.
  */
-function convertIndentedNotes(markdown: string): string {
+export function convertIndentedNotes(markdown: string): string {
   const lines = markdown.split('\n');
   const result: string[] = [];
   let inList = false;
@@ -248,7 +255,7 @@ function processCrossReferences(
  * Remove duplicate H1 headings if a chapter has multiple H1s.
  * Keep only the first one.
  */
-function deduplicateH1(markdown: string): string {
+export function deduplicateH1(markdown: string): string {
   let foundFirst = false;
   const lines = markdown.split('\n');
   const result: string[] = [];
@@ -304,7 +311,7 @@ export async function processMarkdownFiles(
     const renderer = {
       heading(text: string, level: number, _raw: string): string {
         // text may contain HTML tags from inline parsing, strip for slug/toc
-        const plainText = text.replace(/<[^>]+>/g, '');
+        const plainText = stripHtmlTags(text);
         const id = `${chapterSlug}-${slugify(plainText)}`;
         headings.push({ level, text: plainText, id });
         return `<h${level} id="${id}">${text}</h${level}>\n`;
@@ -324,6 +331,91 @@ export async function processMarkdownFiles(
 
     chapters.push({
       title: nav.title,
+      slug: chapterSlug,
+      htmlContent,
+      headings,
+    });
+  }
+
+  return chapters;
+}
+
+/**
+ * Process in-memory catalog markdown entries for PDF output.
+ * Applies admonition/code-meta preprocessing, then renders through
+ * the same Marked pipeline used for file-based markdown.
+ */
+export async function processCatalogMarkdownForPdf(
+  entries: Array<{ title: string; markdown: string }>,
+): Promise<Chapter[]> {
+  const chapters: Chapter[] = [];
+
+  for (const entry of entries) {
+    let markdown = entry.markdown;
+    const chapterSlug = slugify(entry.title);
+
+    // Extended syntax pre-processing
+    markdown = processAdmonitions(markdown);
+    markdown = processCodeBlockMeta(markdown);
+
+    const headings: Heading[] = [];
+
+    const marked = new Marked();
+    const renderer = {
+      heading(text: string, level: number, _raw: string): string {
+        const plainText = stripHtmlTags(text);
+        const id = `${chapterSlug}-${slugify(plainText)}`;
+        headings.push({ level, text: plainText, id });
+        return `<h${level} id="${id}">${text}</h${level}>\n`;
+      },
+      image(href: string, title: string | null, text: string): string {
+        const titleAttr = title ? ` title="${title}"` : '';
+        return `<img src="${href}" alt="${text || ''}" class="doc-image"${titleAttr} />\n`;
+      },
+      code(code: string, infostring: string | undefined): string {
+        const info = infostring || '';
+        const langMatch = info.match(/^(\w+)/);
+        const titleMatch = info.match(/data-title="([^"]*)"/);
+        const highlightMatch = info.match(/data-highlight="([^"]*)"/);
+
+        const lang = langMatch?.[1] || '';
+        const title = titleMatch?.[1] || '';
+        const highlightSpec = highlightMatch?.[1] || '';
+        const highlightLines = parseHighlightLines(highlightSpec);
+
+        let codeHtml: string;
+        if (highlightLines.size > 0) {
+          const lines = code.split('\n');
+          codeHtml = lines
+            .map((line, idx) => {
+              const lineNum = idx + 1;
+              const cls = highlightLines.has(lineNum)
+                ? 'code-line highlighted'
+                : 'code-line';
+              return `<span class="${cls}">${escapeHtmlExt(line)}</span>`;
+            })
+            .join('\n');
+        } else {
+          codeHtml = escapeHtmlExt(code);
+        }
+
+        const langClass = lang ? ` class="language-${lang}"` : '';
+        const preBlock = `<pre><code${langClass}>${codeHtml}</code></pre>`;
+
+        if (title) {
+          return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtmlExt(title)}</div>${preBlock}</div>\n`;
+        }
+
+        return preBlock + '\n';
+      },
+    };
+
+    marked.use({ renderer });
+
+    const htmlContent = await marked.parse(markdown);
+
+    chapters.push({
+      title: entry.title,
       slug: chapterSlug,
       htmlContent,
       headings,

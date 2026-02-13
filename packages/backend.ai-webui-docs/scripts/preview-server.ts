@@ -7,7 +7,8 @@ import { processMarkdownFiles } from './markdown-processor.js';
 import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
-import { buildSampleChapters, buildCatalogChapters } from './sample-content.js';
+import { buildThemeInfoChapter } from './sample-content.js';
+import { processCatalogMarkdownForPdf } from './markdown-processor.js';
 import { getDocVersion } from './version.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -84,13 +85,31 @@ function buildPdfViewerPage(title: string, mode: PreviewMode): string {
     .toolbar .info { color: #888; font-size: 11px; }
     .toolbar .status { color: #4caf50; font-size: 11px; }
     .toolbar .status.building { color: #ff9d00; }
+    .toolbar .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #aaa;
+      font-size: 12px;
+    }
+    .toolbar .page-nav input {
+      width: 36px;
+      background: #444;
+      border: 1px solid #555;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+      padding: 2px 4px;
+      outline: none;
+    }
+    .toolbar .page-nav input:focus { border-color: #ff9d00; }
     .pdf-container {
       flex: 1;
       display: flex;
       justify-content: center;
       overflow: hidden;
     }
-    .pdf-container object,
     .pdf-container iframe {
       width: 100%;
       height: 100%;
@@ -103,18 +122,44 @@ function buildPdfViewerPage(title: string, mode: PreviewMode): string {
     <span class="badge">PDF Preview</span>
     <span class="title">${title}</span>
     <span class="spacer"></span>
+    <span class="page-nav">
+      Page <input id="page-input" type="number" min="1" value="1" />
+    </span>
     <span class="info">${MODE_LABELS[mode]}</span>
     <span class="status" id="status">Ready</span>
   </div>
   <div class="pdf-container">
-    <object id="pdf-viewer" data="/preview.pdf" type="application/pdf">
-      <iframe id="pdf-fallback" src="/preview.pdf"></iframe>
-    </object>
+    <iframe id="pdf-frame" src="/preview.pdf#page=1"></iframe>
   </div>
   <script>
   (function() {
     let lastEtag = '';
+    let currentPage = 1;
     const statusEl = document.getElementById('status');
+    const pdfFrame = document.getElementById('pdf-frame');
+    const pageInput = document.getElementById('page-input');
+
+    // Restore page from sessionStorage
+    const saved = sessionStorage.getItem('pdfPreviewPage');
+    if (saved) {
+      currentPage = parseInt(saved, 10) || 1;
+      pageInput.value = currentPage;
+      pdfFrame.src = '/preview.pdf#page=' + currentPage;
+    }
+
+    // Manual page navigation
+    pageInput.addEventListener('change', function() {
+      const p = parseInt(this.value, 10);
+      if (p >= 1) {
+        currentPage = p;
+        sessionStorage.setItem('pdfPreviewPage', String(currentPage));
+        pdfFrame.src = '/preview.pdf?t=' + Date.now() + '#page=' + currentPage;
+      }
+    });
+    pageInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') this.blur();
+    });
+
     async function poll() {
       try {
         const res = await fetch('/__reload');
@@ -125,11 +170,7 @@ function buildPdfViewerPage(title: string, mode: PreviewMode): string {
         } else if (lastEtag && lastEtag !== data.etag) {
           statusEl.textContent = 'Ready';
           statusEl.className = 'status';
-          const viewer = document.getElementById('pdf-viewer');
-          const fallback = document.getElementById('pdf-fallback');
-          const newSrc = '/preview.pdf?t=' + Date.now();
-          if (viewer) viewer.data = newSrc;
-          if (fallback) fallback.src = newSrc;
+          pdfFrame.src = '/preview.pdf?t=' + Date.now() + '#page=' + currentPage;
         } else {
           statusEl.textContent = 'Ready';
           statusEl.className = 'status';
@@ -167,13 +208,14 @@ async function main(): Promise<void> {
     const start = Date.now();
 
     let html: string;
-    if (args.mode === 'catalog') {
-      // Catalog mode: theme reference + sample elements
-      const chapters = buildCatalogChapters(theme);
-      html = buildFullDocument(chapters, { title, version, lang: args.lang }, DOCS_ROOT, theme);
-    } else if (args.mode === 'sample') {
-      // Sample mode: sample elements only (no theme reference chapter)
-      const chapters = buildSampleChapters();
+    if (args.mode === 'catalog' || args.mode === 'sample') {
+      // Dynamic import with cache-busting to pick up file changes at runtime
+      const cacheBuster = `?t=${Date.now()}`;
+      const { getCatalogMarkdown } = await import(`./sample-content-markdown.js${cacheBuster}`);
+      const sampleChapters = await processCatalogMarkdownForPdf(getCatalogMarkdown());
+      const chapters = args.mode === 'catalog'
+        ? [buildThemeInfoChapter(theme), ...sampleChapters]
+        : sampleChapters;
       html = buildFullDocument(chapters, { title, version, lang: args.lang }, DOCS_ROOT, theme);
     } else {
       // Document mode: real markdown content
@@ -254,12 +296,27 @@ async function main(): Promise<void> {
     const srcLangDir = path.join(SRC_DIR, args.lang);
     if (fs.existsSync(srcLangDir)) {
       fs.watch(srcLangDir, { recursive: true }, (_event, filename) => {
-        if (filename && (filename.endsWith('.md') || filename.endsWith('.yaml'))) {
-          scheduleRebuild(path.join(srcLangDir, filename));
+        const name = filename?.toString();
+        if (name && (name.endsWith('.md') || name.endsWith('.yaml'))) {
+          scheduleRebuild(path.join(srcLangDir, name));
         }
       });
       console.log(`  Watching: src/${args.lang}/**/*.md`);
     }
+  }
+
+  // For sample/catalog modes, watch the shared markdown source
+  // Watch the directory (not the file) to survive inode changes from editors on macOS
+  if (args.mode === 'sample' || args.mode === 'catalog') {
+    const scriptsDir = __dirname;
+    const targetFile = 'sample-content-markdown.ts';
+    fs.watch(scriptsDir, (_event, filename) => {
+      const name = filename?.toString();
+      if (name === targetFile) {
+        scheduleRebuild(path.join(scriptsDir, targetFile));
+      }
+    });
+    console.log(`  Watching: scripts/${targetFile}`);
   }
 
   // Always watch config
@@ -269,7 +326,8 @@ async function main(): Promise<void> {
   const themesDir = path.join(DOCS_ROOT, 'themes');
   if (fs.existsSync(themesDir)) {
     fs.watch(themesDir, { recursive: true }, (_event, filename) => {
-      if (filename) scheduleRebuild(path.join(themesDir, filename));
+      const name = filename?.toString();
+      if (name) scheduleRebuild(path.join(themesDir, name));
     });
   }
 
@@ -342,9 +400,8 @@ async function main(): Promise<void> {
     if (args.mode === 'document') {
       console.log(`  Editing src/${args.lang}/**/*.md will regenerate the PDF.`);
     } else {
-      console.log(`  All modes generate real PDF via Playwright (identical to production).`);
+      console.log(`  Editing scripts/sample-content-markdown.ts will regenerate the PDF.`);
     }
-    console.log(`  Editing scripts/*.ts requires server restart.`);
     console.log('');
     console.log(`  Press Ctrl+C to stop.`);
   });

@@ -1,7 +1,10 @@
 import type { PdfTheme } from './theme.js';
 import { defaultTheme } from './theme.js';
 
-export function generatePdfStyles(theme: PdfTheme): string {
+const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW']);
+
+export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
+  const isCjk = lang ? CJK_LANGS.has(lang) : false;
   return `
 /* ==========================================================================
    Base
@@ -24,6 +27,8 @@ body {
   color: ${theme.textPrimary};
   margin: 0;
   padding: 0;
+  ${isCjk ? 'word-break: keep-all;' : ''}
+  overflow-wrap: break-word;
 }
 
 /* ==========================================================================
@@ -293,10 +298,12 @@ pre {
   padding: 12px;
   border-radius: 4px;
   border: 0.5px solid ${theme.codeBorder};
-  overflow-x: auto;
   font-size: ${theme.codeFontSize};
   line-height: 1.5;
   page-break-inside: avoid;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 pre code {
@@ -304,6 +311,9 @@ pre code {
   border: none;
   padding: 0;
   font-size: inherit;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 /* ==========================================================================
@@ -371,6 +381,120 @@ strong {
 
 em {
   font-style: italic;
+}
+
+/* ==========================================================================
+   Admonitions
+   ========================================================================== */
+.admonition {
+  margin: 14px 0;
+  padding: 12px 16px;
+  border-left: 4px solid;
+  border-radius: 0 4px 4px 0;
+  page-break-inside: avoid;
+}
+
+.admonition-heading {
+  font-weight: 700;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admonition-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+}
+
+.admonition-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.admonition-content p:first-child { margin-top: 0; }
+.admonition-content p:last-child { margin-bottom: 0; }
+
+.admonition-note    { border-color: #54c7ec; background: #f0faff; color: ${theme.textPrimary}; }
+.admonition-note    .admonition-heading { color: #1fa4d4; }
+.admonition-tip     { border-color: #00a400; background: #f0fff0; color: ${theme.textPrimary}; }
+.admonition-tip     .admonition-heading { color: #008a00; }
+.admonition-info    { border-color: #54c7ec; background: #f0faff; color: ${theme.textPrimary}; }
+.admonition-info    .admonition-heading { color: #1fa4d4; }
+.admonition-warning { border-color: #ffba00; background: #fffbf0; color: ${theme.textPrimary}; }
+.admonition-warning .admonition-heading { color: #d49e00; }
+.admonition-caution { border-color: #ffba00; background: #fffbf0; color: ${theme.textPrimary}; }
+.admonition-caution .admonition-heading { color: #d49e00; }
+.admonition-danger  { border-color: #fa383e; background: #fff5f5; color: ${theme.textPrimary}; }
+.admonition-danger  .admonition-heading { color: #e8232a; }
+
+/* ==========================================================================
+   Code Block Title & Line Highlighting
+   ========================================================================== */
+.code-block-wrapper {
+  margin: 12px 0;
+  border-radius: 4px;
+  border: 0.5px solid ${theme.codeBorder};
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+
+.code-block-title {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: ${theme.codeFontSize};
+  background: #e8e8e8;
+  padding: 6px 12px;
+  font-weight: 600;
+  border-bottom: 0.5px solid ${theme.codeBorder};
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.code-line {
+  display: block;
+}
+
+.code-line.highlighted {
+  background: rgba(53, 120, 229, 0.1);
+  border-left: 3px solid #3578e5;
+  margin-left: -12px;
+  padding-left: 9px;
+}
+
+/* ==========================================================================
+   Details / Summary
+   ========================================================================== */
+details {
+  margin: 12px 0;
+  border: 1px solid ${theme.borderColor};
+  border-radius: 4px;
+  padding: 0;
+  page-break-inside: avoid;
+}
+
+details summary {
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 14px;
+  background: #f8f9fa;
+  border-radius: 4px 4px 0 0;
+}
+
+details[open] summary {
+  border-bottom: 1px solid ${theme.borderColor};
+}
+
+details > *:not(summary) {
+  padding: 0 14px;
 }
 
 /* ==========================================================================
