@@ -10,480 +10,381 @@
 
 사용자는 '+ 사용자 추가' 버튼을 클릭하여 생성할 수 있습니다. 이 때 비밀번호는 8 자 이상, 알파벳/특수문자/숫자를 1 개 이상 포함해야 합니다. 사용자 ID와 이름 필드에는 최대 64 자까지 입력할 수 있습니다.
 
-
 이미 같은 이메일이나 사용자 이름이 있는 사용자가 존재한다면 사용자를 생성할 수 없습니다. 다른 이메일과 사용자 이름을 사용해 보십시오.
-``
+
 ![](images/create_user_dialog.png)
 
-Check if the user is created.
+사용자가 생성되었는지 확인합니다.
 
 ![](images/check_if_user_created.png)
 
-Click the green button in the Controls panel for more detailed user
-information. You can also check the domain and project information where the
-user belongs.
+Controls 패널의 초록색 버튼을 클릭하면 더 자세한 사용자 정보를 확인할 수 있습니다. 사용자가 속한 도메인과 프로젝트 정보도 확인할 수 있습니다.
 
 ![](images/user_detail_dialog.png)
 
-Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+Controls 패널의 '설정 (톱니바퀴)' 버튼을 클릭하면 이미 존재하는 사용자의 정보를 수정할 수 있습니다. 사용자의 이름, 비밀번호, 활성화 상태 등을 변경할 수 있습니다. 사용자 ID는 변경할 수 없습니다.
 
 ![](images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
+대화 상자 하단의 다섯 가지 항목은 다음과 같은 기능을 가지고 있습니다.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
-  step to activate the account such as email verification or an approval from an
-  admin. Note that the inactive users are listed in the Inactive tab separately.
+- User Status: 사용자의 상태를 나타냅니다. Inactive 사용자는 로그인할 수 없습니다. Before Verification은 이메일 인증이나 관리자의 승인과 같은 추가 단계를 거쳐야 계정을 활성화할 수 있는 상태를 나타냅니다. Inactive 사용자는 Inactive 탭에 별도로 표시됩니다.
 
   ![](images/active_user_selection.png)
-- Require password change?: If the admin has chosen random passwords while
-  creating users in batches, this field can be set to ON to indicate that
-  password change is required. The users will see the top bar that notify user
-  to update their password, but this is a kind of descriptive flag which has no
-  effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
-  This is useful when the user needs to install packages or run commands that
-  require root privileges. However, it is not recommended to enable this option
-  for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
-  When using two-factor authentication, users are additionally required to enter an
-  OTP code when logging in. Administrators can only disable two-factor authentication
-  for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
-  to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy <user-resource-policy>](#user resource policy <user-resource-policy>) section.
 
-## Inactivate user account
+- Require password change?: 관리자가 사용자를 일괄 생성할 때 무작위 비밀번호를 선택한 경우, 이 필드를 ON으로 설정하여 비밀번호 변경이 필요함을 나타낼 수 있습니다. 사용자에게 비밀번호를 업데이트하라고 알리는 상단 바가 표시되지만, 이는 일종의 설명용 플래그로 실제 사용에는 영향을 미치지 않습니다.
+- Enable sudo session: 사용자가 연산 세션에서 sudo를 사용할 수 있도록 허용합니다. 이는 사용자가 root 권한이 필요한 패키지를 설치하거나 명령을 실행해야 할 때 유용합니다. 그러나 보안 문제를 일으킬 수 있으므로 모든 사용자에게 이 옵션을 활성화하는 것은 권장되지 않습니다.
+- 2FA Enabled: 사용자가 2단계 인증을 사용하는지 여부를 나타내는 플래그입니다. 2단계 인증을 사용하는 경우, 사용자는 로그인 시 추가로 OTP 코드를 입력해야 합니다. 관리자는 다른 사용자의 2단계 인증만 비활성화할 수 있습니다.
+- Resource Policy: Backend.AI 버전 24.09부터, 사용자가 속한 사용자 자원 정책을 선택할 수 있습니다. 사용자 자원 정책에 대한 자세한 내용은 [사용자 자원 정책](#manage-resource-policy) 섹션을 참고하세요.
 
-Deleting user accounts is not allowed even for superadmins, to track usage
-statistics per user, metric retention, and accidental account loss. Instead,
-admins can inactivate user accounts to keep users from logging in. Click the
-delete icon in the Controls panel. A popover asking confirmation appears, and
-you can deactivate the user by clicking the Deactivate button.
+## 사용자 계정 비활성화
+
+슈퍼관리자라도 사용자 계정을 삭제하는 것은 허용되지 않습니다. 이는 사용자별 사용 통계 추적, 메트릭 보존, 실수로 인한 계정 손실을 방지하기 위함입니다. 대신 관리자는 사용자 계정을 비활성화하여 사용자가 로그인하지 못하도록 할 수 있습니다. Controls 패널의 삭제 아이콘을 클릭합니다. 확인을 요청하는 팝오버가 나타나며, Deactivate 버튼을 클릭하여 사용자를 비활성화할 수 있습니다.
 
 ![](images/user_deactivate_confirmation.png)
 
-To re-activate users, go to Users - Inactive tab, and select the status of
-the target user to `Active`.
+사용자를 다시 활성화하려면 Users - Inactive 탭으로 이동하여 대상 사용자의 상태를 `Active`로 선택합니다.
 
 ![](images/user_inactivate_confirmation.png)
 
+사용자를 비활성화하거나 다시 활성화해도 사용자의 자격 증명은 변경되지 않습니다. 사용자 계정에는 여러 keypair가 있을 수 있으므로 어떤 자격 증명을 다시 활성화해야 할지 결정하기 어렵기 때문입니다.
 
-Please note that deactivating or reactivating the user does not change the user's credentials, since the user
-account can have multiple keypairs, which brings it hard to decide which credential
-should be reactivated.
-``
-## Manage User's Keypairs
+## 사용자의 Keypair 관리
 
-Each user account usually have one or more keypairs. A keypair is used for API
-authentication to the Backend.AI server, after user logs in. Login requires
-authentication via user email and password, but every request the user sends to
-the server is authenticated based on the keypair.
+각 사용자 계정은 일반적으로 하나 이상의 keypair를 가지고 있습니다. Keypair는 사용자가 로그인한 후 Backend.AI 서버에 대한 API 인증에 사용됩니다. 로그인은 사용자 이메일과 비밀번호를 통한 인증이 필요하지만, 사용자가 서버에 보내는 모든 요청은 keypair를 기반으로 인증됩니다.
 
-A user can have multiple keypairs, but to reduce the user's burden of managing
-keypairs, we are currently using only one of the user's keypairs to send requests.
-Also, when you create a new user, a keypair is automatically created, so you do
-not need to create and assign a keypair manually in most cases.
+사용자는 여러 개의 keypair를 가질 수 있지만, keypair 관리에 대한 사용자의 부담을 줄이기 위해 현재는 사용자의 keypair 중 하나만 사용하여 요청을 보냅니다. 또한 새 사용자를 생성하면 keypair가 자동으로 생성되므로 대부분의 경우 수동으로 keypair를 생성하고 할당할 필요가 없습니다.
 
-Keypairs can be listed on the Credentials tab of in the Users page. Active
-keypairs are shown immediately, and to see the inactive keypairs, click the
-Inactive panel at the bottom.
+Keypair는 Users 페이지의 Credentials 탭에서 확인할 수 있습니다. 활성 keypair는 즉시 표시되며, 비활성 keypair를 보려면 하단의 Inactive 패널을 클릭합니다.
 
 ![](images/credential_list_tab.png)
 
-Like in Users tab, you can use the buttons in the Controls panel to view or
-update keypair details. Click the green info icon button to see specific details of the keypair.
-If necessary, you can copy the secret key by clicking the copy button.
+Users 탭과 마찬가지로 Controls 패널의 버튼을 사용하여 keypair 세부 정보를 보거나 업데이트할 수 있습니다. 초록색 정보 아이콘 버튼을 클릭하면 keypair의 구체적인 세부 정보를 확인할 수 있습니다. 필요한 경우 복사 버튼을 클릭하여 secret key를 복사할 수 있습니다.
 
 ![](images/keypair_detail_dialog.png)
 
-You can modify the resource policy and rate limit of the keypair by clicking the blue 'Setting (Gear)' button.
-Please keep in mind that if the 'Rate Limit' value is small, API operations such as login may be blocked.
+파란색 '설정 (톱니바퀴)' 버튼을 클릭하여 keypair의 자원 정책과 rate limit을 수정할 수 있습니다. 'Rate Limit' 값이 작으면 로그인과 같은 API 작업이 차단될 수 있으므로 주의하시기 바랍니다.
 
 ![](images/keypair_update_dialog.png)
 
-You can also deactivate or reactivate the keypair by clicking red 'Deactivate' button or black 'Activate' button in control column.
-Unlike the User tab, the Inactive tab allows permanent deletion of key pairs.
-However, you cannot permanently delete a key pair if it is currently being used as a user's main access key.
+control 열의 빨간색 'Deactivate' 버튼이나 검은색 'Activate' 버튼을 클릭하여 keypair를 비활성화하거나 다시 활성화할 수도 있습니다. User 탭과 달리 Inactive 탭에서는 keypair를 영구적으로 삭제할 수 있습니다. 그러나 현재 사용자의 주요 액세스 키로 사용 중인 keypair는 영구적으로 삭제할 수 없습니다.
 
 ![](images/keypair_delete_button.png)
 
 ![](images/keypair_delete_confirmation.png)
 
+실수로 keypair를 삭제한 경우, 오른쪽 상단의 '+ ADD CREDENTIAL' 버튼을 클릭하여 사용자를 위한 keypair를 다시 생성할 수 있습니다.
 
-If you
-accidentally deleted a keypair, you can re-create keypair for the user by
-clicking the '+ ADD CREDENTIAL' button at the upper right corner.
-
-The Rate Limit field is where you specify the maximum number of requests that
-can be sent to the Backend.AI server in 15 minutes. For example, if set to 1000,
-and the keypair sends more than 1000 API requests in 15 minutes, and the server
-throws an error and does not accept the request. It is recommended to use the
-default value and increase it when the API request frequency goes up high
-according to the user's pattern.
+Rate Limit 필드는 15분 동안 Backend.AI 서버에 보낼 수 있는 최대 요청 수를 지정하는 곳입니다. 예를 들어 1000으로 설정하면 keypair가 15분 동안 1000개가 넘는 API 요청을 보낼 경우 서버에서 오류를 발생시키고 요청을 수락하지 않습니다. 기본값을 사용하고 사용자의 패턴에 따라 API 요청 빈도가 높아지면 값을 증가시키는 것이 좋습니다.
 
 ![](images/add_keypair_dialog.png)
 
+## 프로젝트 구성원과 프로젝트 스토리지 폴더 공유
 
-:::
+Backend.AI는 사용자 자신의 스토리지 폴더 외에도 프로젝트를 위한 스토리지 폴더를 제공합니다. 프로젝트 스토리지 폴더는 특정 사용자가 아닌 특정 프로젝트에 속하는 폴더로, 해당 프로젝트의 모든 사용자가 액세스할 수 있습니다.
 
+프로젝트 폴더는 관리자만 생성할 수 있습니다. 일반 사용자는 관리자가 생성한 프로젝트 폴더의 내용에만 액세스할 수 있습니다. 시스템 설정에 따라 프로젝트 폴더가 허용되지 않을 수 있습니다.
 
-## Share project storage folders with project members
-
-Backend.AI provides storage folders for projects, in addition to user's own
-storage folder. A project storage folder is a folder belonging to a specific
-project, not a specific user, and can be accessed by all users in that project.
-
-
-   Project folders can be created only by administrators. Normal users can only
-   access the contents of the project folder created by the administrator.
-   Depending on the system settings, project folders may not be allowed.
-
-First, log in with an admin account and create a project folder. After moving to
-the Data page, click 'Create Folder' to open the folder creation dialog.
-Enter the folder name, set the Type to Project. When the type is set to Project,
-it will be automatically assigned to the project selected in the project selector in the header.
-Permission is set to Read-Only.
+먼저 관리자 계정으로 로그인하여 프로젝트 폴더를 생성합니다. Data 페이지로 이동한 후 'Create Folder'를 클릭하여 폴더 생성 대화 상자를 엽니다. 폴더 이름을 입력하고 Type을 Project로 설정합니다. Type을 Project로 설정하면 헤더의 프로젝트 선택기에서 선택한 프로젝트에 자동으로 할당됩니다. Permission은 Read-Only로 설정합니다.
 
 ![](images/group_folder_creation.png)
 
-After confirming that the folder has been created, log in with the User B's
-account and check that the project folder just created on the Data & Storage page
-is displayed without any invitation procedure. You can see that R (Read Only) is
-also displayed in the Permission panel.
+폴더가 생성되었는지 확인한 후 User B의 계정으로 로그인하여 Data & Storage 페이지에 방금 생성한 프로젝트 폴더가 별도의 초대 절차 없이 표시되는지 확인합니다. Permission 패널에도 R (Read Only)이 표시되는 것을 확인할 수 있습니다.
 
 ![](images/group_folder_listed_in_B.png)
 
-## Manage Models cards
+## 모델 카드 관리
 
-All of the Model cards in model store are managed by project admin.
-After uploading model store with model-definition file, any user in the project
-can access to model card and clone it if needed.
+모델 스토어의 모든 모델 카드는 프로젝트 관리자가 관리합니다.
+model-definition 파일과 함께 모델 스토어를 업로드하면, 프로젝트의 모든 사용자가
+모델 카드에 접근하고 필요 시 복제할 수 있습니다.
 
-Following method is to add model cards from the Hugging Face.
+다음은 Hugging Face에서 모델 카드를 추가하는 방법입니다.
 
+모델 카드를 생성하기 전에 Hugging Face의 특정 모델에 대한 접근 권한이 필요합니다.
+자세한 내용은 [Gated models](https://huggingface.co/docs/hub/models-gated) 를 참고하세요.
 
-   Before creating a model card, getting an access to the specific model on Hugging Face is needed.
-   For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
-
-First, Set the project to 'model-store'.
+먼저, 프로젝트를 'model-store'로 설정합니다.
 
 ![](images/select_project_to_model_store.png)
 
-Move to data page and click the 'Create Folder' button on the right side. Enter the folder name,
-and set the rest of folder configuration as shown below:
+데이터 페이지로 이동하여 오른쪽의 '폴더 생성' 버튼을 클릭합니다. 폴더 이름을 입력하고
+나머지 폴더 설정을 다음과 같이 구성합니다:
 
-   - Usage Mode: Model
-   - Type: project
-   - Permission: Read-Write
-   - Cloneable: True
+- 사용 방식: Model
+- 유형: project
+- 권한: Read-Write
+- 복제 가능: True
 
 ![](images/model_store_folder.png)
 
-After creating the folder, you need to set and upload the model-definition.yaml file
-to the folder that you've just created. Following is the example of the model-definition file.
-If you want to know how to write model-definition file,
-please refer to [Model definition guide <model_definition_guide>](#Model definition guide <model_definition_guide>) section.
+폴더를 생성한 후, 방금 생성한 폴더에 model-definition.yaml 파일을 설정하고 업로드해야 합니다.
+다음은 model-definition 파일의 예시입니다.
+model-definition 파일 작성 방법에 대한 자세한 내용은
+[모델 정의 가이드](#model-definition-guide) 섹션을 참고하세요.
 
+```yaml
+models:
 
-   models:
-   - name: "Llama-3.1-8B-Instruct"
-      model_path: "/models/Llama-3.1-8B-Instruct"
-      service:
-         pre_start_actions:
-         - action: run_command
-            args:
-               command:
-               - huggingface-cli
-               - download
-               - --local-dir
-               - /models/Llama-3.1-8B-Instruct
-               - --token
-               - hf_****
-               - meta-llama/Llama-3.1-8B-Instruct
-            start_command:
-            - /usr/bin/python
-            - -m
-            - vllm.entrypoints.openai.api_server
-            - --model
-            - /models/Llama-3.1-8B-Instruct
-            - --served-model-name
-            - Llama-3.1-8B-Instruct
-            - --tensor-parallel-size
-            - "1"
-            - --host
-            - "0.0.0.0"
-            - --port
-            - "8000"
-            - --max-model-len
-            - "4096"
-         port: 8000
-         health_check:
-            path: /v1/models
-            max_retries: 500
+- name: "Llama-3.1-8B-Instruct"
+  model*path: "/models/Llama-3.1-8B-Instruct"
+  service:
+  pre_start_actions: - action: run_command
+  args:
+  command: - huggingface-cli - download - --local-dir - /models/Llama-3.1-8B-Instruct - --token - hf*\*\*\*\* - meta-llama/Llama-3.1-8B-Instruct
+  start_command: - /usr/bin/python - -m - vllm.entrypoints.openai.api_server - --model - /models/Llama-3.1-8B-Instruct - --served-model-name - Llama-3.1-8B-Instruct - --tensor-parallel-size - "1" - --host - "0.0.0.0" - --port - "8000" - --max-model-len - "4096"
+  port: 8000
+  health_check:
+  path: /v1/models
+  max_retries: 500
+```
 
-
-Once the model-definition file is uploaded, the model card will appear in the model store page.
+model-definition 파일이 업로드되면 모델 스토어 페이지에 모델 카드가 나타납니다.
 
 ![](images/model_card_added.png)
 
+model-definition 파일을 설정한 후 모델을 수동으로 다운로드해야 합니다. 폴더에 모델 파일을 다운로드하려면
+세션 생성 시 모델 폴더를 마운트하고 [Downloading models](https://huggingface.co/docs/hub/models-downloading) 를 참고하여
+해당 위치에 파일을 다운로드할 수 있습니다.
 
-   You need to download model manually after setting model-definition file. For downloading the model file to folder,
-   you can mount the model folder to session creation and download file to there by referring
-   [Downloading models](https://huggingface.co/docs/hub/models-downloading) .
-
-Clicking on the model card you've just created will display the details of the model-definition file you uploaded.
-Now, every member of the project can access the model card and clone it.
+방금 생성한 모델 카드를 클릭하면 업로드한 model-definition 파일의 상세 정보가 표시됩니다.
+이제 프로젝트의 모든 구성원이 모델 카드에 접근하고 복제할 수 있습니다.
 
 ![](images/model_card_detail.png)
 
-## Manage Resource Policy
+모델 카드에서 "이 모델로 서비스 만들기" 버튼을 활성화하려면, 폴더에
+`model-definition.yaml`과 `service-definition.toml` 파일이 모두 존재해야
+합니다. 두 파일 중 하나라도 없으면 버튼이 비활성화됩니다. 서비스 정의 파일을
+생성하는 방법에 대한 자세한 내용은 모델 서빙 문서의
+[서비스 정의 파일](#service-definition-file)
+섹션을 참고하세요.
 
-#### Keypair Resource Policy
+## 모델 스토어 페이지
 
-In Backend.AI, administrators have the ability to set limits on the total resources available for each keypair, user, and project.
-Resource policies enable you to define the maximum allowed resources and other compute session-related settings.
-Additionally, it is possible to create multiple resource policies for different needs,
-such as user or research requirements, and apply them on an individual basis.
+모델 스토어 페이지는 관리자가 사전 구성한 모델을 사용자가 탐색하고 활용할 수 있는 페이지입니다. 사이드바에서 모델 스토어 페이지로 이동하면, 모델 스토어 프로젝트에서 등록된 모든 모델 카드를 확인할 수 있습니다.
 
-The Resource Policy page allows administrators to view a list of all registered resource policies.
-Administrators can review the resource policies established for keypairs, users, and projects directly on this page.
-Let's begin by examining the resource policies for keypairs. In the figure below, there are
-three policies in total (gardener, student, default). The infinity symbol (∞)
-indicates that no resource restrictions have been applied to those resources.
+![](images/model_store_page_overview.png)
+
+각 모델 카드는 다음과 같은 주요 정보를 표시합니다:
+
+- 모델 이름 (폴더 이름)
+- README 내용 (폴더에 README 파일이 있는 경우)
+- model-definition.yaml 파일의 메타데이터
+- 모델과 상호작용하기 위한 액션 버튼
+
+모델 카드를 클릭하면 전체 README 내용과 사용 가능한 액션이 포함된 상세 보기가 열립니다.
+
+![](images/model_card_detail_with_buttons.png)
+
+### 폴더로 복제
+
+"폴더로 복제" 버튼을 사용하면 모델 스토어 폴더의 개인 사본을 생성할 수 있습니다. 모델 스토어 폴더는 읽기 전용이며 프로젝트 전체에서 공유되므로, 파일을 수정하거나 맞춤 워크플로에서 사용하려면 자신의 스토리지로 복제해야 합니다.
+
+모델 폴더를 복제하려면:
+
+1. 모델 카드에서 "폴더로 복제" 버튼을 클릭합니다
+2. 복제 대화 상자에서 다음 설정을 구성합니다:
+   - **폴더 이름**: 복제할 폴더의 이름입니다. (기본값은 원래 이름에 임의 접미사가 추가됩니다)
+   - **권한**: 복제된 폴더의 접근 권한을 설정합니다. (읽기 전용 또는 읽기-쓰기)
+   - **사용 방식**: 폴더 유형을 선택합니다 (일반, 모델 또는 자동 마운트)
+3. "복제" 버튼을 클릭하여 복제 프로세스를 시작합니다.
+
+![](images/model_store_clone_dialog.png)
+
+현재 폴더 복제는 동일한 스토리지 호스트 내에서만 지원됩니다.
+
+복제가 완료되면, 새 폴더가 선택한 사용 방식에 따라 데이터 페이지의 해당 탭에 표시됩니다.
+
+### 이 모델로 서비스 만들기
+
+"이 모델로 서비스 만들기" 버튼을 사용하면 모델 카드에서 한 번의 클릭으로 모델 서비스를 바로 생성할 수 있습니다. 이 기능은 모델 폴더 복제와 모델 서비스 엔드포인트 생성 과정을 자동화합니다.
+
+이 버튼을 활성화하려면 다음 조건이 충족되어야 합니다:
+
+- 모델 폴더에 `model-definition.yaml`과 `service-definition.toml` 파일이 모두 존재해야 합니다. 하나라도 없으면 버튼이 비활성화되며, 어떤 파일이 필요한지 안내하는 툴팁이 표시됩니다.
+- 모델 서비스를 생성할 수 있는 충분한 자원 쿼터가 있어야 합니다.
+- 자원 그룹이 추론 세션 유형을 허용해야 합니다.
+
+#### 서비스 생성 워크플로
+
+"이 모델로 서비스 만들기" 버튼을 클릭하면, Backend.AI는 다음 워크플로를 따릅니다:
+
+1. **필수 파일 확인**: 시스템이 폴더에 model-definition.yaml과 service-definition.toml이 모두 존재하는지 확인합니다
+
+2. **폴더 복제 (필요한 경우)**: 모델 폴더의 복제본이 없는 경우:
+   - 폴더를 복제할 것인지 묻는 확인 대화 상자가 나타납니다
+   - 폴더가 `{원래 이름}-{임의 4자리}` 형식의 이름으로 복제됩니다
+   - 알림으로 복제 진행 상황이 표시됩니다
+
+![](images/model_service_clone_confirmation.png)
+
+3. **서비스 생성**: 폴더가 준비되면 (이전에 복제했거나 방금 복제한 경우):
+   - service-definition.toml의 설정을 사용하여 서비스가 자동으로 생성됩니다
+   - 알림으로 서비스 생성 진행 상황이 표시됩니다
+   - 알림을 클릭하면 모델 서빙 페이지로 이동할 수 있습니다.
+
+![](images/model_service_creation_progress.png)
+
+
+4. **서비스 상세 정보 확인**: 생성이 완료되면, 모델 서빙 페이지로 이동하여 엔드포인트 상세 정보를 확인하고, 서비스 상태를 모니터링하며, 서비스를 관리할 수 있습니다.
+
+![](images/model_service_created_detail.png)
+
+이전 작업에서 복제한 폴더가 이미 존재하는 경우, 시스템이 자동으로 해당 폴더를
+사용하여 서비스를 생성합니다. 향후 릴리스에서는 복제본이 여러 개 있을 경우
+어떤 폴더를 사용할지 선택할 수 있는 기능이 추가될 예정입니다.
+
+#### 문제 해결
+
+서비스 생성에 실패한 경우:
+
+- model-definition.yaml과 service-definition.toml의 형식이 올바른지 확인하세요.
+- 자원 쿼터가 새 모델 서비스 생성을 허용하는지 확인하세요.
+- 모델 서빙 페이지에서 서비스 상태의 오류 메시지를 확인하세요.
+- 자세한 문제 해결 단계는 [모델 서빙](#model-serving) 문서를 참고하세요.
+
+모델 서비스, 서비스 구성 및 엔드포인트 관리에 대한 자세한 내용은 [모델 서빙](#model-serving) 문서를 참고하세요.
+
+<a id="manage-resource-policy"></a>
+
+## 자원 정책 관리
+
+#### Keypair 자원 정책
+
+Backend.AI에서 관리자는 각 keypair, 사용자, 프로젝트에 사용 가능한 총 자원에 대한 제한을 설정할 수 있습니다. 자원 정책을 통해 허용되는 최대 자원과 기타 연산 세션 관련 설정을 정의할 수 있습니다. 또한 사용자 또는 연구 요구 사항과 같은 다양한 필요에 맞는 여러 자원 정책을 생성하고 개별적으로 적용할 수 있습니다.
+
+Resource Policy 페이지에서 관리자는 등록된 모든 자원 정책의 목록을 볼 수 있습니다. 관리자는 이 페이지에서 keypair, 사용자, 프로젝트에 대해 설정된 자원 정책을 직접 검토할 수 있습니다. keypair에 대한 자원 정책을 먼저 살펴보겠습니다. 아래 그림에는 총 세 가지 정책(gardener, student, default)이 있습니다. 무한대 기호(∞)는 해당 자원에 자원 제한이 적용되지 않았음을 나타냅니다.
 
 ![](images/resource_policy_page.png)
 
-The user account being used in this guide is currently assigned to the default
-resource policy. This can be verified in the Credentials tab on the Users page.
-You can also confirm that all resource policies are set to default in the Resource Policy panel.
+이 가이드에서 사용되는 사용자 계정은 현재 default 자원 정책에 할당되어 있습니다. 이는 Users 페이지의 Credentials 탭에서 확인할 수 있습니다. Resource Policy 패널에서 모든 자원 정책이 default로 설정되어 있음을 확인할 수도 있습니다.
 
 ![](images/credentials.png)
 
-To modify resource policies, click the 'Setting (Gear)' in the Control column of the
-default policy group. In the Update Resource Policy dialog, every option is
-editable except for Policy Name, which serves as the primary key for
-distinguishing resource policies in the list. Uncheck the Unlimited checkbox
-at the bottom of CPU, RAM, and fGPU, and set the resource limits to the desired
-values. Ensure that the allocated resources are less than the total hardware
-capacity. In this case, set CPU, RAM, and fGPU to 2, 4, and 1 respectively.
-Click the OK button to apply the updated resource policy.
+자원 정책을 수정하려면 default 정책 그룹의 Control 열에서 '설정 (톱니바퀴)'를 클릭합니다. Update Resource Policy 대화 상자에서 목록의 자원 정책을 구분하는 기본 키 역할을 하는 Policy Name을 제외한 모든 옵션을 편집할 수 있습니다. CPU, RAM, fGPU 하단의 Unlimited 체크박스를 해제하고 자원 제한을 원하는 값으로 설정합니다. 할당된 자원이 전체 하드웨어 용량보다 적은지 확인하세요. 이 경우 CPU, RAM, fGPU를 각각 2, 4, 1로 설정합니다. OK 버튼을 클릭하여 업데이트된 자원 정책을 적용합니다.
 
 ![](images/update_resource_policy.png)
 
-About details of each option in resource policy dialog, see the description below.
+자원 정책 대화 상자의 각 옵션에 대한 세부 정보는 아래 설명을 참조하세요.
 
 - Resource Policy
-   * CPU: Specify the maximum amount of CPU cores. (max value: 512)
-   * Memory: Specify the maximum amount of memory in GB. It would be good practice
-     to set memory twice as large as the maximum value of GPU memory. (max value: 1024)
-   * CUDA-capable GPU: Specify the maximum amount of physical GPUs. If fractional GPU
-     is enabled by the server, this setting has no effect. (max value: 64)
-   * CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
-     GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
-     amount of fGPU required is differed by each image. If fractional GPU is not enabled
-     by the server, this settings has no effect. (max value: 256)
+  - CPU: 최대 CPU 코어 수를 지정합니다. (최대값: 512)
+  - Memory: 최대 메모리 양을 GB 단위로 지정합니다. 메모리를 GPU 메모리의 최대값보다 두 배 크게 설정하는 것이 좋습니다. (최대값: 1024)
+  - CUDA-capable GPU: 최대 물리적 GPU 수를 지정합니다. 서버에서 fractional GPU가 활성화된 경우 이 설정은 효과가 없습니다. (최대값: 64)
+  - CUDA-capable GPU (fractional): Fractional GPU (fGPU)는 GPU를 효율적으로 사용하기 위해 단일 GPU를 여러 파티션으로 분할하는 기능입니다. 필요한 최소 fGPU 양은 각 이미지에 따라 다릅니다. 서버에서 fractional GPU가 활성화되지 않은 경우 이 설정은 효과가 없습니다. (최대값: 256)
 
 - Sessions
-   * Cluster Size: Set the maximum limit for the number of multi-containers or
-     multi-nodes that can be configured when creating a session.
-   * Session Lifetime (sec.): Limits the maximum lifetime of a compute session
-     from the reservation in the active status, including `PENDING` and
-     `RUNNING` statuses. After this time, the session will be force-terminated
-     even if it is fully utilized. This will be useful to prevent the session
-     from running indefinitely.
-   * Max Pending Session Count: Maximum number of compute sessions that can be in
-     the `PENDING` status simultaneously.
-   * Concurrent Jobs: Maximum number of concurrent compute session per keypair.
-     If this value is set to 3, for example, users bound to this resource policy
-     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-   * Idle timeout (sec.): Configurable period of time during which the user can
-     leave their session untouched. If there is no activity at all on a
-     compute session for idle timeout, the session will be garbage collected
-     and destroyed automatically. The criteria of the "idleness" can be
-     various and set by the administrators. (max value: 15552000 (approx. 180 days))
-   * Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
+  - Cluster Size: 세션을 생성할 때 구성할 수 있는 멀티 컨테이너 또는 멀티 노드 수의 최대 제한을 설정합니다.
+  - Session Lifetime (sec.): `PENDING` 및 `RUNNING` 상태를 포함하여 활성 상태에서 예약된 연산 세션의 최대 수명을 제한합니다. 이 시간이 지나면 세션이 완전히 활용되고 있더라도 강제 종료됩니다. 이는 세션이 무기한으로 실행되는 것을 방지하는 데 유용합니다.
+  - Max Pending Session Count: 동시에 `PENDING` 상태에 있을 수 있는 최대 연산 세션 수입니다.
+  - Concurrent Jobs: keypair당 최대 동시 연산 세션 수입니다. 예를 들어 이 값이 3으로 설정된 경우, 이 자원 정책에 바인딩된 사용자는 동시에 3개 이상의 연산 세션을 생성할 수 없습니다. (최대값: 100)
+  - Idle timeout (sec.): 사용자가 세션을 그대로 둘 수 있는 구성 가능한 기간입니다. idle timeout 동안 연산 세션에 아무런 활동이 없으면 세션이 자동으로 가비지 수집되고 삭제됩니다. "유휴"의 기준은 다양할 수 있으며 관리자가 설정합니다. (최대값: 15552000 (약 180일))
+  - Max Concurrent SFTP Sessions: 최대 동시 SFTP 세션 수입니다.
 
 - Folders
-   * Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
-     the accessibility to them. Even if a NFS named "data-1" is mounted on
-     Backend.AI, users cannot access it unless it is allowed by resource policy.
-   * (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
-     can be created/invited. (max value: 100).
+  - Allowed hosts: Backend.AI는 많은 NFS 마운트 포인트를 지원합니다. 이 필드는 이들에 대한 접근성을 제한합니다. "data-1"이라는 NFS가 Backend.AI에 마운트되어 있더라도 자원 정책에서 허용하지 않으면 사용자가 액세스할 수 없습니다.
+  - (23.09.4 이후 더 이상 사용되지 않음) Max. #: 생성/초대할 수 있는 스토리지 폴더의 최대 수입니다. (최대값: 100).
 
-In the keypair resource policy list, check that the Resources value of the default
-policy has been updated.
+keypair 자원 정책 목록에서 default 정책의 Resources 값이 업데이트되었는지 확인합니다.
 
 ![](images/keypair_resource_policy_update_check.png)
 
-You can create a new resource policy by clicking the '+ Create' button. Each setting
-value is the same as described above.
+'+ Create' 버튼을 클릭하여 새 자원 정책을 생성할 수 있습니다. 각 설정 값은 위에서 설명한 것과 동일합니다.
 
-To create a resource policy and associate it with a keypair, go to the
-Credentials tab of the Users page, click the gear button located in the
-Controls column of the desired keypair, and click the Select Policy field to
-choose it.
+자원 정책을 생성하고 keypair와 연결하려면 Users 페이지의 Credentials 탭으로 이동하여 원하는 keypair의 Controls 열에 있는 톱니바퀴 버튼을 클릭하고 Select Policy 필드를 클릭하여 선택합니다.
 
-You can also delete each of resource keypairs by clicking trash can icon
-in the Control column. When you click the icon, the confirmation popup will appears.
-Click 'Delete' button to erase."
+Control 열의 휴지통 아이콘을 클릭하여 각 자원 keypair를 삭제할 수도 있습니다. 아이콘을 클릭하면 확인 팝업이 나타납니다. 'Delete' 버튼을 클릭하여 삭제합니다.
 
 ![](images/resource_policy_delete_dialog.png)
 
+삭제할 자원 정책을 따르는 사용자(비활성 사용자 포함)가 있으면 삭제할 수 없습니다. 자원 정책을 삭제하기 전에 해당 자원 정책 아래에 남아있는 사용자가 없는지 확인하십시오.
 
-If there's any users (including inactive users) following a resource policy to be deleted,
-deletion may not be done. Before deleting a resource policy, please make sure that
-no users remain under the resource policy.
-``
-If you want to hide or show specific columns, click the 'Setting (Gear)' at the bottom right of the
-table. This will bring up a dialog where you can select the columns you want to display.
+특정 열을 숨기거나 표시하려면 테이블 오른쪽 하단의 '설정 (톱니바퀴)'를 클릭합니다. 표시하려는 열을 선택할 수 있는 대화 상자가 나타납니다.
 
 ![](images/keypair_resource_policy_table_setting.png)
 
+#### 사용자 자원 정책
 
-#### User Resource Policy
-
-
-Starting from version 24.03, Backend.AI supports user resource policy management. While each
-user can have multiple keypairs, a user can only have one user resource policy. In the user
-resource policy page, users can set restrictions on various settings related to folders such as
-Max Folder Count and Max Folder Size, as well as individual resource limits like Max Session
-Count Per Model Session and Max Customized Image Count.
+버전 24.03부터 Backend.AI는 사용자 자원 정책 관리를 지원합니다. 각 사용자는 여러 keypair를 가질 수 있지만, 사용자는 하나의 사용자 자원 정책만 가질 수 있습니다. 사용자 자원 정책 페이지에서는 Max Folder Count 및 Max Folder Size와 같은 폴더 관련 다양한 설정에 대한 제한뿐만 아니라 Max Session Count Per Model Session 및 Max Customized Image Count와 같은 개별 자원 제한도 설정할 수 있습니다.
 
 ![](images/user_resource_policy_list.png)
 
-To create a new user resource policy, click the Create button.
+새 사용자 자원 정책을 생성하려면 Create 버튼을 클릭합니다.
 
 ![](images/create_user_resource_policy.png)
 
-- Name: The name of the user resource policy.
-- Max Folder Count: The maximum number of folders that the user can create.
-  If the user's folder count exceeds this value, user cannot create a new folder.
-  If set to Unlimited, it is displayed as "∞".
-- Max Folder Size: The maximum size of the user's storage space. If
-  user's storage space exceeds this value, user cannot create a new data
-  folder. If set to Unlimited, it is displayed as "∞".
-- Max Session Count Per Model Session: The maximum number of available sessions per model
-  service created by a user. Increasing this value can put a heavy load on the session
-  scheduler and potentially lead to system downtime, so please caution when
-  adjusting this setting.
-- Max Customized Image Count: The maximum number of customized images that
-  user can create. If user's customized image count exceeds this value,
-  user cannot create a new customized image. If you want to know more about customized
-  images, please refer to the [My Environments<my-environments>](#My Environments<my-environments>) section.
+- Name: 사용자 자원 정책의 이름입니다.
+- Max Folder Count: 사용자가 생성할 수 있는 최대 폴더 수입니다. 사용자의 폴더 수가 이 값을 초과하면 새 폴더를 생성할 수 없습니다. Unlimited로 설정하면 "∞"로 표시됩니다.
+- Max Folder Size: 사용자의 스토리지 공간의 최대 크기입니다. 사용자의 스토리지 공간이 이 값을 초과하면 새 데이터 폴더를 생성할 수 없습니다. Unlimited로 설정하면 "∞"로 표시됩니다.
+- Max Session Count Per Model Session: 사용자가 생성한 모델 서비스당 사용 가능한 최대 세션 수입니다. 이 값을 증가시키면 세션 스케줄러에 과부하가 걸리고 잠재적으로 시스템 다운타임으로 이어질 수 있으므로 이 설정을 조정할 때 주의하시기 바랍니다.
+- Max Customized Image Count: 사용자가 생성할 수 있는 최대 커스터마이징된 이미지 수입니다. 사용자의 커스터마이징된 이미지 수가 이 값을 초과하면 새 커스터마이징된 이미지를 생성할 수 없습니다. 커스터마이징된 이미지에 대해 자세히 알아보려면 [My Environments](#my-environments) 섹션을 참고하세요.
 
+업데이트하려면 control 열의 '설정 (톱니바퀴)' 버튼을 클릭합니다. 삭제하려면 휴지통 버튼을 클릭합니다.
 
-To update, click the 'Setting (Gear)' button in the control column. To delete, click the trash can
-button.
+자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
 
+keypair 자원 정책과 마찬가지로 테이블 오른쪽 하단의 '설정 (톱니바퀴)' 버튼을 클릭하여 원하는 열만 선택하고 표시할 수 있습니다.
 
-Changing a resource policy may affect all users who use that policy, so use
-it with caution.
-``
-Similar to keypair resource policy, users can select and display only columns users want by
-clicking the 'Setting (Gear)' button at the bottom right of the table.
+#### 프로젝트 자원 정책
 
+버전 24.03부터 Backend.AI는 프로젝트 자원 정책 관리를 지원합니다. 프로젝트 자원 정책은 프로젝트의 스토리지 공간(쿼터) 및 폴더 관련 제한을 관리합니다.
 
-#### Project Resource Policy
-
-Starting from version 24.03, Backend.AI supports project resource policy management. Project
-resource policies manage storage space (quota) and folder-related limitations for projects.
-
-When clicking the Project tab of the Resource Policy page, you can see the list of project
-resource policy.
+Resource Policy 페이지의 Project 탭을 클릭하면 프로젝트 자원 정책 목록을 볼 수 있습니다.
 
 ![](images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+새 프로젝트 자원 정책을 생성하려면 테이블 오른쪽 상단의 '+ Create' 버튼을 클릭합니다.
 
 ![](images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
-  If the project folder count exceeds this value, the administrator will not be able to create
-  a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
-  space exceeds this value, the administrator cannot create a new project folder. If set to
-  Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- Name: 프로젝트 자원 정책의 이름입니다.
+- Max Folder Count: 관리자가 생성할 수 있는 최대 프로젝트 폴더 수입니다. 프로젝트 폴더 수가 이 값을 초과하면 관리자는 새 프로젝트 폴더를 생성할 수 없습니다. Unlimited로 설정하면 "∞"로 표시됩니다.
+- Max Folder Size: 프로젝트의 스토리지 공간의 최대 크기입니다. 프로젝트의 스토리지 공간이 이 값을 초과하면 관리자는 새 프로젝트 폴더를 생성할 수 없습니다. Unlimited로 설정하면 "∞"로 표시됩니다.
+- Max Network Count: Backend.AI 버전 24.12부터 프로젝트에 생성할 수 있는 최대 네트워크 수입니다. Unlimited로 설정하면 "∞"로 표시됩니다.
 
-The meaning of each field is similar to the user resource policy. The difference is that the
-project resource policy is applied to the project folders, while the user resource policy is
-applied to the user folders.
+각 필드의 의미는 사용자 자원 정책과 유사합니다. 차이점은 프로젝트 자원 정책은 프로젝트 폴더에 적용되고 사용자 자원 정책은 사용자 폴더에 적용된다는 점입니다.
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
-names cannot be edited. Deletion can be done by clicking the trash can icon button.
+변경하려면 control 열의 '설정 (톱니바퀴)' 버튼을 클릭합니다. 자원 정책 이름은 편집할 수 없습니다. 삭제는 휴지통 아이콘 버튼을 클릭하여 수행할 수 있습니다.
 
+자원 정책을 변경하면 해당 정책을 사용하는 모든 사용자에게 영향을 미칠 수 있으므로 주의하여 사용하십시오.
 
-   Changing a resource policy may affect all users who use that policy,
-   so use it with caution.
+테이블 오른쪽 하단의 '설정 (톱니바퀴)' 버튼을 클릭하여 원하는 열만 선택하고 표시할 수 있습니다.
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
-bottom right of the table.
-
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+현재 자원 정책을 파일로 저장하려면 각 탭의 왼쪽 상단에 있는 'Tools' 메뉴를 클릭합니다. 메뉴를 클릭하면 다운로드 대화 상자가 나타납니다.
 
 ![](images/keypair_export.png)
 
-## Unified View for Pending Sessions
+## 대기 중인 세션에 대한 통합 보기
 
-From Backend.AI version 25.13.0, a unified view for pending sessions is available in the Admin Menu.
-Unlike the Session page, the Scheduler page provides a unified view of all pending sessions within a
-selected resource group. The index number displayed next to the status indicates the queue position in
-which the session will be created once sufficient resources become available.
+Backend.AI 버전 25.13.0부터 관리자 메뉴에서 대기 중인 세션에 대한 통합 보기를 사용할 수 있습니다. Session 페이지와 달리 Scheduler 페이지는 선택한 자원 그룹 내의 모든 대기 중인 세션에 대한 통합 보기를 제공합니다. 상태 옆에 표시되는 인덱스 번호는 충분한 자원이 사용 가능해지면 세션이 생성될 대기열 위치를 나타냅니다.
 
 ![](images/scheduler_page.png)
 
-Similar to the Session page, you can click the session name to open a drawer that
-displays detailed information about the session.
+Session 페이지와 마찬가지로 세션 이름을 클릭하면 세션에 대한 자세한 정보를 표시하는 drawer가 열립니다.
 
-## Manage Images
+## 이미지 관리
 
-Admins can manage images, which are used in creating a compute session, in the
-Images tab of the Environments page. In the tab, meta information of all images
-currently in the Backend.AI server is displayed. You can check information such
-as registry, namespace, image name, image's based OS, digest, and minimum
-resources required for each image. For images downloaded to one or more agent
-nodes, there will be a `installed` tag in each Status column.
+관리자는 Environments 페이지의 Images 탭에서 연산 세션을 생성하는 데 사용되는 이미지를 관리할 수 있습니다. 이 탭에는 현재 Backend.AI 서버에 있는 모든 이미지의 메타 정보가 표시됩니다. 각 이미지에 대한 registry, namespace, 이미지 이름, 이미지 기반 OS, digest, 필요한 최소 자원과 같은 정보를 확인할 수 있습니다. 하나 이상의 에이전트 노드에 다운로드된 이미지의 경우 각 Status 열에 `installed` 태그가 표시됩니다.
 
-
-   The feature to install images by selecting specific agents is currently
-   under development.
+특정 에이전트를 선택하여 이미지를 설치하는 기능은 현재 개발 중입니다.
 
 ![](images/image_list_page.png)
 
-You can change the minimum resource requirements for each image by clicking the
-'Setting (Gear)' in the Controls panel. Each image has hardware and resource
-requirements for minimal operation. (For example, for GPU-only images, there
-must be a minimum allocated GPU.) The default value for the minimum resource
-amount is provided as embedded in the image's metadata. If an attempt is made to
-create a compute session with a resource that is less than the amount of
-resources specified in each image, the request is automatically adjusted to the
-minimum resource requirements for the image and then generated, not cancelled.
+Controls 패널의 '설정 (톱니바퀴)'를 클릭하여 각 이미지의 최소 자원 요구 사항을 변경할 수 있습니다. 각 이미지에는 최소 작동을 위한 하드웨어 및 자원 요구 사항이 있습니다. (예를 들어 GPU 전용 이미지의 경우 최소 할당 GPU가 있어야 합니다.) 최소 자원 양의 기본값은 이미지의 메타데이터에 포함되어 제공됩니다. 각 이미지에 지정된 자원 양보다 적은 자원으로 연산 세션을 생성하려고 하면 요청이 취소되지 않고 이미지의 최소 자원 요구 사항으로 자동 조정된 후 생성됩니다.
 
 ![](images/update_image_resource_setting.png)
 
+최소 자원 요구 사항을 사전 정의된 값보다 작은 양으로 변경하지 마십시오! 이미지 메타데이터에 포함된 최소 자원 요구 사항은 테스트를 거쳐 결정된 값입니다. 변경하려는 최소 자원 양에 대해 확실하지 않다면 기본값으로 유지하십시오.
 
-   Don't change the minimum resource requirements to an amount less than the
-   predefined value! The minimum resource requirements included in the image
-   metadata are values that have been tested and determined. If you are not
-   really sure about the minimum amount of resources you want to change, leave
-   it in the default.
-
-Additionally, you can add or modify the supported apps for each image by clicking the 'Apps' icon located in the Controls column.
-Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
+또한 Controls 열의 'Apps' 아이콘을 클릭하여 각 이미지에 지원되는 앱을 추가하거나 수정할 수 있습니다. 아이콘을 클릭하면 앱 이름과 해당 포트 번호가 표시됩니다.
 
 ![](images/manage_app_dialog.png)
 
-In this interface, you can add supported custom applications by clicking the '+ Add' button below. To delete an application, simply click the 'red trash can' button on the right side of each row.
+이 인터페이스에서 아래의 '+ Add' 버튼을 클릭하여 지원되는 커스텀 애플리케이션을 추가할 수 있습니다. 애플리케이션을 삭제하려면 각 행의 오른쪽에 있는 '빨간색 휴지통' 버튼을 클릭하기만 하면 됩니다.
 
+관리되는 앱을 변경한 후에는 이미지를 다시 설치해야 합니다.
 
-   You need to reinstall the image after changing the managed app.
-
-   ![](images/confirmation_dialog_for_manage_app_change_in_image.png)
-
+![](images/confirmation_dialog_for_manage_app_change_in_image.png)
 
 ## Manage docker registry
 
@@ -491,9 +392,8 @@ You can click on the Registries tab in Environments page to see the information
 of the docker registry that are currently connected. `cr.backend.ai` is
 registered by default, and it is a registry provided by Harbor.
 
-
-   In the offline environment, the default registry is not accessible, so
-   click the trash icon on the right to delete it.
+In the offline environment, the default registry is not accessible, so
+click the trash icon on the right to delete it.
 
 Click the refresh icon in Controls to update image metadata for Backend.AI from
 the connected registry. Image information which does not have labels for
@@ -512,188 +412,118 @@ that already exists, since name is the key value.
 
 ![](images/create_resource_group.png)
 
-
 ## Storages
 
-On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
-From 23.03 version, We provide per-user/per-project quota setting on storage that supports quota management.
-By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.
+STORAGES 탭에서는 어떤 종류의 마운트 볼륨(일반적으로 NFS)이 존재하는지 확인할 수 있습니다. 23.03 버전부터 쿼터 관리를 지원하는 스토리지에서 사용자별/프로젝트별 쿼터 설정을 제공합니다. 이 기능을 사용하면 관리자가 사용자 및 프로젝트 기반 폴더별 정확한 스토리지 사용량을 쉽게 관리하고 모니터링할 수 있습니다.
 
 ![](images/storage_list.png)
 
-In order to set quota, you need to first access to storages tab in resource page.
-And then, click 'Setting (Gear)' in control column.
+쿼터를 설정하려면 먼저 resource 페이지의 storages 탭에 액세스해야 합니다. 그런 다음 control 열의 '설정 (톱니바퀴)'를 클릭합니다.
 
+쿼터 설정은 쿼터 설정을 제공하는 스토리지(예: XFS, CephFS, NetApp, Purestorage 등)에서만 사용할 수 있습니다. 쿼터 설정 페이지에서 스토리지와 관계없이 스토리지 사용량을 볼 수 있지만, 내부적으로 쿼터 구성을 지원하지 않는 쿼터는 구성할 수 없습니다.
 
-   Please remind that quota setting is only available in storage that provides quota setting
-   (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
-   in quota setting page regardless of storage, you cannot configure the quota which doesn't
-   support quota configuration internally.
+![](images/no_support_quota_setting.png)
 
-   ![](images/no_support_quota_setting.png)
+#### 쿼터 설정 패널
 
-
-#### Quota Setting Panel
-
-In Quota setting page, there are two panels.
+Quota setting 페이지에는 두 개의 패널이 있습니다.
 
 ![](images/quota_setting_page.png)
 
 - Overview panel
-   * Usage: Shows the actual amount usage of the selected storage.
-   * Endpoint: Represents the mount point of the selected storage.
-   * Backend Type: The type of storage.
-   * Capabilities: The supported feature of the selected storage.
+  - Usage: 선택한 스토리지의 실제 사용량을 표시합니다.
+  - Endpoint: 선택한 스토리지의 마운트 포인트를 나타냅니다.
+  - Backend Type: 스토리지의 유형입니다.
+  - Capabilities: 선택한 스토리지의 지원되는 기능입니다.
 
 - Quota Settings
-   * For User: Configure per-user quota setting here.
-   * For Project: Configure per-project quota(project-folder) setting here.
-   * ID: Corresponds to user or project id.
-   * Hard Limit (GB): Currently set hard limit quota for selected quota.
-   * Control: Provides editing the hard limit or even deleting the quota setting.
+  - For User: 사용자별 쿼터 설정을 여기서 구성합니다.
+  - For Project: 프로젝트별 쿼터(프로젝트 폴더) 설정을 여기서 구성합니다.
+  - ID: 사용자 또는 프로젝트 ID에 해당합니다.
+  - Hard Limit (GB): 선택한 쿼터에 대해 현재 설정된 hard limit 쿼터입니다.
+  - Control: hard limit을 편집하거나 쿼터 설정을 삭제하는 기능을 제공합니다.
 
+#### 사용자 쿼터 설정
 
-#### Set User Quota
-
-In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
-we would like to show how to check current quota setting per-user and how to configure it.
-First, make sure the active tab of quota settings panel is `For User`. Then, select user you desire to
-check and edit the quota. You can see the quota id that corresponds to user's id and the configuration already set
-in the table, if you already set the quota.
+Backend.AI에는 사용자와 관리자(프로젝트)가 생성한 두 가지 유형의 vfolder가 있습니다. 이 섹션에서는 사용자별 현재 쿼터 설정을 확인하고 구성하는 방법을 보여드리고자 합니다. 먼저 quota settings 패널의 활성 탭이 `For User`인지 확인합니다. 그런 다음 쿼터를 확인하고 편집하려는 사용자를 선택합니다. 이미 쿼터를 설정한 경우 사용자 ID에 해당하는 쿼터 ID와 이미 설정된 구성을 테이블에서 볼 수 있습니다.
 
 ![](images/per_user_quota.png)
 
-Of course, if you want to edit the quota, you can simply click the Edit button in the control column. After Clicking `Edit` button, you may see the small modal that enables configuring quota setting.
-After input the exact amount, don't forget to Click `OK` button, unless the changes will not be applied.
+물론 쿼터를 편집하려면 control 열의 Edit 버튼을 클릭하기만 하면 됩니다. `Edit` 버튼을 클릭하면 쿼터 설정을 구성할 수 있는 작은 모달이 표시될 수 있습니다. 정확한 양을 입력한 후 변경 사항이 적용되도록 `OK` 버튼을 클릭하는 것을 잊지 마십시오.
 
 ![](images/quota_settings_panel.png)
 
-#### Set Project Quota
+#### 프로젝트 쿼터 설정
 
-Setting a quota on project-folder is similar to setting a user quota. The difference between setting
-project quota and user quota is to confirm setting the project quota requires one more procedure,
-which is selecting the domain that the project is dependent on. The rest are the same.
-As in the picture below, you need to first select the domain, and then select the project.
+프로젝트 폴더에 쿼터를 설정하는 것은 사용자 쿼터를 설정하는 것과 유사합니다. 프로젝트 쿼터 설정과 사용자 쿼터 설정의 차이점은 프로젝트 쿼터 설정을 확인하려면 프로젝트가 속한 도메인을 선택하는 한 가지 절차가 더 필요하다는 것입니다. 나머지는 동일합니다. 아래 그림과 같이 먼저 도메인을 선택한 다음 프로젝트를 선택해야 합니다.
 
 ![](images/per_project_quota.png)
 
-#### Unset Quota
+#### 쿼터 해제
 
-We also provides the feature to unset the quota. Please remind that after removing the quota setting, quota will automatically follows
-user or project default quota, which cannot be set in WebUI. If you want to change the default quota setting, you may need to access to admin-only page.
-By Clicking `Unset` button in control column, the small snackbar message will show up and confirm whether you really want to delete the current quota setting.
-If you click `OK` button in the snackbar message, then it will delete the quota setting and automatically reset the quota follows to corresponding quota,
-which depends on the quota type(user / project).
+쿼터를 해제하는 기능도 제공합니다. 쿼터 설정을 제거한 후에는 쿼터가 자동으로 사용자 또는 프로젝트 기본 쿼터를 따르게 되며, 이는 WebUI에서 설정할 수 없습니다. 기본 쿼터 설정을 변경하려면 관리자 전용 페이지에 액세스해야 할 수 있습니다. control 열의 `Unset` 버튼을 클릭하면 작은 snackbar 메시지가 표시되어 현재 쿼터 설정을 정말로 삭제할 것인지 확인합니다. snackbar 메시지의 `OK` 버튼을 클릭하면 쿼터 설정이 삭제되고 쿼터 유형(사용자/프로젝트)에 따라 해당 쿼터에 맞게 자동으로 재설정됩니다.
 
 ![](images/unset_quota.png)
 
+사용자/프로젝트별 구성이 없는 경우 사용자/프로젝트 자원 정책의 해당 값이 기본값으로 설정됩니다. 예를 들어 쿼터에 대한 hard limit 값이 설정되지 않은 경우 자원 정책의 `max_vfolder_size` 값이 기본값으로 사용됩니다.
 
-If there's no config per user/project, then corresponding values in the user/project resource policy will be set as
-a default value. For example, If no hard limit value for quota is set, `max_vfolder_size` value in the resource policy
-is used as the default value.
-``
-## Download session lists
+## 세션 목록 다운로드
 
-   This feature is currently not available on the default Session page.
-   To use this feature, please enable 'Classic Session list page' option in the 'Switch back to the Classic UI' section
-   on the User Setting page. For more details, please refer to [Backend.AI User Settings<user-settings>](#Backend.AI User Settings<user-settings>) section.
+이 기능은 현재 기본 Session 페이지에서 사용할 수 없습니다. 이 기능을 사용하려면 User Setting 페이지의 'Switch back to the Classic UI' 섹션에서 'Classic Session list page' 옵션을 활성화하십시오. 자세한 내용은 [Backend.AI 사용자 설정](#user-settings) 섹션을 참고하세요.
 
-There's additional feature in Session page for admin.
-On the right side of the FINISHED tab there is a menu marked with `...`.
-When you click this menu, a sub-menu export CSV appears.
+관리자용 Session 페이지에는 추가 기능이 있습니다. FINISHED 탭의 오른쪽에 `...`로 표시된 메뉴가 있습니다. 이 메뉴를 클릭하면 export CSV 하위 메뉴가 나타납니다.
 
 ![](images/export_csv_menu.png)
 
-If you click this menu, you can download the information of the comcpute sessions
-created so far in CSV format. After the following dialog opens, enter an appropriate
-file name (if necessary), click the EXPORT button and you will get the CSV file.
-Please note that a file name can have up to 255 characters.
+이 메뉴를 클릭하면 지금까지 생성된 연산 세션의 정보를 CSV 형식으로 다운로드할 수 있습니다. 다음 대화 상자가 열리면 적절한 파일 이름을 입력하고(필요한 경우) EXPORT 버튼을 클릭하면 CSV 파일을 받을 수 있습니다. 파일 이름은 최대 255자까지 입력할 수 있습니다.
 
 ![](images/export_session_dialog.png)
 
+## 시스템 설정
 
-## System settings
+Configuration 페이지에서 Backend.AI 서버의 주요 설정을 볼 수 있습니다. 현재 설정을 변경하고 나열할 수 있는 여러 컨트롤을 제공합니다.
 
-In the Configuration page, you can see main settings of Backend.AI server.
-Currently, it provides several controls which can change and list settings.
+`Digest`, `Tag`, `None` 중 하나의 옵션을 선택하여 이미지 자동 설치 및 업데이트 규칙을 변경할 수 있습니다. `Digest`는 이미지의 무결성을 확인하고 중복된 레이어를 재사용하여 이미지 다운로드 효율성을 향상시키는 일종의 체크섬입니다. `Tag`는 이미지의 무결성을 보장하지 않기 때문에 개발 옵션 전용입니다.
 
-
-You can change image auto install and update rule by selecting one option from
-`Digest`, `Tag`, `None`. `Digest` is kind of checksum for the image which
-verifies integrity of the image and also enhances  efficiency in downloading images
-by reusing duplicated layers. `Tag` is only for developing option since it does not
-guarantee the Integrity of the image.
-
-
-   Don't change rule selection unless you completely understand the meaning of each rule.
+각 규칙의 의미를 완전히 이해하지 않는 한 규칙 선택을 변경하지 마십시오.
 
 ![](images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+scaling, 플러그인 및 엔터프라이즈 기능에 대한 설정도 변경할 수 있습니다.
 
 ![](images/system_setting_about_scaling_plugins.png)
 
-When a user launches a multi-node cluster session, which is introduced at
-version 20.09, Backend.AI will dynamically create an overlay network to support
-private inter-node communication. Admins can set the value of the Maximum
-Transmission Unit (MTU) for the overlay network, if it is certain that the value
-will enhance the network speed.
+버전 20.09에 도입된 멀티 노드 클러스터 세션을 사용자가 시작하면 Backend.AI는 private 노드 간 통신을 지원하기 위해 오버레이 네트워크를 동적으로 생성합니다. 관리자는 해당 값이 네트워크 속도를 향상시킬 것이 확실한 경우 오버레이 네트워크의 Maximum Transmission Unit (MTU) 값을 설정할 수 있습니다.
 
 ![](images/overlay_network_setting_dialog.png)
 
+Backend.AI Cluster 세션에 대한 자세한 내용은 [Backend.AI 클러스터 연산 세션](#backendai-cluster-compute-session) 섹션을 참고하세요.
 
-   For more information about Backend.AI Cluster session, please refer to
-   [Backend.AI Cluster Compute Session<backendai-cluster-compute-session>](#Backend.AI Cluster Compute Session<backendai-cluster-compute-session>) section.
+Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편집할 수 있습니다. 스케줄러 설정의 값은 각 [자원 그룹](#scheduling-methods)에 스케줄러 설정이 없을 때 사용할 기본값입니다. 자원 그룹별 설정이 있는 경우 이 값은 무시됩니다.
 
-You can edit the configuration per job scheduler by clicking the Scheduler's config button.
-The values in the scheduler setting are the defaults to use when there is no scheduler
-setting in each [resource group<scheduling-methods>](#resource group<scheduling-methods>). If there is a resource
-group-specific setting, this value will be ignored.
-
-Currently supported scheduling methods include `FIFO`, `LIFO`, and `DRF`.
-Each method of scheduling is exactly the same as the [scheduling methods<scheduling-methods>](#scheduling methods<scheduling-methods>) above.
-Scheduler options include session creation retries. Session creation retries refers to the number
-of retries to create a session if it fails. If the session cannot be created within the trials,
-the request will be ignored and Backend.AI will process the next request. Currently, changes are
-only possible when the scheduler is FIFO.
+현재 지원되는 스케줄링 방법에는 `FIFO`, `LIFO`, `DRF`가 있습니다. 각 스케줄링 방법은 위의 [스케줄링 방법](#scheduling-methods)과 정확히 동일합니다. 스케줄러 옵션에는 세션 생성 재시도가 포함됩니다. 세션 생성 재시도는 실패한 경우 세션을 생성하기 위한 재시도 횟수를 나타냅니다. 시도 횟수 내에 세션을 생성할 수 없으면 요청이 무시되고 Backend.AI가 다음 요청을 처리합니다. 현재 스케줄러가 `FIFO`인 경우에만 변경이 가능합니다.
 
 ![](images/system_setting_dialog_scheduler_settings.png)
 
+더 광범위한 설정 컨트롤을 계속 추가할 예정입니다.
 
-   We will continue to add broader range of setting controls.
+시스템 설정은 기본 설정입니다. 자원 그룹에 특정 값이 있으면 시스템 설정에서 구성된 값이 재정의됩니다.
 
+## 서버 관리
 
-   System settings are default settings. If resource group has certain value,
-   then it overrides configured value in system settings.
+Maintenance 페이지로 이동하면 서버를 관리하는 몇 가지 버튼이 표시됩니다.
 
-
-## Server management
-
-Go to the Maintenance page and you will see some buttons to manage the server.
-
-- RECALCULATE USAGE: Occasionally, due to unstable network connections or
-  container management problem of Docker daemon, there may be a case where the
-  resource occupied by Backend.AI does not match the resource actually used by
-  the container. In this case, click the RECALCULATE USAGE button to manually
-  correct the resource occupancy.
-- RESCAN IMAGES: Update image meta information from all registered Docker
-  registries. It can be used when a new image is pushed to a
-  Backend.AI-connected docker registry.
+- RECALCULATE USAGE: 때때로 불안정한 네트워크 연결이나 Docker daemon의 컨테이너 관리 문제로 인해 Backend.AI가 점유한 자원이 컨테이너가 실제로 사용하는 자원과 일치하지 않는 경우가 있을 수 있습니다. 이 경우 RECALCULATE USAGE 버튼을 클릭하여 자원 점유율을 수동으로 수정합니다.
+- RESCAN IMAGES: 등록된 모든 Docker registry에서 이미지 메타 정보를 업데이트합니다. Backend.AI에 연결된 docker registry에 새 이미지가 푸시될 때 사용할 수 있습니다.
 
 ![](images/maintenance_page.png)
 
+사용하지 않는 이미지 제거 또는 정기 유지 관리 일정 등록과 같이 관리에 필요한 기타 설정을 계속 추가할 예정입니다.
 
-   We will continue to add other settings needed for management, such as
-   removing unused images or registering periodic maintenance schedules.
+## 상세 정보
 
+Information 페이지에서 각 기능의 여러 상세 정보와 상태를 볼 수 있습니다. Manager 버전과 API 버전을 보려면 Core 패널을 확인하십시오. Backend.AI의 각 구성 요소가 호환되는지 여부를 확인하려면 Component 패널을 확인하십시오.
 
-## Detailed Information
+이 페이지는 현재 정보를 표시하기 위한 것입니다.
 
-In Information page, you can see several detailed information and status of each feature.
-To see Manager version and API version, check the Core panel. To see whether each component
-for Backend.AI is compatible or not, check the Component panel.
-
-
-This page is only for showing current information.
-``
 ![](images/information_page.png)

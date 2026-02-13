@@ -245,6 +245,99 @@ Now, every member of the project can access the model card and clone it.
 
 ![](images/model_card_detail.png)
 
+   To enable the "Run this model" button on the model card, both
+   `model-definition.yaml` and `service-definition.toml` files must exist in the
+   folder. If either file is missing, the button will be disabled. For details on
+   creating the service definition file, refer to the
+   [Service Definition File <service-definition-file>](#Service Definition File <service-definition-file>)
+   section in the Model Serving documentation.
+
+## Model Store Page
+
+The Model Store page is where users can discover and use pre-configured models that have been set up by administrators. When you navigate to the Model Store page from the sidebar, you will see model cards displaying all available models from the model-store project.
+
+![](images/model_store_page_overview.png)
+
+Each model card displays key information about the model, including:
+
+- Model name (folder name)
+- README content (if a README file exists in the folder)
+- Metadata from the model-definition.yaml file
+- Action buttons for interacting with the model
+
+Clicking on a model card opens a detailed view with the full README content and available actions.
+
+![](images/model_card_detail_with_buttons.png)
+
+### Clone to Folder
+
+The "Clone to folder" button allows you to create a personal copy of a model store folder. Since model store folders are read-only and shared across the project, you need to clone them to your own storage to modify files or use them in custom workflows.
+
+To clone a model folder:
+
+1. Click the "Clone to folder" button on the model card
+2. In the clone dialog, configure the following settings:
+   - **Folder Name**: The name for your cloned folder (defaults to the original name with a random suffix)
+   - **Permission**: Set the access permission for the cloned folder (Read-Only or Read-Write)
+   - **Usage Mode**: The folder type (General, Model, or Auto Mount)
+3. Click the "Clone" button to start the cloning process
+
+![](images/model_store_clone_dialog.png)
+
+   Currently, folder cloning only supports cloning to the same storage host.
+
+After cloning completes, the new folder will appear in your Data page under the appropriate tab based on the usage mode you selected.
+
+### Create Service from This Model
+
+The "Run this model" button allows you to create a model service directly from a model card with a single click. This feature automates the process of cloning the model folder and creating a model service endpoint.
+
+   This button requires the following conditions to be met:
+   - Both `model-definition.yaml` and `service-definition.toml` files must exist in the model folder. If either file is missing, the button will be disabled with a tooltip explaining which file is needed.
+   - You must have sufficient resource quota to create a model service.
+   - The resource group must allow inference session types.
+
+#### Service Creation Workflow
+
+When you click the "Run this model" button, Backend.AI follows this workflow:
+
+1. **Check for Required Files**: The system verifies that both model-definition.yaml and service-definition.toml exist in the folder
+
+2. **Clone Folder (if needed)**: If you don't have a cloned copy of the model folder:
+   - A confirmation dialog appears asking if you want to clone the folder
+   - The folder will be cloned with a name format: `{original-name}-{random-4-chars}`
+   - A notification shows the cloning progress
+
+![](images/model_service_clone_confirmation.png)
+<!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
+
+3. **Create Service**: Once the folder exists (either from a previous clone or just cloned):
+   - The service is automatically created using settings from service-definition.toml
+   - A notification displays the service creation progress
+   - You can click the notification to navigate to the Model Serving page
+
+![](images/model_service_creation_progress.png)
+<!-- TODO: Capture screenshot of service creation progress notification -->
+
+4. **View Service Details**: After creation completes, you can navigate to the Model Serving page to view the endpoint details, monitor service health, and manage the service
+
+![](images/model_service_created_detail.png)
+
+   If a cloned folder already exists from a previous operation, the system will
+   automatically use that folder to create the service. In a future release, you will
+   be able to select which cloned folder to use if multiple copies exist.
+
+#### Troubleshooting
+
+If service creation fails:
+
+- Check that both model-definition.yaml and service-definition.toml are correctly formatted
+- Verify that your resource quota allows creating new model services
+- Check the Model Serving page for error messages in the service status
+- Refer to the [Model Serving <model-serving>](#Model Serving <model-serving>) documentation for detailed troubleshooting steps
+
+For more information about model services, service configuration, and endpoint management, refer to the [Model Serving <model-serving>](#Model Serving <model-serving>) documentation.
+
 ## Manage Resource Policy
 
 #### Keypair Resource Policy

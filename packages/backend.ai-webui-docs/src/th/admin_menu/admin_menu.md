@@ -161,88 +161,184 @@ also displayed in the Permission panel.
 
 ![](images/group_folder_listed_in_B.png)
 
-## Manage Models cards
+## จัดการการ์ดโมเดล
 
-All of the Model cards in model store are managed by project admin.
-After uploading model store with model-definition file, any user in the project
-can access to model card and clone it if needed.
+การ์ดโมเดลทั้งหมดในคลังโมเดลได้รับการจัดการโดยผู้ดูแลโปรเจกต์
+หลังจากอัปโหลดคลังโมเดลพร้อมไฟล์ model-definition แล้ว
+ผู้ใช้ทุกคนในโปรเจกต์สามารถเข้าถึงการ์ดโมเดลและโคลนได้หากจำเป็น
 
-Following method is to add model cards from the Hugging Face.
+วิธีการดังต่อไปนี้คือการเพิ่มการ์ดโมเดลจาก Hugging Face
 
+   ก่อนที่จะสร้างการ์ดโมเดล จำเป็นต้องได้รับสิทธิ์การเข้าถึงโมเดลเฉพาะบน Hugging Face
+   สำหรับข้อมูลเพิ่มเติม โปรดดูที่ [Gated models](https://huggingface.co/docs/hub/models-gated)
 
-   Before creating a model card, getting an access to the specific model on Hugging Face is needed.
-   For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
-
-First, Set the project to 'model-store'.
+ขั้นแรก ตั้งค่าโปรเจกต์เป็น 'model-store'
 
 ![](images/select_project_to_model_store.png)
 
-Move to data page and click the 'Create Folder' button on the right side. Enter the folder name,
-and set the rest of folder configuration as shown below:
+ไปที่หน้าข้อมูลและคลิกปุ่ม 'สร้างโฟลเดอร์' ทางด้านขวา ใส่ชื่อโฟลเดอร์
+และตั้งค่าการกำหนดค่าโฟลเดอร์ที่เหลือดังต่อไปนี้:
 
-   - Usage Mode: Model
-   - Type: project
-   - Permission: Read-Write
-   - Cloneable: True
+   - โหมดการใช้งาน: Model
+   - ประเภท: project
+   - สิทธิ์: Read-Write
+   - โคลนได้: True
 
 ![](images/model_store_folder.png)
 
-After creating the folder, you need to set and upload the model-definition.yaml file
-to the folder that you've just created. Following is the example of the model-definition file.
-If you want to know how to write model-definition file,
-please refer to [Model definition guide <model_definition_guide>](#Model definition guide <model_definition_guide>) section.
+หลังจากสร้างโฟลเดอร์แล้ว คุณจะต้องตั้งค่าและอัปโหลดไฟล์ model-definition.yaml
+ไปยังโฟลเดอร์ที่คุณเพิ่งสร้างขึ้น ต่อไปนี้คือตัวอย่างไฟล์ model-definition
+หากคุณต้องการทราบวิธีการเขียนไฟล์ model-definition
+โปรดดูที่ส่วน [คู่มือการกำหนดโมเดล <model_definition_guide>](#คู่มือการกำหนดโมเดล <model_definition_guide>)
 
+```yaml
+models:
+- name: "Llama-3.1-8B-Instruct"
+  model_path: "/models/Llama-3.1-8B-Instruct"
+  service:
+    pre_start_actions:
+    - action: run_command
+      args:
+        command:
+        - huggingface-cli
+        - download
+        - --local-dir
+        - /models/Llama-3.1-8B-Instruct
+        - --token
+        - hf_****
+        - meta-llama/Llama-3.1-8B-Instruct
+      start_command:
+      - /usr/bin/python
+      - -m
+      - vllm.entrypoints.openai.api_server
+      - --model
+      - /models/Llama-3.1-8B-Instruct
+      - --served-model-name
+      - Llama-3.1-8B-Instruct
+      - --tensor-parallel-size
+      - "1"
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --max-model-len
+      - "4096"
+    port: 8000
+    health_check:
+      path: /v1/models
+      max_retries: 500
+```
 
-   models:
-   - name: "Llama-3.1-8B-Instruct"
-      model_path: "/models/Llama-3.1-8B-Instruct"
-      service:
-         pre_start_actions:
-         - action: run_command
-            args:
-               command:
-               - huggingface-cli
-               - download
-               - --local-dir
-               - /models/Llama-3.1-8B-Instruct
-               - --token
-               - hf_****
-               - meta-llama/Llama-3.1-8B-Instruct
-            start_command:
-            - /usr/bin/python
-            - -m
-            - vllm.entrypoints.openai.api_server
-            - --model
-            - /models/Llama-3.1-8B-Instruct
-            - --served-model-name
-            - Llama-3.1-8B-Instruct
-            - --tensor-parallel-size
-            - "1"
-            - --host
-            - "0.0.0.0"
-            - --port
-            - "8000"
-            - --max-model-len
-            - "4096"
-         port: 8000
-         health_check:
-            path: /v1/models
-            max_retries: 500
-
-
-Once the model-definition file is uploaded, the model card will appear in the model store page.
+เมื่ออัปโหลดไฟล์ model-definition แล้ว การ์ดโมเดลจะปรากฏในหน้าคลังโมเดล
 
 ![](images/model_card_added.png)
 
+   คุณจะต้องดาวน์โหลดโมเดลด้วยตนเองหลังจากตั้งค่าไฟล์ model-definition
+   สำหรับการดาวน์โหลดไฟล์โมเดลไปยังโฟลเดอร์
+   คุณสามารถเมาท์โฟลเดอร์โมเดลเมื่อสร้างเซสชันและดาวน์โหลดไฟล์ไปยังตำแหน่งนั้นโดยดูที่
+   [Downloading models](https://huggingface.co/docs/hub/models-downloading)
 
-   You need to download model manually after setting model-definition file. For downloading the model file to folder,
-   you can mount the model folder to session creation and download file to there by referring
-   [Downloading models](https://huggingface.co/docs/hub/models-downloading) .
-
-Clicking on the model card you've just created will display the details of the model-definition file you uploaded.
-Now, every member of the project can access the model card and clone it.
+การคลิกที่การ์ดโมเดลที่คุณเพิ่งสร้างจะแสดงรายละเอียดของไฟล์ model-definition ที่คุณอัปโหลด
+ตอนนี้สมาชิกทุกคนในโปรเจกต์สามารถเข้าถึงการ์ดโมเดลและโคลนได้
 
 ![](images/model_card_detail.png)
+
+   เพื่อเปิดใช้งานปุ่ม "เรียกใช้รุ่นนี้" บนโมเดลการ์ด ต้องมีทั้งไฟล์
+   `model-definition.yaml` และ `service-definition.toml` ในโฟลเดอร์ หากไฟล์
+   ใดไฟล์หนึ่งหายไป ปุ่มจะถูกปิดใช้งาน สำหรับรายละเอียดเกี่ยวกับการสร้าง
+   ไฟล์กำหนดบริการ โปรดดูที่หัวข้อ
+   [ไฟล์กำหนดบริการ <service-definition-file>](#ไฟล์กำหนดบริการ <service-definition-file>)
+   ในเอกสาร การให้บริการโมเดล
+
+## หน้า Model Store
+
+หน้า Model Store เป็นหน้าที่ผู้ใช้สามารถเรียกดูและใช้งานโมเดลที่ผู้ดูแลระบบได้กำหนดค่าไว้ล่วงหน้า เมื่อไปที่หน้า Model Store จากแถบด้านข้าง คุณจะเห็นโมเดลการ์ดทั้งหมดที่ลงทะเบียนในโปรเจกต์ Model Store
+
+![](images/model_store_page_overview.png)
+<!-- TODO: Capture screenshot of Model Store page showing model cards with buttons visible -->
+
+โมเดลการ์ดแต่ละใบจะแสดงข้อมูลหลักดังนี้:
+
+- ชื่อโมเดล (ชื่อโฟลเดอร์)
+- เนื้อหา README (หากมีไฟล์ README ในโฟลเดอร์)
+- เมตาดาต้าจากไฟล์ model-definition.yaml
+- ปุ่มการดำเนินการสำหรับโต้ตอบกับโมเดล
+
+คลิกที่โมเดลการ์ดเพื่อเปิดมุมมองรายละเอียดที่แสดงเนื้อหา README ทั้งหมดและการดำเนินการที่สามารถใช้ได้
+
+![](images/model_card_detail_with_buttons.png)
+<!-- TODO: Capture screenshot of model card detail view showing README content and buttons -->
+
+### โคลนไปยังโฟลเดอร์
+
+ปุ่ม "โคลนไปยังโฟลเดอร์" ช่วยให้คุณสร้างสำเนาส่วนตัวของโฟลเดอร์ Model Store เนื่องจากโฟลเดอร์ Model Store เป็นแบบอ่านอย่างเดียวและแชร์กันทั้งโปรเจกต์ คุณจึงต้องโคลนไปยังพื้นที่จัดเก็บของคุณเองเพื่อแก้ไขไฟล์หรือใช้ในเวิร์กโฟลว์ที่กำหนดเอง
+
+ในการโคลนโฟลเดอร์โมเดล:
+
+1. คลิกปุ่ม "โคลนไปยังโฟลเดอร์" บนโมเดลการ์ด
+2. กำหนดค่าการตั้งค่าต่อไปนี้ในกล่องโต้ตอบการโคลน:
+   - **ชื่อโฟลเดอร์**: ชื่อสำหรับโฟลเดอร์ที่โคลน (ค่าเริ่มต้นจะเพิ่มคำต่อท้ายแบบสุ่มต่อชื่อเดิม)
+   - **สิทธิ์**: ตั้งค่าสิทธิ์การเข้าถึงสำหรับโฟลเดอร์ที่โคลน (อ่านอย่างเดียว หรือ อ่าน-เขียน)
+   - **โหมดการใช้งาน**: เลือกประเภทโฟลเดอร์ (ทั่วไป, โมเดล หรือ ต่อเชื่อมอัตโนมัติ)
+3. คลิกปุ่ม "โคลน" เพื่อเริ่มกระบวนการโคลน
+
+![](images/model_store_clone_dialog.png)
+<!-- TODO: Capture screenshot of clone folder dialog with field settings -->
+
+   ปัจจุบันการโคลนโฟลเดอร์รองรับเฉพาะภายในโฮสต์จัดเก็บเดียวกันเท่านั้น
+
+เมื่อการโคลนเสร็จสิ้น โฟลเดอร์ใหม่จะปรากฏในแท็บที่เกี่ยวข้องบนหน้าข้อมูล ตามโหมดการใช้งานที่เลือก
+
+### สร้างบริการจากโมเดลนี้
+
+ปุ่ม "เรียกใช้รุ่นนี้" ช่วยให้คุณสร้างบริการโมเดลได้โดยตรงจากโมเดลการ์ดด้วยการคลิกเพียงครั้งเดียว ฟีเจอร์นี้จะทำให้กระบวนการโคลนโฟลเดอร์โมเดลและสร้างเอ็นด์พอยท์ของบริการโมเดลเป็นไปโดยอัตโนมัติ
+
+   เพื่อเปิดใช้งานปุ่มนี้ ต้องเป็นไปตามเงื่อนไขต่อไปนี้:
+   - ต้องมีทั้งไฟล์ `model-definition.yaml` และ `service-definition.toml` ในโฟลเดอร์โมเดล หากไฟล์ใดไฟล์หนึ่งหายไป ปุ่มจะถูกปิดใช้งานและจะแสดงคำแนะนำเครื่องมือระบุว่าต้องการไฟล์ใด
+   - มีโควตาทรัพยากรเพียงพอสำหรับสร้างบริการโมเดล
+   - กลุ่มทรัพยากรอนุญาตประเภทเซสชันการอนุมาน
+
+#### เวิร์กโฟลว์การสร้างบริการ
+
+เมื่อคุณคลิกปุ่ม "เรียกใช้รุ่นนี้" Backend.AI จะดำเนินตามเวิร์กโฟลว์ต่อไปนี้:
+
+1. **ตรวจสอบไฟล์ที่จำเป็น**: ระบบจะตรวจสอบว่ามีทั้ง model-definition.yaml และ service-definition.toml อยู่ในโฟลเดอร์
+
+2. **โคลนโฟลเดอร์ (หากจำเป็น)**: หากยังไม่มีสำเนาโคลนของโฟลเดอร์โมเดล:
+   - จะมีกล่องโต้ตอบยืนยันถามว่าต้องการโคลนโฟลเดอร์หรือไม่
+   - โฟลเดอร์จะถูกโคลนด้วยชื่อในรูปแบบ `{ชื่อเดิม}-{อักขระสุ่ม 4 ตัว}`
+   - การแจ้งเตือนจะแสดงความคืบหน้าของการโคลน
+
+![](images/model_service_clone_confirmation.png)
+<!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
+
+3. **สร้างบริการ**: เมื่อโฟลเดอร์พร้อมแล้ว (จากการโคลนก่อนหน้าหรือการโคลนใหม่):
+   - บริการจะถูกสร้างโดยอัตโนมัติโดยใช้การตั้งค่าจาก service-definition.toml
+   - การแจ้งเตือนจะแสดงความคืบหน้าของการสร้างบริการ
+   - คลิกการแจ้งเตือนเพื่อไปยังหน้าการให้บริการโมเดล
+
+![](images/model_service_creation_progress.png)
+<!-- TODO: Capture screenshot of service creation progress notification -->
+
+4. **ตรวจสอบรายละเอียดบริการ**: เมื่อสร้างเสร็จแล้ว ไปที่หน้าการให้บริการโมเดลเพื่อตรวจสอบรายละเอียดเอ็นด์พอยท์ ตรวจสอบสถานะบริการ และจัดการบริการ
+
+![](images/model_service_created_detail.png)
+<!-- TODO: Capture screenshot of completed service in Model Serving page -->
+
+   หากมีโฟลเดอร์ที่โคลนจากการดำเนินการก่อนหน้าอยู่แล้ว ระบบจะใช้โฟลเดอร์นั้น
+   โดยอัตโนมัติเพื่อสร้างบริการ ในรุ่นอนาคตจะสามารถเลือกได้ว่าจะใช้โฟลเดอร์
+   โคลนใดเมื่อมีสำเนาหลายรายการ
+
+#### การแก้ไขปัญหา
+
+หากการสร้างบริการล้มเหลว:
+
+- ตรวจสอบว่ารูปแบบของ model-definition.yaml และ service-definition.toml ถูกต้อง
+- ตรวจสอบว่าโควตาทรัพยากรอนุญาตให้สร้างบริการโมเดลใหม่
+- ตรวจสอบข้อความข้อผิดพลาดในสถานะบริการบนหน้าการให้บริการโมเดล
+- สำหรับขั้นตอนการแก้ไขปัญหาโดยละเอียด โปรดดูเอกสาร [การให้บริการโมเดล <model-serving>](#การให้บริการโมเดล <model-serving>)
+
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับบริการโมเดล การกำหนดค่าบริการ และการจัดการเอ็นด์พอยท์ โปรดดูเอกสาร [การให้บริการโมเดล <model-serving>](#การให้บริการโมเดล <model-serving>)
 
 ## Manage Resource Policy
 

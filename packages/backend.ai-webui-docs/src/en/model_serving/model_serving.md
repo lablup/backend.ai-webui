@@ -56,13 +56,14 @@ development and testing purposes.
 To use the Model Service, you need to follow the steps below:
 
 1. Create a model definition file.
-2. Upload the model definition file to the model type folder.
-3. Create/Validate the Model Service.
-4. (If the Model Service is not public) Obtain a token.
-5. (For end users) Access the endpoint corresponding to the Model
+2. Create a service definition file.
+3. Upload the definition files to the model type folder.
+4. Create/Validate the Model Service.
+5. (If the Model Service is not public) Obtain a token.
+6. (For end users) Access the endpoint corresponding to the Model
    Service to verify the service.
-6. (If needed) Modify the Model Service.
-7. (If needed) Terminate the Model Service.
+7. (If needed) Modify the Model Service.
+8. (If needed) Terminate the Model Service.
 
 #### Creating a Model Definition File
 
@@ -83,7 +84,7 @@ process can be simplified and optimized during automatic scaling.
 
 The model definition file follows the following format:
 
-
+```yaml
    models:
      - name: "simple-http-server"
        model_path: "/models"
@@ -103,7 +104,7 @@ The model definition file follows the following format:
            max_wait_time: 15.0
            expected_status_code: 200
            initial_delay: 60.0
-
+```
 
 **Key-Value Descriptions for Model Definition File**
 
@@ -115,10 +116,13 @@ The model definition file follows the following format:
 - `service`: Item for organizing information about the files to be served
   (includes command scripts and code).
 
-   - `pre_start_actions` : Item for organizing preceding commands or actions to be executed before the `start_command`.
+   - `pre_start_actions`: Actions to be executed before the `start_command`. These actions
+     prepare the environment by creating configuration files, setting up directories, or
+     running initialization scripts. Actions are executed sequentially in the order defined.
 
-      - `action`: Further information and description is in [here <prestart_actions>](#here <prestart_actions>).
-      - `args/*`: Further information and description is in [here <prestart_actions>](#here <prestart_actions>).
+      - `action`: The type of action to perform. See [Prestart Actions <prestart-actions>](#Prestart Actions <prestart-actions>)
+        for available action types and their parameters.
+      - `args`: Action-specific parameters. Each action type has different required arguments.
 
    - `start_command` (Required): Specify the command to be executed in model serving.
      Can be a string or a list of strings.
@@ -145,7 +149,7 @@ The model definition file follows the following format:
 The health check system monitors individual model service containers and automatically
 manages traffic routing based on their health status.
 
-
+```
 Container Created
 │
 ▼
@@ -196,7 +200,7 @@ UNHEALTHY      Keep current
 (removed       status
 from traffic
 internally)
-``
+```
 
    The internal health status (used for traffic routing) may not be immediately
    synchronized with the status displayed in the user interface.
@@ -265,6 +269,60 @@ please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) s
 ![](images/model_type_folder_list.png)
 
 ![](images/model_definition_file_upload.png)
+
+#### Creating a Service Definition File
+
+The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
+
+Both `model-definition.yaml` and `service-definition.toml` must be present in the
+model folder to enable the "Run this model" button on the Model Store page. These two
+files work together: the model definition specifies the model and inference server
+configuration, while the service definition specifies the runtime environment, resource
+allocation, and environment variables.
+
+The service definition file follows the TOML format with sections organized by runtime variant. Each section configures a specific aspect of the service:
+
+```toml
+[vllm.environment]
+image        = "example.com/model-server:latest"
+architecture = "x86_64"
+
+[vllm.resource_slots]
+cpu = 1
+mem = "8gb"
+"cuda.shares" = "0.5"
+
+[vllm.environ]
+MODEL_NAME = "example-model-name"
+```
+
+
+**Key-Value Descriptions for Service Definition File**
+
+- `[{runtime}.environment]`: Specifies the container image and architecture for the model service.
+
+   - `image` (Required): The full path of the container image to use for the inference service (e.g., `example.com/model-server:latest`).
+   - `architecture` (Required): The CPU architecture of the container image (e.g., `x86_64`, `aarch64`).
+
+- `[{runtime}.resource_slots]`: Defines the compute resources allocated to the model service.
+
+   - `cpu`: Number of CPU cores to allocate (e.g., `1`, `2`, `4`).
+   - `mem`: Amount of memory to allocate. Supports unit suffixes (e.g., `"8gb"`, `"16gb"`).
+   - `"cuda.shares"`: Fractional GPU (fGPU) shares to allocate (e.g., `"0.5"`, `"1.0"`). This value is quoted because the key contains a dot.
+
+- `[{runtime}.environ]`: Sets environment variables that will be passed to the inference service container.
+
+   - You can define any environment variables required by the runtime. For example, `MODEL_NAME` is commonly used to specify which model to load.
+
+
+   The `{runtime}` prefix in each section header corresponds to the runtime variant
+   name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
+   selected runtime variant when creating the service.
+
+   When a service is created from the Model Store using the "Run this model" button,
+   the settings from `service-definition.toml` are applied automatically. If you later
+   need to adjust the resource allocation, you can modify the service through the
+   Model Serving page.
 
 #### Creating/Validating Model Service
 
@@ -347,8 +405,9 @@ you can check the status through the container log. When the result is set to
 ![](images/model-validation-dialog.png)
 
 
-   The result `Finished` doesn't guarantee that the execution is successfully done.
-   Instead, please check the container log.
+   .. note::
+      The result `Finished` doesn't guarantee that the execution is successfully done.
+      Instead, please check the container log.
 
 
 **Handling Failed Model Service Creation**

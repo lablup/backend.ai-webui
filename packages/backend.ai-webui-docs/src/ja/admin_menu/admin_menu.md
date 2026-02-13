@@ -161,88 +161,183 @@ also displayed in the Permission panel.
 
 ![](images/group_folder_listed_in_B.png)
 
-## Manage Models cards
+## モデルカードの管理
 
-All of the Model cards in model store are managed by project admin.
-After uploading model store with model-definition file, any user in the project
-can access to model card and clone it if needed.
+モデルストアのすべてのモデルカードはプロジェクト管理者によって管理されます。
+model-definitionファイルとともにモデルストアをアップロードすると、プロジェクトのすべてのユーザーが
+モデルカードにアクセスし、必要に応じて複製することができます。
 
-Following method is to add model cards from the Hugging Face.
+以下はHugging Faceからモデルカードを追加する方法です。
 
+   モデルカードを作成する前に、Hugging Faceの特定のモデルへのアクセス権限が必要です。
+   詳細については、[Gated models](https://huggingface.co/docs/hub/models-gated) を参照してください。
 
-   Before creating a model card, getting an access to the specific model on Hugging Face is needed.
-   For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
-
-First, Set the project to 'model-store'.
+まず、プロジェクトを'model-store'に設定します。
 
 ![](images/select_project_to_model_store.png)
 
-Move to data page and click the 'Create Folder' button on the right side. Enter the folder name,
-and set the rest of folder configuration as shown below:
+データページに移動し、右側の「フォルダ作成」ボタンをクリックします。フォルダ名を入力し、
+残りのフォルダ設定を以下のように構成します:
 
-   - Usage Mode: Model
-   - Type: project
-   - Permission: Read-Write
-   - Cloneable: True
+- 使用方式: Model
+- タイプ: project
+- 権限: Read-Write
+- 複製可能: True
 
 ![](images/model_store_folder.png)
 
-After creating the folder, you need to set and upload the model-definition.yaml file
-to the folder that you've just created. Following is the example of the model-definition file.
-If you want to know how to write model-definition file,
-please refer to [Model definition guide <model_definition_guide>](#Model definition guide <model_definition_guide>) section.
+フォルダを作成した後、作成したフォルダにmodel-definition.yamlファイルを設定してアップロードする必要があります。
+以下はmodel-definitionファイルの例です。
+model-definitionファイルの作成方法の詳細については、
+[モデル定義ガイド <model_definition_guide>](#モデル定義ガイド <model_definition_guide>) セクションを参照してください。
 
+```yaml
+models:
+- name: "Llama-3.1-8B-Instruct"
+  model_path: "/models/Llama-3.1-8B-Instruct"
+  service:
+    pre_start_actions:
+    - action: run_command
+      args:
+        command:
+        - huggingface-cli
+        - download
+        - --local-dir
+        - /models/Llama-3.1-8B-Instruct
+        - --token
+        - hf_****
+        - meta-llama/Llama-3.1-8B-Instruct
+    start_command:
+    - /usr/bin/python
+    - -m
+    - vllm.entrypoints.openai.api_server
+    - --model
+    - /models/Llama-3.1-8B-Instruct
+    - --served-model-name
+    - Llama-3.1-8B-Instruct
+    - --tensor-parallel-size
+    - "1"
+    - --host
+    - "0.0.0.0"
+    - --port
+    - "8000"
+    - --max-model-len
+    - "4096"
+  port: 8000
+  health_check:
+    path: /v1/models
+    max_retries: 500
+```
 
-   models:
-   - name: "Llama-3.1-8B-Instruct"
-      model_path: "/models/Llama-3.1-8B-Instruct"
-      service:
-         pre_start_actions:
-         - action: run_command
-            args:
-               command:
-               - huggingface-cli
-               - download
-               - --local-dir
-               - /models/Llama-3.1-8B-Instruct
-               - --token
-               - hf_****
-               - meta-llama/Llama-3.1-8B-Instruct
-            start_command:
-            - /usr/bin/python
-            - -m
-            - vllm.entrypoints.openai.api_server
-            - --model
-            - /models/Llama-3.1-8B-Instruct
-            - --served-model-name
-            - Llama-3.1-8B-Instruct
-            - --tensor-parallel-size
-            - "1"
-            - --host
-            - "0.0.0.0"
-            - --port
-            - "8000"
-            - --max-model-len
-            - "4096"
-         port: 8000
-         health_check:
-            path: /v1/models
-            max_retries: 500
-
-
-Once the model-definition file is uploaded, the model card will appear in the model store page.
+model-definitionファイルがアップロードされると、モデルストアページにモデルカードが表示されます。
 
 ![](images/model_card_added.png)
 
+   model-definitionファイルを設定した後、モデルを手動でダウンロードする必要があります。フォルダにモデルファイルをダウンロードするには、
+   セッション作成時にモデルフォルダをマウントし、[Downloading models](https://huggingface.co/docs/hub/models-downloading) を参照して
+   そこにファイルをダウンロードすることができます。
 
-   You need to download model manually after setting model-definition file. For downloading the model file to folder,
-   you can mount the model folder to session creation and download file to there by referring
-   [Downloading models](https://huggingface.co/docs/hub/models-downloading) .
-
-Clicking on the model card you've just created will display the details of the model-definition file you uploaded.
-Now, every member of the project can access the model card and clone it.
+作成したモデルカードをクリックすると、アップロードしたmodel-definitionファイルの詳細が表示されます。
+これで、プロジェクトのすべてのメンバーがモデルカードにアクセスして複製できます。
 
 ![](images/model_card_detail.png)
+
+   モデルカードの「このモデルを実行します」ボタンを有効にするには、フォルダに
+   `model-definition.yaml`と`service-definition.toml`の両方のファイルが存在する
+   必要があります。いずれかのファイルが不足している場合、ボタンは無効になります。
+   サービス定義ファイルの作成方法の詳細については、モデルサービスドキュメントの
+   [サービス定義ファイル <service-definition-file>](#サービス定義ファイル <service-definition-file>)
+   セクションを参照してください。
+
+## モデルストアページ
+
+モデルストアページは、管理者が事前に構成したモデルをユーザーが閲覧して活用できるページです。サイドバーからモデルストアページに移動すると、モデルストアプロジェクトに登録されたすべてのモデルカードを確認できます。
+
+![](images/model_store_page_overview.png)
+<!-- TODO: Capture screenshot of Model Store page showing model cards with buttons visible -->
+
+各モデルカードには以下の主要な情報が表示されます：
+
+- モデル名（フォルダ名）
+- READMEの内容（フォルダにREADMEファイルがある場合）
+- model-definition.yamlファイルのメタデータ
+- モデルと対話するためのアクションボタン
+
+モデルカードをクリックすると、READMEの全内容と利用可能なアクションを含む詳細ビューが開きます。
+
+![](images/model_card_detail_with_buttons.png)
+<!-- TODO: Capture screenshot of model card detail view showing README content and buttons -->
+
+### フォルダにクローン
+
+「フォルダにクローン」ボタンを使用すると、モデルストアフォルダの個人コピーを作成できます。モデルストアフォルダは読み取り専用でプロジェクト全体で共有されるため、ファイルを変更したりカスタムワークフローで使用するには、自分のストレージにクローンする必要があります。
+
+モデルフォルダをクローンするには：
+
+1. モデルカードの「フォルダにクローン」ボタンをクリックします
+2. クローンダイアログで以下の設定を構成します：
+   - **フォルダ名**: クローンするフォルダの名前です（デフォルトは元の名前にランダムなサフィックスが追加されます）
+   - **権限**: クローンしたフォルダのアクセス権限を設定します（読み取り専用または読み書き）
+   - **使用モード**: フォルダの種類を選択します（一般、モデル、または自動マウント）
+3. 「クローン」ボタンをクリックしてクローンプロセスを開始します
+
+![](images/model_store_clone_dialog.png)
+<!-- TODO: Capture screenshot of clone folder dialog with field settings -->
+
+   現在、フォルダのクローンは同じストレージホスト内でのみサポートされています。
+
+クローンが完了すると、選択した使用モードに応じてデータページの該当タブに新しいフォルダが表示されます。
+
+### このモデルからサービスを作成
+
+「このモデルを実行します」ボタンを使用すると、モデルカードからワンクリックでモデルサービスを直接作成できます。この機能はモデルフォルダのクローンとモデルサービスエンドポイントの作成プロセスを自動化します。
+
+   このボタンを有効にするには、以下の条件を満たす必要があります：
+   - モデルフォルダに `model-definition.yaml` と `service-definition.toml` の両方のファイルが存在すること。いずれかのファイルが不足している場合、ボタンは無効になり、必要なファイルを示すツールチップが表示されます。
+   - モデルサービスを作成するための十分なリソースクォータがあること。
+   - リソースグループが推論セッションタイプを許可していること。
+
+#### サービス作成ワークフロー
+
+「このモデルを実行します」ボタンをクリックすると、Backend.AIは以下のワークフローに従います：
+
+1. **必要ファイルの確認**: フォルダにmodel-definition.yamlとservice-definition.tomlの両方が存在するか確認します
+
+2. **フォルダのクローン（必要な場合）**: モデルフォルダのクローンがない場合：
+   - フォルダをクローンするかどうかを尋ねる確認ダイアログが表示されます
+   - フォルダは `{元の名前}-{ランダム4文字}` の形式の名前でクローンされます
+   - 通知でクローンの進行状況が表示されます
+
+![](images/model_service_clone_confirmation.png)
+<!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
+
+3. **サービスの作成**: フォルダの準備ができたら（以前のクローンまたは新しいクローンから）：
+   - service-definition.tomlの設定を使用してサービスが自動的に作成されます
+   - 通知でサービス作成の進行状況が表示されます
+   - 通知をクリックするとモデルサービスページに移動できます
+
+![](images/model_service_creation_progress.png)
+<!-- TODO: Capture screenshot of service creation progress notification -->
+
+4. **サービス詳細の確認**: 作成が完了したら、モデルサービスページに移動してエンドポイントの詳細を確認し、サービスの状態を監視し、サービスを管理できます
+
+![](images/model_service_created_detail.png)
+<!-- TODO: Capture screenshot of completed service in Model Serving page -->
+
+   以前の操作でクローンしたフォルダがすでに存在する場合、システムはそのフォルダを
+   自動的に使用してサービスを作成します。将来のリリースでは、複数のコピーがある場合に
+   どのクローンフォルダを使用するか選択できるようになる予定です。
+
+#### トラブルシューティング
+
+サービスの作成に失敗した場合：
+
+- model-definition.yamlとservice-definition.tomlのフォーマットが正しいか確認してください
+- リソースクォータが新しいモデルサービスの作成を許可しているか確認してください
+- モデルサービスページでサービスステータスのエラーメッセージを確認してください
+- 詳細なトラブルシューティング手順については、[モデルサービス <model-serving>](#モデルサービス <model-serving>) ドキュメントを参照してください
+
+モデルサービス、サービス構成、エンドポイント管理の詳細については、[モデルサービス <model-serving>](#モデルサービス <model-serving>) ドキュメントを参照してください。
 
 ## Manage Resource Policy
 
