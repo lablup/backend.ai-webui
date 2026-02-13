@@ -116,6 +116,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
     cluster_size: 1,
     mount_ids: [toLocalId(vfolder?.id || '').replaceAll('-', '')],
     resourceGroup: sftpScalingGroupByCurrentProject?.[0],
+    reuseIfExists: true,
   });
 
   return (

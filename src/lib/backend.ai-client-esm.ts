@@ -1153,6 +1153,7 @@ class Client {
       cluster_mode: 'single-node',
       cluster_size: 1,
       maxWaitSeconds: 0,
+      reuseIfExists: false,
     },
     timeout?: number,
     architecture: string = 'x86_64',

@@ -174,6 +174,7 @@ export const useStartSession = () => {
         cluster_mode: values.cluster_mode,
         cluster_size: values.cluster_size,
         maxWaitSeconds: 15,
+        reuseIfExists: values.reuseIfExists ?? false,
 
         // Owner settings (optional)
         // FYI, `config.scaling_group` also changes based on owner settings

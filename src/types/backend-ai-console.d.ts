@@ -136,6 +136,7 @@ export interface SessionResources {
   startupCommand?: string;
   bootstrap_script?: string;
   owner_access_key?: string;
+  reuseIfExists?: boolean;
   config?: {
     resources?: {
       cpu: number;
