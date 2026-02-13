@@ -5,69 +5,67 @@
 
    この機能はエンタープライズ版でのみサポートされています。
 
-Backend.AI not only facilitates the construction of development environments
-and resource management during the model training phase, but also supports
-the model service feature from version 23.09 onwards. This feature allows
-end-ユーザーs (such as AI-based mobile apps and web service backends) to make
-inference API calls when they want to deploy the completed model as an
-inference service.
+Backend.AIは、モデル学習フェーズにおける開発環境の構築とリソース管理を支援するだけでなく、
+バージョン23.09以降、モデルサービス機能もサポートしています。この機能により、
+エンドユーザー（AIベースのモバイルアプリやウェブサービスバックエンドなど）は、
+完成したモデルを推論サービスとしてデプロイしたい場合に、推論APIコールを実行できます。
 
-![](images/model-serving-diagram.png)
+![](../images/model-serving-diagram.png)
 
 モデルサービスは、既存のトレーニングコンピュートセッションの機能を拡張し、自動メンテナンス、スケーリング、および本番サービスのための永続的なポートとエンドポイントアドレスのマッピングを可能にします。開発者または管理者は、モデルサービスに必要なスケーリングパラメータを指定するだけでよく、コンピュートセッションを手動で作成または削除する必要はありません。
 
-## Configuring and limitations of model service in version 23.03 and earlier
+## バージョン23.03以前でのモデルサービスの設定と制限事項
 
-Although the model serving-specific feature is officially supported from
-version 23.09, you can still use model service in earlier versions.
+モデルサービング専用機能はバージョン23.09から正式にサポートされていますが、
+以前のバージョンでもモデルサービスを使用することは可能です。
 
-For example, in version 23.03, you can configure a model service by
-modifying the compute session for training in the following way:
+例えば、バージョン23.03では、学習用のコンピュートセッションを次のように
+変更することで、モデルサービスを設定できます：
 
-1. Add pre-opened ports during session creation to map the running
-   server port inside the session for model serving.
-   (For instructions on how to use preopen ports, refer to this [Set Preopen Ports <set_preopen_ports>](#Set Preopen Ports <set_preopen_ports>).)
+1. モデルサービング用にセッション内で実行中のサーバーポートをマッピングするため、
+   セッション作成時に事前開放ポートを追加します。
+   （事前開放ポートの使用方法については、[事前開放ポートの設定 <set_preopen_ports>](#事前開放ポートの設定 <set_preopen_ports>)を参照してください。）
 
-2. Check 'Open app to public' to allow the service mapped to the
-   pre-opened port to be publicly accessible.
-   (For detailed information about "Open app to public," refer to this [Open app to public <open_app_to_public>](#Open app to public <open_app_to_public>).)
+2. 事前開放ポートにマッピングされたサービスをパブリックアクセス可能にするため、
+   「アプリを公開」にチェックを入れます。
+   （「アプリを公開」の詳細については、[アプリを公開 <open_app_to_public>](#アプリを公開 <open_app_to_public>)を参照してください。）
 
-However, there are certain limitations in version 23.03:
+ただし、バージョン23.03には以下のような制限があります：
 
 -  セッションは、アイドルタイムアウトやシステムエラーなどの外部要因で終了した場合、自動的に復旧しません。
 -  セッションが再起動されるたびにアプリのポートが変更されます。
 -  セッションが繰り返し再起動されると、アイドルポートが枯渇する可能性があります。
 
-The official モデルサービス feature in version 23.09 resolves these
-limitations. Therefore, starting from version 23.09, it is recommended
-to create/manage モデルサービスs through the model serving menu whenever
-possible. The use of pre-opened ports is recommended only for
-development and testing purposes.
+バージョン23.09の公式モデルサービス機能により、これらの制限が解決されました。
+そのため、バージョン23.09以降では、可能な限りモデルサービングメニューを通じて
+モデルサービスを作成・管理することを推奨します。事前開放ポートの使用は、
+開発およびテスト目的でのみ推奨されます。
 
 ## モデルサービスの使用手順ガイド
 
-モデルサービス を使用するには、以下の手順に従う必要があります。
+モデルサービスを使用するには、以下の手順に従う必要があります：
 
 1. モデル定義ファイルを作成します。
-2. モデル定義ファイルをモデルタイプフォルダーにアップロードします。
-3. モデルサービスを作成/検証する。
-4. （モデルサービスが公開されていない場合）トークンを取得します。
-5. (エンドユーザー向け) モデルサービスに対応するエンドポイントにアクセスして、サービスを確認します。
-6. （必要に応じて）モデルサービスを変更する。
-7. （必要に応じて）モデルサービスを終了します。
+2. サービス定義ファイルを作成します。
+3. 定義ファイルをモデルタイプフォルダーにアップロードします。
+4. モデルサービスを作成/検証します。
+5. （モデルサービスが公開されていない場合）トークンを取得します。
+6. （エンドユーザー向け）モデルサービスに対応するエンドポイントにアクセスして、サービスを確認します。
+7. （必要に応じて）モデルサービスを変更します。
+8. （必要に応じて）モデルサービスを終了します。
 
 #### モデル定義ファイルの作成
 
    .. note::
-      From 24.03, you can configure model definition file name. But if you don't
-      input any other input field in model definition file path, then the system will
-      regard it as `model-definition.yml` or `model-definition.yaml`.
+      24.03以降、モデル定義ファイル名を設定できます。モデル定義ファイルパスで
+      他の入力フィールドを入力しない場合、システムは`model-definition.yml`または
+      `model-definition.yaml`と見なします。
 
 モデル定義ファイルには、推論セッションを自動的に開始、初期化、およびスケーリングするためにBackend.AIシステムで必要な構成情報が含まれています。これは推論サービスエンジンを含むコンテナイメージとは独立して、モデルタイプフォルダーに保存されます。これにより、特定の要件に基づいて異なるモデルをエンジンが提供できるようになり、モデルが変更されるたびに新しいコンテナイメージを構築してデプロイする必要がなくなります。ネットワークストレージからモデル定義とモデルデータをロードすることで、自動スケーリング中にデプロイメントプロセスを簡素化し、最適化できます。
 
 モデル定義ファイルは次の形式に従います：
 
-
+```yaml
    models:
      - name: "simple-http-server"
        model_path: "/models"
@@ -87,22 +85,25 @@ development and testing purposes.
            max_wait_time: 15.0
            expected_status_code: 200
            initial_delay: 60.0
-
+```
 
 **モデル定義ファイルのキーと値の説明**
 
    .. note::
-      Fields without "(Required)" mark are optional.
+      「(Required)」表示のないフィールドはオプションです。
 
 - `name` (Required): Defines the name of the model.
 - `model_path` (Required): Addresses the path of where model is defined.
 - `service`: Item for organizing information about the files to be served
   (includes command scripts and code).
 
-   - `pre_start_actions` : Item for organizing preceding commands or actions to be executed before the `start_command`.
+   - `pre_start_actions`: `start_command`の前に実行されるアクションです。これらのアクションは、
+     設定ファイルの作成、ディレクトリのセットアップ、初期化スクリプトの実行などによって環境を準備します。
+     アクションは定義された順序で順次実行されます。
 
-      - `action`: Further information and description is in [here <prestart_actions>](#here <prestart_actions>).
-      - `args/*`: Further information and description is in [here <prestart_actions>](#here <prestart_actions>).
+      - `action`: 実行するアクションのタイプ。利用可能なアクションタイプとそのパラメータについては
+        [事前開始アクション <prestart-actions>](#事前開始アクション <prestart-actions>)を参照してください。
+      - `args`: アクション固有のパラメータ。各アクションタイプには異なる必須引数があります。
 
    - `start_command` (Required): Specify the command to be executed in model serving.
      Can be a string or a list of strings.
@@ -129,7 +130,7 @@ development and testing purposes.
 The health check system monitors individual model service containers and automatically
 manages traffic routing based on their health status.
 
-
+```
 Container Created
 │
 ▼
@@ -180,7 +181,7 @@ UNHEALTHY      Keep current
 (removed       status
 from traffic
 internally)
-``
+```
 
    The internal health status (used for traffic routing) may not be immediately
    synchronized with the status displayed in the user interface.
@@ -196,149 +197,252 @@ internally)
   Example with defaults: 10 × 11 = **110 seconds** (about 2 minutes)
 
 
-**Description for service action supported in Backend.AI Model serving**
+**Backend.AIモデルサービングでサポートされているサービスアクションの説明**
 
 
-- `write_file`: This is an action to create a file with the given
-  file name and append control to it. the default access permission is `644`.
+- `write_file`: 指定されたファイル名でファイルを作成し、内容を追加するアクションです。
+  デフォルトのアクセス権限は `644` です。
 
-   - `arg/filename__PROTECTED_36__body__PROTECTED_37__mode__PROTECTED_38__append__PROTECTED_39__True__PROTECTED_40__False__PROTECTED_41__write_tempfile__PROTECTED_42__.py__PROTECTED_43__644__PROTECTED_44__body__PROTECTED_45__mode__PROTECTED_46__run_command__PROTECTED_47__out__PROTECTED_48__err__PROTECTED_49__args/command__PROTECTED_50__python3 -m http.server 8080` command goes to ["python3", "-m", "http.server", "8080"] )
+   - `arg/filename`: ファイル名を指定
+   - `body`: ファイルに追加する内容を指定
+   - `mode`: ファイルのアクセス権限を指定
+   - `append`: ファイルへの内容の上書きまたは追加を `True` または `False` で設定
 
-- `mkdir`: This is an action to create a directory by input path
+- `write_tempfile`: 一時ファイル名（`.py`）でファイルを作成し、内容を追加するアクションです。
+  モードの値が指定されていない場合、デフォルトのアクセス権限は `644` です。
 
-   - `args/path__PROTECTED_53__log__PROTECTED_54__args/message__PROTECTED_55__debug__PROTECTED_56__True__PROTECTED_57__False__PROTECTED_58__model-definition.yml__PROTECTED_59__model__PROTECTED_60__general__PROTECTED_61__vLLM__PROTECTED_62__NVIDIA NIM`, `Predefined Image Command`, `Custom`.
+   - `body`: ファイルに追加する内容を指定
+   - `mode`: ファイルのアクセス権限を指定
 
-![](images/service_launcher1.png)
+- `run_command`: コマンドを実行した結果が、エラーも含めて以下の形式で返されます
+  （`out`: コマンド実行の出力、`err`: コマンド実行中にエラーが発生した場合のエラーメッセージ）
 
-For example, if you choose `vLLM` or `NVIDIA NIM` or `Predefined Image Command` as a runtime variant of model service,
-there's no need to configure a `model-definition` file in your model folder to mount. Instead, you might have to set an additional environment variable.
-For more information, please take a look at
-[Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving).
+   - `args/command`: 実行するコマンドを配列として指定（例：`python3 -m http.server 8080` コマンドは ["python3", "-m", "http.server", "8080"] になります）
 
-![](images/service_launcher_runtime_variant.png)
+- `mkdir`: 入力パスによってディレクトリを作成するアクションです
 
--  Model Destination For Model Folder: This option allows aliasing path of
-   model storage path to session corresponding to routing, which represents
-   the service. default value is `/models`.
--  Model Definition File Path: You can also set model definition file as you
-   uploaded in model storage path. The default value is `model-definition.yaml`.
--  Additional Mounts: Likewise session, service provides additional mounts.
-   Please make sure that only you can mount general/data usage mode folder, not additional
-   model folder.
+   - `args/path`: ディレクトリを作成するパスを指定
 
-![](images/service_launcher2.png)
+- `log`: 入力メッセージによってログを出力するアクションです
 
-Then set number of replicas and select environments and resource group. The resource group is a collection of
-resources that can be allocated to the model service.
+   - `args/message`: ログに表示するメッセージを指定
+   - `debug`: デバッグモードの場合は `True`、それ以外は `False` に設定
 
--  Number of replicas: This setting serves as the basis for determining the number
-   of routing sessions to maintain for the current service. If you change the value of this
-   setting, the manager can create a new replica session or terminate a running session
-   by referring to the number of existing replica sessions.
--  Environment / Version: You can configure the execution environment
-   for the dedicated server of the model service. Currently, even if the
-   service has multiple routings, it will be executed in a single
-   environment only. (Support for multiple execution environments will
-   be added in a future update)
+#### モデル定義ファイルをモデルタイプフォルダーにアップロード
 
-![](images/service_launcher3.png)
+モデル定義ファイル（`model-definition.yml`）をモデルタイプフォルダーにアップロードするには、
+バーチャルフォルダーを作成する必要があります。バーチャルフォルダーを作成する際は、
+デフォルトの `general` タイプではなく `model` タイプを選択してください。
+フォルダーの作成方法については、データページの[ストレージフォルダーの作成<create_storage_folder>](#ストレージフォルダーの作成<create_storage_folder>)セクションを参照してください。
 
--  Resource Presets: Allows you to select the amount of resources to allocate from the model service.
-   Resource contains CPU, RAM, and AI accelerator, as known as GPU.
+![](../images/model_type_folder_creation.png)
 
-![](images/service_launcher4.png)
+フォルダーを作成した後、データページの「MODELS」タブを選択し、
+最近作成したモデルタイプフォルダーアイコンをクリックしてフォルダーエクスプローラーを開き、
+モデル定義ファイルをアップロードします。
+フォルダーエクスプローラーの使用方法については、[フォルダーの探索<explore_folder>](#フォルダーの探索<explore_folder>)セクションを参照してください。
 
--  Single Node: When running a session, the managed node and worker nodes are
-   placed on a single physical node or virtual machine.
--  Multi Node: When running a session, one managed node and one or more worker
-   nodes are split across multiple physical nodes or virtual machines.
--  Variable: In this section, you can set environment variable when starting a model service.
-   It is useful when you trying to create a model service using runtime variant. some runtime variant needs
-   certain environment variable setting before execution.
+![](../images/model_type_folder_list.png)
 
-![](images/cluster_mode.png)
+![](../images/model_definition_file_upload.png)
 
-Before creating model service, Backend.AI supports validation feature to check
-whether execution is available or not(due to any errors during execution).
-By clicking the 'Validate' button at the bottom-left of the service launcher,
-a new popup for listening to validation events will pop up. In the popup modal,
-you can check the status through the container log. When the result is set to
-`Finished`, then the validation check is finished.
+#### サービス定義ファイルの作成
 
+サービス定義ファイル（`service-definition.toml`）を使用すると、管理者はモデルサービスに必要なリソース、環境、およびランタイム設定を事前に構成できます。このファイルがモデルフォルダーに存在する場合、システムはサービスを作成する際にこれらの設定をデフォルト値として使用します。
 
-![](images/model-validation-dialog.png)
+`model-definition.yaml` と `service-definition.toml` の両方がモデルフォルダーに存在する必要があり、
+これによりモデルストアページで「このモデルを実行」ボタンが有効になります。これら2つのファイルは
+連携して動作します：モデル定義はモデルと推論サーバーの構成を指定し、サービス定義はランタイム環境、
+リソース割り当て、および環境変数を指定します。
 
+サービス定義ファイルは、ランタイムバリアントごとにセクションを整理したTOML形式に従います。各セクションはサービスの特定の側面を構成します：
 
-   The result `Finished` doesn't guarantee that the execution is successfully done.
-   Instead, please check the container log.
+```toml
+[vllm.environment]
+image        = "example.com/model-server:latest"
+architecture = "x86_64"
+
+[vllm.resource_slots]
+cpu = 1
+mem = "8gb"
+"cuda.shares" = "0.5"
+
+[vllm.environ]
+MODEL_NAME = "example-model-name"
+```
 
 
-**Handling Failed Model Service Creation**
+**サービス定義ファイルのキーと値の説明**
 
-If the status of the model service remains `UNHEALTHY`, it indicates
-that the model service cannot be executed properly.
+- `[{runtime}.environment]`: モデルサービスのコンテナイメージとアーキテクチャを指定します。
 
-The common reasons for creation failure and their solutions are as
-follows:
+   - `image` (必須): 推論サービスに使用するコンテナイメージのフルパス（例：`example.com/model-server:latest`）。
+   - `architecture` (必須): コンテナイメージのCPUアーキテクチャ（例：`x86_64`、`aarch64`）。
 
--  Insufficient allocated resources for the routing when creating the
-   model service
+- `[{runtime}.resource_slots]`: モデルサービスに割り当てるコンピュートリソースを定義します。
 
-   -  Solution: Terminate the problematic service and recreate it with
-      an allocation of more sufficient resources than the previous
-      settings.
+   - `cpu`: 割り当てるCPUコアの数（例：`1`、`2`、`4`）。
+   - `mem`: 割り当てるメモリ量。単位接尾辞をサポート（例：`"8gb"`、`"16gb"`）。
+   - `"cuda.shares"`: 割り当てる分割GPU（fGPU）シェア（例：`"0.5"`、`"1.0"`）。キーにドットが含まれるため、この値は引用符で囲まれています。
 
--  Incorrect format of the model definition file (`model-definition.yml`)
+- `[{runtime}.environ]`: 推論サービスコンテナに渡される環境変数を設定します。
 
-   ![](images/serving-route-error.png)
-
-   -  Solution: Verify [the format of the model definition file <model_definition_guide>](#the format of the model definition file <model_definition_guide>) and
-      if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
-      Then, click 'Clear error and Retry' button to remove all the error stacked in routes info
-      table and ensure that the routing of the model service is set correctly.
-
-   ![](images/refresh_button.png)
+   - ランタイムに必要な環境変数を定義できます。例えば、`MODEL_NAME` はどのモデルをロードするかを指定するために一般的に使用されます。
 
 
-#### Auto Scaling Rules
-You can configure auto scaling rules for the model service.
-Based on the defined rules, the number of replicas is automatically reduced during low using to conserve resources,
-and increased during high usage to prevent request delays of failures.
+   各セクションヘッダーの `{runtime}` プレフィックスは、ランタイムバリアント名
+   （例：`vllm`、`nim`、`custom`）に対応します。システムは、サービスを作成する際に
+   選択されたランタイムバリアントとこのプレフィックスを照合します。
 
-![](images/auto_scaling_rules.png)
+   「このモデルを実行」ボタンを使用してモデルストアからサービスを作成すると、
+   `service-definition.toml` の設定が自動的に適用されます。後でリソース割り当てを
+   調整する必要がある場合は、モデルサービングページを通じてサービスを変更できます。
 
-Click the 'Add Rules' button to add a new rule. When you click the button, a modal appears
-when you can add a rule. Each field in the modal is described below:
+#### モデルサービスの作成/検証
 
-- Type: Define the rule. Select either 'Scale Up' or 'Scale Down' based on the scope of the rule.
+モデル定義ファイルがモデルタイプのバーチャルフォルダーにアップロードされたら、
+モデルサービスを作成する準備が整います。
 
-- Metric Source: Inference Framework or kernel.
+モデルサービングページで「サービス開始」ボタンをクリックします。これにより、
+サービスを作成するために必要な設定を入力するページが表示されます。
 
-   - Inference Framework: Average value taken from every replicas. Supported only if both AppProxy reports the inference metrics.
-   - Kernel: Average value taken from every kernels backing the endpoint.
+![](../images/serving_list_page.png)
 
-- Condition: Set the condition under which the auto scaling rule will be applied.
+まず、サービス名を入力します。各項目の詳細については、以下を参照してください：
 
-   - Metric Name: The name of the metric to be compared. You can freely input any metric supported by the runtime environment.
-   - Comparator: Method to compare live metrics with threshold value.
+-  公開設定: このオプションを使用すると、サービスがホストされるサーバー上で
+   モデルサービスに個別のトークンなしでアクセスできるようになります。
+   デフォルトでは無効になっています。
+-  マウントするモデルストレージ: これはマウントするモデルフォルダーで、
+   ディレクトリ内にモデル定義ファイルが含まれています。
+-  推論ランタイムバリアント: モデルのタイプを4つのカテゴリに分類します：`vLLM`、`NVIDIA NIM`、`Predefined Image Command`、`Custom`。
 
-      - LESS_THAN: Rule triggered when current metric value goes below the threshold defined
-      - LESS_THAN_OR_EQUAL: Rule triggered when current metric value goes below or equals the threshold defined
-      - GREATER_THAN: Rule triggered when current metric value goes above the threshold defined
-      - GREATER_THAN_OR_EQUAL: Rule triggered when current metric value goes above or equals the threshold defined
+![](../images/service_launcher1.png)
 
-   - Threshold: A reference value to determine whether the scaling condition is met.
+例えば、モデルサービスのランタイムバリアントとして `vLLM` または `NVIDIA NIM` または `Predefined Image Command` を選択した場合、
+マウントするモデルフォルダーに `model-definition` ファイルを設定する必要はありません。代わりに、追加の環境変数を設定する必要がある場合があります。
+詳細については、
+[Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving)を参照してください。
 
-- Step Size: Size of step of the replica count to be changed when rule is triggered.
-  Can be represented as both positive and negative value.
-  when defined as negative, the rule will decrease number of replicas.
+![](../images/service_launcher_runtime_variant.png)
 
-- Max/Min Replicas: Sets a maximum/minimum value for the replica count of the endpoint.
-  Rule will not be triggered if the potential replica count gets above/below this value.
+-  モデルフォルダーのモデル宛先: このオプションにより、サービスを表すルーティングに
+   対応するセッションへのモデルストレージパスのエイリアスパスを設定できます。
+   デフォルト値は `/models` です。
+-  モデル定義ファイルパス: モデルストレージパスにアップロードしたモデル定義ファイルを
+   設定することもできます。デフォルト値は `model-definition.yaml` です。
+-  追加マウント: セッションと同様に、サービスも追加マウントを提供します。
+   追加のモデルフォルダーではなく、一般/データ使用モードのフォルダーのみをマウントできることに
+   注意してください。
 
-- CoolDown Seconds: Durations in seconds to skip reapplying the rule right after rule is first triggered.
+![](../images/service_launcher2.png)
 
-![](images/auto_scaling_rules_modal.png)
+次に、レプリカ数を設定し、環境とリソースグループを選択します。リソースグループは、
+モデルサービスに割り当てることができるリソースのコレクションです。
+
+-  レプリカ数: この設定は、現在のサービスに対して維持するルーティングセッションの数を
+   決定するための基礎となります。この設定の値を変更すると、マネージャーは既存のレプリカ
+   セッションの数を参照して、新しいレプリカセッションを作成したり、実行中のセッションを
+   終了したりできます。
+-  環境 / バージョン: モデルサービスの専用サーバーの実行環境を設定できます。
+   現在、サービスに複数のルーティングがある場合でも、単一の環境でのみ実行されます。
+   （複数の実行環境のサポートは将来のアップデートで追加される予定です）
+
+![](../images/service_launcher3.png)
+
+-  リソースプリセット: モデルサービスから割り当てるリソースの量を選択できます。
+   リソースには、CPU、RAM、およびGPUとして知られるAIアクセラレーターが含まれます。
+
+![](../images/service_launcher4.png)
+
+-  シングルノード: セッションを実行する際、管理ノードとワーカーノードが
+   単一の物理ノードまたは仮想マシンに配置されます。
+-  マルチノード: セッションを実行する際、1つの管理ノードと1つ以上のワーカー
+   ノードが複数の物理ノードまたは仮想マシンに分割されます。
+-  変数: このセクションでは、モデルサービスを開始する際に環境変数を設定できます。
+   ランタイムバリアントを使用してモデルサービスを作成しようとする場合に便利です。
+   一部のランタイムバリアントは、実行前に特定の環境変数の設定が必要です。
+
+![](../images/cluster_mode.png)
+
+モデルサービスを作成する前に、Backend.AIは実行が可能かどうか（実行中のエラーの有無）を
+チェックする検証機能をサポートしています。
+サービスランチャーの左下にある「検証」ボタンをクリックすると、
+検証イベントをリスニングするための新しいポップアップが表示されます。ポップアップモーダルでは、
+コンテナログを通じてステータスを確認できます。結果が `Finished` に設定されると、
+検証チェックは完了です。
+
+
+![](../images/model-validation-dialog.png)
+
+
+   結果が `Finished` であっても、実行が正常に完了したことを保証するものではありません。
+   代わりに、コンテナログを確認してください。
+
+
+**モデルサービス作成の失敗への対処**
+
+モデルサービスのステータスが `UNHEALTHY` のままの場合、
+モデルサービスが正しく実行できないことを示しています。
+
+作成失敗の一般的な理由とその解決策は次のとおりです：
+
+-  モデルサービス作成時のルーティングに対して割り当てられたリソースが不十分
+
+   -  解決策: 問題のあるサービスを終了し、以前の設定よりも十分なリソースを
+      割り当てて再作成してください。
+
+-  モデル定義ファイル（`model-definition.yml`）の形式が正しくない
+
+   ![](../images/serving-route-error.png)
+
+   -  解決策: [モデル定義ファイルの形式 <model_definition_guide>](#モデル定義ファイルの形式 <model_definition_guide>)を確認し、
+      キー値ペアが正しくない場合は、それらを修正して保存された場所のファイルを上書きしてください。
+      その後、「エラーをクリアして再試行」ボタンをクリックして、ルート情報テーブルに
+      スタックされたすべてのエラーを削除し、モデルサービスのルーティングが正しく設定されていることを確認してください。
+
+   ![](../images/refresh_button.png)
+
+
+#### 自動スケーリングルール
+モデルサービスの自動スケーリングルールを設定できます。
+定義されたルールに基づいて、使用率が低い時はリソースを節約するためにレプリカ数が自動的に減少し、
+使用率が高い時はリクエストの遅延や失敗を防ぐために増加します。
+
+![](../images/auto_scaling_rules.png)
+
+新しいルールを追加するには、「ルールを追加」ボタンをクリックします。ボタンをクリックすると、
+ルールを追加できるモーダルが表示されます。モーダル内の各フィールドについて以下に説明します：
+
+- タイプ: ルールを定義します。ルールの範囲に基づいて「スケールアップ」または「スケールダウン」を選択します。
+
+- メトリックソース: 推論フレームワークまたはカーネル。
+
+   - 推論フレームワーク: すべてのレプリカから取得された平均値。両方のAppProxyが推論メトリックをレポートする場合のみサポートされます。
+   - カーネル: エンドポイントをバッキングするすべてのカーネルから取得された平均値。
+
+- 条件: 自動スケーリングルールが適用される条件を設定します。
+
+   - メトリック名: 比較されるメトリックの名前。ランタイム環境でサポートされている任意のメトリックを自由に入力できます。
+   - 比較演算子: ライブメトリックをしきい値と比較する方法。
+
+      - LESS_THAN: 現在のメトリック値が定義されたしきい値を下回ったときにルールがトリガーされます
+      - LESS_THAN_OR_EQUAL: 現在のメトリック値が定義されたしきい値以下になったときにルールがトリガーされます
+      - GREATER_THAN: 現在のメトリック値が定義されたしきい値を上回ったときにルールがトリガーされます
+      - GREATER_THAN_OR_EQUAL: 現在のメトリック値が定義されたしきい値以上になったときにルールがトリガーされます
+
+   - しきい値: スケーリング条件が満たされるかどうかを判断するための参照値。
+
+- ステップサイズ: ルールがトリガーされたときに変更されるレプリカ数のステップサイズ。
+  正の値と負の値の両方で表すことができます。
+  負の値として定義されると、ルールはレプリカ数を減少させます。
+
+- 最大/最小レプリカ: エンドポイントのレプリカ数の最大値/最小値を設定します。
+  潜在的なレプリカ数がこの値を超える/下回る場合、ルールはトリガーされません。
+
+- クールダウン秒数: ルールが最初にトリガーされた直後に、ルールの再適用をスキップする秒単位の期間。
+
+![](../images/auto_scaling_rules_modal.png)
 
 #### Generating Tokens
 
@@ -352,18 +456,18 @@ accessible without any separate token, and end users can access it.
 However, if it is disabled, you can issue a token as described below to
 verify that the service is running properly.
 
-![](images/generate_token.png)
+![](../images/generate_token.png)
 
 Click the 'Generate Token' button located to the right of the generated
 token list in the routing information. In the modal that appears for
 token creation, enter the expiration date.
 
-![](images/token_generation_dialog.png)
+![](../images/token_generation_dialog.png)
 
 The issued token will be added to the list of generated tokens. Click the 'copy' button in the token
 item to copy the token, and add it as the value of the following key.
 
-![](images/generated_token_copy.png)
+![](../images/generated_token_copy.png)
 
 ============= ================
 Key           Value
@@ -402,13 +506,13 @@ to model serving endpoint working properly or not.
 If you've created a Large Language Model (LLM) service, you can test the LLM in real-time.
 Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
 
-![](images/LLM_chat_test.png)
+![](../images/LLM_chat_test.png)
 
 Then, You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
 For more information about the chat feature, please refer to the [Chat page <chat_page>](#Chat page <chat_page>)
 
-![](images/LLM_chat.png)
+![](../images/LLM_chat.png)
 
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
@@ -422,7 +526,7 @@ To use the model, you will need the following information:
   For instance, when using the service generated by Backend.AI, please refer to the
   [Generating Tokens<generating-tokens>](#Generating Tokens<generating-tokens>) section for instructions on how to generate tokens.
 
-![](images/LLM_chat_custom_model.png)
+![](../images/LLM_chat_custom_model.png)
 
 #### Modifying Model Service
 
@@ -432,7 +536,7 @@ previously entered fields already filled in. You can optionally modify only the
 fields you wish to change. After modifying the fields, click the 'confirm' button.
 The changes will be adjusted accordingly.
 
-![](images/edit_model_service.png)
+![](../images/edit_model_service.png)
 
 #### Terminating Model Service
 
@@ -445,4 +549,4 @@ for confirmation to terminate the model service. Clicking `Delete`
 will terminate the model service. The terminated model service will be
 removed from the list of model services.
 
-![](images/terminate_model_service_dialog.png)
+![](../images/terminate_model_service_dialog.png)

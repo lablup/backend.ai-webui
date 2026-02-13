@@ -17,7 +17,7 @@ containers are automatically generated.
 
 สำหรับรายละเอียดเกี่ยวกับเซสชันของคลัสเตอร์ Backend.AI โปรดดูที่ด้านล่างนี้
 
-![](images/overview_cluster_session.png)
+![](../images/overview_cluster_session.png)
 
 - คอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์จะถูกสร้างขึ้นข้ามโหนดตัวแทนหนึ่งหรือมากกว่าซึ่งเป็นของกลุ่มทรัพยากร
 - A cluster session consists of one main container (`main1`) and one or more
@@ -69,7 +69,7 @@ containers are automatically generated.
 
 ในหน้าสมาชิก ให้เปิดกล่องสร้างเซสชันและตั้งค่าในลักษณะเดียวกับการสร้างเซสชันการคอมพิวเตอร์ปกติ จำนวนทรัพยากรที่ตั้งค่าในครั้งนี้คือจำนวนที่จัดสรรให้กับ **หนึ่งคอนเทนเนอร์** ตัวอย่างเช่น หากคุณตั้งค่า 4 CPUs จะมีการจัดสรร 4 คอร์ให้กับแต่ละคอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์ โปรดทราบว่านี่ไม่ใช่จำนวนทรัพยากรที่จัดสรรให้กับเซสชันการคอมพิวเตอร์คลัสเตอร์ทั้งหมด สำหรับการสร้างเซสชันการคอมพิวเตอร์คลัสเตอร์ ต้องการทรัพยากรเซิร์ฟเวอร์เท่ากับ N เท่าของจำนวนทรัพยากรที่ตั้งค่าไว้ที่นี่ (N คือขนาดของคลัสเตอร์) นอกจากนี้ยังอย่าลืมเชื่อมต่อโฟลเดอร์ข้อมูลสำหรับการเก็บรักษาข้อมูลอีกด้วย
 
-![](images/session_launch_dialog.png)
+![](../images/session_launch_dialog.png)
 
 ในฟิลด์ "โหมดคลัสเตอร์" ที่ด้านล่าง คุณสามารถเลือกประเภทของคลัสเตอร์ที่คุณต้องการสร้างได้
 
@@ -82,21 +82,21 @@ Click the LAUNCH button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 
-![](images/cluster_session_created.png)
+![](../images/cluster_session_created.png)
 
 Let's open the terminal app in the compute session we just have created. If you
 look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
 variables described in the above section are set. Compare the meaning and value
 of each environment variable with the description above.
 
-![](images/terminal_on_main_container.png)
+![](../images/terminal_on_main_container.png)
 
 You can also SSH into the `sub1` container. No separate SSH setting is
 required, just issue the command `ssh sub1` and you are done. You can see the
 hostname after `work@` has changed, which indicated the sub container's shell
 is displayed.
 
-![](images/terminal_on_sub1_container.png)
+![](../images/terminal_on_sub1_container.png)
 
 ด้วยวิธีนี้ Backend.AI ทำให้การสร้างเซสชันการคอมพิวเตอร์แบบคลัสเตอร์เป็นเรื่องง่าย เพื่อให้สามารถดำเนินการเรียนรู้และการคำนวณแบบกระจายผ่านเซสชันการคำนวณแบบคลัสเตอร์ จำเป็นต้องใช้โมดูลการเรียนรู้แบบกระจายที่จัดเตรียมโดยไลบรารี ML เช่น TensorFlow/PyTorch หรือซอฟต์แวร์สนับสนุนเพิ่มเติม เช่น Horovod, NNI, MLFlow เป็นต้น และต้องเขียนโค้ดในลักษณะที่สามารถใช้ซอฟต์แวร์ได้อย่างระมัดระวัง Backend.AI มีภาพเคอร์เนลที่มีซอฟต์แวร์ที่จำเป็นสำหรับการเรียนรู้แบบกระจาย ดังนั้นคุณจึงสามารถใช้ภาพนั้นในการสร้างอัลกอริธึมการเรียนรู้แบบกระจายที่ดีได้
 
@@ -105,4 +105,4 @@ is displayed.
 From 24.03, You can check each log of container in logs modal. It will help you
 to understand what's going on not only in `main` container but also `sub` containers.
 
-![](images/log_modal_per_container.png)
+![](../images/log_modal_per_container.png)

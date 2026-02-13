@@ -6,7 +6,7 @@ It helps you quickly understand how your computing resources are being utilized
 and monitor your recent activities in the system.
 Click the refresh icon in any panel to update the displayed data if it seems outdated.
 
-![](images/dashboard.png)
+![](../images/dashboard.png)
 
 The page is composed of several main panels:
 
@@ -37,7 +37,7 @@ The page is composed of several main panels:
 
 For super ผู้ดูแลระบบs, additional information is available.
 
-![](images/admin_dashboard.png)
+![](../images/admin_dashboard.png)
 
 Except for 'Active เซสชัน', 'Agent สถิติ', and 'Active Agents', the remaining panels
 display the same information as the ผู้ใช้ dashboard.

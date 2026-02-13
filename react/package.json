@@ -21,7 +21,6 @@
     "@microsoft/fetch-event-source": "^2.0.1",
     "@monaco-editor/react": "^4.7.0",
     "@react-hook/resize-observer": "^2.0.2",
-    "@storybook/test": "^8.6.15",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query": "^5.90.20",
     "@testing-library/react": "^16.3.2",
@@ -89,9 +88,7 @@
     "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'pnpm run relay --watch'",
     "lint": "eslint ./src --max-warnings=0",
     "format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
-    "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'"
   },
   "browserslist": {
     "production": [
@@ -114,15 +111,6 @@
     "@babel/preset-typescript": "^7.28.5",
     "@craco/craco": "^7.1.0",
     "@eslint/js": "^9.18.0",
-    "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-interactions": "^8.6.14",
-    "@storybook/addon-links": "^8.6.15",
-    "@storybook/addon-onboarding": "^10.2.0",
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/preset-create-react-app": "^10.2.0",
-    "@storybook/react": "^8.6.15",
-    "@storybook/react-webpack5": "^8.6.15",
-    "@storybook/testing-library": "^0.2.2",
     "@tanstack/eslint-plugin-query": "^5.91.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
@@ -140,7 +128,6 @@
     "@types/uuid": "^11.0.0",
     "ajv": "^8.17.1",
     "babel-jest": "^30.2.0",
-    "babel-plugin-named-exports-order": "^0.0.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "babel-plugin-relay": "^20.1.1",
     "babel-preset-react-app": "^10.1.0",
@@ -152,7 +139,6 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-relay": "^2.0.0",
-    "eslint-plugin-storybook": "^0.11.6",
     "globals": "^16.0.0",
     "html-webpack-plugin": "5.6.3",
     "identity-obj-proxy": "^3.0.0",
@@ -166,7 +152,6 @@
     "react-test-renderer": "^19.2.3",
     "relay-compiler": "^20.1.1",
     "relay-test-utils": "^20.1.1",
-    "storybook": "^8.6.15",
     "stream-browserify": "^3.0.0",
     "typescript-eslint": "^8.23.0",
     "webpack": "^5.104.1"

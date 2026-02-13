@@ -3,13 +3,13 @@
 
 ユーザー設定ページには、右上の人アイコンをクリックした後に表示される「環境設定」メニューを選択することでアクセスできます。ユーザーは、言語設定からの利用環境の変更、SSHキーペア管理、ユーザー設定スクリプトの編集、さらにはベータ機能の使用までを行うことができます。
 
-![](images/preferences.png)
+![](../images/preferences.png)
 
 
 ## 一般タブ
 
 
-![](images/user_settings_page.png)
+![](../images/user_settings_page.png)
 
 There are lots of preference menu in 一般タブ. you can search it by search field on top of the section,
 or you may just filter that you changed by clicking `Display Only Changes`. If you want to rollback the changes to before,
@@ -68,14 +68,14 @@ UIに表示される言語を設定します。現在、Backend.AIは英語と�
 
 すべてのユーザーは少なくとも1つ以上のキーペアを持っています。下の「設定」ボタンをクリックすると、アクセスキーとシークレットキーのキーペアを見ることができます。メインのアクセスキーペアは一つだけであることを覚えておいてください。
 
-![](images/my_keypair_information.png)
+![](../images/my_keypair_information.png)
 
 
 ### SSH キーペア管理
 
 WebUIアプリを使用する際、コンピュートセッションに直接SSH/SFTP接続を作成できます。Backend.AIにサインアップすると、公開鍵ペアが提供されます。SSHキーペア管理セクションの右側にあるボタンをクリックすると、次のダイアログが表示されます。右側のコピーボタンをクリックして、既存のSSH公開鍵をコピーできます。ダイアログの下部にあるGENERATEボタンをクリックすると、SSHキーペアを更新できます。SSH公開/秘密鍵はランダムに生成され、ユーザー情報として保存されます。秘密鍵は作成後すぐに手動で保存しない限り、再確認できないことに注意してください。
 
-![](images/ssh_keypair_dialog.png)
+![](../images/ssh_keypair_dialog.png)
 
 
    Backend.AIはOpenSSHに基づいたSSHキーペアを使用します。ウィンドウズでは、これをPPKキーに変換することができます。
@@ -84,17 +84,17 @@ From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to pr
 flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
 two text area which corresponds to "public" and "private" key.
 
-![](images/add_ssh_keypair_manually_dialog.png)
+![](../images/add_ssh_keypair_manually_dialog.png)
 
 please enter the keys inside, and click `SAVE` button. Now you can access to backend.ai session using your own key.
 
-![](images/ssh_keypair_dialog_after.png)
+![](../images/ssh_keypair_dialog_after.png)
 
 ### Edit Bootstrap Script
 
 計算セッションが開始された直後に一度だけスクリプトを実行したい場合は、ここに内容を書いてください。
 
-![](images/edit_bootstrap_script.png)
+![](../images/edit_bootstrap_script.png)
 
 
    The compute session will be at the `PREPARING` status until the bootstrap
@@ -114,29 +114,29 @@ downloaded to a specific location.
 
 上部のドロップダウンメニューを使用して作成したいスクリプトのタイプを選択し、内容を記述します。スクリプトは、SAVE または SAVE AND CLOSE ボタンをクリックして保存できます。DELETE ボタンをクリックするとスクリプトを削除できます。
 
-![](images/edit_user_config_script.png)
+![](../images/edit_user_config_script.png)
 
 ### Switch back to the Classic UI
 
 If you want to switch back to the classic Backend.AI interface, enable the following options.
 
-![](images/switch_classic_ui.png)
+![](../images/switch_classic_ui.png)
 
 ### Experimental 機能s
 
 You can enable or disable experimental features before they are officially released.
 
-![](images/experimental_features.png)
+![](../images/experimental_features.png)
 
 ## LOGSタブ
 
 クライアント側で記録されたさまざまなログの詳細情報を表示します。このページを訪れることで、発生したエラーについて詳しく知ることができます。エラーログを検索したり、フィルタリングしたり、ログを更新したり、右上の「Clear Logs」ボタンをクリックしてログをクリアしたりすることができます。
 
-![](images/user_log.png)
+![](../images/user_log.png)
 
 
    1つのページにしかログインしていない場合、REFRESHボタンをクリックしても正しく機能していないように見えるかもしれません。ログページはサーバーへのリクエストとサーバーからのレスポンスの集まりです。現在のページがログページである場合、ページを明示的にリフレッシュする以外にサーバーへのリクエストは送信されません。ログが正しく積み重ねられているか確認するには、別のページを開いてREFRESHボタンをクリックしてください。
 
 特定の列を非表示にしたり表示したりしたい場合は、テーブルの右下にある歯車アイコンをクリックしてください。すると、以下のダイアログが表示され、表示したい列を選択することができます。
 
-![](images/logs_table_setting.png)
+![](../images/logs_table_setting.png)

@@ -5,7 +5,7 @@ This feature is deprecated, so please use the [dashboard<dashboard>](#dashboard<
 
 On the サマリー page, ユーザーs can check resource status and session usage.
 
-![](images/summary.png)
+![](../images/summary.png)
 
 ### リソース統計情報
 

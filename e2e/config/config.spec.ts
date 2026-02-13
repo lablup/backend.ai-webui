@@ -133,7 +133,7 @@ test.describe.parallel(
                 break;
               }
             }
-          } catch (e) {
+          } catch {
             // If timeout, continue to next row
             continue;
           }

@@ -115,6 +115,7 @@ export interface SessionResources {
   bootstrap_script?: string;
   owner_access_key?: string;
   enqueueOnly?: boolean;
+  reuseIfExists?: boolean;
   config?: {
     resources?: {
       cpu: number;
@@ -156,6 +157,7 @@ interface SessionLauncherValue {
     OPENBLAS_NUM_THREADS?: string;
   };
   bootstrap_script?: string;
+  reuseIfExists?: boolean;
 }
 
 export type SessionLauncherFormValue = SessionLauncherValue &
@@ -1217,7 +1219,6 @@ const SessionLauncherPage = () => {
                               });
                               if (!isConformed) return;
                             }
-
                             await startSession(values)
                               .then((results) => {
                                 // After sending a create request, navigate to job page and set current resource group
@@ -1250,10 +1251,21 @@ const SessionLauncherPage = () => {
                                   results.rejected.length > 0
                                 ) {
                                   const error = results.rejected[0].reason;
-                                  app.modal.error({
-                                    title: error?.title,
-                                    content: getErrorMessage(error),
-                                  });
+                                  if (
+                                    error?.error_code ===
+                                    'session_create_already-exists'
+                                  ) {
+                                    app.modal.error({
+                                      title: t(
+                                        'session.launcher.SessionAlreadyExists',
+                                      ),
+                                    });
+                                  } else {
+                                    app.modal.error({
+                                      title: error?.title,
+                                      content: getErrorMessage(error),
+                                    });
+                                  }
                                 }
                               })
                               .catch((error) => {
@@ -1262,6 +1274,7 @@ const SessionLauncherPage = () => {
                                   'Unexpected error during session creation:',
                                   error,
                                 );
+
                                 app.message.error(t('error.UnexpectedError'));
                               });
                           }}
@@ -1346,6 +1359,7 @@ const SessionLauncherPage = () => {
                   command: undefined,
                   scheduleDate: undefined,
                 },
+                reuseIfExists: false,
                 agent: ['auto'], // Add the missing 'agent' property
               } as SessionLauncherFormData,
               formValue,

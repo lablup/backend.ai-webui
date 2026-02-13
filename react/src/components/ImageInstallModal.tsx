@@ -70,6 +70,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         cluster_size: 1,
         startupCommand: 'echo "Image is installed"',
         enqueueOnly: true,
+        reuseIfExists: false,
         config: {
           resources: {
             ..._.mapValues(_.keyBy(image?.resource_limits, 'key'), 'min'),

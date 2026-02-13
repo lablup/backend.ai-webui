@@ -7,7 +7,7 @@ Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP
       When the version is 23.09 or lower version, you need to use WebUI Desktop app. Desktop app can be downloaded
       a panel from the สรุป page. Using this panel, the compatible version will be downloaded automatically.
 
-      ![](images/app_download_panel.png)
+      ![](../images/app_download_panel.png)
 
       You can also download the app from
       https://github.com/lablup/backend.ai-webui/releases. Make sure to download
@@ -32,7 +32,7 @@ link, you can also download the `id_container` file located under
 SSH key may change when new session is created. In that case, it must be
 downloaded again.
 
-![](images/sftp_app.png)
+![](../images/sftp_app.png)
 
 To เชื่อมต่อ SSH to the compute session with the downloaded SSH private key, you
 run the following command in the shell environment. You should write the
@@ -79,7 +79,7 @@ each FTP client manual for details.
    If you receive the following warning message, try again after changing the
    permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 
-   ![](images/bad_permissions.png)
+   ![](../images/bad_permissions.png)
 
 
 ## For Windows / FileZilla
@@ -112,13 +112,13 @@ UserKnownHostsFile /dev/null
 ``
 Now in the Visual Studio Code, select the `Command Palette...` from `View` menu.
 
-  ![](images/vscode_view_commandpalett.png)
+  ![](../images/vscode_view_commandpalett.png)
 
 Visual Studio Code can automatically detect the type of host you are connecting
 to. Let's choose `Remote-SSH: Connect to Host...__PROTECTED_32__.ssh/config__PROTECTED_33__vscode__PROTECTED_34__File >
 Open...` or `File > Open Workspace...` menu just as you usually would do!
 
-  ![](images/vscode_connected_host_file_open.png)
+  ![](../images/vscode_connected_host_file_open.png)
 
 
 ## Establish SSH connection with Backend.AI client package
@@ -148,7 +148,7 @@ $ docker pull lablup/backend.ai-client:<version>
 The version of Backend.AI server can be found in "About Backend.AI" menu that
 appears when you click on the person icon on the top right corner of the Web UI.
 
-![](images/check_backend_server_version.png)
+![](../images/check_backend_server_version.png)
 
 Run the Docker image with the following command:
 

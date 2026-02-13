@@ -448,17 +448,19 @@ const ReservoirPage: React.FC = () => {
             rowSelection={{
               type: 'checkbox',
               onChange: (keys) => {
-                const artifactIdList = artifacts?.edges.map((e) => e.node.id);
+                const artifactIdList =
+                  artifacts?.edges.map((e) => e.node.id) ?? [];
                 setSelectedArtifactIdList((prev) => {
                   const _filtered = prev.filter(
                     (v) => !artifactIdList.includes(v.id),
                   );
-                  const _selected = artifacts?.edges
-                    .filter((e) => keys.includes(e.node.id))
-                    .map((arr) => ({
-                      id: arr.node.id,
-                      data: arr.node,
-                    }));
+                  const _selected =
+                    artifacts?.edges
+                      .filter((e) => keys.includes(e.node.id))
+                      .map((arr) => ({
+                        id: arr.node.id,
+                        data: arr.node,
+                      })) ?? [];
                   return _filtered.concat(_selected);
                 });
               },

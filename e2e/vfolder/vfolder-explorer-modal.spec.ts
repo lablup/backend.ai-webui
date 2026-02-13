@@ -162,7 +162,7 @@ test.describe(
       try {
         await moveToTrashAndVerify(page, testFolderName);
         await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch (error) {
+      } catch {
         console.log(`Could not delete ${testFolderName}, it may not exist`);
       }
 
@@ -213,10 +213,7 @@ test.describe(
       await modal.close();
     });
 
-    test.fixme(
-      'User can access File Browser from VFolder explorer modal without defaultFileBrowserImage setting',
-      () => {},
-    );
+    test.fixme('User can access File Browser from VFolder explorer modal without defaultFileBrowserImage setting', () => {});
 
     test('User can view VFolder details in the explorer modal', async ({
       page,

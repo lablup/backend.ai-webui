@@ -17,7 +17,7 @@ containers are automatically generated.
 
 For detailed about Backend.AI cluster session, refer to the following.
 
-![](images/overview_cluster_session.png)
+![](../images/overview_cluster_session.png)
 
 - Containers under a cluster session are created across one or more Agent
   nodes which belon to a resource group.
@@ -92,7 +92,7 @@ computing session. To create a cluster compute session, server resources equal
 to N times the amount of resources set here are required (N is the cluster
 size). Also, don't forget to mount the data folder for data safekeeping.
 
-![](images/session_launch_dialog.png)
+![](../images/session_launch_dialog.png)
 
 In the "Cluster mode" field at the bottom, you can choose what type of cluster
 you want to create.
@@ -111,21 +111,21 @@ Click the LAUNCH button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 
-![](images/cluster_session_created.png)
+![](../images/cluster_session_created.png)
 
 Let's open the terminal app in the compute session we just have created. If you
 look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
 variables described in the above section are set. Compare the meaning and value
 of each environment variable with the description above.
 
-![](images/terminal_on_main_container.png)
+![](../images/terminal_on_main_container.png)
 
 You can also SSH into the `sub1` container. No separate SSH setting is
 required, just issue the command `ssh sub1` and you are done. You can see the
 hostname after `work@` has changed, which indicated the sub container's shell
 is displayed.
 
-![](images/terminal_on_sub1_container.png)
+![](../images/terminal_on_sub1_container.png)
 
 In this way, Backend.AI makes it easy to create cluster computing sessions. In
 order to execute distributed learning and calculation through a cluster
@@ -141,4 +141,4 @@ distributed learning algorithm.
 From 24.03, You can check each log of container in logs modal. It will help you
 to understand what's going on not only in `main` container but also `sub` containers.
 
-![](images/log_modal_per_container.png)
+![](../images/log_modal_per_container.png)

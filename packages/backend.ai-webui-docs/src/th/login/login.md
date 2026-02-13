@@ -5,11 +5,11 @@
 When you launch the WebUI, log in dialog appears. If you haven't signed up
 yet, press the SIGN UP button.
 
-![](images/login_dialog.png)
+![](../images/login_dialog.png)
 
 กรอกข้อมูลที่จำเป็น อ่านและยอมรับข้อกำหนดในการให้บริการ / นโยบายความเป็นส่วนตัว และคลิกปุ่ม SIGNUP ขึ้นอยู่กับการตั้งค่าของระบบของคุณ อาจต้องกรอกโทเค็นการเชิญเพื่อสมัครสมาชิก อีเมลยืนยันอาจถูกส่งเพื่อยืนยันว่าอีเมลนั้นเป็นของคุณ หากมีการส่งอีเมลยืนยัน คุณจะต้องอ่านอีเมลและคลิกลิงก์ภายในเพื่อผ่านการตรวจสอบก่อนที่คุณจะสามารถเข้าสู่ระบบด้วยบัญชีของคุณได้
 
-![](images/signup_dialog.png)
+![](../images/signup_dialog.png)
 
 
    ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์และการตั้งค่าปลั๊กอิน อาจไม่อนุญาตให้ผู้ใช้ที่ไม่ระบุตัวตนลงทะเบียน ในกรณีนี้โปรดติดต่อผู้ดูแลระบบของระบบของคุณ
@@ -32,7 +32,7 @@ the สรุป tab.
 
 โดยการคลิกที่ไอคอนในมุมขวาบน คุณจะเห็นเมนูย่อย คุณสามารถออกจากระบบได้โดยการเลือกเมนูออกจากระบบ
 
-![](images/signout_button.png)
+![](../images/signout_button.png)
 
 
 ## เมื่อคุณลืมรหัสผ่านของคุณ
@@ -43,7 +43,7 @@ by reading and following the instruction. Depending on the server settings, the
 password change feature may be disabled. In this case, contact the
 ผู้ดูแลระบบistrator.
 
-![](images/forgot_password_panel.png)
+![](../images/forgot_password_panel.png)
 
 
    นี่เป็นฟีเจอร์แบบโมดูลาร์ ดังนั้นการเปลี่ยนรหัสผ่านอาจไม่เป็นไปได้ในบางระบบ
@@ -61,4 +61,4 @@ password change feature may be disabled. In this case, contact the
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
 
 
-![](images/menu_collapse.png)
+![](../images/menu_collapse.png)

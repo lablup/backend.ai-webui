@@ -23,17 +23,17 @@ with a GPU with 8 GB of memory as in the following figure. And through the
 administrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
 GPU (or 1 physical GPU is 2 fGPU).
 
-![](images/host_gpu.png)
+![](../images/host_gpu.png)
 
 Now let's go to the Sessions page and create a compute session by allocating 0.5
 fGPU as follows:
 
-![](images/session_launch_dialog_with_gpu.png)
+![](../images/session_launch_dialog_with_gpu.png)
 
 In the AI Accelerator panel of the session list, you can see that
 0.5 fGPU is allocated.
 
-![](images/session_list_with_gpu.png)
+![](../images/session_list_with_gpu.png)
 
 Now, let's connect directly to the container and check if the allocated GPU
 memory is really equivalent to 0.5 units (~2 GB). Let's bring up a web
@@ -42,11 +42,11 @@ see in the following figure, you can see that about 2 GB of GPU memory is
 allocated. This shows that the physical GPU is actually divided into quarters and allocated inside the
 container for this compute session, which is not possible by a way like PCI passthrough.
 
-![](images/nvidia_smi_inside_container.png)
+![](../images/nvidia_smi_inside_container.png)
 
 Let's open up a Jupyter Notebook and run a simple ML training code.
 
-![](images/mnist_train.png)
+![](../images/mnist_train.png)
 
 While training is in progress, connect to the shell of the GPU host node and
 execute the `nvidia-smi` command. You can see that there is one GPU attached
@@ -54,7 +54,7 @@ to the process and this process is occupying about 25% of the resources of the
 physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
 model.)
 
-![](images/host_nvidia_smi.png)
+![](../images/host_nvidia_smi.png)
 
 Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
 
@@ -79,7 +79,7 @@ requested at the same time. Let's set the GPU and Sessions to 1 and 3,
 respectively. This is the situation that 3 sessions requesting a
 total of 3 fGPUs are created when only 2 fGPUs exist.
 
-![](images/session_launch_dialog_2_sessions.png)
+![](../images/session_launch_dialog_2_sessions.png)
 
 Wait for a while and you will see three compute sessions being listed.
 If you look closely at the Status panel, you can see that two of the
@@ -88,7 +88,7 @@ remains in PENDING state. This PENDING session is only registered in the
 job queue and has not actually been allocated a container due to insufficient
 GPU resources.
 
-![](images/pending_session_list.png)
+![](../images/pending_session_list.png)
 
 Now let's destroy one of the two sessions in RUNNING state. Then you can see
 that the compute session in PENDING state is allocated resources
@@ -96,7 +96,7 @@ by the job scheduler and converted to RUNNING state soon. In this way, the job
 scheduler utilizes the job queue to hold the user's compute session requests
 and automatically process the requests when resources become available.
 
-![](images/pending_to_running.png)
+![](../images/pending_to_running.png)
 
 
 ## Multi-version machine learning container support
@@ -109,35 +109,35 @@ advantage of multiple versions of the multiple ML library immediately.
 Go to the Sessions page and open the session launch dialog. There may be various
 kernel images depending on the installation settings.
 
-![](images/various_kernel_images.png)
+![](../images/various_kernel_images.png)
 
 Here, let's select the TensorFlow 2.3 environment and created a session.
 
-![](images/session_launch_dialog_tf23.png)
+![](../images/session_launch_dialog_tf23.png)
 
 Open the web terminal of the created session and run the following Python
 command. You can see that TensorFlow 2.3 version is installed.
 
-![](images/tf23_version_print.png)
+![](../images/tf23_version_print.png)
 
 This time, let's select the TensorFlow 1.15 environment to create a compute
 session. If resources are insufficient, delete the previous session.
 
-![](images/session_launch_dialog_tf115.png)
+![](../images/session_launch_dialog_tf115.png)
 
 Open the web terminal of the created session and run the same Python command as
 before. You can see that TensorFlow 1.15(.4) version is installed.
 
-![](images/tf115_version_print.png)
+![](../images/tf115_version_print.png)
 
 Finally, create a compute session using PyTorch version 1.7.
 
-![](images/session_launch_dialog_pytorch17.png)
+![](../images/session_launch_dialog_pytorch17.png)
 
 Open the web terminal of the created session and run the following Python
 command. You can see that PyTorch 1.8 version is installed.
 
-![](images/pytorch17_version_print.png)
+![](../images/pytorch17_version_print.png)
 
 Like this, you can utilize various versions of major libraries such as
 TensorFlow and PyTorch through Backend.AI without unnecessary effort to install them.
@@ -174,7 +174,7 @@ Docker image.
 - You can manually enter the image name in the session launch dialog. The image
   is private and not be revealed to other users
 
-  ![](images/session-creation-by-specifying-image-name.png)
+  ![](../images/session-creation-by-specifying-image-name.png)
 
 - A new compute session will be created using the new Docker image.
 
@@ -256,11 +256,11 @@ $ mlflow ui --host 0.0.0.0
 ``
 Then, Click "MLFlow UI" app in app launcher dialog.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 After few moment, you will see a new page for MLFlow UI.
 
-![](images/mlflow_UI.png)
+![](../images/mlflow_UI.png)
 
 By using MLFlow, you can track experiments, such as metrics and parameters every time you run.
 Let's start tracking experiments from simple example.
@@ -271,7 +271,7 @@ $ python train_diabetes.py
 ``
 After executing python code, you may see the experiments result in MLFlow.
 
-![](images/mlflow_first_execution.png)
+![](../images/mlflow_first_execution.png)
 
 You can also set hyperparameter by giving arguments with code execution.
 
@@ -280,4 +280,4 @@ $ python train_diabetes.py 0.2 0.05
 ``
 After a few training, you can compare trained models with results.
 
-![](images/mlflow_multiple_execution.png)
+![](../images/mlflow_multiple_execution.png)

@@ -1,19 +1,21 @@
+<a id="user-settings"></a>
+
 # 사용자 설정 페이지
 
 
 사용자 설정 페이지는 우측 상단 사람 아이콘을 클릭하면 나오는 Preferences 메뉴를 선택하여 접근할 수 있습니다. 여기서는, 사용자 설정 페이지의 각 항목 및 메뉴에 관해 간단히 설명합니다.
 
-![](images/preferences.png)
+![](../images/preferences.png)
 
+
+<a id="general-tab"></a>
 
 ## GENERAL 탭
 
 
-![](images/user_settings_page.png)
+![](../images/user_settings_page.png)
 
-There are lots of preference menu in GENERAL 탭. you can search it by search field on top of the section,
-or you may just filter that you changed by clicking `Display Only Changes`. If you want to rollback the changes to before,
-click Reset button on the right top of the section.
+GENERAL 탭에는 다양한 설정 메뉴가 있습니다. 섹션 상단의 검색 필드를 이용해 원하는 설정을 검색하거나, `Display Only Changes`를 클릭하여 변경된 항목만 필터링할 수 있습니다. 변경 사항을 이전 상태로 되돌리려면 섹션 우측 상단의 Reset 버튼을 클릭하십시오.
 
 ### 데스크톱 알림 활성화
 
@@ -45,16 +47,15 @@ UI 에 출력되는 언어를 설정합니다. 현재 Backend.AI에서는 한국
 - Portuguese: 포르투갈어를 기본 언어로 설정합니다.
 - Russian: 러시아어를 기본 언어로 설정합니다.
 - Spanish: 스페인어를 기본 언어로 설정합니다.
-- That: 태국어를 기본 언어로 설정합니다.
+- Thai: 태국어를 기본 언어로 설정합니다.
 - Turkish: 터키어를 기본 언어로 설정합니다.
 - Vietnamese: 베트남어를 기본 언어로 설정합니다.
 
 
 
-   Some of translated items may be marked as `__NOT_TRANSLATED__`, which
-   indicates the item is not yet translated for that language. Since Backend.AI
-   WebUI is open sourced, anyone who willing to make the translation better
-   can contribute: https://github.com/lablup/backend.ai-webui.
+:::info
+일부 번역 항목은 `__NOT_TRANSLATED__`로 표시될 수 있으며, 이는 해당 언어에 대한 번역이 아직 완료되지 않았음을 나타냅니다. Backend.AI WebUI는 오픈 소스이므로, 번역 개선에 기여하고자 하는 분은 누구나 참여할 수 있습니다: https://github.com/lablup/backend.ai-webui.
+:::
 
 ### 자동 업데이트 체크
 
@@ -68,75 +69,72 @@ WebUI의 새 버전이 검색될 경우 알림 창을 띄웁니다. 이 기능�
 
 모든 사용자는 하나 이상의 키페어를 가지고 있습니다. 아래의 구성 버튼을 클릭하면 액세스 및 비밀 키페어를 확인할 수 있습니다. 기본 액세스 키페어는 하나만 존재합니다.
 
-![](images/my_keypair_information.png)
+![](../images/my_keypair_information.png)
 
+
+<a id="user-ssh-keypair-management"></a>
 
 ### SSH 키페어 관리
 
 연산 세션에 직접 SSH 로 접속할 때 필요한 SSH 키페어를 조회하고 생성하는 기능입니다. 우측 버튼을 클릭하면 다음과 같은 다이얼로그가 뜹니다. 우측의 복사 버튼을 클릭하면 현재 존재하는 SSH 공개 키를 복사할 수 있습니다. 처음 Backend.AI 에 계정을 등록하게 되면, 자동으로 한 쌍의 키페어가 발급되게 됩니다. 갱신하고자 한다면 GENERATE 버튼을 클릭합니다. SSH 공개/비밀 키 는 랜덤으로 생성되어 사용자 정보로 저장됩니다. 비밀 키는 생성 직후 따로 저장해 두지 않으면 다시 확인할 수 없음에 주의하십시오.
 
-![](images/ssh_keypair_dialog.png)
+![](../images/ssh_keypair_dialog.png)
 
 
-   Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반 키로 변환해야 할 수 있습니다.
+:::info
+Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반 키로 변환해야 할 수 있습니다.
+:::
 
-From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to provide
-flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
-two text area which corresponds to "public" and "private" key.
+22.09 버전부터, Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해 사용자 자신의 SSH 키페어를 직접 등록하는 기능을 지원합니다. 자신의 SSH 키페어를 추가하려면 `ENTER MANUALLY` 버튼을 클릭하십시오. 그러면 "public" 키와 "private" 키에 해당하는 두 개의 텍스트 영역이 표시됩니다.
 
-![](images/add_ssh_keypair_manually_dialog.png)
+![](../images/add_ssh_keypair_manually_dialog.png)
 
-please enter the keys inside, and click `SAVE` button. Now you can access to backend.ai session using your own key.
+키를 입력한 후 `SAVE` 버튼을 클릭하십시오. 이제 자신의 키를 사용하여 Backend.AI 세션에 접속할 수 있습니다.
 
-![](images/ssh_keypair_dialog_after.png)
+![](../images/ssh_keypair_dialog_after.png)
 
 ### 부트스트랩 스크립트 수정
 
 연산 세션 시작 후 한 번만 스크립트를 실행하고자 할 경우, 여기에 그 내용을 작성해 주십시오.
 
-![](images/edit_bootstrap_script.png)
+![](../images/edit_bootstrap_script.png)
 
 
-   The compute session will be at the `PREPARING` status until the bootstrap
-   script finishes its execution. Since a 일반 사용자 cannot use the session until it
-   is `RUNNING`, if the script contains a long-running tasks, it might be
-   better to remove them out of the bootstrap script and run them in a terminal
-   app.
+:::info
+부트스트랩 스크립트의 실행이 완료될 때까지 연산 세션은 `PREPARING` 상태를 유지합니다. 세션이 `RUNNING` 상태가 되어야 사용할 수 있으므로, 스크립트에 오래 걸리는 작업이 포함되어 있다면 부트스트랩 스크립트에서 제거하고 터미널 앱에서 직접 실행하는 것이 좋습니다.
+:::
 
 ### 사용자 환경 스크립트 수정
 
-You can write some config scripts to replace the default ones in a compute
-session. Files like `.bashrc`, `.tmux.conf.local`, `.vimrc`, etc. can be
-customized. The scripts are saved for each 일반 사용자 and can be used when certain
-automation tasks are required. For example, you can modify the `.bashrc`
-script to register your command aliases or specify that certain files are always
-downloaded to a specific location.
+연산 세션의 기본 설정 스크립트를 대체하는 사용자 환경 스크립트를 작성할 수 있습니다. `.bashrc`, `.tmux.conf.local`, `.vimrc` 등의 파일을 사용자 정의할 수 있습니다. 스크립트는 사용자별로 저장되며, 특정 자동화 작업이 필요할 때 활용할 수 있습니다. 예를 들어, `.bashrc` 스크립트를 수정하여 명령어 별칭을 등록하거나 특정 파일이 항상 지정된 위치에 다운로드되도록 설정할 수 있습니다.
 
 상단의 드롭다운 메뉴를 활용해서 작성할 스크립트의 종류를 선택한 후 내용을 작성하십시오. 작성이 완료되면 SAVE 또는 SAVE AND CLOSE 버튼을 클릭해서 스크립트를 저장할 수 있습니다. DELETE 버튼을 클릭하면 해당 스크립트를 삭제할 수 있습니다.
 
-![](images/edit_user_config_script.png)
+![](../images/edit_user_config_script.png)
 
 ### Classic UI로 돌아가기
 
 Classic Backend.AI 인터페이스로 돌아가고 싶다면 다음 설정을 활성화해 주세요.
 
-![](images/switch_classic_ui.png)
+![](../images/switch_classic_ui.png)
 
 ### 실험적 기능
 
 실험적 기능들이 정식으로 출시되기 전에 활성화하거나 비활성화할 수 있습니다.
 
-![](images/experimental_features.png)
+![](../images/experimental_features.png)
 
 ## LOGS 탭
 
 클라이언트 측에서 기록된 각종 로그의 상세 정보를 출력합니다. 요청 오류가 발생했을 때 자세한 내용을 확인하고 싶을 때 이 페이지에 방문할 수 있습니다. 우측 상단의 버튼을 이용해서 로그를 검색하거나 에러 메시지를 필터링하고, 로그를 새로고침하거나 지울 수 있습니다.
 
-![](images/user_log.png)
+![](../images/user_log.png)
 
 
-   로그인된 페이지가 하나만 존재할 경우, REFRESH 버튼을 클릭하면 제대로 작동하지 않는 것처럼 보일 수 있습니다. 로그 페이지는 서버에 대한 요청과 서버의 응답을 모아둔 것이며, 현재 페이지가 로그 페이지인 경우 명시적으로 페이지를 새로 고침하는 것 외에는 서버에 요청을 보내지 않습니다. 로그가 제대로 쌓이는지 확인하려면 다른 페이지를 열고 REFRESH 버튼을 클릭하십시오.
+:::info
+로그인된 페이지가 하나만 존재할 경우, REFRESH 버튼을 클릭하면 제대로 작동하지 않는 것처럼 보일 수 있습니다. 로그 페이지는 서버에 대한 요청과 서버의 응답을 모아둔 것이며, 현재 페이지가 로그 페이지인 경우 명시적으로 페이지를 새로 고침하는 것 외에는 서버에 요청을 보내지 않습니다. 로그가 제대로 쌓이는지 확인하려면 다른 페이지를 열고 REFRESH 버튼을 클릭하십시오.
+:::
 
 특정 열을 숨기거나 보이게 하려면, 테이블 우측 하단의 기어 아이콘을 클릭하십시오. 그러면 아래와 같은 다이얼로그가 나타나며, 보고 싶은 열을 선택할 수 있습니다.
 
-![](images/logs_table_setting.png)
+![](../images/logs_table_setting.png)

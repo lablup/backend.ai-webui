@@ -14,16 +14,16 @@ constraint, digest, and other information for each image.
 To delete an image, click on the red trash button in the control column.
 After deletion, you will not be able to create a new session using that image.
 
-![](images/my_environments.png)
+![](../images/my_environments.png)
 
 You can also copy the my environment image and create session with manual image.
 Click 'Copy' button in the control column, and go to sessions page and create a session.
 Fill the input of manual image by pasting the image that you copied.
 
-![](images/copy_image_name_manual.png)
+![](../images/copy_image_name_manual.png)
 
 If you want to hide or show the certain columns, click the gear icon at the
 bottom right of the table. Then you can see below dialog to select the columns
 you want to see.
 
-![](images/table_setting.png)
+![](../images/table_setting.png)

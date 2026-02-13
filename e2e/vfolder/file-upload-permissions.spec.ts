@@ -59,7 +59,7 @@ test.describe.serial(
       try {
         await moveToTrashAndVerify(page, roFolderName);
         await deleteForeverAndVerifyFromTrash(page, roFolderName);
-      } catch (error) {
+      } catch {
         console.log(`Could not delete ${roFolderName}, it may not exist`);
       }
 
@@ -67,7 +67,7 @@ test.describe.serial(
       try {
         await moveToTrashAndVerify(page, rwFolderName);
         await deleteForeverAndVerifyFromTrash(page, rwFolderName);
-      } catch (error) {
+      } catch {
         console.log(`Could not delete ${rwFolderName}, it may not exist`);
       }
 

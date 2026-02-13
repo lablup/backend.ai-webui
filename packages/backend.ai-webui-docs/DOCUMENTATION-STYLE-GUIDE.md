@@ -44,6 +44,24 @@ Detailed content...
 
 ## Formatting Elements
 
+### Inline Formatting
+
+Standard inline styles:
+
+| Syntax | Result | Usage |
+|--------|--------|-------|
+| `**bold**` | **bold** | UI element names, field names, emphasis |
+| `*italic*` | *italic* | First use of a term, titles |
+| `~~strikethrough~~` | ~~strikethrough~~ | Deprecated items |
+| `` `inline code` `` | `inline code` | Paths, config values, technical identifiers |
+
+Use backticks for:
+- UI button labels: `` `SIGN UP` ``
+- File/directory paths: `` `/home/work/` ``
+- Configuration values: `` `config.toml` ``
+- Keyboard shortcuts: `` `Ctrl-R` ``
+- Technical identifiers: `` `__NOT_TRANSLATED__` ``
+
 ### Step-by-Step Procedures
 
 Use numbered lists for ordered procedures:
@@ -83,9 +101,84 @@ Rules:
 - Bold the field name: `**Field Name**:`
 - Indent sub-items with 3 spaces
 
-### Notes, Warnings, and Tips
+### Admonitions
 
-Use indented blocks (3 spaces) with blank lines before and after:
+Admonitions are callout blocks for highlighting important information. They render with distinctive colors, icons, and titles.
+
+**Syntax:**
+
+````markdown
+:::type
+Content here. Supports **bold**, *italic*, `code`, lists, tables, and other markdown.
+:::
+````
+
+**With custom title:**
+
+````markdown
+:::type[Custom Title]
+Content here.
+:::
+````
+
+**Supported types:**
+
+| Type | Usage | Color |
+|------|-------|-------|
+| `:::note` | General information users should take into account | Blue |
+| `:::tip` | Helpful suggestions and best practices | Green |
+| `:::info` | Supplementary context or background information | Blue |
+| `:::warning` | Potential issues or pitfalls to watch out for | Yellow |
+| `:::caution` | Situations requiring extra care | Yellow |
+| `:::danger` | Critical warnings about destructive or irreversible actions | Red |
+
+**Examples:**
+
+````markdown
+:::note
+This is a general note. Use it to highlight information that users
+should take into account, even when skimming.
+:::
+
+:::warning[Important Configuration]
+Make sure to configure `apiEndpoint` in `config.toml` before connecting.
+:::
+
+:::danger
+Deleting a storage folder is **irreversible**. All data in the folder
+will be permanently lost.
+:::
+````
+
+**Rich content inside admonitions:**
+
+Admonitions can contain lists, tables, code blocks, and other markdown:
+
+````markdown
+:::info[Resource Allocation Guide]
+When creating a new session, consider the following:
+
+| Resource | Minimum | Recommended |
+|----------|---------|-------------|
+| CPU      | 1 core  | 4 cores     |
+| Memory   | 1 GB    | 8 GB        |
+
+```toml title="config.toml"
+[resources]
+maxCPU = 8
+maxMemory = "64g"
+```
+:::
+````
+
+Rules:
+- Opening `:::type` and closing `:::` must be on their own lines
+- Nested admonitions are supported (inner blocks track depth automatically)
+- Prefer admonitions over 3-space indented notes for new documentation
+
+### Notes via Indented Blocks (Legacy)
+
+3-space indented blocks are automatically converted to blockquotes during processing. This is a legacy convention; prefer [Admonitions](#admonitions) for new content.
 
 ```markdown
 Previous paragraph content here.
@@ -101,7 +194,26 @@ Rules:
 - Indent with **3 spaces**
 - No prefix markers (no "Note:", "Warning:", etc.)
 - Blank line before and after the indented block
-- Keep the note concise and directly relevant
+- Not applied inside list contexts or code blocks
+
+### Blockquotes
+
+Use standard `>` syntax for quoted content or supplementary notes:
+
+```markdown
+> Your administrator must configure the `apiEndpoint` in `config.toml`
+> before you can connect to the Backend.AI server.
+```
+
+Multi-line and nested blockquotes are supported:
+
+```markdown
+> Backend.AI is an open-source platform for managing AI/ML computing resources.
+>
+> > This is a nested blockquote with additional context.
+>
+> Back to the outer level.
+```
 
 ### Images
 
@@ -120,6 +232,7 @@ Rules:
 - Leave blank lines before and after the image reference
 - No alt text (current convention)
 - Use relative paths: `images/filename.png`
+- Image paths are resolved relative to the markdown file's directory during build
 - If a screenshot doesn't exist yet, add a TODO comment:
   ```markdown
   ![](images/new_feature.png)
@@ -140,25 +253,135 @@ Rules:
 - Anchor names use lowercase with hyphens
 - Link text should be descriptive and match the target section title
 - Both parts of the link (display and href) must match
+- During build, cross-references are processed to include chapter-slug prefixes
 
-### Inline Code
+#### HTML Anchors for Non-Heading Targets
 
-Use backticks for:
-- UI button labels: `` `SIGN UP` ``
-- File/directory paths: `` `/home/work/` ``
-- Configuration values: `` `config.toml` ``
-- Keyboard shortcuts: `` `Ctrl-R` ``
-- Technical identifiers: `` `__NOT_TRANSLATED__` ``
+Markdown only auto-generates anchors from headings. For non-heading targets, or to ensure English anchors work in translated pages, insert an HTML anchor tag:
+
+```markdown
+<a id="generating-tokens"></a>
+
+#### Generating Tokens
+```
+
+In translated documents, heading anchors are auto-generated from the translated text. Use HTML anchors to provide stable English IDs:
+
+```markdown
+<a id="generating-tokens"></a>
+
+#### 토큰 생성
+```
+
+Rules:
+- Place `<a id="..."></a>` on its own line **before** the target content
+- Leave a blank line between the anchor tag and the content
+- Anchor IDs must always be in English, even in translated documents
+- Only translate the display text in cross-reference links, never the anchor
 
 ### Code Blocks
 
-Use fenced code blocks with language identifier:
+#### Basic Code Block
+
+Use fenced code blocks with a language identifier:
 
 ````markdown
 ```shell
 $ pip install backend.ai-client
 ```
 ````
+
+#### Code Block with Title
+
+Add `title="filename"` after the language to display a filename label above the code block:
+
+````markdown
+```python title="train.py"
+import torch
+model = torch.nn.Linear(784, 10)
+```
+````
+
+````markdown
+```toml title="config.toml"
+[general]
+apiEndpoint = "https://api.backend.ai"
+```
+````
+
+#### Code Block with Line Highlighting
+
+Add `{lineNumbers}` to highlight specific lines. Supports individual lines and ranges:
+
+````markdown
+```javascript title="config.js" {2,4-6}
+const config = {
+  apiEndpoint: 'https://api.backend.ai',  // highlighted
+  version: '26.2.0',
+  features: {                              // highlighted
+    gpu: true,                             // highlighted
+    multiNode: true,                       // highlighted
+  },
+};
+```
+````
+
+Line highlighting can be used without a title:
+
+````markdown
+```python {1,3-4}
+import torch
+import numpy as np
+from backend.ai import Client  # highlighted
+client = Client()               # highlighted
+```
+````
+
+**Line number syntax:**
+- Single line: `{3}`
+- Multiple lines: `{1,3,5}`
+- Range: `{3-5}`
+- Combined: `{1,3-5,7}`
+
+### Collapsible Sections (Details/Summary)
+
+Use HTML5 `<details>` and `<summary>` elements for collapsible content:
+
+```markdown
+<details>
+<summary>Click to expand</summary>
+
+Hidden content here. Supports **markdown formatting**, lists, code blocks,
+tables, and even admonitions.
+
+</details>
+```
+
+**Example with rich content:**
+
+````markdown
+<details>
+<summary>Advanced Configuration Options</summary>
+
+You can configure Backend.AI WebUI using `config.toml`:
+
+```toml title="config.toml"
+[general]
+apiEndpoint = "https://api.backend.ai"
+allowSignup = false
+```
+
+:::tip
+These settings are loaded on application startup.
+:::
+
+</details>
+````
+
+Rules:
+- Leave a blank line after `<summary>` and before `</details>`
+- Markdown inside `<details>` is fully processed (including admonitions, code blocks, etc.)
+- Use descriptive summary text
 
 ### Tables
 
@@ -170,7 +393,53 @@ Use standard Markdown tables for structured comparisons:
 | Value 1  | Value 2  | Value 3  |
 ```
 
-Use tables sparingly. Prefer bullet lists for field descriptions.
+Column alignment is supported:
+
+```markdown
+| Left     | Center   | Right    |
+|----------|:--------:|---------:|
+| text     | text     | text     |
+```
+
+Rules:
+- Use tables sparingly; prefer bullet lists for field descriptions
+- RST-style grid tables (`+---+---+`) are auto-converted to Markdown tables during build
+
+### Horizontal Rules
+
+Use `---` to create a horizontal rule (thematic break):
+
+```markdown
+Content above the rule.
+
+---
+
+Content below the rule.
+```
+
+### Task Lists
+
+Use checkbox syntax for checklists:
+
+```markdown
+- [x] Install Backend.AI WebUI
+- [x] Configure `config.toml`
+- [ ] Set up SSL certificates
+- [ ] Create user accounts
+```
+
+### Template Variables
+
+Sphinx-style template variables are substituted during build:
+
+| Variable | Replaced With | Example Output |
+|----------|---------------|----------------|
+| `\|year\|` | Current year | `2026` |
+| `\|version\|` | Documentation version | `26.03` |
+| `\|version_date\|` | Version date (YYYY.MM.DD) | `2026.02.12` |
+| `\|date\|` | Current date (YYYY/MM/DD) | `2026/02/12` |
+
+These are primarily used in `disclaimer.md` and similar metadata pages.
 
 ## Content Guidelines
 
@@ -237,6 +506,35 @@ For each documented feature, ensure:
 3. Ensure the page structure follows this guide
 4. Add cross-references from related existing pages
 
+## Supported Markdown Syntax Summary
+
+Quick reference of all supported syntax:
+
+| Feature | Syntax | Notes |
+|---------|--------|-------|
+| Headings | `# H1` through `###### H6` | One H1 per file |
+| Bold | `**text**` | |
+| Italic | `*text*` | |
+| Strikethrough | `~~text~~` | |
+| Inline code | `` `code` `` | |
+| Links | `[text](url)` | |
+| Images | `![alt](path)` | Relative paths resolved during build |
+| Ordered lists | `1. item` | |
+| Unordered lists | `- item` | |
+| Task lists | `- [x] done` / `- [ ] todo` | |
+| Blockquotes | `> text` | Supports nesting |
+| Code blocks | ` ```lang ` | With language identifier |
+| Code block title | ` ```lang title="file" ` | Displays filename label |
+| Line highlighting | ` ```lang {1,3-5} ` | Highlight specific lines |
+| Tables | `\| col \| col \|` | Supports alignment |
+| Horizontal rules | `---` | |
+| Admonitions | `:::note` through `:::danger` | 6 types, custom titles |
+| Collapsible sections | `<details>/<summary>` | HTML5 elements |
+| HTML anchors | `<a id="name"></a>` | For non-heading targets |
+| Cross-references | `[text <anchor>](#text <anchor>)` | Chapter-aware |
+| Template variables | `\|year\|`, `\|version\|`, etc. | Sphinx-style |
+| Indented notes | 3-space indent | Legacy; prefer admonitions |
+
 ## Common Mistakes to Avoid
 
 | Mistake | Correct |
@@ -246,5 +544,9 @@ For each documented feature, ensure:
 | Starting with an image before any text | Always introduce the context first |
 | Mixing `-` and `*` at the same nesting level | Use `-` for primary, `*` for nested |
 | Hard-coded UI labels without checking i18n | Verify against `resources/i18n/{lang}.json` |
-| Using "Note:" or "Warning:" prefixes | Use indented blocks without prefixes |
+| Using "Note:" or "Warning:" prefixes | Use admonitions or indented blocks |
 | Inconsistent terminology | Follow `TERMINOLOGY.md` |
+| Using 3-space indented notes for new content | Prefer admonitions (`:::note`, `:::warning`, etc.) |
+| Missing blank line after `<summary>` | Always leave blank line for markdown processing |
+| Translating anchor IDs in non-English docs | Anchors must always remain in English |
+| Code blocks without language identifier | Always specify the language (e.g., `shell`, `toml`, `python`) |

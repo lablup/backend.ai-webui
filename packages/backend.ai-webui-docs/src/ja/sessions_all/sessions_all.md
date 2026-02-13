@@ -9,12 +9,12 @@ This document will cover how to query and create container-based compute session
 After logging in with a ユーザー account, click 'セッション' on the left sidebar.
 'セッション' page lets you start new sessions or use and manage existing running sessions.
 
-![](images/sessions_page.png)
+![](../images/sessions_page.png)
 
 
 Click the 'START' button to start a new compute session.
 
-![](images/launch_session_type.png)
+![](../images/launch_session_type.png)
 
 ### Session Type
 
@@ -51,7 +51,7 @@ If needed, setting the name of the session (optional) is also available.
     - Users can also set the 'Timeout Duration' of a batch-type compute session.
       When ユーザーs set the timeout duration, The session will automatically terminate if the specified time is exceeded.
 
-    ![](images/session_type_batch.png)
+    ![](../images/session_type_batch.png)
 
 - Session name: Users can specify the name of the compute session to be
   created. If set, this name appears in Session Info, so it is
@@ -63,13 +63,13 @@ If ユーザーs create a session with the `super admin` or `admin` account,
 they can additionally assign a session owner. If you enable the toggle,
 a ユーザー email field will appear.
 
-   ![](images/admin_launch_session_owner.png)
+   ![](../images/admin_launch_session_owner.png)
 
 Enter the email of the ユーザー you want to assign the session to,
 click the 'search' button, and the ユーザー's access key will be automatically registered.
 You can also select a project and resource group.
 
-   ![](images/admin_launch_session_owner_project.png)
+   ![](../images/admin_launch_session_owner_project.png)
 
 ### Environments & Resource allocation
 
@@ -79,7 +79,7 @@ to proceed to the next page. If you want to create a session without any further
 settings, press the 'Skip to review' button. In this case, settings on the
 other pages will all use the default values.
 
-  ![](images/launch_session_environments_and_resource.png)
+  ![](../images/launch_session_environments_and_resource.png)
 
 ### Environments
 
@@ -98,7 +98,7 @@ refer to the following:
   in session launching. In this feature, ユーザーs can add any envs such as `PATH` by filling out
   variable name and value in environment configuration dialog.
 
-  ![](images/launch_session_environments.png)
+  ![](../images/launch_session_environments.png)
 
 ### Resource allocation
 
@@ -116,7 +116,7 @@ refer to the following:
   define frequently used resource settings in advance. By adjusting the numerical
   input or sliding the slider, ユーザーs can allocate the desired amount of resources.
 
-  ![](images/launch_session_resource.png)
+  ![](../images/launch_session_resource.png)
 
   The meaning of each item is as follows.
   Clicking the 'Help (?)' button will also give more information.
@@ -142,7 +142,7 @@ refer to the following:
     are created. If there are not enough resources available, requests to create
     sessions that cannot be created are put on the waiting queue.
 
-  ![](images/launce_session_resource_2.png)
+  ![](../images/launce_session_resource_2.png)
 
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.
@@ -164,7 +164,7 @@ refer to the following:
   resulting in an abnormally large number of threads and significant performance degradation.
   To resolve this issue, setting the number of threads to 1 or 2 would work.
 
-![](images/session_hpc_optimization.png)
+![](../images/session_hpc_optimization.png)
 
 ### データとストレージ
 
@@ -177,19 +177,19 @@ Data in those folders can also be reused by mounting it when creating another co
 For further information on how to mount a folder and run a compute session, refer to
 [Mounting Folders to a Compute Session<session-mounts>](#Mounting Folders to a Compute Session<session-mounts>).
 
-![](images/launch_session_data.png)
+![](../images/launch_session_data.png)
 
 ユーザーs can specify the data folders to mount in the compute session.
 Folder explorer can be used by clicking folder name. For further information,
 please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 New folder can be created by clicking the '+' button next to the search box.
 When new folder is created, it will automatically be selected as the folder to mount.
 For further information, please refer [Create Storage Folder<create_storage_folder>](#Create Storage Folder<create_storage_folder>) section.
 
-![](images/folder_create_modal.png)
+![](../images/folder_create_modal.png)
 
 ### Network
 
@@ -202,7 +202,7 @@ On this page, Network configuration can be done such as Preopen Ports.
   <set_preopen_ports>) for further information.
 
 
-![](images/launch_session_network.png)
+![](../images/launch_session_network.png)
 
 ### Confirm and Launch
 
@@ -216,31 +216,31 @@ environment variables set on the previous pages, preopen ports, etc.,
 Review the settings, ユーザーs could launch the session by clicking 'Launch' button.
 Click the 'Edit' button located at the top right of each card to redirect to relevant page.
 
-![](images/launch_session_confirm.png)
+![](../images/launch_session_confirm.png)
 
 If there is an issue with the settings, an error message will be displayed as follows.
 Users can edit their settings when this happens.
 
-![](images/launch_session_error_card.png)
+![](../images/launch_session_error_card.png)
 
 When you click the 'Launch' button, a warning dialog appears stating that there are no mounted folders.
 If folder mounting is not required, you can ignore the warning and click the 'Start' button in the dialog to proceed.
 
-![](images/no_folder_notification_dialog.png)
+![](../images/no_folder_notification_dialog.png)
 
 When a new compute session is added in the **Running** tab, a notification appears at the bottom-right corner of the screen.
 The bottom-left area of the notification displays the session status, while the bottom-right area includes buttons for opening the app dialog,
 launching the terminal, viewing container logs, and terminating the session.
 You can also view this session creation notification by clicking **Notifications** in the header.
 
-![](images/session_created.png)
+![](../images/session_created.png)
 
 
-![](images/session_notification.png)
+![](../images/session_notification.png)
 
 By clicking the app dialog button on the far left, you can view the available app services.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 
 ### Recent History
@@ -249,9 +249,9 @@ By clicking the app dialog button on the far left, you can view the available ap
 'Session Launcher' page provides a set of options for creating sessions. As of 24.09,
 `Recent History` feature has been added to remember information about previously created sessions.
 
-![](images/recent_history.png)
+![](../images/recent_history.png)
 
-![](images/recent_history_modal.png)
+![](../images/recent_history_modal.png)
 
 The `Recent History` modal stores information about the five most recently created sessions.
 Clicking a session name takes you to the 'Confirm and Launch' page, which is the final step of session creation.
@@ -276,7 +276,7 @@ elapsed time, agent, cluster mode, resource usage including network I/O, and ker
 
 Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of that kernel directly.
 
-![](images/session_detail.png)
+![](../images/session_detail.png)
 
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
 Click the 'Info' button to check the details when available.
@@ -288,7 +288,7 @@ Let’s look at how to use and manage an already running compute session.
 Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
 the app services available for that session.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 
    There are two check options under the app icons. Opening the app with each item checked
@@ -312,7 +312,7 @@ the app services available for that session.
 
 Let's click on Jupyter Notebook.
 
-![](images/jupyter_app.png)
+![](../images/jupyter_app.png)
 
 Pop up windows will show that Jupyter Notebook is running. This
 notebook was created inside a running compute session and can be used easily
@@ -328,20 +328,20 @@ the container.
 Click the 'NEW' button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where ユーザーs can enter their own code.
 
-![](images/backendai_notebook_menu.png)
+![](../images/backendai_notebook_menu.png)
 
 In this window, ユーザーs can enter and execute any code that they want by using the
 environment that session provides. The code is executed on one of the
 Backend.AI nodes where the compute session is actually created and there is no
 need to configure a separate environment on the local machine.
 
-![](images/notebook_code_execution.png)
+![](../images/notebook_code_execution.png)
 
 When window is closed, `Untitled.ipynb` file can be founded in the notebook file explorer.
 Note that the files created here are deleted when session is terminated. The way to preserve those files even
 after the session is terminated is described in the データとストレージ フォルダー section.
 
-![](images/untitled_ipynb_created.png)
+![](../images/untitled_ipynb_created.png)
 
 
 ## Use web terminal
@@ -353,7 +353,7 @@ If familiar with the commands, ユーザーs can easily run various Linux comman
 can be found in Jupyter Notebook, which is listed with the `ls` command. This shows that both apps
 are running in the same container environment.
 
-![](images/session_terminal.png)
+![](../images/session_terminal.png)
 
 Files created here can also be immediately seen in the Jupyter Notebook as well. Conversely, changes made to files in Jupyter
 Notebook can also be checked right from the terminal. This is because they are using the same files in the same compute session.
@@ -367,7 +367,7 @@ Lab, etc., depending on the type of environments provided by the compute session
 Users can view the log of the compute session by clicking the last icon in the
 Control panel of the running compute session.
 
-![](images/session_log.png)
+![](../images/session_log.png)
 
 ## Rename running session
 
@@ -375,7 +375,7 @@ Name of the active session can be changed. Click the 'Edit' button in the sessio
 panel to change the session name.
 New session name should also follow the [the authoring rule<session-naming-rule>](#the authoring rule<session-naming-rule>).
 
-![](images/session_renaming.png)
+![](../images/session_renaming.png)
 
 
 ## Delete a compute session
@@ -386,7 +386,7 @@ session is deleted as soon as the compute session ends, it is recommended to
 move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
 
-![](images/session_destroy_dialog.png)
+![](../images/session_destroy_dialog.png)
 
 ## Idleness checks
 
@@ -396,7 +396,7 @@ Checker.
 
 The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
 
-![](images/idle_checks_column.png)
+![](../images/idle_checks_column.png)
 
 The meaning of idle checkers are as follows, and more detailed explanations can be
 found by clicking the information (i) button in the idle checks section.
@@ -452,7 +452,7 @@ variable name and value in environment configuration dialog.
 To add environment variable, simply click '+ Add environment variables' button of the Variable.
 Also, you can remove the variable by clicking '-' button of the row that you want to get rid of.
 
-![](images/launch_session_env.png)
+![](../images/launch_session_env.png)
 
 You can write down variable name and value in the same line of the input fields.
 
@@ -464,7 +464,7 @@ separate images when you want to expose the serving port.
 
 To add preopen ports, simply enter multiple values separated by either a comma (,) or a space.
 
-![](images/preopen-ports-config.png)
+![](../images/preopen-ports-config.png)
 
 In the forth page of session creation page, ユーザーs can add, update and delete written preopen ports. To see more detail
 information, please click 'Help (?)'' button.
@@ -472,7 +472,7 @@ information, please click 'Help (?)'' button.
 Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press 'Enter'. Users can specify multiple ports, separated by commas (,).
 Users can check the configured preopen ports in the session app launcher.
 
-![](images/session_app_launcher.png)
+![](../images/session_app_launcher.png)
 
 
    The preopen ports are **the internal ports within the container**. Therefore, unlike other apps, when ユーザーs click the
@@ -489,7 +489,7 @@ to open a dialog displaying the session information. After entering the session 
 a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),
 or underscores (`_`).
 
-![](images/push_session_to_customized_image.png)
+![](../images/push_session_to_customized_image.png)
 
 After filling out session name in the input field, click the 'PUSH SESSION TO CUSTOMIZED IMAGE' button.
 The customized image created in this way can be used in future session creations. However, directories
@@ -513,11 +513,11 @@ Converting an ongoing session into an image allows ユーザーs to select this 
 when creating a new session. This image is not exposed to other ユーザーs and is useful for continuing to use the current session
 state as is. The converted image is tagged with `Customized<session name>`.
 
-![](images/select_customized_image.png)
+![](../images/select_customized_image.png)
 
 To manually enter the environment name for future session creation, please click the copy icon.
 
-![](images/copy_customized_image.png)
+![](../images/copy_customized_image.png)
 
 
 ## Advanced web terminal usage
@@ -588,7 +588,7 @@ starting with `1:` is the one just created. Users can move between shells
 using the up/down keys. Place the cursor on the shell `0:` and press the Enter
 key to select it.
 
-![](images/tmux_multi_session_pane.png)
+![](../images/tmux_multi_session_pane.png)
 
 In this way, ユーザーs can use multiple shell environments within a web terminal. To exit or terminate the
 current shell, just enter `exit` command or press `Ctrl-B x` key and then

@@ -1,17 +1,17 @@
-import useControllableState_deprecated from '../hooks/useControllableState';
-import { InputNumber, type InputNumberProps } from 'antd';
-import { useUpdatableState } from 'backend.ai-ui';
+import useControllableState_deprecated from '../../../../react/src/hooks/useControllableState';
+import { useUpdatableState } from '../hooks';
+import { InputNumber, InputNumberProps } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
-export interface DynamicInputNumberProps
+export interface BAIDynamicStepInputNumberProps
   extends Omit<InputNumberProps, 'step' | 'value' | 'onChange'> {
   dynamicSteps?: number[];
   value: number;
   onChange: (value: number) => void;
 }
 
-const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
+const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
   // dynamicSteps = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024],
   dynamicSteps = [
     0, 0.0625, 0.125, 0.25, 0.5, 0.75, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
@@ -79,4 +79,4 @@ const DynamicInputNumber: React.FC<DynamicInputNumberProps> = ({
   );
 };
 
-export default DynamicInputNumber;
+export default BAIDynamicStepInputNumber;

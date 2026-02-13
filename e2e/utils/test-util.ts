@@ -288,7 +288,7 @@ async function removeSearchButton(page: Page, folderName: string) {
     if (await filterChip.isVisible({ timeout: 1000 })) {
       await filterChip.click();
     }
-  } catch (error) {
+  } catch {
     // Silently ignore if filter chip doesn't exist
     // This prevents cascading failures when the filter was already removed
   }
@@ -314,7 +314,7 @@ async function clearAllFilters(page: Page) {
         await expect(filterChips).toHaveCount(count - i - 1);
       }
     }
-  } catch (error) {
+  } catch {
     // Silently ignore if no filters exist
   }
 }

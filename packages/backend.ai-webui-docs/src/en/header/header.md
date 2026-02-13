@@ -3,7 +3,7 @@
 
 The top bar includes various features that support use of the WebUI.
 
-![](images/header.png)
+![](../images/header.png)
 
 ## Project selector
 
@@ -21,7 +21,7 @@ When background tasks are running, such as creating a compute session,
 you can check the jobs here. When the background task is finished.
 Press the shortcut key (`]`) to open and close the notification area.
 
-![](images/notification_collapse.png)
+![](../images/notification_collapse.png)
 
 ## Theme mode
 
@@ -29,7 +29,7 @@ Press the shortcut key (`]`) to open and close the notification area.
 You can change the theme mode of the WebUI via the dark mode button on the
 right side of the header.
 
-![](images/theme_mode.png)
+![](../images/theme_mode.png)
 
 ## Help
 
@@ -43,7 +43,7 @@ You will be directed to the appropriate documentation based on the page you are 
 Click the person button on the right side of the top bar to see the user menu.
 Each menu item has the following functions.
 
-![](images/user_drop_down.png)
+![](../images/user_drop_down.png)
 
 - About Backend.AI: Displays information such as version of Backend.AI WebUI,
   license type, etc.
@@ -58,7 +58,7 @@ Each menu item has the following functions.
 
 If you click My Account, the following dialog appears.
 
-![](images/my_account_information.png)
+![](../images/my_account_information.png)
 
 Each item has the following meaning. Enter the desired value and click the UPDATE button to update the user
 information.
@@ -78,7 +78,7 @@ information.
 ### 2FA Setup
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
-![](images/2fa_setup.png)
+![](../images/2fa_setup.png)
 
 Turn on the 2FA application you use and scan the QR code or manually enter the verification
 code. There are many 2FA-enabled applications, such as Google Authenticator, 2STP, 1Password,
@@ -90,11 +90,11 @@ Then enter the 6-digit code from the item added to your 2FA application into the
 When you log in later, if you enter an email and password, an additional field appears asking
 for the OTP code.
 
-![](images/ask_otp_when_login.png)
+![](../images/ask_otp_when_login.png)
 
 To log in, you must open the 2FA application and enter a 6-digit code in the One-time password field.
 
-![](images/remove_2fa.png)
+![](../images/remove_2fa.png)
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.

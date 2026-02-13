@@ -15,7 +15,7 @@ from the select period menu on the upper left. Displayed items are as follows.
 
 ここに表示されている統計は、終了したコンピュートセッションに基づいていることに注意してください。また、アカウントが作成されてから1週間以内のユーザーについては、1週間の統計が表示されない場合があります。
 
-![](images/usage_panel.png)
+![](../images/usage_panel.png)
 
 ## User session history
 
@@ -33,4 +33,4 @@ In addition, depending on the available resources, additional items such as CUDA
 
 より詳細な統計情報は、管理者専用のコントロールパネルに表示されます。
 
-![](images/user_session_history.png)
+![](../images/user_session_history.png)

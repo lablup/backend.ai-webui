@@ -3,13 +3,13 @@
 
 ผู้ใช้สามารถเข้าถึงหน้าการตั้งค่าผ่านการเลือกเมนู Preferences ที่ปรากฏหลังจากคลิกที่ไอคอนคนที่มุมขวาบน ผู้ใช้สามารถเปลี่ยนสภาพแวดล้อมที่ต้องการจากการตั้งค่าภาษา, การจัดการ SSH keypair, การแก้ไขสคริปต์กำหนดค่าผู้ใช้ และแม้กระทั่งการใช้ฟีเจอร์ Beta.
 
-![](images/preferences.png)
+![](../images/preferences.png)
 
 
 ## แท็บทั่วไป
 
 
-![](images/user_settings_page.png)
+![](../images/user_settings_page.png)
 
 There are lots of preference menu in แท็บทั่วไป. you can search it by search field on top of the section,
 or you may just filter that you changed by clicking `Display Only Changes`. If you want to rollback the changes to before,
@@ -76,7 +76,7 @@ etc.).
 
 ผู้ใช้แต่ละคนมีคีย์คู่คืนหนึ่งคู่หรือมากกว่า คุณสามารถดูคีย์คู่การเข้าถึงและคีย์ลับได้โดยคลิกที่ปุ่มการตั้งค่าด้านล่าง จำไว้ว่าคีย์คู่การเข้าถึงหลักมีเพียงหนึ่งคู่เท่านั้น
 
-![](images/my_keypair_information.png)
+![](../images/my_keypair_information.png)
 
 
 ### การจัดการคู่กุญแจ SSH
@@ -91,7 +91,7 @@ randomly generated and stored as ผู้ใช้ information. Please note tha
 key cannot be checked again unless it is saved manually immediately after
 creation.
 
-![](images/ssh_keypair_dialog.png)
+![](../images/ssh_keypair_dialog.png)
 
 
    Backend.AI ใช้คู่กุญแจ SSH ที่อิงตาม OpenSSH บน หน้าต่าง คุณสามารถแปลงสิ่งนี้เป็นกุญแจ PPK ได้
@@ -100,17 +100,17 @@ From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to pr
 flexibility such as accessing to a private ที่เก็บข้อมูล. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
 two text area which corresponds to "public" and "private" key.
 
-![](images/add_ssh_keypair_manually_dialog.png)
+![](../images/add_ssh_keypair_manually_dialog.png)
 
 please enter the keys inside, and click `SAVE` button. Now you can access to backend.ai session using your own key.
 
-![](images/ssh_keypair_dialog_after.png)
+![](../images/ssh_keypair_dialog_after.png)
 
 ### Edit Bootstrap Script
 
 หากคุณต้องการเรียกใช้งานสคริปต์ครั้งเดียวหลังจากที่เซสชันการประมวลผลของคุณเริ่มต้นขึ้น ให้เขียนเนื้อหาที่นี่
 
-![](images/edit_bootstrap_script.png)
+![](../images/edit_bootstrap_script.png)
 
 
    The compute session will be at the `PREPARING` status until the bootstrap
@@ -130,29 +130,29 @@ downloaded to a specific location.
 
 ใช้เมนูแบบเลื่อนลงที่ด้านบนเพื่อเลือกประเภทของสคริปต์ที่คุณต้องการเขียนแล้วเขียนเนื้อหา คุณสามารถบันทึกสคริปต์โดยการคลิกปุ่มบันทึก (SAVE) หรือบันทึกและปิด (SAVE AND CLOSE) คลิกปุ่มลบ (DELETE) เพื่อลบสคริปต์
 
-![](images/edit_user_config_script.png)
+![](../images/edit_user_config_script.png)
 
 ### Switch back to the Classic UI
 
 If you want to switch back to the classic Backend.AI interface, enable the following options.
 
-![](images/switch_classic_ui.png)
+![](../images/switch_classic_ui.png)
 
 ### Experimental คุณสมบัติs
 
 You can enable or disable experimental features before they are officially released.
 
-![](images/experimental_features.png)
+![](../images/experimental_features.png)
 
 ## แท็บ LOGS
 
 แสดงข้อมูลรายละเอียดของบันทึกต่างๆ ที่บันทึกไว้ในด้านของลูกค้า คุณสามารถไปที่หน้านี้เพื่อหาข้อมูลเพิ่มเติมเกี่ยวกับข้อผิดพลาดที่เกิดขึ้น คุณสามารถค้นหา กรองบันทึกข้อผิดพลาด อัปเดตและล้างบันทึกโดยการคลิกที่ปุ่มล้างบันทึกที่มุมขวาบน
 
-![](images/user_log.png)
+![](../images/user_log.png)
 
 
    หากคุณล็อกอินอยู่เพียงหน้าหนึ่ง การคลิกที่ปุ่ม REFRESH อาจไม่แสดงผลอย่างถูกต้อง หน้าบันทึกเป็นการรวมคำขอไปยังเซิร์ฟเวอร์และการตอบสนองจากเซิร์ฟเวอร์ หากหน้าปัจจุบันคือหน้าบันทึก มันจะไม่ส่งคำขอใด ๆ ไปยังเซิร์ฟเวอร์นอกเหนือจากการรีเฟรชหน้าตามที่ระบุ หากต้องการตรวจสอบว่าบันทึกกำลังถูกจัดเรียงอย่างถูกต้อง กรุณาเปิดหน้าอื่นและคลิกปุ่ม REFRESH
 
 หากคุณต้องการซ่อนหรือแสดงคอลัมน์บางอย่าง ให้คลิกที่ไอคอนเฟืองที่มุมขวาล่างของตาราง จากนั้นคุณจะสามารถเห็นกล่องโต้ตอบด้านล่างเพื่อเลือกคอลัมน์ที่คุณต้องการเห็น
 
-![](images/logs_table_setting.png)
+![](../images/logs_table_setting.png)

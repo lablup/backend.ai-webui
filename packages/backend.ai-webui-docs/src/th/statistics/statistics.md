@@ -15,7 +15,7 @@ from the select period menu on the upper left. Displayed items are as follows.
 
 โปรดทราบว่าสถิติที่แสดงที่นี่มีพื้นฐานมาจากเซสชันการคอมพิวเตอร์ที่สิ้นสุดแล้ว นอกจากนี้ สถิติหนึ่งสัปดาห์อาจไม่แสดงสำหรับผู้ใช้ที่บัญชีของพวกเขาถูกสร้างขึ้นไม่เกินหนึ่งสัปดาห์
 
-![](images/usage_panel.png)
+![](../images/usage_panel.png)
 
 ## User session history
 
@@ -33,4 +33,4 @@ In addition, depending on the available resources, additional items such as CUDA
 
 ข้อมูลสถิติที่ละเอียดกว่านั้นจะแสดงในแผงควบคุมที่เฉพาะสำหรับผู้ดูแลระบบเท่านั้น
 
-![](images/user_session_history.png)
+![](../images/user_session_history.png)

@@ -11,7 +11,7 @@ such as the folder name and ID, the NFS host name where the folder is located
 (Location), and folder access rights (Permission).
 
 
-![](images/data_page.png)
+![](../images/data_page.png)
 
 ストレージフォルダには、`ユーザー`と`プロジェクト`の2つのタイプがあります。「種類」列で区別できます。
 
@@ -19,7 +19,7 @@ such as the folder name and ID, the NFS host name where the folder is located
 プロジェクトフォルダは、ドメイン管理者が各プロジェクトに対して作成したフォルダです。
 一般ユーザーは自分でプロジェクトフォルダを作成できません。管理者が作成したプロジェクトフォルダのみ使用できます。
 
-![](images/vfolder_status.png)
+![](../images/vfolder_status.png)
 
 The Storage Status and ストレージボリュームごとのクォータ show the following information:
 
@@ -46,7 +46,7 @@ The Storage Status and ストレージボリュームごとのクォータ show 
 To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
 the creation dialog as follows:
 
-![](images/vfolder_create_modal.png)
+![](../images/vfolder_create_modal.png)
 
 The meaning of each field in the creation dialog is as follows.
 
@@ -73,11 +73,11 @@ directory will not be deleted when the compute session is terminated.
 
 Click the folder name to open a file explorer and view the contents of the folder.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 フォルダ内にディレクトリやファイルが存在する場合、それらが一覧表示されます。Name列でディレクトリ名をクリックすると、そのディレクトリに移動します。Actions列のダウンロードボタンまたは削除ボタンをクリックして、ダウンロードしたり、ディレクトリから完全に削除したりすることができます。また、ファイル/ディレクトリの名前を変更することも可能です。より詳細なファイル操作については、コンピュートセッションを作成する際にこのフォルダをマウントし、TerminalやJupyter Notebookなどのサービスを使用して行うことができます。
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 現在のパスに新しいディレクトリを作成するには、「作成」ボタン（フォルダーエクスプローラー内）を使用するか、ローカルファイルやフォルダーをアップロードするには「アップロード」ボタンを使用します。これらのファイル操作は、上記のフォルダーをコンピューターセッションにマウントする方法を使用して実行することもできます。
 
@@ -93,11 +93,11 @@ Click the folder name to open a file explorer and view the contents of the folde
 
 フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、テキストファイルのコントロール列にある「ファイルを編集」ボタンをクリックします。
 
-![](images/folder_explorer_edit_button.png)
+![](../images/folder_explorer_edit_button.png)
 
 テキストファイルエディタがコードエディタインターフェースとともにモーダルで開きます。エディタはファイル拡張子に基づいてファイルタイプを自動検出し、適切な構文ハイライトを適用します(例: Python、JavaScript、Markdown)。モーダルのタイトルにはファイル名とサイズが表示されます。
 
-![](images/text_file_editor_modal.png)
+![](../images/text_file_editor_modal.png)
 
 エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
 
@@ -108,7 +108,7 @@ Click the folder name to open a file explorer and view the contents of the folde
 
 ストレージフォルダの名前を変更する権限がある場合、編集ボタンをクリックして名前を変更できます。
 
-![](images/rename_vfolder.png)
+![](../images/rename_vfolder.png)
 
 
 ## フォルダーを削除
@@ -116,15 +116,15 @@ Click the folder name to open a file explorer and view the contents of the folde
 
 ストレージフォルダを削除する権限がある場合、「ゴミ箱」ボタンをクリックしてフォルダを「ゴミ箱」タブに移動できます。フォルダをゴミ箱タブに移動すると、削除保留状態としてマークされます。
 
-![](images/move_to_trash.png)
+![](../images/move_to_trash.png)
 
 この状態では、コントロール列の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ列の「ゴミ箱」ボタンをクリックしてください。
 
-![](images/vfolder_trash_list.png)
+![](../images/vfolder_trash_list.png)
 
 確認モーダルが表示され、`削除するフォルダ名を入力してください`という入力フィールドが表示されます。削除するフォルダ名を正確に入力し、赤い「完全に削除」ボタンをクリックしてフォルダを完全に削除します。
 
-![](images/vfolder_delete_dialog.png)
+![](../images/vfolder_delete_dialog.png)
 
 ## ファイルブラウザの使用
 
@@ -151,24 +151,24 @@ the ユーザー's local machine.
 Go to the Data page and open the file explorer dialog of target
 data folder. Click the folder name to open the file explorer.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたデータフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。
 
-![](images/filebrowser_with_new_window.png)
+![](../images/filebrowser_with_new_window.png)
 
 ユーザーが 'EXECUTE FILEBROWSER' ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
 
-![](images/filebrowser_in_session_page.png)
+![](../images/filebrowser_in_session_page.png)
 
 
    誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。
 
-   ![](images/app_dialog_with_filebrowser.png)
+   ![](../images/app_dialog_with_filebrowser.png)
 
    |
    | データフォルダーエクスプローラーで 'EXECUTE FILEBROWSER' ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
@@ -195,7 +195,7 @@ FileBrowserは、ツリー構造を維持したまま、1つ以上のローカ�
 
    読み取り専用フォルダーにファイルをアップロードしようとすると、FileBrowser がサーバーエラーを発生させます。
 
-![](images/filebrowser_upload.png)
+![](../images/filebrowser_upload.png)
 
 次の構造を持つディレクトリをアップロードしましょう。
 
@@ -208,7 +208,7 @@ foo
 After selecting `foo` directory, you can see the directory just uploaded
 successfully.
 
-![](images/filebrowser_upload_finished.png)
+![](../images/filebrowser_upload_finished.png)
 
 You can also upload local files and directories by drag and drop.
 
@@ -219,21 +219,21 @@ You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
 
-![](images/select_folders.png)
+![](../images/select_folders.png)
 
 2. Click the 'arrow' button in the upper right corner of FileBrowser
 
-![](images/click_arrow_icon.png)
+![](../images/click_arrow_icon.png)
 
 3. Select the destination
 
-![](images/select_the_destination.png)
+![](../images/select_the_destination.png)
 
 4. Click 'MOVE' button
 
 You will see that moving operation is successfully finished.
 
-![](images/moving_operation_in_filebrowser_finished.png)
+![](../images/moving_operation_in_filebrowser_finished.png)
 
 
    FileBrowser is provided via application inside a compute session currently.
@@ -258,12 +258,12 @@ Click the folder button or the folder name to open the file explorer.
 
 Click 'Run SFTP server' button in the upper-right corner of the explorer.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
 automatically. (This session will not affect resource occupancy.)
 
-![](images/SSH_SFTP_connection.png)
+![](../images/SSH_SFTP_connection.png)
 
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
@@ -303,7 +303,7 @@ with different kinds of compute session.
 For more detailed information on the usage of 自動マウントフォルダー, refer to
 [examples of using automount folders<using-automount-folder>](#examples of using automount folders<using-automount-folder>).
 
-![](images/vfolder_automount_folders.png)
+![](../images/vfolder_automount_folders.png)
 
 ## モデル一覧
 
@@ -312,4 +312,4 @@ For more detailed information on the usage of 自動マウントフォルダー,
 The モデル一覧 tab facilitates straightforward model serving.
 You can store the necessary data, including input data for [model serving <model-serving>](#model serving <model-serving>) and training data, in the model folder.
 
-![](images/models.png)
+![](../images/models.png)

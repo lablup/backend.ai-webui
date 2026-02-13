@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 /**
  * Extended Error with GraphQL error information
  */
-interface ErrorWithGraphQL extends Error {
+export interface ErrorWithGraphQL extends Error {
   source?: {
     errors?: ReadonlyArray<GraphQLFormattedError>;
     variables?: any;

@@ -5,7 +5,7 @@ This feature is deprecated, so please use the [dashboard<dashboard>](#dashboard<
 
 On the Summary page, users can check resource status and session usage.
 
-![](images/summary.png)
+![](../images/summary.png)
 
 ### Resource Statistics
 

@@ -3,7 +3,7 @@
 
 The tob bar includes various features that support use of the WebUI.
 
-![](images/header.png)
+![](../images/header.png)
 
 ## Project selector
 
@@ -21,7 +21,7 @@ When background tasks are running, such as creating a compute session,
 you can check the jobs here. When the background task is finished.
 Press the shortcut key (`]`) to open and close the notification area.
 
-![](images/notification_collapse.png)
+![](../images/notification_collapse.png)
 
 ## Theme mode
 
@@ -29,7 +29,7 @@ Press the shortcut key (`]`) to open and close the notification area.
 You can change the theme mode of the WebUI via the dark mode button on the
 right side of the header.
 
-![](images/theme_mode.png)
+![](../images/theme_mode.png)
 
 ## Help
 
@@ -43,7 +43,7 @@ You will be directed to the appropriate documentation based on the page you are 
 Click the person button on the right side of the top bar to see the ผู้ใช้ menu.
 Each menu item has the following functions.
 
-![](images/user_drop_down.png)
+![](../images/user_drop_down.png)
 
 - About Backend.AI: Displays information such as version of Backend.AI WebUI,
   license type, etc.
@@ -57,7 +57,7 @@ Each menu item has the following functions.
 
 ถ้าคุณคลิกที่ บัญชีของฉัน จะมีหน้าต่างถูกเปิดขึ้นดังนี้
 
-![](images/my_account_information.png)
+![](../images/my_account_information.png)
 
 แต่ละรายการมีความหมายดังต่อไปนี้ ป้อนค่าที่ต้องการและคลิกปุ่ม UPDATE เพื่ออัปเดตข้อมูลผู้ใช้。
 
@@ -76,7 +76,7 @@ Each menu item has the following functions.
 ### การตั้งค่า 2FA
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
-![](images/2fa_setup.png)
+![](../images/2fa_setup.png)
 
 เปิดแอปพลิเคชัน 2FA ที่คุณใช้และสแกนรหัส QR หรือป้อนรหัสยืนยันด้วยตนเอง มีแอปพลิเคชันที่รองรับ 2FA หลายตัว เช่น Google Authenticator, 2STP, 1Password และ Bitwarden
 
@@ -84,11 +84,11 @@ If you activate the `2FA Enabled` switch, the following dialog appears.
 
 เมื่อคุณเข้าสู่ระบบในภายหลัง หากคุณใส่อีเมลและรหัสผ่าน จะมีฟิลด์เพิ่มเติมปรากฏขึ้นเพื่อขอรหัส OTP
 
-![](images/ask_otp_when_login.png)
+![](../images/ask_otp_when_login.png)
 
 ในการเข้าสู่ระบบ คุณต้องเปิดแอปพลิเคชัน 2FA และป้อนรหัส 6 หลักในช่องรหัสผ่านใช้ครั้งเดียว
 
-![](images/remove_2fa.png)
+![](../images/remove_2fa.png)
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.

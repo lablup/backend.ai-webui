@@ -92,6 +92,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     cluster_mode: 'single-node',
     cluster_size: 1,
     mount_ids: [toLocalId(vfolder.id || '').replaceAll('-', '')],
+    reuseIfExists: true,
   });
 
   return (
