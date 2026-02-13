@@ -33,7 +33,7 @@ Backend.AI WebUI는 데스크톱 애플리케이션을 지원합니다.
 - Mac
 
 
-:::info
+:::note
 사용자의 로컬 환경(운영체제, 아키텍처 등)에 맞는 버튼을 클릭하면, 현재 WebUI 버전과 동일한 버전의 데스크톱 앱이 자동으로 다운로드됩니다.
 이전 또는 이후 버전의 WebUI 데스크톱 앱을 다운로드하려면, [여기](https://github.com/lablup/backend.ai-webui/releases?page=1)를 방문하여 원하는 버전을 다운로드하십시오.
 :::
