@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm list *)",
+      "Bash(pnpm why *)",
+      "Bash(pnpm run lint *)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run format *)",
+      "Bash(pnpm run format)",
+      "Bash(pnpm run test *)",
+      "Bash(pnpm run test)",
+      "Bash(pnpm run relay)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view *)",
+      "Bash(gh api *)",
+      "Bash(git log *)",
+      "Bash(git log)",
+      "Bash(git status *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git diff)",
+      "Bash(ls *)",
+      "Bash(ls)",
+      "mcp__playwright-test__test_run",
+      "mcp__playwright-test__test_list"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "Atlassian",
+    "playwright-test",
+    "graphite"
+  ]
+}
