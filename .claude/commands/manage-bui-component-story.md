@@ -1,6 +1,6 @@
 ---
 description: Create or Update BUI Component Story (project)
-model: claude-sonnet-4-5
+model: sonnet
 ---
 
 # Create or Update BUI Component Story
