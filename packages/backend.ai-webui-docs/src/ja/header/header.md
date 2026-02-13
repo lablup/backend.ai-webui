@@ -3,7 +3,7 @@
 
 The tob bar includes various features that support use of the WebUI.
 
-![](images/header.png)
+![](../images/header.png)
 
 ## Project selector
 
@@ -18,7 +18,7 @@ Since each project may have different resource policies, switching projects may 
 ベル型のボタンは、イベント通知ボタンです。WebUIの操作中に記録する必要があるイベントがここに表示されます。コンピュートセッションの作成など、バックグラウンドタスクが実行されている場合、ここでジョブを確認できます。バックグラウンドタスクが終了したとき。
 Press the shortcut key (`]`) to open and close the notification area.
 
-![](images/notification_collapse.png)
+![](../images/notification_collapse.png)
 
 ## Theme mode
 
@@ -26,7 +26,7 @@ Press the shortcut key (`]`) to open and close the notification area.
 You can change the theme mode of the WebUI via the dark mode button on the
 right side of the header.
 
-![](images/theme_mode.png)
+![](../images/theme_mode.png)
 
 ## Help
 
@@ -40,7 +40,7 @@ You will be directed to the appropriate documentation based on the page you are 
 Click the person button on the right side of the top bar to see the ユーザー menu.
 Each menu item has the following functions.
 
-![](images/user_drop_down.png)
+![](../images/user_drop_down.png)
 
 - Backend.AIについて: Backend.AI WebUIのバージョン、ライセンスの種類などの情報を表示します。
 - My Account: Check / Update information of current login ユーザー.
@@ -53,7 +53,7 @@ Each menu item has the following functions.
 
 My Accountをクリックすると、次のダイアログが表示されます。
 
-![](images/my_account_information.png)
+![](../images/my_account_information.png)
 
 各項目には以下の意味があります。 希望する値を入力し、UPDATEボタンをクリックしてユーザー情報を更新します。
 
@@ -72,7 +72,7 @@ My Accountをクリックすると、次のダイアログが表示されます�
 ### 2FA 設定
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
-![](images/2fa_setup.png)
+![](../images/2fa_setup.png)
 
 使用している2FAアプリケーションを起動し、QRコードをスキャンするか、手動で検証コードを入力します。2FA対応のアプリケーションには、Google Authenticator、2STP、1Password、Bitwardenなどがあります。
 
@@ -80,11 +80,11 @@ If you activate the `2FA Enabled` switch, the following dialog appears.
 
 後でログインする際に、メールアドレスとパスワードを入力すると、OTPコードを求める追加フィールドが表示されます。
 
-![](images/ask_otp_when_login.png)
+![](../images/ask_otp_when_login.png)
 
 ログインするには、2FAアプリケーションを開き、ワンタイムパスワードフィールドに6桁のコードを入力する必要があります。
 
-![](images/remove_2fa.png)
+![](../images/remove_2fa.png)
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.

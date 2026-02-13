@@ -13,7 +13,7 @@
 
 여기에 나타나는 통계는 종료된 연산 세션을 기준으로 합니다. 또한, 가입 일주일 미만의 사용자에게는 주간 통계 조회 메뉴가 출력되지 않을 수 있습니다.
 
-![](images/usage_panel.png)
+![](../images/usage_panel.png)
 
 ## 사용자 세션 기록
 
@@ -30,4 +30,4 @@
 
 보다 자세한 통계 기능은 관리자 전용 Control-Panel에서 제공합니다.
 
-![](images/user_session_history.png)
+![](../images/user_session_history.png)

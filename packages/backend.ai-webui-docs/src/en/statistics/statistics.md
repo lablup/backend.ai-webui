@@ -18,7 +18,7 @@ Note that the statistics shown here are based on terminated compute sessions.
 Also, one week statistics may not be shown for the users whose account is created no
 longer than a week.
 
-![](images/usage_panel.png)
+![](../images/usage_panel.png)
 
 ## User session history
 
@@ -36,4 +36,4 @@ In addition, depending on the available resources, additional items such as CUDA
 
 More detailed statistics are shown in the admin-only Control-Panel.
 
-![](images/user_session_history.png)
+![](../images/user_session_history.png)

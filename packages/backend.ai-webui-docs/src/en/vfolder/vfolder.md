@@ -11,7 +11,7 @@ such as the folder name and ID, the NFS host name where the folder is located
 (Location), and folder access rights (Permission).
 
 
-![](images/data_page.png)
+![](../images/data_page.png)
 
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
@@ -21,7 +21,7 @@ A Project folder is created by a domain administrator for each project.
 Regular users cannot create project folders themselves; they can only use
 project folders that have been created by an administrator.
 
-![](images/vfolder_status.png)
+![](../images/vfolder_status.png)
 
 The Storage Status and Quota per storage volume show the following information:
 
@@ -48,7 +48,7 @@ The Storage Status and Quota per storage volume show the following information:
 To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
 the creation dialog as follows:
 
-![](images/vfolder_create_modal.png)
+![](../images/vfolder_create_modal.png)
 
 The meaning of each field in the creation dialog is as follows.
 
@@ -75,7 +75,7 @@ directory will not be deleted when the compute session is terminated.
 
 Click the folder name to open a file explorer and view the contents of the folder.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 You can see that directories and files inside the folder will be listed, if
 exists. Click a directory name in the Name column to move to the directory.  You
@@ -85,7 +85,7 @@ well. For more detailed file operations, you can mount this folder when creating
 a compute session, and then use a service like Terminal or Jupyter Notebook to
 do it.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 You can create a new directory on the current path with the 'Create' button
 (in the folder explorer), or upload a local file or folder with the 'Upload' button. All
@@ -105,11 +105,11 @@ file system. But, it usually cannot exceed 255 characters.
 
 You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the 'Edit File' button in the Control column for any text file.
 
-![](images/folder_explorer_edit_button.png)
+![](../images/folder_explorer_edit_button.png)
 
 The text file editor opens in a modal with a code editor interface. The editor automatically detects the file type based on the file extension and applies appropriate syntax highlighting (e.g., Python, JavaScript, Markdown). The modal title displays the file name and size.
 
-![](images/text_file_editor_modal.png)
+![](../images/text_file_editor_modal.png)
 
 The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click 'Save' to upload the modified file, or 'Cancel' to discard changes.
 
@@ -121,7 +121,7 @@ The editor supports both light and dark themes matching your UI preferences. You
 If you have permission to rename the storage folder, you can rename it by
 clicking the edit button.
 
-![](images/rename_vfolder.png)
+![](../images/rename_vfolder.png)
 
 
 ## Delete folder
@@ -130,18 +130,18 @@ clicking the edit button.
 If you have permission to delete the storage folder, you can send the folder to the 'Trash'
 tab by clicking the 'trash bin' button. When you move a folder to the Trash tab, it is marked as delete-pending.
 
-![](images/move_to_trash.png)
+![](../images/move_to_trash.png)
 
 In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
 please click 'trash bin' button in the same column.
 
-![](images/vfolder_trash_list.png)
+![](../images/vfolder_trash_list.png)
 
 A confirmation modal will pop up with
 an input field saying `Type folder name to delete`. Make sure you type the exact folder name correctly
 into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
 
-![](images/vfolder_delete_dialog.png)
+![](../images/vfolder_delete_dialog.png)
 
 ## Using FileBrowser
 
@@ -169,32 +169,32 @@ You can access FileBrowser in two ways.
 Go to the Data page and open the file explorer dialog of target
 data folder. Click the folder name to open the file explorer.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 You can see the FileBrowser is opened in a new window. You can also see that the
 data folder you opened the explorer dialog becomes the root directory. From the
 FileBrowser window, you can freely upload, modify, and delete any directories
 and files.
 
-![](images/filebrowser_with_new_window.png)
+![](../images/filebrowser_with_new_window.png)
 
 When user clicks 'EXECUTE FILEBROWSER' button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user's responsibility to delete this compute
 session.
 
-![](images/filebrowser_in_session_page.png)
+![](../images/filebrowser_in_session_page.png)
 
 
    If you accidentally close the FileBrowser window and want to reopen it, just
    go to Sessions page and click the FileBrowser application button of the
    FileBrowser compute session.
 
-   ![](images/app_dialog_with_filebrowser.png)
+   ![](../images/app_dialog_with_filebrowser.png)
 
    |
    | When you click 'EXECUTE FILEBROWSER' button again in the data folder
@@ -230,7 +230,7 @@ and you can select any directory you want to upload.
    If you try to upload a file to a read-only folder, FileBrowser will raise a
    server error.
 
-![](images/filebrowser_upload.png)
+![](../images/filebrowser_upload.png)
 
 Let's upload a directory with the following structure.
 
@@ -243,7 +243,7 @@ foo
 After selecting `foo` directory, you can see the directory just uploaded
 successfully.
 
-![](images/filebrowser_upload_finished.png)
+![](../images/filebrowser_upload_finished.png)
 
 You can also upload local files and directories by drag and drop.
 
@@ -254,21 +254,21 @@ You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
 
-![](images/select_folders.png)
+![](../images/select_folders.png)
 
 2. Click the 'arrow' button in the upper right corner of FileBrowser
 
-![](images/click_arrow_icon.png)
+![](../images/click_arrow_icon.png)
 
 3. Select the destination
 
-![](images/select_the_destination.png)
+![](../images/select_the_destination.png)
 
 4. Click 'MOVE' button
 
 You will see that moving operation is successfully finished.
 
-![](images/moving_operation_in_filebrowser_finished.png)
+![](../images/moving_operation_in_filebrowser_finished.png)
 
 
    FileBrowser is provided via application inside a compute session currently.
@@ -293,12 +293,12 @@ Click the folder button or the folder name to open the file explorer.
 
 Click 'Run SFTP server' button in the upper-right corner of the explorer.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
 automatically. (This session will not affect resource occupancy.)
 
-![](images/SSH_SFTP_connection.png)
+![](../images/SSH_SFTP_connection.png)
 
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
@@ -338,7 +338,7 @@ with different kinds of compute session.
 For more detailed information on the usage of Automount folders, refer to
 [examples of using automount folders<using-automount-folder>](#examples of using automount folders<using-automount-folder>).
 
-![](images/vfolder_automount_folders.png)
+![](../images/vfolder_automount_folders.png)
 
 ## Models
 
@@ -347,4 +347,4 @@ For more detailed information on the usage of Automount folders, refer to
 The Models tab facilitates straightforward model serving.
 You can store the necessary data, including input data for [model serving <model-serving>](#model serving <model-serving>) and training data, in the model folder.
 
-![](images/models.png)
+![](../images/models.png)

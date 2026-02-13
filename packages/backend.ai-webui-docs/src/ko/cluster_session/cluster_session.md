@@ -11,7 +11,7 @@ Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 �
 
 Backend.AI 클러스터 세션의 상세 특징은 다음을 참고하십시오.
 
-![](images/overview_cluster_session.png)
+![](../images/overview_cluster_session.png)
 
 - 클러스터 세션을 구성하는 컨테이너는 한 자원 그룹에 속한 하나 이상의 에이전트 노드에 걸쳐 생성됩니다.
 - 클러스터 세션은 하나의 메인 컨테이너(`main1`)와 하나 이상의 서브 컨테이너(`subX`)로 구성됩니다.
@@ -59,7 +59,7 @@ Backend.AI 클러스터 세션의 상세 특징은 다음을 참고하십시오.
 
 세션 (Sessions) 페이지에서 연산 세션 생성 다이얼로그를 띄운 후 일반 연산 세션을 생성하는 것과 같은 방식으로 설정합니다. 이 때 설정한 자원의 양은 **하나의 컨테이너에** 할당되는 양입니다. 예를 들어, CPU를 4개로 설정한 경우 클러스터 세션을 구성하는 각 컨테이너에 4 코어 CPU가 할당됩니다. 클러스터 연산 세션 전체에 할당되는 자원 양이 아니라는 점에 유의하십시오. 클러스터 연산 세션을 생성하기 위해서는 여기서 설정한 자원 양의 N배에 해당하는 서버 자원이 필요합니다 (N은 클러스터 크기). 데이터 보존을 위해 데이터 폴더를 마운트하는 것도 잊지 마십시오.
 
-![](images/session_launch_dialog.png)
+![](../images/session_launch_dialog.png)
 
 아래쪽에 있는 "Cluster mode" 필드에서 원하는 클러스터 생성 형태를 결정할 수 있습니다.
 
@@ -70,15 +70,15 @@ Backend.AI 클러스터 세션의 상세 특징은 다음을 참고하십시오.
 
 LAUNCH 버튼을 클릭하여 연산 세션 생성 요청을 보내고 잠시 기다리면 클러스터 세션이 생성됩니다. 세션 생성 이후에, 세션 상세 페이지에서 생성된 컨테이너를 확인할 수 있습니다.
 
-![](images/cluster_session_created.png)
+![](../images/cluster_session_created.png)
 
 방금 생성한 연산 세션에서 터미널 앱을 열어 보겠습니다. 환경 변수를 조회하면, 위 섹션에서 설명한 `BACKENDAI_CLUSTER_*` 변수들이 설정되어 있는 것을 확인할 수 있습니다. 각 환경 변수의 의미와 값을 위의 설명과 비교해 보십시오.
 
-![](images/terminal_on_main_container.png)
+![](../images/terminal_on_main_container.png)
 
 `sub1` 컨테이너로 SSH 접속을 할 수도 있습니다. 별도의 SSH 설정 없이, `ssh sub1` 명령어를 입력하기만 하면 됩니다. `work@` 뒤의 호스트 이름이 변경된 것을 확인할 수 있으며, 이는 서브 컨테이너의 셸이 표시되고 있음을 나타냅니다.
 
-![](images/terminal_on_sub1_container.png)
+![](../images/terminal_on_sub1_container.png)
 
 이런 방식으로 Backend.AI에서는 클러스터 연산 세션을 손쉽게 생성할 수 있습니다. 클러스터 연산 세션을 통해 분산 학습 및 연산을 실행하기 위해서는, TensorFlow/PyTorch 등 ML 라이브러리에서 제공하는 분산 학습용 모듈이나 Horovod, NNI, MLFlow 등과 같은 별도의 지원 소프트웨어가 필요하고, 해당 소프트웨어를 활용할 수 있는 방식으로 코드를 주의 깊게 작성해야 합니다. Backend.AI에서는 분산 학습에 필요한 소프트웨어를 포함하는 커널 이미지를 제공하고 있으므로, 해당 이미지를 사용하여 분산 학습 알고리즘을 구현해 볼 수 있습니다.
 
@@ -88,4 +88,4 @@ LAUNCH 버튼을 클릭하여 연산 세션 생성 요청을 보내고 잠시 �
 
 24.03 버전부터, 로그 모달에서 각 컨테이너의 로그를 확인할 수 있습니다. 이 기능을 통해 `main` 컨테이너뿐만 아니라 `sub` 컨테이너에서 어떤 일이 일어나고 있는지 파악하는 데 도움이 됩니다.
 
-![](images/log_modal_per_container.png)
+![](../images/log_modal_per_container.png)

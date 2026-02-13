@@ -192,6 +192,41 @@ body {
   page-break-before: always;
 }
 
+/* Book-like chapter title area — occupies ~1/3 of the top of the page before content starts */
+.chapter-title-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 200px;
+  padding: 40px 0 32px 0;
+  margin-bottom: 24px;
+  border-bottom: 1px solid ${theme.borderColor};
+  /* No page-break-after: content flows directly below the title */
+}
+
+.chapter-number {
+  font-size: 12pt;
+  font-weight: 400;
+  color: ${theme.textTertiary};
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.chapter-title-text {
+  font-size: 24pt;
+  font-weight: 700;
+  color: ${theme.textPrimary};
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.chapter-title-divider {
+  width: 60px;
+  height: 3px;
+  background: ${theme.brandColor};
+}
+
 h1 {
   font-size: ${theme.headingH1Size};
   font-weight: 700;
@@ -200,6 +235,18 @@ h1 {
   margin-bottom: 20px;
   padding-bottom: 8px;
   border-bottom: 2px solid ${theme.brandColor};
+}
+
+/* H1 already displayed on the chapter title page — hidden in content area
+   but kept in DOM for PDF named destinations */
+h1.chapter-h1-hidden {
+  font-size: 0;
+  line-height: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
 }
 
 h2 {
@@ -236,16 +283,36 @@ p {
 }
 
 /* ==========================================================================
-   Images
+   Images – figure with caption and shadow
    ========================================================================== */
+.doc-figure {
+  margin: 16px 0;
+  padding: 0;
+  page-break-inside: avoid;
+  text-align: center;
+}
+
+.doc-figure figcaption {
+  font-size: 9pt;
+  color: ${theme.textSecondary};
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.doc-image-wrap {
+  margin: 12px 0;
+  page-break-inside: avoid;
+  overflow: visible;
+  text-align: center;
+}
+
 .doc-image {
   max-width: 100%;
   height: auto;
-  display: block;
-  margin: 12px auto;
-  border: 0.5px solid ${theme.borderColor};
-  border-radius: 3px;
-  page-break-inside: avoid;
+  display: inline-block;
+  border-radius: 4px;
+  border: 0.5px solid #d0d0d0;
 }
 
 /* ==========================================================================

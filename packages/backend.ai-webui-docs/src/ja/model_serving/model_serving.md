@@ -10,7 +10,7 @@ Backend.AIは、モデル学習フェーズにおける開発環境の構築と�
 エンドユーザー（AIベースのモバイルアプリやウェブサービスバックエンドなど）は、
 完成したモデルを推論サービスとしてデプロイしたい場合に、推論APIコールを実行できます。
 
-![](images/model-serving-diagram.png)
+![](../images/model-serving-diagram.png)
 
 モデルサービスは、既存のトレーニングコンピュートセッションの機能を拡張し、自動メンテナンス、スケーリング、および本番サービスのための永続的なポートとエンドポイントアドレスのマッピングを可能にします。開発者または管理者は、モデルサービスに必要なスケーリングパラメータを指定するだけでよく、コンピュートセッションを手動で作成または削除する必要はありません。
 
@@ -235,16 +235,16 @@ internally)
 デフォルトの `general` タイプではなく `model` タイプを選択してください。
 フォルダーの作成方法については、データページの[ストレージフォルダーの作成<create_storage_folder>](#ストレージフォルダーの作成<create_storage_folder>)セクションを参照してください。
 
-![](images/model_type_folder_creation.png)
+![](../images/model_type_folder_creation.png)
 
 フォルダーを作成した後、データページの「MODELS」タブを選択し、
 最近作成したモデルタイプフォルダーアイコンをクリックしてフォルダーエクスプローラーを開き、
 モデル定義ファイルをアップロードします。
 フォルダーエクスプローラーの使用方法については、[フォルダーの探索<explore_folder>](#フォルダーの探索<explore_folder>)セクションを参照してください。
 
-![](images/model_type_folder_list.png)
+![](../images/model_type_folder_list.png)
 
-![](images/model_definition_file_upload.png)
+![](../images/model_definition_file_upload.png)
 
 #### サービス定義ファイルの作成
 
@@ -306,7 +306,7 @@ MODEL_NAME = "example-model-name"
 モデルサービングページで「サービス開始」ボタンをクリックします。これにより、
 サービスを作成するために必要な設定を入力するページが表示されます。
 
-![](images/serving_list_page.png)
+![](../images/serving_list_page.png)
 
 まず、サービス名を入力します。各項目の詳細については、以下を参照してください：
 
@@ -317,14 +317,14 @@ MODEL_NAME = "example-model-name"
    ディレクトリ内にモデル定義ファイルが含まれています。
 -  推論ランタイムバリアント: モデルのタイプを4つのカテゴリに分類します：`vLLM`、`NVIDIA NIM`、`Predefined Image Command`、`Custom`。
 
-![](images/service_launcher1.png)
+![](../images/service_launcher1.png)
 
 例えば、モデルサービスのランタイムバリアントとして `vLLM` または `NVIDIA NIM` または `Predefined Image Command` を選択した場合、
 マウントするモデルフォルダーに `model-definition` ファイルを設定する必要はありません。代わりに、追加の環境変数を設定する必要がある場合があります。
 詳細については、
 [Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving)を参照してください。
 
-![](images/service_launcher_runtime_variant.png)
+![](../images/service_launcher_runtime_variant.png)
 
 -  モデルフォルダーのモデル宛先: このオプションにより、サービスを表すルーティングに
    対応するセッションへのモデルストレージパスのエイリアスパスを設定できます。
@@ -335,7 +335,7 @@ MODEL_NAME = "example-model-name"
    追加のモデルフォルダーではなく、一般/データ使用モードのフォルダーのみをマウントできることに
    注意してください。
 
-![](images/service_launcher2.png)
+![](../images/service_launcher2.png)
 
 次に、レプリカ数を設定し、環境とリソースグループを選択します。リソースグループは、
 モデルサービスに割り当てることができるリソースのコレクションです。
@@ -348,12 +348,12 @@ MODEL_NAME = "example-model-name"
    現在、サービスに複数のルーティングがある場合でも、単一の環境でのみ実行されます。
    （複数の実行環境のサポートは将来のアップデートで追加される予定です）
 
-![](images/service_launcher3.png)
+![](../images/service_launcher3.png)
 
 -  リソースプリセット: モデルサービスから割り当てるリソースの量を選択できます。
    リソースには、CPU、RAM、およびGPUとして知られるAIアクセラレーターが含まれます。
 
-![](images/service_launcher4.png)
+![](../images/service_launcher4.png)
 
 -  シングルノード: セッションを実行する際、管理ノードとワーカーノードが
    単一の物理ノードまたは仮想マシンに配置されます。
@@ -363,7 +363,7 @@ MODEL_NAME = "example-model-name"
    ランタイムバリアントを使用してモデルサービスを作成しようとする場合に便利です。
    一部のランタイムバリアントは、実行前に特定の環境変数の設定が必要です。
 
-![](images/cluster_mode.png)
+![](../images/cluster_mode.png)
 
 モデルサービスを作成する前に、Backend.AIは実行が可能かどうか（実行中のエラーの有無）を
 チェックする検証機能をサポートしています。
@@ -373,7 +373,7 @@ MODEL_NAME = "example-model-name"
 検証チェックは完了です。
 
 
-![](images/model-validation-dialog.png)
+![](../images/model-validation-dialog.png)
 
 
    結果が `Finished` であっても、実行が正常に完了したことを保証するものではありません。
@@ -394,14 +394,14 @@ MODEL_NAME = "example-model-name"
 
 -  モデル定義ファイル（`model-definition.yml`）の形式が正しくない
 
-   ![](images/serving-route-error.png)
+   ![](../images/serving-route-error.png)
 
    -  解決策: [モデル定義ファイルの形式 <model_definition_guide>](#モデル定義ファイルの形式 <model_definition_guide>)を確認し、
       キー値ペアが正しくない場合は、それらを修正して保存された場所のファイルを上書きしてください。
       その後、「エラーをクリアして再試行」ボタンをクリックして、ルート情報テーブルに
       スタックされたすべてのエラーを削除し、モデルサービスのルーティングが正しく設定されていることを確認してください。
 
-   ![](images/refresh_button.png)
+   ![](../images/refresh_button.png)
 
 
 #### 自動スケーリングルール
@@ -409,7 +409,7 @@ MODEL_NAME = "example-model-name"
 定義されたルールに基づいて、使用率が低い時はリソースを節約するためにレプリカ数が自動的に減少し、
 使用率が高い時はリクエストの遅延や失敗を防ぐために増加します。
 
-![](images/auto_scaling_rules.png)
+![](../images/auto_scaling_rules.png)
 
 新しいルールを追加するには、「ルールを追加」ボタンをクリックします。ボタンをクリックすると、
 ルールを追加できるモーダルが表示されます。モーダル内の各フィールドについて以下に説明します：
@@ -442,7 +442,7 @@ MODEL_NAME = "example-model-name"
 
 - クールダウン秒数: ルールが最初にトリガーされた直後に、ルールの再適用をスキップする秒単位の期間。
 
-![](images/auto_scaling_rules_modal.png)
+![](../images/auto_scaling_rules_modal.png)
 
 #### Generating Tokens
 
@@ -456,18 +456,18 @@ accessible without any separate token, and end users can access it.
 However, if it is disabled, you can issue a token as described below to
 verify that the service is running properly.
 
-![](images/generate_token.png)
+![](../images/generate_token.png)
 
 Click the 'Generate Token' button located to the right of the generated
 token list in the routing information. In the modal that appears for
 token creation, enter the expiration date.
 
-![](images/token_generation_dialog.png)
+![](../images/token_generation_dialog.png)
 
 The issued token will be added to the list of generated tokens. Click the 'copy' button in the token
 item to copy the token, and add it as the value of the following key.
 
-![](images/generated_token_copy.png)
+![](../images/generated_token_copy.png)
 
 ============= ================
 Key           Value
@@ -506,13 +506,13 @@ to model serving endpoint working properly or not.
 If you've created a Large Language Model (LLM) service, you can test the LLM in real-time.
 Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
 
-![](images/LLM_chat_test.png)
+![](../images/LLM_chat_test.png)
 
 Then, You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
 For more information about the chat feature, please refer to the [Chat page <chat_page>](#Chat page <chat_page>)
 
-![](images/LLM_chat.png)
+![](../images/LLM_chat.png)
 
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
@@ -526,7 +526,7 @@ To use the model, you will need the following information:
   For instance, when using the service generated by Backend.AI, please refer to the
   [Generating Tokens<generating-tokens>](#Generating Tokens<generating-tokens>) section for instructions on how to generate tokens.
 
-![](images/LLM_chat_custom_model.png)
+![](../images/LLM_chat_custom_model.png)
 
 #### Modifying Model Service
 
@@ -536,7 +536,7 @@ previously entered fields already filled in. You can optionally modify only the
 fields you wish to change. After modifying the fields, click the 'confirm' button.
 The changes will be adjusted accordingly.
 
-![](images/edit_model_service.png)
+![](../images/edit_model_service.png)
 
 #### Terminating Model Service
 
@@ -549,4 +549,4 @@ for confirmation to terminate the model service. Clicking `Delete`
 will terminate the model service. The terminated model service will be
 removed from the list of model services.
 
-![](images/terminate_model_service_dialog.png)
+![](../images/terminate_model_service_dialog.png)

@@ -10,7 +10,7 @@ Backend.AI는 모델 학습 단계에서 개발 환경 구축과 리소스 관�
 엔드 유저(AI 기반 모바일 앱 및 웹 서비스 백엔드 등)는 완성된 모델을
 추론 서비스로 배포하고자 할 때 추론 API 호출을 수행할 수 있습니다.
 
-![](images/model-serving-diagram.png)
+![](../images/model-serving-diagram.png)
 
 모델 서비스는 기존의 학습용 연산 세션 기능을 확장하여, 자동화된 유지·보수 및 스케일링을 가능하게 하고 프로덕션 서비스를 위한 영구적인 포트 및 엔드포인트 주소 매핑을 제공합니다. 개발자나 관리자가 연산 세션을 수동으로 생성·삭제할 필요 없이 모델 서비스에 필요한 스케일링 파라미터를 지정해 주기만 하면 됩니다.
 
@@ -238,7 +238,7 @@ internally)
 `model` 타입을 선택하세요. 폴더 생성 방법에 대한 지침은 데이터 페이지의
 [스토리지 폴더 생성](#create-storage-folder) 섹션을 참조하세요.
 
-![](images/model_type_folder_creation.png)
+![](../images/model_type_folder_creation.png)
 
 폴더를 생성한 후, 데이터 페이지에서 'MODELS' 탭을 선택하고
 최근에 생성한 모델 타입 폴더 아이콘을 클릭하여 폴더 탐색기를 열고
@@ -246,9 +246,9 @@ internally)
 폴더 탐색기 사용 방법에 대한 자세한 내용은
 [폴더 탐색](#explore-folder) 섹션을 참조하세요.
 
-![](images/model_type_folder_list.png)
+![](../images/model_type_folder_list.png)
 
-![](images/model_definition_file_upload.png)
+![](../images/model_definition_file_upload.png)
 
 #### 서비스 정의 파일 생성
 
@@ -310,7 +310,7 @@ MODEL_NAME = "example-model-name"
 모델 서빙 페이지에서 '서비스 시작' 버튼을 클릭합니다. 이렇게 하면
 서비스를 생성하는 데 필요한 설정을 입력할 수 있는 페이지가 표시됩니다.
 
-![](images/serving_list_page.png)
+![](../images/serving_list_page.png)
 
 먼저 서비스 이름을 제공합니다. 각 항목에 대한 자세한 설명은 다음을 참조하세요:
 
@@ -321,14 +321,14 @@ MODEL_NAME = "example-model-name"
    마운트할 모델 폴더입니다.
 -  추론 런타임 변형: 모델 유형을 네 가지로 분류합니다: `vLLM`, `NVIDIA NIM`, `Predefined Image Command`, `Custom`.
 
-![](images/service_launcher1.png)
+![](../images/service_launcher1.png)
 
 예를 들어, 모델 서비스의 런타임 변형으로 `vLLM` 또는 `NVIDIA NIM` 또는 `Predefined Image Command`를 선택하면,
 마운트할 모델 폴더에 `model-definition` 파일을 구성할 필요가 없습니다. 대신 추가 환경 변수를 설정해야 할 수도 있습니다.
 자세한 내용은
 [Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving)를 참조하세요.
 
-![](images/service_launcher_runtime_variant.png)
+![](../images/service_launcher_runtime_variant.png)
 
 -  모델 폴더의 모델 대상: 이 옵션을 사용하면 서비스를 나타내는 라우팅에
    해당하는 세션으로 모델 스토리지 경로의 별칭 경로를 설정할 수 있습니다.
@@ -339,7 +339,7 @@ MODEL_NAME = "example-model-name"
    추가 모델 폴더가 아닌 일반/데이터 사용 모드 폴더만 마운트할 수 있다는 점에
    유의하세요.
 
-![](images/service_launcher2.png)
+![](../images/service_launcher2.png)
 
 그런 다음 레플리카 수를 설정하고 환경 및 자원 그룹을 선택합니다. 자원 그룹은
 모델 서비스에 할당할 수 있는 리소스의 모음입니다.
@@ -352,12 +352,12 @@ MODEL_NAME = "example-model-name"
    현재는 서비스에 여러 라우팅이 있더라도 단일 환경에서만 실행됩니다.
    (다중 실행 환경 지원은 향후 업데이트에서 추가될 예정입니다)
 
-![](images/service_launcher3.png)
+![](../images/service_launcher3.png)
 
 -  리소스 프리셋: 모델 서비스에 할당할 리소스 양을 선택할 수 있습니다.
    리소스에는 CPU, RAM 및 GPU로 알려진 AI 가속기가 포함됩니다.
 
-![](images/service_launcher4.png)
+![](../images/service_launcher4.png)
 
 -  Single Node: 세션 실행 시, 관리 노드와 워커 노드가
    단일 물리 노드 또는 가상 머신에 배치됩니다.
@@ -367,7 +367,7 @@ MODEL_NAME = "example-model-name"
    이는 런타임 변형을 사용하여 모델 서비스를 생성할 때 유용합니다. 일부 런타임 변형은
    실행 전에 특정 환경 변수 설정이 필요합니다.
 
-![](images/cluster_mode.png)
+![](../images/cluster_mode.png)
 
 모델 서비스를 생성하기 전에, Backend.AI는 유효성 검사 기능을 지원하여
 실행 가능 여부를 확인합니다(실행 중 오류로 인한).
@@ -377,7 +377,7 @@ MODEL_NAME = "example-model-name"
 `Finished`로 설정되면 유효성 검사가 완료된 것입니다.
 
 
-![](images/model-validation-dialog.png)
+![](../images/model-validation-dialog.png)
 
 
    결과가 `Finished`라고 해서 실행이 성공적으로 완료되었다는 것을 보장하지는 않습니다.
@@ -399,14 +399,14 @@ MODEL_NAME = "example-model-name"
 
 -  모델 정의 파일(`model-definition.yml`)의 형식이 잘못됨
 
-   ![](images/serving-route-error.png)
+   ![](../images/serving-route-error.png)
 
    -  해결 방법: [모델 정의 파일의 형식](#model-definition-guide)을 확인하고
       키-값 쌍이 잘못된 경우 수정한 다음 저장된 위치에 파일을 덮어씁니다.
       그런 다음 'Clear error and Retry' 버튼을 클릭하여 라우트 정보
       테이블에 쌓인 모든 오류를 제거하고 모델 서비스의 라우팅이 올바르게 설정되었는지 확인합니다.
 
-   ![](images/refresh_button.png)
+   ![](../images/refresh_button.png)
 
 
 #### 자동 스케일링 규칙
@@ -414,7 +414,7 @@ MODEL_NAME = "example-model-name"
 정의된 규칙에 따라, 리소스를 절약하기 위해 낮은 사용량일 때 레플리카 수가 자동으로 줄어들고,
 요청 지연이나 실패를 방지하기 위해 높은 사용량일 때 증가합니다.
 
-![](images/auto_scaling_rules.png)
+![](../images/auto_scaling_rules.png)
 
 새 규칙을 추가하려면 'Add Rules' 버튼을 클릭합니다. 버튼을 클릭하면 모달이 나타나며
 규칙을 추가할 수 있습니다. 모달의 각 필드는 다음과 같이 설명됩니다:
@@ -447,7 +447,7 @@ MODEL_NAME = "example-model-name"
 
 - CoolDown Seconds: 규칙이 처음 트리거된 직후 규칙을 다시 적용하지 않을 시간(초 단위)입니다.
 
-![](images/auto_scaling_rules_modal.png)
+![](../images/auto_scaling_rules_modal.png)
 
 <a id="generating-tokens"></a>
 
@@ -463,18 +463,18 @@ MODEL_NAME = "example-model-name"
 그러나 비활성화된 경우, 아래 설명된 대로 토큰을 발급하여
 서비스가 제대로 실행되고 있는지 확인할 수 있습니다.
 
-![](images/generate_token.png)
+![](../images/generate_token.png)
 
 라우팅 정보의 생성된 토큰 목록 오른쪽에 있는 'Generate Token' 버튼을
 클릭합니다. 토큰 생성을 위해 나타나는 모달에서
 만료 날짜를 입력합니다.
 
-![](images/token_generation_dialog.png)
+![](../images/token_generation_dialog.png)
 
 발급된 토큰은 생성된 토큰 목록에 추가됩니다. 토큰
 항목에서 'copy' 버튼을 클릭하여 토큰을 복사하고, 다음 키의 값으로 추가합니다.
 
-![](images/generated_token_copy.png)
+![](../images/generated_token_copy.png)
 
 ============= ================
 Key           Value
@@ -512,13 +512,13 @@ Authorization BackendAI
 대형 언어 모델(LLM) 서비스를 생성한 경우, 실시간으로 LLM을 테스트할 수 있습니다.
 Service Endpoint 열에 있는 'LLM Chat Test' 버튼을 클릭하기만 하면 됩니다.
 
-![](images/LLM_chat_test.png)
+![](../images/LLM_chat_test.png)
 
 그러면, 생성한 모델이 자동으로 선택된 Chat 페이지로 리디렉션됩니다.
 Chat 페이지에서 제공되는 채팅 인터페이스를 사용하여 LLM 모델을 테스트할 수 있습니다.
 채팅 기능에 대한 자세한 내용은 [Chat 페이지](#chat-page)를 참조하세요.
 
-![](images/LLM_chat.png)
+![](../images/LLM_chat.png)
 
 API 연결에 문제가 발생하면, Chat 페이지에 모델 설정을 수동으로 구성할 수 있는 옵션이 표시됩니다.
 모델을 사용하려면 다음 정보가 필요합니다:
@@ -532,7 +532,7 @@ API 연결에 문제가 발생하면, Chat 페이지에 모델 설정을 수동�
   예를 들어, Backend.AI에서 생성된 서비스를 사용할 때는
   토큰 생성 방법에 대한 지침은 [토큰 생성](#generating-tokens) 섹션을 참조하세요.
 
-![](images/LLM_chat_custom_model.png)
+![](../images/LLM_chat_custom_model.png)
 
 #### 모델 서비스 수정
 
@@ -542,7 +542,7 @@ API 연결에 문제가 발생하면, Chat 페이지에 모델 설정을 수동�
 필드만 선택적으로 수정할 수 있습니다. 필드를 수정한 후 'confirm' 버튼을 클릭합니다.
 변경 사항이 그에 따라 조정됩니다.
 
-![](images/edit_model_service.png)
+![](../images/edit_model_service.png)
 
 #### 모델 서비스 종료
 
@@ -555,4 +555,4 @@ Control 열에서 'trash' 버튼을 클릭합니다. 모델 서비스를 종료�
 클릭하면 모델 서비스가 종료됩니다. 종료된 모델 서비스는
 모델 서비스 목록에서 제거됩니다.
 
-![](images/terminate_model_service_dialog.png)
+![](../images/terminate_model_service_dialog.png)

@@ -5,7 +5,7 @@
 채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다.
 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.
 
-![](images/chat_page.png)
+![](../images/chat_page.png)
 
 <a id="selecting-models"></a>
 
@@ -13,7 +13,7 @@
 
 채팅 페이지 카드의 왼쪽 상단에서 엔드포인트와 모델을 선택할 수 있습니다. 엔드포인트 선택란을 클릭하면, 엔드포인트를 직접 검색하거나 목록에서 선택할 수 있으며, 모델도 동일한 방식으로 선택할 수 있습니다. 단, 선택한 엔드포인트에 해당하는 모델이 없을 경우, OpenAI 호환 기본 경로와 토큰을 확인한 후 '모델 정보 새로고침' 버튼을 클릭하세요.
 
-![](images/custom_model.png)
+![](../images/custom_model.png)
 
 사용자 정의 모델 설정에 필요한 입력 사항은 다음 설명을 참조하세요.
 
@@ -32,11 +32,11 @@
 
 우측 상단의 '비교' 아이콘 버튼을 클릭하여 새로운 비교 채팅 카드를 추가할 수 있습니다.
 
-![](images/add_cards.png)
+![](../images/add_cards.png)
 
 각 채팅 세션을 삭제하려면 카드 우측 상단에 있는 '더보기' 버튼을 클릭하세요. 버튼을 클릭하면 드롭다운 메뉴가 표시되며, '채팅 삭제' 버튼을 통해 해당 채팅 세션을 삭제할 수 있습니다. 입력한 내용이 존재하는 경우에는 모두 삭제되므로 주의해 주세요.
 
-![](images/delete_chatting_session.png)
+![](../images/delete_chatting_session.png)
 
 <a id="clear-chat-history"></a>
 
@@ -44,7 +44,7 @@
 
 '더보기' 버튼을 클릭하면 '채팅 지우기' 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제됩니다. 단, 카드의 세션은 종료되지 않습니다.
 
-![](images/delete_chatting_session.png)
+![](../images/delete_chatting_session.png)
 
 <a id="synchronize-input"></a>
 
@@ -52,7 +52,7 @@
 
 채팅 카드의 우측 상단에 있는 '동기화' 버튼을 사용하면 '동기화'가 활성화된 모든 채팅 카드의 입력을 동기화할 수 있습니다. '동기화'가 활성화된 상태에서 'Enter'를 누르거나 어떤 카드의 '전송' 버튼을 클릭하면 현재 입력 중인 카드의 입력이 일괄 적용됩니다. 이 기능은 하나의 입력값을 통해 다양한 모델의 응답 결과를 비교하고 싶을 때 유용하게 사용할 수 있습니다.
 
-![](images/synchronized_input.png)
+![](../images/synchronized_input.png)
 
 <a id="parameter-adjustment"></a>
 
@@ -60,7 +60,7 @@
 
 우측 상단의 파라미터 버튼을 클릭하여 각 모델에 대한 파라미터를 조정할 수 있습니다. 사용자는 Max Tokens, Temperature, Top P, Top K와 같은 다양한 값을 설정할 수 있습니다. 동기화 기능을 사용하여 같은 모델에 대해 다른 파라미터를 적용한 후 결과를 비교할 수 있습니다.
 
-![](images/parameter_settings.png)
+![](../images/parameter_settings.png)
 
 <a id="chat-history"></a>
 
@@ -68,10 +68,10 @@
 
 우측 상단의 '+' 버튼을 클릭하여 새로운 채팅을 시작할 수 있습니다.
 
-![](images/new_chat.png)
+![](../images/new_chat.png)
 
 모든 채팅 기록은 로컬 스토리지에 저장됩니다. 우측 상단의 '히스토리' 버튼을 클릭하여 이전 채팅 기록에 접근할 수 있습니다.
 
-![](images/history_button.png)
+![](../images/history_button.png)
 
-![](images/chat_history.png)
+![](../images/chat_history.png)

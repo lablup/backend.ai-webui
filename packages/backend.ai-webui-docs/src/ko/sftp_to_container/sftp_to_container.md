@@ -8,7 +8,7 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
       24.03 버전부터 SSH/SFTP 접속 기능은 웹 브라우저와 WebUI 데스크톱 앱 모두에서 사용할 수 있습니다.
       23.09 이하 버전에서는 WebUI 데스크톱 앱을 사용해야 합니다. 데스크톱 앱은 요약(Summary) 페이지의 패널에서 다운로드할 수 있습니다. 이 패널을 통해 호환되는 버전이 자동으로 다운로드됩니다.
 
-   ![](images/app_download_panel.png)
+   ![](../images/app_download_panel.png)
 
    https://github.com/lablup/backend.ai-webui/releases 에서도 앱을 다운로드할 수 있습니다. 이 경우, 호환되는 버전의 Web-UI를 다운로드해야 합니다. Web-UI 버전은 GUI 우측 상단의 환경설정 메뉴에 있는 "About Backend.AI" 하위 메뉴를 클릭하여 확인할 수 있습니다.
 
@@ -24,7 +24,7 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
 
 다음으로, SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. SFTP URL에 적혀 있는 주소(특히 할당된 포트 번호)를 기억해 두고, 다운로드 링크를 클릭하여 `id_container` 파일을 로컬 머신에 저장합니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 링크를 사용하는 대신, 웹 터미널이나 Jupyter Notebook을 통해 `/home/work/` 아래에 위치한 `id_container` 파일을 직접 다운로드할 수도 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 변경될 수 있으며, 그 경우 다시 다운로드해야 합니다.
 
-![](images/sftp_app.png)
+![](../images/sftp_app.png)
 
 다운로드한 SSH 개인 키를 사용하여 연산 세션에 SSH 접속하려면, 쉘 환경에서 다음 명령을 실행합니다. `-i` 옵션 뒤에 다운로드한 `id_container` 파일의 경로를, `-p` 옵션 뒤에 할당된 포트 번호를 입력합니다. 연산 세션 내부의 사용자 계정은 보통 `work`으로 설정되어 있지만, 세션이 다른 계정을 사용하는 경우 `work@127.0.0.1`에서 `work` 부분을 실제 세션 계정으로 변경해야 합니다. 명령을 올바르게 실행하면, 연산 세션에 SSH 접속이 이루어지고 컨테이너의 쉘 환경이 표시됩니다.
 
@@ -49,7 +49,7 @@ SFTP로 접속하는 방법도 거의 동일합니다. SFTP 클라이언트를 �
 
    다음과 같은 경고 메시지가 표시되면, `id_container`의 퍼미션을 600으로 변경한 후 다시 시도하세요. (`chmod 600 <id_container 경로>`)
 
-   ![](images/bad_permissions.png)
+   ![](../images/bad_permissions.png)
 
 
 <a id="for-windows-filezilla"></a>
@@ -60,23 +60,23 @@ Backend.AI Web-UI 앱은 OpenSSH 기반 공개 키 접속(RSA2048)을 지원합�
 
 Linux/Mac에서의 접속 방법을 참고하여, 연산 세션을 생성하고 접속 포트를 확인한 후 `id_container`를 다운로드합니다. `id_container`는 OpenSSH 기반 키이므로, Windows 전용이거나 ppk 타입 키만 지원하는 클라이언트를 사용하는 경우 변환이 필요합니다. 여기서는 PuTTY와 함께 설치되는 PuTTYgen 프로그램을 통해 변환합니다. PuTTYgen을 실행한 후, Conversions 메뉴에서 import key를 클릭합니다. 파일 열기 대화상자에서 다운로드한 `id_container` 파일을 선택합니다. PuTTYgen의 Save private key 버튼을 클릭하고 파일을 `id_container.ppk`라는 이름으로 저장합니다.
 
-![](images/puttygen_conversion.png)
+![](../images/puttygen_conversion.png)
 
 FileZilla 클라이언트를 실행한 후, 설정-연결-SFTP로 이동하여 키 파일 `id_container.ppk`(OpenSSH를 지원하는 클라이언트의 경우 `id_container`)를 등록합니다.
 
-![](images/filezilla_setting.png)
+![](../images/filezilla_setting.png)
 
 사이트 관리자를 열고, 새 사이트를 생성한 후 다음과 같이 접속 정보를 입력합니다.
 
-![](images/filezilla_site_setting.png)
+![](../images/filezilla_site_setting.png)
 
 컨테이너에 처음 접속할 때 다음과 같은 확인 팝업이 나타날 수 있습니다. OK 버튼을 클릭하여 호스트 키를 저장합니다.
 
-![](images/unknown_host_key.png)
+![](../images/unknown_host_key.png)
 
 잠시 후, 다음과 같이 접속이 완료된 것을 확인할 수 있습니다. 이 SFTP 접속을 통해 `/home/work/` 또는 마운트된 스토리지 폴더로 대용량 파일을 전송할 수 있습니다.
 
-![](images/filezilla_connection_established.png)
+![](../images/filezilla_connection_established.png)
 
 
 <a id="for-visual-studio-code"></a>
@@ -89,11 +89,11 @@ Backend.AI는 연산 세션에 대한 SSH/SFTP 접속을 통해 로컬 Visual St
 
 링크: https://aka.ms/vscode-remote/download/extension
 
-![](images/vscode_install_remote_ssh.png)
+![](../images/vscode_install_remote_ssh.png)
 
 확장을 설치한 후, 연산 세션에 대한 SSH 접속을 설정합니다. VSCode Remote Connection 대화상자에서 복사 아이콘 버튼을 클릭하여 Visual Studio Code 원격 SSH 비밀번호를 복사합니다. 포트 번호도 기억해 둡니다.
 
-![](images/download_ssh_key.png)
+![](../images/download_ssh_key.png)
 
 그런 다음, SSH config 파일을 설정합니다. `~/.ssh/config` 파일(Linux/Mac의 경우) 또는 `C:\Users\[사용자 이름]\.ssh\config` 파일(Windows의 경우)을 편집하고 다음 블록을 추가합니다. 편의를 위해 호스트 이름을 `bai-vscode`로 설정합니다. 원하는 별칭으로 변경할 수 있습니다.
 
@@ -109,23 +109,23 @@ UserKnownHostsFile /dev/null
 
 이제 Visual Studio Code에서 `View` 메뉴의 `Command Palette...`를 선택합니다.
 
-![](images/vscode_view_commandpalett.png)
+![](../images/vscode_view_commandpalett.png)
 
 Visual Studio Code는 접속하려는 호스트 유형을 자동으로 감지합니다. `Remote-SSH: Connect to Host...`를 선택합니다.
 
-![](images/vscode_remote_ssh_connect.png)
+![](../images/vscode_remote_ssh_connect.png)
 
 `.ssh/config`에 있는 호스트 목록이 표시됩니다. 접속할 호스트를 선택합니다. 여기서는 `vscode`를 선택합니다.
 
-![](images/vscode_remote_ssh_select_host.png)
+![](../images/vscode_remote_ssh_select_host.png)
 
 호스트 이름을 선택하면 원격 연산 세션에 접속됩니다. 접속이 완료되면 빈 창이 표시됩니다. 상태 표시줄에서 접속된 호스트를 항상 확인할 수 있습니다.
 
-![](images/vscode_connect_finish.png)
+![](../images/vscode_connect_finish.png)
 
 이제 평소처럼 `File > Open...` 또는 `File > Open Workspace...` 메뉴를 통해 원격 호스트의 폴더나 워크스페이스를 열 수 있습니다.
 
-![](images/vscode_connected_host_file_open.png)
+![](../images/vscode_connected_host_file_open.png)
 
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
@@ -155,7 +155,7 @@ $ docker pull lablup/backend.ai-client:<version>
 
 Backend.AI 서버 버전은 Web UI 우측 상단의 사람 아이콘을 클릭하면 나타나는 "About Backend.AI" 메뉴에서 확인할 수 있습니다.
 
-![](images/check_backend_server_version.png)
+![](../images/check_backend_server_version.png)
 
 다음 명령으로 Docker 이미지를 실행합니다.
 

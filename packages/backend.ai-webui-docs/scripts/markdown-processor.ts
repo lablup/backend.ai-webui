@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { Marked } from 'marked';
 import {
   processAdmonitions,
@@ -8,7 +8,76 @@ import {
   parseHighlightLines,
   escapeHtml as escapeHtmlExt,
   stripHtmlTags,
+  getFigureLabel,
+  parseImageSizeHint,
 } from './markdown-extensions.js';
+
+/**
+ * Read image dimensions from a PNG or JPEG file header.
+ * Returns { width, height } or null if unable to read.
+ */
+function getImageDimensions(filePath: string): { width: number; height: number } | null {
+  try {
+    const buf = Buffer.alloc(32);
+    const fd = fs.openSync(filePath, 'r');
+    fs.readSync(fd, buf, 0, 32, 0);
+    fs.closeSync(fd);
+
+    // PNG: bytes 16-20 contain width, 20-24 contain height in IHDR chunk
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
+      return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+    }
+
+    // JPEG: scan for SOF marker
+    const fullBuf = fs.readFileSync(filePath);
+    if (fullBuf[0] === 0xff && fullBuf[1] === 0xd8) {
+      let offset = 2;
+      while (offset < fullBuf.length - 9) {
+        if (fullBuf[offset] !== 0xff) { offset++; continue; }
+        const marker = fullBuf[offset + 1];
+        if (
+          (marker >= 0xc0 && marker <= 0xc3) ||
+          (marker >= 0xc5 && marker <= 0xc7) ||
+          (marker >= 0xc9 && marker <= 0xcb) ||
+          (marker >= 0xcd && marker <= 0xcf)
+        ) {
+          return {
+            width: fullBuf.readUInt16BE(offset + 7),
+            height: fullBuf.readUInt16BE(offset + 5),
+          };
+        }
+        const segLen = fullBuf.readUInt16BE(offset + 2);
+        offset += 2 + segLen;
+      }
+    }
+  } catch {
+    // Ignore errors — fall through to return null
+  }
+  return null;
+}
+
+/**
+ * Scale factor: treat source images as captured at 2x (retina).
+ * A 1920px screenshot will render as 960px in HTML, which is still
+ * wider than the ~643px content area, so max-width:100% caps it.
+ * But a 400px icon will render as 200px — no longer filling the width.
+ */
+const IMAGE_SCALE_FACTOR = 0.5;
+
+/**
+ * Resolve a file:// URL or src path back to a local filesystem path.
+ * Returns null if not a local file or path doesn't exist.
+ */
+function resolveImageFilePath(src: string): string | null {
+  try {
+    if (src.startsWith('file://')) {
+      return fileURLToPath(src);
+    }
+  } catch {
+    // Ignore
+  }
+  return null;
+}
 
 export interface Heading {
   level: number;
@@ -83,20 +152,24 @@ function rewriteImagePaths(
 ): string {
   const mdDir = path.dirname(mdFilePath);
   return markdown.replace(
-    /!\[([^\]]*)\]\(images\/([^)]+)\)/g,
-    (_, alt, filename) => {
-      // Images are always in src/{lang}/images/
-      const absPath = path.join(srcDir, lang, 'images', filename);
-      if (fs.existsSync(absPath)) {
-        return `![${alt}](${pathToFileURL(absPath).toString()})`;
+    /!\[([^\]]*)\]\(([^)]+\.(?:png|jpe?g|gif|svg|webp))\)/gi,
+    (match, alt, imgPath) => {
+      // Skip already-absolute URLs (http://, https://, file://)
+      if (/^(?:https?|file):\/\//.test(imgPath)) return match;
+
+      // Resolve relative to the md file's directory
+      const resolved = path.resolve(mdDir, imgPath);
+      if (fs.existsSync(resolved)) {
+        return `![${alt}](${pathToFileURL(resolved).toString()})`;
       }
-      // Try relative to the md file's directory
-      const relPath = path.join(mdDir, 'images', filename);
-      if (fs.existsSync(relPath)) {
-        return `![${alt}](${pathToFileURL(relPath).toString()})`;
+      // Fallback: try src/{lang}/images/ with just the filename
+      const filename = path.basename(imgPath);
+      const langImagesPath = path.join(srcDir, lang, 'images', filename);
+      if (fs.existsSync(langImagesPath)) {
+        return `![${alt}](${pathToFileURL(langImagesPath).toString()})`;
       }
       // Keep original if not found
-      return `![${alt}](images/${filename})`;
+      return match;
     },
   );
 }
@@ -283,6 +356,8 @@ export async function processMarkdownFiles(
 ): Promise<Chapter[]> {
   const chapters: Chapter[] = [];
 
+  let chapterIndex = 0;
+
   for (const nav of navigation) {
     let mdPath: string;
     try {
@@ -292,6 +367,7 @@ export async function processMarkdownFiles(
       continue;
     }
 
+    chapterIndex++;
     let markdown = fs.readFileSync(mdPath, 'utf-8');
     const chapterSlug = slugify(nav.title);
 
@@ -302,8 +378,18 @@ export async function processMarkdownFiles(
     markdown = normalizeRstTables(markdown);
     markdown = convertIndentedNotes(markdown);
 
+    // Extended syntax pre-processing
+    markdown = processAdmonitions(markdown, lang);
+    markdown = processCodeBlockMeta(markdown);
+
     // Track headings for TOC
     const headings: Heading[] = [];
+    let h2Counter = 0;
+    let imgCounter = 0;
+    const currentChapterNum = chapterIndex;
+    const figureLabel = getFigureLabel(lang);
+    // Capture H1 text to use as chapter.title (localized title)
+    let h1Title: string | null = null;
 
     // Configure marked with custom renderer
     // marked@12 uses positional args: heading(text, level, raw), image(href, title, text)
@@ -313,12 +399,99 @@ export async function processMarkdownFiles(
         // text may contain HTML tags from inline parsing, strip for slug/toc
         const plainText = stripHtmlTags(text);
         const id = `${chapterSlug}-${slugify(plainText)}`;
-        headings.push({ level, text: plainText, id });
-        return `<h${level} id="${id}">${text}</h${level}>\n`;
+
+        if (level === 1) {
+          // Capture the first H1 text as chapter title
+          if (h1Title === null) {
+            h1Title = plainText;
+          }
+          // H1 is visually hidden since it's already shown on the chapter title page.
+          // The h1 tag is kept for PDF named destinations and footer section labels.
+          const numberedPlainText = `${currentChapterNum}. ${plainText}`;
+          headings.push({ level, text: numberedPlainText, id });
+          return `<h1 id="${id}" class="chapter-h1-hidden">${currentChapterNum}. ${text}</h1>\n`;
+        }
+
+        // Add numbering: H2 gets chapter.section number
+        let numberedText = text;
+        let numberedPlainText = plainText;
+        if (level === 2) {
+          h2Counter++;
+          numberedText = `${currentChapterNum}.${h2Counter} ${text}`;
+          numberedPlainText = `${currentChapterNum}.${h2Counter} ${plainText}`;
+        }
+
+        headings.push({ level, text: numberedPlainText, id });
+        return `<h${level} id="${id}">${numberedText}</h${level}>\n`;
       },
       image(href: string, title: string | null, text: string): string {
         const titleAttr = title ? ` title="${title}"` : '';
-        return `<img src="${href}" alt="${text || ''}" class="doc-image"${titleAttr} />\n`;
+        // Parse size hint from alt text (e.g. "alt =40%", "alt =300px")
+        const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
+
+        let styleAttr = '';
+        if (sizeHint) {
+          // Explicit size hint overrides auto-scaling
+          if (sizeHint === 'auto') {
+            styleAttr = ''; // Use natural CSS sizing
+          } else {
+            styleAttr = ` style="width:${sizeHint}"`;
+          }
+        } else {
+          // Default: read image dimensions and scale down for print
+          const localPath = resolveImageFilePath(href);
+          if (localPath) {
+            const dims = getImageDimensions(localPath);
+            if (dims) {
+              const scaledWidth = Math.round(dims.width * IMAGE_SCALE_FACTOR);
+              styleAttr = ` style="width:${scaledWidth}px"`;
+            }
+          }
+        }
+
+        imgCounter++;
+        const figNum = `${figureLabel} ${currentChapterNum}.${imgCounter}`;
+        const caption = cleanAlt
+          ? `<figcaption>${figNum} &mdash; ${escapeHtmlExt(cleanAlt)}</figcaption>`
+          : `<figcaption>${figNum}</figcaption>`;
+
+        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
+      },
+      code(code: string, infostring: string | undefined): string {
+        const info = infostring || '';
+        const langMatch = info.match(/^(\w+)/);
+        const titleMatch = info.match(/data-title="([^"]*)"/);
+        const highlightMatch = info.match(/data-highlight="([^"]*)"/);
+
+        const lang = langMatch?.[1] || '';
+        const title = titleMatch?.[1] || '';
+        const highlightSpec = highlightMatch?.[1] || '';
+        const highlightLines = parseHighlightLines(highlightSpec);
+
+        let codeHtml: string;
+        if (highlightLines.size > 0) {
+          const lines = code.split('\n');
+          codeHtml = lines
+            .map((line, idx) => {
+              const lineNum = idx + 1;
+              const cls = highlightLines.has(lineNum)
+                ? 'code-line highlighted'
+                : 'code-line';
+              return `<span class="${cls}">${escapeHtmlExt(line)}</span>`;
+            })
+            .join('\n');
+        } else {
+          codeHtml = escapeHtmlExt(code);
+        }
+
+        const langClass = lang ? ` class="language-${lang}"` : '';
+        const preBlock = `<pre><code${langClass}>${codeHtml}</code></pre>`;
+
+        if (title) {
+          return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtmlExt(title)}</div>${preBlock}</div>\n`;
+        }
+
+        return preBlock + '\n';
       },
     };
 
@@ -330,7 +503,8 @@ export async function processMarkdownFiles(
     htmlContent = processCrossReferences(htmlContent, chapterSlug);
 
     chapters.push({
-      title: nav.title,
+      // Use H1 text as chapter title (localized), fall back to nav.title
+      title: h1Title || nav.title,
       slug: chapterSlug,
       htmlContent,
       headings,
@@ -370,7 +544,22 @@ export async function processCatalogMarkdownForPdf(
       },
       image(href: string, title: string | null, text: string): string {
         const titleAttr = title ? ` title="${title}"` : '';
-        return `<img src="${href}" alt="${text || ''}" class="doc-image"${titleAttr} />\n`;
+        const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
+
+        let styleAttr = '';
+        if (sizeHint && sizeHint !== 'auto') {
+          styleAttr = ` style="width:${sizeHint}"`;
+        } else {
+          const localPath = resolveImageFilePath(href);
+          if (localPath) {
+            const dims = getImageDimensions(localPath);
+            if (dims) {
+              const scaledWidth = Math.round(dims.width * IMAGE_SCALE_FACTOR);
+              styleAttr = ` style="width:${scaledWidth}px"`;
+            }
+          }
+        }
+        return `<div class="doc-image-wrap"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} /></div>\n`;
       },
       code(code: string, infostring: string | undefined): string {
         const info = infostring || '';

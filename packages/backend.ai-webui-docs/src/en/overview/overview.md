@@ -25,7 +25,7 @@ achieves more intuitive use.
 
 ## Key Concepts
 
-![](images/key_concepts_2209.png)
+![](../images/key_concepts_2209.png)
 
 - User: The user is a person who connects to Backend.AI and performs work.
   Users are divided into normal users, domain admins, and superadmins according

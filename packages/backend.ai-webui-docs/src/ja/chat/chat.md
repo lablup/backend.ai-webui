@@ -5,7 +5,7 @@ Starting from version 25.05, the 'LLMプレイグラウンド' feature has been 
 Chat page enables ユーザーs to conveniently compare and interact with different LLM models all in one location.
 This allows ユーザーs to experience the services offered by Backend.AI as well as a variety of large language models (LLMs).
 
-![](images/chat_page.png)
+![](../images/chat_page.png)
 
 ## モデルの選択
 
@@ -13,7 +13,7 @@ Users can select the endpoint and model from the top left corner of each chat ca
 Clicking the endpoint field allows ユーザーs to search for or choose from available endpoints, and the model can be selected in the same way.
 If no model is associated with the selected endpoint, verify the base path and token compatibility with OpenAI, then click the 'Refresh model info' button.
 
-![](images/custom_model.png)
+![](../images/custom_model.png)
 
 以下の説明を参照して、カスタムモーダル設定を構成するために必要な入力を確認してください。
 
@@ -30,13 +30,13 @@ If no model is associated with the selected endpoint, verify the base path and t
 
 To add new comparison chat cards, click the comparison icon button located in the top right corner.
 
-![](images/add_cards.png)
+![](../images/add_cards.png)
 
 To remove a chat session, click on the 'more' button located in the upper right corner of the chat card.
 Then a dropdown menu will appear, and ユーザーs can select 'Delete Chat' to remove a chat session.
 Please be cautious as this will delete all entered content.
 
-![](images/delete_chatting_session.png)
+![](../images/delete_chatting_session.png)
 
 ## Clear chat history
 
@@ -44,7 +44,7 @@ Clicking the 'more' button will reveal the 'Clear chat' option.
 By selecting this, ユーザーs will erase all chat history associated with the card,
 although the card session itself will remain active.
 
-![](images/delete_chatting_session.png)
+![](../images/delete_chatting_session.png)
 
 ## 入力を同期する
 
@@ -53,23 +53,23 @@ Enabling 'Sync input' means that pressing 'Enter' or clicking the 'Send' button 
 any card will submit the input from the card ユーザーs are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.
 
-![](images/synchronized_input.png)
+![](../images/synchronized_input.png)
 
 ## Parameter adjustment
 
 Click the parameter button in the top-right corner to adjust the parameters for each model. Users can set various values such as Max Tokens, Temperature, Top P, and Top K.
 Using the synchronize feature, ユーザーs can apply different parameters to the same model and then compare the results.
 
-![](images/parameter_settings.png)
+![](../images/parameter_settings.png)
 
 ## Chat history
 
 To start new chat, click the '+' button located in the top right corner.
 
-![](images/new_chat.png)
+![](../images/new_chat.png)
 
 All chat history is stored in local storage, and ユーザーs can access previous chats by clicking the history button in the top-right corner.
 
-![](images/history_button.png)
+![](../images/history_button.png)
 
-![](images/chat_history.png)
+![](../images/chat_history.png)

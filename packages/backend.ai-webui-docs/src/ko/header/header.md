@@ -3,7 +3,7 @@
 
 상단 바에는 WebUI 사용을 지원하는 다양한 기능이 포함되어 있습니다.
 
-![](images/header.png)
+![](../images/header.png)
 
 <a id="project-selector"></a>
 
@@ -19,7 +19,7 @@
 
 종 모양 버튼은 이벤트 알림 버튼입니다. WebUI 사용 중 기록이 필요한 이벤트가 이곳에 표시됩니다. 연산 세션 생성과 같은 백그라운드 작업이 진행 중일 때, 여기에서 작업 상태를 확인할 수 있습니다. 단축키(`]`)를 눌러 알림 영역을 열거나 닫을 수 있습니다.
 
-![](images/notification_collapse.png)
+![](../images/notification_collapse.png)
 
 <a id="theme-mode"></a>
 
@@ -28,7 +28,7 @@
 
 상단 바 우측에 있는 다크모드 버튼을 통하여 WebUI의 테마를 변경할 수 있습니다.
 
-![](images/theme_mode.png)
+![](../images/theme_mode.png)
 
 <a id="help"></a>
 
@@ -44,7 +44,7 @@
 
 상단 바 우측의 사람 아이콘 버튼을 클릭하여, 사용자 메뉴를 확인할 수 있습니다. 각 항목은 다음과 같은 기능을 가집니다.
 
-![](images/user_drop_down.png)
+![](../images/user_drop_down.png)
 
 - Backend.AI에 대하여: Backend.AI Web-UI의 버전, 라이선스 종류 등과 같은 정보를 표시합니다.
 - 사용자 정보 변경: 현재 로그인된 사용자 정보를 확인 / 변경합니다.
@@ -59,7 +59,7 @@
 
 사용자 정보 변경을 클릭하면, 다음과 같은 다이얼로그가 나타납니다.
 
-![](images/my_account_information.png)
+![](../images/my_account_information.png)
 
 각 항목은 다음과 같은 의미를 가집니다.
 
@@ -78,7 +78,7 @@
 
 `2FA Enabled` 스위치를 활성화하면, 다음과 같은 다이얼로그가 나타납니다.
 
-![](images/2fa_setup.png)
+![](../images/2fa_setup.png)
 
 사용자가 사용하는 이중 인증 애플리케이션을 켜고 QR 코드를 스캔하거나 인증 코드를 직접 입력합니다. 이중 인증 지원 애플리케이션은 Google Authenticator, 2STP, 1Password, Bitwarden 등이 있습니다.
 
@@ -86,10 +86,10 @@
 
 이후 해당 사용자의 로그인 과정에서 OTP 코드를 묻는 추가 필드가 나타납니다.
 
-![](images/ask_otp_when_login.png)
+![](../images/ask_otp_when_login.png)
 
 이중 인증 애플리케이션을 열고 One-time password 필드에 6자리 코드를 입력해야 로그인이 가능합니다.
 
-![](images/remove_2fa.png)
+![](../images/remove_2fa.png)
 
 이중 인증을 비활성화하려면, `2FA Enabled` 스위치를 끄고 다음 다이얼로그에서 확인 버튼을 클릭합니다.

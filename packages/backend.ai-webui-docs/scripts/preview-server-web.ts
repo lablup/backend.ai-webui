@@ -154,15 +154,21 @@ async function main(): Promise<void> {
       return;
     }
 
-    // Serve images from src/{lang}/images/
-    if (url.pathname.startsWith('/images/')) {
-      const filename = path.basename(url.pathname);
-      const imagePath = path.join(SRC_DIR, args.lang, 'images', filename);
-      if (fs.existsSync(imagePath) && fs.statSync(imagePath).isFile()) {
-        const ext = path.extname(imagePath).toLowerCase();
-        const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
+    // Serve static image files from src/{lang}/
+    const safePath = path.normalize(url.pathname).replace(/^\/+/, '');
+    const baseDir = path.resolve(SRC_DIR, args.lang);
+    const resolved = path.resolve(baseDir, safePath);
+    if (
+      safePath &&
+      resolved.startsWith(baseDir + path.sep) &&
+      fs.existsSync(resolved) &&
+      fs.statSync(resolved).isFile()
+    ) {
+      const ext = path.extname(resolved).toLowerCase();
+      const mimeType = MIME_TYPES[ext];
+      if (mimeType) {
         res.writeHead(200, { 'Content-Type': mimeType, 'Cache-Control': 'max-age=60' });
-        fs.createReadStream(imagePath).pipe(res);
+        fs.createReadStream(resolved).pipe(res);
         return;
       }
     }

@@ -12,7 +12,7 @@ Backend.AI ไม่เพียงแต่อำนวยความสะด
 inference API ได้เมื่อต้องการ deploy โมเดลที่เสร็จสมบูรณ์แล้วเป็น
 บริการ inference
 
-![](images/model-serving-diagram.png)
+![](../images/model-serving-diagram.png)
 
 บริการโมเดลขยายฟังก์ชันการทำงานของเซสชันการคอมพิวเตอร์การฝึกอบรมที่มีอยู่ โดยช่วยให้การบำรุงรักษา การปรับขนาดอัตโนมัติ และการแมพตำแหน่งพอร์ตและที่อยู่เอ็นด์พอยต์ถาวรสำหรับบริการการผลิต ทำให้ผู้พัฒนาหรือผู้ดูแลระบบจำเป็นต้องระบุพารามิเตอร์การปรับขนาดที่จำเป็นสำหรับบริการโมเดล โดยไม่จำเป็นต้องสร้างหรือลบเซสชันการคอมพิวเตอร์ด้วยตนเอง
 
@@ -230,13 +230,13 @@ internally)
 
 เพื่ออัปโหลดไฟล์กำหนดโมเดล (`model-definition.yml`) ไปยังโฟลเดอร์ประเภทโมเดล คุณต้องสร้างโฟลเดอร์เสมือน เมื่อสร้างโฟลเดอร์เสมือน ให้เลือกประเภท `model` แทนประเภท `general` เริ่มต้น โปรดอ้างถึงส่วนเกี่ยวกับ [การสร้างโฟลเดอร์จัดเก็บ<create_storage_folder>](#การสร้างโฟลเดอร์จัดเก็บ<create_storage_folder>) ในหน้า Data สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโฟลเดอร์
 
-![](images/model_type_folder_creation.png)
+![](../images/model_type_folder_creation.png)
 
 หลังจากสร้างโฟลเดอร์แล้ว ให้เลือกแท็บ 'MODELS' ในหน้า Data คลิกไอคอนโฟลเดอร์ประเภทโมเดลที่สร้างขึ้นล่าสุดเพื่อเปิดตัวสำรวจโฟลเดอร์ และอัปโหลดไฟล์กำหนดโมเดล สำหรับข้อมูลเพิ่มเติมเกี่ยวกับวิธีใช้ตัวสำรวจโฟลเดอร์ โปรดอ้างถึงส่วน [สำรวจโฟลเดอร์<explore_folder>](#สำรวจโฟลเดอร์<explore_folder>)
 
-![](images/model_type_folder_list.png)
+![](../images/model_type_folder_list.png)
 
-![](images/model_definition_file_upload.png)
+![](../images/model_definition_file_upload.png)
 
 #### การสร้างไฟล์กำหนดบริการ
 
@@ -287,7 +287,7 @@ MODEL_NAME = "example-model-name"
 
 คลิกปุ่ม 'Start Service' ในหน้า Model Serving ซึ่งจะเปิดหน้าที่คุณสามารถใส่การตั้งค่าที่จำเป็นสำหรับการสร้างบริการ
 
-![](images/serving_list_page.png)
+![](../images/serving_list_page.png)
 
 ขั้นแรก ให้ระบุชื่อบริการ สำหรับคำอธิบายรายละเอียดของแต่ละรายการ โปรดอ้างถึงสิ่งต่อไปนี้:
 
@@ -295,14 +295,14 @@ MODEL_NAME = "example-model-name"
 -  Model Storage To Mount: นี่คือโฟลเดอร์โมเดลที่จะเมาต์ ซึ่งประกอบด้วยไฟล์กำหนดโมเดลภายในไดเรกทอรี
 -  Inference Runtime Variant: สิ่งนี้แบ่งประเภทของโมเดลออกเป็นสี่ประเภท: `vLLM`, `NVIDIA NIM`, `Predefined Image Command`, `Custom`, `Predefined Image Command`, `Custom`.
 
-![](images/service_launcher1.png)
+![](../images/service_launcher1.png)
 
 For example, if you choose `vLLM` or `NVIDIA NIM` or `Predefined Image Command` as a runtime variant of model service,
 there's no need to configure a `model-definition` file in your model folder to mount. Instead, you might have to set an additional environment variable.
 For more information, please take a look at
 [Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving).
 
-![](images/service_launcher_runtime_variant.png)
+![](../images/service_launcher_runtime_variant.png)
 
 -  Model Destination For Model Folder: This option allows aliasing path of
    model storage path to session corresponding to routing, which represents
@@ -313,7 +313,7 @@ For more information, please take a look at
    Please make sure that only you can mount general/data usage mode folder, not additional
    model folder.
 
-![](images/service_launcher2.png)
+![](../images/service_launcher2.png)
 
 Then set number of replicas and select environments and resource group. The resource group is a collection of
 resources that can be allocated to the model service.
@@ -328,12 +328,12 @@ resources that can be allocated to the model service.
    environment only. (Support for multiple execution environments will
    be added in a future update)
 
-![](images/service_launcher3.png)
+![](../images/service_launcher3.png)
 
 -  Resource Presets: Allows you to select the amount of resources to allocate from the model service.
    Resource contains CPU, RAM, and AI accelerator, as known as GPU.
 
-![](images/service_launcher4.png)
+![](../images/service_launcher4.png)
 
 -  Single Node: When running a session, the managed node and worker nodes are
    placed on a single physical node or virtual machine.
@@ -343,7 +343,7 @@ resources that can be allocated to the model service.
    It is useful when you trying to create a model service using runtime variant. some runtime variant needs
    certain environment variable setting before execution.
 
-![](images/cluster_mode.png)
+![](../images/cluster_mode.png)
 
 Before creating model service, Backend.AI supports validation feature to check
 whether execution is available or not(due to any errors during execution).
@@ -353,7 +353,7 @@ you can check the status through the container log. When the result is set to
 `Finished`, then the validation check is finished.
 
 
-![](images/model-validation-dialog.png)
+![](../images/model-validation-dialog.png)
 
 
    The result `Finished` doesn't guarantee that the execution is successfully done.
@@ -377,14 +377,14 @@ follows:
 
 -  Incorrect format of the model definition file (`model-definition.yml`)
 
-   ![](images/serving-route-error.png)
+   ![](../images/serving-route-error.png)
 
    -  Solution: Verify [the format of the model definition file <model_definition_guide>](#the format of the model definition file <model_definition_guide>) and
       if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
       Then, click 'Clear error and Retry' button to remove all the error stacked in routes info
       table and ensure that the routing of the model service is set correctly.
 
-   ![](images/refresh_button.png)
+   ![](../images/refresh_button.png)
 
 
 #### กฎการปรับขนาดอัตโนมัติ
@@ -392,7 +392,7 @@ follows:
 ตามกฎที่กำหนด จำนวนเรพลิกาจะถูกลดลงโดยอัตโนมัติในช่วงที่ใช้งานต่ำเพื่อประหยัดทรัพยากร
 และเพิ่มขึ้นในช่วงที่ใช้งานสูงเพื่อป้องกันความล่าช้าของคำขอหรือความล้มเหลว
 
-![](images/auto_scaling_rules.png)
+![](../images/auto_scaling_rules.png)
 
 คลิกปุ่ม 'Add Rules' เพื่อเพิ่มกฎใหม่ เมื่อคุณคลิกปุ่ม โมดอลจะปรากฏขึ้น
 ซึ่งคุณสามารถเพิ่มกฎได้ ฟิลด์แต่ละฟิลด์ในโมดอลมีคำอธิบายดังนี้:
@@ -425,7 +425,7 @@ follows:
 
 - CoolDown Seconds: ระยะเวลาเป็นวินาทีเพื่อข้ามการใช้กฎซ้ำทันทีหลังจากที่กฎทำงานครั้งแรก
 
-![](images/auto_scaling_rules_modal.png)
+![](../images/auto_scaling_rules_modal.png)
 
 #### การสร้างโทเค็น
 
@@ -439,18 +439,18 @@ follows:
 อย่างไรก็ตาม หากถูกปิดใช้งาน คุณสามารถออกโทเค็นตามที่อธิบายด้านล่าง
 เพื่อตรวจสอบว่าบริการทำงานอย่างถูกต้อง
 
-![](images/generate_token.png)
+![](../images/generate_token.png)
 
 คลิกปุ่ม 'Generate Token' ที่อยู่ทางขวาของรายการโทเค็นที่สร้างขึ้น
 ในข้อมูลการเส้นทาง ในโมดอลที่ปรากฏขึ้นสำหรับ
 การสร้างโทเค็น ให้ใส่วันที่หมดอายุ
 
-![](images/token_generation_dialog.png)
+![](../images/token_generation_dialog.png)
 
 โทเค็นที่ออกจะถูกเพิ่มลงในรายการโทเค็นที่สร้างขึ้น คลิกปุ่ม 'copy' ในรายการโทเค็น
 เพื่อคัดลอกโทเค็น และเพิ่มเป็นค่าของคีย์ต่อไปนี้
 
-![](images/generated_token_copy.png)
+![](../images/generated_token_copy.png)
 
 ============= ================
 Key           Value
@@ -489,13 +489,13 @@ Authorization BackendAI
 หากคุณสร้างบริการ Large Language Model (LLM) คุณสามารถทดสอบ LLM แบบเรียลไทม์
 เพียงคลิกปุ่ม 'LLM Chat Test' ที่อยู่ในคอลัมน์ Service Endpoint
 
-![](images/LLM_chat_test.png)
+![](../images/LLM_chat_test.png)
 
 จากนั้น คุณจะถูกเปลี่ยนเส้นทางไปยังหน้า Chat ซึ่งโมเดลที่คุณสร้างจะถูกเลือกโดยอัตโนมัติ
 โดยใช้อินเทอร์เฟซแชทที่ให้บริการในหน้า Chat คุณสามารถทดสอบโมเดล LLM
 สำหรับข้อมูลเพิ่มเติมเกี่ยวกับฟีเจอร์แชท โปรดอ้างถึง [หน้าแชท <chat_page>](#หน้าแชท <chat_page>)
 
-![](images/LLM_chat.png)
+![](../images/LLM_chat.png)
 
 หากคุณพบปัญหาในการเชื่อมต่อกับ API หน้าแชทจะแสดงตัวเลือกที่ให้คุณกำหนดค่าการตั้งค่าโมเดลด้วยตนเอง
 ในการใช้โมเดล คุณจะต้องมีข้อมูลต่อไปนี้:
@@ -509,7 +509,7 @@ Authorization BackendAI
   เช่น เมื่อใช้บริการที่สร้างโดย Backend.AI โปรดอ้างถึง
   [การสร้างโทเค็น<generating-tokens>](#การสร้างโทเค็น<generating-tokens>) สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโทเค็น
 
-![](images/LLM_chat_custom_model.png)
+![](../images/LLM_chat_custom_model.png)
 
 #### การปรับเปลี่ยนบริการโมเดล
 
@@ -519,7 +519,7 @@ Authorization BackendAI
 ฟิลด์ที่คุณต้องการเปลี่ยนแปลง หลังจากปรับเปลี่ยนฟิลด์แล้ว ให้คลิกปุ่ม 'confirm'
 การเปลี่ยนแปลงจะถูกปรับให้เหมาะสม
 
-![](images/edit_model_service.png)
+![](../images/edit_model_service.png)
 
 #### การยุติบริการโมเดล
 
@@ -532,4 +532,4 @@ Authorization BackendAI
 จะยุติบริการโมเดล บริการโมเดลที่ยุติแล้วจะถูก
 ลบออกจากรายการบริการโมเดล
 
-![](images/terminate_model_service_dialog.png)
+![](../images/terminate_model_service_dialog.png)

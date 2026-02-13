@@ -8,7 +8,7 @@ Backend.AI supports SSH/SFTP connection to the created compute sessions
       When the version is 23.09 or lower version, you need to use WebUI Desktop app. Desktop app can be downloaded
       a panel from the Summary page. Using this panel, the compatible version will be downloaded automatically.
 
-      ![](images/app_download_panel.png)
+      ![](../images/app_download_panel.png)
 
       You can also download the app from
       https://github.com/lablup/backend.ai-webui/releases. Make sure to download
@@ -39,7 +39,7 @@ link, you can also download the `id_container` file located under
 SSH key may change when new session is created. In that case, it must be
 downloaded again.
 
-![](images/sftp_app.png)
+![](../images/sftp_app.png)
 
 To SSH connect to the compute session with the downloaded SSH private key, you
 run the following command in the shell environment. You should write the
@@ -86,7 +86,7 @@ each FTP client manual for details.
    If you receive the following warning message, try again after changing the
    permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 
-   ![](images/bad_permissions.png)
+   ![](../images/bad_permissions.png)
 
 
 ## For Windows / FileZilla
@@ -107,29 +107,29 @@ Conversions menu. Select the downloaded `id_container` file from the file open
 dialog. Click the Save private key button of PuTTYGen and save the file with the
 name `id_container.ppk`.
 
-![](images/puttygen_conversion.png)
+![](../images/puttygen_conversion.png)
 
 After launching the FileZilla client, go to the Settings-Connection-SFTP
 and register the key file `id_container.ppk` (`id_container` for clients
 supporting OpenSSH).
 
-![](images/filezilla_setting.png)
+![](../images/filezilla_setting.png)
 
 Open Site Manager, create a new site, and enter the connection information as
 follows.
 
-![](images/filezilla_site_setting.png)
+![](../images/filezilla_site_setting.png)
 
 When connecting to a container for the first time, the following confirmation
 popup may appear. Click the OK button to save the host key.
 
-![](images/unknown_host_key.png)
+![](../images/unknown_host_key.png)
 
 After a while, you can see that the connection is established as follows. You
 can now transfer large files to `/home/work/` or other mounted storage folder
 with this SFTP connection.
 
-![](images/filezilla_connection_established.png)
+![](../images/filezilla_connection_established.png)
 
 
 ## For Visual Studio Code
@@ -144,13 +144,13 @@ extension pack.
 
 Link: https://aka.ms/vscode-remote/download/extension
 
-![](images/vscode_install_remote_ssh.png)
+![](../images/vscode_install_remote_ssh.png)
 
 After installing the extension, you should configure the SSH connection for the
 compute session. In the VSCode Remote Connection dialog, click the copy icon button
 to copy the Visual Studio Code remote SSH password. Also, remember the port number.
 
-![](images/download_ssh_key.png)
+![](../images/download_ssh_key.png)
 
 Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
 or `C:\Users\[user name]\.ssh\config` (for Windows) and add the following block.
@@ -167,28 +167,28 @@ UserKnownHostsFile /dev/null
 ``
 Now in the Visual Studio Code, select the `Command Palette...` from `View` menu.
 
-  ![](images/vscode_view_commandpalett.png)
+  ![](../images/vscode_view_commandpalett.png)
 
 Visual Studio Code can automatically detect the type of host you are connecting
 to. Let's choose `Remote-SSH: Connect to Host...`.
 
-  ![](images/vscode_remote_ssh_connect.png)
+  ![](../images/vscode_remote_ssh_connect.png)
 
 You will see the list of hosts in `.ssh/config`. Please select the host to
 connect, in this case, `vscode`.
 
-  ![](images/vscode_remote_ssh_select_host.png)
+  ![](../images/vscode_remote_ssh_select_host.png)
 
 Selecting the host name will lead you to access the remote compute session.
 After you are connected, you will see an empty window. You can always refer to
 the Status bar to see which host you are connected to.
 
-  ![](images/vscode_connect_finish.png)
+  ![](../images/vscode_connect_finish.png)
 
 You can then open any folder or workspace on the remote host by accessing `File >
 Open...` or `File > Open Workspace...` menu just as you usually would do!
 
-  ![](images/vscode_connected_host_file_open.png)
+  ![](../images/vscode_connected_host_file_open.png)
 
 
 ## Establish SSH connection with Backend.AI client package
@@ -218,7 +218,7 @@ $ docker pull lablup/backend.ai-client:<version>
 The version of Backend.AI server can be found in "About Backend.AI" menu that
 appears when you click on the person icon on the top right corner of the Web UI.
 
-![](images/check_backend_server_version.png)
+![](../images/check_backend_server_version.png)
 
 Run the Docker image with the following command:
 

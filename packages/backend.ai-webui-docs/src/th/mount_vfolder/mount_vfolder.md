@@ -14,7 +14,7 @@ From this list, choose the folders to mount and add them, or select multiple fol
 The documentation will explain how to mount two folders, `user1-ml-test` and `user2-vfolder`,
 and then create a session.
 
-![](images/create_session_with_folders.png)
+![](../images/create_session_with_folders.png)
 
 
    By looking at the data and folder information within that project, ผู้ใช้s can see information such as usage mode,
@@ -36,9 +36,9 @@ Or you can also open terminal app from the notification.
 `ls` command will mount ``user1-ml-test` folder and `user2-vfolder` under the `user1-ml-test`
 and `user2-vfolder` folders are mounted under the home directory.
 
-![](images/execute_terminal_app.png)
+![](../images/execute_terminal_app.png)
 
-![](images/execute_terminal_app2.png)
+![](../images/execute_terminal_app2.png)
 
 
    The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
@@ -53,7 +53,7 @@ The example below illustrates what's happening.
 Under the `user2-vfolder`, create a `test_file`.
 Fill the contents with \"file inside ผู้ใช้2-vfolder\".
 
-![](images/mounted_folders_in_terminal.png)
+![](../images/mounted_folders_in_terminal.png)
 
 Running `ls` command against `user2-vfolder`, ผู้ใช้s can confirm the file was created successfully.
 Please note the contents of the file can be chekced with `cat` command.
@@ -63,7 +63,7 @@ Locate the `user2-vfolder folder`, open a file explorer and check that the `test
 Click the 'download' button in 'Actions' tab to download the file to the local machine and open it
 to confirm that the contents are \"file inside ผู้ใช้2-vfolder\".
 
-![](images/download_file_from_folder.png)
+![](../images/download_file_from_folder.png)
 
 Performing file management on a mounted folder when you create a compute session,
 data can be preserved even after ผู้ใช้s ends the compute session.

@@ -5,7 +5,7 @@ From 22.09 Backend.AI WebUI supports showing partial information of agent node(s
 In Agent summary menu, you can see the list of agent information including endpoint address, CPU architecture, resource allocation,
 and whether the agent is schedulable or not. This menu is useful to check resource allocation on session creation.
 
-![](images/agent_summary.png)
+![](../images/agent_summary.png)
 
 
    Depending on the server configuration, the agent summary service feature may not be available.

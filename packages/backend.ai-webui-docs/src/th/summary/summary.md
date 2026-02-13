@@ -5,7 +5,7 @@ This feature is deprecated, so please use the [dashboard<dashboard>](#dashboard<
 
 On the สรุป page, ผู้ใช้s can check resource status and session usage.
 
-![](images/summary.png)
+![](../images/summary.png)
 
 ### สถิติทรัพยากร
 

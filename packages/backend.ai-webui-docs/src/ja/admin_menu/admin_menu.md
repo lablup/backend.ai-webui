@@ -7,7 +7,7 @@ super-管理者 role ユーザー can see all ユーザーs' information, create
 User ID (email), Name (ユーザーname), Role and Description(User Description) can be filtered by typing text in the
 search box on each column header.
 
-![](images/admin_user_page.png)
+![](../images/admin_user_page.png)
 
 ## ユーザーの作成と更新
 
@@ -18,22 +18,22 @@ character/ number should be included. The maximum length allowed for E-Mail and 
 
 同じメールアドレスまたはユーザー名のユーザーが既に存在する場合、ユーザーアカウントを作成することはできません。他のメールアドレスとユーザー名を試してください。
 ``
-![](images/create_user_dialog.png)
+![](../images/create_user_dialog.png)
 
 Check if the user is created.
 
-![](images/check_if_user_created.png)
+![](../images/check_if_user_created.png)
 
 Click the green button in the Controls panel for more detailed user
 information. You can also check the domain and project information where the
 user belongs.
 
-![](images/user_detail_dialog.png)
+![](../images/user_detail_dialog.png)
 
 Click the 'Setting (Gear)' in the Controls panel to update information of a user who
 already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
 
-![](images/user_update_dialog.png)
+![](../images/user_update_dialog.png)
 
 Each of the five items at the bottom of the dialog has the following functions.
 
@@ -42,7 +42,7 @@ Each of the five items at the bottom of the dialog has the following functions.
   step to activate the account such as email verification or an approval from an
   admin. Note that the inactive users are listed in the Inactive tab separately.
 
-  ![](images/active_user_selection.png)
+  ![](../images/active_user_selection.png)
 - Require password change?: If the admin has chosen random passwords while
   creating users in batches, this field can be set to ON to indicate that
   password change is required. The users will see the top bar that notify user
@@ -68,12 +68,12 @@ admins can inactivate user accounts to keep users from logging in. Click the
 delete icon in the Controls panel. A popover asking confirmation appears, and
 you can deactivate the user by clicking the Deactivate button.
 
-![](images/user_deactivate_confirmation.png)
+![](../images/user_deactivate_confirmation.png)
 
 To re-activate users, go to Users - Inactive tab, and select the status of
 the target user to `Active`.
 
-![](images/user_inactivate_confirmation.png)
+![](../images/user_inactivate_confirmation.png)
 
 
 Please note that deactivating or reactivating the user does not change the user's credentials, since the user
@@ -96,26 +96,26 @@ Keypairs can be listed on the Credentials tab of in the Users page. Active
 keypairs are shown immediately, and to see the inactive keypairs, click the
 Inactive panel at the bottom.
 
-![](images/credential_list_tab.png)
+![](../images/credential_list_tab.png)
 
 Like in Users tab, you can use the buttons in the Controls panel to view or
 update keypair details. Click the green info icon button to see specific details of the keypair.
 If necessary, you can copy the secret key by clicking the copy button.
 
-![](images/keypair_detail_dialog.png)
+![](../images/keypair_detail_dialog.png)
 
 You can modify the resource policy and rate limit of the keypair by clicking the blue 'Setting (Gear)' button.
 Please keep in mind that if the 'Rate Limit' value is small, API operations such as login may be blocked.
 
-![](images/keypair_update_dialog.png)
+![](../images/keypair_update_dialog.png)
 
 You can also deactivate or reactivate the keypair by clicking red 'Deactivate' button or black 'Activate' button in control column.
 Unlike the User tab, the Inactive tab allows permanent deletion of key pairs.
 However, you cannot permanently delete a key pair if it is currently being used as a user's main access key.
 
-![](images/keypair_delete_button.png)
+![](../images/keypair_delete_button.png)
 
-![](images/keypair_delete_confirmation.png)
+![](../images/keypair_delete_confirmation.png)
 
 
 If you
@@ -129,7 +129,7 @@ throws an error and does not accept the request. It is recommended to use the
 default value and increase it when the API request frequency goes up high
 according to the user's pattern.
 
-![](images/add_keypair_dialog.png)
+![](../images/add_keypair_dialog.png)
 
 
 :::
@@ -152,14 +152,14 @@ Enter the folder name, set the Type to Project. When the type is set to Project,
 it will be automatically assigned to the project selected in the project selector in the header.
 Permission is set to Read-Only.
 
-![](images/group_folder_creation.png)
+![](../images/group_folder_creation.png)
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
 is displayed without any invitation procedure. You can see that R (Read Only) is
 also displayed in the Permission panel.
 
-![](images/group_folder_listed_in_B.png)
+![](../images/group_folder_listed_in_B.png)
 
 ## モデルカードの管理
 
@@ -174,7 +174,7 @@ model-definitionファイルとともにモデルストアをアップロード�
 
 まず、プロジェクトを'model-store'に設定します。
 
-![](images/select_project_to_model_store.png)
+![](../images/select_project_to_model_store.png)
 
 データページに移動し、右側の「フォルダ作成」ボタンをクリックします。フォルダ名を入力し、
 残りのフォルダ設定を以下のように構成します:
@@ -184,7 +184,7 @@ model-definitionファイルとともにモデルストアをアップロード�
 - 権限: Read-Write
 - 複製可能: True
 
-![](images/model_store_folder.png)
+![](../images/model_store_folder.png)
 
 フォルダを作成した後、作成したフォルダにmodel-definition.yamlファイルを設定してアップロードする必要があります。
 以下はmodel-definitionファイルの例です。
@@ -231,7 +231,7 @@ models:
 
 model-definitionファイルがアップロードされると、モデルストアページにモデルカードが表示されます。
 
-![](images/model_card_added.png)
+![](../images/model_card_added.png)
 
    model-definitionファイルを設定した後、モデルを手動でダウンロードする必要があります。フォルダにモデルファイルをダウンロードするには、
    セッション作成時にモデルフォルダをマウントし、[Downloading models](https://huggingface.co/docs/hub/models-downloading) を参照して
@@ -240,7 +240,7 @@ model-definitionファイルがアップロードされると、モデルスト�
 作成したモデルカードをクリックすると、アップロードしたmodel-definitionファイルの詳細が表示されます。
 これで、プロジェクトのすべてのメンバーがモデルカードにアクセスして複製できます。
 
-![](images/model_card_detail.png)
+![](../images/model_card_detail.png)
 
    モデルカードの「このモデルを実行します」ボタンを有効にするには、フォルダに
    `model-definition.yaml`と`service-definition.toml`の両方のファイルが存在する
@@ -253,7 +253,7 @@ model-definitionファイルがアップロードされると、モデルスト�
 
 モデルストアページは、管理者が事前に構成したモデルをユーザーが閲覧して活用できるページです。サイドバーからモデルストアページに移動すると、モデルストアプロジェクトに登録されたすべてのモデルカードを確認できます。
 
-![](images/model_store_page_overview.png)
+![](../images/model_store_page_overview.png)
 <!-- TODO: Capture screenshot of Model Store page showing model cards with buttons visible -->
 
 各モデルカードには以下の主要な情報が表示されます：
@@ -265,7 +265,7 @@ model-definitionファイルがアップロードされると、モデルスト�
 
 モデルカードをクリックすると、READMEの全内容と利用可能なアクションを含む詳細ビューが開きます。
 
-![](images/model_card_detail_with_buttons.png)
+![](../images/model_card_detail_with_buttons.png)
 <!-- TODO: Capture screenshot of model card detail view showing README content and buttons -->
 
 ### フォルダにクローン
@@ -281,7 +281,7 @@ model-definitionファイルがアップロードされると、モデルスト�
    - **使用モード**: フォルダの種類を選択します（一般、モデル、または自動マウント）
 3. 「クローン」ボタンをクリックしてクローンプロセスを開始します
 
-![](images/model_store_clone_dialog.png)
+![](../images/model_store_clone_dialog.png)
 <!-- TODO: Capture screenshot of clone folder dialog with field settings -->
 
    現在、フォルダのクローンは同じストレージホスト内でのみサポートされています。
@@ -308,7 +308,7 @@ model-definitionファイルがアップロードされると、モデルスト�
    - フォルダは `{元の名前}-{ランダム4文字}` の形式の名前でクローンされます
    - 通知でクローンの進行状況が表示されます
 
-![](images/model_service_clone_confirmation.png)
+![](../images/model_service_clone_confirmation.png)
 <!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
 
 3. **サービスの作成**: フォルダの準備ができたら（以前のクローンまたは新しいクローンから）：
@@ -316,12 +316,12 @@ model-definitionファイルがアップロードされると、モデルスト�
    - 通知でサービス作成の進行状況が表示されます
    - 通知をクリックするとモデルサービスページに移動できます
 
-![](images/model_service_creation_progress.png)
+![](../images/model_service_creation_progress.png)
 <!-- TODO: Capture screenshot of service creation progress notification -->
 
 4. **サービス詳細の確認**: 作成が完了したら、モデルサービスページに移動してエンドポイントの詳細を確認し、サービスの状態を監視し、サービスを管理できます
 
-![](images/model_service_created_detail.png)
+![](../images/model_service_created_detail.png)
 <!-- TODO: Capture screenshot of completed service in Model Serving page -->
 
    以前の操作でクローンしたフォルダがすでに存在する場合、システムはそのフォルダを
@@ -354,13 +354,13 @@ Let's begin by examining the resource policies for keypairs. In the figure below
 three policies in total (gardener, student, default). The infinity symbol (∞)
 indicates that no resource restrictions have been applied to those resources.
 
-![](images/resource_policy_page.png)
+![](../images/resource_policy_page.png)
 
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
 You can also confirm that all resource policies are set to default in the Resource Policy panel.
 
-![](images/credentials.png)
+![](../images/credentials.png)
 
 To modify resource policies, click the 'Setting (Gear)' in the Control column of the
 default policy group. In the Update Resource Policy dialog, every option is
@@ -371,7 +371,7 @@ values. Ensure that the allocated resources are less than the total hardware
 capacity. In this case, set CPU, RAM, and fGPU to 2, 4, and 1 respectively.
 Click the OK button to apply the updated resource policy.
 
-![](images/update_resource_policy.png)
+![](../images/update_resource_policy.png)
 
 About details of each option in resource policy dialog, see the description below.
 
@@ -416,7 +416,7 @@ About details of each option in resource policy dialog, see the description belo
 In the keypair resource policy list, check that the Resources value of the default
 policy has been updated.
 
-![](images/keypair_resource_policy_update_check.png)
+![](../images/keypair_resource_policy_update_check.png)
 
 You can create a new resource policy by clicking the '+ Create' button. Each setting
 value is the same as described above.
@@ -430,7 +430,7 @@ You can also delete each of resource keypairs by clicking trash can icon
 in the Control column. When you click the icon, the confirmation popup will appears.
 Click 'Delete' button to erase."
 
-![](images/resource_policy_delete_dialog.png)
+![](../images/resource_policy_delete_dialog.png)
 
 
 If there's any users (including inactive users) following a resource policy to be deleted,
@@ -440,7 +440,7 @@ no users remain under the resource policy.
 If you want to hide or show specific columns, click the 'Setting (Gear)' at the bottom right of the
 table. This will bring up a dialog where you can select the columns you want to display.
 
-![](images/keypair_resource_policy_table_setting.png)
+![](../images/keypair_resource_policy_table_setting.png)
 
 
 #### User Resource Policy
@@ -452,11 +452,11 @@ resource policy page, users can set restrictions on various settings related to 
 Max Folder Count and Max Folder Size, as well as individual resource limits like Max Session
 Count Per Model Session and Max Customized Image Count.
 
-![](images/user_resource_policy_list.png)
+![](../images/user_resource_policy_list.png)
 
 To create a new user resource policy, click the Create button.
 
-![](images/create_user_resource_policy.png)
+![](../images/create_user_resource_policy.png)
 
 - Name: The name of the user resource policy.
 - Max Folder Count: The maximum number of folders that the user can create.
@@ -494,11 +494,11 @@ resource policies manage storage space (quota) and folder-related limitations fo
 When clicking the Project tab of the Resource Policy page, you can see the list of project
 resource policy.
 
-![](images/project_resource_policy_list.png)
+![](../images/project_resource_policy_list.png)
 
 To create a new project resource policy, click the '+ Create' button at the top right of the table.
 
-![](images/create_project_resource_policy.png)
+![](../images/create_project_resource_policy.png)
 
 - Name: The name of the project resource policy.
 - Max Folder Count: The maximum number of project folders that an administrator can create.
@@ -525,7 +525,7 @@ bottom right of the table.
 
 To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
 
-![](images/keypair_export.png)
+![](../images/keypair_export.png)
 
 ## Unified View for Pending Sessions
 
@@ -534,7 +534,7 @@ Unlike the Session page, the Scheduler page provides a unified view of all pendi
 selected resource group. The index number displayed next to the status indicates the queue position in
 which the session will be created once sufficient resources become available.
 
-![](images/scheduler_page.png)
+![](../images/scheduler_page.png)
 
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
@@ -552,7 +552,7 @@ nodes, there will be a `installed` tag in each Status column.
    The feature to install images by selecting specific agents is currently
    under development.
 
-![](images/image_list_page.png)
+![](../images/image_list_page.png)
 
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource
@@ -563,7 +563,7 @@ create a compute session with a resource that is less than the amount of
 resources specified in each image, the request is automatically adjusted to the
 minimum resource requirements for the image and then generated, not cancelled.
 
-![](images/update_image_resource_setting.png)
+![](../images/update_image_resource_setting.png)
 
 
    Don't change the minimum resource requirements to an amount less than the
@@ -575,14 +575,14 @@ minimum resource requirements for the image and then generated, not cancelled.
 Additionally, you can add or modify the supported apps for each image by clicking the 'Apps' icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
 
-![](images/manage_app_dialog.png)
+![](../images/manage_app_dialog.png)
 
 In this interface, you can add supported custom applications by clicking the '+ Add' button below. To delete an application, simply click the 'red trash can' button on the right side of each row.
 
 
    You need to reinstall the image after changing the managed app.
 
-   ![](images/confirmation_dialog_for_manage_app_change_in_image.png)
+   ![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
 
 
 ## Manage docker registry
@@ -599,7 +599,7 @@ Click the refresh icon in Controls to update image metadata for Backend.AI from
 the connected registry. Image information which does not have labels for
 Backend.AI among the images stored in the registry is not updated.
 
-![](images/image_registries_page.png)
+![](../images/image_registries_page.png)
 
 You can add your own private docker registry by clicking the '+ Add Registry'
 button. Note that Registry Name and Registry URL address must be set
@@ -610,7 +610,7 @@ You can create a new resource policy by clicking the '+ Create' button.
 Likewise other creating options, you cannot create a resource policy with the name
 that already exists, since name is the key value.
 
-![](images/create_resource_group.png)
+![](../images/create_resource_group.png)
 
 
 ## Storages
@@ -619,7 +619,7 @@ On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
 From 23.03 version, We provide per-user/per-project quota setting on storage that supports quota management.
 By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.
 
-![](images/storage_list.png)
+![](../images/storage_list.png)
 
 In order to set quota, you need to first access to storages tab in resource page.
 And then, click 'Setting (Gear)' in control column.
@@ -630,14 +630,14 @@ And then, click 'Setting (Gear)' in control column.
    in quota setting page regardless of storage, you cannot configure the quota which doesn't
    support quota configuration internally.
 
-   ![](images/no_support_quota_setting.png)
+   ![](../images/no_support_quota_setting.png)
 
 
 #### Quota Setting Panel
 
 In Quota setting page, there are two panels.
 
-![](images/quota_setting_page.png)
+![](../images/quota_setting_page.png)
 
 - Overview panel
    * Usage: Shows the actual amount usage of the selected storage.
@@ -661,12 +661,12 @@ First, make sure the active tab of quota settings panel is `For User`. Then, sel
 check and edit the quota. You can see the quota id that corresponds to user's id and the configuration already set
 in the table, if you already set the quota.
 
-![](images/per_user_quota.png)
+![](../images/per_user_quota.png)
 
 Of course, if you want to edit the quota, you can simply click the Edit button in the control column. After Clicking `Edit` button, you may see the small modal that enables configuring quota setting.
 After input the exact amount, don't forget to Click `OK` button, unless the changes will not be applied.
 
-![](images/quota_settings_panel.png)
+![](../images/quota_settings_panel.png)
 
 #### Set Project Quota
 
@@ -675,7 +675,7 @@ project quota and user quota is to confirm setting the project quota requires on
 which is selecting the domain that the project is dependent on. The rest are the same.
 As in the picture below, you need to first select the domain, and then select the project.
 
-![](images/per_project_quota.png)
+![](../images/per_project_quota.png)
 
 #### Unset Quota
 
@@ -685,7 +685,7 @@ By Clicking `Unset` button in control column, the small snackbar message will sh
 If you click `OK` button in the snackbar message, then it will delete the quota setting and automatically reset the quota follows to corresponding quota,
 which depends on the quota type(user / project).
 
-![](images/unset_quota.png)
+![](../images/unset_quota.png)
 
 
 If there's no config per user/project, then corresponding values in the user/project resource policy will be set as
@@ -702,14 +702,14 @@ There's additional feature in Session page for admin.
 On the right side of the FINISHED tab there is a menu marked with `...`.
 When you click this menu, a sub-menu export CSV appears.
 
-![](images/export_csv_menu.png)
+![](../images/export_csv_menu.png)
 
 If you click this menu, you can download the information of the comcpute sessions
 created so far in CSV format. After the following dialog opens, enter an appropriate
 file name (if necessary), click the EXPORT button and you will get the CSV file.
 Please note that a file name can have up to 255 characters.
 
-![](images/export_session_dialog.png)
+![](../images/export_session_dialog.png)
 
 
 ## System settings
@@ -727,11 +727,11 @@ guarantee the Integrity of the image.
 
    Don't change rule selection unless you completely understand the meaning of each rule.
 
-![](images/system_setting_about_image.png)
+![](../images/system_setting_about_image.png)
 
 You can also change settings for scaling, plugins and enterprise features.
 
-![](images/system_setting_about_scaling_plugins.png)
+![](../images/system_setting_about_scaling_plugins.png)
 
 When a user launches a multi-node cluster session, which is introduced at
 version 20.09, Backend.AI will dynamically create an overlay network to support
@@ -739,7 +739,7 @@ private inter-node communication. Admins can set the value of the Maximum
 Transmission Unit (MTU) for the overlay network, if it is certain that the value
 will enhance the network speed.
 
-![](images/overlay_network_setting_dialog.png)
+![](../images/overlay_network_setting_dialog.png)
 
 
    For more information about Backend.AI Cluster session, please refer to
@@ -757,7 +757,7 @@ of retries to create a session if it fails. If the session cannot be created wit
 the request will be ignored and Backend.AI will process the next request. Currently, changes are
 only possible when the scheduler is FIFO.
 
-![](images/system_setting_dialog_scheduler_settings.png)
+![](../images/system_setting_dialog_scheduler_settings.png)
 
 
    We will continue to add broader range of setting controls.
@@ -780,7 +780,7 @@ Go to the Maintenance page and you will see some buttons to manage the server.
   registries. It can be used when a new image is pushed to a
   Backend.AI-connected docker registry.
 
-![](images/maintenance_page.png)
+![](../images/maintenance_page.png)
 
 
    We will continue to add other settings needed for management, such as
@@ -796,4 +796,4 @@ for Backend.AI is compatible or not, check the Component panel.
 
 This page is only for showing current information.
 ``
-![](images/information_page.png)
+![](../images/information_page.png)

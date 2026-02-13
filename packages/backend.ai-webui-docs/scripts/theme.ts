@@ -49,18 +49,24 @@ export interface PdfTheme {
  * Playwright header/footer templates support these CSS classes:
  *   .date, .title, .url, .pageNumber, .totalPages
  * Only inline styles are allowed (no external stylesheets).
+ *
+ * Book-style header: document title on the left, thin bottom border.
  */
 function defaultHeaderHtml(title: string, theme: { headerFooterColor: string; headerFooterFontSize: string }): string {
   return `
-    <div style="width: 100%; font-size: ${theme.headerFooterFontSize}; color: ${theme.headerFooterColor}; padding: 0 15mm; margin-top: 5mm;">
-      <span style="float: left;">${title}</span>
+    <div style="width: 100%; font-size: ${theme.headerFooterFontSize}; font-family: 'Noto Sans', 'Noto Sans KR', Helvetica, Arial, sans-serif; color: ${theme.headerFooterColor}; padding: 0 20mm; margin-top: 4mm; border-bottom: 0.5px solid #ccc; padding-bottom: 4px;">
+      <span>${title}</span>
     </div>
   `;
 }
 
+/**
+ * Book-style footer: page number on the right, thin top border.
+ * Chapter label is stamped separately via pdf-lib post-processing.
+ */
 function defaultFooterHtml(theme: { headerFooterColor: string; headerFooterFontSize: string }): string {
   return `
-    <div style="width: 100%; font-size: ${theme.headerFooterFontSize}; color: ${theme.headerFooterColor}; text-align: center; padding: 0 15mm; margin-bottom: 3mm;">
+    <div style="width: 100%; font-size: ${theme.headerFooterFontSize}; font-family: 'Noto Sans', 'Noto Sans KR', Helvetica, Arial, sans-serif; color: ${theme.headerFooterColor}; padding: 0 20mm; margin-bottom: 4mm; border-top: 0.5px solid #ccc; padding-top: 4px; display: flex; justify-content: flex-end;">
       <span class="pageNumber"></span>
     </div>
   `;
@@ -68,8 +74,8 @@ function defaultFooterHtml(theme: { headerFooterColor: string; headerFooterFontS
 
 // Internal defaults used to build headerHtml/footerHtml
 const HEADER_FOOTER_DEFAULTS = {
-  headerFooterFontSize: '8px',
-  headerFooterColor: '#aaa',
+  headerFooterFontSize: '9px',
+  headerFooterColor: '#555',
 };
 
 export const defaultTheme: PdfTheme = {

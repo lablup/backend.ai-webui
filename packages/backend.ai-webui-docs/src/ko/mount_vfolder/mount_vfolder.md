@@ -14,7 +14,7 @@ Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할
 이 목록에서 마운트할 폴더를 선택하여 추가하거나, 여러 폴더를 선택하여 추가로 마운트할 수 있습니다.
 이 문서에서는 `user1-ml-test`와 `user2-vfolder` 두 개의 폴더를 마운트한 후 세션을 생성하는 방법을 설명합니다.
 
-![](images/create_session_with_folders.png)
+![](../images/create_session_with_folders.png)
 
 
    해당 프로젝트 내의 데이터와 폴더 정보를 살펴보면 사용 모드, 해당 폴더가 속해 있는 스토리지 호스트, 권한 등의 정보를 확인할 수 있습니다.
@@ -34,9 +34,9 @@ Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할
 또는 알림에서도 터미널 앱을 열 수 있습니다.
 `ls` 명령을 실행하면 홈 디렉터리 아래에 `user1-ml-test` 폴더와 `user2-vfolder` 폴더가 마운트되어 있는 것을 확인할 수 있습니다.
 
-![](images/execute_terminal_app.png)
+![](../images/execute_terminal_app.png)
 
-![](images/execute_terminal_app2.png)
+![](../images/execute_terminal_app2.png)
 
 
    선택한 폴더는 기본적으로 연산 세션 내부의 `/home/work/` 아래에 폴더 이름으로 마운트됩니다.
@@ -51,7 +51,7 @@ Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존
 `user2-vfolder` 아래에 `test_file`을 생성합니다.
 파일의 내용을 "file inside user2-vfolder"로 채웁니다.
 
-![](images/mounted_folders_in_terminal.png)
+![](../images/mounted_folders_in_terminal.png)
 
 `user2-vfolder`에 대해 `ls` 명령을 실행하면 파일이 정상적으로 생성된 것을 확인할 수 있습니다.
 `cat` 명령을 사용하면 파일의 내용도 확인할 수 있습니다.
@@ -61,7 +61,7 @@ Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존
 '작업' 탭에서 '다운로드' 버튼을 클릭하여 파일을 로컬 컴퓨터에 다운로드한 후 열어서
 내용이 "file inside user2-vfolder"인지 확인합니다.
 
-![](images/download_file_from_folder.png)
+![](../images/download_file_from_folder.png)
 
 연산 세션을 생성할 때 폴더를 마운트한 후, 마운트된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.
 

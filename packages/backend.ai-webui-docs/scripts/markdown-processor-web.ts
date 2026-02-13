@@ -4,6 +4,7 @@
  */
 
 import fs from 'fs';
+import path from 'path';
 import { Marked } from 'marked';
 import {
   slugify,
@@ -20,6 +21,8 @@ import {
   parseHighlightLines,
   escapeHtml,
   stripHtmlTags,
+  getFigureLabel,
+  parseImageSizeHint,
 } from './markdown-extensions.js';
 
 export type { Chapter, Heading };
@@ -31,12 +34,37 @@ interface NavEntry {
 
 /**
  * Rewrite image paths for web preview.
- * Converts relative `images/` paths to `/images/{filename}` URLs served by the preview server.
+ * Resolves relative image paths from the md file's directory to absolute URL paths
+ * that the preview server can serve.
  */
-function rewriteImagePathsForWeb(markdown: string): string {
+function rewriteImagePathsForWeb(
+  markdown: string,
+  mdFilePath: string,
+  lang: string,
+  srcDir: string,
+): string {
+  const mdDir = path.dirname(mdFilePath);
+  const langDir = path.resolve(srcDir, lang);
   return markdown.replace(
-    /!\[([^\]]*)\]\(images\/([^)]+)\)/g,
-    (_, alt, filename) => `![${alt}](/images/${filename})`,
+    /!\[([^\]]*)\]\(([^)]+\.(?:png|jpe?g|gif|svg|webp))\)/gi,
+    (match, alt, imgPath) => {
+      // Skip already-absolute URLs
+      if (/^(?:https?|file):\/\//.test(imgPath)) return match;
+
+      // Treat leading-slash paths as already web-absolute
+      if (imgPath.startsWith('/')) return match;
+
+      // Resolve relative to the md file's directory
+      const resolved = path.resolve(mdDir, imgPath);
+
+      // Ensure the resolved path is within the language directory
+      if (!resolved.startsWith(langDir + path.sep)) return match;
+
+      // Make path relative to lang dir and convert to a URL path
+      const relToLang = path.relative(langDir, resolved);
+      const webPath = '/' + relToLang.split(path.sep).join('/');
+      return `![${alt}](${webPath})`;
+    },
   );
 }
 
@@ -55,7 +83,15 @@ function processCrossReferencesWeb(html: string, chapterSlug: string): string {
  * Handles headings with anchor links, images with doc-image class,
  * and code blocks with title/line-highlighting support.
  */
-function buildWebRenderer(chapterSlug: string, headings: Heading[]) {
+function buildWebRenderer(
+  chapterSlug: string,
+  headings: Heading[],
+  options?: { chapterIndex?: number; lang?: string },
+) {
+  let imgCounter = 0;
+  const chapterIndex = options?.chapterIndex ?? 0;
+  const figureLabel = getFigureLabel(options?.lang);
+
   return {
     heading(text: string, level: number, _raw: string): string {
       const plainText = stripHtmlTags(text);
@@ -66,7 +102,23 @@ function buildWebRenderer(chapterSlug: string, headings: Heading[]) {
     },
     image(href: string, title: string | null, text: string): string {
       const titleAttr = title ? ` title="${title}"` : '';
-      return `<img src="${href}" alt="${text || ''}" class="doc-image"${titleAttr} />\n`;
+      const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
+
+      let styleAttr = '';
+      if (sizeHint && sizeHint !== 'auto') {
+        styleAttr = ` style="width:${sizeHint}"`;
+      }
+
+      if (chapterIndex > 0) {
+        imgCounter++;
+        const figNum = `${figureLabel} ${chapterIndex}.${imgCounter}`;
+        const caption = cleanAlt
+          ? `<figcaption>${figNum} &mdash; ${escapeHtml(cleanAlt)}</figcaption>`
+          : `<figcaption>${figNum}</figcaption>`;
+        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
+      }
+
+      return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />\n`;
     },
     code(code: string, infostring: string | undefined): string {
       const info = infostring || '';
@@ -114,6 +166,7 @@ export async function processMarkdownFilesForWeb(
   version: string,
 ): Promise<Chapter[]> {
   const chapters: Chapter[] = [];
+  let chapterIndex = 0;
 
   for (const nav of navigation) {
     let mdPath: string;
@@ -124,23 +177,24 @@ export async function processMarkdownFilesForWeb(
       continue;
     }
 
+    chapterIndex++;
     let markdown = fs.readFileSync(mdPath, 'utf-8');
     const chapterSlug = slugify(nav.title);
 
     // Pre-processing pipeline (reused from PDF processor)
     markdown = deduplicateH1(markdown);
     markdown = substituteTemplateVars(markdown, version);
-    markdown = rewriteImagePathsForWeb(markdown);
+    markdown = rewriteImagePathsForWeb(markdown, mdPath, lang, srcDir);
     markdown = normalizeRstTables(markdown);
     markdown = convertIndentedNotes(markdown);
 
     // Extended syntax pre-processing
-    markdown = processAdmonitions(markdown);
+    markdown = processAdmonitions(markdown, lang);
     markdown = processCodeBlockMeta(markdown);
 
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings) });
+    marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang }) });
 
     let htmlContent = await marked.parse(markdown);
     htmlContent = processCrossReferencesWeb(htmlContent, chapterSlug);

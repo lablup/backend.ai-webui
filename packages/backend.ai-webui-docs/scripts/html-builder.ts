@@ -102,10 +102,20 @@ function buildTocHtml(chapters: Chapter[], lang: string): string {
 function buildContentHtml(chapters: Chapter[]): string {
   return chapters
     .map(
-      (chapter) =>
-        `<section class="chapter" id="chapter-${chapter.slug}">\n` +
-        `<a id="${chapter.slug}"></a>\n` +
-        `${chapter.htmlContent}\n</section>`,
+      (chapter, index) => {
+        const chapterNum = index + 1;
+        const chapterTitle = chapter.title;
+        return (
+          `<section class="chapter" id="chapter-${chapter.slug}" data-chapter-num="${chapterNum}" data-chapter-title="${chapterTitle}">\n` +
+          `<a id="${chapter.slug}"></a>\n` +
+          `<div class="chapter-title-page">\n` +
+          `  <div class="chapter-number">Chapter ${chapterNum}</div>\n` +
+          `  <div class="chapter-title-text">${chapterTitle}</div>\n` +
+          `  <div class="chapter-title-divider"></div>\n` +
+          `</div>\n` +
+          `${chapter.htmlContent}\n</section>`
+        );
+      },
     )
     .join('\n');
 }

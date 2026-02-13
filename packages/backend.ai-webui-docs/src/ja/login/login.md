@@ -5,11 +5,11 @@
 When you launch the WebUI, log in dialog appears. If you haven't signed up
 yet, press the SIGN UP button.
 
-![](images/login_dialog.png)
+![](../images/login_dialog.png)
 
 必要な情報を入力し、利用規約/プライバシーポリシーを読み同意した上で、SIGNUPボタンをクリックしてください。システム設定によっては、サインアップに招待トークンを入力する必要がある場合があります。あなたのメールアドレスであることを確認するための確認メールが送信されることがあります。確認メールが送信された場合は、メールを読んで内部のリンクをクリックし、検証を通過した後にアカウントでログインする必要があります。
 
-![](images/signup_dialog.png)
+![](../images/signup_dialog.png)
 
 
    サーバーの構成およびプラグインの設定によっては、匿名ユーザーによるサインアップが許可されていない場合があります。その場合は、システムの管理者に連絡してください。
@@ -32,7 +32,7 @@ the サマリー tab.
 
 右上のアイコンをクリックすると、サブメニューが表示されます。ログアウトメニューを選択するとログアウトできます。
 
-![](images/signout_button.png)
+![](../images/signout_button.png)
 
 
 ## パスワードを忘れた場合
@@ -43,7 +43,7 @@ by reading and following the instruction. Depending on the server settings, the
 password change feature may be disabled. In this case, contact the
 管理者istrator.
 
-![](images/forgot_password_panel.png)
+![](../images/forgot_password_panel.png)
 
 
    これはモジュール式の機能でもあるため、システムによってはパスワード変更ができない場合があります。
@@ -61,4 +61,4 @@ password change feature may be disabled. In this case, contact the
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
 
 
-![](images/menu_collapse.png)
+![](../images/menu_collapse.png)

@@ -4,7 +4,7 @@ In Backend.AI, a `session` represents an isolated compute environment where ユ�
 Each session is created based on ユーザー-defined configurations such as runtime image, resource size, and environment settings.
 Once started, the session provides access to interactive applications, terminals, and logs, allowing ユーザーs to manage and monitor their workloads efficiently.
 
-![](images/sessions_page.png)
+![](../images/sessions_page.png)
 
 
 ## Resource サマリー Panels
@@ -12,7 +12,7 @@ At the top of the 'セッション' page, you can find panels displaying your av
 Different panel views — 'My Total Resources Limit', 'My Resources in Resource Group', and 'Total Resources in Resource Group' — can be selected depending on
 the information needed. Use the 'Settings' button to change which panel is displayed.
 
-![](images/panel_settings.png)
+![](../images/panel_settings.png)
 
 For more detailed information about resource panels and their metrics, please refer to the [dashboard](#dashboard) page.
 
@@ -26,4 +26,4 @@ By default, you can view the following columns: session name, status, allocated 
 elapsed time, and for super 管理者s, agent and owner email.
 Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
 
-![](images/session_table_settings.png)
+![](../images/session_table_settings.png)

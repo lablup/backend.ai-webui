@@ -10,12 +10,12 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 사용자 계정으로 로그인 후 좌측 메뉴의 '세션'을 클릭하여 세션 페이지로 이동합니다. '세션 페이지'는 새로운 연산 세션을 시작하거나 이미 실행 중인 연산 세션을 관리할 때 사용할 수 있습니다.
 
-![](images/sessions_page.png)
+![](../images/sessions_page.png)
 
 
 새로운 연산 세션을 시작하려면 '시작' 버튼을 클릭하세요.
 
-![](images/launch_session_type.png)
+![](../images/launch_session_type.png)
 
 <a id="session-type"></a>
 
@@ -40,7 +40,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
     - 연산 세션 시작 시점을 지정할 수 있습니다. 다만, 시작 시점에 반드시 연산 세션이 자원을 할당받을 수 있는 것은 아닙니다(자원 부족 등의 이유로 PENDING 상태에 계속 머물 수 있습니다). 시작 시점 이전에는 자원이 있어도 연산 세션을 스케줄링 하지 않는 개념으로 이해하는 것이 정확합니다.
     - 배치 작업 최대 실행 시간: 배치 작업의 최대 실행 시간을 설정합니다. 지정된 시간이 초과되면 세션이 자동으로 종료됩니다.
 
-    ![](images/session_type_batch.png)
+    ![](../images/session_type_batch.png)
 
 <a id="session-naming-rule"></a>
 
@@ -48,11 +48,11 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 `슈퍼관리자` 또는 `관리자` 계정으로 세션을 생성하는 경우, 세션 소유자를 추가로 지정할 수 있습니다. 토글을 활성화하면 사용자 이메일 필드가 나타납니다.
 
-   ![](images/admin_launch_session_owner.png)
+   ![](../images/admin_launch_session_owner.png)
 
 세션 할당을 위한 사용자 이메일을 입력하고 '검색' 버튼을 클릭하면, 해당 사용자의 access key가 자동으로 등록됩니다. 추가적으로 프로젝트와 자원 그룹을 선택해 할당할 수 있습니다.
 
-   ![](images/admin_launch_session_owner_project.png)
+   ![](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
@@ -61,7 +61,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 다음 페이지로 진행하려면 아래쪽의 '다음' 버튼을 클릭하거나, 우측의 '실행 환경 & 자원 할당' 버튼을 클릭하십시오. 추가 설정 없이 세션을 생성하려면 '검토로 건너뛰기' 버튼을 누르십시오. 이 경우, 다른 페이지의 설정은 모두 기본값을 사용하게 됩니다.
 
-  ![](images/launch_session_environments_and_resource.png)
+  ![](../images/launch_session_environments_and_resource.png)
 
 ### 실행 환경
 
@@ -73,7 +73,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 - 환경 이름 (선택사항): 연산 세션에 사용할 이미지의 이름을 지정할 수 있습니다. 환경 설정에 따라 이 설정이 사용 불가능할 수도 있습니다.
 - 환경 변수 설정: 사용자에게 보다 편리한 작업 환경을 제공하기 위해, Backend.AI는 세션 생성 시 환경 변수 설정을 지원합니다. 이 기능을 통해 사용자는 환경 변수 설정 대화 상자에서 변수 이름과 값을 입력하여 `PATH` 등의 환경 변수를 추가할 수 있습니다.
 
-  ![](images/launch_session_environments.png)
+  ![](../images/launch_session_environments.png)
 
 ### 자원 할당
 
@@ -81,7 +81,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 - 자원 그룹: 연산 세션을 생성할 자원 그룹을 지정합니다. 자원 그룹은 각 사용자가 접근할 수 있는 호스트 서버를 묶은 단위이며, 주로 같은 종류의 GPU 자원을 보유하고 있는 서버들을 하나의 자원 그룹으로 설정합니다. 관리자는 서버를 종류별로 구분하여 자원 그룹으로 묶고, 사용자가 사용할 수 있는 자원 그룹의 종류를 지정할 수 있습니다. 사용자는 관리자가 허가한 자원 그룹 서버에만 연산 세션을 생성할 수 있습니다. 자원 그룹이 여러 개인 경우 원하는 그룹을 선택할 수 있지만, 하나만 있는 경우에는 변경할 수 없습니다.
 - 자원 프리셋: 이 템플릿은 연산 세션에 할당할 CPU, 메모리, GPU 등의 자원 세트를 미리 정의해 둔 것입니다. 관리자는 미리 자주 사용하는 자원 설정을 정의할 수 있습니다. 숫자 입력을 조정하거나 슬라이더를 움직이면 원하는 자원량을 할당할 수 있습니다.
 
-  ![](images/launch_session_resource.png)
+  ![](../images/launch_session_resource.png)
 
   각 항목의 의미는 다음과 같습니다. '도움 (?)' 버튼을 클릭하면 자세한 정보를 확인할 수 있습니다.
 
@@ -91,7 +91,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
   * AI 가속기: AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 며칠로 줄입니다.
   * 세션: 세션은 지정된 환경과 자원에 따라 생성되는 계산 환경 단위입니다. 이 값을 1보다 큰 값으로 설정하면 위의 자원 설정을 이용한 여러 세션이 지정한 값만큼 동시에 생성됩니다. 세션 시작 요청 시 사용 가능한 자원이 충분하지 않은 경우, 생성하지 못한 세션 시작 요청들은 생성 대기열에 추가됩니다.
 
-  ![](images/launce_session_resource_2.png)
+  ![](../images/launce_session_resource_2.png)
 
   * 에이전트 선택: 사용자는 할당할 에이전트를 직접 선택할 수 있습니다. 기본적으로는 스케줄러가 에이전트를 자동으로 선택합니다. 에이전트 선택기에서는 각 에이전트의 실제 사용 가능한 자원 양을 확인할 수 있습니다. 현재 이 기능은 단일 노드, 단일 컨테이너 환경에서만 지원됩니다.
   * 클러스터 모드: 클러스터 모드를 사용하면 여러 연산 세션을 한 번에 생성할 수 있습니다. 자세한 내용은 [Backend.AI 클러스터 연산 세션 개요](#backendai-cluster-compute-session)를 참고하세요.
@@ -103,7 +103,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
   Backend.AI는 `nthreads-var` 내부 제어 변수에 대한 설정 UI를 제공합니다. Backend.AI는 기본적으로 이 값을 세션의 CPU 코어 수와 동일하게 설정하며, 이는 일반적인 고성능 컴퓨팅 워크로드를 가속하는 효과가 있습니다. 그러나 일부 멀티 스레드 워크로드에서는 OpenMP를 사용하는 여러 프로세스가 동시에 실행되어 비정상적으로 많은 스레드가 생성되고 성능이 크게 저하될 수 있습니다. 이 문제를 해결하려면 스레드 수를 1 또는 2로 설정하면 됩니다.
 
-![](images/session_hpc_optimization.png)
+![](../images/session_hpc_optimization.png)
 
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
@@ -115,15 +115,15 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 연산 세션이 삭제되면 내부 데이터도 기본적으로 함께 삭제됩니다. 그러나 마운트된 폴더에 저장된 데이터는 보존됩니다. 마운트된 폴더의 데이터는 다른 연산 세션을 생성할 때 다시 마운트하여 재사용할 수도 있습니다. 폴더를 마운트하고 연산 세션을 실행하는 방법에 대한 자세한 내용은 [연산 세션에 폴더 마운트](#session-mounts)를 참고하세요.
 
-![](images/launch_session_data.png)
+![](../images/launch_session_data.png)
 
 연산 세션에 마운트할 스토리지 폴더를 지정할 수 있습니다. 폴더 이름을 클릭하면 폴더 탐색기를 사용할 수 있습니다. 자세한 내용은 [폴더 탐색](#explore-folder) 섹션을 참고하세요.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 검색 상자 옆의 '+' 버튼을 클릭하여 새 폴더를 생성할 수 있습니다. 새 폴더를 생성하면 자동으로 마운트할 폴더로 선택됩니다. 자세한 내용은 [스토리지 폴더 생성](#create-storage-folder) 섹션을 참고하세요.
 
-![](images/folder_create_modal.png)
+![](../images/folder_create_modal.png)
 
 <a id="network"></a>
 
@@ -134,7 +134,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 - 사전 개방 포트 설정: 연산 세션에서 사전 개방 포트를 설정할 수 있는 인터페이스를 제공합니다. 자세한 내용은 [세션 생성 전 사전 개방 포트 추가 방법](#set-preopen-ports)을 참고하세요.
 
 
-![](images/launch_session_network.png)
+![](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
@@ -145,26 +145,26 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 마지막 페이지에서는 이전 페이지에서 설정한 연산 세션 환경, 자원 할당량, 마운트 정보, 설정된 환경 변수, 사전 개방 포트 등의 정보를 확인할 수 있습니다. 설정을 검토한 후 '시작' 버튼을 클릭하여 세션을 실행합니다. 각 카드 우측 상단에 있는 '수정' 버튼을 클릭하면 해당 페이지로 이동하여 설정을 변경할 수 있습니다.
 
-![](images/launch_session_confirm.png)
+![](../images/launch_session_confirm.png)
 
 설정에 문제가 있는 경우, 다음과 같이 오류가 표시됩니다. 설정을 수정하려면 '수정' 버튼을 클릭하십시오.
 
-![](images/launch_session_error_card.png)
+![](../images/launch_session_error_card.png)
 
 폴더 마운트 없이 시작 버튼을 클릭하면, 아무 폴더를 마운트하지 않았다는 경고 대화 상자가 나타납니다. 폴더를 마운트할 필요가 없는 경우, 경고 대화 상자의 '시작' 버튼을 클릭하여 세션을 생성합니다.
 
-![](images/no_folder_notification_dialog.png)
+![](../images/no_folder_notification_dialog.png)
 
 새로운 연산 세션이 **실행 중** 탭에 추가되면, 화면 우측 하단에 알림이 나타납니다. 알림의 좌측 하단 영역에는 세션 상태가 표시되고, 우측 하단 영역에는 앱 대화 상자 열기, 터미널 실행, 컨테이너 로그 보기, 세션 종료 버튼이 포함되어 있습니다. 헤더의 **알림** 을 클릭하여 이 세션 생성 알림을 다시 볼 수도 있습니다.
 
-![](images/session_created.png)
+![](../images/session_created.png)
 
 
-![](images/session_notification.png)
+![](../images/session_notification.png)
 
 가장 왼쪽에 있는 앱 대화 상자 버튼을 클릭하면, 사용 가능한 앱 서비스를 확인할 수 있습니다.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 
 ### 최근 기록
@@ -172,9 +172,9 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 '세션 런처' 페이지는 세션을 생성하기 위한 다양한 옵션을 제공합니다. 24.09 버전부터 이전에 생성한 세션의 정보를 기억하는 `최근 기록` 기능이 추가되었습니다.
 
-![](images/recent_history.png)
+![](../images/recent_history.png)
 
-![](images/recent_history_modal.png)
+![](../images/recent_history_modal.png)
 
 `최근 기록` 모달에는 가장 최근에 생성된 5개의 세션 정보가 저장됩니다. 세션 이름을 클릭하면 세션 생성의 마지막 단계인 '검토 및 시작' 페이지로 이동합니다. 각 항목의 이름을 변경하거나 고정하여 편리하게 접근할 수 있습니다.
 
@@ -192,7 +192,7 @@ Backend.AI WebUI 에서 가장 많이 방문하게 될 페이지는 세션 페�
 
 '커널' 섹션의 '호스트명' 옆에 있는 '로그' 버튼을 클릭하면 해당 커널의 로그를 직접 확인할 수 있습니다.
 
-![](images/session_detail.png)
+![](../images/session_detail.png)
 
 Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대해 추가 정보를 제공합니다. 사용 가능한 경우 '정보' 버튼을 클릭하여 세부 사항을 확인할 수 있습니다.
 
@@ -203,7 +203,7 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 이미 실행 중인 연산 세션을 어떻게 사용하고 관리하는지 살펴봅시다. 세션 상세 정보 패널 우측 상단의 첫 번째 아이콘을 클릭하여 앱 런처를 열면 해당 세션에서 사용할 수 있는 앱 서비스가 표시됩니다.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 
    앱 아이콘 아래에는 두 가지 체크 옵션이 있습니다. 각 항목을 체크하고 앱을 띄우면 다음과 같은 기능이 반영됩니다:
@@ -215,7 +215,7 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 Jupyter Notebook 을 클릭해봅시다.
 
-![](images/jupyter_app.png)
+![](../images/jupyter_app.png)
 
 새로운 창이 뜨면서 Jupyter Notebook 이 실행되는 것을 확인할 수 있습니다. 이 Notebook 은 실행 중인 연산 세션 내부에서 생성된 것으로, 별다른 설정 없이 버튼 클릭만으로 손쉽게 사용할 수 있습니다. 또한, 연산 세션이 기본적으로 제공하는 언어 환경 및 라이브러리를 그대로 활용할 수 있어 별도의 패키지 설치 과정이 필요 없습니다. 자세한 Jupyter Notebook 사용법은 공식 문서 등을 참고하시기 바랍니다.
 
@@ -223,22 +223,22 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 우측 상단의 NEW 버튼을 클릭한 후 Backend.AI 용 Notebook 을 선택하면 새로운 코드를 입력할 수 있는 ipynb 창이 뜹니다.
 
-![](images/backendai_notebook_menu.png)
+![](../images/backendai_notebook_menu.png)
 
 이 창에서 세션 환경에 맞는 코드를 입력하고 실행해볼 수 있습니다. 코드는 Backend.AI 서버를 구성하는 노드 중 연산 세션이 실제로 생성된 노드에서 실행이 되며, 로컬 머신에는 별도 환경을 구성할 필요가 없습니다.
 
-![](images/notebook_code_execution.png)
+![](../images/notebook_code_execution.png)
 
 창을 닫으면 Notebook 파일 탐색기에서 `Untitled.ipynb` 파일을 확인할 수 있습니다. 여기서 생성된 파일은 세션이 종료되면 함께 삭제됩니다. 세션이 종료된 후에도 파일을 보존하는 방법은 데이터 및 폴더 섹션에서 설명합니다.
 
-![](images/untitled_ipynb_created.png)
+![](../images/untitled_ipynb_created.png)
 
 
 ## 웹 터미널 활용
 
 이 섹션에서는 웹 터미널 사용 방법을 설명합니다. 터미널 아이콘(두 번째 버튼)을 클릭하면 컨테이너의 ttyd 앱을 사용할 수 있습니다. 새 창에 터미널이 나타나며, 다음 그림과 같이 쉘 명령을 실행하여 연산 세션에 접근할 수 있습니다. 명령에 익숙하다면 다양한 Linux 명령을 쉽게 실행할 수 있습니다. Jupyter Notebook 에서 확인한 `Untitled.ipynb` 파일이 `ls` 명령으로도 나열되는 것을 볼 수 있습니다. 이는 두 앱이 동일한 컨테이너 환경에서 실행되고 있음을 보여줍니다.
 
-![](images/session_terminal.png)
+![](../images/session_terminal.png)
 
 만약 여기서 파일을 만들면 앞서 띄운 Jupyter Notebook 에서 즉시 그 파일을 확인할 수 있습니다. 반대로, Jupyter Notebook 에서 편집한 파일의 변경 사항도 터미널에서 바로 확인할 수 있습니다. 같은 연산 세션을 사용하고 있기 때문입니다.
 
@@ -249,7 +249,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 돌아가고 있는 연산 세션의 Control 열의 마지막 아이콘을 클릭하면 연산 세션의 로그를 조회할 수 있습니다.
 
-![](images/session_log.png)
+![](../images/session_log.png)
 
 <a id="rename-running-session"></a>
 
@@ -257,7 +257,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 활성 세션의 이름을 변경할 수 있습니다. 세션 상세 정보 패널에서 '수정' 버튼을 클릭하여 세션 이름을 변경하세요. 새 세션 이름도 [세션 이름 작성 규칙](#session-naming-rule)을 따라야 합니다.
 
-![](images/session_renaming.png)
+![](../images/session_renaming.png)
 
 
 <a id="delete_session"></a>
@@ -266,7 +266,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 특정 세션을 종료하려면 빨간색 전원 버튼을 클릭한 후 대화 상자에서 '종료' 버튼을 클릭하십시오. 연산 세션이 종료되면 연산 세션 내부의 폴더에 있는 데이터가 함께 삭제되므로, 데이터를 마운트된 폴더로 옮기거나 처음부터 마운트된 폴더에 업로드하는 것을 권장합니다.
 
-![](images/session_destroy_dialog.png)
+![](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
@@ -276,7 +276,7 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 
 세션 종료 기준은 세션 상세 정보 패널의 '유휴 상태 검사' 섹션에서 확인할 수 있습니다.
 
-![](images/idle_checks_column.png)
+![](../images/idle_checks_column.png)
 
 각 항목의 의미는 다음과 같으며, 우측의 정보(i) 버튼을 클릭해서 자세한 설명을 확인할 수도 있습니다.
 
@@ -303,7 +303,7 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 
 더 많은 환경 변수를 추가하고 싶을 경우, 입력 필드 첫번째 행의 오른쪽에 있는 '+ 환경 변수 추가' 버튼을 클릭하면 됩니다. 또한 환경 변수를 지우고 싶을 경우, 지우고자 하는 행의 '-' 버튼을 클릭하면 됩니다.
 
-![](images/launch_session_env.png)
+![](../images/launch_session_env.png)
 
 환경 변수 명과 값을 같은 행의 입력 필드에 입력할 수 있습니다.
 
@@ -315,13 +315,13 @@ Backend.AI는 컨테이너 시작 전 사전 개방 포트를 설정하는 것�
 
 사전 개방 포트를 추가하려면 쉼표(,)나 공백으로 구분하여 여러 값을 입력할 수 있습니다.
 
-![](images/preopen-ports-config.png)
+![](../images/preopen-ports-config.png)
 
 해당 다이얼로그에서 사전 개방 포트를 추가하거나, 작성한 사전 개방 포트를 갱신, 삭제할 수 있습니다. 더욱 자세한 설명이 필요한 경우, 다이얼로그 헤더 부분에 있는 '도움말 (?)' 버튼을 클릭해주세요.
 
 입력란에 1024 ~ 65535 사이의 포트값을 입력한 뒤, 엔터 키를 누르세요. 각 포트는 쉼표(,)로 구분되며, 여러 포트를 설정할 수 있습니다. 설정된 사전 개방 포트값은 세션 앱 런처에서 확인할 수 있습니다.
 
-![](images/session_app_launcher.png)
+![](../images/session_app_launcher.png)
 
 
    사전 개방 포트는 **컨테이너 내부 포트** 입니다. 따라서, 다른 앱들과 달리 세션 앱 런처에서 사전 개방 포트를 클릭하면 빈 페이지가 나타납니다. 사용하기 전에 해당 포트에 서버를 바인딩하세요.
@@ -333,7 +333,7 @@ Backend.AI는 컨테이너 시작 전 사전 개방 포트를 설정하는 것�
 
 Backend.AI는 24.03 버전부터 "세션을 이미지로 변환" 기능을 지원합니다. `RUNNING` 상태의 세션을 커밋하면 세션의 현재 상태가 새로운 이미지로 저장됩니다. 세션 상세 정보 패널에서 '커밋' 버튼(네 번째 아이콘)을 클릭하면 세션 정보가 표시된 대화 상자가 열립니다. 세션 이름을 입력한 후 세션을 새 이미지로 변환할 수 있습니다. 세션 이름은 4자에서 32자 사이여야 하며, 영숫자, 하이픈(`-`) 또는 밑줄(`_`)만 포함할 수 있습니다.
 
-![](images/push_session_to_customized_image.png)
+![](../images/push_session_to_customized_image.png)
 
 입력 필드에 세션 이름을 입력한 후 'PUSH SESSION TO CUSTOMIZED IMAGE' 버튼을 클릭합니다. 이 방법으로 생성된 커스텀 이미지는 향후 세션 생성 시 사용할 수 있습니다. 그러나 이미지 커밋 시 컨테이너에 마운트된 디렉토리는 외부 자원으로 간주되어 최종 이미지에 포함되지 않습니다. `/home/work`는 마운트 폴더(스크래치 디렉토리)이므로 포함되지 않는다는 점을 기억하세요.
 
@@ -348,11 +348,11 @@ Backend.AI는 24.03 버전부터 "세션을 이미지로 변환" 기능을 지�
 
 진행 중인 세션을 이미지로 변환하면, 새 세션을 생성할 때 세션 런처의 실행 환경에서 이 이미지를 선택할 수 있습니다. 이 이미지는 다른 사용자에게 노출되지 않으며, 현재 세션 상태를 그대로 계속 사용하려는 경우에 유용합니다. 변환된 이미지에는 `Customized<세션 이름>` 태그가 지정됩니다.
 
-![](images/select_customized_image.png)
+![](../images/select_customized_image.png)
 
 향후 세션 생성을 위해 환경 이름을 수동으로 입력하려면, 복사 아이콘을 누릅니다.
 
-![](images/copy_customized_image.png)
+![](../images/copy_customized_image.png)
 
 
 ## 웹 터미널 고급 사용법
@@ -390,7 +390,7 @@ tmux는 유용한 기능을 많이 제공하지만, 처음 사용하는 사용�
 
 tmux의 주요 장점은 하나의 터미널 창에서 여러 쉘을 실행하고 사용할 수 있다는 것입니다. `Ctrl-B` 키를 누른 후 `c` 를 누르면 새로운 쉘 환경이 나타납니다. 이전 창은 현재 시점에서는 보이지 않지만 종료된 것은 아닙니다. `Ctrl-B` 를 누른 후 `w` 를 누르면 tmux에서 현재 열려 있는 쉘 목록이 표시됩니다. `0:` 으로 시작하는 쉘이 초기 쉘 환경이고, `1:` 으로 시작하는 쉘이 방금 생성한 쉘입니다. 위/아래 키를 사용하여 쉘 간에 이동할 수 있습니다. 커서를 `0:` 쉘에 놓고 Enter 키를 눌러 선택합니다.
 
-![](images/tmux_multi_session_pane.png)
+![](../images/tmux_multi_session_pane.png)
 
 이와 같이 웹 터미널 내에서 여러 쉘 환경을 사용할 수 있습니다. 현재 쉘을 종료하려면 `exit` 명령을 입력하거나 `Ctrl-B x` 키를 누른 후 `y` 를 입력합니다.
 

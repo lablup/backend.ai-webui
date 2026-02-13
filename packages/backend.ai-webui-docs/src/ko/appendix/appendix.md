@@ -10,27 +10,27 @@ Backend.AI는 GPU 가상화 기술을 지원하여 하나의 물리 GPU를 여�
 
 먼저, 호스트 노드에 설치된 물리 GPU의 종류와 메모리 용량을 확인합니다. 이 가이드에서 사용하는 GPU 노드는 아래 그림과 같이 8 GB 메모리를 탑재한 GPU를 장착하고 있습니다. 그리고 관리자 설정에 따라 1 fGPU는 0.5개의 물리 GPU에 해당하는 양으로 설정되어 있습니다 (즉, 1개의 물리 GPU가 2 fGPU입니다).
 
-![](images/host_gpu.png)
+![](../images/host_gpu.png)
 
 이제 세션 페이지로 이동하여 다음과 같이 0.5 fGPU를 할당하여 연산 세션을 생성합니다.
 
-![](images/session_launch_dialog_with_gpu.png)
+![](../images/session_launch_dialog_with_gpu.png)
 
 세션 목록의 AI 가속기 패널에서 0.5 fGPU가 할당된 것을 확인할 수 있습니다.
 
-![](images/session_list_with_gpu.png)
+![](../images/session_list_with_gpu.png)
 
 이제 컨테이너에 직접 접속하여 할당된 GPU 메모리가 실제로 0.5 단위(약 2 GB)에 해당하는지 확인합니다. 웹 터미널을 열고 `nvidia-smi` 명령을 실행합니다. 아래 그림에서 볼 수 있듯이, 약 2 GB의 GPU 메모리가 할당된 것을 확인할 수 있습니다. 이는 PCI 패스스루와 같은 방식으로는 불가능한, 물리 GPU를 실제로 분할하여 컨테이너 내부에 할당하는 것을 보여줍니다.
 
-![](images/nvidia_smi_inside_container.png)
+![](../images/nvidia_smi_inside_container.png)
 
 이번에는 Jupyter Notebook을 열어서 간단한 ML 학습 코드를 실행해 보겠습니다.
 
-![](images/mnist_train.png)
+![](../images/mnist_train.png)
 
 학습이 진행되는 동안, GPU 호스트 노드의 셸에 접속하여 `nvidia-smi` 명령을 실행합니다. 해당 프로세스에 하나의 GPU가 연결되어 있으며, 물리 GPU 자원의 약 25%를 점유하고 있는 것을 확인할 수 있습니다. (GPU 점유율은 학습 코드와 GPU 모델에 따라 크게 달라질 수 있습니다.)
 
-![](images/host_nvidia_smi.png)
+![](../images/host_nvidia_smi.png)
 
 또는, 웹 터미널에서 `nvidia-smi` 명령을 실행하여 컨테이너 내부의 GPU 사용 이력을 조회할 수도 있습니다.
 
@@ -43,15 +43,15 @@ Backend.AI 서버는 자체 개발한 작업 스케줄러를 내장하고 있습
 
 사용자 Web-UI에서 간단한 방법으로 작업 스케줄러의 동작을 확인할 수 있습니다. GPU 호스트가 최대 2 fGPU를 할당할 수 있는 경우, 각각 1 fGPU 할당을 요청하는 3개의 연산 세션을 동시에 생성해 보겠습니다. 세션 시작 다이얼로그의 사용자 지정 할당 섹션에는 GPU와 세션 슬라이더가 있습니다. 세션에서 1보다 큰 값을 지정하고 LAUNCH 버튼을 클릭하면 해당 수만큼의 세션이 동시에 요청됩니다. GPU와 세션을 각각 1과 3으로 설정하겠습니다. 이는 fGPU가 2 단위밖에 없는 상황에서 총 3 fGPU를 요청하는 3개의 세션을 생성하는 상황입니다.
 
-![](images/session_launch_dialog_2_sessions.png)
+![](../images/session_launch_dialog_2_sessions.png)
 
 잠시 기다리면 세 개의 연산 세션이 목록에 나타납니다. 상태 패널을 자세히 살펴보면, 세 개의 연산 세션 중 두 개는 RUNNING 상태이지만 나머지 한 개는 PENDING 상태로 남아 있는 것을 확인할 수 있습니다. 이 PENDING 세션은 작업 큐에만 등록되어 있으며, GPU 자원 부족으로 인해 실제 컨테이너가 할당되지 않은 상태입니다.
 
-![](images/pending_session_list.png)
+![](../images/pending_session_list.png)
 
 이제 RUNNING 상태의 두 세션 중 하나를 삭제해 보겠습니다. 그러면 PENDING 상태의 연산 세션이 작업 스케줄러에 의해 자원을 할당받고, 곧 RUNNING 상태로 전환되는 것을 확인할 수 있습니다. 이처럼, 작업 스케줄러는 작업 큐를 활용하여 사용자의 연산 세션 요청을 보관하고 있다가, 가용 자원이 확보되면 자동으로 요청을 처리합니다.
 
-![](images/pending_to_running.png)
+![](../images/pending_to_running.png)
 
 
 <a id="multi-version-machine-learning-container-support"></a>
@@ -62,31 +62,31 @@ Backend.AI는 다양한 사전 빌드된 ML 및 HPC 커널 이미지를 제공�
 
 세션 페이지로 이동하여 세션 시작 다이얼로그를 엽니다. 설치 환경에 따라 다양한 커널 이미지가 제공될 수 있습니다.
 
-![](images/various_kernel_images.png)
+![](../images/various_kernel_images.png)
 
 여기서 TensorFlow 2.3 환경을 선택하여 세션을 생성합니다.
 
-![](images/session_launch_dialog_tf23.png)
+![](../images/session_launch_dialog_tf23.png)
 
 생성된 세션의 웹 터미널을 열고 다음 Python 명령을 실행합니다. TensorFlow 2.3 버전이 설치되어 있는 것을 확인할 수 있습니다.
 
-![](images/tf23_version_print.png)
+![](../images/tf23_version_print.png)
 
 이번에는 TensorFlow 1.15 환경을 선택하여 연산 세션을 생성합니다. 자원이 부족한 경우 이전 세션을 삭제합니다.
 
-![](images/session_launch_dialog_tf115.png)
+![](../images/session_launch_dialog_tf115.png)
 
 생성된 세션의 웹 터미널을 열고 이전과 동일한 Python 명령을 실행합니다. TensorFlow 1.15(.4) 버전이 설치되어 있는 것을 확인할 수 있습니다.
 
-![](images/tf115_version_print.png)
+![](../images/tf115_version_print.png)
 
 마지막으로, PyTorch 1.7 버전을 사용하여 연산 세션을 생성합니다.
 
-![](images/session_launch_dialog_pytorch17.png)
+![](../images/session_launch_dialog_pytorch17.png)
 
 생성된 세션의 웹 터미널을 열고 다음 Python 명령을 실행합니다. PyTorch 1.8 버전이 설치되어 있는 것을 확인할 수 있습니다.
 
-![](images/pytorch17_version_print.png)
+![](../images/pytorch17_version_print.png)
 
 이처럼 Backend.AI를 통해 TensorFlow, PyTorch 등 주요 라이브러리의 다양한 버전을 별도의 설치 작업 없이 즉시 활용할 수 있습니다.
 
@@ -108,7 +108,7 @@ Backend.AI는 다양한 사전 빌드된 ML 및 HPC 커널 이미지를 제공�
 - 관리자가 연산 세션을 새로운 Docker 이미지로 변환하면, 전체 이미지 이름과 태그를 안내받게 됩니다.
 - 세션 시작 다이얼로그에서 이미지 이름을 직접 입력할 수 있습니다. 해당 이미지는 비공개이며 다른 사용자에게는 표시되지 않습니다.
 
-  ![](images/session-creation-by-specifying-image-name.png)
+  ![](../images/session-creation-by-specifying-image-name.png)
 
 - 새로운 Docker 이미지를 사용하여 연산 세션이 생성됩니다.
 
@@ -171,11 +171,11 @@ $ mlflow ui --host 0.0.0.0
 
 그런 다음, 앱 런처 다이얼로그에서 "MLFlow UI" 앱을 클릭합니다.
 
-![](images/app_dialog.png)
+![](../images/app_dialog.png)
 
 잠시 후, MLFlow UI의 새 페이지가 나타납니다.
 
-![](images/mlflow_UI.png)
+![](../images/mlflow_UI.png)
 
 MLFlow를 사용하면 실행할 때마다 메트릭, 파라미터 등의 실험을 추적할 수 있습니다. 간단한 예제부터 실험 추적을 시작해 보겠습니다.
 
@@ -186,7 +186,7 @@ $ python train_diabetes.py
 
 Python 코드를 실행한 후, MLFlow에서 실험 결과를 확인할 수 있습니다.
 
-![](images/mlflow_first_execution.png)
+![](../images/mlflow_first_execution.png)
 
 코드 실행 시 인자를 전달하여 하이퍼파라미터를 설정할 수도 있습니다.
 
@@ -196,4 +196,4 @@ $ python train_diabetes.py 0.2 0.05
 
 몇 번의 학습이 끝나면, 학습된 모델들의 결과를 서로 비교해 볼 수 있습니다.
 
-![](images/mlflow_multiple_execution.png)
+![](../images/mlflow_multiple_execution.png)

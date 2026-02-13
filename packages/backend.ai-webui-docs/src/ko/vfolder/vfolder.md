@@ -4,13 +4,13 @@
 Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되기 때문에, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다. 스토리지 폴더 목록은 사이드바의 데이터 페이지에서 확인할 수 있습니다. 이 목록에서는 폴더 이름과 ID, 폴더가 위치한 NFS 호스트(위치), 폴더의 접근 권한(권한) 등 주요 정보를 확인할 수 있습니다.
 
 
-![](images/data_page.png)
+![](../images/data_page.png)
 
 스토리지 폴더에는 `사용자`와 `프로젝트` 두 가지 유형이 있습니다. '종류' 열에서 구분할 수 있습니다.
 
 사용자 폴더는 일반 사용자가 직접 생성하여 개인적으로 사용하는 폴더입니다. 프로젝트 폴더는 도메인 관리자가 프로젝트별로 생성하는 폴더입니다. 일반 사용자는 프로젝트 폴더를 직접 생성할 수 없으며, 관리자가 생성한 프로젝트 폴더만 사용할 수 있습니다.
 
-![](images/vfolder_status.png)
+![](../images/vfolder_status.png)
 
 저장소 상태와 스토리지 볼륨별 가용량은 아래의 정보를 표시합니다.
 
@@ -39,7 +39,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 새 폴더를 만들려면 데이터 페이지에서 '폴더 생성'을 클릭합니다. 생성 대화 상자의 필드를 다음과 같이 채웁니다.
 
-![](images/vfolder_create_modal.png)
+![](../images/vfolder_create_modal.png)
 
 생성 대화 상자의 각 필드 의미는 다음과 같습니다.
 
@@ -66,11 +66,11 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 폴더 이름을 클릭하여 해당 폴더의 내용을 조회할 수 있는 파일 탐색기를 띄울 수 있습니다.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 내부에 디렉토리와 파일이 존재하는 것을 확인할 수 있습니다. Name 열에 있는 디렉토리 이름을 클릭하면 해당 디렉토리로 이동할 수 있습니다. Actions 열의 다운로드 버튼이나 삭제 버튼을 클릭하여 파일을 다운로드하거나 디렉토리에서 완전히 삭제할 수 있습니다. 파일이나 디렉토리의 이름을 변경하는 것도 가능합니다. 보다 세밀한 파일 작업이 필요하다면, 이 폴더를 연산 세션 생성 시 마운트한 뒤 터미널이나 Jupyter Notebook 등과 같은 서비스를 활용하여 수행할 수 있습니다.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 '만들기' 버튼으로 현재 경로에 새로운 폴더를 생성할 수 있으며, '업로드' 버튼으로 현재 경로에 로컬 파일 혹은 폴더를 업로드할 수도 있습니다. 이러한 파일 작업은 앞서 설명한 연산 세션 마운트 방식으로도 모두 수행 가능합니다.
 
@@ -83,11 +83,11 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 폴더 탐색기에서 텍스트 파일을 직접 편집할 수 있습니다. 폴더 이름을 클릭하여 파일 탐색기를 연 다음, 텍스트 파일의 제어 열에서 '파일 편집' 버튼을 클릭합니다.
 
-![](images/folder_explorer_edit_button.png)
+![](../images/folder_explorer_edit_button.png)
 
 텍스트 파일 편집기가 코드 편집기 인터페이스와 함께 모달로 열립니다. 편집기는 파일 확장자를 기반으로 파일 유형을 자동으로 감지하고 적절한 구문 강조를 적용합니다(예: Python, JavaScript, Markdown). 모달 제목에는 파일 이름과 크기가 표시됩니다.
 
-![](images/text_file_editor_modal.png)
+![](../images/text_file_editor_modal.png)
 
 편집기는 UI 환경 설정과 일치하는 라이트 및 다크 테마를 모두 지원합니다. 파일 내용을 편집한 후 '저장'을 클릭하여 수정된 파일을 업로드하거나, '취소'를 클릭하여 변경 사항을 취소할 수 있습니다.
 
@@ -98,7 +98,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 스토리지 폴더의 이름을 변경할 수 있는 권한을 가지고 있는 경우, 폴더 이름 옆의 수정 버튼을 클릭하여 이름 변경 작업을 수행할 수 있습니다.
 
-![](images/rename_vfolder.png)
+![](../images/rename_vfolder.png)
 
 
 ## 폴더 삭제하기
@@ -106,15 +106,15 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 스토리지 폴더를 삭제할 수 있는 권한을 가지고 있는 경우, 제어 열의 '휴지통' 아이콘을 클릭하여 폴더를 '휴지통' 탭으로 이동시킬 수 있습니다. 휴지통 탭으로 이동된 폴더는 삭제 대기(delete-pending) 상태로 표시됩니다.
 
-![](images/move_to_trash.png)
+![](../images/move_to_trash.png)
 
 이 상태에서 제어 열의 복원 버튼을 클릭하면 폴더를 복원할 수 있습니다. 폴더를 영구적으로 삭제하려면 같은 열의 '휴지통' 버튼을 클릭합니다.
 
-![](images/vfolder_trash_list.png)
+![](../images/vfolder_trash_list.png)
 
 `삭제할 폴더 이름을 입력하세요`라는 입력 필드를 포함한 확인 모달이 나타납니다. 삭제하려는 폴더 이름을 정확하게 입력한 후, 빨간색 '영구 삭제' 버튼을 클릭하여 폴더를 완전히 삭제할 수 있습니다.
 
-![](images/vfolder_delete_dialog.png)
+![](../images/vfolder_delete_dialog.png)
 
 ## 파일 브라우저 사용하기
 
@@ -137,25 +137,25 @@ FileBrowser는 두 가지 방법으로 사용할 수 있습니다.
 
 데이터 페이지로 이동한 후 원하는 데이터 폴더의 탐색기 대화 상자를 엽니다. 폴더 이름을 클릭하여 파일 탐색기를 엽니다.
 
-![](images/click_folder_name.png)
+![](../images/click_folder_name.png)
 
 탐색기 우측 상단의 '파일브라우저 실행' 버튼을 클릭합니다.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 FileBrowser가 새 창에서 열린 것을 확인할 수 있습니다. 탐색기를 열었던 데이터 폴더가 FileBrowser의 루트 디렉토리가 됩니다. FileBrowser 창에서 디렉토리와 파일을 자유롭게 업로드하고, 수정하고, 삭제할 수 있습니다.
 
-![](images/filebrowser_with_new_window.png)
+![](../images/filebrowser_with_new_window.png)
 
 사용자가 '파일브라우저 실행' 버튼을 클릭하면, Backend.AI는 자동으로 FileBrowser 전용 연산 세션을 하나 생성합니다. 따라서 세션 페이지에서 FileBrowser 연산 세션이 조회되는 것을 확인할 수 있습니다. 이 연산 세션을 삭제하는 것은 사용자의 몫입니다.
 
-![](images/filebrowser_in_session_page.png)
+![](../images/filebrowser_in_session_page.png)
 
 
    FileBrowser 창을 실수로 종료하여 다시 열고자 한다면, 세션 페이지로 가서 해당
    FileBrowser 연산 세션의 애플리케이션 버튼을 클릭하면 됩니다.
 
-   ![](images/app_dialog_with_filebrowser.png)
+   ![](../images/app_dialog_with_filebrowser.png)
 
    |
    | 탐색기에서 '파일브라우저 실행' 버튼을 다시 클릭하면 새로운 연산 세션이 생성되어
@@ -180,7 +180,7 @@ FileBrowser는 로컬 디렉토리의 트리 구조를 그대로 유지하면서
 
    읽기 전용 폴더에 파일을 업로드하는 경우, FileBrowser가 서버 에러를 표시합니다.
 
-![](images/filebrowser_upload.png)
+![](../images/filebrowser_upload.png)
 
 다음과 같은 구조를 가진 폴더를 업로드해 보겠습니다.
 
@@ -193,7 +193,7 @@ foo
 
 `foo` 디렉토리를 선택하면 디렉토리가 정상적으로 업로드된 것을 확인할 수 있습니다.
 
-![](images/filebrowser_upload_finished.png)
+![](../images/filebrowser_upload_finished.png)
 
 드래그 앤 드롭으로 로컬 파일과 디렉토리를 업로드할 수도 있습니다.
 
@@ -203,21 +203,21 @@ FileBrowser에서 스토리지 폴더 내의 파일이나 디렉토리를 이동
 
 1. FileBrowser에서 이동할 디렉토리 또는 파일을 선택합니다.
 
-![](images/select_folders.png)
+![](../images/select_folders.png)
 
 2. FileBrowser 우측 상단의 '화살표' 버튼을 클릭합니다.
 
-![](images/click_arrow_icon.png)
+![](../images/click_arrow_icon.png)
 
 3. 이동할 대상 위치를 선택합니다.
 
-![](images/select_the_destination.png)
+![](../images/select_the_destination.png)
 
 4. 'MOVE' 버튼을 클릭합니다.
 
 이동 작업이 정상적으로 완료된 것을 확인할 수 있습니다.
 
-![](images/moving_operation_in_filebrowser_finished.png)
+![](../images/moving_operation_in_filebrowser_finished.png)
 
 
    현재 FileBrowser는 연산 세션 내의 애플리케이션으로 제공됩니다.
@@ -238,11 +238,11 @@ FileBrowser에서 스토리지 폴더 내의 파일이나 디렉토리를 이동
 
 탐색기 우측 상단의 'SFTP 서버 사용' 버튼을 클릭합니다.
 
-![](images/folder_explorer.png)
+![](../images/folder_explorer.png)
 
 SSH / SFTP 연결 대화 상자가 나타납니다. 새로운 SFTP 세션이 자동으로 생성됩니다. (이 세션은 자원 점유에 영향을 주지 않습니다.)
 
-![](images/SSH_SFTP_connection.png)
+![](../images/SSH_SFTP_connection.png)
 
 연결을 위해 'SSH 키 다운로드' 버튼을 클릭하여 SSH 개인 키(`id_container`)를 다운로드합니다. 또한 호스트와 포트 번호를 기억해 두세요. 이후 대화 상자에 표시된 연결 예시 코드를 사용하여 세션에 파일을 복사하거나, 다음 가이드를 참고할 수 있습니다: [SFTP 연결 가이드](../sftp_to_container/sftp_to_container.md#for-linux-mac). 파일을 보존하려면 스토리지 폴더로 파일을 전송해야 합니다. 또한 일정 시간 동안 전송이 없으면 세션이 자동으로 종료됩니다.
 
@@ -267,7 +267,7 @@ SSH / SFTP 연결 대화 상자가 나타납니다. 새로운 SFTP 세션이 자
 
 자동 마운트 폴더의 사용법에 대한 자세한 내용은 [자동 마운트 폴더 사용 예시](#using-automount-folder) 섹션을 참고하세요.
 
-![](images/vfolder_automount_folders.png)
+![](../images/vfolder_automount_folders.png)
 
 <a id="models"></a>
 
@@ -276,4 +276,4 @@ SSH / SFTP 연결 대화 상자가 나타납니다. 새로운 SFTP 세션이 자
 
 모델 탭은 간편한 모델 서빙을 지원합니다. [모델 서빙](#model-serving)에 필요한 입력 데이터와 학습 데이터를 포함한 필요한 데이터를 모델 폴더에 저장할 수 있습니다.
 
-![](images/models.png)
+![](../images/models.png)

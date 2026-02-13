@@ -17,7 +17,7 @@ containers are automatically generated.
 
 Backend.AI クラスターセッションの詳細については、以下を参照してください。
 
-![](images/overview_cluster_session.png)
+![](../images/overview_cluster_session.png)
 
 - クラスタセッション下のコンテナは、リソースグループに属する1台以上のエージェントノードにわたって作成されます。
 - A cluster session consists of one main container (`main1`) and one or more
@@ -69,7 +69,7 @@ Backend.AI クラスターセッションの詳細については、以下を参
 
 セッションページで、セッション作成ダイアログを開き、通常の計算セッションを作成するのと同じ方法で設定します。このときに設定するリソース量は、**1つのコンテナ**に割り当てられる量です。例えば、4つのCPUを設定した場合、クラスタセッションの下で各コンテナに4コアが割り当てられます。これは、クラスタ計算セッション全体に割り当てられるリソース量ではないことに注意してください。クラスタ計算セッションを作成するには、ここで設定したリソース量のN倍に相当するサーバーリソースが必要です（Nはクラスタのサイズです）。データの安全保存のためにデータフォルダーをマウントすることを忘れないでください。
 
-![](images/session_launch_dialog.png)
+![](../images/session_launch_dialog.png)
 
 下部にある「クラスターモード」フィールドで、作成したいクラスターのタイプを選択できます。
 
@@ -82,21 +82,21 @@ Click the LAUNCH button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 
-![](images/cluster_session_created.png)
+![](../images/cluster_session_created.png)
 
 Let's open the terminal app in the compute session we just have created. If you
 look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
 variables described in the above section are set. Compare the meaning and value
 of each environment variable with the description above.
 
-![](images/terminal_on_main_container.png)
+![](../images/terminal_on_main_container.png)
 
 You can also SSH into the `sub1` container. No separate SSH setting is
 required, just issue the command `ssh sub1` and you are done. You can see the
 hostname after `work@` has changed, which indicated the sub container's shell
 is displayed.
 
-![](images/terminal_on_sub1_container.png)
+![](../images/terminal_on_sub1_container.png)
 
 このように、Backend.AI はクラスタコンピューティングセッションの作成を容易にします。クラスタ計算セッションを通じて分散学習と計算を実行するには、TensorFlow/PyTorch などの ML ライブラリが提供する分散学習モジュールや、Horovod、NNI、MLFlow などの追加のサポートソフトウェアが必要であり、そのソフトウェアを利用できる方法でコードを記述する必要があります。慎重に書く必要があります。Backend.AI は分散学習に必要なソフトウェアを含むカーネルイメージを提供しているため、そのイメージを使用して優れた分散学習アルゴリズムを作成することができます。
 
@@ -105,4 +105,4 @@ is displayed.
 From 24.03, You can check each log of container in logs modal. It will help you
 to understand what's going on not only in `main` container but also `sub` containers.
 
-![](images/log_modal_per_container.png)
+![](../images/log_modal_per_container.png)

@@ -12,7 +12,7 @@ end-users (such as AI-based mobile apps and web service backends) to make
 inference API calls when they want to deploy the completed model as an
 inference service.
 
-![](images/model-serving-diagram.png)
+![](../images/model-serving-diagram.png)
 
 The Model Service extends the functionality of the existing training
 compute sessions, enabling automated maintenance, scaling, and permanent
@@ -258,7 +258,7 @@ folder<create_storage_folder>](#creating a storage
 folder<create_storage_folder>) in the Data page for
 instructions on how to create a folder.
 
-![](images/model_type_folder_creation.png)
+![](../images/model_type_folder_creation.png)
 
 After creating the folder, select the 'MODELS' tab in the Data
 page, click on the recently created model type folder icon to open the
@@ -266,9 +266,9 @@ folder explorer, and upload the model definition file.
 For more information on how to use the folder explorer,
 please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
 
-![](images/model_type_folder_list.png)
+![](../images/model_type_folder_list.png)
 
-![](images/model_definition_file_upload.png)
+![](../images/model_definition_file_upload.png)
 
 #### Creating a Service Definition File
 
@@ -333,7 +333,7 @@ Click the 'Start Service' button on the Model Serving page. This will
 bring up a page where you can enter the required settings for creating
 the service.
 
-![](images/serving_list_page.png)
+![](../images/serving_list_page.png)
 
 First, provide a service name. For detailed explanations of each item, please refer to the following:
 
@@ -344,14 +344,14 @@ First, provide a service name. For detailed explanations of each item, please re
    model definition file inside the directory.
 -  Inference Runtime Variant: This categorizes the type of models into four: `vLLM`, `NVIDIA NIM`, `Predefined Image Command`, `Custom`.
 
-![](images/service_launcher1.png)
+![](../images/service_launcher1.png)
 
 For example, if you choose `vLLM` or `NVIDIA NIM` or `Predefined Image Command` as a runtime variant of model service,
 there's no need to configure a `model-definition` file in your model folder to mount. Instead, you might have to set an additional environment variable.
 For more information, please take a look at
 [Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving).
 
-![](images/service_launcher_runtime_variant.png)
+![](../images/service_launcher_runtime_variant.png)
 
 -  Model Destination For Model Folder: This option allows aliasing path of
    model storage path to session corresponding to routing, which represents
@@ -362,7 +362,7 @@ For more information, please take a look at
    Please make sure that only you can mount general/data usage mode folder, not additional
    model folder.
 
-![](images/service_launcher2.png)
+![](../images/service_launcher2.png)
 
 Then set number of replicas and select environments and resource group. The resource group is a collection of
 resources that can be allocated to the model service.
@@ -377,12 +377,12 @@ resources that can be allocated to the model service.
    environment only. (Support for multiple execution environments will
    be added in a future update)
 
-![](images/service_launcher3.png)
+![](../images/service_launcher3.png)
 
 -  Resource Presets: Allows you to select the amount of resources to allocate from the model service.
    Resource contains CPU, RAM, and AI accelerator, as known as GPU.
 
-![](images/service_launcher4.png)
+![](../images/service_launcher4.png)
 
 -  Single Node: When running a session, the managed node and worker nodes are
    placed on a single physical node or virtual machine.
@@ -392,7 +392,7 @@ resources that can be allocated to the model service.
    It is useful when you trying to create a model service using runtime variant. some runtime variant needs
    certain environment variable setting before execution.
 
-![](images/cluster_mode.png)
+![](../images/cluster_mode.png)
 
 Before creating model service, Backend.AI supports validation feature to check
 whether execution is available or not(due to any errors during execution).
@@ -402,7 +402,7 @@ you can check the status through the container log. When the result is set to
 `Finished`, then the validation check is finished.
 
 
-![](images/model-validation-dialog.png)
+![](../images/model-validation-dialog.png)
 
 
    .. note::
@@ -427,14 +427,14 @@ follows:
 
 -  Incorrect format of the model definition file (`model-definition.yml`)
 
-   ![](images/serving-route-error.png)
+   ![](../images/serving-route-error.png)
 
    -  Solution: Verify [the format of the model definition file <model_definition_guide>](#the format of the model definition file <model_definition_guide>) and
       if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
       Then, click 'Clear error and Retry' button to remove all the error stacked in routes info
       table and ensure that the routing of the model service is set correctly.
 
-   ![](images/refresh_button.png)
+   ![](../images/refresh_button.png)
 
 
 #### Auto Scaling Rules
@@ -442,7 +442,7 @@ You can configure auto scaling rules for the model service.
 Based on the defined rules, the number of replicas is automatically reduced during low using to conserve resources,
 and increased during high usage to prevent request delays of failures.
 
-![](images/auto_scaling_rules.png)
+![](../images/auto_scaling_rules.png)
 
 Click the 'Add Rules' button to add a new rule. When you click the button, a modal appears
 when you can add a rule. Each field in the modal is described below:
@@ -475,7 +475,7 @@ when you can add a rule. Each field in the modal is described below:
 
 - CoolDown Seconds: Durations in seconds to skip reapplying the rule right after rule is first triggered.
 
-![](images/auto_scaling_rules_modal.png)
+![](../images/auto_scaling_rules_modal.png)
 
 #### Generating Tokens
 
@@ -489,18 +489,18 @@ accessible without any separate token, and end users can access it.
 However, if it is disabled, you can issue a token as described below to
 verify that the service is running properly.
 
-![](images/generate_token.png)
+![](../images/generate_token.png)
 
 Click the 'Generate Token' button located to the right of the generated
 token list in the routing information. In the modal that appears for
 token creation, enter the expiration date.
 
-![](images/token_generation_dialog.png)
+![](../images/token_generation_dialog.png)
 
 The issued token will be added to the list of generated tokens. Click the 'copy' button in the token
 item to copy the token, and add it as the value of the following key.
 
-![](images/generated_token_copy.png)
+![](../images/generated_token_copy.png)
 
 ============= ================
 Key           Value
@@ -539,13 +539,13 @@ to model serving endpoint working properly or not.
 If you've created a Large Language Model (LLM) service, you can test the LLM in real-time.
 Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
 
-![](images/LLM_chat_test.png)
+![](../images/LLM_chat_test.png)
 
 Then, You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
 For more information about the chat feature, please refer to the [Chat page <chat_page>](#Chat page <chat_page>)
 
-![](images/LLM_chat.png)
+![](../images/LLM_chat.png)
 
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
@@ -559,7 +559,7 @@ To use the model, you will need the following information:
   For instance, when using the service generated by Backend.AI, please refer to the
   [Generating Tokens<generating-tokens>](#Generating Tokens<generating-tokens>) section for instructions on how to generate tokens.
 
-![](images/LLM_chat_custom_model.png)
+![](../images/LLM_chat_custom_model.png)
 
 #### Modifying Model Service
 
@@ -569,7 +569,7 @@ previously entered fields already filled in. You can optionally modify only the
 fields you wish to change. After modifying the fields, click the 'confirm' button.
 The changes will be adjusted accordingly.
 
-![](images/edit_model_service.png)
+![](../images/edit_model_service.png)
 
 #### Terminating Model Service
 
@@ -582,4 +582,4 @@ for confirmation to terminate the model service. Clicking `Delete`
 will terminate the model service. The terminated model service will be
 removed from the list of model services.
 
-![](images/terminate_model_service_dialog.png)
+![](../images/terminate_model_service_dialog.png)

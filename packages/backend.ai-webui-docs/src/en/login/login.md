@@ -5,7 +5,7 @@
 When you launch the WebUI, log in dialog appears. If you haven't signed up
 yet, press the SIGN UP button.
 
-![](images/login_dialog.png)
+![](../images/login_dialog.png)
 
 Enter the required information, read and agree to the Terms of Service /
 Privacy Policy, and click the SIGNUP button. Depending on your system settings,
@@ -14,7 +14,7 @@ be sent to verify that the email is yours. If the verification email is sent, yo
 will need to read the email and click the link inside to pass verification
 before you can log in with your account.
 
-![](images/signup_dialog.png)
+![](../images/signup_dialog.png)
 
 
    Depending on the server configuration and plugin settings, signing up by
@@ -47,7 +47,7 @@ the Summary tab.
 By clicking the icon in the upper-right corner, you will see sub menus. You
 can logout by selecting the Log Out menu.
 
-![](images/signout_button.png)
+![](../images/signout_button.png)
 
 
 ## When you forgot your password
@@ -58,7 +58,7 @@ by reading and following the instruction. Depending on the server settings, the
 password change feature may be disabled. In this case, contact the
 administrator.
 
-![](images/forgot_password_panel.png)
+![](../images/forgot_password_panel.png)
 
 
    This is also a modular feature, so changing password may not be possible in
@@ -79,4 +79,4 @@ Clicking it again will return the sidebar to its original width.
 You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
 
 
-![](images/menu_collapse.png)
+![](../images/menu_collapse.png)

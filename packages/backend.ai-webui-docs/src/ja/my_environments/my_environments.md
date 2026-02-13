@@ -9,12 +9,12 @@ This page displays contents such as a list of images created by the ユーザー
 
 イメージを削除するには、コントロール列の赤いゴミ箱ボタンをクリックします。削除後は、そのイメージを使用して新しいセッションを作成することはできません。
 
-![](images/my_environments.png)
+![](../images/my_environments.png)
 
 マイ環境イメージをコピーし、手動イメージでセッションを作成することもできます。コントロール列の「コピー」ボタンをクリックし、セッションページに移動してセッションを作成します。コピーしたイメージを貼り付けて手動イメージの入力欄に記入します。
 
-![](images/copy_image_name_manual.png)
+![](../images/copy_image_name_manual.png)
 
 特定の列を非表示にしたり表示したりしたい場合は、テーブルの右下にある歯車アイコンをクリックしてください。すると、以下のダイアログが表示され、表示したい列を選択することができます。
 
-![](images/table_setting.png)
+![](../images/table_setting.png)

@@ -6,13 +6,13 @@ appears after clicking the person icon at the top right. Users can change
 the preferred Environment from the language setting, SSH keypair management,
 editing user config script, and even to using Beta features.
 
-![](images/preferences.png)
+![](../images/preferences.png)
 
 
 ## GENERAL tab
 
 
-![](images/user_settings_page.png)
+![](../images/user_settings_page.png)
 
 There are lots of preference menu in GENERAL tab. you can search it by search field on top of the section,
 or you may just filter that you changed by clicking `Display Only Changes`. If you want to rollback the changes to before,
@@ -86,7 +86,7 @@ etc.).
 Every user has at least one or more keypairs. you can see access and secret keypair by clicking
 Config button below. Remember that main access keypair is only one.
 
-![](images/my_keypair_information.png)
+![](../images/my_keypair_information.png)
 
 
 ### SSH Keypair Management
@@ -101,7 +101,7 @@ randomly generated and stored as user information. Please note that the secret
 key cannot be checked again unless it is saved manually immediately after
 creation.
 
-![](images/ssh_keypair_dialog.png)
+![](../images/ssh_keypair_dialog.png)
 
 
    Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may convert
@@ -111,18 +111,18 @@ From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to pr
 flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
 two text area which corresponds to "public" and "private" key.
 
-![](images/add_ssh_keypair_manually_dialog.png)
+![](../images/add_ssh_keypair_manually_dialog.png)
 
 please enter the keys inside, and click `SAVE` button. Now you can access to backend.ai session using your own key.
 
-![](images/ssh_keypair_dialog_after.png)
+![](../images/ssh_keypair_dialog_after.png)
 
 ### Edit Bootstrap Script
 
 If you want to execute a one-time script just after your compute sessions
 started, write down the contents here.
 
-![](images/edit_bootstrap_script.png)
+![](../images/edit_bootstrap_script.png)
 
 
    The compute session will be at the `PREPARING` status until the bootstrap
@@ -145,19 +145,19 @@ and then write the content. You can save the script by
 clicking the SAVE or SAVE AND CLOSE button. Click the DELETE button to delete
 the script.
 
-![](images/edit_user_config_script.png)
+![](../images/edit_user_config_script.png)
 
 ### Switch back to the Classic UI
 
 If you want to switch back to the classic Backend.AI interface, enable the following options.
 
-![](images/switch_classic_ui.png)
+![](../images/switch_classic_ui.png)
 
 ### Experimental Features
 
 You can enable or disable experimental features before they are officially released.
 
-![](images/experimental_features.png)
+![](../images/experimental_features.png)
 
 ## LOGS tab
 
@@ -166,7 +166,7 @@ can visit this page to find out more about the errors occurred.
 You can search, filter the error logs, refresh and clear the logs by clicking the
 Clear Logs button at the top right.
 
-![](images/user_log.png)
+![](../images/user_log.png)
 
 
    If you only have one page logged in, clicking the REFRESH button may not seem
@@ -179,4 +179,4 @@ Clear Logs button at the top right.
 If you want to hide or show the certain columns, click the gear icon at the bottom
 right of the table. Then you can see below dialog to select the columns you want to see.
 
-![](images/logs_table_setting.png)
+![](../images/logs_table_setting.png)
