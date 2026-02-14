@@ -52,7 +52,7 @@ runs:
       run: |
         echo "Step: Running React tests with coverage..." >> ../coverage-steps.log
         echo "Coverage output will be saved to: react/coverage/" >> ../coverage-steps.log
-        pnpm run test -- --coverage --coverageDirectory=coverage 2>&1 | tee -a ../coverage-steps.log
+        pnpm run test --coverage --coverageDirectory=coverage 2>&1 | tee -a ../coverage-steps.log
         echo "React tests completed" >> ../coverage-steps.log
 
     # Step 4: Run backend.ai-ui tests with coverage
@@ -62,7 +62,7 @@ runs:
       run: |
         echo "Step: Running backend.ai-ui tests with coverage..." >> ../../coverage-steps.log
         echo "Coverage output will be saved to: packages/backend.ai-ui/coverage/" >> ../../coverage-steps.log
-        pnpm run test -- --coverage --coverageDirectory=coverage 2>&1 | tee -a ../../coverage-steps.log
+        pnpm run test --coverage --coverageDirectory=coverage 2>&1 | tee -a ../../coverage-steps.log
         echo "backend.ai-ui tests completed" >> ../../coverage-steps.log
 
     # Step 5: Create combined coverage directory
@@ -123,7 +123,7 @@ runs:
         if [ -f "react/coverage/lcov-report/index.html" ]; then
           echo "" >> coverage-steps.log
           echo "React Project Coverage:" >> coverage-steps.log
-          cd react && pnpm run test -- --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../coverage-steps.log || true
+          cd react && pnpm run test --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../coverage-steps.log || true
           cd ..
         fi
         
@@ -131,7 +131,7 @@ runs:
         if [ -f "packages/backend.ai-ui/coverage/lcov-report/index.html" ]; then
           echo "" >> coverage-steps.log
           echo "backend.ai-ui Project Coverage:" >> coverage-steps.log
-          cd packages/backend.ai-ui && pnpm run test -- --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../../coverage-steps.log || true
+          cd packages/backend.ai-ui && pnpm run test --coverage --coverageReporters=text-summary 2>&1 | grep -A 10 "Coverage summary" | tee -a ../../coverage-steps.log || true
           cd ../..
         fi
         
