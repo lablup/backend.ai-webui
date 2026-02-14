@@ -116,7 +116,8 @@ module.exports = proxy = class Proxy {
       logger.info(
         `App-proxy server connection established: ${this.ip}:${this.port}.`,
       );
-      tcpConn.setTimeout(30000);
+      tcpConn.setTimeout(3600000);
+      tcpConn.setKeepAlive(true, 30000);
       tcpConn.on('timeout', () => {
         logger.debug(`Socket timeout`);
         tcpConn.destroy();
