@@ -31,6 +31,15 @@ import {
   getVFolderHostsResponse,
 } from './fixtures/graphql/login-flow-queries';
 import {
+  getVFolderNodeListPageQueryResponse,
+  getStorageStatusPanelCardQueryResponse,
+  getQuotaPerStorageVolumePanelCardUserQueryResponse,
+  getQuotaPerStorageVolumePanelCardQueryResponse,
+  getVFolderListRestResponse,
+  getFolderExplorerModalQueryResponse,
+  getVFolderFilesRestResponse,
+} from './fixtures/graphql/vfolder-queries';
+import {
   getLoginCheckResponse,
   getLoginResponse,
   logoutResponse,
@@ -303,6 +312,76 @@ async function handleMockRoute(route: Route, role: MockRole): Promise<void> {
           },
         },
       }),
+    });
+  }
+
+  // GET /func/folders/_/allowed_types - allowed vfolder types
+  // Called by vfolder.list_allowed_types() — used by FolderCreateModal
+  if (path === '/func/folders/_/allowed_types' && method === 'GET') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(['user', 'group']),
+    });
+  }
+
+  // GET /func/folders/_/shared - shared invitees for InviteFolderSettingModal
+  // Called by baiSignedRequestWithPromise({ url: '/folders/_/shared?vfolder_id=...' })
+  if (path === '/func/folders/_/shared' && method === 'GET') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        shared: [
+          {
+            perm: 'ro',
+            shared_to: {
+              uuid: 'mock-invitee-uuid-0001',
+              email: 'invited-reader@lablup.com',
+            },
+            vfolder_id: 'aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa',
+          },
+          {
+            perm: 'rw',
+            shared_to: {
+              uuid: 'mock-invitee-uuid-0002',
+              email: 'invited-writer@lablup.com',
+            },
+            vfolder_id: 'aaaaaaaa-1111-1111-1111-aaaaaaaaaaaa',
+          },
+        ],
+      }),
+    });
+  }
+
+  // GET /func/folders/invitations/list - pending vfolder invitations
+  // Called by vfolder.invitations() — used by useVFolderInvitations hook
+  if (path === '/func/folders/invitations/list' && method === 'GET') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ invitations: [] }),
+    });
+  }
+
+  // GET /func/folders/{name}/files - file listing for FolderExplorerModal
+  // Called by vfolder.list_files(path, name) — returns { items, files, total_count }
+  if (path.match(/^\/func\/folders\/[^/]+\/files$/) && method === 'GET') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(getVFolderFilesRestResponse()),
+    });
+  }
+
+  // GET /func/folders - vfolder list for StorageStatusPanelCard counting
+  // Called by vfolder.list(groupId) — returns array of vfolder objects
+  // IMPORTANT: Must come AFTER /func/folders/_/* handlers (more specific paths first)
+  if (path === '/func/folders' && method === 'GET') {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(getVFolderListRestResponse()),
     });
   }
 
@@ -641,6 +720,49 @@ function matchGraphQLQuery(
         },
       },
     };
+  }
+
+  // ---- VFolder page Relay queries ----
+
+  // Relay VFolderNodeListPageQuery — main page query for vfolder list
+  if (
+    operationName === 'VFolderNodeListPageQuery' ||
+    queryText.includes('VFolderNodeListPageQuery')
+  ) {
+    return getVFolderNodeListPageQueryResponse(role);
+  }
+
+  // Relay StorageStatusPanelCardQuery — max vfolder counts for user/project
+  if (
+    operationName === 'StorageStatusPanelCardQuery' ||
+    queryText.includes('StorageStatusPanelCardQuery')
+  ) {
+    return getStorageStatusPanelCardQueryResponse();
+  }
+
+  // Relay QuotaPerStorageVolumePanelCardUserQuery — current user ID
+  if (
+    operationName === 'QuotaPerStorageVolumePanelCardUserQuery' ||
+    queryText.includes('QuotaPerStorageVolumePanelCardUserQuery')
+  ) {
+    return getQuotaPerStorageVolumePanelCardUserQueryResponse();
+  }
+
+  // Relay QuotaPerStorageVolumePanelCardQuery — quota usage/limits
+  if (
+    operationName === 'QuotaPerStorageVolumePanelCardQuery' ||
+    queryText.includes('QuotaPerStorageVolumePanelCardQuery')
+  ) {
+    return getQuotaPerStorageVolumePanelCardQueryResponse();
+  }
+
+  // Relay FolderExplorerModalQuery — folder detail for explorer modal
+  if (
+    operationName === 'FolderExplorerModalQuery' ||
+    queryText.includes('FolderExplorerModalQuery')
+  ) {
+    const vfolderGlobalId = (parsed.variables?.vfolderGlobalId as string) ?? '';
+    return getFolderExplorerModalQueryResponse(vfolderGlobalId);
   }
 
   // ---- Legacy GQL queries (matched by query text keywords) ----
