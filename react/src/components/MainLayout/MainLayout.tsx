@@ -61,6 +61,7 @@ const useStyle = createStyles(({ css, token }) => ({
 }));
 
 function MainLayout() {
+  'use memo';
   const navigate = useNavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
@@ -116,9 +117,11 @@ function MainLayout() {
   }, []);
 
   useLayoutEffect(() => {
-    const handleNavigate = (e: any) => {
-      const { detail } = e;
-      navigate(detail);
+    const handleNavigate = (e: Event) => {
+      const { detail } = e as CustomEvent<string>;
+      if (typeof detail === 'string') {
+        navigate(detail);
+      }
     };
     document.addEventListener('react-navigate', handleNavigate);
 
