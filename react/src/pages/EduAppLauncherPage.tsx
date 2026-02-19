@@ -19,7 +19,7 @@ const EduAppLauncherPage: React.FC = () => {
     <>
       <CSSTokenVariables />
       <NotificationForAnonymous />
-      {/* @ts-ignore */}
+      {/* @ts-expect-error - custom Lit element not in JSX.IntrinsicElements */}
       <backend-ai-webui id="webui-shell" />
       <Suspense fallback={null}>
         <EduAppLauncherPageContent />
@@ -29,6 +29,7 @@ const EduAppLauncherPage: React.FC = () => {
 };
 
 const EduAppLauncherPageContent: React.FC = () => {
+  'use memo';
   const apiEndpoint = useApiEndpoint();
 
   return <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={true} />;
