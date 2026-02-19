@@ -104,7 +104,7 @@ const loadPage =
         break;
       case 'applauncher':
       case 'edu-applauncher':
-        import('./components/backend-ai-edu-applauncher.js');
+        // Handled by backend-ai-react-edu-applauncher (React component)
         break;
       case 'error':
       default:

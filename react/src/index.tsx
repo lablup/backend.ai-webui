@@ -63,6 +63,9 @@ const EmailVerificationViewLazy = React.lazy(
 const ChangePasswordViewLazy = React.lazy(
   () => import('./components/ChangePasswordView'),
 );
+const EduAppLauncherLazy = React.lazy(
+  () => import('./components/EduAppLauncher'),
+);
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 customElements.define(
@@ -260,6 +263,31 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ChangePasswordViewInWebComponent />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const EduAppLauncherInWebComponent: React.FC = () => {
+  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
+    useWebComponentInfo<{
+      apiEndpoint: string;
+      active: boolean;
+    }>();
+
+  return (
+    <React.Suspense fallback={null}>
+      <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={active} />
+    </React.Suspense>
+  );
+};
+
+customElements.define(
+  'backend-ai-react-edu-applauncher',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <EduAppLauncherInWebComponent />
       </DefaultProviders>
     );
   }),

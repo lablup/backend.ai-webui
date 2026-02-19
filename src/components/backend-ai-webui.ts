@@ -287,12 +287,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             this._page === 'edu-applauncher' ||
             this._page === 'applauncher'
           ) {
-            const eduApplauncherView = this.shadowRoot?.querySelector(
-              'backend-ai-edu-applauncher',
-            );
-            window.setTimeout(() => {
-              eduApplauncherView?.launch(this.loginPanel.api_endpoint);
-            }, 1000);
+            // React component backend-ai-react-edu-applauncher handles launch automatically
           } else {
             const tabcount = new TabCount();
             const isPageReloaded =
@@ -860,14 +855,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             active: this._page === 'change-password',
           })}"
         ></backend-ai-react-change-password-view>
-        <backend-ai-edu-applauncher
+        <backend-ai-react-edu-applauncher
           class="page"
           name="edu-applauncher"
-          ?active="${this._page === 'edu-applauncher' ||
-          this._page === 'applauncher'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-edu-applauncher>
+          value="${JSON.stringify({
+            apiEndpoint: this.loginPanel?.api_endpoint || '',
+            active:
+              this._page === 'edu-applauncher' || this._page === 'applauncher',
+          })}"
+        ></backend-ai-react-edu-applauncher>
       </div>
 
       <backend-ai-react-login-view
