@@ -33,7 +33,7 @@ const _dispatchNotification = (
         open: true,
         type: shouldSaveLog ? 'error' : undefined,
         message,
-        description: detail,
+        description: message === detail ? undefined : detail,
         duration: persistent ? 0 : undefined,
       },
     }),
