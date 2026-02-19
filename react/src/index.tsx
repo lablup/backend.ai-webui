@@ -49,6 +49,19 @@ const TOTPActivateModalWithToken = React.lazy(
   () => import('./components/TOTPActivateModalWithToken'),
 );
 
+const SignupModal = React.lazy(() => import('./components/SignupModal'));
+
+customElements.define(
+  'backend-ai-react-signup-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SignupModalInWebComponent {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
 customElements.define(
   'backend-ai-react-totp-registration-modal-before-login',
   reactToWebComponent((props) => {
@@ -95,6 +108,34 @@ customElements.define(
     );
   }),
 );
+
+const SignupModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
+  const {
+    parsedValue: {
+      open = false,
+      endpoint = '',
+      allowSignupWithoutConfirmation = false,
+      preloadedToken,
+    } = {},
+  } = useWebComponentInfo<{
+    open: boolean;
+    endpoint: string;
+    allowSignupWithoutConfirmation: boolean;
+    preloadedToken?: string;
+  }>();
+
+  return (
+    <SignupModal
+      open={open}
+      endpoint={endpoint}
+      allowSignupWithoutConfirmation={allowSignupWithoutConfirmation}
+      preloadedToken={preloadedToken}
+      onRequestClose={() => {
+        props.dispatchEvent('close', null);
+      }}
+    />
+  );
+};
 
 const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   const {

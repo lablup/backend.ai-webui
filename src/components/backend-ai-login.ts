@@ -14,7 +14,7 @@ import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
-import './backend-ai-signup';
+// Signup modal is now rendered via React web component (backend-ai-react-signup-modal)
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import { IconButton } from '@material/mwc-icon-button';
@@ -37,7 +37,6 @@ globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-type BackendAISignup = HTMLElementTagNameMap['backend-ai-signup'];
 
 declare global {
   const ai: any;
@@ -98,6 +97,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({ type: Object }) notification;
   @property({ type: Object }) user_groups;
   @property({ type: Boolean }) signup_support = false;
+  @property({ type: Boolean }) showSignupModal = false;
+  @property({ type: String }) signupPreloadedToken?: string;
   @property({ type: Boolean }) allowAnonymousChangePassword = false;
   @property({ type: Boolean }) change_signin_support = false;
   @property({ type: Boolean }) allow_signout = false;
@@ -576,14 +577,7 @@ export default class BackendAILogin extends BackendAIPage {
       defaultValue: false,
       value: generalConfig?.signupSupport,
     } as ConfigValueObject) as boolean;
-    // Signup support flag
-    if (this.signup_support) {
-      (
-        this.shadowRoot?.querySelector(
-          '#signup-dialog',
-        ) as HTMLElementTagNameMap['backend-ai-signup']
-      ).active = true;
-    }
+    // Signup modal is now rendered via React web component - no init needed
 
     // Signup support flag
     this.allowAnonymousChangePassword = this._getConfigValueByExists(
@@ -1346,13 +1340,8 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    const signupDialog = this.shadowRoot?.querySelector(
-      '#signup-dialog',
-    ) as BackendAISignup;
-    signupDialog.endpoint = this.api_endpoint;
-    signupDialog.allowSignupWithoutConfirmation =
-      this.allowSignupWithoutConfirmation;
-    signupDialog.open(token);
+    this.signupPreloadedToken = token;
+    this.showSignupModal = true;
   }
 
   private _showChangePasswordEmailDialog() {
@@ -2539,7 +2528,15 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-signup id="signup-dialog"></backend-ai-signup>
+      <backend-ai-react-signup-modal
+        value="${JSON.stringify({
+          open: this.showSignupModal,
+          endpoint: this.api_endpoint,
+          allowSignupWithoutConfirmation: this.allowSignupWithoutConfirmation,
+          preloadedToken: this.signupPreloadedToken,
+        })}"
+        @close="${() => (this.showSignupModal = false)}"
+      ></backend-ai-react-signup-modal>
     `;
   }
 }
