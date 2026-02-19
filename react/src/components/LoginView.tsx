@@ -3,9 +3,11 @@
  *
  * Supports SESSION and API connection modes, OTP/TOTP flows,
  * endpoint configuration, and integrates with existing React child components.
+ *
+ * Config is fetched and parsed entirely within React via useInitializeConfig.
  */
 import {
-  refreshConfigFromToml,
+  getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
 import {
@@ -16,18 +18,20 @@ import {
   loginWithSAML,
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
+import {
+  useInitializeConfig,
+  useConfigRefreshPageEffect,
+  loginPluginState,
+} from '../hooks/useWebUIConfig';
 import LoginFormPanel from './LoginFormPanel';
 import { Button, Form, Modal, type MenuProps } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
+import { useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
-
-interface LoginViewProps {
-  config?: LoginConfigState;
-}
 
 export interface LoginViewHandle {
   login: (showError?: boolean) => void;
@@ -40,14 +44,27 @@ export interface LoginViewHandle {
   api_endpoint: string;
 }
 
-const LoginView: React.FC<LoginViewProps> = () => {
+const LoginView: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
 
+  // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
+  const {
+    isLoaded: isConfigLoaded,
+    loginConfig: atomLoginConfig,
+    loadConfig,
+  } = useInitializeConfig();
+
+  // Set up proxy URL on backend client when connected
+  useConfigRefreshPageEffect();
+
+  // Login plugin name from config
+  const loginPlugin = useAtomValue(loginPluginState);
+
   // State
   const [loginConfig, setLoginConfig] = useState<LoginConfigState>(() =>
-    refreshConfigFromToml(null),
+    getDefaultLoginConfig(),
   );
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
@@ -77,6 +94,56 @@ const LoginView: React.FC<LoginViewProps> = () => {
   const clientRef =
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
+
+  // Trigger config loading on mount
+  useEffect(() => {
+    loadConfig();
+  }, [loadConfig]);
+
+  // When config finishes loading from the atom, apply it to local state
+  useEffect(() => {
+    if (!isConfigLoaded || !atomLoginConfig) return;
+
+    const newCfg = atomLoginConfig;
+    setLoginConfig(newCfg);
+    setConnectionMode(newCfg.connection_mode);
+    setApiEndpoint((prev) => newCfg.api_endpoint || prev);
+
+    // Handle endpoint visibility
+    if (newCfg.api_endpoint === '') {
+      setShowEndpointInput(true);
+      setIsEndpointDisabled(false);
+    } else if (newCfg.api_endpoint_text === '') {
+      setShowEndpointInput(true);
+      setIsEndpointDisabled(false);
+    } else {
+      setIsEndpointDisabled(true);
+    }
+  }, [isConfigLoaded, atomLoginConfig]);
+
+  // Load login plugin when config is ready
+  useEffect(() => {
+    if (!isConfigLoaded || !loginPlugin) return;
+
+    // Sanitize the plugin name to prevent path traversal attacks.
+    // Only allow alphanumeric characters, hyphens, and underscores.
+    const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
+
+    import(
+      /* webpackIgnore: true */
+      `../../../src/plugins/${sanitizedPlugin}`
+    ).catch(() => {
+      const n = (globalThis as Record<string, unknown>).lablupNotification as {
+        text: string;
+        show: () => void;
+      } | null;
+      if (n) {
+        n.text = t('error.LoginFailed');
+        n.show();
+      }
+    });
+  }, [isConfigLoaded, loginPlugin, t]);
 
   // Keep configRef in sync
   useEffect(() => {
@@ -509,17 +576,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
 
         if (connectionMode === 'SESSION') {
           if ((globalThis as Record<string, unknown>).isElectron) {
-            loadConfigFromWebServer(ep).then(() => {
-              const webuiEl = document.querySelector(
-                'backend-ai-webui',
-              ) as HTMLElement & {
-                config: unknown;
-                loadConfig: (c: unknown) => void;
-              };
-              if (webuiEl) {
-                webuiEl.loadConfig(webuiEl.config);
-              }
-            });
+            loadConfigFromWebServer(ep);
           }
           if (ep === '') return false;
           const { client } = createBackendAIClient('', '', ep, 'SESSION');
@@ -538,37 +595,10 @@ const LoginView: React.FC<LoginViewProps> = () => {
           await clientRef.current.logout();
         }
       },
-      refreshWithConfig: (config: Record<string, unknown>) => {
-        const newCfg = refreshConfigFromToml(config);
-        setLoginConfig(newCfg);
-        setConnectionMode(newCfg.connection_mode);
-        setApiEndpoint((prev) => newCfg.api_endpoint || prev);
-
-        // Handle endpoint visibility
-        if (newCfg.api_endpoint === '') {
-          setShowEndpointInput(true);
-          setIsEndpointDisabled(false);
-        } else if (newCfg.api_endpoint_text === '') {
-          setShowEndpointInput(true);
-          setIsEndpointDisabled(false);
-        } else {
-          setIsEndpointDisabled(true);
-        }
-
-        // Handle plugin loading
-        if (
-          config.plugin &&
-          (config.plugin as Record<string, unknown>).login &&
-          (config.plugin as Record<string, unknown>).login !== ''
-        ) {
-          import(
-            /* webpackIgnore: true */
-            `../../../src/plugins/${(config.plugin as Record<string, unknown>).login}`
-          ).catch(() => {
-            notification(t('error.LoginFailed'));
-            open();
-          });
-        }
+      // Config is now loaded by React directly via useInitializeConfig.
+      // This method is kept as a no-op for backward compatibility.
+      refreshWithConfig: () => {
+        // No-op: config is consumed from Jotai atoms
       },
       get api_endpoint() {
         return apiEndpoint;

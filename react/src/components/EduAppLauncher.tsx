@@ -5,6 +5,7 @@
  * for education-specific use cases.
  */
 import { openWsproxy, connectToProxyWorker } from '../helper/appLauncherProxy';
+import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +38,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * Initialize the backend.ai client with session-based auth mode.
    */
   const _initClient = async (endpoint: string) => {
-    const webUIShell: any = document.querySelector('#webui-shell');
     let resolvedEndpoint = endpoint;
 
     if (resolvedEndpoint === '') {
@@ -60,9 +60,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       clientConfig,
       'Backend.AI Web UI.',
     );
-    const configPath = '../../config.toml';
-    await webUIShell._parseConfig(configPath);
-    g.backendaiclient._config._proxyURL = webUIShell.config.wsproxy.proxyURL;
+    const configPath = g.isElectron ? './config.toml' : '../../config.toml';
+    const tomlConfig = await fetchAndParseConfig(configPath);
+    if (tomlConfig?.wsproxy?.proxyURL) {
+      g.backendaiclient._config._proxyURL = tomlConfig.wsproxy.proxyURL;
+    }
     await g.backendaiclient.get_manager_version();
     g.backendaiclient.ready = true;
   };
