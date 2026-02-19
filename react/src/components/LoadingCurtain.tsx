@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 const useStyle = createStyles(({ css }) => ({
   loadingBackground: css`
-    transition: all 0.3s linear;
+    transition: opacity 0.3s linear;
     position: fixed;
     top: 0;
     left: 0;
@@ -70,8 +70,8 @@ const LoadingCurtain: React.FC = () => {
     };
   }, []);
 
-  const handleTransitionEnd = () => {
-    if (isVisuallyHidden) {
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName === 'opacity' && isVisuallyHidden) {
       setIsHidden(true);
     }
   };
