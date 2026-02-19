@@ -1,8 +1,6 @@
-import { PaperColor } from './paper-color';
 import { css } from 'lit';
 
 export const BackendAiStyles = [
-  PaperColor,
   // language=CSS
   css`
     :host > *,
