@@ -1,4 +1,3 @@
-import './backend-ai-indicator-pool';
 // backend-ai-login has been migrated to React (backend-ai-react-login-view)
 import './backend-ai-settings-store';
 import { LitElement } from 'lit-element';
@@ -7,9 +6,8 @@ declare const BackendAIWebUI_base: typeof LitElement;
 /**
  Backend.AI Web UI
 
- `backend-ai-webui` is a minimal Lit shell that provides global store
- initialization, config loading, notification/indicator pools, and
- login view orchestration. All routing and UI is handled by React.
+ `backend-ai-webui` is a minimal Lit shell that provides login view
+ orchestration and logout handling. All routing and UI is handled by React.
 
  @group Backend.AI Web UI
  @element backend-ai-webui
@@ -34,7 +32,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   shouldUpdate(changedProperties: any): boolean;
   loadConfig(config: any): void;
   refreshPage(): void;
-  showUpdateNotifier(): void;
   _parseConfig(fileName: any, returning?: boolean): Promise<void>;
   close_app_window(): Promise<void>;
   logout(performClose?: boolean, callbackURL?: string): Promise<void>;

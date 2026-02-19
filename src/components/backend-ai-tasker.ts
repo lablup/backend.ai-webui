@@ -48,7 +48,6 @@ class Task {
  */
 @customElement('backend-ai-tasker')
 export default class BackendAiTasker extends LitElement {
-  @property({ type: Object }) indicator;
   @property({ type: Array }) taskstore;
   @property({ type: Array }) finished;
   @property({ type: Object }) pooler;
@@ -63,7 +62,6 @@ export default class BackendAiTasker extends LitElement {
     super();
     this.taskstore = [];
     this.finished = [];
-    this.indicator = globalThis.lablupIndicator;
     this.pooler = setInterval(() => {
       this.gc();
     }, 10000);
@@ -272,7 +270,7 @@ export default class BackendAiTasker extends LitElement {
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
       /[xy]/g,
       (c) => {
-        const r = (dt + Math.random() * 16) % 16 | 0;
+        const r = ((dt + Math.random() * 16) % 16) | 0;
         dt = Math.floor(dt / 16);
         return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
       },

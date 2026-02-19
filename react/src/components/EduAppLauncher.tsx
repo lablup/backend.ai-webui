@@ -161,8 +161,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * Open a service app for an existing session using standalone proxy utilities.
    */
   const _openServiceApp = async (sessionId: string, requestedApp: string) => {
-    const indicator = await g.lablupIndicator.start();
-
     try {
       const resp = await openWsproxy(
         g.backendaiclient,
@@ -175,7 +173,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           ? String(appRespUrl.appConnectUrl)
           : resp.url;
         if (!appConnectUrl) {
-          indicator.end();
           _dispatchNotification(
             t('session.appLauncher.ConnectUrlIsNotValid'),
             undefined,
@@ -183,14 +180,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           );
           return;
         }
-        indicator.set(100, t('session.appLauncher.Prepared'));
         setTimeout(() => {
           g.open(appConnectUrl, '_self');
         });
       }
     } catch (err) {
       logger.error('Failed to open service app:', err);
-      indicator.end();
       _handleError(err);
     }
   };
@@ -202,7 +197,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const _createEduSession = async (
     resources: Record<string, string | null>,
   ) => {
-    const indicator = await g.lablupIndicator.start();
     const eduAppNamePrefix = g.backendaiclient._config.eduAppNamePrefix || '';
 
     const statusList = [
@@ -236,7 +230,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
     let sessions: any;
     try {
-      indicator.set(20, t('eduapi.QueryingExistingComputeSession'));
       sessions = await g.backendaiclient.computeSession.list(
         sessionFields,
         statusList,
@@ -245,7 +238,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         0,
       );
     } catch (err) {
-      indicator.end();
       _handleError(err);
       return;
     }
@@ -269,13 +261,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         (tmpl: any) => tmpl.name === sessionTemplateName,
       );
     } catch (err) {
-      indicator.end();
       _handleError(err);
       return;
     }
 
     if (sessionTemplates.length < 1) {
-      indicator.end();
       _dispatchNotification(t('eduapi.NoSessionTemplate'), undefined, true);
       return;
     }
@@ -299,7 +289,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         if (
           sessionImage !== requestedSessionTemplate.template.spec.kernel.image
         ) {
-          indicator.end();
           _dispatchNotification(
             t('eduapi.CannotCreateSessionWithDifferentImage'),
             undefined,
@@ -309,7 +298,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         }
 
         if (sessionStatus !== 'RUNNING') {
-          indicator.end();
           _dispatchNotification(
             t('eduapi.SessionStatusIsWithReload', { status: sessionStatus }),
             undefined,
@@ -330,14 +318,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           'session_id' in matchedSession
             ? (matchedSession.session_id as string)
             : null;
-        indicator.set(50, t('eduapi.FoundExistingComputeSession'));
       } else {
         launchNewSession = true;
       }
     }
 
     if (launchNewSession) {
-      indicator.set(40, t('eduapi.FindingSessionTemplate'));
       const templateId = requestedSessionTemplate.id;
 
       try {
@@ -364,7 +350,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         };
 
         try {
-          indicator.set(60, t('eduapi.CreatingComputeSession'));
           const response = await g.backendaiclient.createSessionFromTemplate(
             templateId,
             null,
@@ -374,12 +359,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           );
           sessionId = response.sessionId;
         } catch (err: any) {
-          indicator.end();
           _handleError(err);
           return;
         }
       } catch (err: any) {
-        indicator.end();
         if (err?.message && 'statusCode' in err && err.statusCode === 408) {
           _dispatchNotification(
             t('eduapi.SessionStillPreparing'),
@@ -393,8 +376,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         return;
       }
     }
-
-    indicator.set(100, t('eduapi.ComputeSessionPrepared'));
 
     if (sessionId) {
       _openServiceApp(sessionId, parsedAppName);

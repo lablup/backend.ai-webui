@@ -5,10 +5,8 @@
 import { default as TabCount } from '../lib/TabCounter';
 import * as ai from '../lib/backend.ai-client-esm';
 import './backend-ai-common-utils';
-import './backend-ai-indicator-pool';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
-import DOMPurify from 'dompurify';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
   get as _text,
@@ -24,7 +22,7 @@ globalThis.BackendAIClient = ai.backend.Client;
 // @ts-ignore
 globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
-// lit-translate configuration for remaining Lit components (indicator, etc.)
+// lit-translate configuration for remaining Lit components
 registerTranslateConfig({
   loader: (lang) =>
     fetch(`/resources/i18n/${lang}.json`).then((res) => res.json()),
@@ -40,7 +38,6 @@ registerTranslateConfig({
  Backend.AI Web UI
 
  `backend-ai-webui` is a minimal Lit shell that provides:
- - Indicator pool (still a Lit component)
  - Login view orchestration
  - Logout and Electron app-close handling
 
@@ -159,8 +156,6 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   firstUpdated() {
-    globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
-
     // Logout handler
     document.addEventListener('backend-ai-logout', ((
       e: CustomEvent<{ callbackURL: string }>,
@@ -304,22 +299,6 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   /**
-   * Show a notification when a new Web UI version is available.
-   * Called from service-worker-driver.js.
-   */
-  showUpdateNotifier(): void {
-    const indicator = <any>(
-      this.shadowRoot?.getElementById('backend-ai-indicator')
-    );
-    if (indicator) {
-      indicator.innerHTML = DOMPurify.sanitize(
-        'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.',
-      );
-      indicator.show();
-    }
-  }
-
-  /**
    * When user closes the Electron app window, clean up login information.
    */
   async close_app_window() {
@@ -403,7 +382,6 @@ export default class BackendAIWebUI extends LitElement {
       <backend-ai-react-login-view
         id="login-panel"
       ></backend-ai-react-login-view>
-      <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
     `;
   }
 }
