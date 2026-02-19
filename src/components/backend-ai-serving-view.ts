@@ -2,12 +2,10 @@
  @license
 Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
 */
-import { navigate } from '../backend-ai-app';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import '@material/mwc-circular-progress';
@@ -53,12 +51,13 @@ export default class BackendAIServingView extends BackendAIPage {
         @moveTo="${(e: CustomEvent) => {
           const path = e.detail.path;
           const params = e.detail.params;
-          globalThis.history.pushState(
-            {},
-            '',
-            path + '?folder=' + params.folder,
+          const fullPath = path + '?folder=' + params.folder;
+          globalThis.history.pushState({}, '', fullPath);
+          document.dispatchEvent(
+            new CustomEvent('react-navigate', {
+              detail: fullPath,
+            }),
           );
-          store.dispatch(navigate(decodeURIComponent(path), params));
         }}"
       ></backend-ai-react-serving-list>
     `;
