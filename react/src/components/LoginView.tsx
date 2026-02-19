@@ -581,7 +581,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
       if (descriptor) {
         Object.defineProperty(el, key, descriptor);
       } else {
-        (el as Record<string, unknown>)[key] =
+        (el as unknown as Record<string, unknown>)[key] =
           handle[key as keyof LoginViewHandle];
       }
     });
@@ -638,11 +638,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
       : endpoints.map((ep) => ({
           key: ep,
           label: (
-            <BAIFlex
-              justify="space-between"
-              align="center"
-              style={{ minWidth: 300 }}
-            >
+            <BAIFlex justify="between" align="center" style={{ minWidth: 300 }}>
               <span>{ep}</span>
               <Button
                 type="text"
@@ -747,6 +743,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
         }
         closable={false}
         maskClosable={false}
+        getContainer={false}
         destroyOnHidden
       >
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
@@ -761,6 +758,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
         onCancel={() => setIsHelpOpen(false)}
         footer={null}
         width={350}
+        getContainer={false}
       >
         <div
           style={{

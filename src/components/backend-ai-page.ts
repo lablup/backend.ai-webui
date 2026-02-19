@@ -114,17 +114,6 @@ export class BackendAIPage extends LitElement {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
-  /**
-   * Hide the backend.ai dialog.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  _hideDialog(e) {
-    const hideButton = e.target;
-    const dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   // Compatibility layer from here.
   _addInputValidator(obj: any) {
     if (!obj.hasAttribute('auto-validate')) {

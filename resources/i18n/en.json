@@ -599,6 +599,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Unable to authorize your session. Login to the portal first.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Compute session prepared",
     "CreatingComputeSession": "Creating compute session ...",
     "EmptyProject": "EmptyProject",
@@ -608,6 +610,7 @@
     "PleaseReload": "Please reload after some time.",
     "QueryingExistingComputeSession": "Querying existing compute session ...",
     "SessionStatusIs": "Session status is",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Session is still in preparing. Reload after a while"
   },
   "environment": {

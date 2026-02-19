@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Oturumunuz yetkilendirilemiyor. Önce portala giriş yapın.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Hesaplama oturumu hazırlandı",
     "CreatingComputeSession": "Hesaplama oturumu oluşturuluyor...",
     "EmptyProject": "BoşProje",
@@ -605,6 +607,7 @@
     "PleaseReload": "Lütfen bir süre sonra yeniden yükleyin.",
     "QueryingExistingComputeSession": "Mevcut bilgi işlem oturumu sorgulanıyor...",
     "SessionStatusIs": "Oturum durumu (şimdiki değeri)",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Oturum hala hazırlanıyor. Bir süre sonra yeniden yükle"
   },
   "environment": {

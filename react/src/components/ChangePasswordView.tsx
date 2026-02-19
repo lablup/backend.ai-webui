@@ -33,10 +33,11 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
   const [form] = Form.useForm<ChangePasswordFormValues>();
 
   // token is derived from URL params which are stable for the lifetime of this page
-  const token = useRef(readTokenFromUrl());
+  const [initialToken] = useState(readTokenFromUrl);
+  const token = useRef(initialToken);
 
   const [viewState, setViewState] = useState<ViewState>(
-    readTokenFromUrl() ? 'change-password' : 'invalid-token',
+    initialToken ? 'change-password' : 'invalid-token',
   );
 
   const anonBaiClient = useAnonymousBackendaiClient({
@@ -48,25 +49,30 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
   };
 
   const handleUpdatePassword = async () => {
-    const values = await form.validateFields();
+    const values = await form.validateFields().catch(() => undefined);
+    if (!values) return;
 
     if (values.password1 !== values.password2) {
       message.error(t('webui.menu.PasswordMismatch'));
       return;
     }
 
-    await anonBaiClient.cloud
-      .change_password(values.email, values.password1, token.current)
-      .then(() => {
-        message.success(t('login.PasswordChanged'));
-        setTimeout(() => {
-          redirectToLoginPage();
-        }, 2000);
-      })
-      .catch((e: Error) => {
-        message.error(e.message || t('error.UpdateError'));
-        setViewState('invalid-token');
-      });
+    try {
+      await anonBaiClient.cloud.change_password(
+        values.email,
+        values.password1,
+        token.current,
+      );
+      message.success(t('login.PasswordChanged'));
+      setTimeout(() => {
+        redirectToLoginPage();
+      }, 2000);
+    } catch (e: unknown) {
+      const errorMessage =
+        e instanceof Error ? e.message : t('error.UpdateError');
+      message.error(errorMessage);
+      setViewState('invalid-token');
+    }
   };
 
   if (!active) {
@@ -95,7 +101,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
       >
         <BAIFlex direction="column" gap="sm">
           <p style={{ width: 350 }}>{t('login.UpdatePasswordMessage')}</p>
-          <Form form={form} layout="vertical">
+          <Form form={form} layout="vertical" preserve={false}>
             <Form.Item
               name="email"
               rules={[

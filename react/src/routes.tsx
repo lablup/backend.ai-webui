@@ -89,6 +89,15 @@ const ReservoirArtifactDetailPage = React.lazy(
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const EmailVerificationPage = React.lazy(
+  () => import('./pages/EmailVerificationPage'),
+);
+const ChangePasswordPage = React.lazy(
+  () => import('./pages/ChangePasswordPage'),
+);
+const EduAppLauncherPage = React.lazy(
+  () => import('./pages/EduAppLauncherPage'),
+);
 
 /**
  * MainLayout children routes - these are the actual page routes
@@ -527,6 +536,50 @@ export const routes: RouteObject[] = [
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
           <InteractiveLoginPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/verify-email',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EmailVerificationPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/change-password',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <ChangePasswordPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/edu-applauncher',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EduAppLauncherPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/applauncher',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EduAppLauncherPage />
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),

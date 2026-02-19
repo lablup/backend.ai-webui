@@ -590,6 +590,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "ไม่สามารถอนุญาตเซสชันของคุณได้ กรุณาเข้าสู่ระบบที่พอร์ทัลก่อน",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "เตรียมเซสชันการคำนวณแล้ว",
     "CreatingComputeSession": "กำลังสร้างเซสชันการคำนวณ ...",
     "EmptyProject": "โครงการว่างเปล่า",
@@ -599,6 +601,7 @@
     "PleaseReload": "กรุณาโหลดใหม่หลังจากผ่านไปสักครู่",
     "QueryingExistingComputeSession": "กำลังสอบถามเซสชันการคำนวณที่มีอยู่ ...",
     "SessionStatusIs": "สถานะเซสชันคือ",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "เซสชันยังอยู่ในขั้นตอนการเตรียมการ โหลดใหม่หลังจากผ่านไปสักครู่"
   },
   "environment": {

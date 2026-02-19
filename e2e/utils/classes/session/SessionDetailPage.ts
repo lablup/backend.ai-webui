@@ -169,8 +169,8 @@ export class SessionDetailPage extends BasePage {
     const appLauncherButton = sessionRow.getByLabel('view comfy');
     await appLauncherButton.click();
 
-    // Wait for app launcher modal
-    const appLauncherModal = this.page.locator('backend-ai-app-launcher');
+    // Wait for app launcher modal (React Ant Design modal)
+    const appLauncherModal = this.page.getByTestId('app-launcher-modal');
     await this.waitForVisible(appLauncherModal);
   }
 
@@ -192,9 +192,7 @@ export class SessionDetailPage extends BasePage {
 
     // Wait for logs modal/dialog to be visible
     // The modal contains the react-lazylog component
-    const logsModal = this.page.locator(
-      '.ant-modal:has(.react-lazylog), backend-ai-dialog:has(.react-lazylog)',
-    );
+    const logsModal = this.page.locator('.ant-modal:has(.react-lazylog)');
     await logsModal.waitFor({ state: 'visible', timeout: 5000 });
 
     // Wait for log lines to be rendered in the lazylog component
@@ -205,7 +203,7 @@ export class SessionDetailPage extends BasePage {
     await logLines.first().waitFor({ state: 'visible', timeout: 5000 });
 
     // Get all text content from the modal body
-    const modalBody = logsModal.locator('.ant-modal-body, .dialog-body');
+    const modalBody = logsModal.locator('.ant-modal-body');
     const logsText = await modalBody.textContent();
 
     // Close the logs modal by clicking the close button

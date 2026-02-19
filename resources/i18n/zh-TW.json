@@ -597,6 +597,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "無法授權您的會話。首先登錄門戶。",
+    "CannotCreateSessionWithDifferentImage": "無法使用與正在執行的工作階段不同的映像檔建立工作階段。",
+    "CannotInitializeClient": "用戶端連線初始化失敗。",
     "ComputeSessionPrepared": "計算會話已準備好",
     "CreatingComputeSession": "正在創建計算會話...",
     "EmptyProject": "空项目",
@@ -606,6 +608,7 @@
     "PleaseReload": "請過一段時間重新加載。",
     "QueryingExistingComputeSession": "正在查詢現有計算會話...",
     "SessionStatusIs": "會話狀態為",
+    "SessionStatusIsWithReload": "工作階段狀態為 {{status}}。請稍後重新載入。",
     "SessionStillPreparing": "會議還在準備中。一段時間後重新加載"
   },
   "environment": {

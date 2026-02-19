@@ -2,50 +2,33 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-import { navigate } from '../backend-ai-app';
 import { default as TabCount } from '../lib/TabCounter';
-import {
-  IronFlex,
-  IronFlexAlignment,
-  IronFlexFactors,
-  IronPositioning,
-} from '../plastics/layout/iron-flex-layout-classes';
-import { store } from '../store';
-import './backend-ai-app-launcher';
+import * as ai from '../lib/backend.ai-client-esm';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import BackendAIMetadataStore from './backend-ai-metadata-store';
-import { BackendAIPage } from './backend-ai-page';
-import './backend-ai-project-switcher';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
-import '@material/mwc-button';
-import '@material/mwc-circular-progress';
-import '@material/mwc-icon';
-import { IconButton } from '@material/mwc-icon-button';
-import '@material/mwc-icon-button-toggle';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
-import '@material/mwc-textarea';
-import '@material/mwc-top-app-bar-fixed';
-import '@vaadin/tooltip';
 import DOMPurify from 'dompurify';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
   get as _text,
   registerTranslateConfig,
-  translate as _t,
   use as setLanguage,
 } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
-// PWA components
-import { connect } from 'pwa-helpers/connect-mixin';
-import { installRouter } from 'pwa-helpers/router';
+
+// Expose Backend.AI client classes globally for React components.
+// Previously set by the now-removed backend-ai-login.ts.
+// @ts-ignore
+globalThis.BackendAIClient = ai.backend.Client;
+// @ts-ignore
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 registerTranslateConfig({
   loader: (lang) =>
@@ -59,52 +42,29 @@ globalThis.backendaiutils = new BackendAICommonUtils();
 /**
  Backend.AI Web UI
 
- `backend-ai-webui` is a shell of Backend.AI Web UI (web / app).
+ `backend-ai-webui` is a minimal Lit shell that provides:
+ - Global store initialization (settings, metadata, tasker, utils)
+ - Config loading from config.toml
+ - Notification and indicator pool (still Lit components)
+ - Login view orchestration
+ - Logout and Electron app-close handling
 
- Example:
-
- <backend-ai-webui>
- ... content ...
- </backend-ai-webui>
+ All routing, page rendering, and UI is handled by React.
 
  @group Backend.AI Web UI
  @element backend-ai-webui
  */
 @customElement('backend-ai-webui')
-export default class BackendAIWebUI extends connect(store)(LitElement) {
+export default class BackendAIWebUI extends LitElement {
   @property({ type: Boolean }) hasLoadedStrings = false;
-  @property({ type: String }) menuTitle = 'LOGIN REQUIRED';
-  @property({ type: String }) user_id = 'DISCONNECTED';
-  @property({ type: String }) full_name = 'DISCONNECTED';
-  @property({ type: String }) domain = 'CLICK TO CONNECT';
   @property({ type: Boolean }) is_connected = false;
-  @property({ type: Boolean }) is_admin = false;
-  @property({ type: Boolean }) is_superadmin = false;
-  @property({ type: Boolean }) allow_signout = false;
-  @property({ type: Boolean }) needPasswordChange = false;
-  @property({ type: String }) proxy_url = '';
-  @property({ type: String }) connection_mode = 'API';
-  @property({ type: String }) connection_server = '';
-  @property({ type: String }) edition = 'Open Source';
-  @property({ type: String }) validUntil = '';
-  @property({ type: Array }) groups = [];
-  @property({ type: Object }) plugins = Object();
-  @property({ type: String }) fasttrackEndpoint = '';
-  @property({ type: String }) _page = '';
-  @property({ type: String }) _lazyPage = '';
-  @property({ type: Object }) _pageParams = {};
-  @property({ type: String }) _sidepanel:
-    | ''
-    | 'feedback'
-    | 'notification'
-    | 'task' = '';
-  @property({ type: Boolean }) _offline = false;
   @property({ type: Object }) config = Object();
   @property({ type: Object }) notification;
-  @property({ type: Boolean }) mini_ui = false;
   @property({ type: Boolean }) auto_logout = false;
-  @property({ type: Boolean }) isUserInfoMaskEnabled;
-  @property({ type: Boolean }) isHideAgents = true;
+  @property({ type: String }) edition = 'Open Source';
+  @property({ type: String }) validUntil = '';
+  @property({ type: Object }) plugins = Object();
+  @property({ type: String }) proxy_url = '';
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
@@ -129,170 +89,89 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     'zh-CN',
     'zh-TW',
   ];
-  @property({ type: Array }) blockedMenuItem;
-  @property({ type: Array }) inactiveMenuItem;
-  @property({ type: Number }) minibarWidth = 88;
-  @property({ type: Number }) sidebarWidth = 250;
-  @property({ type: Number }) sidepanelWidth = 250;
-  @property({ type: Object }) supports = Object();
-  @property({ type: Array }) availablePages = [
-    'start',
-    'dashboard',
-    'admin-session',
-    'admin-dashboard',
-    'summary',
-    'verify-email',
-    'change-password',
-    'job',
-    'data',
-    'my-environment',
-    'agent-summary',
-    'statistics',
-    'usersettings',
-    'credential',
-    'environment',
-    'agent',
-    'resource-policy',
-    'storage-settings',
-    'settings',
-    'maintenance',
-    'serving',
-    'service',
-    'service/start',
-    'service/update',
-    'information',
-    'github',
-    'import',
-    'session',
-    'session/start',
-    'interactive-login',
-    'chat',
-    'ai-agent',
-    'model-store',
-    'scheduler',
-    'reservoir',
-    'project',
-    'branding',
-  ];
-  @property({ type: Array }) adminOnlyPages = [
-    'experiment',
-    'credential',
-    'environment',
-    'scheduler',
-    'resource-policy',
-  ];
-  @property({ type: Array }) superAdminOnlyPages = [
-    'admin-session',
-    'admin-dashboard',
-    'agent',
-    'storage-settings',
-    'settings',
-    'maintenance',
-    'information',
-    'project',
-    'branding',
-  ];
-  @property({ type: Array }) optionalPages;
-  @property({ type: Number }) timeoutSec = 5;
-  @property({ type: Object }) loggedAccount = Object();
-  @property({ type: Object }) roleInfo = Object();
-  @property({ type: Object }) keyPairInfo = Object();
-  @property({ type: Boolean }) isOpenUserProfileDialog = false;
-  @property({ type: Boolean }) isOpenSignoutDialog = false;
-  @property({ type: Boolean }) isOpenSplashDialog = false;
-  @query('#app-page') appPage!: HTMLDivElement;
   @property({ type: Object }) _refreshPage = this.refreshPage.bind(this);
-  // TODO need investigation about class method undefined issue
-  // This issue occurred when importing exported class
   @query('#login-panel') loginPanel: any;
-  @query('#main-toolbar') mainToolbar: any;
-  @property({ type: Boolean }) isOpenTOSDialog = false;
-  @property({ type: String }) tosDialogEntry = 'terms-of-service';
-  @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
-
-  constructor() {
-    super();
-    this.blockedMenuItem = [];
-    this.inactiveMenuItem = [];
-  }
 
   static get styles(): CSSResultGroup {
-    return [
-      BackendAIWebUIStyles,
-      IronFlex,
-      IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
-    ];
+    return [BackendAIWebUIStyles];
+  }
+
+  /**
+   * Wait for the React-based login panel to expose its imperative handle.
+   * The handle methods (login, block, etc.) are assigned via useEffect in
+   * LoginView.tsx, so they may not be available immediately after the
+   * web component element is in the DOM.
+   */
+  private _waitForLoginPanel(timeout = 10000): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.loginPanel?.block) {
+        resolve();
+        return;
+      }
+      const start = Date.now();
+      const check = () => {
+        if (this.loginPanel?.block) {
+          resolve();
+        } else if (Date.now() - start > timeout) {
+          reject(new Error('LoginPanel not ready within timeout'));
+        } else {
+          requestAnimationFrame(check);
+        }
+      };
+      requestAnimationFrame(check);
+    });
   }
 
   firstUpdated() {
     globalThis.lablupNotification =
       this.shadowRoot?.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
-    globalThis.appLauncher = this.shadowRoot?.querySelector('#app-launcher');
-    globalThis.currentPage = this._page;
-    globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    // if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) {
-    //   // For macOS
-    //   (
-    //     this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement
-    //   ).style.visibility = 'hidden';
-    // }
-    installRouter((location) =>
-      store.dispatch(navigate(decodeURIComponent(location.pathname))),
-    );
-    let configPath;
+
+    const configPath = globalThis.isElectron
+      ? './config.toml'
+      : '../../config.toml';
+
+    // Logout handler
+    document.addEventListener('backend-ai-logout', ((
+      e: CustomEvent<{ callbackURL: string }>,
+    ) => {
+      this.logout(false, e.detail?.callbackURL);
+    }) as EventListener);
+
+    // Electron-specific handlers
     if (globalThis.isElectron) {
-      configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', ((
-        e: CustomEvent<{ callbackURL: string }>,
-      ) => {
-        this.logout(false, e.detail?.callbackURL);
-      }) as EventListener);
       document.addEventListener('backend-ai-app-close', () =>
         this.close_app_window(),
       );
-      document.addEventListener('backend-ai-show-splash', () =>
-        this._showSplash(),
-      );
-    } else {
-      configPath = '../../config.toml';
-      document.addEventListener('backend-ai-logout', ((
-        e: CustomEvent<{ callbackURL: string }>,
-      ) => {
-        this.logout(false, e.detail?.callbackURL);
-      }) as EventListener);
-      document.addEventListener('backend-ai-show-splash', () =>
-        this._showSplash(),
-      );
     }
+
     globalThis.addEventListener('beforeunload', function () {
       globalThis.backendaioptions.set(
         'last_window_close_time',
         new Date().getTime() / 1000,
       );
     });
-    this._parseConfig(configPath)
+
+    // Wait for the React login panel handle to be ready before proceeding
+    Promise.all([this._parseConfig(configPath), this._waitForLoginPanel()])
       .then(() => {
         this.loadConfig(this.config);
-        // If disconnected
+        // If disconnected, trigger login flow
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
           globalThis.backendaiclient === null ||
           globalThis.backendaiclient.ready === false
         ) {
+          // Check if on edu-applauncher page (handled by React route)
+          const currentPage = window.location.pathname
+            .replace(/^\//, '')
+            .split('/')[0];
           if (
-            this._page === 'edu-applauncher' ||
-            this._page === 'applauncher'
+            currentPage === 'edu-applauncher' ||
+            currentPage === 'applauncher'
           ) {
-            const eduApplauncherView = this.shadowRoot?.querySelector(
-              'backend-ai-edu-applauncher',
-            );
-            window.setTimeout(() => {
-              eduApplauncherView?.launch(this.loginPanel.api_endpoint);
-            }, 1000);
+            // React component handles launch automatically
           } else {
             const tabcount = new TabCount();
             const isPageReloaded =
@@ -341,31 +220,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           globalThis.backendaiclient === null ||
           globalThis.backendaiclient.ready === false
         ) {
-          this.loginPanel.block('Configuration is not loaded.', 'Error');
+          this.loginPanel?.block?.('Configuration is not loaded.', 'Error');
         }
       });
-    this.mini_ui = globalThis.backendaioptions.get('compact_sidebar');
-    globalThis.mini_ui = this.mini_ui;
 
-    // apply update name when user info changed via users page
-    document.addEventListener('current-user-info-changed', (e: any) => {
-      const input = e.detail;
-      this.full_name = input;
-    });
-    document.addEventListener('move-to-from-react', (e) => {
-      const params = (e as CustomEvent).detail.params;
-      const path = (e as CustomEvent).detail.path;
-      this._moveTo(path, params, true);
-    });
-    document.addEventListener('show-TOS-agreement', () => {
-      this.showTOSAgreement();
-    });
-    document.addEventListener('show-PP-agreement', () => {
-      this.showPPAgreement();
-    });
-    document.addEventListener('show-about-backendai', () => {
-      this._showSplash();
-    });
+    // Keep lit-translate in sync when user changes language (for notification text)
     document.addEventListener('language-changed', async (e) => {
       await setLanguage((e as CustomEvent).detail.language);
     });
@@ -395,7 +254,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.backendaioptions.set('language', this.lang, 'general');
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
-    // this._initClient();
   }
 
   disconnectedCallback() {
@@ -407,21 +265,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
   }
 
+  /**
+   * Load essential config values and dispatch events for React consumption.
+   * Most config parsing is handled by React's loginConfig.ts via refreshWithConfig.
+   */
   loadConfig(config): void {
-    if (
-      typeof config.general !== 'undefined' &&
-      'connectionMode' in config.general
-    ) {
-      this.connection_mode = config.general.connectionMode;
-      // console.log(this.connection_mode);
-    }
-    if (
-      typeof config.general !== 'undefined' &&
-      'connectionServer' in config.general
-    ) {
-      this.connection_server = config.general.connectionServer;
-      // console.log(this.connection_server);
-    }
+    // Auto-logout setting
     if (
       typeof config.general !== 'undefined' &&
       'autoLogout' in config.general &&
@@ -431,172 +280,57 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     } else {
       this.auto_logout = globalThis.backendaioptions.get('auto_logout', false);
     }
+
+    // Package edition and license info (used by React SplashModal/AboutModal)
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
-    if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
-      this.blockedMenuItem = config.menu.blocklist
-        .split(',')
-        .map((x: string) => x.trim());
-    }
-    if (typeof config.menu !== 'undefined' && 'inactivelist' in config.menu) {
-      this.inactiveMenuItem = config.menu.inactivelist
-        .split(',')
-        .map((x: string) => x.trim());
-    }
-    if (
-      typeof config.general !== 'undefined' &&
-      'maskUserInfo' in config.general
-    ) {
-      this.isUserInfoMaskEnabled = config.general.maskUserInfo;
-    }
-    if (
-      typeof config.general !== 'undefined' &&
-      'hideAgents' in config.general
-    ) {
-      this.isHideAgents = config.general.hideAgents;
-    }
-
     globalThis.packageEdition = this.edition;
     if (
       typeof config.license !== 'undefined' &&
       'validUntil' in config.license
     ) {
       this.validUntil = config.license.validUntil;
-      // console.log(this.validUntil);
     }
     globalThis.packageValidUntil = this.validUntil;
-    if (
-      typeof config.general === 'undefined' ||
-      typeof config.general.allowSignout === 'undefined' ||
-      config.general.allowSignout === '' ||
-      config.general.allowSignout == false
-    ) {
-      this.allow_signout = false;
-    } else {
-      this.allow_signout = true;
+
+    // Proxy URL (used by refreshPage)
+    if (typeof config.wsproxy !== 'undefined' && 'proxyURL' in config.wsproxy) {
+      this.proxy_url = config.wsproxy.proxyURL;
     }
-    if (
-      typeof config.pipeline !== 'undefined' &&
-      'frontendEndpoint' in config.pipeline
-    ) {
-      this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
-    }
+
+    // Dispatch plugin configuration to React PluginLoader
     if (typeof config.plugin !== 'undefined') {
-      // Store plugin information
       if ('login' in config.plugin) {
         this.plugins['login'] = config.plugin.login;
       }
-      if ('page' in config.plugin) {
-        this.plugins['page'] = [];
-        this.plugins['menuitem'] = [];
-        this.plugins['menuitem-user'] = [];
-        this.plugins['menuitem-admin'] = [];
-        this.plugins['menuitem-superadmin'] = [];
-        const pluginLoaderQueue: object[] = [];
-        for (const page of config.plugin.page.split(',')) {
-          const pluginUrl =
-            globalThis.isElectron && this.loginPanel.api_endpoint
-              ? `${this.loginPanel.api_endpoint}/dist/plugins/${page}.js`
-              : `../plugins/${page}.js`;
-
-          pluginLoaderQueue.push(
-            import(pluginUrl).then(() => {
-              const pageItem = document.createElement(page) as BackendAIPage;
-              pageItem.classList.add('page');
-              pageItem.setAttribute('name', page);
-              this.appPage.appendChild(pageItem);
-              this.plugins['menuitem'].push(page);
-              this.availablePages.push(page);
-              switch (pageItem.permission) {
-                case 'superadmin':
-                  this.plugins['menuitem-superadmin'].push(page);
-                  this.superAdminOnlyPages.push(page);
-                  break;
-                case 'admin':
-                  this.plugins['menuitem-admin'].push(page);
-                  this.adminOnlyPages.push(page);
-                  break;
-                default:
-                  this.plugins['menuitem-user'].push(page);
-              }
-              this.plugins['page'].push({
-                name: page,
-                url: page,
-                menuitem: pageItem.menuitem,
-                icon: pageItem.icon,
-                group: pageItem.group,
-              });
-              return Promise.resolve(true);
-            }),
-          );
-        }
-        Promise.all(pluginLoaderQueue).then(() => {
-          globalThis.backendaiPages = this.plugins['page'];
-          const event: CustomEvent = new CustomEvent(
-            'backend-ai-plugin-loaded',
-            { detail: true },
-          );
-          document.dispatchEvent(event);
-          this.requestUpdate();
-
-          // After loading plugin, activate the current page component if exists (only for initial load)
-          if (this.plugins['page'].find((item) => item.name === this._page)) {
-            const component = this.shadowRoot?.querySelector(
-              this._page,
-            ) as BackendAIPage;
-            if (component) {
-              component.active = true;
-              component.requestUpdate();
-            }
-          }
-        });
-      } else {
-        // No page plugins to load, dispatch event immediately
-        document.dispatchEvent(
-          new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
-        );
-      }
-    } else {
-      // No plugin config, dispatch event immediately
-      document.dispatchEvent(
-        new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
-      );
     }
+    const pluginPages =
+      typeof config.plugin !== 'undefined' && 'page' in config.plugin
+        ? config.plugin.page
+        : '';
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-plugin-config', {
+        detail: {
+          pluginPages,
+          apiEndpoint: this.loginPanel?.api_endpoint || '',
+        },
+      }),
+    );
+
+    // Pass full config to React LoginView for detailed parsing
     this.loginPanel.refreshWithConfig(config);
-    const event = new CustomEvent('backend-ai-config-loaded');
-    document.dispatchEvent(event);
+
+    // Notify React that config is loaded
+    document.dispatchEvent(new CustomEvent('backend-ai-config-loaded'));
   }
 
+  /**
+   * Called when backend-ai-connected event fires (after successful login).
+   * Sets up proxy URL and hides the loading curtain.
+   */
   refreshPage(): void {
-    // TODO need more clear type for mwc-list-item
-    this.loggedAccount.access_key =
-      globalThis.backendaiclient._config.accessKey;
-    this.isUserInfoMaskEnabled =
-      globalThis.backendaiclient._config.maskUserInfo;
-    this.needPasswordChange = globalThis.backendaiclient.need_password_change;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
-    if (
-      typeof globalThis.backendaiclient !== 'undefined' &&
-      globalThis.backendaiclient != null &&
-      typeof globalThis.backendaiclient.is_admin !== 'undefined' &&
-      globalThis.backendaiclient.is_admin === true
-    ) {
-      this.is_admin = true;
-    } else {
-      this.is_admin = false;
-    }
-    if (
-      typeof globalThis.backendaiclient !== 'undefined' &&
-      globalThis.backendaiclient != null &&
-      typeof globalThis.backendaiclient.is_superadmin !== 'undefined' &&
-      globalThis.backendaiclient.is_superadmin === true
-    ) {
-      this.is_superadmin = true;
-    } else {
-      this.is_superadmin = false;
-    }
-    this._refreshUserInfoPanel();
     document.body.style.backgroundImage = 'none';
 
     const curtain = this.shadowRoot?.getElementById('loading-curtain');
@@ -613,26 +347,28 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         passive: false,
       },
     );
-    // Note: Unauthorized page redirect logic is handled in React (MainLayout/PageAccessGuard)
-    this.optionalPages = [
-      {
-        page: 'agent-summary',
-        available: !this.isHideAgents,
-      },
-    ];
-    // Note: Redirect logic for blocked pages is handled in React (MainLayout/BlockedPageRedirector)
   }
 
+  /**
+   * Show a notification when a new Web UI version is available.
+   * Called from service-worker-driver.js.
+   */
   showUpdateNotifier(): void {
     const indicator = <any>(
       this.shadowRoot?.getElementById('backend-ai-indicator')
     );
-    indicator.innerHTML = DOMPurify.sanitize(
-      'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.',
-    );
-    indicator.show();
+    if (indicator) {
+      indicator.innerHTML = DOMPurify.sanitize(
+        'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.',
+      );
+      indicator.show();
+    }
   }
 
+  /**
+   * Parse config.toml from the given path.
+   * Also used by loginSessionAuth.ts to load webserver config.
+   */
   _parseConfig(fileName, returning = false): Promise<void> {
     const _preprocessToml = (config) => {
       if (config?.general?.apiEndpointText) {
@@ -661,45 +397,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   /**
-   * Refresh the user information panel.
-   */
-  _refreshUserInfoPanel(): void {
-    this.user_id = globalThis.backendaiclient.email;
-    this.full_name = globalThis.backendaiclient.full_name;
-    this.domain = globalThis.backendaiclient._config.domainName;
-  }
-
-  /**
-   * Load the page element.
-   */
-  _loadPageElement() {
-    if (this._page === 'index.html' || this._page === '') {
-      this._page = 'start';
-      navigate(decodeURIComponent('/'));
-    }
-  }
-
-  updated(changedProps: any) {
-    if (changedProps.has('_page')) {
-      let view: string = this._page;
-      // load data for view
-      if (this.availablePages.includes(view) !== true) {
-        // Fallback for Windows OS
-        const modified_view: string | undefined = view.split(/[/]+/).pop();
-        if (typeof modified_view != 'undefined') {
-          view = modified_view;
-        }
-      }
-      this._page = view;
-    }
-  }
-
-  /**
-   * When user close the app window, delete login information.
+   * When user closes the Electron app window, clean up login information.
    */
   async close_app_window() {
     if (globalThis.backendaioptions.get('preserve_login') === false) {
-      // Delete login information.
       this.notification.text = _text('webui.CleanUpLoginSession');
       this.notification.show();
       const keys = Object.keys(localStorage);
@@ -709,7 +410,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           localStorage.removeItem(key);
         }
       }
-      // remove data in sessionStorage
       sessionStorage.clear();
       if (
         typeof globalThis.backendaiclient != 'undefined' &&
@@ -725,8 +425,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   /**
    * Logout from the backend.ai client.
-   *
-   * @param {Boolean} performClose
    */
   async logout(performClose = false, callbackURL: string = '/') {
     globalThis.backendaiutils._deleteRecentProjectGroupInfo();
@@ -739,8 +437,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
-      this.is_admin = false;
-      this.is_superadmin = false;
       globalThis.backendaiclient = null;
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
@@ -749,90 +445,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           localStorage.removeItem(key);
         }
       }
-      // remove data in sessionStorage
       sessionStorage.clear();
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (globalThis.isElectron) {
         globalThis.location.href = globalThis.electronInitialHref;
       } else {
-        this._moveTo(callbackURL);
+        globalThis.history.pushState({}, '', callbackURL);
+        document.dispatchEvent(
+          new CustomEvent('react-navigate', { detail: callbackURL }),
+        );
         globalThis.location.reload();
       }
     }
-  }
-
-  /**
-   * Display the ToS(terms of service) agreement.
-   */
-  showTOSAgreement() {
-    this.tosDialogEntry = 'terms-of-service';
-    this.isOpenTOSDialog = true;
-  }
-
-  /**
-   * Display the PP(privacy policy) agreement.
-   */
-  showPPAgreement() {
-    this.tosDialogEntry = 'privacy-policy';
-    this.isOpenTOSDialog = true;
-  }
-
-  /**
-   * Moves to the specified URL and updates the state of the web component.
-   * @param {string} url - The URL to navigate to.
-   * @param {object} params - Optional parameters for the URL.
-   * @param {boolean} fromReact - Indicates whether the navigation is triggered from React.
-   */
-  _moveTo(url, params = undefined, fromReact = false) {
-    !fromReact && globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
-    if ('menuitem' in this.plugins) {
-      for (const item of this.plugins.menuitem) {
-        if (item !== this._page) {
-          // TODO specify type for web components from variable
-          const component = this.shadowRoot?.querySelector(
-            item,
-          ) as BackendAIPage;
-          component.active = false;
-          component.removeAttribute('active');
-        }
-      }
-      if (this.plugins['menuitem']?.includes(this._page)) {
-        // TODO specify type for web components from variable
-        const component = this.shadowRoot?.querySelector(
-          this._page,
-        ) as BackendAIPage;
-        component.active = true;
-        // component.setAttribute('active', true);
-        component.requestUpdate();
-      }
-    }
-
-    !fromReact &&
-      document.dispatchEvent(
-        new CustomEvent('react-navigate', {
-          detail: url,
-        }),
-      );
-  }
-
-  /**
-   * Change the state.
-   *
-   * @param {object} state
-   */
-  stateChanged(state) {
-    this._page = state.app.page;
-    this._pageParams = state.app.params;
-    this._offline = state.app.offline;
-    // this._drawerOpened = state.app.drawerOpened;
-    globalThis.currentPage = this._page;
-    globalThis.currentPageParams = this._pageParams;
-  }
-
-  _showSplash() {
-    this.isOpenSplashDialog = true;
   }
 
   protected render() {
@@ -843,60 +468,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <div id="loading-curtain" class="loading-background">
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
-      <div id="app-page">
-        <backend-ai-react-email-verification-view
-          class="page"
-          name="email-verification"
-          value="${JSON.stringify({
-            apiEndpoint: this.loginPanel?.api_endpoint || '',
-            active: this._page === 'verify-email',
-          })}"
-        ></backend-ai-react-email-verification-view>
-        <backend-ai-react-change-password-view
-          class="page"
-          name="change-password"
-          value="${JSON.stringify({
-            apiEndpoint: this.loginPanel?.api_endpoint || '',
-            active: this._page === 'change-password',
-          })}"
-        ></backend-ai-react-change-password-view>
-        <backend-ai-edu-applauncher
-          class="page"
-          name="edu-applauncher"
-          ?active="${this._page === 'edu-applauncher' ||
-          this._page === 'applauncher'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-edu-applauncher>
-      </div>
-
       <backend-ai-react-login-view
         id="login-panel"
       ></backend-ai-react-login-view>
-      <backend-ai-react-splash-modal
-        value="${JSON.stringify({ open: this.isOpenSplashDialog })}"
-        @close="${() => {
-          this.isOpenSplashDialog = false;
-        }}"
-      ></backend-ai-react-splash-modal>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
-      <backend-ai-react-tos-modal
-        value="${JSON.stringify({
-          open: this.isOpenTOSDialog,
-          entry: this.tosDialogEntry,
-        })}"
-        @close="${() => {
-          this.isOpenTOSDialog = false;
-        }}"
-      ></backend-ai-react-tos-modal>
-      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
-      <backend-ai-react-signout-modal
-        value="${this.isOpenSignoutDialog ? 'true' : 'false'}"
-        @close="${() => {
-          this.isOpenSignoutDialog = false;
-        }}"
-      ></backend-ai-react-signout-modal>
     `;
   }
 }

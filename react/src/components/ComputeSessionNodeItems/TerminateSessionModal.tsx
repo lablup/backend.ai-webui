@@ -94,12 +94,6 @@ const getWSProxyVersion = async (
   projectId: string,
   baiClient: BackendAIClient,
 ) => {
-  // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
-  // @ts-ignore
-  if (globalThis?.backendaiwebui?.debug === true) {
-    if (globalThis.appLauncher?.forceUseV1Proxy?.checked) return 'v1';
-    else if (globalThis.appLauncher?.forceUseV2Proxy?.checked) return 'v2';
-  }
   if (globalThis.isElectron) {
     return 'v1';
   }

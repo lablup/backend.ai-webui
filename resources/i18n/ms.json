@@ -595,6 +595,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Tidak dapat mengesahkan sesi anda. Masuk ke portal terlebih dahulu.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Sesi perkiraan disediakan",
     "CreatingComputeSession": "Membuat sesi mengira ...",
     "EmptyProject": "EmptyProject",
@@ -604,6 +606,7 @@
     "PleaseReload": "Muat semula selepas beberapa waktu.",
     "QueryingExistingComputeSession": "Pertanyaan sesi pengkomputeran yang ada ...",
     "SessionStatusIs": "Status sesi adalah",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Muat semula selepas beberapa ketika"
   },
   "environment": {

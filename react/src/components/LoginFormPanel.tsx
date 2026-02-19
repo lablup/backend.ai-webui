@@ -116,6 +116,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         keyboard={false}
         footer={null}
         width={400}
+        getContainer={false}
         styles={{
           body: { padding: 0 },
         }}
@@ -132,7 +133,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
         {/* Mode header */}
         <BAIFlex
-          justify="space-between"
+          justify="between"
           align="center"
           style={{
             margin: '0 25px',
@@ -446,6 +447,7 @@ const ResetPasswordRequiredInline: React.FC<{
       maskClosable={false}
       footer={null}
       width={450}
+      getContainer={false}
       destroyOnHidden
     >
       <BAIFlex
@@ -602,6 +604,7 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
+      getContainer={false}
       destroyOnHidden
       onOk={handleOk}
       loading={!isSuccess}
