@@ -1,5 +1,6 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
+import { backendaiOptions } from '../global-stores';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -126,8 +127,7 @@ const SettingAtomFamily = atomFamily((param: string) => {
         ...prev,
         [key]: newValue,
       });
-      // @ts-ignore
-      globalThis.backendaioptions?.set?.(name, newValue, namespace, true);
+      backendaiOptions?.set?.(name, newValue, namespace, true);
     },
   );
 });

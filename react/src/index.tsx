@@ -1,6 +1,10 @@
+// Initialize global stores before any component renders.
+// This import has side effects: it instantiates the four singleton stores
+// and assigns them to globalThis for backward compatibility with Lit code.
 import App from './App';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import SourceCodeView from './components/SourceCodeView';
+import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
   ReactWebComponentProps,
