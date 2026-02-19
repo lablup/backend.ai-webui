@@ -54,6 +54,9 @@ const SplashModal = React.lazy(() => import('./components/SplashModal'));
 const EmailVerificationViewLazy = React.lazy(
   () => import('./components/EmailVerificationView'),
 );
+const ChangePasswordViewLazy = React.lazy(
+  () => import('./components/ChangePasswordView'),
+);
 
 customElements.define(
   'backend-ai-react-signup-modal',
@@ -216,6 +219,31 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <EmailVerificationViewInWebComponent />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const ChangePasswordViewInWebComponent: React.FC = () => {
+  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
+    useWebComponentInfo<{
+      apiEndpoint: string;
+      active: boolean;
+    }>();
+
+  return (
+    <React.Suspense fallback={null}>
+      <ChangePasswordViewLazy apiEndpoint={apiEndpoint} active={active} />
+    </React.Suspense>
+  );
+};
+
+customElements.define(
+  'backend-ai-react-change-password-view',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ChangePasswordViewInWebComponent />
       </DefaultProviders>
     );
   }),

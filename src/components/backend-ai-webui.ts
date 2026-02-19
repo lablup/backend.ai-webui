@@ -283,14 +283,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           globalThis.backendaiclient === null ||
           globalThis.backendaiclient.ready === false
         ) {
-          if (this._page === 'change-password') {
-            const changePasswordView = this.shadowRoot?.querySelector(
-              'backend-ai-change-forgot-password-view',
-            );
-            window.setTimeout(() => {
-              changePasswordView?.open(this.loginPanel.api_endpoint);
-            }, 1000);
-          } else if (
+          if (
             this._page === 'edu-applauncher' ||
             this._page === 'applauncher'
           ) {
@@ -865,13 +858,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             active: this._page === 'verify-email',
           })}"
         ></backend-ai-react-email-verification-view>
-        <backend-ai-change-forgot-password-view
+        <backend-ai-react-change-password-view
           class="page"
-          name="change-forgot-password"
-          ?active="${this._page === 'change-password'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-change-forgot-password-view>
+          name="change-password"
+          value="${JSON.stringify({
+            apiEndpoint: this.loginPanel?.api_endpoint || '',
+            active: this._page === 'change-password',
+          })}"
+        ></backend-ai-react-change-password-view>
         <backend-ai-edu-applauncher
           class="page"
           name="edu-applauncher"

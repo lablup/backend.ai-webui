@@ -101,7 +101,6 @@ const loadPage =
       case 'verify-email':
         break;
       case 'change-password':
-        import('./components/backend-ai-change-forgot-password-view.js');
         break;
       case 'applauncher':
       case 'edu-applauncher':
