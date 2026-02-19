@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Istuntoa ei pystytä valtuuttamaan. Kirjaudu ensin portaaliin.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Laskenta-istunto valmis",
     "CreatingComputeSession": "Laskenta-istunnon luominen ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Lataa uudelleen jonkin ajan kuluttua.",
     "QueryingExistingComputeSession": "Olemassa olevan laskenta-istunnon kysely ...",
     "SessionStatusIs": "Istunnon tila on",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Istunto on edelleen valmistelussa. Lataa uudelleen hetken kuluttua"
   },
   "environment": {

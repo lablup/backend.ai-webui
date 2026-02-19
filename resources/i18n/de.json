@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Ihre Sitzung kann nicht autorisiert werden. Melden Sie sich zuerst im Portal an.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Computersitzung vorbereitet",
     "CreatingComputeSession": "Compute-Sitzung erstellen ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Bitte nach einiger Zeit neu laden.",
     "QueryingExistingComputeSession": "Vorhandene Compute-Sitzung wird abgefragt...",
     "SessionStatusIs": "Sitzungsstatus ist",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Sitzung ist noch in Vorbereitung. Nach einiger Zeit neu laden"
   },
   "environment": {

@@ -593,6 +593,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Δεν είναι δυνατή η εξουσιοδότηση της περιόδου σύνδεσης. Πρώτα συνδεθείτε στην πύλη.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Η συνεδρία υπολογισμού προετοιμάστηκε",
     "CreatingComputeSession": "Δημιουργία συνεδρίας υπολογιστών ...",
     "EmptyProject": "EmptyProject",
@@ -602,6 +604,7 @@
     "PleaseReload": "Φορτώστε ξανά μετά από λίγο.",
     "QueryingExistingComputeSession": "Ερώτηση υφιστάμενης περιόδου λειτουργίας υπολογισμού ...",
     "SessionStatusIs": "Η κατάσταση περιόδου σύνδεσης είναι",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Η συνεδρία βρίσκεται ακόμη σε προετοιμασία. Επαναφόρτωση μετά από λίγο"
   },
   "environment": {
