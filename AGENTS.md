@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `pnpm run build` - Full production build (cleans, copies resources, runs rollup)
 - `pnpm run build:react-only` - Build only React components
-- `pnpm run build:plugin` - Build plugins separately
+- `pnpm run build:plugin` - Build plugins separately (Lit plugin system removed; kept as no-op)
 
 ### Quality Control
 
@@ -37,18 +37,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-### Hybrid Architecture
+### Architecture
 
-This is a **hybrid web application** with two main UI frameworks:
-
-- **Lit-Element Web Components** (`/src`) - Legacy UI components using TypeScript
-- **React Components** (`/react`) - Modern UI components using React + Ant Design + Relay (GraphQL)
+This is a **React web application** using React + Ant Design + Relay (GraphQL).
+The legacy Lit-Element web components have been removed.
 
 ### Key Technologies
 
-- **Build System**: Rollup for bundling, pnpm for package management
-- **Styling**: Ant Design (React), Material Web Components (Lit)
-- **State Management**: Redux (legacy), Relay (GraphQL for React)
+- **Build System**: Vite (React), Rollup (service worker only), pnpm for package management
+- **Styling**: Ant Design (React)
+- **State Management**: Jotai, Relay (GraphQL)
 - **GraphQL**: Relay compiler for React components
 - **Testing**: Jest for unit tests, Playwright for E2E tests
 - **Electron**: Desktop app wrapper with websocket proxy
@@ -56,11 +54,10 @@ This is a **hybrid web application** with two main UI frameworks:
 ### Project Structure
 
 ```
-src/                    # Lit-Element web components (legacy)
-  components/           # Main web components
+src/                    # Legacy utilities and websocket proxy
   lib/                  # Shared libraries and utilities
   wsproxy/              # WebSocket proxy for desktop app
-react/                  # React components (modern)
+react/                  # React application (main UI)
   src/                  # React application code
   components/           # React UI components
 resources/              # Static assets, i18n files, themes
@@ -113,10 +110,7 @@ e2e/                    # End-to-end tests
 
 ### Key Libraries
 
-- **@material/mwc-\*** - Material Web Components for Lit elements
-- **@vaadin/\*** - Vaadin components
 - **antd** - Ant Design for React components
-- **lit** - Lit-Element framework
 - **relay-runtime** - GraphQL client for React
 - **electron** - Desktop app framework
 

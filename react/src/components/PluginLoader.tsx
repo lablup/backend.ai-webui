@@ -1,9 +1,8 @@
 /**
  * PluginLoader - React component that handles loading Backend.AI WebUI plugins.
  *
- * This component replaces the Lit-based plugin loading system that was previously
- * in backend-ai-webui.ts. It:
- * 1. Reads plugin configuration from Jotai state (set by Lit shell via event)
+ * It:
+ * 1. Reads plugin configuration from Jotai state (set during config initialization)
  * 2. Dynamically imports each plugin module (ES modules)
  * 3. Creates web component elements and appends them to a container
  * 4. Extracts metadata (menuitem, icon, group, permission) from each plugin element
@@ -23,7 +22,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-interface BackendAIPageElement extends HTMLElement {
+interface PluginPageElement extends HTMLElement {
   active: boolean;
   permission?: string;
   menuitem?: string;
@@ -49,9 +48,7 @@ function PluginLoader() {
   const setLoadingStarted = useSetAtom(pluginLoadingStartedState);
   const { logger } = useBAILogger();
   const containerRef = useRef<HTMLDivElement>(null);
-  const pluginElementsRef = useRef<Map<string, BackendAIPageElement>>(
-    new Map(),
-  );
+  const pluginElementsRef = useRef<Map<string, PluginPageElement>>(new Map());
   const loadingGuardRef = useRef(false);
   const location = useLocation();
 
@@ -88,9 +85,7 @@ function PluginLoader() {
           try {
             await import(/* @vite-ignore */ pluginUrl);
 
-            const pageItem = document.createElement(
-              page,
-            ) as BackendAIPageElement;
+            const pageItem = document.createElement(page) as PluginPageElement;
             pageItem.classList.add('page');
             pageItem.setAttribute('name', page);
 
