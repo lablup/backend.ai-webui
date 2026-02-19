@@ -1,4 +1,3 @@
-import './backend-ai-app-launcher';
 import './backend-ai-dialog';
 import './backend-ai-indicator-pool';
 // backend-ai-login has been migrated to React (backend-ai-react-login-view)
