@@ -10,6 +10,7 @@ import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+import { LogoutEventHandler } from './hooks/useLogout';
 import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
@@ -535,6 +536,7 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
+          <LogoutEventHandler />
           <InteractiveLoginPage />
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>

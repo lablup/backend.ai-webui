@@ -8,11 +8,7 @@ import './backend-ai-common-utils';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import { LitElement, html, CSSResultGroup } from 'lit';
-import {
-  get as _text,
-  registerTranslateConfig,
-  use as setLanguage,
-} from 'lit-translate';
+import { registerTranslateConfig, use as setLanguage } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 
 // Expose Backend.AI client classes globally for React components.
@@ -39,8 +35,9 @@ registerTranslateConfig({
 
  `backend-ai-webui` is a minimal Lit shell that provides:
  - Login view orchestration
- - Logout and Electron app-close handling
 
+ Logout and app-close handling has been migrated to React
+ (see react/src/hooks/useLogout.ts).
  Global store initialization (settings, metadata, tasker, utils) is now
  handled by React (see react/src/global-stores.ts).
  Config loading from config.toml is handled entirely by React
@@ -156,26 +153,8 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   firstUpdated() {
-    // Logout handler
-    document.addEventListener('backend-ai-logout', ((
-      e: CustomEvent<{ callbackURL: string }>,
-    ) => {
-      this.logout(false, e.detail?.callbackURL);
-    }) as EventListener);
-
-    // Electron-specific handlers
-    if (globalThis.isElectron) {
-      document.addEventListener('backend-ai-app-close', () =>
-        this.close_app_window(),
-      );
-    }
-
-    globalThis.addEventListener('beforeunload', function () {
-      globalThis.backendaioptions.set(
-        'last_window_close_time',
-        new Date().getTime() / 1000,
-      );
-    });
+    // Logout, app-close, and beforeunload handlers are now registered from
+    // React (useLogoutEventListeners in react/src/hooks/useLogout.ts).
 
     // Wait for both the React login panel handle and React config loading
     Promise.all([this._waitForConfigLoaded(), this._waitForLoginPanel()])
@@ -249,7 +228,7 @@ export default class BackendAIWebUI extends LitElement {
         }
       });
 
-    // Keep lit-translate in sync when user changes language (for indicator text and close_app_window notifications)
+    // Keep lit-translate in sync when user changes language (for remaining Lit components)
     document.addEventListener('language-changed', async (e) => {
       await setLanguage((e as CustomEvent).detail.language);
     });
@@ -296,82 +275,6 @@ export default class BackendAIWebUI extends LitElement {
    */
   refreshPage(): void {
     this.is_connected = true;
-  }
-
-  /**
-   * When user closes the Electron app window, clean up login information.
-   */
-  async close_app_window() {
-    if (globalThis.backendaioptions.get('preserve_login') === false) {
-      document.dispatchEvent(
-        new CustomEvent('add-bai-notification', {
-          detail: {
-            open: true,
-            message: _text('webui.CleanUpLoginSession'),
-          },
-        }),
-      );
-      const keys = Object.keys(localStorage);
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        if (/^(BackendAIWebUI\.login\.)/.test(key)) {
-          localStorage.removeItem(key);
-        }
-      }
-      sessionStorage.clear();
-      if (
-        typeof globalThis.backendaiclient != 'undefined' &&
-        globalThis.backendaiclient !== null
-      ) {
-        if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-          await globalThis.backendaiclient.logout();
-        }
-        globalThis.backendaiclient = null;
-      }
-    }
-  }
-
-  /**
-   * Logout from the backend.ai client.
-   */
-  async logout(performClose = false, callbackURL: string = '/') {
-    globalThis.backendaiutils._deleteRecentProjectGroupInfo();
-    if (
-      typeof globalThis.backendaiclient != 'undefined' &&
-      globalThis.backendaiclient !== null
-    ) {
-      document.dispatchEvent(
-        new CustomEvent('add-bai-notification', {
-          detail: {
-            open: true,
-            message: _text('webui.CleanUpNow'),
-          },
-        }),
-      );
-      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-        await globalThis.backendaiclient.logout();
-      }
-      globalThis.backendaiclient = null;
-      const keys = Object.keys(localStorage);
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        if (/^(BackendAIWebUI\.login\.)/.test(key)) {
-          localStorage.removeItem(key);
-        }
-      }
-      sessionStorage.clear();
-      if (performClose === true) {
-        // Do nothing. this window will be closed.
-      } else if (globalThis.isElectron) {
-        globalThis.location.href = globalThis.electronInitialHref;
-      } else {
-        globalThis.history.pushState({}, '', callbackURL);
-        document.dispatchEvent(
-          new CustomEvent('react-navigate', { detail: callbackURL }),
-        );
-        globalThis.location.reload();
-      }
-    }
   }
 
   protected render() {
