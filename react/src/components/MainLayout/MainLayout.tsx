@@ -1,6 +1,7 @@
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
+import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
@@ -104,6 +105,10 @@ function MainLayout() {
   // Plugin config is now set directly by useInitializeConfig in LoginView.
   // useSetupWebUIPluginEffect is kept as a no-op for backward compatibility.
   useSetupWebUIPluginEffect();
+
+  // Register logout/app-close/beforeunload event listeners at the app level.
+  // These were previously in the Lit shell (backend-ai-webui.ts).
+  useLogoutEventListeners();
 
   // Splash/About modal state - handles 'backend-ai-show-splash' event from Electron menu
   const [isOpenSplashDialog, setIsOpenSplashDialog] = useState(false);
