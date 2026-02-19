@@ -12,31 +12,85 @@ import Draggable, {
 } from 'react-draggable';
 
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
+
 export interface BAIModalProps extends ModalProps {
-  draggable?: boolean; // modal can be draggle
+  /** Enable dragging modal by header */
+  draggable?: boolean;
+  /**
+   * When true, calls `onConfirmClose` before closing the modal.
+   * If `onConfirmClose` returns false or rejects, the close is prevented.
+   */
+  confirmBeforeClose?: boolean;
+  /**
+   * Callback invoked before the modal is closed when `confirmBeforeClose` is true.
+   * Return false (or a rejected Promise) to prevent closing; return void/true to allow it.
+   */
+  onConfirmClose?: () => void | Promise<boolean>;
+  /** Makes the modal header sticky so it remains visible when body content is scrolled */
+  stickyTitle?: boolean;
+  /** Visual variant that changes the header title color */
+  type?: 'normal' | 'warning' | 'error';
 }
 
-const useStyles = createStyles(({ css }) => ({
-  modal: css`
-    .ant-modal-wrap.ant-modal-centered {
-      overflow: hidden;
-    }
-    .ant-modal-close {
-      width: 26px;
-      height: 26px;
-      top: 22px;
-      right: 18px;
-      -webkit-app-region: no-drag;
-    }
-    .ant-modal-title {
-      margin-right: 36px;
-    }
-  `,
-}));
+const useStyles = createStyles(
+  (
+    { css },
+    {
+      stickyTitle,
+      type,
+      colorWarning,
+      colorError,
+    }: {
+      stickyTitle: boolean;
+      type: 'normal' | 'warning' | 'error';
+      colorWarning: string;
+      colorError: string;
+    },
+  ) => ({
+    modal: css`
+      .ant-modal-wrap.ant-modal-centered {
+        overflow: hidden;
+      }
+      .ant-modal-close {
+        width: 26px;
+        height: 26px;
+        top: 22px;
+        right: 18px;
+        -webkit-app-region: no-drag;
+      }
+      .ant-modal-title {
+        margin-right: 36px;
+        ${type === 'warning' ? `color: ${colorWarning};` : ''}
+        ${type === 'error' ? `color: ${colorError};` : ''}
+      }
+      ${stickyTitle
+        ? `
+        .ant-modal-header {
+          position: sticky;
+          top: 0;
+          z-index: 1;
+        }
+      `
+        : ''}
+    `,
+  }),
+);
 
-const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
+const BAIModal: React.FC<BAIModalProps> = ({
+  className,
+  confirmBeforeClose,
+  onConfirmClose,
+  stickyTitle = false,
+  type = 'normal',
+  ...modalProps
+}) => {
   const { token } = theme.useToken();
-  const { styles } = useStyles();
+  const { styles } = useStyles({
+    stickyTitle,
+    type,
+    colorWarning: token.colorWarning,
+    colorError: token.colorError,
+  });
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
     left: 0,
@@ -45,6 +99,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
     right: 0,
   }); //draggable space
   const draggleRef = useRef<HTMLDivElement>(null);
+
   const handleDrag = (_e: DraggableEvent, uiData: DraggableData) => {
     const { clientWidth, clientHeight } = window.document.documentElement; //browserWidth, browserHeight
     const targetRect = draggleRef.current?.getBoundingClientRect(); //Modal size and viewport
@@ -62,12 +117,24 @@ const BAIModal: React.FC<BAIModalProps> = ({ className, ...modalProps }) => {
         (targetRect.height - 69), // 69 is height of modal header
     });
   };
+
+  const handleCancel: ModalProps['onCancel'] = async (e) => {
+    if (confirmBeforeClose && onConfirmClose) {
+      const result = await Promise.resolve(onConfirmClose());
+      if (result === false) {
+        return;
+      }
+    }
+    modalProps.onCancel?.(e);
+  };
+
   return (
     <Modal
       {...modalProps}
       centered={modalProps.centered ?? true}
       className={classNames(`bai-modal ${className ?? ''}`, styles.modal)}
       wrapClassName={modalProps.draggable ? 'draggable' : ''}
+      onCancel={handleCancel}
       styles={{
         ...modalProps.styles,
         header: {
