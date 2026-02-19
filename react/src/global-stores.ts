@@ -205,7 +205,6 @@ class BackendAIMetadataStore {
 // ---------------------------------------------------------------------------
 
 class BackendAITasker {
-  indicator: any;
   taskstore: any[];
   finished: string[];
   pooler: ReturnType<typeof setInterval>;
@@ -215,7 +214,6 @@ class BackendAITasker {
   constructor() {
     this.taskstore = [];
     this.finished = [];
-    this.indicator = (globalThis as any).lablupIndicator;
     this.pooler = setInterval(() => {
       this.gc();
     }, 10000);

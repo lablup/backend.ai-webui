@@ -125,17 +125,12 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         duration: 2,
       });
 
-      //@ts-ignore
-      const indicator = await globalThis.lablupIndicator.start('indeterminate');
-      indicator.set(10, t('import.Downloading'));
-
       try {
         await baiClient.image.install(
           imageName,
           image?.architecture,
           imageResource,
         );
-        indicator.end(1000);
         return image?.id;
       } catch (error) {
         document.dispatchEvent(
@@ -148,8 +143,6 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
             },
           }),
         );
-        indicator.set(100, t('environment.DescProblemOccurred'));
-        indicator.end(1000);
         return null;
       }
     });
