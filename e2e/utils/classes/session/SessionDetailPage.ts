@@ -203,7 +203,7 @@ export class SessionDetailPage extends BasePage {
     await logLines.first().waitFor({ state: 'visible', timeout: 5000 });
 
     // Get all text content from the modal body
-    const modalBody = logsModal.locator('.ant-modal-body, .dialog-body');
+    const modalBody = logsModal.locator('.ant-modal-body');
     const logsText = await modalBody.textContent();
 
     // Close the logs modal by clicking the close button
