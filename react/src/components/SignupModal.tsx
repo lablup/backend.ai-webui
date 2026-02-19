@@ -89,9 +89,13 @@ const SignupModal: React.FC<SignupModalProps> = ({
         }
         onCancel={onRequestClose}
         destroyOnHidden
+        getContainer={false}
         width={400}
+        styles={{
+          body: { fontSize: 14 },
+        }}
         footer={
-          <BAIFlex justify="end">
+          <BAIFlex justify="end" gap="sm">
             <BAIButton onClick={onRequestClose}>{t('button.Cancel')}</BAIButton>
             <BAIButton type="primary" action={handleSubmit}>
               {t('signUp.SignUp')}
@@ -231,15 +235,18 @@ const SignupModal: React.FC<SignupModalProps> = ({
       <TermsOfServiceModal
         open={showTOS}
         onRequestClose={() => setShowTOS(false)}
+        getContainer={false}
       />
       <PrivacyPolicyModal
         open={showPrivacyPolicy}
         onRequestClose={() => setShowPrivacyPolicy(false)}
+        getContainer={false}
       />
       <Modal
         open={showEmailSentDialog}
         title={t('signUp.ThankYou')}
         closable={false}
+        getContainer={false}
         footer={
           <BAIButton
             type="primary"
