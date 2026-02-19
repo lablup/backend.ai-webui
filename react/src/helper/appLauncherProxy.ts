@@ -260,7 +260,6 @@ export async function openWsproxy(
 
   const rqstProxy = {
     method: 'GET',
-    app: app,
     uri: `${uri}&${searchParams.toString()}`,
   };
 

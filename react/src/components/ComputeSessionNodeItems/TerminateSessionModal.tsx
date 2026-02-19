@@ -94,11 +94,6 @@ const getWSProxyVersion = async (
   projectId: string,
   baiClient: BackendAIClient,
 ) => {
-  // @ts-ignore
-  if (globalThis?.backendaiwebui?.debug === true) {
-    // Debug proxy version override is no longer supported
-    // after the removal of the Lit backend-ai-app-launcher component.
-  }
   if (globalThis.isElectron) {
     return 'v1';
   }
