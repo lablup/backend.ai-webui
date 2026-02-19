@@ -363,6 +363,7 @@ const LoginView: React.FC = () => {
         } else {
           setIsConnected(true);
           await doGQLConnect(client);
+          return;
         }
       } catch (err: unknown) {
         setIsBlockPanelOpen(false);
