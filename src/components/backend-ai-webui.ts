@@ -8,7 +8,6 @@ import './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
-import './lablup-notification';
 import DOMPurify from 'dompurify';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import {
@@ -25,7 +24,7 @@ globalThis.BackendAIClient = ai.backend.Client;
 // @ts-ignore
 globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
-// lit-translate configuration for remaining Lit components (notification, indicator, etc.)
+// lit-translate configuration for remaining Lit components (indicator, etc.)
 registerTranslateConfig({
   loader: (lang) =>
     fetch(`/resources/i18n/${lang}.json`).then((res) => res.json()),
@@ -41,7 +40,7 @@ registerTranslateConfig({
  Backend.AI Web UI
 
  `backend-ai-webui` is a minimal Lit shell that provides:
- - Notification and indicator pool (still Lit components)
+ - Indicator pool (still a Lit component)
  - Login view orchestration
  - Logout and Electron app-close handling
 
@@ -51,6 +50,8 @@ registerTranslateConfig({
  (see react/src/hooks/useWebUIConfig.ts).
 
  All routing, page rendering, and UI is handled by React.
+ Notifications are dispatched directly via the 'add-bai-notification'
+ CustomEvent handled by BAINotificationButton in React.
 
  @group Backend.AI Web UI
  @element backend-ai-webui
@@ -59,7 +60,6 @@ registerTranslateConfig({
 export default class BackendAIWebUI extends LitElement {
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: Boolean }) is_connected = false;
-  @property({ type: Object }) notification;
   @property({ type: Boolean }) auto_logout = false;
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
@@ -159,10 +159,7 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   firstUpdated() {
-    globalThis.lablupNotification =
-      this.shadowRoot?.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
-    this.notification = globalThis.lablupNotification;
 
     // Logout handler
     document.addEventListener('backend-ai-logout', ((
@@ -257,7 +254,7 @@ export default class BackendAIWebUI extends LitElement {
         }
       });
 
-    // Keep lit-translate in sync when user changes language (for notification text)
+    // Keep lit-translate in sync when user changes language (for indicator text and close_app_window notifications)
     document.addEventListener('language-changed', async (e) => {
       await setLanguage((e as CustomEvent).detail.language);
     });
@@ -327,8 +324,14 @@ export default class BackendAIWebUI extends LitElement {
    */
   async close_app_window() {
     if (globalThis.backendaioptions.get('preserve_login') === false) {
-      this.notification.text = _text('webui.CleanUpLoginSession');
-      this.notification.show();
+      document.dispatchEvent(
+        new CustomEvent('add-bai-notification', {
+          detail: {
+            open: true,
+            message: _text('webui.CleanUpLoginSession'),
+          },
+        }),
+      );
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
@@ -358,8 +361,14 @@ export default class BackendAIWebUI extends LitElement {
       typeof globalThis.backendaiclient != 'undefined' &&
       globalThis.backendaiclient !== null
     ) {
-      this.notification.text = _text('webui.CleanUpNow');
-      this.notification.show();
+      document.dispatchEvent(
+        new CustomEvent('add-bai-notification', {
+          detail: {
+            open: true,
+            message: _text('webui.CleanUpNow'),
+          },
+        }),
+      );
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
@@ -394,7 +403,6 @@ export default class BackendAIWebUI extends LitElement {
       <backend-ai-react-login-view
         id="login-panel"
       ></backend-ai-react-login-view>
-      <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
     `;
   }

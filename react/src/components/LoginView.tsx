@@ -134,14 +134,14 @@ const LoginView: React.FC = () => {
       /* webpackIgnore: true */
       `../../../src/plugins/${sanitizedPlugin}`
     ).catch(() => {
-      const n = (globalThis as Record<string, unknown>).lablupNotification as {
-        text: string;
-        show: () => void;
-      } | null;
-      if (n) {
-        n.text = t('error.LoginFailed');
-        n.show();
-      }
+      document.dispatchEvent(
+        new CustomEvent('add-bai-notification', {
+          detail: {
+            open: true,
+            message: t('error.LoginFailed'),
+          },
+        }),
+      );
     });
   }, [isConfigLoaded, loginPlugin, t]);
 
@@ -159,13 +159,15 @@ const LoginView: React.FC = () => {
   }, []);
 
   const notification = useCallback((text: string, detail?: string) => {
-    const n = (globalThis as any).lablupNotification;
-
-    if (n) {
-      n.text = text;
-      if (detail) n.detail = detail;
-      n.show();
-    }
+    document.dispatchEvent(
+      new CustomEvent('add-bai-notification', {
+        detail: {
+          open: true,
+          message: text,
+          description: detail,
+        },
+      }),
+    );
   }, []);
 
   const open = useCallback(() => {

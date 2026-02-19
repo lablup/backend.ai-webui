@@ -17,6 +17,29 @@ interface EduAppLauncherProps {
 
 const g = globalThis as any;
 
+/**
+ * Dispatch a notification event to the React notification system.
+ */
+const _dispatchNotification = (
+  message: string,
+  detail?: string,
+  persistent = false,
+  log?: Record<string, unknown>,
+) => {
+  const shouldSaveLog = log && Object.keys(log).length !== 0;
+  document.dispatchEvent(
+    new CustomEvent('add-bai-notification', {
+      detail: {
+        open: true,
+        type: shouldSaveLog ? 'error' : undefined,
+        message,
+        description: detail,
+        duration: persistent ? 0 : undefined,
+      },
+    }),
+  );
+};
+
 const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   apiEndpoint,
   active,
@@ -73,7 +96,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * Authenticate via token from URL query parameters.
    */
   const _token_login = async (): Promise<boolean> => {
-    const notification = g.lablupNotification;
     const urlParams = new URLSearchParams(window.location.search);
     const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
 
@@ -96,16 +118,14 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           extraParams,
         );
         if (!loginSuccess) {
-          notification.text = t('eduapi.CannotAuthorizeSessionByToken');
-          notification.show(true);
+          _dispatchNotification(t('eduapi.CannotAuthorizeSessionByToken'));
           return false;
         }
       }
       return true;
     } catch (err) {
       logger.error('Token login failed:', err);
-      notification.text = t('eduapi.CannotAuthorizeSessionByToken');
-      notification.show(true, err);
+      _dispatchNotification(t('eduapi.CannotAuthorizeSessionByToken'));
       return false;
     }
   };
@@ -141,7 +161,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * Open a service app for an existing session using standalone proxy utilities.
    */
   const _openServiceApp = async (sessionId: string, requestedApp: string) => {
-    const notification = g.lablupNotification;
     const indicator = await g.lablupIndicator.start();
 
     try {
@@ -157,8 +176,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           : resp.url;
         if (!appConnectUrl) {
           indicator.end();
-          notification.text = t('session.appLauncher.ConnectUrlIsNotValid');
-          notification.show(true);
+          _dispatchNotification(
+            t('session.appLauncher.ConnectUrlIsNotValid'),
+            undefined,
+            true,
+          );
           return;
         }
         indicator.set(100, t('session.appLauncher.Prepared'));
@@ -169,7 +191,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     } catch (err) {
       logger.error('Failed to open service app:', err);
       indicator.end();
-      _handleError(err, g.lablupNotification);
+      _handleError(err);
     }
   };
 
@@ -180,7 +202,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const _createEduSession = async (
     resources: Record<string, string | null>,
   ) => {
-    const notification = g.lablupNotification;
     const indicator = await g.lablupIndicator.start();
     const eduAppNamePrefix = g.backendaiclient._config.eduAppNamePrefix || '';
 
@@ -225,7 +246,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       );
     } catch (err) {
       indicator.end();
-      _handleError(err, notification);
+      _handleError(err);
       return;
     }
 
@@ -249,14 +270,13 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       );
     } catch (err) {
       indicator.end();
-      _handleError(err, notification);
+      _handleError(err);
       return;
     }
 
     if (sessionTemplates.length < 1) {
       indicator.end();
-      notification.text = t('eduapi.NoSessionTemplate');
-      notification.show(true);
+      _dispatchNotification(t('eduapi.NoSessionTemplate'), undefined, true);
       return;
     }
 
@@ -280,17 +300,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           sessionImage !== requestedSessionTemplate.template.spec.kernel.image
         ) {
           indicator.end();
-          notification.text = t('eduapi.CannotCreateSessionWithDifferentImage');
-          notification.show(true);
+          _dispatchNotification(
+            t('eduapi.CannotCreateSessionWithDifferentImage'),
+            undefined,
+            true,
+          );
           return;
         }
 
         if (sessionStatus !== 'RUNNING') {
           indicator.end();
-          notification.text = t('eduapi.SessionStatusIsWithReload', {
-            status: sessionStatus,
-          });
-          notification.show(true);
+          _dispatchNotification(
+            t('eduapi.SessionStatusIsWithReload', { status: sessionStatus }),
+            undefined,
+            true,
+          );
           return;
         }
 
@@ -321,8 +345,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         const projects = await g.backendaiclient.eduApp.get_user_projects();
 
         if (!projects) {
-          notification.text = t('eduapi.EmptyProject');
-          notification.show();
+          _dispatchNotification(t('eduapi.EmptyProject'));
           return;
         }
 
@@ -352,17 +375,20 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           sessionId = response.sessionId;
         } catch (err: any) {
           indicator.end();
-          _handleError(err, notification);
+          _handleError(err);
           return;
         }
       } catch (err: any) {
         indicator.end();
         if (err?.message && 'statusCode' in err && err.statusCode === 408) {
-          notification.text = t('eduapi.SessionStillPreparing');
-          notification.detail = err.message;
-          notification.show(true, err);
+          _dispatchNotification(
+            t('eduapi.SessionStillPreparing'),
+            err.message,
+            true,
+            err,
+          );
         } else {
-          _handleError(err, notification);
+          _handleError(err);
         }
         return;
       }
@@ -378,18 +404,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   /**
    * Handle API errors and show notification messages.
    */
-  const _handleError = (err: any, notification: any) => {
+  const _handleError = (err: any) => {
     if (err?.message) {
-      if (err.description) {
-        notification.text = err.description;
-      } else {
-        notification.text = err.message;
-      }
-      notification.detail = err.message;
-      notification.show(true, err);
+      const message = err.description ?? err.message;
+      _dispatchNotification(message, err.message, true, err);
     } else if (err?.title) {
-      notification.text = err.title;
-      notification.show(true, err);
+      _dispatchNotification(err.title, undefined, true, err);
     }
   };
 
@@ -402,11 +422,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       await _initClient(endpoint);
     } catch (err) {
       logger.error('Failed to initialize client:', err);
-      const notification = g.lablupNotification;
-      if (notification) {
-        notification.text = t('eduapi.CannotInitializeClient');
-        notification.show(true, err);
-      }
+      _dispatchNotification(
+        t('eduapi.CannotInitializeClient'),
+        undefined,
+        true,
+      );
       return;
     }
 
@@ -426,7 +446,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       await _prepareProjectInformation();
     } catch (err) {
       logger.error('Failed to prepare project information:', err);
-      _handleError(err, g.lablupNotification);
+      _handleError(err);
       return;
     }
 

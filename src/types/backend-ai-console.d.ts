@@ -1,7 +1,6 @@
 import './backend-ai-indicator-pool';
 // backend-ai-login has been migrated to React (backend-ai-react-login-view)
 import './backend-ai-settings-store';
-import './lablup-notification';
 import { LitElement } from 'lit-element';
 
 declare const BackendAIWebUI_base: typeof LitElement;
@@ -19,7 +18,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   hasLoadedStrings: boolean;
   is_connected: boolean;
   config: any;
-  notification: any;
   auto_logout: boolean;
   edition: string;
   validUntil: string;

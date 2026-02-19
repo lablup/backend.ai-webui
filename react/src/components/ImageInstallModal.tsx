@@ -138,12 +138,16 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         indicator.end(1000);
         return image?.id;
       } catch (error) {
-        // @ts-ignore
-        globalThis.lablupNotification.text = painKiller.relieve(error.title);
-        // @ts-ignore
-        globalThis.lablupNotification.detail = error.message;
-        // @ts-ignore
-        globalThis.lablupNotification.show(true, error);
+        document.dispatchEvent(
+          new CustomEvent('add-bai-notification', {
+            detail: {
+              open: true,
+              type: 'error',
+              message: painKiller.relieve((error as any).title),
+              description: (error as any).message,
+            },
+          }),
+        );
         indicator.set(100, t('environment.DescProblemOccurred'));
         indicator.end(1000);
         return null;
