@@ -5,6 +5,9 @@
  * endpoint configuration, and integrates with existing React child components.
  *
  * Config is fetched and parsed entirely within React via useInitializeConfig.
+ * Login flow orchestration (auto-logout, tab counting, initial login) is
+ * handled by the useLoginOrchestration hook, replacing the Lit shell's
+ * firstUpdated() logic.
  */
 import {
   getDefaultLoginConfig,
@@ -18,10 +21,10 @@ import {
   loginWithSAML,
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
+import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
-  useAutoLogout,
   loginPluginState,
 } from '../hooks/useWebUIConfig';
 import LoginFormPanel from './LoginFormPanel';
@@ -33,17 +36,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
-
-export interface LoginViewHandle {
-  login: (showError?: boolean) => void;
-  open: () => void;
-  close: () => void;
-  block: (message?: string, type?: string) => void;
-  check_login: () => Promise<boolean>;
-  _logoutSession: () => Promise<void>;
-  refreshWithConfig: (config: Record<string, unknown>) => void;
-  api_endpoint: string;
-}
 
 const LoginView: React.FC = () => {
   'use memo';
@@ -585,239 +577,84 @@ const LoginView: React.FC = () => {
     t,
   ]);
 
-  // Auto-login orchestration: replaces the Lit shell's login flow.
-  // Runs once when config is loaded and not already connected.
-  const autoLogout = useAutoLogout();
-  const autoLoginRef = useRef(false);
-  useEffect(() => {
-    if (!isConfigLoaded || autoLoginRef.current) return;
-    autoLoginRef.current = true;
-
-    // If config failed to load, show an error block
-    if (!atomLoginConfig) {
-      block('Configuration is not loaded.', 'Error');
-      return;
-    }
-
-    // Skip for edu-applauncher / applauncher (they handle their own flow)
-    const currentPage = window.location.pathname
-      .replace(/^\//, '')
-      .split('/')[0];
-    if (currentPage === 'edu-applauncher' || currentPage === 'applauncher') {
-      return;
-    }
-
-    // If already connected, nothing to do
-    if (
-      typeof (globalThis as any).backendaiclient !== 'undefined' &&
-      (globalThis as any).backendaiclient !== null &&
-      (globalThis as any).backendaiclient.ready === true
-    ) {
-      return;
-    }
-
-    // Resolve the API endpoint from config or localStorage.
-    // We read from the config atom directly because React state (apiEndpoint)
-    // may not yet reflect the config-loaded value in this render cycle.
-    const resolveEndpoint = (): string => {
-      let ep = atomLoginConfig?.api_endpoint || '';
-      if (ep === '') {
-        const stored = localStorage.getItem('backendaiwebui.api_endpoint');
-        if (stored) {
-          ep = stored.replace(/^"+|"+$/g, '');
-        }
+  // Resolve the effective API endpoint from state or localStorage.
+  const resolveEndpoint = useCallback((): string => {
+    let ep = apiEndpoint;
+    if (ep === '') {
+      const stored = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (stored) {
+        ep = stored.replace(/^"+|"+$/g, '');
+        setApiEndpoint(ep);
       }
-      return ep.trim();
-    };
-
-    // Resolve connection mode from config atom directly
-    const resolvedMode = atomLoginConfig?.connection_mode || connectionMode;
-    const resolvedEndpoint = resolveEndpoint();
-
-    // Update React state so subsequent operations use the resolved values
-    if (resolvedEndpoint !== '') {
-      setApiEndpoint(resolvedEndpoint);
     }
+    return ep.trim();
+  }, [apiEndpoint]);
 
-    const doAutoGQLConnect = async (
-      client: ReturnType<typeof createBackendAIClient>['client'],
-    ) => {
-      const cfg = configRef.current;
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      (globalThis as any).backendaioptions.set(
-        'last_login',
-        currentTime,
-        'general',
-      );
-      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
-      setEndpoints(updatedEndpoints);
-
-      const event = new CustomEvent('backend-ai-connected', {
-        detail: client,
-      });
-      document.dispatchEvent(event);
-      close();
-      clearSavedLoginInfo();
-      localStorage.setItem('backendaiwebui.api_endpoint', resolvedEndpoint);
-    };
-
-    const performLogin = async (showError: boolean) => {
-      if (resolvedMode === 'SESSION') {
+  // Login method: attempts silent or interactive login depending on mode.
+  // Used by the orchestration hook as `onLogin`.
+  const login = useCallback(
+    async (showError = true) => {
+      const ep = resolveEndpoint();
+      if (connectionMode === 'SESSION') {
         if ((globalThis as Record<string, unknown>).isElectron) {
-          await loadConfigFromWebServer(resolvedEndpoint);
+          await loadConfigFromWebServer(ep);
         }
-        if (resolvedEndpoint === '') {
-          open();
-          return;
-        }
-        const { client } = createBackendAIClient(
-          '',
-          '',
-          resolvedEndpoint,
-          'SESSION',
-        );
-        clientRef.current = client;
-
-        try {
-          await client.get_manager_version();
-        } catch {
-          if (showError) {
-            notification(t('error.NetworkConnectionFailed'));
-          }
-          open();
-          return;
-        }
-
-        let isLogon = false;
-        try {
-          isLogon = !!(await client.check_login());
-        } catch {
-          isLogon = false;
-        }
-
-        if (isLogon) {
-          setIsConnected(true);
-          try {
-            await doAutoGQLConnect(client);
-          } catch (err: unknown) {
-            handleGQLError(err, showError);
-          }
-        } else {
-          open();
-        }
-      } else if (resolvedMode === 'API') {
+        await connectUsingSession(showError);
+      } else if (connectionMode === 'API') {
         await connectUsingAPI(showError);
       } else {
         open();
       }
-    };
+    },
+    [
+      resolveEndpoint,
+      connectionMode,
+      connectUsingSession,
+      connectUsingAPI,
+      open,
+    ],
+  );
 
-    const checkLogin = async (): Promise<boolean> => {
-      if (resolvedMode === 'SESSION') {
-        if ((globalThis as Record<string, unknown>).isElectron) {
-          loadConfigFromWebServer(resolvedEndpoint);
-        }
-        if (resolvedEndpoint === '') return false;
-        const { client } = createBackendAIClient(
-          '',
-          '',
-          resolvedEndpoint,
-          'SESSION',
-        );
-        try {
-          await client.get_manager_version();
-          const isLogon = await client.check_login();
-          return !!isLogon;
-        } catch {
-          return false;
-        }
+  // Check if a session login exists on the server.
+  // Used by the orchestration hook as `onCheckLogin`.
+  const checkLogin = useCallback(async (): Promise<boolean> => {
+    const ep = resolveEndpoint();
+    if (connectionMode === 'SESSION') {
+      if ((globalThis as Record<string, unknown>).isElectron) {
+        loadConfigFromWebServer(ep);
       }
-      return false;
-    };
-
-    const logoutSession = async () => {
-      if (resolvedEndpoint !== '') {
-        const { client } = createBackendAIClient(
-          '',
-          '',
-          resolvedEndpoint,
-          'SESSION',
-        );
-        try {
-          await client.logout();
-        } catch {
-          // Ignore logout errors
-        }
+      if (ep === '') return false;
+      const { client } = createBackendAIClient('', '', ep, 'SESSION');
+      try {
+        await client.get_manager_version();
+        const isLogon = await client.check_login();
+        return !!isLogon;
+      } catch {
+        return false;
       }
-    };
+    }
+    return false;
+  }, [resolveEndpoint, connectionMode]);
 
-    // Dynamic import of TabCount to avoid bundling issues
-    import('../helper/TabCounter')
-      .then(({ default: TabCount }) => {
-        const tabcount = new TabCount();
-        const isPageReloaded = window.performance
-          .getEntriesByType('navigation')
-          .some(
-            (nav) => (nav as PerformanceNavigationTiming).type === 'reload',
-          );
-        tabcount.tabsCount(true);
-
-        if (
-          autoLogout === true &&
-          tabcount.tabsCounter === 1 &&
-          !isPageReloaded
-        ) {
-          checkLogin().then((result) => {
-            const currentTime = new Date().getTime() / 1000;
-            if (
-              result === true &&
-              currentTime -
-                (globalThis as any).backendaioptions.get(
-                  'last_window_close_time',
-                  currentTime,
-                ) >
-                3.0
-            ) {
-              // Logged in but window was closed > 3s ago: force logout
-              logoutSession().then(() => {
-                open();
-              });
-            } else if (result === true) {
-              // Logged in and window just reopened: auto-reconnect
-              performLogin(false);
-            } else {
-              // Not logged in: show login dialog
-              open();
-            }
-          });
-        } else {
-          // Normal auto-reconnect
-          performLogin(false);
-        }
-      })
-      .catch(() => {
-        // If TabCounter import fails, just do normal login
-        performLogin(false);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConfigLoaded]);
-
-  // Save last_window_close_time on beforeunload for auto-logout detection
-  useEffect(() => {
-    const handler = () => {
-      (globalThis as any).backendaioptions.set(
-        'last_window_close_time',
-        new Date().getTime() / 1000,
-      );
-    };
-    globalThis.addEventListener('beforeunload', handler);
-    return () => {
-      globalThis.removeEventListener('beforeunload', handler);
-    };
+  // Log out the current session on the server.
+  // Used by the orchestration hook as `onLogoutSession`.
+  const logoutSession = useCallback(async (): Promise<void> => {
+    if (clientRef.current) {
+      await clientRef.current.logout();
+    }
   }, []);
+
+  // Orchestrate the initial login flow (auto-logout, tab counting, etc.)
+  // This replaces the Lit shell's firstUpdated() login orchestration.
+  useLoginOrchestration({
+    onLogin: login,
+    onOpen: open,
+    onBlock: block,
+    onCheckLogin: checkLogin,
+    onLogoutSession: logoutSession,
+    apiEndpoint,
+    connectionMode,
+  });
 
   const changeSigninMode = useCallback(() => {
     if (!loginConfig.change_signin_support) return;
