@@ -3,7 +3,7 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
-import { Checkbox, Form, Input, Modal, theme, Typography } from 'antd';
+import { App, Checkbox, Form, Input, theme, Typography } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +37,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
   const [form] = Form.useForm<SignupFormValues>();
   const [showTOS, setShowTOS] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
@@ -66,17 +67,22 @@ const SignupModal: React.FC<SignupModalProps> = ({
   });
 
   const handleSubmit = async () => {
-    const values = await form.validateFields();
-    await signupMutation.mutateAsync(values, {
-      onSuccess: () => {
-        if (!allowSignupWithoutConfirmation) {
-          onRequestClose();
-          setShowEmailSentDialog(true);
-        } else {
-          onRequestClose();
-        }
-      },
-    });
+    const values = await form.validateFields().catch(() => undefined);
+    if (!values) return;
+
+    try {
+      await signupMutation.mutateAsync(values);
+      if (!allowSignupWithoutConfirmation) {
+        onRequestClose();
+        setShowEmailSentDialog(true);
+      } else {
+        onRequestClose();
+      }
+    } catch (e: unknown) {
+      const errorMessage =
+        e instanceof Error ? e.message : t('error.UpdateError');
+      message.error(errorMessage);
+    }
   };
 
   return (
@@ -107,6 +113,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
         <Form
           form={form}
           layout="vertical"
+          preserve={false}
           initialValues={{
             token: preloadedToken || '',
           }}
@@ -242,10 +249,11 @@ const SignupModal: React.FC<SignupModalProps> = ({
         onRequestClose={() => setShowPrivacyPolicy(false)}
         getContainer={false}
       />
-      <Modal
+      <BAIModal
         open={showEmailSentDialog}
         title={t('signUp.ThankYou')}
         closable={false}
+        destroyOnHidden
         getContainer={false}
         footer={
           <BAIButton
@@ -260,7 +268,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
         <Typography.Paragraph style={{ maxWidth: 350 }}>
           {t('signUp.VerificationMessage')}
         </Typography.Paragraph>
-      </Modal>
+      </BAIModal>
     </>
   );
 };
