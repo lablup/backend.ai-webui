@@ -152,11 +152,14 @@ beforeEach(() => {
   mockNavigationType('navigate');
 
   // Reset TabCount mock: single tab, not reloaded
-  MockedTabCount.mockImplementation(() => ({
-    tabsCounter: 1,
-    tabsCount: jest.fn().mockReturnValue(1),
-    pause: jest.fn(),
-  }));
+  MockedTabCount.mockImplementation(
+    () =>
+      ({
+        tabsCounter: 1,
+        tabsCount: jest.fn().mockReturnValue(1),
+        pause: jest.fn(),
+      }) as unknown as TabCount,
+  );
 
   mockedLoadConfig.mockResolvedValue(undefined);
 });
@@ -249,11 +252,14 @@ describe('useLoginOrchestration - normal flow', () => {
 
   it('calls onLogin(false) when there are multiple tabs even with auto_logout on', async () => {
     // Multiple tabs: tabsCounter > 1
-    MockedTabCount.mockImplementation(() => ({
-      tabsCounter: 2,
-      tabsCount: jest.fn().mockReturnValue(2),
-      pause: jest.fn(),
-    }));
+    MockedTabCount.mockImplementation(
+      () =>
+        ({
+          tabsCounter: 2,
+          tabsCount: jest.fn().mockReturnValue(2),
+          pause: jest.fn(),
+        }) as unknown as TabCount,
+    );
     const { options } = await renderOrchestrationHook(true, true);
     expect(options.onLogin).toHaveBeenCalledWith(false);
     expect(options.onOpen).not.toHaveBeenCalled();
@@ -321,11 +327,14 @@ describe('useLoginOrchestration - Electron', () => {
 describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', () => {
   beforeEach(() => {
     // Single tab, fresh navigation (not a reload)
-    MockedTabCount.mockImplementation(() => ({
-      tabsCounter: 1,
-      tabsCount: jest.fn().mockReturnValue(1),
-      pause: jest.fn(),
-    }));
+    MockedTabCount.mockImplementation(
+      () =>
+        ({
+          tabsCounter: 1,
+          tabsCount: jest.fn().mockReturnValue(1),
+          pause: jest.fn(),
+        }) as unknown as TabCount,
+    );
     mockNavigationType('navigate');
   });
 
