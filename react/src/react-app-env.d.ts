@@ -16,6 +16,16 @@ declare namespace globalThis {
   var isElectron: boolean;
   // eslint-disable-next-line no-var
   var electronInitialHref: string;
+  // eslint-disable-next-line no-var
+  var packageEdition: string;
+  // eslint-disable-next-line no-var
+  var packageVersion: string;
+  // eslint-disable-next-line no-var
+  var packageValidUntil: string;
+  // eslint-disable-next-line no-var
+  var buildVersion: string;
+  // eslint-disable-next-line no-var
+  var backendaiclient: any;
 }
 
 type DeepPartial<T> = {

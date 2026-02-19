@@ -3,6 +3,7 @@
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import { default as TabCount } from '../lib/TabCounter';
+import * as ai from '../lib/backend.ai-client-esm';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
@@ -20,6 +21,13 @@ import {
 } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
+
+// Expose Backend.AI client classes globally for React components.
+// Previously set by the now-removed backend-ai-login.ts.
+// @ts-ignore
+globalThis.BackendAIClient = ai.backend.Client;
+// @ts-ignore
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 registerTranslateConfig({
   loader: (lang) =>
@@ -87,6 +95,32 @@ export default class BackendAIWebUI extends LitElement {
     return [BackendAIWebUIStyles];
   }
 
+  /**
+   * Wait for the React-based login panel to expose its imperative handle.
+   * The handle methods (login, block, etc.) are assigned via useEffect in
+   * LoginView.tsx, so they may not be available immediately after the
+   * web component element is in the DOM.
+   */
+  private _waitForLoginPanel(timeout = 10000): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.loginPanel?.block) {
+        resolve();
+        return;
+      }
+      const start = Date.now();
+      const check = () => {
+        if (this.loginPanel?.block) {
+          resolve();
+        } else if (Date.now() - start > timeout) {
+          reject(new Error('LoginPanel not ready within timeout'));
+        } else {
+          requestAnimationFrame(check);
+        }
+      };
+      requestAnimationFrame(check);
+    });
+  }
+
   firstUpdated() {
     globalThis.lablupNotification =
       this.shadowRoot?.querySelector('#notification');
@@ -118,7 +152,8 @@ export default class BackendAIWebUI extends LitElement {
       );
     });
 
-    this._parseConfig(configPath)
+    // Wait for the React login panel handle to be ready before proceeding
+    Promise.all([this._parseConfig(configPath), this._waitForLoginPanel()])
       .then(() => {
         this.loadConfig(this.config);
         // If disconnected, trigger login flow
@@ -184,7 +219,7 @@ export default class BackendAIWebUI extends LitElement {
           globalThis.backendaiclient === null ||
           globalThis.backendaiclient.ready === false
         ) {
-          this.loginPanel.block('Configuration is not loaded.', 'Error');
+          this.loginPanel?.block?.('Configuration is not loaded.', 'Error');
         }
       });
 
