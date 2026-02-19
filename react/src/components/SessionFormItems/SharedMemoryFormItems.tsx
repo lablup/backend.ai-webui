@@ -143,18 +143,30 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                     {
                       warningOnly: true,
                       validator: async (_rule, value: string) => {
-                        const applicationMem = appMemUnitResult?.value;
-                        const shmem = value;
-
-                        if (_.isEmpty(applicationMem) || _.isEmpty(shmem)) {
+                        // Skip validation when automatic shmem is enabled,
+                        // since the system controls shmem in auto mode
+                        if (getFieldValue('enabledAutomaticShmem')) {
                           return Promise.resolve();
                         }
 
-                        if (
-                          (convertToBinaryUnit(applicationMem, 'm')?.number ||
-                            0) <
-                          (convertToBinaryUnit(shmem, 'm')?.number || 0) * 2
-                        ) {
+                        const currentMem =
+                          getFieldValue(['resource', 'mem']) || '0g';
+                        const shmem = value;
+
+                        if (_.isEmpty(currentMem) || _.isEmpty(shmem)) {
+                          return Promise.resolve();
+                        }
+
+                        const memInM =
+                          convertToBinaryUnit(currentMem, 'm')?.number || 0;
+                        const shmemInM =
+                          convertToBinaryUnit(shmem, 'm')?.number || 0;
+                        const applicationMemInM = Math.max(
+                          0,
+                          memInM - shmemInM,
+                        );
+
+                        if (applicationMemInM < shmemInM * 2) {
                           throw t(
                             'session.launcher.SHMEMShouldBeLessThanHalfOfAppMemory',
                           );
