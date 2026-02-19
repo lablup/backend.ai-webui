@@ -19,8 +19,6 @@ const EmailVerificationPage: React.FC = () => {
     <>
       <CSSTokenVariables />
       <NotificationForAnonymous />
-      {/* @ts-expect-error - custom Lit element not in JSX.IntrinsicElements */}
-      <backend-ai-webui id="webui-shell" />
       <Suspense fallback={null}>
         <EmailVerificationPageContent />
       </Suspense>

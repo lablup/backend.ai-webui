@@ -1,8 +1,8 @@
 /**
  * Global store initialization for Backend.AI WebUI.
  *
- * This module creates the four singleton stores that were previously
- * initialized at module scope in the Lit shell (backend-ai-webui.ts).
+ * This module creates the four singleton stores (previously initialized
+ * in the now-removed Lit shell).
  * The store classes here are plain TypeScript reimplementations of the
  * original Lit custom-element classes, preserving the same public API
  * so that both React and remaining Lit components can use them.
@@ -15,7 +15,6 @@
  */
 // ---------------------------------------------------------------------------
 // Backend.AI client classes on globalThis.
-// Previously set by the Lit shell (backend-ai-webui.ts).
 // Must be available before any component calls createBackendAIClient().
 // ---------------------------------------------------------------------------
 // @ts-ignore - resolved via craco webpack alias to dist/lib/backend.ai-client-esm.js

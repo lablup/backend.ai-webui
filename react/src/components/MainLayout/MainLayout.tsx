@@ -95,7 +95,6 @@ function MainLayout() {
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
-  const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
@@ -296,8 +295,6 @@ function MainLayout() {
                   <PluginLoader />
                 </ErrorBoundaryWithNullFallback>
               </Suspense>
-              {/* @ts-ignore */}
-              <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>
           </BAIFlex>
         </BAIContentWithDrawerArea>
