@@ -1,4 +1,5 @@
-// backend-ai-login has been migrated to React (backend-ai-react-login-view)
+// Login flow orchestration has been migrated to React
+// (see react/src/hooks/useLoginOrchestration.ts).
 import './backend-ai-settings-store';
 import { LitElement } from 'lit-element';
 
@@ -6,8 +7,9 @@ declare const BackendAIWebUI_base: typeof LitElement;
 /**
  Backend.AI Web UI
 
- `backend-ai-webui` is a minimal Lit shell that provides login view
- orchestration and logout handling. All routing and UI is handled by React.
+ `backend-ai-webui` is a minimal Lit shell that provides Backend.AI client
+ class exposure and lit-translate language synchronization. All routing, UI,
+ login orchestration, and logout handling is handled by React.
 
  @group Backend.AI Web UI
  @element backend-ai-webui
@@ -15,26 +17,15 @@ declare const BackendAIWebUI_base: typeof LitElement;
 export default class BackendAIWebUI extends BackendAIWebUI_base {
   hasLoadedStrings: boolean;
   is_connected: boolean;
-  config: any;
-  auto_logout: boolean;
-  edition: string;
-  validUntil: string;
-  plugins: any;
-  proxy_url: string;
   lang: string;
   supportLanguageCodes: string[];
-  loginPanel: any;
   constructor();
   static get styles(): import('lit-element').CSSResult[];
   firstUpdated(): void;
   connectedCallback(): Promise<void>;
   disconnectedCallback(): void;
   shouldUpdate(changedProperties: any): boolean;
-  loadConfig(config: any): void;
   refreshPage(): void;
-  _parseConfig(fileName: any, returning?: boolean): Promise<void>;
-  close_app_window(): Promise<void>;
-  logout(performClose?: boolean, callbackURL?: string): Promise<void>;
   protected render(): import('lit-element').TemplateResult;
 }
 

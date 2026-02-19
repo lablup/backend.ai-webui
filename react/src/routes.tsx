@@ -25,6 +25,8 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
 
+const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
+
 const Information = React.lazy(() => import('./components/Information'));
 const EndpointDetailPage = React.lazy(
   () => import('./pages/EndpointDetailPage'),
@@ -602,6 +604,9 @@ export const routes: RouteObject[] = [
             <RoutingEventHandler />
           </ErrorBoundaryWithNullFallback>
           <Suspense>
+            <ErrorBoundaryWithNullFallback>
+              <LoginViewLazy />
+            </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <FolderExplorerOpener />
             </ErrorBoundaryWithNullFallback>
