@@ -21,7 +21,6 @@ import {
   use as setLanguage,
 } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
-import toml from 'markty-toml';
 
 // Expose Backend.AI client classes globally for React components.
 // Previously set by the now-removed backend-ai-login.ts.
@@ -44,10 +43,12 @@ globalThis.backendaiutils = new BackendAICommonUtils();
 
  `backend-ai-webui` is a minimal Lit shell that provides:
  - Global store initialization (settings, metadata, tasker, utils)
- - Config loading from config.toml
  - Notification and indicator pool (still Lit components)
  - Login view orchestration
  - Logout and Electron app-close handling
+
+ Config loading from config.toml is handled entirely by React
+ (see react/src/hooks/useWebUIConfig.ts).
 
  All routing, page rendering, and UI is handled by React.
 
@@ -58,13 +59,8 @@ globalThis.backendaiutils = new BackendAICommonUtils();
 export default class BackendAIWebUI extends LitElement {
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: Boolean }) is_connected = false;
-  @property({ type: Object }) config = Object();
   @property({ type: Object }) notification;
   @property({ type: Boolean }) auto_logout = false;
-  @property({ type: String }) edition = 'Open Source';
-  @property({ type: String }) validUntil = '';
-  @property({ type: Object }) plugins = Object();
-  @property({ type: String }) proxy_url = '';
   @property({ type: String }) lang = 'default';
   @property({ type: Array }) supportLanguageCodes = [
     'en',
@@ -122,15 +118,41 @@ export default class BackendAIWebUI extends LitElement {
     });
   }
 
+  /**
+   * Wait for React to finish loading and processing config.toml.
+   * React dispatches 'backend-ai-config-loaded' when config is ready.
+   * The event detail contains { autoLogout: boolean } for the login flow.
+   */
+  private _waitForConfigLoaded(timeout = 15000): Promise<boolean> {
+    return new Promise((resolve) => {
+      const handleConfigLoaded = (e: Event) => {
+        document.removeEventListener(
+          'backend-ai-config-loaded',
+          handleConfigLoaded,
+        );
+        const detail = (e as CustomEvent<{ autoLogout?: boolean }>).detail;
+        resolve(detail?.autoLogout ?? false);
+      };
+
+      document.addEventListener('backend-ai-config-loaded', handleConfigLoaded);
+
+      // Timeout fallback - resolve with false (no auto-logout) if config
+      // loading takes too long
+      setTimeout(() => {
+        document.removeEventListener(
+          'backend-ai-config-loaded',
+          handleConfigLoaded,
+        );
+        resolve(false);
+      }, timeout);
+    });
+  }
+
   firstUpdated() {
     globalThis.lablupNotification =
       this.shadowRoot?.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
-
-    const configPath = globalThis.isElectron
-      ? './config.toml'
-      : '../../config.toml';
 
     // Logout handler
     document.addEventListener('backend-ai-logout', ((
@@ -153,10 +175,11 @@ export default class BackendAIWebUI extends LitElement {
       );
     });
 
-    // Wait for the React login panel handle to be ready before proceeding
-    Promise.all([this._parseConfig(configPath), this._waitForLoginPanel()])
-      .then(() => {
-        this.loadConfig(this.config);
+    // Wait for both the React login panel handle and React config loading
+    Promise.all([this._waitForConfigLoaded(), this._waitForLoginPanel()])
+      .then(([autoLogout]) => {
+        this.auto_logout = autoLogout;
+
         // If disconnected, trigger login flow
         if (
           typeof globalThis.backendaiclient === 'undefined' ||
@@ -266,71 +289,10 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   /**
-   * Load essential config values and dispatch events for React consumption.
-   * Most config parsing is handled by React's loginConfig.ts via refreshWithConfig.
-   */
-  loadConfig(config): void {
-    // Auto-logout setting
-    if (
-      typeof config.general !== 'undefined' &&
-      'autoLogout' in config.general &&
-      globalThis.backendaioptions.get('auto_logout') === null
-    ) {
-      this.auto_logout = config.general.autoLogout;
-    } else {
-      this.auto_logout = globalThis.backendaioptions.get('auto_logout', false);
-    }
-
-    // Package edition and license info (used by React SplashModal/AboutModal)
-    if (typeof config.license !== 'undefined' && 'edition' in config.license) {
-      this.edition = config.license.edition;
-    }
-    globalThis.packageEdition = this.edition;
-    if (
-      typeof config.license !== 'undefined' &&
-      'validUntil' in config.license
-    ) {
-      this.validUntil = config.license.validUntil;
-    }
-    globalThis.packageValidUntil = this.validUntil;
-
-    // Proxy URL (used by refreshPage)
-    if (typeof config.wsproxy !== 'undefined' && 'proxyURL' in config.wsproxy) {
-      this.proxy_url = config.wsproxy.proxyURL;
-    }
-
-    // Dispatch plugin configuration to React PluginLoader
-    if (typeof config.plugin !== 'undefined') {
-      if ('login' in config.plugin) {
-        this.plugins['login'] = config.plugin.login;
-      }
-    }
-    const pluginPages =
-      typeof config.plugin !== 'undefined' && 'page' in config.plugin
-        ? config.plugin.page
-        : '';
-    document.dispatchEvent(
-      new CustomEvent('backend-ai-plugin-config', {
-        detail: {
-          pluginPages,
-          apiEndpoint: this.loginPanel?.api_endpoint || '',
-        },
-      }),
-    );
-
-    // Pass full config to React LoginView for detailed parsing
-    this.loginPanel.refreshWithConfig(config);
-
-    // Notify React that config is loaded
-    document.dispatchEvent(new CustomEvent('backend-ai-config-loaded'));
-  }
-
-  /**
    * Called when backend-ai-connected event fires (after successful login).
-   * Sets up proxy URL. Loading curtain is now managed by React (LoadingCurtain component).
+   * Proxy URL is now set by React (useConfigRefreshPageEffect in useWebUIConfig.ts).
    */
   refreshPage(): void {
-    globalThis.backendaiclient.proxyURL = this.proxy_url;
     this.is_connected = true;
   }
 
@@ -348,37 +310,6 @@ export default class BackendAIWebUI extends LitElement {
       );
       indicator.show();
     }
-  }
-
-  /**
-   * Parse config.toml from the given path.
-   * Also used by loginSessionAuth.ts to load webserver config.
-   */
-  _parseConfig(fileName, returning = false): Promise<void> {
-    const _preprocessToml = (config) => {
-      if (config?.general?.apiEndpointText) {
-        config.general.apiEndpointText = JSON.parse(
-          `"${config.general.apiEndpointText}"`,
-        );
-      }
-    };
-    return fetch(fileName)
-      .then((res) => {
-        if (res.status == 200) {
-          return res.text();
-        }
-        return '';
-      })
-      .then((res) => {
-        const tomlConfig = toml(res);
-        _preprocessToml(tomlConfig);
-        if (returning) {
-          return tomlConfig;
-        } else {
-          this.config = tomlConfig;
-        }
-      })
-      .catch(() => undefined);
   }
 
   /**

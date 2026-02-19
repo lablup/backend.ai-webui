@@ -1,48 +1,29 @@
-import { useEffect, useState } from 'react';
+import { loginConfigState } from './useWebUIConfig';
+import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
 
 /**
  * Hook to resolve the Backend.AI API endpoint.
  * Checks sources in order:
  * 1. localStorage (set by LoginView after config parsing)
- * 2. The webui-shell login panel (Lit component)
- * 3. Current window origin as fallback
+ * 2. The login config atom (set by useInitializeConfig)
+ * 3. Empty string as fallback
  */
 export const useApiEndpoint = (): string => {
-  const [endpoint, setEndpoint] = useState(() => {
-    // First, try localStorage (most reliable source after config is loaded)
+  const loginConfig = useAtomValue(loginConfigState);
+
+  return useMemo(() => {
+    // First, try localStorage (most reliable source after login)
     const stored = localStorage.getItem('backendaiwebui.api_endpoint');
     if (stored) {
       return stored.replace(/^"+|"+$/g, '');
     }
+
+    // Second, try the login config atom
+    if (loginConfig?.api_endpoint) {
+      return loginConfig.api_endpoint;
+    }
+
     return '';
-  });
-
-  useEffect(() => {
-    if (endpoint) return;
-
-    // Listen for config loaded event to get the endpoint from the shell
-    const handleConfigLoaded = () => {
-      const webUIShell = document.querySelector('#webui-shell') as any;
-      const loginPanel =
-        webUIShell?.loginPanel ||
-        webUIShell?.shadowRoot?.querySelector('#login-panel');
-      const ep = loginPanel?.api_endpoint || '';
-      if (ep) {
-        setEndpoint(ep);
-      }
-    };
-
-    // Check if config is already loaded
-    handleConfigLoaded();
-
-    document.addEventListener('backend-ai-config-loaded', handleConfigLoaded);
-    return () => {
-      document.removeEventListener(
-        'backend-ai-config-loaded',
-        handleConfigLoaded,
-      );
-    };
-  }, [endpoint]);
-
-  return endpoint;
+  }, [loginConfig]);
 };

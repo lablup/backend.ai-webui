@@ -3,6 +3,11 @@
 // declare module 'babel-plugin-relay/macro' {
 //   export { graphql as default } from 'react-relay';
 // }
+
+declare module 'markty-toml' {
+  function toml(input: string): Record<string, any>;
+  export default toml;
+}
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any

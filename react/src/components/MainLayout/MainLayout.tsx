@@ -101,8 +101,8 @@ function MainLayout() {
     setMainContentDivRefState(contentScrollFlexRef);
   }, [contentScrollFlexRef, setMainContentDivRefState]);
 
-  // Setup listener for 'backend-ai-plugin-config' event from Lit shell.
-  // This stores the plugin config string in Jotai state for PluginLoader to consume.
+  // Plugin config is now set directly by useInitializeConfig in LoginView.
+  // useSetupWebUIPluginEffect is kept as a no-op for backward compatibility.
   useSetupWebUIPluginEffect();
 
   // Splash/About modal state - handles 'backend-ai-show-splash' event from Electron menu
