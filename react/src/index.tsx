@@ -43,29 +43,12 @@ const ResetPasswordRequired = React.lazy(
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
-const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const TOTPActivateModalWithToken = React.lazy(
   () => import('./components/TOTPActivateModalWithToken'),
 );
 
 const SignupModal = React.lazy(() => import('./components/SignupModal'));
-const SplashModal = React.lazy(() => import('./components/SplashModal'));
-const TermsOfServiceModal = React.lazy(
-  () => import('./components/TermsOfServiceModal'),
-);
-const PrivacyPolicyModal = React.lazy(
-  () => import('./components/PrivacyPolicyModal'),
-);
-const EmailVerificationViewLazy = React.lazy(
-  () => import('./components/EmailVerificationView'),
-);
-const ChangePasswordViewLazy = React.lazy(
-  () => import('./components/ChangePasswordView'),
-);
-const EduAppLauncherLazy = React.lazy(
-  () => import('./components/EduAppLauncher'),
-);
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 customElements.define(
@@ -175,159 +158,6 @@ const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   }>();
   return <SourceCodeView language={language}>{children}</SourceCodeView>;
 };
-
-customElements.define(
-  'backend-ai-react-signout-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SignoutModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-splash-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SplashModalInWebComponent {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const SplashModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
-  const { parsedValue: { open = false } = {} } = useWebComponentInfo<{
-    open: boolean;
-  }>();
-
-  return (
-    <SplashModal
-      open={open}
-      onRequestClose={() => {
-        props.dispatchEvent('close', null);
-      }}
-    />
-  );
-};
-
-const EmailVerificationViewInWebComponent: React.FC = () => {
-  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
-    useWebComponentInfo<{
-      apiEndpoint: string;
-      active: boolean;
-    }>();
-
-  return (
-    <React.Suspense fallback={null}>
-      <EmailVerificationViewLazy apiEndpoint={apiEndpoint} active={active} />
-    </React.Suspense>
-  );
-};
-
-customElements.define(
-  'backend-ai-react-email-verification-view',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <EmailVerificationViewInWebComponent />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const ChangePasswordViewInWebComponent: React.FC = () => {
-  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
-    useWebComponentInfo<{
-      apiEndpoint: string;
-      active: boolean;
-    }>();
-
-  return (
-    <React.Suspense fallback={null}>
-      <ChangePasswordViewLazy apiEndpoint={apiEndpoint} active={active} />
-    </React.Suspense>
-  );
-};
-
-customElements.define(
-  'backend-ai-react-change-password-view',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ChangePasswordViewInWebComponent />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const EduAppLauncherInWebComponent: React.FC = () => {
-  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
-    useWebComponentInfo<{
-      apiEndpoint: string;
-      active: boolean;
-    }>();
-
-  return (
-    <React.Suspense fallback={null}>
-      <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={active} />
-    </React.Suspense>
-  );
-};
-
-customElements.define(
-  'backend-ai-react-edu-applauncher',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <EduAppLauncherInWebComponent />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const TOSModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
-  const { parsedValue: { open = false, entry = 'terms-of-service' } = {} } =
-    useWebComponentInfo<{
-      open: boolean;
-      entry: 'terms-of-service' | 'privacy-policy';
-    }>();
-
-  const handleClose = () => {
-    props.dispatchEvent('close', null);
-  };
-
-  if (entry === 'privacy-policy') {
-    return (
-      <React.Suspense fallback={null}>
-        <PrivacyPolicyModal open={open} onRequestClose={handleClose} />
-      </React.Suspense>
-    );
-  }
-  return (
-    <React.Suspense fallback={null}>
-      <TermsOfServiceModal open={open} onRequestClose={handleClose} />
-    </React.Suspense>
-  );
-};
-
-customElements.define(
-  'backend-ai-react-tos-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <TOSModalInWebComponent {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,

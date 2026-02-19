@@ -23,7 +23,7 @@ import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
-import {
+import React, {
   Suspense,
   useEffect,
   useLayoutEffect,
@@ -35,6 +35,8 @@ import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
+
+const SplashModal = React.lazy(() => import('../SplashModal'));
 
 // Z-index for header in MainLayout. Should be higher than any other elements in the page content.
 // Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
@@ -100,6 +102,18 @@ function MainLayout() {
   // Setup listener for 'backend-ai-plugin-config' event from Lit shell.
   // This stores the plugin config string in Jotai state for PluginLoader to consume.
   useSetupWebUIPluginEffect();
+
+  // Splash/About modal state - handles 'backend-ai-show-splash' event from Electron menu
+  const [isOpenSplashDialog, setIsOpenSplashDialog] = useState(false);
+  useEffect(() => {
+    const handleShowSplash = () => {
+      setIsOpenSplashDialog(true);
+    };
+    document.addEventListener('backend-ai-show-splash', handleShowSplash);
+    return () => {
+      document.removeEventListener('backend-ai-show-splash', handleShowSplash);
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -278,6 +292,12 @@ function MainLayout() {
           </BAIFlex>
         </BAIContentWithDrawerArea>
       </Layout>
+      <Suspense fallback={null}>
+        <SplashModal
+          open={isOpenSplashDialog}
+          onRequestClose={() => setIsOpenSplashDialog(false)}
+        />
+      </Suspense>
     </LayoutWithPageTestId>
   );
 }
