@@ -25,7 +25,7 @@ export interface BAIModalProps extends ModalProps {
    * Callback invoked before the modal is closed when `confirmBeforeClose` is true.
    * Return false (or a rejected Promise) to prevent closing; return void/true to allow it.
    */
-  onConfirmClose?: () => void | Promise<boolean>;
+  onConfirmClose?: () => void | boolean | Promise<boolean>;
   /** Makes the modal header sticky so it remains visible when body content is scrolled */
   stickyTitle?: boolean;
   /** Visual variant that changes the header title color */
@@ -69,6 +69,7 @@ const useStyles = createStyles(
           position: sticky;
           top: 0;
           z-index: 1;
+          background: var(--ant-color-bg-elevated, #fff);
         }
       `
         : ''}
@@ -84,6 +85,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   type = 'normal',
   ...modalProps
 }) => {
+  'use memo';
   const { token } = theme.useToken();
   const { styles } = useStyles({
     stickyTitle,
@@ -120,8 +122,12 @@ const BAIModal: React.FC<BAIModalProps> = ({
 
   const handleCancel: ModalProps['onCancel'] = async (e) => {
     if (confirmBeforeClose && onConfirmClose) {
-      const result = await Promise.resolve(onConfirmClose());
-      if (result === false) {
+      try {
+        const result = await Promise.resolve(onConfirmClose());
+        if (result === false) {
+          return;
+        }
+      } catch {
         return;
       }
     }
