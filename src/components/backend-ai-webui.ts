@@ -283,14 +283,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           globalThis.backendaiclient === null ||
           globalThis.backendaiclient.ready === false
         ) {
-          if (this._page === 'verify-email') {
-            const emailVerifyView = this.shadowRoot?.querySelector(
-              'backend-ai-email-verification-view',
-            );
-            window.setTimeout(() => {
-              emailVerifyView?.verify(this.loginPanel.api_endpoint);
-            }, 1000);
-          } else if (this._page === 'change-password') {
+          if (this._page === 'change-password') {
             const changePasswordView = this.shadowRoot?.querySelector(
               'backend-ai-change-forgot-password-view',
             );
@@ -864,13 +857,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         <div id="loading-drag-area" class="loading-background-drag-area"></div>
       </div>
       <div id="app-page">
-        <backend-ai-email-verification-view
+        <backend-ai-react-email-verification-view
           class="page"
           name="email-verification"
-          ?active="${this._page === 'verify-email'}"
-        >
-          <mwc-circular-progress indeterminate></mwc-circular-progress>
-        </backend-ai-email-verification-view>
+          value="${JSON.stringify({
+            apiEndpoint: this.loginPanel?.api_endpoint || '',
+            active: this._page === 'verify-email',
+          })}"
+        ></backend-ai-react-email-verification-view>
         <backend-ai-change-forgot-password-view
           class="page"
           name="change-forgot-password"

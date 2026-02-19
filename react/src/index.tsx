@@ -51,6 +51,9 @@ const TOTPActivateModalWithToken = React.lazy(
 
 const SignupModal = React.lazy(() => import('./components/SignupModal'));
 const SplashModal = React.lazy(() => import('./components/SplashModal'));
+const EmailVerificationViewLazy = React.lazy(
+  () => import('./components/EmailVerificationView'),
+);
 
 customElements.define(
   'backend-ai-react-signup-modal',
@@ -192,6 +195,31 @@ const SplashModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
     />
   );
 };
+
+const EmailVerificationViewInWebComponent: React.FC = () => {
+  const { parsedValue: { apiEndpoint = '', active = false } = {} } =
+    useWebComponentInfo<{
+      apiEndpoint: string;
+      active: boolean;
+    }>();
+
+  return (
+    <React.Suspense fallback={null}>
+      <EmailVerificationViewLazy apiEndpoint={apiEndpoint} active={active} />
+    </React.Suspense>
+  );
+};
+
+customElements.define(
+  'backend-ai-react-email-verification-view',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <EmailVerificationViewInWebComponent />
+      </DefaultProviders>
+    );
+  }),
+);
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
