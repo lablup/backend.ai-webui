@@ -172,6 +172,11 @@ class BackendAIMetadataStore {
           detail: '',
         });
         document.dispatchEvent(event);
+      })
+      .catch(() => {
+        // Silently handle fetch failure -- image metadata is non-critical
+        // and the application can continue without it.
+        return undefined;
       });
   }
 
@@ -186,6 +191,10 @@ class BackendAIMetadataStore {
           detail: '',
         });
         document.dispatchEvent(event);
+      })
+      .catch(() => {
+        // Silently handle fetch failure -- device metadata is non-critical.
+        return undefined;
       });
   }
 }
@@ -442,6 +451,7 @@ class BackendAICommonUtils {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
   }
 
