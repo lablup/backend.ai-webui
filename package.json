@@ -23,7 +23,7 @@
     "server:p": "serve build/rollup",
     "server:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && PORT=$BAI_WEBUI_DEV_REACT_PORT PROXY=http://localhost:$BAI_WEBUI_DEV_WEBDEV_PORT pnpm --prefix ./react run start",
     "server:d-ie11": "web-dev-server --node-resolve --open --watch --port 3081 --hostname $BAI_WEBUI_DEV_HOST --esbuild-target auto --app-index demo/index.html --file-extensions .ts",
-    "build:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && pnpm run relay:watch\" \"web-dev-server --node-resolve --port $BAI_WEBUI_DEV_WEBDEV_PORT --hostname localhost --esbuild-target auto --app-index index.html --file-extensions .ts\"",
+    "build:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev,react\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && pnpm run relay:watch\" \"web-dev-server --node-resolve --port $BAI_WEBUI_DEV_WEBDEV_PORT --hostname localhost --esbuild-target auto --app-index index.html --file-extensions .ts\" \"PORT=$BAI_WEBUI_DEV_REACT_PORT pnpm --prefix ./react run start\"",
     "electron:d": "electron build/electron-app --dev",
     "electron:d:hmr": "LIVE_DEBUG=1 electron build/electron-app --dev",
     "relay": "relay-compiler",
