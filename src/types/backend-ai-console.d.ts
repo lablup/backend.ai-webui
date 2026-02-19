@@ -3,7 +3,6 @@ import './backend-ai-dialog';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-settings-store';
-import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 import '@material/mwc-icon';
@@ -57,7 +56,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   current_group: string;
   plugins: any;
   notification: any;
-  splash: any;
   loginPanel: any;
   _page: string;
   _sidepanel: string;
