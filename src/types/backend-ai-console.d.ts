@@ -1,7 +1,7 @@
 import './backend-ai-app-launcher';
 import './backend-ai-dialog';
 import './backend-ai-indicator-pool';
-import './backend-ai-login';
+// backend-ai-login has been migrated to React (backend-ai-react-login-view)
 import './backend-ai-settings-store';
 import './lablup-notification';
 import '@material/mwc-icon';

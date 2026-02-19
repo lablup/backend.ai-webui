@@ -63,6 +63,7 @@ const EmailVerificationViewLazy = React.lazy(
 const ChangePasswordViewLazy = React.lazy(
   () => import('./components/ChangePasswordView'),
 );
+const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 customElements.define(
   'backend-ai-react-signup-modal',
@@ -91,6 +92,15 @@ customElements.define(
   reactToWebComponent((props) => (
     <DefaultProviders {...props}>
       <ResetPasswordRequired />
+    </DefaultProviders>
+  )),
+);
+
+customElements.define(
+  'backend-ai-react-login-view',
+  reactToWebComponent((props) => (
+    <DefaultProviders {...props}>
+      <LoginViewLazy />
     </DefaultProviders>
   )),
 );
