@@ -598,6 +598,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "인증 실패. 포털에 로그인 되어 있는지 확인하십시오.",
+    "CannotCreateSessionWithDifferentImage": "실행 중인 세션과 다른 이미지로 세션을 생성할 수 없습니다.",
+    "CannotInitializeClient": "클라이언트 연결 초기화에 실패했습니다.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "EmptyProject": "사용자가 소속된 프로젝트가 없습니다.",
@@ -607,6 +609,7 @@
     "PleaseReload": "잠시 후에 다시 시도해 보십시오.",
     "QueryingExistingComputeSession": "기존 연산 세션 조회 중 ...",
     "SessionStatusIs": "세션 상태는 ",
+    "SessionStatusIsWithReload": "세션 상태: {{status}}. 잠시 후 새로고침해 주세요.",
     "SessionStillPreparing": "연산 세션이 아직 준비 중입니다. 잠시 후 다시 로드해 주세요."
   },
   "environment": {

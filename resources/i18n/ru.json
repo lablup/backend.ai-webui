@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Не удалось авторизовать сеанс. Сначала войдите на портал.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Вычислительная сессия подготовлена",
     "CreatingComputeSession": "Создание вычислительного сеанса ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Пожалуйста, перезагрузите через некоторое время.",
     "QueryingExistingComputeSession": "Запрос существующего сеанса вычислений ...",
     "SessionStatusIs": "Статус сеанса",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время"
   },
   "environment": {

@@ -591,6 +591,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Таны session-г зөвшөөрөх боломжгүй байна. Эхлээд портал руу нэвтрэх.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Тооцоолох хэсгийг бэлтгэсэн",
     "CreatingComputeSession": "Тооцоолох session үүсгэж байна ...",
     "EmptyProject": "Хоосон төсөл",
@@ -600,6 +602,7 @@
     "PleaseReload": "Хэсэг хугацааны дараа дахин ачааллана уу.",
     "QueryingExistingComputeSession": "Одоо байгаа тооцоолох session-ээс асууж байна ...",
     "SessionStatusIs": "Session-ий байдал",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Session бэлтгэл ажил үргэлжилж байна. Хэсэг хугацааны дараа дахин ажиллуулна уу"
   },
   "environment": {

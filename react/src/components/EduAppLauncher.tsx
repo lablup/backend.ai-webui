@@ -76,7 +76,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
 
     if (sToken !== null) {
-      document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+      document.cookie = `sToken=${encodeURIComponent(sToken)}; path=/; Secure; SameSite=Lax`;
     }
 
     const extraParams: Record<string, string> = {};
@@ -150,7 +150,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       );
       if (resp?.url) {
         const appRespUrl = await connectToProxyWorker(resp.url, '');
-        const appConnectUrl = String(appRespUrl?.appConnectUrl) || resp.url;
+        const appConnectUrl = appRespUrl?.appConnectUrl
+          ? String(appRespUrl.appConnectUrl)
+          : resp.url;
         if (!appConnectUrl) {
           indicator.end();
           notification.text = t('session.appLauncher.ConnectUrlIsNotValid');
@@ -276,19 +278,16 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           sessionImage !== requestedSessionTemplate.template.spec.kernel.image
         ) {
           indicator.end();
-          const errText =
-            'Cannot create a session with an image different from any running session.';
-          notification.text = errText;
-          notification.show(true, errText);
+          notification.text = t('eduapi.CannotCreateSessionWithDifferentImage');
+          notification.show(true);
           return;
         }
 
         if (sessionStatus !== 'RUNNING') {
           indicator.end();
-          notification.text =
-            t('eduapi.SessionStatusIs') +
-            ` ${sessionStatus}. ` +
-            t('eduapi.PleaseReload');
+          notification.text = t('eduapi.SessionStatusIsWithReload', {
+            status: sessionStatus,
+          });
           notification.show(true);
           return;
         }
@@ -401,6 +400,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       await _initClient(endpoint);
     } catch (err) {
       logger.error('Failed to initialize client:', err);
+      const notification = g.lablupNotification;
+      if (notification) {
+        notification.text = t('eduapi.CannotInitializeClient');
+        notification.show(true, err);
+      }
       return;
     }
 
@@ -416,7 +420,13 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     const loginSuccess = await _token_login();
     if (!loginSuccess) return;
 
-    await _prepareProjectInformation();
+    try {
+      await _prepareProjectInformation();
+    } catch (err) {
+      logger.error('Failed to prepare project information:', err);
+      _handleError(err, g.lablupNotification);
+      return;
+    }
 
     const sessionId = urlParams.get('session_id') || null;
     if (sessionId) {

@@ -595,6 +595,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Impossibile autorizzare la tua sessione. Accedi prima al portale.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Sessione di calcolo preparata",
     "CreatingComputeSession": "Creazione della sessione di calcolo in corso...",
     "EmptyProject": "Progetto vuoto",
@@ -604,6 +606,7 @@
     "PleaseReload": "Si prega di ricaricare dopo un po' di tempo.",
     "QueryingExistingComputeSession": "Interrogazione della sessione di calcolo esistente in corso...",
     "SessionStatusIs": "Lo stato della sessione è",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "La sessione è ancora in preparazione. Ricarica dopo un po'"
   },
   "environment": {
