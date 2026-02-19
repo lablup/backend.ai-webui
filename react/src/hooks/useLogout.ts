@@ -1,5 +1,5 @@
 import { backendaiOptions, backendaiUtils } from '../global-stores';
-import React, { useCallback, useEffect, useEffectEvent } from 'react';
+import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,11 +44,13 @@ async function logoutBackendAIClient() {
  * clean up.
  */
 async function performLogoutCleanup(notificationMessage: string) {
-  // Delete recent project group info
+  // Delete recent project group info.
+  // Tolerate failure: backendaiutils or backendaiclient may not be
+  // initialized yet, in which case there is nothing to delete.
   try {
     backendaiUtils._deleteRecentProjectGroupInfo();
   } catch {
-    // backendaiutils or backendaiclient may not be initialized
+    // Intentionally ignored -- project group info cleanup is best-effort.
   }
 
   if (
@@ -75,6 +77,9 @@ async function performLogoutCleanup(notificationMessage: string) {
 /**
  * Electron-only: clean up login data when the app window is closing,
  * unless the user has chosen to preserve their login.
+ *
+ * The logout API call is performed before clearing storage so that
+ * session tokens remain available for the server-side logout request.
  */
 async function performAppCloseCleanup(notificationMessage: string) {
   if (backendaiOptions.get('preserve_login') === false) {
@@ -87,8 +92,8 @@ async function performAppCloseCleanup(notificationMessage: string) {
       }),
     );
 
-    clearLoginStorage();
     await logoutBackendAIClient();
+    clearLoginStorage();
   }
 }
 
@@ -112,33 +117,30 @@ export function useLogout() {
    * 1. Clean up session data
    * 2. Redirect (Electron -> electronInitialHref, Web -> navigate + reload)
    */
-  const logout = useCallback(
-    async (performClose = false, callbackURL = '/') => {
-      const didCleanup = await performLogoutCleanup(t('webui.CleanUpNow'));
+  const logout = async (performClose = false, callbackURL = '/') => {
+    const didCleanup = await performLogoutCleanup(t('webui.CleanUpNow'));
 
-      if (didCleanup) {
-        if (performClose) {
-          // Do nothing. The window will be closed (Electron).
-        } else if (globalThis.isElectron) {
-          globalThis.location.href = globalThis.electronInitialHref;
-        } else {
-          // Use React Router navigate directly instead of dispatching
-          // react-navigate CustomEvent through the Lit shell
-          navigate(callbackURL, { replace: true });
-          globalThis.location.reload();
-        }
+    if (didCleanup) {
+      if (performClose) {
+        // Do nothing. The window will be closed (Electron).
+      } else if (globalThis.isElectron) {
+        globalThis.location.href = globalThis.electronInitialHref;
+      } else {
+        // Use React Router navigate directly instead of dispatching
+        // react-navigate CustomEvent through the Lit shell
+        navigate(callbackURL, { replace: true });
+        globalThis.location.reload();
       }
-    },
-    [navigate, t],
-  );
+    }
+  };
 
   /**
    * Electron-only: clean up login data when the app window is closing,
    * unless the user has chosen to preserve their login.
    */
-  const closeAppWindow = useCallback(async () => {
+  const closeAppWindow = async () => {
     await performAppCloseCleanup(t('webui.CleanUpLoginSession'));
-  }, [t]);
+  };
 
   return { logout, closeAppWindow };
 }
