@@ -192,9 +192,7 @@ export class SessionDetailPage extends BasePage {
 
     // Wait for logs modal/dialog to be visible
     // The modal contains the react-lazylog component
-    const logsModal = this.page.locator(
-      '.ant-modal:has(.react-lazylog), backend-ai-dialog:has(.react-lazylog)',
-    );
+    const logsModal = this.page.locator('.ant-modal:has(.react-lazylog)');
     await logsModal.waitFor({ state: 'visible', timeout: 5000 });
 
     // Wait for log lines to be rendered in the lazylog component

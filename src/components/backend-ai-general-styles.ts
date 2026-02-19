@@ -1077,51 +1077,6 @@ export const BackendAiStyles = [
       color: #999999;
     }
 
-    backend-ai-dialog {
-      mwc-list-item,
-      mwc-icon,
-      mwc-icon-button,
-      div.card {
-        background-color: var(--token-colorBgElevated);
-      }
-
-      mwc-icon,
-      mwc-icon-button {
-        color: var(--token-colorTextSecondary);
-      }
-
-      mwc-select {
-        --mdc-select-fill-color: var(--token-colorBgElevated, transparent);
-        --mdc-select-disabled-fill-color: var(
-          --token-colorTextDisabled,
-          transparent
-        );
-        --mdc-theme-surface: var(--token-colorBgElevated, #f1f1f1);
-      }
-
-      mwc-textfield,
-      mwc-textarea {
-        --mdc-text-field-fill-color: var(--token-colorBgElevated);
-        --mdc-typography-font-family: var(--token-fontFamily);
-        --mdc-theme-primary: var(--token-colorPrimary);
-        --mdc-text-field-label-ink-color: var(--token-colorTextSecondary);
-      }
-
-      vaadin-grid[theme~='dark'] {
-        --lumo-base-color: var(--token-colorBgElevated) !important;
-      }
-
-      div[slot='footer'] {
-        mwc-button[unelevated],
-        mwc-button[raised] {
-          --mdc-theme-on-primary: var(
-            --token-colorWhite,
-            --general-button-color
-          );
-        }
-      }
-    }
-
     div.note-container {
       background-color: var(--paper-green-100);
     }
