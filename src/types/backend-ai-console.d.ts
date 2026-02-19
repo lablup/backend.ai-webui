@@ -1,6 +1,5 @@
 // Login flow orchestration has been migrated to React
 // (see react/src/hooks/useLoginOrchestration.ts).
-import './backend-ai-settings-store';
 import { LitElement } from 'lit-element';
 
 declare const BackendAIWebUI_base: typeof LitElement;
