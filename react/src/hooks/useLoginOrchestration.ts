@@ -18,9 +18,9 @@
  * If all conditions are met, it logs out the stale session and shows the
  * login panel. Otherwise, it attempts a silent re-login.
  */
-import TabCount from '../../../src/lib/TabCounter';
 import { backendaiOptions } from '../global-stores';
 import { loadConfigFromWebServer } from '../helper/loginSessionAuth';
+import TabCount from '../lib/TabCounter';
 import { autoLogoutState, configLoadedState } from './useWebUIConfig';
 import { useAtomValue } from 'jotai';
 import { useEffect, useEffectEvent, useRef } from 'react';
