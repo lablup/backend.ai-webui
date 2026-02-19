@@ -66,7 +66,6 @@ export const usePluginConfigStringValue = () => {
  * pluginPages string so React can mark plugins as loaded immediately.
  */
 export const useSetupWebUIPluginEffect = () => {
-  'use memo';
   const setPluginConfigString = useSetAtom(pluginConfigStringState);
   const setPluginApiEndpoint = useSetAtom(pluginApiEndpointState);
   const setPluginLoaded = useSetAtom(pluginLoadedState);

@@ -15,9 +15,10 @@ import {
   type WebUIPluginType,
   pluginApiEndpointState,
   pluginLoadedState,
+  usePluginConfigStringValue,
   webUIPluginsState,
 } from '../hooks/useWebUIPluginState';
-import { usePluginConfigStringValue } from '../hooks/useWebUIPluginState';
+import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -46,10 +47,12 @@ function PluginLoader() {
   const setPluginLoaded = useSetAtom(pluginLoadedState);
   const loadingStarted = useAtomValue(pluginLoadingStartedState);
   const setLoadingStarted = useSetAtom(pluginLoadingStartedState);
+  const { logger } = useBAILogger();
   const containerRef = useRef<HTMLDivElement>(null);
   const pluginElementsRef = useRef<Map<string, BackendAIPageElement>>(
     new Map(),
   );
+  const loadingGuardRef = useRef(false);
   const location = useLocation();
 
   const loadPlugins = useCallback(
@@ -120,9 +123,8 @@ function PluginLoader() {
               group: pageItem.group,
             };
             plugins.page.push(pluginPageData);
-          } catch {
-            // Failed to load plugin - skip it silently
-            // The plugin may not exist or may have a syntax error
+          } catch (error) {
+            logger.warn(`Failed to load plugin "${page}":`, error);
           }
         },
       );
@@ -141,16 +143,27 @@ function PluginLoader() {
         new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
       );
     },
-    [apiEndpoint, setWebUIPlugins, setPluginLoaded],
+    [apiEndpoint, logger, setWebUIPlugins, setPluginLoaded],
   );
 
   // Load plugins when config string becomes available
   useEffect(() => {
-    if (pluginConfigString && !loadingStarted) {
+    if (pluginConfigString && !loadingStarted && !loadingGuardRef.current) {
+      loadingGuardRef.current = true;
       setLoadingStarted(true);
-      loadPlugins(pluginConfigString);
+      loadPlugins(pluginConfigString).catch((error) => {
+        logger.error('Unexpected error during plugin loading:', error);
+        setPluginLoaded(true);
+      });
     }
-  }, [pluginConfigString, loadingStarted, setLoadingStarted, loadPlugins]);
+  }, [
+    pluginConfigString,
+    loadingStarted,
+    setLoadingStarted,
+    loadPlugins,
+    logger,
+    setPluginLoaded,
+  ]);
 
   // Activate/deactivate plugin pages based on current route
   useEffect(() => {
