@@ -3,7 +3,6 @@
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
 import * as ai from '../lib/backend.ai-client-esm';
-import './backend-ai-common-utils';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import { LitElement, html, CSSResultGroup } from 'lit';
 import { registerTranslateConfig, use as setLanguage } from 'lit-translate';
