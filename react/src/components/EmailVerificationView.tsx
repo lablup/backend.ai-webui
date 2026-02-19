@@ -1,5 +1,5 @@
 import { useAnonymousBackendaiClient } from '../hooks';
-import { Form, Input, App } from 'antd';
+import { App, Form, Input } from 'antd';
 import { BAIButton, BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,8 +43,12 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
         .then(() => {
           setVerificationState('success');
         })
-        .catch(() => {
-          message.error(t('signUp.VerificationError'));
+        .catch((error: unknown) => {
+          message.error(
+            error instanceof Error
+              ? error.message
+              : t('signUp.VerificationError'),
+          );
           setVerificationState('failed');
         });
     } else {
@@ -59,8 +63,14 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
 
   const handleResendVerification = async () => {
     const values = await form.validateFields();
-    await anonBaiClient.cloud.send_verification_email(values.email);
-    message.success(t('signUp.EmailSent'));
+    try {
+      await anonBaiClient.cloud.send_verification_email(values.email);
+      message.success(t('signUp.EmailSent'));
+    } catch (e: unknown) {
+      const errorMessage =
+        e instanceof Error ? e.message : t('signUp.SendError');
+      message.error(errorMessage);
+    }
   };
 
   if (!active || verificationState === 'loading') {
