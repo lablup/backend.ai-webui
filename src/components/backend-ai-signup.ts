@@ -14,7 +14,6 @@ import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
-import './lablup-terms-of-service';
 import { Button } from '@material/mwc-button';
 import '@material/mwc-checkbox';
 import '@material/mwc-icon-button-toggle';
@@ -27,7 +26,6 @@ import { customElement, property, query } from 'lit/decorators.js';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-type LablupTermsOfService = HTMLElementTagNameMap['lablup-terms-of-service'];
 
 /**
  Backend.AI Signup feature for GUI Console
@@ -64,10 +62,11 @@ export default class BackendAiSignup extends BackendAIPage {
   @query('#id_token') tokenInput!: TextField;
   @query('#id_password1') passwordInput!: TextField;
   @query('#id_password2') passwordConfirmInput!: TextField;
+  @property({ type: Boolean }) isOpenTOSDialog = false;
+  @property({ type: String }) tosDialogEntry = 'terms-of-service';
   @query('#signup-panel') signupPanel!: BackendAIDialog;
   @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
-  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
 
   static get styles(): CSSResultGroup {
     return [
@@ -184,30 +183,16 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   receiveTOSAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
-        'language',
-        'default',
-        'general',
-      );
-      this.TOSdialog.title = _t('webui.menu.TermsOfService') as string;
-      this.TOSdialog.tosEntry = 'terms-of-service';
-      this.TOSdialog.open();
+    if (!this.isOpenTOSDialog) {
+      this.tosDialogEntry = 'terms-of-service';
+      this.isOpenTOSDialog = true;
     }
   }
 
   receivePPAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = '';
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get(
-        'language',
-        'default',
-        'general',
-      );
-      this.TOSdialog.title = _t('webui.menu.PrivacyPolicy') as string;
-      this.TOSdialog.tosEntry = 'privacy-policy';
-      this.TOSdialog.open();
+    if (!this.isOpenTOSDialog) {
+      this.tosDialogEntry = 'privacy-policy';
+      this.isOpenTOSDialog = true;
     }
   }
 
@@ -663,7 +648,15 @@ export default class BackendAiSignup extends BackendAIPage {
           ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
+      <backend-ai-react-tos-modal
+        value="${JSON.stringify({
+          open: this.isOpenTOSDialog,
+          entry: this.tosDialogEntry,
+        })}"
+        @close="${() => {
+          this.isOpenTOSDialog = false;
+        }}"
+      ></backend-ai-react-tos-modal>
     `;
   }
 }

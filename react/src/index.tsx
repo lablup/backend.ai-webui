@@ -51,6 +51,12 @@ const TOTPActivateModalWithToken = React.lazy(
 
 const SignupModal = React.lazy(() => import('./components/SignupModal'));
 const SplashModal = React.lazy(() => import('./components/SplashModal'));
+const TermsOfServiceModal = React.lazy(
+  () => import('./components/TermsOfServiceModal'),
+);
+const PrivacyPolicyModal = React.lazy(
+  () => import('./components/PrivacyPolicyModal'),
+);
 const EmailVerificationViewLazy = React.lazy(
   () => import('./components/EmailVerificationView'),
 );
@@ -244,6 +250,42 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ChangePasswordViewInWebComponent />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const TOSModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
+  const { parsedValue: { open = false, entry = 'terms-of-service' } = {} } =
+    useWebComponentInfo<{
+      open: boolean;
+      entry: 'terms-of-service' | 'privacy-policy';
+    }>();
+
+  const handleClose = () => {
+    props.dispatchEvent('close', null);
+  };
+
+  if (entry === 'privacy-policy') {
+    return (
+      <React.Suspense fallback={null}>
+        <PrivacyPolicyModal open={open} onRequestClose={handleClose} />
+      </React.Suspense>
+    );
+  }
+  return (
+    <React.Suspense fallback={null}>
+      <TermsOfServiceModal open={open} onRequestClose={handleClose} />
+    </React.Suspense>
+  );
+};
+
+customElements.define(
+  'backend-ai-react-tos-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <TOSModalInWebComponent {...props} />
       </DefaultProviders>
     );
   }),

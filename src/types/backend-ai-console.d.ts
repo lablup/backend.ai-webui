@@ -4,7 +4,6 @@ import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-settings-store';
 import './lablup-notification';
-import './lablup-terms-of-service';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
@@ -32,7 +31,7 @@ declare const BackendAIWebUI_base: (new (...args: any[]) => {
 
  <backend-ai-webui>
  ... content ...
- </backend-ai-webui>lablup-terms-of-service
+ </backend-ai-webui>
 
 @group Backend.AI Web UI
  @element backend-ai-webui
@@ -68,7 +67,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   mainToolbar: any;
   drawerToggleButton: any;
   sidebarMenu: any;
-  TOSdialog: any;
   mini_ui: boolean;
   lang: string;
   supportLanguageCodes: string[];
