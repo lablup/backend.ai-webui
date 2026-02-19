@@ -529,7 +529,7 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 ## Unified View for Pending Sessions
 
 From Backend.AI version 25.13.0, a unified view for pending sessions is available in the Admin Menu.
-Unlike the Session page, the Scheduler page provides a unified view of all pending sessions within a
+The Admin Session page provides a unified view of all pending sessions within a
 selected resource group. The index number displayed next to the status indicates the queue position in
 which the session will be created once sufficient resources become available.
 
@@ -537,6 +537,191 @@ which the session will be created once sufficient resources become available.
 
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
+
+## Fair Share Scheduler
+
+From Backend.AI core version 26.2.0 and later, the Fair Share Scheduler page is available in the
+Administration menu. This feature allows administrators to manage fair share scheduling weights
+across a hierarchical structure of resource groups, domains, projects, and users.
+
+Fair share scheduling allocates compute resources based on historical usage patterns,
+ensuring that resources are distributed fairly among users. Users who have consumed fewer
+resources in the past receive higher scheduling priority, while those who have used more
+resources are given lower priority. Administrators can fine-tune this behavior by adjusting
+weights at each level of the hierarchy.
+
+:::note
+The Fair Share Scheduler is only available when a resource group's scheduler type is set
+to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to the
+[Manage resource group](#manage-resource-group) section.
+:::
+
+To access this feature, click the Scheduler menu item in the Administration section of the sidebar.
+The page displays a Fair Share Setting tab with a 4-step drill-down interface.
+
+![](../images/fair_share_resource_group_page.png)
+
+The page is organized into four hierarchical steps:
+
+1. **Resource Group**: Configure core fair share parameters for each resource group
+2. **Domain**: Set weights for domains within a resource group
+3. **Project**: Set weights for projects within a domain
+4. **User**: Set weights for individual users within a project
+
+A step indicator bar at the top of the page shows your current position in the hierarchy.
+Completed steps display the name of the selected item. You can click on any completed step
+to navigate back to that level.
+
+![](../images/fair_share_step_indicator.png)
+
+If the selected resource group does not have its scheduler type set to `FAIR_SHARE`, a
+warning alert is displayed indicating that the Fair Share Scheduler is not enabled for that
+resource group.
+
+![](../images/fair_share_scheduler_warning.png)
+
+At each step, the following common features are available:
+
+- **Filtering**: Use the property-based search filter to narrow results by name. At the User step, additional filters for email and active status are available.
+- **Sorting**: Click column headers to sort the table by that column.
+- **Pagination**: Navigate through results with configurable page size.
+- **Auto-refresh**: Data refreshes automatically every 7 seconds. A manual refresh button is also available.
+
+### Resource Group
+
+The Resource Group step displays a table of all resource groups with their fair share configuration.
+
+![](../images/fair_share_resource_group_page.png)
+
+The table includes the following columns:
+
+- **Name**: The resource group name. Click the name to drill into the domain-level settings for that resource group.
+- **Control**: A settings (gear) button that opens the Resource Group Fair Share Settings modal.
+- **Allocation**: Resource usage showing used/capacity for each resource type allocated to the resource group (e.g., CPU, Memory, CUDA GPU).
+- **Resource Weight**: Per-resource-type weights. Displays "default" if using the default weight.
+- **Default Weight**: The fallback weight value for domains, projects, and users without a specified weight.
+- **Decay Unit**: The period (in days) for aggregating usage.
+- **Half Life**: The period (in days) over which the usage reflection rate decreases by half.
+- **Lookback**: The range (in days) of usage history reflected in calculations.
+
+### Resource Group Fair Share Settings
+
+Click the settings (gear) button in the Control column of a resource group to open the
+Fair Share Settings modal.
+
+![](../images/fair_share_resource_group_setting_modal.png)
+
+:::warning
+Changes are not immediately reflected in Fair Share calculations and may take
+approximately 5 minutes due to the calculation cycle.
+:::
+
+The modal contains the following fields:
+
+- **Resource Group**: Read-only field showing the resource group name.
+- **Half Life**: The period over which the usage reflection rate decreases by half, specified in days (minimum 1). For example, if set to 7 days, usage from 7 days ago is calculated at 50%, and usage from 14 days ago at 25%. It is recommended to set this as a multiple of the decay unit.
+- **Lookback**: The range of usage history reflected in Fair Share calculations, specified in days (minimum 1). Usage prior to this period is excluded from calculations. It is recommended to set this as a multiple of the half life.
+- **Default Weight**: The default value applied to domains, projects, and users without a specified weight (minimum 1, step 0.1).
+- **Resource Weights**: Per-resource-type weights (e.g., CPU, Memory, GPU), each with a minimum value of 1 and step 0.1. This section is only displayed if resource weights exist for the resource group.
+
+### Domain
+
+After selecting a resource group, the Domain step displays a table of domains with their
+fair share weights and usage within that resource group.
+
+![](../images/fair_share_domain_page.png)
+
+The table includes the following columns:
+
+- **Name**: The domain name. Click the name to drill into project-level settings for that domain.
+- **Control**: A settings (gear) button that opens the weight setting modal for this domain.
+- **Weight**: The current weight value. Displays "default" if using the default weight.
+- **Fair Share Factor**: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.
+- **Resource Allocation**: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).
+- **Modified At**: The last modification timestamp.
+- **Created At**: The creation timestamp.
+
+You can select multiple rows using the checkboxes on the left side of the table. When rows
+are selected, two additional buttons appear:
+
+- **Usage Graph** (chart icon): Opens the Usage History modal for the selected items.
+- **Bulk Edit** (gear icon): Opens the weight setting modal to edit weights for all selected items at once.
+
+### Project
+
+After selecting a domain, the Project step displays a table of projects with the same
+column structure as the Domain step. Click a project name to drill into the User step.
+
+![](../images/fair_share_project_page.png)
+
+The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
+
+### User
+
+After selecting a project, the User step displays a table of individual users with their
+fair share weights and usage.
+
+![](../images/fair_share_user_page.png)
+
+The table includes the following columns:
+
+- **Email**: The user's email address.
+- **Name**: The user's name.
+- **Control**: A settings (gear) button that opens the weight setting modal for this user.
+- **Weight**: The current weight value. Displays "default" if using the default weight.
+- **Fair Share Factor**: The scheduling priority calculated by the scheduler.
+- **Resource Allocation**: Average daily decayed resource usage per resource type.
+- **Modified At**: The last modification timestamp.
+- **Created At**: The creation timestamp.
+
+:::note
+At the User step, additional filter properties are available: email, name, and active status.
+:::
+
+The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
+
+### Editing Fair Share Weights
+
+To edit the fair share weight for a domain, project, or user, click the settings (gear) button
+in the Control column of the desired row. This opens the weight setting modal.
+
+![](../images/fair_share_weight_setting_modal.png)
+
+:::warning
+Changes are not immediately reflected in Fair Share calculations and may take
+approximately 5 minutes due to the calculation cycle.
+:::
+
+In single-edit mode, the modal displays the entity name (read-only) and a weight input field.
+
+- **Weight**: The multiplier that determines Fair Share scheduling priority. Higher weight results in higher priority. The default value is "1.0". A weight of "2.0" has twice the priority of "1.0". The minimum value is 1 with a step of 0.1.
+
+To edit weights for multiple items at once, select the desired rows using the checkboxes in the
+table, then click the Bulk Edit (gear icon) button. In bulk-edit mode, the modal displays a
+tag list of all selected entities and a single weight input that will be applied to all of them.
+
+![](../images/fair_share_weight_bulk_edit_modal.png)
+
+:::note
+If the selected resource group does not have its scheduler type set to `FAIR_SHARE`,
+a warning alert is displayed in the modal.
+:::
+
+### Viewing Usage History
+
+To view the usage history for domains, projects, or users, select the desired rows using
+the checkboxes in the table, then click the Usage Graph (chart icon) button. This opens
+the Usage History modal.
+
+![](../images/fair_share_usage_bucket_modal.png)
+
+The modal displays the following:
+
+- **Date range picker**: Select a date range for the usage history. Presets are available for Last 7 Days, Last 30 Days, and Last 90 Days.
+- **Refresh button**: Manually refresh the usage data.
+- **Context information**: Shows the resource group, domain, and project (depending on the current step).
+- **Selected entities**: Displayed as tags showing the names of the selected items.
+- **Usage chart**: A chart showing the average daily resource usage over the selected period.
 
 ## Manage Images
 
@@ -713,6 +898,8 @@ preserving the existing sessions on the Agent.
 
 ![](../images/agent_settings.png)
 
+
+<a id="manage-resource-group"></a>
 
 ## Manage resource group
 
