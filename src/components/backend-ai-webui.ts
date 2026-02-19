@@ -23,7 +23,6 @@ import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
-import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
 import '@material/mwc-icon';
@@ -66,7 +65,7 @@ globalThis.backendaiutils = new BackendAICommonUtils();
 
  <backend-ai-webui>
  ... content ...
- </backend-ai-webui>lablup-terms-of-service
+ </backend-ai-webui>
 
  @group Backend.AI Web UI
  @element backend-ai-webui
@@ -207,7 +206,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   // This issue occurred when importing exported class
   @query('#login-panel') loginPanel: any;
   @query('#main-toolbar') mainToolbar: any;
-  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
+  @property({ type: Boolean }) isOpenTOSDialog = false;
+  @property({ type: String }) tosDialogEntry = 'terms-of-service';
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
 
   constructor() {
@@ -766,22 +766,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Display the ToS(terms of service) agreement.
    */
   showTOSAgreement() {
-    this.TOSdialog.tosContent = '';
-    this.TOSdialog.tosLanguage = this.lang;
-    this.TOSdialog.title = _text('webui.menu.TermsOfService');
-    this.TOSdialog.tosEntry = 'terms-of-service';
-    this.TOSdialog.open();
+    this.tosDialogEntry = 'terms-of-service';
+    this.isOpenTOSDialog = true;
   }
 
   /**
    * Display the PP(privacy policy) agreement.
    */
   showPPAgreement() {
-    this.TOSdialog.tosContent = '';
-    this.TOSdialog.tosLanguage = this.lang;
-    this.TOSdialog.title = _text('webui.menu.PrivacyPolicy');
-    this.TOSdialog.tosEntry = 'privacy-policy';
-    this.TOSdialog.open();
+    this.tosDialogEntry = 'privacy-policy';
+    this.isOpenTOSDialog = true;
   }
 
   /**
@@ -885,10 +879,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       ></backend-ai-react-splash-modal>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
-      <lablup-terms-of-service
-        id="terms-of-service"
-        block
-      ></lablup-terms-of-service>
+      <backend-ai-react-tos-modal
+        value="${JSON.stringify({
+          open: this.isOpenTOSDialog,
+          entry: this.tosDialogEntry,
+        })}"
+        @close="${() => {
+          this.isOpenTOSDialog = false;
+        }}"
+      ></backend-ai-react-tos-modal>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
       <backend-ai-react-signout-modal
         value="${this.isOpenSignoutDialog ? 'true' : 'false'}"
