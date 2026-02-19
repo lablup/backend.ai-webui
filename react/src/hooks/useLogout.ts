@@ -1,3 +1,4 @@
+import { backendaiOptions, backendaiUtils } from '../global-stores';
 import React, { useCallback, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -45,7 +46,7 @@ async function logoutBackendAIClient() {
 async function performLogoutCleanup(notificationMessage: string) {
   // Delete recent project group info
   try {
-    globalThis.backendaiutils._deleteRecentProjectGroupInfo();
+    backendaiUtils._deleteRecentProjectGroupInfo();
   } catch {
     // backendaiutils or backendaiclient may not be initialized
   }
@@ -76,7 +77,7 @@ async function performLogoutCleanup(notificationMessage: string) {
  * unless the user has chosen to preserve their login.
  */
 async function performAppCloseCleanup(notificationMessage: string) {
-  if (globalThis.backendaioptions.get('preserve_login') === false) {
+  if (backendaiOptions.get('preserve_login') === false) {
     document.dispatchEvent(
       new CustomEvent('add-bai-notification', {
         detail: {
@@ -167,7 +168,7 @@ export function useLogoutEventListeners() {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      globalThis.backendaioptions.set(
+      backendaiOptions.set(
         'last_window_close_time',
         new Date().getTime() / 1000,
       );
