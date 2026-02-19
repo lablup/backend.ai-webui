@@ -1,6 +1,12 @@
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAILink,
+  BAIModal,
+  BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,20 +31,19 @@ const SplashModal: React.FC<SplashModalProps> = ({
   const buildVersion = globalThis.buildVersion || '';
   const isElectron = globalThis.isElectron || false;
 
-  let licenseText = '';
-  if (edition !== 'Open Source') {
-    if (
-      validUntil === '2099-12-31' ||
-      validUntil === '""' ||
-      validUntil === ''
-    ) {
-      licenseText = t('license.Perpetual');
-    } else {
-      licenseText = t('license.Subscription');
-    }
-  } else {
-    licenseText = t('license.OpenSource');
-  }
+  const licenseType =
+    edition !== 'Open Source'
+      ? validUntil === '2099-12-31' || validUntil === '""' || validUntil === ''
+        ? 'perpetual'
+        : 'subscription'
+      : 'openSource';
+
+  const licenseText =
+    licenseType === 'perpetual'
+      ? t('license.Perpetual')
+      : licenseType === 'subscription'
+        ? t('license.Subscription')
+        : t('license.OpenSource');
 
   const logoSrc = isDarkMode
     ? 'manifest/backend.ai-text-bgdark.svg'
@@ -47,6 +52,7 @@ const SplashModal: React.FC<SplashModalProps> = ({
   return (
     <BAIModal
       {...modalProps}
+      destroyOnHidden
       title={
         <div
           style={{
@@ -65,23 +71,27 @@ const SplashModal: React.FC<SplashModalProps> = ({
       maskClosable={false}
     >
       <BAIFlex direction="column" gap="xs" style={{ paddingLeft: 20 }}>
-        <BAIText style={{ fontSize: 13 }}>
+        <BAIText style={{ fontSize: token.fontSizeSM }}>
           Backend.AI Web UI <span>{version}</span>
         </BAIText>
-        <BAIText style={{ fontSize: 13 }}>{edition} Edition</BAIText>
-        {licenseText === t('license.Subscription') && validUntil ? (
-          <BAIText style={{ fontSize: 13 }}>
+        <BAIText style={{ fontSize: token.fontSizeSM }}>
+          {edition} Edition
+        </BAIText>
+        {licenseType === 'subscription' && validUntil ? (
+          <BAIText style={{ fontSize: token.fontSizeSM }}>
             Subscription is active until {validUntil}
           </BAIText>
-        ) : licenseText === t('license.Perpetual') ? (
-          <BAIText style={{ fontSize: 13 }}>Perpetual License</BAIText>
+        ) : licenseType === 'perpetual' ? (
+          <BAIText style={{ fontSize: token.fontSizeSM }}>
+            {licenseText}
+          </BAIText>
         ) : null}
-        <div style={{ marginTop: 15 }}>
-          <BAIText style={{ fontSize: 13 }}>
+        <div style={{ marginTop: token.marginMD }}>
+          <BAIText style={{ fontSize: token.fontSizeSM }}>
             Backend.AI Cluster {managerVersion}
           </BAIText>
         </div>
-        <BAIText style={{ fontSize: 13 }}>
+        <BAIText style={{ fontSize: token.fontSizeSM }}>
           {isElectron ? 'App' : 'WebServer'} Build {buildVersion}
         </BAIText>
       </BAIFlex>
@@ -90,37 +100,33 @@ const SplashModal: React.FC<SplashModalProps> = ({
         gap="xs"
         style={{ paddingLeft: 20, marginTop: token.marginSM }}
       >
-        <BAIText style={{ fontSize: 13 }}>
+        <BAIText style={{ fontSize: token.fontSizeSM }}>
           Powered by{' '}
-          <a
+          <BAILink
             target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/lablup/backend.ai/blob/main/LICENSE"
-            style={{ color: token.colorLink }}
+            to="https://github.com/lablup/backend.ai/blob/main/LICENSE"
           >
             open-source software
-          </a>
+          </BAILink>
         </BAIText>
-        <BAIText style={{ fontSize: 12 }}>
+        <BAIText style={{ fontSize: token.fontSizeSM - 1 }}>
           Copyright &copy; 2015-2025 Lablup Inc.
         </BAIText>
         <BAIFlex gap="sm">
-          <a
+          <BAILink
             target="_blank"
-            rel="noopener noreferrer"
-            href={`https://github.com/lablup/backend.ai-webui/releases/tag/v${version}`}
-            style={{ color: token.colorLink, fontSize: 12 }}
+            to={`https://github.com/lablup/backend.ai-webui/releases/tag/v${version}`}
+            style={{ fontSize: token.fontSizeSM - 1 }}
           >
             Release Note
-          </a>
-          <a
+          </BAILink>
+          <BAILink
             target="_blank"
-            rel="noopener noreferrer"
-            href="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE"
-            style={{ color: token.colorLink, fontSize: 12 }}
+            to="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE"
+            style={{ fontSize: token.fontSizeSM - 1 }}
           >
             License
-          </a>
+          </BAILink>
         </BAIFlex>
       </BAIFlex>
     </BAIModal>
