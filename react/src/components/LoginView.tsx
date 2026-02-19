@@ -621,10 +621,11 @@ const LoginView: React.FC = () => {
     const ep = resolveEndpoint();
     if (connectionMode === 'SESSION') {
       if ((globalThis as Record<string, unknown>).isElectron) {
-        loadConfigFromWebServer(ep);
+        await loadConfigFromWebServer(ep);
       }
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
+      clientRef.current = client;
       try {
         await client.get_manager_version();
         const isLogon = await client.check_login();

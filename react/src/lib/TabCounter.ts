@@ -106,9 +106,14 @@ class TabCount {
 
   getData = (): TabCountData => {
     const savedData = localStorage.getItem('tabCountData');
-    return savedData == null
-      ? { list: {}, lastCleaned: 0 }
-      : JSON.parse(savedData);
+    if (savedData == null) {
+      return { list: {}, lastCleaned: 0 };
+    }
+    try {
+      return JSON.parse(savedData) as TabCountData;
+    } catch {
+      return { list: {}, lastCleaned: 0 };
+    }
   };
 
   getUrls = (getUnique = false): string[] => {
