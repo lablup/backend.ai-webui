@@ -440,3 +440,43 @@ export const convertToUUID = (id: string): string => {
 };
 
 export * from './useDebouncedDeferredValue';
+
+// Re-export react-query aliases
+export * from './reactQueryAlias';
+
+/**
+ * Flattens a nested object into a single-level object with keys joined by a separator.
+ * Uses lodash for efficient object manipulation.
+ *
+ * @param obj - The nested object to flatten
+ * @param separator - The string to use for joining nested keys (default: "/")
+ * @param prefix - The prefix to prepend to all keys (default: "")
+ * @returns A flattened object with concatenated keys
+ *
+ * @example
+ * ```ts
+ * const nested = { a: { b: { c: 'value' } } };
+ * flattenDict(nested); // { "a/b/c": "value" }
+ * ```
+ */
+export const flattenDict = (
+  obj: Record<string, any>,
+  separator: string = '/',
+  prefix: string = '',
+): Record<string, any> => {
+  return _.transform(
+    obj,
+    (result: Record<string, any>, value: any, key: string) => {
+      const newKey = prefix ? `${prefix}${separator}${key}` : key;
+
+      if (_.isObject(value) && !_.isArray(value) && !_.isNull(value)) {
+        // Recursively flatten nested objects
+        _.assign(result, flattenDict(value, separator, newKey));
+      } else {
+        // Assign primitive values
+        result[newKey] = value;
+      }
+    },
+    {},
+  );
+};
