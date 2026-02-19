@@ -125,6 +125,16 @@ export default class BackendAIWebUI extends LitElement {
    */
   private _waitForConfigLoaded(timeout = 15000): Promise<boolean> {
     return new Promise((resolve) => {
+      // Check if React already dispatched the event before this listener
+      // was attached. React sets this flag on globalThis immediately before
+      // dispatching 'backend-ai-config-loaded' to prevent the race condition.
+      const alreadyLoaded = (globalThis as Record<string, unknown>)
+        .__backendai_config_loaded__ as { autoLogout?: boolean } | undefined;
+      if (alreadyLoaded) {
+        resolve(alreadyLoaded.autoLogout ?? false);
+        return;
+      }
+
       const handleConfigLoaded = (e: Event) => {
         document.removeEventListener(
           'backend-ai-config-loaded',

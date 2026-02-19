@@ -267,6 +267,13 @@ export function useInitializeConfig(): {
       setPluginLoaded(true);
     }
 
+    // Set a flag on globalThis before dispatching so the Lit shell can
+    // detect if the event was already fired (prevents race condition
+    // when the Lit shell attaches its listener after React dispatches).
+    (globalThis as Record<string, unknown>).__backendai_config_loaded__ = {
+      autoLogout,
+    };
+
     // Dispatch event for Lit shell login flow orchestration.
     // The Lit shell reads autoLogout from the event detail to decide
     // whether to auto-logout on first tab open.

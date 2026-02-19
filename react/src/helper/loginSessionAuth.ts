@@ -189,6 +189,16 @@ export async function loadConfigFromWebServer(
   apiEndpoint: string,
 ): Promise<void> {
   if (!window.location.href.startsWith(apiEndpoint)) {
+    // Validate the endpoint URL scheme to prevent fetching config from
+    // unexpected protocols (e.g., javascript:, data:, file:).
+    try {
+      const endpointUrl = new URL(apiEndpoint);
+      if (!['http:', 'https:'].includes(endpointUrl.protocol)) {
+        return;
+      }
+    } catch {
+      return;
+    }
     const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
     const config = await fetchAndParseConfig(webserverConfigURL);
     if (!config) return;

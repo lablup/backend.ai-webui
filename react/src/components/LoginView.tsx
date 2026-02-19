@@ -125,9 +125,14 @@ const LoginView: React.FC = () => {
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
+    // Sanitize the plugin name to prevent path traversal attacks.
+    // Only allow alphanumeric characters, hyphens, and underscores.
+    const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
+
     import(
       /* webpackIgnore: true */
-      `../../../src/plugins/${loginPlugin}`
+      `../../../src/plugins/${sanitizedPlugin}`
     ).catch(() => {
       const n = (globalThis as Record<string, unknown>).lablupNotification as {
         text: string;
