@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import '@material/mwc-linear-progress';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
