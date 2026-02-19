@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useThemeMode } from './useThemeMode';
 import { useBAILogger } from 'backend.ai-ui';
 import { useMemo } from 'react';

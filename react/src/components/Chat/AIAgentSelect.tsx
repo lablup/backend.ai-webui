@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { useControllableValue } from 'ahooks';

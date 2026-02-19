@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Login Session Authentication Utilities
  *
  * Extracted from backend-ai-login.ts _connectViaGQL method.

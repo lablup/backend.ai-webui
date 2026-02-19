@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
 import { convertToBinaryUnit, convertToDecimalUnit } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';

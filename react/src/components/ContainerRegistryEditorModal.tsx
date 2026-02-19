@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
@@ -32,8 +36,10 @@ type RegistryFormInput = {
   extra?: string;
 };
 
-interface ContainerRegistryEditorModalProps
-  extends Omit<BAIModalProps, 'onOk'> {
+interface ContainerRegistryEditorModalProps extends Omit<
+  BAIModalProps,
+  'onOk'
+> {
   onOk: (type: 'create' | 'modify') => void;
   containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
 }

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ServiceLauncherPageQuery } from '../__generated__/ServiceLauncherPageQuery.graphql';
 import ServiceLauncherPageContent from '../components/ServiceLauncherPageContent';
 import { graphql, useLazyLoadQuery } from 'react-relay';

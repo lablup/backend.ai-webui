@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../../helper';

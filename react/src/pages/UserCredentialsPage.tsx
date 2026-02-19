@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import UserCredentialList from '../components/UserCredentialList';
 import UserManagement from '../components/UserManagement';
 import { Skeleton } from 'antd';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Form, Checkbox, type FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex } from 'backend.ai-ui';

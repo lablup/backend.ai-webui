@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * WebUI Config - React-based config.toml parsing and state management.
  *
  * This module replaces the Lit shell's _parseConfig() and loadConfig() methods.

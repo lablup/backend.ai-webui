@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';

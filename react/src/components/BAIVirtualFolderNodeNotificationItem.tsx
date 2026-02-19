@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useToggle } from 'ahooks';
 import { Card, List, theme, Typography } from 'antd';

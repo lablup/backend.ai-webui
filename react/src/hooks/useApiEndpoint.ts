@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { loginConfigState } from './useWebUIConfig';
 import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';

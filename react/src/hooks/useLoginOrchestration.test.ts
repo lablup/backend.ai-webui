@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Tests for useLoginOrchestration hook.
  *
  * The hook orchestrates the initial login flow once config is loaded.

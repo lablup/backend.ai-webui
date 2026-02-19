@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { ReactNode } from 'react';

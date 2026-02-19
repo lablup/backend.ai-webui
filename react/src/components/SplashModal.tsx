@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from 'antd';
 import {
@@ -110,7 +114,7 @@ const SplashModal: React.FC<SplashModalProps> = ({
           </BAILink>
         </BAIText>
         <BAIText style={{ fontSize: token.fontSizeSM - 1 }}>
-          Copyright &copy; 2015-2025 Lablup Inc.
+          Copyright &copy; 2015-2026 Lablup Inc.
         </BAIText>
         <BAIFlex gap="sm">
           <BAILink

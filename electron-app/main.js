@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 const {
   app,

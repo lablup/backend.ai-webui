@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 // Initialize global stores before any component renders.
 // This import has side effects: it instantiates the four singleton stores
 // and assigns them to globalThis for backward compatibility with Lit code.

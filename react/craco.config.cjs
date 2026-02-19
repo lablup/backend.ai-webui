@@ -19,6 +19,24 @@ module.exports = {
     enable: false, // Disable ESLint webpack plugin for ESLint 9 compatibility. Use CLI lint instead.
   },
   devServer: (devServerConfig, { env, paths }) => {
+    // Serve static files from the root project directory so that
+    // /resources/*, /config.toml, /manifest/*, /dist/* are available
+    // without a separate webdev server.
+    const projectRoot = path.resolve(__dirname, '..');
+    const existingStatic = devServerConfig.static
+      ? Array.isArray(devServerConfig.static)
+        ? devServerConfig.static
+        : [devServerConfig.static]
+      : [];
+    devServerConfig.static = [
+      ...existingStatic,
+      {
+        directory: projectRoot,
+        publicPath: '/',
+        watch: true,
+      },
+    ];
+
     devServerConfig.watchFiles = {
       paths: [
         '../index.html',

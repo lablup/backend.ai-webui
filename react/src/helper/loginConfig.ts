@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Login Configuration Utilities
  *
  * Extracted from backend-ai-login.ts to support the React LoginView component.

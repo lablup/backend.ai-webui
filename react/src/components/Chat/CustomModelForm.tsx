@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';

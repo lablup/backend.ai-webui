@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Tabs, type TabsProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   SessionNodesFragment$data,
   SessionNodesFragment$key,
@@ -45,11 +49,10 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableSessionSorterKeys, key);
 };
 
-interface SessionNodesProps
-  extends Omit<
-    BAITableProps<SessionNodeInList>,
-    'dataSource' | 'columns' | 'onChangeOrder'
-  > {
+interface SessionNodesProps extends Omit<
+  BAITableProps<SessionNodeInList>,
+  'dataSource' | 'columns' | 'onChangeOrder'
+> {
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;

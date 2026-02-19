@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { PurgeUsersModalMutation } from '../__generated__/PurgeUsersModalMutation.graphql';
 import { App, Checkbox, Form, theme } from 'antd';
@@ -17,8 +21,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
-export interface PurgeUsersModalProps
-  extends Omit<BAIModalProps, 'title' | 'okText' | 'okButtonProps'> {
+export interface PurgeUsersModalProps extends Omit<
+  BAIModalProps,
+  'title' | 'okText' | 'okButtonProps'
+> {
   usersFrgmt: PurgeUsersModalFragment$key;
 }
 

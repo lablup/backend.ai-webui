@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Standalone proxy utility functions for app launching.
  *
  * These functions are extracted from useBackendAIAppLauncher hook to allow

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
@@ -9,8 +13,10 @@ import _ from 'lodash';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface ImageAliasNameAndBaseVersionTagsProps
-  extends Omit<DoubleTagObjectValue, 'label'> {
+interface ImageAliasNameAndBaseVersionTagsProps extends Omit<
+  DoubleTagObjectValue,
+  'label'
+> {
   image: string | null;
 }
 const ImageAliasNameAndBaseVersionTags: React.FC<

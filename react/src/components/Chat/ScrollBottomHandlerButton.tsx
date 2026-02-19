@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Button } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
 import { ArrowDownIcon } from 'lucide-react';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useControllableValue } from 'ahooks';
 import { DatePicker } from 'antd';
 import { PickerProps } from 'antd/es/date-picker/generatePicker';
@@ -6,8 +10,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
 import React from 'react';
 
-export interface DatePickerISOProps
-  extends Omit<PickerProps<Dayjs>, 'value' | 'onChange'> {
+export interface DatePickerISOProps extends Omit<
+  PickerProps<Dayjs>,
+  'value' | 'onChange'
+> {
   value?: string | undefined | null;
   onChange?: (value: string | undefined) => void;
   localFormat?: boolean;

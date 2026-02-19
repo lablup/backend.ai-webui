@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useWebUINavigate } from '.';
 import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
@@ -56,8 +60,10 @@ type BackgroundTaskConfig<T> = {
   promise?: Promise<T> | null;
 };
 
-export interface NotificationState<T = any>
-  extends Omit<ArgsProps, 'placement' | 'key' | 'icon'> {
+export interface NotificationState<T = any> extends Omit<
+  ArgsProps,
+  'placement' | 'key' | 'icon'
+> {
   key: React.Key;
   created?: string;
   toTextKey?: string;
@@ -272,7 +278,6 @@ export const useBAINotificationEffect = () => {
         );
       }
     });
-
   }, [_notifications, upsertNotification]);
 };
 

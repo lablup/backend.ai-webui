@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 // EnvVarFormList.test.tsx
 import '../../__test__/matchMedia.mock.js';
 import { sanitizeSensitiveEnv } from './EnvVarFormList';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useHighlight } from '../../hooks/useHighlight';
 import DOMPurify from 'dompurify';
 import { HTMLAttributes, memo } from 'react';
