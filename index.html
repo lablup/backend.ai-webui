@@ -82,7 +82,7 @@
     <noscript>
       <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
     </noscript>
-    <script src="./dist/components/backend-ai-webui.js" type="module"></script>
+    <!-- Backend.AI client classes are now initialized by React global-stores.ts -->
     <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
       document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;

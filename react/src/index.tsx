@@ -53,7 +53,6 @@ const TOTPActivateModalWithToken = React.lazy(
 );
 
 const SignupModal = React.lazy(() => import('./components/SignupModal'));
-const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 customElements.define(
   'backend-ai-react-signup-modal',
@@ -82,15 +81,6 @@ customElements.define(
   reactToWebComponent((props) => (
     <DefaultProviders {...props}>
       <ResetPasswordRequired />
-    </DefaultProviders>
-  )),
-);
-
-customElements.define(
-  'backend-ai-react-login-view',
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <LoginViewLazy />
     </DefaultProviders>
   )),
 );

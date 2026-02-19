@@ -211,28 +211,15 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
-      // Configure ModuleScopePlugin to allow backend.ai-ui package
+      // Configure ModuleScopePlugin to allow imports outside react/src.
+      // Needed for: backend.ai-ui package, backend.ai-client-esm (via alias to dist/lib/)
       if (env === 'development') {
-        const backendAiUiEntryFile = path.resolve(
-          __dirname,
-          '../packages/backend.ai-ui/src/index.ts',
-        );
-
-        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.map(
-          (plugin) => {
-            if (
+        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
+          (plugin) =>
+            !(
               plugin instanceof ModuleScopePlugin ||
               plugin.constructor.name === 'ModuleScopePlugin'
-            ) {
-              // Preserve existing allowedFiles and add backend.ai-ui entry file
-              const existingAllowedFiles = Array.from(plugin.allowedFiles);
-              return new ModuleScopePlugin(paths.appSrc, [
-                ...existingAllowedFiles,
-                backendAiUiEntryFile, // Allow backend.ai-ui/src (via entry file)
-              ]);
-            }
-            return plugin;
-          },
+            ),
         );
       }
 
@@ -242,6 +229,11 @@ module.exports = {
           ...webpackConfig.resolve,
           alias: {
             ...webpackConfig.resolve.alias,
+            // Backend.AI client ESM library (used by global-stores.ts to set globalThis classes)
+            'backend.ai-client-esm': path.resolve(
+              __dirname,
+              '../dist/lib/backend.ai-client-esm.js',
+            ),
             ...whenDev(
               () => ({
                 'backend.ai-ui/dist': path.resolve(
