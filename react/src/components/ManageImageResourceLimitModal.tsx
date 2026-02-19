@@ -47,7 +47,7 @@ const ManageImageResourceLimitModal: React.FC<
 
   const image = useFragment(
     graphql`
-      fragment ManageImageResourceLimitModal_image on Image {
+      fragment ManageImageResourceLimitModal_image on ImageNode {
         resource_limits {
           key
           min
