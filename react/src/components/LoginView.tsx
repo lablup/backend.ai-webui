@@ -21,6 +21,7 @@ import {
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
+  useAutoLogout,
   loginPluginState,
 } from '../hooks/useWebUIConfig';
 import LoginFormPanel from './LoginFormPanel';
@@ -158,6 +159,57 @@ const LoginView: React.FC = () => {
     setEndpoints(storedEndpoints);
   }, []);
 
+  // Language initialization: bridge selected_language -> general.language
+  // (replaces Lit shell's connectedCallback language setup)
+  useEffect(() => {
+    const supportLanguageCodes = [
+      'en',
+      'ko',
+      'de',
+      'el',
+      'es',
+      'fi',
+      'fr',
+      'id',
+      'it',
+      'ja',
+      'mn',
+      'ms',
+      'pl',
+      'pt',
+      'pt-BR',
+      'ru',
+      'th',
+      'tr',
+      'vi',
+      'zh-CN',
+      'zh-TW',
+    ];
+    const selectedLang = (globalThis as any).backendaioptions?.get(
+      'selected_language',
+    );
+
+    // Try full locale first (e.g., 'zh-CN'), then base language (e.g., 'zh')
+    const browserLang = globalThis.navigator.language;
+    let defaultLang: string;
+    if (supportLanguageCodes.includes(browserLang)) {
+      defaultLang = browserLang;
+    } else {
+      const baseLang = browserLang.split('-')[0];
+      defaultLang = supportLanguageCodes.includes(baseLang) ? baseLang : 'en';
+    }
+
+    let lang: string;
+    if (!selectedLang || selectedLang === 'default') {
+      lang = defaultLang;
+    } else {
+      lang = supportLanguageCodes.includes(selectedLang)
+        ? selectedLang
+        : defaultLang;
+    }
+    (globalThis as any).backendaioptions.set('language', lang, 'general');
+  }, []);
+
   const notification = useCallback((text: string, detail?: string) => {
     document.dispatchEvent(
       new CustomEvent('add-bai-notification', {
@@ -196,6 +248,7 @@ const LoginView: React.FC = () => {
     (message = '', type = '') => {
       setBlockMessage(message);
       setBlockType(type);
+
       setTimeout(() => {
         if (!isBlockPanelOpen && !isConnected && !isLoginPanelOpen) {
           setIsBlockPanelOpen(true);
@@ -532,102 +585,239 @@ const LoginView: React.FC = () => {
     t,
   ]);
 
-  // Expose imperative API for the parent Lit component
+  // Auto-login orchestration: replaces the Lit shell's login flow.
+  // Runs once when config is loaded and not already connected.
+  const autoLogout = useAutoLogout();
+  const autoLoginRef = useRef(false);
   useEffect(() => {
-    const el = document.querySelector(
-      'backend-ai-react-login-view',
-    ) as HTMLElement | null;
-    if (!el) return;
+    if (!isConfigLoaded || autoLoginRef.current) return;
+    autoLoginRef.current = true;
 
-    const handle: LoginViewHandle = {
-      login: async (showError = true) => {
-        let ep = apiEndpoint;
-        if (ep === '') {
-          const stored = localStorage.getItem('backendaiwebui.api_endpoint');
-          if (stored) {
-            ep = stored.replace(/^"+|"+$/g, '');
-            setApiEndpoint(ep);
-          }
+    // If config failed to load, show an error block
+    if (!atomLoginConfig) {
+      block('Configuration is not loaded.', 'Error');
+      return;
+    }
+
+    // Skip for edu-applauncher / applauncher (they handle their own flow)
+    const currentPage = window.location.pathname
+      .replace(/^\//, '')
+      .split('/')[0];
+    if (currentPage === 'edu-applauncher' || currentPage === 'applauncher') {
+      return;
+    }
+
+    // If already connected, nothing to do
+    if (
+      typeof (globalThis as any).backendaiclient !== 'undefined' &&
+      (globalThis as any).backendaiclient !== null &&
+      (globalThis as any).backendaiclient.ready === true
+    ) {
+      return;
+    }
+
+    // Resolve the API endpoint from config or localStorage.
+    // We read from the config atom directly because React state (apiEndpoint)
+    // may not yet reflect the config-loaded value in this render cycle.
+    const resolveEndpoint = (): string => {
+      let ep = atomLoginConfig?.api_endpoint || '';
+      if (ep === '') {
+        const stored = localStorage.getItem('backendaiwebui.api_endpoint');
+        if (stored) {
+          ep = stored.replace(/^"+|"+$/g, '');
         }
-        ep = ep.trim();
+      }
+      return ep.trim();
+    };
 
-        if (connectionMode === 'SESSION') {
-          if ((globalThis as Record<string, unknown>).isElectron) {
-            await loadConfigFromWebServer(ep);
+    // Resolve connection mode from config atom directly
+    const resolvedMode = atomLoginConfig?.connection_mode || connectionMode;
+    const resolvedEndpoint = resolveEndpoint();
+
+    // Update React state so subsequent operations use the resolved values
+    if (resolvedEndpoint !== '') {
+      setApiEndpoint(resolvedEndpoint);
+    }
+
+    const doAutoGQLConnect = async (
+      client: ReturnType<typeof createBackendAIClient>['client'],
+    ) => {
+      const cfg = configRef.current;
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      (globalThis as any).backendaioptions.set(
+        'last_login',
+        currentTime,
+        'general',
+      );
+      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
+
+      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      setEndpoints(updatedEndpoints);
+
+      const event = new CustomEvent('backend-ai-connected', {
+        detail: client,
+      });
+      document.dispatchEvent(event);
+      close();
+      clearSavedLoginInfo();
+      localStorage.setItem('backendaiwebui.api_endpoint', resolvedEndpoint);
+    };
+
+    const performLogin = async (showError: boolean) => {
+      if (resolvedMode === 'SESSION') {
+        if ((globalThis as Record<string, unknown>).isElectron) {
+          await loadConfigFromWebServer(resolvedEndpoint);
+        }
+        if (resolvedEndpoint === '') {
+          open();
+          return;
+        }
+        const { client } = createBackendAIClient(
+          '',
+          '',
+          resolvedEndpoint,
+          'SESSION',
+        );
+        clientRef.current = client;
+
+        try {
+          await client.get_manager_version();
+        } catch {
+          if (showError) {
+            notification(t('error.NetworkConnectionFailed'));
           }
-          await connectUsingSession(showError);
-        } else if (connectionMode === 'API') {
-          await connectUsingAPI(showError);
+          open();
+          return;
+        }
+
+        let isLogon = false;
+        try {
+          isLogon = !!(await client.check_login());
+        } catch {
+          isLogon = false;
+        }
+
+        if (isLogon) {
+          setIsConnected(true);
+          try {
+            await doAutoGQLConnect(client);
+          } catch (err: unknown) {
+            handleGQLError(err, showError);
+          }
         } else {
           open();
         }
-      },
-      open,
-      close,
-      block,
-      check_login: async () => {
-        let ep = apiEndpoint;
-        if (ep === '') {
-          const stored = localStorage.getItem('backendaiwebui.api_endpoint');
-          if (stored) {
-            ep = stored.replace(/^"+|"+$/g, '');
-            setApiEndpoint(ep);
-          }
-        }
-        ep = ep.trim();
-
-        if (connectionMode === 'SESSION') {
-          if ((globalThis as Record<string, unknown>).isElectron) {
-            loadConfigFromWebServer(ep);
-          }
-          if (ep === '') return false;
-          const { client } = createBackendAIClient('', '', ep, 'SESSION');
-          try {
-            await client.get_manager_version();
-            const isLogon = await client.check_login();
-            return !!isLogon;
-          } catch {
-            return false;
-          }
-        }
-        return false;
-      },
-      _logoutSession: async () => {
-        if (clientRef.current) {
-          await clientRef.current.logout();
-        }
-      },
-      // Config is now loaded by React directly via useInitializeConfig.
-      // This method is kept as a no-op for backward compatibility.
-      refreshWithConfig: () => {
-        // No-op: config is consumed from Jotai atoms
-      },
-      get api_endpoint() {
-        return apiEndpoint;
-      },
+      } else if (resolvedMode === 'API') {
+        await connectUsingAPI(showError);
+      } else {
+        open();
+      }
     };
 
-    // Assign handle properties directly to the element for Lit access
-    Object.keys(handle).forEach((key) => {
-      const descriptor = Object.getOwnPropertyDescriptor(handle, key);
-      if (descriptor) {
-        Object.defineProperty(el, key, descriptor);
-      } else {
-        (el as unknown as Record<string, unknown>)[key] =
-          handle[key as keyof LoginViewHandle];
+    const checkLogin = async (): Promise<boolean> => {
+      if (resolvedMode === 'SESSION') {
+        if ((globalThis as Record<string, unknown>).isElectron) {
+          loadConfigFromWebServer(resolvedEndpoint);
+        }
+        if (resolvedEndpoint === '') return false;
+        const { client } = createBackendAIClient(
+          '',
+          '',
+          resolvedEndpoint,
+          'SESSION',
+        );
+        try {
+          await client.get_manager_version();
+          const isLogon = await client.check_login();
+          return !!isLogon;
+        } catch {
+          return false;
+        }
       }
-    });
-  }, [
-    apiEndpoint,
-    connectionMode,
-    connectUsingSession,
-    connectUsingAPI,
-    open,
-    close,
-    block,
-    notification,
-    t,
-  ]);
+      return false;
+    };
+
+    const logoutSession = async () => {
+      if (resolvedEndpoint !== '') {
+        const { client } = createBackendAIClient(
+          '',
+          '',
+          resolvedEndpoint,
+          'SESSION',
+        );
+        try {
+          await client.logout();
+        } catch {
+          // Ignore logout errors
+        }
+      }
+    };
+
+    // Dynamic import of TabCount to avoid bundling issues
+    import('../helper/TabCounter')
+      .then(({ default: TabCount }) => {
+        const tabcount = new TabCount();
+        const isPageReloaded = window.performance
+          .getEntriesByType('navigation')
+          .some(
+            (nav) => (nav as PerformanceNavigationTiming).type === 'reload',
+          );
+        tabcount.tabsCount(true);
+
+        if (
+          autoLogout === true &&
+          tabcount.tabsCounter === 1 &&
+          !isPageReloaded
+        ) {
+          checkLogin().then((result) => {
+            const currentTime = new Date().getTime() / 1000;
+            if (
+              result === true &&
+              currentTime -
+                (globalThis as any).backendaioptions.get(
+                  'last_window_close_time',
+                  currentTime,
+                ) >
+                3.0
+            ) {
+              // Logged in but window was closed > 3s ago: force logout
+              logoutSession().then(() => {
+                open();
+              });
+            } else if (result === true) {
+              // Logged in and window just reopened: auto-reconnect
+              performLogin(false);
+            } else {
+              // Not logged in: show login dialog
+              open();
+            }
+          });
+        } else {
+          // Normal auto-reconnect
+          performLogin(false);
+        }
+      })
+      .catch(() => {
+        // If TabCounter import fails, just do normal login
+        performLogin(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfigLoaded]);
+
+  // Save last_window_close_time on beforeunload for auto-logout detection
+  useEffect(() => {
+    const handler = () => {
+      (globalThis as any).backendaioptions.set(
+        'last_window_close_time',
+        new Date().getTime() / 1000,
+      );
+    };
+    globalThis.addEventListener('beforeunload', handler);
+    return () => {
+      globalThis.removeEventListener('beforeunload', handler);
+    };
+  }, []);
 
   const changeSigninMode = useCallback(() => {
     if (!loginConfig.change_signin_support) return;
@@ -725,8 +915,21 @@ const LoginView: React.FC = () => {
     loginWithOpenID(client);
   }, [apiEndpoint]);
 
+  // Wrapper creates a stacking context above LoadingCurtain (z-index 9999).
+  // Zero-sized so it doesn't intercept pointer events. Child modals use
+  // position:fixed internally so they are visible and interactive.
   return (
-    <>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 0,
+        height: 0,
+        zIndex: 10000,
+        overflow: 'visible',
+      }}
+    >
       <LoginFormPanel
         isOpen={isLoginPanelOpen}
         isLoading={isLoading}
@@ -783,13 +986,14 @@ const LoginView: React.FC = () => {
         </div>
       </BAIModal>
 
-      {/* Help Description */}
+      {/* Help Description - zIndex above login modal */}
       <Modal
         open={isHelpOpen}
         title={helpDescriptionTitle}
         onCancel={() => setIsHelpOpen(false)}
         footer={null}
         width={350}
+        zIndex={1050}
         getContainer={false}
       >
         <div
@@ -802,7 +1006,7 @@ const LoginView: React.FC = () => {
           }}
         />
       </Modal>
-    </>
+    </div>
   );
 };
 

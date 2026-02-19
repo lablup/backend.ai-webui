@@ -6,6 +6,7 @@ import {
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
+import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -592,6 +593,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
+          <Suspense>
+            <LoginView />
+          </Suspense>
           {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
           <MainLayout />
           <ErrorBoundaryWithNullFallback>
