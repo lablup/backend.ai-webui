@@ -7,6 +7,7 @@ import * as ai from '../lib/backend.ai-client-esm';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
+// backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import BackendAIMetadataStore from './backend-ai-metadata-store';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';

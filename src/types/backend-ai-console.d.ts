@@ -1,4 +1,5 @@
 import './backend-ai-indicator-pool';
+// backend-ai-login has been migrated to React (backend-ai-react-login-view)
 import './backend-ai-settings-store';
 import './lablup-notification';
 import { LitElement } from 'lit-element';
