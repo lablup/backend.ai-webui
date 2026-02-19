@@ -14,7 +14,6 @@ import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import BackendAIMetadataStore from './backend-ai-metadata-store';
-import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
@@ -234,7 +233,6 @@ export default class BackendAIWebUI extends LitElement {
     // Listen for location changes from React Router to keep _page in sync.
     document.addEventListener('locationPath:changed', () => {
       this._updatePageFromPath(window.location.pathname);
-      this._activatePluginPage();
     });
     let configPath;
     if (globalThis.isElectron) {
@@ -343,9 +341,8 @@ export default class BackendAIWebUI extends LitElement {
     document.addEventListener('move-to-from-react', (e) => {
       const path = (e as CustomEvent).detail.path;
       // React Router already handles the actual navigation.
-      // We only need to update _page and activate plugin pages.
+      // We only need to update _page for Lit-side state.
       this._updatePageFromPath(path);
-      this._activatePluginPage();
     });
     document.addEventListener('show-TOS-agreement', () => {
       this.showTOSAgreement();
@@ -472,87 +469,25 @@ export default class BackendAIWebUI extends LitElement {
     ) {
       this.fasttrackEndpoint = config.pipeline.frontendEndpoint;
     }
+    // Dispatch plugin configuration to React for loading.
+    // Plugin loading is now handled by the React PluginLoader component.
     if (typeof config.plugin !== 'undefined') {
-      // Store plugin information
       if ('login' in config.plugin) {
         this.plugins['login'] = config.plugin.login;
       }
-      if ('page' in config.plugin) {
-        this.plugins['page'] = [];
-        this.plugins['menuitem'] = [];
-        this.plugins['menuitem-user'] = [];
-        this.plugins['menuitem-admin'] = [];
-        this.plugins['menuitem-superadmin'] = [];
-        const pluginLoaderQueue: object[] = [];
-        for (const page of config.plugin.page.split(',')) {
-          const pluginUrl =
-            globalThis.isElectron && this.loginPanel.api_endpoint
-              ? `${this.loginPanel.api_endpoint}/dist/plugins/${page}.js`
-              : `../plugins/${page}.js`;
-
-          pluginLoaderQueue.push(
-            import(pluginUrl).then(() => {
-              const pageItem = document.createElement(page) as BackendAIPage;
-              pageItem.classList.add('page');
-              pageItem.setAttribute('name', page);
-              this.appPage.appendChild(pageItem);
-              this.plugins['menuitem'].push(page);
-              this.availablePages.push(page);
-              switch (pageItem.permission) {
-                case 'superadmin':
-                  this.plugins['menuitem-superadmin'].push(page);
-                  this.superAdminOnlyPages.push(page);
-                  break;
-                case 'admin':
-                  this.plugins['menuitem-admin'].push(page);
-                  this.adminOnlyPages.push(page);
-                  break;
-                default:
-                  this.plugins['menuitem-user'].push(page);
-              }
-              this.plugins['page'].push({
-                name: page,
-                url: page,
-                menuitem: pageItem.menuitem,
-                icon: pageItem.icon,
-                group: pageItem.group,
-              });
-              return Promise.resolve(true);
-            }),
-          );
-        }
-        Promise.all(pluginLoaderQueue).then(() => {
-          globalThis.backendaiPages = this.plugins['page'];
-          const event: CustomEvent = new CustomEvent(
-            'backend-ai-plugin-loaded',
-            { detail: true },
-          );
-          document.dispatchEvent(event);
-          this.requestUpdate();
-
-          // After loading plugin, activate the current page component if exists (only for initial load)
-          if (this.plugins['page'].find((item) => item.name === this._page)) {
-            const component = this.shadowRoot?.querySelector(
-              this._page,
-            ) as BackendAIPage;
-            if (component) {
-              component.active = true;
-              component.requestUpdate();
-            }
-          }
-        });
-      } else {
-        // No page plugins to load, dispatch event immediately
-        document.dispatchEvent(
-          new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
-        );
-      }
-    } else {
-      // No plugin config, dispatch event immediately
-      document.dispatchEvent(
-        new CustomEvent('backend-ai-plugin-loaded', { detail: true }),
-      );
     }
+    const pluginPages =
+      typeof config.plugin !== 'undefined' && 'page' in config.plugin
+        ? config.plugin.page
+        : '';
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-plugin-config', {
+        detail: {
+          pluginPages,
+          apiEndpoint: this.loginPanel?.api_endpoint || '',
+        },
+      }),
+    );
     this.loginPanel.refreshWithConfig(config);
     const event = new CustomEvent('backend-ai-config-loaded');
     document.dispatchEvent(event);
@@ -797,34 +732,6 @@ export default class BackendAIWebUI extends LitElement {
   }
 
   /**
-   * Activate/deactivate plugin page components based on current _page.
-   */
-  _activatePluginPage() {
-    if ('menuitem' in this.plugins) {
-      for (const item of this.plugins.menuitem) {
-        if (item !== this._page) {
-          const component = this.shadowRoot?.querySelector(
-            item,
-          ) as BackendAIPage;
-          if (component) {
-            component.active = false;
-            component.removeAttribute('active');
-          }
-        }
-      }
-      if (this.plugins['menuitem']?.includes(this._page)) {
-        const component = this.shadowRoot?.querySelector(
-          this._page,
-        ) as BackendAIPage;
-        if (component) {
-          component.active = true;
-          component.requestUpdate();
-        }
-      }
-    }
-  }
-
-  /**
    * Moves to the specified URL.
    * For Lit->React navigation, pushes to history and dispatches react-navigate.
    * For React->Lit navigation (fromReact=true), only updates internal state.
@@ -837,7 +744,6 @@ export default class BackendAIWebUI extends LitElement {
       globalThis.history.pushState({}, '', url);
     }
     this._updatePageFromPath(url);
-    this._activatePluginPage();
 
     if (!fromReact) {
       document.dispatchEvent(

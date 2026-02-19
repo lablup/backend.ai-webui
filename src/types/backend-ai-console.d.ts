@@ -100,7 +100,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   showTOSAgreement(): void;
   showPPAgreement(): void;
   _updatePageFromPath(path: string): void;
-  _activatePluginPage(): void;
   _moveTo(url: any, params?: any, fromReact?: boolean): void;
   _moveToLogPage(): void;
   _readRecentProjectGroup(): any;
