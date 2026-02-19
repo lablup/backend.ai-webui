@@ -327,26 +327,11 @@ export default class BackendAIWebUI extends LitElement {
 
   /**
    * Called when backend-ai-connected event fires (after successful login).
-   * Sets up proxy URL and hides the loading curtain.
+   * Sets up proxy URL. Loading curtain is now managed by React (LoadingCurtain component).
    */
   refreshPage(): void {
     globalThis.backendaiclient.proxyURL = this.proxy_url;
-    document.body.style.backgroundImage = 'none';
-
-    const curtain = this.shadowRoot?.getElementById('loading-curtain');
-    curtain?.classList.add('visuallyhidden');
-    curtain?.addEventListener(
-      'transitionend',
-      () => {
-        curtain?.classList.add('hidden');
-        this.is_connected = true;
-      },
-      {
-        capture: false,
-        once: true,
-        passive: false,
-      },
-    );
+    this.is_connected = true;
   }
 
   /**
@@ -465,9 +450,6 @@ export default class BackendAIWebUI extends LitElement {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css" />
       <link rel="stylesheet" href="resources/custom.css" />
-      <div id="loading-curtain" class="loading-background">
-        <div id="loading-drag-area" class="loading-background-drag-area"></div>
-      </div>
       <backend-ai-react-login-view
         id="login-panel"
       ></backend-ai-react-login-view>

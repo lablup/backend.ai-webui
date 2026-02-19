@@ -9,6 +9,7 @@ import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
+import LoadingCurtain from '../LoadingCurtain';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
@@ -132,6 +133,7 @@ function MainLayout() {
 
   return (
     <LayoutWithPageTestId>
+      <LoadingCurtain />
       <CSSTokenVariables />
       <style>
         {`
