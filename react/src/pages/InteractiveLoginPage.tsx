@@ -16,8 +16,6 @@ const InteractiveLoginPage = () => {
     <>
       <CSSTokenVariables />
       <NotificationForAnonymous />
-      {/* @ts-ignore */}
-      <backend-ai-webui id="webui-shell" />
       <Suspense>
         <Children />
       </Suspense>

@@ -29,7 +29,10 @@ const plugins = (outDir) =>  [
 
 export default [
   {
-    input: ['src/components/backend-ai-webui.ts'],
+    // The Lit shell (backend-ai-webui.ts) has been removed.
+    // backend-ai-page.ts is the base class for plugin Lit components and
+    // remains as the entry point so the rollup build pipeline stays intact.
+    input: ['src/components/backend-ai-page.ts'],
     output: {
       dir: 'build/rollup/dist/components',
       format: 'es',
