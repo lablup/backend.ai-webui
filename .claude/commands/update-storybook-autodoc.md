@@ -1,5 +1,5 @@
 ---
-model: claude-sonnet-4-5
+model: sonnet
 ---
 
 # Update Storybook with Autodoc
