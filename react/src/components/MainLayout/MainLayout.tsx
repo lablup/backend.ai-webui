@@ -12,6 +12,7 @@ import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
+import PluginLoader from '../PluginLoader';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -96,10 +97,9 @@ function MainLayout() {
     setMainContentDivRefState(contentScrollFlexRef);
   }, [contentScrollFlexRef, setMainContentDivRefState]);
 
-  // Call `useSetupWebUIPluginEffect` to setup listener for 'backend-ai-config-loaded' event
-  useSetupWebUIPluginEffect({
-    webUIRef: webUIRef,
-  });
+  // Setup listener for 'backend-ai-plugin-config' event from Lit shell.
+  // This stores the plugin config string in Jotai state for PluginLoader to consume.
+  useSetupWebUIPluginEffect();
 
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -268,6 +268,9 @@ function MainLayout() {
                     </PageAccessGuard>
                   </AutoAdminPrimaryColorProvider>
                 </BAIErrorBoundary>
+                <ErrorBoundaryWithNullFallback>
+                  <PluginLoader />
+                </ErrorBoundaryWithNullFallback>
               </Suspense>
               {/* @ts-ignore */}
               <backend-ai-webui id="webui-shell" ref={webUIRef} />
