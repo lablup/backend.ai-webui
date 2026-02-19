@@ -15,7 +15,7 @@ import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
-import './backend-ai-login';
+// backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
 import BackendAIMetadataStore from './backend-ai-metadata-store';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
@@ -870,7 +870,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         </backend-ai-edu-applauncher>
       </div>
 
-      <backend-ai-login active id="login-panel"></backend-ai-login>
+      <backend-ai-react-login-view
+        id="login-panel"
+      ></backend-ai-react-login-view>
       <backend-ai-react-splash-modal
         value="${JSON.stringify({ open: this.isOpenSplashDialog })}"
         @close="${() => {
