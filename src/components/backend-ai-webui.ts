@@ -5,12 +5,8 @@
 import { default as TabCount } from '../lib/TabCounter';
 import * as ai from '../lib/backend.ai-client-esm';
 import './backend-ai-common-utils';
-import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
 // backend-ai-login is now a React component registered as 'backend-ai-react-login-view'
-import BackendAIMetadataStore from './backend-ai-metadata-store';
-import BackendAISettingsStore from './backend-ai-settings-store';
-import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
 import DOMPurify from 'dompurify';
@@ -29,24 +25,28 @@ globalThis.BackendAIClient = ai.backend.Client;
 // @ts-ignore
 globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
+// lit-translate configuration for remaining Lit components (notification, indicator, etc.)
 registerTranslateConfig({
   loader: (lang) =>
     fetch(`/resources/i18n/${lang}.json`).then((res) => res.json()),
 });
-globalThis.backendaioptions = new BackendAISettingsStore();
-globalThis.backendaimetadata = new BackendAIMetadataStore();
-globalThis.tasker = new BackendAITasker();
-globalThis.backendaiutils = new BackendAICommonUtils();
+
+// Global store initialization (settings, metadata, tasker, utils) has been
+// moved to React. See react/src/global-stores.ts.
+// The stores are assigned to globalThis from there, so existing Lit code
+// that references globalThis.backendaioptions, globalThis.backendaimetadata,
+// globalThis.tasker, or globalThis.backendaiutils continues to work.
 
 /**
  Backend.AI Web UI
 
  `backend-ai-webui` is a minimal Lit shell that provides:
- - Global store initialization (settings, metadata, tasker, utils)
  - Notification and indicator pool (still Lit components)
  - Login view orchestration
  - Logout and Electron app-close handling
 
+ Global store initialization (settings, metadata, tasker, utils) is now
+ handled by React (see react/src/global-stores.ts).
  Config loading from config.toml is handled entirely by React
  (see react/src/hooks/useWebUIConfig.ts).
 
