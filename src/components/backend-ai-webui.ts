@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-import { navigate } from '../backend-ai-app';
 import { default as TabCount } from '../lib/TabCounter';
 import {
   IronFlex,
@@ -10,7 +9,6 @@ import {
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { store } from '../store';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
@@ -42,9 +40,6 @@ import {
 } from 'lit-translate';
 import { customElement, property, query } from 'lit/decorators.js';
 import toml from 'markty-toml';
-// PWA components
-import { connect } from 'pwa-helpers/connect-mixin';
-import { installRouter } from 'pwa-helpers/router';
 
 registerTranslateConfig({
   loader: (lang) =>
@@ -70,7 +65,7 @@ globalThis.backendaiutils = new BackendAICommonUtils();
  @element backend-ai-webui
  */
 @customElement('backend-ai-webui')
-export default class BackendAIWebUI extends connect(store)(LitElement) {
+export default class BackendAIWebUI extends LitElement {
   @property({ type: Boolean }) hasLoadedStrings = false;
   @property({ type: String }) menuTitle = 'LOGIN REQUIRED';
   @property({ type: String }) user_id = 'DISCONNECTED';
@@ -232,15 +227,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    // if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) {
-    //   // For macOS
-    //   (
-    //     this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement
-    //   ).style.visibility = 'hidden';
-    // }
-    installRouter((location) =>
-      store.dispatch(navigate(decodeURIComponent(location.pathname))),
-    );
+    // React Router is the source of truth for routing.
+    // Derive _page from the current URL path on initial load.
+    this._updatePageFromPath(window.location.pathname);
+
+    // Listen for location changes from React Router to keep _page in sync.
+    document.addEventListener('locationPath:changed', () => {
+      this._updatePageFromPath(window.location.pathname);
+      this._activatePluginPage();
+    });
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
@@ -346,9 +341,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.full_name = input;
     });
     document.addEventListener('move-to-from-react', (e) => {
-      const params = (e as CustomEvent).detail.params;
       const path = (e as CustomEvent).detail.path;
-      this._moveTo(path, params, true);
+      // React Router already handles the actual navigation.
+      // We only need to update _page and activate plugin pages.
+      this._updatePageFromPath(path);
+      this._activatePluginPage();
     });
     document.addEventListener('show-TOS-agreement', () => {
       this.showTOSAgreement();
@@ -668,7 +665,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   _loadPageElement() {
     if (this._page === 'index.html' || this._page === '') {
       this._page = 'start';
-      navigate(decodeURIComponent('/'));
+      globalThis.currentPage = this._page;
     }
   }
 
@@ -772,57 +769,88 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   /**
-   * Moves to the specified URL and updates the state of the web component.
+   * Extract page name from a URL path and update _page state.
+   * @param {string} path - The URL path to extract page from.
+   */
+  _updatePageFromPath(path: string) {
+    const decodedPath = decodeURIComponent(path);
+    let page: string;
+    if (['/', '/build', '/app', '', 'build', 'app'].includes(decodedPath)) {
+      page = 'start';
+    } else if (decodedPath.startsWith('/')) {
+      page = decodedPath.slice(1);
+    } else {
+      page = decodedPath;
+    }
+    // Handle paths with sub-routes (e.g., 'session/start' -> 'session')
+    // but keep known multi-segment pages
+    if (
+      page.includes('/') &&
+      !['service/start', 'service/update'].some((p) => page.startsWith(p))
+    ) {
+      page = page.split('/')[0];
+    }
+    this._page = page;
+    this._pageParams = {};
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
+  }
+
+  /**
+   * Activate/deactivate plugin page components based on current _page.
+   */
+  _activatePluginPage() {
+    if ('menuitem' in this.plugins) {
+      for (const item of this.plugins.menuitem) {
+        if (item !== this._page) {
+          const component = this.shadowRoot?.querySelector(
+            item,
+          ) as BackendAIPage;
+          if (component) {
+            component.active = false;
+            component.removeAttribute('active');
+          }
+        }
+      }
+      if (this.plugins['menuitem']?.includes(this._page)) {
+        const component = this.shadowRoot?.querySelector(
+          this._page,
+        ) as BackendAIPage;
+        if (component) {
+          component.active = true;
+          component.requestUpdate();
+        }
+      }
+    }
+  }
+
+  /**
+   * Moves to the specified URL.
+   * For Lit->React navigation, pushes to history and dispatches react-navigate.
+   * For React->Lit navigation (fromReact=true), only updates internal state.
    * @param {string} url - The URL to navigate to.
    * @param {object} params - Optional parameters for the URL.
    * @param {boolean} fromReact - Indicates whether the navigation is triggered from React.
    */
-  _moveTo(url, params = undefined, fromReact = false) {
-    !fromReact && globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), params ?? {}));
-    if ('menuitem' in this.plugins) {
-      for (const item of this.plugins.menuitem) {
-        if (item !== this._page) {
-          // TODO specify type for web components from variable
-          const component = this.shadowRoot?.querySelector(
-            item,
-          ) as BackendAIPage;
-          component.active = false;
-          component.removeAttribute('active');
-        }
-      }
-      if (this.plugins['menuitem']?.includes(this._page)) {
-        // TODO specify type for web components from variable
-        const component = this.shadowRoot?.querySelector(
-          this._page,
-        ) as BackendAIPage;
-        component.active = true;
-        // component.setAttribute('active', true);
-        component.requestUpdate();
-      }
+  _moveTo(url, _params = undefined, fromReact = false) {
+    if (!fromReact) {
+      globalThis.history.pushState({}, '', url);
     }
+    this._updatePageFromPath(url);
+    this._activatePluginPage();
 
-    !fromReact &&
+    if (!fromReact) {
       document.dispatchEvent(
         new CustomEvent('react-navigate', {
           detail: url,
         }),
       );
+    }
   }
 
-  /**
-   * Change the state.
-   *
-   * @param {object} state
-   */
-  stateChanged(state) {
-    this._page = state.app.page;
-    this._pageParams = state.app.params;
-    this._offline = state.app.offline;
-    // this._drawerOpened = state.app.drawerOpened;
-    globalThis.currentPage = this._page;
-    globalThis.currentPageParams = this._pageParams;
-  }
+  // stateChanged() has been removed. Page state is now derived from
+  // the URL path via _updatePageFromPath(), called when React Router
+  // dispatches 'locationPath:changed' events.
 
   _showSplash() {
     this.isOpenSplashDialog = true;

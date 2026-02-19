@@ -13,14 +13,7 @@ import 'weightless/popover';
 import 'weightless/popover-card';
 import 'weightless/progress-spinner';
 
-declare const BackendAIWebUI_base: (new (...args: any[]) => {
-  _storeUnsubscribe: import('redux').Unsubscribe;
-  connectedCallback(): void;
-  disconnectedCallback(): void;
-  stateChanged(_state: unknown): void;
-  readonly isConnected: boolean;
-}) &
-  typeof LitElement;
+declare const BackendAIWebUI_base: typeof LitElement;
 /**
  Backend.AI Web UI
 
@@ -106,7 +99,9 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   _toggleDropdown(): void;
   showTOSAgreement(): void;
   showPPAgreement(): void;
-  _moveTo(url: any): void;
+  _updatePageFromPath(path: string): void;
+  _activatePluginPage(): void;
+  _moveTo(url: any, params?: any, fromReact?: boolean): void;
   _moveToLogPage(): void;
   _readRecentProjectGroup(): any;
   _writeRecentProjectGroup(value: string): void;
@@ -115,7 +110,6 @@ export default class BackendAIWebUI extends BackendAIWebUI_base {
   addTooltips(): Promise<void>;
   _createPopover(anchor: string, title: string): void;
   protected render(): import('lit-element').TemplateResult;
-  stateChanged(state: any): void;
 }
 
 export {};

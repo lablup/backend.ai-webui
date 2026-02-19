@@ -2,13 +2,11 @@
  @license
  Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
  */
-import { navigate } from '../backend-ai-app';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
 import '@material/mwc-button';
@@ -71,11 +69,11 @@ export default class BackendAIErrorView extends BackendAIPage {
    */
   _moveTo(url = '') {
     const page = url !== '' ? url : 'start';
-    globalThis.history.pushState({}, '', '/start');
-    store.dispatch(navigate(decodeURIComponent('/' + page), {}));
+    const targetPath = '/' + page;
+    globalThis.history.pushState({}, '', targetPath);
     document.dispatchEvent(
       new CustomEvent('react-navigate', {
-        detail: url,
+        detail: targetPath,
       }),
     );
   }
