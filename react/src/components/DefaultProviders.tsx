@@ -48,7 +48,6 @@ import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { use as setLitLanguage } from 'lit-translate';
 import _ from 'lodash';
 import { GlobeIcon } from 'lucide-react';
 import React, {
@@ -205,33 +204,6 @@ const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
   );
-};
-
-/**
- * Keeps lit-translate language in sync with React when the user changes
- * language via UserSettingsPage (dispatches 'language-changed' event).
- * Previously handled by the Lit shell (backend-ai-webui.ts).
- */
-const LitLanguageSyncEffect: React.FC = () => {
-  useEffect(() => {
-    // Initialize lit-translate with the current language
-    const currentLang =
-      backendaiOptions?.get('language', 'default', 'general') || 'en';
-    setLitLanguage(currentLang);
-
-    const handleLanguageChanged = async (e: Event) => {
-      const lang = (e as CustomEvent).detail?.language;
-      if (lang) {
-        await setLitLanguage(lang);
-      }
-    };
-    document.addEventListener('language-changed', handleLanguageChanged);
-    return () => {
-      document.removeEventListener('language-changed', handleLanguageChanged);
-    };
-  }, []);
-
-  return null;
 };
 
 const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
@@ -407,7 +379,6 @@ export const DefaultProvidersForReactRoot: React.FC<
 
   return (
     <>
-      <LitLanguageSyncEffect />
       <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
