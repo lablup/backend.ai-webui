@@ -39,7 +39,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 
   const image = useFragment(
     graphql`
-      fragment ManageAppsModal_image on Image {
+      fragment ManageAppsModal_image on ImageNode {
         labels {
           key
           value
