@@ -23,6 +23,7 @@ import {
   WarningTwoTone,
 } from '@ant-design/icons';
 import {
+  App,
   Button,
   Dropdown,
   Form,
@@ -30,7 +31,6 @@ import {
   Modal,
   Spin,
   Typography,
-  message,
   theme,
   type FormInstance,
   type MenuProps,
@@ -387,6 +387,7 @@ const ResetPasswordRequiredInline: React.FC<{
   onCancel: () => void;
   onOk: () => void;
 }> = ({ open, username, currentPassword, apiEndpoint, onCancel, onOk }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [form] = Form.useForm<{ newPassword: string; confirm: string }>();
@@ -530,7 +531,9 @@ const TOTPActivateInline: React.FC<{
   onCancel: () => void;
   onOk: () => void;
 }> = ({ open, totpRegistrationToken, apiEndpoint, onCancel, onOk }) => {
+  'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const formRef = useRef<FormInstance<TOTPActivateFormData>>(null);
   const anonBaiClient = useAnonymousBackendaiClient({
     api_endpoint: apiEndpoint,
