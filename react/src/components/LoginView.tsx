@@ -19,6 +19,7 @@ import {
 import LoginFormPanel from './LoginFormPanel';
 import { Button, Form, Modal, type MenuProps } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
+import DOMPurify from 'dompurify';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -135,7 +136,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
     [isBlockPanelOpen, isConnected, isLoginPanelOpen],
   );
 
-  const saveLoginInfo = useCallback(() => {
+  const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
     localStorage.removeItem('backendaiwebui.login.secret_key');
     localStorage.removeItem('backendaiwebui.login.user_id');
@@ -162,10 +163,10 @@ const LoginView: React.FC<LoginViewProps> = () => {
       });
       document.dispatchEvent(event);
       close();
-      saveLoginInfo();
+      clearSavedLoginInfo();
       localStorage.setItem('backendaiwebui.api_endpoint', apiEndpoint);
     },
-    [endpoints, close, saveLoginInfo, apiEndpoint],
+    [endpoints, close, clearSavedLoginInfo, apiEndpoint],
   );
 
   const connectUsingSession = useCallback(
@@ -191,10 +192,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
         open();
         setIsLoading(false);
         if (showError) {
-          notification(
-            t('error.EndpointUnreachable') ||
-              'Endpoint is unreachable. Please check the connection or endpoint',
-          );
+          notification(t('error.NetworkConnectionFailed'));
         }
         return;
       }
@@ -225,7 +223,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
       const sToken = urlParams.get('sToken');
       if (sToken) {
         try {
-          document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+          document.cookie = `sToken=${sToken}; expires=Session; path=/; Secure; SameSite=Lax`;
           const updatedEndpoints = await tokenLogin(
             client,
             sToken,
@@ -257,12 +255,9 @@ const LoginView: React.FC<LoginViewProps> = () => {
         if (showError) {
           const e = err as { title?: string; message?: string };
           if (e.message) {
-            notification(e.title || 'Error', e.message);
+            notification(e.title || t('error.LoginFailed'), e.message);
           } else {
-            notification(
-              t('error.LoginInformationMismatch') ||
-                'Login information mismatch.',
-            );
+            notification(t('error.LoginInformationMismatch'));
           }
         }
       }
@@ -270,9 +265,8 @@ const LoginView: React.FC<LoginViewProps> = () => {
       open();
       setIsLoading(false);
     },
-    /* eslint-disable react-hooks/exhaustive-deps */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
-    /* eslint-enable react-hooks/exhaustive-deps */
   );
 
   const handleLoginFailReason = useCallback(
@@ -337,12 +331,10 @@ const LoginView: React.FC<LoginViewProps> = () => {
               e.message,
             );
           } else {
-            notification(e.title || 'Error', e.message);
+            notification(e.title || t('error.LoginFailed'), e.message);
           }
         } else {
-          notification(
-            'Login information mismatch. If the information is correct, logout and login again.',
-          );
+          notification(t('error.LoginInformationMismatch'));
         }
       }
       open();
@@ -365,10 +357,11 @@ const LoginView: React.FC<LoginViewProps> = () => {
         await client.get_manager_version();
         await doGQLConnect(client);
       } catch {
+        notification(t('error.NetworkConnectionFailed'));
         setIsLoading(false);
       }
     },
-    [apiEndpoint, form, doGQLConnect],
+    [apiEndpoint, form, doGQLConnect, notification, t],
   );
 
   const handleLogin = useCallback(async () => {
@@ -572,7 +565,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
             /* webpackIgnore: true */
             `../../../src/plugins/${(config.plugin as Record<string, unknown>).login}`
           ).catch(() => {
-            notification('Plugin loading failed.');
+            notification(t('error.LoginFailed'));
             open();
           });
         }
@@ -601,6 +594,7 @@ const LoginView: React.FC<LoginViewProps> = () => {
     close,
     block,
     notification,
+    t,
   ]);
 
   const changeSigninMode = useCallback(() => {
@@ -773,7 +767,9 @@ const LoginView: React.FC<LoginViewProps> = () => {
             fontSize: 14,
             margin: 10,
           }}
-          dangerouslySetInnerHTML={{ __html: helpDescription }}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(helpDescription),
+          }}
         />
       </Modal>
     </>
