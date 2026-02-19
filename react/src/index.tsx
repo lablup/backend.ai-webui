@@ -50,6 +50,7 @@ const TOTPActivateModalWithToken = React.lazy(
 );
 
 const SignupModal = React.lazy(() => import('./components/SignupModal'));
+const SplashModal = React.lazy(() => import('./components/SplashModal'));
 
 customElements.define(
   'backend-ai-react-signup-modal',
@@ -165,6 +166,32 @@ customElements.define(
     );
   }),
 );
+
+customElements.define(
+  'backend-ai-react-splash-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SplashModalInWebComponent {...props} />
+      </DefaultProviders>
+    );
+  }),
+);
+
+const SplashModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
+  const { parsedValue: { open = false } = {} } = useWebComponentInfo<{
+    open: boolean;
+  }>();
+
+  return (
+    <SplashModal
+      open={open}
+      onRequestClose={() => {
+        props.dispatchEvent('close', null);
+      }}
+    />
+  );
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,

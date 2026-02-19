@@ -20,7 +20,6 @@ import BackendAIMetadataStore from './backend-ai-metadata-store';
 import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-project-switcher';
 import BackendAISettingsStore from './backend-ai-settings-store';
-import './backend-ai-splash';
 import BackendAITasker from './backend-ai-tasker';
 import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import './lablup-notification';
@@ -201,6 +200,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({ type: Object }) keyPairInfo = Object();
   @property({ type: Boolean }) isOpenUserProfileDialog = false;
   @property({ type: Boolean }) isOpenSignoutDialog = false;
+  @property({ type: Boolean }) isOpenSplashDialog = false;
   @query('#app-page') appPage!: HTMLDivElement;
   @property({ type: Object }) _refreshPage = this.refreshPage.bind(this);
   // TODO need investigation about class method undefined issue
@@ -208,7 +208,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @query('#login-panel') loginPanel: any;
   @query('#main-toolbar') mainToolbar: any;
   @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
-  @query('backend-ai-splash') splash: any;
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
 
   constructor() {
@@ -853,7 +852,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _showSplash() {
-    this.splash.show();
+    this.isOpenSplashDialog = true;
   }
 
   protected render() {
@@ -890,7 +889,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       </div>
 
       <backend-ai-login active id="login-panel"></backend-ai-login>
-      <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
+      <backend-ai-react-splash-modal
+        value="${JSON.stringify({ open: this.isOpenSplashDialog })}"
+        @close="${() => {
+          this.isOpenSplashDialog = false;
+        }}"
+      ></backend-ai-react-splash-modal>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service
