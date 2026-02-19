@@ -169,8 +169,8 @@ export class SessionDetailPage extends BasePage {
     const appLauncherButton = sessionRow.getByLabel('view comfy');
     await appLauncherButton.click();
 
-    // Wait for app launcher modal
-    const appLauncherModal = this.page.locator('backend-ai-app-launcher');
+    // Wait for app launcher modal (React Ant Design modal)
+    const appLauncherModal = this.page.getByTestId('app-launcher-modal');
     await this.waitForVisible(appLauncherModal);
   }
 

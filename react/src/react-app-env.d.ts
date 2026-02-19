@@ -16,24 +16,6 @@ declare namespace globalThis {
   var isElectron: boolean;
   // eslint-disable-next-line no-var
   var electronInitialHref: string;
-  // eslint-disable-next-line no-var
-  var appLauncher: {
-    showLauncher?: (sessionId: {
-      'session-name'?: string;
-      'session-uuid'?: string;
-      'access-key'?: string;
-      mode?: SessionMode;
-      'app-services'?: Array<string>;
-      runtime?: string;
-      filename?: string;
-    }) => void;
-    forceUseV1Proxy?: {
-      checked: boolean;
-    };
-    forceUseV2Proxy?: {
-      checked: boolean;
-    };
-  };
 }
 
 type DeepPartial<T> = {

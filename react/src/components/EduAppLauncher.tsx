@@ -4,6 +4,7 @@
  * Handles token-based authentication, session management, and app launching
  * for education-specific use cases.
  */
+import { openWsproxy, connectToProxyWorker } from '../helper/appLauncherProxy';
 import { useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -135,36 +136,20 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Open a service app for an existing session using the app launcher proxy.
-   * Delegates to the Lit-based backend-ai-app-launcher web component for
-   * proxy operations (_open_wsproxy, _connectToProxyWorker).
+   * Open a service app for an existing session using standalone proxy utilities.
    */
   const _openServiceApp = async (sessionId: string, requestedApp: string) => {
     const notification = g.lablupNotification;
     const indicator = await g.lablupIndicator.start();
 
     try {
-      const appLauncherEl = document.querySelector(
-        'backend-ai-app-launcher',
-      ) as any;
-      if (!appLauncherEl) {
-        notification.text = t('session.appLauncher.ConnectUrlIsNotValid');
-        notification.show(true);
-        indicator.end();
-        return;
-      }
-
-      const resp = await appLauncherEl._open_wsproxy(
+      const resp = await openWsproxy(
+        g.backendaiclient,
         sessionId,
         requestedApp,
-        null,
-        null,
       );
       if (resp?.url) {
-        const appRespUrl = await appLauncherEl._connectToProxyWorker(
-          resp.url,
-          '',
-        );
+        const appRespUrl = await connectToProxyWorker(resp.url, '');
         const appConnectUrl = String(appRespUrl?.appConnectUrl) || resp.url;
         if (!appConnectUrl) {
           indicator.end();

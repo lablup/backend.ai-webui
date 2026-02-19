@@ -11,7 +11,6 @@ import {
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { store } from '../store';
-import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import './backend-ai-indicator-pool';
@@ -230,7 +229,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.lablupNotification =
       this.shadowRoot?.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
-    globalThis.appLauncher = this.shadowRoot?.querySelector('#app-launcher');
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
@@ -886,7 +884,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           this.isOpenTOSDialog = false;
         }}"
       ></backend-ai-react-tos-modal>
-      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
       <backend-ai-react-signout-modal
         value="${this.isOpenSignoutDialog ? 'true' : 'false'}"
         @close="${() => {

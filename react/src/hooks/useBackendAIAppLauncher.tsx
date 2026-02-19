@@ -24,7 +24,6 @@ export const useBackendAIAppLauncher = (
   const baiClient = useSuspendedBackendaiClient();
   const { logger } = useBAILogger();
 
-  // TODO: migrate backend-ai-app-launcher features to this hook using fragment data.
   const session = useFragment(
     graphql`
       fragment useBackendAIAppLauncherFragment on ComputeSessionNode {
@@ -63,7 +62,6 @@ export const useBackendAIAppLauncher = (
   };
 
   const getWSProxyVersion = async (): Promise<'v1' | 'v2'> => {
-    // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
     // @ts-ignore
     if (globalThis?.backendaiwebui?.debug === true) {
       if (debugOptions?.forceUseV1Proxy) return 'v1';
