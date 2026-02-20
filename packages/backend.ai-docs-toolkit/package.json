@@ -1,0 +1,39 @@
+{
+  "name": "backend.ai-docs-toolkit",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "docs-toolkit": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
+    "handlebars": "^4.7.8",
+    "marked": "^12.0.2",
+    "pdf-lib": "^1.17.1",
+    "yaml": "^2.7.0"
+  },
+  "peerDependencies": {
+    "playwright": "^1.40.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "~5.5.4",
+    "playwright": "^1.58.0"
+  }
+}

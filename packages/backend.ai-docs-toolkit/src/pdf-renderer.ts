@@ -7,13 +7,14 @@ import { PDFDocument, PDFName, PDFArray, PDFDict, PDFRef, rgb, StandardFonts } f
 import fontkit from '@pdf-lib/fontkit';
 import type { PdfTheme } from './theme.js';
 import { defaultTheme } from './theme.js';
+import type { ResolvedDocConfig } from './config.js';
 
 /**
- * CJK font path candidates (in priority order).
+ * Default CJK font path candidates (in priority order).
  * Uses the first TTF/OTF found on the system.
  * TTC (collection) files are excluded as pdf-lib/fontkit does not support them directly.
  */
-const CJK_FONT_CANDIDATES = [
+const DEFAULT_CJK_FONT_CANDIDATES = [
   // macOS – user-installed fonts
   path.join(os.homedir(), 'Library/Fonts/NanumBarunGothic.ttf'),
   path.join(os.homedir(), 'Library/Fonts/NanumSquareRegular.ttf'),
@@ -26,10 +27,18 @@ const CJK_FONT_CANDIDATES = [
 
 type EmbeddedFont = Awaited<ReturnType<PDFDocument['embedFont']>>;
 
-async function loadCjkFont(pdfDoc: PDFDocument): Promise<EmbeddedFont | null> {
+async function loadCjkFont(
+  pdfDoc: PDFDocument,
+  extraPaths?: string[],
+): Promise<EmbeddedFont | null> {
   pdfDoc.registerFontkit(fontkit);
 
-  for (const candidate of CJK_FONT_CANDIDATES) {
+  const candidates = [
+    ...(extraPaths ?? []),
+    ...DEFAULT_CJK_FONT_CANDIDATES,
+  ];
+
+  for (const candidate of candidates) {
     if (!fs.existsSync(candidate)) continue;
     if (candidate.endsWith('.ttc')) continue;
     try {
@@ -44,13 +53,14 @@ async function loadCjkFont(pdfDoc: PDFDocument): Promise<EmbeddedFont | null> {
   return null;
 }
 
-interface RenderOptions {
+export interface RenderOptions {
   html: string;
   outputPath: string;
   title: string;
   version: string;
   lang: string;
   theme?: PdfTheme;
+  config?: ResolvedDocConfig;
 }
 
 interface ChapterInfo {
@@ -368,6 +378,7 @@ function stampHeaderFooter(
 
 export async function renderPdf(options: RenderOptions): Promise<void> {
   const theme = options.theme ?? defaultTheme;
+  const config = options.config;
 
   fs.mkdirSync(path.dirname(options.outputPath), { recursive: true });
 
@@ -476,15 +487,17 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   console.log('  Post-processing (header/footer + metadata)...');
   const pdfDoc = await PDFDocument.load(pdfBuffer);
 
+  // PDF metadata from config or sensible defaults
+  const pdfMeta = config?.pdfMetadata;
   pdfDoc.setTitle(`${options.title} ${options.version} (${options.lang})`);
-  pdfDoc.setAuthor('Lablup Inc.');
-  pdfDoc.setSubject('Backend.AI WebUI User Guide');
-  pdfDoc.setCreator('Backend.AI Docs PDF Generator');
+  pdfDoc.setAuthor(pdfMeta?.author ?? 'docs-toolkit');
+  pdfDoc.setSubject(pdfMeta?.subject ?? options.title);
+  pdfDoc.setCreator(pdfMeta?.creator ?? 'docs-toolkit PDF Generator');
   pdfDoc.setProducer('Playwright + pdf-lib');
   pdfDoc.setCreationDate(new Date());
 
   const latinFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const cjkFont = await loadCjkFont(pdfDoc);
+  const cjkFont = await loadCjkFont(pdfDoc, config?.cjkFontPaths);
 
   // First chapter start page (skip chapter labels on preceding pages like TOC).
   // Computed from sectionList (H1/H2 heading id attributes) — works around the issue

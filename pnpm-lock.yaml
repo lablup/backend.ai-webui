@@ -220,6 +220,34 @@ importers:
         specifier: ^8.19.0
         version: 8.19.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
+  packages/backend.ai-docs-toolkit:
+    dependencies:
+      '@pdf-lib/fontkit':
+        specifier: ^1.1.1
+        version: 1.1.1
+      handlebars:
+        specifier: ^4.7.8
+        version: 4.7.8
+      marked:
+        specifier: ^12.0.2
+        version: 12.0.2
+      pdf-lib:
+        specifier: ^1.17.1
+        version: 1.17.1
+      yaml:
+        specifier: ^2.7.0
+        version: 2.8.1
+    devDependencies:
+      playwright:
+        specifier: ^1.58.0
+        version: 1.58.0
+      tsx:
+        specifier: ^4.19.0
+        version: 4.21.0
+      typescript:
+        specifier: ~5.5.4
+        version: 5.5.4
+
   packages/backend.ai-ui:
     dependencies:
       '@ant-design/icons':
@@ -436,27 +464,12 @@ importers:
 
   packages/backend.ai-webui-docs:
     devDependencies:
-      '@pdf-lib/fontkit':
-        specifier: ^1.1.1
-        version: 1.1.1
-      marked:
-        specifier: ^12.0.2
-        version: 12.0.2
-      pdf-lib:
-        specifier: ^1.17.1
-        version: 1.17.1
+      backend.ai-docs-toolkit:
+        specifier: workspace:*
+        version: link:../backend.ai-docs-toolkit
       playwright:
         specifier: ^1.58.0
         version: 1.58.0
-      tsx:
-        specifier: ^4.19.0
-        version: 4.21.0
-      typescript:
-        specifier: ~5.5.4
-        version: 5.5.4
-      yaml:
-        specifier: ^2.7.0
-        version: 2.8.1
 
   packages/eslint-config-bai:
     dependencies:

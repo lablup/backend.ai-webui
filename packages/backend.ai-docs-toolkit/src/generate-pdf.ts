@@ -1,18 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { parse as parseYaml } from 'yaml';
 import { processMarkdownFiles } from './markdown-processor.js';
 import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
 import { getDocVersion } from './version.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DOCS_ROOT = path.resolve(__dirname, '..');
-const SRC_DIR = path.join(DOCS_ROOT, 'src');
-const CONFIG_PATH = path.join(SRC_DIR, 'book.config.yaml');
+import type { ResolvedDocConfig } from './config.js';
 
 interface BookConfig {
   title: string;
@@ -21,7 +15,12 @@ interface BookConfig {
   navigation: Record<string, Array<{ title: string; path: string }>>;
 }
 
-function parseArgs(argv: string[]): { lang: string; theme: string } {
+export interface GeneratePdfOptions {
+  lang: string;
+  theme: string;
+}
+
+function parseArgs(argv: string[]): GeneratePdfOptions {
   let lang = 'all';
   let theme = 'default';
   for (let i = 0; i < argv.length; i++) {
@@ -37,19 +36,42 @@ function parseArgs(argv: string[]): { lang: string; theme: string } {
   return { lang, theme };
 }
 
-async function main(): Promise<void> {
-  const args = parseArgs(process.argv.slice(2));
-  const config: BookConfig = parseYaml(
-    fs.readFileSync(CONFIG_PATH, 'utf-8'),
+/**
+ * Generate a PDF filename from the template.
+ * Supports {title}, {version}, {lang} placeholders.
+ */
+function formatPdfFilename(
+  template: string,
+  vars: { title: string; version: string; lang: string },
+): string {
+  return template
+    .replace(/\{title\}/g, vars.title.replace(/\s+/g, '_'))
+    .replace(/\{version\}/g, vars.version)
+    .replace(/\{lang\}/g, vars.lang);
+}
+
+export async function generatePdf(
+  config: ResolvedDocConfig,
+  options?: Partial<GeneratePdfOptions>,
+): Promise<void> {
+  const args = options ?? parseArgs(process.argv.slice(2));
+
+  const configPath = path.join(config.srcDir, 'book.config.yaml');
+  const bookConfig: BookConfig = parseYaml(
+    fs.readFileSync(configPath, 'utf-8'),
   );
 
-  const theme = loadTheme(args.theme);
-  const { display: version, filename: versionForFilename } = getDocVersion();
-  const title = config.title;
-  const availableLanguages = config.languages;
+  const theme = loadTheme(args.theme ?? 'default');
+  const { display: version, filename: versionForFilename } = getDocVersion(
+    config.versionSource,
+    config.version,
+  );
+  const title = bookConfig.title;
+  const availableLanguages = bookConfig.languages;
 
+  const langArg = args.lang ?? 'all';
   const languages =
-    args.lang === 'all' ? availableLanguages : [args.lang];
+    langArg === 'all' ? availableLanguages : [langArg];
 
   // Validate requested language
   for (const lang of languages) {
@@ -61,7 +83,8 @@ async function main(): Promise<void> {
     }
   }
 
-  console.log(`Backend.AI WebUI Docs PDF Generator`);
+  const productName = config.productName;
+  console.log(`${productName} PDF Generator`);
   console.log(`Title: ${title}`);
   console.log(`Version: ${version}`);
   console.log(`Theme: ${theme.name}`);
@@ -72,7 +95,7 @@ async function main(): Promise<void> {
     const startTime = Date.now();
     console.log(`[${lang}] Generating PDF...`);
 
-    const navigation = config.navigation[lang];
+    const navigation = bookConfig.navigation[lang];
     if (!navigation) {
       console.warn(`[${lang}] No navigation found, skipping`);
       continue;
@@ -83,8 +106,9 @@ async function main(): Promise<void> {
     const chapters = await processMarkdownFiles(
       lang,
       navigation,
-      SRC_DIR,
+      config.srcDir,
       version,
+      config,
     );
 
     // Build single unified HTML document
@@ -92,16 +116,17 @@ async function main(): Promise<void> {
     const html = buildFullDocument(
       chapters,
       { title, version, lang },
-      DOCS_ROOT,
+      config,
       theme,
     );
 
     // Render PDF
-    const outputPath = path.join(
-      DOCS_ROOT,
-      'dist',
-      `Backend.AI_WebUI_User_Guide_${versionForFilename}_${lang}.pdf`,
-    );
+    const pdfFilename = formatPdfFilename(config.pdfFilenameTemplate, {
+      title,
+      version: versionForFilename,
+      lang,
+    });
+    const outputPath = path.join(config.distDir, pdfFilename);
 
     console.log(`[${lang}] Rendering PDF...`);
     await renderPdf({
@@ -111,6 +136,7 @@ async function main(): Promise<void> {
       version,
       lang,
       theme,
+      config,
     });
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -123,8 +149,3 @@ async function main(): Promise<void> {
 
   console.log('PDF generation complete!');
 }
-
-main().catch((err) => {
-  console.error('PDF generation failed:', err);
-  process.exit(1);
-});

@@ -16,17 +16,24 @@ export const ADMONITION_TITLES: Record<AdmonitionType, string> = {
   danger: 'DANGER',
 };
 
-/** Localized admonition titles per language */
-const ADMONITION_TITLES_I18N: Record<string, Record<AdmonitionType, string>> = {
+/** Default localized admonition titles per language */
+const DEFAULT_ADMONITION_TITLES_I18N: Record<string, Record<string, string>> = {
   en: { note: 'NOTE', tip: 'TIP', info: 'INFO', warning: 'WARNING', caution: 'CAUTION', danger: 'DANGER' },
   ko: { note: '참고', tip: '팁', info: '정보', warning: '주의', caution: '주의', danger: '위험' },
   ja: { note: '注記', tip: 'ヒント', info: '情報', warning: '警告', caution: '注意', danger: '危険' },
   th: { note: 'หมายเหตุ', tip: 'เคล็ดลับ', info: 'ข้อมูล', warning: 'คำเตือน', caution: 'ข้อควรระวัง', danger: 'อันตราย' },
 };
 
-export function getAdmonitionTitle(type: AdmonitionType, lang?: string): string {
-  if (lang && ADMONITION_TITLES_I18N[lang]) {
-    return ADMONITION_TITLES_I18N[lang][type];
+export function getAdmonitionTitle(
+  type: AdmonitionType,
+  lang?: string,
+  customTitles?: Record<string, Record<string, string>>,
+): string {
+  const titles = customTitles
+    ? { ...DEFAULT_ADMONITION_TITLES_I18N, ...customTitles }
+    : DEFAULT_ADMONITION_TITLES_I18N;
+  if (lang && titles[lang]) {
+    return titles[lang][type] ?? ADMONITION_TITLES[type];
   }
   return ADMONITION_TITLES[type];
 }
@@ -43,13 +50,12 @@ export const ADMONITION_ICONS: Record<AdmonitionType, string> = {
 /**
  * Parse admonition blocks.
  * Converts :::type[title] blocks to HTML admonition divs.
- *
- * Supports:
- * - :::note, :::tip, :::info, :::warning, :::caution, :::danger
- * - Custom titles: :::note[Custom Title]
- * - Nested markdown content
  */
-export function processAdmonitions(markdown: string, lang?: string): string {
+export function processAdmonitions(
+  markdown: string,
+  lang?: string,
+  customAdmonitionTitles?: Record<string, Record<string, string>>,
+): string {
   const lines = markdown.split('\n');
   const result: string[] = [];
   let i = 0;
@@ -62,7 +68,7 @@ export function processAdmonitions(markdown: string, lang?: string): string {
 
       if (ADMONITION_TYPES.includes(type as AdmonitionType)) {
         const admonitionType = type as AdmonitionType;
-        const title = customTitle || getAdmonitionTitle(admonitionType, lang);
+        const title = customTitle || getAdmonitionTitle(admonitionType, lang, customAdmonitionTitles);
         const icon = ADMONITION_ICONS[admonitionType];
 
         // Collect content until closing :::
@@ -104,18 +110,8 @@ export function processAdmonitions(markdown: string, lang?: string): string {
   return result.join('\n');
 }
 
-/**
- * Process code block metadata (title and line highlighting).
- * Converts ```lang title="filename" {1,3-4} to wrapped HTML.
- *
- * Since Marked processes code fences before we can intercept,
- * we pre-process the markdown to add metadata as data attributes
- * that the custom renderer can use.
- */
+/** Process code block metadata (title and line highlighting). */
 export function processCodeBlockMeta(markdown: string): string {
-  // Use [ \t]+ (horizontal whitespace only) instead of \s+ to avoid
-  // matching across newlines, which would eat the first line of code
-  // in blocks like ```shell\nfirst line...
   return markdown.replace(
     /^```(\w+)[ \t]+(.+)$/gm,
     (_match, lang, meta) => {
@@ -133,9 +129,7 @@ export function processCodeBlockMeta(markdown: string): string {
   );
 }
 
-/**
- * Parse highlight line specification like "1,3-5,7" into a Set of line numbers.
- */
+/** Parse highlight line specification like "1,3-5,7" into a Set of line numbers. */
 export function parseHighlightLines(spec: string): Set<number> {
   const lines = new Set<number>();
   if (!spec) return lines;
@@ -155,26 +149,23 @@ export function parseHighlightLines(spec: string): Set<number> {
   return lines;
 }
 
-/** Localized figure labels per language */
-const FIGURE_LABELS: Record<string, string> = {
+/** Default localized figure labels per language */
+const DEFAULT_FIGURE_LABELS: Record<string, string> = {
   en: 'Figure',
   ko: '그림',
   ja: '図',
   th: 'รูปที่',
 };
 
-export function getFigureLabel(lang?: string): string {
-  if (lang && FIGURE_LABELS[lang]) {
-    return FIGURE_LABELS[lang];
+export function getFigureLabel(lang?: string, customLabels?: Record<string, string>): string {
+  const labels = customLabels ? { ...DEFAULT_FIGURE_LABELS, ...customLabels } : DEFAULT_FIGURE_LABELS;
+  if (lang && labels[lang]) {
+    return labels[lang];
   }
-  return FIGURE_LABELS['en'];
+  return labels['en'];
 }
 
-/**
- * Parse image size hint from alt text.
- * Supports: `![alt =40%](path)`, `![alt =300px](path)`, `![alt =auto](path)`
- * Returns the alt text (without size hint) and the parsed size hint.
- */
+/** Parse image size hint from alt text. */
 export function parseImageSizeHint(alt: string): {
   cleanAlt: string;
   sizeHint: string | null;
@@ -194,11 +185,7 @@ export function escapeHtml(str: string): string {
     .replace(/"/g, '&quot;');
 }
 
-/**
- * Strip all HTML tags from a string, including nested/interleaved tags.
- * Loops until no more angle-bracket patterns remain to prevent
- * bypasses like `<scr<script>ipt>`.
- */
+/** Strip all HTML tags from a string, including nested/interleaved tags. */
 export function stripHtmlTags(str: string): string {
   let result = str;
   let prev: string;

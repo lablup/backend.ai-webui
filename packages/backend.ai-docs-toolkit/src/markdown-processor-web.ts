@@ -24,6 +24,7 @@ import {
   getFigureLabel,
   parseImageSizeHint,
 } from './markdown-extensions.js';
+import type { ResolvedDocConfig } from './config.js';
 
 export type { Chapter, Heading };
 
@@ -86,11 +87,11 @@ function processCrossReferencesWeb(html: string, chapterSlug: string): string {
 function buildWebRenderer(
   chapterSlug: string,
   headings: Heading[],
-  options?: { chapterIndex?: number; lang?: string },
+  options?: { chapterIndex?: number; lang?: string; figureLabels?: Record<string, string> },
 ) {
   let imgCounter = 0;
   const chapterIndex = options?.chapterIndex ?? 0;
-  const figureLabel = getFigureLabel(options?.lang);
+  const figureLabel = getFigureLabel(options?.lang, options?.figureLabels);
 
   return {
     heading(text: string, level: number, _raw: string): string {
@@ -164,14 +165,19 @@ export async function processMarkdownFilesForWeb(
   navigation: NavEntry[],
   srcDir: string,
   version: string,
+  config?: ResolvedDocConfig,
 ): Promise<Chapter[]> {
   const chapters: Chapter[] = [];
   let chapterIndex = 0;
 
+  const pathFallbacks = config?.pathFallbacks ?? {};
+  const admonitionTitles = config?.admonitionTitles;
+  const figureLabels = config?.figureLabels;
+
   for (const nav of navigation) {
     let mdPath: string;
     try {
-      mdPath = resolveMarkdownPath(lang, nav.path, srcDir);
+      mdPath = resolveMarkdownPath(lang, nav.path, srcDir, pathFallbacks);
     } catch {
       console.warn(`Skipping missing file: ${nav.path} (${lang})`);
       continue;
@@ -189,12 +195,12 @@ export async function processMarkdownFilesForWeb(
     markdown = convertIndentedNotes(markdown);
 
     // Extended syntax pre-processing
-    markdown = processAdmonitions(markdown, lang);
+    markdown = processAdmonitions(markdown, lang, admonitionTitles);
     markdown = processCodeBlockMeta(markdown);
 
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang }) });
+    marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang, figureLabels }) });
 
     let htmlContent = await marked.parse(markdown);
     htmlContent = processCrossReferencesWeb(htmlContent, chapterSlug);

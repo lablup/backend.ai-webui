@@ -5,6 +5,7 @@
 
 import type { Chapter } from './markdown-processor.js';
 import { generateWebStyles } from './styles-web.js';
+import type { ResolvedDocConfig } from './config.js';
 
 export interface WebDocMetadata {
   title: string;
@@ -12,15 +13,18 @@ export interface WebDocMetadata {
   lang: string;
 }
 
-const LANGUAGE_LABELS: Record<string, string> = {
-  en: 'English',
-  ko: '한국어',
-  ja: '日本語',
-  th: 'ภาษาไทย',
-};
-
-function buildSidebarHtml(chapters: Chapter[], metadata: WebDocMetadata): string {
-  const langLabel = LANGUAGE_LABELS[metadata.lang] || metadata.lang;
+function buildSidebarHtml(
+  chapters: Chapter[],
+  metadata: WebDocMetadata,
+  config?: ResolvedDocConfig,
+): string {
+  const languageLabels = config?.languageLabels ?? {
+    en: 'English',
+    ko: '한국어',
+    ja: '日本語',
+    th: 'ภาษาไทย',
+  };
+  const langLabel = languageLabels[metadata.lang] || metadata.lang;
 
   const navItems = chapters
     .map((chapter, index) => {
@@ -103,18 +107,26 @@ function buildLiveReloadScript(): string {
 export function buildWebDocument(
   chapters: Chapter[],
   metadata: WebDocMetadata,
+  config?: ResolvedDocConfig,
 ): string {
   const styles = generateWebStyles(metadata.lang);
-  const sidebar = buildSidebarHtml(chapters, metadata);
+  const sidebar = buildSidebarHtml(chapters, metadata, config);
   const content = buildContentHtml(chapters);
   const liveReload = buildLiveReloadScript();
+
+  const languageLabels = config?.languageLabels ?? {
+    en: 'English',
+    ko: '한국어',
+    ja: '日本語',
+    th: 'ภาษาไทย',
+  };
 
   return `<!DOCTYPE html>
 <html lang="${metadata.lang}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${metadata.title} - ${LANGUAGE_LABELS[metadata.lang] || metadata.lang}</title>
+  <title>${metadata.title} - ${languageLabels[metadata.lang] || metadata.lang}</title>
   <style>${styles}</style>
 </head>
 <body>

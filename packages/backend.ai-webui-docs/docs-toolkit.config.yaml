@@ -1,0 +1,83 @@
+# docs-toolkit configuration for Backend.AI WebUI User Guide
+# Engine provided by backend.ai-docs-toolkit
+
+title: "Backend.AI WebUI User Guide"
+company: "Lablup Inc."
+
+# Logo (SVG file relative to project root)
+logoPath: "../../manifest/backend.ai-brand-simple.svg"
+
+# Source and output directories
+srcDir: "src"
+distDir: "dist"
+
+# Version source (relative to project root)
+versionSource: "../../package.json"
+
+# Languages
+languageLabels:
+  en: "English"
+  ko: "한국어"
+  ja: "日本語"
+  th: "ภาษาไทย"
+
+# PDF settings
+pdfFilenameTemplate: "Backend.AI_WebUI_User_Guide_{version}_{lang}.pdf"
+pdfMetadata:
+  author: "Lablup Inc."
+  subject: "Backend.AI WebUI User Guide"
+  creator: "Backend.AI Docs PDF Generator"
+
+# Product name for log messages
+productName: "Backend.AI WebUI Docs"
+
+# Agent configuration (for 'docs-toolkit agents' command)
+agents:
+  projectTitle: "Backend.AI WebUI"
+  docsRoot: "."
+  languages:
+    - code: en
+      label: English
+    - code: ja
+      label: Japanese
+    - code: ko
+      label: Korean
+    - code: th
+      label: Thai
+  i18nPaths:
+    en: "../../resources/i18n/en.json"
+    ko: "../../resources/i18n/ko.json"
+    ja: "../../resources/i18n/ja.json"
+    th: "../../resources/i18n/th.json"
+  terminologyFile: "TERMINOLOGY.md"
+  styleGuideFile: "DOCUMENTATION-STYLE-GUIDE.md"
+  translationGuideFile: "TRANSLATION-GUIDE.md"
+  screenshotGuideFile: "SCREENSHOT-GUIDELINES.md"
+  app:
+    baseUrl: "http://localhost:9081"
+    routes:
+      - path: "/summary"
+        name: "Summary"
+      - path: "/job"
+        name: "Sessions"
+      - path: "/data"
+        name: "Data (Storage Folders)"
+      - path: "/serving"
+        name: "Model Serving"
+      - path: "/statistics"
+        name: "Statistics"
+      - path: "/usersettings"
+        name: "User Settings"
+      - path: "/credential"
+        name: "Credentials (Admin)"
+      - path: "/environment"
+        name: "Environments (Admin)"
+      - path: "/agent"
+        name: "Resources (Admin)"
+    loginInstructions: |
+      1. Navigate to the app URL
+      2. Enter credentials from E2E_USER and E2E_PASSWORD environment variables
+      3. Click the Sign In button
+    envVars:
+      - E2E_USER
+      - E2E_PASSWORD

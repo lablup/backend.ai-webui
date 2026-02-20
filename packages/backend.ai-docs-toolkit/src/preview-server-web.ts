@@ -7,18 +7,12 @@
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { parse as parseYaml } from 'yaml';
 import { processMarkdownFilesForWeb, processCatalogMarkdownForWeb } from './markdown-processor-web.js';
 import { buildWebDocument } from './html-builder-web.js';
 import { getDocVersion } from './version.js';
+import type { ResolvedDocConfig } from './config.js';
 // getCatalogMarkdown is dynamically imported in catalog mode for hot-reload support
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DOCS_ROOT = path.resolve(__dirname, '..');
-const SRC_DIR = path.join(DOCS_ROOT, 'src');
-const CONFIG_PATH = path.join(SRC_DIR, 'book.config.yaml');
 
 interface BookConfig {
   title: string;
@@ -27,7 +21,13 @@ interface BookConfig {
   navigation: Record<string, Array<{ title: string; path: string }>>;
 }
 
-function parseArgs(argv: string[]): { lang: string; port: number; mode: 'document' | 'catalog' } {
+export interface HtmlPreviewOptions {
+  lang: string;
+  port: number;
+  mode: 'document' | 'catalog';
+}
+
+function parseArgs(argv: string[]): HtmlPreviewOptions {
   let lang = 'en';
   let port = 3457;
   let mode: 'document' | 'catalog' = 'document';
@@ -39,18 +39,23 @@ function parseArgs(argv: string[]): { lang: string; port: number; mode: 'documen
   return { lang, port, mode };
 }
 
-async function main(): Promise<void> {
-  const args = parseArgs(process.argv.slice(2));
-  const config: BookConfig = parseYaml(fs.readFileSync(CONFIG_PATH, 'utf-8'));
-  const { display: version } = getDocVersion();
+export async function startHtmlPreviewServer(
+  config: ResolvedDocConfig,
+  options?: Partial<HtmlPreviewOptions>,
+): Promise<void> {
+  const args = { ...parseArgs(process.argv.slice(2)), ...options };
+
+  const configPath = path.join(config.srcDir, 'book.config.yaml');
+  const bookConfig: BookConfig = parseYaml(fs.readFileSync(configPath, 'utf-8'));
+  const { display: version } = getDocVersion(config.versionSource, config.version);
   const isCatalog = args.mode === 'catalog';
-  const title = isCatalog ? 'Style Catalog' : config.title;
+  const title = isCatalog ? 'Style Catalog' : bookConfig.title;
 
   if (!isCatalog) {
-    const navigation = config.navigation[args.lang];
+    const navigation = bookConfig.navigation[args.lang];
     if (!navigation) {
       console.error(`No navigation found for language: ${args.lang}`);
-      console.error(`Available: ${Object.keys(config.navigation).join(', ')}`);
+      console.error(`Available: ${Object.keys(bookConfig.navigation).join(', ')}`);
       process.exit(1);
     }
   }
@@ -68,11 +73,11 @@ async function main(): Promise<void> {
       const { getCatalogMarkdown } = await import(`./sample-content-markdown.js${cacheBuster}`);
       chapters = await processCatalogMarkdownForWeb(getCatalogMarkdown());
     } else {
-      const navigation = config.navigation[args.lang];
-      chapters = await processMarkdownFilesForWeb(args.lang, navigation, SRC_DIR, version);
+      const navigation = bookConfig.navigation[args.lang];
+      chapters = await processMarkdownFilesForWeb(args.lang, navigation, config.srcDir, version, config);
     }
 
-    const html = buildWebDocument(chapters, { title, version, lang: args.lang });
+    const html = buildWebDocument(chapters, { title, version, lang: args.lang }, config);
     const elapsed = Date.now() - start;
     console.log(`  HTML generated in ${elapsed}ms (${chapters.length} ${isCatalog ? 'sections' : 'chapters'})`);
     return html;
@@ -90,7 +95,7 @@ async function main(): Promise<void> {
     if (rebuildTimer) clearTimeout(rebuildTimer);
     rebuildTimer = setTimeout(async () => {
       rebuildTimer = null;
-      console.log(`  File changed: ${path.relative(DOCS_ROOT, changedFile)}`);
+      console.log(`  File changed: ${path.relative(config.projectRoot, changedFile)}`);
       try {
         cachedHtml = await generateHtml();
         currentEtag = Date.now().toString(36);
@@ -100,19 +105,24 @@ async function main(): Promise<void> {
     }, debounceMs);
   }
 
-  // Watch source files (catalog mode watches the catalog source, document mode watches markdown)
-  // Watch directory (not file) to survive inode changes from editors on macOS
+  // Watch source files
   if (isCatalog) {
-    const scriptsDir = __dirname;
-    const targetFile = 'sample-content-markdown.ts';
-    fs.watch(scriptsDir, (_event, filename) => {
-      const name = filename?.toString();
-      if (name === targetFile) {
-        scheduleRebuild(path.join(scriptsDir, targetFile));
-      }
-    });
+    const sampleContentPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      'sample-content-markdown.js',
+    );
+    const watchDir = path.dirname(sampleContentPath);
+    const targetFile = path.basename(sampleContentPath);
+    if (fs.existsSync(watchDir)) {
+      fs.watch(watchDir, (_event, filename) => {
+        const name = filename?.toString();
+        if (name === targetFile) {
+          scheduleRebuild(path.join(watchDir, targetFile));
+        }
+      });
+    }
   } else {
-    const srcLangDir = path.join(SRC_DIR, args.lang);
+    const srcLangDir = path.join(config.srcDir, args.lang);
     if (fs.existsSync(srcLangDir)) {
       fs.watch(srcLangDir, { recursive: true }, (_event, filename) => {
         const name = filename?.toString();
@@ -124,7 +134,7 @@ async function main(): Promise<void> {
   }
 
   // Watch config
-  fs.watch(CONFIG_PATH, () => { scheduleRebuild(CONFIG_PATH); });
+  fs.watch(configPath, () => { scheduleRebuild(configPath); });
 
   // MIME types for static files
   const MIME_TYPES: Record<string, string> = {
@@ -156,7 +166,7 @@ async function main(): Promise<void> {
 
     // Serve static image files from src/{lang}/
     const safePath = path.normalize(url.pathname).replace(/^\/+/, '');
-    const baseDir = path.resolve(SRC_DIR, args.lang);
+    const baseDir = path.resolve(config.srcDir, args.lang);
     const resolved = path.resolve(baseDir, safePath);
     if (
       safePath &&
@@ -178,15 +188,16 @@ async function main(): Promise<void> {
   });
 
   server.listen(args.port, () => {
+    const productName = config.productName;
     console.log('');
-    console.log(`  Backend.AI Docs - HTML Preview [${isCatalog ? 'CATALOG' : 'DOCUMENT'}]`);
+    console.log(`  ${productName} - HTML Preview [${isCatalog ? 'CATALOG' : 'DOCUMENT'}]`);
     if (!isCatalog) {
       console.log(`  Language:  ${args.lang}`);
     }
     console.log(`  URL:       http://localhost:${args.port}`);
     console.log('');
     if (isCatalog) {
-      console.log('  Editing scripts/sample-content-markdown.ts will auto-reload the page.');
+      console.log('  Editing sample-content-markdown will auto-reload the page.');
     } else {
       console.log(`  Editing src/${args.lang}/**/*.md will auto-reload the page.`);
     }
@@ -194,8 +205,3 @@ async function main(): Promise<void> {
     console.log('');
   });
 }
-
-main().catch((err) => {
-  console.error('HTML preview server failed:', err);
-  process.exit(1);
-});

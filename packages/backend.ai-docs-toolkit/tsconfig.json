@@ -6,9 +6,9 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "./dist",
-    "rootDir": "./scripts",
-    "declaration": false,
+    "rootDir": "./src",
+    "declaration": true,
     "skipLibCheck": true
   },
-  "include": ["scripts/**/*.ts"]
+  "include": ["src/**/*.ts"]
 }
