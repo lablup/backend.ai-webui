@@ -6,15 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run server:d` - Start development server with watch mode
-- `pnpm run build:d` - Build with watch mode for development
+- `pnpm run server:d` - Start React dev server via Craco (port configured by `scripts/dev-config.js`)
+- `pnpm run build:d` - Concurrent Relay watch + React dev server
 - `pnpm run wsproxy` - Start websocket proxy (required for local development)
 
 ### Build and Production
 
-- `pnpm run build` - Full production build (cleans, copies resources, runs rollup)
-- `pnpm run build:react-only` - Build only React components
-- `pnpm run build:plugin` - Build plugins separately (Lit plugin system removed; kept as no-op)
+- `pnpm run build` - Full production build (cleans `build/rollup/`, copies resources, generates service worker via Rollup, builds React via Craco, builds workspace packages)
+- `pnpm run build:react-only` - Build only React app via Craco
+- `pnpm run relay` - Compile GraphQL queries with Relay compiler
 
 ### Quality Control
 
@@ -25,9 +25,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Testing
 
-- `pnpm run test` - Run Jest tests
-- `pnpm run test` (in /react directory) - Run React-specific tests
-- E2E tests require full Backend.AI cluster running first
+- `pnpm run test` - Run Jest tests (root: `scripts/`, `src/`)
+- `pnpm run test` (in `/react` directory) - Run React-specific Jest tests
+- E2E tests (`/e2e/`) use Playwright; require full Backend.AI cluster running first
 
 ### Electron App
 
@@ -39,38 +39,68 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Architecture
 
-This is a **React web application** using React + Ant Design + Relay (GraphQL).
+This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
 The legacy Lit-Element web components have been removed.
 
 ### Key Technologies
 
-- **Build System**: Vite (React), Rollup (service worker only), pnpm for package management
-- **Styling**: Ant Design (React)
-- **State Management**: Jotai, Relay (GraphQL)
-- **GraphQL**: Relay compiler for React components
+- **React Build**: Webpack via @craco/craco (Create React App with customizations)
+- **Component Library Build**: Vite (`packages/backend.ai-ui/`)
+- **Service Worker**: Rollup + rollup-plugin-workbox (generates `sw.js` only; see [#5454](https://github.com/lablup/backend.ai-webui/issues/5454) for planned migration)
+- **Package Manager**: pnpm with workspace monorepo
+- **Styling**: Ant Design + antd-style
+- **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
+- **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
+- **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
 - **Testing**: Jest for unit tests, Playwright for E2E tests
-- **Electron**: Desktop app wrapper with websocket proxy
+- **Linting**: ESLint 9 (flat config) + Prettier, pre-commit hooks via Husky + lint-staged
+- **Electron**: Desktop app wrapper with built-in websocket proxy
+- **Storybook**: @storybook/react-vite for `backend.ai-ui` component library
 
 ### Project Structure
 
 ```
-src/                    # Legacy utilities and websocket proxy
-  lib/                  # Shared libraries and utilities
-  wsproxy/              # WebSocket proxy for desktop app
-react/                  # React application (main UI)
-  src/                  # React application code
-  components/           # React UI components
-resources/              # Static assets, i18n files, themes
+react/                  # Main React application (Webpack/Craco)
+  src/                  # Application source code
+    components/         # React UI components
+    pages/              # Page-level components
+    hooks/              # Custom React hooks
+    helper/             # Utility functions
+    __generated__/      # Relay compiler output
+  craco.config.cjs      # Webpack customization via Craco
 packages/               # Monorepo workspace packages
-e2e/                    # End-to-end tests
+  backend.ai-ui/        # Shared React component library (Vite build)
+  backend.ai-webui-docs/# User manual documentation
+  eslint-config-bai/    # Shared ESLint configuration
+src/                    # Legacy utilities and websocket proxy
+  lib/                  # Backend.AI client library (ESM/Node.js)
+  wsproxy/              # WebSocket proxy for desktop app
+  backend-ai-app.ts     # Minimal Rollup entry (service worker generation only)
+resources/              # Static assets, i18n files (22 languages), themes
+data/                   # GraphQL schema files (schema.graphql, client-directives.graphql)
+e2e/                    # Playwright E2E tests
+electron-app/           # Electron desktop app source
+configs/                # Environment-specific config files
+scripts/                # Build and dev utility scripts
 ```
+
+### Build Pipeline
+
+Production build (`pnpm run build`) runs these steps sequentially:
+1. Clean and create `build/rollup/` output directory
+2. Copy `index.html`, `resources/`, `manifest/`, config files
+3. Rollup generates service worker (`build/rollup/sw.js`) via workbox plugin
+4. `pnpm run -r --stream build` builds all workspace packages:
+   - React app (Craco/Webpack) → `react/build/` → copied to `build/rollup/`
+   - backend.ai-ui (Vite) → `packages/backend.ai-ui/dist/`
 
 ### Development Workflow
 
-1. **Dual Server Setup**: Run both `pnpm run server:d` and `pnpm run wsproxy` for full development
-2. **Build Process**: Multi-stage build copying resources, running TypeScript, and bundling
-3. **Testing**: Both Jest unit tests and Playwright E2E tests
-4. **Linting**: ESLint + Prettier with pre-commit hooks via husky
+1. **Dual Server Setup**: Run both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
+2. **Alternative**: `pnpm run build:d` runs Relay watch + React dev server concurrently
+3. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
+4. **Testing**: Jest unit tests + Playwright E2E tests
+5. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
 # Additional Workflow Description
 
@@ -110,35 +140,44 @@ e2e/                    # End-to-end tests
 
 ### Key Libraries
 
-- **antd** - Ant Design for React components
-- **relay-runtime** - GraphQL client for React
-- **electron** - Desktop app framework
+- **react** 19, **react-dom** 19 - UI framework
+- **antd** 6 - Ant Design component library
+- **react-relay** 20, **relay-runtime** 20 - GraphQL client
+- **jotai** - Atomic state management (replaces legacy Recoil usage)
+- **i18next**, **react-i18next** - Internationalization
+- **@craco/craco** - CRA webpack customization
+- **electron** 35 - Desktop app framework
 
 ### GraphQL/Relay Setup
 
-- Schema files in `/data/`
-- Relay compiler configured for React components
+- Schema files in `/data/` (`schema.graphql`, `client-directives.graphql`)
+- Relay compiler configured for two projects: `react` and `backend.ai-ui`
+- Config: `/relay.config.js` (extends `/relay-base.config.js`)
+- Generated types output to `react/src/__generated__/` and `packages/backend.ai-ui/src/__generated__/`
 - Run `pnpm run relay` to compile GraphQL queries
+- Run `pnpm run relay:watch` for watch mode during development
 
 ### Internationalization
 
-- JSON files in `resources/i18n/`
-- Use `_t`, `_tr`, `_text` functions for translations
+- JSON translation files in `resources/i18n/` (22 languages supported)
+- React components use `useTranslation()` hook from `react-i18next`
+- Backend.AI UI package has own locale files in `packages/backend.ai-ui/src/locale/`
 - Run `make i18n` to extract translation strings
 
 ### Build Output
 
-- Production build: `build/rollup/`
-- Electron app: `build/electron-app/`
-- Static assets copied to build directories
+- Production build: `build/rollup/` (contains React build + service worker + static assets)
+- Electron app: `build/electron-app/` (created by `make dep`)
+- Component library: `packages/backend.ai-ui/dist/`
 
 ## Important Notes
 
 - Always run websocket proxy (`pnpm run wsproxy`) for local development
-- Pre-commit hooks run linting and formatting automatically
+- Pre-commit hooks (Husky + lint-staged) run linting and formatting automatically
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
-- React components use Relay; ensure GraphQL schema is up to date
+- React components use Relay; ensure GraphQL schema in `/data/` is up to date
+- Backend.AI client library (`src/lib/backend.ai-client-esm.ts`) is aliased in Craco config
 
 ## GitHub Copilot Custom Instructions
 
@@ -153,7 +192,7 @@ Custom instructions are located in the `.github/` directory:
   - General code review principles
   - Security best practices (OWASP Top 10)
   - TypeScript conventions
-  - Architecture awareness (Lit-Element + React hybrid)
+  - Architecture awareness (React application)
   - Git workflow and commit message format
   - Testing and performance guidelines
 
@@ -165,7 +204,7 @@ Custom instructions are located in the `.github/` directory:
   - Backend.AI UI component library (`BAI*` components preferred over Ant Design)
   - Custom utilities (`useFetchKey`, `BAIUnmountAfterClose`)
   - Error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`)
-  - Recoil for global state management
+  - Jotai for global state management
   - Ant Design usage patterns (prefer `App.useApp()` for modals)
 
 - **`.github/instructions/i18n.instructions.md`** - Internationalization guidelines
