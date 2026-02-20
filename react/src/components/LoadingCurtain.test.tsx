@@ -51,19 +51,6 @@ describe('LoadingCurtain', () => {
     expect(curtain?.className).toContain('visuallyHidden');
   });
 
-  it('removes background image from body when backend-ai-connected fires', () => {
-    document.body.style.backgroundImage =
-      'url(/resources/images/loading-background-large.jpg)';
-
-    render(<LoadingCurtain />);
-
-    act(() => {
-      document.dispatchEvent(new CustomEvent('backend-ai-connected'));
-    });
-
-    expect(document.body.style.backgroundImage).toBe('none');
-  });
-
   it('does not apply visually hidden styles before backend-ai-connected event', () => {
     render(<LoadingCurtain />);
 

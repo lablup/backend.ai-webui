@@ -49,8 +49,6 @@ const LoadingCurtain: React.FC = () => {
 
   useEffect(() => {
     const handleConnected = () => {
-      // Remove background image from body (previously done in Lit shell refreshPage())
-      document.body.style.backgroundImage = 'none';
       // Start fade-out transition
       setIsVisuallyHidden(true);
     };
