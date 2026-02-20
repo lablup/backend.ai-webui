@@ -10,7 +10,6 @@ import { TerminateSessionModalRefetchQuery } from '../../__generated__/Terminate
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
 import { Card, Checkbox, type ModalProps, Typography } from 'antd';
@@ -193,6 +192,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         name
         scaling_group @required(action: NONE)
         access_key
+        project_id @required(action: THROW)
         kernel_nodes {
           edges {
             node {
@@ -211,15 +211,13 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
 
   const baiClient = useSuspendedBackendaiClient();
 
-  const currentProject = useCurrentProjectValue();
-
   const { pendingCount, trackPromise } = usePromiseTracker();
 
-  const terminiateSession = (session: SessionForTerminateModal) => {
+  const terminateSession = (session: SessionForTerminateModal) => {
     return terminateApp(
       session,
       baiClient._config.accessKey,
-      currentProject.id,
+      session.project_id,
       baiClient,
     )
       .catch((e) => {
@@ -257,7 +255,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
         const promises = _.map(
           filterOutEmpty(_.castArray(sessions)),
           (session) => {
-            return terminiateSession(session)
+            return terminateSession(session)
               .catch((err) => {
                 upsertNotification({
                   message: painKiller.relieve(err?.title),
@@ -272,9 +270,9 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                   graphql`
                     query TerminateSessionModalRefetchQuery(
                       $id: GlobalIDField!
-                      $project_id: UUID!
+                      $scope_id: ScopeField
                     ) {
-                      compute_session_node(id: $id, project_id: $project_id) {
+                      compute_session_node(id: $id, scope_id: $scope_id) {
                         id
                         status
                       }
@@ -282,7 +280,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                   `,
                   {
                     id: session.id,
-                    project_id: currentProject.id,
+                    scope_id: `project:${session.project_id}`,
                   },
                 ).toPromise();
               });

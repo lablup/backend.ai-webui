@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
-import { SessionDetailContentLegacyQuery } from '../__generated__/SessionDetailContentLegacyQuery.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
@@ -51,7 +50,6 @@ import {
   INITIAL_FETCH_KEY,
   BAIButton,
 } from 'backend.ai-ui';
-// import { graphql } from 'react-relay';
 import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,16 +59,14 @@ const SessionDetailContent: React.FC<{
   id: string;
   sessionFrgmt?: SessionDetailContentFragment$key | null;
   fetchKey?: string;
-  /**
-   * @deprecated This property is unnecessary since sessionFrgmt contains the project id field.
-   * Kept for backward compatibility with versions <= v24.12.0.
-   */
-  deprecatedProjectId?: string | null;
-}> = ({ id, fetchKey, sessionFrgmt, deprecatedProjectId }) => {
+}> = ({ id, fetchKey, sessionFrgmt }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for SessionDetailContent');
+  }
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -85,31 +81,16 @@ const SessionDetailContent: React.FC<{
   const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
     useToggle(false);
 
-  // TODO: remove and refactor this waterfall request after v24.12.0
-  // get the project id of the session for <= v24.12.0.
-  const { legacy_session } = useLazyLoadQuery<SessionDetailContentLegacyQuery>(
-    graphql`
-      query SessionDetailContentLegacyQuery($uuid: UUID!) {
-        legacy_session: compute_session(id: $uuid) {
-          group_id
-        }
-      }
-    `,
-    {
-      uuid: id,
-    },
-    {
-      fetchPolicy: deprecatedProjectId ? 'store-only' : 'store-or-network',
-    },
-  );
-
   // TODO: Remove useLazyLoadQuery and use useRefetchableFragment instead of useFragment to fetch session data when deprecatedProjectId is removed.
   const { internalLoadedSession } = useLazyLoadQuery<SessionDetailContentQuery>(
     graphql`
-      query SessionDetailContentQuery($id: GlobalIDField!, $project_id: UUID!) {
+      query SessionDetailContentQuery(
+        $id: GlobalIDField!
+        $scope_id: ScopeField
+      ) {
         internalLoadedSession: compute_session_node(
           id: $id
-          project_id: $project_id
+          scope_id: $scope_id
         ) {
           ...SessionDetailContentFragment
         }
@@ -117,9 +98,7 @@ const SessionDetailContent: React.FC<{
     `,
     {
       id: toGlobalId('ComputeSessionNode', id),
-      // uuid: id,
-      project_id:
-        legacy_session?.group_id || deprecatedProjectId || currentProject.id,
+      scope_id: `project:${currentProject.id}`,
     },
     {
       fetchPolicy:
@@ -206,8 +185,7 @@ const SessionDetailContent: React.FC<{
       .filter(Boolean),
   );
 
-  const resolvedProjectIdOfSession =
-    session?.project_id || legacy_session?.group_id;
+  const resolvedProjectIdOfSession = session?.project_id;
 
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
