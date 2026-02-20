@@ -21,7 +21,7 @@ https://github.com/lablup/backend.ai-webui/releases 에서도 앱을 다운로�
 먼저 연산 세션을 하나 생성한 후 Control의 앱 아이콘(첫 번째 버튼)을 클릭하고 SSH / SFTP 아이콘을 클릭합니다. 그러면 해당 컨테이너 내부에서 SSH/SFTP 접속을 할 수 있도록 해주는 데몬(daemon)이 실행되고, 로컬 proxy를 통해 Web-UI 앱과 컨테이너 내부의 데몬이 연결됩니다.
 
 
-:::info
+:::note
 이 아이콘을 클릭하기 전에는 해당 세션에 SSH/SFTP 접속을 할 수 없습니다. Web-UI 앱을 껐다가 다시 켜게 되면 로컬 proxy와 Web-UI 앱 사이의 연결이 초기화되므로 SSH/SFTP 아이콘을 다시 한 번 클릭해주어야 합니다.
 :::
 
@@ -44,15 +44,15 @@ f310e8dbce83:~$
 SFTP로 접속하는 방법도 거의 동일합니다. SFTP 클라이언트를 실행한 후 공개 키 기반 접속 방식을 설정하고, SSH 개인 키로 `id_container`를 지정합니다. 각 FTP 클라이언트마다 설정 방법이 다를 수 있으므로, 자세한 내용은 해당 FTP 클라이언트의 매뉴얼을 참고하세요.
 
 
-:::info
+:::note
 SSH/SFTP 접속 포트 번호는 세션이 생성될 때마다 무작위로 할당됩니다. 특정 SSH/SFTP 포트 번호를 사용하려면, 사용자 설정 메뉴의 "Preferred SSH Port" 필드에 원하는 포트 번호를 입력할 수 있습니다. 연산 세션 내의 다른 서비스와의 충돌을 방지하기 위해 10000-65000 사이의 포트 번호를 지정하는 것이 좋습니다. 단, 두 개 이상의 연산 세션에서 동시에 SSH/SFTP 접속을 하는 경우, 두 번째 SSH/SFTP 접속은 지정된 포트를 사용할 수 없으므로(첫 번째 SSH/SFTP 접속이 이미 해당 포트를 사용 중이므로), 무작위 포트 번호가 할당됩니다.
 :::
 
-:::info
+:::note
 `id_container` 대신 자체 SSH 키페어를 사용하려면, `.ssh`라는 이름의 사용자 타입 폴더를 생성합니다. 해당 폴더에 `authorized_keys` 파일을 생성하고 SSH 공개 키의 내용을 추가하면, 연산 세션 생성 후 `id_container`를 다운로드하지 않고도 자체 SSH 개인 키로 SSH/SFTP 접속이 가능합니다.
 :::
 
-:::info
+:::note
 다음과 같은 경고 메시지가 표시되면, `id_container`의 퍼미션을 600으로 변경한 후 다시 시도하세요. (`chmod 600 <id_container 경로>`)
 
 ![](../images/bad_permissions.png)

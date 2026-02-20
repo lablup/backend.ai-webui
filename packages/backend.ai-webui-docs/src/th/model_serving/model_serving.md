@@ -154,33 +154,33 @@ Wait up to max_wait_time (15s)
 │
 ┌──────────┴──────────┐
 ▼                     ▼
-Response             Timeout/Error
+Response              Timeout/Error
 │                     │
 ▼                     │
-Status ==                │
-expected?                │
+Status ==             │
+expected?             │
 │                     │
-┌┴┐                    │
-▼ ▼                    │
-Y N                    │
-│ │                    │
-│ └─────────┬──────────┘
-│           ▼
-│      Consecutive
-│      failures +1
-│           │
-▼           ▼
-HEALTHY     Failures > max_retries?
-(reset              │
-failures)     ┌─────┴─────┐
-▼           ▼
-Yes          No
-│           │
-▼           ▼
-UNHEALTHY      Keep current
-(removed       status
-from traffic
-internally)
+┌──┴──┐               │
+▼     ▼               │
+Y     N               │
+│     │               │
+│     └───────┬───────┘
+│             ▼
+│        Consecutive
+│        failures +1
+│             │
+▼             ▼
+HEALTHY       Failures > max_retries?
+(reset                │
+failures)       ┌─────┴─────┐
+                ▼           ▼
+               Yes          No
+                │           │
+                ▼           ▼
+            UNHEALTHY    Keep current
+            (removed     status
+            from traffic
+            internally)
 ```
 
    สถานะสุขภาพภายใน (ใช้สำหรับการเส้นทางการรับส่งข้อมูล) อาจไม่ถูก
