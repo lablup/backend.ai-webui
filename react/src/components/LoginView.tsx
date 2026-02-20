@@ -64,7 +64,10 @@ const LoginView: React.FC = () => {
   );
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
-  const [apiEndpoint, setApiEndpoint] = useState('');
+  const [apiEndpoint, setApiEndpoint] = useState(() => {
+    const stored = localStorage.getItem('backendaiwebui.api_endpoint');
+    return stored ? stored.replace(/^"+|"+$/g, '') : '';
+  });
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -79,7 +82,9 @@ const LoginView: React.FC = () => {
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [endpoints, setEndpoints] = useState<string[]>([]);
+  const [endpoints, setEndpoints] = useState<string[]>(() => {
+    return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
+  });
   const [showEndpointInput, setShowEndpointInput] = useState(true);
   const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
 
@@ -143,13 +148,15 @@ const LoginView: React.FC = () => {
     configRef.current = loginConfig;
   }, [loginConfig]);
 
-  // Initialize endpoints from options
+  // Sync apiEndpoint state changes to the form field.
+  // Ant Design's initialValues only applies on first render, so subsequent
+  // state updates (from config loading, localStorage restoration, etc.)
+  // must be explicitly synced to the form.
   useEffect(() => {
-    const storedEndpoints =
-      (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
-
-    setEndpoints(storedEndpoints);
-  }, []);
+    if (apiEndpoint) {
+      form.setFieldsValue({ api_endpoint: apiEndpoint });
+    }
+  }, [apiEndpoint, form]);
 
   // Language initialization: bridge selected_language -> general.language
   // (replaces Lit shell's connectedCallback language setup)

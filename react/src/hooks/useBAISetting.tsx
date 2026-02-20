@@ -149,9 +149,13 @@ document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
 document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
-    localStorage.removeItem(
-      'backendaiwebui.settings.' + detail.namespace + '.' + detail.name,
-    );
-    // jotaiStore.set(SettingAtomFamily(detail.namespace + '.' + detail.name), null);
+    const key = detail.namespace + '.' + detail.name;
+    // localStorage removal is now handled directly in BackendAISettingsStore.delete().
+    // Trigger jotai reactivity so React components re-render.
+    const prev = jotaiStore.get(settingAtom);
+    jotaiStore.set(settingAtom, {
+      ...prev,
+      ['backendaiwebui.settings.' + key]: null,
+    });
   }
 });
