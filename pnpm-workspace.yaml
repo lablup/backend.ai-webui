@@ -4,9 +4,6 @@ packages:
   - packages/eslint-config-bai
   - packages/backend.ai-webui-docs
 
-ignoredBuiltDependencies:
-  - "@vaadin/vaadin-usage-statistics"
-
 onlyBuiltDependencies:
   - bufferutil
   - core-js
