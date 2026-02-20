@@ -21,7 +21,7 @@ jobs:
       pull-requests: read
       repository-projects: read
       statuses: read
-    runs-on: [macOS, ARM64]
+    runs-on: macos-latest
     environment: app-packaging
     steps:
       - name: Check out Git repository
