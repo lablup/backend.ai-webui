@@ -19,11 +19,14 @@ import {
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
 import {
+  CloseOutlined,
   CloudOutlined,
+  DownOutlined,
   InfoCircleOutlined,
   LockOutlined,
   MailOutlined,
   KeyOutlined,
+  RightOutlined,
   WarningTwoTone,
 } from '@ant-design/icons';
 import {
@@ -33,14 +36,15 @@ import {
   Form,
   Input,
   Modal,
-  Spin,
+  Segmented,
   Typography,
   theme,
   type FormInstance,
   type MenuProps,
 } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
-import React, { useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
@@ -64,9 +68,8 @@ interface LoginFormPanelProps {
   onEndpointMenuClick: MenuProps['onClick'];
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
-  onChangeSigninMode: () => void;
+  onConnectionModeChange: (mode: ConnectionMode) => void;
   onShowSignupDialog: (token?: string) => void;
-  onShowEndpointDescription: () => void;
   onSAMLLogin: () => void;
   onOpenIDLogin: () => void;
   onSetApiEndpoint: (ep: string) => void;
@@ -95,9 +98,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onEndpointMenuClick,
   onKeyDown,
   onLogin,
-  onChangeSigninMode,
+  onConnectionModeChange,
   onShowSignupDialog,
-  onShowEndpointDescription,
   onSAMLLogin,
   onOpenIDLogin,
   onSetApiEndpoint,
@@ -111,6 +113,24 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const [isEndpointExpanded, setIsEndpointExpanded] = useState(
+    () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
+  );
+  const [helpPanel, setHelpPanel] = useState<{
+    title: string;
+    content: string;
+  } | null>(null);
+
+  // Derive effective help panel visibility: hidden when modal is closed
+  const effectiveHelpPanel = isOpen ? helpPanel : null;
+
+  const hasBottomLinks =
+    loginConfig.signup_support || loginConfig.allowAnonymousChangePassword;
+
+  const modalWidth = 400;
+  const helpPanelWidth = 280;
+  const helpPanelGap = 12;
+
   return (
     <>
       <BAIModal
@@ -119,227 +139,285 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         maskClosable={false}
         keyboard={false}
         footer={null}
-        width={400}
+        width={modalWidth}
         getContainer={false}
+        title={
+          <div style={{ textAlign: 'center' }}>
+            <img
+              src="manifest/backend.ai-text.svg"
+              alt="backend.ai"
+              style={{ height: 35 }}
+            />
+          </div>
+        }
         styles={{
-          body: { padding: 0 },
+          header: { borderBottom: 'none', paddingBottom: 0 },
+          body: { padding: token.paddingLG, paddingTop: token.paddingSM },
         }}
         destroyOnHidden
       >
-        {/* Title */}
-        <div style={{ padding: '15px 0 15px 5px' }}>
-          <img
-            src="manifest/backend.ai-text.svg"
-            alt="backend.ai"
-            style={{ height: 35 }}
-          />
-        </div>
+        {/* Mode switching: Segmented control */}
+        {loginConfig.change_signin_support && (
+          <div style={{ marginBottom: token.marginMD }}>
+            <Segmented
+              value={connectionMode}
+              options={[
+                { label: t('login.SessionMode'), value: 'SESSION' },
+                { label: t('login.APIMode'), value: 'API' },
+              ]}
+              onChange={(value) =>
+                onConnectionModeChange(value as ConnectionMode)
+              }
+              block
+            />
+          </div>
+        )}
 
-        {/* Mode header */}
-        <BAIFlex
-          justify="between"
-          align="center"
-          style={{
-            margin: '0 25px',
-            fontWeight: 700,
-            minHeight: 40,
-            paddingBottom: 10,
-          }}
+        <Form
+          form={form}
+          layout="vertical"
+          onKeyDown={onKeyDown}
+          initialValues={{ api_endpoint: apiEndpoint }}
         >
-          <h3 style={{ flex: 1, margin: 0, wordBreak: 'break-word' }}>
-            {connectionMode === 'SESSION'
-              ? t('login.LoginWithE-mailOrUsername')
-              : t('login.LoginWithIAM')}
-          </h3>
-          {loginConfig.change_signin_support && (
-            <BAIFlex
-              direction="column"
-              align="end"
-              style={{ flex: 1, textAlign: 'right' }}
-            >
-              <div style={{ fontSize: 12, margin: '5px 0' }}>
-                {t('login.LoginAnotherWay')}
-              </div>
-              <Button size="small" onClick={onChangeSigninMode}>
-                {connectionMode === 'SESSION'
-                  ? t('login.ClickToUseIAM')
-                  : t('login.ClickToUseID')}
-              </Button>
-            </BAIFlex>
+          {/* SESSION login fields */}
+          {connectionMode === 'SESSION' && (
+            <>
+              <Form.Item name="user_id" style={{ marginBottom: 8 }}>
+                <Input
+                  prefix={<MailOutlined />}
+                  placeholder={t('login.E-mailOrUsername')}
+                  maxLength={64}
+                  autoComplete="username"
+                  disabled={isLoading}
+                />
+              </Form.Item>
+              <Form.Item name="password" style={{ marginBottom: 8 }}>
+                <Input.Password
+                  prefix={<KeyOutlined />}
+                  placeholder={t('login.Password')}
+                  autoComplete="current-password"
+                  disabled={isLoading}
+                />
+              </Form.Item>
+              {otpRequired && (
+                <Form.Item name="otp" style={{ marginBottom: 8 }}>
+                  <Input
+                    prefix={<LockOutlined />}
+                    placeholder={t('totp.OTP')}
+                    disabled={isLoading}
+                    autoFocus
+                  />
+                </Form.Item>
+              )}
+            </>
           )}
-        </BAIFlex>
 
-        {/* Form area */}
-        <div style={{ position: 'relative', padding: '0 15px' }}>
-          {isLoading && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '20%',
-                left: '40%',
-                zIndex: 2,
-              }}
-            >
-              <Spin />
+          {/* API login fields */}
+          {connectionMode === 'API' && (
+            <>
+              <Form.Item name="api_key" style={{ marginBottom: 8 }}>
+                <Input
+                  prefix={<LockOutlined />}
+                  placeholder={t('login.APIKey')}
+                  maxLength={20}
+                  disabled={isLoading}
+                />
+              </Form.Item>
+              <Form.Item name="secret_key" style={{ marginBottom: 8 }}>
+                <Input.Password
+                  prefix={<KeyOutlined />}
+                  placeholder={t('login.SecretKey')}
+                  maxLength={40}
+                  disabled={isLoading}
+                />
+              </Form.Item>
+            </>
+          )}
+
+          {/* Login button */}
+          <Form.Item style={{ marginBottom: 8 }}>
+            <Button type="primary" block onClick={onLogin} loading={isLoading}>
+              {t('login.Login')}
+            </Button>
+          </Form.Item>
+
+          {/* SSO buttons */}
+          {loginConfig.singleSignOnVendors.includes('saml') && (
+            <Form.Item style={{ marginBottom: 8 }}>
+              <Button block onClick={onSAMLLogin}>
+                {t('login.singleSignOn.LoginWithSAML')}
+              </Button>
+            </Form.Item>
+          )}
+          {loginConfig.singleSignOnVendors.includes('openid') && (
+            <Form.Item style={{ marginBottom: 8 }}>
+              <Button block onClick={onOpenIDLogin}>
+                {t('login.singleSignOn.LoginWithRealm', {
+                  realmName: loginConfig.ssoRealmName || 'OpenID',
+                })}
+              </Button>
+            </Form.Item>
+          )}
+
+          {/* Collapsible endpoint section */}
+          {showEndpointInput && (
+            <div style={{ marginTop: token.marginSM }}>
+              <Typography.Link
+                onClick={() => setIsEndpointExpanded((prev) => !prev)}
+                style={{ fontSize: 13, userSelect: 'none' }}
+              >
+                {isEndpointExpanded ? (
+                  <DownOutlined style={{ fontSize: 10, marginRight: 4 }} />
+                ) : (
+                  <RightOutlined style={{ fontSize: 10, marginRight: 4 }} />
+                )}
+                {t('login.AdvancedSettings')}
+              </Typography.Link>
+              {isEndpointExpanded && (
+                <BAIFlex
+                  gap="xs"
+                  align="center"
+                  style={{ marginTop: token.marginXS }}
+                >
+                  <Dropdown
+                    menu={{
+                      items: endpointMenuItems,
+                      onClick: onEndpointMenuClick,
+                    }}
+                    trigger={['click']}
+                  >
+                    <Button
+                      icon={<CloudOutlined />}
+                      type="text"
+                      style={{ color: token.colorInfo }}
+                    />
+                  </Dropdown>
+                  <Form.Item
+                    name="api_endpoint"
+                    style={{ flex: 1, marginBottom: 0 }}
+                    rules={[
+                      {
+                        pattern: /^https?:\/\/(.*)/,
+                        message: t('login.EndpointStartWith'),
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder={t('login.Endpoint')}
+                      maxLength={2048}
+                      disabled={isEndpointDisabled || isLoading}
+                      onChange={(e) => onSetApiEndpoint(e.target.value)}
+                    />
+                  </Form.Item>
+                  <Button
+                    icon={<InfoCircleOutlined />}
+                    type="text"
+                    onClick={() =>
+                      setHelpPanel({
+                        title: t('login.EndpointInfo'),
+                        content: t('login.DescEndpoint'),
+                      })
+                    }
+                  />
+                </BAIFlex>
+              )}
             </div>
           )}
 
-          <Form
-            form={form}
-            layout="vertical"
-            onKeyDown={onKeyDown}
-            initialValues={{ api_endpoint: apiEndpoint }}
-          >
-            {/* SESSION login fields */}
-            {connectionMode === 'SESSION' && (
-              <>
-                <Form.Item name="user_id" style={{ marginBottom: 8 }}>
-                  <Input
-                    prefix={<MailOutlined />}
-                    placeholder={t('login.E-mailOrUsername')}
-                    maxLength={64}
-                    autoComplete="username"
-                    disabled={isLoading}
-                  />
-                </Form.Item>
-                <Form.Item name="password" style={{ marginBottom: 8 }}>
-                  <Input.Password
-                    prefix={<KeyOutlined />}
-                    placeholder={t('login.Password')}
-                    autoComplete="current-password"
-                    disabled={isLoading}
-                  />
-                </Form.Item>
-                {otpRequired && (
-                  <Form.Item name="otp" style={{ marginBottom: 8 }}>
-                    <Input
-                      prefix={<LockOutlined />}
-                      placeholder={t('totp.OTP')}
-                      disabled={isLoading}
-                      autoFocus
-                    />
-                  </Form.Item>
-                )}
-              </>
-            )}
-
-            {/* API login fields */}
-            {connectionMode === 'API' && (
-              <>
-                <Form.Item name="api_key" style={{ marginBottom: 8 }}>
-                  <Input
-                    prefix={<LockOutlined />}
-                    placeholder={t('login.APIKey')}
-                    maxLength={20}
-                    disabled={isLoading}
-                  />
-                </Form.Item>
-                <Form.Item name="secret_key" style={{ marginBottom: 8 }}>
-                  <Input.Password
-                    prefix={<KeyOutlined />}
-                    placeholder={t('login.SecretKey')}
-                    maxLength={40}
-                    disabled={isLoading}
-                  />
-                </Form.Item>
-              </>
-            )}
-
-            {/* Endpoint field */}
-            {showEndpointInput && (
-              <BAIFlex gap="xs" align="center">
-                <Dropdown
-                  menu={{
-                    items: endpointMenuItems,
-                    onClick: onEndpointMenuClick,
-                  }}
-                  trigger={['click']}
-                >
-                  <Button
-                    icon={<CloudOutlined />}
-                    type="text"
-                    style={{ color: token.colorInfo }}
-                  />
-                </Dropdown>
-                <Form.Item
-                  name="api_endpoint"
-                  style={{ flex: 1, marginBottom: 8 }}
-                  rules={[
-                    {
-                      pattern: /^https?:\/\/(.*)/,
-                      message: t('login.EndpointStartWith'),
-                    },
-                  ]}
-                >
-                  <Input
-                    placeholder={t('login.Endpoint')}
-                    maxLength={2048}
-                    disabled={isEndpointDisabled || isLoading}
-                    onChange={(e) => onSetApiEndpoint(e.target.value)}
-                  />
-                </Form.Item>
-                <Button
-                  icon={<InfoCircleOutlined />}
-                  type="text"
-                  onClick={onShowEndpointDescription}
-                />
-              </BAIFlex>
-            )}
-
-            {/* Login button */}
-            <Form.Item style={{ marginBottom: 8 }}>
-              <Button
-                type="primary"
-                block
-                onClick={onLogin}
-                loading={isLoading}
-              >
-                {t('login.Login')}
-              </Button>
-            </Form.Item>
-
-            {/* SSO buttons */}
-            {loginConfig.singleSignOnVendors.includes('saml') && (
-              <Form.Item style={{ marginBottom: 8 }}>
-                <Button block onClick={onSAMLLogin}>
-                  {t('login.singleSignOn.LoginWithSAML')}
-                </Button>
-              </Form.Item>
-            )}
-            {loginConfig.singleSignOnVendors.includes('openid') && (
-              <Form.Item style={{ marginBottom: 8 }}>
-                <Button block onClick={onOpenIDLogin}>
-                  {t('login.singleSignOn.LoginWithRealm', {
-                    realmName: loginConfig.ssoRealmName || 'OpenID',
-                  })}
-                </Button>
-              </Form.Item>
-            )}
-
-            {/* Signup and change password links */}
-            <BAIFlex gap="sm" justify="center" style={{ marginTop: '2em' }}>
+          {/* Signup and change password links */}
+          {hasBottomLinks && (
+            <BAIFlex
+              gap="xs"
+              justify="center"
+              align="center"
+              wrap="wrap"
+              style={{
+                marginTop: token.marginLG,
+                fontSize: 13,
+              }}
+            >
               {loginConfig.signup_support && (
-                <BAIFlex direction="column" align="center" style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12, textAlign: 'center' }}>
-                    {t('login.NotAUser')}
-                  </div>
-                  <Button size="small" onClick={() => onShowSignupDialog()}>
-                    {t('login.SignUp')}
-                  </Button>
-                </BAIFlex>
+                <Typography.Link
+                  style={{ fontSize: 'inherit' }}
+                  onClick={() => onShowSignupDialog()}
+                >
+                  {t('login.SignUp')}
+                </Typography.Link>
               )}
+              {loginConfig.signup_support &&
+                loginConfig.allowAnonymousChangePassword && (
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: 'inherit' }}
+                  >
+                    |
+                  </Typography.Text>
+                )}
               {loginConfig.allowAnonymousChangePassword && (
-                <BAIFlex direction="column" align="center" style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12, textAlign: 'center' }}>
+                <>
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: 'inherit' }}
+                  >
                     {t('login.ForgotPassword')}
-                  </div>
-                  <Button size="small">{t('login.ChangePassword')}</Button>
-                </BAIFlex>
+                  </Typography.Text>
+                  <Typography.Link
+                    style={{ fontSize: 'inherit' }}
+                    onClick={() =>
+                      setHelpPanel({
+                        title: t('login.SendChangePasswordEmail'),
+                        content: t('login.DescChangePasswordEmail'),
+                      })
+                    }
+                  >
+                    {t('login.ChangePassword')}
+                  </Typography.Link>
+                </>
               )}
             </BAIFlex>
-          </Form>
-        </div>
+          )}
+        </Form>
       </BAIModal>
+
+      {/* Help side panel - positioned to the right of the login modal */}
+      {effectiveHelpPanel && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: `calc(50% + ${modalWidth / 2 + helpPanelGap}px)`,
+            transform: 'translateY(-50%)',
+            width: helpPanelWidth,
+            maxHeight: '60vh',
+            background: token.colorBgContainer,
+            borderRadius: token.borderRadiusLG,
+            boxShadow: token.boxShadowSecondary,
+            padding: token.paddingLG,
+            overflow: 'auto',
+            zIndex: 1060,
+          }}
+        >
+          <BAIFlex
+            justify="between"
+            align="center"
+            style={{ marginBottom: token.marginSM }}
+          >
+            <Typography.Text strong>{effectiveHelpPanel.title}</Typography.Text>
+            <Button
+              type="text"
+              size="small"
+              icon={<CloseOutlined />}
+              onClick={() => setHelpPanel(null)}
+            />
+          </BAIFlex>
+          <div
+            style={{ fontSize: 13, lineHeight: 1.6 }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(effectiveHelpPanel.content),
+            }}
+          />
+        </div>
+      )}
 
       {/* Child modals rendered outside login panel */}
       <ResetPasswordRequiredInline

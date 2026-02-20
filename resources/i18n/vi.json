@@ -1015,6 +1015,8 @@
   "login": {
     "APIEndpointEmpty": "Điểm cuối API trống. Vui lòng chỉ định điểm cuối API để đăng nhập.",
     "APIKey": "Mã API",
+    "APIMode": "API",
+    "AdvancedSettings": "Nâng cao",
     "CancelLogin": "Hủy đăng nhập",
     "ChangePassword": "Đổi mật khẩu",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
@@ -1046,6 +1048,7 @@
     "PleaseWait": "Vui lòng đợi để đăng nhập.",
     "SecretKey": "Chìa khoá bí mật",
     "SendChangePasswordEmail": "Gửi email thay đổi mật khẩu",
+    "SessionMode": "Phiên",
     "SignUp": "Đăng ký",
     "SignoutFinished": "Đã kết thúc đăng ký.",
     "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",

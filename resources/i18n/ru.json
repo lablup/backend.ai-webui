@@ -1012,6 +1012,8 @@
   "login": {
     "APIEndpointEmpty": "Конечная точка API пуста. Укажите конечную точку API для входа.",
     "APIKey": "Ключ API",
+    "APIMode": "API",
+    "AdvancedSettings": "Дополнительно",
     "CancelLogin": "Отменить Вход",
     "ChangePassword": "Измени пароль",
     "ClickToUseIAM": "Нажмите, чтобы использовать IAM",
@@ -1043,6 +1045,7 @@
     "PleaseWait": "Подождите, пока вы войдете.",
     "SecretKey": "Секретный ключ",
     "SendChangePasswordEmail": "Отправить электронное письмо для смены пароля",
+    "SessionMode": "Сессия",
     "SignUp": "Зарегистрироваться",
     "SignoutFinished": "Выход завершен.",
     "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",

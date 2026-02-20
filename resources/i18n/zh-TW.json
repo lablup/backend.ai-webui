@@ -1014,6 +1014,8 @@
   "login": {
     "APIEndpointEmpty": "API 端點為空。請指定要登錄的 API 端點。",
     "APIKey": "API 密鑰",
+    "APIMode": "API",
+    "AdvancedSettings": "進階設定",
     "CancelLogin": "取消登錄",
     "ChangePassword": "更改密碼",
     "ClickToUseIAM": "單擊以使用 IAM",
@@ -1045,6 +1047,7 @@
     "PleaseWait": "請等待登錄。",
     "SecretKey": "密鑰",
     "SendChangePasswordEmail": "發送修改密碼郵件",
+    "SessionMode": "工作階段",
     "SignUp": "註冊",
     "SignoutFinished": "註銷完畢。",
     "TooManyAttempt": "登錄嘗試次數過多。登錄嘗試已被阻止一段時間。",

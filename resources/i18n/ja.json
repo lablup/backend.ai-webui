@@ -1014,6 +1014,8 @@
   "login": {
     "APIEndpointEmpty": "APIエンドポイントが空です。ログインするAPIエンドポイントを指定してください。",
     "APIKey": "APIキー",
+    "APIMode": "API",
+    "AdvancedSettings": "詳細設定",
     "CancelLogin": "ログインをキャンセルする",
     "ChangePassword": "パスワードを変更する",
     "ClickToUseIAM": "クリックしてIAMを使用する",
@@ -1045,6 +1047,7 @@
     "PleaseWait": "ログインするまでお待ちください。",
     "SecretKey": "シークレットキー",
     "SendChangePasswordEmail": "パスワード変更メールを送信する",
+    "SessionMode": "セッション",
     "SignUp": "サインアップ",
     "SignoutFinished": "サインアウトが終了しました。",
     "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",

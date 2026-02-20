@@ -1013,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "El punto final de la API está vacío. Especifique el punto final de la API para iniciar sesión.",
     "APIKey": "Clave API",
+    "APIMode": "API",
+    "AdvancedSettings": "Avanzado",
     "CancelLogin": "Cancelar conexión",
     "ChangePassword": "Cambiar contraseña",
     "ClickToUseIAM": "Haga clic para utilizar IAM",
@@ -1044,6 +1046,7 @@
     "PleaseWait": "Espere para iniciar sesión.",
     "SecretKey": "Clave secreta",
     "SendChangePasswordEmail": "Enviar correo electrónico de cambio de contraseña",
+    "SessionMode": "Sesión",
     "SignUp": "Inscríbete",
     "SignoutFinished": "Firma terminada.",
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",

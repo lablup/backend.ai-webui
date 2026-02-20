@@ -17,20 +17,7 @@ const useStyle = createStyles(({ css }) => ({
     z-index: 9999;
   `,
   loadingBackgroundBefore: css`
-    &::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background-image: url('/resources/images/loading-background-large.jpg');
-      z-index: -1;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      background-position: top left;
-      filter: var(--theme-image-filter);
-    }
+    background-color: var(--token-colorBgLayout, #f5f5f5);
   `,
   loadingDragArea: css`
     position: absolute;

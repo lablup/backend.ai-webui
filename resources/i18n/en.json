@@ -1019,6 +1019,8 @@
   "login": {
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
     "APIKey": "API Key",
+    "APIMode": "API",
+    "AdvancedSettings": "Advanced",
     "CancelLogin": "Cancel Login",
     "ChangePassword": "Change",
     "ClickToUseIAM": "Click To Use IAM",
@@ -1050,6 +1052,7 @@
     "PleaseWait": "Please wait to login.",
     "SecretKey": "Secret Key",
     "SendChangePasswordEmail": "Send change password email",
+    "SessionMode": "Session",
     "SignUp": "Sign up",
     "SignoutFinished": "Signout finished.",
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",

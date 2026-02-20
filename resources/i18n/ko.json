@@ -1017,6 +1017,8 @@
   "login": {
     "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
     "APIKey": "접근키",
+    "APIMode": "API",
+    "AdvancedSettings": "고급 설정",
     "CancelLogin": "로그인 취소",
     "ChangePassword": "비밀번호 재설정",
     "ClickToUseIAM": "IAM 사용",
@@ -1048,6 +1050,7 @@
     "PleaseWait": "로그인하고 있습니다. 잠시만 기다려주세요.",
     "SecretKey": "비밀키",
     "SendChangePasswordEmail": "비밀번호 재설정 이메일 보내기",
+    "SessionMode": "세션",
     "SignUp": "가입하기",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",

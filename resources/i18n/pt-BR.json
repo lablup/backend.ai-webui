@@ -1013,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "O endpoint da API está vazio. Especifique o endpoint da API para fazer o login.",
     "APIKey": "Chave API",
+    "APIMode": "API",
+    "AdvancedSettings": "Avançado",
     "CancelLogin": "Cancelar Login",
     "ChangePassword": "Alterar a senha",
     "ClickToUseIAM": "Clique para usar IAM",
@@ -1044,6 +1046,7 @@
     "PleaseWait": "Por favor, espere para fazer o login.",
     "SecretKey": "Chave secreta",
     "SendChangePasswordEmail": "Enviar email de alteração de senha",
+    "SessionMode": "Sessão",
     "SignUp": "Inscrever-se",
     "SignoutFinished": "Desconexão concluída.",
     "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",

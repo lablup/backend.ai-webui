@@ -32,9 +32,8 @@ import {
   loginPluginState,
 } from '../hooks/useWebUIConfig';
 import LoginFormPanel from './LoginFormPanel';
-import { Button, Form, Modal, type MenuProps } from 'antd';
+import { Button, Form, type MenuProps } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
-import DOMPurify from 'dompurify';
 import { useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -78,9 +77,6 @@ const LoginView: React.FC = () => {
   const [isBlockPanelOpen, setIsBlockPanelOpen] = useState(false);
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
-  const [helpDescription, setHelpDescription] = useState('');
-  const [helpDescriptionTitle, setHelpDescriptionTitle] = useState('');
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [endpoints, setEndpoints] = useState<string[]>([]);
@@ -662,13 +658,14 @@ const LoginView: React.FC = () => {
     connectionMode,
   });
 
-  const changeSigninMode = useCallback(() => {
-    if (!loginConfig.change_signin_support) return;
-    const newMode: ConnectionMode =
-      connectionMode === 'SESSION' ? 'API' : 'SESSION';
-    setConnectionMode(newMode);
-    localStorage.setItem('backendaiwebui.connection_mode', newMode);
-  }, [connectionMode, loginConfig.change_signin_support]);
+  const handleConnectionModeChange = useCallback(
+    (mode: ConnectionMode) => {
+      if (!loginConfig.change_signin_support) return;
+      setConnectionMode(mode);
+      localStorage.setItem('backendaiwebui.connection_mode', mode);
+    },
+    [loginConfig.change_signin_support],
+  );
 
   const showSignupDialog = useCallback(
     (preloadToken?: string) => {
@@ -740,12 +737,6 @@ const LoginView: React.FC = () => {
     [handleLogin],
   );
 
-  const showEndpointDescription = useCallback(() => {
-    setHelpDescriptionTitle(t('login.EndpointInfo'));
-    setHelpDescription(t('login.DescEndpoint'));
-    setIsHelpOpen(true);
-  }, [t]);
-
   const handleSAMLLogin = useCallback(() => {
     const ep = apiEndpoint.trim();
     const { client } = createBackendAIClient('', '', ep, 'SESSION');
@@ -792,9 +783,8 @@ const LoginView: React.FC = () => {
         onEndpointMenuClick={handleEndpointMenuClick}
         onKeyDown={handleKeyDown}
         onLogin={handleLogin}
-        onChangeSigninMode={changeSigninMode}
+        onConnectionModeChange={handleConnectionModeChange}
         onShowSignupDialog={showSignupDialog}
-        onShowEndpointDescription={showEndpointDescription}
         onSAMLLogin={handleSAMLLogin}
         onOpenIDLogin={handleOpenIDLogin}
         onSetApiEndpoint={setApiEndpoint}
@@ -828,27 +818,6 @@ const LoginView: React.FC = () => {
           {blockMessage}
         </div>
       </BAIModal>
-
-      {/* Help Description - zIndex above login modal */}
-      <Modal
-        open={isHelpOpen}
-        title={helpDescriptionTitle}
-        onCancel={() => setIsHelpOpen(false)}
-        footer={null}
-        width={350}
-        zIndex={1050}
-        getContainer={false}
-      >
-        <div
-          style={{
-            fontSize: 14,
-            margin: 10,
-          }}
-          dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(helpDescription),
-          }}
-        />
-      </Modal>
     </div>
   );
 };

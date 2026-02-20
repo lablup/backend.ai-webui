@@ -432,9 +432,6 @@ importers:
       underscore:
         specifier: ^1.13.7
         version: 1.13.7
-      web-animations-js:
-        specifier: ^2.3.2
-        version: 2.3.2
       webpack:
         specifier: ^5.104.1
         version: 5.104.1(esbuild@0.27.2)(webpack-cli@6.0.1)
@@ -15148,9 +15145,6 @@ packages:
 
   wbuf@1.7.3:
     resolution: {integrity: sha512-O84QOnr0icsbFGLS0O3bI5FswxzRr8/gHwWkDlQFskhSPryQXvrTMxjxGP4+iWYoauLoBvfDpkrOauZ+0iZpDA==}
-
-  web-animations-js@2.3.2:
-    resolution: {integrity: sha512-TOMFWtQdxzjWp8qx4DAraTWTsdhxVSiWa6NkPFSaPtZ1diKUxTn4yTix73A1euG1WbSOMMPcY51cnjTIHrGtDA==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -34531,8 +34525,6 @@ snapshots:
   wbuf@1.7.3:
     dependencies:
       minimalistic-assert: 1.0.1
-
-  web-animations-js@2.3.2: {}
 
   web-namespaces@2.0.1: {}
 

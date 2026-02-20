@@ -1010,6 +1010,8 @@
   "login": {
     "APIEndpointEmpty": "Το API Endpoint είναι κενό. Προσδιορίστε το τελικό σημείο API για σύνδεση.",
     "APIKey": "Κλειδί API",
+    "APIMode": "API",
+    "AdvancedSettings": "Σύνθετες ρυθμίσεις",
     "CancelLogin": "Ακύρωση σύνδεσης",
     "ChangePassword": "Αλλαξε κωδικό",
     "ClickToUseIAM": "Κάντε κλικ για να χρησιμοποιήσετε το IAM",
@@ -1041,6 +1043,7 @@
     "PleaseWait": "Περιμένετε να συνδεθείτε.",
     "SecretKey": "Μυστικό κλειδί",
     "SendChangePasswordEmail": "Αποστολή email αλλαγής κωδικού πρόσβασης",
+    "SessionMode": "Συνεδρία",
     "SignUp": "Εγγραφείτε",
     "SignoutFinished": "Η έξοδος ολοκληρώθηκε.",
     "TooManyAttempt": "Υπήρξαν πάρα πολλές προσπάθειες σύνδεσης. Οι προσπάθειες σύνδεσης έχουν αποκλειστεί για λίγο.",
