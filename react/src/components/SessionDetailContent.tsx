@@ -17,12 +17,12 @@ import SessionIdleChecks, {
   IdleChecks,
 } from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
-import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -77,13 +77,15 @@ const SessionDetailContent: React.FC<{
 
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
     useState<boolean>(false);
-  const [openStatusDetailModal, setOpenStatusDetailModal] =
-    useState<boolean>(false);
   const [usageMonitorDisplayTarget, setUsageMonitorDisplayTarget] = useState<
     'max' | 'avg' | 'current'
   >('current');
   const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
     useToggle(false);
+  const [
+    openSessionSchedulingHistoryModal,
+    { toggle: toggleOpenSessionSchedulingHistoryModal },
+  ] = useToggle(false);
 
   // TODO: remove and refactor this waterfall request after v24.12.0
   // get the project id of the session for <= v24.12.0.
@@ -185,7 +187,6 @@ const SessionDetailContent: React.FC<{
         ...SessionUsageMonitorFragment
         ...ContainerCommitModalFragment
         ...SessionIdleChecksNodeFragment
-        ...SessionStatusDetailModalFragment
         ...AppLauncherModalFragment
         ...MountedVFolderLinksFragment
         ...BAISessionAgentIdsFragment
@@ -288,17 +289,11 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item label={t('session.Status')}>
             <BAIFlex>
               <SessionStatusTag sessionFrgmt={session} showInfo />
-              {session?.status_data && session?.status_data !== '{}' ? (
-                <Tooltip title={t('button.ClickForMoreDetails')}>
-                  <Button
-                    type="link"
-                    icon={<InfoCircleOutlined />}
-                    onClick={() => {
-                      setOpenStatusDetailModal(true);
-                    }}
-                  />
-                </Tooltip>
-              ) : null}
+              <BAIButton
+                onClick={() => toggleOpenSessionSchedulingHistoryModal()}
+              >
+                see histories
+              </BAIButton>
             </BAIFlex>
           </Descriptions.Item>
           <Descriptions.Item label={t('session.SessionType')}>
@@ -439,11 +434,6 @@ const SessionDetailContent: React.FC<{
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}
       />
-      <SessionStatusDetailModal
-        sessionFrgmt={session}
-        open={openStatusDetailModal}
-        onCancel={() => setOpenStatusDetailModal(false)}
-      />
       <CodeHighlighterModal
         open={openCodeHighlighterModal}
         language="shell"
@@ -460,6 +450,11 @@ const SessionDetailContent: React.FC<{
           </Button>
         }
         onCancel={toggleOpenCodeHighlighterModal}
+      />
+      <SessionSchedulingHistoryModal
+        sessionId={id}
+        open={openSessionSchedulingHistoryModal}
+        onCancel={toggleOpenSessionSchedulingHistoryModal}
       />
     </BAIFlex>
   ) : (
