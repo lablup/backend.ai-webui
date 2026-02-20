@@ -57,6 +57,9 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Xóa",
     "KeepAsIs": "Giữ nguyên",
