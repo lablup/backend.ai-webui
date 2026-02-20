@@ -21,7 +21,7 @@ jobs:
       pull-requests: read
       repository-projects: read
       statuses: read
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: [macOS, ARM64]
     environment: app-packaging
     steps:
       - name: Check out Git repository
@@ -34,8 +34,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
       - name: Configure pnpm store
         run: pnpm config set store-dir ~/.pnpm-store
       # - name: Get pnpm store directory
