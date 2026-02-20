@@ -41,8 +41,11 @@ function buildCoverHtml(
   <div class="cover-logo">
     ${logoSvg}
   </div>
-  <h1 class="cover-title">${metadata.title}</h1>
-  <p class="cover-subtitle">${strings?.userGuide ?? 'User Guide'}</p>
+  <h1 class="cover-title">${metadata.title.trim().replace(/\n/g, "<br>")}</h1>
+  <!-- TODO(html-builder): Subtitle temporarily disabled for cover layout.
+       Re-enable when a cover subtitle is needed.
+       <p class="cover-subtitle">${strings?.userGuide ?? 'User Guide'}</p>
+  -->
   <hr class="cover-divider" />
   <div class="cover-meta">
     <p class="version">${metadata.version}</p>
@@ -135,7 +138,7 @@ export function buildFullDocument(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${metadata.title} (${metadata.lang})</title>
+  <title>${metadata.title.trim().replace(/\n/g, ' ')} (${metadata.lang})</title>
   <style>${styles}</style>
 </head>
 <body>

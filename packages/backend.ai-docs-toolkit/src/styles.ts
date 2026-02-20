@@ -27,7 +27,9 @@ body {
   color: ${theme.textPrimary};
   margin: 0;
   padding: 0;
-  ${isCjk ? 'word-break: keep-all;' : ''}
+  text-align: justify;
+  text-wrap: pretty;
+  ${isCjk ? 'word-break: keep-all;' : '-webkit-hyphens: auto; hyphens: auto;'}
   overflow-wrap: break-word;
 }
 
@@ -424,6 +426,7 @@ blockquote p {
 a {
   color: ${theme.linkColor};
   text-decoration: none;
+  word-break: break-all;
 }
 
 a[href^="#"] {

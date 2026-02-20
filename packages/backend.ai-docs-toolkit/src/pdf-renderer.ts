@@ -489,9 +489,10 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
 
   // PDF metadata from config or sensible defaults
   const pdfMeta = config?.pdfMetadata;
-  pdfDoc.setTitle(`${options.title} ${options.version} (${options.lang})`);
+  const flatTitle = options.title.trim().replace(/\n/g, ' ');
+  pdfDoc.setTitle(`${flatTitle} ${options.version} (${options.lang})`);
   pdfDoc.setAuthor(pdfMeta?.author ?? 'docs-toolkit');
-  pdfDoc.setSubject(pdfMeta?.subject ?? options.title);
+  pdfDoc.setSubject(pdfMeta?.subject ?? flatTitle);
   pdfDoc.setCreator(pdfMeta?.creator ?? 'docs-toolkit PDF Generator');
   pdfDoc.setProducer('Playwright + pdf-lib');
   pdfDoc.setCreationDate(new Date());
@@ -512,7 +513,7 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   console.log(`  First chapter page: ${firstChapterPage}`);
 
   stampHeaderFooter(pdfDoc, {
-    title: options.title,
+    title: flatTitle,
     font: latinFont,
     cjkFont,
     sections: sectionList,
