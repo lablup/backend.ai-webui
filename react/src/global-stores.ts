@@ -78,6 +78,17 @@ class BackendAISettingsStore {
   }
 
   set(name: string, value: any, namespace = 'user', skipDispatch = false) {
+    // Persist directly to localStorage to guarantee durability,
+    // regardless of whether the jotai event listener is ready.
+    const storageKey = 'backendaiwebui.settings.' + namespace + '.' + name;
+    if (typeof value === 'boolean') {
+      localStorage.setItem(storageKey, value ? 'true' : 'false');
+    } else if (typeof value === 'object') {
+      localStorage.setItem(storageKey, JSON.stringify(value));
+    } else {
+      localStorage.setItem(storageKey, String(value));
+    }
+
     if (!skipDispatch) {
       const event = new CustomEvent('backendaiwebui.settings:set', {
         detail: { name, value, namespace },
@@ -88,6 +99,10 @@ class BackendAISettingsStore {
   }
 
   delete(name: string, namespace = 'user', skipDispatch = false) {
+    // Remove directly from localStorage to guarantee durability.
+    const storageKey = 'backendaiwebui.settings.' + namespace + '.' + name;
+    localStorage.removeItem(storageKey);
+
     if (!skipDispatch) {
       const event = new CustomEvent('backendaiwebui.settings:delete', {
         detail: { name, namespace },
