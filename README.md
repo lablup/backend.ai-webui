@@ -140,10 +140,9 @@ You can debug the app.
 
 Backend.AI Web UI is built with
 
-- `lit-element` as webcomponent framework
 - `react` as library for web UI
+- `webpack` (via CRA/Craco) as bundler
 - `pnpm` as package manager
-- `rollup` as bundler
 - `electron` as app shell
 - `watchman` as file change watcher for development
 
@@ -326,7 +325,7 @@ After installing the extension, add the following configuration to your `./vscod
 $ make compile
 ```
 
-Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+Then bundled resource will be prepared in `build/web`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
 
 If you want to create the bundle zip file,
 
@@ -378,7 +377,7 @@ $ make compile
 
 Good for develop phase. Not recommended for production environment.
 
-Note: This command will use Web UI source in `build/rollup` directory. No certificate will be used therefore web server will serve as HTTP.
+Note: This command will use Web UI source in `build/web` directory. No certificate will be used therefore web server will serve as HTTP.
 
 Copy `webserver.example.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
