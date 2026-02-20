@@ -4023,6 +4023,9 @@ class Resources {
     this.resources['hyperaccel-lpu.device'] = {};
     this.resources['hyperaccel-lpu.device'].total = 0;
     this.resources['hyperaccel-lpu.device'].used = 0;
+    this.resources['tt-n300.device'] = {};
+    this.resources['tt-n300.device'].total = 0;
+    this.resources['tt-n300.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -4207,6 +4210,16 @@ class Resources {
               this.resources['hyperaccel-lpu.device'].used =
                 parseInt(this.resources['hyperaccel-lpu.device'].used) +
                 Math.floor(Number(occupied_slots['hyperaccel-lpu.device']));
+            }
+            if ('tt-n300.device' in available_slots) {
+              this.resources['tt-n300.device'].total =
+                parseInt(this.resources['tt-n300.device'].total) +
+                Math.floor(Number(available_slots['tt-n300.device']));
+            }
+            if ('tt-n300.device' in occupied_slots) {
+              this.resources['tt-n300.device'].used =
+                parseInt(this.resources['tt-n300.device'].used) +
+                Math.floor(Number(occupied_slots['tt-n300.device']));
             }
 
             if (isNaN(this.resources.cpu.used)) {
