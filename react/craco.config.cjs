@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 
@@ -238,6 +239,20 @@ module.exports = {
               plugin instanceof ModuleScopePlugin ||
               plugin.constructor.name === 'ModuleScopePlugin'
             ),
+        );
+      }
+
+      // Generate service worker for production builds using Workbox.
+      // This replaces the previous Rollup-based service worker generation.
+      if (env === 'production') {
+        webpackConfig.plugins.push(
+          new GenerateSW({
+            swDest: 'sw.js',
+            globPatterns: ['**/*.{html,json,js,css}'],
+            skipWaiting: true,
+            clientsClaim: true,
+            exclude: [/\.map$/, /asset-manifest\.json$/],
+          }),
         );
       }
 
