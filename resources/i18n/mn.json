@@ -993,6 +993,8 @@
   "login": {
     "APIEndpointEmpty": "API Төгсгөлийн цэг хоосон байна. Нэвтрэхийн тулд API төгсгөлийн цэгийг зааж өгнө үү.",
     "APIKey": "API түлхүүр",
+    "APIMode": "API",
+    "AdvancedSettings": "Нарийвчилсан",
     "CancelLogin": "Нэвтрэхийг цуцлах",
     "ChangePassword": "Нууц үгээ солих",
     "ClickToUseIAM": "IAM ашиглахын тулд товшино уу",
@@ -1024,6 +1026,7 @@
     "PleaseWait": "Нэвтрэхийг хүлээнэ үү.",
     "SecretKey": "Нууц түлхүүр",
     "SendChangePasswordEmail": "Өөрчлөлтийн нууц үгийг имэйлээр илгээх",
+    "SessionMode": "Сессион",
     "SignUp": "Бүртгүүлэх",
     "SignoutFinished": "Бүртгэл дууслаа.",
     "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",

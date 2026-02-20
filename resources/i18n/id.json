@@ -1014,6 +1014,8 @@
   "login": {
     "APIEndpointEmpty": "Titik Akhir API kosong. Harap tentukan titik akhir API untuk login.",
     "APIKey": "Kunci API",
+    "APIMode": "API",
+    "AdvancedSettings": "Lanjutan",
     "CancelLogin": "Batal Login",
     "ChangePassword": "Ganti kata sandi",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
@@ -1045,6 +1047,7 @@
     "PleaseWait": "Harap tunggu untuk login.",
     "SecretKey": "Kunci rahasia",
     "SendChangePasswordEmail": "Kirim email ubah kata sandi",
+    "SessionMode": "Sesi",
     "SignUp": "Daftar",
     "SignoutFinished": "Keluar selesai.",
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",

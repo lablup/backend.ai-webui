@@ -1012,6 +1012,8 @@
   "login": {
     "APIEndpointEmpty": "L'endpoint API è vuoto. Specifica l'endpoint API per accedere.",
     "APIKey": "Chiave API",
+    "APIMode": "API",
+    "AdvancedSettings": "Avanzato",
     "CancelLogin": "Annulla il login",
     "ChangePassword": "Cambia la password",
     "ClickToUseIAM": "Fai clic per utilizzare IAM",
@@ -1043,6 +1045,7 @@
     "PleaseWait": "Attendi per accedere.",
     "SecretKey": "Chiave segreta",
     "SendChangePasswordEmail": "Invia email di modifica password",
+    "SessionMode": "Sessione",
     "SignUp": "Iscriviti",
     "SignoutFinished": "Disconnessione completata.",
     "TooManyAttempt": "Ci sono stati troppi tentativi di accesso. I tentativi di accesso sono stati bloccati per un po'.",

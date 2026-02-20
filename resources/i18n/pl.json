@@ -1012,6 +1012,8 @@
   "login": {
     "APIEndpointEmpty": "Punkt końcowy interfejsu API jest pusty. Określ punkt końcowy interfejsu API, aby się zalogować.",
     "APIKey": "Klucz API",
+    "APIMode": "API",
+    "AdvancedSettings": "Zaawansowane",
     "CancelLogin": "Anuluj logowanie",
     "ChangePassword": "Zmień hasło",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",
@@ -1043,6 +1045,7 @@
     "PleaseWait": "Proszę czekać na zalogowanie.",
     "SecretKey": "Sekretny klucz",
     "SendChangePasswordEmail": "Wyślij e-mail ze zmianą hasła",
+    "SessionMode": "Sesja",
     "SignUp": "Zapisz się",
     "SignoutFinished": "Wylogowanie zakończone.",
     "TooManyAttempt": "Zbyt wiele prób logowania. Próby logowania zostały na jakiś czas zablokowane.",

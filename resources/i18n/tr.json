@@ -1013,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "API Uç Noktası boş. Lütfen oturum açmak için API uç noktasını belirtin.",
     "APIKey": "API Anahtarı",
+    "APIMode": "API",
+    "AdvancedSettings": "Gelişmiş",
     "CancelLogin": "Girişi İptal Et",
     "ChangePassword": "Şifre değiştir",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
@@ -1044,6 +1046,7 @@
     "PleaseWait": "Giriş yapmak için lütfen bekleyiniz.",
     "SecretKey": "Gizli anahtar",
     "SendChangePasswordEmail": "Şifre değiştirme e-postası gönder",
+    "SessionMode": "Oturum",
     "SignUp": "kaydol",
     "SignoutFinished": "Oturum kapatma işlemi tamamlandı.",
     "TooManyAttempt": "Çok fazla giriş denemesi oldu. Giriş denemeleri bir süreliğine engellendi.",

@@ -1004,6 +1004,8 @@
   "login": {
     "APIEndpointEmpty": "จุดสิ้นสุด API ว่างเปล่า กรุณาระบุจุดสิ้นสุด API เพื่อเข้าสู่ระบบ",
     "APIKey": "คีย์ API",
+    "APIMode": "API",
+    "AdvancedSettings": "ขั้นสูง",
     "CancelLogin": "ยกเลิกการเข้าสู่ระบบ",
     "ChangePassword": "เปลี่ยน",
     "ClickToUseIAM": "คลิกเพื่อใช้ IAM",
@@ -1035,6 +1037,7 @@
     "PleaseWait": "กรุณารอเพื่อเข้าสู่ระบบ",
     "SecretKey": "คีย์ลับ",
     "SendChangePasswordEmail": "ส่งอีเมลเปลี่ยนรหัสผ่าน",
+    "SessionMode": "เซสชัน",
     "SignUp": "ลงทะเบียน",
     "SignoutFinished": "ออกจากระบบเสร็จสิ้น",
     "TooManyAttempt": "มีความพยายามเข้าสู่ระบบมากเกินไป การพยายามเข้าสู่ระบบถูกบล็อกชั่วคราว",

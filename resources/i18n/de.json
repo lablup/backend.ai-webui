@@ -1015,6 +1015,8 @@
   "login": {
     "APIEndpointEmpty": "API-Endpunkt ist leer. Bitte geben Sie den API-Endpunkt für die Anmeldung an.",
     "APIKey": "API-Schlüssel",
+    "APIMode": "API",
+    "AdvancedSettings": "Erweitert",
     "CancelLogin": "Anmeldung abbrechen",
     "ChangePassword": "Kennwort ändern",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
@@ -1046,6 +1048,7 @@
     "PleaseWait": "Bitte warten Sie, um sich anzumelden.",
     "SecretKey": "Geheimer Schlüssel",
     "SendChangePasswordEmail": "E-Mail zum Ändern des Passworts senden",
+    "SessionMode": "Sitzung",
     "SignUp": "Anmelden",
     "SignoutFinished": "Abmeldung abgeschlossen.",
     "TooManyAttempt": "Es gab zu viele Anmeldeversuche. Anmeldeversuche sind seit einiger Zeit blockiert.",
