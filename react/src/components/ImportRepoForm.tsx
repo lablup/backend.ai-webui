@@ -76,6 +76,13 @@ const createRepoBootstrapScript = (
   return scriptLines.filter(Boolean).join('\n');
 };
 
+// Only allow: https://github.com/owner/repo or https://github.com/owner/repo/ or https://github.com/owner/repo/tree/branch
+const GITHUB_URL_REGEX =
+  /^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)(\/?)$|^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)\/tree\/([\w./-]+)$/;
+
+const GITLAB_URL_REGEX =
+  /^https:\/\/gitlab\.com\/([\w.-]+)\/([\w.-]+)(\/?)$|^https:\/\/gitlab\.com\/([\w.-]+)\/([\w.-]+)\/-\/tree\/([\w./-]+)$/;
+
 const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   urlType,
   initialUrl,
@@ -297,10 +304,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           { required: true },
           { type: 'string', max: 2048 },
           {
-            pattern:
-              urlType === 'github'
-                ? /^(https?):\/\/github\.com\/([\w./-]{1,})$/
-                : /^(https?):\/\/gitlab\.com\/([\w./-]{1,})$/,
+            pattern: urlType === 'github' ? GITHUB_URL_REGEX : GITLAB_URL_REGEX,
             message: t('import.WrongURLType'),
           },
         ]}
