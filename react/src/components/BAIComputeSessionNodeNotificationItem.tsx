@@ -150,6 +150,7 @@ const UNSAFE_useAutoRefreshInterval = (
 const SessionStatusRefresherUsingSubscription: React.FC<{
   sessionRowId: string;
 }> = ({ sessionRowId }) => {
+  'use memo';
   useSubscription({
     subscription: graphql`
       subscription BAIComputeSessionNodeNotificationItemSubscription(
