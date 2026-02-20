@@ -5,7 +5,6 @@ This file provides custom instructions for GitHub Copilot when reviewing code an
 ## Project Overview
 
 Backend.AI WebUI is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
-The legacy Lit-Element web components have been removed.
 
 ### Key Technologies
 
@@ -58,7 +57,7 @@ The legacy Lit-Element web components have been removed.
 When reviewing code:
 
 - All UI code is in `/react` (React) and `/packages/backend.ai-ui/` (shared components)
-- `/src` contains only legacy utilities and the websocket proxy
+- `/src` contains utilities and the websocket proxy
 - Check that GraphQL queries use Relay conventions in React components
 - Verify proper i18n usage with `useTranslation()` hook from `react-i18next`
 
