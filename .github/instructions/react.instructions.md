@@ -301,7 +301,7 @@ Always consider React composability when writing or reviewing components:
 2. **Composition Over Props Drilling**
 
    - Use component composition instead of passing props through multiple levels
-   - Consider using Recoil for global state management
+   - Consider using Jotai for global state management
    - Leverage children props and render props patterns
 
 3. **Reusability**
@@ -323,14 +323,11 @@ Always consider React composability when writing or reviewing components:
   <Child theme={theme} user={user} config={config} />
 </Parent>
 
-// ✅ Good: Composition with Recoil
-const themeState = atom({
-  key: 'theme',
-  default: 'light',
-});
+// ✅ Good: Composition with Jotai
+const themeAtom = atom('light');
 
 const Child = () => {
-  const theme = useRecoilValue(themeState);
+  const [theme] = useAtom(themeAtom);
   // ...
 };
 
@@ -1147,21 +1144,18 @@ const BAITable = <T extends { id: string }>({
 
 ### Global State
 
-- Use **Recoil** for global state management
+- Use **Jotai** for global state management
 - Use Relay for GraphQL-backed state
 - Use React Context for simple UI state that doesn't need persistence
 
 ```typescript
-// ✅ Good: Recoil for global state
-import { atom, useRecoilState } from "recoil";
+// ✅ Good: Jotai for global state
+import { atom, useAtom } from "jotai";
 
-const userSettingsState = atom({
-  key: "userSettings",
-  default: {},
-});
+const userSettingsAtom = atom({});
 
 const Component = () => {
-  const [settings, setSettings] = useRecoilState(userSettingsState);
+  const [settings, setSettings] = useAtom(userSettingsAtom);
   // ...
 };
 ```
@@ -1300,7 +1294,7 @@ When reviewing React code, check for:
 
 - [ ] Pre-defined error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`) are used
 - [ ] Error states and loading states are handled
-- [ ] Recoil is used for global state when appropriate
+- [ ] Jotai is used for global state when appropriate
 
 ### Internationalization & Accessibility
 
