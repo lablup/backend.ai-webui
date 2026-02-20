@@ -41,11 +41,10 @@ const isEnableSorter = (key: string) => {
 
 type Project = NonNullable<NonNullable<BAIProjectTableFragment$data>[number]>;
 
-export interface BAIProjectTableProps
-  extends Omit<
-    BAITableProps<Project>,
-    'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'
-  > {
+export interface BAIProjectTableProps extends Omit<
+  BAITableProps<Project>,
+  'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'
+> {
   projectFragment: BAIProjectTableFragment$key;
   onChangeOrder?: (
     order: (typeof availableProjectSorterValues)[number] | null,
@@ -192,6 +191,7 @@ const BAIProjectTable = ({
                 danger
                 icon={
                   <BanIcon
+                    size={token.fontSize}
                     style={{
                       color:
                         _.get(record, 'type') === 'MODEL_STORE'
