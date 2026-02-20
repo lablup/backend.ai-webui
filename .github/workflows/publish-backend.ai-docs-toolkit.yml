@@ -43,7 +43,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: Install Dependencies
-        run: pnpm install
+        # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
+        # This workflow runs on pushes to main and version tags (v*); on main,
+        # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
+        # branch lockfiles. --no-frozen-lockfile is needed to allow that merge write.
+        run: pnpm install --no-frozen-lockfile
 
       - name: Update to canary version
         if: github.ref_type == 'branch'
