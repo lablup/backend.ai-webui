@@ -5,6 +5,7 @@ module.exports = {
   setupFiles: ['jest-canvas-mock'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
+    '^backend\\.ai-client-esm$': '<rootDir>/__test__/backendAiClientEsm.mock.js',
     '^backend\\.ai-ui$': path.resolve(
       __dirname,
       '../packages/backend.ai-ui/src',

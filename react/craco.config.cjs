@@ -230,17 +230,15 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
-      // Configure ModuleScopePlugin to allow imports outside react/src.
+      // Remove ModuleScopePlugin to allow imports outside react/src.
       // Needed for: backend.ai-ui package, backend.ai-client-esm (via alias to dist/lib/)
-      if (env === 'development') {
-        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
-          (plugin) =>
-            !(
-              plugin instanceof ModuleScopePlugin ||
-              plugin.constructor.name === 'ModuleScopePlugin'
-            ),
-        );
-      }
+      webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
+        (plugin) =>
+          !(
+            plugin instanceof ModuleScopePlugin ||
+            plugin.constructor.name === 'ModuleScopePlugin'
+          ),
+      );
 
       // Generate service worker for production builds using Workbox.
       // This replaces the previous Rollup-based service worker generation.
@@ -248,7 +246,6 @@ module.exports = {
         webpackConfig.plugins.push(
           new GenerateSW({
             swDest: 'sw.js',
-            globPatterns: ['**/*.{html,json,js,css}'],
             skipWaiting: true,
             clientsClaim: true,
             exclude: [/\.map$/, /asset-manifest\.json$/],
