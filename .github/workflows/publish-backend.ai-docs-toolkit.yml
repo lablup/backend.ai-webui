@@ -1,0 +1,82 @@
+name: Publish Backend.ai-docs-toolkit to npm registry
+
+on:
+  push:
+    paths:
+      - packages/backend.ai-docs-toolkit/**
+    branches:
+      - main
+    tags:
+      - v*
+
+jobs:
+  publish:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+      - name: Update npm
+        run: npm install -g npm@latest
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Update to canary version
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-docs-toolkit
+          ./scripts/update-canary-version.sh
+
+      - name: Publish to npm (canary)
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-docs-toolkit
+          npm publish --tag canary --access public --no-git-checks
+
+      - name: Determine npm tag and publish strategy
+        if: github.ref_type == 'tag'
+        id: determine-tag
+        run: |
+          cd packages/backend.ai-docs-toolkit
+          # Extract version from GITHUB_REF (refs/tags/v25.17.2 -> 25.17.2)
+          VERSION="${GITHUB_REF#refs/tags/v}"
+
+          # Run the script and capture stdout (key=value pairs)
+          SCRIPT_OUTPUT=$(./scripts/determine-publish-strategy.sh "$VERSION")
+
+          # Parse each line and write to GITHUB_OUTPUT
+          echo "$SCRIPT_OUTPUT" | while IFS='=' read -r key value; do
+            if [ -n "$key" ]; then
+              echo "${key}=${value}" >> $GITHUB_OUTPUT
+            fi
+          done
+
+      - name: Publish to npm
+        if: github.ref_type == 'tag' && steps.determine-tag.outputs.should_publish == 'true'
+        run: |
+          cd packages/backend.ai-docs-toolkit
+          npm publish --tag ${{ steps.determine-tag.outputs.npm_tag }} --access public --no-git-checks

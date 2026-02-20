@@ -1,12 +1,35 @@
 {
   "name": "backend.ai-docs-toolkit",
   "version": "0.1.0",
+  "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-docs-toolkit"
+  },
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "backend.ai",
+    "documentation",
+    "pdf",
+    "markdown",
+    "toolkit"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
     "docs-toolkit": "./dist/cli.js"
   },
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
     "dist",
@@ -14,7 +37,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
