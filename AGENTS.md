@@ -40,7 +40,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Architecture
 
 This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
-The legacy Lit-Element web components have been removed.
 
 ### Key Technologies
 
@@ -72,7 +71,7 @@ packages/               # Monorepo workspace packages
   backend.ai-ui/        # Shared React component library (Vite build)
   backend.ai-webui-docs/# User manual documentation
   eslint-config-bai/    # Shared ESLint configuration
-src/                    # Legacy utilities and websocket proxy
+src/                    # Utilities and websocket proxy
   lib/                  # Backend.AI client library (ESM/Node.js)
   wsproxy/              # WebSocket proxy for desktop app
 resources/              # Static assets, i18n files (22 languages), themes
@@ -142,7 +141,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **react** 19, **react-dom** 19 - UI framework
 - **antd** 6 - Ant Design component library
 - **react-relay** 20, **relay-runtime** 20 - GraphQL client
-- **jotai** - Atomic state management (replaces legacy Recoil usage)
+- **jotai** - Atomic state management
 - **i18next**, **react-i18next** - Internationalization
 - **@craco/craco** - CRA webpack customization
 - **electron** 35 - Desktop app framework
