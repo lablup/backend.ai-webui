@@ -11,7 +11,7 @@ The legacy Lit-Element web components have been removed.
 
 - **React Build**: Webpack via @craco/craco (Create React App with customizations)
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
-- **Service Worker**: Rollup + rollup-plugin-workbox (generates `sw.js` only)
+- **Service Worker**: workbox-webpack-plugin (GenerateSW, integrated into Craco/Webpack build)
 - **Package Manager**: pnpm with workspace monorepo
 - **Styling**: Ant Design + antd-style
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
@@ -65,7 +65,7 @@ When reviewing code:
 ### Build and Development
 
 - Development requires both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy)
-- Build process: multi-stage with resource copying, service worker generation (Rollup), and React build (Craco/Webpack)
+- Build process: multi-stage with resource copying and React build (Craco/Webpack with Workbox service worker generation)
 - Pre-commit hooks run linting and formatting automatically via Husky + lint-staged
 
 ## Git Workflow
