@@ -11,16 +11,12 @@ import {
 } from './ChatModel';
 import { useBAILogger } from 'backend.ai-ui';
 import _ from 'lodash';
-import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 // Utils for chat history cache
 const createIdGenerator = () => {
-  const generator = customAlphabet(
-    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-    8,
-  );
-  return (prefix: string) => `${prefix}/${generator()}`;
+  return (prefix: string) => `${prefix}/${uuidv4().slice(0, 8)}`;
 };
 
 const generateChatDataId = createIdGenerator();
