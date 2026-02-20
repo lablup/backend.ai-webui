@@ -34,6 +34,8 @@
     "i18n-ally.translate.openai.apiModel": "gpt-5-mini",
     "files.exclude": {
       "packages/backend.ai-ui": true,
+      "packages/eslint-config-bai": true,
+      "packages/backend.ai-webui-docs": true,
     },
     // MCP server configurations for development and testing
     "mcp": {
