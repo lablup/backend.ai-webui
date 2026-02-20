@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { startTransition, useEffect, useState } from 'react';
 
 export const encodeAsync = async (str: string) => {

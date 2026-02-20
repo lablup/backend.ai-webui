@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ConfigProvider, Radio, theme } from 'antd';
 import type { RadioGroupProps } from 'antd';
 import { createStyles } from 'antd-style';

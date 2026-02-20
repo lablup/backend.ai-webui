@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';

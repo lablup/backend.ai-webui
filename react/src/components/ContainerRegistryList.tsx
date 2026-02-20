@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ContainerRegistryListDeleteMutation } from '../__generated__/ContainerRegistryListDeleteMutation.graphql';
 import { ContainerRegistryListDomainMutation } from '../__generated__/ContainerRegistryListDomainMutation.graphql';
 import {

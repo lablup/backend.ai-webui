@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Result, theme, Typography } from 'antd';

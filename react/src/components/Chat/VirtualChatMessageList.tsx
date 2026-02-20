@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AssistantChatMessage } from './AssistantChatMesssage';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';

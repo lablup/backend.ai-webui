@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Tag, Typography } from 'antd';
 import { BAIPropertyFilter, BAIFlex, BAITable, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';

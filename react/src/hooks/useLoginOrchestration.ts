@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * useLoginOrchestration - React hook that orchestrates the initial login flow.
  *
  * This replaces the login orchestration logic that was previously in the Lit

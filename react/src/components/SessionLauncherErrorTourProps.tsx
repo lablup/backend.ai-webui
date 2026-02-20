@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { Tour, type TourProps } from 'antd';
 import React from 'react';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
 import { UserSettingModalModifyMutation } from '../__generated__/UserSettingModalModifyMutation.graphql';
 import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';

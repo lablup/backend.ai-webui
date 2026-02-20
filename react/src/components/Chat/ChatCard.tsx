@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';

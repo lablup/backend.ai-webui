@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { convertToBinaryUnit } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
@@ -98,8 +102,10 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   );
 };
 
-interface AccTypeIconProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
+interface AccTypeIconProps extends Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  'src'
+> {
   type: ResourceSlotName | string;
   showTooltip?: boolean;
   size?: number;

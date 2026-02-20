@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
 import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';

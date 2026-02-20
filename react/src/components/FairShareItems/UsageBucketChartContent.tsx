@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { presetPalettes } from '@ant-design/colors';
 import { Empty, Tabs, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import CustomizedImageList from '../components/CustomizedImageList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import { BAICard } from 'backend.ai-ui';

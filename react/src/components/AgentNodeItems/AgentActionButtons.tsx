@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import AgentSettingModal from '../AgentSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
 import { Space, Tooltip } from 'antd';

@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Global store initialization for Backend.AI WebUI.
  *
  * This module creates the four singleton stores (previously initialized

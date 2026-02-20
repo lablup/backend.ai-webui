@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
 import type { SorterResult } from 'antd/lib/table/interface';
@@ -292,7 +296,8 @@ interface AntdBasicPaginationOption {
 }
 
 interface InitialPaginationOption
-  extends AntdBasicPaginationOption,
+  extends
+    AntdBasicPaginationOption,
     Omit<BAIPaginationOption, 'limit' | 'offset'> {}
 
 interface BAIPaginationOptionState {

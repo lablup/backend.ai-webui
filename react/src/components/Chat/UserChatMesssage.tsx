@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ChatMessage from './ChatMessage';
 import type { ChatMessagePlacement } from './ChatMessageContainer';
 import { UIMessage } from '@ai-sdk/react';

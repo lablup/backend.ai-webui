@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useAppDownloadMap } from '../hooks';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Select, Button, Descriptions, Tooltip } from 'antd';

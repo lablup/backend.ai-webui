@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';

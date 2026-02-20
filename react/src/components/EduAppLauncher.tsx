@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Backend.AI Education App Launcher - React Migration
  *
  * Handles token-based authentication, session management, and app launching

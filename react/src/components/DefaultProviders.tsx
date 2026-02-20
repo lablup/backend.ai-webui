@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { RelayEnvironment } from '../RelayEnvironment';
 // @ts-ignore
 import rawFixAntCss from '../fix_antd.css?raw';

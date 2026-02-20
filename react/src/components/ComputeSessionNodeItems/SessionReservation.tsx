@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionReservationFragment$key } from '../../__generated__/SessionReservationFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
 import { Typography } from 'antd';

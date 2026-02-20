@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import SourceCodeView from '../SourceCodeView';
 import { Descriptions, Skeleton, Typography } from 'antd';
 import {

@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * LoginView - React implementation of the Backend.AI login component.
  *
  * Supports SESSION and API connection modes, OTP/TOTP flows,

@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * PluginLoader - React component that handles loading Backend.AI WebUI plugins.
  *
  * It:

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { VFolderNodeIdenticonFragment$key } from '../__generated__/VFolderNodeIdenticonFragment.graphql';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';

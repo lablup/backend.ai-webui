@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';

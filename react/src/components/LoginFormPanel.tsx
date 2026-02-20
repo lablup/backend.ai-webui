@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * LoginFormPanel - The form UI for the login dialog.
  *
  * Renders SESSION/API login forms, endpoint configuration,

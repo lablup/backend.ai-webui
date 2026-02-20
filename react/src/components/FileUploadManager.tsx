@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { theme, Typography } from 'antd';

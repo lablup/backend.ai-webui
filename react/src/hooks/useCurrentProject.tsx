@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '.';
 import { backendaiUtils } from '../global-stores';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';

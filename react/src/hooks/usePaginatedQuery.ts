@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useEventNotStable } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useState, useTransition, useMemo, useRef, useEffect } from 'react';

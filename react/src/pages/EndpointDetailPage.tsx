@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
 import {

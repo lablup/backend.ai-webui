@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';

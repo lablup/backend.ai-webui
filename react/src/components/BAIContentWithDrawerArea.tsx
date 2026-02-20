@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { isOpenDrawerState } from './BAINotificationButton';
 import { Grid, Layout, theme } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';

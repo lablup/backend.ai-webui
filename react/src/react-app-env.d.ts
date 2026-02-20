@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 /// <reference types="react-scripts" />
 
 // declare module 'babel-plugin-relay/macro' {

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { convertToDecimalUnit, usageIndicatorColor } from '../helper/index';
 import { Progress, Descriptions, Typography, Tag } from 'antd';

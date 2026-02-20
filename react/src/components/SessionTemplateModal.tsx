@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBackendAIImageMetaData } from '../hooks';
 import { SessionHistory } from '../hooks/useBAISetting';
 import {
@@ -33,14 +37,15 @@ const useStyle = createStyles(({ css }) => ({
   `,
 }));
 
-interface SessionTemplateModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
+interface SessionTemplateModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onCancel'
+> {
   onRequestClose: (formValue?: SessionLauncherFormValue) => void;
 }
 
 interface ParsedSessionHistory
-  extends SessionLauncherFormValue,
-    SessionHistory {
+  extends SessionLauncherFormValue, SessionHistory {
   pinned?: boolean;
 }
 

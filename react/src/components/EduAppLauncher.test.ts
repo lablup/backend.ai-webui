@@ -1,4 +1,8 @@
 /**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
  * Tests for the _dispatchNotification helper in EduAppLauncher.
  *
  * The helper is the core notification bridge introduced in this refactor:

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ResourceSlotName } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';

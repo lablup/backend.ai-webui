@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ImportArtifactRevisionToFolderButtonFragment$key } from '../__generated__/ImportArtifactRevisionToFolderButtonFragment.graphql';
 import { theme } from 'antd';
 import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
@@ -6,8 +10,7 @@ import { FolderInput } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface ImportArtifactRevisionToFolderButtonProps
-  extends BAIButtonProps {
+export interface ImportArtifactRevisionToFolderButtonProps extends BAIButtonProps {
   loading?: boolean;
   revisionsFrgmt: ImportArtifactRevisionToFolderButtonFragment$key;
 }

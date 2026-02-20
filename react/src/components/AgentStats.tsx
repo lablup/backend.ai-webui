@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {

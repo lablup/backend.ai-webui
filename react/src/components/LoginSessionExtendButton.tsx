@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { ClockCircleOutlined } from '@ant-design/icons';

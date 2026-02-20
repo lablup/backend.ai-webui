@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { EndpointStatusTagFragment$key } from '../__generated__/EndpointStatusTagFragment.graphql';
 import { Tag } from 'antd';
 import React from 'react';

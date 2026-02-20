@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 /* TabCounter.ts
  * Based on TabCounter.js by Shubanker Chourasia
  * License: MIT

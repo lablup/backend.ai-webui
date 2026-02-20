@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';

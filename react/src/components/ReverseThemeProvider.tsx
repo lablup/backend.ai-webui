@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { theme, ConfigProvider, type ConfigProviderProps } from 'antd';
 import _ from 'lodash';
