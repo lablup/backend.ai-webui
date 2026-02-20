@@ -284,8 +284,8 @@ const LoginView: React.FC = () => {
   );
 
   const connectUsingSession = useCallback(
-    async (showError = true) => {
-      const ep = apiEndpoint.trim();
+    async (showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
       if (ep === '') {
         setIsBlockPanelOpen(false);
         open();
@@ -459,8 +459,8 @@ const LoginView: React.FC = () => {
   );
 
   const connectUsingAPI = useCallback(
-    async (_showError = true) => {
-      const ep = apiEndpoint.trim();
+    async (_showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
       const apiKey = form.getFieldValue('api_key') || '';
       const secretKey = form.getFieldValue('secret_key') || '';
 
@@ -600,9 +600,9 @@ const LoginView: React.FC = () => {
         if ((globalThis as Record<string, unknown>).isElectron) {
           await loadConfigFromWebServer(ep);
         }
-        await connectUsingSession(showError);
+        await connectUsingSession(showError, ep);
       } else if (connectionMode === 'API') {
-        await connectUsingAPI(showError);
+        await connectUsingAPI(showError, ep);
       } else {
         open();
       }
