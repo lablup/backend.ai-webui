@@ -6,13 +6,13 @@
 ## วัตถุประสงค์
 
 ### ส่วนที่ 1. คู่มือเบื้องต้นในการใช้ Backend.AI
-- [How to create a virtual folder<create_storage_folder>](#How to create a virtual folder<create_storage_folder>)
-- [How to create a session<create_session>](#How to create a session<create_session>)
-- [How to use a session<use_session>](#How to use a session<use_session>)
-- [How to delete a session<delete_session>](#How to delete a session<delete_session>)
+- [สร้างโฟลเดอร์จัดเก็บ](#create-storage-folder)
+- [เริ่มเซสชันใหม่](#create_session)
+- [ใช้งาน Jupyter Notebook](#use_session)
+- [ลบเซสชันการคำนวณ](#delete_session)
 
 ### ส่วนที่ 2. คู่มือขั้นสูงในการใช้ Backend.AI
-- [How to use terminal application with tmux<tmux_guide>](#How to use terminal application with tmux<tmux_guide>)
-- [How to install extra pip package using automount virtual folder<install_pip_pkg>](#How to install extra pip package using automount virtual folder<install_pip_pkg>)
-- [How to use SSH/sFTP <ssh-sftp-container>](#How to use SSH/sFTP <ssh-sftp-container>)
-- [How to install apt packages<installing_apt_pkg>](#How to install apt packages<installing_apt_pkg>)
+- [เปิดเชลล์หลายตัว (tmux)](#tmux_guide)
+- [ติดตั้งแพ็กเกจ pip โดยใช้โฟลเดอร์อัตโนมัติ](#install_pip_pkg)
+- [เชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณ](#ssh-sftp-container)
+- [วิธีติดตั้งแพ็กเกจ apt](#installing_apt_pkg)

@@ -14,6 +14,8 @@
 หากมีปัญหาในการรับรู้คุกกี้การพิสูจน์ตัวตน ผู้ใช้อาจไม่สามารถเข้าสู่ระบบได้ชั่วคราว ลองเข้าสู่ระบบด้วยหน้าต่างเบราว์เซอร์ส่วนตัว หากเข้าสู่ระบบได้ กรุณาล้างแคชของเบราว์เซอร์และ/หรือข้อมูลแอปพลิเคชัน
 
 
+<a id="installing_apt_pkg"></a>
+
 ### วิธีการติดตั้งแพ็กเกจ apt?
 
 Inside a compute session, ผู้ใช้s cannot access `root` account and perform
@@ -23,10 +25,10 @@ is not allowed to install packages with `apt` or `yum` since they require
 permission.
 
 Alternatively, ผู้ใช้s may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>](#guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>).
+the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder).
 
+
+<a id="install_pip_pkg"></a>
 
 ### วิธีติดตั้งแพ็คเกจด้วย pip คืออะไร?
 
@@ -35,12 +37,11 @@ By default, when you install a pip package, it will be installed under
 can keep the installed packages after a compute session is destroyed, and then
 reus them for the next compute session. Just install the packages with pip like:
 
-``shell
+```shell
 $ pip install aiohttp
-``
+```
 For more information, please refer to the [guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>](#guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>).
+packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).
 
 ### I have created a compute session, but cannot launch Jupyter Notebook
 
@@ -79,7 +80,9 @@ the service by referencing the guide on start/stop/restart WSProxy service.
 ### ภาพไม่แสดงหลังจากที่ถูกนำขึ้นไปยัง docker registry
 
 
-   ฟีเจอร์นี้มีให้ใช้เฉพาะสำหรับซูเปอร์แอดมินเท่านั้น
+:::note
+ฟีเจอร์นี้มีให้ใช้เฉพาะสำหรับซูเปอร์แอดมินเท่านั้น
+:::
 
 หากมีการดันภาพใหม่ไปยังหนึ่งในรีจิสทรี docker ของ Backend.AI เมตาดาทาต้องได้รับการอัปเดตใน Backend.AI เพื่อที่จะใช้ในการสร้างเซสชันคอมพิวเตอร์ การอัปเดตเมตาดาทาสามารถทำได้โดยการคลิกที่ปุ่ม RESCAN IMAGES บนหน้า Maintenance ซึ่งจะปรับปรุงเมตาดาทาสำหรับรีจิสทรี docker ทุกตัว หากมีรีจิสทรีหลายตัว
 

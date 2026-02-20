@@ -8,10 +8,10 @@
 
 ชื่อผลิตภัณฑ์และบริษัททั้งหมดที่กล่าวถึงในที่นี้อาจเป็นเครื่องหมายการค้าของเจ้าของที่เกี่ยวข้อง
 
-| Backend.AI เป็นเครื่องหมายการค้าจดทะเบียนของบริษัท Lablup Inc.
-| ลิขสิทธิ์ของ Backend.AI™ เป็นของ Lablup Inc.
+Backend.AI เป็นเครื่องหมายการค้าจดทะเบียนของบริษัท Lablup Inc.
+ลิขสิทธิ์ของ Backend.AI™ เป็นของ Lablup Inc.
 
-©2015-\ |year| Lablup Inc. สงวนลิขสิทธิ์ทุกประการ.
+©2015-|year| Lablup Inc. สงวนลิขสิทธิ์ทุกประการ.
 
-| เอกสารเวอร์ชัน: v\ |version|.\ |version_date|
-| Last Updated (Year/Month/Day): |date|
+เอกสารเวอร์ชัน: v|version|.|version_date|
+Last Updated (Year/Month/Day): |date|

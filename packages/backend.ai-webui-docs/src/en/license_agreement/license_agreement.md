@@ -38,11 +38,11 @@ text and court judgment.
 Apart from LGPL compliance, commercial contracts must be made with Lablup in
 the following cases:
 
-#. When software that works only after installing the Backend.AI server is sold
+1. When software that works only after installing the Backend.AI server is sold
    to customers outside the organization.
-#. When hardware including Backend.AI server is sold to customers outside the
+1. When hardware including Backend.AI server is sold to customers outside the
    organization.
-#. When the Backend.AI server is installed on the hardware and the usage fee is
+1. When the Backend.AI server is installed on the hardware and the usage fee is
    received from a customer outside the organization that uses it.
 
 In other cases, you can use the Backend.AI server for free.

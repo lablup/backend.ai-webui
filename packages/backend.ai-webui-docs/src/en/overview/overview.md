@@ -23,6 +23,8 @@ programs.  Most tasks can be done with mouse clicks and brief typing, which
 achieves more intuitive use.
 
 
+<a id="key-concepts"></a>
+
 ## Key Concepts
 
 ![](../images/key_concepts_2209.png)
@@ -87,7 +89,9 @@ achieves more intuitive use.
   so that the Web-UI app can see the web wsproxy.
 
 
-## Backend.AI feature details
+<a id="backend-ai-feature-details"></a>
+
+## Backend.AI Feature Details
 
 **Accelerator Support**
 
@@ -153,13 +157,16 @@ achieves more intuitive use.
 |                      | Priority development and escalation |
 |                      | Customized container image / kernel or kernel repository |
 
-- ONLY Available on storage supports directory quota management
+\* ONLY Available on storage supports directory quota management
 
-## Accessible menu by user role
+<a id="accessible-menu-by-user-role"></a>
 
+## Accessible Menu by User Role
 
+:::note
 - Pages with `*` mark are in Administration menu.
-- Features only for admin are listed in [admin menu <admin-menu>](#admin menu <admin-menu>).
+- Features only for admin are listed in [admin menu](#admin-menus) section.
+:::
 
 | page \\ role | user | admin |
 | --- | --- | --- |

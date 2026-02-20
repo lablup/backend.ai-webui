@@ -7,7 +7,10 @@ Once started, the session provides access to interactive applications, terminals
 ![](../images/sessions_page.png)
 
 
+<a id="resource-summary-panels"></a>
+
 ## Resource สรุป Panels
+
 At the top of the 'เซสชัน' page, you can find panels displaying your available computing resources such as CPU, RAM, and AI Accelerators.
 Different panel views — 'My Total Resources Limit', 'My Resources in Resource Group', and 'Total Resources in Resource Group' — can be selected depending on
 the information needed. Use the 'Settings' button to change which panel is displayed.
@@ -17,7 +20,10 @@ the information needed. Use the 'Settings' button to change which panel is displ
 For more detailed information about resource panels and their metrics, please refer to the [dashboard](#dashboard) page.
 
 
+<a id="session-list"></a>
+
 ## Session list
+
 The 'เซสชัน' section displays a list of all active and completed compute sessions.
 You can filter sessions by type — `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between
 `Running` and `Finished` tabs to manage sessions.

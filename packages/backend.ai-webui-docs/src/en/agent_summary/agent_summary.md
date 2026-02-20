@@ -8,5 +8,7 @@ and whether the agent is schedulable or not. This menu is useful to check resour
 ![](../images/agent_summary.png)
 
 
-   Depending on the server configuration, the agent summary service feature may not be available.
-   In that case, please contact administrator of your system.
+:::note
+Depending on the server configuration, the agent summary service feature may not be available.
+In that case, please contact administrator of your system.
+:::

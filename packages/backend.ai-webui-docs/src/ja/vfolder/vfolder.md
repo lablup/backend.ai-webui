@@ -1,5 +1,3 @@
-# Data Page
-
 # データとストレージフォルダの取り扱い
 
 
@@ -36,9 +34,14 @@ The Storage Status and ストレージボリュームごとのクォータ show 
     * ユーザー: 現在のユーザーフォルダー使用量 / 現在のユーザーフォルダーのクオータースコープ。
 
 
-   Please remind that quota is only available in storage that provides quota setting
-   (e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-   to the [Quota Setting Panel<quota-setting-panel>](#Quota Setting Panel<quota-setting-panel>) section.
+:::note
+Please remind that quota is only available in storage that provides quota setting
+(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
+to the [Quota Setting Panel](#quota-setting-panel) section.
+:::
+
+<a id="create-storage-folder"></a>
+<a id="create_storage_folder"></a>
 
 ## ストレージフォルダを作成
 
@@ -63,10 +66,12 @@ The meaning of each field in the creation dialog is as follows.
 - パーミッション: プロジェクトフォルダのプロジェクトメンバーに対するパーミッションを設定します。これが「読み取り専用」に設定されている場合、プロジェクトメンバーは計算セッション内でこのフォルダに書き込みを行うことができません。
 - Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
-The folders created here can be [mounted <session-mounts>](#mounted <session-mounts>) when creating a compute session. フォルダー are mounted
+The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. フォルダー are mounted
 under the ユーザー's default working directory, `/home/work/`, and the file stored in the mounted
 directory will not be deleted when the compute session is terminated.
 (If you delete the folder, the file will also be deleted.)
+
+<a id="explore-folder"></a>
 
 ## フォルダーを探索
 
@@ -84,10 +89,12 @@ Click the folder name to open a file explorer and view the contents of the folde
 フォルダ内のファイルまたはディレクトリの最大長は、ホストファイルシステムに依存することがあります。しかし、通常は255文字を超えることはできません。
 
 
-   To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
-   directory contains an excessive number of files. If a folder contains a large number of files, some may
-   not be shown on the screen. In such cases, please use the terminal or other applications to view all files
-   in the directory.
+:::note
+To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
+directory contains an excessive number of files. If a folder contains a large number of files, some may
+not be shown on the screen. In such cases, please use the terminal or other applications to view all files
+in the directory.
+:::
 
 ### テキストファイルを編集
 
@@ -101,7 +108,9 @@ Click the folder name to open a file explorer and view the contents of the folde
 
 エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
 
-   ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
+:::note
+ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
+:::
 
 ## フォルダー名を変更
 
@@ -166,20 +175,23 @@ FileBrowserが新しいウィンドウで開かれているのがわかります
 ![](../images/filebrowser_in_session_page.png)
 
 
-   誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。
+:::note
+誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。
 
-   ![](../images/app_dialog_with_filebrowser.png)
+![](../images/app_dialog_with_filebrowser.png)
 
-   |
-   | データフォルダーエクスプローラーで 'EXECUTE FILEBROWSER' ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
+データフォルダーエクスプローラーで 'EXECUTE FILEBROWSER' ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
+:::
 
 ### FileBrowserイメージでコンピュートセッションを作成する
 
 FileBrowser対応のイメージを使用して直接コンピュートセッションを作成できます。アクセスするには、1つ以上のデータフォルダをマウントする必要があります。どのデータフォルダもマウントしなくても問題なくFileBrowserを使用できますが、セッション終了後にアップロード/更新されたファイルはすべて失われます。
 
 
-   The root directory of FileBrowser will be `/home/work`. Therefore, you
-   can access any mounted data folders for the compute session.
+:::note
+The root directory of FileBrowser will be `/home/work`. Therefore, you
+can access any mounted data folders for the compute session.
+:::
 
 ### FileBrowserの基本的な使用例
 
@@ -193,18 +205,21 @@ guide, please refer to the
 FileBrowserは、ツリー構造を維持したまま、1つ以上のローカルディレクトリのアップロードをサポートしています。ウィンドウの右上隅にあるアップロードボタンをクリックし、フォルダボタンをクリックします。すると、ローカルファイルエクスプローラのダイアログが表示され、アップロードしたいディレクトリを選択できます。
 
 
-   読み取り専用フォルダーにファイルをアップロードしようとすると、FileBrowser がサーバーエラーを発生させます。
+:::note
+読み取り専用フォルダーにファイルをアップロードしようとすると、FileBrowser がサーバーエラーを発生させます。
+:::
 
 ![](../images/filebrowser_upload.png)
 
 次の構造を持つディレクトリをアップロードしましょう。
 
-``shell
+```shell
 foo
 +-- test
 |   +-- test2.txt
 +-- test.txt
-``
+```
+
 After selecting `foo` directory, you can see the directory just uploaded
 successfully.
 
@@ -236,9 +251,11 @@ You will see that moving operation is successfully finished.
 ![](../images/moving_operation_in_filebrowser_finished.png)
 
 
-   FileBrowser is provided via application inside a compute session currently.
-   We are planning to update FileBrowser so that it can run independently
-   without creating a session.
+:::note
+FileBrowser is provided via application inside a compute session currently.
+We are planning to update FileBrowser so that it can run independently
+without creating a session.
+:::
 
 ## Using SFTP Server
 
@@ -248,8 +265,10 @@ web-based WebUI. The SFTP server allows you to upload files quickly through reli
 data streams.
 
 
-   Depending on the system settings, running SFTP server from the file dialog may not
-   be allowed.
+:::note
+Depending on the system settings, running SFTP server from the file dialog may not
+be allowed.
+:::
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
@@ -268,17 +287,19 @@ automatically. (This session will not affect resource occupancy.)
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [link<sftp_connection_for_linux_and_mac>](#link<sftp_connection_for_linux_and_mac>).
+referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
 To preserve the files, you need to transfer the files to the data folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 
-   If you upload your SSH keypair, the `id_container` will be set with your
-   own SSH private key. So, you don't need to download it every time you
-   want to connect via SSH to your container. Please refer to
-   [managing user's SSH keypair<user-ssh-keypair-management>](#managing user's SSH keypair<user-ssh-keypair-management>).
+:::note
+If you upload your SSH keypair, the `id_container` will be set with your
+own SSH private key. So, you don't need to download it every time you
+want to connect via SSH to your container. Please refer to
+[managing user's SSH keypair](#user-ssh-keypair-management).
+:::
 
-# Folder Categories
+## Folder Categories
 
 
 ## Pipeline folders
@@ -286,6 +307,8 @@ the session will be terminated when there is no transfer for some time.
 This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
 under `/pipeline` for each instance of work (computing session).
+
+<a id="automount-folder"></a>
 
 ## Automount folders
 
@@ -301,15 +324,16 @@ you can configure a certain ユーザー packages or environments that do not ch
 with different kinds of compute session.
 
 For more detailed information on the usage of 自動マウントフォルダー, refer to
-[examples of using automount folders<using-automount-folder>](#examples of using automount folders<using-automount-folder>).
+[examples of using automount folders](#using-automount-folder).
 
 ![](../images/vfolder_automount_folders.png)
+
+<a id="models"></a>
 
 ## モデル一覧
 
 
-'モデル一覧'
 The モデル一覧 tab facilitates straightforward model serving.
-You can store the necessary data, including input data for [model serving <model-serving>](#model serving <model-serving>) and training data, in the model folder.
+You can store the necessary data, including input data for [model serving](#model-serving) and training data, in the model folder.
 
 ![](../images/models.png)

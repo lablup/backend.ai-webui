@@ -1,5 +1,7 @@
 # 付録
 
+<a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
+
 ## GPU仮想化および分数GPU割り当て
 
 Backend.AI supports GPU virtualization technology which allows single physical
@@ -57,6 +59,8 @@ model.)
 Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
 
 
+<a id="automated-job-scheduling"></a>
+
 ## 自動ジョブスケジューリング
 
 Backend.AIサーバーには、独自開発されたタスクスケジューラーが組み込まれています。これにより、すべてのワーカーノードの利用可能なリソースを自動的にチェックし、ユーザーのリソース要求を満たすワーカーに対してコンピュートセッションの作成を委任します。さらに、リソースが不足している場合、ユーザーのコンピュートセッションの作成要求は、ジョブキューのPENDING状態として登録されます。その後、リソースが再び利用可能になると、保留された要求が再開されてコンピュートセッションの作成が行われます。
@@ -73,6 +77,8 @@ Backend.AIサーバーには、独自開発されたタスクスケジューラ�
 
 ![](../images/pending_to_running.png)
 
+
+<a id="multi-version-machine-learning-container-support"></a>
 
 ## マルチバージョン機械学習コンテナサポート
 
@@ -113,24 +119,112 @@ command. You can see that PyTorch 1.8 version is installed.
 このように、TensorFlowやPyTorchなどの主要なライブラリのさまざまなバージョンを、Backend.AIを通じてインストールの手間をかけずに利用することができます。
 
 
+<a id="convert-a-compute-session-to-a-new-private-docker-image"></a>
+
 ## コンピュートセッションを新しいプライベートDockerイメージに変換する
 
 実行中のコンピュートセッション（コンテナ）を、新しいコンピュートセッションを作成するために後で利用できる新しいDockerイメージに変換したい場合は、コンピュートセッション環境を準備し、管理者に変換を依頼する必要があります。
 
 - まず、必要なパッケージをインストールし、設定を好みに合わせて調整して、コンピュートセッションを準備します。
 
-  .. note``
-If you want to install OS packages, for example via `apt` command, it
-usually requires the `sudo` privilege. Depending on the security policy
-of the institute, you may not be allowed to use `sudo` inside a
-container.
+:::note
+OSパッケージをインストールしたい場合（例えば`apt`コマンドを通じて）、通常`sudo`権限が必要です。機関のセキュリティポリシーに応じて、コンテナ内で`sudo`を使用することが許可されていない場合があります。
 
-It is recommended to use [automount folder<using-automount-folder>](#automount folder<using-automount-folder>) to
-install [Python packages via pip<install_pip_pkg>](#Python packages via pip<install_pip_pkg>). However, if you
-want to add Python packages in a new image, you should install them with
-`sudo pip install <package-name>` to save them not in your home but in
-the system directory. The contents in your home directory, usually
-`/home/work__PROTECTED_8____PROTECTED_9____PROTECTED_10____PROTECTED_11____PROTECTED_12____PROTECTED_13____PROTECTED_14__`
+Pythonパッケージをインストールする際は、[自動マウントフォルダ](#using-automount-folder)を使用して[pipを通じてインストール](#install_pip_pkg)することをお勧めします。ただし、新しいイメージにPythonパッケージを追加したい場合は、`sudo pip install <パッケージ名>`を使用して、ホームディレクトリではなくシステムディレクトリに保存する必要があります。ホームディレクトリ（通常`/home/work/`）の内容は、コンピュートセッションを新しいDockerイメージに変換する際に保存されません。
+:::
+
+- コンピュートセッションの準備ができたら、管理者に新しいDockerイメージへの変換を依頼してください。セッション名またはIDとプラットフォームに登録されているメールアドレスを知らせる必要があります。
+- 管理者がコンピュートセッションを新しいDockerイメージに変換すると、完全なイメージ名とタグが通知されます。
+- セッション起動ダイアログでイメージ名を手動で入力できます。このイメージはプライベートであり、他のユーザーには表示されません。
+
+  ![](../images/session-creation-by-specifying-image-name.png)
+
+- 新しいDockerイメージを使用して、新しいコンピュートセッションが作成されます。
+
+
+<a id="backend-ai-server-installation-guide"></a>
+
+## Backend.AI サーバーインストールガイド
+
+Backend.AIサーバーデーモン/サービスには、以下のハードウェア仕様を満たす必要があります。最適なパフォーマンスを得るためには、各リソースの量を2倍にすることをお勧めします。
+
+- Manager: 2コア、4 GiBメモリ
+- Agent: 4コア、32 GiBメモリ、NVIDIA GPU（GPUワークロード用）、> 512 GiB SSD
+- Webserver: 2コア、4 GiBメモリ
+- WSProxy: 2コア、4 GiBメモリ
+- PostgreSQL DB: 2コア、4 GiBメモリ
+- Redis: 1コア、2 GiBメモリ
+- Etcd: 1コア、2 GiBメモリ
+
+各サービスをインストールする前に事前にインストールする必要がある必須ホスト依存パッケージは以下の通りです：
+
+- Web-UI: 最新のブラウザを実行できるオペレーティングシステム（Windows、Mac OS、Ubuntuなど）
+- Manager: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
+- Agent: docker (≥19.03)、CUDA/CUDA Toolkit (≥8、11推奨)、nvidia-docker v2、Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
+- Webserver: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
+- WSProxy: docker (≥19.03)、docker-compose (≥1.24)
+- PostgreSQL DB: docker (≥19.03)、docker-compose (≥1.24)
+- Redis: docker (≥19.03)、docker-compose (≥1.24)
+- Etcd: docker (≥19.03)、docker-compose (≥1.24)
+
+エンタープライズ版については、Backend.AIサーバーデーモンはLablupサポートチームによってインストールされ、初回インストール後に以下の資料/サービスが提供されます：
+
+- DVD 1枚（Backend.AIパッケージを含む）
+- ユーザーGUIガイドマニュアル
+- 管理者GUIガイドマニュアル
+- インストールレポート
+- 初回ユーザー/管理者オンサイトチュートリアル（3-5時間）
+
+製品メンテナンスおよびサポート情報：商用契約にはデフォルトでエンタープライズ版の月額/年額サブスクリプション料金が含まれています。初回インストール後約2週間、初回ユーザー/管理者トレーニング（1-2回）および有線/無線カスタマーサポートサービスが提供され、3-6ヶ月間マイナーリリースアップデートサポートおよびオンラインチャネルを通じたカスタマーサポートサービスが提供されます。その後提供されるメンテナンスおよびサポートサービスは、契約条件に応じて詳細が異なる場合があります。
+
+
+<a id="integration-examples"></a>
+
+## 連携例
+
+このセクションでは、Backend.AIプラットフォームで活用できるアプリケーション、ツールキット、機械学習ツールの代表的な使用例を紹介します。ここでは、各ツールの基本的な使い方とBackend.AI環境での設定方法を簡単な例とともに説明します。プロジェクトに必要なツールを選択し活用する際の参考になれば幸いです。
+
+このガイドで扱う内容は特定バージョンのプログラムに基づいて作成されているため、今後のアップデートにより使用方法が変わる可能性があります。そのため、このドキュメントは参考としてご利用いただき、変更事項については最新の公式ドキュメントもあわせてご確認ください。それでは、Backend.AIで活用できる強力なツールを一つずつ見ていきましょう。このセクションが皆さまの研究および開発に役立つガイドとなることを願っています。
+
+#### MLFlowの使用
+
+Backend.AIにはMLFlowとMLFlow UIを内蔵アプリとしてサポートする多数の実行イメージがあります。ただし、実行するために追加の手順が必要になる場合があります。以下の手順に従うことで、ローカル環境で使用するのと同様に、Backend.AIでパラメータと結果を追跡できます。
+
+:::note
+このセクションでは、すでにセッションを作成し、セッション内でアプリを実行しようとしている状態を前提としています。セッション作成およびアプリ実行の経験がない場合は、[新しいセッションの作成方法](#start-a-new-session)セクションを先にご覧ください。
+:::
+
+まず、ターミナルアプリ「console」を起動し、以下のコマンドを実行します。これによりMLFlowトラッキングUIサーバーが開始されます。
+
+```shell
+$ mlflow ui --host 0.0.0.0
+```
+
+次に、アプリランチャーダイアログで「MLFlow UI」アプリをクリックします。
+
+![](../images/app_dialog.png)
+
+しばらくすると、MLFlow UIの新しいページが表示されます。
+
+![](../images/mlflow_UI.png)
+
+MLFlowを使用すると、実行するたびにメトリクス、パラメータなどの実験を追跡できます。簡単な例から実験追跡を始めましょう。
+
+```shell
+$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+$ python train_diabetes.py
+```
+
+Pythonコードを実行した後、MLFlowで実験結果を確認できます。
+
+![](../images/mlflow_first_execution.png)
+
+コード実行時に引数を渡してハイパーパラメータを設定することもできます。
+
+```shell
+$ python train_diabetes.py 0.2 0.05
+```
+
 いくつかのトレーニングを行った後で、結果とともに訓練されたモデルを比較することができます。
 
 ![](../images/mlflow_multiple_execution.png)

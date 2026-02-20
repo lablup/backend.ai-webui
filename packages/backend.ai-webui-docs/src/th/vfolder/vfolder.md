@@ -1,5 +1,3 @@
-# Data Page
-
 # การจัดการข้อมูลและโฟลเดอร์เก็บข้อมูล
 
 
@@ -36,9 +34,14 @@ The Storage Status and โควตาต่อปริมาตรการจ
     * ผู้ใช้: การใช้งานโฟลเดอร์ของผู้ใช้ปัจจุบัน / ขอบเขตของโควต้าของโฟลเดอร์ผู้ใช้ปัจจุบัน
 
 
-   Please remind that quota is only available in storage that provides quota setting
-   (e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-   to the [Quota Setting Panel<quota-setting-panel>](#Quota Setting Panel<quota-setting-panel>) section.
+:::note
+Please remind that quota is only available in storage that provides quota setting
+(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
+to the [Quota Setting Panel](#quota-setting-panel) section.
+:::
+
+<a id="create-storage-folder"></a>
+<a id="create_storage_folder"></a>
 
 ## สร้างโฟลเดอร์จัดเก็บ
 
@@ -63,10 +66,12 @@ The meaning of each field in the creation dialog is as follows.
 - สิทธิ์: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านอย่างเดียว" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคอมพิวเตอร์ของพวกเขาได้
 - Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
-The folders created here can be [mounted <session-mounts>](#mounted <session-mounts>) when creating a compute session. โฟลเดอร์ are mounted
+The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. โฟลเดอร์ are mounted
 under the ผู้ใช้'s default working directory, `/home/work/`, and the file stored in the mounted
 directory will not be deleted when the compute session is terminated.
 (If you delete the folder, the file will also be deleted.)
+
+<a id="explore-folder"></a>
 
 ## สำรวจโฟลเดอร์
 
@@ -87,10 +92,12 @@ of mounting folders into a compute session.
 ความยาวสูงสุดของไฟล์หรือไดเร็กทอรีภายในโฟลเดอร์อาจขึ้นอยู่กับระบบไฟล์ของโฮสต์ แต่โดยปกติจะไม่สามารถเกิน 255 ตัวอักษร
 
 
-   To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
-   directory contains an excessive number of files. If a folder contains a large number of files, some may
-   not be shown on the screen. In such cases, please use the terminal or other applications to view all files
-   in the directory.
+:::note
+To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
+directory contains an excessive number of files. If a folder contains a large number of files, some may
+not be shown on the screen. In such cases, please use the terminal or other applications to view all files
+in the directory.
+:::
 
 ### แก้ไขไฟล์ข้อความ
 
@@ -104,7 +111,9 @@ of mounting folders into a compute session.
 
 ตัวแก้ไขรองรับทั้งธีมสว่างและธีมมืดที่ตรงกับการตั้งค่า UI ของคุณ คุณสามารถแก้ไขเนื้อหาไฟล์ จากนั้นคลิก 'บันทึก' เพื่ออัปโหลดไฟล์ที่แก้ไข หรือ 'ยกเลิก' เพื่อยกเลิกการเปลี่ยนแปลง
 
-   ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อคุณมีสิทธิ์ write_content บนโฟลเดอร์จัดเก็บ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
+:::note
+ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อคุณมีสิทธิ์ write_content บนโฟลเดอร์จัดเก็บ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
+:::
 
 ## เปลี่ยนชื่อโฟลเดอร์
 
@@ -169,20 +178,23 @@ Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 ![](../images/filebrowser_in_session_page.png)
 
 
-   หากคุณปิดหน้าต่าง FileBrowser โดย accident และต้องการเปิดใหม่เพียงแค่ไปที่หน้า เซสชัน และคลิกปุ่มแอปพลิเคชัน FileBrowser ของเซสชันการคอมพิวเตอร์ FileBrowser
+:::note
+หากคุณปิดหน้าต่าง FileBrowser โดย accident และต้องการเปิดใหม่เพียงแค่ไปที่หน้า เซสชัน และคลิกปุ่มแอปพลิเคชัน FileBrowser ของเซสชันการคอมพิวเตอร์ FileBrowser
 
-   ![](../images/app_dialog_with_filebrowser.png)
+![](../images/app_dialog_with_filebrowser.png)
 
-   |
-   | เมื่อคุณคลิกที่ปุ่ม 'EXECUTE FILEBROWSER' อีกครั้งในตัวสำรวจโฟลเดอร์ข้อมูล จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
+เมื่อคุณคลิกที่ปุ่ม 'EXECUTE FILEBROWSER' อีกครั้งในตัวสำรวจโฟลเดอร์ข้อมูล จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
+:::
 
 ### สร้างเซสชันการคำนวณด้วยภาพ FileBrowser
 
 คุณสามารถสร้างเซสชันคอมพิวเตอร์ได้โดยตรงด้วยภาพที่รองรับโดย FileBrowser คุณจำเป็นต้องติดตั้งโฟลเดอร์ข้อมูลอย่างน้อยหนึ่งโฟลเดอร์เพื่อเข้าถึงพวกเขา คุณสามารถใช้ FileBrowser ได้โดยไม่มีปัญหาแม้ว่าคุณจะไม่ติดตั้งโฟลเดอร์ข้อมูลใด ๆ แต่ไฟล์ที่อัปโหลด/อัปเดตทุกไฟล์จะหายไปหลังจากเซสชันสิ้นสุด
 
 
-   The root directory of FileBrowser will be `/home/work`. Therefore, you
-   can access any mounted data folders for the compute session.
+:::note
+The root directory of FileBrowser will be `/home/work`. Therefore, you
+can access any mounted data folders for the compute session.
+:::
 
 ### ตัวอย่างการใช้งานพื้นฐานของ FileBrowser
 
@@ -196,18 +208,21 @@ guide, please refer to the
 FileBrowser รองรับการอัปโหลดไดเรกทอรีท้องถิ่นหนึ่งหรือหลายไดเรกทอรีในขณะที่รักษาโครงสร้างต้นไม้ไว้ คลิกปุ่มอัปโหลดที่มุมขวาบนของหน้าต่าง จากนั้นคลิกปุ่มโฟลเดอร์ จะมีการแสดงกล่องโต้ตอบสำรวจไฟล์ท้องถิ่นขึ้นมา และคุณสามารถเลือกไดเรกทอรีใดก็ได้ที่คุณต้องการอัปโหลด
 
 
-   หากคุณพยายามอัปโหลดไฟล์ไปยังโฟลเดอร์ที่มีสถานะเป็นอ่านอย่างเดียว FileBrowser จะเกิดข้อผิดพลาดของเซิร์ฟเวอร์
+:::note
+หากคุณพยายามอัปโหลดไฟล์ไปยังโฟลเดอร์ที่มีสถานะเป็นอ่านอย่างเดียว FileBrowser จะเกิดข้อผิดพลาดของเซิร์ฟเวอร์
+:::
 
 ![](../images/filebrowser_upload.png)
 
 ให้เราอัปโหลดไดเรกทอรีที่มีโครงสร้างดังต่อไปนี้
 
-``shell
+```shell
 foo
 +-- test
 |   +-- test2.txt
 +-- test.txt
-``
+```
+
 After selecting `foo` directory, you can see the directory just uploaded
 successfully.
 
@@ -239,9 +254,11 @@ You will see that moving operation is successfully finished.
 ![](../images/moving_operation_in_filebrowser_finished.png)
 
 
-   FileBrowser is provided via application inside a compute session currently.
-   We are planning to update FileBrowser so that it can run independently
-   without creating a session.
+:::note
+FileBrowser is provided via application inside a compute session currently.
+We are planning to update FileBrowser so that it can run independently
+without creating a session.
+:::
 
 ## Using SFTP Server
 
@@ -251,8 +268,10 @@ web-based WebUI. The SFTP server allows you to upload files quickly through reli
 data streams.
 
 
-   Depending on the system settings, running SFTP server from the file dialog may not
-   be allowed.
+:::note
+Depending on the system settings, running SFTP server from the file dialog may not
+be allowed.
+:::
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
@@ -271,17 +290,19 @@ automatically. (This session will not affect resource occupancy.)
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [link<sftp_connection_for_linux_and_mac>](#link<sftp_connection_for_linux_and_mac>).
+referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
 To preserve the files, you need to transfer the files to the data folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 
-   If you upload your SSH keypair, the `id_container` will be set with your
-   own SSH private key. So, you don't need to download it every time you
-   want to connect via SSH to your container. Please refer to
-   [managing user's SSH keypair<user-ssh-keypair-management>](#managing user's SSH keypair<user-ssh-keypair-management>).
+:::note
+If you upload your SSH keypair, the `id_container` will be set with your
+own SSH private key. So, you don't need to download it every time you
+want to connect via SSH to your container. Please refer to
+[managing user's SSH keypair](#user-ssh-keypair-management).
+:::
 
-# Folder Categories
+## Folder Categories
 
 
 ## Pipeline folders
@@ -289,6 +310,8 @@ the session will be terminated when there is no transfer for some time.
 This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
 under `/pipeline` for each instance of work (computing session).
+
+<a id="automount-folder"></a>
 
 ## Automount folders
 
@@ -304,15 +327,16 @@ you can configure a certain ผู้ใช้ packages or environments that do 
 with different kinds of compute session.
 
 For more detailed information on the usage of การติดตั้งโฟลเดอร์อัตโนมัติ, refer to
-[examples of using automount folders<using-automount-folder>](#examples of using automount folders<using-automount-folder>).
+[examples of using automount folders](#using-automount-folder).
 
 ![](../images/vfolder_automount_folders.png)
+
+<a id="models"></a>
 
 ## โมเดลส์
 
 
-'โมเดลส์'
 The โมเดลส์ tab facilitates straightforward model serving.
-You can store the necessary data, including input data for [model serving <model-serving>](#model serving <model-serving>) and training data, in the model folder.
+You can store the necessary data, including input data for [model serving](#model-serving) and training data, in the model folder.
 
 ![](../images/models.png)

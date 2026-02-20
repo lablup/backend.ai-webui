@@ -3,7 +3,9 @@
 ## Model Service
 
 
-   This feature is supported in Enterprise version only.
+:::note
+This feature is supported in Enterprise version only.
+:::
 
 Backend.AI not only facilitates the construction of development environments
 and resource management during the model training phase, but also supports
@@ -31,11 +33,11 @@ modifying the compute session for training in the following way:
 
 1. Add pre-opened ports during session creation to map the running
    server port inside the session for model serving.
-   (For instructions on how to use preopen ports, refer to this [Set Preopen Ports <set_preopen_ports>](#Set Preopen Ports <set_preopen_ports>).)
+   (For instructions on how to use preopen ports, refer to [Set Preopen Ports](#set-preopen-ports).)
 
 2. Check 'Open app to public' to allow the service mapped to the
    pre-opened port to be publicly accessible.
-   (For detailed information about "Open app to public," refer to this [Open app to public <open_app_to_public>](#Open app to public <open_app_to_public>).)
+   (For detailed information about "Open app to public," refer to [Open app to public](#open-app-to-public).)
 
 However, there are certain limitations in version 23.03:
 
@@ -65,12 +67,15 @@ To use the Model Service, you need to follow the steps below:
 7. (If needed) Modify the Model Service.
 8. (If needed) Terminate the Model Service.
 
+<a id="model-definition-guide"></a>
+
 #### Creating a Model Definition File
 
-   .. note::
-      From 24.03, you can configure model definition file name. But if you don't
-      input any other input field in model definition file path, then the system will
-      regard it as `model-definition.yml` or `model-definition.yaml`.
+:::note
+From 24.03, you can configure model definition file name. But if you don't
+input any other input field in model definition file path, then the system will
+regard it as `model-definition.yml` or `model-definition.yaml`.
+:::
 
 The model definition file contains the configuration information
 required by the Backend.AI system to automatically start, initialize,
@@ -85,31 +90,32 @@ process can be simplified and optimized during automatic scaling.
 The model definition file follows the following format:
 
 ```yaml
-   models:
-     - name: "simple-http-server"
-       model_path: "/models"
-       service:
-         start_command:
-           - python
-           - -m
-           - http.server
-           - --directory
-           - /home/work
-           - "8000"
-         port: 8000
-         health_check:
-           path: /
-           interval: 10.0
-           max_retries: 10
-           max_wait_time: 15.0
-           expected_status_code: 200
-           initial_delay: 60.0
+models:
+  - name: "simple-http-server"
+    model_path: "/models"
+    service:
+      start_command:
+        - python
+        - -m
+        - http.server
+        - --directory
+        - /home/work
+        - "8000"
+      port: 8000
+      health_check:
+        path: /
+        interval: 10.0
+        max_retries: 10
+        max_wait_time: 15.0
+        expected_status_code: 200
+        initial_delay: 60.0
 ```
 
 **Key-Value Descriptions for Model Definition File**
 
-   .. note::
-      Fields without "(Required)" mark are optional.
+:::note
+Fields without "(Required)" mark are optional.
+:::
 
 - `name` (Required): Defines the name of the model.
 - `model_path` (Required): Addresses the path of where model is defined.
@@ -120,7 +126,7 @@ The model definition file follows the following format:
      prepare the environment by creating configuration files, setting up directories, or
      running initialization scripts. Actions are executed sequentially in the order defined.
 
-      - `action`: The type of action to perform. See [Prestart Actions <prestart-actions>](#Prestart Actions <prestart-actions>)
+      - `action`: The type of action to perform. See [Prestart Actions](#prestart-actions)
         for available action types and their parameters.
       - `args`: Action-specific parameters. Each action type has different required arguments.
 
@@ -202,8 +208,10 @@ failures)       ┌─────┴─────┐
             internally)
 ```
 
-   The internal health status (used for traffic routing) may not be immediately
-   synchronized with the status displayed in the user interface.
+:::note
+The internal health status (used for traffic routing) may not be immediately
+synchronized with the status displayed in the user interface.
+:::
 
 **Time to UNHEALTHY**:
 
@@ -215,6 +223,8 @@ failures)       ┌─────┴─────┐
 
   Example with defaults: 10 × 11 = **110 seconds** (about 2 minutes)
 
+
+<a id="prestart-actions"></a>
 
 **Description for service action supported in Backend.AI Model serving**
 
@@ -253,9 +263,7 @@ failures)       ┌─────┴─────┐
 To upload the model definition file (`model-definition.yml`) to the
 model type folder, you need to create a virtual folder. When creating
 the virtual folder, select the `model` type instead of the default
-`general` type. Refer to the section on [creating a storage
-folder<create_storage_folder>](#creating a storage
-folder<create_storage_folder>) in the Data page for
+`general` type. Refer to the section on [creating a storage folder](#create-storage-folder) in the Data page for
 instructions on how to create a folder.
 
 ![](../images/model_type_folder_creation.png)
@@ -264,11 +272,13 @@ After creating the folder, select the 'MODELS' tab in the Data
 page, click on the recently created model type folder icon to open the
 folder explorer, and upload the model definition file.
 For more information on how to use the folder explorer,
-please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
+please refer to the [Explore Folder](#explore-folder) section.
 
 ![](../images/model_type_folder_list.png)
 
 ![](../images/model_definition_file_upload.png)
+
+<a id="service-definition-file"></a>
 
 #### Creating a Service Definition File
 
@@ -315,14 +325,18 @@ MODEL_NAME = "example-model-name"
    - You can define any environment variables required by the runtime. For example, `MODEL_NAME` is commonly used to specify which model to load.
 
 
-   The `{runtime}` prefix in each section header corresponds to the runtime variant
-   name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
-   selected runtime variant when creating the service.
+:::note
+The `{runtime}` prefix in each section header corresponds to the runtime variant
+name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
+selected runtime variant when creating the service.
+:::
 
-   When a service is created from the Model Store using the "Run this model" button,
-   the settings from `service-definition.toml` are applied automatically. If you later
-   need to adjust the resource allocation, you can modify the service through the
-   Model Serving page.
+:::note
+When a service is created from the Model Store using the "Run this model" button,
+the settings from `service-definition.toml` are applied automatically. If you later
+need to adjust the resource allocation, you can modify the service through the
+Model Serving page.
+:::
 
 #### Creating/Validating Model Service
 
@@ -405,9 +419,10 @@ you can check the status through the container log. When the result is set to
 ![](../images/model-validation-dialog.png)
 
 
-   .. note::
-      The result `Finished` doesn't guarantee that the execution is successfully done.
-      Instead, please check the container log.
+:::note
+The result `Finished` doesn't guarantee that the execution is successfully done.
+Instead, please check the container log.
+:::
 
 
 **Handling Failed Model Service Creation**
@@ -429,7 +444,7 @@ follows:
 
    ![](../images/serving-route-error.png)
 
-   -  Solution: Verify [the format of the model definition file <model_definition_guide>](#the format of the model definition file <model_definition_guide>) and
+   -  Solution: Verify [the format of the model definition file](#model-definition-guide) and
       if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
       Then, click 'Clear error and Retry' button to remove all the error stacked in routes info
       table and ensure that the routing of the model service is set correctly.
@@ -477,6 +492,8 @@ when you can add a rule. Each field in the modal is described below:
 
 ![](../images/auto_scaling_rules_modal.png)
 
+<a id="generating-tokens"></a>
+
 #### Generating Tokens
 
 Once the model service is successfully executed, the status will be set
@@ -502,12 +519,10 @@ item to copy the token, and add it as the value of the following key.
 
 ![](../images/generated_token_copy.png)
 
-============= ================
-Key           Value
-============= ================
-Content-Type  application/json
-Authorization BackendAI
-============= ================
+| Key           | Value            |
+|---------------|------------------|
+| Content-Type  | application/json |
+| Authorization | BackendAI        |
 
 #### Accessing the Model Service Endpoint for End Users
 
@@ -523,16 +538,20 @@ Here's the simple command using `curl` command whether to check sending any requ
 to model serving endpoint working properly or not.
 
 
-   $ export API_TOKEN="<token>"
-   $ curl -H "Content-Type: application/json" -X GET \
-   $ -H "Authorization: BackendAI $API_TOKEN" \
-   $ <model-service-endpoint>
+```bash
+$ export API_TOKEN="<token>"
+$ curl -H "Content-Type: application/json" -X GET \
+  -H "Authorization: BackendAI $API_TOKEN" \
+  <model-service-endpoint>
+```
 
 
-   By default, end users must be on a network that can access the
-   endpoint. If the service was created in a closed network, only end
-   users who have access within that closed network can access the
-   service.
+:::warning
+By default, end users must be on a network that can access the
+endpoint. If the service was created in a closed network, only end
+users who have access within that closed network can access the
+service.
+:::
 
 #### Using the Large Language Model
 
@@ -543,7 +562,7 @@ Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
 
 Then, You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
-For more information about the chat feature, please refer to the [Chat page <chat_page>](#Chat page <chat_page>)
+For more information about the chat feature, please refer to the [Chat page](#chat-page)
 
 ![](../images/LLM_chat.png)
 
@@ -557,7 +576,7 @@ To use the model, you will need the following information:
   generated from various services, not just Backend.AI. The format and generation process
   may vary depending on the service. Always refer to the specific service's guide for details.
   For instance, when using the service generated by Backend.AI, please refer to the
-  [Generating Tokens<generating-tokens>](#Generating Tokens<generating-tokens>) section for instructions on how to generate tokens.
+  [Generating Tokens](#generating-tokens) section for instructions on how to generate tokens.
 
 ![](../images/LLM_chat_custom_model.png)
 

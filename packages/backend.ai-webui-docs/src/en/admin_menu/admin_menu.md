@@ -9,6 +9,8 @@ search box on each column header.
 
 ![](../images/admin_user_page.png)
 
+<a id="create-and-update-users"></a>
+
 ## Create and update users
 
 A user can be created by clicking the '+Create User' button. Note that the password
@@ -18,7 +20,7 @@ character/ number should be included. The maximum length allowed for E-Mail and 
 
 If a user with the same email or username already exists, it is not possible to
 creat user account. Please try other email and username.
-``
+
 ![](../images/create_user_dialog.png)
 
 Check if the user is created.
@@ -59,7 +61,9 @@ Each of the five items at the bottom of the dialog has the following functions.
   for other users.
 - Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
   to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy <user-resource-policy>](#user resource policy <user-resource-policy>) section.
+  refer [user resource policy](#user-resource-policy) section.
+
+<a id="inactivate-user-account"></a>
 
 ## Inactivate user account
 
@@ -76,11 +80,14 @@ the target user to `Active`.
 
 ![](../images/user_inactivate_confirmation.png)
 
-
+:::note
 Please note that deactivating or reactivating the user does not change the user's credentials, since the user
 account can have multiple keypairs, which brings it hard to decide which credential
 should be reactivated.
-``
+:::
+
+<a id="manage-users-keypairs"></a>
+
 ## Manage User's Keypairs
 
 Each user account usually have one or more keypairs. A keypair is used for API
@@ -132,9 +139,7 @@ according to the user's pattern.
 
 ![](../images/add_keypair_dialog.png)
 
-
-:::
-
+<a id="share-project-storage-folders-with-project-members"></a>
 
 ## Share project storage folders with project members
 
@@ -142,10 +147,11 @@ Backend.AI provides storage folders for projects, in addition to user's own
 storage folder. A project storage folder is a folder belonging to a specific
 project, not a specific user, and can be accessed by all users in that project.
 
-
-   Project folders can be created only by administrators. Normal users can only
-   access the contents of the project folder created by the administrator.
-   Depending on the system settings, project folders may not be allowed.
+:::note
+Project folders can be created only by administrators. Normal users can only
+access the contents of the project folder created by the administrator.
+Depending on the system settings, project folders may not be allowed.
+:::
 
 First, log in with an admin account and create a project folder. After moving to
 the Data page, click 'Create Folder' to open the folder creation dialog.
@@ -162,6 +168,8 @@ also displayed in the Permission panel.
 
 ![](../images/group_folder_listed_in_B.png)
 
+<a id="manage-models-cards"></a>
+
 ## Manage Models cards
 
 All of the Model cards in model store are managed by project admin.
@@ -170,9 +178,10 @@ can access to model card and clone it if needed.
 
 Following method is to add model cards from the Hugging Face.
 
-
-   Before creating a model card, getting an access to the specific model on Hugging Face is needed.
-   For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
+:::note
+Before creating a model card, getting an access to the specific model on Hugging Face is needed.
+For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
+:::
 
 First, Set the project to 'model-store'.
 
@@ -191,66 +200,71 @@ and set the rest of folder configuration as shown below:
 After creating the folder, you need to set and upload the model-definition.yaml file
 to the folder that you've just created. Following is the example of the model-definition file.
 If you want to know how to write model-definition file,
-please refer to [Model definition guide <model_definition_guide>](#Model definition guide <model_definition_guide>) section.
+please refer to [Model definition guide](#model-definition-guide) section.
 
-
-   models:
-   - name: "Llama-3.1-8B-Instruct"
-      model_path: "/models/Llama-3.1-8B-Instruct"
-      service:
-         pre_start_actions:
-         - action: run_command
-            args:
-               command:
-               - huggingface-cli
-               - download
-               - --local-dir
-               - /models/Llama-3.1-8B-Instruct
-               - --token
-               - hf_****
-               - meta-llama/Llama-3.1-8B-Instruct
-            start_command:
-            - /usr/bin/python
-            - -m
-            - vllm.entrypoints.openai.api_server
-            - --model
-            - /models/Llama-3.1-8B-Instruct
-            - --served-model-name
-            - Llama-3.1-8B-Instruct
-            - --tensor-parallel-size
-            - "1"
-            - --host
-            - "0.0.0.0"
-            - --port
-            - "8000"
-            - --max-model-len
-            - "4096"
-         port: 8000
-         health_check:
-            path: /v1/models
-            max_retries: 500
-
+```yaml
+models:
+  - name: "Llama-3.1-8B-Instruct"
+    model_path: "/models/Llama-3.1-8B-Instruct"
+    service:
+      pre_start_actions:
+        - action: run_command
+          args:
+            command:
+              - huggingface-cli
+              - download
+              - --local-dir
+              - /models/Llama-3.1-8B-Instruct
+              - --token
+              - hf_****
+              - meta-llama/Llama-3.1-8B-Instruct
+      start_command:
+        - /usr/bin/python
+        - -m
+        - vllm.entrypoints.openai.api_server
+        - --model
+        - /models/Llama-3.1-8B-Instruct
+        - --served-model-name
+        - Llama-3.1-8B-Instruct
+        - --tensor-parallel-size
+        - "1"
+        - --host
+        - "0.0.0.0"
+        - --port
+        - "8000"
+        - --max-model-len
+        - "4096"
+      port: 8000
+      health_check:
+        path: /v1/models
+        max_retries: 500
+```
 
 Once the model-definition file is uploaded, the model card will appear in the model store page.
 
 ![](../images/model_card_added.png)
 
-
-   You need to download model manually after setting model-definition file. For downloading the model file to folder,
-   you can mount the model folder to session creation and download file to there by referring
-   [Downloading models](https://huggingface.co/docs/hub/models-downloading) .
+:::note
+You need to download model manually after setting model-definition file. For downloading the model file to folder,
+you can mount the model folder to session creation and download file to there by referring
+[Downloading models](https://huggingface.co/docs/hub/models-downloading) .
+:::
 
 Clicking on the model card you've just created will display the details of the model-definition file you uploaded.
 Now, every member of the project can access the model card and clone it.
 
 ![](../images/model_card_detail.png)
 
-   To enable the "Run this model" button on the model card, both
-   `model-definition.yaml` and `service-definition.toml` files must exist in the
-   folder. If either file is missing, the button will be disabled. For details on
-   creating the service definition file, refer to the
-   [Service Definition File <service-definition-file>](#Service Definition File <service-definition-file>)
-   section in the Model Serving documentation.
+:::note
+To enable the "Run this model" button on the model card, both
+`model-definition.yaml` and `service-definition.toml` files must exist in the
+folder. If either file is missing, the button will be disabled. For details on
+creating the service definition file, refer to the
+[Service Definition File](#service-definition-file)
+section in the Model Serving documentation.
+:::
+
+<a id="model-store-page"></a>
 
 ## Model Store Page
 
@@ -269,6 +283,8 @@ Clicking on a model card opens a detailed view with the full README content and 
 
 ![](../images/model_card_detail_with_buttons.png)
 
+<a id="clone-to-folder"></a>
+
 ### Clone to Folder
 
 The "Clone to folder" button allows you to create a personal copy of a model store folder. Since model store folders are read-only and shared across the project, you need to clone them to your own storage to modify files or use them in custom workflows.
@@ -284,18 +300,26 @@ To clone a model folder:
 
 ![](../images/model_store_clone_dialog.png)
 
-   Currently, folder cloning only supports cloning to the same storage host.
+:::note
+Currently, folder cloning only supports cloning to the same storage host.
+:::
 
 After cloning completes, the new folder will appear in your Data page under the appropriate tab based on the usage mode you selected.
+
+<a id="create-service-from-this-model"></a>
 
 ### Create Service from This Model
 
 The "Run this model" button allows you to create a model service directly from a model card with a single click. This feature automates the process of cloning the model folder and creating a model service endpoint.
 
-   This button requires the following conditions to be met:
-   - Both `model-definition.yaml` and `service-definition.toml` files must exist in the model folder. If either file is missing, the button will be disabled with a tooltip explaining which file is needed.
-   - You must have sufficient resource quota to create a model service.
-   - The resource group must allow inference session types.
+:::note
+This button requires the following conditions to be met:
+- Both `model-definition.yaml` and `service-definition.toml` files must exist in the model folder. If either file is missing, the button will be disabled with a tooltip explaining which file is needed.
+- You must have sufficient resource quota to create a model service.
+- The resource group must allow inference session types.
+:::
+
+<a id="service-creation-workflow"></a>
 
 #### Service Creation Workflow
 
@@ -323,9 +347,13 @@ When you click the "Run this model" button, Backend.AI follows this workflow:
 
 ![](../images/model_service_created_detail.png)
 
-   If a cloned folder already exists from a previous operation, the system will
-   automatically use that folder to create the service. In a future release, you will
-   be able to select which cloned folder to use if multiple copies exist.
+:::note
+If a cloned folder already exists from a previous operation, the system will
+automatically use that folder to create the service. In a future release, you will
+be able to select which cloned folder to use if multiple copies exist.
+:::
+
+<a id="troubleshooting"></a>
 
 #### Troubleshooting
 
@@ -334,11 +362,15 @@ If service creation fails:
 - Check that both model-definition.yaml and service-definition.toml are correctly formatted
 - Verify that your resource quota allows creating new model services
 - Check the Model Serving page for error messages in the service status
-- Refer to the [Model Serving <model-serving>](#Model Serving <model-serving>) documentation for detailed troubleshooting steps
+- Refer to the [Model Serving](#model-serving) documentation for detailed troubleshooting steps
 
-For more information about model services, service configuration, and endpoint management, refer to the [Model Serving <model-serving>](#Model Serving <model-serving>) documentation.
+For more information about model services, service configuration, and endpoint management, refer to the [Model Serving](#model-serving) documentation.
+
+<a id="manage-resource-policy"></a>
 
 ## Manage Resource Policy
+
+<a id="keypair-resource-policy"></a>
 
 #### Keypair Resource Policy
 
@@ -431,19 +463,20 @@ Click 'Delete' button to erase."
 
 ![](../images/resource_policy_delete_dialog.png)
 
-
+:::note
 If there's any users (including inactive users) following a resource policy to be deleted,
 deletion may not be done. Before deleting a resource policy, please make sure that
 no users remain under the resource policy.
-``
+:::
+
 If you want to hide or show specific columns, click the 'Setting (Gear)' at the bottom right of the
 table. This will bring up a dialog where you can select the columns you want to display.
 
 ![](../images/keypair_resource_policy_table_setting.png)
 
+<a id="user-resource-policy"></a>
 
 #### User Resource Policy
-
 
 Starting from version 24.03, Backend.AI supports user resource policy management. While each
 user can have multiple keypairs, a user can only have one user resource policy. In the user
@@ -471,19 +504,21 @@ To create a new user resource policy, click the Create button.
 - Max Customized Image Count: The maximum number of customized images that
   user can create. If user's customized image count exceeds this value,
   user cannot create a new customized image. If you want to know more about customized
-  images, please refer to the [My Environments<my-environments>](#My Environments<my-environments>) section.
+  images, please refer to the [My Environments](#my-environments) section.
 
 
 To update, click the 'Setting (Gear)' button in the control column. To delete, click the trash can
 button.
 
-
+:::note
 Changing a resource policy may affect all users who use that policy, so use
 it with caution.
-``
+:::
+
 Similar to keypair resource policy, users can select and display only columns users want by
 clicking the 'Setting (Gear)' button at the bottom right of the table.
 
+<a id="project-resource-policy"></a>
 
 #### Project Resource Policy
 
@@ -515,9 +550,10 @@ applied to the user folders.
 If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
 names cannot be edited. Deletion can be done by clicking the trash can icon button.
 
-
-   Changing a resource policy may affect all users who use that policy,
-   so use it with caution.
+:::note
+Changing a resource policy may affect all users who use that policy,
+so use it with caution.
+:::
 
 You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
 bottom right of the table.
@@ -525,6 +561,8 @@ bottom right of the table.
 To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
 
 ![](../images/keypair_export.png)
+
+<a id="unified-view-for-pending-sessions"></a>
 
 ## Unified View for Pending Sessions
 
@@ -538,6 +576,8 @@ which the session will be created once sufficient resources become available.
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
+<a id="manage-images"></a>
+
 ## Manage Images
 
 Admins can manage images, which are used in creating a compute session, in the
@@ -547,9 +587,10 @@ as registry, namespace, image name, image's based OS, digest, and minimum
 resources required for each image. For images downloaded to one or more agent
 nodes, there will be a `installed` tag in each Status column.
 
-
-   The feature to install images by selecting specific agents is currently
-   under development.
+:::note
+The feature to install images by selecting specific agents is currently
+under development.
+:::
 
 ![](../images/image_list_page.png)
 
@@ -564,12 +605,13 @@ minimum resource requirements for the image and then generated, not cancelled.
 
 ![](../images/update_image_resource_setting.png)
 
-
-   Don't change the minimum resource requirements to an amount less than the
-   predefined value! The minimum resource requirements included in the image
-   metadata are values that have been tested and determined. If you are not
-   really sure about the minimum amount of resources you want to change, leave
-   it in the default.
+:::note
+Don't change the minimum resource requirements to an amount less than the
+predefined value! The minimum resource requirements included in the image
+metadata are values that have been tested and determined. If you are not
+really sure about the minimum amount of resources you want to change, leave
+it in the default.
+:::
 
 Additionally, you can add or modify the supported apps for each image by clicking the 'Apps' icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
@@ -578,11 +620,13 @@ Once you click the icon, the name of the app and its corresponding port number w
 
 In this interface, you can add supported custom applications by clicking the '+ Add' button below. To delete an application, simply click the 'red trash can' button on the right side of each row.
 
+:::note
+You need to reinstall the image after changing the managed app.
 
-   You need to reinstall the image after changing the managed app.
+![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+:::
 
-   ![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
-
+<a id="manage-docker-registry"></a>
 
 ## Manage docker registry
 
@@ -590,9 +634,10 @@ You can click on the Registries tab in Environments page to see the information
 of the docker registry that are currently connected. `cr.backend.ai` is
 registered by default, and it is a registry provided by Harbor.
 
-
-   In the offline environment, the default registry is not accessible, so
-   click the trash icon on the right to delete it.
+:::note
+In the offline environment, the default registry is not accessible, so
+click the trash icon on the right to delete it.
+:::
 
 Click the refresh icon in Controls to update image metadata for Backend.AI from
 the connected registry. Image information which does not have labels for
@@ -627,7 +672,9 @@ For **self-hosted (on-premise) GitLab**:
 - Registry URL: Your GitLab registry URL (e.g., `https://registry.example.com`)
 - Extra Information: `{"api_endpoint": "https://gitlab.example.com"}`
 
-  The `api_endpoint` should point to your GitLab instance URL, not the registry URL.
+:::note
+The `api_endpoint` should point to your GitLab instance URL, not the registry URL.
+:::
 
 Additional configuration notes:
 
@@ -648,6 +695,7 @@ use the images immediately. You must enable the registry by toggling the
 Enabled switch in the registry list to allow users to access images from
 the registry.
 
+<a id="manage-resource-preset"></a>
 
 ## Manage resource preset
 
@@ -680,6 +728,7 @@ each resource preset.
 
 ![](../images/create_resource_preset_dialog.png)
 
+<a id="manage-agent-nodes"></a>
 
 ## Manage agent nodes
 
@@ -687,6 +736,8 @@ Superadmins can view the list of agent worker nodes, currently connected to
 Backend.AI, by visiting the Resources page. You can check agent node's IP,
 connecting time, actual resources currently in use, etc. The WebUI does
 not provide the function to manipulate agent nodes.
+
+<a id="query-agent-nodes"></a>
 
 #### Query agent nodes
 
@@ -704,6 +755,8 @@ that there's no disconnection or termination occurred.
 
 ![](../images/terminated_agent_list.png)
 
+<a id="set-schedulable-status-of-agent-nodes"></a>
+
 #### Set schedulable status of agent nodes
 
 You may want to prevent new compute sessions from being scheduled to an Agent
@@ -713,6 +766,7 @@ preserving the existing sessions on the Agent.
 
 ![](../images/agent_settings.png)
 
+<a id="manage-resource-group"></a>
 
 ## Manage resource group
 
@@ -728,6 +782,8 @@ location and restart the agent daemon. Management of the resource groups is
 possible in Resource Group tab of the Resource page.
 
 ![](../images/resource_group_page.png)
+
+<a id="scheduling-methods"></a>
 
 You can edit a resource group by clicking the 'Setting (Gear)' in the Control
 panel. In the Select scheduler field, you can choose the scheduling method for
@@ -771,6 +827,7 @@ that already exists, since name is the key value.
 
 ![](../images/create_resource_group.png)
 
+<a id="storages"></a>
 
 ## Storages
 
@@ -783,14 +840,16 @@ By using this feature, admin can easily manage and monitor the exact amount of s
 In order to set quota, you need to first access to storages tab in resource page.
 And then, click 'Setting (Gear)' in control column.
 
+:::note
+Please remind that quota setting is only available in storage that provides quota setting
+(e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
+in quota setting page regardless of storage, you cannot configure the quota which doesn't
+support quota configuration internally.
 
-   Please remind that quota setting is only available in storage that provides quota setting
-   (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
-   in quota setting page regardless of storage, you cannot configure the quota which doesn't
-   support quota configuration internally.
+![](../images/no_support_quota_setting.png)
+:::
 
-   ![](../images/no_support_quota_setting.png)
-
+<a id="quota-setting-panel"></a>
 
 #### Quota Setting Panel
 
@@ -811,6 +870,7 @@ In Quota setting page, there are two panels.
    * Hard Limit (GB): Currently set hard limit quota for selected quota.
    * Control: Provides editing the hard limit or even deleting the quota setting.
 
+<a id="set-user-quota"></a>
 
 #### Set User Quota
 
@@ -827,6 +887,8 @@ After input the exact amount, don't forget to Click `OK` button, unless the chan
 
 ![](../images/quota_settings_panel.png)
 
+<a id="set-project-quota"></a>
+
 #### Set Project Quota
 
 Setting a quota on project-folder is similar to setting a user quota. The difference between setting
@@ -835,6 +897,8 @@ which is selecting the domain that the project is dependent on. The rest are the
 As in the picture below, you need to first select the domain, and then select the project.
 
 ![](../images/per_project_quota.png)
+
+<a id="unset-quota"></a>
 
 #### Unset Quota
 
@@ -846,16 +910,21 @@ which depends on the quota type(user / project).
 
 ![](../images/unset_quota.png)
 
-
+:::note
 If there's no config per user/project, then corresponding values in the user/project resource policy will be set as
 a default value. For example, If no hard limit value for quota is set, `max_vfolder_size` value in the resource policy
 is used as the default value.
-``
+:::
+
+<a id="download-session-lists"></a>
+
 ## Download session lists
 
-   This feature is currently not available on the default Session page.
-   To use this feature, please enable 'Classic Session list page' option in the 'Switch back to the Classic UI' section
-   on the User Setting page. For more details, please refer to [Backend.AI User Settings<user-settings>](#Backend.AI User Settings<user-settings>) section.
+:::note
+This feature is currently not available on the default Session page.
+To use this feature, please enable 'Classic Session list page' option in the 'Switch back to the Classic UI' section
+on the User Setting page. For more details, please refer to [Backend.AI User Settings](#user-settings) section.
+:::
 
 There's additional feature in Session page for admin.
 On the right side of the FINISHED tab there is a menu marked with `...`.
@@ -870,6 +939,7 @@ Please note that a file name can have up to 255 characters.
 
 ![](../images/export_session_dialog.png)
 
+<a id="system-settings"></a>
 
 ## System settings
 
@@ -883,8 +953,9 @@ verifies integrity of the image and also enhances  efficiency in downloading ima
 by reusing duplicated layers. `Tag` is only for developing option since it does not
 guarantee the Integrity of the image.
 
-
-   Don't change rule selection unless you completely understand the meaning of each rule.
+:::note
+Don't change rule selection unless you completely understand the meaning of each rule.
+:::
 
 ![](../images/system_setting_about_image.png)
 
@@ -900,17 +971,18 @@ will enhance the network speed.
 
 ![](../images/overlay_network_setting_dialog.png)
 
-
-   For more information about Backend.AI Cluster session, please refer to
-   [Backend.AI Cluster Compute Session<backendai-cluster-compute-session>](#Backend.AI Cluster Compute Session<backendai-cluster-compute-session>) section.
+:::note
+For more information about Backend.AI Cluster session, please refer to
+[Backend.AI Cluster Compute Session](#backendai-cluster-compute-session) section.
+:::
 
 You can edit the configuration per job scheduler by clicking the Scheduler's config button.
 The values in the scheduler setting are the defaults to use when there is no scheduler
-setting in each [resource group<scheduling-methods>](#resource group<scheduling-methods>). If there is a resource
+setting in each [resource group](#scheduling-methods). If there is a resource
 group-specific setting, this value will be ignored.
 
 Currently supported scheduling methods include `FIFO`, `LIFO`, and `DRF`.
-Each method of scheduling is exactly the same as the [scheduling methods<scheduling-methods>](#scheduling methods<scheduling-methods>) above.
+Each method of scheduling is exactly the same as the [scheduling methods](#scheduling-methods) above.
 Scheduler options include session creation retries. Session creation retries refers to the number
 of retries to create a session if it fails. If the session cannot be created within the trials,
 the request will be ignored and Backend.AI will process the next request. Currently, changes are
@@ -918,13 +990,16 @@ only possible when the scheduler is FIFO.
 
 ![](../images/system_setting_dialog_scheduler_settings.png)
 
+:::note
+We will continue to add broader range of setting controls.
+:::
 
-   We will continue to add broader range of setting controls.
+:::note
+System settings are default settings. If resource group has certain value,
+then it overrides configured value in system settings.
+:::
 
-
-   System settings are default settings. If resource group has certain value,
-   then it overrides configured value in system settings.
-
+<a id="server-management"></a>
 
 ## Server management
 
@@ -941,10 +1016,12 @@ Go to the Maintenance page and you will see some buttons to manage the server.
 
 ![](../images/maintenance_page.png)
 
+:::note
+We will continue to add other settings needed for management, such as
+removing unused images or registering periodic maintenance schedules.
+:::
 
-   We will continue to add other settings needed for management, such as
-   removing unused images or registering periodic maintenance schedules.
-
+<a id="detailed-information"></a>
 
 ## Detailed Information
 
@@ -952,7 +1029,8 @@ In Information page, you can see several detailed information and status of each
 To see Manager version and API version, check the Core panel. To see whether each component
 for Backend.AI is compatible or not, check the Component panel.
 
-
+:::note
 This page is only for showing current information.
-``
+:::
+
 ![](../images/information_page.png)

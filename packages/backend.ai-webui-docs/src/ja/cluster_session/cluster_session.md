@@ -1,8 +1,12 @@
 # Backend.AI クラスターコンピュートセッション
 
 
-   Cluster compute session feature is supported from Backend.AI server 20.09 or
-   higher.
+:::note
+Cluster compute session feature is supported from Backend.AI server 20.09 or
+higher.
+:::
+
+<a id="backendai-cluster-compute-session"></a>
 
 ### Backend.AI クラスター コンピュート セッションの概要
 
@@ -62,6 +66,7 @@ Backend.AI クラスターセッションの詳細については、以下を参
   container belongs (ex. `3614fdf3-0e04-...`). The main container's
   `BACKENDAI_KERNEL_ID` is the same as `BACKENDAI_SESSION_ID`.
 
+<a id="use-of-backendai-cluster-compute-session"></a>
 
 ### Backend.AI クラスターコンピュートセッションの使用
 
@@ -99,6 +104,8 @@ is displayed.
 ![](../images/terminal_on_sub1_container.png)
 
 このように、Backend.AI はクラスタコンピューティングセッションの作成を容易にします。クラスタ計算セッションを通じて分散学習と計算を実行するには、TensorFlow/PyTorch などの ML ライブラリが提供する分散学習モジュールや、Horovod、NNI、MLFlow などの追加のサポートソフトウェアが必要であり、そのソフトウェアを利用できる方法でコードを記述する必要があります。慎重に書く必要があります。Backend.AI は分散学習に必要なソフトウェアを含むカーネルイメージを提供しているため、そのイメージを使用して優れた分散学習アルゴリズムを作成することができます。
+
+<a id="see-logs-per-container"></a>
 
 ### コンテナごとのログを表示
 

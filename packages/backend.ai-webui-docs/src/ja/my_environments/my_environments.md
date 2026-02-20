@@ -1,11 +1,15 @@
+<a id="my-environments"></a>
+
 # マイ環境
 
 From 24.03, a new \"マイ環境\" page for ユーザーs has been introduced.
 This page displays contents such as a list of images created by the ユーザー's
-[session commits<session-commit>](#session commits<session-commit>).
+[session commits](#save-session-commit).
 
 マイ環境ページのImagesタブでは、ユーザーはコンピュートセッションの作成に使用されるカスタマイズされたイメージを管理できます。このタブには、計算セッションからイメージに変換されたイメージのメタデータ情報が表示されます。ユーザーは、各イメージのレジストリ、アーキテクチャ、ネームスペース、言語、バージョン、ベース、制約、ダイジェスト、その他の情報を確認できます。
 
+
+<a id="delete-customized-image"></a>
 
 イメージを削除するには、コントロール列の赤いゴミ箱ボタンをクリックします。削除後は、そのイメージを使用して新しいセッションを作成することはできません。
 

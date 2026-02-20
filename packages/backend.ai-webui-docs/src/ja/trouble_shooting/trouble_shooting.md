@@ -14,6 +14,8 @@
 認証クッキーの認識に問題がある場合、ユーザーは一時的にログインできないことがあります。プライベートブラウザウィンドウを使用してログインしてみてください。もし成功した場合は、ブラウザのキャッシュおよび/またはアプリケーションデータをクリアしてください。
 
 
+<a id="installing_apt_pkg"></a>
+
 ### aptパッケージのインストール方法?
 
 Inside a compute session, ユーザーs cannot access `root` account and perform
@@ -23,10 +25,10 @@ is not allowed to install packages with `apt` or `yum` since they require
 permission.
 
 Alternatively, ユーザーs may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>](#guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>).
+the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder).
 
+
+<a id="install_pip_pkg"></a>
 
 ### pipでパッケージをインストールする方法
 
@@ -35,12 +37,11 @@ By default, when you install a pip package, it will be installed under
 can keep the installed packages after a compute session is destroyed, and then
 reus them for the next compute session. Just install the packages with pip like:
 
-``shell
+```shell
 $ pip install aiohttp
-``
+```
 For more information, please refer to the [guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>](#guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>).
+packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).
 
 ### I have created a compute session, but cannot launch Jupyter Notebook
 
@@ -79,7 +80,9 @@ the service by referencing the guide on start/stop/restart WSProxy service.
 ### Dockerレジストリにプッシュされた後、イメージが表示されません
 
 
-   この機能はスーパ管理者にのみ利用可能です。
+:::note
+この機能はスーパ管理者にのみ利用可能です。
+:::
 
 新しいイメージがBackend.AIのdockerレジストリの1つにプッシュされた場合、そのイメージのメタデータを更新して計算セッションの作成に使用できるようにする必要があります。メタデータの更新は、メンテナンスページで「イメージの再スキャン」ボタンをクリックすることで実行できます。複数のレジストリがある場合、それに属するすべてのdockerレジストリのメタデータが更新されます。
 
