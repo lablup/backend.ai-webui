@@ -1,10 +1,18 @@
+import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card, Tag, Button, Space, Typography } from 'antd';
+import { Card, Tag, Button, Typography } from 'antd';
 
 /**
- * BAIRowWrapWithDividers creates a flexible layout that wraps items like flexbox and automatically adds vertical dividers
- * only between items that are on the same row. Useful for creating visually separated content that adapts to different screen sizes.
+ * BAIRowWrapWithDividers creates a flexible wrapping layout with automatic vertical dividers.
+ *
+ * Key features:
+ * - Wraps items like flexbox with intelligent divider placement
+ * - Vertical dividers only between items on the same row
+ * - Responsive to screen size changes
+ * - Customizable gaps and divider styling
+ *
+ * @see BAIRowWrapWithDividers.tsx for implementation details
  */
 const meta: Meta<typeof BAIRowWrapWithDividers> = {
   title: 'Row/BAIRowWrapWithDividers',
@@ -14,47 +22,110 @@ const meta: Meta<typeof BAIRowWrapWithDividers> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'BAIRowWrapWithDividers is a responsive layout component that automatically wraps children like flexbox and intelligently adds vertical dividers only between items that are on the same row.',
+        component: `
+**BAIRowWrapWithDividers** is a custom layout component that creates a flexible row with automatic vertical dividers.
+
+## Features
+- Wraps items like flexbox while maintaining vertical dividers only between items on the same row
+- Automatically recalculates divider positions on resize and layout changes
+- Customizable gaps between rows and columns
+- Customizable divider styling (width, color, inset)
+- No layout impact from dividers (overlay positioning)
+
+## Props
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| \`children\` | \`ReactNode\` | - | Items to display with dividers |
+| \`wrap\` | \`boolean\` | \`true\` | Whether to wrap items to new rows |
+| \`rowGap\` | \`number \\| string\` | \`token.marginXL\` | Gap between rows |
+| \`columnGap\` | \`number \\| string\` | \`token.marginXXL\` | Gap between columns |
+| \`dividerWidth\` | \`number\` | \`1\` | Width of vertical dividers in pixels |
+| \`dividerColor\` | \`string\` | \`token.colorBorderSecondary\` | Color of vertical dividers |
+| \`dividerInset\` | \`number\` | \`0\` | Top/bottom inset of vertical dividers (shortens divider line) |
+| \`itemStyle\` | \`CSSProperties\` | - | CSS styles applied to each item wrapper |
+| \`style\` | \`CSSProperties\` | - | CSS styles applied to the container |
+| \`className\` | \`string\` | - | CSS class name for the container |
+        `,
       },
     },
   },
   argTypes: {
+    children: {
+      control: false,
+      description: 'Items to display with dividers between them',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
     wrap: {
-      description: 'Whether to wrap items to new rows',
       control: { type: 'boolean' },
+      description: 'Whether to wrap items to new rows',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
     },
     rowGap: {
-      description: 'Gap between rows',
       control: { type: 'number' },
+      description: 'Gap between rows (uses token.marginXL by default)',
+      table: {
+        type: { summary: 'number | string' },
+        defaultValue: { summary: 'token.marginXL' },
+      },
     },
     columnGap: {
-      description: 'Gap between columns',
       control: { type: 'number' },
+      description: 'Gap between columns (uses token.marginXXL by default)',
+      table: {
+        type: { summary: 'number | string' },
+        defaultValue: { summary: 'token.marginXXL' },
+      },
     },
     dividerWidth: {
-      description: 'Width of the vertical dividers in pixels',
       control: { type: 'number' },
+      description: 'Width of the vertical dividers in pixels',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '1' },
+      },
     },
     dividerColor: {
-      description: 'Color of the vertical dividers',
       control: { type: 'color' },
+      description: 'Color of the vertical dividers',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'token.colorBorderSecondary' },
+      },
     },
     dividerInset: {
-      description: 'Top/bottom inset of vertical dividers in pixels',
       control: { type: 'number' },
+      description:
+        'Top/bottom inset of vertical dividers in pixels (shortens the divider line without affecting container padding)',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '0' },
+      },
     },
     itemStyle: {
-      description: 'CSS styles applied to each item wrapper',
       control: false,
+      description: 'CSS styles applied to each item wrapper',
+      table: {
+        type: { summary: 'CSSProperties' },
+      },
     },
     style: {
-      description: 'CSS styles applied to the container',
       control: false,
+      description: 'CSS styles applied to the container',
+      table: {
+        type: { summary: 'CSSProperties' },
+      },
     },
     className: {
-      description: 'CSS class name for the container',
       control: { type: 'text' },
+      description: 'CSS class name for the container',
+      table: {
+        type: { summary: 'string' },
+      },
     },
   },
 };
@@ -298,10 +369,10 @@ export const MixedContent: Story = {
       <Button size="small" type="primary">
         Edit
       </Button>
-      <Space>
+      <BAIFlex gap="xs">
         <Typography.Text strong>Score:</Typography.Text>
         <Typography.Text>95/100</Typography.Text>
-      </Space>
+      </BAIFlex>
       <Button size="small">View Details</Button>
       <Tag color="success">Verified</Tag>
       <Typography.Text type="secondary">
