@@ -36,7 +36,11 @@ runs:
       shell: bash
       run: |
         echo "Step: Installing dependencies..." >> coverage-steps.log
-        pnpm install 2>&1 | tee -a coverage-steps.log
+        # Try frozen lockfile first, fall back to --no-frozen-lockfile if there's a config mismatch
+        if ! pnpm install 2>&1 | tee -a coverage-steps.log; then
+          echo "Frozen lockfile failed, retrying with --no-frozen-lockfile..." >> coverage-steps.log
+          pnpm install --no-frozen-lockfile 2>&1 | tee -a coverage-steps.log
+        fi
 
     # Step 3: Build and test React project with coverage
     - name: Build React GraphQL types
