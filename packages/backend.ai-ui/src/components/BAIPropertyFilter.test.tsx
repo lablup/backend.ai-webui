@@ -1,9 +1,8 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 import BAIPropertyFilter, {
   mergeFilterValues,
   parseFilterValue,
 } from './BAIPropertyFilter';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 describe('parseFilterValue', () => {
   it('should correctly parse filter with binary operators', () => {
@@ -72,7 +71,13 @@ describe('mergeFilterValues', () => {
   });
 
   it('should filter out empty, null, and undefined values', () => {
-    const filters = ['name ilike "%test%"', null, undefined, '', 'status == "active"'];
+    const filters = [
+      'name ilike "%test%"',
+      null,
+      undefined,
+      '',
+      'status == "active"',
+    ];
     const result = mergeFilterValues(filters);
     expect(result).toBe('(name ilike "%test%")&(status == "active")');
   });
@@ -123,7 +128,9 @@ describe('BAIPropertyFilter Component', () => {
   it('should render property selector and search input', () => {
     render(<BAIPropertyFilter filterProperties={mockFilterProperties} />);
 
-    expect(screen.getByLabelText('Filter property selector')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Filter property selector'),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText('Filter value search')).toBeInTheDocument();
   });
 
@@ -141,7 +148,7 @@ describe('BAIPropertyFilter Component', () => {
     // Component should render without crashing
     const searchInput = screen.getByLabelText('Filter value search');
     expect(searchInput).toBeInTheDocument();
-    
+
     // The component receives and processes the value internally
     // We can verify it accepted the value by checking it doesn't call onChange on mount
     expect(mockOnChange).not.toHaveBeenCalled();
@@ -264,19 +271,19 @@ describe('BAIPropertyFilter Component', () => {
     ];
 
     const mockOnChange = jest.fn();
-    const { container } = render(
-      <BAIPropertyFilter 
+    render(
+      <BAIPropertyFilter
         filterProperties={filterPropertiesWithValidation}
         onChange={mockOnChange}
       />,
     );
 
     const searchInput = screen.getByLabelText('Filter value search');
-    
+
     // Focus input and enter invalid email
     fireEvent.focus(searchInput);
     fireEvent.change(searchInput, { target: { value: 'invalid' } });
-    
+
     // Try to submit invalid value
     fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
 
@@ -355,7 +362,7 @@ describe('BAIPropertyFilter Component', () => {
     // Component should render without crashing
     const searchInput = screen.getByLabelText('Filter value search');
     expect(searchInput).toBeInTheDocument();
-    
+
     // The component accepts defaultValue and processes it internally
     // Verify it doesn't call onChange on mount
     expect(mockOnChange).not.toHaveBeenCalled();
@@ -402,7 +409,7 @@ describe('BAIPropertyFilter Component', () => {
     );
 
     const searchInput = screen.getByLabelText('Filter value search');
-    
+
     // Try to enter value not in options
     fireEvent.change(searchInput, { target: { value: 'invalid' } });
     fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
