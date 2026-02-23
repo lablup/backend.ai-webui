@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -40,8 +44,7 @@ const StorageSelect: React.FC<Props> = ({
   value,
   onChange,
   defaultValue,
-  searchValue,
-  onSearch,
+  showSearch,
   ...partialSelectProps
 }) => {
   const { t } = useTranslation();
@@ -63,7 +66,12 @@ const StorageSelect: React.FC<Props> = ({
       defaultValue,
     });
   const [controllableSearchValue, setControllableSearchValue] =
-    useControllableState_deprecated({ value: searchValue, onChange: onSearch });
+    useControllableState_deprecated({
+      value:
+        typeof showSearch === 'boolean' ? undefined : showSearch?.searchValue,
+      onChange:
+        typeof showSearch === 'boolean' ? undefined : showSearch?.onSearch,
+    });
   useEffect(() => {
     if (!autoSelectType || !vhostInfo) return; // Return early if vhostInfo is null
     let nextHost = vhostInfo?.default ?? vhostInfo?.allowed[0] ?? '';
@@ -95,11 +103,16 @@ const StorageSelect: React.FC<Props> = ({
           ...(vhostInfo?.volume_info?.[host] || {}),
         });
       }}
-      showSearch={{
-        searchValue: controllableSearchValue,
-        onSearch: setControllableSearchValue,
-        filterOption: true,
-      }}
+      showSearch={
+        showSearch === false
+          ? false
+          : {
+              ...(typeof showSearch === 'object' ? showSearch : {}),
+              searchValue: controllableSearchValue,
+              onSearch: setControllableSearchValue,
+              filterOption: true,
+            }
+      }
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => ({
         label: showUsageStatus ? (

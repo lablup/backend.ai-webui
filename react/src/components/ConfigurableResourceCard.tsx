@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
@@ -5,7 +9,7 @@ import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, Dropdown, MenuProps, Skeleton, theme } from 'antd';
+import { Button, Dropdown, type MenuProps, Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useEffect } from 'react';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import MyResource from '../components/MyResource';

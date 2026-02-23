@@ -1,4 +1,8 @@
-import { App, Form, FormInstance, Input, theme } from 'antd';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { App, Form, type FormInstance, Input, theme } from 'antd';
 import {
   BAIFlex,
   BAIModal,
@@ -11,8 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from 'src/__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 
-export interface ScanArtifactModelsFromHuggingFaceModalProps
-  extends BAIModalProps {
+export interface ScanArtifactModelsFromHuggingFaceModalProps extends BAIModalProps {
   onRequestClose?: (
     e: React.MouseEvent<HTMLElement>,
     artifactId: string,

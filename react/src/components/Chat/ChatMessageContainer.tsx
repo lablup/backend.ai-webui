@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Avatar, theme } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React, { memo } from 'react';
@@ -37,7 +41,7 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <Avatar icon={avatar} style={{ fontSize: token.fontSizeHeading3 }} />
+        <Avatar style={{ fontSize: token.fontSizeHeading3 }}>{avatar}</Avatar>
         <BAIFlex
           direction="column"
           align={placement.left ? 'start' : 'end'}

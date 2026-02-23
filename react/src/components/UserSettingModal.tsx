@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
 import { UserSettingModalModifyMutation } from '../__generated__/UserSettingModalModifyMutation.graphql';
 import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
@@ -455,7 +459,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <Checkbox />
+            <Checkbox>{t('general.Enable')}</Checkbox>
           </Form.Item>
           <Form.Item
             name="description"
@@ -507,7 +511,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <Checkbox />
+            <Checkbox>{t('general.Allow')}</Checkbox>
           </Form.Item>
           {!!isTOTPSupported && (
             <Form.Item

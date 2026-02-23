@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ResourcePresetSelectQuery,
   ResourcePresetSelectQuery$data,
@@ -32,8 +36,10 @@ interface PresetOptionType extends Y {
 export type ResourcePreset = NonNullable<
   NonNullable<ResourcePresetSelectQuery$data['resource_presets']>[number]
 >;
-export interface ResourcePresetSelectProps
-  extends Omit<SelectProps, 'onChange'> {
+export interface ResourcePresetSelectProps extends Omit<
+  SelectProps,
+  'onChange'
+> {
   onChange?: (value: string, options: PresetOptionType) => void;
   allocatablePresetNames?: string[];
   showMinimumRequired?: boolean;

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import deviceMetadata from '../../../resources/device_metadata.json';
 // import json
 import schema from '../../../resources/device_metadata.schema.json';

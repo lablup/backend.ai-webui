@@ -1,6 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SearchOutlined } from '@ant-design/icons';
 import { Checkbox, Input, theme, Form } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import { FormInstance } from 'antd/lib';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';

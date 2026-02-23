@@ -13,9 +13,9 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
         component: `
 **BAIGraphQLPropertyFilter** is an advanced filtering component designed for GraphQL-based Backend.AI applications. It provides a sophisticated interface for constructing GraphQL filter objects with support for:
 
-- **GraphQL Filter Types**: Compatible with standard GraphQL filter schemas including StringFilter, NumberFilter, BooleanFilter, and EnumFilter
+- **GraphQL Filter Types**: Compatible with standard GraphQL filter schemas including StringFilter, IntFilter, BooleanFilter, and EnumFilter
 - **Flexible Combination Mode**: Choose between AND or OR operators to combine multiple filter conditions
-- **Rich Operator Set**: Comprehensive operators like eq, ne, contains, startsWith, endsWith, gt, gte, lt, lte, in, notIn
+- **Rich Operator Set**: Case-insensitive string operators (iContains, iEquals, iStartsWith, iEndsWith, etc.) and comparison operators (greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, in, notIn)
 - **Type-Safe Filtering**: Automatic type detection and operator suggestions based on property types
 - **Bidirectional Conversion**: Seamless conversion between UI conditions and GraphQL filter objects
 
@@ -26,33 +26,32 @@ The component generates GraphQL-compatible filter objects that can be directly u
 
 **GraphQL Filter Object Examples:**
 \`\`\`javascript
-// Simple string filter
-{ name: { contains: "john" } }
-{ name: { equals: "john" } }  // exact match with new GraphQL format
-{ name: { iContains: "JOHN" } }  // case-insensitive contains
+// Simple string filter (case-insensitive)
+{ name: { iContains: "john" } }  // case-insensitive contains (default)
+{ name: { iEquals: "john" } }    // case-insensitive exact match
 
 // Number filter
-{ score: { greaterThan: 80 } }  // number comparison with new GraphQL format
-{ price: { lessOrEqual: 100 } }  // number comparison
+{ score: { greaterThan: 80 } }
+{ price: { lessThanOrEqual: 100 } }
 
 // Boolean filter
 { active: true }
 
 // Filters combined with AND (all conditions must match)
-{ 
+{
   AND: [
-    { name: { contains: "john" } },
+    { name: { iContains: "john" } },
     { status: { in: ["ACTIVE", "PENDING"] } },
-    { priority: { equals: "HIGH" } }  // exact match
+    { priority: { iEquals: "HIGH" } }
   ]
 }
 
 // Filters combined with OR (any condition can match)
-{ 
+{
   OR: [
-    { status: { equals: "URGENT" } },  // exact match
-    { priority: { equals: "HIGH" } },  // exact match
-    { assignee: { iEquals: "JOHN" } }  // case-insensitive exact match
+    { status: { iEquals: "URGENT" } },
+    { priority: { iEquals: "HIGH" } },
+    { assignee: { iStartsWith: "john" } }
   ]
 }
 \`\`\`
@@ -70,7 +69,7 @@ The component generates GraphQL-compatible filter objects that can be directly u
 FilterProperty = {
   key: string;              // Property key in the GraphQL schema
   propertyLabel: string;    // Display label for the property
-  type: 'string' | 'number' | 'boolean' | 'enum';
+  type: 'string' | 'int' | 'boolean' | 'enum';
   operators?: FilterOperator[];  // Available operators for this property
   defaultOperator?: FilterOperator;
   options?: AutoCompleteProps['options'];  // Autocomplete suggestions
@@ -83,7 +82,7 @@ FilterProperty = {
   //  - 'scalar': emit { [key]: value } (operatorless). Default for boolean.
   //  - 'operator': emit { [key]: { op: value } }. Default for non-boolean.
   valueMode?: 'scalar' | 'operator';
-  // Visual operator for UI tags when valueMode='scalar' (default 'eq')
+  // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
 }
         `,
@@ -149,7 +148,7 @@ export const Default: Story = {
         key: 'name',
         propertyLabel: 'Name',
         type: 'string',
-        defaultOperator: 'contains',
+        defaultOperator: 'iContains',
       },
       {
         key: 'description',
@@ -203,7 +202,7 @@ export const WithANDCombination: Story = {
     combinationMode: 'AND',
     value: {
       AND: [
-        { title: { contains: 'critical' } },
+        { title: { iContains: 'critical' } },
         { priority: { equals: 'HIGH' } },
         { isUrgent: true },
       ],
@@ -249,7 +248,7 @@ export const WithORCombination: Story = {
     value: {
       OR: [
         { status: { equals: 'URGENT' } },
-        { assignee: { contains: 'john' } },
+        { assignee: { iContains: 'john' } },
         { dueToday: true },
       ],
     },
@@ -277,9 +276,9 @@ export const WithNumberFilters: Story = {
           'equals',
           'notEquals',
           'greaterThan',
-          'greaterOrEqual',
+          'greaterThanOrEqual',
           'lessThan',
-          'lessOrEqual',
+          'lessThanOrEqual',
         ],
       },
       {
@@ -297,7 +296,10 @@ export const WithNumberFilters: Story = {
     ],
     combinationMode: 'AND',
     value: {
-      AND: [{ score: { greaterOrEqual: 80 } }, { quantity: { lessThan: 100 } }],
+      AND: [
+        { score: { greaterThanOrEqual: 80 } },
+        { quantity: { lessThan: 100 } },
+      ],
     },
     onChange: action('Number filter changed'),
   },
@@ -373,7 +375,7 @@ export const ComplexFilter: Story = {
         key: 'email',
         propertyLabel: 'Email',
         type: 'string',
-        operators: ['contains', 'startsWith', 'endsWith'],
+        operators: ['iContains', 'iStartsWith', 'iEndsWith'],
       },
       {
         key: 'role',
@@ -399,10 +401,10 @@ export const ComplexFilter: Story = {
     combinationMode: 'AND',
     value: {
       AND: [
-        { name: { contains: 'john' } },
-        { email: { endsWith: '@company.com' } },
+        { name: { iContains: 'john' } },
+        { email: { iEndsWith: '@company.com' } },
         { role: { equals: 'USER' } },
-        { credits: { greaterOrEqual: 100 } },
+        { credits: { greaterThanOrEqual: 100 } },
         { isVerified: true },
       ],
     },
@@ -501,7 +503,7 @@ export const WithAutocompleteOptions: Story = {
     ],
     combinationMode: 'OR',
     value: {
-      OR: [{ country: { eq: 'US' } }, { language: { in: ['en', 'es'] } }],
+      OR: [{ country: { equals: 'US' } }, { language: { in: ['en', 'es'] } }],
     },
     onChange: action('Autocomplete filter changed'),
   },
@@ -579,13 +581,13 @@ export const ArtifactFilterExample: Story = {
         propertyLabel: 'Artifact Name',
         type: 'string',
         operators: [
-          'equals',
-          'notEquals',
-          'contains',
-          'startsWith',
-          'endsWith',
+          'iContains',
+          'iEquals',
+          'iNotEquals',
+          'iStartsWith',
+          'iEndsWith',
         ],
-        defaultOperator: 'contains',
+        defaultOperator: 'iContains',
       },
       {
         key: 'status',
@@ -604,7 +606,7 @@ export const ArtifactFilterExample: Story = {
     combinationMode: 'AND',
     value: {
       AND: [
-        { name: { contains: 'model' } },
+        { name: { iContains: 'model' } },
         { status: { in: ['PUBLISHED', 'DRAFT'] } },
       ],
     },
@@ -628,13 +630,13 @@ export const WithFixedOperator: Story = {
         key: 'search',
         propertyLabel: 'Search (always contains)',
         type: 'string',
-        fixedOperator: 'contains', // Only allows 'contains' operator
+        fixedOperator: 'iContains', // Only allows case-insensitive 'contains' operator
       },
       {
         key: 'username',
         propertyLabel: 'Username (always equals)',
         type: 'string',
-        fixedOperator: 'equals', // Only allows exact match
+        fixedOperator: 'iEquals', // Only allows case-insensitive exact match
       },
       {
         key: 'tags',
@@ -650,9 +652,9 @@ export const WithFixedOperator: Story = {
         operators: [
           'equals',
           'greaterThan',
-          'greaterOrEqual',
+          'greaterThanOrEqual',
           'lessThan',
-          'lessOrEqual',
+          'lessThanOrEqual',
         ],
       },
     ],
@@ -728,7 +730,7 @@ export const WithScalarValueModeOnString: Story = {
         key: 'title',
         propertyLabel: 'Title',
         type: 'string',
-        defaultOperator: 'contains',
+        defaultOperator: 'iContains',
       },
       {
         key: 'isPublished',

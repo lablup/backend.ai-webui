@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import '../../__test__/matchMedia.mock.js';
 import * as useResourceLimitAndRemainingModule from '../hooks/useResourceLimitAndRemaining';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';

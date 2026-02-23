@@ -4,7 +4,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { Alert, App, ModalProps, theme, Typography } from 'antd';
+import { Alert, App, theme, Typography, type ModalProps } from 'antd';
 import _ from 'lodash';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';

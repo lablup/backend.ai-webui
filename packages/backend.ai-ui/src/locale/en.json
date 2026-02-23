@@ -57,6 +57,11 @@
     "Updated": "Updated",
     "Version": "Version"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Clear",
+    "KeepAsIs": "Keep as is",
+    "UndoChanges": "Undo changes"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Are you sure you want to deactivate {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Are you sure you want to deactivate {{count}} artifacts?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Last Updated",
     "Refresh": "Refresh"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "after",
+      "Before": "before",
+      "GreaterThan": "greater than",
+      "GreaterThanOrEqual": "greater or equal",
+      "IContains": "contains",
+      "IEndsWith": "ends with",
+      "IEquals": "equals",
+      "INotContains": "not contains",
+      "INotEndsWith": "not ends with",
+      "INotEquals": "not equals",
+      "INotStartsWith": "not starts with",
+      "IStartsWith": "starts with",
+      "In": "in",
+      "LessThan": "less than",
+      "LessThanOrEqual": "less or equal",
+      "NotIn": "not in"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versions are excluded.",
     "FailedToPullVersions": "Failed to pull versions.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Select Project"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Allowed Folder Hosts",
@@ -141,7 +169,7 @@
     "PurgeProject": "Purge Project",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
-    "ScalingGroups": "Scaling Groups",
+    "ScalingGroups": "Resource Groups",
     "StorageNodes": "Storage Nodes",
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
@@ -184,6 +212,9 @@
   },
   "comp:BAITestButton": {
     "Test": "Test"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Select User"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
@@ -262,6 +293,7 @@
       "Cancel": "Cancel",
       "Close": "Close",
       "Collapse": "Collapse",
+      "Copied": "Copied",
       "CopyAll": "Copy All",
       "Create": "Create",
       "Delete": "Delete",

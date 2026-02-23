@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   AutoScalingMetricComparator,
   AutoScalingMetricSource,
@@ -25,15 +29,17 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface AutoScalingRuleEditorModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
+interface AutoScalingRuleEditorModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onClose' | 'onCancel'
+> {
   endpoint_id: string;
   autoScalingRuleFrgmt?: AutoScalingRuleEditorModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
 type AutoScalingRuleInput = {
-  type: 'up' | 'down';
+  type: 'out' | 'in';
   metric_source: AutoScalingMetricSource;
   metric_name: string;
   threshold: string;
@@ -151,14 +157,14 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           metric_source: values.metric_source as AutoScalingMetricSource,
           threshold: values.threshold,
           comparator: values.comparator,
-          step_size: values.step_size * (values.type === 'up' ? 1 : -1),
+          step_size: values.step_size * (values.type === 'out' ? 1 : -1),
           cooldown_seconds: values.cooldown_seconds,
           min_replicas: values.min_replicas,
           max_replicas: values.max_replicas,
         };
 
         // set min and max replicas as same value to avoid validation error
-        if (values.type === 'up') {
+        if (values.type === 'out') {
           delete props.min_replicas;
         } else {
           delete props.max_replicas;
@@ -255,10 +261,10 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             ? {
                 ...autoScalingRule,
                 step_size: Math.abs(autoScalingRule.step_size),
-                type: autoScalingRule.step_size >= 0 ? 'up' : 'down',
+                type: autoScalingRule.step_size >= 0 ? 'out' : 'in',
               }
             : {
-                type: 'up',
+                type: 'out',
                 metric_source: 'KERNEL',
                 comparator: 'GREATER_THAN',
                 step_size: 1,
@@ -277,19 +283,19 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             options={[
               {
                 label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleUp')}</BAIFlex>
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleOut')}</BAIFlex>
                 ),
-                value: 'up',
+                value: 'out',
               },
               {
                 label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleDown')}</BAIFlex>
+                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleIn')}</BAIFlex>
                 ),
-                value: 'down',
+                value: 'in',
               },
             ]}
             onChange={(e) => {
-              e.target.value === 'down'
+              e.target.value === 'in'
                 ? formRef.current?.setFieldsValue({ max_replicas: 1 })
                 : formRef.current?.setFieldsValue({ min_replicas: 1 });
             }}
@@ -422,7 +428,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         </Form.Item>
         <Form.Item noStyle dependencies={['type']}>
           {({ getFieldValue }) => {
-            return getFieldValue('type') === 'up' ? (
+            return getFieldValue('type') === 'out' ? (
               <Form.Item
                 label={t('autoScalingRule.MaxReplicas')}
                 name={'max_replicas'}

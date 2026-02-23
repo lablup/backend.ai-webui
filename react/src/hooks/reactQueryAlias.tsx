@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   type QueryKey,
   useQuery,
@@ -48,6 +52,7 @@ export const useSuspenseTanQuery = <
   }>({
     fetchKey,
   });
+
   // eslint-disable-next-line react-hooks/refs
   if (fetchKey !== promiseInfoRef.current.fetchKey) {
     const observer = new QueryObserver(queryClient, {

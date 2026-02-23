@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
@@ -22,7 +26,7 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, CardProps, theme } from 'antd';
+import { Alert, App, Card, type CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAILogger,
@@ -129,7 +133,7 @@ function useModels(
           throw new Error('Invalid response format');
         }
         return result;
-      } catch (error) {
+      } catch {
         return { data: [], error: -1 };
       }
     },

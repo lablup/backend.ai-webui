@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   EndpointListFragment$data,
   EndpointListFragment$key,
@@ -22,7 +26,7 @@ import {
   TablePaginationConfig,
   Tooltip,
 } from 'antd';
-import { ColumnType } from 'antd/lib/table';
+import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -40,8 +44,10 @@ import { Link } from 'react-router-dom';
 
 type Endpoint = EndpointListFragment$data[number];
 
-interface EndpointListProps
-  extends Omit<BAITableProps<Endpoint>, 'dataSource' | 'columns'> {
+interface EndpointListProps extends Omit<
+  BAITableProps<Endpoint>,
+  'dataSource' | 'columns'
+> {
   endpointsFrgmt: EndpointListFragment$key;
   loading?: boolean;
   pagination: TablePaginationConfig;

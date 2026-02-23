@@ -1,8 +1,12 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import { TOTPActivateForm, TOTPActivateFormData } from './TOTPActivateModal';
-import { FormInstance, message } from 'antd';
+import { type FormInstance, message } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +22,7 @@ const TOTPActivateModalWithToken = () => {
   };
   try {
     parsedValue = JSON.parse(value || '');
-  } catch (error) {
+  } catch {
     parsedValue = {
       open: false,
       totp_registration_token: '',

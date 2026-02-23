@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';
@@ -12,7 +16,14 @@ import {
   ControlOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Button, theme, MenuProps, Popover, Tooltip } from 'antd';
+import {
+  Dropdown,
+  Button,
+  theme,
+  type MenuProps,
+  Popover,
+  Tooltip,
+} from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import { isEmpty } from 'lodash';
 import {

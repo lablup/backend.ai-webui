@@ -1,22 +1,23 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+// Initialize global stores before any component renders.
+// This import has side effects: it instantiates the four singleton stores
+// and assigns them to globalThis for backward compatibility with Lit code.
 import App from './App';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
-import SharedResourceGroupSelectForCurrentProject from './components/SharedResourceGroupSelectForCurrentProject';
 import SourceCodeView from './components/SourceCodeView';
+import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
   ReactWebComponentProps,
 } from './helper/react-to-webcomponent';
-import { useSuspendedBackendaiClient } from './hooks';
-import { useCurrentResourceGroupValue } from './hooks/useCurrentProject';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import { ConfigProvider, Tag, theme } from 'antd';
-import { BAIFlex, BAIIntervalView } from 'backend.ai-ui';
-import dayjs from 'dayjs';
+import { ConfigProvider } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
-import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { useTranslation } from 'react-i18next';
 
 // To maintain compatibility with various manager versions, the WebUI client uses directives to manipulate GraphQL queries.
 // This can cause Relay to show "Warning: RelayResponseNormalizer: Payload did not contain a value for field" in the browser console during development.
@@ -50,14 +51,22 @@ const ResetPasswordRequired = React.lazy(
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
-const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
-
-const BatchSessionScheduledTimeSetting = React.lazy(
-  () => import('./components/BatchSessionScheduledTimeSetting'),
-);
 
 const TOTPActivateModalWithToken = React.lazy(
   () => import('./components/TOTPActivateModalWithToken'),
+);
+
+const SignupModal = React.lazy(() => import('./components/SignupModal'));
+
+customElements.define(
+  'backend-ai-react-signup-modal',
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SignupModalInWebComponent {...props} />
+      </DefaultProviders>
+    );
+  }),
 );
 
 customElements.define(
@@ -107,6 +116,34 @@ customElements.define(
   }),
 );
 
+const SignupModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
+  const {
+    parsedValue: {
+      open = false,
+      endpoint = '',
+      allowSignupWithoutConfirmation = false,
+      preloadedToken,
+    } = {},
+  } = useWebComponentInfo<{
+    open: boolean;
+    endpoint: string;
+    allowSignupWithoutConfirmation: boolean;
+    preloadedToken?: string;
+  }>();
+
+  return (
+    <SignupModal
+      open={open}
+      endpoint={endpoint}
+      allowSignupWithoutConfirmation={allowSignupWithoutConfirmation}
+      preloadedToken={preloadedToken}
+      onRequestClose={() => {
+        props.dispatchEvent('close', null);
+      }}
+    />
+  );
+};
+
 const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   const {
     parsedValue: { children, language } = {
@@ -120,79 +157,6 @@ const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   return <SourceCodeView language={language}>{children}</SourceCodeView>;
 };
 
-customElements.define(
-  'backend-ai-react-resource-group-select',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ResourceGroupSelectInWebComponent {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const ResourceGroupSelectInWebComponent = (props: ReactWebComponentProps) => {
-  const { t } = useTranslation();
-
-  useSuspendedBackendaiClient();
-
-  const currentResourceGroupByProject = useCurrentResourceGroupValue();
-
-  React.useEffect(() => {
-    if (
-      // @ts-ignore
-      currentResourceGroupByProject !== globalThis.resourceBroker.scaling_group
-    ) {
-      props.dispatchEvent('change', currentResourceGroupByProject);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentResourceGroupByProject,
-    // @ts-ignore
-    globalThis.resourceBroker.scaling_group,
-  ]);
-  return (
-    <BAIFlex
-      direction="column"
-      gap="sm"
-      align="stretch"
-      style={{ minWidth: 200, maxWidth: 310 }}
-    >
-      {t('session.launcher.ResourceGroup')}
-      <SharedResourceGroupSelectForCurrentProject
-        size="large"
-        showSearch
-        disabled={currentResourceGroupByProject !== props.value}
-        loading={
-          !_.isEmpty(currentResourceGroupByProject) &&
-          currentResourceGroupByProject !== props.value
-        }
-        onChangeInTransition={(value) => {
-          // setValue(value);
-          props.dispatchEvent('change', value);
-        }}
-        popupMatchSelectWidth={false}
-      />
-    </BAIFlex>
-  );
-};
-
-customElements.define(
-  'backend-ai-react-signout-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SignoutModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
 );
@@ -205,75 +169,3 @@ root.render(
     </JotaiProvider>
   </React.StrictMode>,
 );
-
-customElements.define(
-  'backend-ai-react-batch-session-scheduled-time-setting',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <BatchSessionScheduledTimeSetting
-          onChange={(value) => {
-            props.dispatchEvent('change', value);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-session-reservation-timer',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <ReservationTimeCounter {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const ReservationTimeCounter: React.FC<ReactWebComponentProps> = () => {
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-
-  const { parsedValue } = useWebComponentInfo<{
-    starts_at: string;
-    terminated_at: string;
-  }>();
-
-  const baiClient = useSuspendedBackendaiClient();
-
-  if (dayjs(parsedValue.starts_at).isAfter(dayjs())) return null;
-
-  return (
-    <BAIFlex>
-      <Tag
-        color={token.colorTextDisabled}
-        style={{
-          margin: 0,
-          borderTopLeftRadius: token.borderRadiusSM,
-          borderBottomLeftRadius: token.borderRadiusSM,
-        }}
-      >
-        {t('session.ElapsedTime')}
-      </Tag>
-      <Tag
-        color={token['green-7']}
-        style={{
-          borderTopRightRadius: token.borderRadiusSM,
-          borderBottomRightRadius: token.borderRadiusSM,
-        }}
-      >
-        <BAIIntervalView
-          callback={() => {
-            return baiClient.utils.elapsedTime(
-              parsedValue.starts_at,
-              parsedValue.terminated_at || null,
-            );
-          }}
-          delay={1000}
-        />
-      </Tag>
-    </BAIFlex>
-  );
-};

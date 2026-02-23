@@ -1,7 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { FormInstance, message, Form, Select, DatePicker } from 'antd';
+import { type FormInstance, message, Form, Select, DatePicker } from 'antd';
 import {
   BAIModalProps,
   ESMClientErrorResponse,
@@ -12,8 +16,10 @@ import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface EndpointTokenGenerationModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose' | 'onCancel'> {
+interface EndpointTokenGenerationModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onClose' | 'onCancel'
+> {
   endpoint_id: string;
   onRequestClose: (success?: boolean) => void;
 }

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useWebUINavigate } from '../hooks';
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
@@ -41,7 +45,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
 
   return (
     <Drawer
-      width={DRAWER_WIDTH}
+      size={DRAWER_WIDTH}
       title={t('notification.Notifications')}
       mask={false}
       className="webui-notification-drawer"

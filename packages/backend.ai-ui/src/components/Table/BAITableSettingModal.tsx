@@ -4,8 +4,7 @@ import {
   BAITableColumnOverrideItem,
 } from './BAITable';
 import { SearchOutlined, HolderOutlined } from '@ant-design/icons';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext } from '@dnd-kit/core';
+import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
@@ -277,7 +276,6 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(orderedOptions);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(columnOptions);
     }
   }, [columnOptions, initialColumnOrder]);

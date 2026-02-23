@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import {
   Attachments,
@@ -6,7 +10,7 @@ import {
   SenderProps,
 } from '@ant-design/x';
 import { Attachment } from '@ant-design/x/es/attachments';
-import { Badge, Button, GetRef, UploadProps } from 'antd';
+import { Badge, Button, type GetRef, type UploadProps } from 'antd';
 import { isEmpty } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,8 +56,7 @@ export type AttachmentChangeInfo = Parameters<
 >[0];
 
 interface ChatSenderProps
-  extends Omit<SenderProps, 'onChange'>,
-    ChatAttachmentsProps {
+  extends Omit<SenderProps, 'onChange'>, ChatAttachmentsProps {
   loading?: boolean;
   autoFocus?: boolean;
   items?: Attachment[];

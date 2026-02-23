@@ -1,19 +1,21 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ImageListQuery,
   ImageListQuery$data,
+  ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
-import {
-  getImageFullName,
-  localeCompare,
-  preserveDotStartCase,
-} from '../helper';
+import { getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
-import { ImageTags } from './ImageTags';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -25,9 +27,9 @@ import {
   SettingOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
-import { useToggle, useDebounceFn } from 'ahooks';
+import { useToggle } from 'ahooks';
 import { App, Button, Input, Tag, theme, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -35,22 +37,23 @@ import {
   BAITable,
   BAIResourceNumberWithIcon,
   useUpdatableState,
-  BAIDoubleTag,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { Key, useMemo, useState, useTransition } from 'react';
+import { Key, useDeferredValue, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 
-export type EnvironmentImage = NonNullable<
-  NonNullable<ImageListQuery$data['images']>[number]
+export type EnvironmentImage = NonNullableNodeOnEdges<
+  ImageListQuery$data['image_nodes']
 >;
 
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
-  const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
-    useBackendAIImageMetaData();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
@@ -68,63 +71,112 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
+  const currentProject = useCurrentProjectValue();
 
-  const { run: debouncedSetImageSearch } = useDebounceFn(
-    (value: string) => {
-      startSearchTransition(() => setImageSearch(value));
-    },
-    { wait: 500 },
+  const { debouncedSetImageSearch } = useMemo(
+    () => ({
+      debouncedSetImageSearch: _.debounce((value: string) => {
+        startSearchTransition(() => setImageSearch(value));
+      }, 500),
+    }),
+    [],
   );
 
-  const { images } = useLazyLoadQuery<ImageListQuery>(
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+    current: 1,
+    pageSize: 20,
+  });
+
+  const queryVariables: ImageListQuery$variables = useMemo(
+    () => ({
+      scopeId: `project:${currentProject.id}`,
+      offset: baiPaginationOption.offset,
+      first: baiPaginationOption.first,
+      filter: imageSearch ? `name ilike "%${imageSearch}%"` : undefined,
+      order: undefined,
+    }),
+    [
+      currentProject.id,
+      baiPaginationOption.offset,
+      baiPaginationOption.first,
+      imageSearch,
+    ],
+  );
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(environmentFetchKey);
+
+  const { image_nodes } = useLazyLoadQuery<ImageListQuery>(
     graphql`
-      query ImageListQuery {
-        images {
-          id
-          name @deprecatedSince(version: "24.12.0")
-          tag
-          registry
-          architecture
-          digest
-          installed
-          labels {
-            key
-            value
+      query ImageListQuery(
+        $scopeId: ScopeField!
+        $offset: Int
+        $first: Int
+        $filter: String
+        $order: String
+      ) {
+        image_nodes(
+          scope_id: $scopeId
+          offset: $offset
+          first: $first
+          filter: $filter
+          order: $order
+        ) {
+          edges @required(action: THROW) {
+            node @required(action: THROW) {
+              id @required(action: THROW)
+              name @deprecatedSince(version: "24.12.0")
+              tag
+              registry
+              architecture
+              digest
+              installed
+              labels {
+                key
+                value
+              }
+              humanized_name
+              resource_limits {
+                key
+                min
+                max
+              }
+              namespace @since(version: "24.12.0")
+              base_image_name @since(version: "24.12.0")
+              tags @since(version: "24.12.0") {
+                key
+                value
+              }
+              version @since(version: "24.12.0")
+              ...AliasedImageDoubleTagsFragment
+              ...ManageImageResourceLimitModal_image
+              ...ManageAppsModal_image
+            }
           }
-          humanized_name
-          resource_limits {
-            key
-            min
-            max
-          }
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
-            key
-            value
-          }
-          version @since(version: "24.12.0")
-          ...ManageImageResourceLimitModal_image
-          ...ManageAppsModal_image
+          count
         }
       }
     `,
-    {},
+    deferredQueryVariables,
     {
-      // fetchPolicy:
-      //   environmentFetchKey === 'initial-fetch'
-      //     ? 'store-and-network'
-      //     : 'network-only',
-      fetchPolicy: 'store-and-network',
-      fetchKey: environmentFetchKey,
+      fetchPolicy:
+        deferredFetchKey === 'initial-fetch'
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey:
+        deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
     },
   );
 
-  // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
-  // TODO: after `images` query  supports sort order, we should remove this line
-  const defaultSortedImages = useMemo(
-    () => _.sortBy(images, (image) => image?.humanized_name),
-    [images],
+  const imageData = useMemo(
+    () =>
+      filterOutNullAndUndefined(
+        image_nodes?.edges?.map((edge) => edge?.node) ?? [],
+      ),
+    [image_nodes],
   );
 
   const columns: Array<ColumnType<EnvironmentImage>> = useMemo(
@@ -191,7 +243,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
           ),
         },
-        !supportExtendedImageInfo && {
+        supportExtendedImageInfo && {
           title: t('environment.Namespace'),
           key: 'namespace',
           dataIndex: 'namespace',
@@ -200,7 +252,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
           ),
         },
-        !supportExtendedImageInfo && {
+        supportExtendedImageInfo && {
           title: t('environment.BaseImageName'),
           key: 'base_image_name',
           dataIndex: 'base_image_name',
@@ -212,7 +264,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             </TextHighlighter>
           ),
         },
-        !supportExtendedImageInfo && {
+        supportExtendedImageInfo && {
           title: t('environment.Version'),
           key: 'version',
           dataIndex: 'version',
@@ -221,104 +273,20 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
           ),
         },
-        !supportExtendedImageInfo && {
+        supportExtendedImageInfo && {
           title: t('environment.Tags'),
           key: 'tags',
           dataIndex: 'tags',
-          render: (text, row) => {
+          render: (_text, row) => {
             return (
-              <BAIFlex direction="row" align="start" gap="xs" wrap="wrap">
-                {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                {_.map(text, (tag: { key: string; value: string }) => {
-                  const isCustomized = _.includes(tag.key, 'customized_');
-                  const tagValue = isCustomized
-                    ? _.find(row?.labels, {
-                        key: 'ai.backend.customized-image.name',
-                      })?.value
-                    : tag.value;
-                  const aliasedTag = tagAlias(tag.key + tagValue);
-                  return _.isEqual(
-                    aliasedTag,
-                    preserveDotStartCase(tag.key + tagValue),
-                  ) || isCustomized ? (
-                    <BAIDoubleTag
-                      key={tag.key}
-                      highlightKeyword={imageSearch}
-                      values={[
-                        {
-                          label: tagAlias(tag.key),
-                          color: isCustomized ? 'cyan' : 'blue',
-                        },
-                        {
-                          label: tagValue ?? '',
-                          color: isCustomized ? 'cyan' : 'blue',
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
-                      <TextHighlighter keyword={imageSearch}>
-                        {aliasedTag}
-                      </TextHighlighter>
-                    </Tag>
-                  );
-                })}
-              </BAIFlex>
+              <AliasedImageDoubleTags
+                label=""
+                color="blue"
+                imageFrgmt={row}
+                highlightKeyword={imageSearch}
+              />
             );
           },
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Namespace'),
-          key: 'name',
-          dataIndex: 'name',
-          sorter: (a, b) =>
-            localeCompare(getImageFullName(a), getImageFullName(b)),
-          render: (text) => (
-            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Base'),
-          key: 'baseimage',
-          dataIndex: 'baseimage',
-          sorter: (a, b) =>
-            localeCompare(
-              getBaseImage(getImageFullName(a) || ''),
-              getBaseImage(getImageFullName(b) || ''),
-            ),
-          render: (_text, row) => (
-            <TextHighlighter keyword={imageSearch}>
-              {tagAlias(getBaseImage(getImageFullName(row) || ''))}
-            </TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Version'),
-          key: 'baseversion',
-          dataIndex: 'baseversion',
-          sorter: (a, b) =>
-            localeCompare(
-              getBaseVersion(getImageFullName(a) || ''),
-              getBaseVersion(getImageFullName(b) || ''),
-            ),
-          render: (_text, row) => (
-            <TextHighlighter keyword={imageSearch}>
-              {getBaseVersion(getImageFullName(row) || '')}
-            </TextHighlighter>
-          ),
-        },
-        !supportExtendedImageInfo && {
-          title: t('environment.Tags'),
-          key: 'tag',
-          dataIndex: 'tag',
-          sorter: (a, b) => localeCompare(a?.tag, b?.tag),
-          render: (text, row) => (
-            <ImageTags
-              tag={text}
-              labels={row.labels as Array<{ key: string; value: string }>}
-              highlightKeyword={imageSearch}
-            />
-          ),
         },
         {
           title: t('environment.Digest'),
@@ -403,87 +371,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       installingImages,
       token,
       supportExtendedImageInfo,
-      getBaseImage,
-      getBaseVersion,
       tagAlias,
     ],
   );
 
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('ImageList');
-
-  const imageFilterValues = useMemo(() => {
-    return defaultSortedImages?.map((image) => {
-      return {
-        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
-        fullName: getImageFullName(image) || '',
-        digest: image?.digest || '',
-        // ------------ need only before 24.12.0 ------------
-        baseversion: getBaseVersion(getImageFullName(image) || ''),
-        baseimage:
-          image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
-        tag:
-          getTags(
-            image?.tag || '',
-            image?.labels as Array<{ key: string; value: string }>,
-          ) || [],
-        isCustomized: image?.tag
-          ? image.tag.indexOf('customized') !== -1
-          : false,
-        // -------------------------------------------------
-        // ------------ need only after 24.12.0 ------------
-        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
-        tags: supportExtendedImageInfo ? image?.tags : [],
-        version: supportExtendedImageInfo ? image?.version : '',
-        // -------------------------------------------------
-      };
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultSortedImages]);
-
-  const filteredImageData = useMemo(() => {
-    if (_.isEmpty(imageSearch)) return defaultSortedImages;
-    const regExp = new RegExp(`${_.escapeRegExp(imageSearch)}`, 'i');
-    return _.filter(defaultSortedImages, (image, idx) => {
-      return _.some(image, (value, key) => {
-        if (key === 'id') return false;
-        if (['digest', 'architecture', 'registry'].includes(key))
-          return regExp.test(_.toString(value));
-        const curFilterValues = imageFilterValues[idx] || {};
-        const baseVersionMatch = regExp.test(curFilterValues.baseversion);
-        const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
-          regExp.test(value),
-        );
-        const tagMatch = _.some(
-          curFilterValues.tag,
-          (tag) => regExp.test(tag.key) || regExp.test(tag.value),
-        );
-        const customizedMatch = curFilterValues.isCustomized
-          ? regExp.test('customized')
-          : false;
-        const namespaceMatch = regExp.test(curFilterValues.namespace || '');
-        const fullNameMatch = regExp.test(curFilterValues.fullName);
-        const tagsMatch = _.some(
-          curFilterValues.tags,
-          (tag: { key: string; value: string }) =>
-            regExp.test(tag.key) || regExp.test(tag.value),
-        );
-        const versionMatch = regExp.test(curFilterValues.version || '');
-        const digestMatch = regExp.test(curFilterValues.digest);
-        return (
-          baseVersionMatch ||
-          baseImagesMatch ||
-          tagMatch ||
-          namespaceMatch ||
-          customizedMatch ||
-          fullNameMatch ||
-          tagsMatch ||
-          versionMatch ||
-          digestMatch
-        );
-      });
-    });
-  }, [imageSearch, imageFilterValues, defaultSortedImages]);
 
   return (
     <>
@@ -551,6 +444,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{
+            total: image_nodes?.count ?? undefined,
+            ...tablePaginationOption,
+            onChange: (page, pageSize) => {
+              setTablePaginationOption({ current: page, pageSize });
+            },
             extraContent: (
               <Button
                 type="text"
@@ -561,7 +459,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               />
             ),
           }}
-          dataSource={filterOutNullAndUndefined(filteredImageData)}
+          dataSource={imageData}
           columns={_.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
@@ -569,8 +467,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           loading={isPendingSearchTransition}
           rowSelection={{
             type: 'checkbox',
-            // hideSelectAll: true,
-            // columnWidth: 48,
             onChange: (_, selectedRows) => {
               setSelectedRows(selectedRows);
             },

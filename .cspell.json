@@ -35,6 +35,8 @@
     "cuda",
     "deepseek",
     "FGPU",
+    "httpproxy",
+    "tcpproxy",
     "filebrowser",
     "Frgmt",
     "Frgmts",
@@ -72,7 +74,8 @@
     "Warboy",
     "webcomponent",
     "webui",
-    "wsproxy"
+    "wsproxy",
+    "lookback"
   ],
   "flagWords": [
     "데이터레이크",

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
@@ -22,7 +26,7 @@ import {
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

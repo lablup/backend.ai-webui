@@ -1,7 +1,12 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Result, Typography } from 'antd';
+import { Alert, Button, Result, theme, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 import {
@@ -10,8 +15,57 @@ import {
 } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
-interface BAIErrorBoundaryProps
-  extends Omit<ErrorBoundaryPropsWithRender, 'fallbackRender'> {
+/**
+ * Extended Error with GraphQL error information
+ */
+export interface ErrorWithGraphQL extends Error {
+  source?: {
+    errors?: ReadonlyArray<GraphQLFormattedError>;
+    variables?: any;
+    operation?: {
+      name?: string;
+    };
+  };
+  errors?: ReadonlyArray<GraphQLFormattedError>;
+}
+
+/**
+ * Type guard to check if error has GraphQL source errors
+ */
+function hasGraphQLSourceErrors(error: unknown): error is ErrorWithGraphQL & {
+  source: { errors: ReadonlyArray<GraphQLFormattedError> };
+} {
+  if (!(error instanceof Error) || !('source' in error)) {
+    return false;
+  }
+
+  const err = error as ErrorWithGraphQL;
+  return (
+    typeof err.source === 'object' &&
+    err.source !== null &&
+    'errors' in err.source &&
+    Array.isArray(err.source.errors) &&
+    err.source.errors.length > 0
+  );
+}
+
+/**
+ * Type guard to check if error has errors array
+ */
+function hasErrorsArray(error: unknown): error is ErrorWithGraphQL & {
+  errors: ReadonlyArray<GraphQLFormattedError>;
+} {
+  return (
+    error instanceof Error &&
+    'errors' in error &&
+    Array.isArray((error as ErrorWithGraphQL).errors)
+  );
+}
+
+interface BAIErrorBoundaryProps extends Omit<
+  ErrorBoundaryPropsWithRender,
+  'fallbackRender'
+> {
   style?: React.CSSProperties;
 }
 
@@ -20,6 +74,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const isExpiredLoginSession = useAtomValue(isLoginSessionExpiredState);
   return (
     <ErrorBoundary
@@ -27,7 +82,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
       fallbackRender={({ error, resetErrorBoundary }) => {
         const isLoginSessionExpiredError =
           isExpiredLoginSession ||
-          error?.name === 'AuthorizationError' ||
+          (error as Error)?.name === 'AuthorizationError' ||
           (error as any)?.statusCode === 401;
         return (
           <BAIFlex
@@ -63,34 +118,145 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                       ? t('errorBoundary.ExpiredLoginSessionReLogin')
                       : t('errorBoundary.ReloadPage')}
                   </Button>
-                  {process.env.NODE_ENV === 'development' && (
-                    <BAIFlex
-                      direction="column"
-                      gap="sm"
-                      align="center"
-                      style={{ width: '100%' }}
-                    >
-                      <Alert
-                        type="info"
-                        showIcon
-                        description={
-                          <BAIFlex direction="column" align="start" gap={'md'}>
-                            <Button
-                              type="default"
-                              icon={<ReloadOutlined />}
-                              onClick={() => {
-                                resetErrorBoundary();
-                              }}
+                  {
+                    // TODO: Include this to App Config
+                    // @ts-ignore
+                    globalThis?.backendaiwebui?.debug === true && (
+                      <BAIFlex
+                        direction="column"
+                        gap="sm"
+                        align="center"
+                        style={{ width: '100%' }}
+                      >
+                        <Alert
+                          type="info"
+                          description={
+                            <BAIFlex
+                              direction="column"
+                              align="center"
+                              gap={'md'}
                             >
-                              {t('errorBoundary.ResetErrorBoundary')}
-                            </Button>
-                            <Typography.Text>{error.message}</Typography.Text>
-                          </BAIFlex>
-                        }
-                        title={t('errorBoundary.DisplayOnlyDevEnv')}
-                      />
-                    </BAIFlex>
-                  )}
+                              <Button
+                                type="default"
+                                icon={<ReloadOutlined />}
+                                onClick={() => {
+                                  resetErrorBoundary();
+                                }}
+                              >
+                                {t('errorBoundary.ResetErrorBoundary')}
+                              </Button>
+                              <BAIFlex direction="column" gap="sm">
+                                <Typography.Text strong>
+                                  {t('errorBoundary.ErrorMessage')}
+                                </Typography.Text>
+                                <Typography.Paragraph
+                                  style={{
+                                    whiteSpace: 'pre-wrap',
+                                    wordBreak: 'break-word',
+                                    maxHeight: '150px',
+                                    overflow: 'auto',
+                                    textAlign: 'left',
+                                  }}
+                                >
+                                  <pre style={{ margin: 0 }}>
+                                    {(() => {
+                                      // Try to extract GraphQL errors using type guards
+                                      // Case 1: Relay error with source.errors
+                                      if (hasGraphQLSourceErrors(error)) {
+                                        return error.source.errors
+                                          .map((e) => e.message)
+                                          .join('\n\n');
+                                      }
+
+                                      // Case 2: Error object with errors array
+                                      if (hasErrorsArray(error)) {
+                                        return error.errors
+                                          .map((e) => e.message)
+                                          .join('\n\n');
+                                      }
+
+                                      // Case 3: Standard Error message
+                                      if (
+                                        error instanceof Error &&
+                                        error.message
+                                      ) {
+                                        return error.message;
+                                      }
+
+                                      // Fallback: stringify the error
+                                      return JSON.stringify(error, null, 2);
+                                    })()}
+                                  </pre>
+                                </Typography.Paragraph>
+
+                                {/* Debug: Show only relevant error information */}
+                                <Typography.Text
+                                  strong
+                                  style={{ marginTop: token.marginXS }}
+                                >
+                                  {t('errorBoundary.DebugInfo')}
+                                </Typography.Text>
+                                <Typography.Paragraph
+                                  style={{
+                                    whiteSpace: 'pre-wrap',
+                                    wordBreak: 'break-word',
+                                    maxHeight: '150px',
+                                    overflow: 'auto',
+                                    textAlign: 'left',
+                                  }}
+                                >
+                                  <pre style={{ margin: 0 }}>
+                                    {JSON.stringify(
+                                      {
+                                        ...(error instanceof Error && {
+                                          name: error.name,
+                                          message: error.message,
+                                        }),
+                                        ...(hasGraphQLSourceErrors(error) && {
+                                          errors: error.source.errors,
+                                          variables: error.source.variables,
+                                          operationName:
+                                            error.source.operation?.name,
+                                        }),
+                                      },
+                                      null,
+                                      2,
+                                    )}
+                                  </pre>
+                                </Typography.Paragraph>
+
+                                {error instanceof Error && error.stack && (
+                                  <>
+                                    <Typography.Text
+                                      strong
+                                      style={{ marginTop: token.marginXS }}
+                                    >
+                                      {t('errorBoundary.StackTrace')}
+                                    </Typography.Text>
+                                    <Typography.Paragraph
+                                      style={{
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                        maxHeight: '150px',
+                                        overflow: 'auto',
+                                        textAlign: 'left',
+                                        marginBottom: 0,
+                                      }}
+                                    >
+                                      <pre style={{ margin: 0 }}>
+                                        {(error as Error).stack}
+                                      </pre>
+                                    </Typography.Paragraph>
+                                  </>
+                                )}
+                              </BAIFlex>
+                            </BAIFlex>
+                          }
+                          title={t('errorBoundary.DisplayOnlyDevEnv')}
+                        />
+                      </BAIFlex>
+                    )
+                  }
                 </BAIFlex>
               }
             ></Result>

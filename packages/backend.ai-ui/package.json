@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-ui",
-  "version": "26.1.0-alpha.0",
+  "version": "26.2.0-alpha.0",
   "description": "React components for Backend.AI",
   "repository": {
     "type": "git",
@@ -43,86 +43,19 @@
     "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
-  "eslintConfig": {
-    "extends": [
-      "plugin:storybook/recommended",
-      "plugin:react/recommended",
-      "plugin:react-hooks/recommended"
-    ],
-    "plugins": [
-      "json-schema-validator",
-      "react-hooks",
-      "import"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "src/locale/*.json"
-        ],
-        "parser": "jsonc-eslint-parser",
-        "extends": [
-          "plugin:json-schema-validator/recommended"
-        ]
-      },
-      {
-        "files": [
-          "**/*.stories.tsx"
-        ],
-        "rules": {
-          "react-hooks/rules-of-hooks": "off"
-        }
-      },
-      {
-        "files": [
-          "**/*.test.*",
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "no-console": "off"
-        }
-      }
-    ],
-    "rules": {
-      "comma-spacing": "off",
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
-      "import/no-duplicates": "error",
-      "no-useless-catch": "off",
-      "prefer-promise-reject-errors": "off",
-      "func-call-spacing": "off",
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ],
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": [
-        "warn",
-        {
-          "additionalHooks": "useRecoilCallback"
-        }
-      ],
-      "no-console": [
-        "warn"
-      ]
-    }
-  },
   "peerDependencies": {
     "@ant-design/icons": "^6.1.0",
-    "@tanstack/react-query": "^5.90.16",
-    "ahooks": "^3.9.5",
-    "antd": "^6.1.3",
+    "@tanstack/react-query": "^5.90.19",
+    "ahooks": "^3.9.6",
+    "antd": "^6.2.1",
     "antd-style": "^3.7.1",
     "graphql": "^16.12.0",
-    "i18next": "^25.6.0",
+    "i18next": "^25.8.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-i18next": "^16.0.1",
+    "react-i18next": "^16.5.3",
     "react-relay": "^20.1.1",
-    "react-router-dom": "^6.30.2",
+    "react-router-dom": "^6.30.3",
     "relay-runtime": "^20.1.1"
   },
   "dependencies": {
@@ -133,28 +66,26 @@
     "big.js": "^7.0.1",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.19",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lucide-react": "^0.552.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-draggable": "^4.5.0",
-    "react-resizable": "^3.1.0"
+    "react-resizable": "^3.1.3"
   },
   "devDependencies": {
+    "eslint-config-bai": "workspace:*",
     "@jest/expect": "30.2.0",
     "@jest/globals": "30.2.0",
-    "@storybook/addon-docs": "^9.1.17",
-    "@storybook/addon-interactions": "^8.6.14",
-    "@storybook/addon-links": "^9.1.17",
-    "@storybook/addon-onboarding": "^9.1.17",
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/react-vite": "^9.1.17",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-onboarding": "^10.1.11",
+    "@storybook/react-vite": "^10.1.11",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.1",
+    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/big.js": "^6.2.2",
-    "@types/lodash": "^4.17.21",
-    "@types/react": "^19.2.7",
+    "@types/lodash": "^4.17.23",
+    "@types/react": "^19.2.9",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-dom": "^19.2.3",
     "@types/react-relay": "^18.2.1",
@@ -162,20 +93,25 @@
     "@types/relay-runtime": "^19.0.3",
     "@types/relay-test-utils": "^19.0.0",
     "@vitejs/plugin-react": "^4.7.0",
-    "@vueless/storybook-dark-mode": "^9.0.10",
+    "@vueless/storybook-dark-mode": "^10.0.6",
     "babel-jest": "^30.2.0",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^8.57.1",
-    "eslint-plugin-import": "^2.32.0",
+    "@eslint/js": "^9.18.0",
+    "eslint": "^9.18.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-storybook": "^9.1.17",
+    "eslint-plugin-json-schema-validator": "^5.5.1",
+    "eslint-plugin-storybook": "^10.1.11",
+    "globals": "^16.0.0",
+    "jsonc-eslint-parser": "^2.4.2",
+    "typescript-eslint": "^8.23.0",
     "fast-glob": "^3.3.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "prettier-plugin-sort-json": "^4.1.1",
+    "prettier-plugin-sort-json": "^4.2.0",
     "relay-test-utils": "^20.1.1",
-    "storybook": "^9.1.17",
+    "storybook": "^10.1.11",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",

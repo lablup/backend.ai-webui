@@ -24,7 +24,7 @@
     "AreYouSureYouWantToActivateOne": "Sei sicuro di voler attivare {{name}}?",
     "AreYouSureYouWantToActivateSome": "Sei sicuro di voler attivare i manufatti {{count}}?",
     "FailedToActivateArtifacts": "Non è riuscito ad attivare artefatti.",
-    "SuccessfullyActivated": "Artefatti attivati ​​con successo."
+    "SuccessfullyActivated": "Artefatti attivati con successo."
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Seleziona gruppo di risorse"
@@ -57,13 +57,18 @@
     "Updated": "Aggiornato",
     "Version": "Versione"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Cancella",
+    "KeepAsIs": "Mantieni invariato",
+    "UndoChanges": "Annulla modifiche"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Sei sicuro di voler disattivare {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Sei sicuro di voler disattivare {{count}} artefatti?",
     "Deactivate": "Disattivare",
     "DeactivateArtifacts": "Disattiva i manufatti",
     "FailedToDeactivateArtifacts": "Impossibile disattivare gli artefatti.",
-    "SuccessfullyDeactivated": "Artefatti disattivati ​​con successo."
+    "SuccessfullyDeactivated": "Artefatti disattivati con successo."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "Le versioni {{count}} sono escluse.",
@@ -81,6 +86,26 @@
     "LastUpdated": "Ultimo aggiornamento",
     "Refresh": "Aggiorna"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "dopo",
+      "Before": "prima",
+      "GreaterThan": "maggiore di",
+      "GreaterThanOrEqual": "maggiore o uguale",
+      "IContains": "Contiene",
+      "IEndsWith": "termina con",
+      "IEquals": "uguale a",
+      "INotContains": "non contiene",
+      "INotEndsWith": "non termina con",
+      "INotEquals": "diverso da",
+      "INotStartsWith": "non inizia con",
+      "IStartsWith": "inizia con",
+      "In": "in",
+      "LessThan": "minore di",
+      "LessThanOrEqual": "minore o uguale",
+      "NotIn": "non in"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "Le versioni {{count}} sono escluse.",
     "FailedToPullVersions": "Non è riuscito a tirare le versioni.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "La cartella o le cartelle seguenti verranno aggiornate.",
     "ProjectResourcePolicy": "Politica delle risorse del progetto",
     "UpdateMultipleProjects": "Aggiorna più progetti"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Seleziona progetto"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Host autorizzati per le cartelle",
@@ -141,7 +169,7 @@
     "PurgeProject": "Elimina definitivamente il progetto",
     "Registry": "Registro",
     "ResourcePolicy": "Politica delle risorse",
-    "ScalingGroups": "Gruppi di scalabilità",
+    "ScalingGroups": "Gruppi di risorse",
     "StorageNodes": "Nodi di archiviazione",
     "TotalResourceSlots": "Slot risorse totali",
     "Type": "Tipo"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Seleziona utente"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleziona cartella"
@@ -259,6 +290,7 @@
       "Cancel": "Cancellare",
       "Close": "Vicino",
       "Collapse": "Crollo",
+      "Copied": "Copiato",
       "CopyAll": "Copia tutto",
       "Create": "Creare",
       "Delete": "Eliminare",

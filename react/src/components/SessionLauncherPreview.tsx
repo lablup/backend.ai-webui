@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { preserveDotStartCase, getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -241,59 +245,62 @@ const SessionLauncherPreview: React.FC<{
                         </Typography.Text>
                         <Divider type="vertical" />
                         {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                        {_.map(
-                          form.getFieldValue('environments')?.image?.tags,
-                          (tag: { key: string; value: string }) => {
-                            const isCustomized = _.includes(
-                              tag.key,
-                              'customized_',
-                            );
-                            const tagValue = isCustomized
-                              ? _.find(
-                                  form.getFieldValue('environments')?.image
-                                    ?.labels,
-                                  {
-                                    key: 'ai.backend.customized-image.name',
-                                  },
-                                )?.value
-                              : tag.value;
-                            const aliasedTag = tagAlias(tag.key + tagValue);
-                            return _.isEqual(
-                              aliasedTag,
-                              preserveDotStartCase(tag.key + tagValue),
-                            ) || isCustomized ? (
-                              <BAIDoubleTag
-                                key={tag.key}
-                                values={[
-                                  {
-                                    label: tagAlias(tag.key),
-                                    color: isCustomized ? 'cyan' : 'blue',
-                                  },
-                                  {
-                                    label: tagValue,
-                                    color: isCustomized ? 'cyan' : 'blue',
-                                  },
-                                ]}
-                              />
-                            ) : (
-                              <Tag
-                                key={tag.key}
-                                color={isCustomized ? 'cyan' : 'blue'}
-                              >
-                                {aliasedTag}
-                              </Tag>
-                            );
-                          },
-                        )}
-                        <Typography.Text
-                          style={{ color: token.colorPrimary }}
-                          copyable={{
-                            text:
-                              getImageFullName(
-                                form.getFieldValue('environments')?.image,
-                              ) || form.getFieldValue('environments')?.version,
-                          }}
-                        />
+                        <BAIFlex gap={'xxs'}>
+                          {_.map(
+                            form.getFieldValue('environments')?.image?.tags,
+                            (tag: { key: string; value: string }) => {
+                              const isCustomized = _.includes(
+                                tag.key,
+                                'customized_',
+                              );
+                              const tagValue = isCustomized
+                                ? _.find(
+                                    form.getFieldValue('environments')?.image
+                                      ?.labels,
+                                    {
+                                      key: 'ai.backend.customized-image.name',
+                                    },
+                                  )?.value
+                                : tag.value;
+                              const aliasedTag = tagAlias(tag.key + tagValue);
+                              return _.isEqual(
+                                aliasedTag,
+                                preserveDotStartCase(tag.key + tagValue),
+                              ) || isCustomized ? (
+                                <BAIDoubleTag
+                                  key={tag.key}
+                                  values={[
+                                    {
+                                      label: tagAlias(tag.key),
+                                      color: isCustomized ? 'cyan' : 'blue',
+                                    },
+                                    {
+                                      label: tagValue,
+                                      color: isCustomized ? 'cyan' : 'blue',
+                                    },
+                                  ]}
+                                />
+                              ) : (
+                                <Tag
+                                  key={tag.key}
+                                  color={isCustomized ? 'cyan' : 'blue'}
+                                >
+                                  {aliasedTag}
+                                </Tag>
+                              );
+                            },
+                          )}
+                          <Typography.Text
+                            style={{ color: token.colorPrimary }}
+                            copyable={{
+                              text:
+                                getImageFullName(
+                                  form.getFieldValue('environments')?.image,
+                                ) ||
+                                form.getFieldValue('environments')?.version,
+                            }}
+                          />
+                        </BAIFlex>
                       </>
                     )}
                   </BAIFlex>

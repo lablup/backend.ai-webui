@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {
@@ -296,7 +300,7 @@ const ReservoirArtifactDetailPage = () => {
         </BAIFlex>
         <BAIFetchKeyButton
           value={fetchKey}
-          autoUpdateDelay={10_000}
+          autoUpdateDelay={15_000}
           loading={deferredFetchKey !== fetchKey}
           onChange={() => {
             updateFetchKey();

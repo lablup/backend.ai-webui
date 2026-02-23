@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
@@ -220,15 +224,14 @@ const UserDropdownMenu: React.FC<{
             icon={
               <Avatar
                 size={17}
-                icon={
-                  <UserOutlined
-                    style={{ fontSize: 10, color: token.colorPrimary }}
-                  />
-                }
                 style={{
                   backgroundColor: token.colorBgBase,
                 }}
-              ></Avatar>
+              >
+                <UserOutlined
+                  style={{ fontSize: 10, color: token.colorPrimary }}
+                />
+              </Avatar>
             }
           >
             {screens.lg && _.truncate(userInfo.username, { length: 30 })}

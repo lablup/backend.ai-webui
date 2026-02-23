@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   SessionMetricGraphQuery,
   SessionMetricGraphQuery$data,
@@ -42,9 +46,9 @@ const useStyle = createStyles(({ css, token }) => ({
       fill: ${token.colorTextDescription};
     }
     .recharts-default-tooltip {
-      background-color: ${token.colorBgSpotlight} !important;
-      border: none !important;
-      color: ${token.colorTextLightSolid} !important;
+      background-color: ${token.colorBgBase} !important;
+      border: 1px solid ${token.colorBorderSecondary} !important;
+      color: ${token.colorText} !important;
     }
   `,
 }));

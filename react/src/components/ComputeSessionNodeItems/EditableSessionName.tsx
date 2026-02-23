@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../../helper';
@@ -5,7 +9,7 @@ import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-import { theme, Form, Input, App, GetProps, Typography } from 'antd';
+import { theme, Form, Input, App, type GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -181,11 +185,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
             flex: 1,
           }}
         >
-          <Form.Item
-            name="sessionName"
-            rules={validationRules}
-            validateDebounce={200}
-          >
+          <Form.Item name="sessionName" rules={validationRules}>
             <Input
               size="large"
               value={optimisticName || ''}

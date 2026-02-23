@@ -1,7 +1,7 @@
 import { BAIArtifactDescriptionsFragment$key } from '../../__generated__/BAIArtifactDescriptionsFragment.graphql';
 import BAILink from '../BAILink';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { Descriptions, DescriptionsProps, Typography } from 'antd';
+import { Descriptions, Typography, type DescriptionsProps } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useTranslation } from 'react-i18next';

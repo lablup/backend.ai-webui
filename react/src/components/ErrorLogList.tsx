@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -11,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Typography, Alert, Checkbox, Input, theme } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
   BAIModal,

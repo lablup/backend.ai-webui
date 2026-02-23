@@ -1,6 +1,6 @@
 import { UNSAFELazyUserEmailViewQuery } from '../../__generated__/UNSAFELazyUserEmailViewQuery.graphql';
 import { toGlobalId } from '../../helper';
-import { GetProps, Typography } from 'antd';
+import { Typography, type GetProps } from 'antd';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface UNSAFELazyUserEmailViewProps

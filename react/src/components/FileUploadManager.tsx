@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { theme, Typography } from 'antd';
@@ -9,7 +13,7 @@ import {
   useConnectedBAIClient,
 } from 'backend.ai-ui';
 import { atom, useAtom, useSetAtom } from 'jotai';
-import { atomFamily } from 'jotai/utils';
+import { atomFamily } from 'jotai-family';
 import _ from 'lodash';
 import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
@@ -243,7 +247,7 @@ const FileUploadManager: React.FC = () => {
                 ],
               },
             }));
-          } catch (error) {
+          } catch {
             // Error case - use the captured fileName regardless of error structure
             throttledUploadRequests.flush();
             delete pendingDeltaBytesRef.current[vFolderId];
@@ -442,7 +446,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
                   },
                 });
                 upload.start();
-              } catch (error) {
+              } catch {
                 // Handle synchronous errors from tus.Upload constructor or start()
                 reject(
                   new Error(`Failed to initialize upload for ${fileName}`),
@@ -450,7 +454,7 @@ export const useFileUploadManager = (id?: string, folderName?: string) => {
               }
             },
           );
-        } catch (error) {
+        } catch {
           // Handle API errors or any other errors
           // Always throw with a consistent error message
           throw new Error(`Failed to prepare upload for ${fileName}`);

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionInfoCellFragment$key } from '../../__generated__/SessionInfoCellFragment.graphql';
 import {
   // useBackendaiImageMetaData,
@@ -5,7 +9,14 @@ import {
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Form, FormInstance, Input, Typography, theme } from 'antd';
+import {
+  Button,
+  Form,
+  type FormInstance,
+  Input,
+  Typography,
+  theme,
+} from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';

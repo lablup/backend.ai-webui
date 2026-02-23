@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ResourceGroupListDeleteMutation } from '../__generated__/ResourceGroupListDeleteMutation.graphql';
 import {
   ResourceGroupListQuery,
@@ -25,7 +29,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

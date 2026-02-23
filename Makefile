@@ -63,7 +63,6 @@ compile_client_node_ts: clean_client_node_ts
 	@printf "$(YELLOW)backend.ai-client-node.js compiled$(NC)\n"
 compile_wsproxy: compile_client_node_ts
 	@pnpm -w exec webpack-cli --config src/wsproxy/webpack.config.js
-	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep
 	@make mac_x64
 	@make mac_arm64
@@ -76,7 +75,8 @@ dep:
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
-	@if [ ! -d "./build/rollup/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
+	@mkdir -p ./app
+	@if [ ! -d "./build/web/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
 		make compile; \
 		make compile_wsproxy; \
 		rm -rf build/electron-app; \
@@ -84,9 +84,9 @@ dep:
 		cp -r electron-app/* build/electron-app/;\
 		cp electron-app/.npmrc build/electron-app/;\
 		pnpm i --prefix ./build/electron-app --ignore-workspace;\
-		cp -Rp build/rollup build/electron-app/app; \
-		cp -Rp build/rollup/resources build/electron-app; \
-		cp -Rp build/rollup/manifest build/electron-app; \
+		cp -Rp build/web build/electron-app/app; \
+		cp -Rp build/web/resources build/electron-app; \
+		cp -Rp build/web/manifest build/electron-app; \
 		BUILD_TARGET=electron pnpm run build:react-only; \
 		cp -Rp react/build/* build/electron-app/app/; \
 		sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html; \
@@ -95,12 +95,12 @@ dep:
 		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
 web:
-	@if [ ! -d "./build/rollup/" ];then \
+	@if [ ! -d "./build/web/" ];then \
 		make compile; \
 	fi
 	@mkdir -p ./deploy/$(site)
 	@cd deploy/$(site); rm -rf ./*; mkdir webui
-	@cp -Rp build/rollup/* deploy/$(site)/webui
+	@cp -Rp build/web/* deploy/$(site)/webui
 	@cp ./configs/$(site).toml deploy/$(site)/webui/config.toml
 	@if [ -f "./configs/$(site).css" ];then \
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
@@ -158,7 +158,7 @@ endif
 	@printf "$(YELLOW)Finished$(NC)\n"
 bundle: dep
 	@printf "$(GREEN)Bundling...$(NC)"
-	@cd build/rollup; zip -r -9 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
+	@cd build/web; zip -r -9 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
 	@mv ./app/backend.ai-webui-bundle-$(BUILD_DATE).zip ./app/backend.ai-webui-bundle-$(BUILD_VERSION).zip
 	@printf "$(YELLOW)Finished$(NC)\n"
 mac: dep
@@ -210,5 +210,5 @@ i18n:
 	@pnpm exec i18next-scanner --config ./i18n.config.js
 clean:
 	@rm -rf ./app/backend*; rm -rf ./app/Backend*
-	@rm -rf ./build/unbundle ./build/bundle ./build/rollup ./build/electron-app
+	@rm -rf ./build/unbundle ./build/bundle ./build/web ./build/electron-app
 	@rm -rf ./react/build

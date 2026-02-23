@@ -1,8 +1,12 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSettingModalCreateMutation.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { App, Col, Form, Input, InputNumber, ModalProps, Row } from 'antd';
+import { App, Col, Form, Input, InputNumber, type ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { BAIModal } from 'backend.ai-ui';
 import { useRef } from 'react';

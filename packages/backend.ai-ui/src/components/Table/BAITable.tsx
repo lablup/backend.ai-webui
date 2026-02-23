@@ -12,24 +12,26 @@ import {
   Button,
   Pagination,
   Table,
-  TablePaginationConfig,
-  TableProps,
+  type TablePaginationConfig,
+  type TableProps,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { AnyObject, GetProps } from 'antd/es/_util/type';
-import { ColumnType, ColumnsType } from 'antd/es/table';
+import type { AnyObject, GetProps } from 'antd/es/_util/type';
+import type { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import _ from 'lodash';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Resizable, ResizeCallbackData } from 'react-resizable';
+import { Resizable, type ResizeCallbackData } from 'react-resizable';
 
 /**
  * Configuration interface for BAITable pagination
  * Extends Ant Design's TablePaginationConfig but omits 'position' property
  */
-interface BAITablePaginationConfig
-  extends Omit<TablePaginationConfig, 'position'> {
+interface BAITablePaginationConfig extends Omit<
+  TablePaginationConfig,
+  'position'
+> {
   /** Additional content to display in the pagination area */
   extraContent?: ReactNode;
 }
@@ -71,16 +73,19 @@ export interface BAITableSettings {
  * Extended column type for BAITable with additional properties
  * Extends Ant Design's ColumnType with custom BAI-specific features
  */
-export interface BAIColumnType<RecordType = any>
-  extends ColumnType<RecordType> {
+export interface BAIColumnType<
+  RecordType = any,
+> extends ColumnType<RecordType> {
   /** Whether this column should be hidden by default */
   defaultHidden?: boolean;
   /** Whether this column is required and cannot be hidden by users */
   required?: boolean;
 }
 
-export interface BAIColumnGroupType<RecordType = AnyObject>
-  extends Omit<BAIColumnType<RecordType>, 'dataIndex'> {
+export interface BAIColumnGroupType<RecordType = AnyObject> extends Omit<
+  BAIColumnType<RecordType>,
+  'dataIndex'
+> {
   children: ColumnsType<RecordType>;
 }
 
@@ -169,8 +174,9 @@ type BAITableBaseProps<RecordType> = Omit<TableProps<RecordType>, 'onChange'>;
  * Props interface for BAITable component
  * Extends Ant Design's TableProps with additional BAI-specific features
  */
-export interface BAITableProps<RecordType extends AnyObject>
-  extends BAITableBaseProps<RecordType> {
+export interface BAITableProps<
+  RecordType extends AnyObject,
+> extends BAITableBaseProps<RecordType> {
   /** Pagination configuration or false to disable pagination */
   pagination?: false | BAITablePaginationConfig;
   /** Whether columns should be resizable */

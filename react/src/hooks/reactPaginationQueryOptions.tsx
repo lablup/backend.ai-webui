@@ -1,6 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import { SorterResult } from 'antd/lib/table/interface';
+import type { SorterResult } from 'antd/lib/table/interface';
 import _ from 'lodash';
 import { parseAsInteger, useQueryStates } from 'nuqs';
 import { useMemo, useState } from 'react';
@@ -141,9 +145,7 @@ export const useRelayPaginationQueryOptions = <
         setParams({
           page: newPage,
           pageSize: newPageSize,
-          // eslint-disable-next-line
           order: newOrder as [], // TODO: not use as []
-          // eslint-disable-next-line
           filter: newFilter as {}, // TODO: not use as {}
         });
         setRefreshedQueryOptions((prev) => ({
@@ -294,7 +296,8 @@ interface AntdBasicPaginationOption {
 }
 
 interface InitialPaginationOption
-  extends AntdBasicPaginationOption,
+  extends
+    AntdBasicPaginationOption,
     Omit<BAIPaginationOption, 'limit' | 'offset'> {}
 
 interface BAIPaginationOptionState {

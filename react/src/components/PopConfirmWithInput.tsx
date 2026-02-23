@@ -1,5 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Form, Input, Popconfirm, PopconfirmProps, Typography } from 'antd';
+import {
+  Form,
+  Input,
+  Popconfirm,
+  type PopconfirmProps,
+  Typography,
+} from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';

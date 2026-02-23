@@ -1,9 +1,13 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   AgentSettingModalFragment$data,
   AgentSettingModalFragment$key,
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
-import { App, Form, FormInstance, Switch } from 'antd';
+import { App, Form, type FormInstance, Switch } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,

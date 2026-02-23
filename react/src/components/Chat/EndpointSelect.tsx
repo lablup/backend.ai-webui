@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
@@ -7,7 +11,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
-import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
+import { type GetRef, type SelectProps, Skeleton, Tooltip } from 'antd';
 import { BAIFlex, BAILink, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
@@ -19,8 +23,10 @@ export type Endpoint = NonNullable<
   NonNullableItem<EndpointSelectQuery$data['endpoint_list']>
 >;
 
-export interface EndpointSelectProps
-  extends Omit<SelectProps, 'options' | 'labelInValue'> {
+export interface EndpointSelectProps extends Omit<
+  SelectProps,
+  'options' | 'labelInValue'
+> {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
 }
@@ -53,6 +59,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);

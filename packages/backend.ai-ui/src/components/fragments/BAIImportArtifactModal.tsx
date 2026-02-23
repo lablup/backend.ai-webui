@@ -16,7 +16,7 @@ import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, App, Modal, ModalProps, theme, Tooltip } from 'antd';
+import { Alert, App, Modal, theme, Tooltip, type ModalProps } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';

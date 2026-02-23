@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';

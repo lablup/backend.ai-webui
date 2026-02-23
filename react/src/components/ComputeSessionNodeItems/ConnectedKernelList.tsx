@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ConnectedKernelListFragment$data,
   ConnectedKernelListFragment$key,
@@ -6,7 +10,7 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
-import { ColumnType } from 'antd/lib/table';
+import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

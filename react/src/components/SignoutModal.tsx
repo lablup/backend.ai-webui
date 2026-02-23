@@ -1,6 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, Input, message, Alert, FormInstance } from 'antd';
+import { Form, Input, message, Alert, type FormInstance } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

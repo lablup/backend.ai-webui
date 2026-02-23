@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useTokenCount } from '../../hooks/useTokenizer';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { UIMessage } from 'ai';
@@ -59,7 +63,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
           <Typography.Text>{tokenPerSecond.toFixed(1)}</Typography.Text>{' '}
           <Typography.Text type="secondary">TPS</Typography.Text>
         </span>{' '}
-        <Divider type="vertical" />
+        <Divider orientation="vertical" />
         <span>
           <Typography.Text>{totalTokenCount}</Typography.Text>{' '}
           <Typography.Text type="secondary"> tokens</Typography.Text>

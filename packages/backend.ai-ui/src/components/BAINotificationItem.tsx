@@ -1,6 +1,6 @@
 import BAIFlex from './BAIFlex';
 import { List, Typography, theme } from 'antd';
-import React, { ReactNode } from 'react';
+import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {
   title?: React.CSSProperties;

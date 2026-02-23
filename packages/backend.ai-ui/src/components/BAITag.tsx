@@ -1,5 +1,5 @@
 import { ConfigProvider, Tag, theme } from 'antd';
-import { TagProps } from 'antd/lib/tag';
+import type { TagProps } from 'antd/lib/tag';
 import React from 'react';
 
 interface BAITagProps extends TagProps {}

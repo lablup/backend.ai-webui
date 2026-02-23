@@ -1,6 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
-import { Select, SelectProps } from 'antd';
+import { Select, type SelectProps } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

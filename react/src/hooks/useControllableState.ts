@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { SetStateAction } from 'react';
@@ -110,6 +114,5 @@ function useMemoizedFn<T extends noop>(fn: T) {
 function useUpdate() {
   const [, setState] = useState({});
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   return useCallback(() => setState({}), []);
 }

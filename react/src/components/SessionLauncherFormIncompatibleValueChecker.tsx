@@ -1,5 +1,9 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
-import { App, Form, FormInstance } from 'antd';
+import { App, Form, type FormInstance } from 'antd';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

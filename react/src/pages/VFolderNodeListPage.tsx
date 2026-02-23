@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   VFolderNodeListPageQuery,
   VFolderNodeListPageQuery$data,
@@ -111,8 +115,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   useEffect(() => {
     setSelectedFolderList([]);
+
     // Reset selectedRowKeys when currentProject changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject.id]);
 
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
@@ -202,7 +206,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     useLazyLoadQuery<VFolderNodeListPageQuery>(
       graphql`
         query VFolderNodeListPageQuery(
-          $projectId: UUID!
+          $projectId: UUID
           $offset: Int
           $first: Int
           $filter: String

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Progress, theme } from 'antd';
 import _ from 'lodash';
 import { NotificationState } from 'src/hooks/useBAINotification';

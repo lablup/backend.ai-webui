@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '.';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -14,7 +18,7 @@ export const useMergedAllowedStorageHostPermission = (
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
       graphql`
         query useMergedAllowedStorageHostPermission_KeypairQuery(
-          $domainName: String!
+          $domainName: String
           $accessKey: String
         ) {
           keypair(domain_name: $domainName, access_key: $accessKey)

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ContainerRegistryListDeleteMutation } from '../__generated__/ContainerRegistryListDeleteMutation.graphql';
 import { ContainerRegistryListDomainMutation } from '../__generated__/ContainerRegistryListDomainMutation.graphql';
 import {
@@ -32,7 +36,7 @@ import {
   App,
 } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutNullAndUndefined,
   BAITable,
@@ -219,12 +223,16 @@ const ContainerRegistryList: React.FC<{
         duration: 1,
       });
       if (err && err.message) {
-        // @ts-ignore
-        globalThis.lablupNotification.text = painKiller.relieve(err.title);
-        // @ts-ignore
-        globalThis.lablupNotification.detail = err.message;
-        // @ts-ignore
-        globalThis.lablupNotification.show(true, err);
+        document.dispatchEvent(
+          new CustomEvent('add-bai-notification', {
+            detail: {
+              open: true,
+              type: 'error',
+              message: painKiller.relieve(err.title),
+              description: err.message,
+            },
+          }),
+        );
       }
     };
     const isSupportImageRescanByProject = baiClient.supports(

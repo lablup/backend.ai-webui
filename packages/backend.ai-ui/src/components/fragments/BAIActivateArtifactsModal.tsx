@@ -2,7 +2,7 @@ import { BAIActivateArtifactsModalArtifactsFragment$key } from '../../__generate
 import { BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation } from '../../__generated__/BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation.graphql';
 import { toLocalId } from '../../helper';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { App, Modal, ModalProps, Typography } from 'antd';
+import { App, Modal, Typography, type ModalProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 

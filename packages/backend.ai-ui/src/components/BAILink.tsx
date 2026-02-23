@@ -1,7 +1,7 @@
 import { theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router-dom';
 
 const useStyles = createStyles(({ css, token }) => ({
   hover: css`
@@ -22,12 +22,14 @@ const useStyles = createStyles(({ css, token }) => ({
 
 export interface BAILinkProps extends Omit<LinkProps, 'to'> {
   type?: 'hover' | 'disabled' | undefined;
+  icon?: React.ReactNode;
   to?: LinkProps['to'];
   ellipsis?: boolean | { tooltip?: string };
   children?: string | React.ReactNode;
 }
 const BAILink: React.FC<BAILinkProps> = ({
   type,
+  icon,
   to,
   ellipsis,
   children,
@@ -43,6 +45,7 @@ const BAILink: React.FC<BAILinkProps> = ({
       style={{ fontFamily: token.fontFamily, ...linkProps.style }}
     >
       {children}
+      {icon}
     </Link>
   ) : (
     <Typography.Link
@@ -58,9 +61,13 @@ const BAILink: React.FC<BAILinkProps> = ({
           ellipsis={ellipsis}
         >
           {children}
+          {icon}
         </Typography.Text>
       ) : (
-        children
+        <>
+          {children}
+          {icon}
+        </>
       )}
     </Typography.Link>
   );

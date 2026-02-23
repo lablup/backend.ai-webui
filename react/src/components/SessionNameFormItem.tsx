@@ -1,5 +1,9 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-import { Form, FormItemProps, Input } from 'antd';
+import { Form, type FormItemProps, Input } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +22,6 @@ const SessionNameFormItem: React.FC<SessionNameFormItemProps> = ({
     <Form.Item
       label={t('session.launcher.SessionName')}
       name="sessionName"
-      validateDebounce={200}
       // Original rule : /^(?=.{4,64}$)\w[\w.-]*\w$/
       // https://github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/api/session.py#L355-L356
       rules={validationRules}

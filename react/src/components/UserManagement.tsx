@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserManagementModifyMutation } from '../__generated__/UserManagementModifyMutation.graphql';
 import {
   UserManagementQuery,

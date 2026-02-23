@@ -1,10 +1,14 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Button, Select, SelectProps, Tooltip } from 'antd';
+import { Button, Select, type SelectProps, Tooltip } from 'antd';
 import { useUpdatableState, BAIFlex, BAILink } from 'backend.ai-ui';
 import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';

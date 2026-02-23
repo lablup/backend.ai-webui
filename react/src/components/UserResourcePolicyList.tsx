@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserResourcePolicyListMutation } from '../__generated__/UserResourcePolicyListMutation.graphql';
 import {
   UserResourcePolicyListQuery,
@@ -21,7 +25,7 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
-import { ColumnType } from 'antd/es/table';
+import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,

@@ -57,6 +57,11 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Очистить",
+    "KeepAsIs": "Оставить как есть",
+    "UndoChanges": "Отменить изменения"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Обновлено",
     "Refresh": "Обновить"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "после",
+      "Before": "до",
+      "GreaterThan": "больше",
+      "GreaterThanOrEqual": "больше или равно",
+      "IContains": "содержит",
+      "IEndsWith": "заканчивается на",
+      "IEquals": "равно",
+      "INotContains": "не содержит",
+      "INotEndsWith": "не заканчивается на",
+      "INotEquals": "не равно",
+      "INotStartsWith": "не начинается с",
+      "IStartsWith": "начинается с",
+      "In": "в",
+      "LessThan": "меньше",
+      "LessThanOrEqual": "меньше или равно",
+      "NotIn": "не в"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} версии исключены.",
     "FailedToPullVersions": "Не удалось вытащить версии.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Выберите проект"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Разрешённые хосты для папок",
@@ -141,7 +169,7 @@
     "PurgeProject": "Полностью удалить проект",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
-    "ScalingGroups": "Группы масштабирования",
+    "ScalingGroups": "Группы ресурсов",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "тест"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Выберите пользователя"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
@@ -259,6 +290,7 @@
       "Cancel": "Отмена",
       "Close": "Закрывать",
       "Collapse": "Крах",
+      "Copied": "Скопировано",
       "CopyAll": "Копировать все",
       "Create": "Создавать",
       "Delete": "Удалить",

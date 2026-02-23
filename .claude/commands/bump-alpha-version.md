@@ -1,7 +1,7 @@
 ---
 description: Bump version to next alpha and update dependencies after release.
 argument-hint: [26.1.0-alpha.0]
-model: claude-sonnet-4-5
+model: sonnet
 ---
 
 # Bump to Alpha Version and Update Dependencies

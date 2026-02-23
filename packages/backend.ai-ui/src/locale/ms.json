@@ -57,6 +57,11 @@
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Kosongkan",
+    "KeepAsIs": "Kekalkan seperti semula",
+    "UndoChanges": "Batal perubahan"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Adakah anda pasti mahu menyahaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Adakah anda pasti mahu menyahaktifkan {{count}} artifak?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Dikemaskini terakhir",
     "Refresh": "Segarkan"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "selepas",
+      "Before": "sebelum",
+      "GreaterThan": "lebih besar daripada",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "IContains": "mengandungi",
+      "IEndsWith": "berakhir dengan",
+      "IEquals": "sama dengan",
+      "INotContains": "tidak mengandungi",
+      "INotEndsWith": "tidak berakhir dengan",
+      "INotEquals": "tidak sama dengan",
+      "INotStartsWith": "tidak bermula dengan",
+      "IStartsWith": "bermula dengan",
+      "In": "dalam",
+      "LessThan": "kurang daripada",
+      "LessThanOrEqual": "kurang atau sama",
+      "NotIn": "tidak dalam"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",
     "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Pilih Projek"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Hos Dibenarkan untuk Folder",
@@ -141,7 +169,7 @@
     "PurgeProject": "Padam Projek",
     "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
-    "ScalingGroups": "Kumpulan Penskalaan",
+    "ScalingGroups": "Kumpulan Sumber",
     "StorageNodes": "Nod Storan",
     "TotalResourceSlots": "Jumlah Slot Sumber",
     "Type": "Jenis"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "ujian"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Pilih Pengguna"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
@@ -259,6 +290,7 @@
       "Cancel": "Batalkan",
       "Close": "Tutup",
       "Collapse": "Runtuh",
+      "Copied": "Disalin",
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",

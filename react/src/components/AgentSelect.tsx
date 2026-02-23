@@ -1,7 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps, theme } from 'antd';
+import { Select, type SelectProps, theme } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,

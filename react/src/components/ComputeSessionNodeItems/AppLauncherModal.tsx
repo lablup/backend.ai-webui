@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {

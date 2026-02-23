@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
 import {
   UserStatsData,
@@ -18,17 +22,17 @@ import { useTranslation } from 'react-i18next';
 const useStyles = createStyles(({ css, token }) => ({
   graphCard: css`
     .g2-tooltip {
-      background-color: ${token.colorBgSpotlight} !important;
-      border: none !important;
+      background-color: ${token.colorBgBase} !important;
+      border: 1px solid ${token.colorBorderSecondary} !important;
     }
     .g2-tooltip-title {
-      color: ${token.colorTextLightSolid} !important;
+      color: ${token.colorText} !important;
     }
     .g2-tooltip-list-item-name {
-      color: ${token.colorTextLightSolid} !important;
+      color: ${token.colorText} !important;
     }
     .g2-tooltip-list-item-value {
-      color: ${token.colorTextLightSolid} !important;
+      color: ${token.colorText} !important;
     }
   `,
 }));

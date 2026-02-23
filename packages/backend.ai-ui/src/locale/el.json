@@ -57,6 +57,11 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Καθαρισμός",
+    "KeepAsIs": "Διατήρηση ως έχει",
+    "UndoChanges": "Αναίρεση αλλαγών"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
     "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
@@ -81,6 +86,26 @@
     "LastUpdated": "Τελευταία ενημέρωση",
     "Refresh": "Ανανέωση"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "μετά",
+      "Before": "πριν",
+      "GreaterThan": "μεγαλύτερο από",
+      "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
+      "IContains": "περιέχει",
+      "IEndsWith": "τελειώνει με",
+      "IEquals": "ίσο με",
+      "INotContains": "δεν περιέχει",
+      "INotEndsWith": "δεν τελειώνει με",
+      "INotEquals": "όχι ίσο με",
+      "INotStartsWith": "δεν αρχίζει με",
+      "IStartsWith": "αρχίζει με",
+      "In": "σε",
+      "LessThan": "μικρότερο από",
+      "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotIn": "όχι σε"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
     "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Επιλέξτε έργο"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Επιτρεπόμενοι hosts φακέλων",
@@ -141,7 +169,7 @@
     "PurgeProject": "Μόνιμη διαγραφή έργου",
     "Registry": "Μητρώο",
     "ResourcePolicy": "Πολιτική πόρων",
-    "ScalingGroups": "Ομάδες κλιμάκωσης",
+    "ScalingGroups": "Ομάδες πόρων",
     "StorageNodes": "Κόμβοι Αποθήκευσης",
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Επιλογή χρήστη"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"
@@ -259,6 +290,7 @@
       "Cancel": "Ματαίωση",
       "Close": "Κοντά",
       "Collapse": "Κατάρρευση",
+      "Copied": "Αντιγράφηκε",
       "CopyAll": "Αντιγράψτε όλα",
       "Create": "Δημιουργώ",
       "Delete": "Διαγράφω",

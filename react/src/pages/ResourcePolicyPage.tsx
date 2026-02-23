@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';

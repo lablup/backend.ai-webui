@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '.';
 import { useSetBAINotification } from './useBAINotification';
 import {
@@ -174,6 +178,7 @@ export const useStartSession = () => {
         cluster_mode: values.cluster_mode,
         cluster_size: values.cluster_size,
         maxWaitSeconds: 15,
+        reuseIfExists: values.reuseIfExists ?? false,
 
         // Owner settings (optional)
         // FYI, `config.scaling_group` also changes based on owner settings

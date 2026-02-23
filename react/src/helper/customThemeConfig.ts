@@ -1,4 +1,8 @@
-import { ThemeConfig } from 'antd';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { type ThemeConfig } from 'antd';
 import _ from 'lodash';
 
 export type LogoConfig = {

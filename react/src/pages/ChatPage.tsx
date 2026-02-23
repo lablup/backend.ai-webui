@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import ChatCard from '../components/Chat/ChatCard';
 import {
@@ -8,9 +12,9 @@ import {
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { Badge, Button, Card, Drawer, List, Tooltip, Typography } from 'antd';
+import { Badge, Button, Card, Drawer, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import _ from 'lodash';
@@ -90,6 +94,10 @@ const ChatHistoryDrawer = ({
   onClickRemove,
   onClickHistory,
 }: ChatHistoryDrawerProps) => {
+  'use memo';
+
+  const { token } = theme.useToken();
+
   return (
     <Drawer
       getContainer={false}
@@ -98,48 +106,61 @@ const ChatHistoryDrawer = ({
       mask={false}
       maskClosable={true}
       title={t('chatui.History')}
+      size={300}
       styles={{
-        body: { paddingBlock: 0 },
+        body: {
+          paddingBlock: 0,
+          paddingLeft: token.size,
+          paddingRight: token.size,
+        },
       }}
     >
-      <List
+      <BAITable
+        showHeader={false}
         dataSource={history.map((item) => ({
           title: item.label,
           id: item.id,
           updatedAt: item.updatedAt,
+          key: item.id,
         }))}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
+        columns={[
+          {
+            key: 'title',
+            dataIndex: 'title',
+            render: (title, record) => (
+              <BAIFlex direction="column" gap="xs" align="start">
+                <Badge dot={selectedHistoryId === record.id}>
+                  <Typography.Text strong>{title}</Typography.Text>
+                </Badge>
+                <Typography.Text
+                  type="secondary"
+                  style={{ fontSize: token.fontSizeSM }}
+                >
+                  {dayjs(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
+                </Typography.Text>
+              </BAIFlex>
+            ),
+          },
+          {
+            key: 'actions',
+            width: token.sizeXXL,
+            render: (_, record) => (
               <Button
-                key="delete"
                 type="text"
-                icon={
-                  <TrashIcon
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClickRemove(item.id);
-                    }}
-                  />
-                }
-              />,
-            ]}
-            style={{ cursor: 'pointer' }}
-            styles={{
-              actions: {
-                padding: 0,
-              },
-            }}
-            onClick={() => onClickHistory(item.id)}
-          >
-            <List.Item.Meta
-              title={
-                <Badge dot={selectedHistoryId === item.id}>{item.title}</Badge>
-              }
-              description={dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
-            />
-          </List.Item>
-        )}
+                icon={<TrashIcon size={token.size} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClickRemove(record.id);
+                }}
+              />
+            ),
+          },
+        ]}
+        onRow={(record) => ({
+          onClick: () => onClickHistory(record.id),
+          style: { cursor: 'pointer' },
+        })}
+        pagination={false}
       />
     </Drawer>
   );
@@ -203,7 +224,7 @@ const PureChatPage = ({ id }: { id: string }) => {
           },
         }}
         extra={
-          <>
+          <BAIFlex>
             <Tooltip title={t('chatui.NewChat')}>
               <Button
                 type="text"
@@ -223,12 +244,12 @@ const PureChatPage = ({ id }: { id: string }) => {
                 }}
               />
             </Tooltip>
-          </>
+          </BAIFlex>
         }
       >
         {id && (
           <BAIFlex
-            direction="column"
+            direction="row"
             align="stretch"
             gap={'xs'}
             style={{
@@ -237,7 +258,7 @@ const PureChatPage = ({ id }: { id: string }) => {
               height: '100%',
             }}
           >
-            <Suspense fallback={<Card loading />}>
+            <Suspense fallback={<Card loading style={{ width: '100%' }} />}>
               {_.map(chat.chats, (chatData) => (
                 <ChatCard
                   key={chatData.id}

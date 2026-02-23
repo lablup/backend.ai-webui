@@ -140,10 +140,9 @@ You can debug the app.
 
 Backend.AI Web UI is built with
 
-- `lit-element` as webcomponent framework
 - `react` as library for web UI
+- `webpack` (via CRA/Craco) as bundler
 - `pnpm` as package manager
-- `rollup` as bundler
 - `electron` as app shell
 - `watchman` as file change watcher for development
 
@@ -326,7 +325,7 @@ After installing the extension, add the following configuration to your `./vscod
 $ make compile
 ```
 
-Then bundled resource will be prepared in `build/rollup`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
+Then bundled resource will be prepared in `build/web`. Basically, both app and web serving is based on static serving sources in the directory. However, to work as single page application, URL request fallback is needed.
 
 If you want to create the bundle zip file,
 
@@ -378,7 +377,7 @@ $ make compile
 
 Good for develop phase. Not recommended for production environment.
 
-Note: This command will use Web UI source in `build/rollup` directory. No certificate will be used therefore web server will serve as HTTP.
+Note: This command will use Web UI source in `build/web` directory. No certificate will be used therefore web server will serve as HTTP.
 
 Copy `webserver.example.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
@@ -600,16 +599,15 @@ to update / extract i18n resources.
 
 ### Adding i18n strings
 
-- Use `_t` as i18n resource handler on lit-element templates.
-- Use `_tr` as i18n resource handler if i18n resource has HTML code inside.
-- Use `_text` as i18n resource handler on lit-element Javascript code.
+Use `useTranslation()` hook from `react-i18next` in React components:
 
-#### Example
+```typescript
+import { useTranslation } from 'react-i18next';
 
-In lit-html template:
-
-```html
-<div>${_t('general.helloworld')}</div>
+const MyComponent = () => {
+  const { t } = useTranslation();
+  return <div>{t('general.helloworld')}</div>;
+};
 ```
 
 In i18n resource (en.json):
@@ -624,22 +622,6 @@ In i18n resource (en.json):
 
 #### Adding new language
 
-1.  Copy `en.json` to target language. (e.g. `ko.json`)
-2.  Add language identifier to `supportLanguageCodes` in `backend-ai-webui.ts`.
-    e.g.
-
-```javascript
-  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
-```
-
-3.  Add language information to `supportLanguages` in `backend-ai-usersettings-general-list.ts`.
-
-Note: DO NOT DELETE 'default' language. It is used for browser language.
-
-```javascript
-  @property({type: Array}) supportLanguages = [
-    {name: _text("language.Browser"), code: "default"},
-    {name: _text("language.English"), code: "en"},
-    {name: _text("language.Korean"), code: "ko"}
-  ];
-```
+1. Copy `en.json` to target language file (e.g. `ko.json`) in `resources/i18n/`
+2. Translate all keys in the new language file
+3. Add language configuration in the settings component

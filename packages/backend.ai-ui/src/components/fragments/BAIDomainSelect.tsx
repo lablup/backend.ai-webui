@@ -1,6 +1,6 @@
 import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
 import { useControllableValue } from 'ahooks';
-import { Select, SelectProps } from 'antd';
+import { Select, type SelectProps } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,16 +37,11 @@ const BAIDomainSelect: React.FC<Props> = ({
       onChange={(_value, option) => {
         setValue(_value, option);
       }}
-    >
-      {_.map(domains, (domain) => {
-        return (
-          <Select.Option key={domain?.name} domainName={domain?.name}>
-            {domain?.name}
-          </Select.Option>
-        );
-      })}
-      ;
-    </Select>
+      options={_.map(domains, (domain) => ({
+        label: domain?.name,
+        value: domain?.name,
+      }))}
+    />
   );
 };
 

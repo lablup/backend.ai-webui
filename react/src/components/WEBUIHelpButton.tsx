@@ -1,6 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, ButtonProps } from 'antd';
+import { Button, type ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 

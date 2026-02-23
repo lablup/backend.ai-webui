@@ -1,4 +1,19 @@
 let footer = '';
+
+// HTML escape function to prevent XSS when interpolating dynamic content
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') {
+    // Coerce other primitive types to string
+    return String(unsafe);
+  }
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 const template = function (title, contents, comment, options = {}) {
   let result = '';
   result += `<!DOCTYPE html>
@@ -34,3 +49,4 @@ const template = function (title, contents, comment, options = {}) {
 };
 
 module.exports = template;
+module.exports.escapeHtml = escapeHtml;

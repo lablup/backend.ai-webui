@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
 import {
   addNumberWithUnits,
@@ -831,7 +835,6 @@ const ResourceAllocationFormItems: React.FC<
                             <BAIDynamicUnitInputNumberWithSlider
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
-                              prefix={'MEM'}
                               extraMarks={{
                                 ...(remaining.mem
                                   ? {

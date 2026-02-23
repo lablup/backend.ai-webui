@@ -40,8 +40,10 @@ export type FilterProperty = {
   };
 };
 
-export interface BAIPropertyFilterProps
-  extends Omit<ComponentProps<typeof BAIFlex>, 'value' | 'onChange'> {
+export interface BAIPropertyFilterProps extends Omit<
+  ComponentProps<typeof BAIFlex>,
+  'value' | 'onChange'
+> {
   value?: string;
   onChange?: (value: string) => void;
   defaultValue?: string;
@@ -342,6 +344,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           showSearch={{
             optionFilterProp: 'label',
           }}
+          aria-label="Filter property selector"
         />
         <Tooltip
           title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
@@ -383,6 +386,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
               onSearch={onSearch}
               allowClear
               status={!isValid && isFocused ? 'error' : undefined}
+              aria-label="Filter value search"
             />
           </AutoComplete>
         </Tooltip>

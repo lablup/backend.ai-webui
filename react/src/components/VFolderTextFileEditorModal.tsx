@@ -1,4 +1,9 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -24,11 +29,10 @@ const MonacoEditor = React.lazy(() =>
   })),
 );
 
-interface VFolderTextFileEditorModalProps
-  extends Omit<
-    BAIModalProps,
-    'children' | 'title' | 'onCancel' | 'onOk' | 'confirmLoading'
-  > {
+interface VFolderTextFileEditorModalProps extends Omit<
+  BAIModalProps,
+  'children' | 'title' | 'onCancel' | 'onOk' | 'confirmLoading'
+> {
   targetVFolderId: string;
   currentPath: string;
   fileInfo: VFolderFile | null;
@@ -69,6 +73,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
   const { token } = theme.useToken();
+  const { upsertNotification } = useSetBAINotification();
 
   const queryClient = useQueryClient();
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
@@ -119,7 +124,52 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
         type: detectedMimeTypeRef.current,
       }) as RcFile;
 
-      await uploadFiles([file], targetVFolderId, currentPath);
+      // Workaround: tus-js-client skips PATCH requests for 0-byte files,
+      // immediately calling onSuccess without uploading any data.
+      // (ref: https://github.com/tus/tus-js-client/blob/v4.3.1/lib/upload.js#L578-L582)
+      // To handle empty content saves, we manually create an upload session
+      // and send the PATCH request directly.
+      if (file.size === 0) {
+        const uploadPath = [currentPath, fileInfo.name]
+          .filter(Boolean)
+          .join('/');
+        const uploadUrl: string = await baiClient.vfolder.create_upload_session(
+          uploadPath,
+          file,
+          targetVFolderId,
+        );
+
+        const response = await fetch(uploadUrl, {
+          method: 'PATCH',
+          headers: {
+            'Upload-Offset': '0',
+            'Content-Type': 'application/offset+octet-stream',
+            'Tus-Resumable': '1.0.0',
+          },
+          body: blob,
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            t('explorer.UploadFailed', { folderName: fileInfo.name }),
+          );
+        }
+
+        upsertNotification({
+          key: 'upload:' + targetVFolderId,
+          open: true,
+          backgroundTask: {
+            status: 'resolved',
+            percent: 100,
+            onChange: {
+              resolved: t('explorer.SuccessfullyUploadedToFolder'),
+            },
+          },
+          duration: 3,
+        });
+      } else {
+        await uploadFiles([file], targetVFolderId, currentPath);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

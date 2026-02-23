@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   useBAINotificationEffect,
   useBAINotificationState,
@@ -5,8 +9,7 @@ import {
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
-import { Badge, Button, Tooltip, Typography } from 'antd';
-import type { ButtonProps } from 'antd';
+import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import _ from 'lodash';

@@ -57,6 +57,11 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Xóa",
+    "KeepAsIs": "Giữ nguyên",
+    "UndoChanges": "Hoàn tác thay đổi"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Cập nhật lần cuối",
     "Refresh": "Làm mới"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "sau",
+      "Before": "trước",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "IContains": "chứa",
+      "IEndsWith": "kết thúc bằng",
+      "IEquals": "bằng",
+      "INotContains": "không chứa",
+      "INotEndsWith": "không kết thúc bằng",
+      "INotEquals": "không bằng",
+      "INotStartsWith": "không bắt đầu bằng",
+      "IStartsWith": "bắt đầu bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotIn": "không trong"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
     "FailedToPullVersions": "Không thể kéo phiên bản.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Chọn dự án"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Máy chủ thư mục được cho phép",
@@ -141,7 +169,7 @@
     "PurgeProject": "Xóa vĩnh viễn dự án",
     "Registry": "Kho chứa",
     "ResourcePolicy": "Chính sách tài nguyên",
-    "ScalingGroups": "Nhóm tự động mở rộng",
+    "ScalingGroups": "Nhóm tài nguyên",
     "StorageNodes": "Nút lưu trữ",
     "TotalResourceSlots": "Tổng số khe tài nguyên",
     "Type": "Loại"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Chọn người dùng"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"
@@ -259,6 +290,7 @@
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
       "Collapse": "Sụp đổ",
+      "Copied": "Đã sao chép",
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",

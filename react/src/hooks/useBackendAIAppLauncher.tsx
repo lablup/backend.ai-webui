@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
@@ -24,7 +28,6 @@ export const useBackendAIAppLauncher = (
   const baiClient = useSuspendedBackendaiClient();
   const { logger } = useBAILogger();
 
-  // TODO: migrate backend-ai-app-launcher features to this hook using fragment data.
   const session = useFragment(
     graphql`
       fragment useBackendAIAppLauncherFragment on ComputeSessionNode {
@@ -63,8 +66,8 @@ export const useBackendAIAppLauncher = (
   };
 
   const getWSProxyVersion = async (): Promise<'v1' | 'v2'> => {
-    // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
-    if (baiClient.debug === true) {
+    // @ts-ignore
+    if (globalThis?.backendaiwebui?.debug === true) {
       if (debugOptions?.forceUseV1Proxy) return 'v1';
       else if (debugOptions?.forceUseV2Proxy) return 'v2';
     }
@@ -331,7 +334,20 @@ export const useBackendAIAppLauncher = (
     if (servicePortInfo.is_inference) {
       searchParams.set('is_inference', 'true');
     }
-    searchParams.set('protocol', servicePortInfo.protocol || 'tcp');
+    const getAppProtocol = (appName: string, defaultProtocol: string) => {
+      const protocolMap: Record<string, string> = {
+        vnc: 'vnc',
+        xrdp: 'rdp',
+        sshd: 'tcp',
+        'vscode-desktop': 'tcp',
+      };
+      return protocolMap[appName] || defaultProtocol;
+    };
+
+    searchParams.set(
+      'protocol',
+      getAppProtocol(app, servicePortInfo.protocol || 'tcp'),
+    );
 
     const rqst_proxy = {
       method: 'GET',

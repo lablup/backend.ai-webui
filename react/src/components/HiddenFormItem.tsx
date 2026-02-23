@@ -1,4 +1,8 @@
-import { Form, FormItemProps } from 'antd';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { Form, type FormItemProps } from 'antd';
 import React, { useEffect } from 'react';
 
 interface HiddenFormItemProps extends Omit<FormItemProps, 'children'> {

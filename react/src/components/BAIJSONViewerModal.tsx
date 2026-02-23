@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import { Alert } from 'antd';
@@ -25,7 +29,7 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
           formattedJson: JSON.stringify(JSON.parse(json), null, 2),
           hasError: false,
         };
-      } catch (e) {
+      } catch {
         return {
           formattedJson: json,
           hasError: true,

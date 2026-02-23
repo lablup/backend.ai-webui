@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ErrorLogList from '../components/ErrorLogList';
 import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
@@ -15,7 +19,10 @@ import {
 } from '../hooks';
 import { KnownAcceleratorResourceSlotName } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
+import {
+  useCurrentResourceGroupState,
+  useCurrentProjectValue,
+} from '../hooks/useCurrentProject';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import { useRuntimeEnvVarConfigs } from '../hooks/useVariantConfigs';
 import EnvVarFormList, {
@@ -31,6 +38,7 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
+import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
@@ -179,6 +187,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const { getErrorMessage } = useErrorMessageResolver();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
+  const currentProject = useCurrentProjectValue();
 
   // Helper function to set environment variables based on runtime variant
   const setEnvironmentVariablesForRuntimeVariant = (
@@ -278,6 +287,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     graphql`
       fragment ServiceLauncherPageContentFragment on Endpoint {
         endpoint_id
+        project
         desired_session_count @deprecatedSince(version: "24.12.0")
         replicas @since(version: "24.12.0")
         resource_group
@@ -324,6 +334,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     `,
     endpointFrgmt,
   );
+
+  // Check if the endpoint belongs to a different project than the currently selected one
+  const isProjectMismatch = endpoint
+    ? endpoint.project !== currentProject.id
+    : false;
 
   const { data: availableRuntimes } = useSuspenseTanQuery<{
     runtimes: { name: string; human_readable_name: string }[];
@@ -854,6 +869,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             style={{ flex: 1, maxWidth: 700 }}
             wrap="nowrap"
           >
+            {isProjectMismatch && endpoint?.project && (
+              <Alert
+                title={t('modelService.NotInProject')}
+                type="warning"
+                showIcon
+                style={{ marginBottom: token.marginMD }}
+                action={<SwitchToProjectButton projectId={endpoint.project} />}
+              />
+            )}
             {_.filter(
               filterOutNullAndUndefined(endpoint?.extra_mounts),
               (vf) => vf?.name && !vf?.name.startsWith('.'),
@@ -874,7 +898,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             >
               <Form
                 form={form}
-                disabled={mutationToCreateService.isPending}
+                disabled={
+                  mutationToCreateService.isPending || isProjectMismatch
+                }
                 layout="vertical"
                 labelCol={{ span: 12 }}
                 initialValues={mergedInitialValues}
@@ -888,7 +914,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item
                           label={t('modelService.ServiceName')}
                           name="serviceName"
-                          validateDebounce={500}
                           rules={endpoint ? [] : validationRules}
                         >
                           <Input disabled={!!endpoint} />
@@ -1213,6 +1238,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   >
                     <BAIFlex>
                       <Button
+                        disabled={isProjectMismatch}
                         onClick={() => {
                           form
                             .validateFields()
@@ -1232,7 +1258,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </Button>
                     </BAIFlex>
                     <BAIFlex gap={'sm'}>
-                      <Button type="primary" onClick={handleOk}>
+                      <Button
+                        type="primary"
+                        disabled={isProjectMismatch}
+                        onClick={handleOk}
+                      >
                         {endpoint ? t('button.Update') : t('button.Create')}
                       </Button>
                     </BAIFlex>

@@ -1,8 +1,15 @@
 import BAIFlex from './BAIFlex';
-import { Divider, Select, SelectProps, theme, Tooltip, Typography } from 'antd';
+import {
+  Divider,
+  Select,
+  theme,
+  Tooltip,
+  Typography,
+  type SelectProps,
+} from 'antd';
 import { createStyles } from 'antd-style';
-import { BaseOptionType, DefaultOptionType } from 'antd/es/select';
-import { GetRef } from 'antd/lib';
+import type { BaseOptionType, DefaultOptionType } from 'antd/es/select';
+import type { GetRef } from 'antd/lib';
 import classNames from 'classnames';
 import _ from 'lodash';
 import React, { useLayoutEffect, useRef, useTransition } from 'react';
@@ -39,6 +46,7 @@ const useStyles = createStyles(({ css, token }) => ({
   `,
   customStyle: css`
     /* Change the opacity of images and tags in the select option when the dropdown is open */
+    &.ant-select-open .ant-select-content .ant-select-content-value .ant-badge,
     &.ant-select-open .ant-select-content .ant-select-content-value img,
     &.ant-select-open
       .ant-select-content
@@ -172,9 +180,12 @@ function BAISelect<
         {...selectProps}
         loading={isPending || selectProps.loading}
         showSearch={
-          selectProps.showSearch && _.isObject(selectProps.showSearch)
-            ? {
-                ...selectProps.showSearch,
+          selectProps.showSearch === false
+            ? false
+            : {
+                ...(_.isObject(selectProps.showSearch)
+                  ? selectProps.showSearch
+                  : {}),
                 onSearch: async (value) => {
                   _.get(selectProps.showSearch, 'onSearch')?.(value);
                   startTransition(async () => {
@@ -182,7 +193,6 @@ function BAISelect<
                   });
                 },
               }
-            : false
         }
         ref={ref}
         className={classNames(

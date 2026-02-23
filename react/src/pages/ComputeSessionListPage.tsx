@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ComputeSessionListPageQuery,
   ComputeSessionListPageQuery$data,
@@ -156,7 +160,7 @@ const ComputeSessionListPage = () => {
   const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
     graphql`
         query ComputeSessionListPageQuery(
-          $projectId: UUID!
+          $projectId: UUID
           $first: Int = 20
           $offset: Int = 0
           $filter: String

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/ContainerRegistryEditorModalCreateMutation.graphql';
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
@@ -5,7 +9,15 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import HiddenFormItem from './HiddenFormItem';
-import { Form, Input, Select, Checkbox, FormInstance, App, theme } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Checkbox,
+  type FormInstance,
+  App,
+  theme,
+} from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
@@ -24,8 +36,10 @@ type RegistryFormInput = {
   extra?: string;
 };
 
-interface ContainerRegistryEditorModalProps
-  extends Omit<BAIModalProps, 'onOk'> {
+interface ContainerRegistryEditorModalProps extends Omit<
+  BAIModalProps,
+  'onOk'
+> {
   onOk: (type: 'create' | 'modify') => void;
   containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
 }
@@ -269,7 +283,7 @@ const ContainerRegistryEditorModal: React.FC<
                     return Promise.reject(t('registry.DescURLStartString'));
                   try {
                     new URL(value);
-                  } catch (e) {
+                  } catch {
                     return Promise.reject(t('registry.DescURLFormat'));
                   }
                 }
@@ -429,7 +443,7 @@ const ContainerRegistryEditorModal: React.FC<
                       if (value) {
                         try {
                           JSON.parse(value);
-                        } catch (e) {
+                        } catch {
                           return Promise.reject(
                             t('registry.DescExtraJsonFormat'),
                           );

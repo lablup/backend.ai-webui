@@ -1,5 +1,7 @@
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
+export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
+export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
@@ -16,7 +18,7 @@ export type {
 export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
 export type {
   StringFilter,
-  NumberFilter,
+  IntFilter,
   BooleanFilter,
   EnumFilter,
   BaseFilter,
@@ -60,6 +62,8 @@ export {
 export type { BAIResourceNumberWithIconProps } from './BAIResourceNumberWithIcon';
 export { default as BAINumberWithUnit } from './BAINumberWithUnit';
 export { default as BAIAllowedHostNamesSelect } from './BAIAllowedHostNamesSelect';
+export { default as BAIDynamicStepInputNumber } from './BAIDynamicStepInputNumber';
+export type { BAIDynamicStepInputNumberProps } from './BAIDynamicStepInputNumber';
 export { default as BAIDynamicUnitInputNumber } from './BAIDynamicUnitInputNumber';
 export type { BAIDynamicUnitInputNumberProps } from './BAIDynamicUnitInputNumber';
 export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnitInputNumberWithSlider';
@@ -77,6 +81,8 @@ export type { UserNodeInList } from './BAIUserNodes';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
+export { default as BAITagList } from './BAITagList';
+export type { BAITagListProps } from './BAITagList';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';

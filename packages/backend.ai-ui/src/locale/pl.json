@@ -57,6 +57,11 @@
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Wyczyść",
+    "KeepAsIs": "Pozostaw bez zmian",
+    "UndoChanges": "Cofnij zmiany"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Czy na pewno chcesz dezaktywować {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Czy na pewno chcesz dezaktywować {{count}} artefakty?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Ostatnia aktualizacja",
     "Refresh": "Odśwież"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "po",
+      "Before": "przed",
+      "GreaterThan": "większe niż",
+      "GreaterThanOrEqual": "większe lub równe",
+      "IContains": "zawiera",
+      "IEndsWith": "kończy się na",
+      "IEquals": "równe",
+      "INotContains": "nie zawiera",
+      "INotEndsWith": "nie kończy się na",
+      "INotEquals": "nierówne",
+      "INotStartsWith": "nie zaczyna się od",
+      "IStartsWith": "zaczyna się od",
+      "In": "w",
+      "LessThan": "mniejsze niż",
+      "LessThanOrEqual": "mniejsze lub równe",
+      "NotIn": "nie w"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} wersje są wykluczone.",
     "FailedToPullVersions": "Nie udało się wyciągnąć wersji.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Poniższe foldery zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "UpdateMultipleProjects": "Aktualizuj wiele projektów"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Wybierz projekt"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Dozwolone hosty dla folderów",
@@ -141,7 +169,7 @@
     "PurgeProject": "Trwale usuń projekt",
     "Registry": "Rejestr",
     "ResourcePolicy": "Polityka zasobów",
-    "ScalingGroups": "Grupy skalowania",
+    "ScalingGroups": "Grupy zasobów",
     "StorageNodes": "Węzły pamięci masowej",
     "TotalResourceSlots": "Całkowita liczba slotów zasobów",
     "Type": "Typ"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Wybierz użytkownika"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"
@@ -259,6 +290,7 @@
       "Cancel": "Anulować",
       "Close": "Zamknąć",
       "Collapse": "Zawalić się",
+      "Copied": "Skopiowano",
       "CopyAll": "Kopiuj wszystko",
       "Create": "Tworzyć",
       "Delete": "Usuwać",

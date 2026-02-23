@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { routes } from './routes';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
 import {

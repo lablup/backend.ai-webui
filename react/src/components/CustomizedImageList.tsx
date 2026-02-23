@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { CustomizedImageListForgetMutation } from '../__generated__/CustomizedImageListForgetMutation.graphql';
 import {
   CustomizedImageListQuery,
@@ -23,7 +27,7 @@ import {
 import { useToggle } from 'ahooks';
 import { Alert, App, Button, Input, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
-import { ColumnsType, ColumnType } from 'antd/es/table';
+import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

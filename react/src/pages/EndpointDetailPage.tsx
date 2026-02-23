@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated__/EndpointDetailPageAutoScalingRuleDeleteMutation.graphql';
 import {
@@ -17,12 +21,14 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   ArrowRightOutlined,
   CheckOutlined,
@@ -38,6 +44,7 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Card,
@@ -123,7 +130,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
-  // const curProject = useCurrentProjectValue();
+  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const blockList = baiClient?._config?.blockList ?? null;
   const webuiNavigate = useWebUINavigate();
@@ -152,6 +159,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             name
             status
             endpoint_id
+            project
             image_object @since(version: "23.09.9") {
               name
               namespace @since(version: "24.12.0")
@@ -280,6 +288,11 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         fetchKey,
       },
     );
+
+  // Check if the endpoint belongs to a different project than the currently selected one
+  const isProjectMismatch = endpoint
+    ? endpoint.project !== currentProject.id
+    : false;
 
   const mutationToClearError = useTanMutation({
     mutationFn: () => {
@@ -543,6 +556,15 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           </Button>
         </BAIFlex>
       </BAIFlex>
+      {isProjectMismatch && endpoint?.project && (
+        <Alert
+          title={t('modelService.NotInProject')}
+          type="warning"
+          showIcon
+          style={{ marginBottom: token.marginSM }}
+          action={<SwitchToProjectButton projectId={endpoint.project} />}
+        />
+      )}
       <Card
         title={t('modelService.ServiceInfo')}
         extra={
@@ -551,6 +573,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             icon={<SettingOutlined />}
             disabled={
               isEndpointInDestroyingCategory(endpoint) ||
+              isProjectMismatch ||
               (!!endpoint?.created_user_email &&
                 endpoint?.created_user_email !== currentUser.email)
             }

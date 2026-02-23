@@ -1,6 +1,6 @@
 import BAIFlex from './BAIFlex';
 import BAIResourceNumberWithIcon from './BAIResourceNumberWithIcon';
-import { BAIMetaDataProvider, DeviceMetaData } from './provider';
+import { BAIMetaDataProvider, type DeviceMetaData } from './provider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 // Mock device metadata for Storybook

@@ -10,7 +10,7 @@ import BAIDynamicUnitInputNumber, {
 import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
-import { SliderMarks } from 'antd/es/slider';
+import type { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
@@ -21,6 +21,8 @@ export interface BAIDynamicUnitInputNumberWithSliderProps
   warn?: string;
   step?: number;
   inputMinWidth?: number;
+  addonPrefix?: React.ReactNode;
+  addonSuffix?: React.ReactNode;
 }
 const BAIDynamicUnitInputNumberWithSlider: React.FC<
   BAIDynamicUnitInputNumberWithSliderProps
@@ -32,6 +34,8 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
   extraMarks,
   hideSlider,
   step = 0.05,
+  addonPrefix,
+  addonSuffix,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
@@ -92,10 +96,12 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
             setValue(nextValue);
           }}
           style={{
-            minWidth: 130,
+            width: '100%',
           }}
           roundStep={step}
           changeOnBlur={!isMinOversMaxValue}
+          addonPrefix={addonPrefix}
+          addonSuffix={addonSuffix}
         />
       </BAIFlex>
       <BAIFlex

@@ -57,6 +57,11 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Tyhjennä",
+    "KeepAsIs": "Pidä ennallaan",
+    "UndoChanges": "Kumoa muutokset"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
@@ -81,6 +86,26 @@
     "LastUpdated": "Viimeksi päivitetty",
     "Refresh": "Päivitä"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "jälkeen",
+      "Before": "ennen",
+      "GreaterThan": "suurempi kuin",
+      "GreaterThanOrEqual": "suurempi tai yhtä suuri",
+      "IContains": "sisältää",
+      "IEndsWith": "päättyy",
+      "IEquals": "yhtä suuri",
+      "INotContains": "ei sisällä",
+      "INotEndsWith": "ei pääty",
+      "INotEquals": "ei yhtä suuri",
+      "INotStartsWith": "ei ala",
+      "IStartsWith": "alkaa",
+      "In": "sisällä",
+      "LessThan": "pienempi kuin",
+      "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotIn": "ei sisällä"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versiot jätetään pois.",
     "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",
@@ -95,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Valitse projekti"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Sallitut kansioisäntäkoneet",
@@ -141,7 +169,7 @@
     "PurgeProject": "Poista projekti pysyvästi",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
-    "ScalingGroups": "Skaalausryhmät",
+    "ScalingGroups": "Resurssiryhmät",
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
@@ -181,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "testi"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Valitse käyttäjä"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
@@ -259,6 +290,7 @@
       "Cancel": "Peruuttaa",
       "Close": "Lähellä",
       "Collapse": "Romahdus",
+      "Copied": "Kopioitu",
       "CopyAll": "Kopioida kaikki",
       "Create": "Luoda",
       "Delete": "Poistaa",

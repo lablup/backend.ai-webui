@@ -1,10 +1,22 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ManageImageResourceLimitModalMutation,
   ResourceLimitInput,
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
-import { App, Form, FormInstance, message, InputNumber, Row, Col } from 'antd';
+import {
+  App,
+  Form,
+  type FormInstance,
+  message,
+  InputNumber,
+  Row,
+  Col,
+} from 'antd';
 import {
   useResourceSlotsDetails,
   BAIModal,
@@ -39,7 +51,7 @@ const ManageImageResourceLimitModal: React.FC<
 
   const image = useFragment(
     graphql`
-      fragment ManageImageResourceLimitModal_image on Image {
+      fragment ManageImageResourceLimitModal_image on ImageNode {
         resource_limits {
           key
           min

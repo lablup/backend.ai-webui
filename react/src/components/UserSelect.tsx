@@ -1,5 +1,9 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserSelectQuery } from '../__generated__/UserSelectQuery.graphql';
-import { Select, SelectProps } from 'antd';
+import { Select, type SelectProps } from 'antd';
 import _ from 'lodash';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';

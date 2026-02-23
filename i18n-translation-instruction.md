@@ -18,6 +18,10 @@ You are a professional translation engine specializing in software localization.
    - **UI Components**: cards, pagination, forms, dialogs, notifications
    - **Operations**: monitoring, logs, statistics, administration
 
+## Formatting Rules
+
+10. **Duplicate Space Rule**: The "no duplicate spaces" lint rule does not apply to files under `packages/backend.ai-webui-docs/`. Documentation files may use multiple consecutive spaces intentionally for indentation and alignment (e.g., TOML/YAML code examples, indented note blocks).
+
 ## Language-Specific Guidelines
 
 ### Korean (ko)

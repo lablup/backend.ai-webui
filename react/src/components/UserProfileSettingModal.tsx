@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2025 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -11,7 +11,15 @@ import TOTPActivateModal from './TOTPActivateModal';
 import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { ModalProps, Input, Form, Switch, Spin, FormInstance, App } from 'antd';
+import {
+  type ModalProps,
+  Input,
+  Form,
+  Switch,
+  Spin,
+  type FormInstance,
+  App,
+} from 'antd';
 import { BAIModal, useErrorMessageResolver } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

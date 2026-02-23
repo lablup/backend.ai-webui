@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.graphql';
 import {
   convertToDecimalUnit,
@@ -6,7 +10,7 @@ import {
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, TableColumnsType, Tag, theme, Typography } from 'antd';
+import { Button, type TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
@@ -230,7 +234,7 @@ const StorageProxyList = () => {
             record.performance_metric || '{}',
           );
           perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch (e) {
+        } catch {
           perfMetricDisabled = true;
         }
         return (

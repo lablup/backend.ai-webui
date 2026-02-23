@@ -1,45 +1,55 @@
 import BAIFlex from './BAIFlex';
+import BAISelect from './BAISelect';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import {
-  AutoComplete,
-  AutoCompleteProps,
-  Button,
-  GetRef,
-  Input,
-  Select,
-  Space,
-  Tag,
-  Tooltip,
-  theme,
-} from 'antd';
+import { AutoComplete, Button, Input, Space, Tag, Tooltip, theme } from 'antd';
+import type { AutoCompleteProps, GetRef } from 'antd';
 import _ from 'lodash';
-import React, { ComponentProps, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// GraphQL Filter Types
+// GraphQL Filter Types (matching schema.graphql)
 export type StringFilter = {
   contains?: string | null;
   startsWith?: string | null;
   endsWith?: string | null;
   equals?: string | null;
+  notContains?: string | null;
+  notStartsWith?: string | null;
+  notEndsWith?: string | null;
   notEquals?: string | null;
   iContains?: string | null;
   iStartsWith?: string | null;
   iEndsWith?: string | null;
   iEquals?: string | null;
+  iNotContains?: string | null;
+  iNotStartsWith?: string | null;
+  iNotEndsWith?: string | null;
   iNotEquals?: string | null;
 };
 
-export type NumberFilter = {
+export type IntFilter = {
   equals?: number | null;
   notEquals?: number | null;
   greaterThan?: number | null;
-  greaterOrEqual?: number | null;
+  greaterThanOrEqual?: number | null;
   lessThan?: number | null;
-  lessOrEqual?: number | null;
-  in?: number[] | null;
-  notIn?: number[] | null;
+  lessThanOrEqual?: number | null;
+};
+
+export type UUIDFilter = {
+  equals?: string | null;
+  notEquals?: string | null;
+  in?: string[] | null;
+  notIn?: string[] | null;
+};
+
+export type DateTimeFilter = {
+  before?: string | null;
+  after?: string | null;
+  equals?: string | null;
+  notEquals?: string | null;
 };
 
 export type BooleanFilter = boolean;
@@ -61,7 +71,13 @@ export type GraphQLFilter = BaseFilter & {
   [key: string]: any;
 };
 
-export type FilterPropertyType = 'string' | 'number' | 'boolean' | 'enum';
+export type FilterPropertyType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'enum'
+  | 'uuid'
+  | 'datetime';
 
 export type FilterOperator =
   // String operators
@@ -69,19 +85,29 @@ export type FilterOperator =
   | 'startsWith'
   | 'endsWith'
   | 'equals'
+  | 'notContains'
+  | 'notStartsWith'
+  | 'notEndsWith'
   | 'notEquals'
   | 'iContains'
   | 'iStartsWith'
   | 'iEndsWith'
   | 'iEquals'
+  | 'iNotContains'
+  | 'iNotStartsWith'
+  | 'iNotEndsWith'
   | 'iNotEquals'
-  // Number operators
+  // Number/Int operators
   | 'greaterThan'
-  | 'greaterOrEqual'
+  | 'greaterThanOrEqual'
   | 'lessThan'
-  | 'lessOrEqual'
+  | 'lessThanOrEqual'
+  // UUID operators
   | 'in'
   | 'notIn'
+  // DateTime operators
+  | 'before'
+  | 'after'
   // Allow custom operators
   | (string & NonNullable<unknown>);
 
@@ -101,7 +127,7 @@ type BaseFilterProperty = {
   //  - 'operator': emit as an operator object, e.g., { name: { contains: "x" } }
   // Defaults to 'scalar' for boolean type, otherwise 'operator'.
   valueMode?: 'scalar' | 'operator';
-  // For UI/tag display when valueMode='scalar', use this operator symbol (default 'eq').
+  // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
 };
 
@@ -113,11 +139,10 @@ export type FilterProperty = BaseFilterProperty &
     | { defaultOperator?: never; fixedOperator?: never } // No operator preference
   );
 
-export interface BAIGraphQLPropertyFilterProps
-  extends Omit<
-    ComponentProps<typeof BAIFlex>,
-    'value' | 'onChange' | 'defaultValue'
-  > {
+export interface BAIGraphQLPropertyFilterProps extends Omit<
+  ComponentProps<typeof BAIFlex>,
+  'value' | 'onChange' | 'defaultValue'
+> {
   value?: GraphQLFilter;
   onChange?: (value: GraphQLFilter | undefined) => void;
   defaultValue?: GraphQLFilter;
@@ -137,65 +162,92 @@ interface FilterCondition {
 
 const OPERATORS_BY_TYPE: Record<FilterPropertyType, FilterOperator[]> = {
   string: [
-    'equals',
-    'notEquals',
-    'contains',
-    'startsWith',
-    'endsWith',
-    'in',
-    'notIn',
+    'iContains',
+    'iNotContains',
+    'iEquals',
+    'iNotEquals',
+    'iStartsWith',
+    'iNotStartsWith',
+    'iEndsWith',
+    'iNotEndsWith',
   ],
   number: [
     'equals',
     'notEquals',
     'greaterThan',
-    'greaterOrEqual',
+    'greaterThanOrEqual',
     'lessThan',
-    'lessOrEqual',
-    'in',
-    'notIn',
+    'lessThanOrEqual',
   ],
   boolean: ['equals'],
   enum: ['equals', 'notEquals', 'in', 'notIn'],
-};
-
-const OPERATOR_LABELS: Partial<Record<FilterOperator, string>> = {
-  equals: 'equals',
-  notEquals: 'not equals',
-  contains: 'contains',
-  startsWith: 'starts with',
-  endsWith: 'ends with',
-  greaterThan: 'greater than',
-  greaterOrEqual: 'greater or equal',
-  lessThan: 'less than',
-  lessOrEqual: 'less or equal',
-  in: 'in',
-  notIn: 'not in',
+  uuid: ['equals', 'notEquals', 'in', 'notIn'],
+  datetime: ['equals', 'notEquals', 'before', 'after'],
 };
 
 const OPERATOR_SHORT_LABELS: Partial<Record<FilterOperator, string>> = {
+  // Common operators
   equals: '=',
   notEquals: '≠',
-  contains: ':',
+  // String operators
+  contains: '⊃',
+  notContains: '⊅',
   startsWith: '^',
+  notStartsWith: '!^',
   endsWith: '$',
+  notEndsWith: '!$',
+  iEquals: '=',
+  iNotEquals: '≠',
+  iContains: '⊃',
+  iNotContains: '⊅',
+  iStartsWith: '^',
+  iNotStartsWith: '!^',
+  iEndsWith: '$',
+  iNotEndsWith: '!$',
+  // Number/Int operators
   greaterThan: '>',
-  greaterOrEqual: '≥',
+  greaterThanOrEqual: '≥',
   lessThan: '<',
-  lessOrEqual: '≤',
+  lessThanOrEqual: '≤',
+  // UUID operators
   in: '∈',
   notIn: '∉',
+  // DateTime operators
+  before: '<',
+  after: '>',
 };
 
 const DEFAULT_OPERATOR_BY_TYPE: Record<FilterPropertyType, FilterOperator> = {
-  string: 'contains',
+  string: 'iContains',
   number: 'equals',
-  boolean: 'eq',
-  enum: 'eq',
+  boolean: 'equals',
+  enum: 'equals',
+  uuid: 'equals',
+  datetime: 'equals',
 };
 
 function generateId(): string {
   return `filter-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+}
+
+/**
+ * Builds a nested object from a dot-notation path.
+ * e.g., "project.name" with value { eq: "test" } -> { project: { name: { eq: "test" } } }
+ */
+function buildNestedFilter(path: string, value: any): GraphQLFilter {
+  const keys = path.split('.');
+  if (keys.length === 1) {
+    return { [path]: value };
+  }
+
+  let result: any = {};
+  let current = result;
+  for (let i = 0; i < keys.length - 1; i++) {
+    current[keys[i]] = {};
+    current = current[keys[i]];
+  }
+  current[keys[keys.length - 1]] = value;
+  return result;
 }
 
 function convertConditionsToGraphQLFilter(
@@ -244,9 +296,8 @@ function convertConditionsToGraphQLFilter(
     }
 
     // Create a separate filter object for each condition
-    filters.push({
-      [condition.property]: filterValue,
-    });
+    // Supports dot notation for nested objects (e.g., "project.name" -> { project: { name: value } })
+    filters.push(buildNestedFilter(condition.property, filterValue));
   });
 
   // If there's only one filter, return it directly
@@ -256,6 +307,91 @@ function convertConditionsToGraphQLFilter(
 
   // Multiple filters are combined with specified mode (AND or OR)
   return { [combinationMode]: filters };
+}
+
+/**
+ * Extracts filter conditions from a nested filter object.
+ * Supports dot notation keys like "project.name" which map to { project: { name: value } }
+ */
+function extractNestedConditions(
+  filter: GraphQLFilter,
+  filterProperties: FilterProperty[],
+  currentPath: string = '',
+): FilterCondition[] {
+  const conditions: FilterCondition[] = [];
+
+  Object.keys(filter).forEach((key) => {
+    if (key === 'AND' || key === 'OR' || key === 'NOT' || key === 'DISTINCT')
+      return;
+
+    const fullPath = currentPath ? `${currentPath}.${key}` : key;
+    const filterValue = filter[key];
+
+    // Check if this path matches a property key
+    const propertyConfig = filterProperties.find((p) => p.key === fullPath);
+
+    if (propertyConfig) {
+      // Found a matching property, extract conditions
+      const propertyValueMode =
+        propertyConfig.valueMode ||
+        (propertyConfig.type === 'boolean' ? 'scalar' : 'operator');
+
+      if (propertyValueMode === 'scalar' && typeof filterValue !== 'object') {
+        conditions.push({
+          id: generateId(),
+          property: fullPath,
+          operator: propertyConfig.implicitOperator || 'eq',
+          value: String(filterValue),
+          propertyLabel: propertyConfig.propertyLabel || fullPath,
+          type: propertyConfig.type || 'string',
+        });
+      } else if (filterValue && typeof filterValue === 'object') {
+        Object.keys(filterValue).forEach((operator) => {
+          const value = filterValue[operator];
+          if (value !== null && value !== undefined) {
+            conditions.push({
+              id: generateId(),
+              property: fullPath,
+              operator: operator as FilterOperator,
+              value: Array.isArray(value) ? value.join(', ') : String(value),
+              propertyLabel: propertyConfig.propertyLabel || fullPath,
+              type: propertyConfig.type || 'string',
+            });
+          }
+        });
+      }
+    } else if (filterValue && typeof filterValue === 'object') {
+      // Check if this is a nested object (not an operator object)
+      const keys = Object.keys(filterValue);
+      const isOperatorObject = keys.some((k) =>
+        [
+          'eq',
+          'ne',
+          'lt',
+          'le',
+          'gt',
+          'ge',
+          'contains',
+          'notContains',
+          'startsWith',
+          'endsWith',
+          'ilike',
+          'in',
+          'notIn',
+          'isNull',
+        ].includes(k),
+      );
+
+      if (!isOperatorObject) {
+        // Recursively process nested object
+        conditions.push(
+          ...extractNestedConditions(filterValue, filterProperties, fullPath),
+        );
+      }
+    }
+  });
+
+  return conditions;
 }
 
 function convertGraphQLFilterToConditions(
@@ -278,44 +414,8 @@ function convertGraphQLFilterToConditions(
     return conditions;
   }
 
-  // Process property filters
-  Object.keys(filter).forEach((key) => {
-    if (key === 'AND' || key === 'OR' || key === 'NOT' || key === 'DISTINCT')
-      return;
-
-    const propertyConfig = filterProperties.find((p) => p.key === key);
-    const filterValue = filter[key];
-
-    const propertyValueMode =
-      propertyConfig?.valueMode ||
-      (propertyConfig?.type === 'boolean' ? 'scalar' : 'operator');
-
-    if (propertyValueMode === 'scalar' && typeof filterValue !== 'object') {
-      // Scalar value directly
-      conditions.push({
-        id: generateId(),
-        property: key,
-        operator: propertyConfig?.implicitOperator || 'eq',
-        value: String(filterValue),
-        propertyLabel: propertyConfig?.propertyLabel || key,
-        type: propertyConfig?.type || 'string',
-      });
-    } else if (filterValue && typeof filterValue === 'object') {
-      Object.keys(filterValue).forEach((operator) => {
-        const value = filterValue[operator];
-        if (value !== null && value !== undefined) {
-          conditions.push({
-            id: generateId(),
-            property: key,
-            operator: operator as FilterOperator,
-            value: Array.isArray(value) ? value.join(', ') : String(value),
-            propertyLabel: propertyConfig?.propertyLabel || key,
-            type: propertyConfig?.type || 'string',
-          });
-        }
-      });
-    }
-  });
+  // Process property filters (supports nested objects via dot notation)
+  conditions.push(...extractNestedConditions(filter, filterProperties));
 
   return conditions;
 }
@@ -328,8 +428,22 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   combinationMode = 'AND',
   ...containerProps
 }) => {
+  'use memo';
+
   const { token } = theme.useToken();
   const { t } = useTranslation();
+
+  t('comp:BAIGraphQLPropertyFilter.operator.IContains');
+
+  // Helper function to get translated operator label
+  const getOperatorLabel = (operator: FilterOperator): string => {
+    // Convert camelCase operator to PascalCase for i18n key
+    const pascalCaseKey = _.upperFirst(operator);
+    return t(`comp:BAIGraphQLPropertyFilter.operator.${pascalCaseKey}`, {
+      defaultValue: operator,
+    });
+  };
+
   const [value, setValue] = useControllableValue<GraphQLFilter | undefined>({
     value: propValue,
     defaultValue: defaultValue,
@@ -350,7 +464,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   const [selectedOperator, setSelectedOperator] = useState<FilterOperator>(
     () => {
       const mode = getEffectiveValueMode(selectedProperty);
-      if (mode === 'scalar') return selectedProperty?.implicitOperator || 'eq';
+      if (mode === 'scalar')
+        return selectedProperty?.implicitOperator || 'equals';
       return (
         selectedProperty?.fixedOperator ||
         selectedProperty?.defaultOperator ||
@@ -388,10 +503,11 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
 
   const operatorOptions = useMemo(() => {
     return availableOperators.map((op) => ({
-      label: OPERATOR_LABELS[op] || op,
+      label: getOperatorLabel(op),
       value: op,
     }));
-  }, [availableOperators]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableOperators, t]);
 
   const updateConditions = (newConditions: FilterCondition[]) => {
     setConditions(newConditions);
@@ -489,7 +605,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         closable
         onClose={() => removeCondition(condition.id)}
         style={{ margin: 0 }}
-        title={`${condition.propertyLabel} ${OPERATOR_LABELS[condition.operator] || condition.operator} ${condition.value}`}
+        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${condition.value}`}
       >
         {condition.propertyLabel} {operatorShortLabel} {displayValue}
       </Tag>
@@ -499,7 +615,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>
       <Space.Compact>
-        <Select
+        <BAISelect
           popupMatchSelectWidth={false}
           options={propertyOptions}
           value={selectedProperty.key}
@@ -511,7 +627,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               (property.type === 'boolean' ? 'scalar' : 'operator');
             setSelectedOperator(
               mode === 'scalar'
-                ? property.implicitOperator || 'eq'
+                ? property.implicitOperator || 'equals'
                 : property.fixedOperator ||
                     property.defaultOperator ||
                     DEFAULT_OPERATOR_BY_TYPE[property.type],
@@ -529,11 +645,11 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         />
         {/* Hide operator selector if there's only one operator available or fixedOperator is set */}
         {availableOperators.length > 1 && !selectedProperty?.fixedOperator && (
-          <Select
+          <BAISelect
             options={operatorOptions}
+            popupMatchSelectWidth={false}
             value={selectedOperator}
             onChange={setSelectedOperator}
-            style={{ minWidth: 120 }}
           />
         )}
         <Tooltip

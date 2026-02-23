@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { addNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -70,6 +74,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         cluster_size: 1,
         startupCommand: 'echo "Image is installed"',
         enqueueOnly: true,
+        reuseIfExists: false,
         config: {
           resources: {
             ..._.mapValues(_.keyBy(image?.resource_limits, 'key'), 'min'),
@@ -124,27 +129,24 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         duration: 2,
       });
 
-      //@ts-ignore
-      const indicator = await globalThis.lablupIndicator.start('indeterminate');
-      indicator.set(10, t('import.Downloading'));
-
       try {
         await baiClient.image.install(
           imageName,
           image?.architecture,
           imageResource,
         );
-        indicator.end(1000);
         return image?.id;
       } catch (error) {
-        // @ts-ignore
-        globalThis.lablupNotification.text = painKiller.relieve(error.title);
-        // @ts-ignore
-        globalThis.lablupNotification.detail = error.message;
-        // @ts-ignore
-        globalThis.lablupNotification.show(true, error);
-        indicator.set(100, t('environment.DescProblemOccurred'));
-        indicator.end(1000);
+        document.dispatchEvent(
+          new CustomEvent('add-bai-notification', {
+            detail: {
+              open: true,
+              type: 'error',
+              message: painKiller.relieve((error as any).title),
+              description: (error as any).message,
+            },
+          }),
+        );
         return null;
       }
     });
