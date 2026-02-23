@@ -16,6 +16,10 @@
       "path": "packages/backend.ai-webui-docs",
       "name": "webui-docs",
     },
+    {
+      "path": "packages/backend.ai-docs-toolkit",
+      "name": "docs-toolkit",
+    },
   ],
   "settings": {
     "i18n-ally.enabledFrameworks": ["react", "custom"],
