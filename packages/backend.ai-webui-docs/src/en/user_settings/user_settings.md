@@ -1,3 +1,5 @@
+<a id="user-settings"></a>
+
 # User Settings
 
 
@@ -8,6 +10,8 @@ editing user config script, and even to using Beta features.
 
 ![](../images/preferences.png)
 
+
+<a id="general-tab"></a>
 
 ## GENERAL tab
 
@@ -65,10 +69,12 @@ before the page is refreshed.
 
 
 
-   Some of translated items may be marked as `__NOT_TRANSLATED__`, which
-   indicates the item is not yet translated for that language. Since Backend.AI
-   WebUI is open sourced, anyone who willing to make the translation better
-   can contribute: https://github.com/lablup/backend.ai-webui.
+:::note
+Some of translated items may be marked as `__NOT_TRANSLATED__`, which
+indicates the item is not yet translated for that language. Since Backend.AI
+WebUI is open sourced, anyone who willing to make the translation better
+can contribute: https://github.com/lablup/backend.ai-webui.
+:::
 
 ### Automatic Update Check
 
@@ -89,6 +95,8 @@ Config button below. Remember that main access keypair is only one.
 ![](../images/my_keypair_information.png)
 
 
+<a id="user-ssh-keypair-management"></a>
+
 ### SSH Keypair Management
 
 When using the WebUI app, you can create SSH/SFTP connection directly to the
@@ -104,8 +112,10 @@ creation.
 ![](../images/ssh_keypair_dialog.png)
 
 
-   Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may convert
-   this into PPK key.
+:::note
+Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may convert
+this into PPK key.
+:::
 
 From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to provide
 flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
@@ -125,11 +135,13 @@ started, write down the contents here.
 ![](../images/edit_bootstrap_script.png)
 
 
-   The compute session will be at the `PREPARING` status until the bootstrap
-   script finishes its execution. Since a user cannot use the session until it
-   is `RUNNING`, if the script contains a long-running tasks, it might be
-   better to remove them out of the bootstrap script and run them in a terminal
-   app.
+:::note
+The compute session will be at the `PREPARING` status until the bootstrap
+script finishes its execution. Since a user cannot use the session until it
+is `RUNNING`, if the script contains a long-running tasks, it might be
+better to remove them out of the bootstrap script and run them in a terminal
+app.
+:::
 
 ### Edit User Config Script
 
@@ -169,12 +181,14 @@ Clear Logs button at the top right.
 ![](../images/user_log.png)
 
 
-   If you only have one page logged in, clicking the REFRESH button may not seem
-   to work properly. Logs pages are collection of requests to the server and
-   responses from the server. If current page is the log page, then it will
-   not send any requests to the server except refreshing the page explicitly.
-   To check logs are being stacked properly, please open another page and click
-   REFRESH button.
+:::note
+If you only have one page logged in, clicking the REFRESH button may not seem
+to work properly. Logs pages are collection of requests to the server and
+responses from the server. If current page is the log page, then it will
+not send any requests to the server except refreshing the page explicitly.
+To check logs are being stacked properly, please open another page and click
+REFRESH button.
+:::
 
 If you want to hide or show the certain columns, click the gear icon at the bottom
 right of the table. Then you can see below dialog to select the columns you want to see.

@@ -9,7 +9,7 @@
 
 ### Backend.AI WebUI Integration Architecture
 
-The **Backend.AI WebUI** (this project) is a **client application** that communicates with the Backend.AI backend platform through well-defined APIs. It's a hybrid Single Page Application (SPA) using both Lit-Element and React frameworks.
+The **Backend.AI WebUI** (this project) is a **client application** that communicates with the Backend.AI backend platform through well-defined APIs. It's a Single Page Application (SPA) built with React.
 
 ---
 
@@ -19,7 +19,6 @@ The **Backend.AI WebUI** (this project) is a **client application** that communi
 ┌─────────────────────────────────────────────┐
 │  Backend.AI WebUI (this project)            │
 │  - React components (/react)                │
-│  - Lit-Element components (/src)            │
 │  - Ant Design + Relay (GraphQL)             │
 └──────────────────┬──────────────────────────┘
                    │
@@ -214,16 +213,15 @@ fetch('/session', {
 
 ### Framework Architecture
 ```
-Backend.AI WebUI (Hybrid)
+Backend.AI WebUI
 ├── React Components (/react)
 │   ├── Ant Design UI Library
 │   ├── Relay (GraphQL Client)
-│   ├── Recoil (Global State)
-│   └── Modern features (new development)
-└── Lit-Element Components (/src)
-    ├── Material Web Components
-    ├── Redux (Legacy State)
-    └── Legacy features (maintenance mode)
+│   ├── Jotai (Global State)
+│   └── All features and pages
+└── Shared Component Library (/packages/backend.ai-ui)
+    ├── BAI* components
+    └── Vite build
 ```
 
 ### React + Relay Pattern (Preferred)
@@ -426,18 +424,22 @@ const client = new BackendAIClient({
 
 ```
 backend.ai-webui/
-├── react/                    # React components (modern)
+├── react/                    # Main React application
 │   ├── src/
 │   │   ├── components/       # UI components
+│   │   ├── pages/            # Page-level components
 │   │   ├── hooks/            # Custom React hooks
 │   │   ├── __generated__/    # Relay generated files
 │   │   └── App.tsx           # Main React app
-│   └── relay.config.js       # Relay compiler config
+│   └── craco.config.cjs      # Webpack customization
 │
-├── src/                      # Lit-Element components (legacy)
-│   ├── components/           # Web components
-│   ├── lib/                  # Shared libraries
-│   └── backend-ai-client.ts  # API client implementation
+├── packages/
+│   ├── backend.ai-ui/        # Shared component library (Vite)
+│   └── backend.ai-webui-docs/# User manual documentation
+│
+├── src/                      # Utilities and websocket proxy
+│   ├── lib/                  # Backend.AI client library
+│   └── wsproxy/              # WebSocket proxy for desktop app
 │
 └── resources/
     ├── config.toml.sample    # Configuration template
@@ -490,11 +492,11 @@ curl -X POST http://localhost:8090/admin/graphql \
 ## Summary: WebUI-Backend Communication
 
 **Key Points**:
-✅ **Hybrid Architecture**: React (modern) + Lit-Element (legacy)
+✅ **React Architecture**: React 19 + Ant Design 6 + Relay 20
 ✅ **Dual API Support**: REST for operations, GraphQL for queries
 ✅ **Authentication**: JWT tokens or signed requests
 ✅ **Hosted by**: Backend.AI Webserver component
-✅ **State Management**: Relay (GraphQL) + Recoil (global) for React
+✅ **State Management**: Relay (GraphQL) + Jotai (global client state)
 ✅ **Real-time Updates**: WebSocket connections for live data
 ✅ **Service Access**: App Proxy routes to in-container services
 ✅ **File Operations**: Storage Proxy handles vfolder operations

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import ModelCardModal from '../components/ModelCardModal';

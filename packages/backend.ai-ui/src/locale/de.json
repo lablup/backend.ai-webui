@@ -169,7 +169,7 @@
     "PurgeProject": "Projekt bereinigen",
     "Registry": "Registry",
     "ResourcePolicy": "Ressourcenrichtlinie",
-    "ScalingGroups": "Skalierungsgruppen",
+    "ScalingGroups": "Ressourcengruppen",
     "StorageNodes": "Speicherknoten",
     "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
     "Type": "Typ"

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import SessionDetailContent from './SessionDetailContent';

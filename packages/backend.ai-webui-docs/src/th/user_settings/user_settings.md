@@ -1,3 +1,5 @@
+<a id="user-settings"></a>
+
 # การตั้งค่าผู้ใช้
 
 
@@ -5,6 +7,8 @@
 
 ![](../images/preferences.png)
 
+
+<a id="general-tab"></a>
 
 ## แท็บทั่วไป
 
@@ -56,10 +60,12 @@ the notification inside the WebUI still works.
 
 
 
-   Some of translated items may be marked as `__NOT_TRANSLATED__`, which
-   indicates the item is not yet translated for that language. Since Backend.AI
-   WebUI is open sourced, anyone who willing to make the translation better
-   can contribute: https://github.com/lablup/backend.ai-webui.
+:::note
+Some of translated items may be marked as `__NOT_TRANSLATED__`, which
+indicates the item is not yet translated for that language. Since Backend.AI
+WebUI is open sourced, anyone who willing to make the translation better
+can contribute: https://github.com/lablup/backend.ai-webui.
+:::
 
 ### การตรวจสอบการอัปเดตอัตโนมัติ
 
@@ -79,6 +85,8 @@ etc.).
 ![](../images/my_keypair_information.png)
 
 
+<a id="user-ssh-keypair-management"></a>
+
 ### การจัดการคู่กุญแจ SSH
 
 When using the WebUI app, you can create SSH/SFTP connection directly to the
@@ -94,7 +102,9 @@ creation.
 ![](../images/ssh_keypair_dialog.png)
 
 
-   Backend.AI ใช้คู่กุญแจ SSH ที่อิงตาม OpenSSH บน หน้าต่าง คุณสามารถแปลงสิ่งนี้เป็นกุญแจ PPK ได้
+:::note
+Backend.AI ใช้คู่กุญแจ SSH ที่อิงตาม OpenSSH บน หน้าต่าง คุณสามารถแปลงสิ่งนี้เป็นกุญแจ PPK ได้
+:::
 
 From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to provide
 flexibility such as accessing to a private ที่เก็บข้อมูล. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
@@ -113,11 +123,13 @@ please enter the keys inside, and click `SAVE` button. Now you can access to bac
 ![](../images/edit_bootstrap_script.png)
 
 
-   The compute session will be at the `PREPARING` status until the bootstrap
-   script finishes its execution. Since a ผู้ใช้ cannot use the session until it
-   is `RUNNING`, if the script contains a long-running tasks, it might be
-   better to remove them out of the bootstrap script and run them in a terminal
-   app.
+:::note
+The compute session will be at the `PREPARING` status until the bootstrap
+script finishes its execution. Since a ผู้ใช้ cannot use the session until it
+is `RUNNING`, if the script contains a long-running tasks, it might be
+better to remove them out of the bootstrap script and run them in a terminal
+app.
+:::
 
 ### Edit User Config Script
 
@@ -151,7 +163,9 @@ You can enable or disable experimental features before they are officially relea
 ![](../images/user_log.png)
 
 
-   หากคุณล็อกอินอยู่เพียงหน้าหนึ่ง การคลิกที่ปุ่ม REFRESH อาจไม่แสดงผลอย่างถูกต้อง หน้าบันทึกเป็นการรวมคำขอไปยังเซิร์ฟเวอร์และการตอบสนองจากเซิร์ฟเวอร์ หากหน้าปัจจุบันคือหน้าบันทึก มันจะไม่ส่งคำขอใด ๆ ไปยังเซิร์ฟเวอร์นอกเหนือจากการรีเฟรชหน้าตามที่ระบุ หากต้องการตรวจสอบว่าบันทึกกำลังถูกจัดเรียงอย่างถูกต้อง กรุณาเปิดหน้าอื่นและคลิกปุ่ม REFRESH
+:::note
+หากคุณล็อกอินอยู่เพียงหน้าหนึ่ง การคลิกที่ปุ่ม REFRESH อาจไม่แสดงผลอย่างถูกต้อง หน้าบันทึกเป็นการรวมคำขอไปยังเซิร์ฟเวอร์และการตอบสนองจากเซิร์ฟเวอร์ หากหน้าปัจจุบันคือหน้าบันทึก มันจะไม่ส่งคำขอใด ๆ ไปยังเซิร์ฟเวอร์นอกเหนือจากการรีเฟรชหน้าตามที่ระบุ หากต้องการตรวจสอบว่าบันทึกกำลังถูกจัดเรียงอย่างถูกต้อง กรุณาเปิดหน้าอื่นและคลิกปุ่ม REFRESH
+:::
 
 หากคุณต้องการซ่อนหรือแสดงคอลัมน์บางอย่าง ให้คลิกที่ไอคอนเฟืองที่มุมขวาล่างของตาราง จากนั้นคุณจะสามารถเห็นกล่องโต้ตอบด้านล่างเพื่อเลือกคอลัมน์ที่คุณต้องการเห็น
 

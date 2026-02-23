@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';

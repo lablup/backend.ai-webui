@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import { useEventNotStable, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';

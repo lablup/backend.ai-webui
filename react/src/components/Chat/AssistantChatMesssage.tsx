@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
 import CopyButton from './CopyButton';
 import Compact from 'antd/es/space/Compact';

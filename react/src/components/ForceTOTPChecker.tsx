@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ForceTOTPCheckerQuery } from '../__generated__/ForceTOTPCheckerQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';

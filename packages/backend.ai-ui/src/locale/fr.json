@@ -169,7 +169,7 @@
     "PurgeProject": "Purger le projet",
     "Registry": "Registre",
     "ResourcePolicy": "Politique des ressources",
-    "ScalingGroups": "Groupes de mise à l'échelle",
+    "ScalingGroups": "Groupes de ressources",
     "StorageNodes": "Nœuds de stockage",
     "TotalResourceSlots": "Nombre total de créneaux de ressources",
     "Type": "Type"
@@ -240,7 +240,7 @@
     "RenameSuccess": "Le nom a été modifié avec succès.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
-    "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
+    "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
     "TypeFolderNameToDelete": "Tapez le nom du dossier ou du fichier à supprimer.",
     "UnsupportedFileFormat": "Ce format de fichier ne prend pas en charge l'édition.",
     "UploadFiles": "Télécharger des fichiers",
@@ -300,7 +300,7 @@
       "Upload": "Télécharger"
     },
     "modal": {
-      "DeleteForeverDesc": "AVERTISSEMENT : les éléments sélectionnés seront supprimés définitivement et ne seront pas restaurés.",
+      "DeleteForeverDesc": "AVERTISSEMENT : les éléments sélectionnés seront supprimés définitivement et ne seront pas restaurés.",
       "ItemSelectedWithCount": "{{count}} éléments sélectionnés.",
       "PleaseTypeToConfirm": "Veuillez saisir {{ confirmText }} pour confirmer."
     },

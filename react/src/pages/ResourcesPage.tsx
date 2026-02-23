@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import AgentList from '../components/AgentList';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';

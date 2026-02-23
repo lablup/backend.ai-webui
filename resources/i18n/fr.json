@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Impossible d'autoriser votre session. Connectez-vous d'abord au portail.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Séance de calcul préparée",
     "CreatingComputeSession": "Création d'une session de calcul...",
     "EmptyProject": "Projet vide",
@@ -605,6 +607,7 @@
     "PleaseReload": "Veuillez actualiser la page après un certain temps.",
     "QueryingExistingComputeSession": "Vérification de session de calcul existante...",
     "SessionStatusIs": "L'état de la session est",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "La séance est encore en préparation. Actualiser la page après un certain temps"
   },
   "environment": {
@@ -1010,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "Le point de terminaison de l'API est vide. Veuillez spécifier le point de terminaison de l'API pour vous connecter.",
     "APIKey": "clé API",
+    "APIMode": "API",
+    "AdvancedSettings": "Avancé",
     "CancelLogin": "Annuler Connexion",
     "ChangePassword": "Changer le mot de passe",
     "ClickToUseIAM": "Cliquez pour utiliser IAM",
@@ -1041,6 +1046,7 @@
     "PleaseWait": "Veuillez patienter pour vous connecter.",
     "SecretKey": "Clef secrète",
     "SendChangePasswordEmail": "Envoyer un e-mail de changement de mot de passe",
+    "SessionMode": "Session",
     "SignUp": "S'inscrire",
     "SignoutFinished": "Déconnexion terminée.",
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",

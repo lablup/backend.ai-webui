@@ -1,5 +1,7 @@
 # Sign up and Log in
 
+<a id="sign-up"></a>
+
 ## Sign up
 
 When you launch the WebUI, log in dialog appears. If you haven't signed up
@@ -12,20 +14,28 @@ yet, press the SIGN UP button.
 ![](../images/signup_dialog.png)
 
 
-   サーバーの構成およびプラグインの設定によっては、匿名ユーザーによるサインアップが許可されていない場合があります。その場合は、システムの管理者に連絡してください。
+:::note
+サーバーの構成およびプラグインの設定によっては、匿名ユーザーによるサインアップが許可されていない場合があります。その場合は、システムの管理者に連絡してください。
+:::
 
+:::note
+悪意のあるユーザーがユーザーのパスワードを推測するのを防ぐために、パスワードは8文字以上で、少なくとも1つのアルファベット、数字、特殊文字を含むべきです。
+:::
 
-   悪意のあるユーザーがユーザーのパスワードを推測するのを防ぐために、パスワードは8文字以上で、少なくとも1つのアルファベット、数字、特殊文字を含むべきです。
+<a id="log-in"></a>
 
 ## Log in
 
 IDとパスワードを入力し、LOGINボタンを押してください。API ENDPOINTには、リクエストをマネージャーに中継するBackend.AI WebserverのURLを入力する必要があります。
 
 
-   Webサーバーのインストールおよびセットアップ環境によっては、エンドポイントが固定されており、構成ができない場合があります。
+:::note
+Webサーバーのインストールおよびセットアップ環境によっては、エンドポイントが固定されており、構成ができない場合があります。
+:::
 
-
-   Backend.AI は、ユーザーのパスワードを一方向ハッシュを通じて安全に保持します。BSDのデフォルトパスワードハッシュであるBCryptが使用されるため、サーバーの管理者でもユーザーのパスワードを知ることはできません。
+:::note
+Backend.AI は、ユーザーのパスワードを一方向ハッシュを通じて安全に保持します。BSDのデフォルトパスワードハッシュであるBCryptが使用されるため、サーバーの管理者でもユーザーのパスワードを知ることはできません。
+:::
 
 After logging in, you can check the information of the current resource usage in
 the サマリー tab.
@@ -34,6 +44,8 @@ the サマリー tab.
 
 ![](../images/signout_button.png)
 
+
+<a id="when-you-forgot-your-password"></a>
 
 ## パスワードを忘れた場合
 
@@ -46,14 +58,19 @@ password change feature may be disabled. In this case, contact the
 ![](../images/forgot_password_panel.png)
 
 
-   これはモジュール式の機能でもあるため、システムによってはパスワード変更ができない場合があります。
+:::note
+これはモジュール式の機能でもあるため、システムによってはパスワード変更ができない場合があります。
+:::
+
+:::warning
+If log in failure occurs more than 10 times consecutively, access
+to the endpoint is temporarily restricted for 20 minutes for security
+reasons. If the access restriction continues on more than 20 minutes, please contact
+your system 管理者istrator.
+:::
 
 
-   If log in failure occurs more than 10 times consecutively, access
-   to the endpoint is temporarily restricted for 20 minutes for security
-   reasons. If the access restriction continues on more than 20 minutes, please contact
-   your system 管理者istrator.
-
+<a id="sidebar-menus"></a>
 
 ## サイドバーメニュー
 

@@ -1,5 +1,7 @@
 id: baidocs-webui
-title: Backend.AI WebUI User Guide
+title: |
+  Backend.AI WebUI
+  User Guide
 description: Sphinx documentation by Lablup Inc. (v25.15)
 type: document
 repository: https://github.com/lablup/backend.ai-docs-webui

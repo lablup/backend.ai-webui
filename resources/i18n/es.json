@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "No se ha podido autorizar su sesión. Conéctese primero al portal.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Sesión de cálculo preparada",
     "CreatingComputeSession": "Crear sesión de cálculo ...",
     "EmptyProject": "Proyecto vacío",
@@ -605,6 +607,7 @@
     "PleaseReload": "Por favor, vuelva a cargar después de algún tiempo.",
     "QueryingExistingComputeSession": "Consulta de la sesión de cálculo existente ...",
     "SessionStatusIs": "El estado de la sesión es",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "La sesión sigue en preparación. Recargar después de un rato"
   },
   "environment": {
@@ -1010,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "El punto final de la API está vacío. Especifique el punto final de la API para iniciar sesión.",
     "APIKey": "Clave API",
+    "APIMode": "API",
+    "AdvancedSettings": "Avanzado",
     "CancelLogin": "Cancelar conexión",
     "ChangePassword": "Cambiar contraseña",
     "ClickToUseIAM": "Haga clic para utilizar IAM",
@@ -1041,6 +1046,7 @@
     "PleaseWait": "Espere para iniciar sesión.",
     "SecretKey": "Clave secreta",
     "SendChangePasswordEmail": "Enviar correo electrónico de cambio de contraseña",
+    "SessionMode": "Sesión",
     "SignUp": "Inscríbete",
     "SignoutFinished": "Firma terminada.",
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",

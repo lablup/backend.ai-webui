@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';

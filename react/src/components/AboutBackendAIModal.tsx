@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -86,7 +90,7 @@ const AboutBackendAIModal = ({
           open-source software
         </BAILink>
         <br />
-        Copyright &copy; 2015-2025 Lablup Inc.
+        Copyright &copy; 2015-2026 Lablup Inc.
         <br />
         <BAILink
           target="_blank"

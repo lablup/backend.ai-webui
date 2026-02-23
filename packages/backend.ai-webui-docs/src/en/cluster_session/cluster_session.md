@@ -1,8 +1,12 @@
 # Backend.AI Cluster Compute Session
 
 
-   Cluster compute session feature is supported from Backend.AI server 20.09 or
-   higher.
+:::note
+Cluster compute session feature is supported from Backend.AI server 20.09 or
+higher.
+:::
+
+<a id="backendai-cluster-compute-session"></a>
 
 ### Overview of Backend.AI cluster compute session
 
@@ -77,6 +81,7 @@ container information.
   container belongs (ex. `3614fdf3-0e04-...`). The main container's
   `BACKENDAI_KERNEL_ID` is the same as `BACKENDAI_SESSION_ID`.
 
+<a id="use-of-backendai-cluster-compute-session"></a>
 
 ### Use of Backend.AI cluster compute session
 
@@ -135,6 +140,8 @@ MLFlow, etc. is required, and code in a way that can utilize the software. Must
 be written carefully. Backend.AI provides a kernel image containing the software
 required for distributed learning, so you can use that image to create a nice
 distributed learning algorithm.
+
+<a id="see-logs-per-container"></a>
 
 ### See logs per container
 

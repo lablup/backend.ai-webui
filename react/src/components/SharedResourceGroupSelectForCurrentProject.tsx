@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '../hooks';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
@@ -9,11 +13,10 @@ import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState, useTransition } from 'react';
 
-interface ResourceGroupSelectForCurrentProjectProps
-  extends Omit<
-    BAISelectProps,
-    'defaultValue' | 'value' | 'allowClear' | 'onClear' | 'onChange'
-  > {
+interface ResourceGroupSelectForCurrentProjectProps extends Omit<
+  BAISelectProps,
+  'defaultValue' | 'value' | 'allowClear' | 'onClear' | 'onChange'
+> {
   onChangeInTransition?: BAISelectProps['onChange'];
 }
 

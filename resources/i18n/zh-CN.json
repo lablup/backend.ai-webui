@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "无法授权您的会话。首先登录门户。",
+    "CannotCreateSessionWithDifferentImage": "无法使用与正在运行的会话不同的镜像创建会话。",
+    "CannotInitializeClient": "客户端连接初始化失败。",
     "ComputeSessionPrepared": "计算会话已准备好",
     "CreatingComputeSession": "正在创建计算会话...",
     "EmptyProject": "空项目",
@@ -605,6 +607,7 @@
     "PleaseReload": "请过一段时间重新加载。",
     "QueryingExistingComputeSession": "正在查询现有计算会话...",
     "SessionStatusIs": "会话状态为",
+    "SessionStatusIsWithReload": "会话状态为 {{status}}。请稍后重新加载。",
     "SessionStillPreparing": "会议还在准备中。一段时间后重新加载"
   },
   "environment": {
@@ -1012,6 +1015,8 @@
   "login": {
     "APIEndpointEmpty": "API 端点为空。请指定要登录的 API 端点。",
     "APIKey": "API 密钥",
+    "APIMode": "API",
+    "AdvancedSettings": "高级设置",
     "CancelLogin": "取消登录",
     "ChangePassword": "更改密码",
     "ClickToUseIAM": "单击以使用 IAM",
@@ -1043,6 +1048,7 @@
     "PleaseWait": "请等待登录。",
     "SecretKey": "密钥",
     "SendChangePasswordEmail": "发送修改密码邮件",
+    "SessionMode": "会话",
     "SignUp": "注册",
     "SignoutFinished": "注销完毕。",
     "TooManyAttempt": "登录尝试次数过多。登录尝试已被阻止一段时间。",

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { localeCompare } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { Alert } from 'antd';
@@ -22,8 +26,10 @@ type KeypairType = NonNullable<
   NonNullable<GeneratedKeypairListModalFragment$data>[number]
 >;
 
-interface GeneratedKeypairListModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
+interface GeneratedKeypairListModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onCancel'
+> {
   keypairFragment: GeneratedKeypairListModalFragment$key;
   onRequestClose: () => void;
 }

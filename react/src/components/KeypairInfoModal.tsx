@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
 import { Descriptions, type ModalProps, Tag, Typography, theme } from 'antd';

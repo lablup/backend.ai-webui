@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { theme, Tooltip, type TooltipProps } from 'antd';
 import React from 'react';

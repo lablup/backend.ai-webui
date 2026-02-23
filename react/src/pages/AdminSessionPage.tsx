@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { parseAsString, useQueryStates } from 'nuqs';

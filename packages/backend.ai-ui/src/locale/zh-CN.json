@@ -169,7 +169,7 @@
     "PurgeProject": "永久删除项目",
     "Registry": "镜像仓库",
     "ResourcePolicy": "资源策略",
-    "ScalingGroups": "伸缩组",
+    "ScalingGroups": "资源组",
     "StorageNodes": "存储节点",
     "TotalResourceSlots": "资源插槽总数",
     "Type": "类型"

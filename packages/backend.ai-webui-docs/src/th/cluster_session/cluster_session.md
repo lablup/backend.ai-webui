@@ -1,8 +1,12 @@
 # เซสชันการคอมพิวเตอร์คลัสเตอร์ Backend.AI
 
 
-   Cluster compute session feature is supported from Backend.AI server 20.09 or
-   higher.
+:::note
+Cluster compute session feature is supported from Backend.AI server 20.09 or
+higher.
+:::
+
+<a id="backendai-cluster-compute-session"></a>
 
 ### ภาพรวมของเซสชันการคำนวณคลัสเตอร์ Backend.AI
 
@@ -62,6 +66,7 @@ containers are automatically generated.
   container belongs (ex. `3614fdf3-0e04-...`). The main container's
   `BACKENDAI_KERNEL_ID` is the same as `BACKENDAI_SESSION_ID`.
 
+<a id="use-of-backendai-cluster-compute-session"></a>
 
 ### การใช้เซสชันการคอมพิวเตอร์ของคลัสเตอร์ Backend.AI
 
@@ -99,6 +104,8 @@ is displayed.
 ![](../images/terminal_on_sub1_container.png)
 
 ด้วยวิธีนี้ Backend.AI ทำให้การสร้างเซสชันการคอมพิวเตอร์แบบคลัสเตอร์เป็นเรื่องง่าย เพื่อให้สามารถดำเนินการเรียนรู้และการคำนวณแบบกระจายผ่านเซสชันการคำนวณแบบคลัสเตอร์ จำเป็นต้องใช้โมดูลการเรียนรู้แบบกระจายที่จัดเตรียมโดยไลบรารี ML เช่น TensorFlow/PyTorch หรือซอฟต์แวร์สนับสนุนเพิ่มเติม เช่น Horovod, NNI, MLFlow เป็นต้น และต้องเขียนโค้ดในลักษณะที่สามารถใช้ซอฟต์แวร์ได้อย่างระมัดระวัง Backend.AI มีภาพเคอร์เนลที่มีซอฟต์แวร์ที่จำเป็นสำหรับการเรียนรู้แบบกระจาย ดังนั้นคุณจึงสามารถใช้ภาพนั้นในการสร้างอัลกอริธึมการเรียนรู้แบบกระจายที่ดีได้
+
+<a id="see-logs-per-container"></a>
 
 ### ดูบันทึกต่อคอนเทนเนอร์
 

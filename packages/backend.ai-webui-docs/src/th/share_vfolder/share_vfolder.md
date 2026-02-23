@@ -3,6 +3,8 @@
 คุณอาจต้องการแชร์เนื้อหาของโฟลเดอร์เก็บข้อมูลกับผู้ใช้หรือสมาชิกในโครงการคนอื่นเพื่อการทำงานร่วมกัน สำหรับวัตถุประสงค์นี้ Backend.AI จึงมีฟีเจอร์การแชร์โฟลเดอร์ที่ยืดหยุ่น
 
 
+<a id="share-storage-folders-with-other-users"></a>
+
 ## แชร์โฟลเดอร์สตอเรจกับผู้ใช้อื่น
 
 Let's learn how to share your personal Storage folder with other ผู้ใช้s. First,
@@ -22,8 +24,10 @@ account.
 ![](../images/no_test_vfolder_in_B.png)
 
 
-   If a folder named `tests` already exists in User B's account, User A's
-   `tests` folder cannot be shared with User B.
+:::note
+If a folder named `tests` already exists in User B's account, User A's
+`tests` folder cannot be shared with User B.
+:::
 
 Back to User A's account,click the 'share' button in the Control column on the
 'tests' folder in the list.
@@ -68,10 +72,12 @@ by mounting this storge folder with the User B's account.
 ![](../images/launch_session_with_test_mounted_B.png)
 
 
-   From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
-   as default. If you want to use the previous session launcher, please refer [User Settings<general-settings>](#User Settings<general-settings>)
-   section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
-   If you want to know more about the NEO session launcher, please refer [Create Session<create_session>](#Create Session<create_session>)
+:::note
+From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
+as default. If you want to use the previous session launcher, please refer [User Settings](#general-tab)
+section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
+If you want to know more about the NEO session launcher, please refer [Create Session](#start-a-new-session)
+:::
 
 After creating a session, open the web terminal and check that the `tests`
 folder is mounted in the home folder. The contents of the `tests` folder are
@@ -84,9 +90,13 @@ folder if it has been shared including write access.
 วิธีนี้ คุณสามารถแบ่งปันโฟลเดอร์พื้นที่เก็บข้อมูลส่วนตัวของคุณกับผู้ใช้อื่นได้ตามบัญชีอีเมลของ Backend.AI ของคุณ
 
 
-   Backend.AI also provides sharing project folder to project members.
-   To See the detail, go to [sharing a project storage folder with project members <sharing-a-group-storage>](#sharing a project storage folder with project members <sharing-a-group-storage>).
+:::note
+Backend.AI also provides sharing project folder to project members.
+To See the detail, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
+:::
 
+
+<a id="adjust-permission-for-shared-folders"></a>
 
 ## ปรับแต่งสิทธิ์สำหรับโฟลเดอร์ที่แชร์
 
@@ -99,10 +109,14 @@ Click Select permission to set the sharing permission.
 ![](../images/modify_perm.png)
 
 
-   Renaming folder itself is available only for the owner, even if the ผู้ใช้ has granted
-   Edit permission. Please note that Edit permission does not provide
-   renaming folder.
+:::note
+Renaming folder itself is available only for the owner, even if the ผู้ใช้ has granted
+Edit permission. Please note that Edit permission does not provide
+renaming folder.
+:::
 
+
+<a id="stop-sharing-a-folder"></a>
 
 ## Stop sharing a folder
 

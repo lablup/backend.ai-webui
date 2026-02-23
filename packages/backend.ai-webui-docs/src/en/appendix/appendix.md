@@ -1,5 +1,7 @@
 # Appendix
 
+<a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
+
 ## GPU virtualization and fractional GPU allocation
 
 Backend.AI supports GPU virtualization technology which allows single physical
@@ -59,6 +61,8 @@ model.)
 Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
 
 
+<a id="automated-job-scheduling"></a>
+
 ## Automated job scheduling
 
 Backend.AI server has a built-in self-developed task scheduler. It automatically
@@ -98,6 +102,8 @@ and automatically process the requests when resources become available.
 
 ![](../images/pending_to_running.png)
 
+
+<a id="multi-version-machine-learning-container-support"></a>
 
 ## Multi-version machine learning container support
 
@@ -143,6 +149,8 @@ Like this, you can utilize various versions of major libraries such as
 TensorFlow and PyTorch through Backend.AI without unnecessary effort to install them.
 
 
+<a id="convert-a-compute-session-to-a-new-private-docker-image"></a>
+
 ## Convert a compute session to a new private Docker image
 
 If you want to convert a running compute session (container) to a new Docker image
@@ -152,20 +160,20 @@ compute session environment and ask administrators to convert it.
 - First, prepare your compute session by installing the packages that you need
   and adjust the configurations as you like.
 
-  .. note``
+:::note
 If you want to install OS packages, for example via `apt` command, it
 usually requires the `sudo` privilege. Depending on the security policy
 of the institute, you may not be allowed to use `sudo` inside a
 container.
 
-It is recommended to use [automount folder<using-automount-folder>](#automount folder<using-automount-folder>) to
-install [Python packages via pip<install_pip_pkg>](#Python packages via pip<install_pip_pkg>). However, if you
+It is recommended to use [automount folder](#using-automount-folder) to
+install [Python packages via pip](#install_pip_pkg). However, if you
 want to add Python packages in a new image, you should install them with
 `sudo pip install <package-name>` to save them not in your home but in
 the system directory. The contents in your home directory, usually
 `/home/work`, are not saved in converting a compute session to a new
 Docker image.
-``
+:::
 - When your compute session is prepared, please ask an administrator to convert
   it to a new Docker image. You need to inform them the session name or ID and
   your email address in the platform.
@@ -178,6 +186,8 @@ Docker image.
 
 - A new compute session will be created using the new Docker image.
 
+
+<a id="backend-ai-server-installation-guide"></a>
 
 ## Backend.AI Server Installation Guide
 
@@ -223,6 +233,8 @@ are provided for 3-6 months. Maintenance and support services provided
 afterwards may have different details depending on the terms of the contract.
 
 
+<a id="integration-examples"></a>
+
 ## Integration examples
 
 In this section, we would like to introduce several common examples of applications,
@@ -245,15 +257,18 @@ you will be able to track parameters and result at Backend.AI as if you are usin
 local environment.
 
 
-   In this section, we will regard you already created session and about to execute an app in the session.
-   If you don't have any experience in creating session and executing app inside, please have a
-   look through [How to create a session<create_session>](#How to create a session<create_session>) section.
+:::note
+In this section, we will regard you already created session and about to execute an app in the session.
+If you don't have any experience in creating session and executing app inside, please have a
+look through [How to create a session](#start-a-new-session) section.
+:::
 
 First, launch terminal app "console". and execute the command below, It will start mlflow tracking UI server.
 
-   ``shell
+```shell
 $ mlflow ui --host 0.0.0.0
-``
+```
+
 Then, Click "MLFlow UI" app in app launcher dialog.
 
 ![](../images/app_dialog.png)
@@ -265,19 +280,21 @@ After few moment, you will see a new page for MLFlow UI.
 By using MLFlow, you can track experiments, such as metrics and parameters every time you run.
 Let's start tracking experiments from simple example.
 
-   ``shell
+```shell
 $ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
 $ python train_diabetes.py
-``
+```
+
 After executing python code, you may see the experiments result in MLFlow.
 
 ![](../images/mlflow_first_execution.png)
 
 You can also set hyperparameter by giving arguments with code execution.
 
-   ``shell
+```shell
 $ python train_diabetes.py 0.2 0.05
-``
+```
+
 After a few training, you can compare trained models with results.
 
 ![](../images/mlflow_multiple_execution.png)

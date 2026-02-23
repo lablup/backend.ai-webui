@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import CopyableCodeText from './CopyableCodeText';
 import { Descriptions, type DescriptionsProps, Button } from 'antd';

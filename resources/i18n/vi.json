@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Không thể cho phép phiên của bạn. Đăng nhập vào cổng trước.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Phiên máy tính được chuẩn bị",
     "CreatingComputeSession": "Đang tạo phiên máy tính ...",
     "EmptyProject": "Dự án trống rỗng",
@@ -605,6 +607,7 @@
     "PleaseReload": "Vui lòng tải lại sau một thời gian.",
     "QueryingExistingComputeSession": "Đang truy vấn phiên tính toán hiện có ...",
     "SessionStatusIs": "Trạng thái phiên là",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Phiên vẫn đang trong quá trình chuẩn bị. Tải lại sau một thời gian"
   },
   "environment": {
@@ -1012,6 +1015,8 @@
   "login": {
     "APIEndpointEmpty": "Điểm cuối API trống. Vui lòng chỉ định điểm cuối API để đăng nhập.",
     "APIKey": "Mã API",
+    "APIMode": "API",
+    "AdvancedSettings": "Nâng cao",
     "CancelLogin": "Hủy đăng nhập",
     "ChangePassword": "Đổi mật khẩu",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
@@ -1043,6 +1048,7 @@
     "PleaseWait": "Vui lòng đợi để đăng nhập.",
     "SecretKey": "Chìa khoá bí mật",
     "SendChangePasswordEmail": "Gửi email thay đổi mật khẩu",
+    "SessionMode": "Phiên",
     "SignUp": "Đăng ký",
     "SignoutFinished": "Đã kết thúc đăng ký.",
     "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",

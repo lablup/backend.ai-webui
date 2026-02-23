@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Switch, type SwitchProps, Typography } from 'antd';
 import { BAIFlex, useInterval } from 'backend.ai-ui';
 import React from 'react';

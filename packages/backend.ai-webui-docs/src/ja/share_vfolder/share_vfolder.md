@@ -3,6 +3,8 @@
 ストレージフォルダの内容を他のユーザーやプロジェクトメンバーと共有して共同作業を行う必要があるかもしれません。この目的のために、Backend.AIは柔軟なフォルダ共有機能を提供します。
 
 
+<a id="share-storage-folders-with-other-users"></a>
+
 ## 他のユーザーとストレージフォルダーを共有する
 
 Let's learn how to share your personal Storage folder with other ユーザーs. First,
@@ -22,8 +24,10 @@ account.
 ![](../images/no_test_vfolder_in_B.png)
 
 
-   If a folder named `tests` already exists in User B's account, User A's
-   `tests` folder cannot be shared with User B.
+:::note
+If a folder named `tests` already exists in User B's account, User A's
+`tests` folder cannot be shared with User B.
+:::
 
 Back to User A's account,click the 'share' button in the Control column on the
 'tests' folder in the list.
@@ -68,10 +72,12 @@ by mounting this storge folder with the User B's account.
 ![](../images/launch_session_with_test_mounted_B.png)
 
 
-   From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
-   as default. If you want to use the previous session launcher, please refer [User Settings<general-settings>](#User Settings<general-settings>)
-   section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
-   If you want to know more about the NEO session launcher, please refer [Create Session<create_session>](#Create Session<create_session>)
+:::note
+From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
+as default. If you want to use the previous session launcher, please refer [User Settings](#general-tab)
+section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
+If you want to know more about the NEO session launcher, please refer [Create Session](#start-a-new-session)
+:::
 
 After creating a session, open the web terminal and check that the `tests`
 folder is mounted in the home folder. The contents of the `tests` folder are
@@ -84,9 +90,13 @@ folder if it has been shared including write access.
 この方法では、Backend.AIのメールアカウントに基づいて他のユーザーと個人のストレージフォルダを共有することができます。
 
 
-   Backend.AI also provides sharing project folder to project members.
-   To See the detail, go to [sharing a project storage folder with project members <sharing-a-group-storage>](#sharing a project storage folder with project members <sharing-a-group-storage>).
+:::note
+Backend.AI also provides sharing project folder to project members.
+To See the detail, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
+:::
 
+
+<a id="adjust-permission-for-shared-folders"></a>
 
 ## 共有フォルダーの権限を調整する
 
@@ -99,10 +109,14 @@ Click Select permission to set the sharing permission.
 ![](../images/modify_perm.png)
 
 
-   Renaming folder itself is available only for the owner, even if the ユーザー has granted
-   Edit permission. Please note that Edit permission does not provide
-   renaming folder.
+:::note
+Renaming folder itself is available only for the owner, even if the ユーザー has granted
+Edit permission. Please note that Edit permission does not provide
+renaming folder.
+:::
 
+
+<a id="stop-sharing-a-folder"></a>
 
 ## Stop sharing a folder
 

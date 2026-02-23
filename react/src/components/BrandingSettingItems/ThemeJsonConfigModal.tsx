@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import type { Monaco } from '@monaco-editor/react';
 import { Alert, App, Skeleton, theme, Upload } from 'antd';

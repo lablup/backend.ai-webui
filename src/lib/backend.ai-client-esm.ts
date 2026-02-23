@@ -9,7 +9,43 @@ Licensed under MIT
 import CryptoES from 'crypto-es';
 //var CryptoES = require("crypto-js"); /* Exclude for ES6 */
 import { comparePEP440Versions, isCompatibleMultipleConditions} from './pep440';
-import { SessionResources } from '../types/backend-ai-console';
+
+export interface SessionResources {
+  group_name?: string;
+  domain?: string;
+  type?: 'interactive' | 'batch' | 'inference' | 'system';
+  cluster_mode: 'single-node' | 'multi-node';
+  cluster_size: number;
+  maxWaitSeconds: number;
+  starts_at?: string;
+  startupCommand?: string;
+  bootstrap_script?: string;
+  owner_access_key?: string;
+  reuseIfExists?: boolean;
+  config?: {
+    resources?: {
+      cpu: number;
+      mem: string;
+      [key: string]: number | string;
+    };
+    resource_opts?: {
+      shmem?: string;
+      allow_fractional_resource_fragmentation?: boolean;
+    };
+    mounts?: string[];
+    mount_ids?: string[];
+    mount_map?: {
+      [key: string]: string;
+    };
+    environ?: {
+      [key: string]: string;
+    };
+    scaling_group?: string;
+    preopen_ports?: number[];
+    agent_list?: string[];
+  };
+}
+
 type requestInfo = {
   method: string;
   headers: Headers;

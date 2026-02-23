@@ -2,10 +2,8 @@ packages:
   - react
   - packages/backend.ai-ui
   - packages/eslint-config-bai
+  - packages/backend.ai-docs-toolkit
   - packages/backend.ai-webui-docs
-
-ignoredBuiltDependencies:
-  - "@vaadin/vaadin-usage-statistics"
 
 onlyBuiltDependencies:
   - bufferutil

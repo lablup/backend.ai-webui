@@ -169,7 +169,7 @@
     "PurgeProject": "プロジェクトを完全に削除",
     "Registry": "レジストリ",
     "ResourcePolicy": "リソースポリシー",
-    "ScalingGroups": "スケーリンググループ",
+    "ScalingGroups": "リソースグループ",
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"

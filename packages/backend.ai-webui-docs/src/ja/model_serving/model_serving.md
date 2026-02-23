@@ -1,9 +1,13 @@
+<a id="model-serving"></a>
+
 # モデルサービング
 
 ## モデルサービス
 
 
-   この機能はエンタープライズ版でのみサポートされています。
+:::note
+この機能はエンタープライズ版でのみサポートされています。
+:::
 
 Backend.AIは、モデル学習フェーズにおける開発環境の構築とリソース管理を支援するだけでなく、
 バージョン23.09以降、モデルサービス機能もサポートしています。この機能により、
@@ -24,11 +28,11 @@ Backend.AIは、モデル学習フェーズにおける開発環境の構築と�
 
 1. モデルサービング用にセッション内で実行中のサーバーポートをマッピングするため、
    セッション作成時に事前開放ポートを追加します。
-   （事前開放ポートの使用方法については、[事前開放ポートの設定 <set_preopen_ports>](#事前開放ポートの設定 <set_preopen_ports>)を参照してください。）
+   （事前開放ポートの使用方法については、[事前開放ポートの設定](#set-preopen-ports)を参照してください。）
 
 2. 事前開放ポートにマッピングされたサービスをパブリックアクセス可能にするため、
    「アプリを公開」にチェックを入れます。
-   （「アプリを公開」の詳細については、[アプリを公開 <open_app_to_public>](#アプリを公開 <open_app_to_public>)を参照してください。）
+   （「アプリを公開」の詳細については、[アプリを公開](#open-app-to-public)を参照してください。）
 
 ただし、バージョン23.03には以下のような制限があります：
 
@@ -54,43 +58,47 @@ Backend.AIは、モデル学習フェーズにおける開発環境の構築と�
 7. （必要に応じて）モデルサービスを変更します。
 8. （必要に応じて）モデルサービスを終了します。
 
+<a id="model-definition-guide"></a>
+
 #### モデル定義ファイルの作成
 
-   .. note::
-      24.03以降、モデル定義ファイル名を設定できます。モデル定義ファイルパスで
-      他の入力フィールドを入力しない場合、システムは`model-definition.yml`または
-      `model-definition.yaml`と見なします。
+:::note
+24.03以降、モデル定義ファイル名を設定できます。モデル定義ファイルパスで
+他の入力フィールドを入力しない場合、システムは`model-definition.yml`または
+`model-definition.yaml`と見なします。
+:::
 
 モデル定義ファイルには、推論セッションを自動的に開始、初期化、およびスケーリングするためにBackend.AIシステムで必要な構成情報が含まれています。これは推論サービスエンジンを含むコンテナイメージとは独立して、モデルタイプフォルダーに保存されます。これにより、特定の要件に基づいて異なるモデルをエンジンが提供できるようになり、モデルが変更されるたびに新しいコンテナイメージを構築してデプロイする必要がなくなります。ネットワークストレージからモデル定義とモデルデータをロードすることで、自動スケーリング中にデプロイメントプロセスを簡素化し、最適化できます。
 
 モデル定義ファイルは次の形式に従います：
 
 ```yaml
-   models:
-     - name: "simple-http-server"
-       model_path: "/models"
-       service:
-         start_command:
-           - python
-           - -m
-           - http.server
-           - --directory
-           - /home/work
-           - "8000"
-         port: 8000
-         health_check:
-           path: /
-           interval: 10.0
-           max_retries: 10
-           max_wait_time: 15.0
-           expected_status_code: 200
-           initial_delay: 60.0
+models:
+  - name: "simple-http-server"
+    model_path: "/models"
+    service:
+      start_command:
+        - python
+        - -m
+        - http.server
+        - --directory
+        - /home/work
+        - "8000"
+      port: 8000
+      health_check:
+        path: /
+        interval: 10.0
+        max_retries: 10
+        max_wait_time: 15.0
+        expected_status_code: 200
+        initial_delay: 60.0
 ```
 
 **モデル定義ファイルのキーと値の説明**
 
-   .. note::
-      「(Required)」表示のないフィールドはオプションです。
+:::note
+「(Required)」表示のないフィールドはオプションです。
+:::
 
 - `name` (Required): Defines the name of the model.
 - `model_path` (Required): Addresses the path of where model is defined.
@@ -102,7 +110,7 @@ Backend.AIは、モデル学習フェーズにおける開発環境の構築と�
      アクションは定義された順序で順次実行されます。
 
       - `action`: 実行するアクションのタイプ。利用可能なアクションタイプとそのパラメータについては
-        [事前開始アクション <prestart-actions>](#事前開始アクション <prestart-actions>)を参照してください。
+        [事前開始アクション](#prestart-actions)を参照してください。
       - `args`: アクション固有のパラメータ。各アクションタイプには異なる必須引数があります。
 
    - `start_command` (Required): Specify the command to be executed in model serving.
@@ -154,37 +162,39 @@ Wait up to max_wait_time (15s)
 │
 ┌──────────┴──────────┐
 ▼                     ▼
-Response             Timeout/Error
+Response              Timeout/Error
 │                     │
 ▼                     │
-Status ==                │
-expected?                │
+Status ==             │
+expected?             │
 │                     │
-┌┴┐                    │
-▼ ▼                    │
-Y N                    │
-│ │                    │
-│ └─────────┬──────────┘
-│           ▼
-│      Consecutive
-│      failures +1
-│           │
-▼           ▼
-HEALTHY     Failures > max_retries?
-(reset              │
-failures)     ┌─────┴─────┐
-▼           ▼
-Yes          No
-│           │
-▼           ▼
-UNHEALTHY      Keep current
-(removed       status
-from traffic
-internally)
+┌──┴──┐               │
+▼     ▼               │
+Y     N               │
+│     │               │
+│     └───────┬───────┘
+│             ▼
+│        Consecutive
+│        failures +1
+│             │
+▼             ▼
+HEALTHY       Failures > max_retries?
+(reset                │
+failures)       ┌─────┴─────┐
+                ▼           ▼
+               Yes          No
+                │           │
+                ▼           ▼
+            UNHEALTHY    Keep current
+            (removed     status
+            from traffic
+            internally)
 ```
 
-   The internal health status (used for traffic routing) may not be immediately
-   synchronized with the status displayed in the user interface.
+:::note
+The internal health status (used for traffic routing) may not be immediately
+synchronized with the status displayed in the user interface.
+:::
 
 **Time to UNHEALTHY**:
 
@@ -196,6 +206,8 @@ internally)
 
   Example with defaults: 10 × 11 = **110 seconds** (about 2 minutes)
 
+
+<a id="prestart-actions"></a>
 
 **Backend.AIモデルサービングでサポートされているサービスアクションの説明**
 
@@ -233,18 +245,20 @@ internally)
 モデル定義ファイル（`model-definition.yml`）をモデルタイプフォルダーにアップロードするには、
 バーチャルフォルダーを作成する必要があります。バーチャルフォルダーを作成する際は、
 デフォルトの `general` タイプではなく `model` タイプを選択してください。
-フォルダーの作成方法については、データページの[ストレージフォルダーの作成<create_storage_folder>](#ストレージフォルダーの作成<create_storage_folder>)セクションを参照してください。
+フォルダーの作成方法については、データページの[ストレージフォルダーの作成](#create-storage-folder)セクションを参照してください。
 
 ![](../images/model_type_folder_creation.png)
 
 フォルダーを作成した後、データページの「MODELS」タブを選択し、
 最近作成したモデルタイプフォルダーアイコンをクリックしてフォルダーエクスプローラーを開き、
 モデル定義ファイルをアップロードします。
-フォルダーエクスプローラーの使用方法については、[フォルダーの探索<explore_folder>](#フォルダーの探索<explore_folder>)セクションを参照してください。
+フォルダーエクスプローラーの使用方法については、[フォルダーの探索](#explore-folder)セクションを参照してください。
 
 ![](../images/model_type_folder_list.png)
 
 ![](../images/model_definition_file_upload.png)
+
+<a id="service-definition-file"></a>
 
 #### サービス定義ファイルの作成
 
@@ -290,13 +304,17 @@ MODEL_NAME = "example-model-name"
    - ランタイムに必要な環境変数を定義できます。例えば、`MODEL_NAME` はどのモデルをロードするかを指定するために一般的に使用されます。
 
 
-   各セクションヘッダーの `{runtime}` プレフィックスは、ランタイムバリアント名
-   （例：`vllm`、`nim`、`custom`）に対応します。システムは、サービスを作成する際に
-   選択されたランタイムバリアントとこのプレフィックスを照合します。
+:::note
+各セクションヘッダーの `{runtime}` プレフィックスは、ランタイムバリアント名
+（例：`vllm`、`nim`、`custom`）に対応します。システムは、サービスを作成する際に
+選択されたランタイムバリアントとこのプレフィックスを照合します。
+:::
 
-   「このモデルを実行」ボタンを使用してモデルストアからサービスを作成すると、
-   `service-definition.toml` の設定が自動的に適用されます。後でリソース割り当てを
-   調整する必要がある場合は、モデルサービングページを通じてサービスを変更できます。
+:::note
+「このモデルを実行」ボタンを使用してモデルストアからサービスを作成すると、
+`service-definition.toml` の設定が自動的に適用されます。後でリソース割り当てを
+調整する必要がある場合は、モデルサービングページを通じてサービスを変更できます。
+:::
 
 #### モデルサービスの作成/検証
 
@@ -376,8 +394,10 @@ MODEL_NAME = "example-model-name"
 ![](../images/model-validation-dialog.png)
 
 
-   結果が `Finished` であっても、実行が正常に完了したことを保証するものではありません。
-   代わりに、コンテナログを確認してください。
+:::note
+結果が `Finished` であっても、実行が正常に完了したことを保証するものではありません。
+代わりに、コンテナログを確認してください。
+:::
 
 
 **モデルサービス作成の失敗への対処**
@@ -396,7 +416,7 @@ MODEL_NAME = "example-model-name"
 
    ![](../images/serving-route-error.png)
 
-   -  解決策: [モデル定義ファイルの形式 <model_definition_guide>](#モデル定義ファイルの形式 <model_definition_guide>)を確認し、
+   -  解決策: [モデル定義ファイルの形式](#model-definition-guide)を確認し、
       キー値ペアが正しくない場合は、それらを修正して保存された場所のファイルを上書きしてください。
       その後、「エラーをクリアして再試行」ボタンをクリックして、ルート情報テーブルに
       スタックされたすべてのエラーを削除し、モデルサービスのルーティングが正しく設定されていることを確認してください。
@@ -444,6 +464,8 @@ MODEL_NAME = "example-model-name"
 
 ![](../images/auto_scaling_rules_modal.png)
 
+<a id="generating-tokens"></a>
+
 #### Generating Tokens
 
 Once the model service is successfully executed, the status will be set
@@ -469,12 +491,10 @@ item to copy the token, and add it as the value of the following key.
 
 ![](../images/generated_token_copy.png)
 
-============= ================
-Key           Value
-============= ================
-Content-Type  application/json
-Authorization BackendAI
-============= ================
+| Key           | Value            |
+|---------------|------------------|
+| Content-Type  | application/json |
+| Authorization | BackendAI        |
 
 #### Accessing the Model Service Endpoint for End Users
 
@@ -490,16 +510,20 @@ Here's the simple command using `curl` command whether to check sending any requ
 to model serving endpoint working properly or not.
 
 
-   $ export API_TOKEN="<token>"
-   $ curl -H "Content-Type: application/json" -X GET \
-   $ -H "Authorization: BackendAI $API_TOKEN" \
-   $ <model-service-endpoint>
+```bash
+$ export API_TOKEN="<token>"
+$ curl -H "Content-Type: application/json" -X GET \
+  -H "Authorization: BackendAI $API_TOKEN" \
+  <model-service-endpoint>
+```
 
 
-   By default, end users must be on a network that can access the
-   endpoint. If the service was created in a closed network, only end
-   users who have access within that closed network can access the
-   service.
+:::warning
+By default, end users must be on a network that can access the
+endpoint. If the service was created in a closed network, only end
+users who have access within that closed network can access the
+service.
+:::
 
 #### Using the Large Language Model
 
@@ -510,7 +534,7 @@ Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
 
 Then, You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
-For more information about the chat feature, please refer to the [Chat page <chat_page>](#Chat page <chat_page>)
+For more information about the chat feature, please refer to the [Chat page](#chat-page)
 
 ![](../images/LLM_chat.png)
 
@@ -524,7 +548,7 @@ To use the model, you will need the following information:
   generated from various services, not just Backend.AI. The format and generation process
   may vary depending on the service. Always refer to the specific service's guide for details.
   For instance, when using the service generated by Backend.AI, please refer to the
-  [Generating Tokens<generating-tokens>](#Generating Tokens<generating-tokens>) section for instructions on how to generate tokens.
+  [Generating Tokens](#generating-tokens) section for instructions on how to generate tokens.
 
 ![](../images/LLM_chat_custom_model.png)
 

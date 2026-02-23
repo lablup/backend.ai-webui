@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Typography } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -15,8 +19,8 @@ interface AppLaunchConfirmationModalProps extends BAIModalProps {
  * Confirmation modal for apps that require user acknowledgment before launching.
  * Used for nniboard and mlflow-ui apps that need to run before tunneling.
  *
- * This matches the legacy behavior of `_openAppLaunchConfirmationDialog` in
- * backend-ai-app-launcher.ts
+ * This matches the legacy behavior of `_openAppLaunchConfirmationDialog`
+ * from the former Lit-based app launcher component.
  */
 const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
   sessionFrgmt,

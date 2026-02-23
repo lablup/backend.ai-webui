@@ -8,10 +8,10 @@
 
 ここに記載されているすべての製品および会社名は、それぞれの所有者の商標である可能性があります。
 
-| Backend.AIは、Lablup Inc.の登録商標です。
-| Backend.AI™の著作権はLablup Inc.が所有しています。
+Backend.AIは、Lablup Inc.の登録商標です。
+Backend.AI™の著作権はLablup Inc.が所有しています。
 
-©2015-\ |year| Lablup Inc. 無断転載を禁じます。
+©2015-|year| Lablup Inc. 無断転載を禁じます。
 
-| ドキュメントバージョン: v\ |version|.\ |version_date|
-| Last Updated (Year/Month/Day): |date|
+ドキュメントバージョン: v|version|.|version_date|
+Last Updated (Year/Month/Day): |date|

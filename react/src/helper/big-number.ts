@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { generateDisplayValues, InputSizeUnit, SizeUnit } from '.';
 import { Big, type BigSource } from 'big.js';
 

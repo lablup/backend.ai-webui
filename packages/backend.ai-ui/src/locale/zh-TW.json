@@ -169,7 +169,7 @@
     "PurgeProject": "永久刪除專案",
     "Registry": "映像註冊表",
     "ResourcePolicy": "資源策略",
-    "ScalingGroups": "伸縮群組",
+    "ScalingGroups": "資源群組",
     "StorageNodes": "儲存節點",
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"

@@ -24,7 +24,7 @@
     "AreYouSureYouWantToActivateOne": "Sei sicuro di voler attivare {{name}}?",
     "AreYouSureYouWantToActivateSome": "Sei sicuro di voler attivare i manufatti {{count}}?",
     "FailedToActivateArtifacts": "Non è riuscito ad attivare artefatti.",
-    "SuccessfullyActivated": "Artefatti attivati ​​con successo."
+    "SuccessfullyActivated": "Artefatti attivati con successo."
   },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Seleziona gruppo di risorse"
@@ -68,7 +68,7 @@
     "Deactivate": "Disattivare",
     "DeactivateArtifacts": "Disattiva i manufatti",
     "FailedToDeactivateArtifacts": "Impossibile disattivare gli artefatti.",
-    "SuccessfullyDeactivated": "Artefatti disattivati ​​con successo."
+    "SuccessfullyDeactivated": "Artefatti disattivati con successo."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "Le versioni {{count}} sono escluse.",
@@ -169,7 +169,7 @@
     "PurgeProject": "Elimina definitivamente il progetto",
     "Registry": "Registro",
     "ResourcePolicy": "Politica delle risorse",
-    "ScalingGroups": "Gruppi di scalabilità",
+    "ScalingGroups": "Gruppi di risorse",
     "StorageNodes": "Nodi di archiviazione",
     "TotalResourceSlots": "Slot risorse totali",
     "Type": "Tipo"

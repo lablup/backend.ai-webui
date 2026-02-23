@@ -595,6 +595,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Tidak dapat mengotorisasi sesi Anda. Login ke portal terlebih dahulu.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Sesi komputasi tersiapkan",
     "CreatingComputeSession": "Membuat sesi komputasi...",
     "EmptyProject": "Proyek Kosong",
@@ -604,6 +606,7 @@
     "PleaseReload": "Harap muat ulang setelah beberapa saat.",
     "QueryingExistingComputeSession": "Mengkueri sesi komputasi yang ada ...",
     "SessionStatusIs": "Status sesi adalah",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Harap muat ulang setelah beberapa saat"
   },
   "environment": {
@@ -1011,6 +1014,8 @@
   "login": {
     "APIEndpointEmpty": "Titik Akhir API kosong. Harap tentukan titik akhir API untuk login.",
     "APIKey": "Kunci API",
+    "APIMode": "API",
+    "AdvancedSettings": "Lanjutan",
     "CancelLogin": "Batal Login",
     "ChangePassword": "Ganti kata sandi",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
@@ -1042,6 +1047,7 @@
     "PleaseWait": "Harap tunggu untuk login.",
     "SecretKey": "Kunci rahasia",
     "SendChangePasswordEmail": "Kirim email ubah kata sandi",
+    "SessionMode": "Sesi",
     "SignUp": "Daftar",
     "SignoutFinished": "Keluar selesai.",
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",

@@ -3,6 +3,9 @@
 The most visited pages in the Backend.AI WebUI would be the 'เซสชัน' and 'Data' pages.
 This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'เซสชัน' page.
 
+<a id="start-a-new-session"></a>
+<a id="create_session"></a>
+
 ## เริ่มเซสชันใหม่
 
 
@@ -15,6 +18,8 @@ After logging in with a ผู้ใช้ account, click 'เซสชัน' o
 Click the 'START' button to start a new compute session.
 
 ![](../images/launch_session_type.png)
+
+<a id="session-type"></a>
 
 ### Session Type
 
@@ -49,6 +54,8 @@ If needed, setting the name of the session (optional) is also available.
 
     ![](../images/session_type_batch.png)
 
+<a id="session-naming-rule"></a>
+
 - Session name: Users can specify the name of the compute session to be
   created. If set, this name appears in Session Info, so it is
   distinguishable among multiple compute sessions. If not specified, random
@@ -59,13 +66,15 @@ If ผู้ใช้s create a session with the `super admin` or `admin` accoun
 they can additionally assign a session owner. If you enable the toggle,
 a ผู้ใช้ email field will appear.
 
-   ![](../images/admin_launch_session_owner.png)
+![](../images/admin_launch_session_owner.png)
 
 Enter the email of the ผู้ใช้ you want to assign the session to,
 click the 'search' button, and the ผู้ใช้'s access key will be automatically registered.
 You can also select a project and กลุ่มทรัพยากร.
 
-   ![](../images/admin_launch_session_owner_project.png)
+![](../images/admin_launch_session_owner_project.png)
+
+<a id="environments-and-resource-allocation"></a>
 
 ### Environments & Resource allocation
 
@@ -140,10 +149,11 @@ refer to the following:
     Currently, this feature is only supported in single-node, single-container environments.
   * Cluster mode: Cluster mode allows ผู้ใช้s to create
     multiple compute sessions at once. For more information, refer to the
-    [Overview of Backend.AI cluster compute session<backendai-cluster-compute-session>](#Overview of Backend.AI cluster compute session<backendai-cluster-compute-session>).
+    [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
 
-  .. note::
-     The Agent Select feature may not be available depending on the server environment.
+:::note
+The Agent Select feature may not be available depending on the server environment.
+:::
 
 - High-Performance Computing Optimizations: Backend.AI provides configuring values
   related to HPC Optimizations.
@@ -157,6 +167,9 @@ refer to the following:
 
 ![](../images/session_hpc_optimization.png)
 
+<a id="data-and-storage"></a>
+<a id="session-mounts"></a>
+
 ### ข้อมูลและการจัดเก็บ
 
 
@@ -166,21 +179,23 @@ When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
 For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session<session-mounts>](#Mounting Folders to a Compute Session<session-mounts>).
+[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
 ผู้ใช้s can specify the data folders to mount in the compute session.
 Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
+please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
 New folder can be created by clicking the '+' button next to the search box.
 When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder<create_storage_folder>](#Create Storage Folder<create_storage_folder>) section.
+For further information, please refer [Create Storage Folder](#create-storage-folder) section.
 
 ![](../images/folder_create_modal.png)
+
+<a id="network"></a>
 
 ### Network
 
@@ -188,12 +203,12 @@ Click the 'Next' button below, or the 'Network' menu on the right to proceed to 
 On this page, Network configuration can be done such as Preopen Ports.
 
 - Set Preopen Ports: Provides an interface for ผู้ใช้s to set preopen ports in a
-  compute session. Refer to the [How to add preopen ports before session creation
-  <set_preopen_ports>](#How to add preopen ports before session creation
-  <set_preopen_ports>) for further information.
+  compute session. Refer to the [How to add preopen ports before session creation](#set-preopen-ports) for further information.
 
 
 ![](../images/launch_session_network.png)
+
+<a id="confirm-and-launch"></a>
 
 ### Confirm and Launch
 
@@ -249,14 +264,19 @@ Clicking a session name takes you to the 'Confirm and Launch' page, which is the
 Each item can be renamed or pinned for easier access.
 
 
-   Superผู้ดูแลระบบs can query all compute session information currently running (or
-   terminated) in the cluster, and ผู้ใช้s can only view the sessions they have
-   created.
+:::note
+Superผู้ดูแลระบบs can query all compute session information currently running (or
+terminated) in the cluster, and ผู้ใช้s can only view the sessions they have
+created.
+:::
 
+:::note
+Compute session list may not be displayed normally due to intermittent
+network connection problems, and etc. This can be solved by refreshing the
+browser.
+:::
 
-   Compute session list may not be displayed normally due to intermittent
-   network connection problems, and etc. This can be solved by refreshing the
-   browser.
+<a id="session-detail-panel"></a>
 
 ## Session Detail Panel
 
@@ -273,21 +293,27 @@ Backend.AI provides additional information for sessions in `PENDING`, `TERMINATE
 Click the 'Info' button to check the details when available.
 
 
+<a id="use_session"></a>
+
 ## ใช้ Jupyter Notebook
 
-Let’s look at how to use and manage an already running compute session.
+Let's look at how to use and manage an already running compute session.
 Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
 the app services available for that session.
 
 ![](../images/app_dialog.png)
 
 
-   มีตัวเลือกตรวจสอบสองตัวเลือกใต้ไอคอนแอป การเปิดแอปด้วยแต่ละรายการที่เลือกจะใช้คุณลักษณะต่อไปนี้ตามลำดับ:
+:::note
+มีตัวเลือกตรวจสอบสองตัวเลือกใต้ไอคอนแอป การเปิดแอปด้วยแต่ละรายการที่เลือกจะใช้คุณลักษณะต่อไปนี้ตามลำดับ:
 
-   * เปิดแอปให้กับสาธารณะ: เปิดแอปให้กับสาธารณะ โดยพื้นฐานแล้ว บริการเว็บเช่น Terminal และ Jupyter Notebook จะไม่สามารถเข้าถึงได้โดยผู้ใช้รายอื่น แม้ว่าผู้ใช้จะทราบ URL ของบริการก็ตาม เนื่องจากถือว่าไม่มีการตรวจสอบสิทธิ์ อย่างไรก็ตาม การตรวจสอบตัวเลือกนี้ทำให้ใครก็ตามที่ทราบ URL ของบริการ (และหมายเลขพอร์ต) สามารถเข้าถึงและใช้งานได้ แน่นอนว่าผู้ใช้ต้องมีเส้นทางเครือข่ายเพื่อเข้าถึงบริการนั้น
-   * ลองพอร์ตที่ต้องการ: หากไม่เลือกตัวเลือกนี้ หมายเลขพอร์ตสำหรับบริการเว็บจะถูกกำหนดแบบสุ่มจากกลุ่มพอร์ตที่เตรียมไว้ล่วงหน้าโดย Backend.AI หากคุณเลือกจุดนี้และป้อนหมายเลขพอร์ตเฉพาะ หมายเลขพอร์ตที่ป้อนจะถูกลองใช้ก่อน อย่างไรก็ตาม ไม่มีการรับประกันว่าพอร์ตที่ต้องการจะถูกกำหนดเสมอไป เนื่องจากพอร์ตอาจไม่มีอยู่ในกลุ่มพอร์ตเลยหรือบริการอื่นอาจใช้พอร์ตนั้นอยู่แล้ว ในกรณีนี้ หมายเลขพอร์ตจะถูกกำหนดแบบสุ่ม
+<a id="open-app-to-public"></a>
 
-   ขึ้นอยู่กับการตั้งค่าของระบบ ตัวเลือกเหล่านี้อาจไม่แสดงออกมา
+* เปิดแอปให้กับสาธารณะ: เปิดแอปให้กับสาธารณะ โดยพื้นฐานแล้ว บริการเว็บเช่น Terminal และ Jupyter Notebook จะไม่สามารถเข้าถึงได้โดยผู้ใช้รายอื่น แม้ว่าผู้ใช้จะทราบ URL ของบริการก็ตาม เนื่องจากถือว่าไม่มีการตรวจสอบสิทธิ์ อย่างไรก็ตาม การตรวจสอบตัวเลือกนี้ทำให้ใครก็ตามที่ทราบ URL ของบริการ (และหมายเลขพอร์ต) สามารถเข้าถึงและใช้งานได้ แน่นอนว่าผู้ใช้ต้องมีเส้นทางเครือข่ายเพื่อเข้าถึงบริการนั้น
+* ลองพอร์ตที่ต้องการ: หากไม่เลือกตัวเลือกนี้ หมายเลขพอร์ตสำหรับบริการเว็บจะถูกกำหนดแบบสุ่มจากกลุ่มพอร์ตที่เตรียมไว้ล่วงหน้าโดย Backend.AI หากคุณเลือกจุดนี้และป้อนหมายเลขพอร์ตเฉพาะ หมายเลขพอร์ตที่ป้อนจะถูกลองใช้ก่อน อย่างไรก็ตาม ไม่มีการรับประกันว่าพอร์ตที่ต้องการจะถูกกำหนดเสมอไป เนื่องจากพอร์ตอาจไม่มีอยู่ในกลุ่มพอร์ตเลยหรือบริการอื่นอาจใช้พอร์ตนั้นอยู่แล้ว ในกรณีนี้ หมายเลขพอร์ตจะถูกกำหนดแบบสุ่ม
+
+ขึ้นอยู่กับการตั้งค่าของระบบ ตัวเลือกเหล่านี้อาจไม่แสดงออกมา
+:::
 
 ให้คลิกที่ Jupyter Notebook
 
@@ -348,14 +374,18 @@ Control panel of the running compute session.
 
 ![](../images/session_log.png)
 
+<a id="rename-running-session"></a>
+
 ## เปลี่ยนชื่อเซสชันที่กำลังรัน
 
 Name of the active session can be changed. Click the 'Edit' button in the session detail
 panel to change the session name.
-New session name should also follow the [the authoring rule<session-naming-rule>](#the authoring rule<session-naming-rule>).
+New session name should also follow the [the authoring rule](#session-naming-rule).
 
 ![](../images/session_renaming.png)
 
+
+<a id="delete_session"></a>
 
 ## ลบเซสชันการคอมพิวเตอร์
 
@@ -366,6 +396,8 @@ move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
 
 ![](../images/session_destroy_dialog.png)
+
+<a id="idleness-checks"></a>
 
 ## Idleness checks
 
@@ -391,8 +423,9 @@ found by clicking the information (i) button in the idle checks section.
     termination. Resources with empty values are excluded from the garbage
     collection criteria.
 
-   .. note::
-      หลังจากช่วงเวลาให้อภัย เซสชันสามารถถูกยกเลิกได้ทุกเมื่อหากการใช้งานยังคงต่ำ การใช้ทรัพยากรอย่างสั้นๆ จะไม่ขยายช่วงเวลาให้อภัย จะพิจารณาเฉพาะการใช้งานเฉลี่ยในช่วงเวลาไม่ใช้งานล่าสุดเท่านั้น
+:::note
+หลังจากช่วงเวลาให้อภัย เซสชันสามารถถูกยกเลิกได้ทุกเมื่อหากการใช้งานยังคงต่ำ การใช้ทรัพยากรอย่างสั้นๆ จะไม่ขยายช่วงเวลาให้อภัย จะพิจารณาเฉพาะการใช้งานเฉลี่ยในช่วงเวลาไม่ใช้งานล่าสุดเท่านั้น
+:::
 
 Hovering the mouse over the Utilization Checker will display a tooltip with the
 utilization and threshold values. The text color changes to yellow and then red
@@ -400,8 +433,11 @@ as the current utilization approaches the threshold (indicating low resource
 utilization).
 
 
-   ขึ้นอยู่กับการตั้งค่าของสภาพแวดล้อม ตัวตรวจสอบที่ไม่ทำงานและประเภทของทรัพยากรในการตรวจสอบการใช้งานอาจแตกต่างกันได้
+:::note
+ขึ้นอยู่กับการตั้งค่าของสภาพแวดล้อม ตัวตรวจสอบที่ไม่ทำงานและประเภทของทรัพยากรในการตรวจสอบการใช้งานอาจแตกต่างกันได้
+:::
 
+<a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
 ## วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน
 
@@ -416,6 +452,8 @@ Also, you can remove the variable by clicking '-' button of the row that you wan
 
 You can write down variable name and value in the same line of the input fields.
 
+
+<a id="set-preopen-ports"></a>
 
 ## วิธีการเพิ่มพอร์ตที่เปิดก่อนที่จะสร้างเซสชัน
 
@@ -434,8 +472,11 @@ Users can check the configured preopen ports in the session app launcher.
 ![](../images/session_app_launcher.png)
 
 
-   พอร์ตที่เปิดล่วงหน้าคือ **พอร์ตภายในภาชนะ** ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน
+:::note
+พอร์ตที่เปิดล่วงหน้าคือ **พอร์ตภายในภาชนะ** ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน
+:::
 
+<a id="save-session-commit"></a>
 
 ## บันทึกการทำธุรกรรมการเซสชัน
 
@@ -454,14 +495,17 @@ mounted to the container for image commits are considered external resources and
 the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.
 
 
-   Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
-   To prevent unexpected error, ผู้ใช้s may not be able to terminate the session during committing process.
-   To stop the ongoing process, check the session, and force-terminate it.
+:::note
+Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
+To prevent unexpected error, ผู้ใช้s may not be able to terminate the session during committing process.
+To stop the ongoing process, check the session, and force-terminate it.
+:::
 
-
-   The number of times to "Convert Session to Image" may be limited by the ผู้ใช้ resource policy. In this case,
-   [remove the existing customized image<delete-customized-image>](#remove the existing customized image<delete-customized-image>) and try again. If this does not resolves
-   the problem, please contact the ผู้ดูแลระบบistrator.
+:::note
+The number of times to "Convert Session to Image" may be limited by the ผู้ใช้ resource policy. In this case,
+[remove the existing customized image](#delete-customized-image) and try again. If this does not resolves
+the problem, please contact the ผู้ดูแลระบบistrator.
+:::
 
 
 ## การใช้ภาพที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่
@@ -515,15 +559,18 @@ If you remember `:set -g mouse off` or `:set -g mouse on` after `Ctrl-B`,
 you can use the web terminal more conveniently.
 
 
-   `Ctrl-B` is tmux's default control mode key. If ผู้ใช้s set another control key
-   by modifying `.tmux.conf` in ผู้ใช้ home directory, they should press the set
-   key combination instead of `Ctrl-B`.
+:::note
+`Ctrl-B` is tmux's default control mode key. If ผู้ใช้s set another control key
+by modifying `.tmux.conf` in ผู้ใช้ home directory, they should press the set
+key combination instead of `Ctrl-B`.
+:::
 
+:::note
+ในสภาพแวดล้อม หน้าต่าง ให้ดูที่ทางลัดต่อไปนี้
 
-   ในสภาพแวดล้อม หน้าต่าง ให้ดูที่ทางลัดต่อไปนี้
-
-   * Copy: Hold down `Shift`, right-click and drag
-   * Paste: Press `Ctrl-Shift-V`
+* Copy: Hold down `Shift`, right-click and drag
+* Paste: Press `Ctrl-Shift-V`
+:::
 
 ### ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์
 
@@ -533,6 +580,8 @@ using the keyboard. Again, click `Ctrl-B` first, and then press the `Page
 Up` and/or `Page Down` keys. To exit search mode, just press the `q`
 key. With this method, ผู้ใช้s can check the contents of the terminal history even
 when the mouse support is turned off.
+
+<a id="tmux_guide"></a>
 
 ### สร้างเชลล์หลายตัว
 

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { EnvVarConfig } from '../components/EnvVarFormList';
 import { useTranslation } from 'react-i18next';
 

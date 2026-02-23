@@ -10,10 +10,14 @@ WebUIのウェブベースの形式では、ユーザーは最新バージョン
 - 要件: ウェブブラウザを実行する任意のマシン (2コア、4 GiBメモリ)
 
 
-   Microsoft Internet Explorer は廃止され、ウェブ標準に従わず、最新のブラウザ機能をサポートしていないため、サポートしていません。
+:::note
+Microsoft Internet Explorer は廃止され、ウェブ標準に従わず、最新のブラウザ機能をサポートしていないため、サポートしていません。
+:::
 
 The stand-alone WebUI app can be downloaded from following link:
 https://github.com/lablup/backend.ai-webui/releases
 
 
-   オペレーティングシステムのセキュリティ設定によっては、インストーラーが署名されていない実行可能ファイルとして認識される場合があります。権限の確認が必要になることがあります。
+:::note
+オペレーティングシステムのセキュリティ設定によっては、インストーラーが署名されていない実行可能ファイルとして認識される場合があります。権限の確認が必要になることがあります。
+:::

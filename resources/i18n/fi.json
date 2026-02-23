@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Istuntoa ei pystytä valtuuttamaan. Kirjaudu ensin portaaliin.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Laskenta-istunto valmis",
     "CreatingComputeSession": "Laskenta-istunnon luominen ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Lataa uudelleen jonkin ajan kuluttua.",
     "QueryingExistingComputeSession": "Olemassa olevan laskenta-istunnon kysely ...",
     "SessionStatusIs": "Istunnon tila on",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Istunto on edelleen valmistelussa. Lataa uudelleen hetken kuluttua"
   },
   "environment": {
@@ -1010,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "API-päätepiste on tyhjä. Määritä API-päätepiste kirjautumista varten.",
     "APIKey": "API-avain",
+    "APIMode": "API",
+    "AdvancedSettings": "Lisäasetukset",
     "CancelLogin": "Peruuta kirjautuminen",
     "ChangePassword": "Vaihda salasana",
     "ClickToUseIAM": "Klikkaa käyttääksesi IAM:ää",
@@ -1041,6 +1046,7 @@
     "PleaseWait": "Odota kirjautumista.",
     "SecretKey": "Salainen avain",
     "SendChangePasswordEmail": "Lähetä sähköpostiviesti salasanan vaihtamisesta",
+    "SessionMode": "Istunto",
     "SignUp": "Rekisteröidy",
     "SignoutFinished": "Kirjautuminen päättyi.",
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",

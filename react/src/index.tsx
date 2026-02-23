@@ -1,6 +1,14 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+// Initialize global stores before any component renders.
+// This import has side effects: it instantiates the four singleton stores
+// and assigns them to globalThis for backward compatibility with Lit code.
 import App from './App';
 import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
 import SourceCodeView from './components/SourceCodeView';
+import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent, {
   ReactWebComponentProps,
@@ -43,7 +51,6 @@ const ResetPasswordRequired = React.lazy(
 const CopyableCodeText = React.lazy(
   () => import('./components/CopyableCodeText'),
 );
-const SignoutModal = React.lazy(() => import('./components/SignoutModal'));
 
 const TOTPActivateModalWithToken = React.lazy(
   () => import('./components/TOTPActivateModalWithToken'),
@@ -149,22 +156,6 @@ const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
   }>();
   return <SourceCodeView language={language}>{children}</SourceCodeView>;
 };
-
-customElements.define(
-  'backend-ai-react-signout-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SignoutModal
-          open={props.value === 'true'}
-          onRequestClose={() => {
-            props.dispatchEvent('close', null);
-          }}
-        />
-      </DefaultProviders>
-    );
-  }),
-);
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,

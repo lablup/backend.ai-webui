@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import {
   Attachments,
@@ -52,8 +56,7 @@ export type AttachmentChangeInfo = Parameters<
 >[0];
 
 interface ChatSenderProps
-  extends Omit<SenderProps, 'onChange'>,
-    ChatAttachmentsProps {
+  extends Omit<SenderProps, 'onChange'>, ChatAttachmentsProps {
   loading?: boolean;
   autoFocus?: boolean;
   items?: Attachment[];

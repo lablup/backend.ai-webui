@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Не удалось авторизовать сеанс. Сначала войдите на портал.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Вычислительная сессия подготовлена",
     "CreatingComputeSession": "Создание вычислительного сеанса ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Пожалуйста, перезагрузите через некоторое время.",
     "QueryingExistingComputeSession": "Запрос существующего сеанса вычислений ...",
     "SessionStatusIs": "Статус сеанса",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время"
   },
   "environment": {
@@ -1009,6 +1012,8 @@
   "login": {
     "APIEndpointEmpty": "Конечная точка API пуста. Укажите конечную точку API для входа.",
     "APIKey": "Ключ API",
+    "APIMode": "API",
+    "AdvancedSettings": "Дополнительно",
     "CancelLogin": "Отменить Вход",
     "ChangePassword": "Измени пароль",
     "ClickToUseIAM": "Нажмите, чтобы использовать IAM",
@@ -1040,6 +1045,7 @@
     "PleaseWait": "Подождите, пока вы войдете.",
     "SecretKey": "Секретный ключ",
     "SendChangePasswordEmail": "Отправить электронное письмо для смены пароля",
+    "SessionMode": "Сессия",
     "SignUp": "Зарегистрироваться",
     "SignoutFinished": "Выход завершен.",
     "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
