@@ -185,7 +185,15 @@
         "Temperature": "Rastgeleliği kontrol eder; düşük daha odaklanmış, yüksek daha yaratıcıdır",
         "Title": "Parametreler",
         "TopK": "En olası K belirteçten örnekler",
-        "TopP": "Kümülatif olasılığı P içinde olan belirteçlerden örnekler"
+        "TopP": "Kümülatif olasılığı P içinde olan belirteçlerden örnekler",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

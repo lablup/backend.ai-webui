@@ -15,6 +15,7 @@ import {
   ChatModel,
   getLatestUserMessage,
   ChatMessage,
+  mapAgentParamsToChatParams,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
 import { createOpenAI } from '@ai-sdk/openai';
@@ -88,6 +89,7 @@ function useModels(
   provider: ChatProviderData,
   fetchKey: string,
   baseURL?: string,
+  effectiveApiKey?: string,
 ) {
   const { t } = useTranslation();
   const getModelsErrorMessage = (status?: number) => {
@@ -109,7 +111,7 @@ function useModels(
     data: Array<ChatModel>;
     error?: number;
   }>({
-    queryKey: ['models', fetchKey, baseURL, provider.apiKey],
+    queryKey: ['models', fetchKey, baseURL, effectiveApiKey ?? provider.apiKey],
     queryFn: async () => {
       try {
         if (!baseURL) {
@@ -117,7 +119,7 @@ function useModels(
         }
 
         const url = createModelsURL(baseURL);
-        const authToken = provider.apiKey;
+        const authToken = effectiveApiKey ?? provider.apiKey;
         const response = await fetch(url, {
           headers: {
             Authorization: authToken ? `Bearer ${authToken}` : '',
@@ -237,14 +239,22 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
 
-  const baseURL = createBaseURL(logger, chat.provider.basePath, endpoint?.url);
+  const { agents } = useAIAgent();
+  const agent = agents.find((a) => a.id === chat.provider.agentId);
+  const effectiveApiKey = agent?.endpoint_token || chat.provider.apiKey;
+  const agentEndpointUrl = agent?.endpoint_url;
+
+  const baseURL = createBaseURL(
+    logger,
+    chat.provider.basePath,
+    agentEndpointUrl || endpoint?.url,
+  );
   const { models, modelId, modelsError } = useModels(
     chat.provider,
     fetchKey,
     baseURL,
+    effectiveApiKey,
   );
-  const { agents } = useAIAgent();
-  const agent = agents.find((a) => a.id === chat.provider.agentId);
 
   const [input, setInput] = useState('');
 
@@ -256,23 +266,21 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     },
     // Because there is an issue(https://github.com/vercel/ai/issues/8956) with useChat that does not run a new transport without an id change,
     // we have to change the id and use fetch by utilizing useEventNotStable.
-    id: `chat-${baseURL}-${modelId}-${chat.provider.apiKey}`,
+    id: `chat-${baseURL}-${modelId}-${effectiveApiKey}`,
     transport: new DefaultChatTransport({
       api: baseURL,
       body: {
         modelId: modelId,
       },
       headers: {
-        Authorization: chat.provider.apiKey
-          ? `Bearer ${chat.provider.apiKey}`
-          : '',
+        Authorization: effectiveApiKey ? `Bearer ${effectiveApiKey}` : '',
       },
       fetch: useEventNotStable(async (input, init) => {
         // For custom models or client-side fetching, handle directly
-        if (fetchOnClient || modelId === 'custom') {
+        if (fetchOnClient || modelId === 'custom' || agentEndpointUrl) {
           const provider = createOpenAI({
             baseURL: baseURL,
-            apiKey: chat.provider.apiKey || 'dummy',
+            apiKey: effectiveApiKey || 'dummy',
           });
 
           try {
@@ -360,6 +368,23 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     }
   }, [modelsError, fetchKey, appMessage]);
 
+  // Apply agent params to chat parameters on initial load (e.g., navigating from agent page)
+  const hasAppliedInitialAgentParams = useRef(false);
+  useEffect(() => {
+    if (
+      agent?.params &&
+      !hasAppliedInitialAgentParams.current &&
+      !chat.usingParameters
+    ) {
+      hasAppliedInitialAgentParams.current = true;
+      onUpdateChat?.({
+        usingParameters: true,
+        parameters: mapAgentParamsToChatParams(agent.params),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agent?.id]);
+
   useEffect(() => {
     if (chat.messages.length > 0) {
       setMessages(chat.messages);
@@ -415,8 +440,16 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             onUpdateChat?.({
               provider: {
                 agentId: agent.id,
-                endpointId: agent.endpoint_id,
+                endpointId: agent.endpoint_url ? '' : agent.endpoint_id,
+                apiKey: agent.endpoint_token || undefined,
+                modelId: agent.config?.default_model || undefined,
               },
+              ...(agent.params
+                ? {
+                    usingParameters: true,
+                    parameters: mapAgentParamsToChatParams(agent.params),
+                  }
+                : {}),
             });
           }}
           // endpoint
@@ -461,11 +494,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {baseURL && endpoint && _.isEmpty(models) && (
+      {baseURL && (endpoint || agentEndpointUrl) && _.isEmpty(models) && (
         <CustomModelForm
-          endpointUrl={endpoint?.url ?? ''}
+          endpointUrl={agentEndpointUrl || endpoint?.url || ''}
           basePath={chat.provider.basePath}
-          token={chat.provider.apiKey}
+          token={effectiveApiKey}
           endpointId={endpoint?.endpoint_id}
           loading={isPendingUpdate}
           onSubmit={(data) => {

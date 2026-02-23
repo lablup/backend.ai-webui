@@ -160,6 +160,7 @@ guides-for-ai-temp
 CLAUDE.local.md
 
 .claude/settings.local.json
+.claude/worktrees
 packages/backend.ai-webui-docs/.claude/settings.local.json
 .serena
 
@@ -176,3 +177,5 @@ scripts/temp-releases/
 
 # ignore documentation agent working files
 packages/backend.ai-webui-docs/.agent-output/
+
+

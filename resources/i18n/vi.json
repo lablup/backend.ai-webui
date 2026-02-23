@@ -185,7 +185,15 @@
         "Temperature": "Kiểm soát tính ngẫu nhiên; giá trị thấp hơn mang lại sự tập trung cao hơn, giá trị cao hơn mang lại sự sáng tạo hơn.",
         "Title": "Tham số",
         "TopK": "Mẫu từ K token có khả năng cao nhất",
-        "TopP": "Mẫu từ các token có xác suất tích lũy nằm trong khoảng P"
+        "TopP": "Mẫu từ các token có xác suất tích lũy nằm trong khoảng P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

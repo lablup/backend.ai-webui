@@ -185,7 +185,15 @@
         "Temperature": "Controla a aleatoriedade; mais baixo é mais concentrado, mais alto é mais criativo",
         "Title": "Parâmetros",
         "TopK": "Amostras dos K tokens mais prováveis",
-        "TopP": "Amostras de tokens cuja probabilidade acumulada está dentro de P"
+        "TopP": "Amostras de tokens cuja probabilidade acumulada está dentro de P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

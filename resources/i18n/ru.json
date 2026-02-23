@@ -185,7 +185,15 @@
         "Temperature": "Контролирует случайность; низкий уровень - более сосредоточенный, высокий - более творческий",
         "Title": "Параметры",
         "TopK": "Выборки из K наиболее вероятных токенов",
-        "TopP": "Выборки из лексем, чья кумулятивная вероятность находится в пределах P"
+        "TopP": "Выборки из лексем, чья кумулятивная вероятность находится в пределах P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

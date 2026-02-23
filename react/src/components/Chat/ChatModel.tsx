@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AIAgent } from '../../hooks/useAIAgent';
+import type { AIAgent, AIAgentParams } from '../../hooks/useAIAgent';
 import { APICallError } from 'ai';
 import type { UIMessage } from 'ai';
 
@@ -73,6 +73,27 @@ export const DEFAULT_CHAT_PARAMETERS = {
   frequencyPenalty: 1,
   presencePenalty: 1,
 };
+
+export function mapAgentParamsToChatParams(
+  agentParams: AIAgentParams,
+): ChatParameters {
+  return {
+    ...DEFAULT_CHAT_PARAMETERS,
+    ...(agentParams.temperature !== undefined && {
+      temperature: agentParams.temperature,
+    }),
+    ...(agentParams.max_tokens !== undefined && {
+      maxOutputTokens: agentParams.max_tokens,
+    }),
+    ...(agentParams.top_p !== undefined && { topP: agentParams.top_p }),
+    ...(agentParams.frequency_penalty !== undefined && {
+      frequencyPenalty: agentParams.frequency_penalty,
+    }),
+    ...(agentParams.presence_penalty !== undefined && {
+      presencePenalty: agentParams.presence_penalty,
+    }),
+  };
+}
 
 export function getLatestUserMessage(messages: Array<ChatMessage>) {
   const userMessages = messages.filter((message) => message.role === 'user');

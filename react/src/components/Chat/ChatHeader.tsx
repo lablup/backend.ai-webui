@@ -206,17 +206,19 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
-        <EndpointSelect
-          fetchKey={fetchKey}
-          loading={isPendingEndpointTransition}
-          onChange={(id) => {
-            startEndpointTransition(() => {
-              onChangeEndpoint?.(id);
-            });
-          }}
-          value={endpoint?.endpoint_id}
-          popupMatchSelectWidth={false}
-        />
+        {!agent?.endpoint_url && (
+          <EndpointSelect
+            fetchKey={fetchKey}
+            loading={isPendingEndpointTransition}
+            onChange={(id) => {
+              startEndpointTransition(() => {
+                onChangeEndpoint?.(id);
+              });
+            }}
+            value={endpoint?.endpoint_id}
+            popupMatchSelectWidth={false}
+          />
+        )}
         {!isEmpty(models) && (
           <ModelSelect
             models={models}

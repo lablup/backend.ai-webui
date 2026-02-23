@@ -185,7 +185,15 @@
         "Temperature": "Kontroluje losowość; niższy jest bardziej skoncentrowany, wyższy bardziej kreatywny.",
         "Title": "Parametry",
         "TopK": "Próbki z K najbardziej prawdopodobnych tokenów",
-        "TopP": "Próbki z tokenów, których łączne prawdopodobieństwo mieści się w zakresie P"
+        "TopP": "Próbki z tokenów, których łączne prawdopodobieństwo mieści się w zakresie P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },
