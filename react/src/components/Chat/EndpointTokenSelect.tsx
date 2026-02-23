@@ -35,10 +35,11 @@ interface EndpointTokenSelectProps extends Omit<SelectProps, 'options'> {
   endpointId?: string | null;
 }
 
-const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
-  endpointId,
-  ...props
-}) => {
+const EndpointTokenSelectWithQuery: React.FC<
+  EndpointTokenSelectProps & {
+    endpointId: string;
+  }
+> = ({ endpointId, ...props }) => {
   const { t } = useTranslation();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
@@ -62,8 +63,8 @@ const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
       }
     `,
     {
-      endpointId: endpointId || '',
-      isEmptyEndpointId: !endpointId,
+      endpointId: endpointId,
+      isEmptyEndpointId: false,
     },
   );
 
@@ -89,6 +90,26 @@ const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
       {...props}
     />
   );
+};
+
+const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
+  endpointId,
+  ...props
+}) => {
+  const [controllableValue, setControllableValue] =
+    useControllableValue<string>(props);
+
+  if (!endpointId) {
+    return (
+      <Input
+        value={controllableValue}
+        onChange={(e) => setControllableValue(e.target.value)}
+        style={props.style}
+      />
+    );
+  }
+
+  return <EndpointTokenSelectWithQuery endpointId={endpointId} {...props} />;
 };
 
 export default EndpointTokenSelect;

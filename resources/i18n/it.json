@@ -184,7 +184,15 @@
         "Temperature": "Controlla la casualità; più basso è più concentrato, più alto è più creativo",
         "Title": "Parametri",
         "TopK": "Esempi dei primi K token più probabili",
-        "TopP": "Campioni di token la cui probabilità cumulativa è entro P"
+        "TopP": "Campioni di token la cui probabilità cumulativa è entro P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

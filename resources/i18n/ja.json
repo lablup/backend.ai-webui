@@ -184,7 +184,15 @@
         "Temperature": "ランダム性をコントロールし、低ければより集中し、高ければより創造的になる。",
         "Title": "パラメータ",
         "TopK": "最も可能性の高い上位K個のトークンからのサンプル",
-        "TopP": "累積確率がPの範囲内にあるトークンからのサンプル"
+        "TopP": "累積確率がPの範囲内にあるトークンからのサンプル",
+        "label": {
+          "FrequencyPenalty": "頻度ペナルティ",
+          "MaxTokens": "最大トークン数",
+          "PresencePenalty": "存在ペナルティ",
+          "Temperature": "温度",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

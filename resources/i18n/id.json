@@ -184,7 +184,15 @@
         "Temperature": "Mengontrol keacakan; lebih rendah lebih fokus, lebih tinggi lebih kreatif",
         "Title": "Parameter",
         "TopK": "Sampel dari K teratas kemungkinan besar token",
-        "TopP": "Sampel dari token yang probabilitas kumulatifnya berada di dalam P"
+        "TopP": "Sampel dari token yang probabilitas kumulatifnya berada di dalam P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

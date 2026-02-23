@@ -185,7 +185,15 @@
         "Temperature": "Contrôle le caractère aléatoire ; plus la valeur est basse, plus la concentration est importante, plus la valeur est élevée, plus la créativité est grande.",
         "Title": "Paramètres",
         "TopK": "Échantillons des K jetons les plus probables",
-        "TopP": "Échantillons de tokens dont la probabilité cumulée est inférieure à P"
+        "TopP": "Échantillons de tokens dont la probabilité cumulée est inférieure à P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

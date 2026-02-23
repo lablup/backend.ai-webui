@@ -185,7 +185,15 @@
         "Temperature": "Säätelee satunnaisuutta; alempi on keskittyneempi, korkeampi on luovempi.",
         "Title": "Parametrit",
         "TopK": "Näytteet K todennäköisimmän merkin joukosta.",
-        "TopP": "Näytteet merkinnöistä, joiden kumulatiivinen todennäköisyys on P:n sisällä."
+        "TopP": "Näytteet merkinnöistä, joiden kumulatiivinen todennäköisyys on P:n sisällä.",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

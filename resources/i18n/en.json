@@ -189,7 +189,15 @@
         "Temperature": "Controls randomness; lower is more focused, higher is more creative",
         "Title": "Parameters",
         "TopK": "Samples from the top K most likely tokens",
-        "TopP": "Samples from tokens whose cumulative probability is within P"
+        "TopP": "Samples from tokens whose cumulative probability is within P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

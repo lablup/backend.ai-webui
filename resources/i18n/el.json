@@ -185,7 +185,15 @@
         "Temperature": "Ελέγχει την τυχαιότητα- το χαμηλότερο είναι πιο εστιασμένο, το υψηλότερο είναι πιο δημιουργικό",
         "Title": "Παράμετροι",
         "TopK": "Δείγματα από τα K πιο πιθανά tokens",
-        "TopP": "Δείγματα από μάρκες των οποίων η αθροιστική πιθανότητα είναι εντός P"
+        "TopP": "Δείγματα από μάρκες των οποίων η αθροιστική πιθανότητα είναι εντός P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

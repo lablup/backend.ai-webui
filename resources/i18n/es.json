@@ -185,7 +185,15 @@
         "Temperature": "Controla la aleatoriedad; más bajo es más centrado, más alto es más creativo",
         "Title": "Parámetros",
         "TopK": "Muestras de las K fichas más probables",
-        "TopP": "Muestras de fichas cuya probabilidad acumulada está dentro de P"
+        "TopP": "Muestras de fichas cuya probabilidad acumulada está dentro de P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

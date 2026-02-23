@@ -188,7 +188,15 @@
         "Temperature": "출력의 무작위성을 조절합니다. 낮을수록 집중되고, 높을수록 창의적입니다",
         "Title": "파라미터",
         "TopK": "확률이 높은 상위 K개의 단어 중에서 선택합니다.",
-        "TopP": "누적 확률이 P 이하인 단어들 중에서 선택합니다"
+        "TopP": "누적 확률이 P 이하인 단어들 중에서 선택합니다",
+        "label": {
+          "FrequencyPenalty": "빈도 페널티",
+          "MaxTokens": "최대 토큰",
+          "PresencePenalty": "존재 페널티",
+          "Temperature": "온도",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

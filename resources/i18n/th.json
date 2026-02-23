@@ -185,7 +185,15 @@
         "Temperature": "ควบคุมการสุ่ม; \nที่ต่ำกว่าเน้นมากขึ้นความคิดสร้างสรรค์ที่สูงขึ้น",
         "Title": "พารามิเตอร์",
         "TopK": "ตัวอย่างจากด้านบน k ที่เป็นไปได้มากที่สุด",
-        "TopP": "ตัวอย่างจากโทเค็นที่มีความน่าจะเป็นสะสมอยู่ภายใน P"
+        "TopP": "ตัวอย่างจากโทเค็นที่มีความน่าจะเป็นสะสมอยู่ภายใน P",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

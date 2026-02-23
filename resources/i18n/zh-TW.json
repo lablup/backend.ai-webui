@@ -185,7 +185,15 @@
         "Temperature": "控制随机性；越低越专注，越高越有创造力",
         "Title": "参数",
         "TopK": "从 K 个最有可能的代币中提取样本",
-        "TopP": "从累计概率在 P"
+        "TopP": "从累计概率在 P",
+        "label": {
+          "FrequencyPenalty": "頻率懲罰",
+          "MaxTokens": "最大令牌數",
+          "PresencePenalty": "存在懲罰",
+          "Temperature": "溫度",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },

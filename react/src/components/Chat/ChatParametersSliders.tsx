@@ -29,7 +29,7 @@ interface ChatParameterSliderFormItemProps extends ChatParameterSliderData {
   onChange?: ChatParameterChangeEventHandler;
 }
 
-const ChatParameterSliderFormItem = ({
+export const ChatParameterSliderFormItem = ({
   id,
   label,
   max,
@@ -42,7 +42,7 @@ const ChatParameterSliderFormItem = ({
   return (
     <Form.Item
       label={
-        <BAIFlex justify="between" style={{ width: '240px' }}>
+        <BAIFlex justify="between">
           <BAIFlex gap={'xxs'}>
             <Typography.Text
               style={{
@@ -70,44 +70,44 @@ const ChatParameterSliderFormItem = ({
   );
 };
 
-const chatParameters: Record<string, ChatParameterSliderData> = {
+export const chatParameters: Record<string, ChatParameterSliderData> = {
   maxOutputTokens: {
-    label: 'Max Tokens',
+    label: t('chatui.chat.parameter.label.MaxTokens'),
     min: 50,
     max: 16384,
     step: 1,
     description: t('chatui.chat.parameter.MaxTokens'),
   },
   temperature: {
-    label: 'Temperature',
+    label: t('chatui.chat.parameter.label.Temperature'),
     min: 0.0,
     max: 1,
     step: 0.01,
     description: t('chatui.chat.parameter.Temperature'),
   },
   topP: {
-    label: 'Top P',
+    label: t('chatui.chat.parameter.label.TopP'),
     min: 0.0,
     max: 1,
     step: 0.01,
     description: t('chatui.chat.parameter.TopP'),
   },
   topK: {
-    label: 'Top K',
+    label: t('chatui.chat.parameter.label.TopK'),
     min: 1,
     max: 500,
     step: 1,
     description: t('chatui.chat.parameter.TopK'),
   },
   frequencyPenalty: {
-    label: 'Frequency Penalty',
+    label: t('chatui.chat.parameter.label.FrequencyPenalty'),
     min: 0,
     max: 2,
     step: 0.01,
     description: t('chatui.chat.parameter.FrequencyPenalty'),
   },
   presencePenalty: {
-    label: 'Presence Penalty',
+    label: t('chatui.chat.parameter.label.PresencePenalty'),
     min: 0,
     max: 2,
     step: 0.01,
@@ -147,6 +147,9 @@ export const ChatParametersSliders = ({
         size="small"
         layout="vertical"
         requiredMark={false}
+        style={{
+          width: 240,
+        }}
         initialValues={
           Object.keys(parameters).length > 0
             ? parameters

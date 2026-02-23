@@ -181,7 +181,15 @@
         "Temperature": "Санамсаргүй байдлыг удирддаг; \nбага нь илүү төвлөрсөн, илүү өндөр бүтээлч байдаг",
         "Title": "Пүринтри",
         "TopK": "Топ k-ийн хамгийн их магадлалтай токенууд",
-        "TopP": "Хуримтлагдсан магадлал p"
+        "TopP": "Хуримтлагдсан магадлал p",
+        "label": {
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
+          "TopK": "Top K",
+          "TopP": "Top P"
+        }
       }
     }
   },
