@@ -9,12 +9,11 @@ describe('customThemeConfig', () => {
   let fetchMock: jest.Mock;
   let originalFetch: typeof global.fetch;
   let dispatchEventSpy: jest.SpyInstance;
-  let originalNodeEnv: string | undefined;
+  const originalNodeEnv: string | undefined = process.env.NODE_ENV;
 
   beforeEach(() => {
     // Save original values
     originalFetch = global.fetch;
-    originalNodeEnv = process.env.NODE_ENV;
 
     // Setup fetch mock
     fetchMock = jest.fn();
@@ -27,7 +26,11 @@ describe('customThemeConfig', () => {
   afterEach(() => {
     // Restore original values
     global.fetch = originalFetch;
-    process.env.NODE_ENV = originalNodeEnv;
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: originalNodeEnv,
+      writable: true,
+      configurable: true,
+    });
     jest.clearAllMocks();
   });
 
@@ -99,7 +102,11 @@ describe('customThemeConfig', () => {
     });
 
     it('should apply REACT_APP_THEME_COLOR in development environment', async () => {
-      process.env.NODE_ENV = 'development';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'development',
+        writable: true,
+        configurable: true,
+      });
       process.env.REACT_APP_THEME_COLOR = '#ff0000';
 
       const mockTheme: CustomThemeConfig = {
@@ -132,7 +139,11 @@ describe('customThemeConfig', () => {
     });
 
     it('should not apply REACT_APP_THEME_COLOR in production environment', async () => {
-      process.env.NODE_ENV = 'production';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        writable: true,
+        configurable: true,
+      });
       process.env.REACT_APP_THEME_COLOR = '#ff0000';
 
       const mockTheme: CustomThemeConfig = {
@@ -371,7 +382,11 @@ describe('customThemeConfig', () => {
     });
 
     it('should only apply REACT_APP_THEME_COLOR when both development mode and env var are set', async () => {
-      process.env.NODE_ENV = 'development';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'development',
+        writable: true,
+        configurable: true,
+      });
       delete process.env.REACT_APP_THEME_COLOR;
 
       const mockTheme: CustomThemeConfig = {
@@ -404,7 +419,11 @@ describe('customThemeConfig', () => {
     });
 
     it('should preserve existing Layout component settings when applying REACT_APP_THEME_COLOR', async () => {
-      process.env.NODE_ENV = 'development';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'development',
+        writable: true,
+        configurable: true,
+      });
       process.env.REACT_APP_THEME_COLOR = '#ff0000';
 
       const mockTheme: CustomThemeConfig = {

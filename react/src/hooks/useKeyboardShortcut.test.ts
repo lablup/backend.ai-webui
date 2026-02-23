@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import useKeyboardShortcut from './useKeyboardShortcut';
+import { renderHook } from '@testing-library/react';
 
 // Mock ahooks useEventListener
 jest.mock('ahooks', () => ({
@@ -50,7 +50,7 @@ describe('useKeyboardShortcut', () => {
     it('should pass the keyboard event to handler', () => {
       renderHook(() => useKeyboardShortcut(mockHandler));
 
-      const event = triggerKeydown({ key: 'Enter' });
+      triggerKeydown({ key: 'Enter' });
 
       expect(mockHandler).toHaveBeenCalledWith(
         expect.objectContaining({

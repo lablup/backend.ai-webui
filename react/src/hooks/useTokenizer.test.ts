@@ -1,5 +1,6 @@
 import { useTokenCount, encodeAsync } from './useTokenizer';
 import { renderHook, waitFor } from '@testing-library/react';
+import { encode } from 'gpt-tokenizer';
 
 // Mock gpt-tokenizer
 jest.mock('gpt-tokenizer', () => ({
@@ -59,8 +60,7 @@ describe('useTokenizer', () => {
     });
 
     it('should fallback to string length on encoding error', async () => {
-      const { encode } = require('gpt-tokenizer');
-      encode.mockImplementationOnce(() => {
+      (encode as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Encoding failed');
       });
 

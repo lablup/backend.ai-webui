@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { useRuntimeEnvVarConfigs } from './useVariantConfigs';
+import { renderHook } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
 
 // Mock react-i18next
@@ -144,7 +144,7 @@ describe('useRuntimeEnvVarConfigs', () => {
   it('should have consistent structure across all runtimes', () => {
     const { result } = renderHook(() => useRuntimeEnvVarConfigs());
 
-    Object.entries(result.current).forEach(([runtime, config]) => {
+    Object.entries(result.current).forEach(([_runtime, config]) => {
       expect(config).toHaveProperty('optionalEnvVars');
       expect(Array.isArray(config.optionalEnvVars)).toBe(true);
 

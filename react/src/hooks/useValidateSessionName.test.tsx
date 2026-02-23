@@ -1,5 +1,6 @@
-import { renderHook } from '@testing-library/react';
 import { useValidateSessionName } from './useValidateSessionName';
+import { renderHook } from '@testing-library/react';
+import type { RuleObject } from 'antd/es/form';
 
 // Mock react-i18next to return translation keys
 jest.mock('react-i18next', () => ({
@@ -7,6 +8,35 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => key,
   }),
 }));
+
+type Rules = ReturnType<typeof useValidateSessionName>;
+
+type ValidatorRule = RuleObject & {
+  validator: (rule: RuleObject, value: string) => Promise<void>;
+};
+
+function isRuleObject(rule: Rules[number]): rule is RuleObject {
+  return rule !== null && typeof rule === 'object';
+}
+
+function findValidatorRule(rules: Rules): ValidatorRule | undefined {
+  return rules.find(
+    (rule): rule is ValidatorRule => isRuleObject(rule) && 'validator' in rule,
+  );
+}
+
+function findRuleByKey<K extends keyof RuleObject>(
+  rules: Rules,
+  key: K,
+  value?: RuleObject[K],
+): RuleObject | undefined {
+  return rules.find(
+    (rule): rule is RuleObject =>
+      isRuleObject(rule) &&
+      key in rule &&
+      (value === undefined || rule[key] === value),
+  );
+}
 
 describe('useValidateSessionName', () => {
   describe('Basic validation rules', () => {
@@ -18,14 +48,14 @@ describe('useValidateSessionName', () => {
 
     it('should include min length validation', () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const minRule = result.current.find((rule: any) => rule.min === 4);
+      const minRule = findRuleByKey(result.current, 'min', 4);
       expect(minRule).toBeDefined();
       expect(minRule?.message).toBeDefined();
     });
 
     it('should include max length validation', () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const maxRule = result.current.find((rule: any) => rule.max === 64);
+      const maxRule = findRuleByKey(result.current, 'max', 64);
       expect(maxRule).toBeDefined();
       expect(maxRule?.message).toBeDefined();
     });
@@ -36,33 +66,25 @@ describe('useValidateSessionName', () => {
       const { result } = renderHook(() =>
         useValidateSessionName('existing-session'),
       );
-      const requiredRule = result.current.find(
-        (rule: any) => rule.required === true,
-      );
+      const requiredRule = findRuleByKey(result.current, 'required', true);
       expect(requiredRule).toBeDefined();
     });
 
     it('should not require field when currentName is not provided', () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const requiredRule = result.current.find(
-        (rule: any) => rule.required === true,
-      );
+      const requiredRule = findRuleByKey(result.current, 'required', true);
       expect(requiredRule).toBeUndefined();
     });
 
     it('should not require field when currentName is null', () => {
       const { result } = renderHook(() => useValidateSessionName(null));
-      const requiredRule = result.current.find(
-        (rule: any) => rule.required === true,
-      );
+      const requiredRule = findRuleByKey(result.current, 'required', true);
       expect(requiredRule).toBeUndefined();
     });
 
     it('should not require field when currentName is empty string', () => {
       const { result } = renderHook(() => useValidateSessionName(''));
-      const requiredRule = result.current.find(
-        (rule: any) => rule.required === true,
-      );
+      const requiredRule = findRuleByKey(result.current, 'required', true);
       expect(requiredRule).toBeUndefined();
     });
   });
@@ -70,7 +92,7 @@ describe('useValidateSessionName', () => {
   describe('Custom validator - valid session names', () => {
     it('should accept valid session name with alphanumeric characters', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
       expect(validator).toBeDefined();
 
       const validationResult = await validator?.validator({}, 'mySession123');
@@ -79,7 +101,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept session name with hyphens', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator(
         {},
@@ -90,7 +112,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept session name with dots', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator(
         {},
@@ -101,7 +123,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept session name with underscores', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator(
         {},
@@ -112,7 +134,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept session name with mixed valid characters', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator(
         {},
@@ -123,7 +145,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept empty value', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator({}, '');
       expect(validationResult).toBeUndefined();
@@ -133,7 +155,7 @@ describe('useValidateSessionName', () => {
   describe('Custom validator - invalid session names', () => {
     it('should reject session name starting with hyphen', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       await expect(validator?.validator({}, '-mySession')).rejects.toMatch(
         /start/i,
@@ -142,7 +164,7 @@ describe('useValidateSessionName', () => {
 
     it('should reject session name starting with dot', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       await expect(validator?.validator({}, '.mySession')).rejects.toMatch(
         /start/i,
@@ -151,7 +173,7 @@ describe('useValidateSessionName', () => {
 
     it('should reject session name ending with hyphen', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       await expect(validator?.validator({}, 'mySession-')).rejects.toMatch(
         /end/i,
@@ -160,7 +182,7 @@ describe('useValidateSessionName', () => {
 
     it('should reject session name ending with dot', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       await expect(validator?.validator({}, 'mySession.')).rejects.toMatch(
         /end/i,
@@ -169,46 +191,46 @@ describe('useValidateSessionName', () => {
 
     it('should reject session name with spaces', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
-      await expect(
-        validator?.validator({}, 'my session name'),
-      ).rejects.toMatch(/invalid|character/i);
+      await expect(validator?.validator({}, 'my session name')).rejects.toMatch(
+        /invalid|character/i,
+      );
     });
 
     it('should reject session name with special characters', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
-      await expect(
-        validator?.validator({}, 'mySession@name'),
-      ).rejects.toMatch(/invalid|character/i);
+      await expect(validator?.validator({}, 'mySession@name')).rejects.toMatch(
+        /invalid|character/i,
+      );
     });
 
     it('should reject session name with slash', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
-      await expect(
-        validator?.validator({}, 'my/session/name'),
-      ).rejects.toMatch(/invalid|character/i);
+      await expect(validator?.validator({}, 'my/session/name')).rejects.toMatch(
+        /invalid|character/i,
+      );
     });
 
     it('should reject session name with parentheses', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       // Parenthesis at the end triggers the "end with" check first
-      await expect(
-        validator?.validator({}, 'mySession(test)'),
-      ).rejects.toMatch(/end/i);
+      await expect(validator?.validator({}, 'mySession(test)')).rejects.toMatch(
+        /end/i,
+      );
     });
   });
 
   describe('Edge cases', () => {
     it('should accept session name at minimum length', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator({}, 'test');
       expect(validationResult).toBeUndefined();
@@ -216,7 +238,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept session name at maximum length', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const longName = 'a'.repeat(64);
       const validationResult = await validator?.validator({}, longName);
@@ -225,7 +247,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept numeric-only session name', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator({}, '12345');
       expect(validationResult).toBeUndefined();
@@ -233,7 +255,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept uppercase session name', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator({}, 'MYSESSION');
       expect(validationResult).toBeUndefined();
@@ -241,7 +263,7 @@ describe('useValidateSessionName', () => {
 
     it('should accept mixed case session name', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator({}, 'MySession');
       expect(validationResult).toBeUndefined();
@@ -251,7 +273,7 @@ describe('useValidateSessionName', () => {
   describe('Differences from useValidateServiceName', () => {
     it('should accept dots in session names (unlike service names)', async () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const validator = result.current.find((rule: any) => rule.validator);
+      const validator = findValidatorRule(result.current);
 
       const validationResult = await validator?.validator(
         {},
@@ -262,7 +284,7 @@ describe('useValidateSessionName', () => {
 
     it('should have max length of 64 characters', () => {
       const { result } = renderHook(() => useValidateSessionName());
-      const maxRule = result.current.find((rule: any) => rule.max);
+      const maxRule = findRuleByKey(result.current, 'max');
       expect(maxRule?.max).toBe(64);
     });
   });
