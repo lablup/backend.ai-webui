@@ -37,16 +37,11 @@ const BAIDomainSelect: React.FC<Props> = ({
       onChange={(_value, option) => {
         setValue(_value, option);
       }}
-    >
-      {_.map(domains, (domain) => {
-        return (
-          <Select.Option key={domain?.name} domainName={domain?.name}>
-            {domain?.name}
-          </Select.Option>
-        );
-      })}
-      ;
-    </Select>
+      options={_.map(domains, (domain) => ({
+        label: domain?.name,
+        value: domain?.name,
+      }))}
+    />
   );
 };
 

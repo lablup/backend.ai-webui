@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
@@ -150,6 +154,7 @@ const UNSAFE_useAutoRefreshInterval = (
 const SessionStatusRefresherUsingSubscription: React.FC<{
   sessionRowId: string;
 }> = ({ sessionRowId }) => {
+  'use memo';
   useSubscription({
     subscription: graphql`
       subscription BAIComputeSessionNodeNotificationItemSubscription(

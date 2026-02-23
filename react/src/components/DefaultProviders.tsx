@@ -1,6 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { RelayEnvironment } from '../RelayEnvironment';
 // @ts-ignore
 import rawFixAntCss from '../fix_antd.css?raw';
+import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
 import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import {
@@ -147,10 +152,7 @@ i18n
     },
     postProcess:
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
-    lng:
-      //@ts-ignore
-      globalThis?.backendaioptions?.get('language', 'default', 'general') ||
-      'en',
+    lng: backendaiOptions?.get('language', 'default', 'general') || 'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -163,8 +165,7 @@ i18n
 
 export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
-    //@ts-ignore
-    globalThis?.backendaioptions?.get('language', 'default', 'general') || 'en',
+    backendaiOptions?.get('language', 'default', 'general') || 'en',
   );
   const { i18n } = useTranslation();
 
@@ -173,6 +174,7 @@ export const useCurrentLanguage = () => {
     setTimeout(() => i18n?.changeLanguage(lang), 0);
     // For changing locale globally, use dayjs.locale instead of dayjs().locale
     dayjs.locale(lang);
+    document.documentElement.lang = lang;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -185,6 +187,7 @@ export const useCurrentLanguage = () => {
       i18n?.changeLanguage(lang);
       // For changing locale globally, use dayjs.locale instead of dayjs().locale
       dayjs.locale(lang);
+      document.documentElement.lang = lang;
     };
     window.addEventListener('langChanged', handler);
     return () => window.removeEventListener('langChanged', handler);
@@ -227,7 +230,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
     let parsedValue: any;
     try {
       parsedValue = JSON.parse(value || '');
-    } catch (error) {
+    } catch {
       parsedValue = {};
     }
     return {

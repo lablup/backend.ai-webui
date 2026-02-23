@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
@@ -366,7 +370,7 @@ export const useBackendAIImageMetaData = () => {
       // remove architecture string and split by '-'
       const tags = _.split(_.first(_.split(tag, '@')), '-');
       return { key, tags };
-    } catch (error) {
+    } catch {
       return {
         key: '',
         tags: [],

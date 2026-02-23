@@ -3,7 +3,7 @@ import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Form, Input, InputNumber, Select, Button } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 /**
  * BAIBulkEditFormItem is a custom Form.Item component for bulk editing scenarios.

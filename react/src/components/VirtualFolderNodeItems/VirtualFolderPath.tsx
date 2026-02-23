@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
 import { theme } from 'antd';

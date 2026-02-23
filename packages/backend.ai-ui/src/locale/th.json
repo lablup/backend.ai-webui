@@ -86,6 +86,26 @@
     "LastUpdated": "อัปเดตล่าสุด",
     "Refresh": "รีเฟรช"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "หลัง",
+      "Before": "ก่อน",
+      "GreaterThan": "มากกว่า",
+      "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
+      "IContains": "ประกอบด้วย",
+      "IEndsWith": "ลงท้ายด้วย",
+      "IEquals": "เท่ากับ",
+      "INotContains": "ไม่มี",
+      "INotEndsWith": "ไม่ลงท้ายด้วย",
+      "INotEquals": "ไม่เท่ากับ",
+      "INotStartsWith": "ไม่เริ่มต้นด้วย",
+      "IStartsWith": "เริ่มต้นด้วย",
+      "In": "ใน",
+      "LessThan": "น้อยกว่า",
+      "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotIn": "ไม่ใน"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "เลือกโปรเจกต์"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "โฮสต์ที่อนุญาตสำหรับโฟลเดอร์",
@@ -146,7 +169,7 @@
     "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
-    "ScalingGroups": "กลุ่มปรับขนาด",
+    "ScalingGroups": "กลุ่มทรัพยากร",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "เลือกผู้ใช้"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
@@ -264,6 +290,7 @@
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
       "Collapse": "ทรุด",
+      "Copied": "คัดลอกแล้ว",
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",

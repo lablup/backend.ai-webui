@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ManageImageResourceLimitModalMutation,
   ResourceLimitInput,
@@ -47,7 +51,7 @@ const ManageImageResourceLimitModal: React.FC<
 
   const image = useFragment(
     graphql`
-      fragment ManageImageResourceLimitModal_image on Image {
+      fragment ManageImageResourceLimitModal_image on ImageNode {
         resource_limits {
           key
           min

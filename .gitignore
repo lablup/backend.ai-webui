@@ -160,6 +160,7 @@ guides-for-ai-temp
 CLAUDE.local.md
 
 .claude/settings.local.json
+packages/backend.ai-webui-docs/.claude/settings.local.json
 .serena
 
 .env.development.local
@@ -172,3 +173,6 @@ scripts/temp-releases/
 
 # ignore playwright mcp test files
 .playwright-mcp/
+
+# ignore documentation agent working files
+packages/backend.ai-webui-docs/.agent-output/

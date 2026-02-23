@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useWebUINavigate } from '../hooks';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { EllipsisOutlined } from '@ant-design/icons';
@@ -92,6 +96,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     cluster_mode: 'single-node',
     cluster_size: 1,
     mount_ids: [toLocalId(vfolder.id || '').replaceAll('-', '')],
+    reuseIfExists: true,
   });
 
   return (

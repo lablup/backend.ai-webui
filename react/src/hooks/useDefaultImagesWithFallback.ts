@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { backendaiClientPromise } from '.';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';

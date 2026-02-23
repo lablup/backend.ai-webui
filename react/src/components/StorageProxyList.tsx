@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageProxyListQuery } from '../__generated__/StorageProxyListQuery.graphql';
 import {
   convertToDecimalUnit,
@@ -230,7 +234,7 @@ const StorageProxyList = () => {
             record.performance_metric || '{}',
           );
           perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch (e) {
+        } catch {
           perfMetricDisabled = true;
         }
         return (

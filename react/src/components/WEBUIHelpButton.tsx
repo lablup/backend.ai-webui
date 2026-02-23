@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';

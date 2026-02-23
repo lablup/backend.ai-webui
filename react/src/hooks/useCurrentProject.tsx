@@ -1,4 +1,9 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '.';
+import { backendaiUtils } from '../global-stores';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import _ from 'lodash';
@@ -29,6 +34,7 @@ interface ScalingGroupsResponse {
   scaling_groups: ScalingGroupItem[];
 }
 
+// TODO: check undefined and add error handling
 const currentProjectAtom = atomWithDefault(() => {
   return {
     // @ts-ignore
@@ -158,8 +164,7 @@ export const useSetCurrentProject = () => {
       // To sync with baiClient
       // eslint-disable-next-line react-hooks/immutability
       baiClient.current_group = projectName;
-      // @ts-ignore
-      globalThis.backendaiutils._writeRecentProjectGroup(projectName);
+      backendaiUtils._writeRecentProjectGroup(projectName);
     },
     [set, baiClient],
   );

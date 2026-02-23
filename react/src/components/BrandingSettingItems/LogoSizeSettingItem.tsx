@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Col, Row, theme, Typography } from 'antd';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';

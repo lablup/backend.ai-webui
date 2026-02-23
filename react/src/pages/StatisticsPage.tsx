@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import AllocationHistory from '../components/AllocationHistory';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
 import { useSuspendedBackendaiClient } from '../hooks';

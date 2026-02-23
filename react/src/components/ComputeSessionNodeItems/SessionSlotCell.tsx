@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
 import { ResourceSlotName } from '../../hooks/backendai';

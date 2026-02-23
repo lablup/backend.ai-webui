@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import _ from 'lodash';

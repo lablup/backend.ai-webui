@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { Slider, type SliderSingleProps } from 'antd';
 import _, { isNumber } from 'lodash';
@@ -10,8 +14,10 @@ export type StepType =
     }
   | number
   | string;
-interface NonLinearSliderProps
-  extends Omit<SliderSingleProps, 'value' | 'defaultValue' | 'onChange'> {
+interface NonLinearSliderProps extends Omit<
+  SliderSingleProps,
+  'value' | 'defaultValue' | 'onChange'
+> {
   steps: StepType[];
   value?: number | string;
   defaultValue?: number | string;

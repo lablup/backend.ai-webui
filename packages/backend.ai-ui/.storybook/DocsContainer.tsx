@@ -1,8 +1,8 @@
 import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
 import {
   DocsContainer as BaseContainer,
-  DocsContainerProps,
-} from '@storybook/blocks';
+  type DocsContainerProps,
+} from '@storybook/addon-docs/blocks';
 import { DARK_MODE_EVENT_NAME } from '@vueless/storybook-dark-mode';
 import type { PropsWithChildren } from 'react';
 import { useEffect, useState } from 'react';

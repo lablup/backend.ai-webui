@@ -741,6 +741,75 @@ page.on('pageerror', error => console.log('PAGE ERROR:', error));
 
 ---
 
+## E2E Coverage Report Maintenance
+
+### Coverage Report Location
+
+The project maintains a living E2E coverage report at [`e2e/E2E_COVERAGE_REPORT.md`](../../e2e/E2E_COVERAGE_REPORT.md). This report tracks which pages and features have E2E test coverage and which do not.
+
+### When to Update the Coverage Report
+
+**You MUST update `e2e/E2E_COVERAGE_REPORT.md` whenever you:**
+
+1. **Add new E2E test files** - Add the test file reference and update feature coverage status
+2. **Add new test cases to existing files** - Update the feature table for the relevant page
+3. **Remove or rename E2E test files** - Reflect the changes in the report
+4. **Add new Page Object Models** - Update the "Test Infrastructure" section
+
+### How to Update
+
+Follow these steps when modifying E2E tests:
+
+1. **Update the feature table** for the affected page section:
+   - Change `❌` to `✅` for newly covered features
+   - Add the test name in the "Test" column
+   - Add test file references under "Test files"
+   - Update the `**Coverage: ...**` line at the bottom of that page section
+
+2. **Update the "Coverage Summary" table** at the top:
+   - Recalculate the **Covered** count for the affected page row
+   - Update the **Status** column: `❌ 0%` / `🔶 N%` / `✅ 100%`
+   - Recalculate the **Total** row (sum of all Features and Covered columns)
+   - Update the **Overall** line: `**Overall: X / Y features covered (Z%)**`
+
+3. **Update the "Coverage Matrix (Quick Reference)"** table:
+   - Change the Functional Tests column status for affected routes
+
+4. **Update "Priority Recommendations"** if applicable:
+   - Remove items that are now fully covered
+   - Adjust priority if partially covered
+
+5. **Update the "Last Updated" date** at the top of the report
+
+6. **Update "Test Infrastructure"** section if you:
+   - Created new Page Object Model classes
+   - Added new shared utility functions
+   - Remove items from "Page Object Models Needed" when created
+
+### Example Update
+
+When adding 2 new tests for the Serving page (`/serving`):
+
+```markdown
+<!-- Before: feature table -->
+| Endpoint list rendering | ❌ | - |
+| "Start Service" → navigate to `/service/start` | ❌ | - |
+
+<!-- After: feature table -->
+| Endpoint list rendering | ✅ | `User can see endpoint list` |
+| "Start Service" → navigate to `/service/start` | ✅ | `User can start a new service` |
+
+<!-- Before: Coverage Summary row -->
+| Serving | `/serving` | 7 | 0 | ❌ 0% |
+
+<!-- After: Coverage Summary row -->
+| Serving | `/serving` | 7 | 2 | 🔶 29% |
+
+<!-- Also update the Total row and Overall line -->
+```
+
+---
+
 ## Additional Resources
 
 - [Playwright Auto-Waiting Documentation](https://playwright.dev/docs/actionability)

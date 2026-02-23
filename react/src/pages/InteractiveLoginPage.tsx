@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   CSSTokenVariables,
   NotificationForAnonymous,
@@ -16,8 +20,6 @@ const InteractiveLoginPage = () => {
     <>
       <CSSTokenVariables />
       <NotificationForAnonymous />
-      {/* @ts-ignore */}
-      <backend-ai-webui id="webui-shell" />
       <Suspense>
         <Children />
       </Suspense>

@@ -86,6 +86,26 @@
     "LastUpdated": "最後更新",
     "Refresh": "重新整理"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "之後",
+      "Before": "之前",
+      "GreaterThan": "大於",
+      "GreaterThanOrEqual": "大於或等於",
+      "IContains": "包含",
+      "IEndsWith": "以...結尾",
+      "IEquals": "等於",
+      "INotContains": "不包含",
+      "INotEndsWith": "不以...結尾",
+      "INotEquals": "不等於",
+      "INotStartsWith": "不以...開頭",
+      "IStartsWith": "以...開頭",
+      "In": "在...中",
+      "LessThan": "小於",
+      "LessThanOrEqual": "小於或等於",
+      "NotIn": "不在...中"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",
     "FailedToPullVersions": "未能拉動版本。",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "選擇專案"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "允許的資料夾主機",
@@ -146,7 +169,7 @@
     "PurgeProject": "永久刪除專案",
     "Registry": "映像註冊表",
     "ResourcePolicy": "資源策略",
-    "ScalingGroups": "伸縮群組",
+    "ScalingGroups": "資源群組",
     "StorageNodes": "儲存節點",
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "測試"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "選擇使用者"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "選擇資料夾"
@@ -264,6 +290,7 @@
       "Cancel": "取消",
       "Close": "關閉",
       "Collapse": "坍塌",
+      "Copied": "已複製",
       "CopyAll": "複製全部",
       "Create": "創造",
       "Delete": "刪除",

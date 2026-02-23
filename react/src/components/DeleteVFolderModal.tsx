@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';

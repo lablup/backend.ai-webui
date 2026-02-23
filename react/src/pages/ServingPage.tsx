@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ServingPageQuery } from '../__generated__/ServingPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
@@ -82,6 +86,7 @@ const ServingPage: React.FC = () => {
         ) {
           total_count
           items {
+            project
             ...EndpointListFragment
           }
         }
@@ -107,7 +112,7 @@ const ServingPage: React.FC = () => {
             <BAIFetchKeyButton
               value={fetchKey}
               onChange={updateFetchKey}
-              autoUpdateDelay={7000}
+              autoUpdateDelay={7_000}
               loading={
                 deferredQueryVariables !== queryVariables ||
                 deferredFetchKey !== fetchKey

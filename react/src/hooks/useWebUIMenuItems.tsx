@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserRole } from './backendai';
 import { useBAISettingUserState } from './useBAISetting';
@@ -77,6 +81,7 @@ export type MenuKeys =
   | 'statistics'
   | 'pipeline'
   // adminMenu keys
+  | 'admin-session'
   | 'credential'
   | 'environment'
   | 'scheduler'
@@ -263,6 +268,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     //   key: 'admin-dashboard',
     // },
     {
+      label: (
+        <WebUILink to="/admin-session">{t('webui.menu.Sessions')}</WebUILink>
+      ),
+      icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      key: 'admin-session',
+    },
+    {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
       key: 'credential',
@@ -274,7 +286,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment',
     },
-    baiClient?.supports('pending-session-list') && {
+    baiClient?.supports('fair-share-scheduling') && {
       label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
       icon: <ClipboardClock style={{ color: token.colorInfo }} />,
       key: 'scheduler',

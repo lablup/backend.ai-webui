@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   TerminateSessionModalFragment$data,
   TerminateSessionModalFragment$key,
@@ -22,8 +26,10 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
-interface TerminateSessionModalProps
-  extends Omit<ModalProps, 'onOk' | 'onCancel'> {
+interface TerminateSessionModalProps extends Omit<
+  ModalProps,
+  'onOk' | 'onCancel'
+> {
   sessionFrgmts?: TerminateSessionModalFragment$key;
   onRequestClose: (success: boolean) => void;
 }
@@ -81,7 +87,7 @@ const sendRequest = async (
     if (!resp.ok) {
       throw body;
     }
-  } catch (e) {
+  } catch {
     return resp;
   }
   return body;
@@ -92,11 +98,6 @@ const getWSProxyVersion = async (
   projectId: string,
   baiClient: BackendAIClient,
 ) => {
-  // TODO: remove globalThis.appLauncher(backend-ai-app-launcher) dependency after migration to React
-  if (baiClient.debug === true) {
-    if (globalThis.appLauncher?.forceUseV1Proxy?.checked) return 'v1';
-    else if (globalThis.appLauncher?.forceUseV2Proxy?.checked) return 'v2';
-  }
   if (globalThis.isElectron) {
     return 'v1';
   }

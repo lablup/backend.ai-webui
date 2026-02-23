@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import _ from 'lodash';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';

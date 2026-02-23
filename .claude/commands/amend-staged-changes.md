@@ -1,7 +1,7 @@
 ---
 description: Amend staged changes to existing PR and update PR description.
 argument-hint: [--update-desc]
-model: claude-sonnet-4-5
+model: opus
 ---
 
 # Amend Staged Changes
@@ -28,22 +28,25 @@ If no argument is provided, PR description will only be updated if there are sta
 
 ## Detailed Process
 
-### Step 0: Verify MCP Authentication
+### Step 0: Verify MCP Authentication (MUST BE FIRST)
 
-Verify that MCP tools are authenticated before starting the workflow.
+> **⚠️ CRITICAL**: This step MUST be executed BEFORE any other operation. Do NOT skip or defer this step. Do NOT read files, check git status, or perform any other action until MCP authentication is verified.
+
+Verify that Atlassian MCP is authenticated before starting the workflow.
 
 ```
-# Test Graphite MCP authentication
-mcp__graphite__run_gt_cmd with args: ["--version"]
+# Test Atlassian MCP authentication - THIS MUST BE THE VERY FIRST TOOL CALL
+mcp__Atlassian__atlassianUserInfo
 ```
 
 **If authentication fails:**
-- Inform the user that Graphite MCP needs re-authentication
+- **STOP IMMEDIATELY** - Do not proceed with any other steps
+- Inform the user that Atlassian MCP needs re-authentication
 - Provide guidance on how to re-authenticate:
   ```
   ⚠️ MCP Authentication Required
 
-  Graphite MCP needs re-authentication.
+  Atlassian MCP needs re-authentication.
   Please re-authenticate via MCP settings and run the command again.
   ```
 - Exit the workflow without making any changes

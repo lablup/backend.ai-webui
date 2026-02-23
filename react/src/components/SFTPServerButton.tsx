@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useWebUINavigate } from '../hooks';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { App, Dropdown, Image, Space, Tooltip } from 'antd';
@@ -116,6 +120,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
     cluster_size: 1,
     mount_ids: [toLocalId(vfolder?.id || '').replaceAll('-', '')],
     resourceGroup: sftpScalingGroupByCurrentProject?.[0],
+    reuseIfExists: true,
   });
 
   return (

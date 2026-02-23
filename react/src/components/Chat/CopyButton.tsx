@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Button, type ButtonProps, Tooltip } from 'antd';
 import { CopyConfig } from 'antd/es/typography/Base';
 import { CheckIcon, CopyIcon } from 'lucide-react';

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated__/ResourceGroupSettingModalAssociateDomainMutation.graphql';
 import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
@@ -39,6 +43,7 @@ type FormInputType = {
   description: string;
   allowedSessionTypes: string[];
   wsProxyAddress: string;
+  wsProxyAPIToken: string;
   active: boolean;
   public: boolean;
   scheduler: string;
@@ -70,6 +75,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
         is_active
         is_public
         wsproxy_addr
+        wsproxy_api_token
         scheduler
         scheduler_opts
       }
@@ -139,6 +145,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       ? _.toNumber(schedulerOpts?.config?.num_retries_to_skip)
       : null,
     wsProxyAddress: resourceGroup?.wsproxy_addr,
+    wsProxyAPIToken: resourceGroup?.wsproxy_api_token,
   });
 
   return (
@@ -182,6 +189,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               is_public: values.public,
               is_active: values.active,
               wsproxy_addr: values.wsProxyAddress,
+              wsproxy_api_token: values.wsProxyAPIToken,
             };
 
             if (resourceGroup) {
@@ -343,6 +351,12 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           >
             <Input placeholder="http://localhost:10200" />
           </Form.Item>
+          <Form.Item
+            label={t('resourceGroup.WsproxyAPIToken')}
+            name="wsProxyAPIToken"
+          >
+            <Input.Password placeholder={t('resourceGroup.EnterAPIToken')} />
+          </Form.Item>
           <Row>
             <Col span={12}>
               <Form.Item
@@ -388,6 +402,10 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 {
                   label: 'DRF',
                   value: 'drf',
+                },
+                {
+                  label: 'Fair Share',
+                  value: 'fair-share',
                 },
               ]}
             />

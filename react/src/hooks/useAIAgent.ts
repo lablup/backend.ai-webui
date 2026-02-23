@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useTanQuery } from './reactQueryAlias';
 import { useUpdatableState } from 'backend.ai-ui';
 import { useCallback } from 'react';

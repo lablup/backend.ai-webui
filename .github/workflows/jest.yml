@@ -65,7 +65,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
       - name: Run ESLint on React
         run: pnpm run lint
       - name: run relay-compiler
@@ -118,7 +118,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
       - name: Run ESLint on backend.ai-ui
         run: pnpm run lint
       - name: run relay-compiler

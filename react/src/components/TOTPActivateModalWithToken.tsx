@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
@@ -18,7 +22,7 @@ const TOTPActivateModalWithToken = () => {
   };
   try {
     parsedValue = JSON.parse(value || '');
-  } catch (error) {
+  } catch {
     parsedValue = {
       open: false,
       totp_registration_token: '',

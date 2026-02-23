@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import de_DE from 'backend.ai-ui/dist/locale/de_DE';
 import el_GR from 'backend.ai-ui/dist/locale/el_GR';
 import en_US from 'backend.ai-ui/dist/locale/en_US';

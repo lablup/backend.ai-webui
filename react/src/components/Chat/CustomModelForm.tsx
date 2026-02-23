@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import EndpointTokenSelect from './EndpointTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
@@ -36,7 +40,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [shrinkControlSize, setShrinkControlSize] = useState<boolean>(true);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // eslint-disable-next-line react-hooks/refs
   useResizeObserver(containerRef.current, ({ contentRect }) => {
     setShrinkControlSize(contentRect.width < 480);
   });

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { loadLanguage, LanguageName } from '@uiw/codemirror-extensions-langs';

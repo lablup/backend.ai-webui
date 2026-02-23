@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { MountedVFolderLinksFragment$key } from '../__generated__/MountedVFolderLinksFragment.graphql';
 import { MountedVFolderLinksLegacyLazyFolderLinkFragment$key } from '../__generated__/MountedVFolderLinksLegacyLazyFolderLinkFragment.graphql';
 import { MountedVFolderLinksQuery } from '../__generated__/MountedVFolderLinksQuery.graphql';

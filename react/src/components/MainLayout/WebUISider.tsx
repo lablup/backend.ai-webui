@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
@@ -29,11 +33,10 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 
-interface WebUISiderProps
-  extends Pick<
-    BAISiderProps,
-    'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
-  > {}
+interface WebUISiderProps extends Pick<
+  BAISiderProps,
+  'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
+> {}
 
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';
@@ -213,7 +216,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               hasAdminCategoryRole && {
                 // Go to first page of admin setting pages.
                 label: (
-                  <WebUILink to="/credential">
+                  <WebUILink to="/admin-session">
                     {t('webui.menu.AdminSettings')}
                   </WebUILink>
                 ),

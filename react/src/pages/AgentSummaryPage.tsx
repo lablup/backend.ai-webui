@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import AgentSummaryList from '../components/AgentSummaryList';
 import { Skeleton, theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';

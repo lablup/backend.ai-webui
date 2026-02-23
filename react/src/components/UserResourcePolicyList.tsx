@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserResourcePolicyListMutation } from '../__generated__/UserResourcePolicyListMutation.graphql';
 import {
   UserResourcePolicyListQuery,

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { FolderLink_vfolderNode$key } from '../__generated__/FolderLink_vfolderNode.graphql';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { FolderOutlined } from '@ant-design/icons';

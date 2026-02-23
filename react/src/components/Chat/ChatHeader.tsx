@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent } from '../../hooks/useAIAgent';

@@ -86,6 +86,26 @@
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
     "Refresh": "Шинэчлэх"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "дараа",
+      "Before": "өмнө",
+      "GreaterThan": "их",
+      "GreaterThanOrEqual": "их эсвэл тэнцүү",
+      "IContains": "агуулсан",
+      "IEndsWith": "төгсдөг",
+      "IEquals": "тэнцүү",
+      "INotContains": "агуулаагүй",
+      "INotEndsWith": "төгсдөггүй",
+      "INotEquals": "тэнцүү биш",
+      "INotStartsWith": "эхэлдэггүй",
+      "IStartsWith": "эхэлдэг",
+      "In": "дотор",
+      "LessThan": "бага",
+      "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotIn": "дотор биш"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
     "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Төсөл сонгох"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Зөвшөөрөгдсөн хавтас хостууд",
@@ -146,7 +169,7 @@
     "PurgeProject": "Төслийг бүрэн устгах",
     "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
-    "ScalingGroups": "Тэлэлтийн бүлгүүд",
+    "ScalingGroups": "Нөөцийн бүлгүүд",
     "StorageNodes": "Хадгалах зангилаанууд",
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "турших"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Хэрэглэгч сонгох"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
@@ -264,6 +290,7 @@
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
+      "Copied": "Хуулсан",
       "CopyAll": "Бүгдийг хуулбарлах",
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",

@@ -26,21 +26,54 @@ These instructions apply to React components in the `/react` directory.
   - **Never** “fix” or “rename” `use memo` to something else.
   - **Never** add comments suggesting that `use memo` is unknown, invalid, or deprecated.
 
-### Code style for React files
+### Placement Rules for 'use memo'
 
-- Keep React directives (`use memo`, `use client`, etc.) at the very top of the file or at the beginning of the component body, before other statements.
-- Do not wrap `use memo` in conditional logic or function calls; it must stay as a simple directive string.
-- When in doubt about `use memo`, assume it is correct and keep it as-is.
+The `'use memo'` directive has **strict placement requirements**:
+
+- **Must be at the very beginning of a function body**, before any other code
+- Comments before the directive are allowed
+- Must use double or single quotes: `"use memo"` or `'use memo'` (**not backticks**)
+- Cannot be placed conditionally or later in the function
+- Only the first directive is processed; additional directives are ignored
 
 ```typescript
-'use memo';
+// ✅ Good: 'use memo' at the very beginning of function body
+function MyComponent({ data }: Props) {
+  'use memo';
 
-import React from 'react';
-
-const MyComponent: React.FC<Props> = ({ data }) => {
+  const [state, setState] = useState(0);
   // Component logic - React Compiler handles optimization
   return <div>{data}</div>;
+}
+
+// ✅ Good: Comments before 'use memo' are OK
+const AnotherComponent: React.FC<Props> = ({ data }) => {
+  // This component is optimized by React Compiler
+  'use memo';
+
+  return <div>{data}</div>;
 };
+
+// ❌ Bad: 'use memo' after other statements
+function BadComponent({ data }: Props) {
+  const value = 'test'; // ❌ Code before directive
+  'use memo';
+  return <div>{data}</div>;
+}
+
+// ❌ Bad: 'use memo' in conditional
+function ConditionalBad({ data }: Props) {
+  if (condition) {
+    'use memo'; // ❌ Cannot be conditional
+  }
+  return <div>{data}</div>;
+}
+
+// ❌ Bad: Using backticks
+function BacktickBad({ data }: Props) {
+  `use memo`; // ❌ Must use quotes, not backticks
+  return <div>{data}</div>;
+}
 ```
 
 ### Manual Optimization Hooks (Use Sparingly)
@@ -93,6 +126,167 @@ useEffect(() => {
 }, []);
 ```
 
+## Rules of Hooks
+
+All React Hooks (useState, useEffect, useContext, useMemo, useCallback, useLazyLoadQuery, etc.) must follow these fundamental rules:
+
+### Rule 1: Only Call Hooks at the Top Level
+
+**Don't call Hooks inside loops, conditions, nested functions, or try/catch/finally blocks.**
+
+Always use Hooks at the top level of your React function, before any early returns.
+
+**Why this matters:** React relies on the order in which Hooks are called to maintain state correctly between re-renders. Calling Hooks conditionally breaks this order.
+
+```typescript
+// ✅ Good: Hooks at the top level
+function MyComponent({ condition }: Props) {
+  const [count, setCount] = useState(0);
+  const theme = useContext(ThemeContext);
+  const data = useLazyLoadQuery(query, {});
+
+  if (condition) {
+    return <div>Condition met</div>;
+  }
+
+  return <div>{count}</div>;
+}
+
+// ❌ Bad: Hook inside a condition
+function BadComponent({ condition }: Props) {
+  if (condition) {
+    const [count, setCount] = useState(0); // ❌ Conditional Hook call
+  }
+  return <div>Content</div>;
+}
+
+// ❌ Bad: Hook inside a loop
+function BadLoop({ items }: Props) {
+  const results = [];
+  for (let i = 0; i < items.length; i++) {
+    const data = useQuery(items[i]); // ❌ Hook in loop
+    results.push(data);
+  }
+  return <div>{results}</div>;
+}
+
+// ❌ Bad: Hook after early return
+function BadEarlyReturn({ condition }: Props) {
+  if (condition) {
+    return <div>Early return</div>;
+  }
+
+  const [count, setCount] = useState(0); // ❌ After conditional return
+  return <div>{count}</div>;
+}
+
+// ❌ Bad: Hook in event handler
+function BadEventHandler() {
+  function handleClick() {
+    const theme = useContext(ThemeContext); // ❌ Hook in event handler
+  }
+  return <button onClick={handleClick}>Click</button>;
+}
+
+// ❌ Bad: Hook in try/catch block
+function BadTryCatch() {
+  try {
+    const data = useQuery(query); // ❌ Hook in try block
+  } catch (error) {
+    // ...
+  }
+  return <div>Content</div>;
+}
+```
+
+### Rule 2: Only Call Hooks from React Functions
+
+**Don't call Hooks from regular JavaScript functions.**
+
+**✅ Call Hooks from:**
+- React function components
+- Custom Hooks (functions starting with `use`)
+
+**❌ Don't call Hooks from:**
+- Regular JavaScript functions
+- Class components
+- Event handlers
+
+```typescript
+// ✅ Good: Hook in component
+function MyComponent() {
+  const [count, setCount] = useState(0);
+  return <div>{count}</div>;
+}
+
+// ✅ Good: Hook in custom Hook
+function useCounter() {
+  const [count, setCount] = useState(0);
+  return { count, setCount };
+}
+
+// ❌ Bad: Hook in regular function
+function calculateTotal() { // Not a component or custom Hook
+  const [count, setCount] = useState(0); // ❌
+  return count;
+}
+```
+
+### Workarounds for Conditional Logic
+
+When you need conditional behavior with Hooks:
+
+```typescript
+// ✅ Good: Call Hook unconditionally, use result conditionally
+function MyComponent({ userId }: Props) {
+  const userData = useUserData(userId); // Always called
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{userData.name}</div>;
+}
+
+// ✅ Good: Move conditional logic inside the Hook
+function useOptionalFeature(enabled: boolean) {
+  const [value, setValue] = useState(null); // Always called
+
+  useEffect(() => {
+    if (enabled) { // Condition inside the Hook
+      // Do something
+    }
+  }, [enabled]);
+
+  return value;
+}
+
+// ✅ Good: Use array.map instead of loop
+function UserList({ userIds }: Props) {
+  return (
+    <div>
+      {userIds.map((id) => (
+        <UserItem key={id} userId={id} /> // Component uses hooks
+      ))}
+    </div>
+  );
+}
+```
+
+### ESLint Plugin
+
+**Use `eslint-plugin-react-hooks`** to automatically catch violations:
+
+```json
+{
+  "plugins": ["react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
+```
+
 ## React Composability
 
 ### Component Composition Principles
@@ -107,7 +301,7 @@ Always consider React composability when writing or reviewing components:
 2. **Composition Over Props Drilling**
 
    - Use component composition instead of passing props through multiple levels
-   - Consider using Recoil for global state management
+   - Consider using Jotai for global state management
    - Leverage children props and render props patterns
 
 3. **Reusability**
@@ -129,14 +323,11 @@ Always consider React composability when writing or reviewing components:
   <Child theme={theme} user={user} config={config} />
 </Parent>
 
-// ✅ Good: Composition with Recoil
-const themeState = atom({
-  key: 'theme',
-  default: 'light',
-});
+// ✅ Good: Composition with Jotai
+const themeAtom = atom('light');
 
 const Child = () => {
-  const theme = useRecoilValue(themeState);
+  const [theme] = useAtom(themeAtom);
   // ...
 };
 
@@ -211,235 +402,15 @@ interface TableProps {
 
 ## GraphQL/Relay Integration
 
-### Commonly Used Hooks
+### Essential Relay Rules
 
-We primarily use these Relay hooks:
+- **Hooks**: `useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`, `usePaginationFragment`
+- **Naming**: Query fragments use `queryRef`, other types use `{typeName}Frgmt` (e.g., `userFrgmt`)
+- **Architecture**: Separate query orchestrator (data fetching) from fragment component (presentation)
+- **Colocation**: Colocate GraphQL fragments with components that use them
+- **Optimization**: Only request fields you need; use pagination for lists
 
-- **`useLazyLoadQuery`** - Fetch data on component mount
-- **`useFragment`** - Read fragment data from parent query
-- **`useRefetchableFragment`** - Fragment with refetch capability
-
-```typescript
-import { graphql, useLazyLoadQuery, useFragment, useRefetchableFragment } from 'react-relay';
-
-// Lazy load query
-const MyComponent = () => {
-  const data = useLazyLoadQuery(
-    graphql`
-      query MyComponentQuery {
-        user {
-          id
-          ...UserProfile_user
-        }
-      }
-    `,
-    {},
-  );
-  return <UserProfile userRef={data.user} />;
-};
-
-// Fragment usage
-const UserProfile: React.FC<{ userRef: UserProfile_user$key }> = ({ userRef }) => {
-  const data = useFragment(
-    graphql`
-      fragment UserProfile_user on User {
-        id
-        name
-        email
-      }
-    `,
-    userRef,
-  );
-  return <div>{data.name}</div>;
-};
-
-// Refetchable fragment
-const UserList = ({ usersRef }) => {
-  const [data, refetch] = useRefetchableFragment(
-    graphql`
-      fragment UserList_users on Query
-      @refetchable(queryName: "UserListRefetchQuery") {
-        users {
-          id
-          name
-        }
-      }
-    `,
-    usersRef,
-  );
-
-  return (
-    <div>
-      {data.users.map(user => <div key={user.id}>{user.name}</div>)}
-      <button onClick={() => refetch({})}>Refresh</button>
-    </div>
-  );
-};
-```
-
-### Modern Relay Patterns (Recommended)
-
-If applicable, consider these newer patterns:
-
-- **`@required` directive** - Type-safe null handling in fragments
-- **`@alias` directive** - Rename fields for better semantics
-- **Suspense boundaries** - Better loading state handling with concurrent features
-
-### Fragment Colocation
-
-- Colocate GraphQL fragments with components that use them
-- Use Relay's fragment composition for nested data requirements
-
-### Relay Naming Conventions
-
-Follow consistent naming patterns for Relay fragment props:
-
-```typescript
-// ✅ Good: Use 'queryRef' for Query fragments
-interface ComponentProps {
-  queryRef: ComponentQuery$key;
-}
-
-const Component: React.FC<ComponentProps> = ({ queryRef }) => {
-  const data = useFragment(
-    graphql`fragment Component_query on Query { ... }`,
-    queryRef,
-  );
-};
-
-// ✅ Good: Use specific naming for other types
-interface UserProfileProps {
-  userFrgmt: UserProfile_user$key; // For User type
-  projectFrgmt: UserProfile_project$key; // For Project type
-}
-
-// ❌ Bad: Inconsistent naming
-interface ComponentProps {
-  fragmentData: ComponentQuery$key; // Not following convention
-  queryKey: ComponentQuery$key; // Missing 'Ref' suffix
-}
-```
-
-**Naming Rules:**
-
-- Query fragments: Use `queryRef`
-- Other types: Use `{typeName}Frgmt` (e.g., `userFrgmt`, `projectFrgmt`)
-- For non-Query fragments, always include the `Frgmt` suffix to indicate it's a fragment reference
-
-### Relay Fragment Architecture
-
-Separate data fetching (query orchestrator) from presentation (fragment component) for better code organization and reusability.
-
-**Architecture Pattern:**
-
-```
-┌─────────────────────────────────────┐
-│     Query Orchestrator Component    │
-│  - useLazyLoadQuery                 │
-│  - Manages fetchKey, transitions    │
-│  - Passes fragment refs to children │
-└─────────────────────┬───────────────┘
-                      │ fragment ref
-                      ▼
-┌─────────────────────────────────────┐
-│       Fragment Component            │
-│  - useFragment                      │
-│  - Receives fragment ref as prop    │
-│  - Focused on presentation          │
-└─────────────────────────────────────┘
-```
-
-**Implementation Example:**
-
-```typescript
-// Query Orchestrator Component
-const UserManagement: React.FC = () => {
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-
-  const { users } = useLazyLoadQuery<UserManagementQuery>(
-    graphql`
-      query UserManagementQuery {
-        users {
-          ...UserNodes_users
-        }
-      }
-    `,
-    {},
-    { fetchPolicy: 'store-and-network', fetchKey },
-  );
-
-  return (
-    <UserNodes
-      usersFrgmt={users}
-      loading={isPendingRefetch}
-      onRefresh={() => {
-        startRefetchTransition(() => {
-          updateFetchKey();
-        });
-      }}
-    />
-  );
-};
-
-// Fragment Component
-interface UserNodesProps {
-  usersFrgmt: UserNodes_users$key;
-  loading?: boolean;
-  onRefresh?: () => void;
-  customizeColumns?: (cols: BAIColumnType[]) => BAIColumnType[];
-}
-
-const UserNodes: React.FC<UserNodesProps> = ({
-  usersFrgmt,
-  loading,
-  onRefresh,
-  customizeColumns,
-}) => {
-  const data = useFragment(
-    graphql`
-      fragment UserNodes_users on Query {
-        users {
-          id
-          email
-          username
-          is_active
-        }
-      }
-    `,
-    usersFrgmt,
-  );
-
-  const baseColumns: BAIColumnType[] = [
-    { key: 'email', title: 'Email', dataIndex: 'email' },
-    { key: 'username', title: 'Username', dataIndex: 'username' },
-  ];
-
-  const columns = customizeColumns?.(baseColumns) ?? baseColumns;
-
-  return (
-    <BAITable
-      dataSource={data.users}
-      columns={columns}
-      loading={loading}
-    />
-  );
-};
-```
-
-**Benefits:**
-
-- **Separation of Concerns**: Data fetching logic separate from presentation
-- **Reusability**: Fragment components can be used with different queries
-- **Type Safety**: Relay generates types for fragments
-- **Colocation**: Fragment definition lives with the component that uses it
-- **Composability**: Parent can customize child behavior through props
-
-### Query Optimization
-
-- Avoid over-fetching data - only request fields you need
-- Use Relay's pagination for lists (`usePaginationFragment`)
-- Consider using `@defer` and `@stream` for progressive loading
+For detailed patterns, examples, and architecture guides, use the `relay-patterns` skill.
 
 ## Backend.AI UI Component Library
 
@@ -809,6 +780,29 @@ const MyComponent = () => {
 
 ## TypeScript Best Practices
 
+### Variable Naming Convention
+
+- **All variable names must start with a lowercase letter** (camelCase)
+- This applies to local variables, function parameters, state variables, constants (non-enum), and hook return values
+
+```typescript
+// ✅ Good: Variables start with lowercase
+const userName = 'John';
+const [isLoading, setIsLoading] = useState(false);
+const fetchKey = useFetchKey();
+const handleSubmit = () => { /* ... */ };
+
+// ❌ Bad: Variables starting with uppercase
+const UserName = 'John';
+const FetchKey = useFetchKey();
+const HandleSubmit = () => { /* ... */ };
+```
+
+**Exceptions:**
+- React component names (PascalCase): `const MyComponent = () => { ... }`
+- Type/Interface names (PascalCase): `interface UserProps { ... }`
+- Enum members (PascalCase): `enum Status { Active, Inactive }`
+
 ### Type Safety
 
 - Always define prop interfaces
@@ -930,21 +924,18 @@ const BAITable = <T extends { id: string }>({
 
 ### Global State
 
-- Use **Recoil** for global state management
+- Use **Jotai** for global state management
 - Use Relay for GraphQL-backed state
 - Use React Context for simple UI state that doesn't need persistence
 
 ```typescript
-// ✅ Good: Recoil for global state
-import { atom, useRecoilState } from "recoil";
+// ✅ Good: Jotai for global state
+import { atom, useAtom } from "jotai";
 
-const userSettingsState = atom({
-  key: "userSettings",
-  default: {},
-});
+const userSettingsAtom = atom({});
 
 const Component = () => {
-  const [settings, setSettings] = useRecoilState(userSettingsState);
+  const [settings, setSettings] = useAtom(userSettingsAtom);
   // ...
 };
 ```
@@ -1083,7 +1074,7 @@ When reviewing React code, check for:
 
 - [ ] Pre-defined error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`) are used
 - [ ] Error states and loading states are handled
-- [ ] Recoil is used for global state when appropriate
+- [ ] Jotai is used for global state when appropriate
 
 ### Internationalization & Accessibility
 

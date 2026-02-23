@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   CreateKeyPairResourcePolicyInput,
   KeypairResourcePolicySettingModalCreateMutation,
@@ -173,10 +177,7 @@ const KeypairResourcePolicySettingModal: React.FC<
       ?.validateFields()
       .then((values) => {
         const total_resource_slots = _.mapValues(
-          _.pickBy(
-            values.total_resource_slots,
-            (value) => !_.isUndefined(value),
-          ),
+          _.pickBy(values.total_resource_slots, (value) => !_.isNil(value)),
           (value, key) => {
             if (_.includes(key, 'mem')) {
               return convertToBinaryUnit(value, '', 0)?.numberFixed;
