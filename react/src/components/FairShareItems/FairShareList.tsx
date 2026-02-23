@@ -48,15 +48,15 @@ import { useDeferredValue, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
-  DomainFairShareFilter,
+  RGProjectFairShareFilter,
   DomainFairShareOrderBy,
   FairShareListQuery,
   FairShareListQuery$variables,
-  ProjectFairShareFilter,
+  RGDomainFairShareFilter,
   ProjectFairShareOrderBy,
   ResourceGroupFilter,
   ResourceGroupOrderBy,
-  UserFairShareFilter,
+  RGUserFairShareFilter,
   UserFairShareOrderBy,
 } from 'src/__generated__/FairShareListQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from 'src/helper';
@@ -84,9 +84,9 @@ export type FairShareOrderVariables = {
 
 export type FairShareFilterVariables = {
   resourceGroupFilter?: ResourceGroupFilter;
-  domainFilter?: DomainFairShareFilter;
-  projectFilter?: ProjectFairShareFilter;
-  userFilter?: UserFairShareFilter;
+  domainFilter?: RGDomainFairShareFilter;
+  projectFilter?: RGProjectFairShareFilter;
+  userFilter?: RGUserFairShareFilter;
 };
 type StepItem = NonNullable<StepsProps['items']>[number];
 
@@ -229,11 +229,11 @@ const FairShareList: React.FC = () => {
         $projectIdStr: String!
         $resourceGroupFilter: ResourceGroupFilter
         $resourceGroupOrder: [ResourceGroupOrderBy!]
-        $domainFilter: DomainFairShareFilter
+        $domainFilter: RGDomainFairShareFilter
         $domainOrder: [DomainFairShareOrderBy!]
-        $projectFilter: ProjectFairShareFilter
+        $projectFilter: RGProjectFairShareFilter
         $projectOrder: [ProjectFairShareOrderBy!]
-        $userFilter: UserFairShareFilter
+        $userFilter: RGUserFairShareFilter
         $userOrder: [UserFairShareOrderBy!]
         $limit: Int
         $offset: Int
