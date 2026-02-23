@@ -19,7 +19,6 @@ A ผู้ใช้ can be created by clicking the '+Create User' button. Note 
 must be longer or equal to 8 characters and at least 1 alphabet/special
 character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
 
-
 หากผู้ใช้ที่มีอีเมลหรือชื่อผู้ใช้งานเดียวกันมีอยู่แล้ว จะไม่สามารถสร้างบัญชีผู้ใช้ได้ กรุณาลองใช้อีเมลและชื่อผู้ใช้งานอื่น
 
 ![](../images/create_user_dialog.png)
@@ -47,6 +46,7 @@ Each of the five items at the bottom of the dialog has the following functions.
   admin. Note that the inactive users are listed in the Inactive tab separately.
 
   ![](../images/active_user_selection.png)
+
 - Require password change?: If the admin has chosen random passwords while
   creating users in batches, this field can be set to ON to indicate that
   password change is required. The users will see the top bar that notify user
@@ -126,7 +126,6 @@ However, you cannot permanently delete a key pair if it is currently being used 
 
 ![](../images/keypair_delete_confirmation.png)
 
-
 If you
 accidentally deleted a keypair, you can re-create keypair for the user by
 clicking the '+ ADD CREDENTIAL' button at the upper right corner.
@@ -191,10 +190,10 @@ also displayed in the Permission panel.
 ไปที่หน้าข้อมูลและคลิกปุ่ม 'สร้างโฟลเดอร์' ทางด้านขวา ใส่ชื่อโฟลเดอร์
 และตั้งค่าการกำหนดค่าโฟลเดอร์ที่เหลือดังต่อไปนี้:
 
-   - โหมดการใช้งาน: Model
-   - ประเภท: project
-   - สิทธิ์: Read-Write
-   - โคลนได้: True
+- โหมดการใช้งาน: Model
+- ประเภท: project
+- สิทธิ์: Read-Write
+- โคลนได้: True
 
 ![](../images/model_store_folder.png)
 
@@ -205,40 +204,40 @@ also displayed in the Permission panel.
 
 ```yaml
 models:
-- name: "Llama-3.1-8B-Instruct"
-  model_path: "/models/Llama-3.1-8B-Instruct"
-  service:
-    pre_start_actions:
-    - action: run_command
-      args:
-        command:
-        - huggingface-cli
-        - download
-        - --local-dir
-        - /models/Llama-3.1-8B-Instruct
-        - --token
-        - hf_****
-        - meta-llama/Llama-3.1-8B-Instruct
-      start_command:
-      - /usr/bin/python
-      - -m
-      - vllm.entrypoints.openai.api_server
-      - --model
-      - /models/Llama-3.1-8B-Instruct
-      - --served-model-name
-      - Llama-3.1-8B-Instruct
-      - --tensor-parallel-size
-      - "1"
-      - --host
-      - "0.0.0.0"
-      - --port
-      - "8000"
-      - --max-model-len
-      - "4096"
-    port: 8000
-    health_check:
-      path: /v1/models
-      max_retries: 500
+  - name: "Llama-3.1-8B-Instruct"
+    model_path: "/models/Llama-3.1-8B-Instruct"
+    service:
+      pre_start_actions:
+        - action: run_command
+          args:
+            command:
+              - huggingface-cli
+              - download
+              - --local-dir
+              - /models/Llama-3.1-8B-Instruct
+              - --token
+              - hf_****
+              - meta-llama/Llama-3.1-8B-Instruct
+          start_command:
+            - /usr/bin/python
+            - -m
+            - vllm.entrypoints.openai.api_server
+            - --model
+            - /models/Llama-3.1-8B-Instruct
+            - --served-model-name
+            - Llama-3.1-8B-Instruct
+            - --tensor-parallel-size
+            - "1"
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8000"
+            - --max-model-len
+            - "4096"
+      port: 8000
+      health_check:
+        path: /v1/models
+        max_retries: 500
 ```
 
 เมื่ออัปโหลดไฟล์ model-definition แล้ว การ์ดโมเดลจะปรากฏในหน้าคลังโมเดล
@@ -273,6 +272,7 @@ models:
 หน้า Model Store เป็นหน้าที่ผู้ใช้สามารถเรียกดูและใช้งานโมเดลที่ผู้ดูแลระบบได้กำหนดค่าไว้ล่วงหน้า เมื่อไปที่หน้า Model Store จากแถบด้านข้าง คุณจะเห็นโมเดลการ์ดทั้งหมดที่ลงทะเบียนในโปรเจกต์ Model Store
 
 ![](../images/model_store_page_overview.png)
+
 <!-- TODO: Capture screenshot of Model Store page showing model cards with buttons visible -->
 
 โมเดลการ์ดแต่ละใบจะแสดงข้อมูลหลักดังนี้:
@@ -285,6 +285,7 @@ models:
 คลิกที่โมเดลการ์ดเพื่อเปิดมุมมองรายละเอียดที่แสดงเนื้อหา README ทั้งหมดและการดำเนินการที่สามารถใช้ได้
 
 ![](../images/model_card_detail_with_buttons.png)
+
 <!-- TODO: Capture screenshot of model card detail view showing README content and buttons -->
 
 <a id="clone-to-folder"></a>
@@ -303,6 +304,7 @@ models:
 3. คลิกปุ่ม "โคลน" เพื่อเริ่มกระบวนการโคลน
 
 ![](../images/model_store_clone_dialog.png)
+
 <!-- TODO: Capture screenshot of clone folder dialog with field settings -->
 
 :::note
@@ -319,10 +321,11 @@ models:
 
 :::note
 เพื่อเปิดใช้งานปุ่มนี้ ต้องเป็นไปตามเงื่อนไขต่อไปนี้:
+
 - ต้องมีทั้งไฟล์ `model-definition.yaml` และ `service-definition.toml` ในโฟลเดอร์โมเดล หากไฟล์ใดไฟล์หนึ่งหายไป ปุ่มจะถูกปิดใช้งานและจะแสดงคำแนะนำเครื่องมือระบุว่าต้องการไฟล์ใด
 - มีโควตาทรัพยากรเพียงพอสำหรับสร้างบริการโมเดล
 - กลุ่มทรัพยากรอนุญาตประเภทเซสชันการอนุมาน
-:::
+  :::
 
 <a id="service-creation-workflow"></a>
 
@@ -338,6 +341,7 @@ models:
    - การแจ้งเตือนจะแสดงความคืบหน้าของการโคลน
 
 ![](../images/model_service_clone_confirmation.png)
+
 <!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
 
 3. **สร้างบริการ**: เมื่อโฟลเดอร์พร้อมแล้ว (จากการโคลนก่อนหน้าหรือการโคลนใหม่):
@@ -346,11 +350,13 @@ models:
    - คลิกการแจ้งเตือนเพื่อไปยังหน้าการให้บริการโมเดล
 
 ![](../images/model_service_creation_progress.png)
+
 <!-- TODO: Capture screenshot of service creation progress notification -->
 
 4. **ตรวจสอบรายละเอียดบริการ**: เมื่อสร้างเสร็จแล้ว ไปที่หน้าการให้บริการโมเดลเพื่อตรวจสอบรายละเอียดเอ็นด์พอยท์ ตรวจสอบสถานะบริการ และจัดการบริการ
 
 ![](../images/model_service_created_detail.png)
+
 <!-- TODO: Capture screenshot of completed service in Model Serving page -->
 
 :::note
@@ -413,42 +419,42 @@ Click the OK button to apply the updated resource policy.
 About details of each option in resource policy dialog, see the description below.
 
 - Resource Policy
-   * CPU: Specify the maximum amount of CPU cores. (max value: 512)
-   * Memory: Specify the maximum amount of memory in GB. It would be good practice
-     to set memory twice as large as the maximum value of GPU memory. (max value: 1024)
-   * CUDA-capable GPU: Specify the maximum amount of physical GPUs. If fractional GPU
-     is enabled by the server, this setting has no effect. (max value: 64)
-   * CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
-     GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
-     amount of fGPU required is differed by each image. If fractional GPU is not enabled
-     by the server, this settings has no effect. (max value: 256)
+  - CPU: Specify the maximum amount of CPU cores. (max value: 512)
+  - Memory: Specify the maximum amount of memory in GB. It would be good practice
+    to set memory twice as large as the maximum value of GPU memory. (max value: 1024)
+  - CUDA-capable GPU: Specify the maximum amount of physical GPUs. If fractional GPU
+    is enabled by the server, this setting has no effect. (max value: 64)
+  - CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
+    GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
+    amount of fGPU required is differed by each image. If fractional GPU is not enabled
+    by the server, this settings has no effect. (max value: 256)
 
 - Sessions
-   * Cluster Size: Set the maximum limit for the number of multi-containers or
-     multi-nodes that can be configured when creating a session.
-   * Session Lifetime (sec.): Limits the maximum lifetime of a compute session
-     from the reservation in the active status, including `PENDING` and
-     `RUNNING` statuses. After this time, the session will be force-terminated
-     even if it is fully utilized. This will be useful to prevent the session
-     from running indefinitely.
-   * Max Pending Session Count: Maximum number of compute sessions that can be in
-     the `PENDING` status simultaneously.
-   * Concurrent Jobs: Maximum number of concurrent compute session per keypair.
-     If this value is set to 3, for example, users bound to this resource policy
-     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-   * Idle timeout (sec.): Configurable period of time during which the user can
-     leave their session untouched. If there is no activity at all on a
-     compute session for idle timeout, the session will be garbage collected
-     and destroyed automatically. The criteria of the "idleness" can be
-     various and set by the administrators. (max value: 15552000 (approx. 180 days))
-   * Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
+  - Cluster Size: Set the maximum limit for the number of multi-containers or
+    multi-nodes that can be configured when creating a session.
+  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+    from the reservation in the active status, including `PENDING` and
+    `RUNNING` statuses. After this time, the session will be force-terminated
+    even if it is fully utilized. This will be useful to prevent the session
+    from running indefinitely.
+  - Max Pending Session Count: Maximum number of compute sessions that can be in
+    the `PENDING` status simultaneously.
+  - Concurrent Jobs: Maximum number of concurrent compute session per keypair.
+    If this value is set to 3, for example, users bound to this resource policy
+    cannot create more than 3 compute sessions simultaneously. (max value: 100)
+  - Idle timeout (sec.): Configurable period of time during which the user can
+    leave their session untouched. If there is no activity at all on a
+    compute session for idle timeout, the session will be garbage collected
+    and destroyed automatically. The criteria of the "idleness" can be
+    various and set by the administrators. (max value: 15552000 (approx. 180 days))
+  - Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
 
 - Folders
-   * Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
-     the accessibility to them. Even if a NFS named "data-1" is mounted on
-     Backend.AI, users cannot access it unless it is allowed by resource policy.
-   * (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
-     can be created/invited. (max value: 100).
+  - Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
+    the accessibility to them. Even if a NFS named "data-1" is mounted on
+    Backend.AI, users cannot access it unless it is allowed by resource policy.
+  - (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
+    can be created/invited. (max value: 100).
 
 In the keypair resource policy list, check that the Resources value of the default
 policy has been updated.
@@ -512,7 +518,6 @@ To create a new user resource policy, click the Create button.
   user cannot create a new customized image. If you want to know more about customized
   images, please refer to the [My Environments](#my-environments) section.
 
-
 To update, click the 'Setting (Gear)' button in the control column. To delete, click the trash can
 button.
 
@@ -568,19 +573,207 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 
 ![](../images/keypair_export.png)
 
-<a id="unified-view-for-pending-sessions"></a>
+## มุมมองรวมสำหรับเซสชันที่รอดำเนินการ
 
-## Unified View for Pending Sessions
-
-From Backend.AI version 25.13.0, a unified view for pending sessions is available in the Admin Menu.
-Unlike the Session page, the Scheduler page provides a unified view of all pending sessions within a
-selected resource group. The index number displayed next to the status indicates the queue position in
-which the session will be created once sufficient resources become available.
+ตั้งแต่ Backend.AI เวอร์ชัน 25.13.0 เป็นต้นไป มุมมองรวมสำหรับเซสชันที่รอดำเนินการจะพร้อมใช้งานในเมนูผู้ดูแลระบบ
+หน้า Admin Session จะแสดงมุมมองรวมของเซสชันที่รอดำเนินการทั้งหมดภายใน
+กลุ่มทรัพยากรที่เลือก หมายเลขดัชนีที่แสดงถัดจากสถานะจะระบุตำแหน่งในคิว
+ที่เซสชันจะถูกสร้างเมื่อมีทรัพยากรเพียงพอ
 
 ![](../images/scheduler_page.png)
 
-Similar to the Session page, you can click the session name to open a drawer that
-displays detailed information about the session.
+เช่นเดียวกับหน้า Session คุณสามารถคลิกชื่อเซสชันเพื่อเปิด drawer ที่แสดง
+ข้อมูลรายละเอียดเกี่ยวกับเซสชันได้
+
+<a id="manage-images"></a>
+
+## ตัวจัดตาราง Fair Share
+
+ตั้งแต่ Backend.AI core เวอร์ชัน 26.2.0 เป็นต้นไป หน้า Fair Share Scheduler จะพร้อมใช้งาน
+ในเมนู Administration ฟีเจอร์นี้ช่วยให้ผู้ดูแลระบบสามารถจัดการน้ำหนักการจัดตาราง
+Fair Share ตามโครงสร้างลำดับชั้นของกลุ่มทรัพยากร โดเมน โปรเจกต์ และผู้ใช้
+
+การจัดตาราง Fair Share จะจัดสรรทรัพยากรการคำนวณโดยอิงจากรูปแบบการใช้งานในอดีต
+เพื่อให้มั่นใจว่าทรัพยากรจะถูกกระจายอย่างเป็นธรรมในหมู่ผู้ใช้ ผู้ใช้ที่ใช้
+ทรัพยากรน้อยในอดีตจะได้รับลำดับความสำคัญในการจัดตารางสูงกว่า ในขณะที่ผู้ใช้
+ที่ใช้มากกว่าจะได้รับลำดับความสำคัญต่ำกว่า ผู้ดูแลระบบสามารถปรับแต่งพฤติกรรมนี้
+ได้โดยการปรับน้ำหนักในแต่ละระดับของลำดับชั้น
+
+:::note
+Fair Share Scheduler จะพร้อมใช้งานเฉพาะเมื่อประเภทตัวจัดตารางของกลุ่มทรัพยากร
+ถูกตั้งค่าเป็น `FAIR_SHARE` เท่านั้น สำหรับการกำหนดค่าประเภทตัวจัดตารางของ
+กลุ่มทรัพยากร โปรดดูที่ส่วนจัดการกลุ่มทรัพยากร
+:::
+
+หากต้องการเข้าถึงฟีเจอร์นี้ ให้คลิกเมนู Scheduler ในส่วน Administration ของแถบด้านข้าง
+หน้าจะแสดงแท็บการตั้งค่า Fair Share พร้อมอินเทอร์เฟซ drill-down 4 ขั้นตอน
+
+![](../images/fair_share_resource_group_page.png)
+
+หน้าถูกจัดระเบียบเป็น 4 ขั้นตอนตามลำดับชั้น:
+
+1. **กลุ่มทรัพยากร**: กำหนดค่าพารามิเตอร์หลักของ Fair Share สำหรับแต่ละกลุ่มทรัพยากร
+2. **โดเมน**: ตั้งค่าน้ำหนักสำหรับโดเมนภายในกลุ่มทรัพยากร
+3. **โปรเจกต์**: ตั้งค่าน้ำหนักสำหรับโปรเจกต์ภายในโดเมน
+4. **ผู้ใช้**: ตั้งค่าน้ำหนักสำหรับผู้ใช้แต่ละคนภายในโปรเจกต์
+
+แถบตัวบ่งชี้ขั้นตอนที่ด้านบนของหน้าจะแสดงตำแหน่งปัจจุบันในลำดับชั้น
+ขั้นตอนที่เสร็จสิ้นจะแสดงชื่อของรายการที่เลือก คุณสามารถคลิกที่ขั้นตอนที่
+เสร็จสิ้นเพื่อย้อนกลับไปยังระดับนั้นได้
+
+![](../images/fair_share_step_indicator.png)
+
+หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น `FAIR_SHARE`
+จะมีการแจ้งเตือนเป็นคำเตือนว่า Fair Share Scheduler ไม่ได้เปิดใช้งานสำหรับ
+กลุ่มทรัพยากรนั้น
+
+![](../images/fair_share_scheduler_warning.png)
+
+ในแต่ละขั้นตอน ฟีเจอร์ทั่วไปต่อไปนี้พร้อมใช้งาน:
+
+- **การกรอง**: ใช้ตัวกรองค้นหาตามคุณสมบัติเพื่อจำกัดผลลัพธ์ตามชื่อ ในขั้นตอนผู้ใช้ จะมีตัวกรองเพิ่มเติมสำหรับอีเมลและสถานะการใช้งาน
+- **การเรียงลำดับ**: คลิกส่วนหัวคอลัมน์เพื่อเรียงลำดับตารางตามคอลัมน์นั้น
+- **การแบ่งหน้า**: นำทางผ่านผลลัพธ์พร้อมขนาดหน้าที่กำหนดค่าได้
+- **รีเฟรชอัตโนมัติ**: ข้อมูลจะรีเฟรชอัตโนมัติทุก 7 วินาที ปุ่มรีเฟรชด้วยตนเองก็พร้อมใช้งานเช่นกัน
+
+### กลุ่มทรัพยากร
+
+ขั้นตอนกลุ่มทรัพยากรจะแสดงตารางของกลุ่มทรัพยากรทั้งหมดพร้อมการกำหนดค่า
+Fair Share
+
+![](../images/fair_share_resource_group_page.png)
+
+ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
+
+- **ชื่อ**: ชื่อกลุ่มทรัพยากร คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโดเมนของกลุ่มทรัพยากรนั้น
+- **ตัวควบคุม**: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่า Fair Share ของกลุ่มทรัพยากร
+- **การจัดสรร**: การใช้ทรัพยากรแสดงการใช้งาน/ความจุสำหรับแต่ละประเภททรัพยากรที่จัดสรรให้กลุ่มทรัพยากร (เช่น CPU, Memory, CUDA GPU)
+- **น้ำหนักทรัพยากร**: น้ำหนักตามประเภททรัพยากร แสดง "ค่าเริ่มต้น" หากใช้น้ำหนักเริ่มต้น
+- **น้ำหนักเริ่มต้น**: ค่าน้ำหนักสำรองสำหรับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก
+- **หน่วยการลดทอน**: ช่วงเวลา (เป็นวัน) สำหรับรวบรวมการใช้งาน
+- **ครึ่งชีวิต**: ช่วงเวลา (เป็นวัน) ที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง
+- **ช่วงเวลาย้อนหลัง**: ช่วง (เป็นวัน) ของประวัติการใช้งานที่สะท้อนในการคำนวณ
+
+### การตั้งค่า Fair Share ของกลุ่มทรัพยากร
+
+คลิกปุ่มตั้งค่า (เฟือง) ในคอลัมน์ตัวควบคุมของกลุ่มทรัพยากรเพื่อเปิด modal
+การตั้งค่า Fair Share
+
+![](../images/fair_share_resource_group_setting_modal.png)
+
+:::warning
+การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
+ประมาณ 5 นาทีเนื่องจากรอบการคำนวณ
+:::
+
+modal ประกอบด้วยฟิลด์ต่อไปนี้:
+
+- **กลุ่มทรัพยากร**: ฟิลด์อ่านอย่างเดียวที่แสดงชื่อกลุ่มทรัพยากร
+- **ครึ่งชีวิต**: ช่วงเวลาที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง ระบุเป็นวัน (ขั้นต่ำ 1) ตัวอย่างเช่น หากตั้งเป็น 7 วัน การใช้งานเมื่อ 7 วันก่อนจะคำนวณที่ 50% และการใช้งานเมื่อ 14 วันก่อนที่ 25% แนะนำให้ตั้งค่าเป็นพหุคูณของหน่วยการลดทอน
+- **ช่วงเวลาย้อนหลัง**: ช่วงของประวัติการใช้งานที่สะท้อนในการคำนวณ Fair Share ระบุเป็นวัน (ขั้นต่ำ 1) การใช้งานก่อนช่วงเวลานี้จะถูกยกเว้นจากการคำนวณ แนะนำให้ตั้งค่าเป็นพหุคูณของครึ่งชีวิต
+- **น้ำหนักเริ่มต้น**: ค่าเริ่มต้นที่ใช้กับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก (ขั้นต่ำ 1, ขั้น 0.1)
+- **น้ำหนักทรัพยากร**: น้ำหนักตามประเภททรัพยากร (เช่น CPU, Memory, GPU) แต่ละรายการมีค่าขั้นต่ำ 1 และขั้น 0.1 ส่วนนี้จะแสดงเฉพาะเมื่อกลุ่มทรัพยากรมีน้ำหนักทรัพยากรเท่านั้น
+
+### โดเมน
+
+หลังจากเลือกกลุ่มทรัพยากร ขั้นตอนโดเมนจะแสดงตารางของโดเมนพร้อมน้ำหนัก
+Fair Share และการใช้งานภายในกลุ่มทรัพยากรนั้น
+
+![](../images/fair_share_domain_page.png)
+
+ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
+
+- **ชื่อ**: ชื่อโดเมน คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโปรเจกต์ของโดเมนนั้น
+- **ตัวควบคุม**: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของโดเมนนี้
+- **น้ำหนัก**: ค่าน้ำหนักปัจจุบัน แสดง "ค่าเริ่มต้น" หากใช้น้ำหนักเริ่มต้น
+- **ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม**: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง ค่าที่สูงกว่าหมายถึงลำดับความสำคัญที่สูงกว่า
+- **การจัดสรรทรัพยากร**: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร (CPU, Memory, GPU / Day)
+- **แก้ไขเมื่อ**: timestamp การแก้ไขครั้งล่าสุด
+- **สร้างเมื่อ**: timestamp การสร้าง
+
+คุณสามารถเลือกหลายแถวโดยใช้ช่องทำเครื่องหมายทางด้านซ้ายของตาราง เมื่อเลือก
+แถวแล้ว จะมีปุ่มเพิ่มเติม 2 ปุ่มปรากฏขึ้น:
+
+- **กราฟการใช้งาน** (ไอคอนแผนภูมิ): เปิด modal ประวัติการใช้งานสำหรับรายการที่เลือก
+- **แก้ไขเป็นกลุ่ม** (ไอคอนเฟือง): เปิด modal การตั้งค่าน้ำหนักเพื่อแก้ไขน้ำหนักของรายการที่เลือกทั้งหมดพร้อมกัน
+
+### โปรเจกต์
+
+หลังจากเลือกโดเมน ขั้นตอนโปรเจกต์จะแสดงตารางของโปรเจกต์ที่มีโครงสร้าง
+คอลัมน์เดียวกันกับขั้นตอนโดเมน คลิกชื่อโปรเจกต์เพื่อ drill down ไปยัง
+ขั้นตอนผู้ใช้
+
+![](../images/fair_share_project_page.png)
+
+การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว
+
+### ผู้ใช้
+
+หลังจากเลือกโปรเจกต์ ขั้นตอนผู้ใช้จะแสดงตารางของผู้ใช้แต่ละคนพร้อมน้ำหนัก
+Fair Share และการใช้งาน
+
+![](../images/fair_share_user_page.png)
+
+ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
+
+- **อีเมล**: ที่อยู่อีเมลของผู้ใช้
+- **ชื่อ**: ชื่อของผู้ใช้
+- **ตัวควบคุม**: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของผู้ใช้นี้
+- **น้ำหนัก**: ค่าน้ำหนักปัจจุบัน แสดง "ค่าเริ่มต้น" หากใช้น้ำหนักเริ่มต้น
+- **ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม**: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง
+- **การจัดสรรทรัพยากร**: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร
+- **แก้ไขเมื่อ**: timestamp การแก้ไขครั้งล่าสุด
+- **สร้างเมื่อ**: timestamp การสร้าง
+
+:::note
+ในขั้นตอนผู้ใช้ จะมีคุณสมบัติตัวกรองเพิ่มเติม: อีเมล ชื่อ และสถานะการใช้งาน
+:::
+
+การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว
+
+### การแก้ไขน้ำหนัก Fair Share
+
+หากต้องการแก้ไขน้ำหนัก Fair Share สำหรับโดเมน โปรเจกต์ หรือผู้ใช้ ให้คลิกปุ่ม
+ตั้งค่า (เฟือง) ในคอลัมน์ตัวควบคุมของแถวที่ต้องการ modal การตั้งค่าน้ำหนักจะเปิดขึ้น
+
+![](../images/fair_share_weight_setting_modal.png)
+
+:::warning
+การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
+ประมาณ 5 นาทีเนื่องจากรอบการคำนวณ
+:::
+
+ในโหมดแก้ไขเดี่ยว modal จะแสดงชื่อรายการ (อ่านอย่างเดียว) และฟิลด์ป้อนน้ำหนัก
+
+- **น้ำหนัก**: ตัวคูณฐานที่กำหนดลำดับความสำคัญสำหรับการจัดตารางแบบ Fair Share ยิ่งค่าสูง จะมีลำดับความสำคัญสูงขึ้น ค่าเริ่มต้นคือ "1.0" น้ำหนัก "2.0" จะมีลำดับความสำคัญเป็นสองเท่าของ "1.0" ค่าขั้นต่ำคือ 1 และขั้นคือ 0.1
+
+หากต้องการแก้ไขน้ำหนักของหลายรายการพร้อมกัน ให้เลือกแถวที่ต้องการโดยใช้ช่อง
+ทำเครื่องหมายในตาราง จากนั้นคลิกปุ่มแก้ไขเป็นกลุ่ม (ไอคอนเฟือง) ในโหมด
+แก้ไขเป็นกลุ่ม modal จะแสดงรายการแท็กของรายการที่เลือกทั้งหมดและฟิลด์ป้อน
+น้ำหนักเดียวที่จะใช้กับทุกรายการ
+
+![](../images/fair_share_weight_bulk_edit_modal.png)
+
+:::note
+หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น `FAIR_SHARE`
+จะมีการแจ้งเตือนเป็นคำเตือนแสดงใน modal
+:::
+
+### การดูประวัติการใช้งาน
+
+หากต้องการดูประวัติการใช้งานของโดเมน โปรเจกต์ หรือผู้ใช้ ให้เลือกแถวที่ต้องการ
+โดยใช้ช่องทำเครื่องหมายในตาราง จากนั้นคลิกปุ่มกราฟการใช้งาน (ไอคอนแผนภูมิ)
+modal ประวัติการใช้งานจะเปิดขึ้น
+
+![](../images/fair_share_usage_bucket_modal.png)
+
+modal จะแสดงข้อมูลต่อไปนี้:
+
+- **ตัวเลือกช่วงวันที่**: เลือกช่วงวันที่สำหรับประวัติการใช้งาน มีพรีเซ็ตสำหรับ 7 วันที่ผ่านมา, 30 วันที่ผ่านมา และ 90 วันที่ผ่านมา
+- **ปุ่มรีเฟรช**: รีเฟรชข้อมูลการใช้งานด้วยตนเอง
+- **ข้อมูลบริบท**: แสดงกลุ่มทรัพยากร โดเมน และโปรเจกต์ (ขึ้นอยู่กับขั้นตอนปัจจุบัน)
+- **รายการที่เลือก**: แสดงเป็นแท็กที่แสดงชื่อของรายการที่เลือก
+- **แผนภูมิการใช้งาน**: แผนภูมิแสดงการใช้ทรัพยากรเฉลี่ยต่อวันในช่วงเวลาที่เลือก
 
 <a id="manage-images"></a>
 
@@ -695,18 +888,17 @@ In Quota setting page, there are two panels.
 ![](../images/quota_setting_page.png)
 
 - Overview panel
-   * Usage: Shows the actual amount usage of the selected storage.
-   * Endpoint: Represents the mount point of the selected storage.
-   * Backend Type: The type of storage.
-   * Capabilities: The supported feature of the selected storage.
+  - Usage: Shows the actual amount usage of the selected storage.
+  - Endpoint: Represents the mount point of the selected storage.
+  - Backend Type: The type of storage.
+  - Capabilities: The supported feature of the selected storage.
 
 - Quota Settings
-   * For User: Configure per-user quota setting here.
-   * For Project: Configure per-project quota(project-folder) setting here.
-   * ID: Corresponds to user or project id.
-   * Hard Limit (GB): Currently set hard limit quota for selected quota.
-   * Control: Provides editing the hard limit or even deleting the quota setting.
-
+  - For User: Configure per-user quota setting here.
+  - For Project: Configure per-project quota(project-folder) setting here.
+  - ID: Corresponds to user or project id.
+  - Hard Limit (GB): Currently set hard limit quota for selected quota.
+  - Control: Provides editing the hard limit or even deleting the quota setting.
 
 <a id="set-user-quota"></a>
 
@@ -784,10 +976,9 @@ Please note that a file name can have up to 255 characters.
 In the Configuration page, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
-
 You can change image auto install and update rule by selecting one option from
 `Digest`, `Tag`, `None`. `Digest` is kind of checksum for the image which
-verifies integrity of the image and also enhances  efficiency in downloading images
+verifies integrity of the image and also enhances efficiency in downloading images
 by reusing duplicated layers. `Tag` is only for developing option since it does not
 guarantee the Integrity of the image.
 

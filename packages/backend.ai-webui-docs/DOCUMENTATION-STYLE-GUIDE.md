@@ -241,19 +241,37 @@ Rules:
 
 ### Cross-References (Internal Links)
 
-Format: `[Link Text <anchor-name>](#Link Text <anchor-name>)`
+Format: `[Display Text](#anchor-id)`
 
 ```markdown
 For details, refer to the
-[Create Storage Folder <create-storage-folder>](#Create Storage Folder <create-storage-folder>)
-section.
+[Create Storage Folder](#create-storage-folder) section.
+```
+
+For translated documents, only translate the display text — the anchor must stay in English:
+
+```markdown
+[스토리지 폴더 생성](#create-storage-folder)
 ```
 
 Rules:
-- Anchor names use lowercase with hyphens
+- Anchor IDs use lowercase English with hyphens
 - Link text should be descriptive and match the target section title
-- Both parts of the link (display and href) must match
 - During build, cross-references are processed to include chapter-slug prefixes
+
+:::danger
+**Do NOT use angle brackets `<>` in link URLs.** The `marked` parser (CommonMark-compliant)
+cannot parse `<>` inside link destinations. Links like `[Text <anchor>](#Text <anchor>)` will
+render as **plain text** instead of clickable links — especially inside admonitions (`:::note`, etc.).
+
+```markdown
+<!-- ❌ BROKEN: angle brackets in URL break markdown link parsing -->
+[Create Storage Folder <create-storage-folder>](#Create Storage Folder <create-storage-folder>)
+
+<!-- ✅ CORRECT: simple anchor ID, no angle brackets -->
+[Create Storage Folder](#create-storage-folder)
+```
+:::
 
 #### HTML Anchors for Non-Heading Targets
 
@@ -531,7 +549,7 @@ Quick reference of all supported syntax:
 | Admonitions | `:::note` through `:::danger` | 6 types, custom titles |
 | Collapsible sections | `<details>/<summary>` | HTML5 elements |
 | HTML anchors | `<a id="name"></a>` | For non-heading targets |
-| Cross-references | `[text <anchor>](#text <anchor>)` | Chapter-aware |
+| Cross-references | `[text](#anchor-id)` | Chapter-aware; no `<>` in URLs |
 | Template variables | `\|year\|`, `\|version\|`, etc. | Sphinx-style |
 | Indented notes | 3-space indent | Legacy; prefer admonitions |
 
@@ -547,6 +565,7 @@ Quick reference of all supported syntax:
 | Using "Note:" or "Warning:" prefixes | Use admonitions or indented blocks |
 | Inconsistent terminology | Follow `TERMINOLOGY.md` |
 | Using 3-space indented notes for new content | Prefer admonitions (`:::note`, `:::warning`, etc.) |
+| Using `<>` in cross-reference URLs `[Text <anchor>](#...)` | Use `[Text](#anchor-id)` — angle brackets break `marked` link parsing |
 | Missing blank line after `<summary>` | Always leave blank line for markdown processing |
 | Translating anchor IDs in non-English docs | Anchors must always remain in English |
 | Code blocks without language identifier | Always specify the language (e.g., `shell`, `toml`, `python`) |

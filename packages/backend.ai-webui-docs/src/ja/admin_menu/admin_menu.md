@@ -19,7 +19,6 @@ A ユーザー can be created by clicking the '+Create User' button. Note that t
 must be longer or equal to 8 characters and at least 1 alphabet/special
 character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
 
-
 同じメールアドレスまたはユーザー名のユーザーが既に存在する場合、ユーザーアカウントを作成することはできません。他のメールアドレスとユーザー名を試してください。
 
 ![](../images/create_user_dialog.png)
@@ -47,6 +46,7 @@ Each of the five items at the bottom of the dialog has the following functions.
   admin. Note that the inactive users are listed in the Inactive tab separately.
 
   ![](../images/active_user_selection.png)
+
 - Require password change?: If the admin has chosen random passwords while
   creating users in batches, this field can be set to ON to indicate that
   password change is required. The users will see the top bar that notify user
@@ -126,7 +126,6 @@ However, you cannot permanently delete a key pair if it is currently being used 
 
 ![](../images/keypair_delete_confirmation.png)
 
-
 If you
 accidentally deleted a keypair, you can re-create keypair for the user by
 clicking the '+ ADD CREDENTIAL' button at the upper right corner.
@@ -205,40 +204,40 @@ model-definitionファイルの作成方法の詳細については、
 
 ```yaml
 models:
-- name: "Llama-3.1-8B-Instruct"
-  model_path: "/models/Llama-3.1-8B-Instruct"
-  service:
-    pre_start_actions:
-    - action: run_command
-      args:
-        command:
-        - huggingface-cli
-        - download
-        - --local-dir
+  - name: "Llama-3.1-8B-Instruct"
+    model_path: "/models/Llama-3.1-8B-Instruct"
+    service:
+      pre_start_actions:
+        - action: run_command
+          args:
+            command:
+              - huggingface-cli
+              - download
+              - --local-dir
+              - /models/Llama-3.1-8B-Instruct
+              - --token
+              - hf_****
+              - meta-llama/Llama-3.1-8B-Instruct
+      start_command:
+        - /usr/bin/python
+        - -m
+        - vllm.entrypoints.openai.api_server
+        - --model
         - /models/Llama-3.1-8B-Instruct
-        - --token
-        - hf_****
-        - meta-llama/Llama-3.1-8B-Instruct
-    start_command:
-    - /usr/bin/python
-    - -m
-    - vllm.entrypoints.openai.api_server
-    - --model
-    - /models/Llama-3.1-8B-Instruct
-    - --served-model-name
-    - Llama-3.1-8B-Instruct
-    - --tensor-parallel-size
-    - "1"
-    - --host
-    - "0.0.0.0"
-    - --port
-    - "8000"
-    - --max-model-len
-    - "4096"
-  port: 8000
-  health_check:
-    path: /v1/models
-    max_retries: 500
+        - --served-model-name
+        - Llama-3.1-8B-Instruct
+        - --tensor-parallel-size
+        - "1"
+        - --host
+        - "0.0.0.0"
+        - --port
+        - "8000"
+        - --max-model-len
+        - "4096"
+    port: 8000
+    health_check:
+      path: /v1/models
+      max_retries: 500
 ```
 
 model-definitionファイルがアップロードされると、モデルストアページにモデルカードが表示されます。
@@ -272,6 +271,7 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
 モデルストアページは、管理者が事前に構成したモデルをユーザーが閲覧して活用できるページです。サイドバーからモデルストアページに移動すると、モデルストアプロジェクトに登録されたすべてのモデルカードを確認できます。
 
 ![](../images/model_store_page_overview.png)
+
 <!-- TODO: Capture screenshot of Model Store page showing model cards with buttons visible -->
 
 各モデルカードには以下の主要な情報が表示されます：
@@ -284,6 +284,7 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
 モデルカードをクリックすると、READMEの全内容と利用可能なアクションを含む詳細ビューが開きます。
 
 ![](../images/model_card_detail_with_buttons.png)
+
 <!-- TODO: Capture screenshot of model card detail view showing README content and buttons -->
 
 <a id="clone-to-folder"></a>
@@ -302,6 +303,7 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
 3. 「クローン」ボタンをクリックしてクローンプロセスを開始します
 
 ![](../images/model_store_clone_dialog.png)
+
 <!-- TODO: Capture screenshot of clone folder dialog with field settings -->
 
 :::note
@@ -318,10 +320,11 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
 
 :::note
 このボタンを有効にするには、以下の条件を満たす必要があります：
+
 - モデルフォルダに `model-definition.yaml` と `service-definition.toml` の両方のファイルが存在すること。いずれかのファイルが不足している場合、ボタンは無効になり、必要なファイルを示すツールチップが表示されます。
 - モデルサービスを作成するための十分なリソースクォータがあること。
 - リソースグループが推論セッションタイプを許可していること。
-:::
+  :::
 
 <a id="service-creation-workflow"></a>
 
@@ -337,6 +340,7 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
    - 通知でクローンの進行状況が表示されます
 
 ![](../images/model_service_clone_confirmation.png)
+
 <!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
 
 3. **サービスの作成**: フォルダの準備ができたら（以前のクローンまたは新しいクローンから）：
@@ -345,11 +349,13 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
    - 通知をクリックするとモデルサービスページに移動できます
 
 ![](../images/model_service_creation_progress.png)
+
 <!-- TODO: Capture screenshot of service creation progress notification -->
 
 4. **サービス詳細の確認**: 作成が完了したら、モデルサービスページに移動してエンドポイントの詳細を確認し、サービスの状態を監視し、サービスを管理できます
 
 ![](../images/model_service_created_detail.png)
+
 <!-- TODO: Capture screenshot of completed service in Model Serving page -->
 
 :::note
@@ -412,42 +418,42 @@ Click the OK button to apply the updated resource policy.
 About details of each option in resource policy dialog, see the description below.
 
 - Resource Policy
-   * CPU: Specify the maximum amount of CPU cores. (max value: 512)
-   * Memory: Specify the maximum amount of memory in GB. It would be good practice
-     to set memory twice as large as the maximum value of GPU memory. (max value: 1024)
-   * CUDA-capable GPU: Specify the maximum amount of physical GPUs. If fractional GPU
-     is enabled by the server, this setting has no effect. (max value: 64)
-   * CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
-     GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
-     amount of fGPU required is differed by each image. If fractional GPU is not enabled
-     by the server, this settings has no effect. (max value: 256)
+  - CPU: Specify the maximum amount of CPU cores. (max value: 512)
+  - Memory: Specify the maximum amount of memory in GB. It would be good practice
+    to set memory twice as large as the maximum value of GPU memory. (max value: 1024)
+  - CUDA-capable GPU: Specify the maximum amount of physical GPUs. If fractional GPU
+    is enabled by the server, this setting has no effect. (max value: 64)
+  - CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
+    GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
+    amount of fGPU required is differed by each image. If fractional GPU is not enabled
+    by the server, this settings has no effect. (max value: 256)
 
 - Sessions
-   * Cluster Size: Set the maximum limit for the number of multi-containers or
-     multi-nodes that can be configured when creating a session.
-   * Session Lifetime (sec.): Limits the maximum lifetime of a compute session
-     from the reservation in the active status, including `PENDING` and
-     `RUNNING` statuses. After this time, the session will be force-terminated
-     even if it is fully utilized. This will be useful to prevent the session
-     from running indefinitely.
-   * Max Pending Session Count: Maximum number of compute sessions that can be in
-     the `PENDING` status simultaneously.
-   * Concurrent Jobs: Maximum number of concurrent compute session per keypair.
-     If this value is set to 3, for example, users bound to this resource policy
-     cannot create more than 3 compute sessions simultaneously. (max value: 100)
-   * Idle timeout (sec.): Configurable period of time during which the user can
-     leave their session untouched. If there is no activity at all on a
-     compute session for idle timeout, the session will be garbage collected
-     and destroyed automatically. The criteria of the "idleness" can be
-     various and set by the administrators. (max value: 15552000 (approx. 180 days))
-   * Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
+  - Cluster Size: Set the maximum limit for the number of multi-containers or
+    multi-nodes that can be configured when creating a session.
+  - Session Lifetime (sec.): Limits the maximum lifetime of a compute session
+    from the reservation in the active status, including `PENDING` and
+    `RUNNING` statuses. After this time, the session will be force-terminated
+    even if it is fully utilized. This will be useful to prevent the session
+    from running indefinitely.
+  - Max Pending Session Count: Maximum number of compute sessions that can be in
+    the `PENDING` status simultaneously.
+  - Concurrent Jobs: Maximum number of concurrent compute session per keypair.
+    If this value is set to 3, for example, users bound to this resource policy
+    cannot create more than 3 compute sessions simultaneously. (max value: 100)
+  - Idle timeout (sec.): Configurable period of time during which the user can
+    leave their session untouched. If there is no activity at all on a
+    compute session for idle timeout, the session will be garbage collected
+    and destroyed automatically. The criteria of the "idleness" can be
+    various and set by the administrators. (max value: 15552000 (approx. 180 days))
+  - Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
 
 - Folders
-   * Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
-     the accessibility to them. Even if a NFS named "data-1" is mounted on
-     Backend.AI, users cannot access it unless it is allowed by resource policy.
-   * (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
-     can be created/invited. (max value: 100).
+  - Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
+    the accessibility to them. Even if a NFS named "data-1" is mounted on
+    Backend.AI, users cannot access it unless it is allowed by resource policy.
+  - (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
+    can be created/invited. (max value: 100).
 
 In the keypair resource policy list, check that the Resources value of the default
 policy has been updated.
@@ -511,7 +517,6 @@ To create a new user resource policy, click the Create button.
   user cannot create a new customized image. If you want to know more about customized
   images, please refer to the [My Environments](#my-environments) section.
 
-
 To update, click the 'Setting (Gear)' button in the control column. To delete, click the trash can
 button.
 
@@ -569,17 +574,210 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 
 <a id="unified-view-for-pending-sessions"></a>
 
-## Unified View for Pending Sessions
+## ペンディングセッションの統合ビュー
 
-From Backend.AI version 25.13.0, a unified view for pending sessions is available in the Admin Menu.
-Unlike the Session page, the Scheduler page provides a unified view of all pending sessions within a
-selected resource group. The index number displayed next to the status indicates the queue position in
-which the session will be created once sufficient resources become available.
+Backend.AIバージョン25.13.0以降、管理者メニューでペンディングセッションの統合ビューが利用可能です。
+Admin Sessionページでは、選択したリソースグループ内のすべてのペンディングセッションを
+一覧で確認できます。ステータスの横に表示されるインデックス番号は、十分なリソースが
+確保された際にセッションが作成されるキューの位置を示しています。
 
 ![](../images/scheduler_page.png)
 
-Similar to the Session page, you can click the session name to open a drawer that
-displays detailed information about the session.
+セッションページと同様に、セッション名をクリックすると、セッションの詳細情報を
+表示するドロワーが開きます。
+
+<a id="manage-images"></a>
+
+## フェアシェアスケジューラ
+
+Backend.AIコアバージョン26.2.0以降で、フェアシェアスケジューラページがAdministration
+メニューから利用可能です。この機能により、管理者はリソースグループ、ドメイン、
+プロジェクト、ユーザーの階層構造に基づいてフェアシェアスケジューリングの重みを
+管理できます。
+
+フェアシェアスケジューリングは、過去の使用パターンに基づいてコンピューティングリソースを
+配分し、ユーザー間でリソースが公平に分配されるようにします。過去にリソースの使用が
+少なかったユーザーはスケジューリング優先度が高くなり、多く使用したユーザーは優先度が
+低くなります。管理者は階層構造の各レベルで重みを調整することで、この動作を
+細かく制御できます。
+
+:::note
+フェアシェアスケジューラは、リソースグループのスケジューラタイプが`FAIR_SHARE`に
+設定されている場合にのみ使用できます。リソースグループのスケジューラタイプの設定に
+ついては、リソースグループの管理セクションを参照してください。
+:::
+
+この機能にアクセスするには、サイドバーのAdministrationセクションでSchedulerメニュー項目を
+クリックします。ページにはフェアシェア設定タブと4段階のドリルダウンインターフェースが
+表示されます。
+
+![](../images/fair_share_resource_group_page.png)
+
+ページは以下の4つの階層的なステップで構成されています：
+
+1. **リソースグループ**: 各リソースグループのフェアシェアの主要パラメータを設定します
+2. **ドメイン**: リソースグループ内のドメインごとに重みを設定します
+3. **プロジェクト**: ドメイン内のプロジェクトごとに重みを設定します
+4. **ユーザー**: プロジェクト内の個々のユーザーに重みを設定します
+
+ページ上部のステップインジケーターバーは、階層構造での現在の位置を表示します。
+完了したステップには選択した項目の名前が表示されます。完了したステップをクリックすると
+そのレベルに戻ることができます。
+
+![](../images/fair_share_step_indicator.png)
+
+選択したリソースグループのスケジューラタイプが`FAIR_SHARE`に設定されていない場合、
+そのリソースグループでフェアシェアスケジューラが有効になっていないことを示す警告
+アラートが表示されます。
+
+![](../images/fair_share_scheduler_warning.png)
+
+各ステップで以下の共通機能が利用可能です：
+
+- **フィルタリング**: プロパティベースの検索フィルタを使用して、名前で結果を絞り込めます。ユーザーステップでは、メールアドレスとアクティブ状態による追加フィルタが利用できます。
+- **ソート**: カラムヘッダーをクリックして、そのカラムでテーブルをソートできます。
+- **ページネーション**: ページサイズを設定して結果をナビゲートできます。
+- **自動リフレッシュ**: データは7秒ごとに自動更新されます。手動リフレッシュボタンも利用可能です。
+
+### リソースグループ
+
+リソースグループステップでは、すべてのリソースグループとそのフェアシェア設定がテーブルで
+表示されます。
+
+![](../images/fair_share_resource_group_page.png)
+
+テーブルには以下のカラムが含まれます：
+
+- **名前**: リソースグループ名です。名前をクリックすると、そのリソースグループのドメインレベル設定にドリルダウンします。
+- **制御**: リソースグループのフェアシェア設定モーダルを開く設定（歯車）ボタンです。
+- **割り当て**: リソースグループに割り当てられた各リソースタイプの使用量/容量を表示します（例：CPU、Memory、CUDA GPU）。
+- **リソース重み**: リソースタイプごとの重みです。デフォルトの重みを使用している場合は「デフォルト」と表示されます。
+- **既定の重み**: 重みが指定されていないドメイン、プロジェクト、ユーザーに適用されるデフォルト値です。
+- **減衰単位**: 使用量を集計する期間（日単位）です。
+- **半減期**: 使用量の反映率が半分になる期間（日単位）です。
+- **参照期間**: Fair Share計算に反映される利用履歴の範囲（日単位）です。
+
+### リソースグループのフェアシェア設定
+
+リソースグループの制御カラムにある設定（歯車）ボタンをクリックすると、フェアシェア設定
+モーダルが開きます。
+
+![](../images/fair_share_resource_group_setting_modal.png)
+
+:::warning
+変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
+約5分かかる場合があります。
+:::
+
+モーダルには以下のフィールドが含まれます：
+
+- **リソースグループ**: リソースグループ名を表示する読み取り専用フィールドです。
+- **半減期**: 使用量の反映率が半分になる期間で、日数で指定します（最小1）。例えば7日に設定すると、7日前の使用量は50%、14日前の使用量は25%として計算されます。減衰単位の倍数に設定することを推奨します。
+- **参照期間**: Fair Share計算に反映される利用履歴の範囲で、日数で指定します（最小1）。これより前の利用は計算から除外されます。半減期の倍数に設定することを推奨します。
+- **既定の重み**: 重みが指定されていないドメイン、プロジェクト、ユーザーに適用されるデフォルト値です（最小1、ステップ0.1）。
+- **リソース重み**: リソースタイプごとの重み（例：CPU、Memory、GPU）で、それぞれ最小値1、ステップ0.1です。このセクションはリソースグループにリソース重みが存在する場合にのみ表示されます。
+
+### ドメイン
+
+リソースグループを選択すると、ドメインステップでそのリソースグループ内のドメインの
+フェアシェア重みと使用量がテーブルで表示されます。
+
+![](../images/fair_share_domain_page.png)
+
+テーブルには以下のカラムが含まれます：
+
+- **名前**: ドメイン名です。名前をクリックすると、そのドメインのプロジェクトレベル設定にドリルダウンします。
+- **制御**: 重み設定モーダルを開く設定（歯車）ボタンです。
+- **重み**: 現在の重み値です。デフォルトの重みを使用している場合は「デフォルト」と表示されます。
+- **フェアシェア係数**: フェアシェアスケジューラによって算出されたスケジューリング優先度です。値が大きいほど優先度が高くなります。
+- **リソース割り当て**: リソースタイプごとの1日あたりの平均減衰リソース使用量です（CPU、Memory、GPU / Day）。
+- **更新日時**: 最終更新のタイムスタンプです。
+- **作成日時**: 作成のタイムスタンプです。
+
+テーブル左側のチェックボックスを使用して複数の行を選択できます。行が選択されると、
+2つの追加ボタンが表示されます：
+
+- **利用グラフ**（チャートアイコン）：選択した項目の利用履歴モーダルを開きます。
+- **一括編集**（歯車アイコン）：選択したすべての項目の重みを一括で編集するモーダルを開きます。
+
+### プロジェクト
+
+ドメインを選択すると、プロジェクトステップでドメインステップと同じカラム構造の
+プロジェクトテーブルが表示されます。プロジェクト名をクリックするとユーザーステップに
+ドリルダウンします。
+
+![](../images/fair_share_project_page.png)
+
+行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。
+
+### ユーザー
+
+プロジェクトを選択すると、ユーザーステップで個々のユーザーのフェアシェア重みと
+使用量がテーブルで表示されます。
+
+![](../images/fair_share_user_page.png)
+
+テーブルには以下のカラムが含まれます：
+
+- **メール**: ユーザーのメールアドレスです。
+- **名前**: ユーザーの名前です。
+- **制御**: 重み設定モーダルを開く設定（歯車）ボタンです。
+- **重み**: 現在の重み値です。デフォルトの重みを使用している場合は「デフォルト」と表示されます。
+- **フェアシェア係数**: フェアシェアスケジューラによって算出されたスケジューリング優先度です。
+- **リソース割り当て**: リソースタイプごとの1日あたりの平均減衰リソース使用量です。
+- **更新日時**: 最終更新のタイムスタンプです。
+- **作成日時**: 作成のタイムスタンプです。
+
+:::note
+ユーザーステップでは、メール、名前、アクティブ状態による追加フィルタが利用可能です。
+:::
+
+行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。
+
+### フェアシェア重みの編集
+
+ドメイン、プロジェクト、またはユーザーのフェアシェア重みを編集するには、対象の行の
+制御カラムにある設定（歯車）ボタンをクリックします。重み設定モーダルが開きます。
+
+![](../images/fair_share_weight_setting_modal.png)
+
+:::warning
+変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
+約5分かかる場合があります。
+:::
+
+単一編集モードでは、モーダルにエンティティ名（読み取り専用）と重み入力フィールドが
+表示されます。
+
+- **重み**: Fair Shareスケジューリングの優先度を決定する基本倍率です。値が大きいほど優先度が高くなります。デフォルトは「1.0」です。重み「2.0」は「1.0」の2倍の優先度です。最小値は1、ステップは0.1です。
+
+複数の項目の重みを一括で編集するには、テーブルのチェックボックスで対象の行を選択し、
+一括編集（歯車アイコン）ボタンをクリックします。一括編集モードでは、モーダルに選択した
+すべてのエンティティのタグリストと、すべてに適用される単一の重み入力フィールドが
+表示されます。
+
+![](../images/fair_share_weight_bulk_edit_modal.png)
+
+:::note
+選択したリソースグループのスケジューラタイプが`FAIR_SHARE`に設定されていない場合、
+モーダルに警告アラートが表示されます。
+:::
+
+### 利用履歴の表示
+
+ドメイン、プロジェクト、またはユーザーの利用履歴を表示するには、テーブルの
+チェックボックスで対象の行を選択し、利用グラフ（チャートアイコン）ボタンをクリック
+します。利用履歴モーダルが開きます。
+
+![](../images/fair_share_usage_bucket_modal.png)
+
+モーダルには以下が表示されます：
+
+- **日付範囲ピッカー**: 利用履歴の日付範囲を選択します。過去7日間、過去30日間、過去90日間のプリセットが利用可能です。
+- **リフレッシュボタン**: 利用データを手動で更新します。
+- **コンテキスト情報**: 現在のステップに応じて、リソースグループ、ドメイン、プロジェクトの情報が表示されます。
+- **選択されたエンティティ**: 選択した項目の名前がタグとして表示されます。
+- **利用チャート**: 選択した期間の1日あたりの平均リソース使用量を示すチャートです。
 
 <a id="manage-images"></a>
 
@@ -694,17 +892,17 @@ In Quota setting page, there are two panels.
 ![](../images/quota_setting_page.png)
 
 - Overview panel
-   * Usage: Shows the actual amount usage of the selected storage.
-   * Endpoint: Represents the mount point of the selected storage.
-   * Backend Type: The type of storage.
-   * Capabilities: The supported feature of the selected storage.
+  - Usage: Shows the actual amount usage of the selected storage.
+  - Endpoint: Represents the mount point of the selected storage.
+  - Backend Type: The type of storage.
+  - Capabilities: The supported feature of the selected storage.
 
 - Quota Settings
-   * For User: Configure per-user quota setting here.
-   * For Project: Configure per-project quota(project-folder) setting here.
-   * ID: Corresponds to user or project id.
-   * Hard Limit (GB): Currently set hard limit quota for selected quota.
-   * Control: Provides editing the hard limit or even deleting the quota setting.
+  - For User: Configure per-user quota setting here.
+  - For Project: Configure per-project quota(project-folder) setting here.
+  - ID: Corresponds to user or project id.
+  - Hard Limit (GB): Currently set hard limit quota for selected quota.
+  - Control: Provides editing the hard limit or even deleting the quota setting.
 
 <a id="set-user-quota"></a>
 
@@ -782,10 +980,9 @@ Please note that a file name can have up to 255 characters.
 In the Configuration page, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
-
 You can change image auto install and update rule by selecting one option from
 `Digest`, `Tag`, `None`. `Digest` is kind of checksum for the image which
-verifies integrity of the image and also enhances  efficiency in downloading images
+verifies integrity of the image and also enhances efficiency in downloading images
 by reusing duplicated layers. `Tag` is only for developing option since it does not
 guarantee the Integrity of the image.
 
