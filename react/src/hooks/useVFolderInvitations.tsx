@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
 import { mutationOptions } from './backendai';
 import { useTanMutation } from './reactQueryAlias';

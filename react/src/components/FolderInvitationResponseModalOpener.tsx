@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import React from 'react';
 import { useQueryParam, StringParam } from 'use-query-params';

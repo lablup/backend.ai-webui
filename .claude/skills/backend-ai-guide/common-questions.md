@@ -88,7 +88,7 @@ It's named after the warehouse keeper puzzle game (Sokoban), reflecting its role
 
 **Connection Flow**:
 ```
-WebUI Code (React/Lit) → API Calls → Manager API → Backend Operations
+WebUI Code (React) → API Calls → Manager API → Backend Operations
 ```
 
 ---
@@ -483,38 +483,13 @@ curl -X POST http://localhost:8090/admin/graphql \
 
 ## WebUI-Specific Questions
 
-### Q: What's the difference between React and Lit-Element code in this WebUI?
-
-**A**: This WebUI is a **hybrid architecture**:
-
-**Lit-Element (`/src`)**:
-- Legacy web components
-- Material Web Components
-- Older features and pages
-
-**React (`/react`)**:
-- Modern UI components
-- Ant Design + Relay (GraphQL)
-- New features and pages
-
-**Integration**: Both coexist, gradually migrating from Lit to React.
-
----
-
 ### Q: How does the WebUI handle state management?
 
-**A**: Different strategies for different frameworks:
+**A**: The WebUI uses a layered state management approach:
 
-**React Components**:
-- **Relay** for GraphQL-backed state
-- **Recoil** for global client state
-- **React hooks** for local state
-
-**Lit-Element Components**:
-- **Redux** for global state
-- Component properties for local state
-
-**Recommendation**: New features should use React + Relay + Recoil pattern.
+- **Relay** for GraphQL-backed server state
+- **Jotai** for global client state (atomic state management)
+- **React hooks** (`useState`, `useReducer`) for local component state
 
 ---
 

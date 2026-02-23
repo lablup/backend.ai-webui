@@ -4,3 +4,9 @@
   height: 1em !important;
   vertical-align: -0.125em !important;
 }
+
+:lang(ko) *,
+:lang(ja) *,
+:lang(zh) * {
+  word-break: keep-all;
+}

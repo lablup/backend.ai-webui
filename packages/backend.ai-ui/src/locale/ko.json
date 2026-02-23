@@ -86,6 +86,26 @@
     "LastUpdated": "마지막 업데이트",
     "Refresh": "새로고침"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "이후",
+      "Before": "이전",
+      "GreaterThan": "초과",
+      "GreaterThanOrEqual": "이상",
+      "IContains": "포함",
+      "IEndsWith": "끝남",
+      "IEquals": "같음",
+      "INotContains": "포함하지 않음",
+      "INotEndsWith": "끝나지 않음",
+      "INotEquals": "같지 않음",
+      "INotStartsWith": "시작하지 않음",
+      "IStartsWith": "시작",
+      "In": "포함됨",
+      "LessThan": "미만",
+      "LessThanOrEqual": "이하",
+      "NotIn": "포함되지 않음"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
     "FailedToPullVersions": "버전을 가져오는데 실패했습니다.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "프로젝트를 선택해주세요"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "허용된 호스트",
@@ -146,7 +169,7 @@
     "PurgeProject": "프로젝트 삭제",
     "Registry": "레지스트리",
     "ResourcePolicy": "자원 정책",
-    "ScalingGroups": "스케일링 그룹",
+    "ScalingGroups": "자원 그룹",
     "StorageNodes": "저장소 노드",
     "TotalResourceSlots": "총 리소스 슬롯",
     "Type": "타입"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "테스트"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "사용자를 선택해주세요"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"
@@ -264,6 +290,7 @@
       "Cancel": "취소",
       "Close": "닫기",
       "Collapse": "접기",
+      "Copied": "복사됨",
       "CopyAll": "모두 복사",
       "Create": "생성",
       "Delete": "삭제",

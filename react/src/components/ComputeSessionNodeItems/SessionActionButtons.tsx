@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   SessionActionButtonsFragment$data,
   SessionActionButtonsFragment$key,
@@ -17,20 +21,16 @@ import {
   BAIContainerCommitIcon,
   BAIFileBrowserIcon,
   BAIJupyterIcon,
-  BAILink,
   BAISessionLogIcon,
   BAISftpIcon,
   BAITerminalAppIcon,
   BAITerminateIcon,
   BAIUnmountAfterClose,
-  omitNullAndUndefinedFields,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 type SessionActionButtonKey =
   | 'appLauncher'
@@ -87,9 +87,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { upsertNotification } = useSetBAINotification();
   const baiClient = useSuspendedBackendaiClient();
-  const navigate = useNavigate();
 
   const session = useFragment(
     graphql`
@@ -154,43 +152,23 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   // When size is 'small', use the button's title attribute instead of a Tooltip
   const isButtonTitleMode = size === 'small';
 
-  const launchApp = (appName: string) => {
-    // FIXME: Since the app execution logic is implemented in the web component,
-    // notification must be initially declared to control notification in the web component.
-    upsertNotification({
-      key: `session-app-${session?.row_id}`,
-      message: (
-        <span>
-          {t('general.Session')}:&nbsp;
-          <BAILink
-            style={{
-              fontWeight: 'normal',
-            }}
-            onClick={() => {
-              const newSearchParams = new URLSearchParams(location.search);
-              newSearchParams.set('sessionDetail', session?.row_id || '');
-              navigate({
-                pathname: `/session`,
-                search: newSearchParams.toString(),
-              });
-            }}
-          >
-            {session?.name}
-          </BAILink>
-        </span>
-      ),
-      description: t('session.appLauncher.LaunchingApp', {
-        appName: appName,
-      }),
-    });
+  const launchApp = () => {
+    if (!primaryAppOption?.appName) return;
 
-    const appOption = {
-      'app-name': primaryAppOption?.appName,
-      'session-uuid': session?.row_id,
-      'url-postfix': primaryAppOption?.urlPostfix,
-    };
-    // @ts-ignore
-    globalThis.appLauncher._runApp(omitNullAndUndefinedFields(appOption));
+    appLauncher.launchAppWithNotification({
+      app: primaryAppOption.appName,
+      onPrepared(workInfo) {
+        if (workInfo.appConnectUrl) {
+          const urlPostfix = primaryAppOption.urlPostfix || '';
+          const targetUrl = urlPostfix
+            ? new URL(urlPostfix, workInfo.appConnectUrl.href)
+            : workInfo.appConnectUrl;
+          setTimeout(() => {
+            globalThis.open(targetUrl.href, '_blank');
+          }, 1000);
+        }
+      },
+    });
   };
 
   return session ? (
@@ -216,7 +194,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }
                   icon={<BAIJupyterIcon />}
                   onClick={() => {
-                    launchApp('Jupyter Notebook');
+                    launchApp();
                   }}
                   title={
                     isButtonTitleMode
@@ -246,7 +224,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }
                   icon={<BAIFileBrowserIcon />}
                   onClick={() => {
-                    launchApp('File browser');
+                    launchApp();
                   }}
                   title={
                     isButtonTitleMode

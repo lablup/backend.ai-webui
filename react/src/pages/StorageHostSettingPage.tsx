@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSettingPageQuery.graphql';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';

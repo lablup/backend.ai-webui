@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {

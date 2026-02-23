@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Form, Checkbox, type FormItemProps } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex } from 'backend.ai-ui';
@@ -29,8 +33,15 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
   // Detect changes in form value to update the isUnlimited state.
   useEffect(() => {
     const fieldValue = form.getFieldValue(name);
+    // When unlimitedValue is undefined or null, treat both null and undefined
+    // form values as "unlimited" because Ant Design may internally convert
+    // undefined to null when storing form field values.
+    const isFieldUnlimited =
+      unlimitedValue === undefined || unlimitedValue === null
+        ? fieldValue === undefined || fieldValue === null
+        : fieldValue === unlimitedValue;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsUnlimited(fieldValue === unlimitedValue);
+    setIsUnlimited(isFieldUnlimited);
   }, [form, name, unlimitedValue]);
 
   // Disable children when isUnlimited is true.
@@ -73,7 +84,9 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
           const checked = e.target.checked;
           setIsUnlimited(checked);
           if (checked) {
-            form.setFieldValue(name, unlimitedValue);
+            // Use null instead of undefined because Ant Design may treat
+            // undefined as "reset to initial value" rather than storing it.
+            form.setFieldValue(name, unlimitedValue ?? null);
           } else {
             form.resetFields([name]);
           }

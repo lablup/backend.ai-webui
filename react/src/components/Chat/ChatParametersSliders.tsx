@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';

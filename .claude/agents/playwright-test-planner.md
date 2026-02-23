@@ -100,6 +100,27 @@ application features:
 - Include negative testing scenarios
 - Ensure scenarios are independent and can be run in any order
 
+**Resource Cleanup Planning**:
+- When designing tests that create resources (sessions, endpoints, users), always plan for cleanup
+- Include `afterEach` cleanup step in test plan documentation
+- Consider test isolation - each test should not depend on previous test's state
+- For sequential tests that share state, note the dependency explicitly
+
+```markdown
+## Test Infrastructure Notes
+- **Cleanup Required**: Yes - sessions must be terminated after each test
+- **Execution Mode**: Sequential (tests share session state)
+- **Tags**: @critical, @session
+```
+
+**Sequential vs Parallel Execution**:
+- Most tests should be independent and run in parallel (default)
+- Use `test.describe.configure({ mode: 'serial' })` only when:
+  - Tests share expensive resources (e.g., session creation)
+  - Tests depend on state from previous tests
+  - Resource contention would cause flaky tests
+- Document execution mode requirements in the test plan
+
 **Test Design Principles - No Fallback Logic**:
 - **DO NOT** design tests with visibility checks and fallback logic
 - Each step should be direct and deterministic - if an element should be present, it must be present
@@ -139,3 +160,11 @@ application features:
 
 **Output Format**: Always save the complete test plan as a markdown file with clear headings, numbered steps, and
 professional formatting suitable for sharing with development and QA teams.
+
+**Project-Specific Conventions:**
+- Test files use `.spec.ts` extension (per `e2e/E2E-TEST-NAMING-GUIDELINES.md`)
+- Tests are organized in feature directories: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+- POM classes are in `e2e/utils/classes/{feature}/`
+- Use tags for categorization: `@smoke`, `@critical`, `@regression`, `@session`, `@serving`, `@functional`
+- Plan for proper authentication: `loginAsAdmin` or `loginAsUser`
+- Plan for navigation: `navigateTo(page, 'route')`

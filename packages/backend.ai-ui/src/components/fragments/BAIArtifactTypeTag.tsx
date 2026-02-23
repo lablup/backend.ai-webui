@@ -38,7 +38,7 @@ const BAIArtifactTypeTag = ({ artifactTypeFrgmt }: BAIArtifactTypeTagProps) => {
     artifactTypeFrgmt,
   );
   return (
-    <Tag>
+    <Tag style={{ display: 'inline-flex', alignItems: 'center' }}>
       {getTypeIcon(artifact.type)}&nbsp;{artifact.type}
     </Tag>
   );

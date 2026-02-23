@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { CustomThemeConfig, getCustomTheme } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useSessionStorageState } from 'ahooks';

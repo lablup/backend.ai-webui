@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
@@ -138,7 +142,7 @@ const TotalResourceWithinResourceGroup: React.FC<
       try {
         occupiedSlots = JSON.parse(agent.occupied_slots || '{}');
         availableSlots = JSON.parse(agent.available_slots || '{}');
-      } catch (e) {
+      } catch {
         return;
       }
 

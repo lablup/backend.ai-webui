@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { Button, ConfigProvider, theme, Tooltip, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';

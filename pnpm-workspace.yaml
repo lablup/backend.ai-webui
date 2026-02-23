@@ -1,9 +1,9 @@
 packages:
   - react
   - packages/backend.ai-ui
-
-ignoredBuiltDependencies:
-  - "@vaadin/vaadin-usage-statistics"
+  - packages/eslint-config-bai
+  - packages/backend.ai-docs-toolkit
+  - packages/backend.ai-webui-docs
 
 onlyBuiltDependencies:
   - bufferutil
@@ -21,6 +21,11 @@ patchedDependencies:
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
   "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
   "@rc-component/form": react/patches/@rc-component__form.patch
+
+gitBranchLockfile: true
+
+mergeGitBranchLockfilesBranchPattern:
+  - main
 
 minimumReleaseAge: 10080
 

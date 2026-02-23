@@ -50,7 +50,10 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-pnpm-store-
       - name: Install Dependencies
-        run: pnpm install
+        # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
+        # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
+        # branch lockfiles on main. --no-frozen-lockfile allows that merge write.
+        run: pnpm install --no-frozen-lockfile
       - name: Package Desktop Applications
         run: make all
         env:

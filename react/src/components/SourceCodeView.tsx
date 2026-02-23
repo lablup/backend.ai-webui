@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import { theme } from 'antd';

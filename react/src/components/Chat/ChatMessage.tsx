@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   ChatMessageContainer,
   ChatMessagePlacement,
@@ -15,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 interface FilePart {
   type: 'file';
   url: string;
-  mediaType?: 'audio' | 'video' | 'image' | 'file';
+  mediaType?: string;
   filename?: string;
 }
 
@@ -71,7 +75,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         const filename =
           part.filename || part.url?.split('/').pop() || `file-${index}`;
 
-        return _.includes(part?.mediaType, 'image/') ? (
+        return part.mediaType?.toLowerCase().startsWith('image/') ? (
           <BAIFlex
             key={`${message?.id}-${index}`}
             style={{
@@ -96,7 +100,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             name={filename}
             description={filename}
             src={part?.url}
-            type={part?.mediaType}
           />
         );
       })}

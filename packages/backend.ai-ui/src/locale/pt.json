@@ -86,6 +86,26 @@
     "LastUpdated": "Última atualização",
     "Refresh": "Atualizar"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "depois",
+      "Before": "antes",
+      "GreaterThan": "maior que",
+      "GreaterThanOrEqual": "maior ou igual",
+      "IContains": "contém",
+      "IEndsWith": "termina com",
+      "IEquals": "igual a",
+      "INotContains": "não contém",
+      "INotEndsWith": "não termina com",
+      "INotEquals": "diferente de",
+      "INotStartsWith": "não começa com",
+      "IStartsWith": "começa com",
+      "In": "em",
+      "LessThan": "menor que",
+      "LessThanOrEqual": "menor ou igual",
+      "NotIn": "não em"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versões são excluídas.",
     "FailedToPullVersions": "Falhou em puxar versões.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Selecionar projeto"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Hosts permitidos para pastas",
@@ -146,7 +169,7 @@
     "PurgeProject": "Purgar Projeto",
     "Registry": "Registo",
     "ResourcePolicy": "Política de Recursos",
-    "ScalingGroups": "Grupos de Escalonamento",
+    "ScalingGroups": "Grupos de Recursos",
     "StorageNodes": "Nós de Armazenamento",
     "TotalResourceSlots": "Total de slots de recursos",
     "Type": "Tipo"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "teste"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Selecionar usuário"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
@@ -264,6 +290,7 @@
       "Cancel": "Cancelar",
       "Close": "Fechar",
       "Collapse": "Colapso",
+      "Copied": "Copiado",
       "CopyAll": "Copie tudo",
       "Create": "Criar",
       "Delete": "Excluir",

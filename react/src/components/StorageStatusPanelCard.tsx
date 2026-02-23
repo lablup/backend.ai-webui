@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -141,7 +145,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
             title={
               invitationCount > 0 ? (
                 // Add <a></a> to make tooltip clickable
-                // eslint-disable-next-line
+
                 <a
                   onClick={() => {
                     onRequestBadgeClick?.();

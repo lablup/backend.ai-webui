@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { UserCredentialListDeleteMutation } from '../__generated__/UserCredentialListDeleteMutation.graphql';
 import { UserCredentialListModifyMutation } from '../__generated__/UserCredentialListModifyMutation.graphql';
@@ -164,7 +168,7 @@ const UserCredentialList: React.FC = () => {
     if (action === 'add') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenUserKeypairSettingModal(true);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setAction(undefined);
     }
   }, [action, setAction]);

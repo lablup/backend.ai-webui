@@ -86,6 +86,26 @@
     "LastUpdated": "Última actualización",
     "Refresh": "Actualizar"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "después",
+      "Before": "antes",
+      "GreaterThan": "mayor que",
+      "GreaterThanOrEqual": "mayor o igual",
+      "IContains": "contiene",
+      "IEndsWith": "termina con",
+      "IEquals": "igual a",
+      "INotContains": "no contiene",
+      "INotEndsWith": "no termina con",
+      "INotEquals": "no igual a",
+      "INotStartsWith": "no empieza con",
+      "IStartsWith": "empieza con",
+      "In": "en",
+      "LessThan": "menor que",
+      "LessThanOrEqual": "menor o igual",
+      "NotIn": "no en"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "Las versiones {{count}} están excluidas.",
     "FailedToPullVersions": "No se pudo tirar de versiones.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Se actualizará(n) la(s) siguiente(s) carpeta(s).",
     "ProjectResourcePolicy": "Política de recursos del proyecto",
     "UpdateMultipleProjects": "Actualizar varios proyectos"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Seleccionar proyecto"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Hosts permitidos para carpetas",
@@ -146,7 +169,7 @@
     "PurgeProject": "Eliminar proyecto permanentemente",
     "Registry": "Registro",
     "ResourcePolicy": "Política de recursos",
-    "ScalingGroups": "Grupos de escalado",
+    "ScalingGroups": "Grupos de recursos",
     "StorageNodes": "Nodos de almacenamiento",
     "TotalResourceSlots": "Total de ranuras de recursos",
     "Type": "Tipo"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "prueba"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Seleccionar usuario"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"
@@ -264,6 +290,7 @@
       "Cancel": "Cancelar",
       "Close": "Cerca",
       "Collapse": "Colapsar",
+      "Copied": "Copiado",
       "CopyAll": "Copiar todo",
       "Create": "Crear",
       "Delete": "Borrar",

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import FolderCreateModal from './FolderCreateModal';
 import { useToggle } from 'ahooks';
 import {
@@ -34,8 +38,10 @@ import {
   useSetCurrentProject,
 } from 'src/hooks/useCurrentProject';
 
-export interface ImportArtifactRevisionToFolderModalProps
-  extends Omit<BAIModalProps, 'onOk'> {
+export interface ImportArtifactRevisionToFolderModalProps extends Omit<
+  BAIModalProps,
+  'onOk'
+> {
   selectedArtifactRevisionFrgmt: ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key;
   modelStoreProjectsFrgmt?: ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key;
   onOk?: (

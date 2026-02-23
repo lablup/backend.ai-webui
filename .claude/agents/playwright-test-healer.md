@@ -66,6 +66,39 @@ await page.goto('/dashboard');
 await page.waitForSelector('[data-testid="dashboard-loaded"]');
 ```
 
+**Guideline: Avoid Using `page.waitForTimeout()` for Polling or Readiness**
+- **Avoid `page.waitForTimeout()` for polling/readiness** - it often causes flaky tests and wastes time
+- When fixing tests, **remove** any manual polling loops with `waitForTimeout()` and prefer assertion-based waiting
+- Replace with Playwright's `expect.poll()` for status checking or element-based waiting
+- Use short `waitForTimeout()` delays only as a last resort for brief stabilization
+
+```typescript
+// ❌ BAD: Manual polling with waitForTimeout
+let status = await getSessionStatus(sessionId);
+while (status !== 'RUNNING') {
+  await page.waitForTimeout(1000);
+  status = await getSessionStatus(sessionId);
+}
+
+// ✅ GOOD: Use expect.poll() for status waiting
+await expect.poll(
+  async () => await sessionDetailPage.getSessionStatus(sessionId),
+  { message: `Waiting for session ${sessionId} to be RUNNING`, timeout: 120000 }
+).toBe('RUNNING');
+
+// ✅ GOOD: Use expect.poll() with error state handling
+await expect.poll(
+  async () => {
+    const currentStatus = await getSessionStatus(sessionId);
+    if (currentStatus === 'ERROR' || currentStatus === 'CANCELLED') {
+      throw new Error(`Session entered ${currentStatus} state`);
+    }
+    return currentStatus;
+  },
+  { timeout: 120000 }
+).toBe('RUNNING');
+```
+
 **Critical: Avoid Unnecessary Visibility Checks and Fallback Logic**
 - **DO NOT** create visibility check variables like `isSomethingVisible` with fallback logic
 - **DO NOT** wrap actions in try-catch blocks with alternative fallback paths to continue testing
@@ -197,3 +230,80 @@ await page.locator('svg[data-icon="upload"]').click();
 - **General utilities** (`e2e/utils/test-util.ts`):
   - Import appropriate utility based on UI framework being tested
   - Prefer utility functions over direct CSS selectors for maintainability
+
+**Resource Cleanup Pattern:**
+- Tests that create resources (sessions, endpoints, users) MUST ensure cleanup
+- Prefer `afterEach` for isolated tests; use `afterAll` when a single expensive resource is shared across serial tests
+- Use `SessionLauncher.terminate()` for session cleanup - handles all states (PENDING, RUNNING, etc.)
+- Never assume a resource was successfully created - wrap cleanup in try-catch
+
+```typescript
+// ✅ GOOD: Proper cleanup pattern for session tests
+let createdSessionName: string | null = null;
+
+test.beforeEach(async ({ page, request }) => {
+  await loginAsUser(page, request);
+  createdSessionName = null;
+});
+
+test.afterEach(async ({ page }) => {
+  if (createdSessionName) {
+    try {
+      const sessionLauncher = new SessionLauncher(page);
+      sessionLauncher.withSessionName(createdSessionName);
+      await sessionLauncher.terminate();
+    } catch (error) {
+      console.log(`Failed to terminate session ${createdSessionName}:`, error);
+    }
+  }
+});
+
+test('Create session', async ({ page }) => {
+  const sessionLauncher = new SessionLauncher(page);
+  await sessionLauncher.withSessionName('test-session').create();
+  createdSessionName = sessionLauncher.getSessionName(); // Track for cleanup
+  // ... test assertions
+});
+```
+
+**Sequential Test Execution:**
+- Use `test.describe.configure({ mode: 'serial' })` when tests share resources or must run in order
+- Prevents parallel execution that causes resource contention
+
+```typescript
+test.describe('Session Lifecycle', () => {
+  test.describe.configure({ mode: 'serial' }); // Run tests sequentially
+  // ... tests
+});
+```
+
+**Vaadin Grid → Ant Design Table Migration:**
+- Many components have migrated from Vaadin Grid to Ant Design Table
+- Update locators accordingly when fixing tests
+
+```typescript
+// ❌ OLD: Vaadin Grid locators
+const row = page.locator('vaadin-grid-cell-content');
+const cell = sessionRow.locator('cell');
+
+// ✅ NEW: Ant Design Table locators
+const row = page.getByRole('row');
+const cell = sessionRow.getByRole('cell');
+```
+
+**Action Buttons in Notification Alerts:**
+- Some action buttons (terminate, app launch, terminal) appear in notification alerts, not table rows
+- Look for `getByRole('alert')` when table row buttons are not found
+
+```typescript
+// ✅ Finding action buttons in notification area
+const alert = page.getByRole('alert').filter({ hasText: sessionName });
+await alert.getByRole('button', { name: 'terminate' }).click();
+```
+
+**Project-Specific Conventions:**
+- Test files use `.spec.ts` extension (per `e2e/E2E-TEST-NAMING-GUIDELINES.md`)
+- Tests are organized in feature directories: `e2e/session/`, `e2e/serving/`, `e2e/user/`, etc.
+- POM classes are in `e2e/utils/classes/{feature}/`
+- Use `loginAsAdmin` or `loginAsUser` from `test-util.ts` for authentication
+- Use `navigateTo(page, 'route')` for navigation

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { StorageHostSettingsPanelQuery } from '../__generated__/StorageHostSettingsPanelQuery.graphql';
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
@@ -97,7 +101,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           },
         ]}
         activeTabKey={currentSettingType}
-        // eslint-disable-next-line
         //@ts-ignore
         onTabChange={(v) => {
           startTransition(() => {
@@ -113,9 +116,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   <BAIDomainSelect
                     style={{ width: '20vw', marginRight: 10 }}
                     value={selectedDomainName}
-                    onChange={(_value, domain: any) => {
+                    onChange={(selectedDomainName) => {
                       startTransition(() => {
-                        setSelectedDomainName(domain?.domainName);
+                        setSelectedDomainName(selectedDomainName);
                         setSelectedProjectId(undefined);
                       });
                     }}

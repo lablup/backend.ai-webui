@@ -1,7 +1,7 @@
 import { BAISessionTypeTagStoriesQuery } from '../../__generated__/BAISessionTypeTagStoriesQuery.graphql';
 import RelayResolver from '../../tests/RelayResolver';
 import BAISessionTypeTag from './BAISessionTypeTag';
-import type { Meta, StoryObj } from '@storybook/react-vite/*';
+import { Meta, StoryObj } from '@storybook/react-vite';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type Story = StoryObj<typeof BAISessionTypeTag>;

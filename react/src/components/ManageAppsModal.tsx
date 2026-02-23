@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -39,7 +43,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 
   const image = useFragment(
     graphql`
-      fragment ManageAppsModal_image on Image {
+      fragment ManageAppsModal_image on ImageNode {
         labels {
           key
           value

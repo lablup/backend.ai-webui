@@ -8,7 +8,7 @@ const CONFIG_SAMPLE_PATH = path.join(__dirname, "..", "config.toml.sample");
 const CONFIG_CONFIG_PATH = path.join(__dirname, "..", "config.toml");
 const CONFIG_OUTPUT_PATH = path.join(
   __dirname,
-  "../build/rollup",
+  "../build/web",
   "config.toml",
 );
 const BAI_CONFIGS_GENERAL = ["apiEndpoint", "apiEndpointText"];
@@ -83,6 +83,6 @@ if (IS_VERCEL) {
   console.log("🔄 Generating config.toml for Vercel deployment...");
   generateConfigToml();
 } else {
-  console.log("🔄 Copying config.toml to build/rollup...");
+  console.log("🔄 Copying config.toml to build/web...");
   fs.copyFileSync(CONFIG_CONFIG_PATH, CONFIG_OUTPUT_PATH);
 }

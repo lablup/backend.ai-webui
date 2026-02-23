@@ -4,17 +4,17 @@ This file provides custom instructions for GitHub Copilot when reviewing code an
 
 ## Project Overview
 
-Backend.AI WebUI is a **hybrid web application** with two main UI frameworks:
-
-- **Lit-Element Web Components** (`/src`) - Legacy UI components using TypeScript
-- **React Components** (`/react`) - Modern UI components using React + Ant Design + Relay (GraphQL)
+Backend.AI WebUI is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
 
 ### Key Technologies
 
-- **Build System**: Rollup for bundling, pnpm for package management
-- **Styling**: Ant Design (React), Material Web Components (Lit)
-- **State Management**: Redux (legacy), Relay (GraphQL for React)
-- **GraphQL**: Relay compiler for React components
+- **React Build**: Webpack via @craco/craco (Create React App with customizations)
+- **Component Library Build**: Vite (`packages/backend.ai-ui/`)
+- **Service Worker**: workbox-webpack-plugin (GenerateSW, integrated into Craco/Webpack build)
+- **Package Manager**: pnpm with workspace monorepo
+- **Styling**: Ant Design + antd-style
+- **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
+- **GraphQL**: Relay compiler for React components and backend.ai-ui package
 - **Testing**: Jest for unit tests, Playwright for E2E tests
 
 ## Code Review Guidelines
@@ -56,16 +56,16 @@ Backend.AI WebUI is a **hybrid web application** with two main UI frameworks:
 
 When reviewing code:
 
-- Recognize whether code is in `/src` (Lit-Element) or `/react` (React)
-- Understand the hybrid nature requires different patterns for each framework
+- All UI code is in `/react` (React) and `/packages/backend.ai-ui/` (shared components)
+- `/src` contains utilities and the websocket proxy
 - Check that GraphQL queries use Relay conventions in React components
-- Verify proper i18n usage with `_t`, `_tr`, `_text` functions
+- Verify proper i18n usage with `useTranslation()` hook from `react-i18next`
 
 ### Build and Development
 
-- Development requires both `pnpm run server:d` and `pnpm run build:d`
-- Build process: multi-stage with resource copying and TypeScript compilation
-- Pre-commit hooks run linting and formatting automatically
+- Development requires both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy)
+- Build process: multi-stage with resource copying and React build (Craco/Webpack with Workbox service worker generation)
+- Pre-commit hooks run linting and formatting automatically via Husky + lint-staged
 
 ## Git Workflow
 

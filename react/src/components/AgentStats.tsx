@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
@@ -62,7 +66,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const agentStatsData = (() => {
-    const totalResource = data.agentStats.totalResource;
+    const totalResource = data.agentStats?.totalResource;
     if (!totalResource) {
       return { cpu: null, memory: null, accelerators: [] };
     }

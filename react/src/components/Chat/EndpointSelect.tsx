@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
@@ -19,8 +23,10 @@ export type Endpoint = NonNullable<
   NonNullableItem<EndpointSelectQuery$data['endpoint_list']>
 >;
 
-export interface EndpointSelectProps
-  extends Omit<SelectProps, 'options' | 'labelInValue'> {
+export interface EndpointSelectProps extends Omit<
+  SelectProps,
+  'options' | 'labelInValue'
+> {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
 }
@@ -53,6 +59,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
+      defaultValuePropName: 'defaultOpen',
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);

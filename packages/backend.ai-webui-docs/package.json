@@ -1,0 +1,32 @@
+{
+  "name": "backend.ai-webui-docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:toolkit": "pnpm --filter backend.ai-docs-toolkit build",
+    "pdf": "pnpm run build:toolkit && docs-toolkit pdf --lang all",
+    "pdf:en": "pnpm run build:toolkit && docs-toolkit pdf --lang en",
+    "pdf:ko": "pnpm run build:toolkit && docs-toolkit pdf --lang ko",
+    "pdf:ja": "pnpm run build:toolkit && docs-toolkit pdf --lang ja",
+    "pdf:th": "pnpm run build:toolkit && docs-toolkit pdf --lang th",
+    "pdf:all": "pnpm run build:toolkit && docs-toolkit pdf --lang all",
+    "preview": "pnpm run build:toolkit && docs-toolkit preview --mode sample",
+    "preview:catalog": "pnpm run build:toolkit && docs-toolkit preview --mode catalog",
+    "preview:doc": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang en",
+    "preview:doc:ko": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang ko",
+    "preview:doc:ja": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang ja",
+    "preview:doc:th": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang th",
+    "preview:html": "pnpm run build:toolkit && docs-toolkit preview:html --lang en",
+    "preview:html:ko": "pnpm run build:toolkit && docs-toolkit preview:html --lang ko",
+    "preview:html:ja": "pnpm run build:toolkit && docs-toolkit preview:html --lang ja",
+    "preview:html:th": "pnpm run build:toolkit && docs-toolkit preview:html --lang th",
+    "preview:html:catalog": "pnpm run build:toolkit && docs-toolkit preview:html --mode catalog",
+    "agents": "docs-toolkit agents",
+    "agents:force": "docs-toolkit agents --force"
+  },
+  "devDependencies": {
+    "backend.ai-docs-toolkit": "workspace:*",
+    "playwright": "^1.58.0"
+  }
+}

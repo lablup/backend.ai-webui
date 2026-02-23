@@ -321,7 +321,9 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
 type KnownGlobalIdType =
   | 'VirtualFolderNode'
   | 'ComputeSessionNode'
-  | 'UserNode';
+  | 'GroupNode'
+  | 'UserNode'
+  | 'ProjectNode';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);
@@ -436,3 +438,5 @@ export const convertToUUID = (id: string): string => {
     '$1-$2-$3-$4-$5',
   );
 };
+
+export * from './useDebouncedDeferredValue';

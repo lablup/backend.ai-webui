@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
@@ -12,7 +16,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useMemo, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type UserConfigScript = {
@@ -113,9 +117,9 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     }
   };
 
-  useMemo(() => {
-    fetchScript();
-    //eslint-disable-next-line
+  const fetchScriptEffectEvent = useEffectEvent(fetchScript);
+  useEffect(() => {
+    fetchScriptEffectEvent();
   }, [shellInfo]);
 
   const saveScript = ({ closeAfter = true } = {}) => {

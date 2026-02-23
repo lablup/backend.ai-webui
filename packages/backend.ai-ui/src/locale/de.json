@@ -86,6 +86,26 @@
     "LastUpdated": "Zuletzt aktualisiert",
     "Refresh": "Aktualisieren"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "nach",
+      "Before": "vor",
+      "GreaterThan": "größer als",
+      "GreaterThanOrEqual": "größer oder gleich",
+      "IContains": "enthält",
+      "IEndsWith": "endet mit",
+      "IEquals": "gleich",
+      "INotContains": "enthält nicht",
+      "INotEndsWith": "endet nicht mit",
+      "INotEquals": "ungleich",
+      "INotStartsWith": "beginnt nicht mit",
+      "IStartsWith": "beginnt mit",
+      "In": "enthalten in",
+      "LessThan": "kleiner als",
+      "LessThanOrEqual": "kleiner oder gleich",
+      "NotIn": "nicht enthalten in"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
     "FailedToPullVersions": "Versäumte, Versionen zu ziehen.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Die folgenden Ordner werden aktualisiert.",
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",
     "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Projekt auswählen"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Zugelassene Hosts für Ordner",
@@ -146,7 +169,7 @@
     "PurgeProject": "Projekt bereinigen",
     "Registry": "Registry",
     "ResourcePolicy": "Ressourcenrichtlinie",
-    "ScalingGroups": "Skalierungsgruppen",
+    "ScalingGroups": "Ressourcengruppen",
     "StorageNodes": "Speicherknoten",
     "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
     "Type": "Typ"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Benutzer auswählen"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"
@@ -264,6 +290,7 @@
       "Cancel": "Stornieren",
       "Close": "Schließen",
       "Collapse": "Zusammenbruch",
+      "Copied": "Kopiert",
       "CopyAll": "Alle kopieren",
       "Create": "Erstellen",
       "Delete": "Löschen",

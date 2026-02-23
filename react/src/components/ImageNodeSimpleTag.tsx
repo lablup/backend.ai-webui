@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import {

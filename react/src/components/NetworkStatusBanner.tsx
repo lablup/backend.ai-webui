@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useDebounce, useNetwork } from 'ahooks';
 import { Alert } from 'antd';
 import { createStyles } from 'antd-style';

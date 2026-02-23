@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
@@ -60,8 +64,10 @@ export const statusTagColor = {
 };
 
 export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
-interface VFolderNodesProps
-  extends Omit<BAITableProps<VFolderNodeInList>, 'dataSource' | 'columns'> {
+interface VFolderNodesProps extends Omit<
+  BAITableProps<VFolderNodeInList>,
+  'dataSource' | 'columns'
+> {
   vfoldersFrgmt: VFolderNodesFragment$key;
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;

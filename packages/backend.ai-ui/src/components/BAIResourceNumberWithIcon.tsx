@@ -10,7 +10,7 @@ import BAIFlex from './BAIFlex';
 import NumberWithUnit from './BAINumberWithUnit';
 import BAIText from './BAIText';
 import { ResourceSlotName, useBAIDeviceMetaData } from './provider';
-import { theme, Tooltip } from 'antd';
+import { theme, Tooltip, TooltipProps } from 'antd';
 import _ from 'lodash';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -122,6 +122,7 @@ const knownDeviceIcons = {
 interface ResourceTypeIconProps {
   type: ResourceSlotName | string;
   showTooltip?: boolean;
+  tooltipProps?: TooltipProps;
   size?: number;
 }
 
@@ -129,6 +130,7 @@ export const ResourceTypeIcon = ({
   type,
   showTooltip = true,
   size = 16,
+  tooltipProps,
 }: ResourceTypeIconProps) => {
   'use memo';
 
@@ -168,7 +170,10 @@ export const ResourceTypeIcon = ({
   const content = getIconContent();
 
   return showTooltip ? (
-    <Tooltip title={deviceMetaData[type]?.description || type}>
+    <Tooltip
+      title={deviceMetaData[type]?.description || type}
+      {...tooltipProps}
+    >
       {content}
     </Tooltip>
   ) : (

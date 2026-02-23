@@ -3,7 +3,7 @@ import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { action } from 'storybook/internal/actions';
+import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIButton> = {
   title: 'Button/BAIButton',

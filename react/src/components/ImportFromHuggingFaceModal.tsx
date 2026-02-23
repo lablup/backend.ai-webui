@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -165,7 +169,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     if (!baiModalProps.open) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setHuggingFaceURL(undefined);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setTypedURL('');
     }
   }, [baiModalProps.open]);

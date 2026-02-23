@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
 import { Form, type FormItemProps, Input } from 'antd';
 import React from 'react';

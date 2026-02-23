@@ -9,7 +9,7 @@ services:
       - "8080:8080"
     volumes:
       - ./webserver.conf:/webserver.conf
-      - ./build/rollup:/webserver/src/ai/backend/web/static
+      - ./build/web:/webserver/src/ai/backend/web/static
     environment:
       - BACKEND_ENDPOINT_TYPE=api
     command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"

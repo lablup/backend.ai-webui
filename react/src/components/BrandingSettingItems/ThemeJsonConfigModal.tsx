@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import type { Monaco } from '@monaco-editor/react';
 import { Alert, App, Skeleton, theme, Upload } from 'antd';
@@ -106,8 +110,16 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                 } else {
                   // should export current value not the userCustomThemeConfig state
+                  let parsedValue;
+                  try {
+                    parsedValue = JSON.parse(editorValue);
+                  } catch (error) {
+                    logger.warn('Invalid JSON format in export', error);
+                    message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                    return;
+                  }
                   const blob = new Blob(
-                    [JSON.stringify(JSON.parse(editorValue), null, 2)],
+                    [JSON.stringify(parsedValue, null, 2)],
                     { type: 'application/json' },
                   );
                   downloadBlob(blob, `theme.json`);
@@ -128,7 +140,15 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setUserCustomThemeConfig(JSON.parse(editorValue));
+                let parsedValue;
+                try {
+                  parsedValue = JSON.parse(editorValue);
+                } catch (error) {
+                  logger.warn('Invalid JSON format in theme config', error);
+                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                  return;
+                }
+                setUserCustomThemeConfig(parsedValue);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}

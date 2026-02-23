@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { Descriptions } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';

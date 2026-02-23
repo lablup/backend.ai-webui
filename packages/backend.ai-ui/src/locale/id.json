@@ -86,6 +86,26 @@
     "LastUpdated": "Terakhir diperbarui",
     "Refresh": "Segarkan"
   },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "setelah",
+      "Before": "sebelum",
+      "GreaterThan": "lebih besar dari",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "IContains": "mengandung",
+      "IEndsWith": "diakhiri dengan",
+      "IEquals": "sama dengan",
+      "INotContains": "tidak berisi",
+      "INotEndsWith": "tidak diakhiri dengan",
+      "INotEquals": "tidak sama dengan",
+      "INotStartsWith": "tidak dimulai dengan",
+      "IStartsWith": "dimulai dengan",
+      "In": "dalam",
+      "LessThan": "kurang dari",
+      "LessThanOrEqual": "kurang dari atau sama",
+      "NotIn": "tidak dalam"
+    }
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",
@@ -100,6 +120,9 @@
     "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Pilih Proyek"
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "Host Folder yang Diizinkan",
@@ -146,7 +169,7 @@
     "PurgeProject": "Hapus Proyek Secara Permanen",
     "Registry": "Registri",
     "ResourcePolicy": "Kebijakan Sumber Daya",
-    "ScalingGroups": "Grup Penskalaan",
+    "ScalingGroups": "Grup Sumber Daya",
     "StorageNodes": "Node Penyimpanan",
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
@@ -186,6 +209,9 @@
   },
   "comp:BAITestButton": {
     "Test": "tes"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Pilih Pengguna"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
@@ -264,6 +290,7 @@
       "Cancel": "Membatalkan",
       "Close": "Menutup",
       "Collapse": "Runtuh",
+      "Copied": "Disalin",
       "CopyAll": "Salin semua",
       "Create": "Membuat",
       "Delete": "Menghapus",
