@@ -1098,6 +1098,14 @@ type ArtifactVerifierResultEntry
   result: ArtifactVerifierResult!
 }
 
+"""Added in 26.3.0. Input for assigning a role to a user"""
+input AssignRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  userId: UUID!
+  roleId: UUID!
+}
+
 """Added in 24.03.9."""
 type AssociateScalingGroupsWithDomain
   @join__type(graph: GRAPHENE)
@@ -1403,8 +1411,19 @@ input BlueGreenConfigInput
   promoteDelaySeconds: Int! = 0
 }
 
+"""Added in 26.2.0. Payload for bulk user creation mutation."""
+type BulkCreateUsersV2Payload
+  @join__type(graph: STRAWBERRY)
+{
+  """List of successfully created users."""
+  createdUsers: [UserV2!]!
+
+  """List of errors for users that failed to create."""
+  failed: [BulkCreateUserV2Error!]!
+}
+
 """Added in 26.2.0. Error information for a failed user in bulk creation."""
-type BulkCreateUserError
+type BulkCreateUserV2Error
   @join__type(graph: STRAWBERRY)
 {
   """Original position in the input list."""
@@ -1420,17 +1439,6 @@ type BulkCreateUserError
   message: String!
 }
 
-"""Added in 26.2.0. Payload for bulk user creation mutation."""
-type BulkCreateUsersV2Payload
-  @join__type(graph: STRAWBERRY)
-{
-  """List of successfully created users."""
-  createdUsers: [UserV2!]!
-
-  """List of errors for users that failed to create."""
-  failed: [BulkCreateUserError!]!
-}
-
 """
 Added in 26.2.0. Input for bulk creating multiple users. Each user has individual specifications.
 """
@@ -1439,6 +1447,99 @@ input BulkCreateUserV2Input
 {
   """List of user creation inputs."""
   users: [CreateUserV2Input!]!
+}
+
+"""
+Added in 26.3.0. Input for permanently deleting multiple users. This action is irreversible.
+"""
+input BulkPurgeUsersV2Input
+  @join__type(graph: STRAWBERRY)
+{
+  """List of user UUIDs to purge."""
+  userIds: [UUID!]!
+
+  """Options for the purge operation."""
+  options: BulkPurgeUsersV2Options = null
+}
+
+"""Added in 26.3.0. Options for bulk user purge operation."""
+input BulkPurgeUsersV2Options
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  If true, migrate shared virtual folders to the admin user before purging.
+  """
+  purgeSharedVfolders: Boolean! = false
+
+  """If true, delegate endpoint ownership to the admin user before purging."""
+  delegateEndpointOwnership: Boolean! = false
+}
+
+"""Added in 26.3.0. Payload for bulk user permanent deletion mutation."""
+type BulkPurgeUsersV2Payload
+  @join__type(graph: STRAWBERRY)
+{
+  """Number of users successfully purged."""
+  purgedCount: Int!
+
+  """List of errors for users that failed to purge."""
+  failed: [BulkPurgeUserV2Error!]!
+}
+
+"""Added in 26.3.0. Error information for a failed user in bulk purge."""
+type BulkPurgeUserV2Error
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the user that failed to purge."""
+  userId: UUID!
+
+  """Error message describing the failure."""
+  message: String!
+}
+
+"""Added in 26.3.0. Payload for bulk user update mutation."""
+type BulkUpdateUsersV2Payload
+  @join__type(graph: STRAWBERRY)
+{
+  """List of successfully updated users."""
+  updatedUsers: [UserV2!]!
+
+  """List of errors for users that failed to update."""
+  failed: [BulkUpdateUserV2Error!]!
+}
+
+"""Added in 26.3.0. Error information for a failed user in bulk update."""
+type BulkUpdateUserV2Error
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the user that failed to update."""
+  userId: UUID!
+
+  """Error message describing the failure."""
+  message: String!
+}
+
+"""
+Added in 26.3.0. Input for bulk updating multiple users. Each user has individual update specifications.
+"""
+input BulkUpdateUserV2Input
+  @join__type(graph: STRAWBERRY)
+{
+  """List of user update inputs."""
+  users: [BulkUpdateUserV2ItemInput!]!
+}
+
+"""
+Added in 26.3.0. Input for a single user update within a bulk operation. Pairs a user ID with the fields to update.
+"""
+input BulkUpdateUserV2ItemInput
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the user to update."""
+  userId: UUID!
+
+  """Fields to update for this user."""
+  input: UpdateUserV2Input!
 }
 
 """
@@ -1632,7 +1733,7 @@ input ClusterConfigInput
   size: Int!
 }
 
-"""Added in 25.19.0"""
+"""Added in 25.19.0. Cluster mode for compute sessions and deployments."""
 enum ClusterMode
   @join__type(graph: STRAWBERRY)
 {
@@ -2334,6 +2435,17 @@ type CreateObjectStoragePayload
   objectStorage: ObjectStorage!
 }
 
+"""Added in 26.3.0. Input for creating a scoped permission"""
+input CreatePermissionInput
+  @join__type(graph: STRAWBERRY)
+{
+  roleId: UUID!
+  scopeType: RBACElementType!
+  scopeId: String!
+  entityType: RBACElementType!
+  operation: OperationType!
+}
+
 type CreateProjectResourcePolicy
   @join__type(graph: GRAPHENE)
 {
@@ -2420,6 +2532,15 @@ type CreateRevisionPayload
   @join__type(graph: STRAWBERRY)
 {
   revision: ModelRevision!
+}
+
+"""Added in 26.3.0. Input for creating a role"""
+input CreateRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  name: String!
+  description: String = null
+  source: RoleSource = null
 }
 
 type CreateScalingGroup
@@ -2906,6 +3027,20 @@ type DeleteObjectStoragePayload
   id: ID!
 }
 
+"""Added in 26.3.0. Input for deleting a scoped permission"""
+input DeletePermissionInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+}
+
+"""Added in 26.3.0. Payload for delete permission mutation"""
+type DeletePermissionPayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
 type DeleteProjectResourcePolicy
   @join__type(graph: GRAPHENE)
 {
@@ -2932,6 +3067,20 @@ type DeleteResourcePreset
 {
   ok: Boolean
   msg: String
+}
+
+"""Added in 26.3.0. Input for soft-deleting a role"""
+input DeleteRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+}
+
+"""Added in 26.3.0. Payload for delete role mutation"""
+type DeleteRolePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
 }
 
 type DeleteScalingGroup
@@ -4080,6 +4229,85 @@ type EndpointTokenList implements PaginatedList
   total_count: Int!
 }
 
+"""Added in 26.3.0. Entity connection"""
+type EntityConnection
+  @join__type(graph: STRAWBERRY)
+{
+  edges: [EntityEdge!]!
+  pageInfo: PageInfo!
+  count: Int!
+}
+
+"""Added in 26.3.0. Entity edge"""
+type EntityEdge
+  @join__type(graph: STRAWBERRY)
+{
+  node: EntityRef!
+  cursor: String!
+}
+
+"""Added in 26.3.0. Filter for entity associations"""
+input EntityFilter
+  @join__type(graph: STRAWBERRY)
+{
+  entityType: RBACElementType = null
+  entityId: StringFilter = null
+}
+
+union EntityNode
+  @join__type(graph: STRAWBERRY)
+  @join__unionMember(graph: STRAWBERRY, member: "UserV2")
+  @join__unionMember(graph: STRAWBERRY, member: "ProjectV2")
+  @join__unionMember(graph: STRAWBERRY, member: "DomainV2")
+  @join__unionMember(graph: STRAWBERRY, member: "VirtualFolderNode")
+  @join__unionMember(graph: STRAWBERRY, member: "ImageV2")
+  @join__unionMember(graph: STRAWBERRY, member: "ComputeSessionNode")
+  @join__unionMember(graph: STRAWBERRY, member: "Artifact")
+  @join__unionMember(graph: STRAWBERRY, member: "ArtifactRegistry")
+  @join__unionMember(graph: STRAWBERRY, member: "AppConfig")
+  @join__unionMember(graph: STRAWBERRY, member: "NotificationChannel")
+  @join__unionMember(graph: STRAWBERRY, member: "NotificationRule")
+  @join__unionMember(graph: STRAWBERRY, member: "ModelDeployment")
+  @join__unionMember(graph: STRAWBERRY, member: "ResourceGroup")
+  @join__unionMember(graph: STRAWBERRY, member: "ArtifactRevision")
+  @join__unionMember(graph: STRAWBERRY, member: "Role")
+ = UserV2 | ProjectV2 | DomainV2 | VirtualFolderNode | ImageV2 | ComputeSessionNode | Artifact | ArtifactRegistry | AppConfig | NotificationChannel | NotificationRule | ModelDeployment | ResourceGroup | ArtifactRevision | Role
+
+"""Added in 26.3.0. Order by specification for entity associations"""
+input EntityOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: EntityOrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""Added in 26.3.0. Entity ordering field"""
+enum EntityOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  ENTITY_TYPE @join__enumValue(graph: STRAWBERRY)
+  REGISTERED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.3.0. Entity reference from the association_scopes_entities table
+"""
+type EntityRef implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  scopeType: RBACElementType!
+  scopeId: String!
+  entityType: RBACElementType!
+  entityId: String!
+  registeredAt: DateTime!
+
+  """The resolved entity object."""
+  entity: EntityNode
+}
+
 """
 Added in 26.2.0. Common timestamp fields for entity lifecycle tracking. Reusable across different entity types.
 """
@@ -5216,7 +5444,7 @@ type KernelV2 implements Node
   startupCommand: String
 
   """Information about the session this kernel belongs to."""
-  session: KernelV2SessionInfo!
+  sessionInfo: KernelV2SessionInfo!
 
   """User and ownership information."""
   userInfo: KernelV2UserInfo!
@@ -5247,6 +5475,9 @@ type KernelV2 implements Node
 
   """Added in 26.2.0. The resource group this kernel is assigned to."""
   resourceGroup: ResourceGroup
+
+  """Added in 26.3.0. The session this kernel belongs to."""
+  session: SessionV2
 }
 
 """
@@ -5311,7 +5542,7 @@ type KernelV2LifecycleInfo
   status: KernelV2Status!
 
   """The result of the kernel execution (UNDEFINED, SUCCESS, FAILURE)."""
-  result: SessionResult!
+  result: SessionV2Result!
 
   """Timestamp when the kernel was created."""
   createdAt: DateTime
@@ -7216,10 +7447,15 @@ type Mutation
   """
   Added in 26.2.0. Create multiple users in bulk (admin only). Requires superadmin privileges. Each user has individual specifications.
   """
-  adminBulkCreateUsers(input: BulkCreateUserV2Input!): BulkCreateUsersV2Payload! @join__field(graph: STRAWBERRY)
+  adminBulkCreateUsersV2(input: BulkCreateUserV2Input!): BulkCreateUsersV2Payload! @join__field(graph: STRAWBERRY)
 
   """
-  Added in 26.2.0. Update a user's information (admin only). Requires superadmin privileges. Only provided fields will be updated.
+  Added in 26.3.0. Update multiple users in bulk (admin only). Requires superadmin privileges. Each user has individual update specifications.
+  """
+  adminBulkUpdateUsersV2(input: BulkUpdateUserV2Input!): BulkUpdateUsersV2Payload! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.3.0. Update a user's information (admin only). Requires superadmin privileges. Only provided fields will be updated.
   """
   adminUpdateUser(userId: UUID!, input: UpdateUserV2Input!): UpdateUserV2Payload! @join__field(graph: STRAWBERRY)
 
@@ -7244,9 +7480,33 @@ type Mutation
   adminPurgeUser(input: PurgeUserV2Input!): PurgeUserV2Payload! @join__field(graph: STRAWBERRY)
 
   """
-  Added in 26.2.0. Permanently delete multiple users (admin only). Requires superadmin privileges. This action is IRREVERSIBLE. All user data will be deleted.
+  Added in 26.3.0. Permanently delete multiple users in bulk (admin only). Requires superadmin privileges. This action is IRREVERSIBLE. All user data will be deleted.
   """
-  adminPurgeUsers(input: PurgeUsersV2Input!): PurgeUsersV2Payload! @join__field(graph: STRAWBERRY)
+  adminBulkPurgeUsersV2(input: BulkPurgeUsersV2Input!): BulkPurgeUsersV2Payload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Create a new role (admin only)."""
+  adminCreateRole(input: CreateRoleInput!): Role! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Update an existing role (admin only)."""
+  adminUpdateRole(input: UpdateRoleInput!): Role! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Soft-delete a role (admin only)."""
+  adminDeleteRole(input: DeleteRoleInput!): DeleteRolePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Permanently remove a role (admin only)."""
+  adminPurgeRole(input: PurgeRoleInput!): PurgeRolePayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Create a scoped permission (admin only)."""
+  adminCreatePermission(input: CreatePermissionInput!): Permission! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Delete a scoped permission (admin only)."""
+  adminDeletePermission(input: DeletePermissionInput!): DeletePermissionPayload! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Assign a role to a user (admin only)."""
+  adminAssignRole(input: AssignRoleInput!): RoleAssignment! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Revoke a role from a user (admin only)."""
+  adminRevokeRole(input: RevokeRoleInput!): RoleAssignment! @join__field(graph: STRAWBERRY)
 }
 
 """Added in 24.12.0."""
@@ -7511,6 +7771,22 @@ type ObjectStorageEdge
   node: ObjectStorage!
 }
 
+"""Added in 26.3.0. RBAC operation type"""
+enum OperationType
+  @join__type(graph: STRAWBERRY)
+{
+  CREATE @join__enumValue(graph: STRAWBERRY)
+  READ @join__enumValue(graph: STRAWBERRY)
+  UPDATE @join__enumValue(graph: STRAWBERRY)
+  SOFT_DELETE @join__enumValue(graph: STRAWBERRY)
+  HARD_DELETE @join__enumValue(graph: STRAWBERRY)
+  GRANT_ALL @join__enumValue(graph: STRAWBERRY)
+  GRANT_READ @join__enumValue(graph: STRAWBERRY)
+  GRANT_UPDATE @join__enumValue(graph: STRAWBERRY)
+  GRANT_SOFT_DELETE @join__enumValue(graph: STRAWBERRY)
+  GRANT_HARD_DELETE @join__enumValue(graph: STRAWBERRY)
+}
+
 enum OrderDirection
   @join__type(graph: STRAWBERRY)
 {
@@ -7543,6 +7819,74 @@ interface PaginatedList
 {
   items: [Item]!
   total_count: Int!
+}
+
+"""Added in 26.3.0. RBAC scoped permission"""
+type Permission implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  roleId: UUID!
+  scopeType: RBACElementType!
+  scopeId: String!
+  entityType: RBACElementType!
+  operation: OperationType!
+
+  """The role this permission belongs to."""
+  role: Role
+
+  """The scope this permission applies to."""
+  scope: EntityNode
+}
+
+"""Added in 26.3.0. Permission connection"""
+type PermissionConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [PermissionEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type PermissionEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Permission!
+}
+
+"""Added in 26.3.0. Filter for scoped permissions"""
+input PermissionFilter
+  @join__type(graph: STRAWBERRY)
+{
+  roleId: UUID = null
+  scopeType: RBACElementType = null
+  entityType: RBACElementType = null
+}
+
+"""Added in 26.3.0. Order by specification for permissions"""
+input PermissionOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: PermissionOrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""Added in 26.3.0. Permission ordering field"""
+enum PermissionOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  ID @join__enumValue(graph: STRAWBERRY)
+  ENTITY_TYPE @join__enumValue(graph: STRAWBERRY)
 }
 
 type PredefinedAtomicPermission
@@ -8310,6 +8654,20 @@ type PurgeImagesPayload
   task_id: String
 }
 
+"""Added in 26.3.0. Input for purging a role"""
+input PurgeRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+}
+
+"""Added in 26.3.0. Payload for purge role mutation"""
+type PurgeRolePayload
+  @join__type(graph: STRAWBERRY)
+{
+  id: ID!
+}
+
 """
 Delete user as well as all user-related DB informations such as keypairs, kernels, etc.
 
@@ -8340,27 +8698,6 @@ input PurgeUserInput
   Added in 25.4.0. The default value is `false`. Indicates whether the user's existing endpoints are delegated to the requester.
   """
   delegate_endpoint_ownership: Boolean
-}
-
-"""
-Added in 26.2.0. Input for permanently deleting multiple users. This action is irreversible.
-"""
-input PurgeUsersV2Input
-  @join__type(graph: STRAWBERRY)
-{
-  """List of user UUIDs to purge."""
-  userIds: [UUID!]!
-}
-
-"""Added in 26.2.0. Payload for bulk user permanent deletion mutation."""
-type PurgeUsersV2Payload
-  @join__type(graph: STRAWBERRY)
-{
-  """Number of users successfully purged."""
-  purgedCount: Int!
-
-  """List of user UUIDs that failed to purge, if any."""
-  failedUserIds: [UUID!]!
 }
 
 """
@@ -8900,6 +9237,9 @@ type Query
   """Added in 26.2.0. List resource groups (admin only)"""
   adminResourceGroups(filter: ResourceGroupFilter = null, orderBy: [ResourceGroupOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ResourceGroupConnection @join__field(graph: STRAWBERRY)
 
+  """Added in 26.3.0. Query service catalog entries. Admin only."""
+  adminServiceCatalogs(filter: ServiceCatalogFilter = null, orderBy: [ServiceCatalogOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): [ServiceCatalog!]! @join__field(graph: STRAWBERRY)
+
   """List session scheduling history (admin only)"""
   adminSessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
 
@@ -8977,6 +9317,11 @@ type Query
   adminKernelsV2(filter: KernelV2Filter = null, orderBy: [KernelV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelV2Connection @join__field(graph: STRAWBERRY)
 
   """
+  Added in 26.3.0. Query sessions with pagination and filtering. (admin only)
+  """
+  adminSessionsV2(filter: SessionV2Filter = null, orderBy: [SessionV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionV2Connection! @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.2.0.
   
   Query image aliases with optional filtering, ordering, and pagination.
@@ -8987,6 +9332,29 @@ type Query
   """
   adminImageAliases(filter: ImageV2AliasFilterGQL = null, orderBy: [ImageV2AliasOrderByGQL!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ImageV2AliasConnection @join__field(graph: STRAWBERRY)
 
+  """Added in 26.3.0. Get a single role by ID (admin only)."""
+  adminRole(id: UUID!): Role @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.3.0. List roles with filtering and pagination (admin only).
+  """
+  adminRoles(filter: RoleFilter = null, orderBy: [RoleOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RoleConnection! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.3.0. List scoped permissions with filtering and pagination (admin only).
+  """
+  adminPermissions(filter: PermissionFilter = null, orderBy: [PermissionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): PermissionConnection! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.3.0. List role assignments with filtering and pagination (admin only).
+  """
+  adminRoleAssignments(filter: RoleAssignmentFilter = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RoleAssignmentConnection! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.3.0. Search entity associations (admin only). Optionally filter by entity_type and entity_id.
+  """
+  adminEntities(filter: EntityFilter = null, orderBy: [EntityOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): EntityConnection! @join__field(graph: STRAWBERRY)
+
   """Added in 26.2.0. Query kernels within a specific session."""
   sessionKernelsV2(scope: SessionScope!, filter: KernelV2Filter = null, orderBy: [KernelV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelV2Connection @join__field(graph: STRAWBERRY)
 
@@ -8996,7 +9364,7 @@ type Query
   rgDomainFairShare(scope: ResourceGroupDomainScope!, domainName: String!): DomainFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List domain fair shares within resource group scope."""
-  rgDomainFairShares(scope: ResourceGroupDomainScope!, filter: DomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection @join__field(graph: STRAWBERRY)
+  rgDomainFairShares(scope: ResourceGroupDomainScope!, filter: RGDomainFairShareFilter = null, orderBy: [DomainFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DomainFairShareConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get project fair share data within resource group scope.
@@ -9004,13 +9372,13 @@ type Query
   rgProjectFairShare(scope: ResourceGroupProjectScope!, projectId: UUID!): ProjectFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List project fair shares within resource group scope."""
-  rgProjectFairShares(scope: ResourceGroupProjectScope!, filter: ProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection @join__field(graph: STRAWBERRY)
+  rgProjectFairShares(scope: ResourceGroupProjectScope!, filter: RGProjectFairShareFilter = null, orderBy: [ProjectFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ProjectFairShareConnection @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. Get user fair share data within resource group scope."""
   rgUserFairShare(scope: ResourceGroupUserScope!, userUuid: UUID!): UserFairShare @join__field(graph: STRAWBERRY)
 
   """Added in 26.2.0. List user fair shares within resource group scope."""
-  rgUserFairShares(scope: ResourceGroupUserScope!, filter: UserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection @join__field(graph: STRAWBERRY)
+  rgUserFairShares(scope: ResourceGroupUserScope!, filter: RGUserFairShareFilter = null, orderBy: [UserFairShareOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserFairShareConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. List domain usage buckets within resource group scope. This API is not yet implemented.
@@ -9219,6 +9587,41 @@ input QuotaScopeInput
   @join__type(graph: GRAPHENE)
 {
   hard_limit_bytes: BigInt
+}
+
+"""
+Added in 26.3.0. Unified RBAC element type for scope-entity relationships
+"""
+enum RBACElementType
+  @join__type(graph: STRAWBERRY)
+{
+  DOMAIN @join__enumValue(graph: STRAWBERRY)
+  PROJECT @join__enumValue(graph: STRAWBERRY)
+  USER @join__enumValue(graph: STRAWBERRY)
+  SESSION @join__enumValue(graph: STRAWBERRY)
+  VFOLDER @join__enumValue(graph: STRAWBERRY)
+  DEPLOYMENT @join__enumValue(graph: STRAWBERRY)
+  MODEL_DEPLOYMENT @join__enumValue(graph: STRAWBERRY)
+  KEYPAIR @join__enumValue(graph: STRAWBERRY)
+  NOTIFICATION_CHANNEL @join__enumValue(graph: STRAWBERRY)
+  NETWORK @join__enumValue(graph: STRAWBERRY)
+  RESOURCE_GROUP @join__enumValue(graph: STRAWBERRY)
+  CONTAINER_REGISTRY @join__enumValue(graph: STRAWBERRY)
+  STORAGE_HOST @join__enumValue(graph: STRAWBERRY)
+  IMAGE @join__enumValue(graph: STRAWBERRY)
+  ARTIFACT @join__enumValue(graph: STRAWBERRY)
+  ARTIFACT_REGISTRY @join__enumValue(graph: STRAWBERRY)
+  SESSION_TEMPLATE @join__enumValue(graph: STRAWBERRY)
+  APP_CONFIG @join__enumValue(graph: STRAWBERRY)
+  RESOURCE_PRESET @join__enumValue(graph: STRAWBERRY)
+  USER_RESOURCE_POLICY @join__enumValue(graph: STRAWBERRY)
+  KEYPAIR_RESOURCE_POLICY @join__enumValue(graph: STRAWBERRY)
+  PROJECT_RESOURCE_POLICY @join__enumValue(graph: STRAWBERRY)
+  ROLE @join__enumValue(graph: STRAWBERRY)
+  AUDIT_LOG @join__enumValue(graph: STRAWBERRY)
+  EVENT_LOG @join__enumValue(graph: STRAWBERRY)
+  NOTIFICATION_RULE @join__enumValue(graph: STRAWBERRY)
+  ARTIFACT_REVISION @join__enumValue(graph: STRAWBERRY)
 }
 
 """
@@ -9831,6 +10234,238 @@ type RestoreArtifactsPayload
   artifacts: [Artifact!]!
 }
 
+"""Added in 26.3.0. Input for revoking a role from a user"""
+input RevokeRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  userId: UUID!
+  roleId: UUID!
+}
+
+"""
+Added in 26.2.0. Filter for domain fair shares within a resource group scope. References resource group membership columns to avoid excluding domains without fair share records.
+"""
+input RGDomainFairShareFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Filter by scaling group name."""
+  resourceGroup: StringFilter = null
+
+  """Filter by domain name."""
+  domainName: StringFilter = null
+
+  """Filter by domain properties."""
+  domain: DomainFairShareDomainNestedFilter = null
+
+  """Combine with AND logic."""
+  AND: [RGDomainFairShareFilter!] = null
+
+  """Combine with OR logic."""
+  OR: [RGDomainFairShareFilter!] = null
+
+  """Negate filters."""
+  NOT: [RGDomainFairShareFilter!] = null
+}
+
+"""
+Added in 26.2.0. Filter for project fair shares within a resource group scope. References resource group membership columns to avoid excluding projects without fair share records.
+"""
+input RGProjectFairShareFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Filter by scaling group name."""
+  resourceGroup: StringFilter = null
+
+  """Filter by project UUID."""
+  projectId: UUIDFilter = null
+
+  """Filter by domain name."""
+  domainName: StringFilter = null
+
+  """Filter by project properties."""
+  project: ProjectFairShareProjectNestedFilter = null
+
+  """Combine with AND logic."""
+  AND: [RGProjectFairShareFilter!] = null
+
+  """Combine with OR logic."""
+  OR: [RGProjectFairShareFilter!] = null
+
+  """Negate filters."""
+  NOT: [RGProjectFairShareFilter!] = null
+}
+
+"""
+Added in 26.2.0. Filter for user fair shares within a resource group scope. References resource group membership columns to avoid excluding users without fair share records.
+"""
+input RGUserFairShareFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Filter by scaling group name."""
+  resourceGroup: StringFilter = null
+
+  """Filter by user UUID."""
+  userUuid: UUIDFilter = null
+
+  """Filter by project UUID."""
+  projectId: UUIDFilter = null
+
+  """Filter by domain name."""
+  domainName: StringFilter = null
+
+  """Filter by user properties."""
+  user: UserFairShareUserNestedFilter = null
+
+  """Combine with AND logic."""
+  AND: [RGUserFairShareFilter!] = null
+
+  """Combine with OR logic."""
+  OR: [RGUserFairShareFilter!] = null
+
+  """Negate filters."""
+  NOT: [RGUserFairShareFilter!] = null
+}
+
+"""Added in 26.3.0. RBAC role"""
+type Role implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  name: String!
+  description: String
+  source: RoleSource!
+  status: RoleStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+"""Added in 26.3.0. RBAC role assignment (user-role association)"""
+type RoleAssignment implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """The assigned user ID."""
+  userId: UUID!
+
+  """The assigned role ID."""
+  roleId: UUID!
+
+  """The user who granted this assignment."""
+  grantedBy: UUID
+  grantedAt: DateTime!
+
+  """The assigned role."""
+  role: Role
+
+  """The assigned user."""
+  user: UserV2
+}
+
+"""Added in 26.3.0. Role assignment connection"""
+type RoleAssignmentConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RoleAssignmentEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type RoleAssignmentEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RoleAssignment!
+}
+
+"""Added in 26.3.0. Filter for role assignments"""
+input RoleAssignmentFilter
+  @join__type(graph: STRAWBERRY)
+{
+  roleId: UUID = null
+}
+
+"""Added in 26.3.0. Role connection"""
+type RoleConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RoleEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type RoleEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Role!
+}
+
+"""Added in 26.3.0. Filter for roles"""
+input RoleFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  source: [RoleSource!] = null
+  status: [RoleStatus!] = null
+  AND: [RoleFilter!] = null
+  OR: [RoleFilter!] = null
+  NOT: RoleFilter = null
+}
+
+"""Added in 26.3.0. Order by specification for roles"""
+input RoleOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: RoleOrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""Added in 26.3.0. Role ordering field"""
+enum RoleOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  NAME @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Role definition source"""
+enum RoleSource
+  @join__type(graph: STRAWBERRY)
+{
+  SYSTEM @join__enumValue(graph: STRAWBERRY)
+  CUSTOM @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Role status"""
+enum RoleStatus
+  @join__type(graph: STRAWBERRY)
+{
+  ACTIVE @join__enumValue(graph: STRAWBERRY)
+  INACTIVE @join__enumValue(graph: STRAWBERRY)
+  DELETED @join__enumValue(graph: STRAWBERRY)
+}
+
 """Added in 25.19.0. Configuration for rolling update strategy."""
 input RollingUpdateConfigInput
   @join__type(graph: STRAWBERRY)
@@ -10296,6 +10931,111 @@ Added in 24.12.0. A string value in the format '<SCOPE_TYPE>:<SCOPE_ID>'. <SCOPE
 scalar ScopeField
   @join__type(graph: GRAPHENE)
 
+"""Added in 26.3.0. A registered service instance in the catalog."""
+type ServiceCatalog implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """Logical group name (e.g., 'manager', 'agent', 'storage-proxy')."""
+  serviceGroup: String!
+
+  """Unique instance identifier within the group."""
+  instanceId: String!
+
+  """Human-readable display name."""
+  displayName: String!
+
+  """Version of the service instance."""
+  version: String!
+
+  """Labels for categorization and filtering."""
+  labels: JSON!
+
+  """Health status of the service."""
+  status: ServiceCatalogStatus!
+
+  """When the service instance started."""
+  startupTime: DateTime!
+
+  """When the service was first registered."""
+  registeredAt: DateTime!
+
+  """Last heartbeat timestamp."""
+  lastHeartbeat: DateTime!
+
+  """Hash of the service configuration."""
+  configHash: String!
+
+  """Endpoints exposed by this service instance."""
+  endpoints: [ServiceCatalogEndpoint!]!
+}
+
+"""Added in 26.3.0. An endpoint exposed by a service instance."""
+type ServiceCatalogEndpoint
+  @join__type(graph: STRAWBERRY)
+{
+  """Role of this endpoint (e.g., 'main', 'health')."""
+  role: String!
+
+  """Network scope (e.g., 'public', 'private', 'internal')."""
+  scope: String!
+
+  """Hostname or IP address."""
+  address: String!
+
+  """Port number."""
+  port: Int!
+
+  """Protocol (e.g., 'grpc', 'http', 'https')."""
+  protocol: String!
+
+  """Additional metadata."""
+  metadata: JSON
+}
+
+"""Added in 26.3.0. Filter for service catalog queries."""
+input ServiceCatalogFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Filter by service group name (exact match)."""
+  serviceGroup: String = null
+
+  """Filter by health status."""
+  status: ServiceCatalogStatus = null
+}
+
+"""
+Added in 26.3.0. Specifies the field and direction for ordering service catalog queries.
+"""
+input ServiceCatalogOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: ServiceCatalogOrderField!
+  direction: OrderDirection! = ASC
+}
+
+"""
+Added in 26.3.0. Fields available for ordering service catalog queries.
+"""
+enum ServiceCatalogOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  SERVICE_GROUP @join__enumValue(graph: STRAWBERRY)
+  REGISTERED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Health status of a service in the catalog."""
+enum ServiceCatalogStatus
+  @join__type(graph: STRAWBERRY)
+{
+  HEALTHY @join__enumValue(graph: STRAWBERRY)
+  UNHEALTHY @join__enumValue(graph: STRAWBERRY)
+  DEREGISTERED @join__enumValue(graph: STRAWBERRY)
+}
+
 """Added in 25.8.0."""
 type ServiceConfigConnection
   @join__type(graph: GRAPHENE)
@@ -10420,14 +11160,6 @@ Added in 24.09.0. One of ['read_attribute', 'update_attribute', 'delete_session'
 scalar SessionPermissionValueField
   @join__type(graph: GRAPHENE)
 
-enum SessionResult
-  @join__type(graph: STRAWBERRY)
-{
-  UNDEFINED @join__enumValue(graph: STRAWBERRY)
-  SUCCESS @join__enumValue(graph: STRAWBERRY)
-  FAILURE @join__enumValue(graph: STRAWBERRY)
-}
-
 """Session scheduling history record"""
 type SessionSchedulingHistory implements Node
   @join__implements(graph: STRAWBERRY, interface: "Node")
@@ -10513,6 +11245,253 @@ input SessionScope
 }
 
 enum SessionTypes
+  @join__type(graph: STRAWBERRY)
+{
+  INTERACTIVE @join__enumValue(graph: STRAWBERRY)
+  BATCH @join__enumValue(graph: STRAWBERRY)
+  INFERENCE @join__enumValue(graph: STRAWBERRY)
+  SYSTEM @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Represents a compute session in Backend.AI."""
+type SessionV2 implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """Metadata including domain, project, and user information."""
+  metadata: SessionV2MetadataInfo!
+
+  """Resource allocation and cluster information."""
+  resource: SessionV2ResourceInfo!
+
+  """Lifecycle status and timestamps."""
+  lifecycle: SessionV2LifecycleInfo!
+
+  """Runtime execution configuration."""
+  runtime: SessionV2RuntimeInfo!
+
+  """Network configuration."""
+  network: SessionV2NetworkInfo!
+
+  """Added in 26.3.0. The domain this session belongs to."""
+  domain: DomainV2
+
+  """Added in 26.3.0. The user who owns this session."""
+  user: UserV2
+
+  """Added in 26.3.0. The project this session belongs to."""
+  project: ProjectV2
+
+  """Added in 26.3.0. The resource group this session is assigned to."""
+  resourceGroup: ResourceGroup
+
+  """
+  Added in 26.3.0. The candidate resource groups considered during scheduling.
+  """
+  targetResourceGroups: ResourceGroupConnection
+
+  """
+  Added in 26.3.0. The images used by this session. Multiple images are possible in multi-kernel (cluster) sessions.
+  """
+  images: ImageV2Connection!
+
+  """Added in 26.3.0. The kernels belonging to this session."""
+  kernels: KernelV2Connection!
+}
+
+"""Added in 26.3.0. Connection type for paginated session results."""
+type SessionV2Connection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [SessionV2Edge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type SessionV2Edge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: SessionV2!
+}
+
+"""Added in 26.3.0. Filter criteria for querying sessions."""
+input SessionV2Filter
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUIDFilter = null
+  status: SessionV2StatusFilter = null
+  name: StringFilter = null
+  domainName: StringFilter = null
+  projectId: UUIDFilter = null
+  userUuid: UUIDFilter = null
+}
+
+"""Added in 26.3.0. Lifecycle status and timestamps for a session."""
+type SessionV2LifecycleInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Current status of the session."""
+  status: SessionV2Status!
+
+  """Result of the session execution (success, failure, etc.)."""
+  result: SessionV2Result!
+
+  """Timestamp when the session was created."""
+  createdAt: DateTime
+
+  """Timestamp when the session was terminated. Null if still active."""
+  terminatedAt: DateTime
+
+  """Scheduled start time for the session, if applicable."""
+  startsAt: DateTime
+
+  """Batch execution timeout in seconds. Applicable to batch sessions."""
+  batchTimeout: Int
+}
+
+"""Added in 26.3.0. Metadata information for a session."""
+type SessionV2MetadataInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Server-generated unique token for tracking session creation."""
+  creationId: String!
+
+  """Human-readable name of the session."""
+  name: String!
+
+  """Type of the session (interactive, batch, inference)."""
+  sessionType: SessionV2Type!
+
+  """Access key used to create this session."""
+  accessKey: String!
+
+  """Cluster mode for distributed sessions (single-node, multi-node)."""
+  clusterMode: ClusterMode!
+
+  """Number of nodes in the cluster."""
+  clusterSize: Int!
+
+  """Scheduling priority of the session."""
+  priority: Int!
+
+  """Optional user-provided tag for the session."""
+  tag: String
+}
+
+"""Added in 26.3.0. Network configuration for a session."""
+type SessionV2NetworkInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the session uses the host network directly."""
+  useHostNetwork: Boolean!
+
+  """Type of network used by the session."""
+  networkType: String
+
+  """ID of the network if applicable."""
+  networkId: String
+}
+
+"""Added in 26.3.0. Ordering specification for sessions."""
+input SessionV2OrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: SessionV2OrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""Added in 26.3.0. Fields available for ordering sessions."""
+enum SessionV2OrderField
+  @join__type(graph: STRAWBERRY)
+{
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  TERMINATED_AT @join__enumValue(graph: STRAWBERRY)
+  STATUS @join__enumValue(graph: STRAWBERRY)
+  ID @join__enumValue(graph: STRAWBERRY)
+  NAME @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Resource allocation information for a session."""
+type SessionV2ResourceInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Resource allocation with requested and occupied slots."""
+  allocation: ResourceAllocation!
+
+  """The resource group (scaling group) this session is assigned to."""
+  resourceGroupName: String
+
+  """Candidate resource group names considered during scheduling."""
+  targetResourceGroupNames: [String!]
+}
+
+"""
+Added in 26.3.0. Result status of a session or kernel execution. Indicates the final outcome after the session/kernel has terminated. UNDEFINED: The session has not yet finished or its result is unknown. SUCCESS: The session completed normally without errors. FAILURE: The session terminated abnormally due to an error or user cancellation.
+"""
+enum SessionV2Result
+  @join__type(graph: STRAWBERRY)
+{
+  UNDEFINED @join__enumValue(graph: STRAWBERRY)
+  SUCCESS @join__enumValue(graph: STRAWBERRY)
+  FAILURE @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Runtime execution configuration for a session."""
+type SessionV2RuntimeInfo
+  @join__type(graph: STRAWBERRY)
+{
+  """Environment variables for the session."""
+  environ: EnvironmentVariables
+
+  """Bootstrap script to run before the main process."""
+  bootstrapScript: String
+
+  """Startup command to execute when the session starts."""
+  startupCommand: String
+
+  """
+  URL to call back when the session completes (e.g., for batch sessions).
+  """
+  callbackUrl: String
+}
+
+"""Added in 26.3.0. Status of a session in its lifecycle."""
+enum SessionV2Status
+  @join__type(graph: STRAWBERRY)
+{
+  PENDING @join__enumValue(graph: STRAWBERRY)
+  SCHEDULED @join__enumValue(graph: STRAWBERRY)
+  PREPARING @join__enumValue(graph: STRAWBERRY)
+  PREPARED @join__enumValue(graph: STRAWBERRY)
+  CREATING @join__enumValue(graph: STRAWBERRY)
+  RUNNING @join__enumValue(graph: STRAWBERRY)
+  DEPRIORITIZING @join__enumValue(graph: STRAWBERRY)
+  TERMINATING @join__enumValue(graph: STRAWBERRY)
+  TERMINATED @join__enumValue(graph: STRAWBERRY)
+  CANCELLED @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.3.0. Filter for session status."""
+input SessionV2StatusFilter
+  @join__type(graph: STRAWBERRY)
+{
+  in: [SessionV2Status!] = null
+  notIn: [SessionV2Status!] = null
+}
+
+"""Added in 26.3.0. Type of compute session."""
+enum SessionV2Type
   @join__type(graph: STRAWBERRY)
 {
   INTERACTIVE @join__enumValue(graph: STRAWBERRY)
@@ -11057,6 +12036,15 @@ type UpdateResourceGroupPayload
   resourceGroup: ResourceGroup!
 }
 
+"""Added in 26.3.0. Input for updating a role"""
+input UpdateRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+  name: String = null
+  description: String = null
+}
+
 """Added in 25.19.0. Input for updating route traffic status."""
 input UpdateRouteTrafficStatusInput
   @join__type(graph: STRAWBERRY)
@@ -11077,61 +12065,61 @@ type UpdateRouteTrafficStatusPayload
 }
 
 """
-Added in 26.2.0. Input for updating user information. All fields are optional - only provided fields will be updated.
+Added in 26.3.0. Input for updating user information. All fields are optional - only provided fields will be updated.
 """
 input UpdateUserV2Input
   @join__type(graph: STRAWBERRY)
 {
   """New username."""
-  username: String = null
+  username: String
 
   """New password."""
-  password: String = null
+  password: String
 
   """New full display name."""
-  fullName: String = null
+  fullName: String
 
   """New description."""
-  description: String = null
+  description: String
 
   """New account status."""
-  status: UserStatusV2 = null
+  status: UserStatusV2
 
   """New user role."""
-  role: UserRoleV2 = null
+  role: UserRoleV2
 
   """New domain assignment."""
-  domainName: String = null
+  domainName: String
 
   """New project (group) assignments. Replaces existing assignments."""
-  groupIds: [UUID!] = null
+  groupIds: [UUID!]
 
   """New allowed client IP addresses or CIDR ranges."""
-  allowedClientIp: [String!] = null
+  allowedClientIp: [String!]
 
   """Set password change requirement."""
-  needPasswordChange: Boolean = null
+  needPasswordChange: Boolean
 
   """New user resource policy name."""
-  resourcePolicy: String = null
+  resourcePolicy: String
 
   """Enable or disable sudo session capability."""
-  sudoSessionEnabled: Boolean = null
+  sudoSessionEnabled: Boolean
 
   """Set the primary API access key."""
-  mainAccessKey: String = null
+  mainAccessKey: String
 
   """New container user ID."""
-  containerUid: Int = null
+  containerUid: Int
 
   """New container primary group ID."""
-  containerMainGid: Int = null
+  containerMainGid: Int
 
   """New container supplementary group IDs."""
-  containerGids: [Int!] = null
+  containerGids: [Int!]
 }
 
-"""Added in 26.2.0. Payload for user update mutation."""
+"""Added in 26.3.0. Payload for user update mutation."""
 type UpdateUserV2Payload
   @join__type(graph: STRAWBERRY)
 {
