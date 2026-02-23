@@ -1,6 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIDomainSelect from './BAIDomainSelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const sampleActiveDomains = [
   { name: 'default' },
@@ -15,6 +15,10 @@ const sampleAllDomains = [
   { name: 'archived-domain' },
   { name: 'inactive-domain' },
 ];
+
+const sampleManyDomains = Array.from({ length: 15 }, (_, i) => ({
+  name: `domain-${i + 1}`,
+}));
 
 /**
  * BAIDomainSelect is a specialized Select component that fetches and displays
@@ -302,21 +306,15 @@ export const ManyDomains: Story = {
     showSearch: true,
     allowClear: true,
   },
-  render: (args) => {
-    const manyDomains = Array.from({ length: 15 }, (_, i) => ({
-      name: `domain-${i + 1}`,
-    }));
-
-    return (
-      <RelayResolver
-        mockResolvers={{
-          Query: () => ({
-            domains: manyDomains,
-          }),
-        }}
-      >
-        <BAIDomainSelect {...args} style={{ width: '300px' }} />
-      </RelayResolver>
-    );
-  },
+  render: (args) => (
+    <RelayResolver
+      mockResolvers={{
+        Query: () => ({
+          domains: sampleManyDomains,
+        }),
+      }}
+    >
+      <BAIDomainSelect {...args} style={{ width: '300px' }} />
+    </RelayResolver>
+  ),
 };

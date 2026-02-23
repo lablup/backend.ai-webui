@@ -4,7 +4,7 @@ import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode, useMemo } from 'react';
+import { Suspense, type ReactNode, useRef } from 'react';
 
 const sampleHostNames = [
   'host1.example.com',
@@ -13,6 +13,11 @@ const sampleHostNames = [
   'gpu-cluster.example.com',
   'storage-node1.example.com',
 ];
+
+const sampleManyHosts = Array.from(
+  { length: 20 },
+  (_, i) => `host${i + 1}.example.com`,
+);
 
 const createMockClient = (allowed: string[] = sampleHostNames) => {
   const mockClient = {
@@ -35,16 +40,26 @@ const StoryProvider = ({
   children: ReactNode;
   allowed?: string[];
 }) => {
-  const clientPromise = useMemo(() => createMockClient(allowed), [allowed]);
-  const storyQueryClient = useMemo(() => new QueryClient(), []);
+  const clientPromiseRef = useRef(createMockClient(allowed));
+  const storyQueryClientRef = useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: 0,
+          staleTime: 0,
+        },
+      },
+    }),
+  );
 
   return (
     <BAIConfigProvider
       locale={{ lang: 'en', antdLocale: enUS }}
-      clientPromise={clientPromise}
+      clientPromise={clientPromiseRef.current}
       anonymousClientFactory={mockAnonymousClientFactory}
     >
-      <QueryClientProvider client={storyQueryClient}>
+      <QueryClientProvider client={storyQueryClientRef.current}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </QueryClientProvider>
     </BAIConfigProvider>
@@ -283,18 +298,17 @@ export const ManyHosts: Story = {
     showSearch: true,
     allowClear: true,
   },
-  render: (args) => {
-    const manyHosts = Array.from(
-      { length: 20 },
-      (_, i) => `host${i + 1}.example.com`,
-    );
-
-    return (
-      <StoryProvider allowed={manyHosts}>
-        <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
-      </StoryProvider>
-    );
-  },
+  render: (args) => (
+    <StoryProvider allowed={sampleManyHosts}>
+      <BAIAllowedHostNamesSelect
+        {...args}
+        style={{ width: 300 }}
+        getPopupContainer={(triggerNode) =>
+          triggerNode.parentElement || document.body
+        }
+      />
+    </StoryProvider>
+  ),
 };
 
 /**

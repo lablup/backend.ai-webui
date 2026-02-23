@@ -1,6 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const samplePolicies = [
   { id: 'policy-1', name: 'default' },

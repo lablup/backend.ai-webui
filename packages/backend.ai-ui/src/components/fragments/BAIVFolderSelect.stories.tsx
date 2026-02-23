@@ -1,6 +1,6 @@
 import { RelayResolverProps } from '../../tests/RelayResolver';
 import BAIVFolderSelect from './BAIVFolderSelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';

@@ -4,7 +4,7 @@ import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode, useMemo } from 'react';
+import { Suspense, type ReactNode, useRef } from 'react';
 
 // =============================================================================
 // Mock Data
@@ -16,6 +16,10 @@ const sampleScalingGroups = [
   { name: 'cpu-only' },
   { name: 'high-memory' },
 ];
+
+const sampleManyGroups = Array.from({ length: 15 }, (_, i) => ({
+  name: `resource-group-${i + 1}`,
+}));
 
 const sampleVolumeInfo = {
   allowed: ['host1', 'host2'],
@@ -70,19 +74,26 @@ const StoryProvider = ({
   scalingGroups?: Array<{ name: string }>;
   volumeInfo?: typeof sampleVolumeInfo;
 }) => {
-  const clientPromise = useMemo(
-    () => createMockClient(scalingGroups, volumeInfo),
-    [scalingGroups, volumeInfo],
+  const clientPromiseRef = useRef(createMockClient(scalingGroups, volumeInfo));
+  const storyQueryClientRef = useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: 0,
+          staleTime: 0,
+        },
+      },
+    }),
   );
-  const storyQueryClient = useMemo(() => new QueryClient(), []);
 
   return (
     <BAIConfigProvider
       locale={{ lang: 'en', antdLocale: enUS }}
-      clientPromise={clientPromise}
+      clientPromise={clientPromiseRef.current}
       anonymousClientFactory={mockAnonymousClientFactory}
     >
-      <QueryClientProvider client={storyQueryClient}>
+      <QueryClientProvider client={storyQueryClientRef.current}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </QueryClientProvider>
     </BAIConfigProvider>
@@ -363,15 +374,9 @@ export const ManyOptions: Story = {
     placeholder: 'Select from 15 resource groups',
     showSearch: true,
   },
-  render: (args) => {
-    const manyGroups = Array.from({ length: 15 }, (_, i) => ({
-      name: `resource-group-${i + 1}`,
-    }));
-
-    return (
-      <StoryProvider scalingGroups={manyGroups}>
-        <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
-      </StoryProvider>
-    );
-  },
+  render: (args) => (
+    <StoryProvider scalingGroups={sampleManyGroups}>
+      <BAIProjectResourceGroupSelect {...args} style={{ width: 300 }} />
+    </StoryProvider>
+  ),
 };

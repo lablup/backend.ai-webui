@@ -1,6 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIObjectStorageSelect from './BAIObjectStorageSelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const sampleObjectStorages = [
   { node: { id: 'storage-1', name: 'S3 Main Storage' } },

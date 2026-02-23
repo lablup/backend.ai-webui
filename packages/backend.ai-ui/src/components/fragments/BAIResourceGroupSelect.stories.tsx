@@ -1,6 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIResourceGroupSelect from './BAIResourceGroupSelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 // =============================================================================
 // Mock Data

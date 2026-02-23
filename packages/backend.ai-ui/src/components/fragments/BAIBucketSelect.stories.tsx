@@ -1,6 +1,6 @@
 import RelayResolver from '../../tests/RelayResolver';
 import BAIBucketSelect from './BAIBucketSelect';
-import { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const sampleBuckets = [
   { node: { id: 'bucket-1', namespace: 'my-bucket-1' } },
