@@ -28,7 +28,6 @@ const RelayResolver = ({
     queueResolver();
 
     return env;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mockResolvers]);
 
   return (

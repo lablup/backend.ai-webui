@@ -4,7 +4,7 @@ import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode, useState } from 'react';
+import { Suspense, type ReactNode, useMemo, useState } from 'react';
 
 const sampleHostNames = [
   'host1.example.com',
@@ -40,7 +40,7 @@ const StoryProvider = ({
   children: ReactNode;
   allowed?: string[];
 }) => {
-  const [clientPromise] = useState(() => createMockClient(allowed));
+  const clientPromise = useMemo(() => createMockClient(allowed), [allowed]);
   const [storyQueryClient] = useState(
     () =>
       new QueryClient({
@@ -301,13 +301,7 @@ export const ManyHosts: Story = {
   },
   render: (args) => (
     <StoryProvider allowed={sampleManyHosts}>
-      <BAIAllowedHostNamesSelect
-        {...args}
-        style={{ width: 300 }}
-        getPopupContainer={(triggerNode) =>
-          triggerNode.parentElement || document.body
-        }
-      />
+      <BAIAllowedHostNamesSelect {...args} style={{ width: 300 }} />
     </StoryProvider>
   ),
 };

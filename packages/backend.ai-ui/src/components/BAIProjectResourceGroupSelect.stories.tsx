@@ -4,7 +4,7 @@ import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode, useState } from 'react';
+import { Suspense, type ReactNode, useMemo, useState } from 'react';
 
 // =============================================================================
 // Mock Data
@@ -74,8 +74,9 @@ const StoryProvider = ({
   scalingGroups?: Array<{ name: string }>;
   volumeInfo?: typeof sampleVolumeInfo;
 }) => {
-  const [clientPromise] = useState(() =>
-    createMockClient(scalingGroups, volumeInfo),
+  const clientPromise = useMemo(
+    () => createMockClient(scalingGroups, volumeInfo),
+    [scalingGroups, volumeInfo],
   );
   const [storyQueryClient] = useState(
     () =>
