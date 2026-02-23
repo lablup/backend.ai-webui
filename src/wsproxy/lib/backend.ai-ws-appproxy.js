@@ -131,7 +131,8 @@ module.exports = proxy = class Proxy extends ai.backend.Client {
       logger.info(
         `App-Proxy server connection established: ${this.ip}:${this.port}.`,
       );
-      tcpConn.setTimeout(60000);
+      tcpConn.setTimeout(3600000);
+      tcpConn.setKeepAlive(true, 30000);
       tcpConn.on('timeout', () => {
         logger.debug(`Socket timeout`);
         tcpConn.destroy();
