@@ -169,7 +169,7 @@
     "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
-    "ScalingGroups": "กลุ่มปรับขนาด",
+    "ScalingGroups": "กลุ่มทรัพยากร",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
