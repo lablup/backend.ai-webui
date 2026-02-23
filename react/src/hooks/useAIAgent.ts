@@ -3,8 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTanQuery } from './reactQueryAlias';
-import { useUpdatableState } from 'backend.ai-ui';
-import { useCallback } from 'react';
+import { useBAISettingUserState } from './useBAISetting';
+import { useEventNotStable, useUpdatableState } from 'backend.ai-ui';
+import _ from 'lodash';
+import { useCallback, useMemo } from 'react';
 
 export interface AIAgentMeta {
   title: string;
@@ -51,6 +53,9 @@ const TIMEOUT_24_HOURS = 24 * 60 * 60 * 1000;
 export const useAIAgent = () => {
   const [key, checkUpdate] = useUpdatableState('first');
 
+  const [extraAgents, setExtraAgents] =
+    useBAISettingUserState('extra_ai_agents');
+
   const { data: agentsData, isLoading } = useTanQuery<AIAgents>({
     queryKey: ['useAgents', key],
     queryFn: () => {
@@ -61,9 +66,43 @@ export const useAIAgent = () => {
     staleTime: TIMEOUT_24_HOURS, // 24 hours
   });
 
+  const builtInAgents = useMemo(
+    () =>
+      (agentsData?.agents ?? []).map((a) => ({
+        ...a,
+        isCustom: false as const,
+      })),
+    [agentsData],
+  );
+
+  const userAgents = useMemo(
+    () => (extraAgents ?? []).map((a) => ({ ...a, isCustom: true as const })),
+    [extraAgents],
+  );
+
+  // Merge: user agents take precedence over built-in agents by ID
+  const agents = useMemo(
+    () => _.uniqBy([...userAgents, ...builtInAgents], 'id'),
+    [userAgents, builtInAgents],
+  );
+
+  const upsertAgent = useEventNotStable((agent: AIAgent) => {
+    setExtraAgents((prev) => {
+      const { isCustom: _isCustom, ...cleaned } = agent;
+      return _.uniqBy([cleaned, ...(prev ?? [])], 'id');
+    });
+  });
+
+  const deleteAgent = useEventNotStable((agentId: string) => {
+    setExtraAgents((prev) => (prev ?? []).filter((a) => a.id !== agentId));
+  });
+
   return {
-    agents: agentsData?.agents ?? [],
+    agents,
+    builtInAgents,
     isLoading,
     refresh: useCallback(() => checkUpdate(), [checkUpdate]),
+    upsertAgent,
+    deleteAgent,
   };
 };
