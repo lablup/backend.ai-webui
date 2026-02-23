@@ -1,68 +1,20 @@
 import { BAIProjectTableStoriesQuery } from '../../__generated__/BAIProjectTableStoriesQuery.graphql';
-import { BAILocale } from '../../locale';
 import RelayResolver from '../../tests/RelayResolver';
-import { BAIClient } from '../provider/BAIClientProvider';
-import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import {
-  BAIMetaDataProvider,
-  type DeviceMetaData,
-} from '../provider/BAIMetaDataProvider';
+  locales,
+  mockAnonymousClientFactory,
+  mockClientPromise,
+  mockDeviceMetaData,
+} from '../../tests/storybook-mock-utils';
+import { BAIConfigProvider } from '../provider/BAIConfigProvider';
+import { BAIMetaDataProvider } from '../provider/BAIMetaDataProvider';
 import BAIProjectTable, {
   availableProjectSorterValues,
 } from './BAIProjectTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { App } from 'antd';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// Mock BAIClient for Storybook
-const mockClient = {} as BAIClient;
-const mockClientPromise = Promise.resolve(mockClient);
-const mockAnonymousClientFactory = () => mockClient;
-
-// Simple locale setup for Storybook
-const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
-} as const;
-
-// Mock device metadata for BAIMetaDataProvider
-const mockDeviceMetaData: DeviceMetaData = {
-  cpu: {
-    slot_name: 'cpu',
-    description: 'CPU',
-    human_readable_name: 'CPU',
-    display_unit: 'Core',
-    number_format: { binary: false, round_length: 0 },
-    display_icon: 'cpu',
-  },
-  mem: {
-    slot_name: 'mem',
-    description: 'Memory',
-    human_readable_name: 'Memory',
-    display_unit: 'GiB',
-    number_format: { binary: true, round_length: 2 },
-    display_icon: 'mem',
-  },
-  'cuda.device': {
-    slot_name: 'cuda.device',
-    description: 'NVIDIA GPU',
-    human_readable_name: 'GPU',
-    display_unit: 'GPU',
-    number_format: { binary: false, round_length: 0 },
-    display_icon: 'nvidia',
-  },
-  'cuda.shares': {
-    slot_name: 'cuda.shares',
-    description: 'NVIDIA GPU (fractional)',
-    human_readable_name: 'GPU',
-    display_unit: 'FGPU',
-    number_format: { binary: false, round_length: 2 },
-    display_icon: 'nvidia',
-  },
-};
 
 /**
  * BAIProjectTable is a specialized table component for displaying Backend.AI project (group) information.
@@ -152,8 +104,7 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
   decorators: [
     (Story, context) => {
       const locale = context.globals.locale || 'en';
-      const baiLocale: BAILocale =
-        locales[locale as keyof typeof locales] || locales.en;
+      const baiLocale = locales[locale] || locales.en;
 
       return (
         <App>

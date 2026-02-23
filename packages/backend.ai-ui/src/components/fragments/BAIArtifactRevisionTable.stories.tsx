@@ -1,30 +1,16 @@
 import { BAIArtifactRevisionTableStoriesQuery } from '../../__generated__/BAIArtifactRevisionTableStoriesQuery.graphql';
-import { BAILocale } from '../../locale';
 import RelayResolver from '../../tests/RelayResolver';
-import { BAIClient } from '../provider/BAIClientProvider';
+import {
+  locales,
+  mockAnonymousClientFactory,
+  mockClientPromise,
+} from '../../tests/storybook-mock-utils';
 import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import BAIArtifactRevisionTable from './BAIArtifactRevisionTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from 'antd';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// =============================================================================
-// Mock Setup
-// =============================================================================
-
-// Mock BAIClient for Storybook
-const mockClient = {} as BAIClient;
-const mockClientPromise = Promise.resolve(mockClient);
-const mockAnonymousClientFactory = () => mockClient;
-
-// Simple locale setup for Storybook
-const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
-} as const;
 
 // =============================================================================
 // Meta Configuration
@@ -105,8 +91,7 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
   decorators: [
     (Story, context) => {
       const locale = context.globals.locale || 'en';
-      const baiLocale: BAILocale =
-        locales[locale as keyof typeof locales] || locales.en;
+      const baiLocale = locales[locale] || locales.en;
 
       return (
         <BAIConfigProvider
@@ -526,7 +511,7 @@ export const RealWorldExample: Story = {
                 key: 'actions',
                 title: 'Actions',
                 width: 120,
-                render: (record) => (
+                render: (_text, record) => (
                   <Button
                     type="link"
                     size="small"

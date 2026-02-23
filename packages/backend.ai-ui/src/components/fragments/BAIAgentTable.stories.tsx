@@ -1,83 +1,22 @@
 import { BAIAgentTableStoriesQuery } from '../../__generated__/BAIAgentTableStoriesQuery.graphql';
-import { BAILocale } from '../../locale';
 import RelayResolver from '../../tests/RelayResolver';
-import { BAIClient } from '../provider/BAIClientProvider';
-import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import {
-  BAIMetaDataProvider,
-  type DeviceMetaData,
-} from '../provider/BAIMetaDataProvider';
+  createMockClientWithElapsedTime,
+  locales,
+  mockDeviceMetaData,
+} from '../../tests/storybook-mock-utils';
+import { BAIConfigProvider } from '../provider/BAIConfigProvider';
+import { BAIMetaDataProvider } from '../provider/BAIMetaDataProvider';
 import BAIAgentTable, { AgentNodeInList } from './BAIAgentTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from 'antd';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-// Mock BAIClient for Storybook
-const mockClient = {
-  utils: {
-    elapsedTime: (start: string | Date, end: number) => {
-      const startTime = new Date(start).getTime();
-      const elapsed = end - startTime;
-      const seconds = Math.floor(elapsed / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-
-      if (days > 0) return `${days}d ${hours % 24}h`;
-      if (hours > 0) return `${hours}h ${minutes % 60}m`;
-      if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
-      return `${seconds}s`;
-    },
-  },
-} as unknown as BAIClient;
-
-const mockClientPromise = Promise.resolve(mockClient);
-const mockAnonymousClientFactory = () => mockClient;
-
-// Simple locale setup for Storybook
-const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
-} as const;
-
-// Mock device metadata for BAIMetaDataProvider
-const mockDeviceMetaData: DeviceMetaData = {
-  cpu: {
-    slot_name: 'cpu',
-    description: 'CPU',
-    human_readable_name: 'CPU',
-    display_unit: 'Core',
-    number_format: { binary: false, round_length: 0 },
-    display_icon: 'cpu',
-  },
-  mem: {
-    slot_name: 'mem',
-    description: 'Memory',
-    human_readable_name: 'Memory',
-    display_unit: 'GiB',
-    number_format: { binary: true, round_length: 2 },
-    display_icon: 'mem',
-  },
-  'cuda.device': {
-    slot_name: 'cuda.device',
-    description: 'NVIDIA GPU',
-    human_readable_name: 'GPU',
-    display_unit: 'GPU',
-    number_format: { binary: false, round_length: 0 },
-    display_icon: 'nvidia',
-  },
-  'cuda.shares': {
-    slot_name: 'cuda.shares',
-    description: 'NVIDIA GPU (fractional)',
-    human_readable_name: 'GPU',
-    display_unit: 'FGPU',
-    number_format: { binary: false, round_length: 2 },
-    display_icon: 'nvidia',
-  },
-};
+const {
+  mockClientPromise,
+  mockAnonymousClientFactory,
+} = createMockClientWithElapsedTime();
 
 /**
  * BAIAgentTable is a specialized table component for displaying Backend.AI agent information.
@@ -170,8 +109,7 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
   decorators: [
     (Story, context) => {
       const locale = context.globals.locale || 'en';
-      const baiLocale: BAILocale =
-        locales[locale as keyof typeof locales] || locales.en;
+      const baiLocale = locales[locale] || locales.en;
 
       return (
         <BAIConfigProvider

@@ -1,26 +1,16 @@
 import { BAIArtifactTableStoriesQuery } from '../../__generated__/BAIArtifactTableStoriesQuery.graphql';
-import { BAILocale } from '../../locale';
 import RelayResolver from '../../tests/RelayResolver';
-import { BAIClient } from '../provider/BAIClientProvider';
+import {
+  locales,
+  mockAnonymousClientFactory,
+  mockClientPromise,
+} from '../../tests/storybook-mock-utils';
 import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import BAIArtifactTable from './BAIArtifactTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
-
-// Mock BAIClient for Storybook
-const mockClient = {} as BAIClient;
-const mockClientPromise = Promise.resolve(mockClient);
-const mockAnonymousClientFactory = () => mockClient;
-
-// Simple locale setup for Storybook
-const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
-} as const;
 
 /**
  * BAIArtifactTable is a specialized table component for displaying Backend.AI artifact information.
@@ -103,8 +93,7 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
   decorators: [
     (Story, context) => {
       const locale = context.globals.locale || 'en';
-      const baiLocale: BAILocale =
-        locales[locale as keyof typeof locales] || locales.en;
+      const baiLocale = locales[locale] || locales.en;
 
       return (
         <MemoryRouter>
