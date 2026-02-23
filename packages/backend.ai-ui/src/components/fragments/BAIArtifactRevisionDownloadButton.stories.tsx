@@ -125,7 +125,7 @@ const QueryResolver = ({ loading = false, onClick }: QueryResolverProps) => {
  * Downloadable revisions - button is enabled with info styling
  */
 export const Default: Story = {
-  name: 'Downloadable',
+  name: 'Basic',
   args: {},
   parameters: {
     docs: {

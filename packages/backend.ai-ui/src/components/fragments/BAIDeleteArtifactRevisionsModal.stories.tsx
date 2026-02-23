@@ -185,7 +185,7 @@ const QueryResolver = () => {
  * Multiple revisions deletion
  */
 export const Default: Story = {
-  name: 'MultipleRevisions',
+  name: 'Basic',
   parameters: {
     docs: {
       description: {

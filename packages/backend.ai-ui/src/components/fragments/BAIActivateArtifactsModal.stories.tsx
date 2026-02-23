@@ -146,6 +146,7 @@ const QueryResolver = ({ defaultOpen = false }: QueryResolverProps) => {
  * Single artifact activation
  */
 export const Default: Story = {
+  name: 'Basic',
   parameters: {
     docs: {
       description: {

@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import {
   createMockEnvironment,
@@ -15,16 +15,21 @@ const RelayResolver = ({
   children,
   mockResolvers = {},
 }: RelayResolverProps) => {
-  const environment = createMockEnvironment();
+  const environment = useMemo(() => {
+    const env = createMockEnvironment();
 
-  const queueResolver = () => {
-    environment.mock.queueOperationResolver((operation) => {
-      queueResolver();
-      return MockPayloadGenerator.generate(operation, mockResolvers);
-    });
-  };
+    const queueResolver = () => {
+      env.mock.queueOperationResolver((operation) => {
+        queueResolver();
+        return MockPayloadGenerator.generate(operation, mockResolvers);
+      });
+    };
 
-  queueResolver();
+    queueResolver();
+
+    return env;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mockResolvers]);
 
   return (
     <RelayEnvironmentProvider environment={environment}>

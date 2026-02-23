@@ -125,7 +125,7 @@ const QueryResolver = ({ loading = false, onClick }: QueryResolverProps) => {
  * Deletable revisions - button is enabled with error styling
  */
 export const Default: Story = {
-  name: 'Deletable',
+  name: 'Basic',
   args: {},
   parameters: {
     docs: {

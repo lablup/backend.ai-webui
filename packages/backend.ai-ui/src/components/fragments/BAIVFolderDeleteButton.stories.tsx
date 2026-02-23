@@ -124,7 +124,7 @@ const QueryResolver = ({ disabled = false, onClick }: QueryResolverProps) => {
  * Deletable vfolders - button is enabled with error styling
  */
 export const Default: Story = {
-  name: 'Deletable',
+  name: 'Basic',
   args: {},
   parameters: {
     docs: {

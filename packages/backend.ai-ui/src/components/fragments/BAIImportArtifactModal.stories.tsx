@@ -190,7 +190,7 @@ const QueryResolver = () => {
  * Multiple SCANNED revisions ready to be pulled
  */
 export const Default: Story = {
-  name: 'PullableRevisions',
+  name: 'Basic',
   parameters: {
     docs: {
       description: {
@@ -262,6 +262,7 @@ export const Default: Story = {
  * With excluded revisions (non-SCANNED status)
  */
 export const WithExcludedRevisions: Story = {
+  name: 'WithExcludedRevisions',
   parameters: {
     docs: {
       description: {
@@ -341,6 +342,7 @@ export const WithExcludedRevisions: Story = {
  * Single revision import
  */
 export const SingleRevision: Story = {
+  name: 'SingleRevision',
   parameters: {
     docs: {
       description: {
@@ -395,6 +397,7 @@ export const SingleRevision: Story = {
  * All revisions excluded (no pullable revisions)
  */
 export const AllExcluded: Story = {
+  name: 'AllExcluded',
   parameters: {
     docs: {
       description: {
