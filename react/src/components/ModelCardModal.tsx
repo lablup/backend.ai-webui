@@ -1,5 +1,8 @@
 import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -50,6 +53,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [visibleCloneModal, setVisibleCloneModal] = useState(false);
 
@@ -133,20 +137,22 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
             : '90%'
       }
       footer={[
-        // This button is used to clone-and-create/create the model service with the content of the model card.
-        <ErrorBoundaryWithNullFallback key="model-try-content-button">
-          <Suspense
-            fallback={
-              <Tooltip title={t('modelStore.CheckingSettings')}>
-                <Button loading disabled />
-              </Tooltip>
-            }
-          >
-            <ModelTryContentButton
-              vfolderNode={model_card?.vfolder_node || null}
-            />
-          </Suspense>
-        </ErrorBoundaryWithNullFallback>,
+        baiClient.supports('model-try-content-button') && (
+          // This button is used to clone-and-create/create the model service with the content of the model card.
+          <ErrorBoundaryWithNullFallback key="model-try-content-button">
+            <Suspense
+              fallback={
+                <Tooltip title={t('modelStore.CheckingSettings')}>
+                  <Button loading disabled />
+                </Tooltip>
+              }
+            >
+              <ModelTryContentButton
+                vfolderNode={model_card?.vfolder_node || null}
+              />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        ),
         <Button
           key="clone"
           type="primary"
