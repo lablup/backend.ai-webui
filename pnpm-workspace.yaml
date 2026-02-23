@@ -1,3 +1,77 @@
+catalog:
+  # React/UI Core
+  react: ^19.2.3
+  react-dom: ^19.2.3
+  antd: ^6.2.2
+  antd-style: ^3.7.1
+  "@ant-design/icons": ^6.1.0
+  "@tanstack/react-query": ^5.90.20
+  ahooks: ^3.9.6
+  graphql: ^16.12.0
+  i18next: ^25.8.0
+  react-i18next: ^16.5.3
+  react-relay: ^20.1.1
+  relay-runtime: ^20.1.1
+  react-router-dom: ^6.30.3
+
+  # Shared Runtime Dependencies
+  lodash: ^4.17.23
+  dompurify: ^3.3.1
+  tus-js-client: ^4.3.1
+  dayjs: ^1.11.19
+  big.js: ^7.0.1
+  classnames: ^2.5.1
+  react-copy-to-clipboard: ^5.1.0
+  lucide-react: ^0.552.0
+  markty-toml: 0.1.1
+  marked: ^16.4.2
+  uuid: ^13.0.0
+
+  # ESLint Ecosystem
+  eslint: ^9.18.0
+  "@eslint/js": ^9.39.2
+  typescript-eslint: ^8.23.0
+  eslint-plugin-react: ^7.37.5
+  eslint-plugin-react-hooks: ^7.0.1
+  eslint-plugin-import: ^2.31.0
+  eslint-plugin-json-schema-validator: ^5.5.1
+  jsonc-eslint-parser: ^2.4.2
+
+  # Testing Infrastructure
+  "@testing-library/react": ^16.3.2
+  "@testing-library/jest-dom": ^6.9.1
+  "@testing-library/user-event": ^14.6.1
+  relay-test-utils: ^20.1.1
+  babel-plugin-react-compiler: ^1.0.0
+  relay-compiler: ^20.1.1
+  babel-jest: ^30.2.0
+  jest: ^30.2.0
+  jest-environment-jsdom: ^30.2.0
+  "@jest/expect": 30.2.0
+  "@jest/globals": 30.2.0
+  ts-jest: ^29.4.6
+
+  # Build/Tooling
+  "@babel/core": ^7.28.6
+  "@babel/preset-typescript": ^7.28.5
+  webpack: ^5.104.1
+  prettier: ^3.8.1
+  globals: ^16.5.0
+  prettier-plugin-sort-json: ^4.2.0
+  "@trivago/prettier-plugin-sort-imports": ^6.0.2
+
+  # Type Definitions
+  "@types/react": ^19.2.9
+  "@types/react-dom": ^19.2.3
+  "@types/react-relay": ^18.2.1
+  "@types/relay-runtime": ^19.0.3
+  "@types/relay-test-utils": ^19.0.0
+  "@types/big.js": ^6.2.2
+  "@types/lodash": ^4.17.23
+  "@types/react-copy-to-clipboard": ^5.0.7
+  "@types/jest": ^30.0.0
+  "@types/node": ^22.19.7
+
 packages:
   - react
   - packages/backend.ai-ui
