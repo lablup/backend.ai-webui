@@ -10,6 +10,7 @@ export interface BAITextProps extends Omit<AntdTextProps, 'ellipsis'> {
   monospace?: boolean;
   // Enable CSS-based ellipsis with Safari compatibility (multi-line via -webkit-line-clamp)
   ellipsis?: boolean | EllipsisConfig;
+  keyboardWithLightBorder?: boolean;
 }
 
 // Derive Tooltip props from the ellipsis config.
@@ -44,6 +45,7 @@ const BAIText: React.FC<BAITextProps> = ({
   mark,
   code,
   keyboard,
+  keyboardWithLightBorder,
   ...restProps
 }) => {
   const { token } = theme.useToken();
@@ -82,7 +84,16 @@ const BAIText: React.FC<BAITextProps> = ({
   if (!ellipsis) {
     return (
       <Typography.Text
-        style={{ ...(monospace && { fontFamily: 'monospace' }), ...style }}
+        style={{
+          ...(monospace && { fontFamily: 'monospace' }),
+          ...(keyboardWithLightBorder && {
+            color: 'inherit',
+            margin: 0,
+            border: '1px solid rgba(255, 255, 255, 0.6)',
+            borderRadius: token.borderRadiusSM,
+          }),
+          ...style,
+        }}
         copyable={copyable}
         strong={strong}
         italic={italic}
@@ -90,7 +101,7 @@ const BAIText: React.FC<BAITextProps> = ({
         delete={deleteProp}
         mark={mark}
         code={code}
-        keyboard={keyboard}
+        keyboard={keyboardWithLightBorder || keyboard}
         {...restProps}
       >
         {children}
