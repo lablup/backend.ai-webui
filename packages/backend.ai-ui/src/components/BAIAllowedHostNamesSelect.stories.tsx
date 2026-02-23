@@ -4,7 +4,7 @@ import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import enUS from 'antd/locale/en_US';
-import { Suspense, type ReactNode, useRef } from 'react';
+import { Suspense, type ReactNode, useState } from 'react';
 
 const sampleHostNames = [
   'host1.example.com',
@@ -40,26 +40,27 @@ const StoryProvider = ({
   children: ReactNode;
   allowed?: string[];
 }) => {
-  const clientPromiseRef = useRef(createMockClient(allowed));
-  const storyQueryClientRef = useRef(
-    new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-          gcTime: 0,
-          staleTime: 0,
+  const [clientPromise] = useState(() => createMockClient(allowed));
+  const [storyQueryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+            gcTime: 0,
+            staleTime: 0,
+          },
         },
-      },
-    }),
+      }),
   );
 
   return (
     <BAIConfigProvider
       locale={{ lang: 'en', antdLocale: enUS }}
-      clientPromise={clientPromiseRef.current}
+      clientPromise={clientPromise}
       anonymousClientFactory={mockAnonymousClientFactory}
     >
-      <QueryClientProvider client={storyQueryClientRef.current}>
+      <QueryClientProvider client={storyQueryClient}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </QueryClientProvider>
     </BAIConfigProvider>
