@@ -397,7 +397,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/resource-policy',
-    handle: { labelKey: 'webui.menu.ResourcePolicy' },
+    handle: { labelKey: 'webui.menu.ResourcePolicies' },
     Component: ResourcePolicyPage,
   },
   {
@@ -463,7 +463,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         </Suspense>
       </BAIErrorBoundary>
     ),
-    handle: { labelKey: 'webui.menu.Project' },
+    handle: { labelKey: 'webui.menu.Projects' },
   },
   {
     path: '/storage-settings/:hostname',

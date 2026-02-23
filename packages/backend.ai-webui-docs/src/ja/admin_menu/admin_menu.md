@@ -379,7 +379,7 @@ model-definitionファイルを設定した後、モデルを手動でダウン�
 
 <a id="manage-resource-policy"></a>
 
-## Manage Resource Policy
+## Manage Resource Policies
 
 <a id="keypair-resource-policy"></a>
 
@@ -390,7 +390,7 @@ Resource policies enable you to define the maximum allowed resources and other c
 Additionally, it is possible to create multiple resource policies for different needs,
 such as user or research requirements, and apply them on an individual basis.
 
-The Resource Policy page allows administrators to view a list of all registered resource policies.
+The Resource Policies page allows administrators to view a list of all registered resource policies.
 Administrators can review the resource policies established for keypairs, users, and projects directly on this page.
 Let's begin by examining the resource policies for keypairs. In the figure below, there are
 three policies in total (gardener, student, default). The infinity symbol (∞)
@@ -400,7 +400,7 @@ indicates that no resource restrictions have been applied to those resources.
 
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
-You can also confirm that all resource policies are set to default in the Resource Policy panel.
+You can also confirm that all resource policies are set to default in the Resource Policies panel.
 
 ![](../images/credentials.png)
 
@@ -535,7 +535,7 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 Starting from version 24.03, Backend.AI supports project resource policy management. Project
 resource policies manage storage space (quota) and folder-related limitations for projects.
 
-When clicking the Project tab of the Resource Policy page, you can see the list of project
+When clicking the Project tab of the Resource Policies page, you can see the list of project
 resource policy.
 
 ![](../images/project_resource_policy_list.png)

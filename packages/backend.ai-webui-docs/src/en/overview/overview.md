@@ -184,7 +184,7 @@ achieves more intuitive use.
 | Users* | X | O |
 | Environments* | X | O |
 | Scheduler* | X | O |
-| Resource Policy* | X | O |
+| Resource Policies* | X | O |
 | Resources* | X | O |
 | Configurations* | X | O |
 | Maintenance* | X | O |

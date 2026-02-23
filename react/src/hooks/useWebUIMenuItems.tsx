@@ -294,7 +294,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     {
       label: (
         <WebUILink to="/resource-policy">
-          {t('webui.menu.ResourcePolicy')}
+          {t('webui.menu.ResourcePolicies')}
         </WebUILink>
       ),
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
@@ -317,7 +317,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       key: 'agent',
     },
     {
-      label: <WebUILink to="/project">{t('webui.menu.Project')}</WebUILink>,
+      label: <WebUILink to="/project">{t('webui.menu.Projects')}</WebUILink>,
       icon: <TeamOutlined style={{ color: token.colorInfo }} />,
       key: 'project',
     },

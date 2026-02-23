@@ -312,11 +312,11 @@ model-definition 파일을 설정한 후 모델을 수동으로 다운로드해�
 
 Backend.AI에서 관리자는 각 keypair, 사용자, 프로젝트에 사용 가능한 총 자원에 대한 제한을 설정할 수 있습니다. 자원 정책을 통해 허용되는 최대 자원과 기타 연산 세션 관련 설정을 정의할 수 있습니다. 또한 사용자 또는 연구 요구 사항과 같은 다양한 필요에 맞는 여러 자원 정책을 생성하고 개별적으로 적용할 수 있습니다.
 
-Resource Policy 페이지에서 관리자는 등록된 모든 자원 정책의 목록을 볼 수 있습니다. 관리자는 이 페이지에서 keypair, 사용자, 프로젝트에 대해 설정된 자원 정책을 직접 검토할 수 있습니다. keypair에 대한 자원 정책을 먼저 살펴보겠습니다. 아래 그림에는 총 세 가지 정책(gardener, student, default)이 있습니다. 무한대 기호(∞)는 해당 자원에 자원 제한이 적용되지 않았음을 나타냅니다.
+Resource Policies 페이지에서 관리자는 등록된 모든 자원 정책의 목록을 볼 수 있습니다. 관리자는 이 페이지에서 keypair, 사용자, 프로젝트에 대해 설정된 자원 정책을 직접 검토할 수 있습니다. keypair에 대한 자원 정책을 먼저 살펴보겠습니다. 아래 그림에는 총 세 가지 정책(gardener, student, default)이 있습니다. 무한대 기호(∞)는 해당 자원에 자원 제한이 적용되지 않았음을 나타냅니다.
 
 ![](../images/resource_policy_page.png)
 
-이 가이드에서 사용되는 사용자 계정은 현재 default 자원 정책에 할당되어 있습니다. 이는 Users 페이지의 Credentials 탭에서 확인할 수 있습니다. Resource Policy 패널에서 모든 자원 정책이 default로 설정되어 있음을 확인할 수도 있습니다.
+이 가이드에서 사용되는 사용자 계정은 현재 default 자원 정책에 할당되어 있습니다. 이는 Users 페이지의 Credentials 탭에서 확인할 수 있습니다. Resource Policies 패널에서 모든 자원 정책이 default로 설정되어 있음을 확인할 수도 있습니다.
 
 ![](../images/credentials.png)
 
@@ -396,7 +396,7 @@ keypair 자원 정책과 마찬가지로 테이블 오른쪽 하단의 '설정 (
 
 버전 24.03부터 Backend.AI는 프로젝트 자원 정책 관리를 지원합니다. 프로젝트 자원 정책은 프로젝트의 스토리지 공간(쿼터) 및 폴더 관련 제한을 관리합니다.
 
-Resource Policy 페이지의 Project 탭을 클릭하면 프로젝트 자원 정책 목록을 볼 수 있습니다.
+Resource Policies 페이지의 Project 탭을 클릭하면 프로젝트 자원 정책 목록을 볼 수 있습니다.
 
 ![](../images/project_resource_policy_list.png)
 
