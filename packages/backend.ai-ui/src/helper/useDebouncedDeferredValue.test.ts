@@ -1,6 +1,6 @@
+import useDebouncedDeferredValue from './useDebouncedDeferredValue';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import useDebouncedDeferredValue from './useDebouncedDeferredValue';
 
 describe('useDebouncedDeferredValue', () => {
   beforeEach(() => {
@@ -14,9 +14,7 @@ describe('useDebouncedDeferredValue', () => {
 
   describe('Basic Functionality', () => {
     it('should return initial value immediately', () => {
-      const { result } = renderHook(() =>
-        useDebouncedDeferredValue('initial'),
-      );
+      const { result } = renderHook(() => useDebouncedDeferredValue('initial'));
       expect(result.current).toBe('initial');
     });
 
@@ -94,8 +92,7 @@ describe('useDebouncedDeferredValue', () => {
     it('should respect custom wait time option', async () => {
       const customWait = 500;
       const { result, rerender } = renderHook(
-        ({ value }) =>
-          useDebouncedDeferredValue(value, { wait: customWait }),
+        ({ value }) => useDebouncedDeferredValue(value, { wait: customWait }),
         { initialProps: { value: 'initial' } },
       );
 
@@ -316,15 +313,13 @@ describe('useDebouncedDeferredValue', () => {
 
   describe('Performance Considerations', () => {
     it('should not cause memory leaks with unmounting', () => {
-      const { unmount } = renderHook(() =>
-        useDebouncedDeferredValue('test'),
-      );
+      const { unmount } = renderHook(() => useDebouncedDeferredValue('test'));
 
       expect(() => unmount()).not.toThrow();
     });
 
     it('should handle unmount during debounce', async () => {
-      const { result, rerender, unmount } = renderHook(
+      const { rerender, unmount } = renderHook(
         ({ value }) => useDebouncedDeferredValue(value),
         { initialProps: { value: 'initial' } },
       );
