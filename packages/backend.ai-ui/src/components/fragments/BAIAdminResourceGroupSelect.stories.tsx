@@ -115,7 +115,7 @@ const BAIAdminResourceGroupSelectWithQuery = (
 };
 
 export const Default: Story = {
-  name: 'Default (3 items)',
+  name: 'Basic',
   parameters: {
     docs: {
       description: {

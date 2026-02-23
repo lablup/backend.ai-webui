@@ -81,7 +81,7 @@ const QueryResolver = () => {
 };
 
 export const Default: Story = {
-  name: 'INTERACTIVE',
+  name: 'Basic',
   parameters: {
     docs: {
       description: {
