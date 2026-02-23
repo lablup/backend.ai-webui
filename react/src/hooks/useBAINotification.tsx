@@ -134,6 +134,7 @@ export const useBAINotificationEffect = () => {
                 status: 'resolved',
               },
               duration: CLOSING_DURATION,
+              open: true,
             });
             const overrideData = generateOverrideByStatus(
               updatedNotification,
@@ -149,6 +150,7 @@ export const useBAINotificationEffect = () => {
                 status: 'rejected',
               },
               duration: CLOSING_DURATION,
+              open: true,
             });
             const overrideData = generateOverrideByStatus(
               updatedNotification,
@@ -214,6 +216,7 @@ export const useBAINotificationEffect = () => {
                 percent: 100,
               },
               duration: CLOSING_DURATION,
+              open: true,
               skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
@@ -235,6 +238,7 @@ export const useBAINotificationEffect = () => {
                   ?.renderDataMessage?.(data?.message)
                   ?.toString() || data?.message,
               duration: CLOSING_DURATION,
+              open: true,
               skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
@@ -250,6 +254,7 @@ export const useBAINotificationEffect = () => {
                   ?.renderDataMessage?.(data?.message)
                   ?.toString() || data?.message,
               duration: CLOSING_DURATION,
+              open: true,
               skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
@@ -267,6 +272,7 @@ export const useBAINotificationEffect = () => {
                 percent: ratio * 100,
               },
               duration: CLOSING_DURATION,
+              open: true,
               skipDesktopNotification: notification.skipDesktopNotification,
             });
           },
@@ -367,6 +373,17 @@ export const useSetBAINotification = () => {
         if (!skipOverrideByStatus) {
           const overrideData = generateOverrideByStatus(newNotification);
           newNotification = _.merge({}, newNotification, overrideData);
+        }
+
+        // For pending background tasks, default to duration: 0 (stay open) unless explicitly set
+        if (
+          newNotification.backgroundTask?.status === 'pending' &&
+          !('duration' in params)
+        ) {
+          newNotification = {
+            ...newNotification,
+            duration: 0,
+          };
         }
 
         // This is to check if the notification should be updated using ant.d notification
