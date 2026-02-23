@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
 import { BAIDoubleTag, DoubleTagObjectValue } from 'backend.ai-ui';
 import _ from 'lodash';

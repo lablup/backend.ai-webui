@@ -1,6 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
+import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
@@ -9,9 +14,11 @@ import BAIErrorBoundary from '../BAIErrorBoundary';
 import BAISider from '../BAISider';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
+import LoadingCurtain from '../LoadingCurtain';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
+import PluginLoader from '../PluginLoader';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -22,7 +29,7 @@ import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import _ from 'lodash';
-import {
+import React, {
   Suspense,
   useEffect,
   useLayoutEffect,
@@ -34,6 +41,8 @@ import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
 import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
+
+const SplashModal = React.lazy(() => import('../SplashModal'));
 
 // Z-index for header in MainLayout. Should be higher than any other elements in the page content.
 // Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
@@ -58,6 +67,7 @@ const useStyle = createStyles(({ css, token }) => ({
 }));
 
 function MainLayout() {
+  'use memo';
   const navigate = useNavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
@@ -89,22 +99,38 @@ function MainLayout() {
 
   // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
-  const webUIRef = useRef<HTMLElement>(null);
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
     setMainContentDivRefState(contentScrollFlexRef);
   }, [contentScrollFlexRef, setMainContentDivRefState]);
 
-  // Call `useSetupWebUIPluginEffect` to setup listener for 'backend-ai-config-loaded' event
-  useSetupWebUIPluginEffect({
-    webUIRef: webUIRef,
-  });
+  // Plugin config is now set directly by useInitializeConfig in LoginView.
+  // useSetupWebUIPluginEffect is kept as a no-op for backward compatibility.
+  useSetupWebUIPluginEffect();
+
+  // Register logout/app-close/beforeunload event listeners at the app level.
+  // These were previously in the Lit shell (backend-ai-webui.ts).
+  useLogoutEventListeners();
+
+  // Splash/About modal state - handles 'backend-ai-show-splash' event from Electron menu
+  const [isOpenSplashDialog, setIsOpenSplashDialog] = useState(false);
+  useEffect(() => {
+    const handleShowSplash = () => {
+      setIsOpenSplashDialog(true);
+    };
+    document.addEventListener('backend-ai-show-splash', handleShowSplash);
+    return () => {
+      document.removeEventListener('backend-ai-show-splash', handleShowSplash);
+    };
+  }, []);
 
   useLayoutEffect(() => {
-    const handleNavigate = (e: any) => {
-      const { detail } = e;
-      navigate(detail);
+    const handleNavigate = (e: Event) => {
+      const { detail } = e as CustomEvent<string>;
+      if (typeof detail === 'string') {
+        navigate(detail);
+      }
     };
     document.addEventListener('react-navigate', handleNavigate);
 
@@ -115,6 +141,7 @@ function MainLayout() {
 
   return (
     <LayoutWithPageTestId>
+      <LoadingCurtain />
       <CSSTokenVariables />
       <style>
         {`
@@ -268,13 +295,20 @@ function MainLayout() {
                     </PageAccessGuard>
                   </AutoAdminPrimaryColorProvider>
                 </BAIErrorBoundary>
+                <ErrorBoundaryWithNullFallback>
+                  <PluginLoader />
+                </ErrorBoundaryWithNullFallback>
               </Suspense>
-              {/* @ts-ignore */}
-              <backend-ai-webui id="webui-shell" ref={webUIRef} />
             </BAIErrorBoundary>
           </BAIFlex>
         </BAIContentWithDrawerArea>
       </Layout>
+      <Suspense fallback={null}>
+        <SplashModal
+          open={isOpenSplashDialog}
+          onRequestClose={() => setIsOpenSplashDialog(false)}
+        />
+      </Suspense>
     </LayoutWithPageTestId>
   );
 }

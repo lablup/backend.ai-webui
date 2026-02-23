@@ -50,6 +50,8 @@
     "lucide-react": "^0.552.0",
     "markdown-to-jsx": "^7.7.17",
     "marked": "^16.4.2",
+    "nanoid": "^5.1.6",
+    "markty-toml": "0.1.1",
     "nuqs": "^2.8.6",
     "p-queue": "^8.1.1",
     "prettier": "^3.8.1",
@@ -80,7 +82,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "pnpm run build:only && cp -r ./build/* ../build/rollup/",
+    "build": "pnpm run build:only && cp -r ./build/* ../build/web/",
     "build:only": "pnpm run relay && craco build",
     "test": "NODE_OPTIONS='$NODE_OPTIONS --no-deprecation --experimental-vm-modules' jest",
     "eject": "react-scripts eject",
@@ -154,6 +156,7 @@
     "relay-test-utils": "^20.1.1",
     "stream-browserify": "^3.0.0",
     "typescript-eslint": "^8.23.0",
-    "webpack": "^5.104.1"
+    "webpack": "^5.104.1",
+    "workbox-webpack-plugin": "^7.4.0"
   }
 }

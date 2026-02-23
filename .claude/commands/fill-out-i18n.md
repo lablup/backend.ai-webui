@@ -1,5 +1,5 @@
 ---
-model: claude-sonnet-4-5
+model: sonnet
 ---
 
 # Fill Out i18n Translations
@@ -25,8 +25,8 @@ High-performance auto-translation of missing i18n keys using Claude AI for Backe
 This command uses **Claude AI for high-quality translation** combined with **fast JSON processing** to efficiently detect and translate missing i18n keys. It leverages `jq` for rapid JSON operations with minimal overhead.
 
 Backend.AI WebUI supports two i18n systems:
-- **Main project**: `/resources/i18n/` - Legacy Lit-Element components
-- **React components**: `/packages/backend.ai-ui/src/locale/` - Modern React components
+- **Main project**: `/resources/i18n/` - Main WebUI translations
+- **Component library**: `/packages/backend.ai-ui/src/locale/` - Shared UI component translations
 
 ### Supported Languages
 `de`, `el`, `es`, `fi`, `fr`, `id`, `it`, `ja`, `ko`, `mn`, `ms`, `pl`, `pt-BR`, `pt`, `ru`, `th`, `tr`, `vi`, `zh-CN`, `zh-TW`

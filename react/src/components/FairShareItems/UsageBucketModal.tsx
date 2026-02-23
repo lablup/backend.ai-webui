@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import UsageBucketChartContent from './UsageBucketChartContent';
 import { DatePicker, Descriptions, Skeleton } from 'antd';
 import {

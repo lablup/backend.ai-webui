@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useThemeMode } from '../hooks/useThemeMode';
 import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';

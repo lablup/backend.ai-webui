@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 // Always use this component instead of directly importing `FluentEmoji` from `@lobehub/fluent-emoji`.
 // eslint-disable-next-line no-restricted-imports
 import { getFluentEmojiCDN as originalGetFluentEmojiCDN } from '@lobehub/fluent-emoji';

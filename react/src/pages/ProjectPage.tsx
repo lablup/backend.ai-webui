@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { PlusOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {

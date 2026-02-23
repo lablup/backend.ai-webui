@@ -6,15 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run server:d` - Start development server with watch mode
-- `pnpm run build:d` - Build with watch mode for development
+- `pnpm run server:d` - Start React dev server via Craco (port configured by `scripts/dev-config.js`)
+- `pnpm run build:d` - Concurrent Relay watch + React dev server
 - `pnpm run wsproxy` - Start websocket proxy (required for local development)
 
 ### Build and Production
 
-- `pnpm run build` - Full production build (cleans, copies resources, runs rollup)
-- `pnpm run build:react-only` - Build only React components
-- `pnpm run build:plugin` - Build plugins separately
+- `pnpm run build` - Full production build (cleans `build/web/`, copies resources, builds React via Craco with Workbox service worker generation, builds workspace packages)
+- `pnpm run build:react-only` - Build only React app via Craco
+- `pnpm run relay` - Compile GraphQL queries with Relay compiler
 
 ### Quality Control
 
@@ -25,9 +25,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Testing
 
-- `pnpm run test` - Run Jest tests
-- `pnpm run test` (in /react directory) - Run React-specific tests
-- E2E tests require full Backend.AI cluster running first
+- `pnpm run test` - Run Jest tests (root: `scripts/`, `src/`)
+- `pnpm run test` (in `/react` directory) - Run React-specific Jest tests
+- E2E tests (`/e2e/`) use Playwright; require full Backend.AI cluster running first
 
 ### Electron App
 
@@ -37,43 +37,68 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-### Hybrid Architecture
+### Architecture
 
-This is a **hybrid web application** with two main UI frameworks:
-
-- **Lit-Element Web Components** (`/src`) - Legacy UI components using TypeScript
-- **React Components** (`/react`) - Modern UI components using React + Ant Design + Relay (GraphQL)
+This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
 
 ### Key Technologies
 
-- **Build System**: Rollup for bundling, pnpm for package management
-- **Styling**: Ant Design (React), Material Web Components (Lit)
-- **State Management**: Redux (legacy), Relay (GraphQL for React)
-- **GraphQL**: Relay compiler for React components
+- **React Build**: Webpack via @craco/craco (Create React App with customizations)
+- **Component Library Build**: Vite (`packages/backend.ai-ui/`)
+- **Service Worker**: workbox-webpack-plugin (GenerateSW, integrated into Craco/Webpack build)
+- **Package Manager**: pnpm with workspace monorepo
+- **Styling**: Ant Design + antd-style
+- **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
+- **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
+- **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
 - **Testing**: Jest for unit tests, Playwright for E2E tests
-- **Electron**: Desktop app wrapper with websocket proxy
+- **Linting**: ESLint 9 (flat config) + Prettier, pre-commit hooks via Husky + lint-staged
+- **Electron**: Desktop app wrapper with built-in websocket proxy
+- **Storybook**: @storybook/react-vite for `backend.ai-ui` component library
 
 ### Project Structure
 
 ```
-src/                    # Lit-Element web components (legacy)
-  components/           # Main web components
-  lib/                  # Shared libraries and utilities
-  wsproxy/              # WebSocket proxy for desktop app
-react/                  # React components (modern)
-  src/                  # React application code
-  components/           # React UI components
-resources/              # Static assets, i18n files, themes
+react/                  # Main React application (Webpack/Craco)
+  src/                  # Application source code
+    components/         # React UI components
+    pages/              # Page-level components
+    hooks/              # Custom React hooks
+    helper/             # Utility functions
+    __generated__/      # Relay compiler output
+  craco.config.cjs      # Webpack customization via Craco
 packages/               # Monorepo workspace packages
-e2e/                    # End-to-end tests
+  backend.ai-ui/        # Shared React component library (Vite build)
+  backend.ai-webui-docs/# User manual documentation
+  eslint-config-bai/    # Shared ESLint configuration
+src/                    # Utilities and websocket proxy
+  lib/                  # Backend.AI client library (ESM/Node.js)
+  wsproxy/              # WebSocket proxy for desktop app
+resources/              # Static assets, i18n files (22 languages), themes
+data/                   # GraphQL schema files (schema.graphql, client-directives.graphql)
+e2e/                    # Playwright E2E tests
+electron-app/           # Electron desktop app source
+configs/                # Environment-specific config files
+scripts/                # Build and dev utility scripts
 ```
+
+### Build Pipeline
+
+Production build (`pnpm run build`) runs these steps sequentially:
+1. Clean and create `build/web/` output directory
+2. Copy `index.html`, `resources/`, `manifest/`, config files
+3. `pnpm run -r --stream build` builds all workspace packages:
+   - React app (Craco/Webpack) → `react/build/` → copied to `build/web/`
+   - Service worker (`sw.js`) generated by workbox-webpack-plugin during React build
+   - backend.ai-ui (Vite) → `packages/backend.ai-ui/dist/`
 
 ### Development Workflow
 
-1. **Dual Server Setup**: Run both `pnpm run server:d` and `pnpm run wsproxy` for full development
-2. **Build Process**: Multi-stage build copying resources, running TypeScript, and bundling
-3. **Testing**: Both Jest unit tests and Playwright E2E tests
-4. **Linting**: ESLint + Prettier with pre-commit hooks via husky
+1. **Dual Server Setup**: Run both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
+2. **Alternative**: `pnpm run build:d` runs Relay watch + React dev server concurrently
+3. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
+4. **Testing**: Jest unit tests + Playwright E2E tests
+5. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
 # Additional Workflow Description
 
@@ -102,7 +127,13 @@ e2e/                    # End-to-end tests
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
     - Do NOT use `git commit`, `git push`, `git checkout -b` directly
     - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`
-- If MCP authentication fails, re-authenticate and retry before proceeding.
+- **MCP Authentication Failure Handling**:
+  - If an MCP tool call fails with an authentication/connection error, retry **at most once**.
+  - If the retry also fails, do NOT enter an infinite retry loop. Instead, inform the user that the MCP connection appears to be broken and suggest:
+    1. Run `/mcp` and select reconnect for the failing server
+    2. If reconnect fails, restart Claude Code (the stored tokens are usually still valid)
+  - This is a known issue where OAuth tokens are stored correctly but the session-level MCP connection state becomes stale (see [claude-code#10250](https://github.com/anthropics/claude-code/issues/10250)). A restart resolves it because Claude Code reads the persisted tokens on startup.
+  - When the MCP connection is unavailable, proceed with alternative tools if possible (e.g., `gh` CLI for GitHub operations) rather than blocking the entire workflow.
 - Follow Graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
 
 ### Configuration
@@ -113,110 +144,67 @@ e2e/                    # End-to-end tests
 
 ### Key Libraries
 
-- **@material/mwc-\*** - Material Web Components for Lit elements
-- **@vaadin/\*** - Vaadin components
-- **antd** - Ant Design for React components
-- **lit** - Lit-Element framework
-- **relay-runtime** - GraphQL client for React
-- **electron** - Desktop app framework
+- **react** 19, **react-dom** 19 - UI framework
+- **antd** 6 - Ant Design component library
+- **react-relay** 20, **relay-runtime** 20 - GraphQL client
+- **jotai** - Atomic state management
+- **i18next**, **react-i18next** - Internationalization
+- **@craco/craco** - CRA webpack customization
+- **electron** 35 - Desktop app framework
 
 ### GraphQL/Relay Setup
 
-- Schema files in `/data/`
-- Relay compiler configured for React components
+- Schema files in `/data/` (`schema.graphql`, `client-directives.graphql`)
+- Relay compiler configured for two projects: `react` and `backend.ai-ui`
+- Config: `/relay.config.js` (extends `/relay-base.config.js`)
+- Generated types output to `react/src/__generated__/` and `packages/backend.ai-ui/src/__generated__/`
 - Run `pnpm run relay` to compile GraphQL queries
+- Run `pnpm run relay:watch` for watch mode during development
 
 ### Internationalization
 
-- JSON files in `resources/i18n/`
-- Use `_t`, `_tr`, `_text` functions for translations
+- JSON translation files in `resources/i18n/` (22 languages supported)
+- React components use `useTranslation()` hook from `react-i18next`
+- Backend.AI UI package has own locale files in `packages/backend.ai-ui/src/locale/`
 - Run `make i18n` to extract translation strings
 
 ### Build Output
 
-- Production build: `build/rollup/`
-- Electron app: `build/electron-app/`
-- Static assets copied to build directories
+- Production build: `build/web/` (contains React build + service worker + static assets)
+- Electron app: `build/electron-app/` (created by `make dep`)
+- Component library: `packages/backend.ai-ui/dist/`
 
 ## Important Notes
 
 - Always run websocket proxy (`pnpm run wsproxy`) for local development
-- Pre-commit hooks run linting and formatting automatically
+- Pre-commit hooks (Husky + lint-staged) run linting and formatting automatically
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
-- React components use Relay; ensure GraphQL schema is up to date
+- React components use Relay; ensure GraphQL schema in `/data/` is up to date
+- Backend.AI client library (`src/lib/backend.ai-client-esm.ts`) is aliased in Craco config
 
-## GitHub Copilot Custom Instructions
+## Core Guidelines
 
-This repository includes custom instructions for GitHub Copilot to provide more accurate code reviews and suggestions. These instructions are automatically applied when using GitHub Copilot on github.com, VS Code, and Visual Studio. When writing new code or refactoring, please make sure to refer to these instructions.
+### React Essentials (detail: `.github/instructions/react.instructions.md`, auto-loaded via applyTo)
 
-### Instruction Files
+- Use `'use memo'` directive at the top of component bodies for React Compiler optimization. Never remove existing `'use memo'`.
+- Use `BAIButton` `action` prop for async operations (auto loading state). Prefer BAI components over Ant Design equivalents.
+- Follow Relay fragment architecture: query orchestrator (useLazyLoadQuery) + fragment component (useFragment).
+- Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
+- Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
+- Use Jotai for global state, Relay for GraphQL state.
 
-Custom instructions are located in the `.github/` directory:
+### On-Demand Skills (loaded only when needed)
 
-- **`.github/copilot-instructions.md`** - Repository-wide guidelines
+- **Storybook**: `storybook-guide` skill (CSF 3, meta config, story patterns, checklists)
+- **i18n**: `i18n-guide` skill (translation keys, casing rules, language-specific guidelines)
+- **Documentation**: `docs-guide` skill (user manual structure, terminology, multilingual rules)
+- **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 
-  - General code review principles
-  - Security best practices (OWASP Top 10)
-  - TypeScript conventions
-  - Architecture awareness (Lit-Element + React hybrid)
-  - Git workflow and commit message format
-  - Testing and performance guidelines
+### Auto-Applied Instructions (loaded when editing matching files)
 
-- **`.github/instructions/react.instructions.md`** - React component guidelines
-
-  - React Compiler optimization (`'use memo'` directive)
-  - React composability principles
-  - GraphQL/Relay patterns (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`)
-  - Backend.AI UI component library (`BAI*` components preferred over Ant Design)
-  - Custom utilities (`useFetchKey`, `BAIUnmountAfterClose`)
-  - Error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`)
-  - Recoil for global state management
-  - Ant Design usage patterns (prefer `App.useApp()` for modals)
-
-- **`.github/instructions/i18n.instructions.md`** - Internationalization guidelines
-  - Translation key naming conventions
-    - Main WebUI: `category.key` format
-    - Backend.AI UI package: `comp:ComponentName.key` format
-  - Placeholder preservation
-  - Language-specific guidelines (Korean, Japanese, Chinese)
-  - Backend.AI platform context awareness
-
-- **`.github/instructions/storybook.instructions.md`** - Storybook story guidelines
-  - CSF 3 format with TypeScript
-  - Meta configuration (title, tags, parameters, argTypes)
-  - Story patterns (args-based, render function, Relay fragment)
-  - Documentation best practices
-  - Story organization and naming conventions
-  - Complete templates and checklists
-
-### How It Works
-
-- GitHub Copilot automatically applies these instructions when working in this repository
-- Instructions use path-based targeting with `applyTo` frontmatter:
-  - React instructions apply to `react/**/*.tsx` and `react/**/*.ts`
-  - i18n instructions apply to translation JSON files and all TypeScript/TSX files
-- The instructions help Copilot provide more contextually relevant suggestions and code reviews
-
-### Key Guidelines for AI Assistants
-
-When reviewing or writing code:
-
-1. **React Components**: Always prefer `'use memo'` directive over manual `useMemo`/`useCallback`
-2. **UI Components**: Use `BAI*` components from `backend.ai-ui` package instead of Ant Design equivalents
-3. **i18n**: Never hard-code user-facing text; always use translation functions with proper key formats
-4. **Composability**: Check for proper component composition, avoid props drilling
-5. **Custom Hooks**: Verify `useFetchKey` and `BAIUnmountAfterClose` are used where appropriate
-6. **Error Handling**: Use pre-defined error boundaries instead of creating new ones
-7. **Storybook Stories**: Follow CSF 3 format, include `tags: ['autodocs']`, document with argTypes and descriptions
-
-## Other guidelines
-
-Read and follow below guides:
-
-- @guides-for-ai/react-component-guide.md
-- @.github/copilot-instructions.md
-- @.github/instructions/react.instructions.md
-- @.github/instructions/i18n.instructions.md
-- @.github/instructions/storybook.instructions.md
-- @.github/instructions/docs.instructions.md
+- `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
+- `storybook.instructions.md` → `packages/backend.ai-ui/**/*.stories.tsx,packages/backend.ai-ui/**/*.stories.ts`
+- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-guide` skill for tsx/ts context)
+- `e2e.instructions.md` → `e2e/**/*.ts`
+- `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`

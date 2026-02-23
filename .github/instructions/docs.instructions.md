@@ -30,7 +30,7 @@ Always consult these before writing or editing documentation:
 - Form fields use bullet lists with bold field names: `- **Field Name**: Description`
 - Notes/warnings are indented blocks (3 spaces) with no prefix markers
 - Images: `![](images/filename.png)` placed after introductory text
-- Cross-references: `[Text <anchor>](#Text <anchor>)`
+- Cross-references: `[Display Text](#anchor-id)` — never use `<>` in link URLs
 - Inline code for UI elements, paths, config values: backticks
 
 ### reStructuredText (RST) Directives
@@ -70,20 +70,29 @@ When converting from reST to Markdown, follow these general steps:
 
 4. **Cross-References**:
 
-   To convert the `[Text <anchor>](#Text <anchor>)` format from reStructuredText into Markdown, follow these steps:
- 
+   Use the `[Display Text](#anchor-id)` format for internal cross-references.
+
    1. **Utilize Automatically Generated Anchors in Headers**:
      - In Markdown, headers automatically generate anchors. For example, a header like `## Section Title` will automatically create an anchor `#section-title`.
- 
+
    2. **Create a Markdown Link**:
-     - Use these anchors to create links.
-     - For instance, if you have `[Text <anchor>](#Text <anchor>)` in reST, it can be converted to Markdown as follows:
- 
+     - Use these anchors to create links:
+
        ```markdown
-       [Text](#text-anchor)
+       [Section Title](#section-title)
        ```
- 
-   The important point to note is that in Markdown, spaces are typically converted to hyphens (`-`) and everything is treated in lowercase. Thus, if you have a header called `Text Anchor`, the anchor would be `#text-anchor`.
+
+   Spaces are converted to hyphens (`-`) and everything is lowercase. `## Text Anchor` → `#text-anchor`.
+
+   **CRITICAL: Do NOT use angle brackets `<>` in link URLs.** The `marked` parser (CommonMark-compliant) cannot parse `<>` inside link destinations. Links like `[Text <anchor>](#Text <anchor>)` will render as **plain text** instead of clickable links. This is especially problematic inside admonitions (`:::note`, `:::warning`, etc.).
+
+   ```markdown
+   <!-- ❌ BROKEN: angle brackets in URL break markdown link parsing -->
+   [Create Storage Folder <create-storage-folder>](#Create Storage Folder <create-storage-folder>)
+
+   <!-- ✅ CORRECT: simple anchor ID, no angle brackets -->
+   [Create Storage Folder](#create-storage-folder)
+   ```
 
    3. **Anchors Must Always Be in English**:
      - When translating cross-references for non-English documentation, **only translate the display text**, never the anchor.
@@ -159,3 +168,4 @@ When converting from reST to Markdown, follow these general steps:
 - Do not use inconsistent terminology across sections
 - Do not leave untranslated English in non-English files
 - Do not skip languages when adding or updating content
+- Do not use angle brackets `<>` in cross-reference link URLs — `marked` cannot parse them and the link renders as plain text

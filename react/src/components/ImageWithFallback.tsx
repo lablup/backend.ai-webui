@@ -1,7 +1,13 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import React, { useState } from 'react';
 
-interface ImageWithFallbackProps
-  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'onError'> {
+interface ImageWithFallbackProps extends Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  'onError'
+> {
   src: string;
   fallbackIcon: React.ReactNode;
   alt: string;

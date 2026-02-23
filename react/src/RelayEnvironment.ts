@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';

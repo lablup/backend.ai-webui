@@ -1,7 +1,7 @@
 ---
 description: Amend staged changes to existing PR and update PR description.
 argument-hint: [--update-desc]
-model: claude-sonnet-4-5
+model: opus
 ---
 
 # Amend Staged Changes

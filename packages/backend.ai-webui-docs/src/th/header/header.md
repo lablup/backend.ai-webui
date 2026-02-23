@@ -5,12 +5,16 @@ The tob bar includes various features that support use of the WebUI.
 
 ![](../images/header.png)
 
+<a id="project-selector"></a>
+
 ## Project selector
 
 
 Users can switch between projects using the project selector provided in the top bar.
 By default, the project that ผู้ใช้ currently belongs to is selected.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
+
+<a id="notification"></a>
 
 ## Notification
 
@@ -23,6 +27,8 @@ Press the shortcut key (`]`) to open and close the notification area.
 
 ![](../images/notification_collapse.png)
 
+<a id="theme-mode"></a>
+
 ## Theme mode
 
 
@@ -31,11 +37,15 @@ right side of the header.
 
 ![](../images/theme_mode.png)
 
+<a id="help"></a>
+
 ## Help
 
 
 Click question mark button to access the web version of this guide document.
 You will be directed to the appropriate documentation based on the page you are currently on.
+
+<a id="user-menu"></a>
 
 ## User Menu
 
@@ -52,6 +62,8 @@ Each menu item has the following functions.
 - บันทึก / ข้อผิดพลาด: ไปที่หน้าบันทึก คุณสามารถตรวจสอบประวัติบันทึกและข้อผิดพลาดที่บันทึกไว้ในฝั่งคล้ายได้
 - Download Desktop App: Download the stand-alone WebUI app for your platform.
 - Log Out: Log out of the WebUI.
+
+<a id="my-account"></a>
 
 ### My Account
 
@@ -70,8 +82,12 @@ Each menu item has the following functions.
 - เปิดใช้งาน 2FA: การเปิดใช้งาน 2FA ผู้ใช้จำเป็นต้องป้อนรหัส OTP เมื่อเข้าสู่ระบบหากมีการเลือกใช้งาน
 
 
-  Depending on the plugin settings, the `2FA Enabled` column might be invisible.
-  In that case, please contact ผู้ดูแลระบบistrator of your system.
+:::note
+Depending on the plugin settings, the `2FA Enabled` column might be invisible.
+In that case, please contact ผู้ดูแลระบบistrator of your system.
+:::
+
+<a id="2fa-setup"></a>
 
 ### การตั้งค่า 2FA
 If you activate the `2FA Enabled` switch, the following dialog appears.

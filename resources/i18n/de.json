@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Ihre Sitzung kann nicht autorisiert werden. Melden Sie sich zuerst im Portal an.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Computersitzung vorbereitet",
     "CreatingComputeSession": "Compute-Sitzung erstellen ...",
     "EmptyProject": "EmptyProject",
@@ -605,6 +607,7 @@
     "PleaseReload": "Bitte nach einiger Zeit neu laden.",
     "QueryingExistingComputeSession": "Vorhandene Compute-Sitzung wird abgefragt...",
     "SessionStatusIs": "Sitzungsstatus ist",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Sitzung ist noch in Vorbereitung. Nach einiger Zeit neu laden"
   },
   "environment": {
@@ -1012,6 +1015,8 @@
   "login": {
     "APIEndpointEmpty": "API-Endpunkt ist leer. Bitte geben Sie den API-Endpunkt für die Anmeldung an.",
     "APIKey": "API-Schlüssel",
+    "APIMode": "API",
+    "AdvancedSettings": "Erweitert",
     "CancelLogin": "Anmeldung abbrechen",
     "ChangePassword": "Kennwort ändern",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
@@ -1043,6 +1048,7 @@
     "PleaseWait": "Bitte warten Sie, um sich anzumelden.",
     "SecretKey": "Geheimer Schlüssel",
     "SendChangePasswordEmail": "E-Mail zum Ändern des Passworts senden",
+    "SessionMode": "Sitzung",
     "SignUp": "Anmelden",
     "SignoutFinished": "Abmeldung abgeschlossen.",
     "TooManyAttempt": "Es gab zu viele Anmeldeversuche. Anmeldeversuche sind seit einiger Zeit blockiert.",

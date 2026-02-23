@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { Alert, App, Form, Input, InputNumber, theme } from 'antd';
 import { FormInstance } from 'antd/lib';

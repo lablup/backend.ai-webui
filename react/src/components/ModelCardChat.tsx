@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ModelCardChatQuery } from '../__generated__/ModelCardChatQuery.graphql';
 import { useChatProviderData } from '../pages/ChatPage';
 import ChatCard from './Chat/ChatCard';

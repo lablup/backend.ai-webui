@@ -169,7 +169,7 @@
     "PurgeProject": "Полностью удалить проект",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
-    "ScalingGroups": "Группы масштабирования",
+    "ScalingGroups": "Группы ресурсов",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, type SpinProps } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';

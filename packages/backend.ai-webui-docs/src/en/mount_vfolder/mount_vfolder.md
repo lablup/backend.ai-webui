@@ -1,5 +1,6 @@
 # Mounting Folders to a Compute Session
 
+<a id="session-mounts"></a>
 
 Backend.AI provides a function to mount storage folders when creating a compute session.
 When new compute session is started, user will have access to the`/home/work/` directory.
@@ -17,18 +18,24 @@ and then create a session.
 ![](../images/create_session_with_folders.png)
 
 
-   By looking at the data and folder information within that project, users can see information such as usage mode,
-   the storage host the folder belongs to, permissions, and more.
-   Note that the 'Data & Storage' step only outputs data folders that are mountable by the current user.
-   For example, folders that belong to other projects cannot be viewed.
+:::note
+By looking at the data and folder information within that project, users can see information such as usage mode,
+the storage host the folder belongs to, permissions, and more.
+Note that the 'Data & Storage' step only outputs data folders that are mountable by the current user.
+For example, folders that belong to other projects cannot be viewed.
+:::
 
-   Clicking a 'folder name' in the 'Data & Storage' step will open the folder explorer for that folder.
-   From this, users can view the folders that have been created, create new folders, and upload files.
-   For more detailed instructions related to folders, please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
+:::note
+Clicking a 'folder name' in the 'Data & Storage' step will open the folder explorer for that folder.
+From this, users can view the folders that have been created, create new folders, and upload files.
+For more detailed instructions related to folders, please refer [Explore Folder](#explore-folder) section.
+:::
 
-   Alternatively, a new virtual folder can be created by clicking the '+' button.
-   For further information on how to create a new folder in session launcher page,
-   please refer [Create storage folder<create_storage_folder>](#Create storage folder<create_storage_folder>) section.
+:::note
+Alternatively, a new virtual folder can be created by clicking the '+' button.
+For further information on how to create a new folder in session launcher page,
+please refer [Create storage folder](#create-storage-folder) section.
+:::
 
 In the created session, click the created session name to open detail information drawer. Then,
 click the 'Execute Terminal App' icon button (upper right corner, second from the right) to open terminal app.
@@ -41,11 +48,13 @@ and `user2-vfolder` folders are mounted under the home directory.
 ![](../images/execute_terminal_app2.png)
 
 
-   The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
-   For example, if folder's name is `test`, it is mounted on `/home/work/test`.
-   To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
-   Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
-   Writing a relative path will mount the folder under `/home/work/` with the path.
+:::note
+The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
+For example, if folder's name is `test`, it is mounted on `/home/work/test`.
+To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
+Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
+Writing a relative path will mount the folder under `/home/work/` with the path.
+:::
 
 Backend.AI gives an option to preserve files in folders when a compute session is deleted.
 The example below illustrates what's happening.
@@ -69,12 +78,16 @@ Performing file management on a mounted folder when you create a compute session
 data can be preserved even after users ends the compute session.
 
 
+<a id="using-automount-folder"></a>
+
 ## Configure a compute session environment using an automount folder
 
-If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and [automount-folder<automount-folder>](#automount-folder<automount-folder>),
+If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and [automount folder](#automount-folder),
 which is independent of the compute session lifecycle, can be used to install the package.
 Configure a consistent environment regardless of the type of compute session.
 
+
+<a id="using-pip-with-automountfolder"></a>
 
 ### Install Python packages via pip
 
@@ -91,11 +104,14 @@ pip install tqdm
 After that, when a new compute session is created, the `.local` folder where the `tqdm` package
 is installed is automatically mounted, so users can use it without reinstalling the `tqdm` package.
 
-
+:::note
 When using multiple Python versions or sessions with different Python versions, packages may have compatibility issues.
 This can be circumvented by branching `PYTHONPATH` environment variable via the `.bashrc`.
 This is because the user's `pip` package is installed in the path specified in the `PYTHONPATH`.
+:::
 
+
+<a id="using-linuxbrew-with-automountfolder"></a>
 
 ### Install packages via Homebrew
 

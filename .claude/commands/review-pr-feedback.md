@@ -20,6 +20,7 @@ The `$ARGUMENTS` specifies the PR number to review. If not provided, uses the cu
 3. Present summary to user
 4. Apply approved fixes
 5. Resolve review threads
+6. Re-request review from CHANGES_REQUESTED reviewers
 ```
 
 ## Detailed Process
@@ -35,6 +36,9 @@ gh pr view [PR_NUMBER] --json number,title,url
 
 # Get review comments (inline comments)
 gh api repos/lablup/backend.ai-webui/pulls/[PR_NUMBER]/comments --jq '.[] | {id: .id, path: .path, line: .line, body: .body, user: .user.login}'
+
+# Get reviews to identify CHANGES_REQUESTED reviewers
+gh api repos/lablup/backend.ai-webui/pulls/[PR_NUMBER]/reviews --jq '.[] | {id: .id, user: .user.login, state: .state}'
 ```
 
 ### Step 2: Analyze and Categorize Feedback
@@ -162,7 +166,25 @@ mutation {
 }'
 ```
 
-### Step 8: Display Summary
+### Step 8: Re-request Review from CHANGES_REQUESTED Reviewers
+
+If code changes were applied and there are reviewers who submitted a `CHANGES_REQUESTED` review, automatically re-request their review so they are notified of the fixes.
+
+```bash
+# Identify human reviewers (exclude bots like copilot-pull-request-reviewer) who left CHANGES_REQUESTED
+# From the reviews fetched in Step 1, filter for state: "CHANGES_REQUESTED"
+
+# Re-request review using gh CLI
+gh pr edit [PR_NUMBER] --add-reviewer [REVIEWER_USERNAME]
+```
+
+Rules:
+- Only re-request review when code changes were actually applied (not for "Only resolve threads" or "Cancel" options)
+- Exclude bot reviewers (e.g., `copilot-pull-request-reviewer`, `github-actions`)
+- If multiple human reviewers left CHANGES_REQUESTED, re-request all of them
+- If no CHANGES_REQUESTED reviews exist, skip this step
+
+### Step 9: Display Summary
 
 ```
 ✅ Review Feedback Processed!
@@ -174,6 +196,7 @@ Actions Taken:
   - Code fixes applied: X
   - Comments replied: Y
   - Threads resolved: Z
+  - Re-review requested: [reviewer1, reviewer2] (or "none")
 
 Changes:
   - [file1.ts]: [description of fix]

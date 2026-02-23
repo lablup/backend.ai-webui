@@ -1,3 +1,5 @@
+<a id="user-settings"></a>
+
 # ユーザー設定
 
 
@@ -5,6 +7,8 @@
 
 ![](../images/preferences.png)
 
+
+<a id="general-tab"></a>
 
 ## 一般タブ
 
@@ -51,10 +55,12 @@ UIに表示される言語を設定します。現在、Backend.AIは英語と�
 
 
 
-   Some of translated items may be marked as `__NOT_TRANSLATED__`, which
-   indicates the item is not yet translated for that language. Since Backend.AI
-   WebUI is open sourced, anyone who willing to make the translation better
-   can contribute: https://github.com/lablup/backend.ai-webui.
+:::note
+Some of translated items may be marked as `__NOT_TRANSLATED__`, which
+indicates the item is not yet translated for that language. Since Backend.AI
+WebUI is open sourced, anyone who willing to make the translation better
+can contribute: https://github.com/lablup/backend.ai-webui.
+:::
 
 ### 自動更新チェック
 
@@ -71,6 +77,8 @@ UIに表示される言語を設定します。現在、Backend.AIは英語と�
 ![](../images/my_keypair_information.png)
 
 
+<a id="user-ssh-keypair-management"></a>
+
 ### SSH キーペア管理
 
 WebUIアプリを使用する際、コンピュートセッションに直接SSH/SFTP接続を作成できます。Backend.AIにサインアップすると、公開鍵ペアが提供されます。SSHキーペア管理セクションの右側にあるボタンをクリックすると、次のダイアログが表示されます。右側のコピーボタンをクリックして、既存のSSH公開鍵をコピーできます。ダイアログの下部にあるGENERATEボタンをクリックすると、SSHキーペアを更新できます。SSH公開/秘密鍵はランダムに生成され、ユーザー情報として保存されます。秘密鍵は作成後すぐに手動で保存しない限り、再確認できないことに注意してください。
@@ -78,7 +86,9 @@ WebUIアプリを使用する際、コンピュートセッションに直接SSH
 ![](../images/ssh_keypair_dialog.png)
 
 
-   Backend.AIはOpenSSHに基づいたSSHキーペアを使用します。ウィンドウズでは、これをPPKキーに変換することができます。
+:::note
+Backend.AIはOpenSSHに基づいたSSHキーペアを使用します。ウィンドウズでは、これをPPKキーに変換することができます。
+:::
 
 From 22.09, Backend.AI WebUI supports adding your own ssh keypair in order to provide
 flexibility such as accessing to a private repository. In order to add your own ssh keypair, click `ENTER MANUALLY` button. Then, you will see
@@ -97,11 +107,13 @@ please enter the keys inside, and click `SAVE` button. Now you can access to bac
 ![](../images/edit_bootstrap_script.png)
 
 
-   The compute session will be at the `PREPARING` status until the bootstrap
-   script finishes its execution. Since a ユーザー cannot use the session until it
-   is `RUNNING`, if the script contains a long-running tasks, it might be
-   better to remove them out of the bootstrap script and run them in a terminal
-   app.
+:::note
+The compute session will be at the `PREPARING` status until the bootstrap
+script finishes its execution. Since a ユーザー cannot use the session until it
+is `RUNNING`, if the script contains a long-running tasks, it might be
+better to remove them out of the bootstrap script and run them in a terminal
+app.
+:::
 
 ### Edit User Config Script
 
@@ -135,7 +147,9 @@ You can enable or disable experimental features before they are officially relea
 ![](../images/user_log.png)
 
 
-   1つのページにしかログインしていない場合、REFRESHボタンをクリックしても正しく機能していないように見えるかもしれません。ログページはサーバーへのリクエストとサーバーからのレスポンスの集まりです。現在のページがログページである場合、ページを明示的にリフレッシュする以外にサーバーへのリクエストは送信されません。ログが正しく積み重ねられているか確認するには、別のページを開いてREFRESHボタンをクリックしてください。
+:::note
+1つのページにしかログインしていない場合、REFRESHボタンをクリックしても正しく機能していないように見えるかもしれません。ログページはサーバーへのリクエストとサーバーからのレスポンスの集まりです。現在のページがログページである場合、ページを明示的にリフレッシュする以外にサーバーへのリクエストは送信されません。ログが正しく積み重ねられているか確認するには、別のページを開いてREFRESHボタンをクリックしてください。
+:::
 
 特定の列を非表示にしたり表示したりしたい場合は、テーブルの右下にある歯車アイコンをクリックしてください。すると、以下のダイアログが表示され、表示したい列を選択することができます。
 

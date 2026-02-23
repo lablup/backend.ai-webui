@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParam } from 'use-query-params';

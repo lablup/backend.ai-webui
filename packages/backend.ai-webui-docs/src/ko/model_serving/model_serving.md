@@ -1,9 +1,11 @@
+<a id="model-serving"></a>
+
 # 모델 서빙
 
 ## 모델 서비스
 
 
-:::info
+:::note
 이 기능은 엔터프라이즈 전용 기능입니다.
 :::
 
@@ -146,7 +148,7 @@ Container Created
 └─────────────────────────────────┘
 │
 ▼
-시작 Health Check Cycle
+Start Health Check Cycle
 │
 ▼
 ┌─────────────────────────────────┐
@@ -159,36 +161,36 @@ Wait up to max_wait_time (15s)
 │
 ┌──────────┴──────────┐
 ▼                     ▼
-Response             Timeout/Error
+Response              Timeout/Error
 │                     │
 ▼                     │
-Status ==                │
-expected?                │
+Status ==             │
+expected?             │
 │                     │
-┌┴┐                    │
-▼ ▼                    │
-Y N                    │
-│ │                    │
-│ └─────────┬──────────┘
-│           ▼
-│      Consecutive
-│      failures +1
-│           │
-▼           ▼
-HEALTHY     Failures > max_retries?
-(reset              │
-failures)     ┌─────┴─────┐
-▼           ▼
-Yes          No
-│           │
-▼           ▼
-UNHEALTHY      Keep current
-(removed       status
-from traffic
-internally)
+┌──┴──┐               │
+▼     ▼               │
+Y     N               │
+│     │               │
+│     └───────┬───────┘
+│             ▼
+│        Consecutive
+│        failures +1
+│             │
+▼             ▼
+HEALTHY       Failures > max_retries?
+(reset                │
+failures)       ┌─────┴─────┐
+                ▼           ▼
+               Yes          No
+                │           │
+                ▼           ▼
+            UNHEALTHY    Keep current
+            (removed     status
+            from traffic
+            internally)
 ```
 
-:::info
+:::note
 내부 상태 정보(트래픽 라우팅에 사용됨)는 사용자 인터페이스에 표시되는
 상태와 즉시 동기화되지 않을 수 있습니다.
 :::
@@ -256,6 +258,8 @@ internally)
 
 ![](../images/model_definition_file_upload.png)
 
+<a id="service-definition-file"></a>
+
 #### 서비스 정의 파일 생성
 
 서비스 정의 파일(`service-definition.toml`)을 사용하면 관리자가 모델 서비스에 필요한 리소스, 환경 및 런타임 설정을 미리 구성할 수 있습니다. 이 파일이 모델 폴더에 있으면, 시스템은 서비스를 생성할 때 이러한 설정을 기본값으로 사용합니다.
@@ -300,13 +304,13 @@ MODEL_NAME = "example-model-name"
    - 런타임에서 필요한 모든 환경 변수를 정의할 수 있습니다. 예를 들어, `MODEL_NAME`은 일반적으로 로드할 모델을 지정하는 데 사용됩니다.
 
 
-:::info
+:::note
 각 섹션 헤더의 `{runtime}` 접두사는 런타임 변형 이름
 (예: `vllm`, `nim`, `custom`)에 해당합니다. 시스템은 서비스를 생성할 때
 선택한 런타임 변형과 이 접두사를 매칭합니다.
 :::
 
-:::info
+:::note
 "이 모델 실행" 버튼을 사용하여 모델 스토어에서 서비스를 생성하면
 `service-definition.toml`의 설정이 자동으로 적용됩니다. 나중에 리소스
 할당을 조정해야 하는 경우, 모델 서빙 페이지를 통해 서비스를 수정할 수 있습니다.
@@ -390,7 +394,7 @@ MODEL_NAME = "example-model-name"
 ![](../images/model-validation-dialog.png)
 
 
-:::info
+:::note
 결과가 `Finished`라고 해서 실행이 성공적으로 완료되었다는 것을 보장하지는 않습니다.
 대신 컨테이너 로그를 확인하세요.
 :::
@@ -514,7 +518,7 @@ $ curl -H "Content-Type: application/json" -X GET \
 ```
 
 
-:::info
+:::warning
 기본적으로, 엔드 유저는 엔드포인트에 액세스할 수 있는
 네트워크에 있어야 합니다. 서비스가 폐쇄된 네트워크에서 생성된 경우,
 해당 폐쇄된 네트워크 내에서 액세스할 수 있는 엔드

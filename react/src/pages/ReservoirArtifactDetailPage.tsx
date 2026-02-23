@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {

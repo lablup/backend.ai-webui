@@ -3,6 +3,9 @@
 The most visited pages in the Backend.AI WebUI would be the 'Sessions' and 'Data' pages.
 This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.
 
+<a id="start-a-new-session"></a>
+<a id="create_session"></a>
+
 ## Start a new session
 
 
@@ -15,6 +18,8 @@ After logging in with a user account, click 'Sessions' on the left sidebar.
 Click the 'START' button to start a new compute session.
 
 ![](../images/launch_session_type.png)
+
+<a id="session-type"></a>
 
 ### Session Type
 
@@ -53,6 +58,8 @@ If needed, setting the name of the session (optional) is also available.
 
     ![](../images/session_type_batch.png)
 
+<a id="session-naming-rule"></a>
+
 - Session name: Users can specify the name of the compute session to be
   created. If set, this name appears in Session Info, so it is
   distinguishable among multiple compute sessions. If not specified, random
@@ -63,13 +70,15 @@ If users create a session with the `super admin` or `admin` account,
 they can additionally assign a session owner. If you enable the toggle,
 a user email field will appear.
 
-   ![](../images/admin_launch_session_owner.png)
+![](../images/admin_launch_session_owner.png)
 
 Enter the email of the user you want to assign the session to,
 click the 'search' button, and the user's access key will be automatically registered.
 You can also select a project and resource group.
 
-   ![](../images/admin_launch_session_owner_project.png)
+![](../images/admin_launch_session_owner_project.png)
+
+<a id="environments-and-resource-allocation"></a>
 
 ### Environments & Resource allocation
 
@@ -149,10 +158,11 @@ refer to the following:
     Currently, this feature is only supported in single-node, single-container environments.
   * Cluster mode: Cluster mode allows users to create
     multiple compute sessions at once. For more information, refer to the
-    [Overview of Backend.AI cluster compute session<backendai-cluster-compute-session>](#Overview of Backend.AI cluster compute session<backendai-cluster-compute-session>).
+    [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
 
-  .. note::
-     The Agent Select feature may not be available depending on the server environment.
+:::note
+The Agent Select feature may not be available depending on the server environment.
+:::
 
 - High-Performance Computing Optimizations: Backend.AI provides configuring values
   related to HPC Optimizations.
@@ -166,6 +176,9 @@ refer to the following:
 
 ![](../images/session_hpc_optimization.png)
 
+<a id="data-and-storage"></a>
+<a id="session-mounts"></a>
+
 ### Data & Storage
 
 
@@ -175,21 +188,23 @@ When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
 For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session<session-mounts>](#Mounting Folders to a Compute Session<session-mounts>).
+[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
 users can specify the data folders to mount in the compute session.
 Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder<explore_folder>](#Explore Folder<explore_folder>) section.
+please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
 New folder can be created by clicking the '+' button next to the search box.
 When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder<create_storage_folder>](#Create Storage Folder<create_storage_folder>) section.
+For further information, please refer [Create Storage Folder](#create-storage-folder) section.
 
 ![](../images/folder_create_modal.png)
+
+<a id="network"></a>
 
 ### Network
 
@@ -197,12 +212,12 @@ Click the 'Next' button below, or the 'Network' menu on the right to proceed to 
 On this page, Network configuration can be done such as Preopen Ports.
 
 - Set Preopen Ports: Provides an interface for users to set preopen ports in a
-  compute session. Refer to the [How to add preopen ports before session creation
-  <set_preopen_ports>](#How to add preopen ports before session creation
-  <set_preopen_ports>) for further information.
+  compute session. Refer to the [How to add preopen ports before session creation](#set-preopen-ports) for further information.
 
 
 ![](../images/launch_session_network.png)
+
+<a id="confirm-and-launch"></a>
 
 ### Confirm and Launch
 
@@ -258,14 +273,19 @@ Clicking a session name takes you to the 'Confirm and Launch' page, which is the
 Each item can be renamed or pinned for easier access.
 
 
-   Superadmins can query all compute session information currently running (or
-   terminated) in the cluster, and users can only view the sessions they have
-   created.
+:::note
+Superadmins can query all compute session information currently running (or
+terminated) in the cluster, and users can only view the sessions they have
+created.
+:::
 
+:::note
+Compute session list may not be displayed normally due to intermittent
+network connection problems, and etc. This can be solved by refreshing the
+browser.
+:::
 
-   Compute session list may not be displayed normally due to intermittent
-   network connection problems, and etc. This can be solved by refreshing the
-   browser.
+<a id="session-detail-panel"></a>
 
 ## Session Detail Panel
 
@@ -282,33 +302,39 @@ Backend.AI provides additional information for sessions in `PENDING`, `TERMINATE
 Click the 'Info' button to check the details when available.
 
 
+<a id="use_session"></a>
+
 ## Use Jupyter Notebook
 
-Let’s look at how to use and manage an already running compute session.
+Let's look at how to use and manage an already running compute session.
 Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
 the app services available for that session.
 
 ![](../images/app_dialog.png)
 
 
-   There are two check options under the app icons. Opening the app with each item checked
-   applies the following features, respectively:
+:::note
+There are two check options under the app icons. Opening the app with each item checked
+applies the following features, respectively:
 
-   * Open app to public: Open the app to the public. Basically, web services
-     such as Terminal and Jupyter Notebook services are not accessible by
-     other users, even if the user knows the service URL, since they are
-     considered unauthenticated. However, checking this option makes it possible
-     for anyone who knows the service URL (and port number) to access and use it. Of
-     course, the user must have a network path to access the service.
-   * Try preferred port: Without this option checked, a port number for the web service is randomly
-     assigned from the port pool prepared in advance by Backend.AI.
-     If you check this item and enter a specific port number, the entered
-     port number will be tried first. However, there is no guarantee that the desired
-     port will always be assigned because the port may not exist at all in the port
-     pool or another service may already be using the port. In this case, the
-     port number is randomly assigned.
+<a id="open-app-to-public"></a>
 
-   Depending on the system configuration, these options may not be shown.
+* Open app to public: Open the app to the public. Basically, web services
+  such as Terminal and Jupyter Notebook services are not accessible by
+  other users, even if the user knows the service URL, since they are
+  considered unauthenticated. However, checking this option makes it possible
+  for anyone who knows the service URL (and port number) to access and use it. Of
+  course, the user must have a network path to access the service.
+* Try preferred port: Without this option checked, a port number for the web service is randomly
+  assigned from the port pool prepared in advance by Backend.AI.
+  If you check this item and enter a specific port number, the entered
+  port number will be tried first. However, there is no guarantee that the desired
+  port will always be assigned because the port may not exist at all in the port
+  pool or another service may already be using the port. In this case, the
+  port number is randomly assigned.
+
+Depending on the system configuration, these options may not be shown.
+:::
 
 Let's click on Jupyter Notebook.
 
@@ -369,14 +395,18 @@ Control panel of the running compute session.
 
 ![](../images/session_log.png)
 
+<a id="rename-running-session"></a>
+
 ## Rename running session
 
 Name of the active session can be changed. Click the 'Edit' button in the session detail
 panel to change the session name.
-New session name should also follow the [the authoring rule<session-naming-rule>](#the authoring rule<session-naming-rule>).
+New session name should also follow the [the authoring rule](#session-naming-rule).
 
 ![](../images/session_renaming.png)
 
+
+<a id="delete_session"></a>
 
 ## Delete a compute session
 
@@ -387,6 +417,8 @@ move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
 
 ![](../images/session_destroy_dialog.png)
+
+<a id="idleness-checks"></a>
 
 ## Idleness checks
 
@@ -428,10 +460,11 @@ found by clicking the information (i) button in the idle checks section.
     termination. Resources with empty values are excluded from the garbage
     collection criteria.
 
-   .. note::
-      After the grace period, sessions can be terminated anytime if utilization
-      remains low. Briefly using the resources does not extend the grace period.
-      Only the average utilization over the last idle timeout is considered.
+:::note
+After the grace period, sessions can be terminated anytime if utilization
+remains low. Briefly using the resources does not extend the grace period.
+Only the average utilization over the last idle timeout is considered.
+:::
 
 Hovering the mouse over the Utilization Checker will display a tooltip with the
 utilization and threshold values. The text color changes to yellow and then red
@@ -439,9 +472,12 @@ as the current utilization approaches the threshold (indicating low resource
 utilization).
 
 
-   Depending on the environment settings, idle checkers and resource types of
-   utilization checker's tooltip may be different.
+:::note
+Depending on the environment settings, idle checkers and resource types of
+utilization checker's tooltip may be different.
+:::
 
+<a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
 ## How to add environment variable before creating a session
 
@@ -456,6 +492,8 @@ Also, you can remove the variable by clicking '-' button of the row that you wan
 
 You can write down variable name and value in the same line of the input fields.
 
+
+<a id="set-preopen-ports"></a>
 
 ## How to add preopen ports before creating a session
 
@@ -475,10 +513,13 @@ Users can check the configured preopen ports in the session app launcher.
 ![](../images/session_app_launcher.png)
 
 
-   The preopen ports are **the internal ports within the container**. Therefore, unlike other apps, when users click the
-   preopen ports in the session app launcher, a blank page will appear. Please bind a server to the respective port
-   before use.
+:::note
+The preopen ports are **the internal ports within the container**. Therefore, unlike other apps, when users click the
+preopen ports in the session app launcher, a blank page will appear. Please bind a server to the respective port
+before use.
+:::
 
+<a id="save-session-commit"></a>
 
 ## Save session commit
 
@@ -497,14 +538,17 @@ mounted to the container for image commits are considered external resources and
 the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.
 
 
-   Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
-   To prevent unexpected error, users may not be able to terminate the session during committing process.
-   To stop the ongoing process, check the session, and force-terminate it.
+:::note
+Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
+To prevent unexpected error, users may not be able to terminate the session during committing process.
+To stop the ongoing process, check the session, and force-terminate it.
+:::
 
-
-   The number of times to "Convert Session to Image" may be limited by the user resource policy. In this case,
-   [remove the existing customized image<delete-customized-image>](#remove the existing customized image<delete-customized-image>) and try again. If this does not resolves
-   the problem, please contact the administrator.
+:::note
+The number of times to "Convert Session to Image" may be limited by the user resource policy. In this case,
+[remove the existing customized image](#delete-customized-image) and try again. If this does not resolves
+the problem, please contact the administrator.
+:::
 
 
 ## Utilizing converted images of ongoing sessions
@@ -558,15 +602,18 @@ If you remember `:set -g mouse off` or `:set -g mouse on` after `Ctrl-B`,
 you can use the web terminal more conveniently.
 
 
-   `Ctrl-B` is tmux's default control mode key. If users set another control key
-   by modifying `.tmux.conf` in user home directory, they should press the set
-   key combination instead of `Ctrl-B`.
+:::note
+`Ctrl-B` is tmux's default control mode key. If users set another control key
+by modifying `.tmux.conf` in user home directory, they should press the set
+key combination instead of `Ctrl-B`.
+:::
 
+:::note
+In the Windows environment, refer to the following shortcuts.
 
-   In the Windows environment, refer to the following shortcuts.
-
-   * Copy: Hold down `Shift`, right-click and drag
-   * Paste: Press `Ctrl-Shift-V`
+* Copy: Hold down `Shift`, right-click and drag
+* Paste: Press `Ctrl-Shift-V`
+:::
 
 ### Check the terminal history using keyboard
 
@@ -576,6 +623,8 @@ using the keyboard. Again, click `Ctrl-B` first, and then press the `Page
 Up` and/or `Page Down` keys. To exit search mode, just press the `q`
 key. With this method, users can check the contents of the terminal history even
 when the mouse support is turned off.
+
+<a id="tmux_guide"></a>
 
 ### Spawn multiple shells
 

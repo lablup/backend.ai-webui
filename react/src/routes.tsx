@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import BAIErrorBoundary, { ErrorView } from './components/BAIErrorBoundary';
 import {
   DefaultProvidersForReactRoot,
@@ -6,10 +10,12 @@ import {
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
+import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+import { LogoutEventHandler } from './hooks/useLogout';
 import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
@@ -22,6 +28,8 @@ import { BAIFlex, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
+
+const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 const Information = React.lazy(() => import('./components/Information'));
 const EndpointDetailPage = React.lazy(
@@ -89,6 +97,15 @@ const ReservoirArtifactDetailPage = React.lazy(
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const EmailVerificationPage = React.lazy(
+  () => import('./pages/EmailVerificationPage'),
+);
+const ChangePasswordPage = React.lazy(
+  () => import('./pages/ChangePasswordPage'),
+);
+const EduAppLauncherPage = React.lazy(
+  () => import('./pages/EduAppLauncherPage'),
+);
 
 /**
  * MainLayout children routes - these are the actual page routes
@@ -526,7 +543,52 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
+          <LogoutEventHandler />
           <InteractiveLoginPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/verify-email',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EmailVerificationPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/change-password',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <ChangePasswordPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/edu-applauncher',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EduAppLauncherPage />
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    path: '/applauncher',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <EduAppLauncherPage />
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -537,12 +599,18 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
+          <Suspense>
+            <LoginView />
+          </Suspense>
           {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
           <MainLayout />
           <ErrorBoundaryWithNullFallback>
             <RoutingEventHandler />
           </ErrorBoundaryWithNullFallback>
           <Suspense>
+            <ErrorBoundaryWithNullFallback>
+              <LoginViewLazy />
+            </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <FolderExplorerOpener />
             </ErrorBoundaryWithNullFallback>

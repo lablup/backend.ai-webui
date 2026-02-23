@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { type FormItemProps } from 'antd';
 import type { RuleObject } from 'antd/es/form';
 import _ from 'lodash';

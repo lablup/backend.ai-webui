@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { UserCredentialListDeleteMutation } from '../__generated__/UserCredentialListDeleteMutation.graphql';
 import { UserCredentialListModifyMutation } from '../__generated__/UserCredentialListModifyMutation.graphql';

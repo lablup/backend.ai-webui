@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';

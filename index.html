@@ -14,12 +14,11 @@
   <link rel="icon" type="image/png" sizes="16x16" href="manifest/backend-ai.iconset/icon_16x16@1x.png">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="resources/fonts/fonts.css">
+  <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
   <link rel="stylesheet" href="resources/webui.css">
   <link rel="stylesheet" href="resources/custom.css">
   <script src="manifest/app.js"></script>
   <title>Backend.AI</title>
-  <script src="./src/lib/webcomponents-loader.js"></script>
-  <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
   <script nonce="{{nonce}}">
     globalThis.isElectron = isElectron();
     if (isElectron) {
@@ -29,7 +28,6 @@
 
     globalThis.packageVersion = "26.2.0-alpha.0";
     globalThis.buildNumber = "7265";
-    globalThis.litNonce = "{{nonce}}";
     globalThis.baiNonce = "{{nonce}}";
 
     // DO NOT CHANGE BELOW LINE
@@ -64,7 +62,7 @@
           </ul>
           <ul>
             <li>Powered by open-source software</li>
-            <li class="copyright">Copyright &copy; 2015-2025 Lablup Inc.</li>
+            <li class="copyright">Copyright &copy; 2015-2026 Lablup Inc.</li>
           </ul>
         </div>
         <div class="sk-folding-cube">
@@ -76,13 +74,10 @@
         <div id="loading-message" class="loading-message">Loading components...</div>
       </div>
     </div>
-    <!-- <backend-ai-webui id="webui-shell" style="background-color:#222222;"> -->
-
-    <!-- </backend-ai-webui> -->
     <noscript>
       <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
     </noscript>
-    <script src="./dist/components/backend-ai-webui.js" type="module"></script>
+    <!-- Backend.AI client classes are now initialized by React global-stores.ts -->
     <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
       document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;

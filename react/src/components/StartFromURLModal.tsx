@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import BAITabs from './BAITabs';
 import ImportNotebookForm from './ImportNotebookForm';
 import ImportRepoForm from './ImportRepoForm';

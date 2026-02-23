@@ -21,6 +21,8 @@ to login with private browser window. If it succeeds, please clear your
 browser's cache and/or application data.
 
 
+<a id="installing_apt_pkg"></a>
+
 ### How to install apt packages?
 
 Inside a compute session, users cannot access `root` account and perform
@@ -30,10 +32,10 @@ is not allowed to install packages with `apt` or `yum` since they require
 permission.
 
 Alternatively, users may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>](#guide on using Homebrew with automount
-folder<using-linuxbrew-with-automountfolder>).
+the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder).
 
+
+<a id="install_pip_pkg"></a>
 
 ### How to install packages with pip?
 
@@ -42,12 +44,11 @@ By default, when you install a pip package, it will be installed under
 can keep the installed packages after a compute session is destroyed, and then
 reus them for the next compute session. Just install the packages with pip like:
 
-``shell
+```shell
 $ pip install aiohttp
-``
+```
 For more information, please refer to the [guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>](#guide on installing Python
-packages with automount folder<using-pip-with-automountfolder>).
+packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).
 
 ### I have created a compute session, but cannot launch Jupyter Notebook
 
@@ -99,7 +100,9 @@ case, follow the steps below.
 ### Image is not displayed after it is pushed to a docker registry
 
 
-   This feature is only available for superadmins.
+:::note
+This feature is only available for superadmins.
+:::
 
 If a new image is pushed to one of the Backend.AI docker registries, the image
 metadata must be updated in Backend.AI to be used in creating a compute session.

@@ -1,5 +1,6 @@
-This feature is deprecated, so please use the [dashboard<dashboard>](#dashboard<dashboard>) page going forward. Also, technical support
-   and bug fixes for this feature are no longer provided. Please understand that issues may not be addressed.
+:::warning
+This feature is deprecated, so please use the [dashboard](../dashboard/dashboard.md) page going forward. Also, technical support and bug fixes for this feature are no longer provided. Please understand that issues may not be addressed.
+:::
 
 # Summary Page
 
@@ -40,7 +41,7 @@ Of course, you can decline the sharing requests.
 ### Download Backend.AI Web UI App
 
 Backend.AI WebUI supports desktop applications.
-By using desktop app, you can use desktop app specific features, such as [SSH/SFTP connection to a Compute Session<ssh-sftp-container>](#SSH/SFTP connection to a Compute Session<ssh-sftp-container>) .
+By using desktop app, you can use desktop app specific features, such as [SSH/SFTP connection to a Compute Session](../sftp_to_container/sftp_to_container.md#ssh-sftp-container).
 For now Backend.AI WebUI provides desktop application with following OS:
 
 - Windows
@@ -48,5 +49,7 @@ For now Backend.AI WebUI provides desktop application with following OS:
 - Mac
 
 
-   When you click the button that match with your local environment (e.g. OS, Architecture), It will automatically downloads the same version of current webUI version.
-   If you want to download later or former version of WebUI as a desktop app, please visit [here](https://github.com/lablup/backend.ai-webui/releases?page=1) and download the desired version(s).
+:::note
+When you click the button that match with your local environment (e.g. OS, Architecture), It will automatically downloads the same version of current webUI version.
+If you want to download later or former version of WebUI as a desktop app, please visit [here](https://github.com/lablup/backend.ai-webui/releases?page=1) and download the desired version(s).
+:::

@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { CustomizedImageListForgetMutation } from '../__generated__/CustomizedImageListForgetMutation.graphql';
 import {
   CustomizedImageListQuery,

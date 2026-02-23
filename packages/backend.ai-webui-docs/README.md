@@ -1,6 +1,6 @@
 # Backend.AI WebUI Docs
 
-PDF generation tool for the Backend.AI WebUI User Guide. Converts multilingual Markdown documentation into production-ready PDF with cover page, table of contents, headers/footers, and themeable styling.
+Multilingual user manual for Backend.AI WebUI. Uses [backend.ai-docs-toolkit](../backend.ai-docs-toolkit/) to convert Markdown documentation into production-ready PDF with cover page, table of contents, headers/footers, and themeable styling.
 
 ## Prerequisites
 
@@ -11,6 +11,9 @@ PDF generation tool for the Backend.AI WebUI User Guide. Converts multilingual M
 ```bash
 # Install dependencies from the monorepo root
 pnpm install
+
+# Build the toolkit (required before first use)
+cd packages/backend.ai-docs-toolkit && pnpm run build
 ```
 
 ## Quick Start
@@ -40,6 +43,8 @@ dist/Backend.AI_WebUI_User_Guide_v26.2.0-alpha.0+abc1234_en.pdf
 
 ## Preview Server
 
+### PDF Preview
+
 The preview server generates real PDFs through the same Playwright pipeline as production, with live-reload on file changes.
 
 ```bash
@@ -58,6 +63,20 @@ pnpm run preview:doc:th     # Thai
 
 Open `http://localhost:3456` to view the PDF in the browser. The page auto-refreshes when the PDF is rebuilt.
 
+### HTML Preview
+
+A lightweight HTML preview without Playwright rendering. Faster iteration for content editing.
+
+```bash
+pnpm run preview:html       # English
+pnpm run preview:html:ko    # Korean
+pnpm run preview:html:ja    # Japanese
+pnpm run preview:html:th    # Thai
+pnpm run preview:html:catalog
+```
+
+Open `http://localhost:3457` to view.
+
 ### Preview Modes
 
 | Mode | Command | Content | Speed |
@@ -66,60 +85,38 @@ Open `http://localhost:3456` to view the PDF in the browser. The page auto-refre
 | `catalog` | `pnpm run preview:catalog` | Theme variable reference + sample chapters | ~1s |
 | `document` | `pnpm run preview:doc` | Real Markdown content from `src/{lang}/` | ~15-30s |
 
-In `document` mode, editing any `.md` file under `src/{lang}/` triggers an automatic PDF rebuild.
+In `document` mode, editing any `.md` file under `src/{lang}/` triggers an automatic rebuild.
 
-### CLI Options
+## AI Agent Workflow
 
-```bash
-tsx scripts/preview-server.ts --mode <mode> --lang <lang> --theme <name> --port <port>
-```
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--mode` | `sample` | `sample`, `catalog`, or `document` |
-| `--lang` | `en` | Language code (`en`, `ko`, `ja`, `th`) |
-| `--theme` | `default` | Theme name |
-| `--port` | `3456` | HTTP server port |
-
-## Style Catalog (HTML)
-
-A standalone HTML page showing all PDF styling elements. Useful for quick visual checks without Playwright rendering.
+Four Claude Code agents handle the documentation lifecycle. Generate or update them with:
 
 ```bash
-pnpm run catalog
-# Output: dist/preview/style-catalog.html
+pnpm run agents          # generate (skip existing)
+pnpm run agents:force    # regenerate all
 ```
+
+| Agent | Purpose |
+|-------|---------|
+| `docs-update-planner` | Analyzes PR changes to create documentation update plans |
+| `docs-update-writer` | Writes documentation content across all 4 languages |
+| `docs-update-reviewer` | Reviews for accuracy, consistency, and translation quality |
+| `docs-screenshot-capturer` | Captures screenshots using Playwright MCP |
+
+Agent files are stored in `.claude/agents/` and can be customized after generation. Configuration is in the `agents` section of `docs-toolkit.config.yaml`.
+
+## Configuration
+
+All engine settings are defined in [`docs-toolkit.config.yaml`](docs-toolkit.config.yaml):
+
+- Title, company, logo path
+- Language labels
+- PDF filename template and metadata
+- Agent template variables (languages, i18n paths, guide file references, app routes)
 
 ## Theme System
 
-Themes control all visual aspects of the PDF: colors, typography, cover page, code blocks, tables, blockquotes, and header/footer templates.
-
-The theme interface is defined in `scripts/theme.ts`:
-
-```typescript
-interface PdfTheme {
-  name: string;
-
-  // Colors
-  brandColor: string;        // Accent color (default: #ff9d00)
-  textPrimary: string;       // Main text (default: #1a1a1a)
-  textSecondary: string;     // Secondary text (default: #666)
-  linkColor: string;         // Link color (default: #0066cc)
-  borderColor: string;       // General borders (default: #e0e0e0)
-
-  // Typography
-  baseFontSize: string;      // Body text (default: 11pt)
-  headingH1Size: string;     // H1 (default: 22pt)
-  headingH2Size: string;     // H2 (default: 16pt)
-  // ... and more (code, table, blockquote, cover, TOC)
-
-  // Header/Footer (Playwright displayHeaderFooter templates)
-  headerHtml: string;
-  footerHtml: string;
-}
-```
-
-Currently only the `default` theme is built-in. Custom theme loading from disk (e.g., `themes/customer-blue.json`) is planned for future implementation. To customize styling, edit the `defaultTheme` values in `scripts/theme.ts` directly.
+Themes control all visual aspects of the PDF: colors, typography, cover page, code blocks, tables, blockquotes, and header/footer templates. The theme interface is defined in the toolkit package (`backend.ai-docs-toolkit/src/theme.ts`). Currently only the `default` theme is built-in.
 
 ## Versioning
 
@@ -130,52 +127,27 @@ The document version is derived from the monorepo root `package.json` version fi
 | `26.2.0` (release) | `v26.2.0` | `..._v26.2.0_en.pdf` |
 | `26.2.0-alpha.0` (pre-release) | `v26.2.0-alpha.0 (abc1234)` | `..._v26.2.0-alpha.0+abc1234_en.pdf` |
 
-For pre-release versions, the git short hash is appended so that PDFs generated from different commits are distinguishable even when the package version has not been bumped. The version logic is defined in `scripts/version.ts`.
+For pre-release versions, the git short hash is appended so that PDFs generated from different commits are distinguishable.
 
 ## Project Structure
 
 ```
 packages/backend.ai-webui-docs/
+├── docs-toolkit.config.yaml      # Engine configuration
 ├── src/
 │   ├── book.config.yaml          # Book metadata, languages, navigation
 │   ├── en/                       # English Markdown source
 │   ├── ko/                       # Korean
 │   ├── ja/                       # Japanese
 │   └── th/                       # Thai
-├── scripts/
-│   ├── generate-pdf.ts           # Main entry point (pnpm run pdf)
-│   ├── markdown-processor.ts     # Markdown → HTML conversion
-│   ├── html-builder.ts           # Assembles cover + TOC + chapters
-│   ├── pdf-renderer.ts           # Playwright PDF rendering (3-pass)
-│   ├── styles.ts                 # CSS generation from theme
-│   ├── theme.ts                  # Theme interface and defaults
-│   ├── version.ts                # Version resolution (semver + git hash)
-│   ├── preview-server.ts         # Dev server with live-reload
-│   ├── sample-content.ts         # Sample chapters for preview
-│   └── style-catalog.ts          # Standalone HTML catalog
+├── .claude/agents/               # Generated Claude Code agent files
 ├── dist/                         # Generated output (gitignored)
+├── CLAUDE.md                     # AI agent instructions
 ├── TERMINOLOGY.md                # Standardized terms across languages
 ├── DOCUMENTATION-STYLE-GUIDE.md  # Writing conventions
 ├── TRANSLATION-GUIDE.md          # Translation rules per language
 └── SCREENSHOT-GUIDELINES.md      # Image conventions
 ```
-
-## PDF Generation Pipeline
-
-The PDF is generated through a multi-stage pipeline:
-
-1. **Markdown Processing** (`markdown-processor.ts`) — Parses `.md` files, extracts headings, resolves image paths, generates chapter-scoped heading IDs.
-
-2. **HTML Assembly** (`html-builder.ts`) — Builds a single HTML document containing:
-   - Cover page with logo, title, version, date
-   - Table of Contents with placeholder page numbers
-   - All chapter content with section breaks
-
-3. **PDF Rendering** (`pdf-renderer.ts`) — 3-pass Playwright rendering:
-   - **Pass 1**: Render to PDF, extract page numbers from named destinations
-   - **Pass 2**: Inject real page numbers into TOC, render again
-   - **Pass 3**: Final render with header/footer enabled
-   - **Post-processing**: Mask header/footer on cover page using pdf-lib
 
 ## Writing Documentation
 

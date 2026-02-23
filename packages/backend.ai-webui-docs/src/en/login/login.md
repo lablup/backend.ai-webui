@@ -1,5 +1,7 @@
 # Sign up and Log in
 
+<a id="sign-up"></a>
+
 ## Sign up
 
 When you launch the WebUI, log in dialog appears. If you haven't signed up
@@ -17,14 +19,19 @@ before you can log in with your account.
 ![](../images/signup_dialog.png)
 
 
-   Depending on the server configuration and plugin settings, signing up by
-   anonymous user may not be allowed. In that case, please contact administrator
-   of your system.
+:::note
+Depending on the server configuration and plugin settings, signing up by
+anonymous user may not be allowed. In that case, please contact administrator
+of your system.
+:::
 
+:::note
+To prevent malicious users from guessing user's password, password should be longer
+than 8 characters with at least one alphabet(s), number(s), and special
+character(s).
+:::
 
-   To prevent malicious users from guessing user's password, password should be longer
-   than 8 characters with at least one alphabet(s), number(s), and special
-   character(s).
+<a id="log-in"></a>
 
 ## Log in
 
@@ -33,13 +40,16 @@ of Backend.AI Webserver, which relays the request to the Manager, should be
 entered.
 
 
-   Depending on the installation and setup environment of the Webserver,
-   the endpoint might be pinned and not configurable.
+:::note
+Depending on the installation and setup environment of the Webserver,
+the endpoint might be pinned and not configurable.
+:::
 
-
-   Backend.AI keeps the user's password securely through a one-way hash. BCrypt,
-   the default password hash of BSD, is used, so even the server admins cannot
-   know the user's password.
+:::note
+Backend.AI keeps the user's password securely through a one-way hash. BCrypt,
+the default password hash of BSD, is used, so even the server admins cannot
+know the user's password.
+:::
 
 After logging in, you can check the information of the current resource usage in
 the Summary tab.
@@ -49,6 +59,8 @@ can logout by selecting the Log Out menu.
 
 ![](../images/signout_button.png)
 
+
+<a id="when-you-forgot-your-password"></a>
 
 ## When you forgot your password
 
@@ -61,15 +73,20 @@ administrator.
 ![](../images/forgot_password_panel.png)
 
 
-   This is also a modular feature, so changing password may not be possible in
-   some systems.
+:::note
+This is also a modular feature, so changing password may not be possible in
+some systems.
+:::
+
+:::warning
+If log in failure occurs more than 10 times consecutively, access
+to the endpoint is temporarily restricted for 20 minutes for security
+reasons. If the access restriction continues on more than 20 minutes, please contact
+your system administrator.
+:::
 
 
-   If log in failure occurs more than 10 times consecutively, access
-   to the endpoint is temporarily restricted for 20 minutes for security
-   reasons. If the access restriction continues on more than 20 minutes, please contact
-   your system administrator.
-
+<a id="sidebar-menus"></a>
 
 ## Sidebar Menus
 

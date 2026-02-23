@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 
@@ -19,6 +20,24 @@ module.exports = {
     enable: false, // Disable ESLint webpack plugin for ESLint 9 compatibility. Use CLI lint instead.
   },
   devServer: (devServerConfig, { env, paths }) => {
+    // Serve static files from the root project directory so that
+    // /resources/*, /config.toml, /manifest/*, /dist/* are available
+    // without a separate webdev server.
+    const projectRoot = path.resolve(__dirname, '..');
+    const existingStatic = devServerConfig.static
+      ? Array.isArray(devServerConfig.static)
+        ? devServerConfig.static
+        : [devServerConfig.static]
+      : [];
+    devServerConfig.static = [
+      ...existingStatic,
+      {
+        directory: projectRoot,
+        publicPath: '/',
+        watch: true,
+      },
+    ];
+
     devServerConfig.watchFiles = {
       paths: [
         '../index.html',
@@ -211,28 +230,26 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
-      // Configure ModuleScopePlugin to allow backend.ai-ui package
-      if (env === 'development') {
-        const backendAiUiEntryFile = path.resolve(
-          __dirname,
-          '../packages/backend.ai-ui/src/index.ts',
-        );
+      // Remove ModuleScopePlugin to allow imports outside react/src.
+      // Needed for: backend.ai-ui package, backend.ai-client-esm (via alias to dist/lib/)
+      webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
+        (plugin) =>
+          !(
+            plugin instanceof ModuleScopePlugin ||
+            plugin.constructor.name === 'ModuleScopePlugin'
+          ),
+      );
 
-        webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.map(
-          (plugin) => {
-            if (
-              plugin instanceof ModuleScopePlugin ||
-              plugin.constructor.name === 'ModuleScopePlugin'
-            ) {
-              // Preserve existing allowedFiles and add backend.ai-ui entry file
-              const existingAllowedFiles = Array.from(plugin.allowedFiles);
-              return new ModuleScopePlugin(paths.appSrc, [
-                ...existingAllowedFiles,
-                backendAiUiEntryFile, // Allow backend.ai-ui/src (via entry file)
-              ]);
-            }
-            return plugin;
-          },
+      // Generate service worker for production builds using Workbox.
+      // This replaces the previous Rollup-based service worker generation.
+      if (env === 'production') {
+        webpackConfig.plugins.push(
+          new GenerateSW({
+            swDest: 'sw.js',
+            skipWaiting: true,
+            clientsClaim: true,
+            exclude: [/\.map$/, /asset-manifest\.json$/],
+          }),
         );
       }
 
@@ -242,6 +259,11 @@ module.exports = {
           ...webpackConfig.resolve,
           alias: {
             ...webpackConfig.resolve.alias,
+            // Backend.AI client ESM library (used by global-stores.ts to set globalThis classes)
+            'backend.ai-client-esm': path.resolve(
+              __dirname,
+              '../dist/lib/backend.ai-client-esm.js',
+            ),
             ...whenDev(
               () => ({
                 'backend.ai-ui/dist': path.resolve(

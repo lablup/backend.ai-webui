@@ -169,7 +169,7 @@
     "PurgeProject": "Purge Project",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
-    "ScalingGroups": "Scaling Groups",
+    "ScalingGroups": "Resource Groups",
     "StorageNodes": "Storage Nodes",
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"

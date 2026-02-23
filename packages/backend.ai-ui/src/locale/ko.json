@@ -169,7 +169,7 @@
     "PurgeProject": "프로젝트 삭제",
     "Registry": "레지스트리",
     "ResourcePolicy": "자원 정책",
-    "ScalingGroups": "스케일링 그룹",
+    "ScalingGroups": "자원 그룹",
     "StorageNodes": "저장소 노드",
     "TotalResourceSlots": "총 리소스 슬롯",
     "Type": "타입"

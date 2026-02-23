@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { useTokenCount } from '../../hooks/useTokenizer';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { UIMessage } from 'ai';

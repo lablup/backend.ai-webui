@@ -597,6 +597,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "無法授權您的會話。首先登錄門戶。",
+    "CannotCreateSessionWithDifferentImage": "無法使用與正在執行的工作階段不同的映像檔建立工作階段。",
+    "CannotInitializeClient": "用戶端連線初始化失敗。",
     "ComputeSessionPrepared": "計算會話已準備好",
     "CreatingComputeSession": "正在創建計算會話...",
     "EmptyProject": "空项目",
@@ -606,6 +608,7 @@
     "PleaseReload": "請過一段時間重新加載。",
     "QueryingExistingComputeSession": "正在查詢現有計算會話...",
     "SessionStatusIs": "會話狀態為",
+    "SessionStatusIsWithReload": "工作階段狀態為 {{status}}。請稍後重新載入。",
     "SessionStillPreparing": "會議還在準備中。一段時間後重新加載"
   },
   "environment": {
@@ -1011,6 +1014,8 @@
   "login": {
     "APIEndpointEmpty": "API 端點為空。請指定要登錄的 API 端點。",
     "APIKey": "API 密鑰",
+    "APIMode": "API",
+    "AdvancedSettings": "進階設定",
     "CancelLogin": "取消登錄",
     "ChangePassword": "更改密碼",
     "ClickToUseIAM": "單擊以使用 IAM",
@@ -1042,6 +1047,7 @@
     "PleaseWait": "請等待登錄。",
     "SecretKey": "密鑰",
     "SendChangePasswordEmail": "發送修改密碼郵件",
+    "SessionMode": "工作階段",
     "SignUp": "註冊",
     "SignoutFinished": "註銷完畢。",
     "TooManyAttempt": "登錄嘗試次數過多。登錄嘗試已被阻止一段時間。",

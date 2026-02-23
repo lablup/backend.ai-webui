@@ -1,5 +1,7 @@
 # Sign up and Log in
 
+<a id="sign-up"></a>
+
 ## Sign up
 
 When you launch the WebUI, log in dialog appears. If you haven't signed up
@@ -12,20 +14,28 @@ yet, press the SIGN UP button.
 ![](../images/signup_dialog.png)
 
 
-   ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์และการตั้งค่าปลั๊กอิน อาจไม่อนุญาตให้ผู้ใช้ที่ไม่ระบุตัวตนลงทะเบียน ในกรณีนี้โปรดติดต่อผู้ดูแลระบบของระบบของคุณ
+:::note
+ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์และการตั้งค่าปลั๊กอิน อาจไม่อนุญาตให้ผู้ใช้ที่ไม่ระบุตัวตนลงทะเบียน ในกรณีนี้โปรดติดต่อผู้ดูแลระบบของระบบของคุณ
+:::
 
+:::note
+เพื่อป้องกันไม่ให้ผู้ใช้ที่ไม่หวังดีเดารหัสผ่านของผู้ใช้ รหัสผ่านควรมีความยาวมากกว่า 8 ตัวอักษร และมีอักขระหนึ่งตัวขึ้นไปที่เป็นตัวอักษร, ตัวเลข, และอักขระพิเศษ
+:::
 
-   เพื่อป้องกันไม่ให้ผู้ใช้ที่ไม่หวังดีเดารหัสผ่านของผู้ใช้ รหัสผ่านควรมีความยาวมากกว่า 8 ตัวอักษร และมีอักขระหนึ่งตัวขึ้นไปที่เป็นตัวอักษร, ตัวเลข, และอักขระพิเศษ
+<a id="log-in"></a>
 
 ## Log in
 
 ป้อนID และรหัสผ่านของคุณแล้วกดปุ่ม LOGIN ใน API ENDPOINT ควรป้อน URL ของ Backend.AI Webserver ซึ่งจะทำการส่งต่อคำขอไปยังผู้จัดการ
 
 
-   ขึ้นอยู่กับการติดตั้งและสภาพแวดล้อมการตั้งค่าของ Webserver อาจมีการกำหนดสถานะของ endpoint และไม่สามารถปรับแต่งได้
+:::note
+ขึ้นอยู่กับการติดตั้งและสภาพแวดล้อมการตั้งค่าของ Webserver อาจมีการกำหนดสถานะของ endpoint และไม่สามารถปรับแต่งได้
+:::
 
-
-   Backend.AI เก็บรหัสผ่านของผู้ใช้ไว้เป็นอย่างดีผ่านการแฮชแบบทางเดียว โดยใช้ BCrypt ซึ่งเป็นแฮชรหัสผ่านเริ่มต้นของ BSD ดังนั้นแม้แต่ผู้ดูแลเซิร์ฟเวอร์ก็ไม่สามารถทราบรหัสผ่านของผู้ใช้ได้
+:::note
+Backend.AI เก็บรหัสผ่านของผู้ใช้ไว้เป็นอย่างดีผ่านการแฮชแบบทางเดียว โดยใช้ BCrypt ซึ่งเป็นแฮชรหัสผ่านเริ่มต้นของ BSD ดังนั้นแม้แต่ผู้ดูแลเซิร์ฟเวอร์ก็ไม่สามารถทราบรหัสผ่านของผู้ใช้ได้
+:::
 
 After logging in, you can check the information of the current resource usage in
 the สรุป tab.
@@ -34,6 +44,8 @@ the สรุป tab.
 
 ![](../images/signout_button.png)
 
+
+<a id="when-you-forgot-your-password"></a>
 
 ## เมื่อคุณลืมรหัสผ่านของคุณ
 
@@ -46,14 +58,19 @@ password change feature may be disabled. In this case, contact the
 ![](../images/forgot_password_panel.png)
 
 
-   นี่เป็นฟีเจอร์แบบโมดูลาร์ ดังนั้นการเปลี่ยนรหัสผ่านอาจไม่เป็นไปได้ในบางระบบ
+:::note
+นี่เป็นฟีเจอร์แบบโมดูลาร์ ดังนั้นการเปลี่ยนรหัสผ่านอาจไม่เป็นไปได้ในบางระบบ
+:::
+
+:::warning
+If log in failure occurs more than 10 times consecutively, access
+to the endpoint is temporarily restricted for 20 minutes for security
+reasons. If the access restriction continues on more than 20 minutes, please contact
+your system ผู้ดูแลระบบistrator.
+:::
 
 
-   If log in failure occurs more than 10 times consecutively, access
-   to the endpoint is temporarily restricted for 20 minutes for security
-   reasons. If the access restriction continues on more than 20 minutes, please contact
-   your system ผู้ดูแลระบบistrator.
-
+<a id="sidebar-menus"></a>
 
 ## เมนูแถบด้านข้าง
 

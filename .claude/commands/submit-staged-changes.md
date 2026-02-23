@@ -1,7 +1,7 @@
 ---
 description: Create Jira issue and submit PR for staged changes in one workflow.
 argument-hint: [feat, fix, refactor, style, chore, e2e, docs]
-model: claude-sonnet-4-5
+model: opus
 ---
 
 # Submit Staged Changes

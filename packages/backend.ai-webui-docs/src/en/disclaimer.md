@@ -21,10 +21,10 @@ development by open source community and Lablup Inc.
 All product and company names mentioned herein may be trademarks of their
 respective owners.
 
-| Backend.AI is a registered trademark of Lablup Inc.
-| The copyright for Backend.AI™ is owned by Lablup Inc.
+Backend.AI is a registered trademark of Lablup Inc.
+The copyright for Backend.AI™ is owned by Lablup Inc.
 
-©2015-\ |year| Lablup Inc. All rights reserved.
+©2015-|year| Lablup Inc. All rights reserved.
 
-| Document Version: v\ |version|.\ |version_date|
-| Last Updated (Year/Month/Day): |date|
+Document Version: v|version|.|version_date|
+Last Updated (Year/Month/Day): |date|

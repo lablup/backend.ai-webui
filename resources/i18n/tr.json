@@ -596,6 +596,8 @@
   },
   "eduapi": {
     "CannotAuthorizeSessionByToken": "Oturumunuz yetkilendirilemiyor. Önce portala giriş yapın.",
+    "CannotCreateSessionWithDifferentImage": "Cannot create a session with an image different from any running session.",
+    "CannotInitializeClient": "Failed to initialize the client connection.",
     "ComputeSessionPrepared": "Hesaplama oturumu hazırlandı",
     "CreatingComputeSession": "Hesaplama oturumu oluşturuluyor...",
     "EmptyProject": "BoşProje",
@@ -605,6 +607,7 @@
     "PleaseReload": "Lütfen bir süre sonra yeniden yükleyin.",
     "QueryingExistingComputeSession": "Mevcut bilgi işlem oturumu sorgulanıyor...",
     "SessionStatusIs": "Oturum durumu (şimdiki değeri)",
+    "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
     "SessionStillPreparing": "Oturum hala hazırlanıyor. Bir süre sonra yeniden yükle"
   },
   "environment": {
@@ -1010,6 +1013,8 @@
   "login": {
     "APIEndpointEmpty": "API Uç Noktası boş. Lütfen oturum açmak için API uç noktasını belirtin.",
     "APIKey": "API Anahtarı",
+    "APIMode": "API",
+    "AdvancedSettings": "Gelişmiş",
     "CancelLogin": "Girişi İptal Et",
     "ChangePassword": "Şifre değiştir",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
@@ -1041,6 +1046,7 @@
     "PleaseWait": "Giriş yapmak için lütfen bekleyiniz.",
     "SecretKey": "Gizli anahtar",
     "SendChangePasswordEmail": "Şifre değiştirme e-postası gönder",
+    "SessionMode": "Oturum",
     "SignUp": "kaydol",
     "SignoutFinished": "Oturum kapatma işlemi tamamlandı.",
     "TooManyAttempt": "Çok fazla giriş denemesi oldu. Giriş denemeleri bir süreliğine engellendi.",

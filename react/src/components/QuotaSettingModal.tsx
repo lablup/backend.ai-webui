@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { QuotaSettingModalFragment$key } from '../__generated__/QuotaSettingModalFragment.graphql';
 import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModalSetMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';

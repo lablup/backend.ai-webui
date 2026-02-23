@@ -1,5 +1,10 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
+import { backendaiOptions } from '../global-stores';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -126,8 +131,7 @@ const SettingAtomFamily = atomFamily((param: string) => {
         ...prev,
         [key]: newValue,
       });
-      // @ts-ignore
-      globalThis.backendaioptions?.set?.(name, newValue, namespace, true);
+      backendaiOptions?.set?.(name, newValue, namespace, true);
     },
   );
 });
@@ -145,9 +149,13 @@ document?.addEventListener('backendaiwebui.settings:set', (e: any) => {
 document?.addEventListener('backendaiwebui.settings:delete', (e: any) => {
   const { detail } = e;
   if (detail.namespace && detail.name) {
-    localStorage.removeItem(
-      'backendaiwebui.settings.' + detail.namespace + '.' + detail.name,
-    );
-    // jotaiStore.set(SettingAtomFamily(detail.namespace + '.' + detail.name), null);
+    const key = detail.namespace + '.' + detail.name;
+    // localStorage removal is now handled directly in BackendAISettingsStore.delete().
+    // Trigger jotai reactivity so React components re-render.
+    const prev = jotaiStore.get(settingAtom);
+    jotaiStore.set(settingAtom, {
+      ...prev,
+      ['backendaiwebui.settings.' + key]: null,
+    });
   }
 });

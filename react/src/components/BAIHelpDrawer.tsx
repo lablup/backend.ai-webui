@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
 import { ExportOutlined } from '@ant-design/icons';
 import { Button, Drawer, type DrawerProps } from 'antd';
 import React from 'react';
