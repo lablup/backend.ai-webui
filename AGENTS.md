@@ -127,7 +127,13 @@ Production build (`pnpm run build`) runs these steps sequentially:
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
     - Do NOT use `git commit`, `git push`, `git checkout -b` directly
     - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`
-- If MCP authentication fails, re-authenticate and retry before proceeding.
+- **MCP Authentication Failure Handling**:
+  - If an MCP tool call fails with an authentication/connection error, retry **at most once**.
+  - If the retry also fails, do NOT enter an infinite retry loop. Instead, inform the user that the MCP connection appears to be broken and suggest:
+    1. Run `/mcp` and select reconnect for the failing server
+    2. If reconnect fails, restart Claude Code (the stored tokens are usually still valid)
+  - This is a known issue where OAuth tokens are stored correctly but the session-level MCP connection state becomes stale (see [claude-code#10250](https://github.com/anthropics/claude-code/issues/10250)). A restart resolves it because Claude Code reads the persisted tokens on startup.
+  - When the MCP connection is unavailable, proceed with alternative tools if possible (e.g., `gh` CLI for GitHub operations) rather than blocking the entire workflow.
 - Follow Graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
 
 ### Configuration
@@ -177,77 +183,28 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date
 - Backend.AI client library (`src/lib/backend.ai-client-esm.ts`) is aliased in Craco config
 
-## GitHub Copilot Custom Instructions
+## Core Guidelines
 
-This repository includes custom instructions for GitHub Copilot to provide more accurate code reviews and suggestions. These instructions are automatically applied when using GitHub Copilot on github.com, VS Code, and Visual Studio. When writing new code or refactoring, please make sure to refer to these instructions.
+### React Essentials (detail: `.github/instructions/react.instructions.md`, auto-loaded via applyTo)
 
-### Instruction Files
+- Use `'use memo'` directive at the top of component bodies for React Compiler optimization. Never remove existing `'use memo'`.
+- Use `BAIButton` `action` prop for async operations (auto loading state). Prefer BAI components over Ant Design equivalents.
+- Follow Relay fragment architecture: query orchestrator (useLazyLoadQuery) + fragment component (useFragment).
+- Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
+- Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
+- Use Jotai for global state, Relay for GraphQL state.
 
-Custom instructions are located in the `.github/` directory:
+### On-Demand Skills (loaded only when needed)
 
-- **`.github/copilot-instructions.md`** - Repository-wide guidelines
+- **Storybook**: `storybook-guide` skill (CSF 3, meta config, story patterns, checklists)
+- **i18n**: `i18n-guide` skill (translation keys, casing rules, language-specific guidelines)
+- **Documentation**: `docs-guide` skill (user manual structure, terminology, multilingual rules)
+- **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 
-  - General code review principles
-  - Security best practices (OWASP Top 10)
-  - TypeScript conventions
-  - Architecture awareness (React application)
-  - Git workflow and commit message format
-  - Testing and performance guidelines
+### Auto-Applied Instructions (loaded when editing matching files)
 
-- **`.github/instructions/react.instructions.md`** - React component guidelines
-
-  - React Compiler optimization (`'use memo'` directive)
-  - React composability principles
-  - GraphQL/Relay patterns (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`)
-  - Backend.AI UI component library (`BAI*` components preferred over Ant Design)
-  - Custom utilities (`useFetchKey`, `BAIUnmountAfterClose`)
-  - Error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`)
-  - Jotai for global state management
-  - Ant Design usage patterns (prefer `App.useApp()` for modals)
-
-- **`.github/instructions/i18n.instructions.md`** - Internationalization guidelines
-  - Translation key naming conventions
-    - Main WebUI: `category.key` format
-    - Backend.AI UI package: `comp:ComponentName.key` format
-  - Placeholder preservation
-  - Language-specific guidelines (Korean, Japanese, Chinese)
-  - Backend.AI platform context awareness
-
-- **`.github/instructions/storybook.instructions.md`** - Storybook story guidelines
-  - CSF 3 format with TypeScript
-  - Meta configuration (title, tags, parameters, argTypes)
-  - Story patterns (args-based, render function, Relay fragment)
-  - Documentation best practices
-  - Story organization and naming conventions
-  - Complete templates and checklists
-
-### How It Works
-
-- GitHub Copilot automatically applies these instructions when working in this repository
-- Instructions use path-based targeting with `applyTo` frontmatter:
-  - React instructions apply to `react/**/*.tsx` and `react/**/*.ts`
-  - i18n instructions apply to translation JSON files and all TypeScript/TSX files
-- The instructions help Copilot provide more contextually relevant suggestions and code reviews
-
-### Key Guidelines for AI Assistants
-
-When reviewing or writing code:
-
-1. **React Components**: Always prefer `'use memo'` directive over manual `useMemo`/`useCallback`
-2. **UI Components**: Use `BAI*` components from `backend.ai-ui` package instead of Ant Design equivalents
-3. **i18n**: Never hard-code user-facing text; always use translation functions with proper key formats
-4. **Composability**: Check for proper component composition, avoid props drilling
-5. **Custom Hooks**: Verify `useFetchKey` and `BAIUnmountAfterClose` are used where appropriate
-6. **Error Handling**: Use pre-defined error boundaries instead of creating new ones
-7. **Storybook Stories**: Follow CSF 3 format, include `tags: ['autodocs']`, document with argTypes and descriptions
-
-## Other guidelines
-
-Read and follow below guides:
-
-- @guides-for-ai/react-component-guide.md
-- @.github/copilot-instructions.md
-- @.github/instructions/react.instructions.md
-- @.github/instructions/i18n.instructions.md
-- @.github/instructions/storybook.instructions.md
-- @.github/instructions/docs.instructions.md
+- `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
+- `storybook.instructions.md` → `packages/backend.ai-ui/**/*.stories.tsx,packages/backend.ai-ui/**/*.stories.ts`
+- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-guide` skill for tsx/ts context)
+- `e2e.instructions.md` → `e2e/**/*.ts`
+- `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
