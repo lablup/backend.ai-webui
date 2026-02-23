@@ -1,10 +1,19 @@
+import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Space, Card } from 'antd';
+import { Card } from 'antd';
 
 /**
- * BAIText extends Ant Design's Typography.Text with additional features like monospace font support
- * and CSS-based ellipsis with Safari compatibility for single and multi-line text truncation.
+ * BAIText extends Ant Design's Typography.Text with additional features
+ * for better text handling and customization.
+ *
+ * Key features:
+ * - Monospace font support via `monospace` prop
+ * - CSS-based ellipsis implementation with Safari compatibility
+ * - Proper tooltip integration when text is truncated
+ * - Copy functionality with customizable content
+ *
+ * @see BAIText.tsx for implementation details
  */
 const meta: Meta<typeof BAIText> = {
   title: 'Text/BAIText',
@@ -14,45 +23,153 @@ const meta: Meta<typeof BAIText> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'BAIText is an enhanced text component that extends Ant Design Typography.Text with support for monospace fonts and improved ellipsis handling with Safari compatibility.',
+        component: `
+**BAIText** extends [Ant Design Typography.Text](https://ant.design/components/typography) with enhanced text handling features.
+
+## BAI-Specific Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| \`monospace\` | \`boolean\` | \`false\` | Use monospace font family |
+| \`ellipsis\` | \`boolean \\| EllipsisConfig\` | \`false\` | Custom CSS-based ellipsis with Safari compatibility |
+
+## BAI-Specific Features
+| Feature | Description |
+|---------|-------------|
+| Monospace Font | Simple boolean prop to use monospace font family |
+| CSS-based Ellipsis | Re-implemented ellipsis using CSS with Safari compatibility |
+| Multi-line Truncation | Supports multi-line ellipsis using \`-webkit-line-clamp\` |
+| Tooltip Integration | Automatically shows tooltip when text is truncated |
+| Expandable Text | Built-in expand/collapse functionality for truncated text |
+| Copy with Ellipsis | Copy functionality works correctly with ellipsis |
+
+## Ellipsis Config
+\`\`\`typescript
+interface EllipsisConfig {
+  rows?: number;          // Number of lines before truncation (default: 1)
+  tooltip?: boolean | TooltipProps;  // Show tooltip on hover
+  expandable?: boolean;   // Enable expand/collapse functionality
+  onExpand?: (e, info) => void;  // Callback when expanded/collapsed
+}
+\`\`\`
+
+For all other props, refer to [Ant Design Typography.Text](https://ant.design/components/typography).
+        `,
       },
     },
   },
   argTypes: {
+    children: {
+      control: false,
+      description: 'The text content to display',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
     type: {
-      description: 'Text type for semantic styling',
       control: { type: 'select' },
       options: ['secondary', 'success', 'warning', 'danger', undefined],
+      description: 'Text type for semantic styling',
+      table: {
+        type: { summary: "'secondary' | 'success' | 'warning' | 'danger'" },
+      },
     },
     monospace: {
-      description: 'Use monospace font family',
       control: { type: 'boolean' },
+      description:
+        'Use monospace font family (BAI-specific prop for code, paths, etc.)',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     ellipsis: {
-      description:
-        'Enable CSS-based ellipsis with Safari compatibility. Can be boolean or config object with rows and tooltip properties',
       control: { type: 'boolean' },
+      description:
+        'Enable CSS-based ellipsis with Safari compatibility (BAI-specific implementation). Can be boolean or EllipsisConfig object with rows, tooltip, expandable options',
+      table: {
+        type: { summary: 'boolean | EllipsisConfig' },
+        defaultValue: { summary: 'false' },
+      },
     },
     copyable: {
-      description: 'Enable copy functionality',
       control: { type: 'boolean' },
+      description: 'Enable copy-to-clipboard functionality',
+      table: {
+        type: { summary: 'boolean | CopyConfig' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    editable: {
+      control: false,
+      description: 'Enable inline editing functionality',
+      table: {
+        type: { summary: 'boolean | EditConfig' },
+        defaultValue: { summary: 'false' },
+      },
     },
     strong: {
-      description: 'Bold text',
       control: { type: 'boolean' },
+      description: 'Bold text',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     italic: {
-      description: 'Italic text',
       control: { type: 'boolean' },
+      description: 'Italic text',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     underline: {
-      description: 'Underlined text',
       control: { type: 'boolean' },
+      description: 'Underlined text',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     delete: {
-      description: 'Strikethrough text',
       control: { type: 'boolean' },
+      description: 'Strikethrough text',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    mark: {
+      control: { type: 'boolean' },
+      description: 'Highlighted/marked text with background color',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    code: {
+      control: { type: 'boolean' },
+      description: 'Inline code styling with background and border',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    keyboard: {
+      control: { type: 'boolean' },
+      description: 'Keyboard shortcut styling with shadow effect',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disabled state with reduced opacity',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
   },
 };
@@ -78,13 +195,13 @@ export const Default: Story = {
 export const Types: Story = {
   name: 'SemanticTypes',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText>Default Text</BAIText>
       <BAIText type="secondary">Secondary Text</BAIText>
       <BAIText type="success">Success Text</BAIText>
       <BAIText type="warning">Warning Text</BAIText>
       <BAIText type="danger">Danger Text</BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -98,7 +215,7 @@ export const Types: Story = {
 export const Styles: Story = {
   name: 'TextStyles',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText strong>Strong Text</BAIText>
       <BAIText italic>Italic Text</BAIText>
       <BAIText underline>Underlined Text</BAIText>
@@ -106,7 +223,7 @@ export const Styles: Story = {
       <BAIText strong italic underline>
         Combined Styles
       </BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -120,7 +237,7 @@ export const Styles: Story = {
 export const Monospace: Story = {
   name: 'MonospaceFont',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText>Regular: 1234567890 ABCDEFG</BAIText>
       <BAIText monospace>Monospace: 1234567890 ABCDEFG</BAIText>
       <BAIText monospace type="secondary">
@@ -129,7 +246,7 @@ export const Monospace: Story = {
       <BAIText monospace copyable>
         npm install backend.ai-ui
       </BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -144,7 +261,7 @@ export const Monospace: Story = {
 export const Copyable: Story = {
   name: 'CopyableText',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText copyable>Click icon to copy this text</BAIText>
       <BAIText copyable={{ text: 'Custom copied text!' }}>
         Copy custom text
@@ -160,7 +277,7 @@ export const Copyable: Story = {
       >
         Text with custom copy icons
       </BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -175,7 +292,7 @@ export const Copyable: Story = {
 export const SingleLineEllipsis: Story = {
   name: 'SingleLineEllipsis',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <BAIFlex direction="column" style={{ width: '100%' }}>
       <Card size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ tooltip: true }}>
           This is a very long text that will be truncated with ellipsis when it
@@ -192,7 +309,7 @@ export const SingleLineEllipsis: Story = {
           user@example.com with a very long email address that overflows
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -207,7 +324,7 @@ export const SingleLineEllipsis: Story = {
 export const MultiLineEllipsis: Story = {
   name: 'MultiLineEllipsis',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <BAIFlex direction="column" style={{ width: '100%' }}>
       <Card size="small" style={{ width: 400 }}>
         <BAIText ellipsis={{ rows: 2, tooltip: true }}>
           This is a longer text that spans multiple lines. When it exceeds the
@@ -224,7 +341,7 @@ export const MultiLineEllipsis: Story = {
           aliquip ex ea commodo consequat.
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -239,7 +356,7 @@ export const MultiLineEllipsis: Story = {
 export const EllipsisWithCustomTooltip: Story = {
   name: 'CustomTooltip',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <BAIFlex direction="column" style={{ width: '100%' }}>
       <Card size="small" style={{ width: 300 }}>
         <BAIText
           ellipsis={{
@@ -267,7 +384,7 @@ export const EllipsisWithCustomTooltip: Story = {
           two rows
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -301,7 +418,7 @@ export const EllipsisDisabledTooltip: Story = {
 export const ExpandableEllipsis: Story = {
   name: 'ExpandableEllipsis',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <BAIFlex direction="column" style={{ width: '100%' }}>
       <Card size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ rows: 1, expandable: true }}>
           This is a long text that will be truncated with ellipsis. Click
@@ -332,7 +449,7 @@ export const ExpandableEllipsis: Story = {
           aliquip ex ea commodo consequat.
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -347,7 +464,7 @@ export const ExpandableEllipsis: Story = {
 export const ExpandableWithOtherFeatures: Story = {
   name: 'ExpandableWithCombinedFeatures',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <BAIFlex direction="column" style={{ width: '100%' }}>
       <Card size="small" style={{ width: 350 }}>
         <BAIText
           ellipsis={{ rows: 1, expandable: true, tooltip: true }}
@@ -376,7 +493,7 @@ export const ExpandableWithOtherFeatures: Story = {
           configuration, then try again.
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -391,7 +508,7 @@ export const ExpandableWithOtherFeatures: Story = {
 export const Interactive: Story = {
   name: 'InteractiveText',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText
         editable={{
           onChange: (str) => console.log('Content changed:', str),
@@ -415,7 +532,7 @@ export const Interactive: Story = {
       >
         Both editable and copyable
       </BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -429,7 +546,7 @@ export const Interactive: Story = {
 export const Keyboard: Story = {
   name: 'KeyboardShortcuts',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <div>
         <BAIText keyboard>Ctrl</BAIText> + <BAIText keyboard>C</BAIText>
       </div>
@@ -440,7 +557,7 @@ export const Keyboard: Story = {
       <div>
         Press <BAIText keyboard>Enter</BAIText> to submit
       </div>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -454,7 +571,7 @@ export const Keyboard: Story = {
 export const Code: Story = {
   name: 'CodeBlocks',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText code>const greeting = &quot;Hello World&quot;;</BAIText>
       <BAIText code copyable>
         npm install backend.ai-ui
@@ -465,7 +582,7 @@ export const Code: Story = {
       <div>
         Run <BAIText code>pnpm run dev</BAIText> to start development server
       </div>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -479,7 +596,7 @@ export const Code: Story = {
 export const Mark: Story = {
   name: 'HighlightedText',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText mark>Highlighted text</BAIText>
       <BAIText mark type="danger">
         Important highlighted warning
@@ -487,7 +604,7 @@ export const Mark: Story = {
       <div>
         This is a <BAIText mark>highlighted</BAIText> word in a sentence.
       </div>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -501,7 +618,7 @@ export const Mark: Story = {
 export const Disabled: Story = {
   name: 'DisabledState',
   render: () => (
-    <Space direction="vertical">
+    <BAIFlex direction="column">
       <BAIText disabled>Disabled text</BAIText>
       <BAIText disabled type="secondary">
         Disabled secondary text
@@ -509,7 +626,7 @@ export const Disabled: Story = {
       <BAIText disabled copyable>
         Disabled with copyable (copyable still works)
       </BAIText>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
@@ -523,7 +640,7 @@ export const Disabled: Story = {
 export const RealWorldExamples: Story = {
   name: 'RealWorldUsage',
   render: () => (
-    <Space direction="vertical" style={{ width: '100%' }} size="large">
+    <BAIFlex direction="column" style={{ width: '100%' }} gap="lg">
       <Card title="File Path" size="small" style={{ width: 400 }}>
         <BAIText monospace ellipsis={{ tooltip: true }} copyable>
           /home/user/projects/backend.ai-webui/react/src/components/AgentStats.tsx
@@ -627,7 +744,7 @@ export const RealWorldExamples: Story = {
           very long expandable content that is also marked as deleted
         </BAIText>
       </Card>
-    </Space>
+    </BAIFlex>
   ),
   parameters: {
     docs: {
