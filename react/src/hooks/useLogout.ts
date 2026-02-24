@@ -38,11 +38,22 @@ async function logoutBackendAIClient() {
 }
 
 /**
+ * Session storage key used to signal that the current page load follows
+ * an intentional logout. The login orchestration hook reads and clears
+ * this flag to skip silent re-login and show the login panel directly.
+ *
+ * The flag is written AFTER clearLoginStorage() (which resets sessionStorage)
+ * so that it survives into the next page load triggered by location.reload().
+ */
+export const INTENTIONAL_LOGOUT_FLAG = 'backendai_intentional_logout';
+
+/**
  * Perform the full logout flow (framework-agnostic core):
  * 1. Delete recent project group info
  * 2. Show "cleaning up" notification
  * 3. Logout backendaiclient (SESSION mode)
  * 4. Clear localStorage/sessionStorage
+ * 5. Set intentional-logout flag so the next page load skips auto-login
  *
  * Returns true if cleanup was performed, false if there was no client to
  * clean up.
@@ -73,6 +84,13 @@ async function performLogoutCleanup(notificationMessage: string) {
 
     await logoutBackendAIClient();
     clearLoginStorage();
+
+    // Set the flag AFTER clearLoginStorage() so it is not erased by the
+    // sessionStorage.clear() call inside clearLoginStorage().  The flag
+    // persists across the upcoming location.reload() and is consumed by
+    // useLoginOrchestration to suppress the silent re-login attempt.
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+
     return true;
   }
   return false;
