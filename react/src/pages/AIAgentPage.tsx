@@ -252,7 +252,9 @@ const AIAgentPage: React.FC = () => {
                   agent={agent}
                   isOverridden={isOverridden}
                   onEdit={handleEdit}
-                  onDelete={agent.isCustom && !isOverridden ? handleDelete : undefined}
+                  onDelete={
+                    agent.isCustom && !isOverridden ? handleDelete : undefined
+                  }
                   onReset={isOverridden ? handleReset : undefined}
                 />
               </List.Item>
