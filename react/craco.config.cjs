@@ -34,19 +34,36 @@ module.exports = {
       {
         directory: projectRoot,
         publicPath: '/',
-        watch: true,
+        // Disable file watching on the static directory to prevent full page
+        // reloads when static assets (resources/, dist/, manifest/) change.
+        // HMR handles React component updates; static files are served as-is.
+        watch: false,
       },
     ];
 
+    // Only watch config.toml and index.html for full reloads when they change.
+    // Exclude resources/, dist/, and manifest/ because changes to those files
+    // (e.g. relay-generated files, CSS assets) should not cause full reloads.
+    // The __generated__/ directory is excluded to prevent relay compiler watch
+    // mode from triggering unnecessary full page reloads during development.
     devServerConfig.watchFiles = {
-      paths: [
-        '../index.html',
-        '../config.toml',
-        '../manifest/**/*',
-        '../dist/**/*',
-        '../resources/**/*',
-      ],
+      paths: ['../index.html', '../config.toml'],
+      options: {
+        // Ignore relay-generated files and static assets to prevent full reloads
+        ignored: [
+          '**/src/__generated__/**',
+          '**/node_modules/**',
+          '**/dist/**',
+          '**/resources/**',
+          '**/manifest/**',
+        ],
+      },
     };
+
+    // Enable HMR explicitly and disable liveReload to prevent full page reloads
+    // when HMR updates can handle the change.
+    devServerConfig.hot = true;
+    devServerConfig.liveReload = false;
 
     // Override deprecated middleware options with setupMiddlewares
     const originalOnBefore = devServerConfig.onBeforeSetupMiddleware;
@@ -198,6 +215,12 @@ module.exports = {
               encoding: 'utf-8',
             });
 
+            // Use templateContent for the initial template content injection.
+            // The `template` path is also provided so HtmlWebpackPlugin can
+            // track the file for changes. Note: templateContent takes precedence
+            // over template when both are specified; the template path here is
+            // used only as a reference for webpack's dependency tracking to
+            // enable proper HMR behavior when the HTML file changes.
             plugin = new HtmlWebpackPlugin({
               inject: true,
               template: webuiIndexHtml,
@@ -229,6 +252,26 @@ module.exports = {
         return plugin;
       });
       paths.appHtml = webuiIndexHtml;
+
+      // Configure webpack's own file watcher to ignore static assets that are
+      // served directly and don't need to be in the webpack module graph.
+      // This prevents webpack from triggering unnecessary rebuilds (and
+      // potential HMR fallback to full reload) when static files change.
+      if (env === 'development') {
+        webpackConfig.watchOptions = {
+          ...webpackConfig.watchOptions,
+          ignored: [
+            // Ignore node_modules (standard exclusion for performance)
+            '**/node_modules/**',
+            // Ignore static assets that are served directly by webpack-dev-server
+            // and are not part of the webpack module graph. These don't need
+            // webpack to watch them; the dev server serves them as static files.
+            path.resolve(__dirname, '../dist/**'),
+            path.resolve(__dirname, '../resources/**'),
+            path.resolve(__dirname, '../manifest/**'),
+          ],
+        };
+      }
 
       // Remove ModuleScopePlugin to allow imports outside react/src.
       // Needed for: backend.ai-ui package, backend.ai-client-esm (via alias to dist/lib/)
