@@ -64,36 +64,43 @@ export type MenuGroupName =
   | 'metrics'
   | 'mlops';
 
-export type MenuKeys =
+/**
+ * Single source of truth for all valid menu keys.
+ * MenuKeys type is derived from this array.
+ */
+export const VALID_MENU_KEYS = [
   // generalMenu keys
-  | 'start'
-  | 'dashboard'
-  | 'summary' // 'alias to dashboard' for backward compatibility
-  | 'session'
-  | 'job' // 'alias to session' for backward compatibility
-  | 'serving'
-  | 'model-store'
-  | 'ai-agent'
-  | 'chat'
-  | 'data'
-  | 'my-environment'
-  | 'agent-summary'
-  | 'statistics'
-  | 'pipeline'
+  'start',
+  'dashboard',
+  'summary', // alias to dashboard for backward compatibility
+  'session',
+  'job', // alias to session for backward compatibility
+  'serving',
+  'model-store',
+  'ai-agent',
+  'chat',
+  'data',
+  'my-environment',
+  'agent-summary',
+  'statistics',
+  'pipeline',
   // adminMenu keys
-  | 'admin-session'
-  | 'credential'
-  | 'environment'
-  | 'scheduler'
-  | 'resource-policy'
-  | 'reservoir'
+  'admin-session',
+  'credential',
+  'environment',
+  'scheduler',
+  'resource-policy',
+  'reservoir',
   // superAdminMenu keys
-  | 'admin-dashboard'
-  | 'agent'
-  | 'settings'
-  | 'maintenance'
-  | 'branding'
-  | 'information';
+  'admin-dashboard',
+  'agent',
+  'settings',
+  'maintenance',
+  'branding',
+  'information',
+] as const;
+
+export type MenuKeys = (typeof VALID_MENU_KEYS)[number];
 
 // Convert menu key to URL path
 // Most keys map directly to /${key}, with exceptions for backward compatibility
