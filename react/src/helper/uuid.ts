@@ -10,7 +10,10 @@
  * Falls back to `crypto.getRandomValues()` for plain HTTP origins where
  * `crypto.randomUUID()` is not available.
  *
+ * Both paths use cryptographically secure random number generation.
+ *
  * @returns A UUID v4 string in the format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+ * @throws {Error} If neither `crypto.randomUUID` nor `crypto.getRandomValues` is available
  */
 export function generateUUID(): string {
   if (
@@ -18,6 +21,14 @@ export function generateUUID(): string {
     typeof crypto.randomUUID === 'function'
   ) {
     return crypto.randomUUID();
+  }
+  if (
+    typeof crypto === 'undefined' ||
+    typeof crypto.getRandomValues !== 'function'
+  ) {
+    throw new Error(
+      'generateUUID requires crypto.randomUUID or crypto.getRandomValues',
+    );
   }
   // Fallback using crypto.getRandomValues (available in all contexts including HTTP)
   return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) => {
