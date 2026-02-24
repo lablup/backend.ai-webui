@@ -33,6 +33,33 @@ interface NavEntry {
   path: string;
 }
 
+// ── Anchor resolution types ────────────────────────────────────
+
+export interface AnchorEntry {
+  /** Chapter slug that owns this anchor */
+  chapterSlug: string;
+  /** Nav path of the source file (e.g., "vfolder/vfolder.md") */
+  filePath: string;
+  /** Source: heading-derived or explicit <a id> tag */
+  source: 'heading' | 'explicit';
+  /** The final ID as it appears in the rendered HTML */
+  resolvedId: string;
+}
+
+export interface AnchorRegistry {
+  /** Maps raw anchor ID (as written in markdown) to its entries */
+  anchors: Map<string, AnchorEntry[]>;
+  /** Set of all resolved IDs for quick "already resolved?" checks */
+  resolvedIds: Set<string>;
+}
+
+export interface LinkDiagnostic {
+  type: 'broken-link' | 'duplicate-anchor' | 'ambiguous-link';
+  anchorId: string;
+  sourceFile: string;
+  message: string;
+}
+
 /**
  * Rewrite image paths for web preview.
  * Resolves relative image paths from the md file's directory to absolute URL paths
@@ -70,13 +97,210 @@ function rewriteImagePathsForWeb(
 }
 
 /**
- * Process cross-reference links for web preview.
+ * Fix legacy malformed cross-reference links where HTML tags leaked into href.
+ * This handles a narrow edge case from RST-to-Markdown migration.
  */
-function processCrossReferencesWeb(html: string, chapterSlug: string): string {
+function fixMalformedCrossReferences(html: string, chapterSlug: string): string {
   return html.replace(
     /href="#([^"]*)<([^>]+)>[^"]*"/g,
     (_, _text, anchor) => `href="#${chapterSlug}-${slugify(anchor)}"`,
   );
+}
+
+// ── Anchor resolution functions ────────────────────────────────
+
+interface RenderedChapter {
+  chapter: Chapter;
+  filePath: string;
+}
+
+/**
+ * Build a global anchor registry from rendered chapters.
+ * Uses actual heading IDs from the Marked renderer (guarantees ID accuracy)
+ * and extracts explicit <a id="..."> anchors from rendered HTML.
+ */
+function buildAnchorRegistryFromRendered(
+  rendered: RenderedChapter[],
+): AnchorRegistry {
+  const anchors = new Map<string, AnchorEntry[]>();
+  const resolvedIds = new Set<string>();
+
+  const addEntry = (rawId: string, entry: AnchorEntry) => {
+    const existing = anchors.get(rawId) ?? [];
+    existing.push(entry);
+    anchors.set(rawId, existing);
+    resolvedIds.add(entry.resolvedId);
+  };
+
+  for (const { chapter, filePath } of rendered) {
+    // Register headings using IDs from the Marked renderer (already accurate)
+    for (const heading of chapter.headings) {
+      resolvedIds.add(heading.id);
+
+      // Derive the raw slug by stripping the chapter-slug prefix
+      const prefix = chapter.slug + '-';
+      const rawSlug = heading.id.startsWith(prefix)
+        ? heading.id.slice(prefix.length)
+        : heading.id;
+
+      addEntry(rawSlug, {
+        chapterSlug: chapter.slug,
+        filePath,
+        source: 'heading',
+        resolvedId: heading.id,
+      });
+    }
+
+    // Extract explicit <a ... id="..."> anchors from rendered HTML
+    const explicitRegex = /<a\s+[^>]*?\bid="([^"]+)"[^>]*>/g;
+    let match;
+    while ((match = explicitRegex.exec(chapter.htmlContent)) !== null) {
+      const anchorId = match[1];
+      // Skip heading IDs (already registered above)
+      if (resolvedIds.has(anchorId)) continue;
+
+      addEntry(anchorId, {
+        chapterSlug: chapter.slug,
+        filePath,
+        source: 'explicit',
+        resolvedId: anchorId,
+      });
+      resolvedIds.add(anchorId);
+    }
+  }
+
+  return { anchors, resolvedIds };
+}
+
+/**
+ * Detect duplicate anchors across different chapters and record diagnostics.
+ */
+function detectDuplicateAnchors(
+  registry: AnchorRegistry,
+  diagnostics: LinkDiagnostic[],
+): void {
+  for (const [anchorId, entries] of registry.anchors) {
+    const chaptersWithExplicit = [
+      ...new Set(
+        entries.filter((e) => e.source === 'explicit').map((e) => e.filePath),
+      ),
+    ];
+    if (chaptersWithExplicit.length > 1) {
+      diagnostics.push({
+        type: 'duplicate-anchor',
+        anchorId,
+        sourceFile: chaptersWithExplicit.join(', '),
+        message: `Duplicate explicit anchor <a id="${anchorId}"> in: ${chaptersWithExplicit.join(', ')}`,
+      });
+    }
+  }
+}
+
+/**
+ * Rewrite fragment-only links (#anchor) using the global anchor registry.
+ *
+ * Resolution order for each href="#anchorId":
+ * 1. If anchorId is already a resolved ID (e.g., chapter-prefixed heading ID) → skip
+ * 2. Look up anchorId in registry
+ * 3. Prefer entries in the current chapter (same-page priority)
+ * 4. For cross-chapter links:
+ *    - single-page mode: rewrite to #resolvedId
+ *    - multi-page mode: rewrite to ./targetChapter.html#resolvedId
+ */
+function rewriteCrossPageLinks(
+  html: string,
+  currentChapterSlug: string,
+  registry: AnchorRegistry,
+  diagnostics: LinkDiagnostic[],
+  sourceFile: string,
+  multiPage: boolean = false,
+): string {
+  const reportedAnchors = new Set<string>();
+  return html.replace(/href="#([^"]+)"/g, (fullMatch, anchorId: string) => {
+    // Already a resolved ID (e.g., heading hash-links from the renderer) → skip
+    if (registry.resolvedIds.has(anchorId)) {
+      return fullMatch;
+    }
+
+    const entries = registry.anchors.get(anchorId);
+    if (!entries || entries.length === 0) {
+      if (!reportedAnchors.has(anchorId)) {
+        reportedAnchors.add(anchorId);
+        diagnostics.push({
+          type: 'broken-link',
+          anchorId,
+          sourceFile,
+          message: `No matching anchor found for #${anchorId}`,
+        });
+      }
+      return fullMatch;
+    }
+
+    // Prefer entries in the current chapter (same-page priority)
+    const sameChapter = entries.filter(
+      (e) => e.chapterSlug === currentChapterSlug,
+    );
+    if (sameChapter.length > 0) {
+      // Explicit anchors keep their raw ID which already works in-page
+      const explicit = sameChapter.find((e) => e.source === 'explicit');
+      if (explicit) return fullMatch;
+      // Heading-only: rewrite to chapter-prefixed resolved ID
+      return `href="#${sameChapter[0].resolvedId}"`;
+    }
+
+    // Cross-chapter link — resolve target first so diagnostic is accurate
+    const targetExplicit = entries.find((e) => e.source === 'explicit');
+    const target = targetExplicit ?? entries[0];
+
+    const uniqueChapters = [...new Set(entries.map((e) => e.chapterSlug))];
+    if (uniqueChapters.length > 1 && !reportedAnchors.has(anchorId)) {
+      reportedAnchors.add(anchorId);
+      diagnostics.push({
+        type: 'ambiguous-link',
+        anchorId,
+        sourceFile,
+        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(', ')}. Resolved to: ${target.chapterSlug}`,
+      });
+    }
+
+    if (multiPage) {
+      return `href="./${target.chapterSlug}.html#${target.resolvedId}"`;
+    }
+
+    // Single-page mode: explicit <a id> tags are all in one page, link works as-is
+    if (target.source === 'explicit') {
+      return fullMatch;
+    }
+    return `href="#${target.resolvedId}"`;
+  });
+}
+
+/**
+ * Log anchor resolution diagnostics to the console.
+ */
+function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
+  const broken = diagnostics.filter((d) => d.type === 'broken-link');
+  const duplicates = diagnostics.filter((d) => d.type === 'duplicate-anchor');
+  const ambiguous = diagnostics.filter((d) => d.type === 'ambiguous-link');
+
+  if (duplicates.length > 0) {
+    console.warn(`\n⚠ Duplicate anchors (${duplicates.length}):`);
+    for (const d of duplicates) {
+      console.warn(`  ${d.message}`);
+    }
+  }
+  if (broken.length > 0) {
+    console.warn(`\n⚠ Broken links (${broken.length}):`);
+    for (const d of broken) {
+      console.warn(`  [${d.sourceFile}] #${d.anchorId}`);
+    }
+  }
+  if (ambiguous.length > 0) {
+    console.log(`\nℹ Ambiguous links (${ambiguous.length}):`);
+    for (const d of ambiguous) {
+      console.log(`  [${d.sourceFile}] ${d.message}`);
+    }
+  }
 }
 
 /**
@@ -167,12 +391,15 @@ export async function processMarkdownFilesForWeb(
   version: string,
   config?: ResolvedDocConfig,
 ): Promise<Chapter[]> {
-  const chapters: Chapter[] = [];
+  const diagnostics: LinkDiagnostic[] = [];
   let chapterIndex = 0;
 
   const pathFallbacks = config?.pathFallbacks ?? {};
   const admonitionTitles = config?.admonitionTitles;
   const figureLabels = config?.figureLabels;
+
+  // ── Pass 1: Render all chapters to HTML ──────────────────────
+  const rendered: RenderedChapter[] = [];
 
   for (const nav of navigation) {
     let mdPath: string;
@@ -202,18 +429,39 @@ export async function processMarkdownFilesForWeb(
     const marked = new Marked();
     marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang, figureLabels }) });
 
-    let htmlContent = await marked.parse(markdown);
-    htmlContent = processCrossReferencesWeb(htmlContent, chapterSlug);
+    const htmlContent = await marked.parse(markdown);
 
-    chapters.push({
-      title: nav.title,
-      slug: chapterSlug,
-      htmlContent,
-      headings,
+    rendered.push({
+      chapter: { title: nav.title, slug: chapterSlug, htmlContent, headings },
+      filePath: nav.path,
     });
   }
 
-  return chapters;
+  // ── Build anchor registry from rendered HTML (accurate IDs) ──
+  const registry = buildAnchorRegistryFromRendered(rendered);
+  detectDuplicateAnchors(registry, diagnostics);
+
+  // ── Pass 2: Rewrite cross-page links using the registry ──────
+  for (const { chapter, filePath } of rendered) {
+    chapter.htmlContent = fixMalformedCrossReferences(
+      chapter.htmlContent,
+      chapter.slug,
+    );
+    chapter.htmlContent = rewriteCrossPageLinks(
+      chapter.htmlContent,
+      chapter.slug,
+      registry,
+      diagnostics,
+      filePath,
+    );
+  }
+
+  // ── Report diagnostics ───────────────────────────────────────
+  if (diagnostics.length > 0) {
+    reportLinkDiagnostics(diagnostics);
+  }
+
+  return rendered.map((r) => r.chapter);
 }
 
 /**

@@ -27,6 +27,11 @@ export {
   slugify,
   resolveMarkdownPath,
 } from './markdown-processor.js';
+export type {
+  AnchorEntry,
+  AnchorRegistry,
+  LinkDiagnostic,
+} from './markdown-processor-web.js';
 export {
   processMarkdownFilesForWeb,
   processCatalogMarkdownForWeb,
