@@ -14,6 +14,7 @@ import AutoScalingRuleEditorModal, {
 } from '../components/AutoScalingRuleEditorModal';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
+import EndpointMetricsDrawer from '../components/EndpointMetricsDrawer';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
 import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationModal';
@@ -36,6 +37,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   FolderOutlined,
+  LineChartOutlined,
   LoadingOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -138,6 +140,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
+  const [isOpenMetricsDrawer, setIsOpenMetricsDrawer] = useState(false);
   const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -213,6 +216,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               status
               error_data
             }
+            live_stat @since(version: "24.12.0")
             created_user_email @since(version: "23.09.8")
             ...EndpointOwnerInfoFragment
             ...EndpointStatusTagFragment
@@ -542,6 +546,17 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ) : (
             <></>
           )}
+          <Tooltip title={t('modelService.ViewMetrics')}>
+            <Button
+              icon={<LineChartOutlined />}
+              disabled={
+                isEndpointInDestroyingCategory(endpoint) || !endpoint?.live_stat
+              }
+              onClick={() => setIsOpenMetricsDrawer(true)}
+            >
+              {t('modelService.ViewMetrics')}
+            </Button>
+          </Tooltip>
           <Button
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
@@ -1069,6 +1084,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           setErrorDataForJSONModal(undefined);
         }}
       />
+      <BAIUnmountAfterClose>
+        <EndpointMetricsDrawer
+          open={isOpenMetricsDrawer}
+          endpointId={serviceId ?? ''}
+          onClose={() => setIsOpenMetricsDrawer(false)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
