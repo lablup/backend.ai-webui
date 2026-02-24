@@ -2434,7 +2434,6 @@
       "Remaining": "가용량",
       "Reservoir": "리저버",
       "ResourcePolicies": "자원 정책",
-      "ResourcePolicy": "자원 정책",
       "Resources": "자원",
       "Scheduler": "스케줄러",
       "Serving": "모델 서빙",
