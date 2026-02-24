@@ -172,12 +172,12 @@ const UserPreferencesPage = () => {
           onChange: (value: any) => {
             setSelectedLanguage(value);
             setLanguage(value);
-            const event = new CustomEvent('language-changed', {
+            const event = new CustomEvent('langChanged', {
               detail: {
-                language: value,
+                lang: value,
               },
             });
-            document.dispatchEvent(event);
+            window.dispatchEvent(event);
           },
         },
         globalThis.isElectron && {
