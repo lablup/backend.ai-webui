@@ -111,7 +111,8 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
             mem: values.resource.mem,
             ...(values.resource?.acceleratorType &&
             values.resource?.accelerator &&
-            values.resource.accelerator > 0
+            (_.isString(values.resource.accelerator) ||
+              values.resource.accelerator > 0)
               ? {
                   [values.resource.acceleratorType]:
                     values.resource.accelerator.toString(),

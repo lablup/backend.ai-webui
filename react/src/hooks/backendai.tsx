@@ -22,6 +22,7 @@ export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
 export const knownAcceleratorResourceSlotNames = [
   'cuda.device',
   'cuda.shares',
+  'cuda.mem',
   'rocm.device',
   'tpu.device',
   'ipu.device',
