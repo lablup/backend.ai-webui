@@ -336,8 +336,10 @@ const LoginView: React.FC = () => {
         return;
       }
 
-      // Not yet authenticated. Show block panel while connecting.
-      block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
+      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
+      if (showError) {
+        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
+      }
 
       // Check for SSO token
       const urlParams = new URLSearchParams(window.location.search);
@@ -384,6 +386,7 @@ const LoginView: React.FC = () => {
         }
       }
 
+      setIsBlockPanelOpen(false);
       open();
       setIsLoading(false);
     },
@@ -395,7 +398,9 @@ const LoginView: React.FC = () => {
     (failReason: string, data: Record<string, unknown>, showError: boolean) => {
       if (failReason.includes('User credential mismatch.')) {
         open();
-        notification(t('error.LoginInformationMismatch'));
+        if (showError) {
+          notification(t('error.LoginInformationMismatch'));
+        }
         return;
       }
       if (failReason.includes('You must register Two-Factor Authentication.')) {
@@ -409,7 +414,7 @@ const LoginView: React.FC = () => {
         ) ||
         failReason.includes('OTP not provided')
       ) {
-        if (otpRequired) {
+        if (showError && otpRequired) {
           notification(t('login.PleaseInputOTPCode'));
         }
         setOtpRequired(true);
@@ -423,7 +428,9 @@ const LoginView: React.FC = () => {
         setOtpRequired(true);
         form.setFieldValue('otp', '');
         setIsLoading(false);
-        notification(t('totp.InvalidTotpCode'));
+        if (showError) {
+          notification(t('totp.InvalidTotpCode'));
+        }
         return;
       }
       if (failReason.indexOf('Password expired on ') === 0) {
