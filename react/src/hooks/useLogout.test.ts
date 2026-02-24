@@ -18,6 +18,7 @@
  */
 import { backendaiOptions, backendaiUtils } from '../global-stores';
 import {
+  INTENTIONAL_LOGOUT_FLAG,
   LogoutEventHandler,
   useLogout,
   useLogoutEventListeners,
@@ -225,6 +226,46 @@ describe('performLogoutCleanup (via useLogout)', () => {
     });
 
     backendaiUtils._deleteRecentProjectGroupInfo = originalFn;
+  });
+
+  it('sets INTENTIONAL_LOGOUT_FLAG in sessionStorage after logout', async () => {
+    makeFakeClient();
+
+    const { result } = renderHook(() => useLogout(), { wrapper });
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    // The flag must be set so that the next page load skips silent re-login
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBe('1');
+  });
+
+  it('does NOT set INTENTIONAL_LOGOUT_FLAG when there is no client to clean up', async () => {
+    (globalThis as any).backendaiclient = null;
+
+    const { result } = renderHook(() => useLogout(), { wrapper });
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
+  });
+
+  it('sets INTENTIONAL_LOGOUT_FLAG after sessionStorage.clear() so it survives the page reload', async () => {
+    makeFakeClient();
+    // Pre-populate sessionStorage to confirm it gets cleared first, then the
+    // flag is re-set afterwards (so it is not wiped by clearLoginStorage).
+    sessionStorage.setItem('some-existing-key', 'value');
+
+    const { result } = renderHook(() => useLogout(), { wrapper });
+    await act(async () => {
+      await result.current.logout();
+    });
+
+    // The pre-existing key must have been cleared
+    expect(sessionStorage.getItem('some-existing-key')).toBeNull();
+    // The flag must still be present because it was set after the clear
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBe('1');
   });
 });
 

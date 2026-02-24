@@ -25,6 +25,7 @@
 import { backendaiOptions } from '../global-stores';
 import { loadConfigFromWebServer } from '../helper/loginSessionAuth';
 import TabCount from '../lib/TabCounter';
+import { INTENTIONAL_LOGOUT_FLAG } from './useLogout';
 import { autoLogoutState, configLoadedState } from './useWebUIConfig';
 import { useAtomValue } from 'jotai';
 import { useEffect, useEffectEvent, useRef } from 'react';
@@ -139,6 +140,17 @@ export function useLoginOrchestration({
     // Edu-applauncher and applauncher pages are handled by React Router
     // routes that perform their own login flow.
     if (isAppLauncherPage()) return;
+
+    // Check for intentional logout flag set by useLogout before the reload.
+    // When present, skip silent re-login and show the login panel directly
+    // so that the "Connecting to Cluster" modal never appears after logout.
+    const wasIntentionalLogout =
+      sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1';
+    if (wasIntentionalLogout) {
+      sessionStorage.removeItem(INTENTIONAL_LOGOUT_FLAG);
+      onOpen();
+      return;
+    }
 
     try {
       // Load config from web server for Electron
