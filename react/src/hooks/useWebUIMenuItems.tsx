@@ -42,6 +42,7 @@ import {
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import {
+  Activity,
   BotMessageSquare,
   ClipboardClock,
   PackagePlus,
@@ -96,6 +97,7 @@ export const VALID_MENU_KEYS = [
   'agent',
   'settings',
   'maintenance',
+  'diagnostics',
   'branding',
   'information',
 ] as const;
@@ -341,6 +343,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <ToolOutlined style={{ color: token.colorInfo }} />,
       key: 'maintenance',
+    },
+    {
+      label: (
+        <WebUILink to="/diagnostics">{t('webui.menu.Diagnostics')}</WebUILink>
+      ),
+      icon: <Activity style={{ color: token.colorInfo }} />,
+      key: 'diagnostics',
     },
     !isThemePreviewMode && {
       label: <WebUILink to="/branding">{t('webui.menu.Branding')}</WebUILink>,
