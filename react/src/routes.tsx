@@ -77,6 +77,7 @@ const UserCredentialsPage = React.lazy(
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
+const DiagnosticsPage = React.lazy(() => import('./pages/DiagnosticsPage'));
 const StatisticsPage = React.lazy(() => import('./pages/StatisticsPage'));
 const ConfigurationsPage = React.lazy(
   () => import('./pages/ConfigurationsPage'),
@@ -448,6 +449,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/maintenance',
     element: <MaintenancePage />,
     handle: { labelKey: 'webui.menu.Maintenance' },
+  },
+  {
+    path: '/diagnostics',
+    element: <DiagnosticsPage />,
+    handle: { labelKey: 'webui.menu.Diagnostics' },
   },
   {
     path: '/branding',
