@@ -285,6 +285,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                       onClick: onEndpointMenuClick,
                     }}
                     trigger={['click']}
+                    overlayStyle={{ zIndex: 10001 }}
                   >
                     <Button
                       icon={<CloudOutlined />}
