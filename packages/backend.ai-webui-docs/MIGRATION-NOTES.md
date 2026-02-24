@@ -1,7 +1,7 @@
 # RST → Markdown Migration Notes
 
 This document summarizes the RST → Markdown conversion applied to the `ko/` docs.
-Use it as a reference when applying the same work to other languages (`en/`, `ja/`, `zh-CN/`, `zh-TW/`).
+Use it as a reference when applying the same work to other languages (`en/`, `ja/`, `th/`).
 
 **Delete this file after the migration is complete.**
 
@@ -166,7 +166,7 @@ The following should **not** be converted even if they use 3-space indentation:
 1. **`ko/` docs are the source of truth** — work on `ko/` first, then apply to other languages
 2. Each language has different sentence content, so use grep patterns (`^   \S`) to find candidates and apply the "What NOT to Convert" rules above
 3. Some languages may have standalone indented paragraphs not present in others (added/changed during translation)
-4. Sphinx metadata in `index.md` is likely present in all languages
+4. ~~Sphinx metadata in `index.md` is likely present in all languages~~ — **Done**: Sphinx metadata removed from `en/`, `ja/`, `th/` index.md files
 5. RST `|` remnants in `vfolder.md` may be ko-only, but verify for other languages
 6. RST tables (`===` separators) may also remain in other languages
 
@@ -174,7 +174,7 @@ The following should **not** be converted even if they use 3-space indentation:
 
 ```
 Refer to @packages/backend.ai-webui-docs/MIGRATION-NOTES.md and apply the same
-conversion to en/ (or ja/, zh-CN/, zh-TW/) docs. Follow the same rules used for ko/:
+conversion to en/ (or ja/, th/) docs. Follow the same rules used for ko/:
 convert 3-space indented standalone paragraphs to :::info, and leave items that
 should not be converted (list continuations, etc.) as-is.
 ```
