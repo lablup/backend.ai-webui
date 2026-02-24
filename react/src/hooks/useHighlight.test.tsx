@@ -1,6 +1,6 @@
-import { renderHook, waitFor } from '@testing-library/react';
 import { useHighlight, FALLBACK_LANG } from './useHighlight';
 import { useThemeMode } from './useThemeMode';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useBAILogger } from 'backend.ai-ui';
 import { codeToHtml } from 'shiki';
 
@@ -100,20 +100,13 @@ describe('useHighlight', () => {
 
   describe('Supported Languages', () => {
     it('should support common programming languages', async () => {
-      const testLanguages = [
-        'javascript',
-        'typescript',
-        'python',
-        'java',
-      ];
+      const testLanguages = ['javascript', 'typescript', 'python', 'java'];
 
       for (const lang of testLanguages) {
         jest.clearAllMocks();
         (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
-        
-        const { result } = renderHook(() =>
-          useHighlight('test code', lang),
-        );
+
+        const { result } = renderHook(() => useHighlight('test code', lang));
 
         await waitFor(() => expect(result.current.data).toBeDefined());
 
@@ -130,10 +123,8 @@ describe('useHighlight', () => {
       for (const lang of testLanguages) {
         jest.clearAllMocks();
         (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
-        
-        const { result } = renderHook(() =>
-          useHighlight('test markup', lang),
-        );
+
+        const { result } = renderHook(() => useHighlight('test markup', lang));
 
         await waitFor(() => expect(result.current.data).toBeDefined());
 
@@ -150,10 +141,8 @@ describe('useHighlight', () => {
       for (const lang of testLanguages) {
         jest.clearAllMocks();
         (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
-        
-        const { result } = renderHook(() =>
-          useHighlight('echo "test"', lang),
-        );
+
+        const { result } = renderHook(() => useHighlight('echo "test"', lang));
 
         await waitFor(() => expect(result.current.data).toBeDefined());
 
@@ -174,10 +163,8 @@ describe('useHighlight', () => {
       for (const { alias, expected } of testAliases) {
         jest.clearAllMocks();
         (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
-        
-        const { result } = renderHook(() =>
-          useHighlight('test code', alias),
-        );
+
+        const { result } = renderHook(() => useHighlight('test code', alias));
 
         await waitFor(() => expect(result.current.data).toBeDefined());
 
@@ -193,9 +180,7 @@ describe('useHighlight', () => {
     it('should handle very long code text', async () => {
       const longCode = 'const x = 1;'.repeat(100);
 
-      const { result } = renderHook(() =>
-        useHighlight(longCode, 'javascript'),
-      );
+      const { result } = renderHook(() => useHighlight(longCode, 'javascript'));
 
       await waitFor(() => expect(result.current.data).toBeDefined());
 

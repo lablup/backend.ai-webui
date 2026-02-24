@@ -18,7 +18,12 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps, generateRandomString } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  generateRandomString,
+} from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -119,50 +124,48 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
       width={720}
       onCancel={() => onRequestClose(false)}
       onOk={() => {
-        form
-          .validateFields()
-          .then(
-            (values) => {
-              const isExternal = values.connectionType === 'external';
-              const newAgent: AIAgent = {
-                id: agent?.id ?? generateRandomString(),
-                endpoint: isExternal
-                  ? (values.endpointUrl ?? '')
-                  : values.endpoint,
-                endpoint_id: isExternal ? '' : values.endpointId,
-                endpoint_url: isExternal ? values.endpointUrl : undefined,
-                endpoint_token: isExternal ? values.apiKey : undefined,
-                config: {
-                  system_prompt: values.systemPrompt,
-                  default_model: values.defaultModel || undefined,
-                },
-                meta: {
-                  title: values.title,
-                  avatar: values.avatar || '🤖',
-                  descriptions: values.description || undefined,
-                  tags: values.tags?.length ? values.tags : undefined,
-                },
-                params: values.useParams
-                  ? {
-                      temperature: values.temperature,
-                      max_tokens: values.maxOutputTokens,
-                      top_p: values.topP,
-                      frequency_penalty: values.frequencyPenalty,
-                      presence_penalty: values.presencePenalty,
-                    }
-                  : undefined,
-              };
-              try {
-                upsertAgent(newAgent);
-                onRequestClose(true);
-              } catch {
-                message.error(t('aiAgent.SaveFailed'));
-              }
-            },
-            () => {
-              // form validation failed — inline errors are shown by the Form
-            },
-          );
+        form.validateFields().then(
+          (values) => {
+            const isExternal = values.connectionType === 'external';
+            const newAgent: AIAgent = {
+              id: agent?.id ?? generateRandomString(),
+              endpoint: isExternal
+                ? (values.endpointUrl ?? '')
+                : values.endpoint,
+              endpoint_id: isExternal ? '' : values.endpointId,
+              endpoint_url: isExternal ? values.endpointUrl : undefined,
+              endpoint_token: isExternal ? values.apiKey : undefined,
+              config: {
+                system_prompt: values.systemPrompt,
+                default_model: values.defaultModel || undefined,
+              },
+              meta: {
+                title: values.title,
+                avatar: values.avatar || '🤖',
+                descriptions: values.description || undefined,
+                tags: values.tags?.length ? values.tags : undefined,
+              },
+              params: values.useParams
+                ? {
+                    temperature: values.temperature,
+                    max_tokens: values.maxOutputTokens,
+                    top_p: values.topP,
+                    frequency_penalty: values.frequencyPenalty,
+                    presence_penalty: values.presencePenalty,
+                  }
+                : undefined,
+            };
+            try {
+              upsertAgent(newAgent);
+              onRequestClose(true);
+            } catch {
+              message.error(t('aiAgent.SaveFailed'));
+            }
+          },
+          () => {
+            // form validation failed — inline errors are shown by the Form
+          },
+        );
       }}
       {...modalProps}
     >
