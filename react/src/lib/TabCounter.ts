@@ -9,6 +9,7 @@
  *
  * TypeScript version for React consumption.
  */
+import { generateUUID } from '../helper/uuid';
 
 interface TabData {
   url?: string;
@@ -23,7 +24,7 @@ interface TabCountData {
 
 class TabCount {
   updateInterval = 1000;
-  tabId = globalThis.crypto.randomUUID();
+  tabId = generateUUID();
   tabsCounter = 0;
   onTabCountUpdate: Array<(count: number) => void> = [];
   updateActiveInterval: ReturnType<typeof setInterval> | 0 = 0;

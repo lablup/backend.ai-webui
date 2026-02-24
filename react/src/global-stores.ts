@@ -22,6 +22,7 @@
 // Must be available before any component calls createBackendAIClient().
 // ---------------------------------------------------------------------------
 // @ts-ignore - resolved via craco webpack alias to dist/lib/backend.ai-client-esm.js
+import { generateUUID } from './helper/uuid';
 import * as ai from 'backend.ai-client-esm';
 
 (globalThis as any).BackendAIClient = ai.backend.Client;
@@ -257,7 +258,7 @@ class BackendAITasker {
     doneDescription = '',
     hiddenNotification?: boolean,
   ) {
-    const key = 'task:' + (taskId || crypto.randomUUID());
+    const key = 'task:' + (taskId || generateUUID());
     const item = {
       tasktitle: title,
       taskid: key,
