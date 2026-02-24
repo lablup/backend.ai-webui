@@ -688,6 +688,40 @@ function tomlStringifyCompatible(config: any): string {
   return tomlStr;
 }
 
+/**
+ * Remove duplicate keys within the same TOML section, keeping the last occurrence.
+ * This handles cases where a server's config.toml contains duplicate entries
+ * (e.g., `debug = true` appearing twice), which causes @iarna/toml to throw.
+ */
+function deduplicateTomlKeys(tomlStr: string): string {
+  const lines = tomlStr.split('\n');
+  const result: string[] = [];
+  const seenInSection = new Map<string, number>();
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (/^\[.+\]$/.test(trimmed)) {
+      seenInSection.clear();
+      result.push(line);
+      continue;
+    }
+
+    const keyMatch = trimmed.match(/^([\w.]+)\s*=/);
+    if (keyMatch) {
+      const key = keyMatch[1];
+      if (seenInSection.has(key)) {
+        result[seenInSection.get(key)!] = '';
+      }
+      seenInSection.set(key, result.length);
+    }
+
+    result.push(line);
+  }
+
+  return result.filter((l) => l !== '').join('\n');
+}
+
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
 
@@ -724,7 +758,7 @@ export async function modifyConfigToml(
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
-        config = TOML.parse(configToml);
+        config = TOML.parse(deduplicateTomlKeys(configToml));
         break; // Success, exit retry loop
       } catch (error) {
         lastError = error;
