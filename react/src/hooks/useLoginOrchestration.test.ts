@@ -26,6 +26,7 @@ import { backendaiOptions } from '../global-stores';
 import { loadConfigFromWebServer } from '../helper/loginSessionAuth';
 import TabCount from '../lib/TabCounter';
 import { useLoginOrchestration } from './useLoginOrchestration';
+import { INTENTIONAL_LOGOUT_FLAG } from './useLogout';
 import { configLoadedState, autoLogoutState } from './useWebUIConfig';
 import { renderHook, act } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
@@ -239,6 +240,56 @@ describe('useLoginOrchestration - applauncher pages', () => {
     setWindowPathname('/applauncher/something');
     const { options } = await renderOrchestrationHook(true, false);
     expect(options.onLogin).not.toHaveBeenCalled();
+    expect(options.onOpen).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: intentional logout flag
+// ---------------------------------------------------------------------------
+
+describe('useLoginOrchestration - intentional logout flag', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('calls onOpen() and skips silent login when INTENTIONAL_LOGOUT_FLAG is set', async () => {
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+
+    const { options } = await renderOrchestrationHook(true, false);
+
+    expect(options.onOpen).toHaveBeenCalledTimes(1);
+    expect(options.onLogin).not.toHaveBeenCalled();
+    expect(options.onCheckLogin).not.toHaveBeenCalled();
+  });
+
+  it('removes the INTENTIONAL_LOGOUT_FLAG from sessionStorage after reading it', async () => {
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+
+    await renderOrchestrationHook(true, false);
+
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
+  });
+
+  it('proceeds with normal login flow when INTENTIONAL_LOGOUT_FLAG is absent', async () => {
+    // No flag set
+    const { options } = await renderOrchestrationHook(true, false);
+
+    expect(options.onLogin).toHaveBeenCalledWith(false);
+    expect(options.onOpen).not.toHaveBeenCalled();
+  });
+
+  it('ignores INTENTIONAL_LOGOUT_FLAG when value is not "1"', async () => {
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, 'true');
+
+    const { options } = await renderOrchestrationHook(true, false);
+
+    // Flag value is not exactly '1', so normal flow proceeds
+    expect(options.onLogin).toHaveBeenCalledWith(false);
     expect(options.onOpen).not.toHaveBeenCalled();
   });
 });
