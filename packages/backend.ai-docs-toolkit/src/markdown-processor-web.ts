@@ -151,8 +151,8 @@ function buildAnchorRegistryFromRendered(
       });
     }
 
-    // Extract explicit <a id="..."> anchors from rendered HTML
-    const explicitRegex = /<a\s+id="([^"]+)"[^>]*>/g;
+    // Extract explicit <a ... id="..."> anchors from rendered HTML
+    const explicitRegex = /<a\s+[^>]*?\bid="([^"]+)"[^>]*>/g;
     let match;
     while ((match = explicitRegex.exec(chapter.htmlContent)) !== null) {
       const anchorId = match[1];
@@ -215,6 +215,7 @@ function rewriteCrossPageLinks(
   sourceFile: string,
   multiPage: boolean = false,
 ): string {
+  const reportedAnchors = new Set<string>();
   return html.replace(/href="#([^"]+)"/g, (fullMatch, anchorId: string) => {
     // Already a resolved ID (e.g., heading hash-links from the renderer) → skip
     if (registry.resolvedIds.has(anchorId)) {
@@ -223,12 +224,15 @@ function rewriteCrossPageLinks(
 
     const entries = registry.anchors.get(anchorId);
     if (!entries || entries.length === 0) {
-      diagnostics.push({
-        type: 'broken-link',
-        anchorId,
-        sourceFile,
-        message: `No matching anchor found for #${anchorId}`,
-      });
+      if (!reportedAnchors.has(anchorId)) {
+        reportedAnchors.add(anchorId);
+        diagnostics.push({
+          type: 'broken-link',
+          anchorId,
+          sourceFile,
+          message: `No matching anchor found for #${anchorId}`,
+        });
+      }
       return fullMatch;
     }
 
@@ -244,20 +248,20 @@ function rewriteCrossPageLinks(
       return `href="#${sameChapter[0].resolvedId}"`;
     }
 
-    // Cross-chapter link
+    // Cross-chapter link — resolve target first so diagnostic is accurate
+    const targetExplicit = entries.find((e) => e.source === 'explicit');
+    const target = targetExplicit ?? entries[0];
+
     const uniqueChapters = [...new Set(entries.map((e) => e.chapterSlug))];
-    if (uniqueChapters.length > 1) {
+    if (uniqueChapters.length > 1 && !reportedAnchors.has(anchorId)) {
+      reportedAnchors.add(anchorId);
       diagnostics.push({
         type: 'ambiguous-link',
         anchorId,
         sourceFile,
-        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(', ')}. Resolved to: ${uniqueChapters[0]}`,
+        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(', ')}. Resolved to: ${target.chapterSlug}`,
       });
     }
-
-    // Prefer explicit anchor (preserves well-known raw ID)
-    const targetExplicit = entries.find((e) => e.source === 'explicit');
-    const target = targetExplicit ?? entries[0];
 
     if (multiPage) {
       return `href="./${target.chapterSlug}.html#${target.resolvedId}"`;
