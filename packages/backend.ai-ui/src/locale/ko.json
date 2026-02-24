@@ -106,6 +106,12 @@
       "NotIn": "포함되지 않음"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFace 토큰을 입력하세요",
+    "HuggingFaceSettings": "Hugging Face 설정",
+    "Token": "토큰",
+    "TokenUpdatedSuccessfully": "토큰이 성공적으로 업데이트되었습니다."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
     "FailedToPullVersions": "버전을 가져오는데 실패했습니다.",
@@ -294,6 +300,7 @@
       "CopyAll": "모두 복사",
       "Create": "생성",
       "Delete": "삭제",
+      "Edit": "편집",
       "Expand": "펼치기",
       "Remove": "제거",
       "Save": "저장",

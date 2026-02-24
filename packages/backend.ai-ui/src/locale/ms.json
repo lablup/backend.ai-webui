@@ -106,6 +106,12 @@
       "NotIn": "tidak dalam"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",
@@ -294,6 +300,7 @@
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",
+      "Edit": "Edit",
       "Expand": "Berkembang",
       "Remove": "Keluarkan",
       "Save": "Simpan",

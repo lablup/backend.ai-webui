@@ -1,5 +1,5 @@
 import BAILink from './BAILink';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -244,11 +244,7 @@ describe('BAILink', () => {
     });
 
     it('should have disabled state when type is disabled', () => {
-      render(
-        <BAILink type="disabled">
-          Disabled Link
-        </BAILink>,
-      );
+      render(<BAILink type="disabled">Disabled Link</BAILink>);
 
       const link = screen.getByText('Disabled Link');
       // Ant Design adds ant-typography-disabled class for disabled Typography.Link

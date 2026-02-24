@@ -106,6 +106,12 @@
       "NotIn": "όχι σε"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
     "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",
@@ -294,6 +300,7 @@
       "CopyAll": "Αντιγράψτε όλα",
       "Create": "Δημιουργώ",
       "Delete": "Διαγράφω",
+      "Edit": "Επεξεργασία",
       "Expand": "Διαστέλλω",
       "Remove": "Αφαιρώ",
       "Save": "Αποθήκευση",

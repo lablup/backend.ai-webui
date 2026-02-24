@@ -87,3 +87,8 @@ export type {
   ProjectNode,
   BAIProjectSelectRef,
 } from './BAIProjectSelect';
+export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
+export type {
+  BAIHuggingFaceRegistrySettingModalProps,
+  BAIHuggingFaceRegistrySettingModalFragmentKey,
+} from './BAIHuggingFaceRegistrySettingModal';

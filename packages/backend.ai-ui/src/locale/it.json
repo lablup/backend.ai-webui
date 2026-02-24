@@ -106,6 +106,12 @@
       "NotIn": "non in"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "Le versioni {{count}} sono escluse.",
     "FailedToPullVersions": "Non è riuscito a tirare le versioni.",
@@ -294,6 +300,7 @@
       "CopyAll": "Copia tutto",
       "Create": "Creare",
       "Delete": "Eliminare",
+      "Edit": "Modifica",
       "Expand": "Espandere",
       "Remove": "Rimuovere",
       "Save": "Salva",

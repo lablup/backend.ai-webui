@@ -106,6 +106,12 @@
       "NotIn": "içinde değil"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
     "FailedToPullVersions": "Sürümleri çekemedi.",
@@ -289,6 +295,7 @@
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",
+      "Edit": "Düzenle",
       "Expand": "Genişletmek",
       "Remove": "Kaldırmak",
       "Save": "Kaydet",

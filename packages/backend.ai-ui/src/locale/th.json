@@ -106,6 +106,12 @@
       "NotIn": "ไม่ใน"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",
@@ -294,6 +300,7 @@
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",
+      "Edit": "แก้ไข",
       "Expand": "ขยาย",
       "Remove": "ลบ",
       "Save": "บันทึก",
