@@ -115,26 +115,20 @@ Production build (`pnpm run build`) runs these steps sequentially:
   - Format: `prefix(JIRA-ISSUE-NUMBER): title`
   - GitHub PR content starts with `Resolves #1234(FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number
 
-- **CRITICAL - MCP Tool Requirements (No CLI alternatives)**:
-  - **Jira**: Use Atlassian MCP (`mcp__Atlassian__*`) for ALL operations
-    - `mcp__Atlassian__searchJiraIssuesUsingJql` - Search/query issues
-    - `mcp__Atlassian__getJiraIssue` - Get issue details
-    - `mcp__Atlassian__createJiraIssue` - Create issues
-    - `mcp__Atlassian__editJiraIssue` - Update issues
-  - **GitHub**: Use GitHub MCP (`mcp__github__*`) or `gh` CLI
-    - `mcp__github__search_issues` - Search issues
-    - `mcp__github__issue_read` - Get issue details
+- **Tool Requirements**:
+  - **Jira**: Use `scripts/jira.sh` (REST API with token auth, no MCP dependency)
+    - `bash scripts/jira.sh create --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]`
+    - `bash scripts/jira.sh get FR-XXXX`
+    - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current]`
+    - `bash scripts/jira.sh search "JQL query" [--limit 20]`
+    - `bash scripts/jira.sh comment FR-XXXX "Comment text"`
+    - Setup: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` env vars or `~/.config/atlassian/credentials`
+  - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
     - Do NOT use `git commit`, `git push`, `git checkout -b` directly
     - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`
-- **MCP Authentication Failure Handling**:
-  - If an MCP tool call fails with an authentication/connection error, retry **at most once**.
-  - If the retry also fails, do NOT enter an infinite retry loop. Instead, inform the user that the MCP connection appears to be broken and suggest:
-    1. Run `/mcp` and select reconnect for the failing server
-    2. If reconnect fails, restart Claude Code (the stored tokens are usually still valid)
-  - This is a known issue where OAuth tokens are stored correctly but the session-level MCP connection state becomes stale (see [claude-code#10250](https://github.com/anthropics/claude-code/issues/10250)). A restart resolves it because Claude Code reads the persisted tokens on startup.
-  - When the MCP connection is unavailable, proceed with alternative tools if possible (e.g., `gh` CLI for GitHub operations) rather than blocking the entire workflow.
 - Follow Graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
+- When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
 
 ### Configuration
 
@@ -208,3 +202,18 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-guide` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
 - `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
+
+### Verification Harness
+
+Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript. Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually.
+
+### PR Review Checklist
+
+When reviewing PRs (especially agent-generated ones), check:
+
+- Verification results (`scripts/verify.sh` output in PR description)
+- Semantic correctness: does the code do what the issue asks? (lint/tsc passing is not enough)
+- i18n keys match actual UI text and follow naming conventions
+- No unintended scope creep (files changed beyond what the issue requires)
+- `TODO(needs-backend)` markers are properly placed with issue references
+- No hardcoded strings, magic numbers, or debug artifacts left behind

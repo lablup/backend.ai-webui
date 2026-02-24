@@ -1,9 +1,5 @@
 {
   "mcpServers": {
-    "Atlassian": {
-      "type": "http",
-      "url": "https://mcp.atlassian.com/v1/mcp"
-    },
     "playwright-test": {
       "command": "npx",
       "args": ["playwright", "run-test-mcp-server"]

@@ -35,28 +35,17 @@ If no argument is provided, the prefix will be inferred from the changes.
 
 ## Detailed Process
 
-### Step 0: Verify MCP Authentication (MUST BE FIRST)
+### Step 0: Verify Jira Authentication (MUST BE FIRST)
 
-> **⚠️ CRITICAL**: This step MUST be executed BEFORE any other operation. Do NOT skip or defer this step. Do NOT read files, check git status, or perform any other action until MCP authentication is verified.
+> **CRITICAL**: This step MUST be executed BEFORE any other operation.
 
-Verify that Atlassian MCP is authenticated before starting the workflow.
-
-```
-# Test Atlassian MCP authentication - THIS MUST BE THE VERY FIRST TOOL CALL
-mcp__Atlassian__atlassianUserInfo
+```bash
+bash scripts/jira.sh myself
 ```
 
 **If authentication fails:**
-- **STOP IMMEDIATELY** - Do not proceed with any other steps
-- Inform the user that Atlassian MCP needs re-authentication
-- Provide guidance on how to re-authenticate:
-  ```
-  ⚠️ MCP Authentication Required
-
-  Atlassian MCP needs re-authentication.
-  Please re-authenticate via MCP settings and run the command again.
-  ```
-- Exit the workflow without making any changes
+- Inform the user to set up `~/.config/atlassian/credentials`
+- Exit the workflow
 
 **If authentication succeeds:**
 - Proceed to Step 1
@@ -115,17 +104,14 @@ AskUserQuestion({
 
 ### Step 4: Create Jira Issue
 
-Use Atlassian MCP tools (refer to `.claude/atlassian-config.md`):
+```bash
+bash scripts/jira.sh create \
+  --type "Task" \
+  --title "[issue title without prefix]" \
+  --desc "[WHY this work is needed + Expected outcomes]"
+```
 
-```
-mcp__Atlassian__createJiraIssue with:
-  - cloudId: a28786f5-5410-4c2d-ae2d-9833cf63eb3f
-  - projectKey: FR
-  - issueTypeName: Task (or Story/Bug based on content)
-  - summary: [issue title without prefix]
-  - description: [WHY this work is needed + Expected outcomes]
-  - additional_fields: {"customfield_10173": {"id": "10232"}}
-```
+The script handles project key, GitHub repo custom field, and other required fields internally. Capture the issue key (first line of output) for subsequent steps.
 
 ### Step 5: Create Branch and Commit
 
@@ -171,24 +157,8 @@ EOF
 
 ### Step 8: Update Jira Issue
 
-Get current user and active sprint, then update:
-
-```
-# Get current user
-mcp__Atlassian__atlassianUserInfo
-
-# Get active sprint
-mcp__Atlassian__searchJiraIssuesUsingJql with:
-  - jql: "project = FR AND sprint in openSprints() ORDER BY created DESC"
-  - fields: ["customfield_10020"]
-
-# Update issue
-mcp__Atlassian__editJiraIssue with:
-  - issueIdOrKey: FR-XXXX
-  - fields: {
-      "assignee": {"accountId": "[user_account_id]"},
-      "customfield_10020": [sprint_id]
-    }
+```bash
+bash scripts/jira.sh update FR-XXXX --assignee me --sprint current
 ```
 
 ### Step 9: Display Summary
@@ -240,20 +210,16 @@ Files Changed:
 
 ## Configuration Reference
 
-See `.claude/atlassian-config.md` for:
-- Cloud ID: `a28786f5-5410-4c2d-ae2d-9833cf63eb3f`
-- Project Key: `FR`
-- GitHub Repository field: `customfield_10173` with value `{"id": "10232"}`
-- Sprint field: `customfield_10020` (numeric ID only, not array)
+Jira configuration (project key, custom fields) is hardcoded in `scripts/jira.sh`.
+Auth: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` in env vars or `~/.config/atlassian/credentials`.
 
 ## Error Handling
 
-### MCP Authentication Failure
-If Atlassian MCP authentication fails:
-1. **STOP IMMEDIATELY** - Do not proceed with any other steps
-2. Inform the user about the authentication issue
-3. Ask them to re-authenticate via MCP settings
-4. Exit the workflow - user must run the command again after re-authentication
+### Jira Authentication Failure
+If `scripts/jira.sh` fails with auth error:
+1. Check `~/.config/atlassian/credentials` exists and has valid token
+2. Token can be generated at https://id.atlassian.com/manage-profile/security/api-tokens
+3. Exit the workflow - user must fix credentials and run the command again
 
 ### No Staged Changes
 If `git diff --cached` returns empty:
@@ -270,7 +236,7 @@ If branch creation fails due to naming conflict:
 ## Important Notes
 
 ### Do's
-- Always use MCP tools for Jira and Graphite operations
+- Use `scripts/jira.sh` for Jira operations, Graphite MCP for git operations
 - Confirm with user before creating anything
 - Keep Jira descriptions focused on WHY, not HOW
 - Update sprint and assignee after issue creation
