@@ -21,8 +21,8 @@
 // Backend.AI client classes on globalThis.
 // Must be available before any component calls createBackendAIClient().
 // ---------------------------------------------------------------------------
-// @ts-ignore - resolved via craco webpack alias to dist/lib/backend.ai-client-esm.js
 import { generateUUID } from './helper/uuid';
+// @ts-ignore - resolved via craco webpack alias to dist/lib/backend.ai-client-esm.js
 import * as ai from 'backend.ai-client-esm';
 
 (globalThis as any).BackendAIClient = ai.backend.Client;
