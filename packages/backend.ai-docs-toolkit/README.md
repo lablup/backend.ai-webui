@@ -108,10 +108,10 @@ Generated files include a marker comment and can be customized after generation:
 
 The PDF is generated through a multi-stage pipeline:
 
-1. **Markdown Processing** — Parses `.md` files, extracts headings, resolves image paths, generates chapter-scoped heading IDs
+1. **Markdown Processing** — Parses `.md` files, extracts headings, resolves image paths, processes admonitions, generates chapter-scoped heading IDs
 2. **HTML Assembly** — Builds a single HTML document with cover page, TOC, and all chapters
-3. **PDF Rendering** — Multi-pass Playwright rendering with page number injection and header/footer
-4. **Post-processing** — Header/footer masking on cover page via pdf-lib
+3. **PDF Rendering** — Multi-pass Playwright rendering with TOC page number injection and layout stabilization
+4. **Post-processing** — pdf-lib stamps headers/footers on all pages, sets PDF metadata, and embeds CJK fonts
 
 ## Project Structure
 

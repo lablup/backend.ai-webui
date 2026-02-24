@@ -38,5 +38,5 @@ Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI
 - [관리자 메뉴](admin_menu/admin_menu.md)
 - [FAQ 및 문제 해결](trouble_shooting/trouble_shooting.md)
 - [부록](appendix/appendix.md)
-- [라이선스 동의](license_agreement/license_agreement.md)
+- [사용권 계약 조건](license_agreement/license_agreement.md)
 - [참고 자료](references/references.md)
