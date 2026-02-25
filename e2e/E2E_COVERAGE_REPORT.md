@@ -20,7 +20,7 @@
 | Start Page | `/start` | 8 | 0 | ❌ 0% |
 | Dashboard | `/dashboard` | 9 | 0 | ❌ 0% |
 | Session List | `/session` | 19 | 11 | 🔶 58% |
-| Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
+| Session Launcher | `/session/start` | 14 | 3 | 🔶 21% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
 | Endpoint Detail | `/serving/:serviceId` | 14 | 0 | ❌ 0% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **269** | **67** | **25%** |
+| **Total** | | **271** | **69** | **25%** |
 
 ---
 
@@ -154,7 +154,7 @@
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts)
+**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
@@ -170,11 +170,13 @@
 | VFolder mounting (Step 3) | ❌ | - |
 | Port configuration (Step 4) | ❌ | - |
 | Batch schedule/timeout options | ❌ | - |
+| Session dependency selection | ✅ | `session-dependency.spec.ts` |
+| Session dependency detail display | ✅ | `session-dependency.spec.ts` |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
 | Session history → SessionTemplateModal | ❌ | - |
 
-**Coverage: 🔶 1/12 features (most only indirectly tested)**
+**Coverage: 🔶 3/14 features (most only indirectly tested)**
 
 ---
 
