@@ -281,6 +281,28 @@ get_my_account_id() {
   api GET "/myself" | jq -r '.accountId'
 }
 
+# ── Team member nickname → accountId mapping ─────────────────
+# Usage: resolve_assignee "승원" → accountId
+# Supports: "me", Korean nicknames, English names, accountIds
+resolve_assignee() {
+  local name=$1
+  case "$name" in
+    me)       get_my_account_id; return ;;
+    종은|jongeun)  echo "63240f6729083bbe8cc4d07d" ;;
+    승원|seungwon) echo "712020:06ef5fd1-fd10-4969-8533-80c5245750e2" ;;
+    성철|sungchul) echo "712020:52c9a410-dfd2-4acd-97a6-8c6112ec8a34" ;;
+    수진|sujin)    echo "632410dd29083bbe8cc4d0ad" ;;
+    *)
+      # If it looks like an accountId already, pass through
+      if [[ "$name" =~ ^[0-9a-f]{24}$ || "$name" =~ ^[0-9]+: ]]; then
+        echo "$name"
+      else
+        die "Unknown assignee '$name'. Known: 종은/jongeun, 승원/seungwon, 성철/sungchul, 수진/sujin, me"
+      fi
+      ;;
+  esac
+}
+
 get_current_sprint_id() {
   local jql="project = ${PROJECT} AND sprint in openSprints()"
   local tmp; tmp=$(mktemp)
@@ -380,11 +402,7 @@ cmd_update() {
     case $1 in
       --assignee)
         local aid
-        if [[ $2 == "me" ]]; then
-          aid=$(get_my_account_id)
-        else
-          aid=$2
-        fi
+        aid=$(resolve_assignee "$2")
         fields=$(echo "$fields" | jq --arg id "$aid" '. + {assignee:{accountId:$id}}')
         shift 2 ;;
       --sprint)
