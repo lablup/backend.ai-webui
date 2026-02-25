@@ -30,6 +30,7 @@ import {
   WarningTwoTone,
 } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Dropdown,
@@ -52,6 +53,8 @@ type ConnectionMode = 'SESSION' | 'API';
 interface LoginFormPanelProps {
   isOpen: boolean;
   isLoading: boolean;
+  loginError: { message: string; description?: string } | null;
+  onClearLoginError?: () => void;
   connectionMode: ConnectionMode;
   loginConfig: LoginConfigState;
   apiEndpoint: string;
@@ -82,6 +85,8 @@ interface LoginFormPanelProps {
 const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   isOpen,
   isLoading,
+  loginError,
+  onClearLoginError,
   connectionMode,
   loginConfig,
   apiEndpoint,
@@ -182,7 +187,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {/* SESSION login fields */}
           {connectionMode === 'SESSION' && (
             <>
-              <Form.Item name="user_id" style={{ marginBottom: 8 }}>
+              <Form.Item
+                name="user_id"
+                style={{ marginBottom: token.marginSM }}
+              >
                 <Input
                   prefix={<MailOutlined />}
                   placeholder={t('login.E-mailOrUsername')}
@@ -192,7 +200,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   disabled={isLoading}
                 />
               </Form.Item>
-              <Form.Item name="password" style={{ marginBottom: 8 }}>
+              <Form.Item
+                name="password"
+                style={{ marginBottom: token.marginSM }}
+              >
                 <Input.Password
                   prefix={<KeyOutlined />}
                   placeholder={t('login.Password')}
@@ -202,7 +213,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 />
               </Form.Item>
               {otpRequired && (
-                <Form.Item name="otp" style={{ marginBottom: 8 }}>
+                <Form.Item name="otp" style={{ marginBottom: token.marginSM }}>
                   <Input
                     prefix={<LockOutlined />}
                     placeholder={t('totp.OTP')}
@@ -217,7 +228,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {/* API login fields */}
           {connectionMode === 'API' && (
             <>
-              <Form.Item name="api_key" style={{ marginBottom: 8 }}>
+              <Form.Item
+                name="api_key"
+                style={{ marginBottom: token.marginSM }}
+              >
                 <Input
                   prefix={<LockOutlined />}
                   placeholder={t('login.APIKey')}
@@ -225,7 +239,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   disabled={isLoading}
                 />
               </Form.Item>
-              <Form.Item name="secret_key" style={{ marginBottom: 8 }}>
+              <Form.Item
+                name="secret_key"
+                style={{ marginBottom: token.marginSM }}
+              >
                 <Input.Password
                   prefix={<KeyOutlined />}
                   placeholder={t('login.SecretKey')}
@@ -236,8 +253,23 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             </>
           )}
 
+          {/* Login error alert */}
+          {loginError && (
+            <Alert
+              type="error"
+              showIcon
+              title={loginError.message}
+              description={loginError.description}
+              style={{ marginBottom: token.marginSM }}
+              closable={{
+                closeIcon: true,
+                onClose: onClearLoginError,
+              }}
+            />
+          )}
+
           {/* Login button */}
-          <Form.Item style={{ marginBottom: 8 }}>
+          <Form.Item style={{ marginBottom: token.marginSM }}>
             <Button
               type="primary"
               block
@@ -251,14 +283,14 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* SSO buttons */}
           {loginConfig.singleSignOnVendors.includes('saml') && (
-            <Form.Item style={{ marginBottom: 8 }}>
+            <Form.Item style={{ marginBottom: token.marginSM }}>
               <Button block onClick={onSAMLLogin}>
                 {t('login.singleSignOn.LoginWithSAML')}
               </Button>
             </Form.Item>
           )}
           {loginConfig.singleSignOnVendors.includes('openid') && (
-            <Form.Item style={{ marginBottom: 8 }}>
+            <Form.Item style={{ marginBottom: token.marginSM }}>
               <Button block onClick={onOpenIDLogin}>
                 {t('login.singleSignOn.LoginWithRealm', {
                   realmName: loginConfig.ssoRealmName || 'OpenID',
