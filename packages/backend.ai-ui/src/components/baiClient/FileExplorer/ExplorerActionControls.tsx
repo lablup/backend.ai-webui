@@ -2,6 +2,7 @@ import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import CreateDirectoryModal from './CreateDirectoryModal';
+import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
@@ -62,6 +63,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const [openUploadDropdown, { toggle: toggleUploadDropdown }] =
     useToggle(false);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [openCreateFileModal, { toggle: toggleCreateFileModal }] =
+    useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const lastFileListRef = useRef<Array<RcFile>>([]);
 
@@ -84,7 +87,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             </Tooltip>
           </>
         )}
-        <Tooltip title={!lg && t('general.button.Create')}>
+        <Tooltip title={!lg && t('comp:FileExplorer.CreateFolder')}>
           <Button
             disabled={!enableWrite}
             icon={<FolderAddOutlined />}
@@ -92,7 +95,18 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               toggleCreateModal();
             }}
           >
-            {lg && t('general.button.Create')}
+            {lg && t('comp:FileExplorer.CreateFolder')}
+          </Button>
+        </Tooltip>
+        <Tooltip title={!lg && t('comp:FileExplorer.CreateFile')}>
+          <Button
+            disabled={!enableWrite}
+            icon={<FileAddOutlined />}
+            onClick={() => {
+              toggleCreateFileModal();
+            }}
+          >
+            {lg && t('comp:FileExplorer.CreateFile')}
           </Button>
         </Tooltip>
         <Dropdown
@@ -182,6 +196,16 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             onRequestClose(true);
           }
           toggleCreateModal();
+        }}
+      />
+      <CreateFileModal
+        destroyOnHidden
+        open={openCreateFileModal}
+        onRequestClose={(success: boolean) => {
+          if (success) {
+            onRequestClose(true);
+          }
+          toggleCreateFileModal();
         }}
       />
       {extra}
