@@ -27,6 +27,11 @@
       "mcp__playwright-test__test_list"
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": ".claude/scripts/statusline.sh",
+    "padding": 0
+  },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "Atlassian",
