@@ -65,7 +65,8 @@ module.exports = {
       };
     }
 
-    // Watch config.toml and index.html for changes and trigger a full page reload.
+    // Watch config.toml, index.html, and i18n translation files for changes
+    // and trigger a full page reload.
     // We cannot rely on devServerConfig.watchFiles for this because liveReload is
     // set to false (to prevent HMR fallback reloads on React source changes). In
     // webpack-dev-server v4, the watchFiles mechanism checks liveReload before
@@ -82,6 +83,11 @@ module.exports = {
       const filesToWatch = [
         path.resolve(__dirname, '../config.toml'),
         path.resolve(__dirname, '../index.html'),
+        // Watch the i18n directory so that changes to translation JSON files
+        // trigger a full page reload. i18next-http-backend fetches these files
+        // at runtime (they are not bundled by webpack), so a page reload is
+        // needed to re-fetch the updated translations.
+        path.resolve(__dirname, '../resources/i18n'),
       ];
 
       const watchers = filesToWatch.map((file) => {
