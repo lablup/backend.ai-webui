@@ -1,4 +1,5 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
+import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
@@ -104,6 +105,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         createdAt
         updatedAt
 
+        ...DomainResourceGroupWarningIconFragment
         ...FairShareWeightSettingModal_DomainFragment
         ...UsageBucketModal_DomainFragment
       }
@@ -120,6 +122,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       sorter: isEnableSorter('domainName'),
       render: (_name, record) => (
         <BAIFlex gap="xxs" align="center">
+          <DomainResourceGroupWarningIcon domainFairShareFrgmt={record} />
           <BAILink
             icon={<ChevronRight />}
             onClick={() =>

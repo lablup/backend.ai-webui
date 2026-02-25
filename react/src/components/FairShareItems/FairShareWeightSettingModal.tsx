@@ -1,5 +1,8 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import { Alert, App, Form, Input, InputNumber, theme } from 'antd';
+import DomainResourceGroupAlert from './DomainResourceGroupAlert';
+import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
+import UserResourceGroupAlert from './UserResourceGroupAlert';
+import { Alert, App, Form, Input, InputNumber, Skeleton, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIBulkEditFormItem,
@@ -10,7 +13,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyDomainWeightMutation.graphql';
@@ -76,6 +79,7 @@ const FairShareWeightSettingModal: React.FC<
         spec {
           weight
         }
+        ...DomainResourceGroupAlertFragment
       }
     `,
     domainFairShareFrgmt,
@@ -101,6 +105,7 @@ const FairShareWeightSettingModal: React.FC<
         spec {
           weight
         }
+        ...ProjectResourceGroupAlertFragment
       }
     `,
     projectFairShareFrgmt,
@@ -133,6 +138,7 @@ const FairShareWeightSettingModal: React.FC<
         spec {
           weight
         }
+        ...UserResourceGroupAlertFragment
       }
     `,
     userFairShareFrgmt,
@@ -504,126 +510,153 @@ const FairShareWeightSettingModal: React.FC<
       }}
       onOk={handleOk}
     >
-      {resourceGroup && resourceGroup?.scheduler?.type !== 'FAIR_SHARE' && (
+      <Suspense fallback={<Skeleton active />}>
+        {resourceGroup && resourceGroup?.scheduler?.type !== 'FAIR_SHARE' && (
+          <Alert
+            type="warning"
+            title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
+              resourceGroup: resourceGroup?.name || '',
+            })}
+            showIcon
+            style={{ marginBottom: token.marginMD }}
+          />
+        )}
+        {!isBulkEdit && domainsFairShares?.[0] && (
+          <DomainResourceGroupAlert
+            domainFairShareFrgmt={domainsFairShares[0]}
+            isModalOpen={modalProps?.open ?? false}
+            style={{ marginBottom: token.marginMD }}
+          />
+        )}
+        {!isBulkEdit && projectFairShares?.[0] && (
+          <ProjectResourceGroupAlert
+            projectFairShareFrgmt={projectFairShares[0]}
+            isModalOpen={modalProps?.open ?? false}
+            style={{ marginBottom: token.marginMD }}
+          />
+        )}
+        {!isBulkEdit && userFairShares?.[0] && (
+          <UserResourceGroupAlert
+            userFairShareFrgmt={userFairShares[0]}
+            isModalOpen={modalProps?.open ?? false}
+            style={{ marginBottom: token.marginMD }}
+          />
+        )}
         <Alert
-          type="warning"
-          description={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
-            resourceGroup: resourceGroup?.name || '',
-          })}
+          type="info"
+          title={t('fairShare.FairShareSettingDescription')}
           showIcon
           style={{ marginBottom: token.marginMD }}
         />
-      )}
-      <Alert
-        type="info"
-        description={t('fairShare.FairShareSettingDescription')}
-        showIcon
-        style={{ marginBottom: token.marginMD }}
-      />
-      <Form ref={formRef} layout="vertical" initialValues={INITIAL_FORM_VALUES}>
-        <Form.Item
-          label={t('fairShare.ResourceGroup')}
-          name="resourceGroupName"
-          required
-          hidden
+        <Form
+          ref={formRef}
+          layout="vertical"
+          initialValues={INITIAL_FORM_VALUES}
         >
-          <Input disabled />
-        </Form.Item>
-        <Form.Item
-          label={t('fairShare.Domain')}
-          name="domainName"
-          required
-          hidden={editTarget !== 'domain'}
-        >
-          {isBulkEdit ? (
-            <BAITagList
-              items={_.map(
-                domainsFairShares,
-                (domain) => domain.domain?.basicInfo?.name || '',
-              )}
-              popoverTitle={t('fairShare.Domain')}
-            />
-          ) : (
-            <Input disabled />
-          )}
-        </Form.Item>
-        <Form.Item label={t('fairShare.Project')} name="projectId" hidden>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label={t('fairShare.Name')}
-          name="projectName"
-          required
-          hidden={editTarget !== 'project'}
-        >
-          {isBulkEdit ? (
-            <BAITagList
-              items={_.map(
-                projectFairShares,
-                (project) => project.project?.basicInfo?.name || '',
-              )}
-              popoverTitle={t('fairShare.Project')}
-            />
-          ) : (
-            <Input disabled />
-          )}
-        </Form.Item>
-        <Form.Item
-          label={t('fairShare.User')}
-          name="userId"
-          required={editTarget === 'user'}
-          hidden
-        >
-          <Input disabled />
-        </Form.Item>
-        <Form.Item
-          label={t('fairShare.Email')}
-          name="userEmail"
-          hidden={editTarget !== 'user'}
-        >
-          {isBulkEdit ? (
-            <BAITagList
-              items={_.map(
-                userFairShares,
-                (user) => user.user?.basicInfo?.email || '',
-              )}
-              popoverTitle={t('fairShare.User')}
-            />
-          ) : (
-            <Input disabled />
-          )}
-        </Form.Item>
-        {isBulkEdit ? (
-          <BAIBulkEditFormItem
-            showClear
-            label={
-              <BAIFlex gap="xxs">
-                {t('fairShare.Weight')}
-                <QuestionIconWithTooltip
-                  title={t('fairShare.WeightDescription')}
-                ></QuestionIconWithTooltip>
-              </BAIFlex>
-            }
-            name="weight"
-          >
-            <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
-          </BAIBulkEditFormItem>
-        ) : (
           <Form.Item
-            label={
-              <BAIFlex gap="xxs">
-                {t('fairShare.Weight')}
-                <QuestionIconWithTooltip
-                  title={t('fairShare.WeightDescription')}
-                ></QuestionIconWithTooltip>
-              </BAIFlex>
-            }
-            name="weight"
+            label={t('fairShare.ResourceGroup')}
+            name="resourceGroupName"
+            required
+            hidden
           >
-            <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+            <Input disabled />
           </Form.Item>
-        )}
-      </Form>
+          <Form.Item
+            label={t('fairShare.Domain')}
+            name="domainName"
+            required
+            hidden={editTarget !== 'domain'}
+          >
+            {isBulkEdit ? (
+              <BAITagList
+                items={_.map(
+                  domainsFairShares,
+                  (domain) => domain.domain?.basicInfo?.name || '',
+                )}
+                popoverTitle={t('fairShare.Domain')}
+              />
+            ) : (
+              <Input disabled />
+            )}
+          </Form.Item>
+          <Form.Item label={t('fairShare.Project')} name="projectId" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={t('fairShare.Name')}
+            name="projectName"
+            required
+            hidden={editTarget !== 'project'}
+          >
+            {isBulkEdit ? (
+              <BAITagList
+                items={_.map(
+                  projectFairShares,
+                  (project) => project.project?.basicInfo?.name || '',
+                )}
+                popoverTitle={t('fairShare.Project')}
+              />
+            ) : (
+              <Input disabled />
+            )}
+          </Form.Item>
+          <Form.Item
+            label={t('fairShare.User')}
+            name="userId"
+            required={editTarget === 'user'}
+            hidden
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            label={t('fairShare.Email')}
+            name="userEmail"
+            hidden={editTarget !== 'user'}
+          >
+            {isBulkEdit ? (
+              <BAITagList
+                items={_.map(
+                  userFairShares,
+                  (user) => user.user?.basicInfo?.email || '',
+                )}
+                popoverTitle={t('fairShare.User')}
+              />
+            ) : (
+              <Input disabled />
+            )}
+          </Form.Item>
+          {isBulkEdit ? (
+            <BAIBulkEditFormItem
+              showClear
+              label={
+                <BAIFlex gap="xxs">
+                  {t('fairShare.Weight')}
+                  <QuestionIconWithTooltip
+                    title={t('fairShare.WeightDescription')}
+                  ></QuestionIconWithTooltip>
+                </BAIFlex>
+              }
+              name="weight"
+            >
+              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+            </BAIBulkEditFormItem>
+          ) : (
+            <Form.Item
+              label={
+                <BAIFlex gap="xxs">
+                  {t('fairShare.Weight')}
+                  <QuestionIconWithTooltip
+                    title={t('fairShare.WeightDescription')}
+                  ></QuestionIconWithTooltip>
+                </BAIFlex>
+              }
+              name="weight"
+            >
+              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+            </Form.Item>
+          )}
+        </Form>
+      </Suspense>
     </BAIModal>
   );
 };
