@@ -75,6 +75,21 @@ md_to_adf() {
 import json, re, sys
 
 text = sys.argv[1]
+
+# Auto-convert common Jira wiki markup to Markdown before processing.
+# These patterns are unambiguous and never appear in valid Markdown.
+def wiki_to_md(t):
+    # h1. through h6. headings → # through ######
+    t = re.sub(r"^h([1-6])\.\s+", lambda m: "#" * int(m.group(1)) + " ", t, flags=re.MULTILINE)
+    # {{inline code}} → `inline code`
+    t = re.sub(r"\{\{([^}]+)\}\}", r"`\1`", t)
+    # {code:lang} or {code} blocks → ```lang / ```
+    t = re.sub(r"\{code(?::(\w+))?\}", lambda m: "```" + (m.group(1) or ""), t)
+    # {noformat} → ```
+    t = re.sub(r"\{noformat\}", "```", t)
+    return t
+
+text = wiki_to_md(text)
 lines = text.split("\n")
 content = []
 in_code = False
