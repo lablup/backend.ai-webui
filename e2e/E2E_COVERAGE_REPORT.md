@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-06
+> **Last Updated:** 2026-03-09
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 75 / 273 features covered (27%)**
+**Overall (in-scope routes): 92 / 284 features covered (32%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -34,7 +34,7 @@
 | Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
 | User Credentials | `/credential` | 16 | 6 | 🔶 38% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
-| User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
+| User Settings | `/usersettings` | 14 | 13 | 🔶 93% |
 | Project | `/project` | 6 | 0 | ❌ 0% |
 | Statistics | `/statistics` | 2 | 0 | ❌ 0% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **75** | **27%** |
+| **Total** | | **284** | **92** | **32%** |
 
 ---
 
@@ -570,7 +570,7 @@
 
 ### 19. User Settings (`/usersettings`)
 
-**Test files:** None
+**Test files:** [`e2e/user/user-settings.spec.ts`](user/user-settings.spec.ts)
 
 **Tabs:** General | Logs
 
@@ -579,15 +579,19 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Language selection | ❌ | - |
-| Desktop notifications toggle | ❌ | - |
-| Compact sidebar toggle | ❌ | - |
-| Auto-logout configuration | ❌ | - |
-| SSH keypair info → MyKeypairInfoModal | ❌ | - |
-| SSH keypair management → SSHKeypairManagementModal | ❌ | - |
-| Bootstrap script → ShellScriptEditModal | ❌ | - |
-| User config script → ShellScriptEditModal | ❌ | - |
-| Experimental features toggle | ❌ | - |
+| Language selection | ✅ | `User can change language selection` |
+| Desktop notifications toggle | ✅ | `User can toggle Desktop Notification checkbox` |
+| Compact sidebar toggle | ✅ | `User can toggle Use Compact Sidebar checkbox` |
+| Automatic update check toggle | ✅ | `User can toggle Automatic Update Check checkbox` |
+| Auto-logout configuration | ✅ | `User can toggle Auto Logout checkbox` |
+| Max concurrent uploads | ✅ | `User can change max concurrent uploads` |
+| Tab navigation (General ↔ Logs) | ✅ | `User can switch to Logs tab`, `User can switch back to General tab from Logs` |
+| SSH keypair info → MyKeypairInfoModal | ✅ | `User can open and close My Keypair Info modal` |
+| SSH keypair management → SSHKeypairManagementModal | ✅ | `User can open and close SSH Keypair Management modal` |
+| Bootstrap script → ShellScriptEditModal | ✅ | `User can open and close Bootstrap Script editor modal` |
+| User config script → ShellScriptEditModal | ✅ | `User can open and close User Config Script editor modal`, `User can switch between rc files in User Config Script modal` |
+| Experimental features toggle | ✅ | `User can toggle Experimental AI Agents checkbox` |
+| Search settings by keyword | ✅ | `User can search settings by keyword` |
 
 #### Logs Tab
 
@@ -595,7 +599,7 @@
 |---------|--------|------|
 | Error log viewing | ❌ | - |
 
-**Coverage: ❌ 0/10 features**
+**Coverage: ✅ 13/14 features**
 
 ---
 
@@ -927,7 +931,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/maintenance` | 🔶 | ✅ | - |
 | `/project` | ❌ | ❌ | **P2** |
 | `/statistics` | ❌ | ❌ | P3 |
-| `/usersettings` | ❌ | ❌ | **P2** |
+| `/usersettings` | ✅ | ❌ | P2 |
 | `/scheduler` | ❌ | ❌ | P3 |
 | `/reservoir` | ❌ | ❌ | P3 |
 | `/branding` | ❌ | ❌ | P3 |
