@@ -140,15 +140,38 @@ You can debug the app.
 
 Backend.AI Web UI is built with
 
-- `react` as library for web UI
-- `webpack` (via CRA/Craco) as bundler
+- `react` 19 as library for web UI
+- `webpack` (via Craco) as bundler
+- `relay` / GraphQL as data-fetching layer
+- `antd` 6 (Ant Design) as component library
+- `jotai` for global UI state management
+- `typescript` for type safety
+- `eslint` 9 (flat config) + `prettier` for code quality
 - `pnpm` as package manager
 - `electron` as app shell
-- `watchman` as file change watcher for development
 
 ### Code of conduct
 
 View [Code of conduct](https://github.com/lablup/backend.ai-webui/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
+
+### Project Structure
+
+```
+react/                  # Main React application (Webpack/Craco)
+  src/                  # Application source code (components, pages, hooks)
+  craco.config.cjs      # Webpack customization via Craco
+packages/               # Monorepo workspace packages
+  backend.ai-ui/        # Shared React component library (Vite build)
+  backend.ai-webui-docs/# User manual documentation
+  eslint-config-bai/    # Shared ESLint configuration
+src/                    # Utilities and websocket proxy
+  lib/                  # Backend.AI client library
+  wsproxy/              # WebSocket proxy for desktop app
+data/                   # GraphQL schema files
+e2e/                    # Playwright E2E tests
+resources/              # Static assets, i18n files, themes
+scripts/                # Build and dev utility scripts
+```
 
 ### Initializing
 
@@ -168,41 +191,87 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
-To run `relay-compiler` with the watch option(`pnpm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
+### Developing / testing with dev server
 
-### Developing / testing without bundling
+Two options are available depending on your needs.
+
+#### Option A: Full dev mode (recommended)
+
+`pnpm run build:d` already starts both Relay watch and React dev server concurrently. Do **not** run `server:d` at the same time — that would start a duplicate server.
 
 On a terminal:
 
 ```console
-$ pnpm run build:d   # To watch source changes
+$ pnpm run build:d   # Starts Relay watch + React dev server together
 ```
 
 On another terminal:
 
 ```console
-$ pnpm run server:d  # To run dev. web server
+$ pnpm run wsproxy   # Start websocket proxy (required for API calls)
 ```
 
-On yet another terminal:
+#### Option B: React dev server only (manual Relay compile)
+
+Use this option if you want to control Relay compilation separately.
+
+On a terminal:
 
 ```console
-$ pnpm run wsproxy  # To run websocket proxy
+$ pnpm run server:d  # React dev server only (no Relay watch)
 ```
 
-If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
-
-```
-PORT=YOURPORT
-```
-
-Defaultly, `PORT` is `9081`
-
-### Lint Checking
+On another terminal:
 
 ```console
-$ pnpm run lint  # To check lints
+$ pnpm run wsproxy   # Start websocket proxy
 ```
+
+When GraphQL queries change, compile Relay manually:
+
+```console
+$ pnpm run relay       # One-time compile (from project root)
+$ cd react && pnpm run relay:watch  # Or watch mode (uses nodemon)
+```
+
+#### Port configuration
+
+The default React dev server port is `9081`. To use a different port, create a `.env.development.local` file in the project root and set `BAI_WEBUI_DEV_PORT_OFFSET`:
+
+```
+# .env.development.local
+BAI_WEBUI_DEV_PORT_OFFSET=10   # shifts React port to 9091, webdev port to 3091
+```
+
+Port assignment is managed by `scripts/dev-config.js`. To inspect the current port configuration:
+
+```console
+$ pnpm run dev:config   # Show current dev configuration
+$ pnpm run dev:setup    # Apply configuration to current environment
+```
+
+### Commands Reference
+
+| Command | Description |
+|---------|-------------|
+| `pnpm run build:d` | Relay watch + React dev server (concurrent) |
+| `pnpm run server:d` | React dev server only |
+| `pnpm run wsproxy` | WebSocket proxy (required for dev) |
+| `pnpm run build` | Full production build |
+| `pnpm run build:react-only` | Build only React app |
+| `pnpm run relay` | One-time Relay/GraphQL compile (project root) |
+| `cd react && pnpm run relay:watch` | Relay watch mode (uses nodemon) |
+| `pnpm run lint` | ESLint check |
+| `pnpm run lint-fix` | Auto-fix ESLint issues |
+| `pnpm run format` | Prettier format check |
+| `pnpm run format-fix` | Auto-fix formatting |
+| `bash scripts/verify.sh` | Run Relay + Lint + Format + TypeScript checks |
+| `pnpm run dev:config` | Show current dev port configuration |
+| `pnpm run dev:setup` | Apply dev configuration to current environment |
+| `pnpm run electron:d` | Run Electron in dev mode |
+| `pnpm run electron:d:hmr` | Run Electron in dev mode with HMR (live debug) |
+| `pnpm run test` | Jest unit tests (root: scripts/, src/) |
+| `cd react && pnpm run test` | Jest unit tests for React app |
 
 ### Unit Testing
 
@@ -578,14 +647,29 @@ This is known as the "web shell" mode and allows live edits of the web UI while 
 
 Locale resources are JSON files located in `resources/i18n`.
 
-Currently WebUI supports these languages:
+Currently WebUI supports these 21 languages:
 
-- English
-- Korean
-- French
-- Russian
-- Mongolian
-- Indonesian
+- English (`en`)
+- Korean (`ko`)
+- French (`fr`)
+- Russian (`ru`)
+- Mongolian (`mn`)
+- Indonesian (`id`)
+- German (`de`)
+- Greek (`el`)
+- Spanish (`es`)
+- Finnish (`fi`)
+- Italian (`it`)
+- Japanese (`ja`)
+- Malay (`ms`)
+- Polish (`pl`)
+- Portuguese (`pt`)
+- Portuguese, Brazilian (`pt-BR`)
+- Thai (`th`)
+- Turkish (`tr`)
+- Vietnamese (`vi`)
+- Chinese, Simplified (`zh-CN`)
+- Chinese, Traditional (`zh-TW`)
 
 #### Extracting i18n resources
 
