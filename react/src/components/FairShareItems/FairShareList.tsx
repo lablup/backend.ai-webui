@@ -20,8 +20,9 @@ import UserFairShareTable, {
   availableUserFairShareSorterValues,
   UserFairShare,
 } from './UserFairShareTable';
+import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { SettingOutlined } from '@ant-design/icons';
-import { Alert, Steps, theme, Tooltip, Typography } from 'antd';
+import { Alert, Skeleton, Steps, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
 import {
@@ -44,7 +45,13 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { useDeferredValue, useEffect, useEffectEvent, useState } from 'react';
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
@@ -307,6 +314,7 @@ const FairShareList: React.FC = () => {
           edges {
             node {
               ...UserFairShareTableFragment
+              ...UserResourceGroupAlertFragment
             }
           }
         }
@@ -518,6 +526,13 @@ const FairShareList: React.FC = () => {
               : undefined,
         }}
       />
+      {currentStep === 'user' && userFairShares?.edges?.[0]?.node && (
+        <Suspense fallback={null}>
+          <UserResourceGroupAlert
+            userFairShareFrgmt={userFairShares.edges[0].node}
+          />
+        </Suspense>
+      )}
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
       <Steps
         className={styles.step}
@@ -639,184 +654,187 @@ const FairShareList: React.FC = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {currentStep === 'resource-group' && (
-          <ResourceGroupFairShareTable
-            resourceGroupNodeFragment={
-              resourceGroups?.edges?.map((edge) => edge?.node) || null
-            }
-            onClickGroupName={(name) => {
-              setStepQueryParams({ resourceGroup: name });
-              setQueryParams({
-                order: null,
-                filter: null,
-              });
-            }}
-            afterUpdate={() => {
-              updateFetchKey();
-            }}
-            loading={
-              GQLQueryVariables !== deferredGQLQueryVariables ||
-              stepQueryParams !== deferredStepQueryParams
-            }
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              total: resourceGroups?.count || 0,
-              current: tablePaginationOption.current,
-              style: {
-                marginRight: token.marginXS,
-              },
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({
-                    current,
-                    pageSize,
-                  });
-                }
-              },
-            }}
-          />
-        )}
-        {currentStep === 'domain' && (
-          <DomainFairShareTable
-            domainFairShareNodeFragment={
-              domains?.edges?.map((edge) => edge?.node) || null
-            }
-            loading={
-              GQLQueryVariables !== deferredGQLQueryVariables ||
-              stepQueryParams !== deferredStepQueryParams
-            }
-            selectedRows={selectedRows as Array<DomainFairShare>}
-            onRowSelect={(selectedRowKeys, currentPageItems) => {
-              handleRowSelectionChange(
-                selectedRowKeys,
-                currentPageItems,
-                setSelectedRows as React.Dispatch<
-                  React.SetStateAction<DomainFairShare[]>
-                >,
-                'domainName',
-              );
-            }}
-            onOpenWeightSetting={(row) => {
-              setSelectedSingleRow(row);
-            }}
-            onClickDomainName={(domainName) => {
-              setStepQueryParams({
-                domain: domainName,
-              });
-              setQueryParams({
-                order: null,
-                filter: null,
-              });
-            }}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              total: domains?.count || 0,
-              current: tablePaginationOption.current,
-              style: {
-                marginRight: token.marginXS,
-              },
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({
-                    current,
-                    pageSize,
-                  });
-                }
-              },
-            }}
-          />
-        )}
-        {currentStep === 'project' && (
-          <ProjectFairShareTable
-            projectFairShareNodeFragment={
-              projectFairShares?.edges?.map((edge) => edge?.node) || null
-            }
-            loading={
-              GQLQueryVariables !== deferredGQLQueryVariables ||
-              stepQueryParams !== deferredStepQueryParams
-            }
-            selectedRows={selectedRows as Array<ProjectFairShare>}
-            onRowSelect={(selectedRowKeys, currentPageItems) => {
-              handleRowSelectionChange(
-                selectedRowKeys,
-                currentPageItems,
-                setSelectedRows as React.Dispatch<
-                  React.SetStateAction<ProjectFairShare[]>
-                >,
-                'id',
-              );
-            }}
-            onOpenWeightSetting={(row) => {
-              setSelectedSingleRow(row);
-            }}
-            onClickProjectName={(name) => {
-              setStepQueryParams({
-                project: name,
-              });
-              setQueryParams({
-                order: null,
-                filter: null,
-              });
-            }}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              total: projectFairShares?.count || 0,
-              current: tablePaginationOption.current,
-              style: {
-                marginRight: token.marginXS,
-              },
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({
-                    current,
-                    pageSize,
-                  });
-                }
-              },
-            }}
-          />
-        )}
-        {currentStep === 'user' && (
-          <UserFairShareTable
-            userFairShareNodeFragment={
-              userFairShares?.edges?.map((edge) => edge?.node) || null
-            }
-            loading={
-              GQLQueryVariables !== deferredGQLQueryVariables ||
-              stepQueryParams !== deferredStepQueryParams
-            }
-            selectedRows={selectedRows as Array<UserFairShare>}
-            onRowSelect={(selectedRowKeys, currentPageItems) => {
-              handleRowSelectionChange(
-                selectedRowKeys,
-                currentPageItems,
-                setSelectedRows as React.Dispatch<
-                  React.SetStateAction<UserFairShare[]>
-                >,
-                'userUuid',
-              );
-            }}
-            onOpenWeightSetting={(row) => {
-              setSelectedSingleRow(row);
-            }}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              total: userFairShares?.count || 0,
-              current: tablePaginationOption.current,
-              style: {
-                marginRight: token.marginXS,
-              },
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({
-                    current,
-                    pageSize,
-                  });
-                }
-              },
-            }}
-          />
-        )}
+
+        <Suspense fallback={<Skeleton active />}>
+          {currentStep === 'resource-group' && (
+            <ResourceGroupFairShareTable
+              resourceGroupNodeFragment={
+                resourceGroups?.edges?.map((edge) => edge?.node) || null
+              }
+              onClickGroupName={(name) => {
+                setStepQueryParams({ resourceGroup: name });
+                setQueryParams({
+                  order: null,
+                  filter: null,
+                });
+              }}
+              afterUpdate={() => {
+                updateFetchKey();
+              }}
+              loading={
+                GQLQueryVariables !== deferredGQLQueryVariables ||
+                stepQueryParams !== deferredStepQueryParams
+              }
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                total: resourceGroups?.count || 0,
+                current: tablePaginationOption.current,
+                style: {
+                  marginRight: token.marginXS,
+                },
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                  }
+                },
+              }}
+            />
+          )}
+          {currentStep === 'domain' && (
+            <DomainFairShareTable
+              domainFairShareNodeFragment={
+                domains?.edges?.map((edge) => edge?.node) || null
+              }
+              loading={
+                GQLQueryVariables !== deferredGQLQueryVariables ||
+                stepQueryParams !== deferredStepQueryParams
+              }
+              selectedRows={selectedRows as Array<DomainFairShare>}
+              onRowSelect={(selectedRowKeys, currentPageItems) => {
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  currentPageItems,
+                  setSelectedRows as React.Dispatch<
+                    React.SetStateAction<DomainFairShare[]>
+                  >,
+                  'domainName',
+                );
+              }}
+              onOpenWeightSetting={(row) => {
+                setSelectedSingleRow(row);
+              }}
+              onClickDomainName={(domainName) => {
+                setStepQueryParams({
+                  domain: domainName,
+                });
+                setQueryParams({
+                  order: null,
+                  filter: null,
+                });
+              }}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                total: domains?.count || 0,
+                current: tablePaginationOption.current,
+                style: {
+                  marginRight: token.marginXS,
+                },
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                  }
+                },
+              }}
+            />
+          )}
+          {currentStep === 'project' && (
+            <ProjectFairShareTable
+              projectFairShareNodeFragment={
+                projectFairShares?.edges?.map((edge) => edge?.node) || null
+              }
+              loading={
+                GQLQueryVariables !== deferredGQLQueryVariables ||
+                stepQueryParams !== deferredStepQueryParams
+              }
+              selectedRows={selectedRows as Array<ProjectFairShare>}
+              onRowSelect={(selectedRowKeys, currentPageItems) => {
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  currentPageItems,
+                  setSelectedRows as React.Dispatch<
+                    React.SetStateAction<ProjectFairShare[]>
+                  >,
+                  'id',
+                );
+              }}
+              onOpenWeightSetting={(row) => {
+                setSelectedSingleRow(row);
+              }}
+              onClickProjectName={(name) => {
+                setStepQueryParams({
+                  project: name,
+                });
+                setQueryParams({
+                  order: null,
+                  filter: null,
+                });
+              }}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                total: projectFairShares?.count || 0,
+                current: tablePaginationOption.current,
+                style: {
+                  marginRight: token.marginXS,
+                },
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                  }
+                },
+              }}
+            />
+          )}
+          {currentStep === 'user' && (
+            <UserFairShareTable
+              userFairShareNodeFragment={
+                userFairShares?.edges?.map((edge) => edge?.node) || null
+              }
+              loading={
+                GQLQueryVariables !== deferredGQLQueryVariables ||
+                stepQueryParams !== deferredStepQueryParams
+              }
+              selectedRows={selectedRows as Array<UserFairShare>}
+              onRowSelect={(selectedRowKeys, currentPageItems) => {
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  currentPageItems,
+                  setSelectedRows as React.Dispatch<
+                    React.SetStateAction<UserFairShare[]>
+                  >,
+                  'userUuid',
+                );
+              }}
+              onOpenWeightSetting={(row) => {
+                setSelectedSingleRow(row);
+              }}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                total: userFairShares?.count || 0,
+                current: tablePaginationOption.current,
+                style: {
+                  marginRight: token.marginXS,
+                },
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                  }
+                },
+              }}
+            />
+          )}
+        </Suspense>
       </BAIFlex>
 
       <BAIUnmountAfterClose>

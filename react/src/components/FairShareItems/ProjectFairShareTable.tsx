@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
+import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
@@ -104,6 +105,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         }
         createdAt
         updatedAt
+        ...ProjectResourceGroupWarningIconFragment
         ...FairShareWeightSettingModal_ProjectFragment
         ...UsageBucketModal_ProjectFragment
       }
@@ -120,6 +122,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       sorter: isEnableSorter('projectName'),
       render: (_name, record) => (
         <BAIFlex gap="xxs" align="center">
+          <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
           <BAILink
             icon={<ChevronRight />}
             onClick={() => onClickProjectName?.(record?.projectId)}

@@ -85,6 +85,7 @@ scripts/                # Build and dev utility scripts
 ### Build Pipeline
 
 Production build (`pnpm run build`) runs these steps sequentially:
+
 1. Clean and create `build/web/` output directory
 2. Copy `index.html`, `resources/`, `manifest/`, config files
 3. `pnpm run -r --stream build` builds all workspace packages:
@@ -105,7 +106,6 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - All work items are created in Jira and serve as the starting point for understanding and resolving tasks.
 - Work items are cloned as GitHub issues in the corresponding repository.
 - GitHub PR titles follow this format:
-
   - prefix
     - feat: New features or feature improvements and changes
     - fix: Bug fixes
