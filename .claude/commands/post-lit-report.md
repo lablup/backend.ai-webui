@@ -10,17 +10,29 @@ Log post-migration problems as Jira issues. Does NOT analyze code or modify file
 
 ## Arguments
 
-`$ARGUMENTS` contains the user's report, optionally prefixed with `--assign <name>`.
+`$ARGUMENTS` contains the user's report with an optional assignee.
 
 **Assignee parsing:**
-- If `$ARGUMENTS` starts with `--assign <name>`, extract the name and use it for `--assignee` in jira.sh.
-- Supported names: `종은`/`jongeun`, `승원`/`seungwon`, `성철`/`sungchul`, `수진`/`sujin`, `me`
-- If no `--assign`, default to `--assignee me`.
-- The remaining text after `--assign <name>` is the issue description.
+
+Supported names and their jira.sh values:
+| Korean | English | jira.sh `--assignee` value |
+|--------|---------|---------------------------|
+| 종은 | jongeun | jongeun |
+| 승원 | seungwon | seungwon |
+| 성철 | sungchul | sungchul |
+| 수진 | sujin | sujin |
+| 나/me | me | me |
+
+Detection methods (checked in order):
+1. **Flag format**: `--assign <name>` at the start → extract name, rest is description
+2. **Natural language (Korean)**: patterns like `승원님께 할당`, `승원에게 할당`, `승원 할당` anywhere in text → extract name, remove the assignment phrase
+3. **Natural language (English)**: patterns like `assign to seungwon`, `for seungwon` anywhere in text → extract name, remove the assignment phrase
+4. **No match**: default to `--assignee me`
 
 Examples:
 - `/post-lit-report --assign 승원 PluginLoader sidebar menu 검증 필요`
-- `/post-lit-report PluginLoader sidebar menu 검증 필요` (assigns to me)
+- `/post-lit-report PluginLoader sidebar menu 검증 필요. 승원님께 할당`
+- `/post-lit-report PluginLoader sidebar menu needs checking` (assigns to me)
 
 ## Two Issue Types
 
@@ -34,13 +46,18 @@ Examples:
 - Verification: "not sure if", "needs checking", "verify that", "confirm whether"
 - If ambiguous, use `AskUserQuestion` to ask: "Is this broken, or does it need verification?"
 
+## Language Rule
+
+**All Jira issue titles and descriptions MUST be written in English**, regardless of the input language.
+If the user writes in Korean or another language, translate the content to English before creating the issue.
+
 ## Process
 
 ### Step 1: Parse the Report
 
 Extract from `$ARGUMENTS`:
 - **Component name** (e.g., LoginView, SessionLauncher)
-- **Problem summary** (in the user's words)
+- **Problem summary** (translate to English if needed)
 - **Type** (Bug or Verification)
 - **Affected files** (only if the user mentions them — don't go looking)
 
@@ -61,19 +78,19 @@ Found existing issues for [ComponentName]:
 
 ### Step 3: Confirm Before Creating
 
-Use `AskUserQuestion` to get confirmation. Include clickable Jira links for any duplicates found in the description.
+Use `AskUserQuestion` to get confirmation. **Show the English-translated title and description** so the user can verify the translation before creation. Include clickable Jira links for any duplicates found.
 
 Format:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Create these Jira issues?",
-    header: "Post-Migration Issues",
+    question: "Create this Jira issue?",
+    header: "Jira Issue",
     multiSelect: false,
     options: [
       {
-        label: "Create All",
-        description: "1. [Bug] Title — comp:X\n2. [Task] Verify: Title — comp:Y, needs-verification\n\nDuplicates: (none)"
+        label: "Create",
+        description: "[Type] English Title — labels: lit-cleanup, comp:X\nAssignee: 승원\n\nDescription preview:\n> English description that will be used...\n\nDuplicates: (none)"
       },
       {
         label: "Skip — Duplicate Exists",
@@ -81,7 +98,7 @@ AskUserQuestion({
       },
       {
         label: "Cancel",
-        description: "Don't create any issues"
+        description: "Don't create the issue"
       }
     ]
   }]
@@ -130,10 +147,16 @@ bash scripts/jira.sh create \
   --labels "lit-cleanup,needs-verification,comp:[ComponentName]"
 ```
 
-Then assign and set sprint (use the name from `--assign` or default to `me`):
+Then assign and set sprint (use the parsed assignee name or default to `me`):
 ```bash
 bash scripts/jira.sh update FR-XXXX --assignee [name_or_me] --sprint current
 ```
+
+**If `--sprint current` fails** (e.g., no active sprint), retry without it:
+```bash
+bash scripts/jira.sh update FR-XXXX --assignee [name_or_me]
+```
+Do not treat sprint failure as a blocking error. Note it in the summary.
 
 ### Step 5: Summary
 
@@ -141,10 +164,11 @@ Show the created issues with clickable Jira links (format: `[FR-XXXX](https://la
 
 ```
 Created:
-| # | Key | Type | Title | Assignee | Labels |
-|---|-----|------|-------|----------|--------|
-| 1 | [FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX) | Bug | LoginView notification broken | 승원 | lit-cleanup, comp:LoginView |
-| 2 | [FR-YYYY](https://lablup.atlassian.net/browse/FR-YYYY) | Task | Verify: SessionLauncher env passing | 승원 | lit-cleanup, needs-verification, comp:SessionLauncher |
+| Key | Type | Title | Assignee | Labels |
+|-----|------|-------|----------|--------|
+| [FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX) | Bug | LoginView notification broken | 승원 | lit-cleanup, comp:LoginView |
+
+(Sprint: assigned / or "Sprint: skipped — no active sprint")
 
 Next: Run `/fiber-do FR-XXXX` to fix bugs. Verification tasks need manual checking.
 ```
