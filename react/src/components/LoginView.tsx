@@ -81,7 +81,6 @@ const LoginView: React.FC = () => {
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
@@ -92,6 +91,7 @@ const LoginView: React.FC = () => {
   const clientRef =
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
+  const blockTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   // Trigger config loading on mount
   useEffect(() => {
@@ -222,6 +222,12 @@ const LoginView: React.FC = () => {
   }, []);
 
   const open = useCallback(() => {
+    // Cancel any pending block timer so the block modal doesn't overlay
+    // the login panel (and any error notifications) after a login failure.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
 
@@ -239,23 +245,39 @@ const LoginView: React.FC = () => {
   }, [loginConfig.signup_support, apiEndpoint]);
 
   const close = useCallback(() => {
+    // Cancel any pending block timer so a delayed timer from block()
+    // doesn't re-open the block panel after a successful login.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
     setIsLoginPanelOpen(false);
     setIsBlockPanelOpen(false);
   }, []);
 
-  const block = useCallback(
-    (message = '', type = '') => {
-      setBlockMessage(message);
-      setBlockType(type);
+  const block = useCallback((message = '', type = '') => {
+    setBlockMessage(message);
+    setBlockType(type);
 
-      setTimeout(() => {
-        if (!isBlockPanelOpen && !isConnected && !isLoginPanelOpen) {
+    // Clear any existing block timer to prevent a stale timer from firing.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+    }
+
+    blockTimerRef.current = setTimeout(() => {
+      blockTimerRef.current = null;
+      // Use the functional updater pattern to read the current isLoginPanelOpen
+      // value at callback time, avoiding the stale closure that previously caused
+      // the block modal to overlay error notifications after a login failure.
+      setIsLoginPanelOpen((currentIsLoginPanelOpen) => {
+        if (!currentIsLoginPanelOpen) {
           setIsBlockPanelOpen(true);
         }
-      }, 2000);
-    },
-    [isBlockPanelOpen, isConnected, isLoginPanelOpen],
-  );
+        // Return unchanged value — this is a read-only check, not a state change.
+        return currentIsLoginPanelOpen;
+      });
+    }, 2000);
+  }, []);
 
   const clearSavedLoginInfo = useCallback(() => {
     localStorage.removeItem('backendaiwebui.login.api_key');
@@ -327,7 +349,6 @@ const LoginView: React.FC = () => {
       }
 
       if (isLogon) {
-        setIsConnected(true);
         try {
           await doGQLConnect(client);
         } catch (err: unknown) {
@@ -354,7 +375,6 @@ const LoginView: React.FC = () => {
             endpoints,
           );
           setEndpoints(updatedEndpoints);
-          setIsConnected(true);
           window.location.href = '/';
           return;
         } catch {
@@ -370,7 +390,6 @@ const LoginView: React.FC = () => {
         if (fail_reason) {
           handleLoginFailReason(fail_reason, data, showError);
         } else {
-          setIsConnected(true);
           await doGQLConnect(client);
           return;
         }
