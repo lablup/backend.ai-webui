@@ -469,6 +469,52 @@ cmd_myself() {
   api GET "/myself" | jq '{accountId:.accountId, name:.displayName, email:.emailAddress}'
 }
 
+cmd_check_dup() {
+  local labels="" status_filter="statusCategory != Done"
+  while (( $# )); do
+    case $1 in
+      --labels) labels=$2; shift 2 ;;
+      --include-done) status_filter=""; shift ;;
+      *) die "check-dup: unknown flag $1" ;;
+    esac
+  done
+  [[ -n "$labels" ]] || die "check-dup: --labels required"
+
+  # Build JQL: project=FR AND labels=l1 AND labels=l2 AND statusCategory != Done
+  local jql="project = ${PROJECT}"
+  IFS=',' read -ra LABEL_ARR <<< "$labels"
+  for lbl in "${LABEL_ARR[@]}"; do
+    lbl=$(echo "$lbl" | xargs)  # trim whitespace
+    jql="${jql} AND labels = \"${lbl}\""
+  done
+  [[ -n "$status_filter" ]] && jql="${jql} AND ${status_filter}"
+
+  local tmp; tmp=$(mktemp)
+  local code
+  code=$(curl -s -o "$tmp" -w '%{http_code}' -G \
+    "${API}/search/jql" \
+    --data-urlencode "jql=${jql}" \
+    --data-urlencode "maxResults=5" \
+    --data-urlencode "fields=summary,status,labels" \
+    -H "Authorization: Basic ${AUTH}" \
+    -H "Content-Type: application/json") || { rm -f "$tmp"; die "curl failed"; }
+  local body; body=$(<"$tmp"); rm -f "$tmp"
+  if (( code >= 400 )); then
+    die "HTTP ${code}: ${body}"
+  fi
+
+  local total
+  total=$(echo "$body" | jq '.total')
+  if (( total > 0 )); then
+    echo "DUPLICATE_FOUND"
+    echo "$body" | jq -r '.issues[] | [.key, .fields.status.name, .fields.summary] | @tsv'
+    return 0
+  else
+    echo "NO_DUPLICATE"
+    return 0
+  fi
+}
+
 # ── Main ─────────────────────────────────────────────────────
 require_jq
 cmd=${1:-help}; shift 2>/dev/null || true
@@ -479,12 +525,13 @@ case $cmd in
 Usage: jira.sh <command> [options]
 
 Commands:
-  create   --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]
-  get      FR-XXXX
-  update   FR-XXXX [--assignee me] [--sprint current] [--desc "..."] [--comment "text"]
-  search   "JQL query" [--limit 20]
-  comment  FR-XXXX "Comment text"
-  myself   Show current user info
+  create    --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]
+  get       FR-XXXX
+  update    FR-XXXX [--assignee me] [--sprint current] [--desc "..."] [--comment "text"]
+  search    "JQL query" [--limit 20]
+  comment   FR-XXXX "Comment text"
+  check-dup --labels "l1,l2" [--include-done]   Check for duplicate issues by labels
+  myself    Show current user info
 
 Description and comment fields accept Markdown, which is automatically
 converted to Atlassian Document Format (ADF) for proper Jira rendering.
@@ -496,12 +543,13 @@ USAGE
   *)
     init_auth
     case $cmd in
-      create)  cmd_create "$@" ;;
-      get)     cmd_get "$@" ;;
-      update)  cmd_update "$@" ;;
-      search)  cmd_search "$@" ;;
-      comment) cmd_comment "$@" ;;
-      myself)  cmd_myself ;;
+      create)    cmd_create "$@" ;;
+      get)       cmd_get "$@" ;;
+      update)    cmd_update "$@" ;;
+      search)    cmd_search "$@" ;;
+      comment)   cmd_comment "$@" ;;
+      check-dup) cmd_check_dup "$@" ;;
+      myself)    cmd_myself ;;
       *) die "Unknown command: $cmd" ;;
     esac
     ;;
