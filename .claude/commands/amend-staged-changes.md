@@ -18,145 +18,65 @@ If no argument is provided, PR description will only be updated if there are sta
 ## Workflow Overview
 
 ```
-0. Verify MCP authentication
-1. Verify existing PR context
-2. Analyze staged changes with gt absorb --dry-run
-3. Determine optimal commit placement (absorb vs amend)
-4. User confirmation with absorb analysis
-5. Apply changes (absorb or amend)
-6. Push updated commits
-7. Update PR description (if needed)
-8. Display summary
+1. Verify existing PR context + analyze staged changes (parallel)
+2. Determine strategy: modify (single target) vs absorb (multi target)
+3. User confirmation
+4. Apply changes + push
+5. Update PR description (if requested)
+6. Display summary
 ```
 
 ## Detailed Process
 
-### Step 0: Verify MCP Authentication (MUST BE FIRST)
+### Step 1: Gather Context (all parallel)
 
-> **CRITICAL**: This step MUST be executed BEFORE any other operation. Do NOT skip or defer this step. Do NOT read files, check git status, or perform any other action until MCP authentication is verified.
-
-Verify that Atlassian MCP is authenticated before starting the workflow.
-
-```
-# Test Atlassian MCP authentication - THIS MUST BE THE VERY FIRST TOOL CALL
-mcp__Atlassian__atlassianUserInfo
-```
-
-**If authentication fails:**
-- **STOP IMMEDIATELY** - Do not proceed with any other steps
-- Inform the user that Atlassian MCP needs re-authentication
-- Provide guidance on how to re-authenticate:
-  ```
-  MCP Authentication Required
-
-  Atlassian MCP needs re-authentication.
-  Please re-authenticate via MCP settings and run the command again.
-  ```
-- Exit the workflow without making any changes
-
-**If authentication succeeds:**
-- Proceed to Step 1
-
-### Step 1: Verify Existing PR Context
+Run these commands in a **single parallel batch**:
 
 ```bash
-# Check current branch
+# Branch and PR info
 git branch --show-current
-
-# Check if branch has an associated PR
 gh pr view --json number,title,url,body
 
-# Check current stack state
-mcp__graphite__run_gt_cmd with args: ["log", "short"]
-
-# Check staged changes
-git diff --cached --stat
-```
-
-**If no PR exists for current branch:**
-```
-No PR Found
-
-Current branch does not have an associated PR.
-Use /submit-staged-changes to create a new Jira issue and PR.
-```
-- Exit the workflow
-
-**If PR exists:**
-- Extract PR number, title, URL, and current body
-- Proceed to Step 2
-
-### Step 2: Analyze Changes with gt absorb
-
-```bash
-# View staged changes
+# Staged changes
 git diff --cached
 
-# Run gt absorb in dry-run mode to analyze where changes could go
+# Stack state + absorb analysis
+mcp__graphite__run_gt_cmd with args: ["log", "short"]
 mcp__graphite__run_gt_cmd with args: ["absorb", "--dry-run"]
 ```
 
-**gt absorb Analysis:**
-- `gt absorb` analyzes staged hunks and determines which commits in the stack they logically belong to
-- It considers the blame of modified lines to find the original commit that introduced them
-- Dry-run shows which changes would go to which commits WITHOUT making changes
+**Exit conditions:**
+- No PR exists → "Use /submit-staged-changes to create a new Jira issue and PR." → exit
+- No staged changes and no `--update-desc` → "No staged changes. Use `--update-desc` to update description only." → exit
 
-**If no staged changes and `--update-desc` not provided:**
-```
-No Staged Changes
+### Step 2: Determine Strategy
 
-No staged changes to amend. Use --update-desc flag to update PR description only.
-Or stage your changes first:
-  git add <files>
-```
-- Exit the workflow
+Parse the `gt absorb --dry-run` output to count distinct target commits.
 
-### Step 3: Evaluate Absorb Results
+**Scenario A: Single target (all changes → current commit)**
+→ Strategy: `gt modify --all` (fast path, no absorb needed)
 
-Analyze the `gt absorb --dry-run` output and determine the best approach:
+**Scenario B: Multiple targets (changes span different commits in stack)**
+→ Strategy: `gt absorb` (distributes to appropriate commits)
+→ But present both options to user
 
-**Scenario A: All changes belong to current commit**
-- No cross-PR dependencies
-- Simple amend is appropriate
+### Step 3: User Confirmation
 
-**Scenario B: Changes can be absorbed into different commits**
-- Some hunks belong to commits in other PRs in the stack
-- Consider separation of concerns between PRs
-- Evaluate if absorbing maintains clean PR boundaries
-
-**Scenario C: Mixed - some absorb, some amend**
-- Some changes fit better in downstack PRs
-- Some changes are new to current PR
-
-**Decision Criteria:**
-1. **Separation of Concerns**: Does absorbing maintain clean PR boundaries?
-2. **PR Dependencies**: Will absorbing create unintended dependencies?
-3. **Review Impact**: How will absorbed changes affect PRs already under review?
-4. **Logical Grouping**: Do the changes logically belong together?
-
-### Step 4: User Confirmation with Absorb Analysis
-
-**IMPORTANT**: Present confirmation with detailed absorb analysis:
-
-**If absorb candidates exist:**
+**Scenario A (single target) — simplified prompt:**
 ```
 AskUserQuestion({
   questions: [{
-    question: "How would you like to apply the staged changes?",
-    header: "Change Placement",
+    question: "Ready to amend changes to existing PR?",
+    header: "Amendment",
     multiSelect: false,
     options: [
       {
-        label: "Absorb to Best Fit (Recommended)",
-        description: "gt absorb analysis:\n\n[Absorb dry-run output]\n\nThis distributes changes to the commits where they logically belong, maintaining clean PR separation."
+        label: "Amend & Push (Recommended)",
+        description: "PR: #YYYY - [PR title]\n\nChanges:\n  - file1.ts (modified)\n  - file2.ts (added)\n\nAll changes target the current commit. Will amend and force-push."
       },
       {
-        label: "Amend Current Only",
-        description: "Add all changes to current commit only.\nUse when changes are specific to this PR regardless of file history."
-      },
-      {
-        label: "Review Details First",
-        description: "Show detailed analysis of each hunk and its target commit before deciding."
+        label: "Amend & Update Description",
+        description: "Same as above, plus update PR description to reflect new changes"
       },
       {
         label: "Cancel",
@@ -167,21 +87,25 @@ AskUserQuestion({
 })
 ```
 
-**If no absorb candidates (all changes for current commit):**
+**Scenario B (multiple targets) — full prompt:**
 ```
 AskUserQuestion({
   questions: [{
-    question: "Ready to amend changes to existing PR?",
-    header: "Confirm Amendment",
+    question: "How would you like to apply the staged changes?",
+    header: "Placement",
     multiSelect: false,
     options: [
       {
-        label: "Amend & Push (Recommended)",
-        description: "PR: #YYYY - [PR title]\n\nChanges to amend:\n  - file1.ts (modified)\n  - file2.ts (added)\n\nThis will amend the current commit and force-push."
+        label: "Absorb to Best Fit (Recommended)",
+        description: "Distributes changes to the commits where they logically belong:\n\n[summary of dry-run: which hunks → which commits]"
       },
       {
-        label: "Amend & Update Description",
-        description: "Same as above, plus update PR description with new changes"
+        label: "Amend Current Only",
+        description: "Add all changes to current commit only."
+      },
+      {
+        label: "Review Details First",
+        description: "Show detailed per-hunk breakdown before deciding."
       },
       {
         label: "Cancel",
@@ -193,65 +117,43 @@ AskUserQuestion({
 ```
 
 **If user selects "Review Details First":**
-Present detailed breakdown:
+Present per-commit breakdown, then re-ask with Absorb/Amend/Cancel options.
+
+### Step 4: Apply Changes + Push
+
+**Single target or "Amend Current Only":**
 ```
-Absorb Analysis Details:
-
-Commit abc1234 (PR #1001 - feat: add user settings)
-  └── e2e/user/user-settings.spec.ts:45-52 (test fix)
-
-Commit def5678 (PR #1002 - fix: login validation) [CURRENT]
-  └── src/components/LoginForm.tsx:23-30 (new code)
-  └── src/utils/validation.ts:15-20 (modification)
-
-Commit ghi9012 (PR #1003 - refactor: auth flow)
-  └── No changes would be absorbed
-
-Considerations:
-- PR #1001 is already approved - absorbing may require re-review
-- Changes to user-settings.spec.ts originated from PR #1001's original work
-```
-
-### Step 5: Apply Changes
-
-**If user selected "Absorb to Best Fit":**
-```
-# Apply absorb
-mcp__graphite__run_gt_cmd with args: ["absorb"]
-```
-
-This will:
-- Distribute staged hunks to their logically appropriate commits
-- Automatically restack affected branches
-- Prepare for pushing multiple PRs if needed
-
-**If user selected "Amend Current Only":**
-```
-# Amend staged changes to current commit
 mcp__graphite__run_gt_cmd with args: ["modify", "--all"]
-```
-
-This will:
-- Add all staged changes to the current commit
-- Keep the existing commit message
-- Prepare for pushing
-
-### Step 6: Push Updated Commits
-
-```
-# Push amended/absorbed commits (force push)
 mcp__graphite__run_gt_cmd with args: ["submit", "--stack", "--no-interactive"]
 ```
 
-**Note**: If absorb was used, multiple PRs may be updated.
+**"Absorb to Best Fit":**
+```
+# gt absorb in non-interactive mode may only dry-run.
+# Use gt modify --all as reliable fallback for single-target.
+# For multi-target, stage per-commit hunks manually if gt absorb doesn't apply.
+mcp__graphite__run_gt_cmd with args: ["absorb"]
+```
+If absorb output ends with "Dry run complete" (did not apply):
+→ Fall back to `gt modify --all` and inform user that all changes went to current commit.
+Then push:
+```
+mcp__graphite__run_gt_cmd with args: ["submit", "--stack", "--no-interactive"]
+```
 
-### Step 7: Update PR Description (Optional)
+### Step 5: Update PR Description (if requested)
 
-If user selected "Amend & Update Description" or used `--update-desc` flag:
+Only when user selected "Amend & Update Description" or used `--update-desc` flag.
+
+**Jira auth is checked here (not earlier):**
+```bash
+bash scripts/jira.sh myself
+```
+If auth fails, skip Jira-specific fields but still update PR description.
 
 Extract Jira issue from branch name or PR title (e.g., `FR-XXXX`), then update.
 
-**IMPORTANT**: The `Resolves` link MUST be placed at the TOP of the PR description body, before the Summary section. This ensures proper issue tracking and linking.
+**IMPORTANT**: The `Resolves` link MUST be placed at the TOP of the PR description body.
 
 **GitHub Issue Number**: Get the GitHub Issue number (`#YYYY`) from the Jira issue's "GitHub Issue URL" custom field (`customfield_10169`).
 
@@ -269,28 +171,8 @@ EOF
 )"
 ```
 
-### Step 8: Display Summary
+### Step 6: Display Summary
 
-**For Absorb:**
-```
-Absorb Complete!
-
-Changes distributed across stack:
-
-PR #1001 (feat: add user settings)
-  Branch: feat/FR-1001-user-settings
-  Files: e2e/user/user-settings.spec.ts
-  Commit: abc1234 → abc5678 (amended)
-
-PR #1002 (fix: login validation) [CURRENT]
-  Branch: fix/FR-1002-login-validation
-  Files: src/components/LoginForm.tsx, src/utils/validation.ts
-  Commit: def1234 → def5678 (amended)
-
-All affected PRs have been pushed.
-```
-
-**For Simple Amend:**
 ```
 Amendment Complete!
 
@@ -309,44 +191,24 @@ Commit: abc1234 → def5678 (amended)
 ## Error Handling
 
 ### No Existing PR
-If `gh pr view` fails:
 ```
 No PR Found
 
 Current branch 'branch-name' does not have an associated PR.
-
-Options:
-1. Use /submit-staged-changes to create a new Jira issue and PR
-2. Manually create a PR first with: gh pr create
+Use /submit-staged-changes to create a new Jira issue and PR.
 ```
 
 ### Graphite Sync Issues
-If `gt absorb` or `gt modify` fails due to sync issues:
+If `gt modify` or `gt absorb` fails due to sync:
 ```
 mcp__graphite__run_gt_cmd with args: ["sync"]
 ```
-Then retry the operation.
-
-### Absorb Conflicts
-If `gt absorb` encounters conflicts:
-```
-Absorb Conflict
-
-Some hunks could not be cleanly absorbed:
-  - file.ts:23-30 conflicts with existing changes
-
-Options:
-1. Resolve conflicts manually and re-run
-2. Use "Amend Current Only" to keep all changes in current commit
-```
+Then retry.
 
 ### Push Conflicts
-If `gt submit` fails due to conflicts:
+If `gt submit` fails:
 ```
-Push Failed
-
-There may be conflicts with the remote branch.
-Please resolve conflicts manually:
+Push Failed — resolve conflicts manually:
   git fetch origin
   git rebase origin/main
 ```
@@ -354,35 +216,25 @@ Please resolve conflicts manually:
 ## Important Notes
 
 ### Do's
-- Always run `gt absorb --dry-run` first to analyze change placement
-- Consider PR boundaries and separation of concerns
-- Confirm with user before making changes, especially when absorbing
-- Keep PR description updated with amendment summary
+- Run all context-gathering in a single parallel batch (Step 1)
+- Use dry-run output to decide strategy BEFORE asking user
+- Use `gt modify --all` for single-target (skip absorb entirely)
+- Defer Jira auth to Step 5 (only when description update is needed)
 - Use Graphite MCP tools for git operations
 
 ### Don'ts
-- Never absorb without user confirmation
-- Don't absorb into PRs that are already approved without warning
-- Don't amend/absorb if no staged changes (unless --update-desc)
+- Don't call `gt absorb` when all changes target current commit — use `gt modify --all`
+- Don't check Jira auth upfront when it's not needed
+- Don't run `git diff --cached --stat` separately (redundant with `git diff --cached`)
+- Don't call `gt absorb` after dry-run shows single target — it may only re-run dry-run
 - Don't use direct `git push --force` commands
-- Don't modify commits that are not part of the current stack
-
-## Usage Examples
-
-```bash
-# Amend/absorb staged changes to existing PR(s)
-/amend-staged-changes
-
-# Update PR description only (no code changes)
-/amend-staged-changes --update-desc
-```
 
 ## Comparison with /submit-staged-changes
 
 | Aspect | /submit-staged-changes | /amend-staged-changes |
 |--------|------------------------|----------------------|
 | Purpose | Create new Jira issue + PR | Update existing PR(s) |
-| Jira | Creates new issue | No Jira changes |
+| Jira | Creates new issue | No Jira changes (unless --update-desc) |
 | Branch | Creates new branch | Uses current branch/stack |
 | Commit | New commit | Amends/absorbs to existing |
 | Stack | Single PR | Can affect multiple PRs |
@@ -394,5 +246,5 @@ Please resolve conflicts manually:
 |--------|-----------|-----------|
 | Scope | Analyzes entire stack | Current commit only |
 | Placement | Auto-determines best commit | Always current commit |
-| Use when | Changes span multiple PRs | Changes specific to current PR |
-| Consideration | Maintains PR separation | Simpler, single-PR focused |
+| Use when | Changes span multiple PRs | All changes target current commit |
+| Caveat | May only dry-run in non-interactive mode | Always applies reliably |

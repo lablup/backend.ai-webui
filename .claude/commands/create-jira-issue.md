@@ -105,14 +105,15 @@ Current Claude Code commands use inconsistent text-based prompts ("Proceed? [y/n
 - Only proceed with creation after user selects the confirmation option
 
 ### Issue Creation
-- **CRITICAL**: Use Atlassian MCP tools **ONLY** for all Jira operations. Do **NOT** use `lj` CLI or any other CLI tools for Jira issue creation/modification.
-- If Atlassian MCP authentication fails, re-authenticate and retry before proceeding.
-- **Refer to `.claude/atlassian-config.md` for field IDs and configuration values**
-- Use `mcp__Atlassian__createJiraIssue` for creating issues
-- Use `mcp__Atlassian__editJiraIssue` for updating issues
-- Default values (see `.claude/atlassian-config.md` for details):
-  - Jira Project: **FR**
-  - GitHub Repository (`customfield_10173`): `{"id":"10232"}` (backend.ai-webui)
+- Use `scripts/jira.sh` for all Jira operations:
+  ```bash
+  # Create issue
+  bash scripts/jira.sh create --type "Task" --title "[title]" --desc "[description]"
+
+  # Update issue (assignee, sprint)
+  bash scripts/jira.sh update FR-XXXX --assignee me --sprint current
+  ```
+- Project key (FR), GitHub repo field, and other required fields are handled internally by the script.
 - After creating the issue, open it in your browser to review using `open` cli command.
 
 ## Usage Examples

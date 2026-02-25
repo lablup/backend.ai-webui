@@ -118,10 +118,11 @@ AskUserQuestion({
   - YYYY is the GitHub Issue number from Jira's "GitHub Issue URL" custom field
 
 ### 7. Update Jira Issue
-- **CRITICAL**: Use Atlassian MCP tools **ONLY**. Do NOT use `lj` CLI for modifications.
-- **Refer to `.claude/atlassian-config.md` for field IDs and configuration values**
-- If Sprint is empty, assign to the currently active sprint
-- If Assignee is empty, assign to the current user
+Use `scripts/jira.sh` for Jira updates:
+```bash
+# Assign to current user and active sprint
+bash scripts/jira.sh update FR-XXXX --assignee me --sprint current
+```
 
 ## Stack Management Commands
 
@@ -236,5 +237,5 @@ Based on recent patterns:
 
 ### Authentication & Tools
 - Use `mcp__graphite__run_gt_cmd` for all Graphite operations
-- Use Atlassian MCP for all Jira operations (see `.claude/atlassian-config.md`)
-- If authentication fails, re-authenticate before proceeding
+- Use `scripts/jira.sh` for all Jira operations
+- Auth: `~/.config/atlassian/credentials` or `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` env vars
