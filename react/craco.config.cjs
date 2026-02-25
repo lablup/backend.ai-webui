@@ -41,25 +41,6 @@ module.exports = {
       },
     ];
 
-    // Only watch config.toml and index.html for full reloads when they change.
-    // Exclude resources/, dist/, and manifest/ because changes to those files
-    // (e.g. relay-generated files, CSS assets) should not cause full reloads.
-    // The __generated__/ directory is excluded to prevent relay compiler watch
-    // mode from triggering unnecessary full page reloads during development.
-    devServerConfig.watchFiles = {
-      paths: ['../index.html', '../config.toml'],
-      options: {
-        // Ignore relay-generated files and static assets to prevent full reloads
-        ignored: [
-          '**/src/__generated__/**',
-          '**/node_modules/**',
-          '**/dist/**',
-          '**/resources/**',
-          '**/manifest/**',
-        ],
-      },
-    };
-
     // Enable HMR explicitly and disable liveReload to prevent full page reloads
     // when HMR updates can handle the change.
     devServerConfig.hot = true;
@@ -83,6 +64,50 @@ module.exports = {
         return middlewares;
       };
     }
+
+    // Watch config.toml and index.html for changes and trigger a full page reload.
+    // We cannot rely on devServerConfig.watchFiles for this because liveReload is
+    // set to false (to prevent HMR fallback reloads on React source changes). In
+    // webpack-dev-server v4, the watchFiles mechanism checks liveReload before
+    // sending the browser reload signal, so with liveReload:false, file changes
+    // are detected but the reload signal is never sent. We work around this by
+    // setting up fs.watch watchers in setupMiddlewares that explicitly send the
+    // 'static-changed' WebSocket message to trigger a full page reload.
+    const existingSetupMiddlewares = devServerConfig.setupMiddlewares;
+    devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+      if (existingSetupMiddlewares) {
+        middlewares = existingSetupMiddlewares(middlewares, devServer);
+      }
+
+      const filesToWatch = [
+        path.resolve(__dirname, '../config.toml'),
+        path.resolve(__dirname, '../index.html'),
+      ];
+
+      const watchers = filesToWatch.map((file) => {
+        // Use a debounce timer to avoid rapid successive reloads from
+        // editors that write files in multiple steps (e.g. write + rename).
+        let debounceTimer;
+        return fs.watch(file, () => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            devServer.sendMessage(
+              devServer.webSocketServer.clients,
+              'static-changed',
+            );
+          }, 100);
+        });
+      });
+
+      // Close watchers when the dev server shuts down to prevent resource leaks.
+      const originalClose = devServer.server.close.bind(devServer.server);
+      devServer.server.close = (callback) => {
+        watchers.forEach((w) => w.close());
+        originalClose(callback);
+      };
+
+      return middlewares;
+    };
 
     return devServerConfig;
   },
