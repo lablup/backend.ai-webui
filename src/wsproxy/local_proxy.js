@@ -14,4 +14,21 @@ const logger = require('./lib/logger')(__filename);
     logger.info('Proxy is ready: ' + url);
   });
   manager.start();
+
+  // Graceful shutdown: close the HTTP server and release the port on
+  // SIGINT (Ctrl+C) and SIGTERM (process manager stop signal).
+  const shutdown = () => {
+    if (manager.listener) {
+      manager.listener.close(() => {
+        process.exit(0);
+      });
+      // Force exit after 3 seconds if close() hangs
+      setTimeout(() => process.exit(1), 3000).unref();
+    } else {
+      process.exit(0);
+    }
+  };
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 })();
