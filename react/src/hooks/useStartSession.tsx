@@ -213,6 +213,11 @@ export const useStartSession = () => {
             }
           : undefined),
 
+        // Session dependencies (optional, v24.09.0+)
+        ...(values.dependencies && values.dependencies.length > 0
+          ? { dependencies: values.dependencies }
+          : {}),
+
         config: {
           // Resource allocation
           ...(values?.resource && {

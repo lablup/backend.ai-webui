@@ -22,6 +22,7 @@ export interface SessionResources {
   bootstrap_script?: string;
   owner_access_key?: string;
   reuseIfExists?: boolean;
+  dependencies?: string[];
   config?: {
     resources?: {
       cpu: number;
@@ -804,11 +805,7 @@ class Client {
       this._features['extend-login-session'] = true;
       this._features['session-node'] = true;
       this._features['idle-checks-gql'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('24.09')) {
-      this._features['extend-login-session'] = true;
-      this._features['session-node'] = true;
-      this._features['idle-checks-gql'] = true;
+      this._features['session-dependency'] = true;
     }
     if (this.isManagerVersionCompatibleWith('24.09.1')) {
       this._features['agent-select'] = true;
