@@ -7,6 +7,7 @@ import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import { useAppSetting } from '../hooks/useAppSetting';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -34,25 +35,23 @@ const UserPreferencesPage = () => {
   const { message } = App.useApp();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
-  const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
+  const [desktopNotification, setDesktopNotification] = useAppSetting(
     'desktop_notification',
   );
-  const [compactSidebar, setCompactSidebar] =
-    useBAISettingUserState('compact_sidebar');
+  const [compactSidebar, setCompactSidebar] = useAppSetting('compact_sidebar');
   const [selectedLanguage, setSelectedLanguage] =
-    useBAISettingUserState('selected_language');
+    useAppSetting('selected_language');
   const [, setLanguage] = useBAISettingGeneralState('language');
   const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
     useBAISettingUserState('automatic_update_check');
-  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
+  const [autoLogout, setAutoLogout] = useAppSetting('auto_logout');
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
   const [
     isOpenSSHKeypairManagementModal,
     { toggle: toggleSSHKeypairManagementModal },
   ] = useToggle(false);
-  const [preserveLogin, setPreserveLogin] =
-    useBAISettingUserState('preserve_login');
+  const [preserveLogin, setPreserveLogin] = useAppSetting('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
