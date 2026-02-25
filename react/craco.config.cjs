@@ -294,10 +294,10 @@ module.exports = {
           ignored: [
             // Ignore node_modules (standard exclusion for performance)
             '**/node_modules/**',
-            // Ignore static assets that are served directly by webpack-dev-server
-            // and are not part of the webpack module graph. These don't need
-            // webpack to watch them; the dev server serves them as static files.
-            path.resolve(__dirname, '../dist/**'),
+            // Note: dist/ is intentionally NOT ignored because
+            // backend.ai-client-esm.js (resolved via webpack alias) is part of
+            // the module graph and needs to trigger HMR when recompiled by
+            // `tsc --watch` (run concurrently in the build:d script).
             path.resolve(__dirname, '../resources/**'),
             path.resolve(__dirname, '../manifest/**'),
           ],
