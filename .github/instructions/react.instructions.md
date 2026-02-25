@@ -742,6 +742,36 @@ logger.warn("Deprecated feature used");
 
 ## Ant Design (Secondary Usage)
 
+### Ant Design 6 Deprecated Props
+
+This project uses **Ant Design 6** (antd v6). Several props have been renamed or deprecated compared to antd v4/v5. **Always use the latest prop names:**
+
+| Component | Deprecated Prop | Use Instead |
+|-----------|----------------|-------------|
+| `Alert` | `message` | `title` |
+| `Collapse` | `direction` | `orientation` |
+| `Space` | `direction` | Use `Flex` or `BAIFlex` instead (Space is deprecated for layout) |
+| `Steps` | `direction` | `orientation` |
+
+**General rules for antd 6:**
+
+- **`title` instead of `message`**: `Alert`, `Notification`, and similar components now use `title` for the heading text.
+- **`orientation` instead of `direction`**: Layout-related props on `Collapse` and `Steps` use `orientation`.
+- **Prefer `Flex` / `BAIFlex` over `Space`**: The `Space` component's `direction` prop is deprecated. Use `Flex` (from antd) or `BAIFlex` (from backend.ai-ui) with `direction="column"` or `direction="row"` instead.
+- **Always check for TypeScript deprecation warnings** (`[6385]` ts errors) and fix them immediately.
+
+```typescript
+// ❌ Bad: antd v4/v5 props
+<Alert message="Title" description="Description" />
+<Space direction="vertical">...</Space>
+<Steps direction="vertical">...</Steps>
+
+// ✅ Good: antd v6 props
+<Alert title="Title" description="Description" />
+<BAIFlex direction="column">...</BAIFlex>
+<Steps orientation="vertical">...</Steps>
+```
+
 ### When BAI Components Are Not Available
 
 - Use Ant Design components when no BAI equivalent exists
