@@ -84,6 +84,36 @@ module.exports = {
       };
     }
 
+    // Watch config.toml and index.html for changes and trigger a full page reload.
+    // We cannot rely on watchFiles + liveReload for this because liveReload is set
+    // to false (to prevent HMR fallback reloads on React source changes). In
+    // webpack-dev-server v4, the watchFiles mechanism uses liveReload to send the
+    // browser reload signal, so with liveReload:false, file changes are detected by
+    // chokidar but the reload signal is never sent. We work around this by setting up
+    // a separate chokidar watcher in setupMiddlewares that explicitly sends the
+    // 'static-changed' WebSocket message to trigger a full page reload.
+    const existingSetupMiddlewares = devServerConfig.setupMiddlewares;
+    devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+      if (existingSetupMiddlewares) {
+        middlewares = existingSetupMiddlewares(middlewares, devServer);
+      }
+
+      const chokidar = require('chokidar');
+      const filesToWatch = [
+        path.resolve(__dirname, '../config.toml'),
+        path.resolve(__dirname, '../index.html'),
+      ];
+      const watcher = chokidar.watch(filesToWatch, { ignoreInitial: true });
+      watcher.on('change', () => {
+        devServer.sendMessage(
+          devServer.webSocketServer.clients,
+          'static-changed',
+        );
+      });
+
+      return middlewares;
+    };
+
     return devServerConfig;
   },
   babel: {
