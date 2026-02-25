@@ -1,6 +1,6 @@
 # Post-Migration Anti-Pattern Taxonomy
 
-> **Living document.** Updated by the post-lit-cleanup agent and team members during analysis sessions.
+> **Living document.** Updated by the post-lit-reporter agent and team members during analysis sessions.
 > When a pattern turns out to be acceptable, add it to **Exceptions**. When a new pattern is discovered, add a new entry.
 >
 > Last updated: 2026-02-25
