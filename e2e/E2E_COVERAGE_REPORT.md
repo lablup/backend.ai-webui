@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2025-02-09
+> **Last Updated:** 2026-02-25
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 67 / 269 features covered (25%)**
+**Overall (in-scope routes): 73 / 269 features covered (27%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -34,7 +34,7 @@
 | Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
 | User Credentials | `/credential` | 16 | 6 | 🔶 38% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
-| User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
+| User Settings | `/usersettings` | 10 | 6 | 🔶 60% |
 | Project | `/project` | 6 | 0 | ❌ 0% |
 | Statistics | `/statistics` | 2 | 0 | ❌ 0% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **269** | **67** | **25%** |
+| **Total** | | **269** | **73** | **27%** |
 
 ---
 
@@ -551,7 +551,7 @@
 
 ### 19. User Settings (`/usersettings`)
 
-**Test files:** None
+**Test files:** [`e2e/user/user-settings.spec.ts`](user/user-settings.spec.ts)
 
 **Tabs:** General | Logs
 
@@ -560,10 +560,12 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Language selection | ❌ | - |
-| Desktop notifications toggle | ❌ | - |
-| Compact sidebar toggle | ❌ | - |
-| Auto-logout configuration | ❌ | - |
+| Language selection | ✅ | `User can change language selection` |
+| Desktop notifications toggle | ✅ | `User can toggle Desktop Notification checkbox` |
+| Compact sidebar toggle | ✅ | `User can toggle Use Compact Sidebar checkbox` |
+| Auto-logout configuration | ✅ | `User can toggle Auto Logout checkbox` |
+| Max concurrent uploads | ✅ | `User can change max concurrent uploads` |
+| Tab navigation (General ↔ Logs) | ✅ | `User can switch to Logs tab`, `User can switch back to General tab from Logs` |
 | SSH keypair info → MyKeypairInfoModal | ❌ | - |
 | SSH keypair management → SSHKeypairManagementModal | ❌ | - |
 | Bootstrap script → ShellScriptEditModal | ❌ | - |
@@ -908,7 +910,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/maintenance` | 🔶 | ✅ | - |
 | `/project` | ❌ | ❌ | **P2** |
 | `/statistics` | ❌ | ❌ | P3 |
-| `/usersettings` | ❌ | ❌ | **P2** |
+| `/usersettings` | 🔶 | ❌ | P2 |
 | `/scheduler` | ❌ | ❌ | P3 |
 | `/reservoir` | ❌ | ❌ | P3 |
 | `/branding` | ❌ | ❌ | P3 |
