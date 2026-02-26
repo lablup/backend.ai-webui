@@ -17,7 +17,7 @@ import { fileURLToPath } from 'url';
 import { loadToolkitConfig, resolveConfig } from './config.js';
 import type { ResolvedDocConfig, AgentConfig } from './config.js';
 
-const COMMANDS = ['pdf', 'preview', 'preview:html', 'init', 'agents', 'help'] as const;
+const COMMANDS = ['pdf', 'preview', 'preview:html', 'build:web', 'init', 'agents', 'help'] as const;
 type Command = (typeof COMMANDS)[number];
 
 function printUsage(): void {
@@ -31,6 +31,7 @@ Commands:
   pdf            Generate PDF documents
   preview        PDF preview server (live-reload)
   preview:html   HTML preview server (live-reload, no PDF)
+  build:web      Generate static multi-page website
   init           Initialize a new documentation project
   agents         Generate Claude AI agent files from templates
   help           Show this help message
@@ -51,6 +52,9 @@ Options:
     --lang <en|ko|...>         Language (default: en)
     --port <number>            Port number (default: 3457)
 
+  build:web:
+    --lang <all|en|ko|...>    Language(s) to generate (default: all)
+
   agents:
     --force                    Overwrite existing agent files
 
@@ -60,6 +64,8 @@ Examples:
   docs-toolkit preview
   docs-toolkit preview --mode document --lang ko
   docs-toolkit preview:html --lang en
+  docs-toolkit build:web --lang all
+  docs-toolkit build:web --lang en
   docs-toolkit init
   docs-toolkit agents
   docs-toolkit agents --force
@@ -348,6 +354,15 @@ async function main(): Promise<void> {
     case 'preview:html': {
       const { startHtmlPreviewServer } = await import('./preview-server-web.js');
       await startHtmlPreviewServer(config);
+      break;
+    }
+
+    case 'build:web': {
+      const { generateWebsite } = await import('./website-generator.js');
+      const langIdx = argv.indexOf('--lang');
+      await generateWebsite(config, {
+        lang: langIdx >= 0 ? argv[langIdx + 1] : 'all',
+      });
       break;
     }
 
