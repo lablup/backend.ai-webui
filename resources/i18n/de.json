@@ -1332,6 +1332,7 @@
   },
   "registry": {
     "AddRegistry": "Registrierung hinzufügen",
+    "AllowedProjects": "Zugelassene Projekte",
     "ConfirmNoUserName": "Benutzer und Passwort nicht angegeben, möchten Sie speichern?",
     "DescExtraJsonFormat": "Bitte geben Sie gültig formatiertes JSON ein",
     "DescHostnameIsEmpty": "Hostname ist leer",
@@ -1343,6 +1344,8 @@
     "HarborProject": "Hafenprojekt",
     "Hostname": "Hostname",
     "HostnameDoesNotMatch": "Hostname stimmt nicht überein!",
+    "IsGlobal": "Als globales Registry festlegen",
+    "IsGlobalDescription": "Zugriff von allen Projekten erlauben",
     "ModifyRegistry": "Registry ändern",
     "NoRegistryToDisplay": "Keine Registrierungen anzeigen",
     "Password": "Passwort",

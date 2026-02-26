@@ -1332,6 +1332,7 @@
   },
   "registry": {
     "AddRegistry": "Thêm sổ đăng ký",
+    "AllowedProjects": "Dự án được phép",
     "ConfirmNoUserName": "Người dùng và mật khẩu không được chỉ định, bạn có muốn lưu không?",
     "DescExtraJsonFormat": "Vui lòng nhập JSON được định dạng hợp lệ",
     "DescHostnameIsEmpty": "Tên máy chủ trống",
@@ -1343,6 +1344,8 @@
     "HarborProject": "Dự án cảng",
     "Hostname": "Tên máy chủ",
     "HostnameDoesNotMatch": "Tên máy chủ không khớp!",
+    "IsGlobal": "Đặt làm Registry toàn cục",
+    "IsGlobalDescription": "Cho phép truy cập từ mọi dự án",
     "ModifyRegistry": "Sửa đổi sổ đăng ký",
     "NoRegistryToDisplay": "Không có đăng ký để hiển thị",
     "Password": "Mật khẩu",

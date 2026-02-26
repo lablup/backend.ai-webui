@@ -1332,6 +1332,7 @@
   },
   "registry": {
     "AddRegistry": "添加註冊表",
+    "AllowedProjects": "允許的專案",
     "ConfirmNoUserName": "未指定用户和密码，要保存吗？",
     "DescExtraJsonFormat": "請輸入格式有效的 JSON",
     "DescHostnameIsEmpty": "主機名為空",
@@ -1343,6 +1344,8 @@
     "HarborProject": "海港工程",
     "Hostname": "主機名",
     "HostnameDoesNotMatch": "主機名不匹配！",
+    "IsGlobal": "設為全域映像倉庫",
+    "IsGlobalDescription": "允許所有專案存取",
     "ModifyRegistry": "修改注册表",
     "NoRegistryToDisplay": "无注册表显示",
     "Password": "密碼",

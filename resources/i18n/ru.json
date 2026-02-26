@@ -1329,6 +1329,7 @@
   },
   "registry": {
     "AddRegistry": "Добавить реестр",
+    "AllowedProjects": "Разрешённые проекты",
     "ConfirmNoUserName": "Пользователь и пароль не указаны, хотите сохранить?",
     "DescExtraJsonFormat": "Пожалуйста, введите JSON в правильном формате.",
     "DescHostnameIsEmpty": "Имя хоста пусто",
@@ -1340,6 +1341,8 @@
     "HarborProject": "Проект Harbor",
     "Hostname": "Имя хоста",
     "HostnameDoesNotMatch": "Имя хоста не совпадает!",
+    "IsGlobal": "Установить как глобальный реестр",
+    "IsGlobalDescription": "Разрешить доступ всем проектам",
     "ModifyRegistry": "Изменение реестра",
     "NoRegistryToDisplay": "Отсутствие отображаемых реестров",
     "Password": "Пароль",

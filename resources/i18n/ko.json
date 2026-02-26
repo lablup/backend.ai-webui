@@ -1335,6 +1335,7 @@
   },
   "registry": {
     "AddRegistry": "레지스트리 추가",
+    "AllowedProjects": "허용된 프로젝트",
     "ConfirmNoUserName": "사용자 및 비밀번호가 지정되지 않았습니다. 저장하시겠습니까?",
     "DescExtraJsonFormat": "유효한 형식의 JSON을 입력해 주세요",
     "DescHostnameIsEmpty": "호스트명이 공란입니다",
@@ -1346,6 +1347,8 @@
     "HarborProject": "Harbor 프로젝트",
     "Hostname": "호스트명",
     "HostnameDoesNotMatch": "호스트명이 일치하지 않습니다.",
+    "IsGlobal": "전역 레지스트리로 설정",
+    "IsGlobalDescription": "모든 프로젝트에서 접근 허용",
     "ModifyRegistry": "레지스트리 수정",
     "NoRegistryToDisplay": "레지스트리 정보가 없습니다.",
     "Password": "비밀번호",

@@ -1329,6 +1329,7 @@
   },
   "registry": {
     "AddRegistry": "Dodaj rejestr",
+    "AllowedProjects": "Dozwolone projekty",
     "ConfirmNoUserName": "Użytkownik i hasło nie zostały określone, czy chcesz zapisać?",
     "DescExtraJsonFormat": "Proszę wprowadzić prawidłowo sformatowany JSON",
     "DescHostnameIsEmpty": "Nazwa hosta jest pusta",
@@ -1340,6 +1341,8 @@
     "HarborProject": "Projekt Portowy",
     "Hostname": "Nazwa hosta",
     "HostnameDoesNotMatch": "Nazwa hosta nie pasuje!",
+    "IsGlobal": "Ustaw jako rejestr globalny",
+    "IsGlobalDescription": "Zezwól na dostęp ze wszystkich projektów",
     "ModifyRegistry": "Modyfikacja rejestru",
     "NoRegistryToDisplay": "Brak rejestrów do wyświetlenia",
     "Password": "Hasło",

@@ -1321,6 +1321,7 @@
   },
   "registry": {
     "AddRegistry": "เพิ่มทะเบียน",
+    "AllowedProjects": "โปรเจกต์ที่ได้รับอนุญาต",
     "ConfirmNoUserName": "ไม่ได้ระบุชื่อผู้ใช้และรหัสผ่าน คุณต้องการบันทึกหรือไม่?",
     "DescExtraJsonFormat": "โปรดป้อน JSON ที่มีรูปแบบถูกต้อง",
     "DescHostnameIsEmpty": "ชื่อโฮสต์ว่างเปล่า",
@@ -1332,6 +1333,8 @@
     "HarborProject": "โครงการ Harbor",
     "Hostname": "ชื่อโฮสต์",
     "HostnameDoesNotMatch": "ชื่อโฮสต์ไม่ตรงกัน!",
+    "IsGlobal": "ตั้งเป็นรีจิสทรีระดับระบบ",
+    "IsGlobalDescription": "อนุญาตให้เข้าถึงจากทุกโครงการ",
     "ModifyRegistry": "แก้ไขทะเบียน",
     "NoRegistryToDisplay": "ไม่มีทะเบียนที่จะแสดง",
     "Password": "รหัสผ่าน",
