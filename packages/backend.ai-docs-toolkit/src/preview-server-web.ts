@@ -11,6 +11,7 @@ import { parse as parseYaml } from 'yaml';
 import { processMarkdownFilesForWeb, processCatalogMarkdownForWeb } from './markdown-processor-web.js';
 import { buildWebDocument } from './html-builder-web.js';
 import { getDocVersion } from './version.js';
+import { processNavigation, type NavEntry } from './navigation-utils.js';
 import type { ResolvedDocConfig } from './config.js';
 // getCatalogMarkdown is dynamically imported in catalog mode for hot-reload support
 
@@ -18,7 +19,7 @@ interface BookConfig {
   title: string;
   description: string;
   languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
+  navigation: Record<string, NavEntry[]>;
 }
 
 export interface HtmlPreviewOptions {
@@ -58,6 +59,15 @@ export async function startHtmlPreviewServer(
       console.error(`Available: ${Object.keys(bookConfig.navigation).join(', ')}`);
       process.exit(1);
     }
+
+    // Validate navigation structure early
+    try {
+      processNavigation(navigation);
+    } catch (error) {
+      console.error(`Navigation validation error for language: ${args.lang}`);
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
   }
 
   let currentEtag = Date.now().toString(36);
@@ -74,7 +84,9 @@ export async function startHtmlPreviewServer(
       chapters = await processCatalogMarkdownForWeb(getCatalogMarkdown());
     } else {
       const navigation = bookConfig.navigation[args.lang];
-      chapters = await processMarkdownFilesForWeb(args.lang, navigation, config.srcDir, version, config);
+      const { flattened, structureType, documentCount } = processNavigation(navigation);
+      console.log(`  Navigation: ${structureType} structure with ${documentCount} documents`);
+      chapters = await processMarkdownFilesForWeb(args.lang, flattened, config.srcDir, version, config);
     }
 
     const html = buildWebDocument(chapters, { title, version, lang: args.lang }, config);

@@ -6,13 +6,14 @@ import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
 import { getDocVersion } from './version.js';
+import { processNavigation, type NavEntry } from './navigation-utils.js';
 import type { ResolvedDocConfig } from './config.js';
 
 interface BookConfig {
   title: string;
   description: string;
   languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
+  navigation: Record<string, NavEntry[]>;
 }
 
 export interface GeneratePdfOptions {
@@ -101,11 +102,22 @@ export async function generatePdf(
       continue;
     }
 
+    // Process and flatten navigation structure
+    let processedNavigation;
+    try {
+      processedNavigation = processNavigation(navigation);
+      console.log(`[${lang}] Navigation: ${processedNavigation.structureType} structure with ${processedNavigation.documentCount} documents`);
+    } catch (error) {
+      console.error(`[${lang}] Navigation validation error:`);
+      console.error(error instanceof Error ? error.message : String(error));
+      continue;
+    }
+
     // Process markdown files
-    console.log(`[${lang}] Processing ${navigation.length} chapters...`);
+    console.log(`[${lang}] Processing ${processedNavigation.flattened.length} chapters...`);
     const chapters = await processMarkdownFiles(
       lang,
-      navigation,
+      processedNavigation.flattened,
       config.srcDir,
       version,
       config,

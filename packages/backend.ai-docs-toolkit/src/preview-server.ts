@@ -8,13 +8,14 @@ import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
 import { buildThemeInfoChapter } from './sample-content.js';
 import { getDocVersion } from './version.js';
+import { processNavigation, type NavEntry } from './navigation-utils.js';
 import type { ResolvedDocConfig } from './config.js';
 
 interface BookConfig {
   title: string;
   description: string;
   languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
+  navigation: Record<string, NavEntry[]>;
 }
 
 type PreviewMode = 'catalog' | 'document' | 'sample';
@@ -229,7 +230,20 @@ export async function startPreviewServer(
         isBuilding = false;
         return;
       }
-      const chapters = await processMarkdownFiles(args.lang, navigation, config.srcDir, version, config);
+
+      // Process and flatten navigation structure
+      let processedNavigation;
+      try {
+        processedNavigation = processNavigation(navigation);
+        console.log(`  Navigation: ${processedNavigation.structureType} structure with ${processedNavigation.documentCount} documents`);
+      } catch (error) {
+        console.error('  Navigation validation error:');
+        console.error(error instanceof Error ? error.message : String(error));
+        isBuilding = false;
+        return;
+      }
+
+      const chapters = await processMarkdownFiles(args.lang, processedNavigation.flattened, config.srcDir, version, config);
       html = buildFullDocument(chapters, { title, version, lang: args.lang }, config, theme);
     }
 
