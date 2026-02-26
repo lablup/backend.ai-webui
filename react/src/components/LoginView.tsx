@@ -81,6 +81,10 @@ const LoginView: React.FC = () => {
   const [blockMessage, setBlockMessage] = useState('');
   const [blockType, setBlockType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<{
+    message: string;
+    description?: string;
+  } | null>(null);
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
@@ -132,14 +136,7 @@ const LoginView: React.FC = () => {
       /* webpackIgnore: true */
       `../../../src/plugins/${sanitizedPlugin}`
     ).catch(() => {
-      document.dispatchEvent(
-        new CustomEvent('add-bai-notification', {
-          detail: {
-            open: true,
-            message: t('error.LoginFailed'),
-          },
-        }),
-      );
+      setLoginError({ message: t('error.LoginFailed') });
     });
   }, [isConfigLoaded, loginPlugin, t]);
 
@@ -210,15 +207,7 @@ const LoginView: React.FC = () => {
   }, []);
 
   const notification = useCallback((text: string, detail?: string) => {
-    document.dispatchEvent(
-      new CustomEvent('add-bai-notification', {
-        detail: {
-          open: true,
-          message: text,
-          description: detail,
-        },
-      }),
-    );
+    setLoginError({ message: text, description: detail });
   }, []);
 
   const open = useCallback(() => {
@@ -253,6 +242,7 @@ const LoginView: React.FC = () => {
     }
     setIsLoginPanelOpen(false);
     setIsBlockPanelOpen(false);
+    setLoginError(null);
   }, []);
 
   const block = useCallback((message = '', type = '') => {
@@ -513,6 +503,8 @@ const LoginView: React.FC = () => {
   );
 
   const handleLogin = useCallback(async () => {
+    setLoginError(null);
+
     const loginAttempt = (globalThis as any).backendaioptions.get(
       'login_attempt',
       0,
@@ -695,6 +687,7 @@ const LoginView: React.FC = () => {
     (mode: ConnectionMode) => {
       if (!loginConfig.change_signin_support) return;
       setConnectionMode(mode);
+      setLoginError(null);
       localStorage.setItem('backendaiwebui.connection_mode', mode);
     },
     [loginConfig.change_signin_support],
@@ -800,6 +793,8 @@ const LoginView: React.FC = () => {
       <LoginFormPanel
         isOpen={isLoginPanelOpen}
         isLoading={isLoading}
+        loginError={loginError}
+        onClearLoginError={() => setLoginError(null)}
         connectionMode={connectionMode}
         loginConfig={loginConfig}
         apiEndpoint={apiEndpoint}
