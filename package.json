@@ -20,7 +20,6 @@
     "build": "rm -rf build/web && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && pnpm run -r --stream build",
     "build:react-only": "pnpm run --prefix ./react build:only",
     "server:p": "serve build/web",
-    "server:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && HOST=$BAI_WEBUI_DEV_HOST PORT=$BAI_WEBUI_DEV_REACT_PORT PROXY=http://localhost:$BAI_WEBUI_DEV_WEBDEV_PORT pnpm --prefix ./react run start",
     "build:d": "eval \"$(node scripts/dev-config.js env)\" && node scripts/dev-config.js update && concurrently --kill-others -c \"auto\" --names \"tsc,react-relay,react\" \"tsc --watch --preserveWatchOutput\" \"cd react && pnpm run relay:watch\" \"HOST=$BAI_WEBUI_DEV_HOST BAI_WEBUI_DEV_PROXY= PORT=$BAI_WEBUI_DEV_REACT_PORT pnpm --prefix ./react run start\"",
     "electron:d": "electron build/electron-app --dev",
     "electron:d:hmr": "LIVE_DEBUG=1 electron build/electron-app --dev",

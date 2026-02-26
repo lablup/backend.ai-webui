@@ -63,7 +63,7 @@ When reviewing code:
 
 ### Build and Development
 
-- Development requires both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy)
+- Development requires both `pnpm run build:d` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy)
 - Build process: multi-stage with resource copying and React build (Craco/Webpack with Workbox service worker generation)
 - Pre-commit hooks run linting and formatting automatically via Husky + lint-staged
 

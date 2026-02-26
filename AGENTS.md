@@ -6,8 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run server:d` - Start React dev server via Craco (port configured by `scripts/dev-config.js`)
-- `pnpm run build:d` - Concurrent Relay watch + React dev server
+- `pnpm run build:d` - Start development environment (TypeScript watch + Relay watch + React dev server)
 - `pnpm run wsproxy` - Start websocket proxy (required for local development)
 
 ### Build and Production
@@ -95,11 +94,10 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### Development Workflow
 
-1. **Dual Server Setup**: Run both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
-2. **Alternative**: `pnpm run build:d` runs Relay watch + React dev server concurrently
-3. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
-4. **Testing**: Jest unit tests + Playwright E2E tests
-5. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
+1. **Dev Server**: Run `pnpm run build:d` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
+2. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
+3. **Testing**: Jest unit tests + Playwright E2E tests
+4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
 # Additional Workflow Description
 
