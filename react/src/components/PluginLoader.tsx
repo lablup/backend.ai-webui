@@ -84,18 +84,23 @@ function PluginLoader() {
           const pluginUrl =
             (globalThis as Record<string, unknown>).isElectron && apiEndpoint
               ? `${apiEndpoint}/dist/plugins/${page}.js`
-              : `../plugins/${page}.js`;
+              : `/dist/plugins/${page}.js`;
 
           try {
-            await import(/* @vite-ignore */ pluginUrl);
+            await import(/* webpackIgnore: true */ pluginUrl);
 
             const pageItem = document.createElement(page) as PluginPageElement;
             pageItem.classList.add('page');
             pageItem.setAttribute('name', page);
 
-            // Append to the container div so the web component connects to the DOM
-            if (containerRef.current) {
-              containerRef.current.appendChild(pageItem);
+            // Append to the container div so the web component connects to the DOM.
+            // Fall back to getElementById in case containerRef.current is transiently
+            // null during the async import (can happen in React 19 concurrent mode).
+            const container =
+              containerRef.current ??
+              document.getElementById('plugin-container');
+            if (container) {
+              container.appendChild(pageItem);
             }
 
             // Store reference for activation management
@@ -145,9 +150,20 @@ function PluginLoader() {
     [apiEndpoint, logger, setWebUIPlugins, setPluginLoaded],
   );
 
-  // Load plugins when config string becomes available
+  // Load plugins when config string becomes available.
+  // In Electron, apiEndpoint must also be set before starting, because the plugin URL
+  // is `${apiEndpoint}/dist/plugins/${page}.js`. If we start early with apiEndpoint=null,
+  // the guard (loadingGuardRef + loadingStarted) is set and blocks any later retry
+  // even after apiEndpoint becomes available.
   useEffect(() => {
-    if (pluginConfigString && !loadingStarted && !loadingGuardRef.current) {
+    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
+    const canLoad =
+      pluginConfigString &&
+      !loadingStarted &&
+      !loadingGuardRef.current &&
+      (!isElectronEnv || !!apiEndpoint);
+
+    if (canLoad) {
       loadingGuardRef.current = true;
       setLoadingStarted(true);
       loadPlugins(pluginConfigString).catch((error) => {
@@ -157,6 +173,7 @@ function PluginLoader() {
     }
   }, [
     pluginConfigString,
+    apiEndpoint,
     loadingStarted,
     setLoadingStarted,
     loadPlugins,
@@ -170,11 +187,18 @@ function PluginLoader() {
 
     pluginElementsRef.current.forEach((element, name) => {
       if (name === currentPage) {
+        element.setAttribute('active', '');
         element.active = true;
+        element.style.display = 'block';
+        element.style.flex = '1';
+        element.style.minHeight = '0';
         element.requestUpdate?.();
       } else {
         element.active = false;
         element.removeAttribute('active');
+        element.style.display = '';
+        element.style.flex = '';
+        element.style.minHeight = '';
       }
     });
   }, [location.pathname]);
