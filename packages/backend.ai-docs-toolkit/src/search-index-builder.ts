@@ -4,6 +4,7 @@
  */
 
 import type { Chapter } from './markdown-processor.js';
+import { stripHtmlTags } from './markdown-extensions.js';
 
 export interface SearchDocument {
   slug: string;
@@ -46,6 +47,12 @@ function isThaiChar(ch: string): boolean {
  * - Whitespace languages (en): split on whitespace/punctuation, lowercase, min 2 chars
  * - CJK (ko/ja/zh): character bigrams within CJK segments
  * - Thai: character bigrams within Thai segments
+ *
+ * @param text - The text to tokenize
+ * @param _lang - Reserved for future language-specific tokenization rules
+ *   (e.g., stop words, stemming). Currently unused because the tokenizer
+ *   relies on Unicode character-class detection to handle CJK, Thai, and
+ *   Latin scripts without language-specific logic.
  */
 export function tokenize(text: string, _lang: string): string[] {
   const tokens: string[] = [];
@@ -105,10 +112,8 @@ export function tokenize(text: string, _lang: string): string[] {
 // ── HTML stripping ─────────────────────────────────────────────
 
 function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&[a-z]+;/gi, ' ')
-    .replace(/&#\d+;/g, ' ')
+  return stripHtmlTags(html)
+    .replace(/&[#a-z0-9]+;/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -116,7 +121,7 @@ function stripHtml(html: string): string {
 // ── Index building ─────────────────────────────────────────────
 
 /** Max body text length per document (keeps index size reasonable) */
-const MAX_BODY_LENGTH = 5000;
+const MAX_BODY_LENGTH = 1000;
 
 /** Field weight multipliers for scoring */
 const FIELD_WEIGHTS = { title: 3, headings: 2, body: 1 } as const;
