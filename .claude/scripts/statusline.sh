@@ -158,26 +158,27 @@ except Exception:
 
 IFS=$'\t' read -r JIRA_SUMMARY JIRA_STATUS TEAMS_URL <<< "$PARSED"
 
-# ── Build single-line output: Model | Teams | Jira ───────
-LINE="$MODEL_PART  "
+# ── Line 1: Links (Teams + Jira) ─────────────────────────
+LINE1=""
 
 if [[ -n "$TEAMS_URL" ]]; then
-  LINE+=$(link "$TEAMS_URL" "Teams")
+  LINE1+=$(link "$TEAMS_URL" "Teams")
+  LINE1+="  "
 fi
 
-[[ -n "$LINE" ]] && LINE+="  "
 JIRA_URL="https://lablup.atlassian.net/browse/${JIRA_KEY}"
-LINE+=$(link "$JIRA_URL" "$JIRA_KEY")
+LINE1+=$(link "$JIRA_URL" "$JIRA_KEY")
 
 if [[ -n "$JIRA_STATUS" ]]; then
-  LINE+=" (${JIRA_STATUS})"
+  LINE1+=" (${JIRA_STATUS})"
 fi
 
 if [[ -n "$JIRA_SUMMARY" ]]; then
   if (( ${#JIRA_SUMMARY} > 45 )); then
     JIRA_SUMMARY="${JIRA_SUMMARY:0:42}..."
   fi
-  LINE+=": ${JIRA_SUMMARY}"
+  LINE1+=": ${JIRA_SUMMARY}"
 fi
 
-printf '%b' "$LINE"
+# ── Line 2: Model + token info ────────────────────────────
+printf '%b\n%b' "$LINE1" "$MODEL_PART"
