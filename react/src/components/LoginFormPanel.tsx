@@ -146,6 +146,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         footer={null}
         width={modalWidth}
         getContainer={false}
+        mask={!needToResetPassword}
         title={
           <div style={{ textAlign: 'center' }}>
             <img
@@ -158,6 +159,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         styles={{
           header: { borderBottom: 'none', paddingBottom: 0 },
           body: { padding: token.paddingLG, paddingTop: token.paddingSM },
+          ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
         destroyOnHidden
       >
@@ -468,9 +470,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         currentPassword={form.getFieldValue('password') || ''}
         apiEndpoint={apiEndpoint}
         onCancel={() => onSetNeedToResetPassword(false)}
-        onOk={() => {
+        onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
-          form.setFieldValue('password', '');
+          form.setFieldValue('password', newPassword);
+          onLogin();
         }}
       />
 
@@ -510,7 +513,7 @@ const ResetPasswordRequiredInline: React.FC<{
   currentPassword: string;
   apiEndpoint: string;
   onCancel: () => void;
-  onOk: () => void;
+  onOk: (newPassword: string) => void;
 }> = ({ open, username, currentPassword, apiEndpoint, onCancel, onOk }) => {
   'use memo';
   const { t } = useTranslation();
@@ -551,7 +554,7 @@ const ResetPasswordRequiredInline: React.FC<{
         },
         {
           onSuccess() {
-            onOk();
+            onOk(values.newPassword);
           },
           onError() {
             // Error handled by mutation state
@@ -565,14 +568,14 @@ const ResetPasswordRequiredInline: React.FC<{
     <Modal
       open={open}
       centered
-      mask={false}
       onCancel={onCancel}
       keyboard={false}
       maskClosable={false}
       footer={null}
       width={450}
-      getContainer={false}
       destroyOnHidden
+      zIndex={1002}
+      getContainer={false}
     >
       <BAIFlex
         direction="column"
