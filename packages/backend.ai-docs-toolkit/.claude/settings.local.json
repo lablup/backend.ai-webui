@@ -1,0 +1,11 @@
+{
+  "disabledMcpjsonServers": [
+    "playwright-test",
+    "graphite"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)"
+    ]
+  }
+}
