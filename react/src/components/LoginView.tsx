@@ -115,10 +115,8 @@ const LoginView: React.FC = () => {
     if (newCfg.api_endpoint === '') {
       setShowEndpointInput(true);
       setIsEndpointDisabled(false);
-    } else if (newCfg.api_endpoint_text === '') {
-      setShowEndpointInput(true);
-      setIsEndpointDisabled(false);
     } else {
+      setShowEndpointInput(false);
       setIsEndpointDisabled(true);
     }
   }, [isConfigLoaded, atomLoginConfig]);
