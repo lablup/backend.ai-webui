@@ -117,11 +117,15 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 - **Tool Requirements**:
   - **Jira**: Use `scripts/jira.sh` (REST API with token auth, no MCP dependency)
-    - `bash scripts/jira.sh create --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]`
+    - `bash scripts/jira.sh create --type Task --title "Title" [--desc "..."] [--labels "l1,l2"] [--parent FR-XXXX]`
+    - `bash scripts/jira.sh create --type Epic --title "Epic Title" [--desc "..."] [--labels "l1,l2"]`
     - `bash scripts/jira.sh get FR-XXXX`
-    - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current]`
+    - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX]`
     - `bash scripts/jira.sh search "JQL query" [--limit 20]`
     - `bash scripts/jira.sh comment FR-XXXX "Comment text"`
+    - `bash scripts/jira.sh link --from FR-XXXX --to FR-YYYY --type blocks` (link types: blocks, relates, clones, duplicate)
+    - **Epic linking**: When creating issues under an Epic, ALWAYS use `--parent FR-XXXX` to link them. Issues created without `--parent` will be orphaned and not visible under the Epic.
+    - **Issue linking**: When Epics or issues have dependencies or relationships, use `jira.sh link` to connect them (e.g. `--type blocks` for dependencies, `--type relates` for related work).
     - Setup: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` env vars or `~/.config/atlassian/credentials`
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
