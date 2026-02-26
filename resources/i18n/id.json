@@ -1335,6 +1335,7 @@
   },
   "registry": {
     "AddRegistry": "Tambahkan Registri",
+    "AllowedProjects": "Proyek yang Diizinkan",
     "ConfirmNoUserName": "Pengguna dan kata sandi tidak ditentukan, apakah Anda ingin menyimpan?",
     "DescExtraJsonFormat": "Silakan masukkan JSON yang diformat secara valid",
     "DescHostnameIsEmpty": "Nama host kosong",
@@ -1346,6 +1347,8 @@
     "HarborProject": "Proyek Pelabuhan",
     "Hostname": "Nama host",
     "HostnameDoesNotMatch": "Nama host tidak cocok!",
+    "IsGlobal": "Tetapkan sebagai Registri Global",
+    "IsGlobalDescription": "Izinkan akses dari semua proyek",
     "ModifyRegistry": "Memodifikasi Registri",
     "NoRegistryToDisplay": "Tidak ada Pendaftaran untuk ditampilkan",
     "Password": "Kata sandi",
