@@ -106,6 +106,12 @@
       "NotIn": "дотор биш"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
     "FailedToPullVersions": "Хувилбаруудыг татаж чадсангүй.",
@@ -294,6 +300,7 @@
       "CopyAll": "Бүгдийг хуулбарлах",
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",
+      "Edit": "Засах",
       "Expand": "Өргөтгөх",
       "Remove": "Зөөх",
       "Save": "Хадгалах",

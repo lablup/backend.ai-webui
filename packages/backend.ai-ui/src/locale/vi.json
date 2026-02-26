@@ -106,6 +106,12 @@
       "NotIn": "không trong"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
     "FailedToPullVersions": "Không thể kéo phiên bản.",
@@ -294,6 +300,7 @@
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",
+      "Edit": "Chỉnh sửa",
       "Expand": "Mở rộng",
       "Remove": "Di dời",
       "Save": "Lưu",

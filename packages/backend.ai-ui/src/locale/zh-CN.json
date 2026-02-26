@@ -106,6 +106,12 @@
       "NotIn": "不在...中"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",
     "FailedToPullVersions": "未能拉动版本。",
@@ -294,6 +300,7 @@
       "CopyAll": "复制全部",
       "Create": "创造",
       "Delete": "删除",
+      "Edit": "编辑",
       "Expand": "扩张",
       "Remove": "消除",
       "Save": "保存",

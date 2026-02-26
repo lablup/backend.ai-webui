@@ -25,6 +25,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIHuggingFaceIcon,
+  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
   BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
@@ -90,6 +91,11 @@ const ReservoirPage: React.FC = () => {
   const [openHuggingFaceModal, { toggle: toggleOpenHuggingFaceModal }] =
     useToggle();
   const deferredOpenHuggingFaceModal = useDeferredValue(openHuggingFaceModal);
+  // TODO(needs-backend): Uncomment when storage-proxy applies DB config via Redis
+  // const [
+  //   openHuggingFaceSettingModal,
+  //   { toggle: toggleHuggingFaceSettingModal },
+  // ] = useToggle();
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ReservoirPage',
   );
@@ -150,6 +156,7 @@ const ReservoirPage: React.FC = () => {
   //     }
   //   `);
 
+  // NOTE: huggingfaceRegistries is queried but unused until storage-proxy supports DB config via Redis
   const { defaultArtifactRegistry, total, artifacts } =
     useLazyLoadQuery<ReservoirPageQuery>(
       graphql`
@@ -162,6 +169,14 @@ const ReservoirPage: React.FC = () => {
           defaultArtifactRegistry(artifactType: MODEL) {
             name
             type
+          }
+          huggingfaceRegistries @since(version: "25.14.0") {
+            edges {
+              node {
+                id
+                ...BAIHuggingFaceRegistrySettingModalFragment
+              }
+            }
           }
           total: artifacts(filter: { availability: [ALIVE, DELETED] }) {
             count
@@ -399,19 +414,29 @@ const ReservoirPage: React.FC = () => {
                 }}
               />
               {isAvailableUsingHuggingFace && (
-                <Button
-                  type="primary"
-                  icon={
-                    <BAIHuggingFaceIcon
-                      style={{
-                        fontSize: '1.5em',
-                      }}
+                <>
+                  {/* TODO(needs-backend): HuggingFace registry token setting button is hidden
+                     until storage-proxy applies DB config via Redis stateful state sharing. */}
+                  {/* <Tooltip title={t('button.Settings')}>
+                    <Button
+                      icon={<Settings size={16} />}
+                      onClick={() => toggleHuggingFaceSettingModal()}
                     />
-                  }
-                  onClick={() => toggleOpenHuggingFaceModal()}
-                >
-                  {t('reservoirPage.FromHuggingFace')}
-                </Button>
+                  </Tooltip> */}
+                  <Button
+                    type="primary"
+                    icon={
+                      <BAIHuggingFaceIcon
+                        style={{
+                          fontSize: '1.5em',
+                        }}
+                      />
+                    }
+                    onClick={() => toggleOpenHuggingFaceModal()}
+                  >
+                    {t('reservoirPage.FromHuggingFace')}
+                  </Button>
+                </>
               )}
             </BAIFlex>
           </BAIFlex>
@@ -597,6 +622,16 @@ const ReservoirPage: React.FC = () => {
           setSelectedArtifactIdList([]);
         }}
       />
+      {/* TODO(needs-backend): HuggingFace registry setting modal is hidden
+         until storage-proxy applies DB config via Redis stateful state sharing. */}
+      {/* <BAIHuggingFaceRegistrySettingModal
+        open={openHuggingFaceSettingModal}
+        huggingFaceRegistryFrgmt={
+          huggingfaceRegistries?.edges?.[0]?.node ?? null
+        }
+        onOk={() => toggleHuggingFaceSettingModal()}
+        onCancel={() => toggleHuggingFaceSettingModal()}
+      /> */}
     </BAIFlex>
   );
 };

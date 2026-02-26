@@ -106,6 +106,12 @@
       "NotIn": "含まれない"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFaceトークンを入力してください",
+    "HuggingFaceSettings": "Hugging Face 設定",
+    "Token": "トークン",
+    "TokenUpdatedSuccessfully": "トークンが正常に更新されました。"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}バージョンは除外されます。",
     "FailedToPullVersions": "バージョンを引くことができませんでした。",
@@ -294,6 +300,7 @@
       "CopyAll": "すべてをコピーします",
       "Create": "作成する",
       "Delete": "消去",
+      "Edit": "編集",
       "Expand": "拡大する",
       "Remove": "取り除く",
       "Save": "保存",

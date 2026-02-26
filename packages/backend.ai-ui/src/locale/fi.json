@@ -106,6 +106,12 @@
       "NotIn": "ei sisällä"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versiot jätetään pois.",
     "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",
@@ -294,6 +300,7 @@
       "CopyAll": "Kopioida kaikki",
       "Create": "Luoda",
       "Delete": "Poistaa",
+      "Edit": "Muokkaa",
       "Expand": "Laajentaa",
       "Remove": "Poistaa",
       "Save": "Tallenna",
