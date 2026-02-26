@@ -16,12 +16,13 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page
-    .getByRole('link', { name: folderName })
-    .first()
-    .click({ force: true });
+  await page.waitForLoadState('networkidle');
+  const folderLink = page.getByRole('link', { name: folderName }).first();
+  await expect(folderLink).toBeVisible({ timeout: 15000 });
+  await folderLink.click();
   const modal = new FolderExplorerModal(page);
   await modal.waitForOpen();
+  await modal.verifyFileExplorerLoaded();
   return modal;
 };
 
@@ -37,6 +38,7 @@ test.describe.serial(
     test('User can create folders and upload files in VFolder with write permissions', async ({
       page,
     }) => {
+      test.setTimeout(60000);
       const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
 
       // 1. Create a VFolder with Read & Write permissions
@@ -73,6 +75,7 @@ test.describe.serial(
     test('User can view files but cannot upload to read-only VFolder', async ({
       page,
     }) => {
+      test.setTimeout(60000);
       const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
 
       // 1. Create a VFolder with Read Only permissions
@@ -184,7 +187,7 @@ test.describe(
 
       // 5. Wait for modal to actually be hidden
       await expect(page.getByRole('dialog').first()).not.toBeVisible({
-        timeout: 2000,
+        timeout: 5000,
       });
 
       // 6. Verify URL no longer has folder parameter

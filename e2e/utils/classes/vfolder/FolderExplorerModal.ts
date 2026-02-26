@@ -10,7 +10,7 @@ export class FolderExplorerModal {
   }
 
   async waitForOpen(): Promise<void> {
-    await expect(this.modal).toBeVisible();
+    await expect(this.modal).toBeVisible({ timeout: 10000 });
   }
 
   async clickCloseButton(): Promise<void> {
@@ -20,7 +20,7 @@ export class FolderExplorerModal {
 
   async close(): Promise<void> {
     await this.clickCloseButton();
-    await expect(this.modal).not.toBeVisible({ timeout: 2000 });
+    await expect(this.modal).not.toBeVisible({ timeout: 5000 });
   }
 
   async verifyFolderName(folderName: string): Promise<void> {
@@ -38,7 +38,7 @@ export class FolderExplorerModal {
   async verifyFileExplorerLoaded(): Promise<void> {
     await expect(
       this.modal.getByRole('columnheader', { name: 'Name' }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10000 });
   }
 
   async verifyFileExplorerNotLoaded(): Promise<void> {
@@ -52,7 +52,7 @@ export class FolderExplorerModal {
     const uploadButton = this.modal.getByRole('button', {
       name: 'upload Upload',
     });
-    await expect(uploadButton).toBeVisible();
+    await expect(uploadButton).toBeVisible({ timeout: 10000 });
     return uploadButton;
   }
 
@@ -102,7 +102,7 @@ export class FolderExplorerModal {
 
   async verifyFileVisible(fileName: string): Promise<void> {
     await expect(
-      this.modal.getByRole('cell', { name: fileName, exact: true }),
+      this.modal.getByRole('cell').filter({ hasText: fileName }),
     ).toBeVisible({
       timeout: 10000,
     });

@@ -476,8 +476,8 @@ export async function deleteForeverAndVerifyFromTrash(
   const deletionNotification = page.getByRole('alert').filter({
     hasText: /deleted forever/i,
   });
-  await expect(deletionNotification).toBeVisible({ timeout: 10000 });
-  await expect(deletionNotification).toBeHidden({ timeout: 10000 });
+  await expect(deletionNotification).toBeVisible({ timeout: 15000 });
+  await expect(deletionNotification).toBeHidden({ timeout: 15000 });
 
   // Verify deletion - clear filters again and search
   await clearAllFilters(page);

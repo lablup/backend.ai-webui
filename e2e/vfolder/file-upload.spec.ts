@@ -7,7 +7,7 @@ import {
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
 } from '../utils/test-util';
-import { test, Page } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -17,12 +17,13 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page
-    .getByRole('link', { name: folderName })
-    .first()
-    .click({ force: true });
+  await page.waitForLoadState('networkidle');
+  const folderLink = page.getByRole('link', { name: folderName }).first();
+  await expect(folderLink).toBeVisible({ timeout: 15000 });
+  await folderLink.click();
   const modal = new FolderExplorerModal(page);
   await modal.waitForOpen();
+  await modal.verifyFileExplorerLoaded();
   return modal;
 };
 
