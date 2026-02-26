@@ -105,14 +105,31 @@ module.exports = {
         });
       });
 
-      // Close watchers when the dev server shuts down to prevent resource leaks.
-      const originalClose = devServer.server.close.bind(devServer.server);
-      devServer.server.close = (callback) => {
-        watchers.forEach((w) => w.close());
-        originalClose(callback);
-      };
+      // Store watchers on the devServer instance so onListening can patch
+      // server.close to clean them up on shutdown. We cannot patch
+      // devServer.server.close here because devServer.server is not yet
+      // created at setupMiddlewares time (createServer() runs after
+      // setupMiddlewares() in webpack-dev-server v4's initialize() flow).
+      devServer._fileWatchers = (devServer._fileWatchers || []).concat(
+        watchers,
+      );
 
       return middlewares;
+    };
+
+    // Patch devServer.server.close to close file watchers on shutdown.
+    // This runs after server.listen(), so devServer.server is guaranteed
+    // to exist here (unlike in setupMiddlewares which runs before createServer()).
+    const existingOnListening = devServerConfig.onListening;
+    devServerConfig.onListening = (devServer) => {
+      if (existingOnListening) {
+        existingOnListening(devServer);
+      }
+      const originalClose = devServer.server.close.bind(devServer.server);
+      devServer.server.close = (callback) => {
+        (devServer._fileWatchers || []).forEach((w) => w.close());
+        originalClose(callback);
+      };
     };
 
     return devServerConfig;
