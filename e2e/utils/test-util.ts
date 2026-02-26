@@ -1,7 +1,14 @@
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import TOML from '@iarna/toml';
 import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
-import _ from 'lodash';
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Object.getPrototypeOf(value) === Object.prototype
+  );
+}
 
 /**
  * Custom merge function that handles explicit undefined values.
@@ -18,7 +25,7 @@ import _ from 'lodash';
  * // Result: { a: 1, b: { c: undefined, d: 3, e: 4 } }
  */
 function mergeWithUndefined<T extends object>(target: T, source: object): T {
-  const result = _.cloneDeep(target);
+  const result = structuredClone(target);
 
   Object.keys(source).forEach((key) => {
     const sourceValue = (source as any)[key];
@@ -28,8 +35,8 @@ function mergeWithUndefined<T extends object>(target: T, source: object): T {
       // Explicitly set undefined
       (result as any)[key] = undefined;
     } else if (
-      _.isPlainObject(sourceValue) &&
-      _.isPlainObject(targetValue) &&
+      isPlainObject(sourceValue) &&
+      isPlainObject(targetValue) &&
       !Array.isArray(sourceValue)
     ) {
       // Recursively merge nested objects
@@ -116,8 +123,13 @@ export async function login(
 
   await page.goto(webuiEndpoint);
   await page.getByLabel('Email or Username').fill(username);
-  await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  await page.getByRole('textbox', { name: 'Endpoint' }).fill(endpoint);
+  await page.getByLabel('Password').fill(password);
+  // Expand the endpoint section if it's not already visible
+  const endpointInput = page.getByLabel('Endpoint');
+  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
+    await page.getByText('Advanced').click();
+  }
+  await endpointInput.fill(endpoint);
   await page.getByLabel('Login', { exact: true }).click();
   await page.waitForSelector('[data-testid="user-dropdown-button"]');
 }

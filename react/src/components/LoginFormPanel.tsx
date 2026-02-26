@@ -186,6 +186,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <Input
                   prefix={<MailOutlined />}
                   placeholder={t('login.E-mailOrUsername')}
+                  aria-label="Email or Username"
                   maxLength={64}
                   autoComplete="username"
                   disabled={isLoading}
@@ -195,6 +196,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <Input.Password
                   prefix={<KeyOutlined />}
                   placeholder={t('login.Password')}
+                  aria-label="Password"
                   autoComplete="current-password"
                   disabled={isLoading}
                 />
@@ -236,7 +238,13 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* Login button */}
           <Form.Item style={{ marginBottom: 8 }}>
-            <Button type="primary" block onClick={onLogin} loading={isLoading}>
+            <Button
+              type="primary"
+              block
+              onClick={onLogin}
+              loading={isLoading}
+              aria-label="Login"
+            >
               {t('login.Login')}
             </Button>
           </Form.Item>
@@ -305,6 +313,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   >
                     <Input
                       placeholder={t('login.Endpoint')}
+                      aria-label="Endpoint"
                       maxLength={2048}
                       disabled={isEndpointDisabled || isLoading}
                       onChange={(e) => onSetApiEndpoint(e.target.value)}

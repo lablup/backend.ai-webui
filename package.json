@@ -86,6 +86,7 @@
     "jest": "^30.2.0",
     "jsonc-eslint-parser": "^2.4.2",
     "lint-staged": "^15.5.2",
+    "lodash": "^4.17.21",
     "prettier": "^3.8.1",
     "prettier-plugin-sort-json": "^4.2.0",
     "relay-compiler": "^20.1.1",
