@@ -13,7 +13,7 @@ import { slugify } from './markdown-processor.js';
 import { buildWebPage, buildIndexPage } from './website-builder.js';
 import { buildSearchIndex } from './search-index-builder.js';
 import type { WebsiteMetadata } from './website-builder.js';
-import { generateWebStyles } from './styles-web.js';
+import { generateWebsiteStyles } from './styles-web.js';
 import { getDocVersion } from './version.js';
 import type { ResolvedDocConfig } from './config.js';
 
@@ -148,8 +148,8 @@ export async function generateWebsite(
   const assetsDir = path.join(distBase, 'assets');
   fs.mkdirSync(assetsDir, { recursive: true });
 
-  // Write a combined CSS for all languages (use 'en' as base, CJK handled per-page via lang attr)
-  const cssContent = generateWebStyles();
+  // Write a combined CSS for all languages (CJK handled via :lang() selectors)
+  const cssContent = generateWebsiteStyles();
   fs.writeFileSync(path.join(assetsDir, 'styles.css'), cssContent, 'utf-8');
   console.log(`Written: assets/styles.css`);
 
