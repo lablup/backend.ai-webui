@@ -4,6 +4,7 @@ packages:
   - packages/eslint-config-bai
   - packages/backend.ai-docs-toolkit
   - packages/backend.ai-webui-docs
+  - packages/backend.ai-guide
 
 onlyBuiltDependencies:
   - bufferutil

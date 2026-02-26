@@ -1,0 +1,442 @@
+id: backend-ai-guide
+title: "Backend.AI Complete Guide"
+description: "Comprehensive guide for Backend.AI platform"
+type: document
+languages:
+  - en
+  - ko
+  - ja
+  - th
+
+navigation:
+  en:
+    - title: "1. Backend.AI Overview"
+      children:
+        - title: "Introduction"
+          path: "overview/introduction.md"
+        - title: "Architecture"
+          children:
+            - title: "Service Components"
+              path: "overview/architecture/service-components.md"
+            - title: "Computing Resources"
+              path: "overview/architecture/computing.md"
+            - title: "Storage Management"
+              path: "overview/architecture/storage.md"
+        - title: "Enterprise Applications"
+          children:
+            - title: "FastTrack MLOps"
+              path: "overview/enterprise/fasttrack.md"
+            - title: "Control Panel"
+              path: "overview/enterprise/control-panel.md"
+
+    - title: "2. Installation and Deployment"
+      children:
+        - title: "System Requirements"
+          path: "installation/requirements.md"
+        - title: "Single-node Installation"
+          children:
+            - title: "Docker Compose"
+              path: "installation/single-node/docker-compose.md"
+            - title: "From Source"
+              path: "installation/single-node/source.md"
+        - title: "Multi-node Installation"
+          path: "installation/multi-node.md"
+        - title: "Cloud Deployment"
+          children:
+            - title: "AWS"
+              path: "installation/cloud/aws.md"
+            - title: "Azure"
+              path: "installation/cloud/azure.md"
+
+    - title: "3. Getting Started"
+      children:
+        - title: "First Login"
+          path: "getting-started/first-login.md"
+        - title: "Creating Sessions"
+          path: "getting-started/sessions.md"
+        - title: "Storage Folders"
+          path: "getting-started/storage.md"
+
+    - title: "4. User Guide"
+      children:
+        - title: "Web Interface"
+          children:
+            - title: "Dashboard"
+              path: "user-guide/webui/dashboard.md"
+            - title: "Sessions Management"
+              path: "user-guide/webui/sessions.md"
+            - title: "Storage Management"
+              path: "user-guide/webui/storage.md"
+            - title: "Model Serving"
+              path: "user-guide/webui/model-serving.md"
+        - title: "Advanced Features"
+          children:
+            - title: "Cluster Sessions"
+              path: "user-guide/advanced/cluster-sessions.md"
+            - title: "SSH/SFTP Access"
+              path: "user-guide/advanced/ssh-sftp.md"
+
+    - title: "5. CLI Guide"
+      children:
+        - title: "Installation & Setup"
+          path: "cli-guide/installation.md"
+        - title: "Session Management"
+          path: "cli-guide/sessions.md"
+        - title: "Storage Operations"
+          path: "cli-guide/storage.md"
+
+    - title: "6. Administration"
+      children:
+        - title: "User Management"
+          path: "admin/users.md"
+        - title: "Resource Management"
+          path: "admin/resources.md"
+        - title: "System Configuration"
+          path: "admin/configuration.md"
+
+    - title: "7. API Reference"
+      children:
+        - title: "REST API"
+          path: "api/rest.md"
+        - title: "GraphQL API"
+          path: "api/graphql.md"
+        - title: "Python SDK"
+          path: "api/python-sdk.md"
+
+    - title: "8. Migration Guide"
+      children:
+        - title: "Version Upgrades"
+          path: "migration/versions.md"
+        - title: "Configuration Changes"
+          path: "migration/config.md"
+
+    - title: "9. Troubleshooting"
+      children:
+        - title: "Common Issues"
+          path: "troubleshooting/common.md"
+        - title: "FAQ"
+          path: "troubleshooting/faq.md"
+
+  ko:
+    - title: "1. Backend.AI 살펴보기"
+      children:
+        - title: "소개"
+          path: "overview/introduction.md"
+        - title: "아키텍처"
+          children:
+            - title: "서비스 컴포넌트"
+              path: "overview/architecture/service-components.md"
+            - title: "컴퓨팅 리소스"
+              path: "overview/architecture/computing.md"
+            - title: "스토리지 관리"
+              path: "overview/architecture/storage.md"
+        - title: "엔터프라이즈 애플리케이션"
+          children:
+            - title: "FastTrack MLOps"
+              path: "overview/enterprise/fasttrack.md"
+            - title: "Control Panel"
+              path: "overview/enterprise/control-panel.md"
+
+    - title: "2. 설치 및 배포"
+      children:
+        - title: "시스템 요구사항"
+          path: "installation/requirements.md"
+        - title: "단일 노드 설치"
+          children:
+            - title: "Docker Compose"
+              path: "installation/single-node/docker-compose.md"
+            - title: "소스코드에서 설치"
+              path: "installation/single-node/source.md"
+        - title: "멀티 노드 설치"
+          path: "installation/multi-node.md"
+        - title: "클라우드 배포"
+          children:
+            - title: "AWS"
+              path: "installation/cloud/aws.md"
+            - title: "Azure"
+              path: "installation/cloud/azure.md"
+
+    - title: "3. 시작하기"
+      children:
+        - title: "첫 로그인"
+          path: "getting-started/first-login.md"
+        - title: "세션 생성하기"
+          path: "getting-started/sessions.md"
+        - title: "스토리지 폴더"
+          path: "getting-started/storage.md"
+
+    - title: "4. 사용자 가이드"
+      children:
+        - title: "웹 인터페이스"
+          children:
+            - title: "대시보드"
+              path: "user-guide/webui/dashboard.md"
+            - title: "세션 관리"
+              path: "user-guide/webui/sessions.md"
+            - title: "스토리지 관리"
+              path: "user-guide/webui/storage.md"
+            - title: "모델 서빙"
+              path: "user-guide/webui/model-serving.md"
+        - title: "고급 기능"
+          children:
+            - title: "클러스터 세션"
+              path: "user-guide/advanced/cluster-sessions.md"
+            - title: "SSH/SFTP 접근"
+              path: "user-guide/advanced/ssh-sftp.md"
+
+    - title: "5. CLI 가이드"
+      children:
+        - title: "설치 및 설정"
+          path: "cli-guide/installation.md"
+        - title: "세션 관리"
+          path: "cli-guide/sessions.md"
+        - title: "스토리지 운영"
+          path: "cli-guide/storage.md"
+
+    - title: "6. 관리"
+      children:
+        - title: "사용자 관리"
+          path: "admin/users.md"
+        - title: "리소스 관리"
+          path: "admin/resources.md"
+        - title: "시스템 설정"
+          path: "admin/configuration.md"
+
+    - title: "7. API 레퍼런스"
+      children:
+        - title: "REST API"
+          path: "api/rest.md"
+        - title: "GraphQL API"
+          path: "api/graphql.md"
+        - title: "Python SDK"
+          path: "api/python-sdk.md"
+
+    - title: "8. 마이그레이션 가이드"
+      children:
+        - title: "버전 업그레이드"
+          path: "migration/versions.md"
+        - title: "설정 변경사항"
+          path: "migration/config.md"
+
+    - title: "9. 문제 해결"
+      children:
+        - title: "일반적인 문제"
+          path: "troubleshooting/common.md"
+        - title: "FAQ"
+          path: "troubleshooting/faq.md"
+
+  ja:
+    - title: "1. Backend.AI概要"
+      children:
+        - title: "紹介"
+          path: "overview/introduction.md"
+        - title: "アーキテクチャ"
+          children:
+            - title: "サービスコンポーネント"
+              path: "overview/architecture/service-components.md"
+            - title: "コンピューティングリソース"
+              path: "overview/architecture/computing.md"
+            - title: "ストレージ管理"
+              path: "overview/architecture/storage.md"
+        - title: "エンタープライズアプリケーション"
+          children:
+            - title: "FastTrack MLOps"
+              path: "overview/enterprise/fasttrack.md"
+            - title: "Control Panel"
+              path: "overview/enterprise/control-panel.md"
+
+    - title: "2. インストールとデプロイ"
+      children:
+        - title: "システム要件"
+          path: "installation/requirements.md"
+        - title: "シングルノードインストール"
+          children:
+            - title: "Docker Compose"
+              path: "installation/single-node/docker-compose.md"
+            - title: "ソースからのインストール"
+              path: "installation/single-node/source.md"
+        - title: "マルチノードインストール"
+          path: "installation/multi-node.md"
+        - title: "クラウドデプロイ"
+          children:
+            - title: "AWS"
+              path: "installation/cloud/aws.md"
+            - title: "Azure"
+              path: "installation/cloud/azure.md"
+
+    - title: "3. はじめに"
+      children:
+        - title: "初回ログイン"
+          path: "getting-started/first-login.md"
+        - title: "セッション作成"
+          path: "getting-started/sessions.md"
+        - title: "ストレージフォルダ"
+          path: "getting-started/storage.md"
+
+    - title: "4. ユーザーガイド"
+      children:
+        - title: "Webインターフェース"
+          children:
+            - title: "ダッシュボード"
+              path: "user-guide/webui/dashboard.md"
+            - title: "セッション管理"
+              path: "user-guide/webui/sessions.md"
+            - title: "ストレージ管理"
+              path: "user-guide/webui/storage.md"
+            - title: "モデルサービング"
+              path: "user-guide/webui/model-serving.md"
+        - title: "高度な機能"
+          children:
+            - title: "クラスターセッション"
+              path: "user-guide/advanced/cluster-sessions.md"
+            - title: "SSH/SFTPアクセス"
+              path: "user-guide/advanced/ssh-sftp.md"
+
+    - title: "5. CLIガイド"
+      children:
+        - title: "インストールと設定"
+          path: "cli-guide/installation.md"
+        - title: "セッション管理"
+          path: "cli-guide/sessions.md"
+        - title: "ストレージ操作"
+          path: "cli-guide/storage.md"
+
+    - title: "6. 管理"
+      children:
+        - title: "ユーザー管理"
+          path: "admin/users.md"
+        - title: "リソース管理"
+          path: "admin/resources.md"
+        - title: "システム設定"
+          path: "admin/configuration.md"
+
+    - title: "7. APIリファレンス"
+      children:
+        - title: "REST API"
+          path: "api/rest.md"
+        - title: "GraphQL API"
+          path: "api/graphql.md"
+        - title: "Python SDK"
+          path: "api/python-sdk.md"
+
+    - title: "8. マイグレーションガイド"
+      children:
+        - title: "バージョンアップグレード"
+          path: "migration/versions.md"
+        - title: "設定変更"
+          path: "migration/config.md"
+
+    - title: "9. トラブルシューティング"
+      children:
+        - title: "一般的な問題"
+          path: "troubleshooting/common.md"
+        - title: "FAQ"
+          path: "troubleshooting/faq.md"
+
+  th:
+    - title: "1. ภาพรวม Backend.AI"
+      children:
+        - title: "การแนะนำ"
+          path: "overview/introduction.md"
+        - title: "สถาปัตยกรรม"
+          children:
+            - title: "คอมโพเนนต์ของบริการ"
+              path: "overview/architecture/service-components.md"
+            - title: "ทรัพยากรคอมพิวติ้ง"
+              path: "overview/architecture/computing.md"
+            - title: "การจัดการพื้นที่จัดเก็บ"
+              path: "overview/architecture/storage.md"
+        - title: "แอปพลิเคชันองค์กร"
+          children:
+            - title: "FastTrack MLOps"
+              path: "overview/enterprise/fasttrack.md"
+            - title: "Control Panel"
+              path: "overview/enterprise/control-panel.md"
+
+    - title: "2. การติดตั้งและการจัดส่ง"
+      children:
+        - title: "ข้อกำหนดระบบ"
+          path: "installation/requirements.md"
+        - title: "การติดตั้งแบบโหนดเดียว"
+          children:
+            - title: "Docker Compose"
+              path: "installation/single-node/docker-compose.md"
+            - title: "จากซอร์สโค้ด"
+              path: "installation/single-node/source.md"
+        - title: "การติดตั้งแบบหลายโหนด"
+          path: "installation/multi-node.md"
+        - title: "การจัดส่งบนคลาวด์"
+          children:
+            - title: "AWS"
+              path: "installation/cloud/aws.md"
+            - title: "Azure"
+              path: "installation/cloud/azure.md"
+
+    - title: "3. เริ่มต้นใช้งาน"
+      children:
+        - title: "การเข้าสู่ระบบครั้งแรก"
+          path: "getting-started/first-login.md"
+        - title: "การสร้างเซสชัน"
+          path: "getting-started/sessions.md"
+        - title: "โฟลเดอร์จัดเก็บ"
+          path: "getting-started/storage.md"
+
+    - title: "4. คู่มือผู้ใช้"
+      children:
+        - title: "อินเตอร์เฟซเว็บ"
+          children:
+            - title: "แดชบอร์ด"
+              path: "user-guide/webui/dashboard.md"
+            - title: "การจัดการเซสชัน"
+              path: "user-guide/webui/sessions.md"
+            - title: "การจัดการพื้นที่จัดเก็บ"
+              path: "user-guide/webui/storage.md"
+            - title: "การให้บริการโมเดล"
+              path: "user-guide/webui/model-serving.md"
+        - title: "ฟีเจอร์ขั้นสูง"
+          children:
+            - title: "เซสชันคลัสเตอร์"
+              path: "user-guide/advanced/cluster-sessions.md"
+            - title: "การเข้าถึง SSH/SFTP"
+              path: "user-guide/advanced/ssh-sftp.md"
+
+    - title: "5. คู่มือ CLI"
+      children:
+        - title: "การติดตั้งและการตั้งค่า"
+          path: "cli-guide/installation.md"
+        - title: "การจัดการเซสชัน"
+          path: "cli-guide/sessions.md"
+        - title: "การดำเนินการพื้นที่จัดเก็บ"
+          path: "cli-guide/storage.md"
+
+    - title: "6. การบริหาร"
+      children:
+        - title: "การจัดการผู้ใช้"
+          path: "admin/users.md"
+        - title: "การจัดการทรัพยากร"
+          path: "admin/resources.md"
+        - title: "การกำหนดค่าระบบ"
+          path: "admin/configuration.md"
+
+    - title: "7. การอ้างอิง API"
+      children:
+        - title: "REST API"
+          path: "api/rest.md"
+        - title: "GraphQL API"
+          path: "api/graphql.md"
+        - title: "Python SDK"
+          path: "api/python-sdk.md"
+
+    - title: "8. คู่มือการย้าย"
+      children:
+        - title: "การอัปเกรดเวอร์ชัน"
+          path: "migration/versions.md"
+        - title: "การเปลี่ยนแปลงการกำหนดค่า"
+          path: "migration/config.md"
+
+    - title: "9. การแก้ไขปัญหา"
+      children:
+        - title: "ปัญหาทั่วไป"
+          path: "troubleshooting/common.md"
+        - title: "FAQ"
+          path: "troubleshooting/faq.md"

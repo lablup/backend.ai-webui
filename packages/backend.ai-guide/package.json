@@ -1,0 +1,25 @@
+{
+  "name": "backend.ai-guide",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:toolkit": "pnpm --filter backend.ai-docs-toolkit build",
+    "pdf": "pnpm run build:toolkit && docs-toolkit pdf --lang all",
+    "pdf:en": "pnpm run build:toolkit && docs-toolkit pdf --lang en",
+    "pdf:ko": "pnpm run build:toolkit && docs-toolkit pdf --lang ko",
+    "pdf:ja": "pnpm run build:toolkit && docs-toolkit pdf --lang ja",
+    "pdf:th": "pnpm run build:toolkit && docs-toolkit pdf --lang th",
+    "preview": "pnpm run build:toolkit && docs-toolkit preview --mode sample",
+    "preview:doc": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang en",
+    "preview:html": "pnpm run build:toolkit && docs-toolkit preview:html --lang en",
+    "agents": "docs-toolkit agents",
+    "agents:force": "docs-toolkit agents --force",
+    "verify": "node scripts/verify-content.js"
+  },
+  "devDependencies": {
+    "backend.ai-docs-toolkit": "workspace:*",
+    "playwright": "^1.58.0",
+    "js-yaml": "^4.1.0"
+  }
+}
