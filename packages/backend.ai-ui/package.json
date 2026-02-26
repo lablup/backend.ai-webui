@@ -111,7 +111,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier-plugin-sort-json": "^4.2.0",
     "relay-test-utils": "^20.1.1",
-    "storybook": "^10.1.11",
+    "storybook": "^10.2.10",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
