@@ -69,9 +69,22 @@ export interface AgentConfig {
   };
 }
 
+/** Website generation configuration */
+export interface WebsiteConfig {
+  /** Base URL for 'Edit this page' links, e.g. 'https://github.com/org/repo/edit/main/docs/src' */
+  editBaseUrl?: string;
+  /** GitHub repository URL for source links */
+  repoUrl?: string;
+  /** Output subdirectory under distDir. Default: 'web' */
+  outDir?: string;
+  /** Base path for deployment (e.g., '/docs/'). Default: '/' */
+  basePath?: string;
+}
+
 /** Full toolkit config file shape (docs-toolkit.config.yaml) */
 export interface ToolkitConfig extends DocConfig {
   agents?: AgentConfig;
+  website?: WebsiteConfig;
 }
 
 // ── Defaults ──────────────────────────────────────────────────
@@ -133,6 +146,7 @@ export interface ResolvedDocConfig {
   productName: string;
 
   agents?: AgentConfig;
+  website?: WebsiteConfig;
 }
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
@@ -168,6 +182,7 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     productName: config.productName ?? config.title,
 
     agents: config.agents,
+    website: config.website,
   };
 }
 

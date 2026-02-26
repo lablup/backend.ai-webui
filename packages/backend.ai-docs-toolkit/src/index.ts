@@ -10,6 +10,7 @@
 export type {
   DocConfig,
   AgentConfig,
+  WebsiteConfig,
   ToolkitConfig,
   ResolvedDocConfig,
 } from './config.js';
@@ -58,6 +59,8 @@ export type { DocMetadata } from './html-builder.js';
 export { buildFullDocument } from './html-builder.js';
 export type { WebDocMetadata } from './html-builder-web.js';
 export { buildWebDocument } from './html-builder-web.js';
+export type { WebPageContext, WebsiteMetadata } from './website-builder.js';
+export { buildWebPage, buildIndexPage } from './website-builder.js';
 
 // ── PDF Rendering ───────────────────────────────────────────────
 export type { RenderOptions } from './pdf-renderer.js';
