@@ -22,6 +22,13 @@
     "preview:html:ja": "pnpm run build:toolkit && docs-toolkit preview:html --lang ja",
     "preview:html:th": "pnpm run build:toolkit && docs-toolkit preview:html --lang th",
     "preview:html:catalog": "pnpm run build:toolkit && docs-toolkit preview:html --mode catalog",
+    "build:web": "pnpm run build:toolkit && docs-toolkit build:web --lang all",
+    "build:web:en": "pnpm run build:toolkit && docs-toolkit build:web --lang en",
+    "build:web:ko": "pnpm run build:toolkit && docs-toolkit build:web --lang ko",
+    "serve:web": "pnpm run build:toolkit && docs-toolkit serve:web --lang en",
+    "serve:web:ko": "pnpm run build:toolkit && docs-toolkit serve:web --lang ko",
+    "serve:web:ja": "pnpm run build:toolkit && docs-toolkit serve:web --lang ja",
+    "serve:web:th": "pnpm run build:toolkit && docs-toolkit serve:web --lang th",
     "agents": "docs-toolkit agents",
     "agents:force": "docs-toolkit agents --force"
   },
