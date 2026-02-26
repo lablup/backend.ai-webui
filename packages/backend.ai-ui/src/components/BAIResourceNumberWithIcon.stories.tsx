@@ -36,7 +36,7 @@ const mockDeviceMetaData: DeviceMetaData = {
     description: 'NVIDIA GPU (fractional)',
     human_readable_name: 'GPU',
     display_unit: 'FGPU',
-    number_format: { binary: false, round_length: 2 },
+    number_format: { binary: false, round_length: 1 },
     display_icon: 'nvidia',
   },
   // AMD

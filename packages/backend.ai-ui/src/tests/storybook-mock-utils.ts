@@ -1,6 +1,6 @@
-import { BAILocale } from '../locale';
 import { BAIClient } from '../components/provider/BAIClientProvider';
 import type { DeviceMetaData } from '../components/provider/BAIMetaDataProvider';
+import { BAILocale } from '../locale';
 import enUS from 'antd/locale/en_US';
 import koKR from 'antd/locale/ko_KR';
 
@@ -88,7 +88,7 @@ export const mockDeviceMetaData: DeviceMetaData = {
     description: 'NVIDIA GPU (fractional)',
     human_readable_name: 'GPU',
     display_unit: 'FGPU',
-    number_format: { binary: false, round_length: 2 },
+    number_format: { binary: false, round_length: 1 },
     display_icon: 'nvidia',
   },
 };

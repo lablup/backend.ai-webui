@@ -53,12 +53,13 @@ const BAIResourceNumberWithIcon = ({
   const { token } = theme.useToken();
 
   const formatAmount = (amount: string) => {
+    const roundLength = deviceMetaData?.[type]?.number_format.round_length || 0;
     return deviceMetaData?.[type]?.number_format.binary
       ? Number(
           convertToBinaryUnit(amount, 'g', 2, true)?.numberFixed,
         ).toString()
-      : (deviceMetaData?.[type]?.number_format.round_length || 0) > 0
-        ? parseFloat(amount).toFixed(2)
+      : roundLength > 0
+        ? parseFloat(amount).toFixed(roundLength)
         : amount;
   };
 
