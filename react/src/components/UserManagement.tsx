@@ -13,9 +13,9 @@ import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { EllipsisOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, theme, Popconfirm, App } from 'antd';
+import { Button, theme, Popconfirm, App, Space, Dropdown } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -78,6 +78,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
     string | null
   >(null);
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
+  const [openBulkCreateModal, setOpenBulkCreateModal] =
+    useState<boolean>(false);
   const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
   const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
     useToggle(false);
@@ -401,15 +403,36 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             value={fetchKey}
             onChange={updateFetchKey}
           />
-          <Button
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => {
-              setOpenCreateModal(true);
-            }}
-          >
-            {t('credential.CreateUser')}
-          </Button>
+          <Space.Compact>
+            <Button
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => {
+                setOpenCreateModal(true);
+              }}
+            >
+              {t('credential.CreateUser')}
+            </Button>
+            {bailClient.supports('bulk-create-user') && (
+              <Dropdown
+                trigger={['click']}
+                menu={{
+                  items: [
+                    {
+                      key: 'bulk-create',
+                      label: t('credential.BulkCreateUser'),
+                      onClick: () => {
+                        setOpenBulkCreateModal(true);
+                      },
+                    },
+                  ],
+                }}
+                placement="bottomRight"
+              >
+                <Button type="primary" icon={<EllipsisOutlined />} />
+              </Dropdown>
+            )}
+          </Space.Compact>
         </BAIFlex>
       </BAIFlex>
       <BAIUserNodes
@@ -474,12 +497,17 @@ const UserManagement: React.FC<UserManagementProps> = () => {
       <UserSettingModal
         userEmail={emailForSettingModal}
         open={
-          !!emailForSettingModal || isPendingSettingModalOpen || openCreateModal
+          !!emailForSettingModal ||
+          isPendingSettingModalOpen ||
+          openCreateModal ||
+          openBulkCreateModal
         }
+        bulkCreate={openBulkCreateModal}
         loading={isPendingSettingModalOpen}
         onRequestClose={(success) => {
           setEmailForSettingModal(null);
           setOpenCreateModal(false);
+          setOpenBulkCreateModal(false);
           if (success) {
             updateFetchKey();
           }
