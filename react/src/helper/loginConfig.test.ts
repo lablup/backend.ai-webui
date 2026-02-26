@@ -225,7 +225,8 @@ describe('refreshConfigFromToml', () => {
 
     const result = refreshConfigFromToml(config);
 
-    expect(result.singleSignOnVendors).toEqual(['']);
+    // Empty strings are filtered out by getConfigValueByExists
+    expect(result.singleSignOnVendors).toEqual([]);
   });
 
   it('should parse values from wsproxy section', () => {
