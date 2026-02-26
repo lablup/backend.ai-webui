@@ -11,6 +11,7 @@ import { parse as parseYaml } from 'yaml';
 import { processMarkdownFilesForWeb } from './markdown-processor-web.js';
 import { slugify } from './markdown-processor.js';
 import { buildWebPage, buildIndexPage } from './website-builder.js';
+import { buildSearchIndex } from './search-index-builder.js';
 import type { WebsiteMetadata } from './website-builder.js';
 import { generateWebStyles } from './styles-web.js';
 import { getDocVersion } from './version.js';
@@ -213,6 +214,13 @@ export async function generateWebsite(
     // Generate index.html (redirect to first page)
     const indexHtml = buildIndexPage(chapters, metadata);
     fs.writeFileSync(path.join(langDir, 'index.html'), indexHtml, 'utf-8');
+
+    // Build search index
+    const searchIndex = buildSearchIndex(chapters, lang);
+    const searchIndexJson = JSON.stringify(searchIndex);
+    fs.writeFileSync(path.join(langDir, 'search-index.json'), searchIndexJson, 'utf-8');
+    const indexSizeKb = (Buffer.byteLength(searchIndexJson) / 1024).toFixed(0);
+    console.log(`[${lang}] Search index: ${Object.keys(searchIndex.index).length} terms (${indexSizeKb} KB)`);
 
     // Copy images
     const srcImagesDir = path.join(config.srcDir, lang, 'images');

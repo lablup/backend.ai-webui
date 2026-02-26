@@ -75,6 +75,10 @@ export type { GeneratePdfOptions } from './generate-pdf.js';
 export { generateWebsite } from './website-generator.js';
 export type { GenerateWebsiteOptions } from './website-generator.js';
 
+// ── Search Index ────────────────────────────────────────────────
+export { buildSearchIndex, tokenize } from './search-index-builder.js';
+export type { SearchDocument, SearchIndex, SearchIndexEntry } from './search-index-builder.js';
+
 // ── Preview Servers ─────────────────────────────────────────────
 export { startPreviewServer } from './preview-server.js';
 export type { PreviewServerOptions } from './preview-server.js';
