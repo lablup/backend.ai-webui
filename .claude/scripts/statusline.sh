@@ -50,8 +50,36 @@ _refresh_jira() {
   ) &disown 2>/dev/null
 }
 
+# ── Read all stdin once (can only be read once) ───────────
+SESSION_JSON=$(cat)
+
+# ── Extract model + token info ───────────────────────────
+MODEL_PART=$(echo "$SESSION_JSON" | python3 -c '
+import json, sys
+try:
+    data = json.load(sys.stdin)
+    model = (data.get("model") or {}).get("display_name", "Unknown Model")
+    cw = data.get("context_window") or {}
+    used = cw.get("used_percentage")
+    inp = (cw.get("current_usage") or {}).get("input_tokens")
+    out = (cw.get("current_usage") or {}).get("output_tokens")
+
+    model_str = f"\033[36m{model}\033[0m"
+
+    if used is not None:
+        used_int = round(used)
+        color = "\033[31m" if used_int >= 80 else "\033[33m" if used_int >= 50 else "\033[32m"
+        usage_str = f"{color}{used:.1f}% used\033[0m"
+        token_detail = f" \033[90m(in:{inp} out:{out})\033[0m" if inp is not None and out is not None else ""
+        print(f"{model_str} | Tokens: {usage_str}{token_detail}", end="")
+    else:
+        print(f"{model_str} | Tokens: \033[90mno data yet\033[0m", end="")
+except Exception:
+    pass
+' 2>/dev/null) || true
+
 # ── Extract workspace from session JSON ──────────────────
-WORKSPACE=$(python3 -c '
+WORKSPACE=$(echo "$SESSION_JSON" | python3 -c '
 import json, sys
 try:
     data = json.load(sys.stdin)
@@ -59,12 +87,21 @@ try:
 except Exception: pass
 ' 2>/dev/null) || true
 
-[[ -z "$WORKSPACE" ]] && exit 0
+# ── If no workspace, show only model/token ───────────────
+if [[ -z "$WORKSPACE" ]]; then
+  printf '%b' "$MODEL_PART"
+  exit 0
+fi
 
 # ── Extract branch and repo info ──────────────────────────
-BRANCH=$(git -C "$WORKSPACE" rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+BRANCH=$(git -C "$WORKSPACE" rev-parse --abbrev-ref HEAD 2>/dev/null) || { printf '%b' "$MODEL_PART"; exit 0; }
 JIRA_KEY=$(echo "$BRANCH" | grep -oiE 'fr-[0-9]+' | head -1 | tr '[:lower:]' '[:upper:]') || true
-[[ -z "$JIRA_KEY" ]] && exit 0
+
+# No Jira key on this branch → show only model/token
+if [[ -z "$JIRA_KEY" ]]; then
+  printf '%b' "$MODEL_PART"
+  exit 0
+fi
 
 # Derive GitHub owner/repo from origin remote
 GH_REPO=$(git -C "$WORKSPACE" remote get-url origin 2>/dev/null \
@@ -79,12 +116,16 @@ if [[ -f "$PR_CACHE_FILE" ]]; then
   PR_CACHE_AGE=$(( $(date +%s) - $(file_mtime "$PR_CACHE_FILE") ))
   (( PR_CACHE_AGE >= CACHE_TTL )) && _refresh_pr "$BRANCH" "$PR_CACHE_FILE" "$GH_REPO"
 else
-  # No cache → background pre-warm, show nothing this cycle
+  # No cache → background pre-warm, show only model/token this cycle
   _refresh_pr "$BRANCH" "$PR_CACHE_FILE" "$GH_REPO"
+  printf '%b' "$MODEL_PART"
   exit 0
 fi
 
-[[ -z "$PR_URL" ]] && exit 0
+if [[ -z "$PR_URL" ]]; then
+  printf '%b' "$MODEL_PART"
+  exit 0
+fi
 
 # ── Jira fetch (non-blocking, stale-while-revalidate) ────
 CACHE_FILE="${CACHE_DIR}/${JIRA_KEY}.json"
@@ -93,8 +134,9 @@ if [[ -f "$CACHE_FILE" ]]; then
   JIRA_CACHE_AGE=$(( $(date +%s) - $(file_mtime "$CACHE_FILE") ))
   (( JIRA_CACHE_AGE >= CACHE_TTL )) && _refresh_jira "$JIRA_KEY" "$CACHE_FILE"
 else
-  # No Jira cache → background pre-warm, show nothing this cycle
+  # No Jira cache → background pre-warm, show only model/token this cycle
   _refresh_jira "$JIRA_KEY" "$CACHE_FILE"
+  printf '%b' "$MODEL_PART"
   exit 0
 fi
 
@@ -116,8 +158,8 @@ except Exception:
 
 IFS=$'\t' read -r JIRA_SUMMARY JIRA_STATUS TEAMS_URL <<< "$PARSED"
 
-# ── Build single-line output: Teams | Jira ───────────────
-LINE=""
+# ── Build single-line output: Model | Teams | Jira ───────
+LINE="$MODEL_PART  "
 
 if [[ -n "$TEAMS_URL" ]]; then
   LINE+=$(link "$TEAMS_URL" "Teams")
