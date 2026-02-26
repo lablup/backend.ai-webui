@@ -155,13 +155,11 @@ yarn.lock
 *.code-workspace
 !backend.ai-webui.code-workspace
 
-# ignore temporary files
-guides-for-ai-temp
+# claude code local files
 CLAUDE.local.md
-
-.claude/settings.local.json
+**/.claude/settings.local.json
 .claude/worktrees
-packages/backend.ai-webui-docs/.claude/settings.local.json
+.claude/notes
 .serena
 
 .env.development.local

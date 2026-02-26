@@ -24,7 +24,6 @@ If no argument is provided, the prefix will be inferred from the changes.
 ## Workflow Overview
 
 ```
-0. Verify MCP authentication
 1. Analyze staged changes
 2. Create Jira issue
 3. Create branch and commit
@@ -34,21 +33,6 @@ If no argument is provided, the prefix will be inferred from the changes.
 ```
 
 ## Detailed Process
-
-### Step 0: Verify Jira Authentication (MUST BE FIRST)
-
-> **CRITICAL**: This step MUST be executed BEFORE any other operation.
-
-```bash
-bash scripts/jira.sh myself
-```
-
-**If authentication fails:**
-- Inform the user to set up `~/.config/atlassian/credentials`
-- Exit the workflow
-
-**If authentication succeeds:**
-- Proceed to Step 1
 
 ### Step 1: Pre-flight Checks
 

@@ -153,8 +153,13 @@ export async function startWebsitePreviewServer(
 
     // Resolve file path from URL
     let filePath: string;
-    if (url.pathname === '/' || url.pathname === `/${args.lang}/` || url.pathname === `/${args.lang}`) {
-      // Serve language index for root and language root paths
+    if (url.pathname === '/' || url.pathname === `/${args.lang}`) {
+      // Redirect root to language directory so relative URLs in index.html resolve correctly
+      res.writeHead(302, { Location: `/${args.lang}/` });
+      res.end();
+      return;
+    } else if (url.pathname === `/${args.lang}/`) {
+      // Serve language index
       filePath = path.join(distBase, args.lang, 'index.html');
     } else {
       // Normalize: remove leading slash
