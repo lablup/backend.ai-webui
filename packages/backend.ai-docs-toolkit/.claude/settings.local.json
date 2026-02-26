@@ -1,11 +1,13 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(gt checkout:*)",
+      "Bash(gt submit:*)"
+    ]
+  },
   "disabledMcpjsonServers": [
     "playwright-test",
     "graphite"
-  ],
-  "permissions": {
-    "allow": [
-      "Bash(git add:*)"
-    ]
-  }
+  ]
 }

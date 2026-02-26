@@ -65,11 +65,17 @@ function buildWebsiteSidebar(
     })
     .join('\n');
 
+  const searchLabels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+
   return `
 <aside class="doc-sidebar">
   <div class="doc-sidebar-header">
     <h2>${escapeHtml(metadata.title)}</h2>
     <div class="doc-meta">${escapeHtml(metadata.version)} &middot; ${escapeHtml(langLabel)}</div>
+  </div>
+  <div class="doc-search">
+    <input type="text" id="search-input" placeholder="${searchLabels.searchPlaceholder}" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
   </div>
   <ul class="doc-sidebar-nav">
     ${navItems}
@@ -148,6 +154,42 @@ function buildPageMetadata(context: WebPageContext): string {
 }
 
 /**
+ * Build inline search script.
+ * Loads search-index.json, tokenizes queries with CJK bigram support,
+ * and renders results in a dropdown.
+ */
+function buildSearchScript(lang: string): string {
+  const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
+  return `
+<script>
+(function(){
+  var CJK=/[\\u4E00-\\u9FFF\\uAC00-\\uD7AF\\u3040-\\u309F\\u30A0-\\u30FF]/;
+  var THAI=/[\\u0E00-\\u0E7F]/;
+  var idx=null,inp=document.getElementById('search-input'),res=document.getElementById('search-results');
+  if(!inp||!res)return;
+  function tokenize(t){
+    var tokens=[],s=t.toLowerCase(),seg='',tp='l';
+    function flush(){if(!seg)return;if(tp==='c'||tp==='t'){for(var i=0;i<seg.length-1;i++)tokens.push(seg.slice(i,i+2));if(seg.length===1)tokens.push(seg)}else{seg.split(/[^\\p{L}\\p{N}]+/u).forEach(function(w){if(w.length>=2)tokens.push(w)})}seg=''}
+    for(var i=0;i<s.length;i++){var ch=s[i];if(CJK.test(ch)){if(tp!=='c'){flush();tp='c'}seg+=ch}else if(THAI.test(ch)){if(tp!=='t'){flush();tp='t'}seg+=ch}else{if(tp!=='l'){flush();tp='l'}seg+=ch}}flush();return tokens}
+  function search(q){
+    if(!idx)return[];var toks=tokenize(q);if(!toks.length)return[];
+    var scores={};toks.forEach(function(tok){var entries=idx.index[tok];if(!entries)return;entries.forEach(function(e){scores[e.doc]=(scores[e.doc]||0)+e.freq})});
+    return Object.keys(scores).map(function(d){return{doc:+d,score:scores[d]}}).sort(function(a,b){return b.score-a.score}).slice(0,10)}
+  function render(results){
+    while(res.firstChild)res.removeChild(res.firstChild);
+    if(!results.length){var nr=document.createElement('div');nr.className='search-no-results';nr.textContent='${labels.noResults}';res.appendChild(nr);res.hidden=false;return}
+    results.forEach(function(r){var d=idx.documents[r.doc];if(!d)return;if(typeof d.url!=='string'||!(d.url.startsWith('./')||d.url.startsWith('/')))return;var snippet=(d.body||'').slice(0,100)+'...';var a=document.createElement('a');a.className='search-result-item';a.href=d.url;var t=document.createElement('div');t.className='search-result-title';t.textContent=d.title;var s=document.createElement('div');s.className='search-result-snippet';s.textContent=snippet;a.appendChild(t);a.appendChild(s);res.appendChild(a)});
+    res.hidden=false}
+  var timer;inp.addEventListener('input',function(){clearTimeout(timer);var q=inp.value.trim();if(!q){res.hidden=true;return}timer=setTimeout(function(){var r=search(q);render(r)},200)});
+  inp.addEventListener('keydown',function(e){if(e.key==='Escape'){res.hidden=true;inp.blur()}});
+  document.addEventListener('click',function(e){if(!e.target.closest('.doc-search'))res.hidden=true});
+  document.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();inp.focus()}});
+  fetch('./search-index.json').then(function(r){return r.json()}).then(function(d){idx=d}).catch(function(err){console.error('Failed to load search-index.json',err)});
+})();
+</script>`;
+}
+
+/**
  * Build a complete HTML page for a single chapter in the static website.
  */
 export function buildWebPage(context: WebPageContext): string {
@@ -157,6 +199,7 @@ export function buildWebPage(context: WebPageContext): string {
   const content = buildPageContent(chapter);
   const metadataBar = buildPageMetadata(context);
   const pagination = buildPaginationNav(allChapters, currentIndex, metadata.lang);
+  const searchScript = buildSearchScript(metadata.lang);
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
   const pageTitle = `${escapeHtml(chapter.title)} - ${escapeHtml(metadata.title)}`;
 
@@ -179,6 +222,7 @@ export function buildWebPage(context: WebPageContext): string {
     </div>
   </main>
 </div>
+${searchScript}
 </body>
 </html>`;
 }
