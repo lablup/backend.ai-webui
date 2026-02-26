@@ -43,7 +43,7 @@ import {
   type FormInstance,
   type MenuProps,
 } from 'antd';
-import { BAIModal, BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,6 +62,7 @@ interface LoginFormPanelProps {
   needsOtpRegistration: boolean;
   totpRegistrationToken: string;
   needToResetPassword: boolean;
+  expiredCredentials: { username: string; password: string } | null;
   showSignupModal: boolean;
   signupPreloadedToken?: string;
   showEndpointInput: boolean;
@@ -94,6 +95,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   needsOtpRegistration,
   totpRegistrationToken,
   needToResetPassword,
+  expiredCredentials,
   showSignupModal,
   signupPreloadedToken,
   showEndpointInput,
@@ -146,6 +148,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         footer={null}
         width={modalWidth}
         getContainer={false}
+        mask={!needToResetPassword}
         title={
           <div style={{ textAlign: 'center' }}>
             <img
@@ -158,6 +161,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         styles={{
           header: { borderBottom: 'none', paddingBottom: 0 },
           body: { padding: token.paddingLG, paddingTop: token.paddingSM },
+          ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
         destroyOnHidden
       >
@@ -464,13 +468,14 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       {/* Child modals rendered outside login panel */}
       <ResetPasswordRequiredInline
         open={needToResetPassword}
-        username={form.getFieldValue('user_id') || ''}
-        currentPassword={form.getFieldValue('password') || ''}
+        username={expiredCredentials?.username || ''}
+        currentPassword={expiredCredentials?.password || ''}
         apiEndpoint={apiEndpoint}
         onCancel={() => onSetNeedToResetPassword(false)}
-        onOk={() => {
+        onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
-          form.setFieldValue('password', '');
+          form.setFieldValue('password', newPassword);
+          onLogin();
         }}
       />
 
@@ -510,11 +515,12 @@ const ResetPasswordRequiredInline: React.FC<{
   currentPassword: string;
   apiEndpoint: string;
   onCancel: () => void;
-  onOk: () => void;
+  onOk: (newPassword: string) => void;
 }> = ({ open, username, currentPassword, apiEndpoint, onCancel, onOk }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { logger } = useBAILogger();
   const [form] = Form.useForm<{ newPassword: string; confirm: string }>();
   const anonymousBaiClient = useAnonymousBackendaiClient({
     api_endpoint: apiEndpoint,
@@ -542,37 +548,42 @@ const ResetPasswordRequiredInline: React.FC<{
   });
 
   const onSubmit = () => {
-    form.validateFields().then((values) => {
-      mutation.mutate(
-        {
-          username,
-          current_password: currentPassword,
-          new_password: values.newPassword,
-        },
-        {
-          onSuccess() {
-            onOk();
+    form
+      .validateFields()
+      .then((values) => {
+        mutation.mutate(
+          {
+            username,
+            current_password: currentPassword,
+            new_password: values.newPassword,
           },
-          onError() {
-            // Error handled by mutation state
+          {
+            onSuccess() {
+              onOk(values.newPassword);
+            },
+            onError() {
+              // Error handled by mutation state
+            },
           },
-        },
-      );
-    });
+        );
+      })
+      .catch((e) => {
+        logger.error('validation errors', e);
+      });
   };
 
   return (
     <Modal
       open={open}
       centered
-      mask={false}
       onCancel={onCancel}
       keyboard={false}
       maskClosable={false}
       footer={null}
       width={450}
-      getContainer={false}
       destroyOnHidden
+      zIndex={1002}
+      getContainer={false}
     >
       <BAIFlex
         direction="column"
