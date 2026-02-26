@@ -27,10 +27,10 @@ BYELLOW := \033[1;93m
 NC := \033[0m
 
 test_web:
-	@pnpm run server:d
+	@pnpm run build:d
 test_electron: dep
 	@pnpm run electron:d
-test_electron_hmr: dep # For development with HMR, you have to run build:d and server:d first
+test_electron_hmr: dep # For development with HMR, you have to run build:d first
 	@pnpm run electron:d:hmr
 proxy:
 	@node ./src/wsproxy/local_proxy.js

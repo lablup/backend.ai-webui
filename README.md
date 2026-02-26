@@ -193,45 +193,16 @@ $ make compile_wsproxy
 
 ### Developing / testing with dev server
 
-Two options are available depending on your needs.
-
-#### Option A: Full dev mode (recommended)
-
-`pnpm run build:d` already starts both Relay watch and React dev server concurrently. Do **not** run `server:d` at the same time — that would start a duplicate server.
-
 On a terminal:
 
 ```console
-$ pnpm run build:d   # Starts Relay watch + React dev server together
+$ pnpm run build:d   # Starts TypeScript watch + Relay watch + React dev server
 ```
 
 On another terminal:
 
 ```console
 $ pnpm run wsproxy   # Start websocket proxy (required for API calls)
-```
-
-#### Option B: React dev server only (manual Relay compile)
-
-Use this option if you want to control Relay compilation separately.
-
-On a terminal:
-
-```console
-$ pnpm run server:d  # React dev server only (no Relay watch)
-```
-
-On another terminal:
-
-```console
-$ pnpm run wsproxy   # Start websocket proxy
-```
-
-When GraphQL queries change, compile Relay manually:
-
-```console
-$ pnpm run relay       # One-time compile (from project root)
-$ cd react && pnpm run relay:watch  # Or watch mode (uses nodemon)
 ```
 
 #### Port configuration
@@ -254,8 +225,7 @@ $ pnpm run dev:setup    # Apply configuration to current environment
 
 | Command | Description |
 |---------|-------------|
-| `pnpm run build:d` | Relay watch + React dev server (concurrent) |
-| `pnpm run server:d` | React dev server only |
+| `pnpm run build:d` | TypeScript watch + Relay watch + React dev server (concurrent) |
 | `pnpm run wsproxy` | WebSocket proxy (required for dev) |
 | `pnpm run build` | Full production build |
 | `pnpm run build:react-only` | Build only React app |
@@ -301,7 +271,7 @@ If environment variables are not set, default values will be used.
 On a terminal:
 
 ```console
-$ pnpm run server:d  # To run dev. web server
+$ pnpm run build:d   # To run dev server
 ```
 
 On another terminal:
@@ -350,7 +320,7 @@ $ cd ./react && pnpm run test  # For ./react
 On a terminal:
 
 ```console
-$ pnpm run server:d    # To run test server
+$ pnpm run build:d     # To run dev server
 ```
 
 OR
@@ -640,7 +610,7 @@ $ pnpm run electron:d  # OR, ./node_modules/electron/cli.js .
 The electron app reads the configuration from `./build/electron-app/app/config.toml`, which is copied from the root `config.toml` file during `make clean && make dep`.
 
 If you configure `[server].webServerURL`, the electron app will load the web contents (including `config.toml`) from the designated server.
-The server may be either a `pnpm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
+The server may be either a `pnpm run build:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
 This is known as the "web shell" mode and allows live edits of the web UI while running it inside the electron app.
 
 ### Localization
