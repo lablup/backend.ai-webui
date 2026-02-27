@@ -1331,6 +1331,7 @@
   },
   "registry": {
     "AddRegistry": "レジストリを追加する",
+    "AllowedProjects": "許可されたプロジェクト",
     "ConfirmNoUserName": "ユーザーとパスワードが指定されていません。",
     "DescExtraJsonFormat": "有効な形式の JSON を入力してください",
     "DescHostnameIsEmpty": "ホスト名が空です",
@@ -1342,6 +1343,8 @@
     "HarborProject": "ハーバープロジェクト",
     "Hostname": "ホスト名",
     "HostnameDoesNotMatch": "ホスト名が一致しません！",
+    "IsGlobal": "グローバルレジストリとして設定",
+    "IsGlobalDescription": "すべてのプロジェクトからのアクセスを許可",
     "ModifyRegistry": "レジストリの修正",
     "NoRegistryToDisplay": "レジストリ情報がありません。",
     "Password": "パスワード",

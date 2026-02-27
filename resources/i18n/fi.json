@@ -1329,6 +1329,7 @@
   },
   "registry": {
     "AddRegistry": "Lisää rekisteri",
+    "AllowedProjects": "Sallitut projektit",
     "ConfirmNoUserName": "Käyttäjää ja salasanaa ei ole määritetty, haluatko tallentaa?",
     "DescExtraJsonFormat": "Anna kelvollisesti muotoiltu JSON",
     "DescHostnameIsEmpty": "Isäntänimi on tyhjä",
@@ -1340,6 +1341,8 @@
     "HarborProject": "Satamahanke",
     "Hostname": "Isäntänimi",
     "HostnameDoesNotMatch": "Isäntänimi ei täsmää!",
+    "IsGlobal": "Aseta globaaliksi rekisteriksi",
+    "IsGlobalDescription": "Salli pääsy kaikista projekteista",
     "ModifyRegistry": "Muokkaa rekisteriä",
     "NoRegistryToDisplay": "Ei rekistereitä näytettäväksi",
     "Password": "Salasana",

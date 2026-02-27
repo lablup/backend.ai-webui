@@ -9,6 +9,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import HiddenFormItem from './HiddenFormItem';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import {
   Form,
   Input,
@@ -34,6 +35,8 @@ type RegistryFormInput = {
   password?: string;
   isChangedPassword?: boolean;
   extra?: string;
+  is_global?: boolean;
+  allowed_group_ids?: string[];
 };
 
 interface ContainerRegistryEditorModalProps extends Omit<
@@ -69,6 +72,16 @@ const ContainerRegistryEditorModal: React.FC<
         username
         ssl_verify
         extra @since(version: "24.09.3")
+        is_global @since(version: "24.09.0")
+        allowed_groups @since(version: "25.3.0") {
+          edges {
+            node {
+              id
+              row_id
+              name
+            }
+          }
+        }
       }
     `,
     containerRegistryFrgmt,
@@ -121,6 +134,23 @@ const ContainerRegistryEditorModal: React.FC<
           extra: _.isEmpty(values.extra)
             ? null
             : JSON.stringify(JSON.parse(values.extra ?? '{}')),
+          is_global: values.is_global,
+          allowed_groups: values.is_global
+            ? undefined
+            : (() => {
+                const selected = values.allowed_group_ids ?? [];
+                // When fetched is_global was true, no real assoc records exist,
+                // so treat original as empty to avoid removing non-existent associations
+                const original = containerRegistry?.is_global
+                  ? []
+                  : (containerRegistry?.allowed_groups?.edges
+                      ?.map((edge) => edge?.node?.row_id)
+                      .filter(Boolean) ?? []);
+                return {
+                  add: _.difference(selected, original),
+                  remove: _.difference(original, selected),
+                };
+              })(),
         };
 
         if (containerRegistry) {
@@ -235,8 +265,13 @@ const ContainerRegistryEditorModal: React.FC<
                       2,
                     )
                   : '',
+                is_global: containerRegistry?.is_global ?? true,
+                allowed_group_ids:
+                  containerRegistry?.allowed_groups?.edges
+                    ?.map((edge) => edge?.node?.row_id)
+                    .filter(Boolean) ?? [],
               }
-            : {}
+            : { is_global: true }
         }
         preserve={false}
       >
@@ -424,6 +459,47 @@ const ContainerRegistryEditorModal: React.FC<
               </Form.Item>
             );
           }}
+        </Form.Item>
+        <Form.Item
+          name="is_global"
+          label={t('registry.IsGlobal')}
+          valuePropName="checked"
+        >
+          <Checkbox
+            onChange={(e) => {
+              if (!e.target.checked) {
+                // Restore original allowed groups from fragment data on uncheck
+                const originalGroupIds =
+                  containerRegistry?.allowed_groups?.edges
+                    ?.map((edge) => edge?.node?.row_id)
+                    .filter(Boolean) ?? [];
+                formRef.current?.setFieldValue(
+                  'allowed_group_ids',
+                  originalGroupIds,
+                );
+              }
+            }}
+          >
+            {t('registry.IsGlobalDescription')}
+          </Checkbox>
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prev, next) => prev?.is_global !== next?.is_global}
+        >
+          {({ getFieldValue }) =>
+            !getFieldValue('is_global') && (
+              <Form.Item
+                name="allowed_group_ids"
+                label={t('registry.AllowedProjects')}
+              >
+                <ProjectSelectForAdminPage
+                  domain={baiClient._config.domainName}
+                  mode="multiple"
+                />
+              </Form.Item>
+            )
+          }
         </Form.Item>
         {isSupportExtraField && (
           <Form.Item label={t('registry.ExtraInformation')}>

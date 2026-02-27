@@ -1332,6 +1332,7 @@
   },
   "registry": {
     "AddRegistry": "添加注册表",
+    "AllowedProjects": "允许的项目",
     "ConfirmNoUserName": "未指定用户和密码，要保存吗？",
     "DescExtraJsonFormat": "请输入格式有效的 JSON",
     "DescHostnameIsEmpty": "主机名为空",
@@ -1343,6 +1344,8 @@
     "HarborProject": "海港工程",
     "Hostname": "主机名",
     "HostnameDoesNotMatch": "主机名不匹配！",
+    "IsGlobal": "设为全局注册表",
+    "IsGlobalDescription": "允许所有项目访问",
     "ModifyRegistry": "修改注册表",
     "NoRegistryToDisplay": "无注册表显示",
     "Password": "密码",

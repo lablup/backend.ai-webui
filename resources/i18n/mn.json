@@ -1310,6 +1310,7 @@
   },
   "registry": {
     "AddRegistry": "Бүртгэл нэмэх",
+    "AllowedProjects": "Зөвшөөрөгдсөн төслүүд",
     "ConfirmNoUserName": "Хэрэглэгч болон нууц үгийг заагаагүй тул хадгалах уу?",
     "DescExtraJsonFormat": "Зөв форматтай JSON оруулна уу",
     "DescHostnameIsEmpty": "Хостын нэр хоосон байна",
@@ -1321,6 +1322,8 @@
     "HarborProject": "Боомтын төсөл",
     "Hostname": "Хостын нэр",
     "HostnameDoesNotMatch": "Хостын нэр таарахгүй байна!",
+    "IsGlobal": "Глобал регистр болгох",
+    "IsGlobalDescription": "Бүх төслөөс хандахыг зөвшөөрөх",
     "ModifyRegistry": "Бүртгэлийг өөрчлөх",
     "NoRegistryToDisplay": "Харуулах бүртгэл байхгүй",
     "Password": "Нууц үг",

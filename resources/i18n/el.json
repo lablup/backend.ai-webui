@@ -1327,6 +1327,7 @@
   },
   "registry": {
     "AddRegistry": "Προσθήκη μητρώου",
+    "AllowedProjects": "Επιτρεπόμενα Έργα",
     "ConfirmNoUserName": "Ο χρήστης και ο κωδικός πρόσβασης δεν έχουν καθοριστεί, θέλετε να αποθηκεύσετε;",
     "DescExtraJsonFormat": "Εισαγάγετε JSON με έγκυρη μορφή",
     "DescHostnameIsEmpty": "Το όνομα κεντρικού υπολογιστή είναι κενό",
@@ -1338,6 +1339,8 @@
     "HarborProject": "Πρόγραμμα Harbour",
     "Hostname": "Όνομα κεντρικού υπολογιστή",
     "HostnameDoesNotMatch": "Το όνομα κεντρικού υπολογιστή δεν ταιριάζει!",
+    "IsGlobal": "Ορισμός ως παγκόσμιο μητρώο",
+    "IsGlobalDescription": "Να επιτρέπεται η πρόσβαση από όλα τα έργα",
     "ModifyRegistry": "Τροποποίηση μητρώου",
     "NoRegistryToDisplay": "Δεν εμφανίζονται μητρώα",
     "Password": "Κωδικός πρόσβασης",
