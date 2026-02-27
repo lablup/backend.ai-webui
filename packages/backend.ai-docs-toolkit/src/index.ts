@@ -87,7 +87,7 @@ export type { HtmlPreviewOptions } from './preview-server-web.js';
 
 // ── Styles ──────────────────────────────────────────────────────
 export { generatePdfStyles } from './styles.js';
-export { generateWebStyles } from './styles-web.js';
+export { generateWebStyles, generateWebsiteStyles } from './styles-web.js';
 
 // ── Version ─────────────────────────────────────────────────────
 export { getDocVersion } from './version.js';

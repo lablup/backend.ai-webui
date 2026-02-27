@@ -766,3 +766,29 @@ details > :last-child {
 }
 `;
 }
+
+/**
+ * Generate CSS for multi-page static website.
+ * Unlike generateWebStyles(lang), this produces a single stylesheet
+ * suitable for all languages by using :lang() selectors for CJK-specific rules.
+ */
+export function generateWebsiteStyles(): string {
+  // Base styles without any language-specific conditional
+  const baseStyles = generateWebStyles();
+
+  // Generate :lang() selectors for CJK word-break from CJK_LANGS
+  const cjkSelectors = Array.from(CJK_LANGS)
+    .sort()
+    .map((code) => `:lang(${code}) body`)
+    .join(',\n');
+
+  return baseStyles + `
+
+/* ==========================================================================
+   CJK Language Rules (via :lang() selectors for shared stylesheet)
+   ========================================================================== */
+${cjkSelectors} {
+  word-break: keep-all;
+}
+`;
+}
