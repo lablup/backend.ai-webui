@@ -242,8 +242,10 @@ export function useInitializeConfig(): {
     if (initRef.current) return;
     initRef.current = true;
 
+    // Electron uses es6:// protocol which resolves from app/ directory
+    // Web uses relative path from the HTML location
     const configPath = (globalThis as Record<string, unknown>).isElectron
-      ? './config.toml'
+      ? 'es6://config.toml'
       : '../../config.toml';
 
     const parsed = await fetchAndParseConfig(configPath);
