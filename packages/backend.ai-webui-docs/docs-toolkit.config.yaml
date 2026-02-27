@@ -31,6 +31,11 @@ pdfMetadata:
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
 
+# Website generation settings
+website:
+  editBaseUrl: "https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src"
+  repoUrl: "https://github.com/lablup/backend.ai-webui"
+
 # Agent configuration (for 'docs-toolkit agents' command)
 agents:
   projectTitle: "Backend.AI WebUI"
