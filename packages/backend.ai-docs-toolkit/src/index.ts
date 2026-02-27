@@ -84,6 +84,8 @@ export { startPreviewServer } from './preview-server.js';
 export type { PreviewServerOptions } from './preview-server.js';
 export { startHtmlPreviewServer } from './preview-server-web.js';
 export type { HtmlPreviewOptions } from './preview-server-web.js';
+export { startWebsitePreviewServer } from './preview-server-website.js';
+export type { WebsitePreviewOptions } from './preview-server-website.js';
 
 // ── Styles ──────────────────────────────────────────────────────
 export { generatePdfStyles } from './styles.js';
