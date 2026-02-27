@@ -5,6 +5,7 @@
 
 import type { Chapter } from './markdown-processor.js';
 import type { ResolvedDocConfig } from './config.js';
+import { WEBSITE_LABELS } from './config.js';
 import { escapeHtml } from './markdown-extensions.js';
 
 export interface WebPageContext {
@@ -82,6 +83,38 @@ ${chapter.htmlContent}
 }
 
 /**
+ * Build Previous/Next navigation buttons (Docusaurus-style).
+ */
+function buildPaginationNav(
+  allChapters: Chapter[],
+  currentIndex: number,
+  lang: string,
+): string {
+  const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
+  const prev = currentIndex > 0 ? allChapters[currentIndex - 1] : null;
+  const next = currentIndex < allChapters.length - 1 ? allChapters[currentIndex + 1] : null;
+
+  const prevHtml = prev
+    ? `<a class="pagination-nav__link pagination-nav__link--prev" href="./${prev.slug}.html">
+        <div class="pagination-nav__sublabel">${labels.previous}</div>
+        <div class="pagination-nav__label">&laquo; ${escapeHtml(prev.title)}</div>
+      </a>`
+    : '<span></span>';
+
+  const nextHtml = next
+    ? `<a class="pagination-nav__link pagination-nav__link--next" href="./${next.slug}.html">
+        <div class="pagination-nav__sublabel">${labels.next}</div>
+        <div class="pagination-nav__label">${escapeHtml(next.title)} &raquo;</div>
+      </a>`
+    : '<span></span>';
+
+  return `<nav class="pagination-nav" aria-label="Docs pages">
+  ${prevHtml}
+  ${nextHtml}
+</nav>`;
+}
+
+/**
  * Build a complete HTML page for a single chapter in the static website.
  */
 export function buildWebPage(context: WebPageContext): string {
@@ -89,6 +122,7 @@ export function buildWebPage(context: WebPageContext): string {
 
   const sidebar = buildWebsiteSidebar(allChapters, currentIndex, metadata, config);
   const content = buildPageContent(chapter);
+  const pagination = buildPaginationNav(allChapters, currentIndex, metadata.lang);
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
   const pageTitle = `${escapeHtml(chapter.title)} - ${escapeHtml(metadata.title)}`;
 
@@ -105,7 +139,10 @@ export function buildWebPage(context: WebPageContext): string {
   ${sidebar}
   <main class="doc-main">
     ${content}
-    <div class="page-footer"></div>
+    <div class="page-footer">
+      <div class="page-metadata"></div>
+      ${pagination}
+    </div>
   </main>
 </div>
 </body>

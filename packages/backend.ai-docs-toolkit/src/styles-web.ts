@@ -578,6 +578,87 @@ details > :last-child {
 }
 
 /* ==========================================================================
+   Page Footer (website mode)
+   ========================================================================== */
+.page-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.page-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.page-metadata .edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.page-metadata .edit-link:hover {
+  text-decoration: underline;
+}
+
+.page-metadata .edit-link svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.page-metadata .last-updated {
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Pagination Navigation */
+.pagination-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pagination-nav__link {
+  display: block;
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-pre-border-radius);
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+}
+
+.pagination-nav__link--next {
+  text-align: right;
+}
+
+.pagination-nav__sublabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.25rem;
+}
+
+.pagination-nav__label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 768px) {
@@ -594,6 +675,17 @@ details > :last-child {
   }
   .doc-main {
     padding: 1.5rem;
+  }
+  .pagination-nav {
+    flex-direction: column;
+  }
+  .pagination-nav__link--next {
+    text-align: left;
+  }
+  .page-metadata {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 `;

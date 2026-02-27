@@ -14,7 +14,7 @@ export type {
   ToolkitConfig,
   ResolvedDocConfig,
 } from './config.js';
-export { resolveConfig, loadToolkitConfig } from './config.js';
+export { resolveConfig, loadToolkitConfig, WEBSITE_LABELS } from './config.js';
 
 // ── Theme ───────────────────────────────────────────────────────
 export type { PdfTheme } from './theme.js';
