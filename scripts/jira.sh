@@ -19,6 +19,9 @@
 #   jira.sh update  FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX] [--desc "..."] [--comment "text"]
 #   jira.sh search  "JQL query" [--limit 20]
 #   jira.sh comment FR-XXXX "Comment text"
+#   jira.sh labels  FR-XXXX --add "l1,l2"         Add labels (keeps existing)
+#   jira.sh labels  FR-XXXX --remove "l1,l2"      Remove specific labels
+#   jira.sh labels  FR-XXXX --set "l1,l2"          Replace all labels
 #   jira.sh link    --from FR-XXXX --to FR-YYYY [--type blocks|relates|clones|duplicate]
 #   jira.sh myself
 
@@ -596,6 +599,55 @@ cmd_link() {
   echo "Linked: ${from} --[${link_type}]--> ${to}"
 }
 
+cmd_labels() {
+  local key=${1:?labels: issue key required}; shift
+  local add="" remove="" set_labels=""
+  while (( $# )); do
+    case $1 in
+      --add)    add=$2;        shift 2 ;;
+      --remove) remove=$2;     shift 2 ;;
+      --set)    set_labels=$2; shift 2 ;;
+      *) die "labels: unknown flag $1" ;;
+    esac
+  done
+
+  if [[ -n "$set_labels" ]]; then
+    # Replace all labels
+    local labels_json
+    labels_json=$(echo "$set_labels" | tr ',' '\n' | jq -R . | jq -s .)
+    api PUT "/issue/${key}" -d "$(jq -n --argjson l "$labels_json" '{fields:{labels:$l}}')"
+    echo "Labels set on ${key}: ${set_labels}"
+    return
+  fi
+
+  if [[ -z "$add" && -z "$remove" ]]; then
+    # No operation specified — show current labels
+    api GET "/issue/${key}?fields=labels" | jq -r '.fields.labels | join(", ")'
+    return
+  fi
+
+  # Build update operations array
+  local ops="[]"
+  if [[ -n "$add" ]]; then
+    IFS=',' read -ra ADD_ARR <<< "$add"
+    for lbl in "${ADD_ARR[@]}"; do
+      lbl=$(echo "$lbl" | xargs)
+      ops=$(echo "$ops" | jq --arg v "$lbl" '. + [{"add": $v}]')
+    done
+  fi
+  if [[ -n "$remove" ]]; then
+    IFS=',' read -ra RM_ARR <<< "$remove"
+    for lbl in "${RM_ARR[@]}"; do
+      lbl=$(echo "$lbl" | xargs)
+      ops=$(echo "$ops" | jq --arg v "$lbl" '. + [{"remove": $v}]')
+    done
+  fi
+
+  api PUT "/issue/${key}" -d "$(jq -n --argjson ops "$ops" '{update:{labels:$ops}}')"
+  [[ -n "$add" ]] && echo "Labels added to ${key}: ${add}"
+  [[ -n "$remove" ]] && echo "Labels removed from ${key}: ${remove}"
+}
+
 # ── Main ─────────────────────────────────────────────────────
 require_jq
 cmd=${1:-help}; shift 2>/dev/null || true
@@ -611,11 +663,14 @@ Commands:
   update    FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX] [--desc "..."] [--comment "text"]
   search    "JQL query" [--limit 20]
   comment   FR-XXXX "Comment text"
+  labels    FR-XXXX [--add "l1,l2"] [--remove "l1,l2"] [--set "l1,l2"]
   link      --from FR-XXXX --to FR-YYYY [--type blocks|relates|clones|duplicate]
   check-dup --labels "l1,l2" [--include-done]   Check for duplicate issues by labels
   myself    Show current user info
 
 The --parent flag links an issue to a parent Epic (e.g. --parent FR-1234).
+The labels command manages labels: --add appends, --remove deletes specific labels,
+  --set replaces all labels. With no flags, shows current labels.
 The link command creates issue links (e.g. "FR-1 blocks FR-2", "FR-1 relates to FR-2").
 Description and comment fields accept Markdown, which is automatically
 converted to Atlassian Document Format (ADF) for proper Jira rendering.
@@ -632,6 +687,7 @@ USAGE
       update)    cmd_update "$@" ;;
       search)    cmd_search "$@" ;;
       comment)   cmd_comment "$@" ;;
+      labels)    cmd_labels "$@" ;;
       link)      cmd_link "$@" ;;
       check-dup) cmd_check_dup "$@" ;;
       myself)    cmd_myself ;;
