@@ -31,10 +31,11 @@ import {
   useConfigRefreshPageEffect,
   loginPluginState,
 } from '../hooks/useWebUIConfig';
+import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import LoginFormPanel from './LoginFormPanel';
 import { Button, Form, type MenuProps } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,6 +58,7 @@ const LoginView: React.FC = () => {
 
   // Login plugin name from config
   const loginPlugin = useAtomValue(loginPluginState);
+  const setPluginApiEndpoint = useSetAtom(pluginApiEndpointState);
 
   // State
   const [loginConfig, setLoginConfig] = useState<LoginConfigState>(() =>
@@ -296,8 +298,9 @@ const LoginView: React.FC = () => {
       close();
       clearSavedLoginInfo();
       localStorage.setItem('backendaiwebui.api_endpoint', apiEndpoint);
+      setPluginApiEndpoint(apiEndpoint);
     },
-    [endpoints, close, clearSavedLoginInfo, apiEndpoint],
+    [endpoints, close, clearSavedLoginInfo, apiEndpoint, setPluginApiEndpoint],
   );
 
   const connectUsingSession = useCallback(

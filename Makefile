@@ -34,8 +34,6 @@ test_electron_hmr: dep # For development with HMR, you have to run build:d first
 	@pnpm run electron:d:hmr
 proxy:
 	@node ./src/wsproxy/local_proxy.js
-run_tests:
-	@pnpm dlx testcafe chrome tests
 versiontag:
 	@printf "$(GREEN)Tagging version number / index...$(NC)\n"
 	@echo '{ "package": "${BUILD_VERSION}", "buildNumber": "${BUILD_NUMBER}", "buildDate": "${BUILD_DATE}.${BUILD_TIME}", "revision": "${REVISION_INDEX}" }' > version.json
@@ -45,7 +43,6 @@ versiontag:
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' packages/backend.ai-ui/package.json
 	@sed -i -E 's/"version": "\([^"]*\)"/"version": "${BUILD_VERSION}"/g' electron-app/package.json
 	@sed -i -E 's/globalThis.buildNumber = "\([^"]*\)"/globalThis.buildNumber = "${BUILD_NUMBER}"/g' index.html
-	@sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_NUMBER}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 	@printf "$(YELLOW)Finished$(NC)\n"
 compile_keepversion:
 	@pnpm run build
@@ -89,7 +86,6 @@ dep:
 		cp -Rp build/web/manifest build/electron-app; \
 		BUILD_TARGET=electron pnpm run build:react-only; \
 		cp -Rp react/build/* build/electron-app/app/; \
-		sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html; \
 		mkdir -p ./build/electron-app/app/wsproxy; \
 		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
 		cp ./preload.js ./build/electron-app/preload.js; \
