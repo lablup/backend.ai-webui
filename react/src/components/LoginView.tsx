@@ -376,7 +376,22 @@ const LoginView: React.FC = () => {
       try {
         const { fail_reason, data } = await client.login(otp);
         if (fail_reason) {
-          handleLoginFailReason(fail_reason, data, showError);
+          const shouldOpenLoginPanel = handleLoginFailReason(
+            fail_reason,
+            data,
+            showError,
+          );
+          if (!shouldOpenLoginPanel) {
+            // Don't close the login panel — its BAIModal uses destroyOnHidden,
+            // which would destroy the Form and clear field values needed by
+            // child modals (e.g., ResetPasswordRequiredInline reads username
+            // and currentPassword from form). Just dismiss the block overlay
+            // and let the child modal (zIndex=1002) appear above the login
+            // panel (zIndex=1001).
+            setIsBlockPanelOpen(false);
+            setIsLoading(false);
+            return;
+          }
         } else {
           await doGQLConnect(client);
           return;
@@ -401,19 +416,25 @@ const LoginView: React.FC = () => {
     [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
   );
 
+  // Returns false when the fail reason triggers a dedicated modal (password
+  // reset, TOTP registration) so the caller keeps the login panel open (to
+  // preserve form values) instead of reopening it.
   const handleLoginFailReason = useCallback(
-    (failReason: string, data: Record<string, unknown>, showError: boolean) => {
+    (
+      failReason: string,
+      data: Record<string, unknown>,
+      showError: boolean,
+    ): boolean => {
       if (failReason.includes('User credential mismatch.')) {
-        open();
         if (showError) {
           notification(t('error.LoginInformationMismatch'));
         }
-        return;
+        return true;
       }
       if (failReason.includes('You must register Two-Factor Authentication.')) {
         setTotpRegistrationToken(data.two_factor_registration_token as string);
         setNeedsOtpRegistration(true);
-        return;
+        return false;
       }
       if (
         failReason.includes(
@@ -426,7 +447,7 @@ const LoginView: React.FC = () => {
         }
         setOtpRequired(true);
         setIsLoading(false);
-        return;
+        return true;
       }
       if (
         failReason.includes('Invalid TOTP code provided') ||
@@ -438,17 +459,18 @@ const LoginView: React.FC = () => {
         if (showError) {
           notification(t('totp.InvalidTotpCode'));
         }
-        return;
+        return true;
       }
       if (failReason.indexOf('Password expired on ') === 0) {
         setNeedToResetPassword(true);
-        return;
+        return false;
       }
       if (showError) {
         notification(t('error.UnknownError'));
       }
+      return true;
     },
-    [open, notification, t, otpRequired, form],
+    [notification, t, otpRequired, form],
   );
 
   const handleGQLError = useCallback(
