@@ -11,7 +11,11 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsVisualRegressionAdmin(page, request);
   await navigateTo(page, 'environment');
-  await page.locator('.ant-input-affix-wrapper').first().waitFor();
+  // Wait for the BAIPropertyFilter (replaces removed .ant-input-affix-wrapper wait)
+  await page
+    .locator('.ant-space-compact')
+    .first()
+    .waitFor({ state: 'visible' });
 });
 
 test.describe(
