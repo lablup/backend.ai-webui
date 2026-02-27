@@ -176,6 +176,29 @@ const SessionDetailContent: React.FC<{
           }
         }
 
+        dependees @since(version: "24.09.0") {
+          edges {
+            node {
+              id
+              row_id
+              name
+              status
+            }
+          }
+          count
+        }
+        dependents @since(version: "24.09.0") {
+          edges {
+            node {
+              id
+              row_id
+              name
+              status
+            }
+          }
+          count
+        }
+
         ...SessionStatusTagFragment
         ...SessionActionButtonsFragment
         ...BAISessionTypeTagFragment
@@ -350,6 +373,59 @@ const SessionDetailContent: React.FC<{
           <Descriptions.Item label={t('session.ClusterMode')}>
             <BAISessionClusterMode sessionFrgmt={session} showSize />
           </Descriptions.Item>
+          {(session.dependees?.count ?? 0) > 0 && (
+            <Descriptions.Item label={t('session.DependsOn')} span={md ? 2 : 1}>
+              <BAIFlex gap="xs" wrap="wrap">
+                {session.dependees?.edges
+                  ?.map((edge) => edge?.node)
+                  .filter(Boolean)
+                  .map((node) => (
+                    <Tag
+                      key={node?.row_id}
+                      color={
+                        node?.status === 'RUNNING'
+                          ? 'green'
+                          : node?.status === 'TERMINATED'
+                            ? 'default'
+                            : node?.status === 'CANCELLED'
+                              ? 'red'
+                              : 'blue'
+                      }
+                    >
+                      {node?.name} ({node?.status})
+                    </Tag>
+                  ))}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
+          {(session.dependents?.count ?? 0) > 0 && (
+            <Descriptions.Item
+              label={t('session.DependedByOthers')}
+              span={md ? 2 : 1}
+            >
+              <BAIFlex gap="xs" wrap="wrap">
+                {session.dependents?.edges
+                  ?.map((edge) => edge?.node)
+                  .filter(Boolean)
+                  .map((node) => (
+                    <Tag
+                      key={node?.row_id}
+                      color={
+                        node?.status === 'RUNNING'
+                          ? 'green'
+                          : node?.status === 'TERMINATED'
+                            ? 'default'
+                            : node?.status === 'CANCELLED'
+                              ? 'red'
+                              : 'blue'
+                      }
+                    >
+                      {node?.name} ({node?.status})
+                    </Tag>
+                  ))}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
           {baiClient.supports('idle-checks-gql') &&
           session.status === 'RUNNING' &&
           imminentExpirationTime ? (
