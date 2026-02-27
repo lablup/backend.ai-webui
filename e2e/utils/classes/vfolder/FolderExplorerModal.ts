@@ -58,10 +58,18 @@ export class FolderExplorerModal {
 
   async getCreateFolderButton(): Promise<Locator> {
     const createButton = this.modal.getByRole('button', {
-      name: 'folder-add Create',
+      name: 'folder-add Create Folder',
     });
     await expect(createButton).toBeVisible();
     return createButton;
+  }
+
+  async getCreateFileButton(): Promise<Locator> {
+    const createFileButton = this.modal.getByRole('button', {
+      name: 'file-add Create File',
+    });
+    await expect(createFileButton).toBeVisible();
+    return createFileButton;
   }
 
   async getFileBrowserButton(): Promise<Locator> {
