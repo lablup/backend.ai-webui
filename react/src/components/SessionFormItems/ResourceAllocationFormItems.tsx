@@ -66,7 +66,7 @@ export interface ResourceAllocationFormValue {
     cpu: number;
     mem: string;
     shmem?: string;
-    accelerator?: number;
+    accelerator?: number | string;
     acceleratorType?: string;
   };
   resourceGroup: string;
@@ -274,11 +274,25 @@ const ResourceAllocationFormItems: React.FC<
       ? currentAcceleratorType
       : _.first(_.keys(acceleratorSlotsInRG));
 
-    form.setFieldsValue({
-      resource: {
-        acceleratorType: nextAcceleratorType || currentAcceleratorType,
-      },
-    });
+    const resolvedType = nextAcceleratorType || currentAcceleratorType;
+
+    // Convert accelerator value when switching between memory and device types
+    const wasMemoryType = _.endsWith(currentAcceleratorType, '.mem');
+    const isMemoryType = _.endsWith(resolvedType, '.mem');
+    if (wasMemoryType !== isMemoryType) {
+      form.setFieldsValue({
+        resource: {
+          acceleratorType: resolvedType,
+          accelerator: isMemoryType ? '0g' : 0,
+        },
+      });
+    } else {
+      form.setFieldsValue({
+        resource: {
+          acceleratorType: resolvedType,
+        },
+      });
+    }
   });
 
   const updateResourceFieldsBasedOnImage = useEventNotStable(
@@ -299,6 +313,20 @@ const ResourceAllocationFormItems: React.FC<
         };
 
       // NOTE: accelerator value setting is done inside the conditional statement
+      // Helper to get accelerator min value (converts to GiB string for memory-type)
+      const getAcceleratorMinValue = (
+        accType: string,
+        minBytes: number | undefined,
+      ): number | string | undefined => {
+        if (minBytes === undefined) return undefined;
+        if (_.endsWith(accType, '.mem')) {
+          return (
+            convertToBinaryUnit(minBytes, 'g', 2)?.numberFixed + 'g' || '0g'
+          );
+        }
+        return minBytes;
+      };
+
       if (
         currentImageAcceleratorLimits &&
         currentImageAcceleratorLimits.length > 0
@@ -312,14 +340,12 @@ const ResourceAllocationFormItems: React.FC<
           )
         ) {
           // if current selected accelerator type is supported in the selected image,
-          minimumResources.acceleratorType = form.getFieldValue([
-            'resource',
-            'acceleratorType',
-          ]);
-          minimumResources.accelerator =
-            resourceLimits.accelerators[
-              form.getFieldValue(['resource', 'acceleratorType'])
-            ]?.min;
+          const accType = form.getFieldValue(['resource', 'acceleratorType']);
+          minimumResources.acceleratorType = accType;
+          minimumResources.accelerator = getAcceleratorMinValue(
+            accType,
+            resourceLimits.accelerators[accType]?.min,
+          );
         } else {
           // if current selected accelerator type is not supported in the selected image,
           // change accelerator type to the first supported accelerator type.
@@ -332,8 +358,10 @@ const ResourceAllocationFormItems: React.FC<
             )[0]?.key;
 
           if (nextImageSelectorType) {
-            minimumResources.accelerator =
-              resourceLimits.accelerators[nextImageSelectorType]?.min;
+            minimumResources.accelerator = getAcceleratorMinValue(
+              nextImageSelectorType,
+              resourceLimits.accelerators[nextImageSelectorType]?.min,
+            );
             minimumResources.acceleratorType = nextImageSelectorType;
           }
         }
@@ -343,7 +371,7 @@ const ResourceAllocationFormItems: React.FC<
 
       if (!forceImageMinValues && !force) {
         // delete keys that is not less than current value
-        (['cpu', 'accelerator'] as const).forEach((key) => {
+        (['cpu'] as const).forEach((key) => {
           const minNum = minimumResources[key];
           if (
             _.isNumber(minNum) &&
@@ -352,6 +380,24 @@ const ResourceAllocationFormItems: React.FC<
             delete minimumResources[key];
           }
         });
+        // Handle accelerator separately: number for device types, string for memory types
+        {
+          const minVal = minimumResources.accelerator;
+          const currentVal = form.getFieldValue(['resource', 'accelerator']);
+          if (
+            _.isNumber(minVal) &&
+            _.isNumber(currentVal) &&
+            minVal < currentVal
+          ) {
+            delete minimumResources.accelerator;
+          } else if (
+            _.isString(minVal) &&
+            _.isString(currentVal) &&
+            compareNumberWithUnits(minVal, currentVal) < 0
+          ) {
+            delete minimumResources.accelerator;
+          }
+        }
         (['mem', 'shmem'] as const).forEach((key) => {
           const minNumStr = minimumResources[key];
           if (
@@ -410,15 +456,30 @@ const ResourceAllocationFormItems: React.FC<
 
       let acceleratorSetting: {
         acceleratorType?: string;
-        accelerator: number;
+        accelerator: number | string;
       } = {
         accelerator: 0,
       };
       if (firstMatchedAcceleratorType) {
-        acceleratorSetting = {
-          acceleratorType: firstMatchedAcceleratorType,
-          accelerator: Number(acceleratorObj[firstMatchedAcceleratorType] || 0),
-        };
+        // Memory-type accelerators (e.g., cuda.mem) use GiB string values
+        if (_.endsWith(firstMatchedAcceleratorType, '.mem')) {
+          acceleratorSetting = {
+            acceleratorType: firstMatchedAcceleratorType,
+            accelerator:
+              convertToBinaryUnit(
+                acceleratorObj[firstMatchedAcceleratorType],
+                'g',
+                2,
+              )?.value || '0g',
+          };
+        } else {
+          acceleratorSetting = {
+            acceleratorType: firstMatchedAcceleratorType,
+            accelerator: Number(
+              acceleratorObj[firstMatchedAcceleratorType] || 0,
+            ),
+          };
+        }
       }
 
       // Check if preset has a specific shmem setting
@@ -905,6 +966,11 @@ const ResourceAllocationFormItems: React.FC<
                       'acceleratorType',
                     ]);
 
+                    const isMemoryType = _.endsWith(
+                      currentAcceleratorType,
+                      '.mem',
+                    );
+
                     // Determine the accelerator step size based on the type and cluster settings
                     const isSharesType = _.endsWith(
                       currentAcceleratorType,
@@ -924,8 +990,6 @@ const ResourceAllocationFormItems: React.FC<
 
                     let currentAcceleratorStep;
                     if (isSharesType && isSingleCluster) {
-                      // For single cluster with shares type, use quantum size if available
-                      // otherwise, use default step of 0.1
                       if (hasQuantumSize) {
                         currentAcceleratorStep =
                           currentResourceGroupInfo.accelerator_quantum_size;
@@ -933,7 +997,6 @@ const ResourceAllocationFormItems: React.FC<
                         currentAcceleratorStep = 0.1;
                       }
                     } else {
-                      // For non-shares accelerators, always use step of 1
                       currentAcceleratorStep = 1;
                     }
 
@@ -948,6 +1011,167 @@ const ResourceAllocationFormItems: React.FC<
                         ) * currentAcceleratorStep
                       : undefined;
 
+                    // Shared accelerator type selector
+                    const acceleratorTypeSelector =
+                      (supportedAcceleratorTypesInRGByImage?.length ?? 0) >
+                      0 ? (
+                        <Form.Item
+                          noStyle
+                          name={['resource', 'acceleratorType']}
+                          initialValue={_.first(_.keys(acceleratorSlotsInRG))}
+                        >
+                          <BAISelect
+                            style={{
+                              width: 75,
+                            }}
+                            autoSelectOption
+                            tabIndex={-1}
+                            suffixIcon={
+                              _.size(acceleratorSlotsInRG) > 1
+                                ? undefined
+                                : null
+                            }
+                            popupMatchSelectWidth={false}
+                            onChange={(nextType: string) => {
+                              // Convert accelerator value when switching between memory and device types
+                              const wasMemory = _.endsWith(
+                                currentAcceleratorType,
+                                '.mem',
+                              );
+                              const isMemory = _.endsWith(nextType, '.mem');
+                              if (wasMemory !== isMemory) {
+                                form.setFieldValue(
+                                  ['resource', 'accelerator'],
+                                  isMemory ? '0g' : 0,
+                                );
+                              }
+                              form.setFieldValue('allocationPreset', 'custom');
+                            }}
+                            options={_.map(
+                              acceleratorSlotsInRG,
+                              (_value, name) => {
+                                return {
+                                  value: name,
+                                  label:
+                                    mergedResourceSlots?.[name]?.display_unit ||
+                                    'UNIT',
+                                  disabled: !_.includes(
+                                    supportedAcceleratorTypesInRGByImage,
+                                    name,
+                                  ),
+                                };
+                              },
+                            )}
+                          />
+                        </Form.Item>
+                      ) : undefined;
+
+                    // Memory-type accelerator (e.g., cuda.mem) uses BAIDynamicUnitInputNumberWithSlider
+                    if (isMemoryType) {
+                      const memLimits =
+                        resourceLimits.accelerators[currentAcceleratorType];
+                      const memMin =
+                        convertToBinaryUnit(memLimits?.min || 0, 'g', 2)
+                          ?.numberFixed + 'g' || '0g';
+                      const memMax = memLimits?.max
+                        ? convertToBinaryUnit(memLimits.max, 'g', 2)
+                            ?.numberFixed + 'g'
+                        : undefined;
+
+                      return (
+                        <Form.Item
+                          name={['resource', 'accelerator']}
+                          label={t(`session.launcher.AIAccelerator`)}
+                          tooltip={{
+                            placement: 'right',
+                            title: (
+                              <Trans
+                                i18nKey={'session.launcher.DescAIAccelerator'}
+                              />
+                            ),
+                          }}
+                          dependencies={[['resource', 'acceleratorType']]}
+                          rules={[
+                            {
+                              required:
+                                currentImageAcceleratorLimits &&
+                                currentImageAcceleratorLimits.length > 0,
+                            },
+                            {
+                              validator: async (_rule: any, value: string) => {
+                                if (
+                                  memMax &&
+                                  compareNumberWithUnits(
+                                    value || '0g',
+                                    memMax,
+                                  ) > 0
+                                ) {
+                                  return Promise.reject(
+                                    t('general.MaxValueNotification', {
+                                      name: t('session.launcher.AIAccelerator'),
+                                      max: _.toUpper(memMax) + 'iB',
+                                    }),
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                            {
+                              warningOnly: true,
+                              validator: async (_rule: any, _value: string) => {
+                                if (
+                                  _.isNumber(memLimits?.min) &&
+                                  _.isNumber(memLimits?.max) &&
+                                  isMinOversMaxValue(
+                                    memLimits?.min,
+                                    memLimits?.max,
+                                  )
+                                ) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.InsufficientAllocationOfResourcesWarning',
+                                    ),
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <BAIDynamicUnitInputNumberWithSlider
+                            min={memMin}
+                            max={memMax}
+                            disabled={
+                              supportedAcceleratorTypesInRGByImage?.length === 0
+                            }
+                            addonSuffix={acceleratorTypeSelector}
+                            extraMarks={{
+                              ...(_.isNumber(
+                                remaining.accelerators[currentAcceleratorType],
+                              )
+                                ? {
+                                    // @ts-ignore
+                                    [convertToBinaryUnit(
+                                      remaining.accelerators[
+                                        currentAcceleratorType
+                                      ],
+                                      'g',
+                                      3,
+                                    )?.numberFixed]: {
+                                      label: <RemainingMark />,
+                                    },
+                                  }
+                                : {}),
+                            }}
+                            onChange={() => {
+                              form.setFieldValue('allocationPreset', 'custom');
+                            }}
+                          />
+                        </Form.Item>
+                      );
+                    }
+
+                    // Device-type accelerator rendering (default)
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
@@ -1145,47 +1369,7 @@ const ResourceAllocationFormItems: React.FC<
                             form.setFieldValue('allocationPreset', 'custom');
                           }}
                           inputNumberProps={{
-                            addonAfter:
-                              (supportedAcceleratorTypesInRGByImage?.length ??
-                                0) > 0 ? (
-                                <Form.Item
-                                  noStyle
-                                  name={['resource', 'acceleratorType']}
-                                  initialValue={_.first(
-                                    _.keys(acceleratorSlotsInRG),
-                                  )}
-                                >
-                                  <BAISelect
-                                    style={{
-                                      width: 75,
-                                    }}
-                                    autoSelectOption
-                                    tabIndex={-1}
-                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
-                                    suffixIcon={
-                                      _.size(acceleratorSlotsInRG) > 1
-                                        ? undefined
-                                        : null
-                                    }
-                                    popupMatchSelectWidth={false}
-                                    options={_.map(
-                                      acceleratorSlotsInRG,
-                                      (_value, name) => {
-                                        return {
-                                          value: name,
-                                          label:
-                                            mergedResourceSlots?.[name]
-                                              ?.display_unit || 'UNIT',
-                                          disabled: !_.includes(
-                                            supportedAcceleratorTypesInRGByImage,
-                                            name,
-                                          ),
-                                        };
-                                      },
-                                    )}
-                                  />
-                                </Form.Item>
-                              ) : undefined,
+                            addonAfter: acceleratorTypeSelector,
                           }}
                         />
                       </Form.Item>

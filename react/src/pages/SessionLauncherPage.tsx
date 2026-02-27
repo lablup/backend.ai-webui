@@ -1432,14 +1432,15 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
           );
         },
       )}
-      {resource &&
-      resource.accelerator &&
-      resource.acceleratorType &&
-      _.isNumber(resource.accelerator) ? (
+      {resource && resource.accelerator && resource.acceleratorType ? (
         <BAIResourceNumberWithIcon
           // @ts-ignore
           type={resource.acceleratorType}
-          value={_.toString(resource.accelerator * containerCount)}
+          value={
+            _.isString(resource.accelerator)
+              ? resource.accelerator
+              : _.toString(resource.accelerator * containerCount)
+          }
         />
       ) : null}
     </>
