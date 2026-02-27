@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "From": "Από",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Μέσο"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Έληξε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "Message": "Μήνυμα",
+    "Result": "Αποτέλεσμα",
+    "StartedAt": "Ξεκίνησε στις",
+    "Step": "Βήμα"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Επιτρεπόμενες IP πελατών",

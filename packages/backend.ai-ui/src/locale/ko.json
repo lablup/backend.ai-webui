@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "CreatedAt": "생성일",
+    "From": "이전",
+    "Phase": "페이즈",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "실행노드"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "종료일",
+    "ErrorCode": "오류 코드",
+    "Message": "메시지",
+    "Result": "결과",
+    "StartedAt": "시작일",
+    "Step": "스텝"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "허용된 클라이언트 IP",

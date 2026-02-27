@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Kaynak Grubu Seç"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "From": "Kaynak",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "StatusTransition": "Durum Geçişi",
+    "To": "Bitiş",
+    "UpdatedAt": "Güncelleme Tarihi"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ajan"
   },
@@ -256,6 +266,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Bitiş Zamanı",
+    "ErrorCode": "Hata Kodu",
+    "Message": "Mesaj",
+    "Result": "Sonuç",
+    "StartedAt": "Başlama zamanı",
+    "Step": "Adım"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "İzin Verilen İstemci IP'leri",

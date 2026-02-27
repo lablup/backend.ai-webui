@@ -199,6 +199,16 @@
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "CreatedAt": "Created At",
+    "From": "From",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agent"
   },
@@ -264,6 +274,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Ended At",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "StartedAt": "Started At",
+    "Step": "Step"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",

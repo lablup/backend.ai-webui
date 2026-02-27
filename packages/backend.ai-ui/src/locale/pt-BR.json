@@ -195,6 +195,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Tentativas",
+    "CreatedAt": "Criado em",
+    "From": "De",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "StatusTransition": "Transição de status",
+    "To": "Até",
+    "UpdatedAt": "Atualizado em"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -260,6 +270,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Sem dados de recurso disponíveis"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Finalizado em",
+    "ErrorCode": "Código de erro",
+    "Message": "Mensagem",
+    "Result": "Resultado",
+    "StartedAt": "Iniciado em",
+    "Step": "Etapa"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IPs de cliente permitidos",
