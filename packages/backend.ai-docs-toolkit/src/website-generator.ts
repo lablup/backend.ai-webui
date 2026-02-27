@@ -6,8 +6,10 @@
 
 import fs from 'fs';
 import path from 'path';
+import { execFileSync } from 'child_process';
 import { parse as parseYaml } from 'yaml';
 import { processMarkdownFilesForWeb } from './markdown-processor-web.js';
+import { slugify } from './markdown-processor.js';
 import { buildWebPage, buildIndexPage } from './website-builder.js';
 import type { WebsiteMetadata } from './website-builder.js';
 import { generateWebStyles } from './styles-web.js';
@@ -23,6 +25,64 @@ interface BookConfig {
 
 export interface GenerateWebsiteOptions {
   lang: string;
+}
+
+/** Locale format map for date display */
+const DATE_LOCALES: Record<string, string> = {
+  en: 'en-US',
+  ko: 'ko-KR',
+  ja: 'ja-JP',
+  th: 'th-TH',
+};
+
+/**
+ * Collect last-modified dates for a list of file paths using git log.
+ * Falls back to fs.statSync mtime when git is unavailable.
+ */
+function collectLastModifiedDates(
+  filePaths: string[],
+  srcDir: string,
+): Map<string, Date> {
+  const dates = new Map<string, Date>();
+
+  for (const filePath of filePaths) {
+    const fullPath = path.resolve(srcDir, filePath);
+    try {
+      const gitDate = execFileSync(
+        'git',
+        ['log', '-1', '--format=%aI', '--', fullPath],
+        { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] },
+      ).trim();
+      if (gitDate) {
+        dates.set(filePath, new Date(gitDate));
+        continue;
+      }
+    } catch {
+      // git not available or file not tracked
+    }
+
+    // Fallback: file system mtime
+    try {
+      const stat = fs.statSync(fullPath);
+      dates.set(filePath, stat.mtime);
+    } catch {
+      // file not found
+    }
+  }
+
+  return dates;
+}
+
+/**
+ * Format a date for display in the specified locale.
+ */
+function formatDate(date: Date, lang: string): string {
+  const locale = DATE_LOCALES[lang] ?? 'en-US';
+  return date.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
 /**
@@ -118,15 +178,28 @@ export async function generateWebsite(
 
     const metadata: WebsiteMetadata = { title, version, lang };
 
+    // Collect last-modified dates for all navigation files
+    const navFilePaths = navigation.map((nav) => path.join(lang, nav.path));
+    const lastModifiedDates = collectLastModifiedDates(navFilePaths, config.srcDir);
+
     // Generate individual HTML pages
     console.log(`[${lang}] Generating ${chapters.length} pages...`);
     for (let i = 0; i < chapters.length; i++) {
+      const navEntry = navigation.find((n) => slugify(n.title) === chapters[i].slug);
+      if (!navEntry) {
+        console.warn(`[${lang}] No navigation entry found for chapter slug "${chapters[i].slug}"`);
+      }
+      const navFilePath = navEntry ? path.join(lang, navEntry.path) : undefined;
+      const lastDate = navFilePath ? lastModifiedDates.get(navFilePath) : undefined;
+
       let pageHtml = buildWebPage({
         chapter: chapters[i],
         allChapters: chapters,
         currentIndex: i,
         metadata,
         config,
+        navPath: navEntry?.path,
+        lastUpdated: lastDate ? formatDate(lastDate, lang) : undefined,
       });
 
       // Fix image paths for static site

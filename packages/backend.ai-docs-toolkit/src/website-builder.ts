@@ -19,6 +19,10 @@ export interface WebPageContext {
   metadata: WebsiteMetadata;
   /** Resolved toolkit config */
   config: ResolvedDocConfig;
+  /** Navigation entry path for current chapter (e.g. "vfolder/vfolder.md") */
+  navPath?: string;
+  /** Last modified date string for this page (pre-formatted) */
+  lastUpdated?: string;
 }
 
 export interface WebsiteMetadata {
@@ -114,6 +118,35 @@ function buildPaginationNav(
 </nav>`;
 }
 
+const EDIT_ICON_SVG = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>';
+
+/**
+ * Build the page metadata bar: edit link (left) + last updated date (right).
+ */
+function buildPageMetadata(context: WebPageContext): string {
+  const { metadata, config, navPath, lastUpdated } = context;
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const editBaseUrl = config.website?.editBaseUrl;
+
+  let editHtml = '';
+  if (editBaseUrl && navPath) {
+    const editUrl = `${editBaseUrl}/${metadata.lang}/${navPath}`;
+    editHtml = `<a class="edit-link" href="${editUrl}" target="_blank" rel="noopener noreferrer">${EDIT_ICON_SVG} ${labels.editThisPage}</a>`;
+  }
+
+  let lastUpdatedHtml = '';
+  if (lastUpdated) {
+    lastUpdatedHtml = `<span class="last-updated">${labels.lastUpdated} ${lastUpdated}</span>`;
+  }
+
+  if (!editHtml && !lastUpdatedHtml) return '';
+
+  return `<div class="page-metadata">
+  ${editHtml}
+  ${lastUpdatedHtml}
+</div>`;
+}
+
 /**
  * Build a complete HTML page for a single chapter in the static website.
  */
@@ -122,6 +155,7 @@ export function buildWebPage(context: WebPageContext): string {
 
   const sidebar = buildWebsiteSidebar(allChapters, currentIndex, metadata, config);
   const content = buildPageContent(chapter);
+  const metadataBar = buildPageMetadata(context);
   const pagination = buildPaginationNav(allChapters, currentIndex, metadata.lang);
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
   const pageTitle = `${escapeHtml(chapter.title)} - ${escapeHtml(metadata.title)}`;
@@ -140,7 +174,7 @@ export function buildWebPage(context: WebPageContext): string {
   <main class="doc-main">
     ${content}
     <div class="page-footer">
-      <div class="page-metadata"></div>
+      ${metadataBar}
       ${pagination}
     </div>
   </main>
