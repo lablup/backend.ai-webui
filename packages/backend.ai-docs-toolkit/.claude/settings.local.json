@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(gt checkout:*)",
+      "Bash(gt submit:*)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(bash:*)",
+      "Bash(git:*)"
+    ]
+  },
+  "disabledMcpjsonServers": [
+    "playwright-test",
+    "graphite"
+  ],
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  }
+}

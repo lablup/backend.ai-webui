@@ -32,6 +32,7 @@ export type {
   AnchorEntry,
   AnchorRegistry,
   LinkDiagnostic,
+  WebProcessingOptions,
 } from './markdown-processor-web.js';
 export {
   processMarkdownFilesForWeb,
@@ -69,6 +70,10 @@ export { renderPdf } from './pdf-renderer.js';
 // ── PDF Generation ──────────────────────────────────────────────
 export { generatePdf } from './generate-pdf.js';
 export type { GeneratePdfOptions } from './generate-pdf.js';
+
+// ── Website Generation ──────────────────────────────────────────
+export { generateWebsite } from './website-generator.js';
+export type { GenerateWebsiteOptions } from './website-generator.js';
 
 // ── Preview Servers ─────────────────────────────────────────────
 export { startPreviewServer } from './preview-server.js';
