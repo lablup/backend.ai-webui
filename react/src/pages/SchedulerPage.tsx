@@ -64,21 +64,12 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => {
               const gqlError = error as ErrorWithGraphQL;
+              // FIXME: @required(action: THROW) can detect invalid URL params, but cannot distinguish other errors that cause null. Needs a better approach later.
               // Check for invalid query parameters causing GraphQL errors
-              const isWrongParameterError = _.some(
-                gqlError?.source?.errors,
-                (err) =>
-                  _.some(
-                    [
-                      'Cannot return null for non-nullable field Query',
-                      'No such domain',
-                      'No such scaling group',
-                      'No such project',
-                      'No such user',
-                    ],
-                    (msg) => _.includes(err?.message, msg),
-                  ),
-              );
+              const isWrongParameterError =
+                _.includes(gqlError?.message, 'domainFairShares') ||
+                _.includes(gqlError?.message, 'projectFairShares') ||
+                _.includes(gqlError?.message, 'userFairShares');
 
               return (
                 <FairShareErrorFallback
