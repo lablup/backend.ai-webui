@@ -462,7 +462,7 @@ and increased during high usage to prevent request delays of failures.
 Click the 'Add Rules' button to add a new rule. When you click the button, a modal appears
 when you can add a rule. Each field in the modal is described below:
 
-- Type: Define the rule. Select either 'Scale Up' or 'Scale Down' based on the scope of the rule.
+- Type: Define the rule. Select either 'Scale Out' or 'Scale In' based on the scope of the rule.
 
 - Metric Source: Inference Framework or kernel.
 
