@@ -207,6 +207,8 @@
     "Unlimited": "無限"
   },
   "comp:BAITable": {
+    "Export": "匯出",
+    "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",
     "InvalidPageNumber": "無效的頁碼",
     "SearchTableColumn": "搜索表列",

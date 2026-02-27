@@ -207,6 +207,8 @@
     "Unlimited": "ไม่ จำกัด"
   },
   "comp:BAITable": {
+    "Export": "ส่งออก",
+    "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",
     "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",

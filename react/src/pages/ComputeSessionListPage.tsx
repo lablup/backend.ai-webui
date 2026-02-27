@@ -22,6 +22,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   Alert,
+  App,
   Badge,
   Button,
   Col,
@@ -43,6 +44,7 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
+  useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -55,6 +57,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { useCSVExport } from 'src/hooks/useCSVExport';
 
 const typeFilterValues = [
   'all',
@@ -81,6 +84,8 @@ const ComputeSessionListPage = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
   const location = useLocation();
   const [selectedSessionList, setSelectedSessionList] = useState<
@@ -91,6 +96,8 @@ const ComputeSessionListPage = () => {
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ComputeSessionListPage',
   );
+
+  const { supportedFields, exportCSV } = useCSVExport('sessions');
 
   const {
     baiPaginationOption,
@@ -551,6 +558,41 @@ const ComputeSessionListPage = () => {
                 columnOverrides: columnOverrides,
                 onColumnOverridesChange: setColumnOverrides,
               }}
+              exportSettings={
+                !_.isEmpty(supportedFields)
+                  ? {
+                      supportedFields,
+                      onExport: async (selectedExportKeys) => {
+                        const csvFilter: Record<string, unknown> = {};
+                        if (queryParams.statusCategory === 'finished') {
+                          csvFilter.status = ['TERMINATED', 'CANCELLED'];
+                        } else {
+                          csvFilter.status = [
+                            'PENDING',
+                            'SCHEDULED',
+                            'PREPARING',
+                            'PREPARED',
+                            'CREATING',
+                            'PULLING',
+                            'RESTARTING',
+                            'RUNNING',
+                            'TERMINATING',
+                            'ERROR',
+                          ];
+                        }
+                        if (queryParams.type && queryParams.type !== 'all') {
+                          csvFilter.session_type = [queryParams.type];
+                        }
+                        await exportCSV(selectedExportKeys, csvFilter).catch(
+                          (err) => {
+                            message.error(t('general.ErrorOccurred'));
+                            logger.error(err);
+                          },
+                        );
+                      },
+                    }
+                  : undefined
+              }
             />
           ) : (
             <Alert

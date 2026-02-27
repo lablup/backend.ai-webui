@@ -207,6 +207,8 @@
     "Unlimited": "Tak terbatas"
   },
   "comp:BAITable": {
+    "Export": "Ekspor",
+    "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",
     "InvalidPageNumber": "Nomor halaman tidak valid",
     "SearchTableColumn": "Kolom Tabel Cari",

@@ -4,6 +4,7 @@
  */
 import { PlusOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
+import { App } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,
@@ -18,6 +19,7 @@ import {
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   isValidUUID,
+  useBAILogger,
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -31,6 +33,7 @@ import {
   ProjectPageQuery$variables,
 } from 'src/__generated__/ProjectPageQuery.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
+import { useCSVExport } from 'src/hooks/useCSVExport';
 
 type ProjectNode = NonNullable<
   NonNullable<
@@ -42,6 +45,8 @@ const ProjectPage = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { logger } = useBAILogger();
+  const { message } = App.useApp();
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -69,6 +74,8 @@ const ProjectPage = () => {
   );
   const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const { supportedFields, exportCSV } = useCSVExport('projects');
 
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
@@ -233,6 +240,19 @@ const ProjectPage = () => {
               }
             });
           }}
+          exportSettings={
+            !_.isEmpty(supportedFields)
+              ? {
+                  supportedFields,
+                  onExport: async (selectedExportKeys) => {
+                    await exportCSV(selectedExportKeys).catch((err) => {
+                      message.error(t('general.ErrorOccurred'));
+                      logger.error(err);
+                    });
+                  },
+                }
+              : undefined
+          }
           rowSelection={{
             type: 'checkbox',
             onChange: (keys) => {

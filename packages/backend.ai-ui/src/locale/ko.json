@@ -207,6 +207,8 @@
     "Unlimited": "제한없음"
   },
   "comp:BAITable": {
+    "Export": "내보내기",
+    "ExportCSV": "CSV로 내보내기",
     "GoToFirstPage": "첫 페이지로 이동하기",
     "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
     "SearchTableColumn": "표시할 열 검색",

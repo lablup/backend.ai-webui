@@ -207,6 +207,8 @@
     "Unlimited": "Rajoittamaton"
   },
   "comp:BAITable": {
+    "Export": "Vie",
+    "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",
     "InvalidPageNumber": "Virheellinen sivunumero",
     "SearchTableColumn": "Hakutaulukon sarakkeet",

@@ -882,6 +882,7 @@
     "Enabled": "Enabled",
     "ErrorOccurred": "Something went wrong. Please try again later.",
     "ExtendLoginSession": "Extend login session",
+    "FailedToExportCSV": "Failed to export CSV",
     "Folder": "Folder",
     "Folders": "Folders",
     "General": "General",

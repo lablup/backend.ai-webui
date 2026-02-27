@@ -875,6 +875,7 @@
     "Enabled": "Abilitato",
     "ErrorOccurred": "Qualcosa è andato storto. \nPer favore riprova più tardi.",
     "ExtendLoginSession": "Estendere una sessione di login",
+    "FailedToExportCSV": "Esportazione CSV non riuscita",
     "Folder": "Cartella",
     "Folders": "cartelle",
     "General": "Generale",

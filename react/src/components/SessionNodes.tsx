@@ -164,6 +164,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       {
         key: 'accelerator',
         title: t('session.launcher.AIAccelerator'),
+        exportKey: ['resource_used', 'resource_requested'],
         render: (__, session) => {
           return <SessionSlotCell sessionFrgmt={session} type="accelerator" />;
         },
@@ -171,6 +172,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       {
         key: 'cpu',
         title: t('session.launcher.CPU'),
+        exportKey: ['resource_used', 'resource_requested'],
         render: (__, session) => {
           return <SessionSlotCell sessionFrgmt={session} type="cpu" />;
         },
@@ -178,6 +180,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       {
         key: 'mem',
         title: t('session.launcher.Memory'),
+        exportKey: ['resource_used', 'resource_requested'],
         render: (__, session) => {
           return <SessionSlotCell sessionFrgmt={session} type="mem" />;
         },
@@ -195,6 +198,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'environment',
         title: t('session.launcher.Environments'),
         defaultHidden: true,
+        exportKey: 'main_kernel_image',
         render: (__, session) => {
           return session.kernel_nodes?.edges?.[0]?.node?.image ? (
             <ImageNodeSimpleTag
@@ -212,6 +216,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'scaling_group',
         title: t('session.ResourceGroup'),
         defaultHidden: true,
+        exportKey: 'resource_group_name',
         sorter: isEnableSorter('scaling_group'),
         render: (__, session) =>
           session.scaling_group ? session.scaling_group : '-',
@@ -221,6 +226,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'type',
         title: t('session.SessionType'),
         defaultHidden: true,
+        exportKey: 'session_type',
         sorter: isEnableSorter('type'),
         render: (__, session) => <BAISessionTypeTag sessionFrgmt={session} />,
       },
@@ -247,6 +253,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'agent_ids',
         title: t('session.Agent'),
         defaultHidden: false,
+        exportKey: 'kernel_agent',
         sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
@@ -255,6 +262,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           key: 'owner',
           title: t('session.launcher.OwnerEmail'),
           defaultHidden: false,
+          exportKey: 'user_email',
           render: (__, session) => session.owner?.email || '-',
         },
     ]),

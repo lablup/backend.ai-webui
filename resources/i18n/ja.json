@@ -877,6 +877,7 @@
     "Enabled": "有効",
     "ErrorOccurred": "何かがうまくいかなかった。\n後でもう一度やり直してください。",
     "ExtendLoginSession": "ログインセッションの延長",
+    "FailedToExportCSV": "CSVエクスポートに失敗しました",
     "Folder": "フォルダ",
     "Folders": "フォルダー",
     "General": "一般",

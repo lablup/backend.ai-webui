@@ -207,6 +207,8 @@
     "Unlimited": "Ilimitado"
   },
   "comp:BAITable": {
+    "Export": "Exportar",
+    "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",
     "SearchTableColumn": "Pesquisar colunas da tabela",

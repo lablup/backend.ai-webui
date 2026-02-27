@@ -856,6 +856,7 @@
     "Enabled": "Идэвхжсэн",
     "ErrorOccurred": "Ямар нэг зүйл буруу болсон. \nДараа дахин оролдоно уу.",
     "ExtendLoginSession": "Нэвтрэх сессийг сунгах",
+    "FailedToExportCSV": "CSV экспортлох амжилтгүй боллоо",
     "Folder": "Хавтас",
     "Folders": "Фолдерууд",
     "General": "Генерал",
