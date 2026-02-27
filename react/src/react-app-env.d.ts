@@ -8,6 +8,11 @@
 //   export { graphql as default } from 'react-relay';
 // }
 
+declare module 'backend.ai-client-esm' {
+  const ai: { backend: { Client: any; ClientConfig: any } };
+  export = ai;
+}
+
 declare module 'markty-toml' {
   function toml(input: string): Record<string, any>;
   export default toml;
