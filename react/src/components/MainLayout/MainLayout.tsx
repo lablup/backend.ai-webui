@@ -295,10 +295,10 @@ function MainLayout() {
                     </PageAccessGuard>
                   </AutoAdminPrimaryColorProvider>
                 </BAIErrorBoundary>
-                <ErrorBoundaryWithNullFallback>
-                  <PluginLoader />
-                </ErrorBoundaryWithNullFallback>
               </Suspense>
+              <ErrorBoundaryWithNullFallback>
+                <PluginLoader />
+              </ErrorBoundaryWithNullFallback>
             </BAIErrorBoundary>
           </BAIFlex>
         </BAIContentWithDrawerArea>
