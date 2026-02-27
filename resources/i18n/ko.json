@@ -742,6 +742,7 @@
     "LoginSucceededManagerNotResponding": "로그인은 성공했으나 매니저 서버가 응답하지 않습니다.",
     "MaximumVfolderCreation": "자원 정책에 따라 더 이상 폴더를 만들 수 없습니다.",
     "NetworkConnectionFailed": "네트워크 연결 실패. 네트워크 상태를 확인하세요.",
+    "NoCurrentProject": "현재 프로젝트가 없습니다",
     "NotFoundBasePath": "찾을 수 없습니다. 기본 경로를 확인하세요.",
     "OnlyIntegersAreAllowed": "정수만 허용됩니다.",
     "OnlyPositiveIntegersAreAllowed": "양의 정수만 허용됩니다.",

@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "登录成功，但经理没有响应。",
     "MaximumVfolderCreation": "由于资源政策原因，无法创建更多 v 文件夹",
     "NetworkConnectionFailed": "网络连接失败。检查网络状态。",
+    "NoCurrentProject": "没有当前项目",
     "NotFoundBasePath": "未找到。请检查您的基本路径。",
     "OnlyIntegersAreAllowed": "只允许整数。",
     "OnlyPositiveIntegersAreAllowed": "仅允许积极的整数。",

@@ -22,10 +22,12 @@ import {
   BAIModal,
   BAIModalProps,
   BAIProjectResourceGroupSelect,
+  BAISelect,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Fragment, useRef } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -46,9 +48,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  if (!currentProject.name) {
-    throw new Error('Project name is required for ResourcePresetSettingModal');
-  }
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -294,18 +293,33 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         >
           <Input disabled={!!resourcePreset} />
         </Form.Item>
-        {baiClient?.supports('resource-presets-per-resource-group') && (
-          <Form.Item
-            label={t('general.ResourceGroup')}
-            name="scaling_group_name"
-          >
-            <BAIProjectResourceGroupSelect
-              projectName={currentProject.name}
-              allowClear
-              popupMatchSelectWidth={false}
-            />
-          </Form.Item>
-        )}
+        <ErrorBoundary
+          fallbackRender={() => (
+            <Form.Item
+              label={t('general.ResourceGroup')}
+              name="scaling_group_name"
+            >
+              <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
+            </Form.Item>
+          )}
+        >
+          {baiClient?.supports('resource-presets-per-resource-group') && (
+            <Form.Item
+              label={t('general.ResourceGroup')}
+              name="scaling_group_name"
+            >
+              {currentProject.name ? (
+                <BAIProjectResourceGroupSelect
+                  projectName={currentProject.name}
+                  allowClear
+                  popupMatchSelectWidth={false}
+                />
+              ) : (
+                <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
+              )}
+            </Form.Item>
+          )}
+        </ErrorBoundary>
         <Form.Item
           label={t('resourcePreset.ResourcePreset')}
           required

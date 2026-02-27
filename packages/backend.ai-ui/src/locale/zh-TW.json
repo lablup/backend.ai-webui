@@ -57,6 +57,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "清除",
     "KeepAsIs": "保持原樣",
@@ -257,7 +260,7 @@
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} {{total}}項目"
+    "Total": "{{start}} - {{end}} {{total}}項目"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"

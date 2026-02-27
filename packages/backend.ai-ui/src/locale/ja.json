@@ -57,6 +57,9 @@
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "クリア",
     "KeepAsIs": "そのまま維持",
@@ -257,7 +260,7 @@
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+    "Total": "{{start}} - {{end}} of {{total}}アイテム"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"

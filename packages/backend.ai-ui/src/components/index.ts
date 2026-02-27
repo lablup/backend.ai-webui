@@ -88,6 +88,7 @@ export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
+export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

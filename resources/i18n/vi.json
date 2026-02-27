@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "Đăng nhập thành công nhưng người quản lý không phản hồi.",
     "MaximumVfolderCreation": "Bạn không thể tạo thêm vfolder do chính sách tài nguyên",
     "NetworkConnectionFailed": "Kết nối mạng không thành công. \nKiểm tra trạng thái mạng.",
+    "NoCurrentProject": "Không có dự án hiện tại",
     "NotFoundBasePath": "Không tìm thấy. \nVui lòng kiểm tra đường dẫn cơ sở của bạn.",
     "OnlyIntegersAreAllowed": "Chỉ có số nguyên được cho phép.",
     "OnlyPositiveIntegersAreAllowed": "Chỉ cho phép số nguyên dương được cho phép.",

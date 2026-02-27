@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
     "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla vfolder oluşturamazsınız",
     "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",
+    "NoCurrentProject": "Mevcut proje yok",
     "NotFoundBasePath": "Bulunamadı. Lütfen temel yolunuzu kontrol edin.",
     "OnlyIntegersAreAllowed": "Sadece tamsayılara izin verilir.",
     "OnlyPositiveIntegersAreAllowed": "Sadece pozitif tamsayılara izin verilir.",

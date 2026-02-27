@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas.",
     "MaximumVfolderCreation": "Vous ne pouvez pas créer d'autres dossiers virtuels en raison de la politique de ressources.",
     "NetworkConnectionFailed": "La connexion réseau a échoué. Vérifier l'état du réseau.",
+    "NoCurrentProject": "Aucun projet en cours",
     "NotFoundBasePath": "Non trouvé. Veuillez vérifier votre chemin d'accès à la base.",
     "OnlyIntegersAreAllowed": "Seuls les entiers sont autorisés.",
     "OnlyPositiveIntegersAreAllowed": "Seuls les entiers positifs sont autorisés.",

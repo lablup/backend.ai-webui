@@ -736,6 +736,7 @@
     "LoginSucceededManagerNotResponding": "Η σύνδεση έγινε επιτυχής, αλλά ο διαχειριστής δεν αποκρίνεται.",
     "MaximumVfolderCreation": "Δεν μπορείτε να δημιουργήσετε περισσότερους φακέλους v λόγω της πολιτικής πόρων",
     "NetworkConnectionFailed": "Η σύνδεση δικτύου απέτυχε. Ελέγξτε την κατάσταση του δικτύου.",
+    "NoCurrentProject": "Δεν υπάρχει τρέχον έργο",
     "NotFoundBasePath": "Δεν βρέθηκε. Ελέγξτε τη διαδρομή της βάσης σας.",
     "OnlyIntegersAreAllowed": "Επιτρέπονται μόνο ακέραιοι.",
     "OnlyPositiveIntegersAreAllowed": "Επιτρέπονται μόνο θετικοί ακέραιοι ακέραιοι.",

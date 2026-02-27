@@ -745,6 +745,7 @@
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
+    "NoCurrentProject": "No current project",
     "NotFoundBasePath": "Not Found. Please check your Base Path.",
     "OnlyIntegersAreAllowed": "Only integers are allowed.",
     "OnlyPositiveIntegersAreAllowed": "Only positive integers are allowed.",

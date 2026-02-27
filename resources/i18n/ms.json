@@ -738,6 +738,7 @@
     "LoginSucceededManagerNotResponding": "Log masuk berjaya tetapi pengurus tidak bertindak balas.",
     "MaximumVfolderCreation": "Anda tidak boleh membuat lebih banyak vfolder kerana dasar sumber",
     "NetworkConnectionFailed": "Sambungan rangkaian gagal. \nSemak status rangkaian.",
+    "NoCurrentProject": "Tiada projek semasa",
     "NotFoundBasePath": "Tidak dijumpai. \nSila periksa laluan asas anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang dibenarkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang dibenarkan.",

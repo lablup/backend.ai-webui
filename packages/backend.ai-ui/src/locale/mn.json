@@ -57,6 +57,9 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Цэвэрлэх",
     "KeepAsIs": "Хэвээр үлдээх",

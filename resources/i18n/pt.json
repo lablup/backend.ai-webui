@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "Login bem-sucedido, mas o gerente não está respondendo.",
     "MaximumVfolderCreation": "Não é possível criar mais vfolders devido à política de recursos",
     "NetworkConnectionFailed": "A ligação de rede falhou. Verificar o estado da rede.",
+    "NoCurrentProject": "Nenhum projeto ativo",
     "NotFoundBasePath": "Não encontrado. Por favor, verifique o seu caminho de base.",
     "OnlyIntegersAreAllowed": "Somente números inteiros são permitidos.",
     "OnlyPositiveIntegersAreAllowed": "Apenas números inteiros positivos são permitidos.",

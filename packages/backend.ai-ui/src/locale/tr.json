@@ -57,6 +57,9 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Temizle",
     "KeepAsIs": "Olduğu gibi bırak",

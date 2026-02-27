@@ -738,6 +738,7 @@
     "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons.",
     "MaximumVfolderCreation": "Anda tidak dapat membuat lebih banyak vfolder karena kebijakan sumber daya",
     "NetworkConnectionFailed": "Koneksi jaringan gagal. Periksa status jaringan.",
+    "NoCurrentProject": "Tidak ada proyek saat ini",
     "NotFoundBasePath": "Tidak ditemukan. Silakan periksa Path dasar Anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang diizinkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang diizinkan.",

@@ -739,6 +739,7 @@
     "LoginSucceededManagerNotResponding": "El inicio de sesión se ha realizado correctamente, pero el administrador no responde.",
     "MaximumVfolderCreation": "No se pueden crear más vfolders debido a la política de recursos",
     "NetworkConnectionFailed": "Ha fallado la conexión de red. Compruebe el estado de la red.",
+    "NoCurrentProject": "No hay proyecto actual",
     "NotFoundBasePath": "No se ha encontrado. Por favor, compruebe su ruta base.",
     "OnlyIntegersAreAllowed": "Solo se permiten enteros.",
     "OnlyPositiveIntegersAreAllowed": "Solo se permiten enteros positivos.",
