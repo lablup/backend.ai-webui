@@ -78,6 +78,7 @@ const resourcesSlots: {
   'warboy.device': 'warboy',
   'rngd.device': 'rngd',
   'hyperaccel-lpu.device': 'hyperaccel_lpu',
+  'tt-n300.device': 'tt_n300',
 };
 
 const ConfigurationsSettingList = () => {
