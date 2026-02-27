@@ -168,7 +168,7 @@ export const useStartSession = () => {
         // Project and domain settings
         group_name: values.owner?.enabled
           ? values.owner.project
-          : currentProject.name,
+          : currentProject.name || undefined,
         domain: values.owner?.enabled
           ? values.owner.domainName
           : baiClient._config.domainName,

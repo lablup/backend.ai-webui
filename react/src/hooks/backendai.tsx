@@ -9,6 +9,7 @@ import {
   useTanMutation,
   useTanQuery,
 } from './reactQueryAlias';
+import { useBAISettingUserState, UserSettings } from './useBAISetting';
 import {
   ResourceSlotDetail,
   useUpdatableState,
@@ -261,3 +262,36 @@ export interface InvitationItem {
   status: string;
   perm: string;
 }
+
+/**
+ * Hook to manage recent project group setting
+ * Replaces the functionality of _writeRecentProjectGroup from backend-ai-common-utils
+ */
+export const useRecentProjectGroup = () => {
+  'use memo';
+
+  const baiClient = useSuspendedBackendaiClient();
+
+  // Generate the endpointId from the current client configuration
+  const endpointId =
+    baiClient._config._endpointHost?.replace(/\./g, '_') || 'default';
+  const settingKey = `projectGroup.${endpointId}` satisfies keyof UserSettings;
+
+  const [recentProjectGroup, setRecentProjectGroup] =
+    useBAISettingUserState(settingKey);
+
+  const writeRecentProjectGroup = (projectName?: string) => {
+    const valueToSet = projectName || baiClient.current_group || '';
+    setRecentProjectGroup(valueToSet);
+  };
+
+  const readRecentProjectGroup = () => {
+    return recentProjectGroup || '';
+  };
+
+  return {
+    writeRecentProjectGroup,
+    readRecentProjectGroup,
+    recentProjectGroup: recentProjectGroup || '',
+  };
+};

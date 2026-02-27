@@ -30,6 +30,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import ActiveAgents from 'src/components/ActiveAgents';
 import AgentStats from 'src/components/AgentStats';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const DashboardPage: React.FC = () => {
@@ -134,10 +135,12 @@ const DashboardPage: React.FC = () => {
       },
       data: {
         content: (
-          <MyResource
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
+          <BAIErrorBoundary>
+            <MyResource
+              fetchKey={fetchKey}
+              refetching={isPendingIntervalRefetch}
+            />
+          </BAIErrorBoundary>
         ),
       },
     },
@@ -151,10 +154,12 @@ const DashboardPage: React.FC = () => {
       },
       data: {
         content: (
-          <MyResourceWithinResourceGroup
-            fetchKey={fetchKey}
-            refetching={isPendingIntervalRefetch}
-          />
+          <BAIErrorBoundary>
+            <MyResourceWithinResourceGroup
+              fetchKey={fetchKey}
+              refetching={isPendingIntervalRefetch}
+            />
+          </BAIErrorBoundary>
         ),
       },
     },

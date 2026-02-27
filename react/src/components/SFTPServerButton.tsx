@@ -49,6 +49,9 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for SFTPServerButton');
+  }
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
