@@ -121,6 +121,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
     - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX]`
     - `bash scripts/jira.sh search "JQL query" [--limit 20]`
     - `bash scripts/jira.sh comment FR-XXXX "Comment text"`
+    - `bash scripts/jira.sh labels FR-XXXX --add "l1,l2"` / `--remove "l1,l2"` / `--set "l1,l2"` (manage labels)
     - `bash scripts/jira.sh link --from FR-XXXX --to FR-YYYY --type blocks` (link types: blocks, relates, clones, duplicate)
     - **Epic linking**: When creating issues under an Epic, ALWAYS use `--parent FR-XXXX` to link them. Issues created without `--parent` will be orphaned and not visible under the Epic.
     - **Issue linking**: When Epics or issues have dependencies or relationships, use `jira.sh link` to connect them (e.g. `--type blocks` for dependencies, `--type relates` for related work).
