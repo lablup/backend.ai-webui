@@ -1,16 +1,6 @@
-# 리소스 관리
-
-> **Status**: This content is being migrated and updated. Please check back later for complete documentation.
-
-This section will contain comprehensive information about 리소스 관리.
-
-## Coming Soon
-
-- Detailed explanations
-- Step-by-step guides
-- Examples and best practices
-- Troubleshooting tips
-
 ---
+title: Resources
+order: 83
+---
+# Resources
 
-*This document is part of the Backend.AI Complete Guide.*

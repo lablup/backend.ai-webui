@@ -1,0 +1,29 @@
+# Build output
+dist/
+build/
+*.pdf
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Agent output files
+.agent-output/
+
+# Temporary files
+.tmp/
+tmp/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Cache directories
+.cache/
+.parcel-cache/

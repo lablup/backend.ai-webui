@@ -1,34 +1,47 @@
-title: "Backend.AI Complete Guide"
+# docs-toolkit configuration for Backend.AI Guide
+# Engine provided by backend.ai-docs-toolkit
+
+title: "Backend.AI Guide"
 company: "Lablup Inc."
+
+# Logo (SVG file relative to project root)
 logoPath: "../../manifest/backend.ai-brand-simple.svg"
+
+# Source and output directories
 srcDir: "src"
 distDir: "dist"
+
+# Version source (relative to project root)
 versionSource: "../../package.json"
 
+# Languages
 languageLabels:
   en: "English"
   ko: "한국어"
   ja: "日本語"
   th: "ภาษาไทย"
 
-pdfFilenameTemplate: "Backend.AI_Complete_Guide_{version}_{lang}.pdf"
+# PDF settings
+pdfFilenameTemplate: "Backend.AI_Guide_{version}_{lang}.pdf"
 pdfMetadata:
   author: "Lablup Inc."
-  subject: "Backend.AI Complete Guide"
+  subject: "Backend.AI Guide"
   creator: "Backend.AI Docs PDF Generator"
 
-productName: "Backend.AI Guide"
+# Product name for log messages
+productName: "Backend.AI Guide Docs"
 
+# Agent configuration (for 'docs-toolkit agents' command)
 agents:
-  projectTitle: "Backend.AI Complete Guide"
+  projectTitle: "Backend.AI"
   docsRoot: "."
   languages:
     - code: en
       label: English
-    - code: ko
-      label: Korean
     - code: ja
       label: Japanese
+    - code: ko
+      label: Korean
     - code: th
       label: Thai
   i18nPaths:
@@ -51,6 +64,16 @@ agents:
         name: "Data (Storage Folders)"
       - path: "/serving"
         name: "Model Serving"
+      - path: "/statistics"
+        name: "Statistics"
+      - path: "/usersettings"
+        name: "User Settings"
+      - path: "/credential"
+        name: "Credentials (Admin)"
+      - path: "/environment"
+        name: "Environments (Admin)"
+      - path: "/agent"
+        name: "Resources (Admin)"
     loginInstructions: |
       1. Navigate to the app URL
       2. Enter credentials from E2E_USER and E2E_PASSWORD environment variables
