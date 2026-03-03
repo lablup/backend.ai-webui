@@ -59,7 +59,7 @@ jobs:
 
       - name: Trigger Copilot Analysis
         if: steps.filter.outputs.components == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const WORKFLOW_FILE = 'storybook-coverage-checker.lock.yml';
