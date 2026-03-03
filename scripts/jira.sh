@@ -599,6 +599,26 @@ cmd_link() {
   echo "Linked: ${from} --[${link_type}]--> ${to}"
 }
 
+cmd_weblink() {
+  local key="" url="" title=""
+  while (( $# )); do
+    case $1 in
+      --url)   url=$2;   shift 2 ;;
+      --title) title=$2; shift 2 ;;
+      *) [[ -z "$key" ]] && { key=$1; shift; } || die "weblink: unknown flag $1" ;;
+    esac
+  done
+  [[ -n "$key" ]] || die "weblink: issue key required"
+  [[ -n "$url" ]] || die "weblink: --url required"
+  [[ -z "$title" ]] && title="$url"
+
+  api POST "/issue/${key}/remotelink" -d "$(jq -n \
+    --arg url "$url" \
+    --arg title "$title" \
+    '{object:{url:$url, title:$title}}')" > /dev/null
+  echo "Web link added to ${key}: ${title}"
+}
+
 cmd_labels() {
   local key=${1:?labels: issue key required}; shift
   local add="" remove="" set_labels="" has_set=false
@@ -681,6 +701,7 @@ Commands:
   comment   FR-XXXX "Comment text"
   labels    FR-XXXX [--add "l1,l2"] [--remove "l1,l2"] [--set "l1,l2"]
   link      --from FR-XXXX --to FR-YYYY [--type blocks|relates|clones|duplicate]
+  weblink   FR-XXXX --url "https://..." [--title "Link title"]
   check-dup --labels "l1,l2" [--include-done]   Check for duplicate issues by labels
   myself    Show current user info
 
@@ -688,6 +709,7 @@ The --parent flag links an issue to a parent Epic (e.g. --parent FR-1234).
 The labels command manages labels: --add appends, --remove deletes specific labels,
   --set replaces all labels. With no flags, shows current labels.
 The link command creates issue links (e.g. "FR-1 blocks FR-2", "FR-1 relates to FR-2").
+The weblink command adds an external web link to an issue (e.g. Teams message, external doc).
 Description and comment fields accept Markdown, which is automatically
 converted to Atlassian Document Format (ADF) for proper Jira rendering.
 
@@ -705,6 +727,7 @@ USAGE
       comment)   cmd_comment "$@" ;;
       labels)    cmd_labels "$@" ;;
       link)      cmd_link "$@" ;;
+      weblink)   cmd_weblink "$@" ;;
       check-dup) cmd_check_dup "$@" ;;
       myself)    cmd_myself ;;
       *) die "Unknown command: $cmd" ;;
