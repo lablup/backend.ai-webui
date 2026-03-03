@@ -124,13 +124,16 @@ For `needs-backend` issues where no backend work exists, also create a backend r
 
 ### 6. Summary
 
+Issue keys in the summary table MUST be hyperlinks to the Jira issue page.
+Use the format `[FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX)`.
+
 ```
 Issues created!
 
 | # | Jira Key | Title | Classification |
 |---|----------|-------|---------------|
-| 1 | FR-XXXX | ... | auto-mergeable |
-| 2 | FR-YYYY | ... | needs-review |
+| 1 | [FR-XXXX](https://lablup.atlassian.net/browse/FR-XXXX) | ... | auto-mergeable |
+| 2 | [FR-YYYY](https://lablup.atlassian.net/browse/FR-YYYY) | ... | needs-review |
 
 Next: Run /fiber-do FR-XXXX to implement individually
 ```
