@@ -1,0 +1,97 @@
+name: Storybook Story Check
+
+on:
+  pull_request:
+    types: [ready_for_review]
+    paths:
+      - "packages/backend.ai-ui/src/components/**/*.tsx"
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: write
+
+jobs:
+  detect-and-trigger:
+    name: Detect Changes & Trigger Analysis
+    runs-on: ubuntu-latest
+    # Skip if PR is still in draft
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Filter component changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          list-files: json
+          filters: |
+            components:
+              - 'packages/backend.ai-ui/src/components/**/*.tsx'
+              - '!packages/backend.ai-ui/src/components/**/*.stories.tsx'
+              - '!packages/backend.ai-ui/src/components/**/*.test.tsx'
+
+      - name: Extract component names
+        id: extract
+        if: steps.filter.outputs.components == 'true'
+        run: |
+          # Extract component names from changed files
+          changed_files='${{ steps.filter.outputs.components_files }}'
+
+          components=$(echo "$changed_files" | jq -r '.[]' | while read file; do
+            # Skip if not a .tsx file or is a story/test file
+            case "$file" in
+              *.stories.tsx|*.test.tsx) continue ;;
+              *.tsx) ;;
+              *) continue ;;
+            esac
+
+            # Extract component name from filename
+            basename "$file" .tsx
+          done | sort -u | tr '\n' ' ')
+
+          echo "components=$components" >> $GITHUB_OUTPUT
+          echo "Changed components: $components"
+
+      - name: No changes - Skip
+        if: steps.filter.outputs.components != 'true'
+        run: echo "No component changes detected. Skipping analysis."
+
+      - name: Trigger Copilot Analysis
+        if: steps.filter.outputs.components == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const WORKFLOW_FILE = 'storybook-coverage-checker.lock.yml';
+            const branch = context.payload.pull_request.head.ref;
+
+            const { data: workflows } = await github.rest.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const agenticWorkflow = workflows.workflows.find(
+              w => w.path === `.github/workflows/${WORKFLOW_FILE}`
+            );
+
+            if (!agenticWorkflow) {
+              core.warning(`Workflow file ${WORKFLOW_FILE} not found`);
+              return;
+            }
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: agenticWorkflow.id,
+              ref: branch,
+            });
+
+      - name: Create summary
+        if: steps.filter.outputs.components == 'true'
+        run: |
+          echo "## Storybook Coverage Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered analysis for components:" >> $GITHUB_STEP_SUMMARY
+          echo "\`${{ steps.extract.outputs.components }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Analysis results will be posted as a PR comment by the Storybook Coverage Checker workflow." >> $GITHUB_STEP_SUMMARY

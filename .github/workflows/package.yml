@@ -1,0 +1,73 @@
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler/blob/master/README.md
+
+name: Build and Release Packages
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_mac:
+    permissions:
+      contents: write
+      checks: write
+      actions: read
+      issues: read
+      packages: write
+      pull-requests: read
+      repository-projects: read
+      statuses: read
+    runs-on: [self-hosted, macOS, ARM64]
+    environment: app-packaging
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - name: Configure pnpm store
+        run: pnpm config set store-dir ~/.pnpm-store
+      # - name: Get pnpm store directory
+      #   shell: bash
+      #   run: |
+      #     echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      # - uses: actions/cache@v4
+      #   name: Setup pnpm cache
+      #   with:
+      #     path: ${{ env.STORE_PATH }}
+      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-pnpm-store-
+      - name: Install Dependencies
+        # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
+        # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
+        # branch lockfiles on main. --no-frozen-lockfile allows that merge write.
+        run: pnpm install --no-frozen-lockfile
+      - name: Package Desktop Applications
+        run: make all
+        env:
+          BAI_APP_SIGN: 1
+          BAI_APP_SIGN_APPLE_TEAM_ID: ${{ secrets.BAI_APP_SIGN_APPLE_TEAM_ID }}
+          BAI_APP_SIGN_APPLE_ID: ${{ secrets.BAI_APP_SIGN_APPLE_ID }}
+          BAI_APP_SIGN_APPLE_ID_PASSWORD: ${{ secrets.BAI_APP_SIGN_APPLE_ID_PASSWORD }}
+          BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
+          BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
+          BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Bundle static resources into zip package
+        run: make bundle
+      - name: Upload application to latest release
+        run: node upload-release.js app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

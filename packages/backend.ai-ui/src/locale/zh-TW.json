@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "分配",
+    "Architecture": "架構",
+    "DiskPerc": "磁碟使用率 (%)",
+    "Endpoint": "端點",
+    "NoAvailableLiveStat": "沒有可用的即時統計",
+    "Region": "區域",
+    "ResourceGroup": "資源群組",
+    "Running": "執行中",
+    "Schedulable": "可排程",
+    "Starts": "開始時間",
+    "Status": "狀態",
+    "Utilization": "使用率"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "允許",
+    "Permission": "權限"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "啟用設定",
+    "ActivateArtifacts": "激活工件",
+    "AreYouSureYouWantToActivateOne": "您確定要激活{{name}}嗎？",
+    "AreYouSureYouWantToActivateSome": "您確定要激活{{count}}偽像嗎？",
+    "FailedToActivateArtifacts": "未能激活偽影。",
+    "SuccessfullyActivated": "成功激活的工件。"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "選擇資源群組"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "描述",
+    "Name": "姓名",
+    "Source": "來源",
+    "Type": "類型"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "控制",
+    "LatestVersion": "最新版本",
+    "Name": "姓名",
+    "Size": "尺寸",
+    "Status": "地位",
+    "Updated": "更新",
+    "Version": "版本"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "行動",
+    "Activate": "啟用設定",
+    "Controls": "控件",
+    "Deactivate": "停用",
+    "PullLatestVersion": "拉最新版本",
+    "Registry": "映像註冊表",
+    "Scanned": "掃描",
+    "Size": "尺寸",
+    "Source": "來源",
+    "Updated": "更新",
+    "Version": "版本"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "清除",
+    "KeepAsIs": "保持原樣",
+    "UndoChanges": "撤銷更改"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "您確定要停用{{name}}嗎？",
+    "AreYouSureYouWantToDeactivateSome": "您確定要停用{{count}}文物嗎？",
+    "Deactivate": "停用",
+    "DeactivateArtifacts": "停用偽影",
+    "FailedToDeactivateArtifacts": "未能停用偽影。",
+    "SuccessfullyDeactivated": "成功停用的偽影。"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToRemoveVersions": "無法刪除版本。",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "只能刪除不進行拉或掃描的版本。",
+    "RemoveVersions": "刪除版本",
+    "Size": "尺寸",
+    "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
+    "Version": "版本"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "選擇網域"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "最後更新",
+    "Refresh": "重新整理"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "之後",
+      "Before": "之前",
+      "GreaterThan": "大於",
+      "GreaterThanOrEqual": "大於或等於",
+      "IContains": "包含",
+      "IEndsWith": "以...結尾",
+      "IEquals": "等於",
+      "INotContains": "不包含",
+      "INotEndsWith": "不以...結尾",
+      "INotEquals": "不等於",
+      "INotStartsWith": "不以...開頭",
+      "IStartsWith": "以...開頭",
+      "In": "在...中",
+      "LessThan": "小於",
+      "LessThanOrEqual": "小於或等於",
+      "NotIn": "不在...中"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToPullVersions": "未能拉動版本。",
+    "OnlySCANNEDVersionsCanBePulled": "只能拉出掃描版本。",
+    "Pull": "拉",
+    "PullVersion": "拉版本",
+    "Size": "尺寸",
+    "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
+    "Version": "版本"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
+    "ProjectResourcePolicy": "專案資源政策",
+    "UpdateMultipleProjects": "更新多個專案"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "選擇專案"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "允許的資料夾主機",
+    "AllowedResourceGroups": "允許的資源群組",
+    "ContainerMustBeSpecified": "必須指定容器映像註冊表以儲存使用者提交的容器映像。",
+    "ContainerRegistryForImageCommit": "映像提交的容器註冊表",
+    "CreateProject": "建立專案",
+    "Description": "描述",
+    "Domain": "網域",
+    "FailedToCreateProject": "建立專案失敗",
+    "FailedToUpdateProject": "無法更新專案",
+    "IsActive": "是否啟用？",
+    "MaxAllowedResourceSlots": "最大允許 {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "記憶體大小應小於 300 PiB",
+    "Name": "名稱",
+    "PleaseEnterBothRegistryAndProject": "請同時輸入 registry 與 project。",
+    "Project": "專案",
+    "ProjectCreated": "專案已建立",
+    "ProjectResourcePolicy": "資源策略",
+    "ProjectUpdated": "專案已更新。",
+    "Registry": "映像註冊表",
+    "UpdateProject": "更新專案"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "您確定要停用專案 {{projectName}} 嗎？",
+    "AreYouSureToPurgeProject": "您確定要清除 {{projectName}}? 此操作無法復原。",
+    "ContainerRegistry": "容器映像庫",
+    "Controls": "控制項",
+    "CreatedAt": "建立時間",
+    "Deactivate": "停用",
+    "DeactivateProject": "停用專案",
+    "Description": "描述",
+    "Domain": "網域",
+    "FailedToDeactivateProject": "無法停用專案。",
+    "FailedToPurgeProject": "無法清除專案。",
+    "IntegrationID": "整合識別碼",
+    "IsActive": "啟用",
+    "Name": "名稱",
+    "Project": "專案",
+    "ProjectDeactivated": "該專案已停用。",
+    "ProjectID": "專案 ID",
+    "ProjectPurged": "專案「projecth」已被清除",
+    "Purge": "清除",
+    "PurgeProject": "永久刪除專案",
+    "Registry": "映像註冊表",
+    "ResourcePolicy": "資源策略",
+    "ScalingGroups": "資源群組",
+    "StorageNodes": "儲存節點",
+    "TotalResourceSlots": "資源總槽位",
+    "Type": "類型"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "搜索",
+    "ResetFilter": "重置過濾器"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "取消拉力",
+    "CancelingWillRestartThePulling": "取消將重新啟動拉動",
+    "FailedToCancelThePulling": "未能取消拉力。",
+    "VersionIsPullingNow": "{{version}}版本現在正在拉動。",
+    "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "您即將取消此版本"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "選擇資源群組"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "CreatedAt": "建立時間",
+    "From": "從",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "代理人"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "多",
+    "SingleNodeShort": "單節點"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無限"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "跳到第一頁",
+    "InvalidPageNumber": "無效的頁碼",
+    "SearchTableColumn": "搜索表列",
+    "SelectColumnToDisplay": "選擇要顯示的列",
+    "SettingTable": "表設置"
+  },
+  "comp:BAITestButton": {
+    "Test": "測試"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "選擇使用者"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "選擇資料夾"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "更改文件擴展名",
+    "ChangeFileExtensionDesc": "更改文件擴展名可能會導致文件變得無法使用或不正確打開。你想繼續嗎？",
+    "Controls": "控件",
+    "CreateANewFolder": "創建一個新文件夾",
+    "CreatedAt": "創建在",
+    "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
+    "DeleteSelectedItemsDialog": "刪除確認",
+    "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
+    "DragAndDropDesc": "將文件拖到此區域上傳。",
+    "DuplicatedFiles": "覆蓋確認",
+    "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
+    "EditFile": "編輯檔案",
+    "FileTooLargeToEdit": "由於檔案大小超過{{size}}MB,瀏覽器內編輯受到限制。",
+    "FolderCreatedSuccessfully": "文件夾成功創建了。",
+    "FolderName": "文件夾名稱",
+    "MaxFolderNameLength": "文件夾名稱必須為255個字符或更小。",
+    "ModifiedAt": "修改為",
+    "MoreOptions": "更多選項",
+    "Name": "姓名",
+    "PleaseEnterAFolderName": "請輸入文件夾名稱。",
+    "RenameSuccess": "該名稱已成功更改。",
+    "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
+    "Size": "尺寸",
+    "TypeDeleteToConfirm": "輸入“刪除”進行確認。",
+    "TypeFolderNameToDelete": "輸入要刪除的文件夾或文件名.",
+    "UnsupportedFileFormat": "此檔案格式不支援編輯。",
+    "UploadFiles": "上傳文件",
+    "UploadFolder": "上傳文件夾",
+    "error": {
+      "DuplicatedName": "此名稱已經在使用中。請輸入其他名稱。",
+      "FileNameRequired": "請輸入文件或文件夾名稱。"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} {{total}}項目"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "沒有可用的資源數據"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "結束時間",
+    "ErrorCode": "錯誤代碼",
+    "Message": "訊息",
+    "Result": "結果",
+    "StartedAt": "開始時間",
+    "Step": "步驟"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "允許的用戶端IP",
+    "ContainerGIDs": "容器GID",
+    "ContainerMainGID": "容器主GID",
+    "ContainerUID": "容器UID",
+    "CreatedAt": "建立時間",
+    "Description": "描述",
+    "Disabled": "已停用",
+    "DomainName": "網域",
+    "Email": "電子郵件",
+    "Enabled": "已啟用",
+    "FullName": "全名",
+    "ModifiedAt": "修改時間",
+    "NeedPasswordChange": "需要變更密碼",
+    "Project": "專案",
+    "ResourcePolicy": "資源原則",
+    "Role": "角色",
+    "Status": "狀態",
+    "StatusInfo": "狀態資訊",
+    "SudoSessionEnabled": "Sudo工作階段已啟用",
+    "TwoFA": "雙重驗證",
+    "Username": "使用者名稱"
+  },
+  "error": {
+    "UnknownError": "發生了未知錯誤。請重試。"
+  },
+  "general": {
+    "NSelected": "{{count}}選擇",
+    "Optional": "選填",
+    "TotalItems": "總計{{total}}項目",
+    "button": {
+      "Cancel": "取消",
+      "Close": "關閉",
+      "Collapse": "坍塌",
+      "Copied": "已複製",
+      "CopyAll": "複製全部",
+      "Create": "創造",
+      "Delete": "刪除",
+      "Edit": "編輯",
+      "Expand": "擴張",
+      "Remove": "消除",
+      "Save": "儲存",
+      "Upload": "上傳"
+    },
+    "modal": {
+      "DeleteForeverDesc": "警告：所選項目將被永久刪除且無法恢復。",
+      "ItemSelectedWithCount": "已選擇 {{count}} 項。",
+      "PleaseTypeToConfirm": "請輸入{{ confirmText }}進行確認。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "僅允許字母、數字、'-'、'_' 及 '.'。",
+      "LetterNumber:/-_dot": "僅允許字母 (A–Z, a–z)、數字，以及 '-', '_', ':', '/' 和 '.'。"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+diff --git a/examples/browser.html b/examples/browser.html
+deleted file mode 100644
+index c59d3941ff490cde0e23490d5d4b79ccb0e577c4..0000000000000000000000000000000000000000
+diff --git a/examples/browser_amd.html b/examples/browser_amd.html
+deleted file mode 100644
+index ddd981d9bb754a1ccc773ac56b06939285af543b..0000000000000000000000000000000000000000
+diff --git a/examples/jquery-1.7.2.min.js b/examples/jquery-1.7.2.min.js
+deleted file mode 100644
+index 16ad06c5acaad09ee4d6e9d7c428506db028aeeb..0000000000000000000000000000000000000000
+diff --git a/examples/main.js b/examples/main.js
+deleted file mode 100644
+index a6a9f2836478e55c2f816bc370ca5269a860034b..0000000000000000000000000000000000000000
+diff --git a/examples/require.js b/examples/require.js
+deleted file mode 100644
+index ba19fefece1584c15d677e6a8962265f82249d27..0000000000000000000000000000000000000000
+diff --git a/examples/theme.css b/examples/theme.css
+deleted file mode 100644
+index 5837e1dc877ddbdf51bc1d93fbcb9cbee3ffdf34..0000000000000000000000000000000000000000
+diff --git a/examples/theme.scss b/examples/theme.scss
+deleted file mode 100644
+index e21a4d8769d58c50594b3772b95500b67dc95f04..0000000000000000000000000000000000000000

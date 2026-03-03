@@ -1,0 +1,39 @@
+[general]
+#apiEndpoint =
+#apiEndpointText =
+#defaultSessionEnvironment =
+siteDescription = "Desktop"
+connectionMode = "SESSION"
+allowChangeSigninMode = true
+signupSupport = false
+allowSignout = false
+allowAnonymousChangePassword = false
+allowProjectResourceMonitor = true
+allowManualImageNameForSession = false
+#loginAttemptLimit = 5
+#loginBlockTime = 180
+debug = false
+
+[wsproxy]
+proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
+#proxyBaseURL = ""
+disableCertCheck = false
+
+[resources]
+openPortToPublic = true
+maxCPUCoresPerContainer = 4096
+maxMemoryPerContainer = 16384
+maxCUDADevicesPerContainer = 2048
+maxCUDASharesPerContainer = 4096
+maxShmPerContainer = 512
+maxFileUploadSize = 68719476736 # 64GB.
+
+[environments]
+#allowlist = ""
+
+[server]
+webServerURL =
+
+[plugin]
+#login = "signup-cloud.js"
+#sidebar = "report-cloud.js"

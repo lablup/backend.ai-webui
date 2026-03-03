@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Allokointi",
+    "Architecture": "Arkkitehtuuri",
+    "DiskPerc": "Levy %",
+    "Endpoint": "Päätepiste",
+    "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
+    "Region": "Alue",
+    "ResourceGroup": "Resurssiryhmä",
+    "Running": "Käynnissä",
+    "Schedulable": "Ajastettava",
+    "Starts": "Käynnistykset",
+    "Status": "Tila",
+    "Utilization": "Käyttöaste"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Sallittu",
+    "Permission": "Oikeus"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Aktivoida",
+    "ActivateArtifacts": "Aktivoida esineitä",
+    "AreYouSureYouWantToActivateOne": "Oletko varma, että haluat aktivoida {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Oletko varma, että haluat aktivoida {{count}} esineitä?",
+    "FailedToActivateArtifacts": "Artefaktien aktivointi epäonnistui.",
+    "SuccessfullyActivated": "Onnistuneesti aktivoidut esineet."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Valitse resurssiryhmä"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Kuvaus",
+    "Name": "Nimi",
+    "Source": "Lähde",
+    "Type": "Tyyppi"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Hallinta",
+    "LatestVersion": "Uusin versio",
+    "Name": "Nimi",
+    "Size": "Koko",
+    "Status": "Status",
+    "Updated": "Päivitetty",
+    "Version": "Versio"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Toiminta",
+    "Activate": "Aktivoida",
+    "Controls": "Hallintalaitteet",
+    "Deactivate": "Deaktivoida",
+    "PullLatestVersion": "Vedä uusin versio",
+    "Registry": "Rekisteri",
+    "Scanned": "Skannattu",
+    "Size": "Koko",
+    "Source": "Lähde",
+    "Updated": "Päivitetty",
+    "Version": "Versio"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Tyhjennä",
+    "KeepAsIs": "Pidä ennallaan",
+    "UndoChanges": "Kumoa muutokset"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
+    "Deactivate": "Deaktivoida",
+    "DeactivateArtifacts": "Deaktivoida esineitä",
+    "FailedToDeactivateArtifacts": "Esineiden deaktivointi epäonnistui.",
+    "SuccessfullyDeactivated": "Deaktivoidut esineet onnistuneesti."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "FailedToRemoveVersions": "Versioiden poistaminen epäonnistui.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Vain versiot, jotka eivät ole vetämisessä tai skannattuna, voidaan poistaa.",
+    "RemoveVersions": "Poista versiot",
+    "Size": "Koko",
+    "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
+    "Version": "Versio"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Valitse toimialue"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Viimeksi päivitetty",
+    "Refresh": "Päivitä"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "jälkeen",
+      "Before": "ennen",
+      "GreaterThan": "suurempi kuin",
+      "GreaterThanOrEqual": "suurempi tai yhtä suuri",
+      "IContains": "sisältää",
+      "IEndsWith": "päättyy",
+      "IEquals": "yhtä suuri",
+      "INotContains": "ei sisällä",
+      "INotEndsWith": "ei pääty",
+      "INotEquals": "ei yhtä suuri",
+      "INotStartsWith": "ei ala",
+      "IStartsWith": "alkaa",
+      "In": "sisällä",
+      "LessThan": "pienempi kuin",
+      "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotIn": "ei sisällä"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} versiot jätetään pois.",
+    "FailedToPullVersions": "Versioiden vetäminen epäonnistui.",
+    "OnlySCANNEDVersionsCanBePulled": "Vain skannatut versiot voidaan vetää.",
+    "Pull": "Vedä",
+    "PullVersion": "Vetää versio",
+    "Size": "Koko",
+    "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
+    "Version": "Versio"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
+    "ProjectResourcePolicy": "Projektin resurssipolitiikka",
+    "UpdateMultipleProjects": "Päivitä useita projekteja"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Valitse projekti"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Sallitut kansioisäntäkoneet",
+    "AllowedResourceGroups": "Sallitut resurssiryhmät",
+    "ContainerMustBeSpecified": "Säiliörekisteri on määritettävä käyttäjän tallentamien säiliökuvien säilyttämistä varten.",
+    "ContainerRegistryForImageCommit": "Säiliörekisteri kuvan tallennusta varten",
+    "CreateProject": "Luo projekti",
+    "Description": "Kuvaus",
+    "Domain": "Toimialue",
+    "FailedToCreateProject": "Projektin luominen epäonnistui",
+    "FailedToUpdateProject": "Projektin päivittäminen epäonnistui.",
+    "IsActive": "Aktiivinen?",
+    "MaxAllowedResourceSlots": "Suurin sallittu {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Muistin koko on oltava alle 300 PiB.",
+    "Name": "Nimi",
+    "PleaseEnterBothRegistryAndProject": "Anna sekä rekisteri että projekti.",
+    "Project": "Projekti",
+    "ProjectCreated": "Projekti on luotu.",
+    "ProjectResourcePolicy": "Resurssipolitiikka",
+    "ProjectUpdated": "Projekti on päivitetty.",
+    "Registry": "Rekisteri",
+    "UpdateProject": "Päivitä projekti"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "Haluatko varmasti poistaa projektin {{projectName}} käytöstä?",
+    "AreYouSureToPurgeProject": "Haluatko varmasti poistaa {{projectName}}? Tämä toimenpide on peruuttamaton.",
+    "ContainerRegistry": "Säiliörekisteri",
+    "Controls": "Ohjaimet",
+    "CreatedAt": "Luotu",
+    "Deactivate": "Poista käytöstä",
+    "DeactivateProject": "Poista projekti käytöstä",
+    "Description": "Kuvaus",
+    "Domain": "Toimialue",
+    "FailedToDeactivateProject": "Projektin poistaminen käytöstä epäonnistui.",
+    "FailedToPurgeProject": "Projektin tyhjennys epäonnistui.",
+    "IntegrationID": "Integraation tunnus",
+    "IsActive": "Aktiivinen",
+    "Name": "Nimi",
+    "Project": "Projekti",
+    "ProjectDeactivated": "Projekti on poistettu käytöstä.",
+    "ProjectID": "Projektin tunnus",
+    "ProjectPurged": "Projekti on poistettu pysyvästi.",
+    "Purge": "Tyhjennä",
+    "PurgeProject": "Poista projekti pysyvästi",
+    "Registry": "Rekisteri",
+    "ResourcePolicy": "Resurssipolitiikka",
+    "ScalingGroups": "Resurssiryhmät",
+    "StorageNodes": "Tallennussolmut",
+    "TotalResourceSlots": "Resurssipaikat yhteensä",
+    "Type": "Tyyppi"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Etsi",
+    "ResetFilter": "Nollaa suodattimet"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Peruuta veto",
+    "CancelingWillRestartThePulling": "Peruuttaminen käynnistää vetämisen uudelleen",
+    "FailedToCancelThePulling": "Vedämisen peruuttaminen epäonnistui.",
+    "VersionIsPullingNow": "{{version}} versio vetää nyt.",
+    "VersionPullCanceledSuccessfully": "{{version}} versio peruutettu onnistuneesti.",
+    "WARNING": "VAROITUS",
+    "YouAreAboutToCancelThisVersion": "Olet peruuttanut tämän version"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Valitse resurssiryhmä"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "CreatedAt": "Luotu",
+    "From": "Alkaen",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agentti"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Moni-",
+    "SingleNodeShort": "Yksittäinen"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Rajoittamaton"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "Siirry ensimmäiselle sivulle",
+    "InvalidPageNumber": "Virheellinen sivunumero",
+    "SearchTableColumn": "Hakutaulukon sarakkeet",
+    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
+    "SettingTable": "Taulukon asetukset"
+  },
+  "comp:BAITestButton": {
+    "Test": "testi"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Valitse käyttäjä"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Valitse kansio"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Vaihda tiedoston laajennus",
+    "ChangeFileExtensionDesc": "Tiedoston laajennuksen muuttaminen voi aiheuttaa tiedoston käyttökelvottoman tai avoimen väärin. \nHaluatko edetä?",
+    "Controls": "Hallintalaitteet",
+    "CreateANewFolder": "Luo uusi kansio",
+    "CreatedAt": "Luotu jhk",
+    "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
+    "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
+    "DuplicatedFiles": "Korvata vahvistus",
+    "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
+    "EditFile": "Muokkaa tiedostoa",
+    "FileTooLargeToEdit": "Selaimessa muokkaaminen on rajoitettu, koska tiedostokoko ylittää {{size}}MB.",
+    "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
+    "FolderName": "Kansionimi",
+    "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
+    "ModifiedAt": "Muutettu",
+    "MoreOptions": "Lisää vaihtoehtoja",
+    "Name": "Nimi",
+    "PleaseEnterAFolderName": "Anna kansionimi.",
+    "RenameSuccess": "Nimi on muutettu onnistuneesti.",
+    "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
+    "Size": "Koko",
+    "TypeDeleteToConfirm": "Kirjoita 'Poistaa' vahvistaaksesi.",
+    "TypeFolderNameToDelete": "Kirjoita kansio tai tiedostonimi poistaaksesi.",
+    "UnsupportedFileFormat": "Tämä tiedostomuoto ei tue muokkaamista.",
+    "UploadFiles": "Lähetä tiedostot",
+    "UploadFolder": "Lataa kansio",
+    "error": {
+      "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
+      "FileNameRequired": "Anna tiedoston tai kansionimi."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Päättymisaika",
+    "ErrorCode": "Virhekoodi",
+    "Message": "Viesti",
+    "Result": "Tulos",
+    "StartedAt": "Aloitusaika",
+    "Step": "Vaihe"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",
+    "ContainerGIDs": "Kontin GID:t",
+    "ContainerMainGID": "Kontin päähallinto-GID",
+    "ContainerUID": "Kontin UID",
+    "CreatedAt": "Luotu",
+    "Description": "Kuvaus",
+    "Disabled": "Poistettu käytöstä",
+    "DomainName": "Toimialue",
+    "Email": "Sähköposti",
+    "Enabled": "Käytössä",
+    "FullName": "Koko nimi",
+    "ModifiedAt": "Muokattu",
+    "NeedPasswordChange": "Salasanan vaihto vaaditaan",
+    "Project": "Projekti",
+    "ResourcePolicy": "Resurssikäytäntö",
+    "Role": "Rooli",
+    "Status": "Tila",
+    "StatusInfo": "Tilatiedot",
+    "SudoSessionEnabled": "Sudo-istunto käytössä",
+    "TwoFA": "Kaksivaiheinen todennus",
+    "Username": "Käyttäjänimi"
+  },
+  "error": {
+    "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
+  },
+  "general": {
+    "NSelected": "{{count}} valittu",
+    "Optional": "Valinnainen",
+    "TotalItems": "Yhteensä {{total}} kohteet",
+    "button": {
+      "Cancel": "Peruuttaa",
+      "Close": "Lähellä",
+      "Collapse": "Romahdus",
+      "Copied": "Kopioitu",
+      "CopyAll": "Kopioida kaikki",
+      "Create": "Luoda",
+      "Delete": "Poistaa",
+      "Edit": "Muokkaa",
+      "Expand": "Laajentaa",
+      "Remove": "Poistaa",
+      "Save": "Tallenna",
+      "Upload": "Ladata"
+    },
+    "modal": {
+      "DeleteForeverDesc": "Varoitus: Valitut esineet poistetaan ikuisesti eikä niitä palauteta.",
+      "ItemSelectedWithCount": "{{count}} valitut kohteet.",
+      "PleaseTypeToConfirm": "Kirjoita {{ confirmText }} vahvistaaksesi."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Sallittuja ovat vain kirjaimet, numerot sekä merkit '-', '_' ja '.'.",
+      "LetterNumber:/-_dot": "Sallittuja ovat vain kirjaimet (A–Z, a–z), numerot, '-', '_', ':', '/' ja '.'."
+    }
+  }
+}

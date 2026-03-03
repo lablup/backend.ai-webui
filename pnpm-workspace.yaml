@@ -1,0 +1,39 @@
+packages:
+  - react
+  - packages/backend.ai-ui
+  - packages/eslint-config-bai
+  - packages/backend.ai-docs-toolkit
+  - packages/backend.ai-webui-docs
+
+onlyBuiltDependencies:
+  - bufferutil
+  - core-js
+  - core-js-pure
+  - electron
+  - es5-ext
+  - esbuild
+  - unrs-resolver
+  - utf-8-validate
+
+patchedDependencies:
+  "@cloudscape-design/board-components@3.0.60": react/patches/@cloudscape-design__board-components@3.0.60.patch
+  react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch
+  ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
+  "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
+  "@rc-component/form": react/patches/@rc-component__form.patch
+
+gitBranchLockfile: true
+
+mergeGitBranchLockfilesBranchPattern:
+  - main
+
+minimumReleaseAge: 10080
+
+minimumReleaseAgeExclude:
+  - node-forge@1.3.2
+  - react@19.2.3
+  - react-dom@19.2.3
+  - "@ant-design/x@2.1.3"
+  - react-i18next@16.5.1
+  - i18next@25.7.4
+  - antd@6.1.3

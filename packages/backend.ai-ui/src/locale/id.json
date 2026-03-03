@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Alokasi",
+    "Architecture": "Arsitektur",
+    "DiskPerc": "Disk %",
+    "Endpoint": "Endpoint",
+    "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
+    "Region": "Wilayah",
+    "ResourceGroup": "Grup Sumber Daya",
+    "Running": "Berjalan",
+    "Schedulable": "Dapat dijadwalkan",
+    "Starts": "Mulai",
+    "Status": "Status",
+    "Utilization": "Utilisasi"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Diizinkan",
+    "Permission": "Izin"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Mengaktifkan",
+    "ActivateArtifacts": "Aktifkan artefak",
+    "AreYouSureYouWantToActivateOne": "Anda yakin ingin mengaktifkan {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
+    "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
+    "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Pilih grup sumber daya"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Keterangan",
+    "Name": "Nama",
+    "Source": "Sumber",
+    "Type": "Jenis"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Kontrol",
+    "LatestVersion": "Versi Terbaru",
+    "Name": "Nama",
+    "Size": "Ukuran",
+    "Status": "Status",
+    "Updated": "Diperbarui",
+    "Version": "Versi"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Tindakan",
+    "Activate": "Mengaktifkan",
+    "Controls": "Kontrol",
+    "Deactivate": "Menonaktifkan",
+    "PullLatestVersion": "Tarik versi terbaru",
+    "Registry": "Registri",
+    "Scanned": "Dipindai",
+    "Size": "Ukuran",
+    "Source": "Sumber",
+    "Updated": "Diperbarui",
+    "Version": "Versi"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Hapus",
+    "KeepAsIs": "Pertahankan",
+    "UndoChanges": "Batalkan perubahan"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
+    "Deactivate": "Menonaktifkan",
+    "DeactivateArtifacts": "Nonaktifkan artefak",
+    "FailedToDeactivateArtifacts": "Gagal menonaktifkan artefak.",
+    "SuccessfullyDeactivated": "Berhasil menonaktifkan artefak."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToRemoveVersions": "Gagal menghapus versi.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Hanya versi yang tidak menarik atau dipindai yang dapat dilepas.",
+    "RemoveVersions": "Hapus versi",
+    "Size": "Ukuran",
+    "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
+    "Version": "Versi"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Pilih Domain"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Terakhir diperbarui",
+    "Refresh": "Segarkan"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "setelah",
+      "Before": "sebelum",
+      "GreaterThan": "lebih besar dari",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "IContains": "mengandung",
+      "IEndsWith": "diakhiri dengan",
+      "IEquals": "sama dengan",
+      "INotContains": "tidak berisi",
+      "INotEndsWith": "tidak diakhiri dengan",
+      "INotEquals": "tidak sama dengan",
+      "INotStartsWith": "tidak dimulai dengan",
+      "IStartsWith": "dimulai dengan",
+      "In": "dalam",
+      "LessThan": "kurang dari",
+      "LessThanOrEqual": "kurang dari atau sama",
+      "NotIn": "tidak dalam"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToPullVersions": "Gagal menarik versi.",
+    "OnlySCANNEDVersionsCanBePulled": "Hanya versi yang dipindai yang bisa ditarik.",
+    "Pull": "Menarik",
+    "PullVersion": "Tarik versi",
+    "Size": "Ukuran",
+    "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
+    "Version": "Versi"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
+    "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Pilih Proyek"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Host Folder yang Diizinkan",
+    "AllowedResourceGroups": "Grup Sumber Daya yang Diizinkan",
+    "ContainerMustBeSpecified": "Sebuah registri kontainer harus ditentukan untuk menyimpan image kontainer yang di-commit oleh pengguna.",
+    "ContainerRegistryForImageCommit": "Registry Kontainer untuk Commit Image",
+    "CreateProject": "Buat Proyek",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Gagal membuat proyek",
+    "FailedToUpdateProject": "Gagal memperbarui proyek",
+    "IsActive": "Aktif?",
+    "MaxAllowedResourceSlots": "Maksimum {{resourceKey}} yang diizinkan",
+    "MemorySizeShouldBeLessThan300PiB": "Ukuran memori harus kurang dari 300 PiB",
+    "Name": "Nama",
+    "PleaseEnterBothRegistryAndProject": "Harap masukkan registri dan proyek.",
+    "Project": "Proyek",
+    "ProjectCreated": "Proyek berhasil dibuat.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya",
+    "ProjectUpdated": "Proyek telah diperbarui.",
+    "Registry": "Registri",
+    "UpdateProject": "Perbarui Proyek"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
+    "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
+    "ContainerRegistry": "Registri Kontainer",
+    "Controls": "Kontrol",
+    "CreatedAt": "Dibuat pada",
+    "Deactivate": "Nonaktifkan",
+    "DeactivateProject": "Nonaktifkan Proyek",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",
+    "FailedToPurgeProject": "Gagal menghapus proyek secara permanen.",
+    "IntegrationID": "ID Integrasi",
+    "IsActive": "Aktif",
+    "Name": "Nama",
+    "Project": "Proyek",
+    "ProjectDeactivated": "Proyek telah dinonaktifkan.",
+    "ProjectID": "ID Proyek",
+    "ProjectPurged": "Proyek telah dihapus secara permanen.",
+    "Purge": "Bersihkan",
+    "PurgeProject": "Hapus Proyek Secara Permanen",
+    "Registry": "Registri",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "ScalingGroups": "Grup Sumber Daya",
+    "StorageNodes": "Node Penyimpanan",
+    "TotalResourceSlots": "Jumlah Slot Sumber Daya",
+    "Type": "Tipe"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Pencarian",
+    "ResetFilter": "Setel ulang filter"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Batalkan Tarik",
+    "CancelingWillRestartThePulling": "Membatalkan akan memulai kembali penarikan",
+    "FailedToCancelThePulling": "Gagal membatalkan penarikan.",
+    "VersionIsPullingNow": "{{version}} versi menarik sekarang.",
+    "VersionPullCanceledSuccessfully": "Tarik {{version}} versi berhasil dibatalkan.",
+    "WARNING": "PERINGATAN",
+    "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Pilih Grup Sumber Daya"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "CreatedAt": "Dibuat pada",
+    "From": "Dari",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "StatusTransition": "Transisi Status",
+    "To": "sampai",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agen"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Multi",
+    "SingleNodeShort": "Lajang"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tak terbatas"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "Ke halaman pertama",
+    "InvalidPageNumber": "Nomor halaman tidak valid",
+    "SearchTableColumn": "Kolom Tabel Cari",
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel"
+  },
+  "comp:BAITestButton": {
+    "Test": "tes"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Pilih Pengguna"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Ubah ekstensi file",
+    "ChangeFileExtensionDesc": "Mengubah ekstensi file dapat menyebabkan file menjadi tidak dapat digunakan atau dibuka secara tidak benar. \nApakah Anda ingin melanjutkan?",
+    "Controls": "Kontrol",
+    "CreateANewFolder": "Buat folder baru",
+    "CreatedAt": "Dibuat di",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
+    "DuplicatedFiles": "Timpa konfirmasi",
+    "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "EditFile": "Edit File",
+    "FileTooLargeToEdit": "Pengeditan di browser dibatasi karena ukuran file melebihi {{size}}MB.",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "FolderName": "Nama folder",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "ModifiedAt": "Dimodifikasi di",
+    "MoreOptions": "Opsi lainnya",
+    "Name": "Nama",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameSuccess": "Namanya telah berhasil diubah.",
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "Size": "Ukuran",
+    "TypeDeleteToConfirm": "Ketik 'Menghapus' untuk mengonfirmasi.",
+    "TypeFolderNameToDelete": "Ketik folder atau nama file yang ingin dihapus.",
+    "UnsupportedFileFormat": "Format file ini tidak mendukung pengeditan.",
+    "UploadFiles": "Unggah file",
+    "UploadFolder": "Unggah folder",
+    "error": {
+      "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
+      "FileNameRequired": "Harap masukkan file atau nama folder."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kode Kesalahan",
+    "Message": "Pesan",
+    "Result": "Hasil",
+    "StartedAt": "Dimulai pada",
+    "Step": "Langkah"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP Klien yang Diizinkan",
+    "ContainerGIDs": "GID Container",
+    "ContainerMainGID": "GID Utama Container",
+    "ContainerUID": "UID Container",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Deskripsi",
+    "Disabled": "Nonaktif",
+    "DomainName": "Domain",
+    "Email": "Email",
+    "Enabled": "Aktif",
+    "FullName": "Nama Lengkap",
+    "ModifiedAt": "Dimodifikasi pada",
+    "NeedPasswordChange": "Perlu Ganti Kata Sandi",
+    "Project": "Proyek",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "Role": "Peran",
+    "Status": "Status",
+    "StatusInfo": "Info Status",
+    "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
+    "TwoFA": "Autentikasi Dua Faktor",
+    "Username": "Nama Pengguna"
+  },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
+  "general": {
+    "NSelected": "{{count}} dipilih",
+    "Optional": "Opsional",
+    "TotalItems": "Total {{total}} item",
+    "button": {
+      "Cancel": "Membatalkan",
+      "Close": "Menutup",
+      "Collapse": "Runtuh",
+      "Copied": "Disalin",
+      "CopyAll": "Salin semua",
+      "Create": "Membuat",
+      "Delete": "Menghapus",
+      "Edit": "Edit",
+      "Expand": "Memperluas",
+      "Remove": "Menghapus",
+      "Save": "Simpan",
+      "Upload": "Mengunggah"
+    },
+    "modal": {
+      "DeleteForeverDesc": "PERINGATAN: Item yang dipilih akan dihapus selamanya dan tidak dapat dipulihkan.",
+      "ItemSelectedWithCount": "{{count}} item dipilih.",
+      "PleaseTypeToConfirm": "Silakan ketik {{ confirmText }} untuk mengonfirmasi."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Hanya huruf, angka, '-', '_', dan '.' yang diperbolehkan.",
+      "LetterNumber:/-_dot": "Hanya huruf (A–Z, a–z), angka, '-', '_', ':', '/' dan '.' yang diizinkan."
+    }
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "การจัดสรร",
+    "Architecture": "สถาปัตยกรรม",
+    "DiskPerc": "การใช้ดิสก์ %",
+    "Endpoint": "เอ็นด์พอยต์",
+    "NoAvailableLiveStat": "ไม่มีสถิติเรียลไทม์ที่ใช้งานได้",
+    "Region": "ภูมิภาค",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "Running": "กำลังทำงาน",
+    "Schedulable": "ตั้งเวลาได้",
+    "Starts": "เริ่ม",
+    "Status": "สถานะ",
+    "Utilization": "การใช้งาน"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "อนุญาตแล้ว",
+    "Permission": "สิทธิ์"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "เปิดใช้งาน",
+    "ActivateArtifacts": "เปิดใช้งานสิ่งประดิษฐ์",
+    "AreYouSureYouWantToActivateOne": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{name}}?",
+    "AreYouSureYouWantToActivateSome": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{count}} สิ่งประดิษฐ์?",
+    "FailedToActivateArtifacts": "ไม่สามารถเปิดใช้งานสิ่งประดิษฐ์ได้",
+    "SuccessfullyActivated": "สิ่งประดิษฐ์ที่เปิดใช้งานสำเร็จ"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "เลือกกลุ่มทรัพยากร"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "คำอธิบาย",
+    "Name": "ชื่อ",
+    "Source": "แหล่งที่มา",
+    "Type": "พิมพ์"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "ควบคุม",
+    "LatestVersion": "เวอร์ชันล่าสุด",
+    "Name": "ชื่อ",
+    "Size": "ขนาด",
+    "Status": "สถานะ",
+    "Updated": "อัปเดต",
+    "Version": "รุ่น"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "การกระทำ",
+    "Activate": "เปิดใช้งาน",
+    "Controls": "การควบคุม",
+    "Deactivate": "ปิดใช้งาน",
+    "PullLatestVersion": "ดึงเวอร์ชันล่าสุด",
+    "Registry": "รีจิสทรี",
+    "Scanned": "สแกน",
+    "Size": "ขนาด",
+    "Source": "แหล่งที่มา",
+    "Updated": "อัปเดต",
+    "Version": "รุ่น"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "ล้าง",
+    "KeepAsIs": "เก็บไว้ตามเดิม",
+    "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateArtifacts": "ปิดการใช้งานสิ่งประดิษฐ์",
+    "FailedToDeactivateArtifacts": "ล้มเหลวในการปิดการใช้งานสิ่งประดิษฐ์",
+    "SuccessfullyDeactivated": "ปิดการใช้งานสิ่งประดิษฐ์สำเร็จ"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "FailedToRemoveVersions": "ไม่สามารถลบเวอร์ชันได้",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "เฉพาะเวอร์ชันที่ไม่ได้อยู่ในการดึงหรือสแกนเท่านั้น",
+    "RemoveVersions": "ลบเวอร์ชัน",
+    "Size": "ขนาด",
+    "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
+    "Version": "รุ่น"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "เลือกโดเมน"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "อัปเดตล่าสุด",
+    "Refresh": "รีเฟรช"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "หลัง",
+      "Before": "ก่อน",
+      "GreaterThan": "มากกว่า",
+      "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
+      "IContains": "ประกอบด้วย",
+      "IEndsWith": "ลงท้ายด้วย",
+      "IEquals": "เท่ากับ",
+      "INotContains": "ไม่มี",
+      "INotEndsWith": "ไม่ลงท้ายด้วย",
+      "INotEquals": "ไม่เท่ากับ",
+      "INotStartsWith": "ไม่เริ่มต้นด้วย",
+      "IStartsWith": "เริ่มต้นด้วย",
+      "In": "ใน",
+      "LessThan": "น้อยกว่า",
+      "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotIn": "ไม่ใน"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
+    "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",
+    "OnlySCANNEDVersionsCanBePulled": "สามารถดึงรุ่นสแกนได้เท่านั้น",
+    "Pull": "ดึง",
+    "PullVersion": "Pull Version",
+    "Size": "ขนาด",
+    "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
+    "Version": "รุ่น"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
+    "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
+    "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "เลือกโปรเจกต์"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "โฮสต์ที่อนุญาตสำหรับโฟลเดอร์",
+    "AllowedResourceGroups": "กลุ่มทรัพยากรที่ได้รับอนุญาต",
+    "ContainerMustBeSpecified": "ต้องระบุรีจิสทรีของคอนเทนเนอร์เพื่อเก็บอิมเมจคอนเทนเนอร์ที่ผู้ใช้คอมมิต",
+    "ContainerRegistryForImageCommit": "รีจิสทรีคอนเทนเนอร์สำหรับการคอมมิตอิมเมจ",
+    "CreateProject": "สร้างโปรเจกต์",
+    "Description": "คำอธิบาย",
+    "Domain": "โดเมน",
+    "FailedToCreateProject": "ไม่สามารถสร้างโปรเจกต์ได้",
+    "FailedToUpdateProject": "ไม่สามารถอัปเดตโปรเจ็กต์ได้",
+    "IsActive": "ใช้งานอยู่หรือไม่?",
+    "MaxAllowedResourceSlots": "สูงสุดที่อนุญาตสำหรับ {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "ขนาดหน่วยความจำควรน้อยกว่า 300 PiB",
+    "Name": "ชื่อ",
+    "PleaseEnterBothRegistryAndProject": "กรุณากรอกทั้งรีจิสทรีและโปรเจกต์",
+    "Project": "โครงการ",
+    "ProjectCreated": "สร้างโครงการเรียบร้อยแล้ว",
+    "ProjectResourcePolicy": "นโยบายทรัพยากร",
+    "ProjectUpdated": "โปรเจกต์ได้รับการอัปเดตแล้ว.",
+    "Registry": "รีจิสทรี",
+    "UpdateProject": "อัปเดตโปรเจกต์"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "คุณแน่ใจว่าต้องการปิดใช้งานโปรเจ็กต์ {{projectName}}?",
+    "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
+    "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
+    "Controls": "การควบคุม",
+    "CreatedAt": "สร้างเมื่อ",
+    "Deactivate": "ปิดใช้งาน",
+    "DeactivateProject": "ปิดการใช้งานโครงการ",
+    "Description": "คำอธิบาย",
+    "Domain": "โดเมน",
+    "FailedToDeactivateProject": "ไม่สามารถปิดใช้งานโปรเจ็กต์ได้",
+    "FailedToPurgeProject": "ไม่สามารถล้างโปรเจกต์ได้",
+    "IntegrationID": "รหัสการผสานระบบ",
+    "IsActive": "ใช้งาน",
+    "Name": "ชื่อ",
+    "Project": "โปรเจ็กต์",
+    "ProjectDeactivated": "โครงการถูกปิดการใช้งานแล้ว",
+    "ProjectID": "รหัสโครงการ",
+    "ProjectPurged": "โครงการถูกลบอย่างถาวร",
+    "Purge": "ลบถาวร",
+    "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
+    "Registry": "รีจิสทรี",
+    "ResourcePolicy": "นโยบายทรัพยากร",
+    "ScalingGroups": "กลุ่มทรัพยากร",
+    "StorageNodes": "โหนดจัดเก็บข้อมูล",
+    "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
+    "Type": "ประเภท"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "ค้นหา",
+    "ResetFilter": "รีเซ็ตตัวกรอง"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "ยกเลิกการดึง",
+    "CancelingWillRestartThePulling": "การยกเลิกจะรีสตาร์ทการดึง",
+    "FailedToCancelThePulling": "ล้มเหลวในการยกเลิกการดึง",
+    "VersionIsPullingNow": "{{version}} เวอร์ชันกำลังดึงอยู่ในขณะนี้",
+    "VersionPullCanceledSuccessfully": "ดึง {{version}} ยกเลิกเวอร์ชันสำเร็จ",
+    "WARNING": "คำเตือน",
+    "YouAreAboutToCancelThisVersion": "คุณกำลังจะยกเลิกเวอร์ชันนี้"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "CreatedAt": "สร้างเมื่อ",
+    "From": "จาก",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "ตัวแทน"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "หลาย",
+    "SingleNodeShort": "เดี่ยว"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "ไม่ จำกัด"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "ไปยังหน้าแรก",
+    "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
+    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
+    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
+    "SettingTable": "การตั้งค่าตาราง"
+  },
+  "comp:BAITestButton": {
+    "Test": "ทดสอบ"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "เลือกผู้ใช้"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "เปลี่ยนนามสกุลไฟล์",
+    "ChangeFileExtensionDesc": "การเปลี่ยนนามสกุลไฟล์อาจทำให้ไฟล์ไม่สามารถใช้งานได้หรือเปิดไม่ถูกต้อง \nคุณต้องการดำเนินการต่อหรือไม่?",
+    "Controls": "การควบคุม",
+    "CreateANewFolder": "สร้างโฟลเดอร์ใหม่",
+    "CreatedAt": "สร้างขึ้นที่",
+    "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
+    "DeleteSelectedItemsDialog": "ลบการยืนยัน",
+    "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
+    "DuplicatedFiles": "การยืนยันการเขียนทับ",
+    "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
+    "EditFile": "แก้ไขไฟล์",
+    "FileTooLargeToEdit": "การแก้ไขในเบราว์เซอร์ถูกจำกัดเนื่องจากขนาดไฟล์เกิน {{size}}MB",
+    "FolderCreatedSuccessfully": "โฟลเดอร์สร้างสำเร็จ",
+    "FolderName": "ชื่อโฟลเดอร์",
+    "MaxFolderNameLength": "ชื่อโฟลเดอร์ต้องเป็น 255 อักขระหรือน้อยกว่า",
+    "ModifiedAt": "ดัดแปลงที่",
+    "MoreOptions": "ตัวเลือกเพิ่มเติม",
+    "Name": "ชื่อ",
+    "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
+    "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
+    "Size": "ขนาด",
+    "TypeDeleteToConfirm": "พิมพ์ 'ลบ' เพื่อยืนยัน",
+    "TypeFolderNameToDelete": "พิมพ์โฟลเดอร์หรือชื่อไฟล์ที่จะลบ.",
+    "UnsupportedFileFormat": "รูปแบบไฟล์นี้ไม่รองรับการแก้ไข",
+    "UploadFiles": "อัปโหลดไฟล์",
+    "UploadFolder": "โฟลเดอร์อัปโหลด",
+    "error": {
+      "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
+      "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "สิ้นสุดเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "Message": "ข้อความ",
+    "Result": "ผลลัพธ์",
+    "StartedAt": "เริ่มเมื่อ",
+    "Step": "ขั้นตอน"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
+    "ContainerGIDs": "GID ของคอนเทนเนอร์",
+    "ContainerMainGID": "GID หลักของคอนเทนเนอร์",
+    "ContainerUID": "UID ของคอนเทนเนอร์",
+    "CreatedAt": "สร้างเมื่อ",
+    "Description": "คำอธิบาย",
+    "Disabled": "ปิดใช้งาน",
+    "DomainName": "โดเมน",
+    "Email": "อีเมล",
+    "Enabled": "เปิดใช้งาน",
+    "FullName": "ชื่อเต็ม",
+    "ModifiedAt": "แก้ไขเมื่อ",
+    "NeedPasswordChange": "ต้องเปลี่ยนรหัสผ่าน",
+    "Project": "โครงการ",
+    "ResourcePolicy": "นโยบายทรัพยากร",
+    "Role": "บทบาท",
+    "Status": "สถานะ",
+    "StatusInfo": "ข้อมูลสถานะ",
+    "SudoSessionEnabled": "เซสชัน Sudo เปิดใช้งาน",
+    "TwoFA": "การยืนยันตัวตนสองขั้นตอน",
+    "Username": "ชื่อผู้ใช้"
+  },
+  "error": {
+    "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
+  },
+  "general": {
+    "NSelected": "{{count}} เลือก",
+    "Optional": "ไม่บังคับ",
+    "TotalItems": "รวม {{total}} รายการ",
+    "button": {
+      "Cancel": "ยกเลิก",
+      "Close": "ปิด",
+      "Collapse": "ทรุด",
+      "Copied": "คัดลอกแล้ว",
+      "CopyAll": "คัดลอกทั้งหมด",
+      "Create": "สร้าง",
+      "Delete": "ลบ",
+      "Edit": "แก้ไข",
+      "Expand": "ขยาย",
+      "Remove": "ลบ",
+      "Save": "บันทึก",
+      "Upload": "อัพโหลด"
+    },
+    "modal": {
+      "DeleteForeverDesc": "คำเตือน: รายการที่เลือกจะถูกลบถาวรและไม่สามารถกู้คืนได้",
+      "ItemSelectedWithCount": "เลือกแล้ว {{count}} รายการ",
+      "PleaseTypeToConfirm": "กรุณาพิมพ์ {{ confirmText }} เพื่อยืนยัน"
+    },
+    "validation": {
+      "LetterNumber-_dot": "อนุญาตให้ใช้ได้เฉพาะตัวอักษร ตัวเลข '-' '_' และ '.' เท่านั้น",
+      "LetterNumber:/-_dot": "อนุญาตเฉพาะตัวอักษร (A–Z, a–z), ตัวเลข และสัญลักษณ์ '-', '_', ':', '/' และ '.' เท่านั้น"
+    }
+  }
+}

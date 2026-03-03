@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "할당 정보",
+    "Architecture": "아키텍처",
+    "DiskPerc": "디스크 %",
+    "Endpoint": "엔드포인트",
+    "NoAvailableLiveStat": "표시할 사용량 없음",
+    "Region": "지역",
+    "ResourceGroup": "자원 그룹",
+    "Running": "실행중",
+    "Schedulable": "스케줄링 가능",
+    "Starts": "시작",
+    "Status": "상태",
+    "Utilization": "사용량"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "허용",
+    "Permission": "권한"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "활성화",
+    "ActivateArtifacts": "아티팩트를 활성화",
+    "AreYouSureYouWantToActivateOne": "{{name}}을 활성화 하시겠습니까?",
+    "AreYouSureYouWantToActivateSome": "{{count}}개의 아티팩트를 활성화 하시겠습니까?",
+    "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
+    "SuccessfullyActivated": "성공적으로 아티팩트를 활성화했습니다."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "리소스 그룹을 선택해주세요"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "설명",
+    "Name": "이름",
+    "Source": "소스",
+    "Type": "유형"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "제어",
+    "LatestVersion": "최신 버전",
+    "Name": "이름",
+    "Size": "크기",
+    "Status": "상태",
+    "Updated": "업데이트",
+    "Version": "버전"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "행동",
+    "Activate": "활성화",
+    "Controls": "제어",
+    "Deactivate": "비활성화",
+    "PullLatestVersion": "최신 버전을 가져옵니다",
+    "Registry": "레지스트리",
+    "Scanned": "스캔",
+    "Size": "크기",
+    "Source": "소스",
+    "Updated": "업데이트",
+    "Version": "버전"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "지우기",
+    "KeepAsIs": "그대로 유지",
+    "UndoChanges": "변경 취소"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "{{name}}를 비활성화 하시겠습니까?",
+    "AreYouSureYouWantToDeactivateSome": "{{count}}개의 아티팩트를 비활성화 하시겠습니까?",
+    "Deactivate": "비활성화",
+    "DeactivateArtifacts": "아티팩트 비활성화",
+    "FailedToDeactivateArtifacts": "아티팩트를 비활성화하는 데 실패했습니다.",
+    "SuccessfullyDeactivated": "아티팩트를 성공적으로 비활성화했습니다."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "FailedToRemoveVersions": "버전을 제거하는데 실패했습니다.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "SCANNED 또는 PULLING이 아닌 버전만 제거 가능합니다.",
+    "RemoveVersions": "목록에서 버전 제거하기",
+    "Size": "크기",
+    "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
+    "Version": "버전"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "도메인 선택"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "마지막 업데이트",
+    "Refresh": "새로고침"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "이후",
+      "Before": "이전",
+      "GreaterThan": "초과",
+      "GreaterThanOrEqual": "이상",
+      "IContains": "포함",
+      "IEndsWith": "끝남",
+      "IEquals": "같음",
+      "INotContains": "포함하지 않음",
+      "INotEndsWith": "끝나지 않음",
+      "INotEquals": "같지 않음",
+      "INotStartsWith": "시작하지 않음",
+      "IStartsWith": "시작",
+      "In": "포함됨",
+      "LessThan": "미만",
+      "LessThanOrEqual": "이하",
+      "NotIn": "포함되지 않음"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFace 토큰을 입력하세요",
+    "HuggingFaceSettings": "Hugging Face 설정",
+    "Token": "토큰",
+    "TokenUpdatedSuccessfully": "토큰이 성공적으로 업데이트되었습니다."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
+    "FailedToPullVersions": "버전을 가져오는데 실패했습니다.",
+    "OnlySCANNEDVersionsCanBePulled": "SCANNED인 버전만 가져올 수 있습니다.",
+    "Pull": "가져오기",
+    "PullVersion": "버전 가져오기",
+    "Size": "크기",
+    "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
+    "Version": "버전"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
+    "ProjectResourcePolicy": "프로젝트 리소스 정책",
+    "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "프로젝트를 선택해주세요"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "허용된 호스트",
+    "AllowedResourceGroups": "허용된 리소스 그룹",
+    "ContainerMustBeSpecified": " 사용자가 커밋한 컨테이너 이미지를 저장하려면 컨테이너 레지스트리를 지정해야 합니다.",
+    "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
+    "CreateProject": "프로젝트 생성",
+    "Description": "설명",
+    "Domain": "도메인",
+    "FailedToCreateProject": "프로젝트 생성에 실패했습니다.",
+    "FailedToUpdateProject": "프로젝트 업데이트에 실패했습니다.",
+    "IsActive": "활성화?",
+    "MaxAllowedResourceSlots": "최대 허용 {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "메모리 사이즈는 300 PiB보다 작아야 합니다.",
+    "Name": "이름",
+    "PleaseEnterBothRegistryAndProject": "레지스트리와 프로젝트 모두 입력해 주세요.",
+    "Project": "프로젝트",
+    "ProjectCreated": "프로젝트가 생성되었습니다.",
+    "ProjectResourcePolicy": "리소스 정책",
+    "ProjectUpdated": "프로젝트가 업데이트 되었습니다.",
+    "Registry": "레지스트리",
+    "UpdateProject": "프로젝트 수정"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
+    "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "ContainerRegistry": "컨테이너 레지스트리",
+    "Controls": "제어",
+    "CreatedAt": "생성 시각",
+    "Deactivate": "비활성화",
+    "DeactivateProject": "프로젝트 비활성화",
+    "Description": "설명",
+    "Domain": "도메인",
+    "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",
+    "FailedToPurgeProject": "프로젝트 삭제에 실패했습니다.",
+    "IntegrationID": "통합 ID",
+    "IsActive": "활성",
+    "Name": "이름",
+    "Project": "프로젝트",
+    "ProjectDeactivated": "프로젝트가 비활성화됐습니다.",
+    "ProjectID": "프로젝트 ID",
+    "ProjectPurged": "프로젝트를 삭제했습니다.",
+    "Purge": "삭제",
+    "PurgeProject": "프로젝트 삭제",
+    "Registry": "레지스트리",
+    "ResourcePolicy": "자원 정책",
+    "ScalingGroups": "자원 그룹",
+    "StorageNodes": "저장소 노드",
+    "TotalResourceSlots": "총 리소스 슬롯",
+    "Type": "타입"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "검색",
+    "ResetFilter": "필터 초기화"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "가져오기 취소",
+    "CancelingWillRestartThePulling": "취소하면 처음부터 가져옵니다.",
+    "FailedToCancelThePulling": "가져오기를 취소하는데 실패했습니다.",
+    "VersionIsPullingNow": "{{version}} 버전을 지금 가져오는 중입니다.",
+    "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 성공적으로 취소했습니다.",
+    "WARNING": "경고",
+    "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "CreatedAt": "생성일",
+    "From": "이전",
+    "Phase": "페이즈",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "실행노드"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "다중",
+    "SingleNodeShort": "단일"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "제한없음"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "첫 페이지로 이동하기",
+    "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
+    "SearchTableColumn": "표시할 열 검색",
+    "SelectColumnToDisplay": "표시할 열 선택",
+    "SettingTable": "표 설정"
+  },
+  "comp:BAITestButton": {
+    "Test": "테스트"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "사용자를 선택해주세요"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "폴더를 선택해주세요"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "파일 확장자 변경",
+    "ChangeFileExtensionDesc": "파일 확장자를 변경하면 파일이 사용 불가능해지거나 올바르게 열리지 않을 수 있습니다. 계속하시겠습니까?",
+    "Controls": "제어",
+    "CreateANewFolder": "새 폴더 생성",
+    "CreatedAt": "생성일",
+    "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
+    "DeleteSelectedItemsDialog": "삭제 확인",
+    "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
+    "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요.",
+    "DuplicatedFiles": "덮어쓰기 확인",
+    "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
+    "EditFile": "파일 편집",
+    "FileTooLargeToEdit": "파일 용량이 {{size}}MB를 초과하여 브라우저 편집이 제한됩니다.",
+    "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
+    "FolderName": "폴더 이름",
+    "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",
+    "ModifiedAt": "수정일",
+    "MoreOptions": "더 많은 옵션",
+    "Name": "이름",
+    "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
+    "RenameSuccess": "이름이 성공적으로 변경되었습니다.",
+    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
+    "Size": "크기",
+    "TypeDeleteToConfirm": "확인을 위해 '삭제'를 입력하세요.",
+    "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 또는 파일 이름을 입력하세요.",
+    "UnsupportedFileFormat": "이 파일 형식은 편집을 지원하지 않습니다.",
+    "UploadFiles": "파일 업로드",
+    "UploadFolder": "폴더 업로드",
+    "error": {
+      "DuplicatedName": "중복된 이름이 있습니다. 다른 이름을 입력해주세요.",
+      "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "표시할 리소스 데이터가 없습니다"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "종료일",
+    "ErrorCode": "오류 코드",
+    "Message": "메시지",
+    "Result": "결과",
+    "StartedAt": "시작일",
+    "Step": "세부단계"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "허용된 클라이언트 IP",
+    "ContainerGIDs": "컨테이너 GID",
+    "ContainerMainGID": "컨테이너 메인 GID",
+    "ContainerUID": "컨테이너 UID",
+    "CreatedAt": "생성일",
+    "Description": "설명",
+    "Disabled": "비활성화",
+    "DomainName": "도메인",
+    "Email": "이메일",
+    "Enabled": "활성화",
+    "FullName": "전체 이름",
+    "ModifiedAt": "수정일",
+    "NeedPasswordChange": "비밀번호 변경 필요",
+    "Project": "프로젝트",
+    "ResourcePolicy": "리소스 정책",
+    "Role": "역할",
+    "Status": "상태",
+    "StatusInfo": "상태 정보",
+    "SudoSessionEnabled": "Sudo 세션 활성화",
+    "TwoFA": "2단계 인증",
+    "Username": "사용자 이름"
+  },
+  "error": {
+    "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
+  },
+  "general": {
+    "NSelected": "{{count}}개 선택됨",
+    "Optional": "선택",
+    "TotalItems": "총 {{total}} 항목",
+    "button": {
+      "Cancel": "취소",
+      "Close": "닫기",
+      "Collapse": "접기",
+      "Copied": "복사됨",
+      "CopyAll": "모두 복사",
+      "Create": "생성",
+      "Delete": "삭제",
+      "Edit": "편집",
+      "Expand": "펼치기",
+      "Remove": "제거",
+      "Save": "저장",
+      "Upload": "업로드"
+    },
+    "modal": {
+      "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다.",
+      "ItemSelectedWithCount": "{{count}}개 선택됨.",
+      "PleaseTypeToConfirm": "{{ confirmText }}를 입력하십시오."
+    },
+    "validation": {
+      "LetterNumber-_dot": "문자, 숫자, '-', '_', '.'만 입력할 수 있습니다.",
+      "LetterNumber:/-_dot": "알파벳 대소문자 (A-Z, a-z), 숫자, '-', '_', ':', '/', '.'만 입력할 수 있습니다."
+    }
+  }
+}

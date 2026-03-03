@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Κατανομή",
+    "Architecture": "Αρχιτεκτονική",
+    "DiskPerc": "Χρήση δίσκου %",
+    "Endpoint": "Σημείο τερματισμού",
+    "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
+    "Region": "Περιοχή",
+    "ResourceGroup": "Ομάδα πόρων",
+    "Running": "Εκτελείται",
+    "Schedulable": "Προγραμματιζόμενο",
+    "Starts": "Εκκινήσεις",
+    "Status": "Κατάσταση",
+    "Utilization": "Χρήση"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Επιτρέπεται",
+    "Permission": "Δικαίωμα"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Δραστηριοποιώ",
+    "ActivateArtifacts": "Ενεργοποιήστε αντικείμενα",
+    "AreYouSureYouWantToActivateOne": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{name}};",
+    "AreYouSureYouWantToActivateSome": "Είστε βέβαιοι ότι θέλετε να ενεργοποιήσετε {{count}} τεχνουργήματα;",
+    "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
+    "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Επιλέξτε ομάδα πόρων"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Περιγραφή",
+    "Name": "Ονομα",
+    "Source": "Πηγή",
+    "Type": "Τύπος"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Ελεγχος",
+    "LatestVersion": "Τελευταία έκδοση",
+    "Name": "Ονομα",
+    "Size": "Μέγεθος",
+    "Status": "Κατάσταση",
+    "Updated": "Ενημερωμένος",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Δράση",
+    "Activate": "Δραστηριοποιώ",
+    "Controls": "Χειριστήρια",
+    "Deactivate": "Απενεργοποιούμαι",
+    "PullLatestVersion": "Τραβήξτε την τελευταία έκδοση",
+    "Registry": "Μητρώο",
+    "Scanned": "Σαρωμένος",
+    "Size": "Μέγεθος",
+    "Source": "Πηγή",
+    "Updated": "Ενημερωμένος",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Καθαρισμός",
+    "KeepAsIs": "Διατήρηση ως έχει",
+    "UndoChanges": "Αναίρεση αλλαγών"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
+    "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
+    "Deactivate": "Απενεργοποιούμαι",
+    "DeactivateArtifacts": "Απενεργοποιημένα αντικείμενα",
+    "FailedToDeactivateArtifacts": "Απέτυχε να απενεργοποιήσει τα τεχνουργήματα.",
+    "SuccessfullyDeactivated": "Επιτυχώς απενεργοποιημένα αντικείμενα."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "FailedToRemoveVersions": "Αποτυχία κατάργησης των εκδόσεων.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Μόνο εκδόσεις που δεν είναι σε τράβηγμα ή σαρωμένη μπορούν να αφαιρεθούν.",
+    "RemoveVersions": "Καταργήστε τις εκδόσεις",
+    "Size": "Μέγεθος",
+    "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Επιλέξτε τομέα"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Τελευταία ενημέρωση",
+    "Refresh": "Ανανέωση"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "μετά",
+      "Before": "πριν",
+      "GreaterThan": "μεγαλύτερο από",
+      "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
+      "IContains": "περιέχει",
+      "IEndsWith": "τελειώνει με",
+      "IEquals": "ίσο με",
+      "INotContains": "δεν περιέχει",
+      "INotEndsWith": "δεν τελειώνει με",
+      "INotEquals": "όχι ίσο με",
+      "INotStartsWith": "δεν αρχίζει με",
+      "IStartsWith": "αρχίζει με",
+      "In": "σε",
+      "LessThan": "μικρότερο από",
+      "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotIn": "όχι σε"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
+    "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",
+    "OnlySCANNEDVersionsCanBePulled": "Μπορούν να τραβηχτούν μόνο οι σαρωμένες εκδόσεις.",
+    "Pull": "Τραβήξτε",
+    "PullVersion": "Εκδοχή έλξης",
+    "Size": "Μέγεθος",
+    "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
+    "Version": "Εκδοχή"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
+    "ProjectResourcePolicy": "Πολιτική πόρων έργου",
+    "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Επιλέξτε έργο"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Επιτρεπόμενοι hosts φακέλων",
+    "AllowedResourceGroups": "Επιτρεπόμενες ομάδες πόρων",
+    "ContainerMustBeSpecified": "Πρέπει να καθοριστεί αποθετήριο για την αποθήκευση των εικόνων κοντέινερ που προωθεί ο χρήστης.",
+    "ContainerRegistryForImageCommit": "Αποθετήριο κοντέινερ για καταχώρηση εικόνας",
+    "CreateProject": "Δημιουργία έργου",
+    "Description": "Περιγραφή",
+    "Domain": "Τομέας",
+    "FailedToCreateProject": "Αποτυχία δημιουργίας έργου",
+    "FailedToUpdateProject": "Η ενημέρωση του έργου απέτυχε",
+    "IsActive": "Είναι ενεργό;",
+    "MaxAllowedResourceSlots": "Μέγιστο επιτρεπόμενο {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Το μέγεθος μνήμης πρέπει να είναι μικρότερο από 300 PiB.",
+    "Name": "Όνομα",
+    "PleaseEnterBothRegistryAndProject": "Παρακαλώ εισάγετε τόσο το μητρώο όσο και το έργο.",
+    "Project": "Έργο",
+    "ProjectCreated": "Το έργο δημιουργήθηκε.",
+    "ProjectResourcePolicy": "Πολιτική Πόρων",
+    "ProjectUpdated": "Το έργο ενημερώθηκε.",
+    "Registry": "Μητρώο",
+    "UpdateProject": "Ενημέρωση έργου"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε το έργο {{projectName}};",
+    "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
+    "ContainerRegistry": "Αποθετήριο κοντέινερ",
+    "Controls": "Έλεγχοι",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "Deactivate": "Απενεργοποίηση",
+    "DeactivateProject": "Απενεργοποίηση έργου",
+    "Description": "Περιγραφή",
+    "Domain": "Τομέας",
+    "FailedToDeactivateProject": "Η απενεργοποίηση του έργου απέτυχε.",
+    "FailedToPurgeProject": "Αποτυχία εκκαθάρισης του έργου.",
+    "IntegrationID": "ID ενσωμάτωσης",
+    "IsActive": "Ενεργό",
+    "Name": "Όνομα",
+    "Project": "Έργο",
+    "ProjectDeactivated": "Το έργο έχει απενεργοποιηθεί.",
+    "ProjectID": "ID έργου",
+    "ProjectPurged": "Το projecth έχει διαγραφεί.",
+    "Purge": "Εκκαθάριση",
+    "PurgeProject": "Μόνιμη διαγραφή έργου",
+    "Registry": "Μητρώο",
+    "ResourcePolicy": "Πολιτική πόρων",
+    "ScalingGroups": "Ομάδες πόρων",
+    "StorageNodes": "Κόμβοι Αποθήκευσης",
+    "TotalResourceSlots": "Συνολικές θέσεις πόρων",
+    "Type": "Τύπος"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Αναζήτηση",
+    "ResetFilter": "Επαναφορά φίλτρων"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Ακυρώσω",
+    "CancelingWillRestartThePulling": "Η ακύρωση θα επανεκκινήσει το τράβηγμα",
+    "FailedToCancelThePulling": "Απέτυχε να ακυρώσει το τράβηγμα.",
+    "VersionIsPullingNow": "{{version}} Έκδοση τραβά τώρα.",
+    "VersionPullCanceledSuccessfully": "Τραβήξτε το {{version}} έκδοση ακυρώθηκε με επιτυχία.",
+    "WARNING": "ΠΡΟΕΙΔΟΠΟΙΗΣΗ",
+    "YouAreAboutToCancelThisVersion": "Πρόκειται να ακυρώσετε αυτήν την έκδοση"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "From": "Από",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Μέσο"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Πολλαπλών",
+    "SingleNodeShort": "Μονόκλινο"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Απεριόριστος"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
+    "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
+    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
+    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
+    "SettingTable": "Ρυθμίσεις πίνακα"
+  },
+  "comp:BAITestButton": {
+    "Test": "δοκιμή"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Επιλογή χρήστη"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Αλλαγή επέκτασης αρχείου",
+    "ChangeFileExtensionDesc": "Η αλλαγή της επέκτασης του αρχείου μπορεί να προκαλέσει λανθασμένα το αρχείο. \nΘέλετε να προχωρήσετε;",
+    "Controls": "Χειριστήρια",
+    "CreateANewFolder": "Δημιουργήστε ένα νέο φάκελο",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
+    "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
+    "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
+    "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
+    "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",
+    "EditFile": "Επεξεργασία αρχείου",
+    "FileTooLargeToEdit": "Η επεξεργασία στο πρόγραμμα περιήγησης είναι περιορισμένη επειδή το μέγεθος του αρχείου υπερβαίνει τα {{size}}MB.",
+    "FolderCreatedSuccessfully": "Ο φάκελος δημιούργησε με επιτυχία.",
+    "FolderName": "Όνομα φακέλου",
+    "MaxFolderNameLength": "Το όνομα του φακέλου πρέπει να είναι 255 χαρακτήρες ή λιγότερο.",
+    "ModifiedAt": "Τροποποιημένος",
+    "MoreOptions": "Περισσότερες επιλογές",
+    "Name": "Ονομα",
+    "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
+    "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
+    "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
+    "Size": "Μέγεθος",
+    "TypeDeleteToConfirm": "Πληκτρολογήστε «Διαγράφω» για επιβεβαίωση.",
+    "TypeFolderNameToDelete": "Πληκτρολογήστε φάκελο ή όνομα αρχείου για διαγραφή.",
+    "UnsupportedFileFormat": "Αυτή η μορφή αρχείου δεν υποστηρίζει επεξεργασία.",
+    "UploadFiles": "Μεταφόρτωση αρχείων",
+    "UploadFolder": "Μεταφορτωμένος φάκελος",
+    "error": {
+      "DuplicatedName": "Αυτό το όνομα χρησιμοποιείται ήδη. \nΕισαγάγετε ένα διαφορετικό όνομα.",
+      "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Έληξε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "Message": "Μήνυμα",
+    "Result": "Αποτέλεσμα",
+    "StartedAt": "Ξεκίνησε στις",
+    "Step": "Βήμα"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Επιτρεπόμενες IP πελατών",
+    "ContainerGIDs": "GID περιέκτη",
+    "ContainerMainGID": "Κύριο GID περιέκτη",
+    "ContainerUID": "UID περιέκτη",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "Description": "Περιγραφή",
+    "Disabled": "Απενεργοποιημένο",
+    "DomainName": "Τομέας",
+    "Email": "Email",
+    "Enabled": "Ενεργοποιημένο",
+    "FullName": "Πλήρες όνομα",
+    "ModifiedAt": "Τροποποιήθηκε στις",
+    "NeedPasswordChange": "Απαιτείται αλλαγή κωδικού",
+    "Project": "Έργο",
+    "ResourcePolicy": "Πολιτική πόρων",
+    "Role": "Ρόλος",
+    "Status": "Κατάσταση",
+    "StatusInfo": "Πληροφορίες κατάστασης",
+    "SudoSessionEnabled": "Συνεδρία Sudo ενεργοποιημένη",
+    "TwoFA": "Έλεγχος ταυτότητας δύο παραγόντων",
+    "Username": "Όνομα χρήστη"
+  },
+  "error": {
+    "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
+  },
+  "general": {
+    "NSelected": "{{count}} Επιλεγμένη",
+    "Optional": "Προαιρετικό",
+    "TotalItems": "Σύνολο {{total}} στοιχεία",
+    "button": {
+      "Cancel": "Ματαίωση",
+      "Close": "Κοντά",
+      "Collapse": "Κατάρρευση",
+      "Copied": "Αντιγράφηκε",
+      "CopyAll": "Αντιγράψτε όλα",
+      "Create": "Δημιουργώ",
+      "Delete": "Διαγράφω",
+      "Edit": "Επεξεργασία",
+      "Expand": "Διαστέλλω",
+      "Remove": "Αφαιρώ",
+      "Save": "Αποθήκευση",
+      "Upload": "Μεταφορτώσω"
+    },
+    "modal": {
+      "DeleteForeverDesc": "Προειδοποίηση: Τα επιλεγμένα στοιχεία θα διαγραφούν για πάντα και δεν θα αποκατασταθούν.",
+      "ItemSelectedWithCount": "{{count}} Τα επιλεγμένα στοιχεία.",
+      "PleaseTypeToConfirm": "Πληκτρολογήστε {{ confirmText }} για επιβεβαίωση."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Επιτρέπονται μόνο γράμματα, αριθμοί, '-', '_' και '.'.",
+      "LetterNumber:/-_dot": "Επιτρέπονται μόνο γράμματα (A–Z, a–z), αριθμοί, '-', '_', ':', '/' και '.'."
+    }
+  }
+}

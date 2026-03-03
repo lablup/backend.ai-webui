@@ -1,0 +1,3 @@
+src/lib/
+**/__generated__/*.graphql.ts
+*.graphql

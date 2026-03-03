@@ -1,0 +1,192 @@
+import { BAITrashBinIcon } from '../../../icons';
+import BAIFlex from '../../BAIFlex';
+import { VFolderFile } from '../../provider/BAIClientProvider/types';
+import CreateDirectoryModal from './CreateDirectoryModal';
+import DeleteSelectedItemsModal, {
+  DeleteSelectedItemsModalProps,
+} from './DeleteSelectedItemsModal';
+import { useUploadVFolderFiles } from './hooks';
+import {
+  FileAddOutlined,
+  FolderAddOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
+import { createStyles } from 'antd-style';
+import type { RcFile } from 'antd/es/upload';
+import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+
+const useStyles = createStyles(({ css }) => ({
+  upload: css`
+    .ant-btn,
+    .ant-upload,
+    .ant-upload-wrapper {
+      width: 100% !important;
+    }
+    .ant-btn {
+      justify-content: start;
+    }
+  `,
+}));
+
+interface ExplorerActionControlsProps {
+  selectedFiles: Array<VFolderFile>;
+  onRequestClose: (
+    success: boolean,
+    modifiedItems?: Array<VFolderFile>,
+  ) => void;
+  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
+  enableDelete?: boolean;
+  enableWrite?: boolean;
+  // onClickRefresh?: (key: string) => void;
+  extra?: React.ReactNode;
+}
+
+const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
+  selectedFiles,
+  onRequestClose,
+  onUpload,
+  onDeleteFilesInBackground,
+  enableDelete = false,
+  enableWrite = false,
+  extra,
+}) => {
+  const { t } = useTranslation();
+  const { lg } = Grid.useBreakpoint();
+  const { token } = theme.useToken();
+  const { styles } = useStyles();
+  const { uploadFiles } = useUploadVFolderFiles();
+  const [openUploadDropdown, { toggle: toggleUploadDropdown }] =
+    useToggle(false);
+  const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
+  const lastFileListRef = useRef<Array<RcFile>>([]);
+
+  return (
+    <BAIFlex gap="xs">
+      <BAIFlex gap={'sm'}>
+        {selectedFiles.length > 0 && (
+          <>
+            {t('general.NSelected', {
+              count: selectedFiles.length,
+            })}
+            <Tooltip title={t('general.button.Delete')} placement="topLeft">
+              <Button
+                disabled={!enableDelete}
+                icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+                onClick={() => {
+                  toggleDeleteModal();
+                }}
+              />
+            </Tooltip>
+          </>
+        )}
+        <Tooltip title={!lg && t('general.button.Create')}>
+          <Button
+            disabled={!enableWrite}
+            icon={<FolderAddOutlined />}
+            onClick={() => {
+              toggleCreateModal();
+            }}
+          >
+            {lg && t('general.button.Create')}
+          </Button>
+        </Tooltip>
+        <Dropdown
+          disabled={!enableWrite}
+          trigger={['click']}
+          open={openUploadDropdown}
+          onOpenChange={toggleUploadDropdown}
+          popupRender={() => {
+            return (
+              <BAIFlex
+                align="start"
+                direction="column"
+                className={styles.upload}
+                style={{
+                  padding: 5,
+                  backgroundColor: token.colorBgElevated,
+                  borderRadius: token.borderRadiusLG,
+                  boxShadow: token.boxShadowSecondary,
+                }}
+              >
+                <Upload
+                  beforeUpload={(_, fileList) => {
+                    if (fileList !== lastFileListRef.current) {
+                      uploadFiles(fileList, onUpload);
+                    }
+                    lastFileListRef.current = fileList;
+                    return false; // Prevent default upload behavior
+                  }}
+                  multiple
+                  showUploadList={false}
+                >
+                  <Button
+                    type="text"
+                    icon={<FileAddOutlined />}
+                    onClick={() => toggleUploadDropdown()}
+                  >
+                    {t('comp:FileExplorer.UploadFiles')}
+                  </Button>
+                </Upload>
+                <Upload
+                  directory
+                  beforeUpload={(_, fileList) => {
+                    if (fileList !== lastFileListRef.current) {
+                      uploadFiles(fileList, onUpload);
+                    }
+                    lastFileListRef.current = fileList;
+                    return false;
+                  }}
+                  showUploadList={false}
+                >
+                  <Button
+                    type="text"
+                    icon={<FolderAddOutlined />}
+                    onClick={() => toggleUploadDropdown()}
+                  >
+                    {t('comp:FileExplorer.UploadFolder')}
+                  </Button>
+                </Upload>
+              </BAIFlex>
+            );
+          }}
+        >
+          <Tooltip title={!lg && t('general.button.Upload')}>
+            <Button icon={<UploadOutlined />} disabled={!enableWrite}>
+              {lg && t('general.button.Upload')}
+            </Button>
+          </Tooltip>
+        </Dropdown>
+      </BAIFlex>
+      <DeleteSelectedItemsModal
+        destroyOnHidden
+        open={openDeleteModal}
+        selectedFiles={selectedFiles}
+        onDeleteFilesInBackground={onDeleteFilesInBackground}
+        onRequestClose={(success: boolean) => {
+          if (success) {
+            onRequestClose(true, selectedFiles);
+          }
+          toggleDeleteModal();
+        }}
+      />
+      <CreateDirectoryModal
+        destroyOnHidden
+        open={openCreateModal}
+        onRequestClose={(success: boolean) => {
+          if (success) {
+            onRequestClose(true);
+          }
+          toggleCreateModal();
+        }}
+      />
+      {extra}
+    </BAIFlex>
+  );
+};
+
+export default ExplorerActionControls;

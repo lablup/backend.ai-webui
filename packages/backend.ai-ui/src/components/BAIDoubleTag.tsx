@@ -1,0 +1,77 @@
+import BAIFlex from './BAIFlex';
+import BAIText from './BAIText';
+import BAITextHighlighter from './BAITextHighlighter';
+import { Tag } from 'antd';
+import _ from 'lodash';
+import React from 'react';
+
+export type DoubleTagObjectValue = {
+  label: string;
+  color?: string;
+  style?: React.CSSProperties; // style 속성 추가
+};
+
+export interface BAIDoubleTagProps {
+  values?: Array<string> | Array<DoubleTagObjectValue>;
+  highlightKeyword?: string;
+}
+
+const BAIDoubleTag: React.FC<BAIDoubleTagProps> = ({
+  values = [],
+  highlightKeyword,
+}) => {
+  if (values.length === 0) return null;
+  let objectValues: Array<DoubleTagObjectValue>;
+  if (
+    values[0] &&
+    (typeof values[0] === 'string' || React.isValidElement(values[0]))
+  ) {
+    objectValues = values.map(
+      (value) =>
+        ({
+          label: value,
+          color: 'blue',
+        }) as DoubleTagObjectValue,
+    );
+  } else {
+    objectValues = values as DoubleTagObjectValue[];
+  }
+
+  return (
+    <BAIFlex direction="row">
+      {_.map(objectValues, (objValue, idx) =>
+        !_.isEmpty(objValue.label) ? (
+          <Tag
+            key={idx}
+            style={{
+              ...(_.last(objectValues) === objValue
+                ? {}
+                : { margin: 0, marginRight: -1 }),
+              ...objValue.style,
+            }}
+            color={objValue.color}
+          >
+            <BAIText
+              style={{
+                fontSize: 'inherit',
+                maxWidth: 150,
+                color: 'inherit',
+              }}
+              ellipsis={{ tooltip: true }}
+            >
+              {!_.isUndefined(highlightKeyword) ? (
+                <BAITextHighlighter keyword={highlightKeyword}>
+                  {objValue.label}
+                </BAITextHighlighter>
+              ) : (
+                objValue.label
+              )}
+            </BAIText>
+          </Tag>
+        ) : null,
+      )}
+    </BAIFlex>
+  );
+};
+
+export default BAIDoubleTag;

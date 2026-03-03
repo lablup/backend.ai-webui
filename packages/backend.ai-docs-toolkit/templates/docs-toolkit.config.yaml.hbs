@@ -1,0 +1,36 @@
+# docs-toolkit configuration
+# See: https://github.com/lablup/docs-toolkit
+
+title: "{{title}}"
+company: "{{company}}"
+
+# Logo (SVG file relative to project root)
+# logoPath: "assets/logo.svg"
+
+# Source and output directories
+srcDir: "src"
+distDir: "dist"
+
+# Version source (path to package.json, relative to project root)
+versionSource: "./package.json"
+
+# Languages
+languageLabels:
+{{#each languages}}  {{code}}: "{{label}}"
+{{/each}}
+
+# PDF settings
+pdfFilenameTemplate: "{title}_{version}_{lang}.pdf"
+pdfMetadata:
+  author: "{{company}}"
+  subject: "{{title}}"
+  creator: "docs-toolkit PDF Generator"
+
+# Agent configuration (for 'docs-toolkit agents' command)
+# agents:
+#   projectTitle: "{{title}}"
+#   docsRoot: "."
+#   languages:
+{{#each languages}}#     - code: {{code}}
+#       label: {{label}}
+{{/each}}

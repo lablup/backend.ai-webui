@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Выделение",
+    "Architecture": "Архитектура",
+    "DiskPerc": "Диск %",
+    "Endpoint": "Конечная точка",
+    "NoAvailableLiveStat": "Живая статистика недоступна",
+    "Region": "Регион",
+    "ResourceGroup": "Группа ресурсов",
+    "Running": "Запущено",
+    "Schedulable": "Доступно для планирования",
+    "Starts": "Запуски",
+    "Status": "Статус",
+    "Utilization": "Использование"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Разрешено",
+    "Permission": "Разрешение"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Активировать",
+    "ActivateArtifacts": "Активируйте артефакты",
+    "AreYouSureYouWantToActivateOne": "Вы уверены, что хотите активировать {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Вы уверены, что хотите активировать {{count}} артефакты?",
+    "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
+    "SuccessfullyActivated": "Успешно активированные артефакты."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Выберите группу ресурсов"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Описание",
+    "Name": "Имя",
+    "Source": "Источник",
+    "Type": "Тип"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Контроль",
+    "LatestVersion": "Последняя версия",
+    "Name": "Имя",
+    "Size": "Размер",
+    "Status": "Статус",
+    "Updated": "Обновлено",
+    "Version": "Версия"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Действие",
+    "Activate": "Активировать",
+    "Controls": "Управление",
+    "Deactivate": "Деактивировать",
+    "PullLatestVersion": "Вытащите последнюю версию",
+    "Registry": "Реестр",
+    "Scanned": "Сканируется",
+    "Size": "Размер",
+    "Source": "Источник",
+    "Updated": "Обновлено",
+    "Version": "Версия"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Очистить",
+    "KeepAsIs": "Оставить как есть",
+    "UndoChanges": "Отменить изменения"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
+    "Deactivate": "Деактивировать",
+    "DeactivateArtifacts": "Деактивируйте артефакты",
+    "FailedToDeactivateArtifacts": "Не удалось деактивировать артефакты.",
+    "SuccessfullyDeactivated": "Успешно деактивированные артефакты."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "FailedToRemoveVersions": "Не удалось удалить версии.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Только версии, которые не притягивают или отсканируют, могут быть удалены.",
+    "RemoveVersions": "Удалить версии",
+    "Size": "Размер",
+    "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
+    "Version": "Версия"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Выберите домен"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Обновлено",
+    "Refresh": "Обновить"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "после",
+      "Before": "до",
+      "GreaterThan": "больше",
+      "GreaterThanOrEqual": "больше или равно",
+      "IContains": "содержит",
+      "IEndsWith": "заканчивается на",
+      "IEquals": "равно",
+      "INotContains": "не содержит",
+      "INotEndsWith": "не заканчивается на",
+      "INotEquals": "не равно",
+      "INotStartsWith": "не начинается с",
+      "IStartsWith": "начинается с",
+      "In": "в",
+      "LessThan": "меньше",
+      "LessThanOrEqual": "меньше или равно",
+      "NotIn": "не в"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} версии исключены.",
+    "FailedToPullVersions": "Не удалось вытащить версии.",
+    "OnlySCANNEDVersionsCanBePulled": "Только отсканированные версии можно вытащить.",
+    "Pull": "Тянуть",
+    "PullVersion": "Потянуть версию",
+    "Size": "Размер",
+    "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
+    "Version": "Версия"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "ProjectResourcePolicy": "Политика ресурсов проекта",
+    "UpdateMultipleProjects": "Обновить несколько проектов"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Выберите проект"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Разрешённые хосты для папок",
+    "AllowedResourceGroups": "Разрешённые группы ресурсов",
+    "ContainerMustBeSpecified": "Необходимо указать реестр контейнеров для хранения образов, созданных пользователем.",
+    "ContainerRegistryForImageCommit": "Реестр контейнеров для сохранения образа",
+    "CreateProject": "Создать проект",
+    "Description": "Описание",
+    "Domain": "Домен",
+    "FailedToCreateProject": "Не удалось создать проект",
+    "FailedToUpdateProject": "Не удалось обновить проект",
+    "IsActive": "Активно?",
+    "MaxAllowedResourceSlots": "Максимально допустимо {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Объём памяти должен быть меньше 300 PiB",
+    "Name": "Имя",
+    "PleaseEnterBothRegistryAndProject": "Укажите и реестр, и проект.",
+    "Project": "Проект",
+    "ProjectCreated": "Проект создан",
+    "ProjectResourcePolicy": "Политика ресурсов",
+    "ProjectUpdated": "Проект обновлён.",
+    "Registry": "Реестр",
+    "UpdateProject": "Обновить проект"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
+    "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
+    "ContainerRegistry": "Реестр контейнеров",
+    "Controls": "Элементы управления",
+    "CreatedAt": "Создано",
+    "Deactivate": "Деактивировать",
+    "DeactivateProject": "Деактивировать проект",
+    "Description": "Описание",
+    "Domain": "Домен",
+    "FailedToDeactivateProject": "Не удалось деактивировать проект.",
+    "FailedToPurgeProject": "Не удалось очистить проект.",
+    "IntegrationID": "ID интеграции",
+    "IsActive": "Активный",
+    "Name": "Имя",
+    "Project": "Проект",
+    "ProjectDeactivated": "Проект деактивирован.",
+    "ProjectID": "ID проекта",
+    "ProjectPurged": "Проект был окончательно удалён.",
+    "Purge": "Очистить",
+    "PurgeProject": "Полностью удалить проект",
+    "Registry": "Реестр",
+    "ResourcePolicy": "Политика ресурсов",
+    "ScalingGroups": "Группы ресурсов",
+    "StorageNodes": "Узлы хранения",
+    "TotalResourceSlots": "Всего ресурсных слотов",
+    "Type": "Тип"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Поиск",
+    "ResetFilter": "Сбросить фильтры"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Отменить тяну",
+    "CancelingWillRestartThePulling": "Отмена возобновит тягу",
+    "FailedToCancelThePulling": "Не удалось отменить тягу.",
+    "VersionIsPullingNow": "{{version}} версия сейчас тянет.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} версия отменена успешно.",
+    "WARNING": "ПРЕДУПРЕЖДЕНИЕ",
+    "YouAreAboutToCancelThisVersion": "Вы собираетесь отменить эту версию"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Выберите группу ресурсов"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "CreatedAt": "Дата создания",
+    "From": "От",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "StatusTransition": "Смена статуса",
+    "To": "До",
+    "UpdatedAt": "Обновлено"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Агент"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Мульти",
+    "SingleNodeShort": "Одинокий"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Неограниченный"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "Перейти на первую страницу",
+    "InvalidPageNumber": "Неверный номер страницы",
+    "SearchTableColumn": "Поиск таблицы столбцов",
+    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
+    "SettingTable": "Настройки таблицы"
+  },
+  "comp:BAITestButton": {
+    "Test": "тест"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Выберите пользователя"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Изменить расширение файла",
+    "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
+    "Controls": "Управление",
+    "CreateANewFolder": "Создать новую папку",
+    "CreatedAt": "Создан в",
+    "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
+    "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
+    "DuplicatedFiles": "Перезаписать подтверждение",
+    "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
+    "EditFile": "Редактировать файл",
+    "FileTooLargeToEdit": "Редактирование в браузере ограничено, поскольку размер файла превышает {{size}}МБ.",
+    "FolderCreatedSuccessfully": "Папка создана успешно.",
+    "FolderName": "Имя папки",
+    "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
+    "ModifiedAt": "Модифицирован в",
+    "MoreOptions": "Дополнительные параметры",
+    "Name": "Имя",
+    "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "RenameSuccess": "Имя было успешно изменено.",
+    "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
+    "Size": "Размер",
+    "TypeDeleteToConfirm": "Введите «Удалить» для подтверждения.",
+    "TypeFolderNameToDelete": "Введите папку или имя файла для удаления.",
+    "UnsupportedFileFormat": "Этот формат файла не поддерживает редактирование.",
+    "UploadFiles": "Загрузить файлы",
+    "UploadFolder": "Загрузить папку",
+    "error": {
+      "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя.",
+      "FileNameRequired": "Пожалуйста, введите имя файла или папки."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} of {{total}} элементы"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Недоступные данные о ресурсах"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Завершено в",
+    "ErrorCode": "Код ошибки",
+    "Message": "Сообщение",
+    "Result": "Результат",
+    "StartedAt": "Начато в",
+    "Step": "Шаг"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Разрешенные IP клиентов",
+    "ContainerGIDs": "GID контейнера",
+    "ContainerMainGID": "Основной GID контейнера",
+    "ContainerUID": "UID контейнера",
+    "CreatedAt": "Создано",
+    "Description": "Описание",
+    "Disabled": "Отключено",
+    "DomainName": "Домен",
+    "Email": "Электронная почта",
+    "Enabled": "Включено",
+    "FullName": "Полное имя",
+    "ModifiedAt": "Изменено",
+    "NeedPasswordChange": "Требуется смена пароля",
+    "Project": "Проект",
+    "ResourcePolicy": "Политика ресурсов",
+    "Role": "Роль",
+    "Status": "Статус",
+    "StatusInfo": "Информация о статусе",
+    "SudoSessionEnabled": "Сеанс Sudo включен",
+    "TwoFA": "Двухфакторная аутентификация",
+    "Username": "Имя пользователя"
+  },
+  "error": {
+    "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
+  },
+  "general": {
+    "NSelected": "{{count}} выбрал",
+    "Optional": "Необязательно",
+    "TotalItems": "Total {{total}} элементы",
+    "button": {
+      "Cancel": "Отмена",
+      "Close": "Закрывать",
+      "Collapse": "Крах",
+      "Copied": "Скопировано",
+      "CopyAll": "Копировать все",
+      "Create": "Создавать",
+      "Delete": "Удалить",
+      "Edit": "Редактировать",
+      "Expand": "Расширять",
+      "Remove": "Удалять",
+      "Save": "Сохранить",
+      "Upload": "Загрузить"
+    },
+    "modal": {
+      "DeleteForeverDesc": "ВНИМАНИЕ: выбранные элементы будут удалены навсегда и не будут восстановлены.",
+      "ItemSelectedWithCount": "Выбрано {{count}} элементов.",
+      "PleaseTypeToConfirm": "Пожалуйста, введите {{ confirmText }} для подтверждения."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Разрешены только буквы, цифры и символы '-', '_' и '.'.",
+      "LetterNumber:/-_dot": "Разрешены только буквы (A–Z, a–z), цифры, '-', '_', ':', '/' и '.'."
+    }
+  }
+}

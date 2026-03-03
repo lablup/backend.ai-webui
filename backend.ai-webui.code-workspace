@@ -1,0 +1,60 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "backend.ai-webui",
+    },
+    {
+      "path": "packages/backend.ai-ui",
+      "name": "backend.ai-ui",
+    },
+    {
+      "path": "packages/eslint-config-bai",
+      "name": "eslint-config-bai",
+    },
+    {
+      "path": "packages/backend.ai-webui-docs",
+      "name": "webui-docs",
+    },
+    {
+      "path": "packages/backend.ai-docs-toolkit",
+      "name": "docs-toolkit",
+    },
+  ],
+  "settings": {
+    "i18n-ally.enabledFrameworks": ["react", "custom"],
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.dirStructure": "auto",
+    "i18n-ally.displayLanguage": "en",
+    "i18n-ally.sourceLanguage": "ko",
+    "i18n-ally.translate.promptSource": true,
+    "i18n-ally.regex.usageMatch": [
+      "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*\\{['\"`]({key})['\"`]\\}", // <Trans i18nKey={'key'}>
+      "<Trans\\b[^>]*?\\bi18nKey\\s*=\\s*['\"`]({key})['\"`]", // <Trans i18nKey="key">
+      "(?:^|[^\\w\\d])t\\s*\\(\\s*['\"`]({key})['\"`]", // t('key') / obj.t('key')
+      "(?:^|[^\\w\\d])_t\\s*\\(\\s*['\"`]({key})['\"`]", // _t('key') / obj._t('key') for Lit components
+    ],
+    "i18n-ally.translate.engines": ["openai"],
+    "i18n-ally.translate.openai.apiModel": "gpt-5-mini",
+    "files.exclude": {
+      "packages/backend.ai-ui": true,
+      "packages/eslint-config-bai": true,
+      "packages/backend.ai-webui-docs": true,
+    },
+    // MCP server configurations for development and testing
+    "mcp": {
+      "servers": {
+        "atlassian": {
+          "url": "https://mcp.atlassian.com/v1/sse",
+          "type": "sse",
+        },
+        "playwright-test": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["playwright", "run-test-mcp-server"],
+        },
+      },
+      "inputs": [],
+    },
+  },
+}

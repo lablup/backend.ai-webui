@@ -1,0 +1,340 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Allocation",
+    "Architecture": "Architecture",
+    "DiskPerc": "Disk %",
+    "Endpoint": "Endpoint",
+    "NoAvailableLiveStat": "No available live stat",
+    "Region": "Region",
+    "ResourceGroup": "Resource Group",
+    "Running": "Running",
+    "Schedulable": "Schedulable",
+    "Starts": "Starts",
+    "Status": "Status",
+    "Utilization": "Utilization"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Allowed",
+    "Permission": "Permission"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Activate",
+    "ActivateArtifacts": "Activate Artifacts",
+    "AreYouSureYouWantToActivateOne": "Are you sure you want to activate {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Are you sure you want to activate {{count}} artifacts?",
+    "FailedToActivateArtifacts": "Failed to activate artifacts.",
+    "SuccessfullyActivated": "Successfully activated artifacts."
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Select resource group"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Description",
+    "Name": "Name",
+    "Source": "Source",
+    "Type": "Type"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Control",
+    "LatestVersion": "Latest Version",
+    "Name": "Name",
+    "Size": "Size",
+    "Status": "Status",
+    "Updated": "Updated",
+    "Version": "Version"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Action",
+    "Activate": "Activate",
+    "Controls": "Controls",
+    "Deactivate": "Deactivate",
+    "PullLatestVersion": "Pull latest version",
+    "Registry": "Registry",
+    "Scanned": "Scanned",
+    "Size": "Size",
+    "Source": "Source",
+    "Updated": "Updated",
+    "Version": "Version"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Clear",
+    "KeepAsIs": "Keep as is",
+    "UndoChanges": "Undo changes"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Are you sure you want to deactivate {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Are you sure you want to deactivate {{count}} artifacts?",
+    "Deactivate": "Deactivate",
+    "DeactivateArtifacts": "Deactivate Artifacts",
+    "FailedToDeactivateArtifacts": "Failed to deactivate artifacts.",
+    "SuccessfullyDeactivated": "Successfully deactivated artifacts."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versions are excluded.",
+    "FailedToRemoveVersions": "Failed to remove versions.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Only versions that are not in PULLING or SCANNED can be removed.",
+    "RemoveVersions": "Remove Versions",
+    "Size": "Size",
+    "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
+    "Version": "Version"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Select Domain"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "Last Updated",
+    "Refresh": "Refresh"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "after",
+      "Before": "before",
+      "GreaterThan": "greater than",
+      "GreaterThanOrEqual": "greater or equal",
+      "IContains": "contains",
+      "IEndsWith": "ends with",
+      "IEquals": "equals",
+      "INotContains": "not contains",
+      "INotEndsWith": "not ends with",
+      "INotEquals": "not equals",
+      "INotStartsWith": "not starts with",
+      "IStartsWith": "starts with",
+      "In": "in",
+      "LessThan": "less than",
+      "LessThanOrEqual": "less or equal",
+      "NotIn": "not in"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} versions are excluded.",
+    "FailedToPullVersions": "Failed to pull versions.",
+    "OnlySCANNEDVersionsCanBePulled": "Only SCANNED versions can be pulled.",
+    "Pull": "Pull",
+    "PullVersion": "Pull Version",
+    "Size": "Size",
+    "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
+    "Version": "Version"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "ProjectResourcePolicy": "Project Resource Policy",
+    "UpdateMultipleProjects": "Update Multiple Projects"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Select Project"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Allowed Folder Hosts",
+    "AllowedResourceGroups": "Allowed Resource Groups",
+    "ContainerMustBeSpecified": "A container registry must be specified to store container images committed by the user.",
+    "ContainerRegistryForImageCommit": "Container Registry for Image Commit",
+    "CreateProject": "Create Project",
+    "Description": "Description",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Failed to create a project",
+    "FailedToUpdateProject": "Failed to update a project",
+    "IsActive": "Is Active?",
+    "MaxAllowedResourceSlots": "Max allowed {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Memory size should be less than 300 PiB",
+    "Name": "Name",
+    "PleaseEnterBothRegistryAndProject": "Please enter both the registry and project.",
+    "Project": "Project",
+    "ProjectCreated": "The project has been created",
+    "ProjectResourcePolicy": "Resource Policy",
+    "ProjectUpdated": "The project has been updated.",
+    "Registry": "Registry",
+    "UpdateProject": "Update Project"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "Are you sure to deactivate project {{projectName}}?",
+    "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
+    "ContainerRegistry": "Container Registry",
+    "Controls": "Controls",
+    "CreatedAt": "Created At",
+    "Deactivate": "Deactivate",
+    "DeactivateProject": "Deactivate Project",
+    "Description": "Description",
+    "Domain": "Domain",
+    "FailedToDeactivateProject": "Failed to deactivate the project.",
+    "FailedToPurgeProject": "Failed to purge the project.",
+    "IntegrationID": "Integration ID",
+    "IsActive": "Active",
+    "Name": "Name",
+    "Project": "Project",
+    "ProjectDeactivated": "The project has been deactivated.",
+    "ProjectID": "Project ID",
+    "ProjectPurged": "The projecth has been purged",
+    "Purge": "Purge",
+    "PurgeProject": "Purge Project",
+    "Registry": "Registry",
+    "ResourcePolicy": "Resource Policy",
+    "ScalingGroups": "Resource Groups",
+    "StorageNodes": "Storage Nodes",
+    "TotalResourceSlots": "Total Resource Slots",
+    "Type": "Type"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Search",
+    "ResetFilter": "Reset filters"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Cancel Pull",
+    "CancelingWillRestartThePulling": "Canceling will restart the pulling",
+    "FailedToCancelThePulling": "Failed to cancel the pulling.",
+    "VersionIsPullingNow": "{{version}} version is pulling now.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} version canceled successfully.",
+    "WARNING": "WARNING",
+    "YouAreAboutToCancelThisVersion": "You are about to cancel this version"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Select Resource Group"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Unlimited"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "CreatedAt": "Created At",
+    "From": "From",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agent"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Multi",
+    "SingleNodeShort": "Single"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Unlimited"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "Go to first page",
+    "InvalidPageNumber": "Invalid page number",
+    "SearchTableColumn": "Search table columns",
+    "SelectColumnToDisplay": "Select columns to display",
+    "SettingTable": "Table Settings"
+  },
+  "comp:BAITestButton": {
+    "Test": "Test"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Select User"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "Change File Extension",
+    "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",
+    "Controls": "Controls",
+    "CreateANewFolder": "Create a new folder",
+    "CreatedAt": "Created At",
+    "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
+    "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "DragAndDropDesc": "Drag and drop files to this area to upload.",
+    "DuplicatedFiles": "Overwrite Confirmation",
+    "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
+    "EditFile": "Edit File",
+    "FileTooLargeToEdit": "In-browser editing is restricted because the file size exceeds {{size}}MB.",
+    "FolderCreatedSuccessfully": "Folder created successfully.",
+    "FolderName": "Folder Name",
+    "MaxFolderNameLength": "Folder name must be 255 characters or less.",
+    "ModifiedAt": "Modified At",
+    "MoreOptions": "More options",
+    "Name": "Name",
+    "PleaseEnterAFolderName": "Please enter the folder name.",
+    "RenameSuccess": "The name has been successfully changed.",
+    "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
+    "Size": "Size",
+    "TypeDeleteToConfirm": "Type 'Delete' to confirm.",
+    "TypeFolderNameToDelete": "Type folder or file name to delete.",
+    "UnsupportedFileFormat": "This file format does not support editing.",
+    "UploadFiles": "Upload Files",
+    "UploadFolder": "Upload Folder",
+    "error": {
+      "DuplicatedName": "This name is already in use. Please enter a different name.",
+      "FileNameRequired": "Please enter a file or folder name."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} of {{total}} items"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "No resource data available"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Ended At",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "StartedAt": "Started At",
+    "Step": "Step"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Allowed Client IPs",
+    "ContainerGIDs": "Container GIDs",
+    "ContainerMainGID": "Container Main GID",
+    "ContainerUID": "Container UID",
+    "CreatedAt": "Created At",
+    "Description": "Description",
+    "Disabled": "Disabled",
+    "DomainName": "Domain",
+    "Email": "E-Mail",
+    "Enabled": "Enabled",
+    "FullName": "Full Name",
+    "ModifiedAt": "Modified At",
+    "NeedPasswordChange": "Need Password Change",
+    "Project": "Project",
+    "ResourcePolicy": "Resource Policy",
+    "Role": "Role",
+    "Status": "Status",
+    "StatusInfo": "Status Info",
+    "SudoSessionEnabled": "Sudo Session Enabled",
+    "TwoFA": "2FA",
+    "Username": "Username"
+  },
+  "error": {
+    "UnknownError": "An unknown error occurred. Please try again."
+  },
+  "general": {
+    "NSelected": "{{count}} selected",
+    "Optional": "Optional",
+    "TotalItems": "Total {{total}} items",
+    "button": {
+      "Cancel": "Cancel",
+      "Close": "Close",
+      "Collapse": "Collapse",
+      "Copied": "Copied",
+      "CopyAll": "Copy All",
+      "Create": "Create",
+      "Delete": "Delete",
+      "Edit": "Edit",
+      "Expand": "Expand",
+      "Remove": "Remove",
+      "Save": "Save",
+      "Upload": "Upload"
+    },
+    "modal": {
+      "DeleteForeverDesc": "WARNING: Selected items will be deleted forever and won't be restored.",
+      "ItemSelectedWithCount": "{{count}} items selected.",
+      "PleaseTypeToConfirm": "Please type {{ confirmText }} to confirm."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Only letters, numbers, '-', '_', and '.' are allowed.",
+      "LetterNumber:/-_dot": "Only letters (A–Z, a–z), numbers, '-', '_', ':', '/' and '.' are allowed."
+    }
+  }
+}

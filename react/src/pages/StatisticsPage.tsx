@@ -1,0 +1,80 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import AllocationHistory from '../components/AllocationHistory';
+import UserSessionsMetrics from '../components/UserSessionsMetrics';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { Skeleton, theme } from 'antd';
+import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import React, { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
+import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+
+interface ResourcesPageProps {}
+
+const tabParam = withDefault(StringParam, 'allocation-history');
+
+const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const { token } = theme.useToken();
+
+  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
+    updateType: 'replace',
+  });
+
+  return (
+    <BAICard
+      activeTabKey={curTabKey}
+      onTabChange={(key) => setCurTabKey(key)}
+      tabList={filterOutEmpty([
+        {
+          key: 'allocation-history',
+          tab: t('webui.menu.UsageHistory'),
+        },
+        baiClient?.supports('user-metrics') && {
+          key: 'user-session-history',
+          tab: t('webui.menu.UserSessionHistory'),
+        },
+      ])}
+      styles={{
+        body: {
+          overflow: 'hidden',
+        },
+      }}
+    >
+      {curTabKey === 'allocation-history' ? (
+        <BAIErrorBoundary>
+          <Suspense
+            fallback={
+              <Skeleton
+                active
+                style={{ padding: token.paddingContentVerticalLG }}
+              />
+            }
+          >
+            <AllocationHistory />
+          </Suspense>
+        </BAIErrorBoundary>
+      ) : null}
+      {curTabKey === 'user-session-history' ? (
+        <BAIErrorBoundary>
+          <Suspense
+            fallback={
+              <Skeleton
+                active
+                style={{ padding: token.paddingContentVerticalLG }}
+              />
+            }
+          >
+            <UserSessionsMetrics />
+          </Suspense>
+        </BAIErrorBoundary>
+      ) : null}
+    </BAICard>
+  );
+};
+
+export default ResourcesPage;

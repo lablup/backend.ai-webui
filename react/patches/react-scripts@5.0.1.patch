@@ -1,0 +1,21 @@
+diff --git a/scripts/start.js b/scripts/start.js
+index 8b9a2c26b4df349bc81548ace0354900cf904693..0e6cb9ad0c3fcd3b4b738318d4fb27755ab52cc2 100644
+--- a/scripts/start.js
++++ b/scripts/start.js
+@@ -54,6 +54,7 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+ // Tools like Cloud9 rely on this.
+ const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
+ const HOST = process.env.HOST || '0.0.0.0';
++const PROXY = process.env.BAI_WEBUI_DEV_PROXY || process.env.PROXY || '';
+ 
+ if (process.env.HOST) {
+   console.log(
+@@ -108,7 +109,7 @@ checkBrowsers(paths.appPath, isInteractive)
+       webpack,
+     });
+     // Load proxy config
+-    const proxySetting = require(paths.appPackageJson).proxy;
++    const proxySetting = require(paths.appPackageJson).proxy || PROXY;
+     const proxyConfig = prepareProxy(
+       proxySetting,
+       paths.appPublic,

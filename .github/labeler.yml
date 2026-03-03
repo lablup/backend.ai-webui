@@ -1,0 +1,19 @@
+area:ux:
+  - changed-files:
+    - any-glob-to-any-file:
+      - resources/fonts/*
+      - resources/icons/*
+      - resources/*.css
+      - src/plastics/**/*
+      - resources/i18n/*
+
+area:lib:
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/lib/**/*
+      - src/wsproxy/**/*
+
+area:i18n:
+  - changed-files:
+    - any-glob-to-any-file:
+      - resources/i18n/*

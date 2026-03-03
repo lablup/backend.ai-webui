@@ -1,0 +1,49 @@
+:host > *, html {
+}
+
+backend-ai-webui {
+}
+
+.splash:before {
+  content: url("sample-logo.svg");
+  position: absolute;
+  top: calc(50% - 150px);
+  left: calc(50% - 150px);
+  width: 240px;
+}
+
+.splash {
+  top: calc(50% - 130px);
+  height: 340px!important;
+}
+
+.splash-header {
+  height: 160px!important;
+  background-position: left bottom!important;
+}
+
+.splash-header > img {
+  padding-top:75px!important;
+}
+
+.loading-message {
+  top: calc(50% + 128px)!important;
+}
+
+.sk-folding-cube {
+  top: calc(50% + 130px)!important;
+}
+
+.portrait-canvas {
+  background-image: url("sample-sidebar-logo.svg")!important;
+}
+
+.site-name {
+  font-size: 16px!important;
+}
+
+backend-ai-login {
+  --login-banner-height:60px;
+  --login-banner-width:250px;
+  --login-banner-background: center left / contain no-repeat url("/resources/sample-logo.svg");
+}

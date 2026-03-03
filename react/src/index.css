@@ -1,0 +1,12 @@
+/* fix: match the icon size between Lucide and Ant.d icons */
+.lucide {
+  width: 1em !important;
+  height: 1em !important;
+  vertical-align: -0.125em !important;
+}
+
+:lang(ko) *,
+:lang(ja) *,
+:lang(zh) * {
+  word-break: keep-all;
+}

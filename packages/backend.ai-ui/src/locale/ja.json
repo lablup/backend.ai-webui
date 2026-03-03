@@ -1,0 +1,337 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "割り当て",
+    "Architecture": "アーキテクチャ",
+    "DiskPerc": "ディスク使用率",
+    "Endpoint": "エンドポイント",
+    "NoAvailableLiveStat": "ライブ統計は利用できません",
+    "Region": "リージョン",
+    "ResourceGroup": "リソースグループ",
+    "Running": "実行中",
+    "Schedulable": "スケジュール可能",
+    "Starts": "起動回数",
+    "Status": "ステータス",
+    "Utilization": "使用率"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "許可済み",
+    "Permission": "権限"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "活性化",
+    "ActivateArtifacts": "アーティファクトをアクティブにします",
+    "AreYouSureYouWantToActivateOne": "{{name}}をアクティブにしたいですか？",
+    "AreYouSureYouWantToActivateSome": "{{count}}アーティファクトをアクティブにしたいですか？",
+    "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
+    "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "リソースグループを選択"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "説明",
+    "Name": "名前",
+    "Source": "ソース",
+    "Type": "タイプ"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "コントロール",
+    "LatestVersion": "最新バージョン",
+    "Name": "名前",
+    "Size": "サイズ",
+    "Status": "状態",
+    "Updated": "更新",
+    "Version": "バージョン"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "アクション",
+    "Activate": "活性化",
+    "Controls": "コントロール",
+    "Deactivate": "無効にします",
+    "PullLatestVersion": "最新バージョンをプルします",
+    "Registry": "レジストリ",
+    "Scanned": "スキャン",
+    "Size": "サイズ",
+    "Source": "ソース",
+    "Updated": "更新",
+    "Version": "バージョン"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "クリア",
+    "KeepAsIs": "そのまま維持",
+    "UndoChanges": "変更を元に戻す"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "{{name}}を無効にしたいですか？",
+    "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
+    "Deactivate": "無効にします",
+    "DeactivateArtifacts": "アーティファクトを無効にします",
+    "FailedToDeactivateArtifacts": "アーティファクトを非アクティブ化できませんでした。",
+    "SuccessfullyDeactivated": "正常に非アクティブ化されたアーティファクト。"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}バージョンは除外されます。",
+    "FailedToRemoveVersions": "バージョンの削除に失敗しました。",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "引っ張ったりスキャンしたりしないバージョンのみを削除できます。",
+    "RemoveVersions": "バージョンを削除します",
+    "Size": "サイズ",
+    "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
+    "Version": "バージョン"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "ドメインを選択"
+  },
+  "comp:BAIFetchKeyButton": {
+    "LastUpdated": "最終更新",
+    "Refresh": "更新"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "operator": {
+      "After": "後",
+      "Before": "前",
+      "GreaterThan": "より大きい",
+      "GreaterThanOrEqual": "以上",
+      "IContains": "含む",
+      "IEndsWith": "で終わる",
+      "IEquals": "等しい",
+      "INotContains": "含まない",
+      "INotEndsWith": "で終わらない",
+      "INotEquals": "等しくない",
+      "INotStartsWith": "で始まらない",
+      "IStartsWith": "で始まる",
+      "In": "含まれる",
+      "LessThan": "より小さい",
+      "LessThanOrEqual": "以下",
+      "NotIn": "含まれない"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFaceトークンを入力してください",
+    "HuggingFaceSettings": "Hugging Face 設定",
+    "Token": "トークン",
+    "TokenUpdatedSuccessfully": "トークンが正常に更新されました。"
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}}バージョンは除外されます。",
+    "FailedToPullVersions": "バージョンを引くことができませんでした。",
+    "OnlySCANNEDVersionsCanBePulled": "スキャンされたバージョンのみを引くことができます。",
+    "Pull": "引く",
+    "PullVersion": "プルバージョン",
+    "Size": "サイズ",
+    "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
+    "Version": "バージョン"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
+    "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
+    "UpdateMultipleProjects": "プロジェクトを一括更新"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "プロジェクトを選択"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "許可済みフォルダホスト",
+    "AllowedResourceGroups": "許可されたリソースグループ",
+    "ContainerMustBeSpecified": "ユーザーがコミットしたコンテナイメージを保存するために、コンテナレジストリを指定する必要があります。",
+    "ContainerRegistryForImageCommit": "イメージのコミット用コンテナレジストリ",
+    "CreateProject": "プロジェクトを作成",
+    "Description": "説明",
+    "Domain": "ドメイン",
+    "FailedToCreateProject": "プロジェクトの作成に失敗しました",
+    "FailedToUpdateProject": "プロジェクトの更新に失敗しました",
+    "IsActive": "有効ですか？",
+    "MaxAllowedResourceSlots": "{{resourceKey}}の最大許容量",
+    "MemorySizeShouldBeLessThan300PiB": "メモリサイズは300 PiB未満である必要があります",
+    "Name": "名前",
+    "PleaseEnterBothRegistryAndProject": "レジストリとプロジェクトの両方を入力してください。",
+    "Project": "プロジェクト",
+    "ProjectCreated": "プロジェクトが作成されました",
+    "ProjectResourcePolicy": "リソースポリシー",
+    "ProjectUpdated": "プロジェクトが更新されました。",
+    "Registry": "レジストリ",
+    "UpdateProject": "プロジェクトの更新"
+  },
+  "comp:BAIProjectTable": {
+    "AreYouSureToDeactivateProject": "プロジェクト「{{projectName}}」を無効化してもよろしいですか？",
+    "AreYouSureToPurgeProject": "本当に{{projectName}}を完全に削除しますか？この操作は取り消せません。",
+    "ContainerRegistry": "コンテナレジストリ",
+    "Controls": "操作",
+    "CreatedAt": "作成日時",
+    "Deactivate": "無効化",
+    "DeactivateProject": "プロジェクトを無効化",
+    "Description": "説明",
+    "Domain": "ドメイン",
+    "FailedToDeactivateProject": "プロジェクトの無効化に失敗しました。",
+    "FailedToPurgeProject": "プロジェクトの完全削除に失敗しました。",
+    "IntegrationID": "連携ID",
+    "IsActive": "アクティブ",
+    "Name": "名前",
+    "Project": "プロジェクト",
+    "ProjectDeactivated": "プロジェクトは無効化されました。",
+    "ProjectID": "プロジェクトID",
+    "ProjectPurged": "プロジェクトは完全に削除されました",
+    "Purge": "パージ",
+    "PurgeProject": "プロジェクトを完全に削除",
+    "Registry": "レジストリ",
+    "ResourcePolicy": "リソースポリシー",
+    "ScalingGroups": "リソースグループ",
+    "StorageNodes": "ストレージノード",
+    "TotalResourceSlots": "合計リソーススロット数",
+    "Type": "種類"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "検索",
+    "ResetFilter": "フィルターをリセットする"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "キャンセルプル",
+    "CancelingWillRestartThePulling": "キャンセルすると、引っ張りが再開されます",
+    "FailedToCancelThePulling": "引っ張りをキャンセルできませんでした。",
+    "VersionIsPullingNow": "{{version}}バージョンは今プルされています。",
+    "VersionPullCanceledSuccessfully": "{{version}}バージョンのプルは正常にキャンセルされました。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "このバージョンをキャンセルしようとしています"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "リソースグループを選択"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "試行回数",
+    "CreatedAt": "作成日時",
+    "From": "送信元",
+    "Phase": "フェーズ",
+    "Result": "結果",
+    "StatusTransition": "ステータス遷移",
+    "To": "宛先",
+    "UpdatedAt": "更新日時"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "エージェント"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "マルチ",
+    "SingleNodeShort": "シングル"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "無制限"
+  },
+  "comp:BAITable": {
+    "GoToFirstPage": "最初のページへ",
+    "InvalidPageNumber": "無効なページ番号です",
+    "SearchTableColumn": "テーブル列を検索します",
+    "SelectColumnToDisplay": "表示する列を選択します",
+    "SettingTable": "テーブル設定"
+  },
+  "comp:BAITestButton": {
+    "Test": "テスト"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "ユーザーを選択"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "フォルダを選択"
+  },
+  "comp:FileExplorer": {
+    "ChangeFileExtension": "ファイル拡張子を変更します",
+    "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
+    "Controls": "コントロール",
+    "CreateANewFolder": "新しいフォルダーを作成します",
+    "CreatedAt": "で作成されました",
+    "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
+    "DeleteSelectedItemsDialog": "確認を削除します",
+    "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
+    "DuplicatedFiles": "確認の上書き",
+    "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
+    "EditFile": "ファイルを編集",
+    "FileTooLargeToEdit": "ファイルサイズが{{size}}MBを超えているため、ブラウザでの編集が制限されています。",
+    "FolderCreatedSuccessfully": "フォルダーは正常に作成されました。",
+    "FolderName": "フォルダー名",
+    "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
+    "ModifiedAt": "で変更されました",
+    "MoreOptions": "その他のオプション",
+    "Name": "名前",
+    "PleaseEnterAFolderName": "フォルダー名を入力してください。",
+    "RenameSuccess": "名前は正常に変更されました。",
+    "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
+    "Size": "サイズ",
+    "TypeDeleteToConfirm": "「消去」と入力して確認します。",
+    "TypeFolderNameToDelete": "削除するフォルダーまたはファイル名を入力します.",
+    "UnsupportedFileFormat": "このファイル形式は編集をサポートしていません。",
+    "UploadFiles": "ファイルをアップロードします",
+    "UploadFolder": "フォルダーをアップロードします",
+    "error": {
+      "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
+      "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}}  -  {{end}} of {{total}}アイテム"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "利用可能なリソースデータはありません"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "終了日時",
+    "ErrorCode": "エラーコード",
+    "Message": "メッセージ",
+    "Result": "結果",
+    "StartedAt": "開始日時",
+    "Step": "ステップ"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "許可されたクライアントIP",
+    "ContainerGIDs": "コンテナGID",
+    "ContainerMainGID": "コンテナメインGID",
+    "ContainerUID": "コンテナUID",
+    "CreatedAt": "作成日時",
+    "Description": "説明",
+    "Disabled": "無効",
+    "DomainName": "ドメイン",
+    "Email": "メールアドレス",
+    "Enabled": "有効",
+    "FullName": "フルネーム",
+    "ModifiedAt": "更新日時",
+    "NeedPasswordChange": "パスワード変更が必要",
+    "Project": "プロジェクト",
+    "ResourcePolicy": "リソースポリシー",
+    "Role": "ロール",
+    "Status": "ステータス",
+    "StatusInfo": "ステータス情報",
+    "SudoSessionEnabled": "Sudoセッション有効",
+    "TwoFA": "2段階認証",
+    "Username": "ユーザー名"
+  },
+  "error": {
+    "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
+  },
+  "general": {
+    "NSelected": "{{count}}選択",
+    "Optional": "任意",
+    "TotalItems": "Total {{total}}アイテム",
+    "button": {
+      "Cancel": "キャンセル",
+      "Close": "近い",
+      "Collapse": "崩壊",
+      "Copied": "コピーしました",
+      "CopyAll": "すべてをコピーします",
+      "Create": "作成する",
+      "Delete": "消去",
+      "Edit": "編集",
+      "Expand": "拡大する",
+      "Remove": "取り除く",
+      "Save": "保存",
+      "Upload": "アップロード"
+    },
+    "modal": {
+      "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元されません。",
+      "ItemSelectedWithCount": "{{count}} 個のアイテムが選択されました。",
+      "PleaseTypeToConfirm": "確認するには、「{{ confirmText }}」と入力してください。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "英字、数字、'-'、'_'、'.' のみ使用できます。",
+      "LetterNumber:/-_dot": "使用できるのは英字（A–Z、a–z）、数字、'-'、'_'、':'、'/'、'.' のみです。"
+    }
+  }
+}

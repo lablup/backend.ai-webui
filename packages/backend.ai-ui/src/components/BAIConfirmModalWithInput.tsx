@@ -1,0 +1,109 @@
+import BAIFlex from './BAIFlex';
+import BAIModal, { type BAIModalProps } from './BAIModal';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { Form, Input, theme, Typography, type InputProps } from 'antd';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+const { Text } = Typography;
+
+export interface BAIConfirmModalWithInputProps extends Omit<
+  BAIModalProps,
+  'icon' | 'okButtonProps'
+> {
+  confirmText: string;
+  content: React.ReactNode;
+  title: React.ReactNode;
+  icon?: React.ReactNode;
+  inputLabel?: React.ReactNode;
+  okButtonProps?: Omit<BAIModalProps['okButtonProps'], 'disabled' | 'danger'>;
+  inputProps?: InputProps;
+}
+
+const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
+  confirmText,
+  title,
+  content,
+  icon,
+  onOk,
+  onCancel,
+  inputProps,
+  inputLabel,
+  ...modalProps
+}) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [form] = Form.useForm();
+  const typedText = Form.useWatch('confirmText', form);
+
+  return (
+    <BAIModal
+      destroyOnHidden
+      title={
+        <BAIFlex direction="column" justify="start" align="start">
+          <Text strong>
+            {icon ?? (
+              <ExclamationCircleFilled
+                style={{ color: token.colorWarning, marginRight: 5 }}
+              />
+            )}
+            {title}
+          </Text>
+        </BAIFlex>
+      }
+      onOk={(e) => {
+        form.resetFields();
+        onOk?.(e);
+      }}
+      onCancel={(e) => {
+        form.resetFields();
+        onCancel?.(e);
+      }}
+      {...modalProps}
+      okButtonProps={{
+        ...modalProps.okButtonProps,
+        disabled: confirmText !== typedText,
+        danger: true,
+      }}
+    >
+      <BAIFlex direction="column" justify="start" align="stretch">
+        {content}
+        <Form form={form} style={{ width: '100%' }} preserve={false}>
+          <Form.Item
+            name="confirmText"
+            layout="vertical"
+            label={inputLabel}
+            rules={[
+              {
+                required: true,
+                message: t('general.modal.PleaseTypeToConfirm', {
+                  confirmText,
+                }),
+                validator: (_, value) => {
+                  if (value === confirmText) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject();
+                },
+              },
+            ]}
+          >
+            <Input
+              autoFocus
+              autoComplete="off"
+              allowClear
+              {...inputProps}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                inputProps?.onClick?.(e);
+              }}
+            />
+          </Form.Item>
+        </Form>
+      </BAIFlex>
+    </BAIModal>
+  );
+};
+
+export default BAIConfirmModalWithInput;

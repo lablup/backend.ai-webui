@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+  webui-dev:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./webserver.conf:/webserver.conf
+      - ./build/web:/webserver/src/ai/backend/web/static
+    environment:
+      - BACKEND_ENDPOINT_TYPE=api
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
+    networks:
+      - backend
+  webui:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "443:443"
+    volumes:
+      - ./webserver.conf:/webserver.conf
+      - ./certificates:/etc/certificates
+    environment:
+      - BACKEND_ENDPOINT_TYPE=api
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
