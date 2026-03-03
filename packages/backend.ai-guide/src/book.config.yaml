@@ -14,11 +14,11 @@ navigation:
     - title: "Backend.AI Overview"
       children:
         - title: "Introduction"
-          path: "README.md"
+          path: "introduction.md"
         - title: "Architecture"
           children:
             - title: "Service Components"
-              path: "backend.ai-overview/backend.ai-architecture/service-components/README.md"
+              path: "backend.ai-overview/backend.ai-architecture/service-components/service-components-overview.md"
             - title: "Computing"
               path: "backend.ai-overview/backend.ai-architecture/computing.md"
             - title: "Storage Management"
@@ -30,7 +30,7 @@ navigation:
             - title: "Control Panel"
               path: "backend.ai-overview/enterprise-applicatioins/control-panel.md"
         - title: "FAQ"
-          path: "backend.ai-overview/faq/README.md"
+          path: "backend.ai-overview/faq/frequently-asked-questions.md"
 
     - title: "Install and Run"
       children:
@@ -39,7 +39,7 @@ navigation:
         - title: "Single-node Installation"
           children:
             - title: "Install from Binary"
-              path: "install-and-run/single-node-all-in-one/install-from-binary/README.md"
+              path: "install-and-run/single-node-all-in-one/install-from-binary/binary-installation-guide.md"
             - title: "Install from Source"
               path: "install-and-run/single-node-all-in-one/install-from-source-code.md"
         - title: "Cloud Deployments"
@@ -67,21 +67,21 @@ navigation:
         - title: "Storage"
           children:
             - title: "Data Management"
-              path: "backend.ai-usage-guide/storage/data/README.md"
+              path: "backend.ai-usage-guide/storage/data/data-management-guide.md"
             - title: "Folder Operations"
               path: "backend.ai-usage-guide/storage/data/how-to-create-rename-update-delete-storage-folders.md"
         - title: "Workload"
           children:
             - title: "Sessions"
-              path: "backend.ai-usage-guide/workload/sessions/README.md"
+              path: "backend.ai-usage-guide/workload/sessions/session-management.md"
             - title: "Import & Run"
-              path: "backend.ai-usage-guide/workload/import-and-run/README.md"
+              path: "backend.ai-usage-guide/workload/import-and-run/import-and-run-guide.md"
         - title: "CLI"
           children:
             - title: "User CLI"
-              path: "cli-user/README.md"
+              path: "cli-user/user-cli-guide.md"
             - title: "Admin CLI"
-              path: "cli-admin/README.md"
+              path: "cli-admin/admin-cli-guide.md"
 
     - title: "Administration"
       children:

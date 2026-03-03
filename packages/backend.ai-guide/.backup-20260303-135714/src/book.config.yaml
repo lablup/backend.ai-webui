@@ -1,0 +1,149 @@
+id: backend-ai-guide
+title: |
+  Backend.AI
+  Complete Guide
+description: Comprehensive guide for Backend.AI platform by Lablup Inc.
+type: document
+languages:
+  - en
+  - ko
+  - ja
+  - th
+navigation:
+  en:
+    - title: "Backend.AI Overview"
+      children:
+        - title: "Introduction"
+          path: "README.md"
+        - title: "Architecture"
+          children:
+            - title: "Service Components"
+              path: "backend.ai-overview/backend.ai-architecture/service-components/README.md"
+            - title: "Computing"
+              path: "backend.ai-overview/backend.ai-architecture/computing.md"
+            - title: "Storage Management"
+              path: "backend.ai-overview/backend.ai-architecture/storage-management.md"
+        - title: "Enterprise Applications"
+          children:
+            - title: "FastTrack MLOps"
+              path: "backend.ai-overview/enterprise-applicatioins/fasttrack-mlops.md"
+            - title: "Control Panel"
+              path: "backend.ai-overview/enterprise-applicatioins/control-panel.md"
+        - title: "FAQ"
+          path: "backend.ai-overview/faq/README.md"
+
+    - title: "Install and Run"
+      children:
+        - title: "Supported Environments"
+          path: "install-and-run/support-environments.md"
+        - title: "Single-node Installation"
+          children:
+            - title: "Install from Binary"
+              path: "install-and-run/single-node-all-in-one/install-from-binary/README.md"
+            - title: "Install from Source"
+              path: "install-and-run/single-node-all-in-one/install-from-source-code.md"
+        - title: "Cloud Deployments"
+          children:
+            - title: "AWS Deployment"
+              path: "install-and-run/install-on-cloud-services/install-on-aws.md"
+            - title: "Azure Deployment"
+              path: "install-and-run/install-on-cloud-services/install-on-azure.md"
+            - title: "GCP Deployment"
+              path: "install-and-run/install-on-cloud-services/install-on-gcp.md"
+
+    - title: "Get Started"
+      children:
+        - title: "Signup and Login"
+          path: "get-started/signup-and-login.md"
+        - title: "Create Storage Folder"
+          path: "get-started/create-storage-folder.md"
+        - title: "Start a New Session"
+          path: "get-started/start-a-new-session.md"
+        - title: "Model Serving"
+          path: "get-started/model-serving.md"
+
+    - title: "Backend.AI Usage Guide"
+      children:
+        - title: "Storage"
+          children:
+            - title: "Data Management"
+              path: "backend.ai-usage-guide/storage/data/README.md"
+            - title: "Folder Operations"
+              path: "backend.ai-usage-guide/storage/data/how-to-create-rename-update-delete-storage-folders.md"
+        - title: "Workload"
+          children:
+            - title: "Sessions"
+              path: "backend.ai-usage-guide/workload/sessions/README.md"
+            - title: "Import & Run"
+              path: "backend.ai-usage-guide/workload/import-and-run/README.md"
+        - title: "CLI"
+          children:
+            - title: "User CLI"
+              path: "cli-user/README.md"
+            - title: "Admin CLI"
+              path: "cli-admin/README.md"
+
+    - title: "Administration"
+      children:
+        - title: "User Settings"
+          path: "administration/user-settings.md"
+        - title: "Environments"
+          path: "administration/environments.md"
+        - title: "Resources"
+          path: "administration/resources.md"
+
+    - title: "Backend.AI SDK"
+      children:
+        - title: "Python SDK"
+          path: "backend.ai-sdk/client-sdk-for-python.md"
+        - title: "TypeScript SDK"
+          path: "backend.ai-sdk/client-sdk-for-typescript.md"
+
+  ko:
+    - title: "Backend.AI 살펴보기"
+      children:
+        - title: "소개"
+          path: "README.md"
+        - title: "아키텍처"
+          children:
+            - title: "서비스 컴포넌트"
+              path: "backend.ai-overview/backend.ai-architecture/service-components/README.md"
+            - title: "Computing"
+              path: "backend.ai-overview/backend.ai-architecture/computing.md"
+            - title: "스토리지 관리"
+              path: "backend.ai-overview/backend.ai-architecture/storage-management.md"
+
+    - title: "설치 및 실행"
+      children:
+        - title: "지원되는 환경"
+          path: "install-and-run/support-environments.md"
+        - title: "싱글노드 설치"
+          children:
+            - title: "바이너리에서 설치"
+              path: "install-and-run/single-node-all-in-one/install-from-binary/README.md"
+
+    - title: "시작하기"
+      children:
+        - title: "가입 및 로그인"
+          path: "get-started/signup-and-login.md"
+        - title: "스토리지 폴더 생성"
+          path: "get-started/create-storage-folder.md"
+
+    - title: "Backend.AI 사용 가이드"
+      children:
+        - title: "스토리지"
+          children:
+            - title: "데이터 관리"
+              path: "backend.ai-usage-guide/storage/data/README.md"
+
+  ja:
+    - title: "Backend.AI概要"
+      children:
+        - title: "はじめに"
+          path: "README.md"
+
+  th:
+    - title: "Backend.AI ภาพรวม"
+      children:
+        - title: "บทนำ"
+          path: "README.md"

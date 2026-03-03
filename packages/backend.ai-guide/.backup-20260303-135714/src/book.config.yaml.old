@@ -1,0 +1,273 @@
+id: backend-ai-guide
+title: |
+  Backend.AI
+  Complete Guide
+description: Comprehensive guide for Backend.AI platform by Lablup Inc.
+type: document
+languages:
+  - en
+  - ko
+  - ja
+  - th
+navigation:
+  en:
+    - title: "1. Backend.AI Overview"
+      children:
+        - title: "Introduction"
+          path: "overview/introduction.md"
+        - title: "Architecture"
+          children:
+            - title: "Service Components"
+              path: "overview/architecture/service-components.md"
+            - title: "Computing Resources"
+              path: "overview/architecture/computing.md"
+            - title: "Storage Management"
+              path: "overview/architecture/storage.md"
+        - title: "Enterprise Applications"
+          children:
+            - title: "FastTrack MLOps"
+              path: "overview/enterprise/fasttrack.md"
+            - title: "Control Panel"
+              path: "overview/enterprise/control-panel.md"
+        - title: "Frequently Asked Questions"
+          path: "overview/faq.md"
+
+    - title: "2. Install and Run"
+      children:
+        - title: "Environments and Prerequisites"
+          path: "install/environments.md"
+        - title: "Single-node Installation"
+          children:
+            - title: "Using Docker Compose"
+              path: "install/single-node/docker-compose.md"
+            - title: "Installation from Source"
+              path: "install/single-node/source.md"
+        - title: "Multi-node Installation"
+          children:
+            - title: "Cluster Setup"
+              path: "install/multi-node/cluster.md"
+            - title: "Agent Configuration"
+              path: "install/multi-node/agents.md"
+        - title: "Cloud Deployments"
+          children:
+            - title: "AWS Deployment"
+              path: "install/cloud/aws.md"
+            - title: "Azure Deployment"
+              path: "install/cloud/azure.md"
+            - title: "Google Cloud Deployment"
+              path: "install/cloud/gcp.md"
+        - title: "Upgrade Guide"
+          path: "install/upgrade.md"
+
+    - title: "3. Get Started"
+      children:
+        - title: "First Login and Setup"
+          path: "get-started/first-login.md"
+        - title: "Understanding Storage"
+          path: "get-started/storage.md"
+        - title: "Creating Your First Session"
+          path: "get-started/first-session.md"
+        - title: "Using Applications"
+          path: "get-started/applications.md"
+        - title: "Model Serving Basics"
+          path: "get-started/model-serving.md"
+
+    - title: "4. Backend.AI Usage Guide"
+      children:
+        - title: "Session Management"
+          children:
+            - title: "Interactive Sessions"
+              path: "usage/sessions/interactive.md"
+            - title: "Batch Sessions"
+              path: "usage/sessions/batch.md"
+            - title: "Cluster Sessions"
+              path: "usage/sessions/cluster.md"
+        - title: "Storage Management"
+          children:
+            - title: "Virtual Folders"
+              path: "usage/storage/vfolders.md"
+            - title: "Data Upload and Download"
+              path: "usage/storage/data-transfer.md"
+            - title: "Sharing and Permissions"
+              path: "usage/storage/sharing.md"
+        - title: "Workload Management"
+          children:
+            - title: "Resource Monitoring"
+              path: "usage/workload/monitoring.md"
+            - title: "Performance Optimization"
+              path: "usage/workload/optimization.md"
+        - title: "Backend.AI Playground"
+          children:
+            - title: "Code Playground"
+              path: "usage/playground/code.md"
+            - title: "Notebook Environment"
+              path: "usage/playground/notebook.md"
+        - title: "Services and Applications"
+          children:
+            - title: "Web Terminal"
+              path: "usage/services/terminal.md"
+            - title: "Jupyter Notebook"
+              path: "usage/services/jupyter.md"
+            - title: "VS Code Server"
+              path: "usage/services/vscode.md"
+        - title: "Command Line Interface"
+          children:
+            - title: "CLI Installation"
+              path: "usage/cli/installation.md"
+            - title: "Session Management via CLI"
+              path: "usage/cli/sessions.md"
+            - title: "Storage Operations via CLI"
+              path: "usage/cli/storage.md"
+
+    - title: "5. Administration"
+      children:
+        - title: "User Settings and Management"
+          children:
+            - title: "User Registration"
+              path: "admin/users/registration.md"
+            - title: "User Permissions"
+              path: "admin/users/permissions.md"
+            - title: "Keypair Management"
+              path: "admin/users/keypairs.md"
+        - title: "Environments and Images"
+          children:
+            - title: "Container Images"
+              path: "admin/environments/images.md"
+            - title: "Custom Environments"
+              path: "admin/environments/custom.md"
+        - title: "Resource Management"
+          children:
+            - title: "Resource Policies"
+              path: "admin/resources/policies.md"
+            - title: "Scaling Groups"
+              path: "admin/resources/scaling-groups.md"
+            - title: "Agent Management"
+              path: "admin/resources/agents.md"
+        - title: "System Configuration"
+          children:
+            - title: "Global Settings"
+              path: "admin/config/global.md"
+            - title: "Domain Configuration"
+              path: "admin/config/domains.md"
+            - title: "Storage Configuration"
+              path: "admin/config/storage.md"
+        - title: "Maintenance and Monitoring"
+          children:
+            - title: "System Health"
+              path: "admin/maintenance/health.md"
+            - title: "Log Management"
+              path: "admin/maintenance/logs.md"
+            - title: "Backup and Recovery"
+              path: "admin/maintenance/backup.md"
+
+    - title: "6. FastTrack 2 MLOps"
+      children:
+        - title: "Pipeline Creation"
+          path: "fasttrack/pipeline-creation.md"
+        - title: "Task Management"
+          path: "fasttrack/task-management.md"
+        - title: "Job Scheduling"
+          path: "fasttrack/job-scheduling.md"
+        - title: "Experiment Tracking"
+          path: "fasttrack/experiment-tracking.md"
+
+    - title: "7. Control Panel"
+      children:
+        - title: "Dashboard Overview"
+          path: "control-panel/dashboard.md"
+        - title: "System Monitoring"
+          path: "control-panel/monitoring.md"
+        - title: "Resource Analytics"
+          path: "control-panel/analytics.md"
+
+    - title: "8. Reservoir"
+      children:
+        - title: "Key Concepts"
+          path: "reservoir/concepts.md"
+        - title: "Data Management"
+          path: "reservoir/data-management.md"
+
+    - title: "9. Migration Guide"
+      children:
+        - title: "Version Upgrade Procedures"
+          path: "migration/version-upgrade.md"
+        - title: "Container Registry Migration"
+          path: "migration/registry-migration.md"
+        - title: "Configuration Migration"
+          path: "migration/config-migration.md"
+
+    - title: "10. Developer Guide"
+      children:
+        - title: "Development Environment Setup"
+          path: "developer/setup.md"
+        - title: "Development Workflows"
+          path: "developer/workflows.md"
+        - title: "Contributing Guidelines"
+          path: "developer/contributing.md"
+        - title: "Plugin Development"
+          path: "developer/plugins.md"
+
+    - title: "11. API Reference"
+      children:
+        - title: "Manager API"
+          children:
+            - title: "Authentication"
+              path: "api/manager/auth.md"
+            - title: "Session Management"
+              path: "api/manager/sessions.md"
+            - title: "Resource Management"
+              path: "api/manager/resources.md"
+        - title: "Agent API"
+          path: "api/agent/overview.md"
+        - title: "Storage Proxy API"
+          path: "api/storage-proxy/overview.md"
+        - title: "GraphQL API"
+          path: "api/graphql/overview.md"
+
+    - title: "12. Command Reference"
+      children:
+        - title: "Backend.AI Client"
+          path: "commands/client.md"
+        - title: "Backend.AI Manager"
+          path: "commands/manager.md"
+        - title: "Backend.AI Agent"
+          path: "commands/agent.md"
+        - title: "Storage Proxy"
+          path: "commands/storage-proxy.md"
+
+    - title: "13. Backend.AI SDK"
+      children:
+        - title: "Python SDK"
+          children:
+            - title: "Installation and Setup"
+              path: "sdk/python/setup.md"
+            - title: "Session Operations"
+              path: "sdk/python/sessions.md"
+            - title: "Storage Operations"
+              path: "sdk/python/storage.md"
+        - title: "TypeScript SDK"
+          children:
+            - title: "Installation and Setup"
+              path: "sdk/typescript/setup.md"
+            - title: "Basic Usage"
+              path: "sdk/typescript/usage.md"
+
+    - title: "14. Troubleshooting"
+      children:
+        - title: "Common Issues"
+          path: "troubleshooting/common.md"
+        - title: "Installation Problems"
+          path: "troubleshooting/installation.md"
+        - title: "Session Problems"
+          path: "troubleshooting/sessions.md"
+        - title: "Storage Problems"
+          path: "troubleshooting/storage.md"
+
+    - title: "15. Appendices"
+      children:
+        - title: "Glossary"
+          path: "appendices/glossary.md"
+        - title: "License Agreement"
+          path: "appendices/license.md"
+        - title: "Security Guidelines"
+          path: "appendices/security.md"
