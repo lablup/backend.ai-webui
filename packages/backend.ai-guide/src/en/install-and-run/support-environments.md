@@ -23,8 +23,8 @@ Backend.AI 는 다음 목록의 하드웨어를 지원하며 24.03 버전 기준
 
 |   |   |   |
 | --- | --- | --- |
-| ![](../images/weka-primary-reversed-logo.svg) | ![](../images/Pure-storage-vector-logo (1).svg) | ![](../images/VAST_Data_logo.svg) |
-| ![](../images/netapp-svg.svg) | ![](../images/ceph (1).svg) | ![](../images/ddn-logo-dark-horizontal-rgb (1).svg) |
+| ![](../images/weka-primary-reversed-logo.svg) | ![](../images/Pure-storage-vector-logo.svg) | ![](../images/VAST_Data_logo.svg) |
+| ![](../images/netapp-svg.svg) | ![](../images/ceph.svg) | ![](../images/ddn-logo-dark-horizontal-rgb.svg) |
 
 
 

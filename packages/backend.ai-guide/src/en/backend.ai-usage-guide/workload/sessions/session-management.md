@@ -22,7 +22,7 @@ Backend.AI supports multi-node workloads to let users create a bundle of contain
 
 Each compute session now consists of one or more kernels. In the Docker backend, a kernel corresponds to a container. In the Kubernetes backend, a session corresponds to a pod, and each kernel represents a container within that pod.
 
-<figure><img src="../../../images/image (17).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../images/session_management_page.png" alt=""><figcaption></figcaption></figure>
 
 :::info
 **Notes**

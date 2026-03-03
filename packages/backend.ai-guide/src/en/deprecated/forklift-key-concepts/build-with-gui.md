@@ -10,12 +10,12 @@ order: 192
 
 ### 이미지 빌드하기
 
-<figure><img src="../../images/image (1) (1) (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/extreme_duplicate_4.png" alt=""><figcaption></figcaption></figure>
 
 1. Start Menu 페이지에 있는 `BUILD` 버튼을 누릅니다.
    1. 사이드바의 BUILDER 버튼을 클릭하여 Page Builder를 불러올 수도 있습니다.
 
-<figure><img src="../../images/image (2) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/workflow_step_3.png" alt=""><figcaption></figcaption></figure>
 
 2. 기반이 될 이미지를 **`Source docker image`** 에 입력합니다.
 3. 소스 이미지를 기반으로 새롭게 생성할 이미지를 **`Target docker image`** 에 입력합니다.

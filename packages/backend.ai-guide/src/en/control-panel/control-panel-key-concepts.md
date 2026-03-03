@@ -4,4 +4,4 @@ order: 139
 ---
 # Control Panel Key Concepts
 
-<figure><img src="../images/image (15).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/control_panel_overview.png" alt=""><figcaption></figcaption></figure>

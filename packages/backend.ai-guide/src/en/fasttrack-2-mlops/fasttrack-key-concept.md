@@ -61,11 +61,11 @@ Task customization and sharing (via GitHub/GitLab repositories and/or Backend.AI
 
 Easy deployment in inference-dedicated servers​
 
-<figure><img src="../images/image (4) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/complex_pattern_8.png (4) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## Fast Track Structure
 
-<figure><img src="../images/image (2) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption><p>FastTrack Architecture</p></figcaption></figure>
+<figure><img src="../images/complex_pattern_8.png (2) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption><p>FastTrack Architecture</p></figcaption></figure>
 
 ## Pipeline & Pipeline Job
 
@@ -119,7 +119,7 @@ Session status == task instance status​
 
 ## Pipeline Data Folder
 
-<figure><img src="../images/image (3) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/complex_pattern_8.png (3) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Created when a pipeline is created​
 

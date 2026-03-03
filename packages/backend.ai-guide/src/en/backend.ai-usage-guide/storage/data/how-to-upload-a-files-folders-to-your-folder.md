@@ -6,7 +6,7 @@ order: 61
 
 ## Exploring folders
 
-<figure><img src="../../../images/folder_name (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../images/folder_name.png" alt=""><figcaption></figcaption></figure>
 
 Click the folder name to open a file explorer and view the contents of the folder.
 

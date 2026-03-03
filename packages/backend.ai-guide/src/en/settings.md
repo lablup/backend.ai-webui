@@ -8,7 +8,7 @@ order: 137
 
 
 
-<figure><img src="images/image (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="images/workflow_step_5.png" alt=""><figcaption></figcaption></figure>
 
 
 
@@ -33,7 +33,7 @@ order: 137
 
 
 
-<figure><img src="images/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="images/extreme_duplicate_5.png" alt=""><figcaption></figcaption></figure>
 
 
 

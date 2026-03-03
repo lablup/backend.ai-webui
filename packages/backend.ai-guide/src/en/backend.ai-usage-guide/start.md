@@ -6,7 +6,7 @@ order: 55
 
 ## About Start Page
 
-<figure><img src="../images/image (25).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/usage_guide_start_page.png" alt=""><figcaption></figcaption></figure>
 
 Start tab in Backend.AI serves as a quick-access dashboard, allowing users to efficiently initiate frequently used actions. This page consolidates essential operations into easily accessible cards, streamlining the workflow for both new and experienced users.
 

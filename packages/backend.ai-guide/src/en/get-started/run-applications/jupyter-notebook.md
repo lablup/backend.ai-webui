@@ -4,4 +4,4 @@ order: 51
 ---
 # Jupyter Notebook
 
-<figure><img src="../../images/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/jupyter_notebook_interface.png" alt=""><figcaption></figcaption></figure>

@@ -12,7 +12,7 @@ FastTrack 2 shares account authentication information with Backend.AI. A Backend
 * When accessing the site for the first time, click the **Sign in with Backend.AI** to register.
 * Once a Backend.AI account is linked to FastTrack 2, same button can be used for further logins.
 
-<figure><img src="../../images/image (22).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/fasttrack_login_1.png" alt=""><figcaption></figcaption></figure>
 
 ① **Sign in with Backend.AI**: If Backend.AI account is already registered, it can be used as a credentials.
 
@@ -20,7 +20,7 @@ FastTrack 2 shares account authentication information with Backend.AI. A Backend
 
 ## Connecting the Backend.AI account to FastTrack 2
 
-<figure><img src="../../images/image (23).png" alt=""><figcaption><p>Account connection confirmation popup</p></figcaption></figure>
+<figure><img src="../../images/fasttrack_login_2.png" alt=""><figcaption><p>Account connection confirmation popup</p></figcaption></figure>
 
 When linking a Backend.AI account to FastTrack 2 for the first time, an additional account connection popup may appear. If this happens, please follow the steps provided.
 

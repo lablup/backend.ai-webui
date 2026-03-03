@@ -96,7 +96,7 @@ To install Backend.AI, select 'PACKAGE' at the middle to proceed. Highlighting e
 
 When installation is finished, Install Report is shown. Before moving on to each components, open up the new terminal.
 
-<figure><img src="../../../images/image (1) (1) (1).png" alt=""><figcaption><p>Checking the installation of components</p></figcaption></figure>
+<figure><img src="../../../images/binary_installer_interface.png" alt=""><figcaption><p>Checking the installation of components</p></figcaption></figure>
 
 Use `docker ps` command to check Postgresql, etcd, Redis is running.
 
@@ -124,7 +124,7 @@ Each terminal should be opened in a new window, and tools such as [tmux](https:/
 
 Access to the given address at the installer. Port number should be `:8090` as default.
 
-<figure><img src="../../../images/image (1) (1).png" alt=""><figcaption><p>Backend.AI Login page</p></figcaption></figure>
+<figure><img src="../../../images/extreme_duplicate_7.png" alt=""><figcaption><p>Backend.AI Login page</p></figcaption></figure>
 
 Login with the provided default ID and password. Default password is randomly generated.
 

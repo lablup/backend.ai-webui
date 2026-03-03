@@ -10,7 +10,7 @@ order: 46
 
 access cloud.backend.ai / appropriate access to sign up.
 
-<figure><img src="../images/image (26).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/login_page.png" alt=""><figcaption></figcaption></figure>
 
 
 
@@ -18,7 +18,7 @@ access cloud.backend.ai / appropriate access to sign up.
 
 
 
-<figure><img src="../images/image (27).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/signup_page.png" alt=""><figcaption></figcaption></figure>
 
 :::info
 **Notes**
@@ -50,7 +50,7 @@ Backend.AI securely stores user passwords using one-way hashing. The system util
 
 ## Login
 
-<figure><img src="../images/image (3) (1) (1).png" alt="" width="375"><figcaption></figcaption></figure>
+<figure><img src="../images/login_form_detail.png" alt="" width="375"><figcaption></figcaption></figure>
 
 **Email or Username**: By default, user authentication is performed using the registered email address. Username-based login is available only when a dedicated plugin is applied. For other login methods, refer to the internal policies and configuration settings of the organization.
 

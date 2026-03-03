@@ -6,11 +6,11 @@ order: 60
 
 ## Creating a storage folder
 
-<figure><img src="../../../images/create-folder (1).png" alt=""><figcaption><p>Storage -> Data -> 'Create Folder' button</p></figcaption></figure>
+<figure><img src="../../../images/create-folder.png" alt=""><figcaption><p>Storage -> Data -> 'Create Folder' button</p></figcaption></figure>
 
 A storage folder can be created by clicking the **'Create Folder'** button under Data page. There are two 'Create Folder' button on the screen. One is located at the top-left of the storage status viewing area, and one is located at the top-right side of the 'Folders' card. Clicking the **'Create Folder'** button opens a modal to enter folder information.&#x20;
 
-<figure><img src="../../../images/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption><p>Modal: Create a new storage folder</p></figcaption></figure>
+<figure><img src="../../../images/extreme_duplicate_6.png" alt=""><figcaption><p>Modal: Create a new storage folder</p></figcaption></figure>
 
 The meaning of the each field of the modal as follows:
 
@@ -33,7 +33,7 @@ The meaning of the each field of the modal as follows:
 
 * **Cloneable** (Optional): Set storage folder as cloneable. Shown only when select `Model` in **Usage Mode**.&#x20;
 
-<figure><img src="../../../images/project_selector (1).png" alt=""><figcaption><p>Modal: Project selector based on folder type</p></figcaption></figure>
+<figure><img src="../../../images/project_selector.png" alt=""><figcaption><p>Modal: Project selector based on folder type</p></figcaption></figure>
 
 * **Project** (Optional): Specifies the project group to which the folder will belong. Project folders must be associated with a project; this setting does not apply when creating a user folder. Shown only when users select a `Project` as a **Type**, creating additional project is not available in this dropdown.
 
@@ -45,7 +45,7 @@ Folders created in this section can be [mounted when starting a compute session]
 
 Click the edit button (or pencil icon) next to the folder name to modify its name as needed. Edit button will be visible when user hover their focus over the folder name. Once the changes are saved, the new folder name will be applied immediately.
 
-<figure><img src="../../../images/folder_name_edit (1).png" alt=""><figcaption><p>Renaming a folder on a list</p></figcaption></figure>
+<figure><img src="../../../images/folder_name_edit.png" alt=""><figcaption><p>Renaming a folder on a list</p></figcaption></figure>
 
 :::info
 **Note**

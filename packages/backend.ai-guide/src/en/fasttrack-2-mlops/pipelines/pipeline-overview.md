@@ -10,7 +10,7 @@ order: 125
 
 
 
-<figure><img src="../../images/image (24).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/pipeline_overview_page.png" alt=""><figcaption></figcaption></figure>
 
 d
 

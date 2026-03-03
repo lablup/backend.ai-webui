@@ -16,7 +16,7 @@ order: 126
 
 To create a new pipeline, click the `+ New Pipeline` button on the left top of the pipelines page.
 
-<figure><img src="../../images/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/pipeline_creation_form.png" alt=""><figcaption></figcaption></figure>
 
 00000
 

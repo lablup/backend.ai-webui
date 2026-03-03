@@ -6,6 +6,6 @@ order: 52
 
 ## Advanced web terminal usage
 
-<figure><img src="../../images/image (12).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/web_terminal_usage_1.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../../images/image (13).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../images/web_terminal_usage_2.png" alt=""><figcaption></figcaption></figure>

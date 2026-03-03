@@ -4,4 +4,4 @@ order: 49
 ---
 # Start a New Session
 
-<figure><img src="../images/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../images/session_create_dialog.png" alt=""><figcaption></figcaption></figure>

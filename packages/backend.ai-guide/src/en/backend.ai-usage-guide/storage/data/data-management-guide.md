@@ -8,7 +8,7 @@ order: 59
 
 Backend.AI provides dedicated storage to preserve user files. As all files and directories within a compute session are deleted upon session termination, it is recommended to save important data in a storage folder. The list of storage folders can be accessed by navigating to the **Data** page in the sidebar. Information such as folder name and ID, the NFS host name where the folder is located (Location), and folder access permissions (Permission) are displayed for each storage folder.
 
-<figure><img src="../../../images/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../images/data_page_overview.png" alt=""><figcaption></figcaption></figure>
 
 Data page
 
@@ -38,7 +38,7 @@ User folders can be created by normal users, and you can see that there is one u
 
 ## About Monitor Card
 
-<figure><img src="../../../images/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../images/data_management_interface.png" alt=""><figcaption></figcaption></figure>
 
 
 
