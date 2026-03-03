@@ -1,0 +1,156 @@
+---
+title: Code Execution (Batch Mode)
+order: 162
+---
+# Code Execution (Batch Mode)
+
+Some sessions provide the batch mode, which offers an explicit build step required for multi-module programs or compiled programming languages. In this mode, you first upload files in prior to execution.
+
+## Uploading files
+
+* URI: `/session/:id/upload`
+* Method: `POST`
+
+### Parameters
+
+Upload files to the session. You may upload multiple files at once using multi-part form-data encoding in the request body (RFC 1867/2388). The uploaded files are placed under `/home/work` directory (which is the home directory for all sessions by default), and existing files are always overwritten. If the filename has a directory part, non-existing directories will be auto-created. The path may be either absolute or relative, but only sub-directories under `/home/work` is allowed to be created.
+
+:::info
+Hint
+
+This API is for uploading frequently-changing source files in prior to batch-mode execution. All files uploaded via this API is deleted when the session terminates. Use [virtual folders](virtual-folders.md) to store and access larger, persistent, static data and library files for your codes.
+:::
+
+:::warning
+**Warning**
+
+Direct file uploads to mounted virtual folders are not supported through this API. However, files generated during execution can be copied or moved to virtual folders within build scripts or main programs for subsequent use.
+:::
+
+There are several limits on this API:
+
+
+|   |   |
+| --- | --- |
+| The maximum size of each file | 1 MiB |
+| The number of files per upload request | 20 |
+
+
+
+### Response
+
+
+| HTTP Status Code | Description |
+| --- | --- |
+| 204 OK | Success. |
+| 400 Bad Request | Returned when one of the uploaded file exceeds the size limit or there are too many files. |
+
+
+
+## Executing with Build Step
+
+* URI: `/session/:id`
+* Method: `POST`
+
+### Parameters
+
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| :id | slug | The session ID. |
+| mode | enum[str] | A constant string "batch". |
+| code | str | Must be an empty string "". |
+| runId | str | A string of client-side unique identifier for this particular run. For more details about the concept of a run, see Code Execution Model. If not given, the API server will assign a random one in the first response and the client must use it for the same run afterwards. |
+| options | object | Batch Execution Query Object. |
+
+
+
+Example:
+
+```bash
+{
+  "mode": "batch",
+  "options": "{batch-execution-query-object}",
+  "runId": "af9185c5fb0eacb2"
+}
+```
+
+### Response
+
+
+| HTTP Status Code | Description |
+| --- | --- |
+| 200 OK | The session has responded with the execution result. The response body contains a JSON object as described below. |
+
+
+
+
+| Fields | Type | Values |
+| --- | --- | --- |
+| result | object | Execution Result Object |
+
+
+
+## Listing Files
+
+Once files are uploaded to the session or generated during the execution of the code, there is a need to identify what files actually are in the current session. In this case, use this API to get the list of files of your compute sesison.
+
+* URI: `/session/:id/files`
+* Method: `GET`
+
+### Parameters
+
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| :id | slug | The session ID. |
+| path | str | Path inside the session (default: /home/work). |
+
+
+
+### Response
+
+
+| HTTP Status Code | Description |
+| --- | --- |
+| 200 OK | Success. |
+| 404 Not Found | There is no such path. |
+
+
+
+
+| Fields | Type | Values |
+| --- | --- | --- |
+| files | str | Stringified json containing list of files. |
+| folder_path | str | Absolute path inside session. |
+| errors | str | Any errors occurred during scanning the specified path. |
+
+
+
+## Downloading Files
+
+Download files from your compute session.
+
+The response contents are multiparts with tarfile binaries. Post-processing, such as unpacking and save them, should be handled by the client.
+
+* URI: `/session/:id/download`
+* Method: `GET`
+
+### Parameters
+
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| :id | slug | The session ID. |
+| files | list[str] | File paths inside the session container to download. (maximum 5 files at once) |
+
+
+
+### Response
+
+
+| HTTP Status Code | Description |
+| --- | --- |
+| 200 OK | Success |
+
+
