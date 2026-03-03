@@ -5,6 +5,7 @@ import BAIGaudiIcon from '../icons/BAIGaudiIcon';
 import BAIIpuIcon from '../icons/BAIIpuIcon';
 import BAIRebelIcon from '../icons/BAIRebelIcon';
 import BAIRocmIcon from '../icons/BAIRocmIcon';
+import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
 import BAIFlex from './BAIFlex';
 import NumberWithUnit from './BAINumberWithUnit';
@@ -118,6 +119,7 @@ const knownDeviceIcons = {
   nvidia: <BAINvidiaIcon />,
   rocm: <BAIRocmIcon />,
   rebel: <BAIRebelIcon />,
+  tenstorrent: <BAITenstorrentIcon />,
 } as const;
 
 interface ResourceTypeIconProps {

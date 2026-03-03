@@ -154,6 +154,17 @@
         "round_length": 0
       },
       "display_icon": "lpu"
+    },
+    "tt-n300.device": {
+      "slot_name": "tt-n300.device",
+      "description": "Tenstorrent N300",
+      "human_readable_name": "Tenstorrent N300 Device",
+      "display_unit": "N300",
+      "number_format": {
+        "binary": false,
+        "round_length": 0
+      },
+      "display_icon": "tenstorrent"
     }
   }
 }
