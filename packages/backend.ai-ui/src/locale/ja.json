@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "試行回数",
+    "CreatedAt": "作成日時",
+    "From": "送信元",
+    "Phase": "フェーズ",
+    "Result": "結果",
+    "StatusTransition": "ステータス遷移",
+    "To": "宛先",
+    "UpdatedAt": "更新日時"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "終了日時",
+    "ErrorCode": "エラーコード",
+    "Message": "メッセージ",
+    "Result": "結果",
+    "StartedAt": "開始日時",
+    "Step": "ステップ"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "許可されたクライアントIP",

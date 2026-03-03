@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "CreatedAt": "Ngày tạo",
+    "From": "Từ",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Kết thúc lúc",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "StartedAt": "Bắt đầu lúc",
+    "Step": "Bước"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",

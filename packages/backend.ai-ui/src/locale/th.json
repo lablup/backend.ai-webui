@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "CreatedAt": "สร้างเมื่อ",
+    "From": "จาก",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "ตัวแทน"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "สิ้นสุดเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "Message": "ข้อความ",
+    "Result": "ผลลัพธ์",
+    "StartedAt": "เริ่มเมื่อ",
+    "Step": "ขั้นตอน"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",

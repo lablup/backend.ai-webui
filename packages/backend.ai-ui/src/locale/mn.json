@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "CreatedAt": "Үүссэн огноо",
+    "From": "Эхлэх",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "StatusTransition": "Статусын шилжилт",
+    "To": "Хүртэл",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Дууссан цаг",
+    "ErrorCode": "Алдааны код",
+    "Message": "Зурвас",
+    "Result": "Үр дүн",
+    "StartedAt": "Эхэлсэн цаг",
+    "Step": "Алхам"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",

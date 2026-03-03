@@ -196,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "CreatedAt": "Dibuat pada",
+    "From": "Dari",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "StatusTransition": "Transisi Status",
+    "To": "sampai",
+    "UpdatedAt": "Diperbarui pada"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agen"
   },
@@ -261,6 +271,14 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
+  },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kode Kesalahan",
+    "Message": "Pesan",
+    "Result": "Hasil",
+    "StartedAt": "Dimulai pada",
+    "Step": "Langkah"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Klien yang Diizinkan",
