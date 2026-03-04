@@ -122,6 +122,13 @@
     "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
     "Version": "版本"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "退出全屏",
+    "Fullscreen": "全屏",
+    "Maximize": "最大化",
+    "Minimize": "最小化",
+    "Restore": "还原"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
     "ProjectResourcePolicy": "项目资源策略",
