@@ -61,6 +61,7 @@ const AdminDashboardPage: React.FC = () => {
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
       ) {
+        ...ActiveAgentsFragment
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
         ...TotalResourceWithinResourceGroupFragment
@@ -180,8 +181,8 @@ const AdminDashboardPage: React.FC = () => {
             }
           >
             <ActiveAgents
-              fetchKey={fetchKey}
-              onChangeFetchKey={() => updateFetchKey()}
+              queryRef={queryRef}
+              isRefetching={isPendingIntervalRefetch}
             />
           </Suspense>
         ),
