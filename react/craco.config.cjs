@@ -88,6 +88,9 @@ module.exports = {
         // at runtime (they are not bundled by webpack), so a page reload is
         // needed to re-fetch the updated translations.
         path.resolve(__dirname, '../resources/i18n'),
+        // Watch theme.json so that theme customization changes during development
+        // trigger a full page reload.
+        path.resolve(__dirname, '../resources/theme.json'),
       ];
 
       const watchers = filesToWatch
