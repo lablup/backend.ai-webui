@@ -17,9 +17,6 @@ versionSource: "../../package.json"
 # Languages
 languageLabels:
   en: "English"
-  ko: "한국어"
-  ja: "日本語"
-  th: "ภาษาไทย"
 
 # PDF settings
 pdfFilenameTemplate: "Backend.AI_Guide_{version}_{lang}.pdf"
@@ -38,17 +35,8 @@ agents:
   languages:
     - code: en
       label: English
-    - code: ja
-      label: Japanese
-    - code: ko
-      label: Korean
-    - code: th
-      label: Thai
   i18nPaths:
     en: "../../resources/i18n/en.json"
-    ko: "../../resources/i18n/ko.json"
-    ja: "../../resources/i18n/ja.json"
-    th: "../../resources/i18n/th.json"
   terminologyFile: "TERMINOLOGY.md"
   styleGuideFile: "DOCUMENTATION-STYLE-GUIDE.md"
   translationGuideFile: "TRANSLATION-GUIDE.md"
