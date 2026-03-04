@@ -7,11 +7,10 @@ import {
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 import {
+  findMatchingImage,
   getImageFullName,
   localeCompare,
-  parseImageString,
   preserveDotStartCase,
-  removeArchitectureFromImageFullName,
 } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -177,59 +176,26 @@ const ImageEnvironmentSelectFormItems: React.FC<
     let matchedImageByVersion: Image | undefined;
     const version = form.getFieldValue('environments')?.version;
 
-    // 1. Try exact full name matching (registry/namespace:tag@arch)
-    version &&
-      _.find(imageGroups, (group) => {
-        matchedEnvironmentByVersion = _.find(
-          group.environmentGroups,
-          (environment) => {
-            matchedImageByVersion = _.find(
-              environment.images,
-              (image) => getImageFullName(image) === version,
-            );
-            return !!matchedImageByVersion; // break iteration
-          },
-        );
-        return !!matchedEnvironmentByVersion; // break iteration
-      });
+    // Use findMatchingImage utility for 3-tier matching strategy
+    if (version) {
+      const allImages = imageGroups
+        .flatMap((group) =>
+          group.environmentGroups.flatMap((env) => env.images),
+        )
+        .filter((image): image is NonNullable<typeof image> => image != null);
+      matchedImageByVersion = findMatchingImage(version, allImages) as
+        | Image
+        | undefined;
 
-    // 2. If no exact match, try partial matching
-    if (!matchedEnvironmentByVersion && version) {
-      const { registryAndNamespace, hasTag, hasArch } =
-        parseImageString(version);
-
-      if (!hasArch && hasTag) {
-        // version is "registry/namespace:tag" format without architecture
+      // Find the corresponding environment group for the matched image
+      if (matchedImageByVersion) {
         _.find(imageGroups, (group) => {
           matchedEnvironmentByVersion = _.find(
             group.environmentGroups,
-            (environment) => {
-              matchedImageByVersion = _.find(environment.images, (image) => {
-                const fullName = getImageFullName(image);
-                // Match by removing architecture from fullName
-                return (
-                  removeArchitectureFromImageFullName(fullName) === version
-                );
-              });
-              return !!matchedImageByVersion;
-            },
-          );
-          return !!matchedEnvironmentByVersion;
-        });
-      } else if (!hasTag) {
-        // version is "registry/namespace" format (no tag, no architecture)
-        // Select the latest version (first image in sorted array)
-        _.find(imageGroups, (group) => {
-          matchedEnvironmentByVersion = _.find(
-            group.environmentGroups,
-            (environment) => {
-              if (environment.environmentName === registryAndNamespace) {
-                // images are already sorted by version (latest first)
-                matchedImageByVersion = environment.images[0];
-                return true;
-              }
-              return false;
-            },
+            (environment) =>
+              environment.images.some(
+                (image) => image === matchedImageByVersion,
+              ),
           );
           return !!matchedEnvironmentByVersion;
         });
