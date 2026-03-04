@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ResourcesPageAgentListQuery } from '../__generated__/ResourcesPageAgentListQuery.graphql';
 import AgentList from '../components/AgentList';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
@@ -9,6 +10,7 @@ import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
@@ -17,6 +19,19 @@ type TabKey = 'agents' | 'storages' | 'resourceGroup';
 interface ResourcesPageProps {}
 
 const tabParam = withDefault(StringParam, 'agents');
+
+const ResourcesPageAgentListContent: React.FC = () => {
+  const queryRef = useLazyLoadQuery<ResourcesPageAgentListQuery>(
+    graphql`
+      query ResourcesPageAgentListQuery {
+        ...AgentListFragment
+      }
+    `,
+    {},
+  );
+
+  return <AgentList queryRef={queryRef} />;
+};
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
@@ -46,7 +61,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       <Suspense fallback={<Skeleton active />}>
         {curTabKey === 'agents' && (
           <BAIErrorBoundary>
-            <AgentList />
+            <ResourcesPageAgentListContent />
           </BAIErrorBoundary>
         )}
         {curTabKey === 'storages' && (

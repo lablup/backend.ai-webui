@@ -3,22 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  AgentListQuery,
-  AgentListQuery$data,
-  AgentListQuery$variables,
-} from '../__generated__/AgentListQuery.graphql';
+  AgentListFragment$key,
+  AgentListFragment$data,
+} from '../__generated__/AgentListFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import BAIRadioGroup from './BAIRadioGroup';
 import { ReloadOutlined } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
 import { Button, type TableProps, Tag, theme, Tooltip } from 'antd';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAIFlexProps,
-  INITIAL_FETCH_KEY,
   mergeFilterValues,
   BAIColumnType,
   BAIDoubleTag,
@@ -29,32 +26,32 @@ import {
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { useState, useDeferredValue } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type Agent = NonNullable<
-  NonNullable<AgentListQuery$data['agent_nodes']>['edges'][number]
+  NonNullable<AgentListFragment$data['agent_nodes']>['edges'][number]
 >['node'];
 
 interface AgentListProps {
+  queryRef: AgentListFragment$key;
   tableProps?: Omit<TableProps, 'dataSource'>;
   headerProps?: BAIFlexProps;
-  fetchKey?: string;
-  onChangeFetchKey?: (key: string) => void;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
+  queryRef,
   tableProps,
   headerProps,
-  ...otherProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [queryParams, setQueryParams] = useQueryStates({
     status: parseAsString.withDefault('ALIVE'),
     filter: parseAsString,
@@ -70,50 +67,33 @@ const AgentList: React.FC<AgentListProps> = ({
     pageSize: 10,
   });
 
-  const [fetchKey, setFetchKey] = useControllableValue(otherProps, {
-    valuePropName: 'fetchKey',
-    trigger: 'onChangeFetchKey',
-    defaultValue: INITIAL_FETCH_KEY,
-  });
-
   const statusFilter =
     queryParams.status === 'ALIVE'
       ? 'status == "ALIVE"'
       : 'status == "TERMINATED"';
 
-  const queryVariables: AgentListQuery$variables = {
+  const currentVariables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.limit,
     order: queryParams.order || '-first_contact',
     filter: mergeFilterValues([queryParams.filter, statusFilter]),
   };
 
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const updateFetchKey = () => {
-    setFetchKey(() => new Date().toISOString());
-  };
-
-  const { agent_nodes } = useLazyLoadQuery<AgentListQuery>(
+  const [data, refetch] = useRefetchableFragment(
     graphql`
-      query AgentListQuery(
-        $filter: String
-        $order: String
-        $offset: Int
-        $first: Int
-        $before: String
-        $after: String
-        $last: Int
-      ) {
+      fragment AgentListFragment on Query
+      @argumentDefinitions(
+        filter: { type: "String" }
+        order: { type: "String", defaultValue: "-first_contact" }
+        offset: { type: "Int" }
+        first: { type: "Int", defaultValue: 10 }
+      )
+      @refetchable(queryName: "AgentListRefetchQuery") {
         agent_nodes(
           filter: $filter
           order: $order
           offset: $offset
           first: $first
-          after: $after
-          before: $before
-          last: $last
         ) {
           edges {
             node {
@@ -127,15 +107,16 @@ const AgentList: React.FC<AgentListProps> = ({
         }
       }
     `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
+    queryRef,
   );
+
+  const { agent_nodes } = data;
+
+  const doRefetch = (variables: typeof currentVariables = currentVariables) => {
+    startRefetchTransition(() => {
+      refetch(variables, { fetchPolicy: 'network-only' });
+    });
+  };
 
   const regionColumn: BAIColumnType<AgentNodeInList> = {
     title: t('agent.Region'),
@@ -223,6 +204,18 @@ const AgentList: React.FC<AgentListProps> = ({
             onChange={(e) => {
               setQueryParams({ status: e.target.value });
               setTablePaginationOption({ current: 1 });
+              const newStatusFilter =
+                e.target.value === 'ALIVE'
+                  ? 'status == "ALIVE"'
+                  : 'status == "TERMINATED"';
+              doRefetch({
+                ...currentVariables,
+                offset: 0,
+                filter: mergeFilterValues([
+                  queryParams.filter,
+                  newStatusFilter,
+                ]),
+              });
             }}
           />
 
@@ -258,14 +251,19 @@ const AgentList: React.FC<AgentListProps> = ({
             onChange={(value) => {
               setQueryParams({ filter: value || null });
               setTablePaginationOption({ current: 1 });
+              doRefetch({
+                ...currentVariables,
+                offset: 0,
+                filter: mergeFilterValues([value, statusFilter]),
+              });
             }}
           />
         </BAIFlex>
         <BAIFlex gap="xs">
           <Tooltip title={t('button.Refresh')}>
             <Button
-              loading={deferredFetchKey !== fetchKey}
-              onClick={() => updateFetchKey()}
+              loading={isPendingRefetch}
+              onClick={() => doRefetch()}
               icon={<ReloadOutlined />}
             ></Button>
           </Tooltip>
@@ -287,6 +285,7 @@ const AgentList: React.FC<AgentListProps> = ({
           regionColumn,
           ...baseColumns.slice(3),
         ]}
+        {...tableProps}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: agent_nodes?.count || 0,
@@ -300,22 +299,28 @@ const AgentList: React.FC<AgentListProps> = ({
                 current,
                 pageSize,
               });
+              doRefetch({
+                ...currentVariables,
+                offset: (current - 1) * pageSize,
+                first: pageSize,
+              });
             }
           },
+          ...tableProps?.pagination,
         }}
         order={queryParams.order}
         onChangeOrder={(order) => {
           setQueryParams({ order });
+          doRefetch({
+            ...currentVariables,
+            order: order || '-first_contact',
+          });
         }}
-        loading={
-          deferredQueryVariables !== queryVariables ||
-          deferredFetchKey !== fetchKey
-        }
+        loading={isPendingRefetch}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
-        {...tableProps}
       />
       <BAIUnmountAfterClose>
         <AgentDetailDrawer
