@@ -2560,6 +2560,7 @@
       "NewPasswordCannotBeSame": "请输入与当前密码不同的密码。",
       "NewPasswordMismatch": "两个新密码不匹配。",
       "Notifications": "通知",
+      "OpenExternalLink": "在新标签页中打开",
       "OriginalPassword": "原始密码",
       "PasswordChangePlace": "点击顶部栏上的个人图标，进入 \"我的账户 \"菜单。",
       "PasswordMismatch": "密码不匹配",

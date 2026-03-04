@@ -2560,6 +2560,7 @@
       "NewPasswordCannotBeSame": "Vui lòng nhập mật khẩu khác với mật khẩu hiện tại của bạn.",
       "NewPasswordMismatch": "Hai mật khẩu mới không khớp.",
       "Notifications": "Thông báo",
+      "OpenExternalLink": "Mở trong tab mới",
       "OriginalPassword": "Mật khẩu ban đầu",
       "PasswordChangePlace": "Nhấp vào biểu tượng hình người ở thanh trên cùng và chuyển đến menu \"Tài khoản của tôi\".",
       "PasswordMismatch": "Mật khẩu không khớp",

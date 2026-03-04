@@ -2560,6 +2560,7 @@
       "NewPasswordCannotBeSame": "Bitte geben Sie ein Passwort ein, das sich von Ihrem aktuellen Passwort unterscheidet.",
       "NewPasswordMismatch": "Zwei neue Passwörter stimmen nicht überein.",
       "Notifications": "Benachrichtigungen",
+      "OpenExternalLink": "Im neuen Tab öffnen",
       "OriginalPassword": "Original-Passwort",
       "PasswordChangePlace": "Klicken Sie auf das Personensymbol in der oberen Leiste und rufen Sie das Menü \"Mein Konto\" auf.",
       "PasswordMismatch": "Die Passwörter stimmen nicht überein",
