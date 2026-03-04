@@ -147,9 +147,9 @@ class ClientConfig {
    */
   static createFromEnv() {
     return new this(
-      process.env.BACKEND_ACCESS_KEY,
-      process.env.BACKEND_SECRET_KEY,
-      process.env.BACKEND_ENDPOINT,
+      process.env.BACKEND_ACCESS_KEY ?? '',
+      process.env.BACKEND_SECRET_KEY ?? '',
+      process.env.BACKEND_ENDPOINT ?? '',
     );
   }
 }
@@ -3936,17 +3936,6 @@ class User {
    * };
    */
   async create(email = null, input) {
-    let fields = [
-      'username',
-      'password',
-      'need_password_change',
-      'full_name',
-      'description',
-      'is_active',
-      'domain_name',
-      'role',
-      'groups{id, name}',
-    ];
     if (this.client.is_admin === true) {
       let q =
         `mutation($email: String!, $input: UserInput!) {` +
@@ -4617,6 +4606,7 @@ class Pipeline {
       } else {
         const token = result.token;
         document.cookie = `${this.tokenName}=${token}; path=/`;
+        return Promise.resolve(true);
       }
     } catch (err) {
       // console.log(err);

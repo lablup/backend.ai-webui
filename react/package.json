@@ -13,6 +13,7 @@
     "@ant-design/x": "^2.2.0",
     "@cloudscape-design/board-components": "3.0.60",
     "@codemirror/lang-jinja": "^6.0.0",
+    "@codemirror/lang-liquid": "^6.0.0",
     "@codemirror/language": "^6.12.1",
     "@dicebear/collection": "^9.3.1",
     "@dicebear/core": "^9.3.1",
