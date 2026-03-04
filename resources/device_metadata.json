@@ -157,9 +157,9 @@
     },
     "tt-n300.device": {
       "slot_name": "tt-n300.device",
-      "description": "Tenstorrent N300",
-      "human_readable_name": "Tenstorrent N300 Device",
-      "display_unit": "N300",
+      "description": "Tenstorrent Wormhole™ n300",
+      "human_readable_name": "Tenstorrent Wormhole™ n300 Device",
+      "display_unit": "n300",
       "number_format": {
         "binary": false,
         "round_length": 0
