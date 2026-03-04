@@ -5,6 +5,7 @@ import BAIGaudiIcon from '../icons/BAIGaudiIcon';
 import BAIIpuIcon from '../icons/BAIIpuIcon';
 import BAIRebelIcon from '../icons/BAIRebelIcon';
 import BAIRocmIcon from '../icons/BAIRocmIcon';
+import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
 import BAIFlex from './BAIFlex';
 import NumberWithUnit from './BAINumberWithUnit';
@@ -53,12 +54,13 @@ const BAIResourceNumberWithIcon = ({
   const { token } = theme.useToken();
 
   const formatAmount = (amount: string) => {
+    const roundLength = deviceMetaData?.[type]?.number_format.round_length || 0;
     return deviceMetaData?.[type]?.number_format.binary
       ? Number(
           convertToBinaryUnit(amount, 'g', 2, true)?.numberFixed,
         ).toString()
-      : (deviceMetaData?.[type]?.number_format.round_length || 0) > 0
-        ? parseFloat(amount).toFixed(2)
+      : roundLength > 0
+        ? parseFloat(amount).toFixed(roundLength)
         : amount;
   };
 
@@ -117,6 +119,7 @@ const knownDeviceIcons = {
   nvidia: <BAINvidiaIcon />,
   rocm: <BAIRocmIcon />,
   rebel: <BAIRebelIcon />,
+  tenstorrent: <BAITenstorrentIcon />,
 } as const;
 
 interface ResourceTypeIconProps {

@@ -106,6 +106,12 @@
       "NotIn": "не в"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} версии исключены.",
     "FailedToPullVersions": "Не удалось вытащить версии.",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "CreatedAt": "Дата создания",
+    "From": "От",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "StatusTransition": "Смена статуса",
+    "To": "До",
+    "UpdatedAt": "Обновлено"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Агент"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Завершено в",
+    "ErrorCode": "Код ошибки",
+    "Message": "Сообщение",
+    "Result": "Результат",
+    "StartedAt": "Начато в",
+    "Step": "Шаг"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Разрешенные IP клиентов",
     "ContainerGIDs": "GID контейнера",
@@ -294,6 +318,7 @@
       "CopyAll": "Копировать все",
       "Create": "Создавать",
       "Delete": "Удалить",
+      "Edit": "Редактировать",
       "Expand": "Расширять",
       "Remove": "Удалять",
       "Save": "Сохранить",

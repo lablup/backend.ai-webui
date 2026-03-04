@@ -14,11 +14,15 @@
 #   Or create ~/.config/atlassian/credentials with those two lines.
 #
 # Usage:
-#   jira.sh create  --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]
+#   jira.sh create  --type Task --title "Title" [--desc "..."] [--labels "l1,l2"] [--parent FR-XXXX]
 #   jira.sh get     FR-XXXX
-#   jira.sh update  FR-XXXX [--assignee me] [--sprint current] [--desc "..."] [--comment "text"]
+#   jira.sh update  FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX] [--desc "..."] [--comment "text"]
 #   jira.sh search  "JQL query" [--limit 20]
 #   jira.sh comment FR-XXXX "Comment text"
+#   jira.sh labels  FR-XXXX --add "l1,l2"         Add labels (keeps existing)
+#   jira.sh labels  FR-XXXX --remove "l1,l2"      Remove specific labels
+#   jira.sh labels  FR-XXXX --set "l1,l2"          Replace all labels
+#   jira.sh link    --from FR-XXXX --to FR-YYYY [--type blocks|relates|clones|duplicate]
 #   jira.sh myself
 
 set -euo pipefail
@@ -340,13 +344,14 @@ get_current_sprint_id() {
 # ── Commands ─────────────────────────────────────────────────
 
 cmd_create() {
-  local type="Task" title="" desc="" labels=""
+  local type="Task" title="" desc="" labels="" parent=""
   while (( $# )); do
     case $1 in
       --type)   type=$2;   shift 2 ;;
       --title)  title=$2;  shift 2 ;;
       --desc)   desc=$2;   shift 2 ;;
       --labels) labels=$2; shift 2 ;;
+      --parent) parent=$2; shift 2 ;;
       *) die "create: unknown flag $1" ;;
     esac
   done
@@ -361,6 +366,12 @@ cmd_create() {
     desc_json=$(md_to_adf "$desc")
   fi
 
+  # Build parent field (for linking to Epic)
+  local parent_json="null"
+  if [[ -n "$parent" ]]; then
+    parent_json=$(jq -n --arg key "$parent" '{key: $key}')
+  fi
+
   local payload
   payload=$(jq -n \
     --arg summary "$title" \
@@ -369,6 +380,7 @@ cmd_create() {
     --argjson desc "$desc_json" \
     --argjson labels "$labels_json" \
     --argjson repo "$GITHUB_REPO_FIELD_VALUE" \
+    --argjson parent "$parent_json" \
     '{
       fields: {
         project: { key: $project },
@@ -378,7 +390,8 @@ cmd_create() {
         labels: $labels,
         customfield_10173: $repo
       }
-    }')
+    }
+    | if $parent != null then .fields.parent = $parent else . end')
 
   local result
   result=$(api POST "/issue" -d "$payload")
@@ -390,7 +403,7 @@ cmd_create() {
 cmd_get() {
   local key=${1:?get: issue key required}
   local raw
-  raw=$(api GET "/issue/${key}?fields=summary,status,assignee,description,labels,customfield_10020,customfield_10170")
+  raw=$(api GET "/issue/${key}?fields=summary,status,assignee,description,labels,parent,issuetype,customfield_10020,customfield_10170")
 
   # Extract description as raw JSON (may be ADF object or string)
   local desc_raw
@@ -400,9 +413,11 @@ cmd_get() {
 
   echo "$raw" | jq --arg desc "$desc_text" '{
     key: .key,
+    type: .fields.issuetype.name,
     summary: .fields.summary,
     status: .fields.status.name,
     assignee: (.fields.assignee.displayName // "Unassigned"),
+    parent: (.fields.parent.key // null),
     labels: .fields.labels,
     github_issue_url: (.fields.customfield_10170 // null),
     description: $desc
@@ -419,6 +434,9 @@ cmd_update() {
         local aid
         aid=$(resolve_assignee "$2")
         fields=$(echo "$fields" | jq --arg id "$aid" '. + {assignee:{accountId:$id}}')
+        shift 2 ;;
+      --parent)
+        fields=$(echo "$fields" | jq --arg key "$2" '. + {parent:{key:$key}}')
         shift 2 ;;
       --sprint)
         local sid
@@ -548,6 +566,124 @@ cmd_check_dup() {
   fi
 }
 
+cmd_link() {
+  local from="" to="" type="Relates"
+  while (( $# )); do
+    case $1 in
+      --from)  from=$2;  shift 2 ;;
+      --to)    to=$2;    shift 2 ;;
+      --type)  type=$2;  shift 2 ;;
+      *) die "link: unknown flag $1" ;;
+    esac
+  done
+  [[ -n "$from" ]] || die "link: --from required"
+  [[ -n "$to" ]]   || die "link: --to required"
+
+  # Map shorthand names to Jira link type names
+  local link_type="$type"
+  case "$type" in
+    blocks|Blocks)     link_type="Blocks" ;;
+    relates|Relates)   link_type="Relates" ;;
+    clones|Cloners)    link_type="Cloners" ;;
+    duplicate|Duplicate) link_type="Duplicate" ;;
+    *) link_type="$type" ;;
+  esac
+
+  # outwardIssue = --from (the one that "blocks"/"relates to"/etc.)
+  # inwardIssue  = --to   (the one that "is blocked by"/"relates to"/etc.)
+  api POST "/issueLink" -d "$(jq -n \
+    --arg type "$link_type" \
+    --arg from "$from" \
+    --arg to "$to" \
+    '{type:{name:$type}, outwardIssue:{key:$from}, inwardIssue:{key:$to}}')" > /dev/null
+  echo "Linked: ${from} --[${link_type}]--> ${to}"
+}
+
+cmd_weblink() {
+  local key="" url="" title=""
+  while (( $# )); do
+    case $1 in
+      --url)   url=$2;   shift 2 ;;
+      --title) title=$2; shift 2 ;;
+      *) [[ -z "$key" ]] && { key=$1; shift; } || die "weblink: unknown flag $1" ;;
+    esac
+  done
+  [[ -n "$key" ]] || die "weblink: issue key required"
+  [[ -n "$url" ]] || die "weblink: --url required"
+  [[ -z "$title" ]] && title="$url"
+
+  api POST "/issue/${key}/remotelink" -d "$(jq -n \
+    --arg url "$url" \
+    --arg title "$title" \
+    '{object:{url:$url, title:$title}}')" > /dev/null
+  echo "Web link added to ${key}: ${title}"
+}
+
+cmd_labels() {
+  local key=${1:?labels: issue key required}; shift
+  local add="" remove="" set_labels="" has_set=false
+  while (( $# )); do
+    case $1 in
+      --add)    add=$2;        shift 2 ;;
+      --remove) remove=$2;     shift 2 ;;
+      --set)    set_labels=$2; has_set=true; shift 2 ;;
+      *) die "labels: unknown flag $1" ;;
+    esac
+  done
+
+  if $has_set && [[ -n "$add" || -n "$remove" ]]; then
+    die "labels: --set cannot be combined with --add or --remove"
+  fi
+
+  # Trim whitespace safely (no xargs — avoids mangling labels starting with -)
+  _trim() { sed 's/^[[:space:]]*//;s/[[:space:]]*$//'; }
+
+  if $has_set; then
+    # Replace all labels (--set "" clears all labels)
+    local labels_json="[]"
+    if [[ -n "$set_labels" ]]; then
+      IFS=',' read -ra SET_ARR <<< "$set_labels"
+      for lbl in "${SET_ARR[@]}"; do
+        lbl=$(echo "$lbl" | _trim)
+        [[ -z "$lbl" ]] && continue
+        labels_json=$(echo "$labels_json" | jq --arg v "$lbl" '. + [$v]')
+      done
+    fi
+    api PUT "/issue/${key}" -d "$(jq -n --argjson l "$labels_json" '{fields:{labels:$l}}')"
+    echo "Labels set on ${key}: ${set_labels:-<cleared>}"
+    return
+  fi
+
+  if [[ -z "$add" && -z "$remove" ]]; then
+    # No operation specified — show current labels
+    api GET "/issue/${key}?fields=labels" | jq -r '.fields.labels | join(", ")'
+    return
+  fi
+
+  # Build update operations array
+  local ops="[]"
+  if [[ -n "$add" ]]; then
+    IFS=',' read -ra ADD_ARR <<< "$add"
+    for lbl in "${ADD_ARR[@]}"; do
+      lbl=$(echo "$lbl" | _trim)
+      [[ -z "$lbl" ]] && continue
+      ops=$(echo "$ops" | jq --arg v "$lbl" '. + [{"add": $v}]')
+    done
+  fi
+  if [[ -n "$remove" ]]; then
+    IFS=',' read -ra RM_ARR <<< "$remove"
+    for lbl in "${RM_ARR[@]}"; do
+      lbl=$(echo "$lbl" | _trim)
+      [[ -z "$lbl" ]] && continue
+      ops=$(echo "$ops" | jq --arg v "$lbl" '. + [{"remove": $v}]')
+    done
+  fi
+
+  api PUT "/issue/${key}" -d "$(jq -n --argjson ops "$ops" '{update:{labels:$ops}}')"
+  [[ -n "$add" ]] && echo "Labels added to ${key}: ${add}"
+  [[ -n "$remove" ]] && echo "Labels removed from ${key}: ${remove}"
+}
+
 # ── Main ─────────────────────────────────────────────────────
 require_jq
 cmd=${1:-help}; shift 2>/dev/null || true
@@ -558,14 +694,22 @@ case $cmd in
 Usage: jira.sh <command> [options]
 
 Commands:
-  create    --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]
+  create    --type Task --title "Title" [--desc "..."] [--labels "l1,l2"] [--parent FR-XXXX]
   get       FR-XXXX
-  update    FR-XXXX [--assignee me] [--sprint current] [--desc "..."] [--comment "text"]
+  update    FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX] [--desc "..."] [--comment "text"]
   search    "JQL query" [--limit 20]
   comment   FR-XXXX "Comment text"
+  labels    FR-XXXX [--add "l1,l2"] [--remove "l1,l2"] [--set "l1,l2"]
+  link      --from FR-XXXX --to FR-YYYY [--type blocks|relates|clones|duplicate]
+  weblink   FR-XXXX --url "https://..." [--title "Link title"]
   check-dup --labels "l1,l2" [--include-done]   Check for duplicate issues by labels
   myself    Show current user info
 
+The --parent flag links an issue to a parent Epic (e.g. --parent FR-1234).
+The labels command manages labels: --add appends, --remove deletes specific labels,
+  --set replaces all labels. With no flags, shows current labels.
+The link command creates issue links (e.g. "FR-1 blocks FR-2", "FR-1 relates to FR-2").
+The weblink command adds an external web link to an issue (e.g. Teams message, external doc).
 Description and comment fields accept Markdown, which is automatically
 converted to Atlassian Document Format (ADF) for proper Jira rendering.
 
@@ -581,6 +725,9 @@ USAGE
       update)    cmd_update "$@" ;;
       search)    cmd_search "$@" ;;
       comment)   cmd_comment "$@" ;;
+      labels)    cmd_labels "$@" ;;
+      link)      cmd_link "$@" ;;
+      weblink)   cmd_weblink "$@" ;;
       check-dup) cmd_check_dup "$@" ;;
       myself)    cmd_myself ;;
       *) die "Unknown command: $cmd" ;;

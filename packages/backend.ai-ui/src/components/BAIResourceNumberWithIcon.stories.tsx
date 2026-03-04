@@ -36,7 +36,7 @@ const mockDeviceMetaData: DeviceMetaData = {
     description: 'NVIDIA GPU (fractional)',
     human_readable_name: 'GPU',
     display_unit: 'FGPU',
-    number_format: { binary: false, round_length: 2 },
+    number_format: { binary: false, round_length: 1 },
     display_icon: 'nvidia',
   },
   // AMD
@@ -125,6 +125,15 @@ const mockDeviceMetaData: DeviceMetaData = {
     display_unit: 'LPU',
     number_format: { binary: false, round_length: 0 },
     display_icon: 'hyperaccel',
+  },
+  // TT-N300
+  'tt-n300.device': {
+    slot_name: 'tt-n300.device',
+    description: 'Tenstorrent TT-N300',
+    human_readable_name: 'TT-N300',
+    display_unit: 'TT-N300',
+    number_format: { binary: false, round_length: 0 },
+    display_icon: 'tenstorrent',
   },
 };
 
@@ -316,6 +325,11 @@ export const ResourceTypes: Story = {
       <BAIFlex gap="sm" align="center">
         <span style={{ width: 160 }}>Hyperaccel LPU:</span>
         <BAIResourceNumberWithIcon type="hyperaccel-lpu.device" value="4" />
+      </BAIFlex>
+      {/* Tenstorrent */}
+      <BAIFlex gap="sm" align="center">
+        <span style={{ width: 160 }}>Tenstorrent TT-N300:</span>
+        <BAIResourceNumberWithIcon type="tt-n300.device" value="2" />
       </BAIFlex>
     </BAIFlex>
   ),

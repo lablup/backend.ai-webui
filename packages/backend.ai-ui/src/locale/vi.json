@@ -106,6 +106,12 @@
       "NotIn": "không trong"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
     "FailedToPullVersions": "Không thể kéo phiên bản.",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "CreatedAt": "Ngày tạo",
+    "From": "Từ",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Đại lý"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Kết thúc lúc",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "StartedAt": "Bắt đầu lúc",
+    "Step": "Bước"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",
     "ContainerGIDs": "GID của container",
@@ -294,6 +318,7 @@
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",
+      "Edit": "Chỉnh sửa",
       "Expand": "Mở rộng",
       "Remove": "Di dời",
       "Save": "Lưu",

@@ -2,6 +2,7 @@ import { withGlobalProvider } from './decorators';
 import { DocsContainer } from './DocsContainer';
 import { localeItems } from './localeConfig';
 import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
+import '../../../resources/fonts/fonts.css';
 import type { Preview } from '@storybook/react-vite';
 
 const preview: Preview = {

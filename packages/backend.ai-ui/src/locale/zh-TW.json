@@ -106,6 +106,12 @@
       "NotIn": "不在...中"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}版本被排除在外。",
     "FailedToPullVersions": "未能拉動版本。",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "選擇資源群組"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "CreatedAt": "建立時間",
+    "From": "從",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "代理人"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "結束時間",
+    "ErrorCode": "錯誤代碼",
+    "Message": "訊息",
+    "Result": "結果",
+    "StartedAt": "開始時間",
+    "Step": "步驟"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "允許的用戶端IP",
     "ContainerGIDs": "容器GID",
@@ -294,6 +318,7 @@
       "CopyAll": "複製全部",
       "Create": "創造",
       "Delete": "刪除",
+      "Edit": "編輯",
       "Expand": "擴張",
       "Remove": "消除",
       "Save": "儲存",

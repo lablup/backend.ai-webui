@@ -59,7 +59,8 @@ const ThemedContainer: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     document.body.style.backgroundColor = token.colorBgLayout;
     document.body.style.color = token.colorText;
-  }, [token.colorBgLayout, token.colorText]);
+    document.body.style.fontFamily = token.fontFamily;
+  }, [token.colorBgLayout, token.colorText, token.fontFamily]);
 
   return <>{children}</>;
 };

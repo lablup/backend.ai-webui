@@ -453,7 +453,7 @@ backend.ai-webui/
 ### Running WebUI Locally
 ```bash
 # Terminal 1: Build and serve WebUI
-pnpm run server:d   # Watch mode, auto-reload
+pnpm run build:d    # Watch mode, auto-reload
 
 # Terminal 2: WebSocket proxy (for desktop app)
 pnpm run wsproxy

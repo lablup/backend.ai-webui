@@ -10,10 +10,11 @@
 export type {
   DocConfig,
   AgentConfig,
+  WebsiteConfig,
   ToolkitConfig,
   ResolvedDocConfig,
 } from './config.js';
-export { resolveConfig, loadToolkitConfig } from './config.js';
+export { resolveConfig, loadToolkitConfig, WEBSITE_LABELS } from './config.js';
 
 // ── Theme ───────────────────────────────────────────────────────
 export type { PdfTheme } from './theme.js';
@@ -31,6 +32,7 @@ export type {
   AnchorEntry,
   AnchorRegistry,
   LinkDiagnostic,
+  WebProcessingOptions,
 } from './markdown-processor-web.js';
 export {
   processMarkdownFilesForWeb,
@@ -58,6 +60,8 @@ export type { DocMetadata } from './html-builder.js';
 export { buildFullDocument } from './html-builder.js';
 export type { WebDocMetadata } from './html-builder-web.js';
 export { buildWebDocument } from './html-builder-web.js';
+export type { WebPageContext, WebsiteMetadata } from './website-builder.js';
+export { buildWebPage, buildIndexPage } from './website-builder.js';
 
 // ── PDF Rendering ───────────────────────────────────────────────
 export type { RenderOptions } from './pdf-renderer.js';
@@ -67,15 +71,25 @@ export { renderPdf } from './pdf-renderer.js';
 export { generatePdf } from './generate-pdf.js';
 export type { GeneratePdfOptions } from './generate-pdf.js';
 
+// ── Website Generation ──────────────────────────────────────────
+export { generateWebsite } from './website-generator.js';
+export type { GenerateWebsiteOptions } from './website-generator.js';
+
+// ── Search Index ────────────────────────────────────────────────
+export { buildSearchIndex, tokenize } from './search-index-builder.js';
+export type { SearchDocument, SearchIndex, SearchIndexEntry } from './search-index-builder.js';
+
 // ── Preview Servers ─────────────────────────────────────────────
 export { startPreviewServer } from './preview-server.js';
 export type { PreviewServerOptions } from './preview-server.js';
 export { startHtmlPreviewServer } from './preview-server-web.js';
 export type { HtmlPreviewOptions } from './preview-server-web.js';
+export { startWebsitePreviewServer } from './preview-server-website.js';
+export type { WebsitePreviewOptions } from './preview-server-website.js';
 
 // ── Styles ──────────────────────────────────────────────────────
 export { generatePdfStyles } from './styles.js';
-export { generateWebStyles } from './styles-web.js';
+export { generateWebStyles, generateWebsiteStyles } from './styles-web.js';
 
 // ── Version ─────────────────────────────────────────────────────
 export { getDocVersion } from './version.js';

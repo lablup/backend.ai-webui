@@ -384,12 +384,18 @@ function buildWebRenderer(
   };
 }
 
+export interface WebProcessingOptions {
+  /** Enable multi-page link resolution (default: false) */
+  multiPage?: boolean;
+}
+
 export async function processMarkdownFilesForWeb(
   lang: string,
   navigation: NavEntry[],
   srcDir: string,
   version: string,
   config?: ResolvedDocConfig,
+  options?: WebProcessingOptions,
 ): Promise<Chapter[]> {
   const diagnostics: LinkDiagnostic[] = [];
   let chapterIndex = 0;
@@ -442,6 +448,7 @@ export async function processMarkdownFilesForWeb(
   detectDuplicateAnchors(registry, diagnostics);
 
   // ── Pass 2: Rewrite cross-page links using the registry ──────
+  const multiPage = options?.multiPage ?? false;
   for (const { chapter, filePath } of rendered) {
     chapter.htmlContent = fixMalformedCrossReferences(
       chapter.htmlContent,
@@ -453,6 +460,7 @@ export async function processMarkdownFilesForWeb(
       registry,
       diagnostics,
       filePath,
+      multiPage,
     );
   }
 

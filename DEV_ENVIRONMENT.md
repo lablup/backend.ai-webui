@@ -19,7 +19,7 @@ Simple configuration system for running multiple Backend.AI WebUI development se
 node scripts/dev-config.js show
 
 # Start development server (uses current configuration)
-pnpm run server:d
+pnpm run build:d
 ```
 
 ### 2. Environment Configuration
@@ -137,21 +137,21 @@ node scripts/dev-config.js show
 ```bash
 # Terminal 1: Default instance
 cd webui-ai
-pnpm run server:d
+pnpm run build:d
 # → React: 9081, WebDev: 3081
 
 # Terminal 2: Feature instance with offset
 cd webui-ai-feature  
 echo "BAI_WEBUI_DEV_PORT_OFFSET=10" > .env.development.local
 echo "THEME_HEADER_COLOR=#32CD32" >> .env.development.local
-pnpm run server:d
+pnpm run build:d
 # → React: 9091, WebDev: 3091, Green header
 
 # Terminal 3: Debug instance with different offset
 cd webui-ai-debug
 echo "BAI_WEBUI_DEV_PORT_OFFSET=20" > .env.development.local  
 echo "THEME_HEADER_COLOR=#DC143C" >> .env.development.local
-pnpm run server:d
+pnpm run build:d
 # → React: 9101, WebDev: 3101, Red header
 ```
 

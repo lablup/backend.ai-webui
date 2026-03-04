@@ -178,6 +178,82 @@ body {
   color: var(--ifm-color-emphasis-600);
 }
 
+/* Search */
+.doc-search {
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.doc-search input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-pre-border-radius);
+  background: var(--ifm-color-emphasis-0);
+  outline: none;
+  font-family: var(--ifm-font-family-base);
+}
+
+.doc-search input:focus {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 2px rgba(53, 120, 229, 0.15);
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 1rem;
+  right: 1rem;
+  background: var(--ifm-color-emphasis-0);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-pre-border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.search-result-item {
+  display: block;
+  padding: 0.6rem 0.8rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+  transition: background 0.1s;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover,
+.search-result-item:focus {
+  background: var(--ifm-color-emphasis-100);
+  text-decoration: none;
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.search-result-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.15rem;
+}
+
+.search-result-snippet {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.4;
+}
+
+.search-no-results {
+  padding: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+  text-align: center;
+}
+
 .doc-sidebar-nav {
   list-style: none;
   padding: 0;
@@ -578,6 +654,87 @@ details > :last-child {
 }
 
 /* ==========================================================================
+   Page Footer (website mode)
+   ========================================================================== */
+.page-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.page-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.page-metadata .edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.page-metadata .edit-link:hover {
+  text-decoration: underline;
+}
+
+.page-metadata .edit-link svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.page-metadata .last-updated {
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Pagination Navigation */
+.pagination-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pagination-nav__link {
+  display: block;
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-pre-border-radius);
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+}
+
+.pagination-nav__link--next {
+  text-align: right;
+}
+
+.pagination-nav__sublabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.25rem;
+}
+
+.pagination-nav__label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 @media (max-width: 768px) {
@@ -595,6 +752,43 @@ details > :last-child {
   .doc-main {
     padding: 1.5rem;
   }
+  .pagination-nav {
+    flex-direction: column;
+  }
+  .pagination-nav__link--next {
+    text-align: left;
+  }
+  .page-metadata {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+`;
+}
+
+/**
+ * Generate CSS for multi-page static website.
+ * Unlike generateWebStyles(lang), this produces a single stylesheet
+ * suitable for all languages by using :lang() selectors for CJK-specific rules.
+ */
+export function generateWebsiteStyles(): string {
+  // Base styles without any language-specific conditional
+  const baseStyles = generateWebStyles();
+
+  // Generate :lang() selectors for CJK word-break from CJK_LANGS
+  const cjkSelectors = Array.from(CJK_LANGS)
+    .sort()
+    .map((code) => `:lang(${code}) body`)
+    .join(',\n');
+
+  return baseStyles + `
+
+/* ==========================================================================
+   CJK Language Rules (via :lang() selectors for shared stylesheet)
+   ========================================================================== */
+${cjkSelectors} {
+  word-break: keep-all;
 }
 `;
 }

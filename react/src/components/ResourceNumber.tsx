@@ -43,12 +43,14 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   );
 
   const formatAmount = (amount: string) => {
+    const roundLength =
+      mergedResourceSlots?.[type]?.number_format.round_length || 0;
     return mergedResourceSlots?.[type]?.number_format.binary
       ? Number(
           convertToBinaryUnit(amount, 'g', 2, true)?.numberFixed,
         ).toString()
-      : (mergedResourceSlots?.[type]?.number_format.round_length || 0) > 0
-        ? parseFloat(amount).toFixed(2)
+      : roundLength > 0
+        ? parseFloat(amount).toFixed(roundLength)
         : amount;
   };
 

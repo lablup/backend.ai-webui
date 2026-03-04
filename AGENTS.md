@@ -6,8 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run server:d` - Start React dev server via Craco (port configured by `scripts/dev-config.js`)
-- `pnpm run build:d` - Concurrent Relay watch + React dev server
+- `pnpm run build:d` - Start development environment (TypeScript watch + Relay watch + React dev server)
 - `pnpm run wsproxy` - Start websocket proxy (required for local development)
 
 ### Build and Production
@@ -95,11 +94,10 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### Development Workflow
 
-1. **Dual Server Setup**: Run both `pnpm run server:d` (React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
-2. **Alternative**: `pnpm run build:d` runs Relay watch + React dev server concurrently
-3. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
-4. **Testing**: Jest unit tests + Playwright E2E tests
-5. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
+1. **Dev Server**: Run `pnpm run build:d` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
+2. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
+3. **Testing**: Jest unit tests + Playwright E2E tests
+4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
 # Additional Workflow Description
 
@@ -117,11 +115,16 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 - **Tool Requirements**:
   - **Jira**: Use `scripts/jira.sh` (REST API with token auth, no MCP dependency)
-    - `bash scripts/jira.sh create --type Task --title "Title" [--desc "..."] [--labels "l1,l2"]`
+    - `bash scripts/jira.sh create --type Task --title "Title" [--desc "..."] [--labels "l1,l2"] [--parent FR-XXXX]`
+    - `bash scripts/jira.sh create --type Epic --title "Epic Title" [--desc "..."] [--labels "l1,l2"]`
     - `bash scripts/jira.sh get FR-XXXX`
-    - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current]`
+    - `bash scripts/jira.sh update FR-XXXX [--assignee me] [--sprint current] [--parent FR-XXXX]`
     - `bash scripts/jira.sh search "JQL query" [--limit 20]`
     - `bash scripts/jira.sh comment FR-XXXX "Comment text"`
+    - `bash scripts/jira.sh labels FR-XXXX --add "l1,l2"` / `--remove "l1,l2"` / `--set "l1,l2"` (manage labels)
+    - `bash scripts/jira.sh link --from FR-XXXX --to FR-YYYY --type blocks` (link types: blocks, relates, clones, duplicate)
+    - **Epic linking**: When creating issues under an Epic, ALWAYS use `--parent FR-XXXX` to link them. Issues created without `--parent` will be orphaned and not visible under the Epic.
+    - **Issue linking**: When Epics or issues have dependencies or relationships, use `jira.sh link` to connect them (e.g. `--type blocks` for dependencies, `--type relates` for related work).
     - Setup: `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` env vars or `~/.config/atlassian/credentials`
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push

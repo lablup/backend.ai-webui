@@ -106,6 +106,12 @@
       "NotIn": "tidak dalam"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
     "FailedToPullVersions": "Gagal menarik versi.",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Kumpulan Sumber"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Percubaan",
+    "CreatedAt": "Dicipta pada",
+    "From": "Dari",
+    "Phase": "Fasa",
+    "Result": "Hasil",
+    "StatusTransition": "Peralihan Status",
+    "To": "Kepada",
+    "UpdatedAt": "Dikemas kini pada"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Ejen"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kod Ralat",
+    "Message": "Mesej",
+    "Result": "Hasil",
+    "StartedAt": "Mula pada",
+    "Step": "Langkah"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Pelanggan yang Dibenarkan",
     "ContainerGIDs": "GID Bekas",
@@ -294,6 +318,7 @@
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",
+      "Edit": "Edit",
       "Expand": "Berkembang",
       "Remove": "Keluarkan",
       "Save": "Simpan",

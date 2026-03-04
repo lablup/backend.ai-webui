@@ -397,28 +397,33 @@ function createWindow() {
         console.log('No configuration file found.');
         return;
       }
-      const config = toml(data);
-      if (
-        'wsproxy' in config &&
-        'disableCertCheck' in config.wsproxy &&
-        config.wsproxy.disableCertCheck == true
-      ) {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      try {
+        const config = toml(data);
+        if (
+          'wsproxy' in config &&
+          'disableCertCheck' in config.wsproxy &&
+          config.wsproxy.disableCertCheck == true
+        ) {
+          process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+        }
+        if (
+          'server' in config &&
+          'webServerURL' in config.server &&
+          config.server.webServerURL != '' &&
+          config.server.webServerURL != '""'
+        ) {
+          mainURL = config.server.webServerURL;
+        } else {
+          mainURL = url.format({
+            pathname: path.join(mainIndex),
+            protocol: 'file',
+            slashes: true,
+          });
+        }
+        mainWindow.loadURL(mainURL);
+      } catch (parseErr) {
+        console.error('config.toml parse error:', parseErr);
       }
-      if (
-        'server' in config &&
-        'webServerURL' in config.server &&
-        config.server.webServerURL != ''
-      ) {
-        mainURL = config.server.webServerURL;
-      } else {
-        mainURL = url.format({
-          pathname: path.join(mainIndex),
-          protocol: 'file',
-          slashes: true,
-        });
-      }
-      mainWindow.loadURL(mainURL);
     });
   }
   mainContent = mainWindow.webContents;
@@ -530,7 +535,19 @@ function setSameSitePolicy() {
 app.on('ready', () => {
   // Registering the 'file' protocol
   protocol.handle('file', async (request) => {
-    const url = request.url.substr(7); // strip 'file://' from the URL
+    let url = request.url.substr(7); // strip 'file://' from the URL
+
+    // file:/// URLs have a leading slash - remove it for path resolution
+    if (url.startsWith('/')) {
+      url = url.substring(1);
+    }
+
+    // Files in app/ directory: HTML, JS bundles, config.toml, manifest.json, etc.
+    // Files at root level: resources/, manifest/
+    if (!url.startsWith('app/') && !url.startsWith('resources/') && !url.startsWith('manifest/')) {
+      url = path.join('app', url);
+    }
+
     const normalizedPath = path.normalize(`${BASE_DIR}/${url}`);
     try {
       const data = await fs.readFile(normalizedPath);
@@ -543,7 +560,8 @@ app.on('ready', () => {
   });
   // Registering the 'es6' protocol
   protocol.handle('es6', async (request) => {
-    const filePath = request.url.replace('es6://', '');
+    // Remove trailing slash that browsers may add
+    const filePath = request.url.replace('es6://', '').replace(/\/$/, '');
     const fullPath = npjoin(es6Path, filePath);
     try {
       const data = await fs.readFile(fullPath);

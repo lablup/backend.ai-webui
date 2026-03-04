@@ -88,6 +88,11 @@ export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
+export { default as BAISchedulingResultBadge } from './BAISchedulingResultBadge';
+export type {
+  BAISchedulingResultBadgeProps,
+  SchedulingResult,
+} from './BAISchedulingResultBadge';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

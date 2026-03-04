@@ -106,6 +106,12 @@
       "NotIn": "含まれない"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "HuggingFaceトークンを入力してください",
+    "HuggingFaceSettings": "Hugging Face 設定",
+    "Token": "トークン",
+    "TokenUpdatedSuccessfully": "トークンが正常に更新されました。"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}バージョンは除外されます。",
     "FailedToPullVersions": "バージョンを引くことができませんでした。",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "試行回数",
+    "CreatedAt": "作成日時",
+    "From": "送信元",
+    "Phase": "フェーズ",
+    "Result": "結果",
+    "StatusTransition": "ステータス遷移",
+    "To": "宛先",
+    "UpdatedAt": "更新日時"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "エージェント"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "終了日時",
+    "ErrorCode": "エラーコード",
+    "Message": "メッセージ",
+    "Result": "結果",
+    "StartedAt": "開始日時",
+    "Step": "ステップ"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "許可されたクライアントIP",
     "ContainerGIDs": "コンテナGID",
@@ -294,6 +318,7 @@
       "CopyAll": "すべてをコピーします",
       "Create": "作成する",
       "Delete": "消去",
+      "Edit": "編集",
       "Expand": "拡大する",
       "Remove": "取り除く",
       "Save": "保存",

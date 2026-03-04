@@ -69,9 +69,22 @@ export interface AgentConfig {
   };
 }
 
+/** Website generation configuration */
+export interface WebsiteConfig {
+  /** Base URL for 'Edit this page' links, e.g. 'https://github.com/org/repo/edit/main/docs/src' */
+  editBaseUrl?: string;
+  /** GitHub repository URL for source links */
+  repoUrl?: string;
+  /** Output subdirectory under distDir. Default: 'web' */
+  outDir?: string;
+  /** Base path for deployment (e.g., '/docs/'). Default: '/' */
+  basePath?: string;
+}
+
 /** Full toolkit config file shape (docs-toolkit.config.yaml) */
 export interface ToolkitConfig extends DocConfig {
   agents?: AgentConfig;
+  website?: WebsiteConfig;
 }
 
 // ── Defaults ──────────────────────────────────────────────────
@@ -104,6 +117,14 @@ const DEFAULT_FIGURE_LABELS: Record<string, string> = {
   th: 'รูปที่',
 };
 
+/** Localized labels for website navigation and metadata */
+export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
+  en: { previous: 'Previous', next: 'Next', editThisPage: 'Edit this page', lastUpdated: 'Last updated on', searchPlaceholder: 'Search docs...', noResults: 'No results found' },
+  ko: { previous: '이전', next: '다음', editThisPage: '이 페이지 편집', lastUpdated: '마지막 업데이트', searchPlaceholder: '문서 검색...', noResults: '검색 결과가 없습니다' },
+  ja: { previous: '前へ', next: '次へ', editThisPage: 'このページを編集', lastUpdated: '最終更新日', searchPlaceholder: 'ドキュメント検索...', noResults: '結果が見つかりません' },
+  th: { previous: 'ก่อนหน้า', next: 'ถัดไป', editThisPage: 'แก้ไขหน้านี้', lastUpdated: 'อัปเดตล่าสุด', searchPlaceholder: 'ค้นหาเอกสาร...', noResults: 'ไม่พบผลลัพธ์' },
+};
+
 // ── Resolved config (all defaults applied) ────────────────────
 
 export interface ResolvedDocConfig {
@@ -133,6 +154,7 @@ export interface ResolvedDocConfig {
   productName: string;
 
   agents?: AgentConfig;
+  website?: WebsiteConfig;
 }
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
@@ -168,6 +190,7 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     productName: config.productName ?? config.title,
 
     agents: config.agents,
+    website: config.website,
   };
 }
 

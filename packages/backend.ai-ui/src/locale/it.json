@@ -106,6 +106,12 @@
       "NotIn": "non in"
     }
   },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "Le versioni {{count}} sono escluse.",
     "FailedToPullVersions": "Non è riuscito a tirare le versioni.",
@@ -190,6 +196,16 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Seleziona gruppo di risorse"
   },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Tentativi",
+    "CreatedAt": "Creato il",
+    "From": "Da",
+    "Phase": "Fase",
+    "Result": "Risultato",
+    "StatusTransition": "Transizione di stato",
+    "To": "A",
+    "UpdatedAt": "Aggiornato il"
+  },
   "comp:BAISessionAgentIds": {
     "Agent": "Agente"
   },
@@ -256,6 +272,14 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Nessun dati sulle risorse disponibili"
   },
+  "comp:SessionHistorySubStepNodes": {
+    "EndedAt": "Terminato il",
+    "ErrorCode": "Codice di errore",
+    "Message": "Messaggio",
+    "Result": "Risultato",
+    "StartedAt": "Avviato il",
+    "Step": "Passo"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP client consentiti",
     "ContainerGIDs": "GID del container",
@@ -294,6 +318,7 @@
       "CopyAll": "Copia tutto",
       "Create": "Creare",
       "Delete": "Eliminare",
+      "Edit": "Modifica",
       "Expand": "Espandere",
       "Remove": "Rimuovere",
       "Save": "Salva",
