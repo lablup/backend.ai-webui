@@ -2436,6 +2436,7 @@
       "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해 주세요.",
       "NewPasswordMismatch": "새로 입력한 비밀번호가 일치하지 않습니다.",
       "Notifications": "알림",
+      "OpenExternalLink": "새 탭에서 열기",
       "OriginalPassword": "기존 비밀번호",
       "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요.",
       "PasswordMismatch": "비밀번호가 일치하지 않습니다",
