@@ -16,6 +16,14 @@ import {
   isValidIPOrCidr,
   parseImageString,
   removeArchitectureFromImageFullName,
+  newLineToBrElement,
+  baiSignedRequestWithPromise,
+  _humanReadableTime,
+  GBToBytes,
+  bytesToGB,
+  toFixedWithTypeValidation,
+  addNumberWithUnits,
+  subNumberWithUnits,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -783,5 +791,265 @@ describe('removeArchitectureFromImageFullName', () => {
     expect(
       removeArchitectureFromImageFullName('registry/name@special:tag@x86_64'),
     ).toBe('registry/name@special:tag');
+  });
+});
+
+describe('newLineToBrElement', () => {
+  it('should convert newlines to <br> elements', () => {
+    const result = newLineToBrElement('Line 1\nLine 2\nLine 3');
+    expect(result).toHaveLength(5); // 3 lines + 2 <br> elements
+  });
+
+  it('should convert HTML <br> tags to <br> elements', () => {
+    const result = newLineToBrElement('Line 1<br>Line 2<br/>Line 3');
+    expect(result).toHaveLength(5);
+  });
+
+  it('should handle mixed newlines and <br> tags', () => {
+    const result = newLineToBrElement('Line 1\nLine 2<br>Line 3');
+    expect(result).toHaveLength(5);
+  });
+
+  it('should handle empty string', () => {
+    const result = newLineToBrElement('');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe('');
+  });
+
+  it('should handle single line without newlines', () => {
+    const result = newLineToBrElement('Single line');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe('Single line');
+  });
+
+  it('should use custom separator regexp when provided', () => {
+    const result = newLineToBrElement('a|b|c', /(\|)/);
+    expect(result).toHaveLength(5); // a, |, b, |, c
+  });
+});
+
+describe('baiSignedRequestWithPromise', () => {
+  it('should call client methods when client is provided', () => {
+    const mockClient = {
+      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+    };
+
+    const result = baiSignedRequestWithPromise({
+      method: 'GET',
+      url: '/api/test',
+      body: null,
+      client: mockClient,
+    });
+
+    expect(mockClient.newSignedRequest).toHaveBeenCalledWith(
+      'GET',
+      '/api/test',
+      null,
+      null,
+    );
+    expect(mockClient._wrapWithPromise).toHaveBeenCalledWith('mockRequest');
+    expect(result).toBe('mockPromise');
+  });
+
+  it('should handle body parameter', () => {
+    const mockClient = {
+      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+    };
+
+    baiSignedRequestWithPromise({
+      method: 'POST',
+      url: '/api/test',
+      body: { data: 'test' },
+      client: mockClient,
+    });
+
+    expect(mockClient.newSignedRequest).toHaveBeenCalledWith(
+      'POST',
+      '/api/test',
+      { data: 'test' },
+      null,
+    );
+  });
+
+  it('should handle null client gracefully', () => {
+    const result = baiSignedRequestWithPromise({
+      method: 'GET',
+      url: '/api/test',
+      client: null,
+    });
+
+    expect(result).toBeUndefined();
+  });
+
+  it('should handle undefined client gracefully', () => {
+    const result = baiSignedRequestWithPromise({
+      method: 'GET',
+      url: '/api/test',
+      client: undefined,
+    });
+
+    expect(result).toBeUndefined();
+  });
+});
+
+describe('_humanReadableTime', () => {
+  it('should convert ISO date string to UTC string', () => {
+    const isoDate = '2024-03-04T12:00:00.000Z';
+    const result = _humanReadableTime(isoDate);
+    expect(result).toContain('2024');
+    expect(result).toContain('GMT');
+  });
+
+  it('should handle different date formats', () => {
+    const result = _humanReadableTime('2024-01-01');
+    expect(result).toBeTruthy();
+    expect(typeof result).toBe('string');
+  });
+
+  it('should return UTC string format', () => {
+    const result = _humanReadableTime('2024-03-04T10:30:00.000Z');
+    // UTC string format typically contains day name, date, month, year, time, and GMT
+    expect(result).toMatch(/^\w+, \d+ \w+ \d+ \d+:\d+:\d+ GMT$/);
+  });
+});
+
+describe('GBToBytes', () => {
+  it('should convert GB to bytes correctly', () => {
+    expect(GBToBytes(1)).toBe(1000000000); // 1 GB = 10^9 bytes
+    expect(GBToBytes(2)).toBe(2000000000);
+    expect(GBToBytes(0.5)).toBe(500000000);
+  });
+
+  it('should handle 0 value', () => {
+    expect(GBToBytes(0)).toBe(0);
+  });
+
+  it('should use default value of 0 when no argument provided', () => {
+    expect(GBToBytes()).toBe(0);
+  });
+
+  it('should round the result', () => {
+    expect(GBToBytes(1.5555555)).toBe(1555555500);
+  });
+
+  it('should handle negative values', () => {
+    expect(GBToBytes(-1)).toBe(-1000000000);
+  });
+});
+
+describe('bytesToGB', () => {
+  it('should convert bytes to GB correctly', () => {
+    expect(bytesToGB(1000000000)).toBe('1.00'); // 1 GB
+    expect(bytesToGB(2000000000)).toBe('2.00'); // 2 GB
+    expect(bytesToGB(500000000)).toBe('0.50'); // 0.5 GB
+  });
+
+  it('should handle null value', () => {
+    expect(bytesToGB(null as any)).toBe('-');
+  });
+
+  it('should handle undefined value', () => {
+    expect(bytesToGB(undefined as any)).toBe('-');
+  });
+
+  it('should handle 0 value', () => {
+    expect(bytesToGB(0)).toBe(0);
+  });
+
+  it('should use custom decimal points', () => {
+    expect(bytesToGB(1500000000, 0)).toBe('2'); // Rounded to 0 decimals
+    expect(bytesToGB(1500000000, 1)).toBe('1.5'); // 1 decimal
+    expect(bytesToGB(1500000000, 3)).toBe('1.500'); // 3 decimals
+  });
+
+  it('should use custom null string', () => {
+    expect(bytesToGB(null as any, 2, 'N/A')).toBe('N/A');
+    expect(bytesToGB(undefined as any, 2, 'unknown')).toBe('unknown');
+  });
+
+  it('should handle large values', () => {
+    expect(bytesToGB(1000000000000, 2)).toBe('1000.00'); // 1000 GB = 1 TB
+  });
+});
+
+describe('toFixedWithTypeValidation', () => {
+  it('should return fixed decimal when input is valid number', () => {
+    expect(toFixedWithTypeValidation(1.2345, 2)).toBe('1.23');
+    expect(toFixedWithTypeValidation(10, 0)).toBe('10');
+    expect(toFixedWithTypeValidation(0.123, 1)).toBe('0.1');
+  });
+
+  it('should return "NaN" when input is null', () => {
+    expect(toFixedWithTypeValidation(null as any, 2)).toBe('NaN');
+  });
+
+  it('should return "NaN" when input is undefined', () => {
+    expect(toFixedWithTypeValidation(undefined as any, 2)).toBe('NaN');
+  });
+
+  it('should handle zero value', () => {
+    expect(toFixedWithTypeValidation(0, 2)).toBe('0.00');
+  });
+
+  it('should handle negative numbers', () => {
+    expect(toFixedWithTypeValidation(-5.678, 2)).toBe('-5.68');
+  });
+
+  it('should handle string numbers', () => {
+    expect(toFixedWithTypeValidation('3.14159', 2)).toBe('3.14');
+    expect(toFixedWithTypeValidation('10', 1)).toBe('10.0');
+  });
+});
+
+describe('addNumberWithUnits', () => {
+  it('should add two numbers with same units and return in default unit (m)', () => {
+    const result = addNumberWithUnits('2m', '3m');
+    expect(result).toBe('5m');
+  });
+
+  it('should add numbers with different units and convert to default unit', () => {
+    const result = addNumberWithUnits('1g', '512m');
+    // 1g + 512m = 1024m + 512m = 1536m
+    expect(result).toBe('1536m');
+  });
+
+  it('should support custom target unit', () => {
+    const result = addNumberWithUnits('1g', '1g', 'g');
+    expect(result).toBe('2g');
+  });
+
+  it('should handle zero values', () => {
+    const result = addNumberWithUnits('0m', '5m');
+    expect(result).toBe('5m');
+  });
+});
+
+describe('subNumberWithUnits', () => {
+  it('should subtract two numbers with same units and return in default unit (m)', () => {
+    const result = subNumberWithUnits('5m', '2m');
+    expect(result).toBe('3m');
+  });
+
+  it('should subtract numbers with different units and convert to default unit', () => {
+    const result = subNumberWithUnits('2g', '512m');
+    // 2g - 512m = 2048m - 512m = 1536m
+    expect(result).toBe('1536m');
+  });
+
+  it('should support custom target unit', () => {
+    const result = subNumberWithUnits('5g', '2g', 'g');
+    expect(result).toBe('3g');
+  });
+
+  it('should handle zero values', () => {
+    const result = subNumberWithUnits('5m', '0m');
+    expect(result).toBe('5m');
+  });
+
+  it('should handle negative results', () => {
+    const result = subNumberWithUnits('2g', '5g', 'g');
+    expect(result).toBe('-3g');
   });
 });
