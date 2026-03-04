@@ -12,6 +12,7 @@
  * - Atom initial values
  */
 import '../../__test__/matchMedia.mock.js';
+import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   fetchAndParseConfig,
   rawConfigState,
@@ -27,10 +28,15 @@ import {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function mockFetch(status: number, body: string): void {
+function mockFetch(
+  status: number,
+  body: string,
+  contentType: string = 'application/octet-stream',
+): void {
   global.fetch = jest.fn().mockResolvedValue({
     status,
     text: () => Promise.resolve(body),
+    headers: new Headers({ 'content-type': contentType }),
   } as unknown as Response);
 }
 
@@ -51,6 +57,22 @@ describe('fetchAndParseConfig', () => {
 
   it('returns null when fetch throws an error', async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
+    const result = await fetchAndParseConfig('/config.toml');
+    expect(result).toBeNull();
+  });
+
+  it('returns null for HTTP 500 (server error)', async () => {
+    mockFetch(500, 'Internal Server Error');
+    const result = await fetchAndParseConfig('/config.toml');
+    expect(result).toBeNull();
+  });
+
+  it('returns null when response Content-Type is text/html (SPA fallback)', async () => {
+    // When config.toml is missing, the dev server's historyApiFallback
+    // serves index.html with status 200 and Content-Type: text/html.
+    const html =
+      '<!DOCTYPE html><html><head><title>App</title></head><body></body></html>';
+    mockFetch(200, html, 'text/html; charset=utf-8');
     const result = await fetchAndParseConfig('/config.toml');
     expect(result).toBeNull();
   });
@@ -276,5 +298,65 @@ describe('RawTomlConfig structure', () => {
       customSection: { foo: 'bar' },
     };
     expect(config.customSection).toBeDefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getDefaultLoginConfig fallback (used when config.toml is missing)
+// ---------------------------------------------------------------------------
+
+describe('getDefaultLoginConfig fallback values', () => {
+  it('returns a non-null LoginConfigState with sensible defaults', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults).not.toBeNull();
+    expect(typeof defaults).toBe('object');
+  });
+
+  it('sets proxy_url to the default wsproxy address', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.proxy_url).toBe('http://127.0.0.1:5050/');
+  });
+
+  it('sets api_endpoint to empty string so login page shows empty field', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.api_endpoint).toBe('');
+  });
+
+  it('sets login_attempt_limit to 500', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.login_attempt_limit).toBe(500);
+  });
+
+  it('sets login_block_time to 180', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.login_block_time).toBe(180);
+  });
+
+  it('disables optional features by default', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.signup_support).toBe(false);
+    expect(defaults.force2FA).toBe(false);
+    expect(defaults.enablePipeline).toBe(false);
+    expect(defaults.maskUserInfo).toBe(false);
+  });
+
+  it('sets connection_mode to SESSION', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.connection_mode).toBe('SESSION');
+  });
+
+  it('returns empty arrays for list fields', () => {
+    const defaults = getDefaultLoginConfig();
+    expect(defaults.singleSignOnVendors).toEqual([]);
+    expect(defaults.allow_image_list).toEqual([]);
+    expect(defaults.blockList).toEqual([]);
+    expect(defaults.inactiveList).toEqual([]);
+  });
+
+  it('returns independent objects on each call (no shared state)', () => {
+    const a = getDefaultLoginConfig();
+    const b = getDefaultLoginConfig();
+    a.api_endpoint = 'https://modified.example.com';
+    expect(b.api_endpoint).toBe('');
   });
 });

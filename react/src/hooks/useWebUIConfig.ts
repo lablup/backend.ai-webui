@@ -13,6 +13,7 @@
  * non-React code (e.g. globalThis.packageEdition, globalThis.packageValidUntil).
  */
 import {
+  getDefaultLoginConfig,
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
@@ -22,7 +23,7 @@ import {
 } from './useWebUIPluginState';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import toml from 'markty-toml';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -122,6 +123,14 @@ export async function fetchAndParseConfig(
     if (res.status !== 200) {
       return null;
     }
+    // When config.toml is missing, the dev server's SPA fallback
+    // (historyApiFallback) serves index.html with status 200.  Detect this
+    // by checking the Content-Type header — a real TOML file is served as
+    // text/plain or application/octet-stream, never text/html.
+    const contentType = res.headers.get('content-type') ?? '';
+    if (contentType.includes('text/html')) {
+      return null;
+    }
     const text = await res.text();
     const parsed = toml(text) as RawTomlConfig;
     preprocessToml(parsed);
@@ -218,6 +227,10 @@ function processConfig(config: RawTomlConfig): {
  *
  * This replaces the Lit shell's _parseConfig() + loadConfig() flow.
  */
+// Module-level guard so the config fetch runs at most once across all
+// component instances (LoginView + LoginViewLazy share the same module).
+let configInitStarted = false;
+
 export function useInitializeConfig(): {
   isLoaded: boolean;
   rawConfig: RawTomlConfig | null;
@@ -236,11 +249,10 @@ export function useInitializeConfig(): {
   const isLoaded = useAtomValue(configLoadedState);
   const rawConfig = useAtomValue(rawConfigState);
   const currentLoginConfig = useAtomValue(loginConfigState);
-  const initRef = useRef(false);
 
   const loadConfig = useCallback(async () => {
-    if (initRef.current) return;
-    initRef.current = true;
+    if (configInitStarted) return;
+    configInitStarted = true;
 
     // Electron uses es6:// protocol which resolves from app/ directory
     // Web uses relative path from the HTML location
@@ -251,8 +263,27 @@ export function useInitializeConfig(): {
     const parsed = await fetchAndParseConfig(configPath);
 
     if (!parsed) {
-      // Config fetch failed - still mark as loaded so the app can show errors
+      // config.toml is missing or failed to load — apply defaults so the app
+      // remains functional (login page renders with empty API endpoint field).
+      const defaultConfig = getDefaultLoginConfig();
+      setLoginConfig(defaultConfig);
+      setProxyUrl(defaultConfig.proxy_url);
+      setAutoLogout(false);
+      setPluginLoaded(true);
       setConfigLoaded(true);
+
+      // Ensure config-derived globals are set even when config.toml is missing,
+      // so edition-dependent logic behaves consistently with the normal path.
+      const globalScope = globalThis as Record<string, unknown>;
+      if (globalScope.packageEdition === undefined) {
+        globalScope.packageEdition = 'Open Source';
+      }
+      if (globalScope.packageValidUntil === undefined) {
+        globalScope.packageValidUntil = '';
+      }
+
+      // eslint-disable-next-line no-console
+      console.warn('config.toml not found — using default configuration');
       return;
     }
 

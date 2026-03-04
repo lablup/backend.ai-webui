@@ -90,20 +90,22 @@ module.exports = {
         path.resolve(__dirname, '../resources/i18n'),
       ];
 
-      const watchers = filesToWatch.map((file) => {
-        // Use a debounce timer to avoid rapid successive reloads from
-        // editors that write files in multiple steps (e.g. write + rename).
-        let debounceTimer;
-        return fs.watch(file, () => {
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(() => {
-            devServer.sendMessage(
-              devServer.webSocketServer.clients,
-              'static-changed',
-            );
-          }, 100);
+      const watchers = filesToWatch
+        .filter((file) => fs.existsSync(file))
+        .map((file) => {
+          // Use a debounce timer to avoid rapid successive reloads from
+          // editors that write files in multiple steps (e.g. write + rename).
+          let debounceTimer;
+          return fs.watch(file, () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+              devServer.sendMessage(
+                devServer.webSocketServer.clients,
+                'static-changed',
+              );
+            }, 100);
+          });
         });
-      });
 
       // Store watchers on the devServer instance so onListening can patch
       // server.close to clean them up on shutdown. We cannot patch
