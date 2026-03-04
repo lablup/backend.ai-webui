@@ -61,7 +61,6 @@ const AdminDashboardPage: React.FC = () => {
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
       ) {
-        ...ActiveAgentsFragment
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
         ...TotalResourceWithinResourceGroupFragment
@@ -180,10 +179,7 @@ const AdminDashboardPage: React.FC = () => {
               <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
-            <ActiveAgents
-              queryRef={queryRef}
-              isRefetching={isPendingIntervalRefetch}
-            />
+            <ActiveAgents />
           </Suspense>
         ),
       },
