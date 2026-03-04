@@ -18,7 +18,7 @@ react/
 ## Development
 
 ```console
-$ pnpm run build:d    # Start dev server (TypeScript watch + Relay watch + React dev server, default port: 9081)
+$ pnpm run dev    # Start dev server (TypeScript watch + Relay watch + React dev server, default port: 9081)
 $ pnpm run wsproxy    # Start websocket proxy (required for local dev)
 ```
 

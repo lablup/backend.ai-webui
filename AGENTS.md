@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run build:d` - Start development environment (TypeScript watch + Relay watch + React dev server)
+- `pnpm run dev` - Start development environment (TypeScript watch + Relay watch + React dev server)
 - `pnpm run wsproxy` - Start websocket proxy (required for local development)
 
 ### Build and Production
@@ -94,7 +94,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### Development Workflow
 
-1. **Dev Server**: Run `pnpm run build:d` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
+1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
 2. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
 3. **Testing**: Jest unit tests + Playwright E2E tests
 4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky

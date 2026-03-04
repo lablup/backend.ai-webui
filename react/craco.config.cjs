@@ -314,7 +314,7 @@ module.exports = {
             // Note: dist/ is intentionally NOT ignored because
             // backend.ai-client-esm.js (resolved via webpack alias) is part of
             // the module graph and needs to trigger HMR when recompiled by
-            // `tsc --watch` (run concurrently in the build:d script).
+            // `tsc --watch` (run concurrently in the dev script).
             path.resolve(__dirname, '../resources/**'),
             path.resolve(__dirname, '../manifest/**'),
           ],
