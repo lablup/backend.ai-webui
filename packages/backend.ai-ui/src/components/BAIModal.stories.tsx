@@ -1,11 +1,25 @@
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAIModal from './BAIModal';
+import type { WindowState } from './BAIModal';
 import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { App } from 'antd';
 import { useState } from 'react';
 
+/**
+ * BAIModal extends Ant Design's Modal with dragging, confirm-before-close,
+ * sticky headers, type variants, and window management controls.
+ *
+ * Key features:
+ * - Draggable modal header
+ * - Confirm before close with async support
+ * - Sticky title for scrollable content
+ * - Warning/error type variants
+ * - Window controls: minimize, maximize, fullscreen
+ *
+ * @see BAIModal.tsx for implementation details
+ */
 const meta: Meta<typeof BAIModal> = {
   title: 'Modal/BAIModal',
   component: BAIModal,
@@ -25,11 +39,16 @@ const meta: Meta<typeof BAIModal> = {
 | \`onConfirmClose\` | \`() => void \\| Promise<boolean>\` | - | Callback before close; return false/reject to prevent |
 | \`stickyTitle\` | \`boolean\` | \`false\` | Makes the header sticky when body content is scrolled |
 | \`type\` | \`'normal' \\| 'warning' \\| 'error'\` | \`'normal'\` | Visual variant that changes the header title color |
+| \`windowControls\` | \`boolean\` | \`false\` | Enable window management controls (minimize, maximize, fullscreen) |
+| \`windowActions\` | \`Array<'minimize' \\| 'maximize' \\| 'fullscreen'>\` | - | Control which window actions are available |
+| \`onWindowStateChange\` | \`(state: WindowState) => void\` | - | Callback when modal window state changes |
+| \`minimizedPlacement\` | \`'bottomRight' \\| 'bottomLeft' \\| 'topRight' \\| 'topLeft'\` | \`'bottomRight'\` | Placement of the minimized modal bar |
 
 ## Additional Features
 - **Fixed z-index**: Uses \`DEFAULT_BAI_MODAL_Z_INDEX = 1001\`
 - **Centered by default**: \`centered\` defaults to \`true\`
 - **Consistent styling**: Standard header, body, footer styles with dividers
+- **Window controls**: Minimize (compact bar), maximize (viewport with margin), fullscreen (full viewport)
 
 For all other props, refer to [Ant Design Modal](https://ant.design/components/modal).
         `,
@@ -81,6 +100,47 @@ For all other props, refer to [Ant Design Modal](https://ant.design/components/m
       table: {
         type: { summary: "'normal' | 'warning' | 'error'" },
         defaultValue: { summary: 'normal' },
+      },
+    },
+    windowControls: {
+      control: { type: 'boolean' },
+      description:
+        'Enable window management controls (minimize, maximize, fullscreen) in the modal header.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    windowActions: {
+      control: false,
+      description:
+        'Control which window actions are available. Defaults to all actions when windowControls is true.',
+      table: {
+        type: {
+          summary: "Array<'minimize' | 'maximize' | 'fullscreen'>",
+        },
+      },
+    },
+    onWindowStateChange: {
+      action: 'windowStateChanged',
+      description: 'Callback when modal window state changes.',
+      table: {
+        type: {
+          summary:
+            "(state: 'default' | 'minimized' | 'maximized' | 'fullscreen') => void",
+        },
+      },
+    },
+    minimizedPlacement: {
+      control: { type: 'select' },
+      options: ['bottomRight', 'bottomLeft', 'topRight', 'topLeft'],
+      description:
+        'Placement of the minimized modal bar. Similar to Ant Design notification placement.',
+      table: {
+        type: {
+          summary: "'bottomRight' | 'bottomLeft' | 'topRight' | 'topLeft'",
+        },
+        defaultValue: { summary: 'bottomRight' },
       },
     },
   },
@@ -156,7 +216,7 @@ export const DraggableModal: Story = {
     docs: {
       description: {
         story:
-          'Demonstrates the draggable feature. Hover over the drag handle icon (☰) in the modal header to activate dragging. The modal can be moved around the viewport while staying within bounds.',
+          'Demonstrates the draggable feature. Hover over the drag handle icon in the modal header to activate dragging. The modal can be moved around the viewport while staying within bounds.',
       },
     },
   },
@@ -195,8 +255,8 @@ export const DraggableModal: Story = {
         >
           <BAIFlex direction="column" gap="sm">
             <BAIText>
-              Hover over the drag handle icon (☰) to the left of the title,
-              then drag this modal around!
+              Hover over the drag handle icon to the left of the title, then
+              drag this modal around!
             </BAIText>
             <BAIText>
               The modal will stay within the viewport bounds and cannot be
@@ -408,7 +468,7 @@ export const TypeVariants: Story = {
           onOk={() => setOpenNormal(false)}
           onCancel={() => setOpenNormal(false)}
         >
-          <BAIText>Normal type — default title color.</BAIText>
+          <BAIText>Normal type -- default title color.</BAIText>
         </BAIModal>
 
         <BAIModal
@@ -418,7 +478,7 @@ export const TypeVariants: Story = {
           onOk={() => setOpenWarning(false)}
           onCancel={() => setOpenWarning(false)}
         >
-          <BAIText>Warning type — title in amber/orange color.</BAIText>
+          <BAIText>Warning type -- title in amber/orange color.</BAIText>
         </BAIModal>
 
         <BAIModal
@@ -428,7 +488,351 @@ export const TypeVariants: Story = {
           onOk={() => setOpenError(false)}
           onCancel={() => setOpenError(false)}
         >
-          <BAIText>Error type — title in red color.</BAIText>
+          <BAIText>Error type -- title in red color.</BAIText>
+        </BAIModal>
+      </BAIFlex>
+    );
+  },
+};
+
+// Window controls story - all controls enabled
+export const WindowControls: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the `windowControls` feature. The modal header shows minimize, maximize, and fullscreen buttons. Click each button to toggle the corresponding state; clicking the same button again returns to the default state.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+    const [currentState, setCurrentState] = useState<WindowState>('default');
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIButton type="primary" onClick={() => setOpen(true)}>
+          Open Modal with Window Controls
+        </BAIButton>
+        <BAIText>
+          Current state: <strong>{currentState}</strong>
+        </BAIText>
+        <BAIModal
+          title="Window Controls Modal"
+          open={open}
+          windowControls
+          onWindowStateChange={setCurrentState}
+          onOk={() => setOpen(false)}
+          onCancel={() => {
+            setOpen(false);
+            setCurrentState('default');
+          }}
+          footer={
+            <BAIFlex justify="end" gap="sm">
+              <BAIButton
+                onClick={() => {
+                  setOpen(false);
+                  setCurrentState('default');
+                }}
+              >
+                Cancel
+              </BAIButton>
+              <BAIButton
+                type="primary"
+                onClick={() => {
+                  setOpen(false);
+                  setCurrentState('default');
+                }}
+              >
+                OK
+              </BAIButton>
+            </BAIFlex>
+          }
+        >
+          <LongModalContent />
+        </BAIModal>
+      </BAIFlex>
+    );
+  },
+};
+
+// Minimized state story
+export const MinimizedState: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the minimize/restore flow. Click the minimize button (minus icon) in the header to collapse the modal to a compact bar at the bottom of the viewport. Click the minus icon again to restore it.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <BAIButton type="primary" onClick={() => setOpen(true)}>
+          Open Minimizable Modal
+        </BAIButton>
+        <BAIModal
+          title="Minimizable Modal"
+          open={open}
+          windowActions={['minimize']}
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        >
+          <BAIFlex direction="column" gap="md">
+            <BAIText>
+              Click the <strong>minus icon</strong> in the modal header to
+              minimize this modal. It will collapse to a compact bar showing
+              only the title at the bottom of the viewport.
+            </BAIText>
+            <BAIText>
+              Click the minus icon again on the minimized bar to restore the
+              modal to its default size.
+            </BAIText>
+          </BAIFlex>
+        </BAIModal>
+      </>
+    );
+  },
+};
+
+// Maximized state story
+export const MaximizedState: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the maximize/restore flow. Click the maximize button (border icon) to expand the modal to fill the viewport with a 24px margin on each side. Click the button again (now showing overlapping squares) to restore.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <BAIButton type="primary" onClick={() => setOpen(true)}>
+          Open Maximizable Modal
+        </BAIButton>
+        <BAIModal
+          title="Maximizable Modal"
+          open={open}
+          windowActions={['maximize']}
+          draggable
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        >
+          <BAIFlex direction="column" gap="md">
+            <BAIText>
+              Click the <strong>border icon</strong> in the modal header to
+              maximize this modal. It will expand to fill the viewport with a
+              24px margin.
+            </BAIText>
+            <BAIText>
+              Note: Dragging is automatically disabled when the modal is
+              maximized and re-enabled when restored.
+            </BAIText>
+          </BAIFlex>
+        </BAIModal>
+      </>
+    );
+  },
+};
+
+// Fullscreen state story
+export const FullscreenState: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the fullscreen/exit flow. Click the fullscreen button to expand the modal to fill the entire viewport with no margin and no border-radius. Click the exit fullscreen button to restore.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <>
+        <BAIButton type="primary" onClick={() => setOpen(true)}>
+          Open Fullscreen Modal
+        </BAIButton>
+        <BAIModal
+          title="Fullscreen Modal"
+          open={open}
+          windowActions={['fullscreen']}
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        >
+          <BAIFlex direction="column" gap="md">
+            <BAIText>
+              Click the <strong>fullscreen icon</strong> in the modal header to
+              expand this modal to fill the entire viewport (100vw x 100vh) with
+              no margin and no border-radius.
+            </BAIText>
+            <BAIText>
+              Click the exit fullscreen icon to restore the modal to its default
+              size.
+            </BAIText>
+          </BAIFlex>
+        </BAIModal>
+      </>
+    );
+  },
+};
+
+// Minimized placement story
+export const MinimizedPlacement: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the `minimizedPlacement` prop. Each modal minimizes to a different corner of the viewport. Default placement is `bottomRight`.',
+      },
+    },
+  },
+  render: () => {
+    const [openBR, setOpenBR] = useState(false);
+    const [openBL, setOpenBL] = useState(false);
+    const [openTR, setOpenTR] = useState(false);
+    const [openTL, setOpenTL] = useState(false);
+
+    return (
+      <BAIFlex gap="md" wrap="wrap">
+        <BAIButton type="primary" onClick={() => setOpenBR(true)}>
+          Bottom Right (default)
+        </BAIButton>
+        <BAIButton type="primary" onClick={() => setOpenBL(true)}>
+          Bottom Left
+        </BAIButton>
+        <BAIButton type="primary" onClick={() => setOpenTR(true)}>
+          Top Right
+        </BAIButton>
+        <BAIButton type="primary" onClick={() => setOpenTL(true)}>
+          Top Left
+        </BAIButton>
+
+        <BAIModal
+          title="Bottom Right"
+          open={openBR}
+          windowActions={['minimize']}
+          minimizedPlacement="bottomRight"
+          onOk={() => setOpenBR(false)}
+          onCancel={() => setOpenBR(false)}
+        >
+          <BAIText>
+            Minimizes to <strong>bottom-right</strong> corner (default).
+          </BAIText>
+        </BAIModal>
+
+        <BAIModal
+          title="Bottom Left"
+          open={openBL}
+          windowActions={['minimize']}
+          minimizedPlacement="bottomLeft"
+          onOk={() => setOpenBL(false)}
+          onCancel={() => setOpenBL(false)}
+        >
+          <BAIText>
+            Minimizes to <strong>bottom-left</strong> corner.
+          </BAIText>
+        </BAIModal>
+
+        <BAIModal
+          title="Top Right"
+          open={openTR}
+          windowActions={['minimize']}
+          minimizedPlacement="topRight"
+          onOk={() => setOpenTR(false)}
+          onCancel={() => setOpenTR(false)}
+        >
+          <BAIText>
+            Minimizes to <strong>top-right</strong> corner.
+          </BAIText>
+        </BAIModal>
+
+        <BAIModal
+          title="Top Left"
+          open={openTL}
+          windowActions={['minimize']}
+          minimizedPlacement="topLeft"
+          onOk={() => setOpenTL(false)}
+          onCancel={() => setOpenTL(false)}
+        >
+          <BAIText>
+            Minimizes to <strong>top-left</strong> corner.
+          </BAIText>
+        </BAIModal>
+      </BAIFlex>
+    );
+  },
+};
+
+// Selective window actions story
+export const SelectiveWindowActions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates the `windowActions` prop for selectively enabling specific window controls. Each modal shows a different combination of window action buttons.',
+      },
+    },
+  },
+  render: () => {
+    const [openMinMax, setOpenMinMax] = useState(false);
+    const [openMaxFull, setOpenMaxFull] = useState(false);
+    const [openMinOnly, setOpenMinOnly] = useState(false);
+
+    return (
+      <BAIFlex gap="md" wrap="wrap">
+        <BAIButton type="primary" onClick={() => setOpenMinMax(true)}>
+          Minimize + Maximize
+        </BAIButton>
+        <BAIButton type="primary" onClick={() => setOpenMaxFull(true)}>
+          Maximize + Fullscreen
+        </BAIButton>
+        <BAIButton type="primary" onClick={() => setOpenMinOnly(true)}>
+          Minimize Only
+        </BAIButton>
+
+        <BAIModal
+          title="Minimize + Maximize"
+          open={openMinMax}
+          windowActions={['minimize', 'maximize']}
+          onOk={() => setOpenMinMax(false)}
+          onCancel={() => setOpenMinMax(false)}
+        >
+          <BAIText>
+            This modal has only <strong>minimize</strong> and{' '}
+            <strong>maximize</strong> buttons. No fullscreen option.
+          </BAIText>
+        </BAIModal>
+
+        <BAIModal
+          title="Maximize + Fullscreen"
+          open={openMaxFull}
+          windowActions={['maximize', 'fullscreen']}
+          onOk={() => setOpenMaxFull(false)}
+          onCancel={() => setOpenMaxFull(false)}
+        >
+          <BAIText>
+            This modal has only <strong>maximize</strong> and{' '}
+            <strong>fullscreen</strong> buttons. No minimize option.
+          </BAIText>
+        </BAIModal>
+
+        <BAIModal
+          title="Minimize Only"
+          open={openMinOnly}
+          windowActions={['minimize']}
+          onOk={() => setOpenMinOnly(false)}
+          onCancel={() => setOpenMinOnly(false)}
+        >
+          <BAIText>
+            This modal has only the <strong>minimize</strong> button.
+          </BAIText>
         </BAIModal>
       </BAIFlex>
     );
