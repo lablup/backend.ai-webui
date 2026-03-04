@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",

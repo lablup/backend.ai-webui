@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",

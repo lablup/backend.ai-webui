@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",

@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
     "Version": "版本"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "退出全螢幕",
+    "Fullscreen": "全螢幕",
+    "Maximize": "最大化",
+    "Minimize": "最小化",
+    "Restore": "還原"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
     "ProjectResourcePolicy": "專案資源政策",

@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
