@@ -126,12 +126,12 @@ const mockDeviceMetaData: DeviceMetaData = {
     number_format: { binary: false, round_length: 0 },
     display_icon: 'hyperaccel',
   },
-  // TT-N300
+  // Tenstorrent Wormhole™ n300
   'tt-n300.device': {
     slot_name: 'tt-n300.device',
-    description: 'Tenstorrent TT-N300',
-    human_readable_name: 'TT-N300',
-    display_unit: 'TT-N300',
+    description: 'Tenstorrent Wormhole™ n300',
+    human_readable_name: 'Tenstorrent Wormhole™ n300 Device',
+    display_unit: 'n300',
     number_format: { binary: false, round_length: 0 },
     display_icon: 'tenstorrent',
   },
@@ -328,7 +328,7 @@ export const ResourceTypes: Story = {
       </BAIFlex>
       {/* Tenstorrent */}
       <BAIFlex gap="sm" align="center">
-        <span style={{ width: 160 }}>Tenstorrent TT-N300:</span>
+        <span style={{ width: 160 }}>Tenstorrent Wormhole™ n300:</span>
         <BAIResourceNumberWithIcon type="tt-n300.device" value="2" />
       </BAIFlex>
     </BAIFlex>
