@@ -2432,6 +2432,7 @@
       "NewPasswordCannotBeSame": "Introduza uma palavra-passe diferente da sua palavra-passe atual.",
       "NewPasswordMismatch": "Duas novas senhas não correspondem.",
       "Notifications": "Notificações",
+      "OpenExternalLink": "Abrir em novo separador",
       "OriginalPassword": "Senha original",
       "PasswordChangePlace": "Clique no ícone da pessoa na barra superior e aceda ao menu \"A minha conta\".",
       "PasswordMismatch": "Senha incorreta",

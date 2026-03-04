@@ -2431,6 +2431,7 @@
       "NewPasswordCannotBeSame": "既存のパスワードとは異なる新しいパスワードを入力してください。",
       "NewPasswordMismatch": "2つの新しいパスワードが一致しません。",
       "Notifications": "お知らせ",
+      "OpenExternalLink": "新しいタブで開く",
       "OriginalPassword": "元のパスワード",
       "PasswordChangePlace": "トップバーの人物アイコンをクリックして「ユーザー情報の変更」メニューに移動してください。",
       "PasswordMismatch": "パスワード",

@@ -2431,6 +2431,7 @@
       "NewPasswordCannotBeSame": "Lütfen mevcut şifrenizden farklı bir şifre girin.",
       "NewPasswordMismatch": "İki yeni şifre eşleşmiyor.",
       "Notifications": "Bildirimler",
+      "OpenExternalLink": "Yeni sekmede aç",
       "OriginalPassword": "Orijinal şifre",
       "PasswordChangePlace": "Üst çubuktaki kişi simgesine tıklayın ve \"Hesabım\" menüsüne gidin.",
       "PasswordMismatch": "Şifre eşleşmiyor",
