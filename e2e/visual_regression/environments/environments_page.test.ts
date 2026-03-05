@@ -11,7 +11,10 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsVisualRegressionAdmin(page, request);
   await navigateTo(page, 'environment');
-  await page.locator('.ant-input-affix-wrapper').first().waitFor();
+  // Wait for the BAIPropertyFilter via its accessible combobox
+  await page
+    .getByRole('combobox', { name: 'Filter property selector' })
+    .waitFor({ state: 'visible' });
 });
 
 test.describe(

@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2025-02-09
+> **Last Updated:** 2026-03-03
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 67 / 269 features covered (25%)**
+**Overall (in-scope routes): 78 / 280 features covered (28%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -28,7 +28,7 @@
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 0 | ❌ 0% |
-| Environment | `/environment` | 13 | 3 | 🔶 23% |
+| Environment | `/environment` | 24 | 14 | 🔶 58% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
 | Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **269** | **67** | **25%** |
+| **Total** | | **280** | **78** | **28%** |
 
 ---
 
@@ -352,6 +352,7 @@
 
 #### Images Tab
 **Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`
+**Filter:** `BAIPropertyFilter` (Name, Architecture, Status, Type, Registry)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -359,6 +360,18 @@
 | Image resource limit → ManageImageResourceLimitModal | ✅ | `user can modify image resource limit` |
 | Image app management → ManageAppsModal | ✅ | `user can manage apps` |
 | Image installation → ImageInstallModal | 🚧 | Skipped: `user can install image` |
+| BAIPropertyFilter UI rendering | ✅ | `Admin can see the BAIPropertyFilter on the Images tab` |
+| Filter by name (free text) | ✅ | `Admin can filter images by name using a text value` |
+| Filter by architecture (strict selection) | ✅ | `Admin can filter images by architecture using strict selection` |
+| Filter by status (strict selection) | ✅ | `Admin can filter images by status using strict selection` |
+| Filter by type (strict selection) | ✅ | `Admin can filter images by type using strict selection` |
+| Filter by registry (free text) | ✅ | `Admin can filter images by registry using a text value` |
+| Multiple filters with reset-all | ✅ | `Admin can apply multiple filters simultaneously and see reset-all button` |
+| Clear single filter tag | ✅ | `Admin can clear a single filter tag by clicking its close button` |
+| Clear all filters (reset-all button) | ✅ | `Admin can clear all filters at once using the reset-all button` |
+| Pagination reset on filter | ✅ | `Admin sees pagination reset to page 1 when a filter is applied on page 2` |
+| Strict selection rejects freeform | ✅ | `Admin cannot add a filter for architecture with an invalid freeform value` |
+| Empty state for non-matching filter | ✅ | `Admin sees empty state when filtering by a non-existent image name` |
 | Table column settings → TableColumnsSettingModal | ❌ | - |
 
 #### Resource Presets Tab
@@ -383,7 +396,7 @@
 | Edit registry → ContainerRegistryEditorModal | ❌ | - |
 | Delete registry → Popconfirm | ❌ | - |
 
-**Coverage: 🔶 3/13 features**
+**Coverage: 🔶 14/24 features**
 
 ---
 
