@@ -24,6 +24,9 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: false,
   },
-  staticDirs: ['./public'],
+  staticDirs: [
+    './public',
+    { from: '../../../resources/fonts', to: '/fonts' },
+  ],
 };
 export default config;

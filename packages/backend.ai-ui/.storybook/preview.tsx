@@ -1,8 +1,7 @@
-import { withGlobalProvider } from './decorators';
-import { DocsContainer } from './DocsContainer';
-import { localeItems } from './localeConfig';
 import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
-import '../../../resources/fonts/fonts.css';
+import { DocsContainer } from './DocsContainer';
+import { withGlobalProvider } from './decorators';
+import { localeItems } from './localeConfig';
 import type { Preview } from '@storybook/react-vite';
 
 const preview: Preview = {
@@ -30,7 +29,6 @@ const preview: Preview = {
       toolbar: {
         icon: 'globe',
         items: localeItems,
-        showName: true,
         dynamicTitle: true,
       },
     },
@@ -43,7 +41,6 @@ const preview: Preview = {
           { value: 'default', title: 'Default (Ant Design)' },
           { value: 'webui', title: 'WebUI (Backend.AI)' },
         ],
-        showName: true,
         dynamicTitle: true,
       },
     },
