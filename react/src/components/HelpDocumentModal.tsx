@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ExportOutlined } from '@ant-design/icons';
-import { Button, Spin, Tooltip } from 'antd';
+import { Button, Spin, Tooltip, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import React, { useCallback, useState } from 'react';
@@ -30,7 +30,7 @@ const useStyles = createStyles(({ token, css }) => ({
       font-size: ${token.fontSizeHeading3}px;
       margin-top: ${token.marginXL}px;
       padding-bottom: ${token.paddingXS}px;
-      border-bottom: 1px solid ${token.colorBorderSecondary};
+      border-bottom: ${token.lineWidth}px solid ${token.colorBorderSecondary};
     }
     h3 {
       font-size: ${token.fontSizeHeading4}px;
@@ -48,7 +48,7 @@ const useStyles = createStyles(({ token, css }) => ({
     }
     th,
     td {
-      border: 1px solid ${token.colorBorderSecondary};
+      border: ${token.lineWidth}px solid ${token.colorBorderSecondary};
       padding: ${token.paddingXS}px ${token.paddingSM}px;
       text-align: left;
     }
@@ -59,13 +59,13 @@ const useStyles = createStyles(({ token, css }) => ({
     blockquote {
       margin: ${token.marginMD}px 0;
       padding: ${token.paddingSM}px ${token.padding}px;
-      border-left: 4px solid ${token.colorPrimary};
+      border-left: ${token.lineWidthBold * 2}px solid ${token.colorPrimary};
       background: ${token.colorFillAlter};
       border-radius: 0 ${token.borderRadiusSM}px ${token.borderRadiusSM}px 0;
     }
     code {
       background: ${token.colorFillTertiary};
-      padding: 2px 6px;
+      padding: ${token.lineWidth * 2}px ${token.paddingXS - 2}px;
       border-radius: ${token.borderRadiusSM}px;
       font-size: 0.9em;
     }
@@ -125,6 +125,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { styles } = useStyles();
   const [markdown, setMarkdown] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -168,7 +169,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                 href={externalDocURL}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ marginLeft: 8 }}
+                style={{ marginLeft: token.marginXS }}
               />
             </Tooltip>
           ) : null}
@@ -198,7 +199,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             justifyContent: 'center',
             alignItems: 'center',
             flex: 1,
-            minHeight: 400,
+            minHeight: token.controlHeightLG * 10,
           }}
         >
           <Spin />
