@@ -964,6 +964,32 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 - 할당 성공 후 테이블 refetch로 데이터 갱신
 - 제거 성공 후 테이블 refetch로 데이터 갱신
 
+**에러 처리**:
+
+| 에러 조건 | HTTP | 에러 코드 | 프론트 대응 |
+|----------|------|----------|-----------|
+| 이미 할당된 사용자 재할당 | 409 | `role_create_already-exists` | `message.error` ("해당 사용자는 이미 이 역할에 할당되어 있습니다"). Modal 유지 |
+| 할당되지 않은 사용자 제거 시도 | 400 | `role_purge_not-found` | `message.error` ("해당 사용자는 이 역할에 할당되어 있지 않습니다"). 테이블 refetch |
+| 존재하지 않는 사용자 할당 | 404 | `not-found` | `message.error` ("사용자를 찾을 수 없습니다"). Modal 유지 |
+| 존재하지 않는 역할 | 404 | `not-found` | `message.error` ("역할을 찾을 수 없습니다"). Drawer 닫기 + 목록 refetch |
+| 기타 서버 에러 | 4xx/5xx | - | `message.error`로 에러 메시지 표시 |
+
+**사용자 시나리오 — 중복 할당 시도**:
+
+1. 슈퍼어드민이 역할 Drawer의 할당 탭에서 "사용자 추가" 버튼을 클릭한다
+2. Modal에서 사용자 "김OO (a@example.com)"를 선택하고 "추가"를 클릭한다
+3. 이 사용자가 이미 해당 역할에 할당되어 있는 경우 (예: 다른 관리자가 동시에 할당), 백엔드에서 409 에러가 반환된다
+4. `message.error`로 "해당 사용자는 이미 이 역할에 할당되어 있습니다" 표시
+5. Modal은 유지되어 다른 사용자를 선택할 수 있다
+
+**사용자 시나리오 — 이미 제거된 사용자 제거 시도**:
+
+1. 슈퍼어드민이 할당 탭에서 사용자 "이OO"의 "제거" 버튼을 클릭한다
+2. 확인 다이얼로그에서 "확인"을 클릭한다
+3. 다른 관리자가 이미 해당 사용자를 제거한 경우, 백엔드에서 400 에러가 반환된다
+4. `message.error`로 "해당 사용자는 이 역할에 할당되어 있지 않습니다" 표시
+5. 할당 테이블이 refetch되어 최신 상태로 갱신된다
+
 **인수 조건**:
 - [ ] "할당" 탭 선택 시 해당 역할의 `roleAssignments` 커넥션 데이터가 표시된다
 - [ ] 사용자 목록이 Relay 커서 기반 페이지네이션으로 표시된다
@@ -1122,6 +1148,33 @@ mutation AdminDeletePermissionMutation($input: DeletePermissionInput!) {
 
 - 퍼미션 추가 성공 후 테이블 refetch로 데이터 갱신
 - 퍼미션 삭제 성공 후 테이블 refetch로 데이터 갱신
+
+**에러 처리**:
+
+| 에러 조건 | HTTP | 에러 코드 | 프론트 대응 |
+|----------|------|----------|-----------|
+| 중복 퍼미션 추가 (동일 roleId+scopeType+scopeId+entityType+operation) | 409 | unique constraint | `message.error` ("동일한 퍼미션이 이미 존재합니다"). Modal 유지 |
+| 잘못된 오퍼레이션 타입 | 400 | `api_parsing_invalid-parameters` | `message.error`로 에러 메시지 표시 |
+| 존재하지 않는 역할에 퍼미션 추가 | 404 | `not-found` | `message.error` ("역할을 찾을 수 없습니다"). Modal 닫기 + Drawer 닫기 + 목록 refetch |
+| 존재하지 않는 퍼미션 삭제 시도 | 404 | `not-found` | `message.error` ("해당 퍼미션을 찾을 수 없습니다"). 테이블 refetch |
+| 기타 서버 에러 | 4xx/5xx | - | `message.error`로 에러 메시지 표시 |
+
+**사용자 시나리오 — 중복 퍼미션 추가 시도**:
+
+1. 슈퍼어드민이 퍼미션 탭에서 "퍼미션 추가" 버튼을 클릭한다
+2. Modal에서 scopeType=PROJECT, scopeId=My Project, entityType=VFOLDER, operation=CREATE를 선택한다
+3. "추가"를 클릭한다
+4. 이미 동일한 퍼미션이 존재하는 경우, 백엔드에서 409 에러가 반환된다
+5. `message.error`로 "동일한 퍼미션이 이미 존재합니다" 표시
+6. Modal은 유지되어 다른 값을 선택할 수 있다
+
+**사용자 시나리오 — 이미 삭제된 퍼미션 삭제 시도**:
+
+1. 슈퍼어드민이 퍼미션 탭에서 특정 퍼미션의 "삭제" 버튼을 클릭한다
+2. 확인 다이얼로그에서 "확인"을 클릭한다
+3. 다른 관리자가 이미 해당 퍼미션을 삭제한 경우, 백엔드에서 404 에러가 반환된다
+4. `message.error`로 "해당 퍼미션을 찾을 수 없습니다" 표시
+5. 퍼미션 테이블이 refetch되어 최신 상태로 갱신된다
 
 **scopeType-entityType 조합 조회 (퍼미션 추가 Modal 초기 로딩)**:
 
