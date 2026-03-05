@@ -76,6 +76,7 @@ const useStyles = createStyles(
       colorTextSecondary,
       colorTextBase,
       colorFillSecondary,
+      colorFillTertiary,
     }: {
       stickyTitle: boolean;
       type: 'normal' | 'warning' | 'error';
@@ -92,6 +93,7 @@ const useStyles = createStyles(
       colorTextSecondary: string;
       colorTextBase: string;
       colorFillSecondary: string;
+      colorFillTertiary: string;
     },
   ) => ({
     modal: css`
@@ -193,7 +195,7 @@ const useStyles = createStyles(
           border-radius: inherit;
         }
         .ant-modal-header:hover {
-          background-color: ${colorFillSecondary} !important;
+          background-color: ${colorFillTertiary} !important;
         }
         .ant-modal-body,
         .ant-modal-footer {
@@ -292,6 +294,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
     colorTextSecondary: token.colorTextSecondary,
     colorTextBase: token.colorTextBase,
     colorFillSecondary: token.colorFillSecondary,
+    colorFillTertiary: token.colorFillTertiary,
   });
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
