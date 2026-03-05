@@ -1,7 +1,7 @@
 area:ux:
   - changed-files:
     - any-glob-to-any-file:
-      - resources/fonts/*
+      - resources/fonts/**/*
       - resources/icons/*
       - resources/*.css
       - src/plastics/**/*
