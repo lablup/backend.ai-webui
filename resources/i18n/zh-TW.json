@@ -2537,6 +2537,7 @@
       "FullNameUpdated": "全名更新成功。",
       "GoBack": "返回",
       "Help": "幫助",
+      "HelpDocumentNotFound": "找不到文件 '{{docLang}}/{{docPath}}'。請確認文件檔案是否存在。",
       "Import&Run": "導入並運行",
       "Information": "信息",
       "InputOriginalPassword": "請輸入原始密碼",

@@ -2533,6 +2533,7 @@
       "FullNameUpdated": "Pełna nazwa została pomyślnie zaktualizowana.",
       "GoBack": "Wstecz",
       "Help": "Wsparcie",
+      "HelpDocumentNotFound": "Dokument '{{docLang}}/{{docPath}}' nie znaleziony. Proszę sprawdzić, czy pliki dokumentacji istnieją.",
       "Import&Run": "Importuj i uruchom",
       "Information": "Informacja",
       "InputOriginalPassword": "Wprowadź oryginalne hasło",

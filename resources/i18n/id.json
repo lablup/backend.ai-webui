@@ -2536,6 +2536,7 @@
       "FullNameUpdated": "Nama lengkap berhasil diperbarui.",
       "GoBack": "Kembali",
       "Help": "Bantuan",
+      "HelpDocumentNotFound": "Dokumen '{{docLang}}/{{docPath}}' tidak ditemukan. Harap periksa apakah file dokumentasi ada.",
       "Import&Run": "Impor & Jalankan",
       "Information": "Informasi",
       "InputOriginalPassword": "Silakan masukkan kata sandi asli",

@@ -2533,6 +2533,7 @@
       "FullNameUpdated": "Koko nimi on päivitetty onnistuneesti.",
       "GoBack": "Takaisin",
       "Help": "Apua",
+      "HelpDocumentNotFound": "Asiakirjaa '{{docLang}}/{{docPath}}' ei löydy. Tarkista, ovatko dokumentaatiotiedostot olemassa.",
       "Import&Run": "Tuo ja suorita",
       "Information": "Tiedot",
       "InputOriginalPassword": "Syötä alkuperäinen salasana",

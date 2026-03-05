@@ -2533,6 +2533,7 @@
       "FullNameUpdated": "Le nom complet a été mis à jour avec succès.",
       "GoBack": "Retour",
       "Help": "Aide",
+      "HelpDocumentNotFound": "Document '{{docLang}}/{{docPath}}' introuvable. Veuillez vérifier si les fichiers de documentation existent.",
       "Import&Run": "Importer et exécuter",
       "Information": "Informations",
       "InputOriginalPassword": "Veuillez saisir le mot de passe d'origine",
