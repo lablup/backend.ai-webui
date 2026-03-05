@@ -55,6 +55,70 @@ test.describe('Login', { tag: ['@smoke', '@auth', '@functional'] }, () => {
   });
 });
 
+/**
+ * Regression tests for FR-2199: endpoint URL normalization.
+ *
+ * Trailing slashes on the endpoint must be stripped before API calls are made
+ * to prevent double-slash in request URLs (e.g. `http://host//func/...`).
+ */
+test.describe(
+  'Endpoint URL normalization (FR-2199)',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('user can login with endpoint that has a single trailing slash', async ({
+      page,
+    }) => {
+      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await fillEndpoint(page, webServerEndpoint + '/');
+      await page.getByLabel('Login', { exact: true }).click();
+
+      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(
+        page.getByTestId('webui-breadcrumb').getByText('Start'),
+      ).toBeVisible();
+    });
+
+    test('user can login with endpoint that has multiple trailing slashes', async ({
+      page,
+    }) => {
+      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await fillEndpoint(page, webServerEndpoint + '///');
+      await page.getByLabel('Login', { exact: true }).click();
+
+      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      await expect(
+        page.getByTestId('webui-breadcrumb').getByText('Start'),
+      ).toBeVisible();
+    });
+
+    test('API requests do not contain double-slash after endpoint normalization', async ({
+      page,
+    }) => {
+      const doubleSlashUrls: string[] = [];
+
+      // Intercept all requests and check for double-slash in the path
+      page.on('request', (req) => {
+        const url = req.url();
+        // Strip the protocol (https://) before checking for double-slash
+        const pathPart = url.replace(/^[^:]+:\/\//, '');
+        if (pathPart.includes('//')) {
+          doubleSlashUrls.push(url);
+        }
+      });
+
+      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Password').fill(userInfo.admin.password);
+      await fillEndpoint(page, webServerEndpoint + '/');
+      await page.getByLabel('Login', { exact: true }).click();
+
+      await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
+      expect(doubleSlashUrls).toHaveLength(0);
+    });
+  },
+);
+
 test.describe(
   'Login failure cases',
   { tag: ['@critical', '@auth', '@functional'] },

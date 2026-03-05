@@ -92,6 +92,7 @@ class ClientConfig {
     if (endpoint === undefined || endpoint === null) {
       endpoint = 'https://api.backend.ai';
     }
+    endpoint = endpoint.replace(/\/+$/, '');
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
     if (connectionMode === 'API') {

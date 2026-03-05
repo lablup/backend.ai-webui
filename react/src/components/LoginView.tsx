@@ -576,7 +576,7 @@ const LoginView: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      await connectUsingSession(true);
+      await connectUsingSession(true, ep);
     } else {
       const apiKey = form.getFieldValue('api_key') || '';
       const secretKey = form.getFieldValue('secret_key') || '';
@@ -591,7 +591,7 @@ const LoginView: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      await connectUsingAPI(true);
+      await connectUsingAPI(true, ep);
     }
   }, [
     loginConfig,
@@ -614,7 +614,7 @@ const LoginView: React.FC = () => {
         setApiEndpoint(ep);
       }
     }
-    return ep.trim();
+    return ep.trim().replace(/\/+$/, '');
   }, [apiEndpoint]);
 
   // Login method: attempts silent or interactive login depending on mode.
