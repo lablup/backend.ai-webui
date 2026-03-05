@@ -76,6 +76,7 @@ const useStyles = createStyles(
       colorTextSecondary,
       colorTextBase,
       colorFillSecondary,
+      colorFillTertiary,
     }: {
       stickyTitle: boolean;
       type: 'normal' | 'warning' | 'error';
@@ -92,6 +93,7 @@ const useStyles = createStyles(
       colorTextSecondary: string;
       colorTextBase: string;
       colorFillSecondary: string;
+      colorFillTertiary: string;
     },
   ) => ({
     modal: css`
@@ -135,7 +137,8 @@ const useStyles = createStyles(
           padding: 0;
           margin: ${marginLG}px auto;
         }
-        .ant-modal-content {
+        .ant-modal-content,
+        .ant-modal-container {
           height: calc(100vh - ${marginLG * 2}px);
           display: flex;
           flex-direction: column;
@@ -154,11 +157,13 @@ const useStyles = createStyles(
         &.ant-modal {
           width: 100vw !important;
           max-width: 100vw !important;
-          top: 0;
-          padding: 0;
-          margin: 0;
+          height: 100vh !important;
+          top: 0 !important;
+          padding: 0 !important;
+          margin: 0 !important;
         }
-        .ant-modal-content {
+        .ant-modal-content,
+        .ant-modal-container {
           height: 100vh;
           display: flex;
           flex-direction: column;
@@ -181,10 +186,12 @@ const useStyles = createStyles(
           padding: 0;
           margin: 0;
           cursor: pointer;
+          pointer-events: auto;
           ${minimizedPlacement.includes('bottom') ? 'top: auto !important; bottom: 0;' : 'top: 0 !important; bottom: auto;'}
           ${minimizedPlacement.includes('Right') ? `right: ${marginLG}px; left: auto;` : `left: ${marginLG}px; right: auto;`}
         }
-        .ant-modal-content {
+        .ant-modal-content,
+        .ant-modal-container {
           ${minimizedPlacement.includes('bottom') ? `border-radius: ${borderRadiusLG}px ${borderRadiusLG}px 0 0;` : `border-radius: 0 0 ${borderRadiusLG}px ${borderRadiusLG}px;`}
         }
         .ant-modal-header {
@@ -193,7 +200,7 @@ const useStyles = createStyles(
           border-radius: inherit;
         }
         .ant-modal-header:hover {
-          background-color: ${colorFillSecondary} !important;
+          background-color: ${colorFillTertiary} !important;
         }
         .ant-modal-body,
         .ant-modal-footer {
@@ -270,6 +277,25 @@ const BAIModal: React.FC<BAIModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalProps.open]);
 
+  // Override rc-component/portal scroll lock when minimized.
+  // The portal injects `html body { overflow-y: hidden }` via a <style> tag.
+  // We counter it with a higher-specificity rule.
+  useEffect(() => {
+    if (windowState === 'minimized' && modalProps.open) {
+      const styleId = 'bai-modal-minimized-scroll-unlock';
+      let style = document.getElementById(styleId) as HTMLStyleElement | null;
+      if (!style) {
+        style = document.createElement('style');
+        style.id = styleId;
+        document.head.appendChild(style);
+      }
+      style.textContent = 'html body { overflow-y: auto !important; }';
+      return () => {
+        style?.remove();
+      };
+    }
+  }, [windowState, modalProps.open]);
+
   const hasWindowControls =
     windowControls || (windowActions && windowActions.length > 0);
   const activeActions: WindowAction[] =
@@ -292,6 +318,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
     colorTextSecondary: token.colorTextSecondary,
     colorTextBase: token.colorTextBase,
     colorFillSecondary: token.colorFillSecondary,
+    colorFillTertiary: token.colorFillTertiary,
   });
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -429,18 +456,22 @@ const BAIModal: React.FC<BAIModalProps> = ({
             />
           </Tooltip>
         )}
-        <Tooltip title={t('general.button.Close')}>
-          <Button
-            className={styles.windowControlButton}
-            type="text"
-            size="small"
-            icon={<CloseOutlined />}
-            onClick={(e) =>
-              handleCancel(e as unknown as React.MouseEvent<HTMLButtonElement>)
-            }
-            aria-label={t('general.button.Close')}
-          />
-        </Tooltip>
+        {modalProps.closable !== false && (
+          <Tooltip title={t('general.button.Close')}>
+            <Button
+              className={styles.windowControlButton}
+              type="text"
+              size="small"
+              icon={<CloseOutlined />}
+              onClick={(e) =>
+                handleCancel(
+                  e as unknown as React.MouseEvent<HTMLButtonElement>,
+                )
+              }
+              aria-label={t('general.button.Close')}
+            />
+          </Tooltip>
+        )}
       </div>
     );
   };
@@ -461,6 +492,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
       onCancel={handleCancel}
       closable={hasWindowControls ? false : modalProps.closable}
       mask={windowState === 'minimized' ? false : (modalProps.mask ?? true)}
+      maskClosable={
+        windowState === 'minimized' ? false : modalProps.maskClosable
+      }
       styles={{
         ...modalProps.styles,
         wrapper: {
@@ -477,6 +511,13 @@ const BAIModal: React.FC<BAIModalProps> = ({
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-start',
+                overflow: 'hidden',
+              }
+            : {}),
+          ...(windowState === 'minimized'
+            ? {
+                pointerEvents: 'none' as const,
+                overflow: 'hidden',
               }
             : {}),
         },
@@ -506,6 +547,21 @@ const BAIModal: React.FC<BAIModalProps> = ({
         container: {
           padding: `var(--general-modal-content-padding, 0)`,
           ...(!_.isFunction(modalProps.styles) && modalProps.styles?.container),
+          ...(windowState === 'maximized'
+            ? {
+                height: `calc(100vh - ${token.marginLG * 2}px)`,
+                display: 'flex',
+                flexDirection: 'column' as const,
+              }
+            : {}),
+          ...(windowState === 'fullscreen'
+            ? {
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column' as const,
+                borderRadius: 0,
+              }
+            : {}),
         },
         footer: {
           borderTop: '1px solid',
@@ -518,23 +574,54 @@ const BAIModal: React.FC<BAIModalProps> = ({
         },
       }}
       title={
-        <BAIFlex
-          gap={'xs'}
-          justify="between"
-          align="center"
-          style={{ width: '100%', overflow: 'hidden' }}
-        >
-          <BAIFlex gap={'xs'} style={{ overflow: 'hidden', flex: 1 }}>
+        hasWindowControls ? (
+          <BAIFlex
+            gap={'xs'}
+            justify="between"
+            align="center"
+            style={{ width: '100%', overflow: 'hidden' }}
+          >
+            <BAIFlex gap={'xs'} style={{ overflow: 'hidden', flex: 1 }}>
+              <HolderOutlined
+                style={{
+                  cursor:
+                    modalProps.draggable && !isDraggingDisabled ? 'move' : '',
+                  display: !modalProps.draggable ? 'none' : '',
+                  // @ts-ignore
+                  '-webkit-app-region': 'no-drag',
+                }}
+                onMouseOver={() => {
+                  if (disabled && !isDraggingDisabled) {
+                    setDisabled(false);
+                  }
+                }}
+                onMouseLeave={() => {
+                  setDisabled(true);
+                }}
+              />
+              <span
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {modalProps.title}
+              </span>
+            </BAIFlex>
+            {renderWindowControls()}
+          </BAIFlex>
+        ) : (
+          <BAIFlex gap={'xs'}>
             <HolderOutlined
               style={{
-                cursor:
-                  modalProps.draggable && !isDraggingDisabled ? 'move' : '',
+                cursor: modalProps.draggable ? 'move' : '',
                 display: !modalProps.draggable ? 'none' : '',
                 // @ts-ignore
                 '-webkit-app-region': 'no-drag',
               }}
               onMouseOver={() => {
-                if (disabled && !isDraggingDisabled) {
+                if (disabled) {
                   setDisabled(false);
                 }
               }}
@@ -542,24 +629,23 @@ const BAIModal: React.FC<BAIModalProps> = ({
                 setDisabled(true);
               }}
             />
-            <span
-              style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {modalProps.title}
-            </span>
+            {modalProps.title}
           </BAIFlex>
-          {renderWindowControls()}
-        </BAIFlex>
+        )
       }
       modalRender={(modal) => {
         if (windowState === 'minimized') {
           return (
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => handleWindowStateChange('minimize')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleWindowStateChange('minimize');
+                }
+              }}
               style={{ cursor: 'pointer' }}
             >
               {modal}
