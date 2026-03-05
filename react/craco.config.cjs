@@ -93,21 +93,42 @@ module.exports = {
         path.resolve(__dirname, '../resources/theme.json'),
       ];
 
+      // Use a single shared debounce timer across all watchers so that
+      // simultaneous events (e.g. on macOS where FSEvents can fire watchers
+      // for sibling files in the same directory) coalesce into a single
+      // reload signal. This also handles editors that write files in
+      // multiple steps (e.g. write + rename).
+      // Store the debounce timer on devServer so it can be cleared during
+      // shutdown (see onListening below).
+      const sendReload = () => {
+        clearTimeout(devServer._reloadDebounceTimer);
+        devServer._reloadDebounceTimer = setTimeout(() => {
+          devServer.sendMessage(
+            devServer.webSocketServer.clients,
+            'static-changed',
+          );
+        }, 300);
+      };
+
       const watchers = filesToWatch
         .filter((file) => fs.existsSync(file))
         .map((file) => {
-          // Use a debounce timer to avoid rapid successive reloads from
-          // editors that write files in multiple steps (e.g. write + rename).
-          let debounceTimer;
-          return fs.watch(file, () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-              devServer.sendMessage(
-                devServer.webSocketServer.clients,
-                'static-changed',
-              );
-            }, 100);
+          const isDir = fs.statSync(file).isDirectory();
+          if (isDir) {
+            // Directories: use fs.watch (fs.watchFile doesn't work on dirs)
+            return fs.watch(file, () => sendReload());
+          }
+          // Files: use fs.watchFile (polling) so that watchers survive
+          // file replacements from editors that use atomic save
+          // (write temp → rename), which causes fs.watch to stop working
+          // because the original inode is replaced.
+          fs.watchFile(file, { interval: 500 }, (curr, prev) => {
+            if (curr.mtimeMs !== prev.mtimeMs) {
+              sendReload();
+            }
           });
+          // Return a close handle compatible with fs.watch watchers
+          return { close: () => fs.unwatchFile(file) };
         });
 
       // Store watchers on the devServer instance so onListening can patch
@@ -132,6 +153,9 @@ module.exports = {
       }
       const originalClose = devServer.server.close.bind(devServer.server);
       devServer.server.close = (callback) => {
+        // Clear any pending debounce timer to prevent sendReload from
+        // firing after the server has been shut down.
+        clearTimeout(devServer._reloadDebounceTimer);
         (devServer._fileWatchers || []).forEach((w) => w.close());
         originalClose(callback);
       };
@@ -306,23 +330,45 @@ module.exports = {
       });
       paths.appHtml = webuiIndexHtml;
 
-      // Configure webpack's own file watcher to ignore static assets that are
-      // served directly and don't need to be in the webpack module graph.
-      // This prevents webpack from triggering unnecessary rebuilds (and
-      // potential HMR fallback to full reload) when static files change.
+      // Configure webpack's own file watcher to ignore files that are not
+      // part of the webpack module graph. When webpack resolves aliases
+      // outside react/ (e.g. backend.ai-client-esm → ../dist/lib/...),
+      // enhanced-resolve walks up the directory tree and adds the project
+      // root as a context dependency. This causes webpack to watch ALL files
+      // in the project root, triggering unnecessary rebuilds when config
+      // files or editor temp files change (which leads to HMR "Cannot find
+      // update" → full page reload).
+      //
+      // We use a single RegExp instead of a string array because webpack
+      // validates that ignored arrays contain only strings (no RegExp),
+      // and we need pattern matching to catch editor temp files.
+      //
+      // The RegExp ignores:
+      // 1. node_modules everywhere
+      // 2. resources/ and manifest/ directories (static assets)
+      // 3. All files directly in the project root (config.toml, index.html,
+      //    editor temp files like .config.toml.XXXXX, etc.)
+      //
+      // NOT ignored (must remain watched):
+      // - dist/lib/backend.ai-client-esm.js (webpack alias, needs HMR)
+      // - packages/backend.ai-ui/src/** (workspace package, dev alias)
       if (env === 'development') {
+        const escapedRoot = path
+          .resolve(__dirname, '..')
+          .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         webpackConfig.watchOptions = {
           ...webpackConfig.watchOptions,
-          ignored: [
-            // Ignore node_modules (standard exclusion for performance)
-            '**/node_modules/**',
-            // Note: dist/ is intentionally NOT ignored because
-            // backend.ai-client-esm.js (resolved via webpack alias) is part of
-            // the module graph and needs to trigger HMR when recompiled by
-            // `tsc --watch` (run concurrently in the dev script).
-            path.resolve(__dirname, '../resources/**'),
-            path.resolve(__dirname, '../manifest/**'),
-          ],
+          ignored: new RegExp(
+            [
+              'node_modules',
+              escapedRoot + '[\\\\/]resources[\\\\/]',
+              escapedRoot + '[\\\\/]manifest[\\\\/]',
+              // Match files directly in the project root (no deeper path
+              // separators). This catches config.toml, index.html, and any
+              // temp files created by editors during atomic save operations.
+              escapedRoot + '[\\\\/][^\\\\/]+$',
+            ].join('|'),
+          ),
         };
       }
 
