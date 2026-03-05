@@ -2408,6 +2408,7 @@
       "FullNameUpdated": "Tên đầy đủ được cập nhật thành công.",
       "GoBack": "Quay lại",
       "Help": "Cứu giúp",
+      "HelpDocumentNotFound": "Không tìm thấy tài liệu '{{docLang}}/{{docPath}}'. Vui lòng kiểm tra xem các tệp tài liệu có tồn tại không.",
       "Import&Run": "Nhập & Chạy",
       "Information": "Thông tin",
       "InputOriginalPassword": "Vui lòng nhập mật khẩu ban đầu",

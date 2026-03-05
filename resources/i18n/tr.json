@@ -2406,6 +2406,7 @@
       "FullNameUpdated": "Tam ad başarıyla güncellendi.",
       "GoBack": "Geri dön",
       "Help": "Yardım",
+      "HelpDocumentNotFound": "'{{docLang}}/{{docPath}}' belgesi bulunamadı. Lütfen dokümantasyon dosyalarının mevcut olup olmadığını kontrol edin.",
       "Import&Run": "İçe Aktar ve Çalıştır",
       "Information": "Bilgi",
       "InputOriginalPassword": "Lütfen Orijinal Şifreyi Girin",

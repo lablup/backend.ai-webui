@@ -2392,6 +2392,7 @@
       "FullNameUpdated": "อัปเดตชื่อเต็มเรียบร้อยแล้ว",
       "GoBack": "ย้อนกลับ",
       "Help": "ช่วยเหลือ",
+      "HelpDocumentNotFound": "ไม่พบเอกสาร '{{docLang}}/{{docPath}}' กรุณาตรวจสอบว่าไฟล์เอกสารมีอยู่หรือไม่",
       "Import&Run": "นำเข้าและรัน",
       "Information": "ข้อมูล",
       "InputOriginalPassword": "กรุณาใส่รหัสผ่านเดิม",

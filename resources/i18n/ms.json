@@ -2404,6 +2404,7 @@
       "FullNameUpdated": "Nama penuh berjaya dikemas kini.",
       "GoBack": "Kembali",
       "Help": "Tolonglah",
+      "HelpDocumentNotFound": "Dokumen '{{docLang}}/{{docPath}}' tidak dijumpai. Sila semak sama ada fail dokumentasi wujud.",
       "Import&Run": "Import & Jalankan",
       "Information": "Maklumat",
       "InputOriginalPassword": "Sila Masukkan Kata Laluan Asal",

@@ -2406,6 +2406,7 @@
       "FullNameUpdated": "El nombre completo se ha actualizado correctamente.",
       "GoBack": "Atrás",
       "Help": "Ayuda",
+      "HelpDocumentNotFound": "Documento '{{docLang}}/{{docPath}}' no encontrado. Por favor, compruebe si existen los archivos de documentación.",
       "Import&Run": "Importar y ejecutar",
       "Information": "Información",
       "InputOriginalPassword": "Introduzca la contraseña original",
