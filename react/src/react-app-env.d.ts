@@ -8,6 +8,11 @@
 //   export { graphql as default } from 'react-relay';
 // }
 
+declare module 'backend.ai-client-esm' {
+  const ai: { backend: { Client: any; ClientConfig: any } };
+  export = ai;
+}
+
 declare module 'markty-toml' {
   function toml(input: string): Record<string, any>;
   export default toml;
@@ -41,6 +46,7 @@ declare module globalThis {
   var packageValidUntil: string;
   // eslint-disable-next-line no-var
   var buildVersion: string;
+  // eslint-disable-next-line no-var
   var appLauncher: {
     showLauncher?: (sessionId: {
       'session-name'?: string;
@@ -59,7 +65,7 @@ declare module globalThis {
     };
   };
   // eslint-disable-next-line no-var
-  var backendaiclient: BackendAIClient | undefined;
+  var backendaiclient: BackendAIClient | null | undefined;
   // eslint-disable-next-line no-var
   var backendaioptions: BackendAIOptions | undefined;
 }

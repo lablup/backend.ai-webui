@@ -19,6 +19,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { Skeleton, theme } from 'antd';
 import {
+  BAIBoardItemErrorBoundary,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -30,7 +31,6 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import ActiveAgents from 'src/components/ActiveAgents';
 import AgentStats from 'src/components/AgentStats';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const DashboardPage: React.FC = () => {
@@ -135,12 +135,15 @@ const DashboardPage: React.FC = () => {
       },
       data: {
         content: (
-          <BAIErrorBoundary>
+          <BAIBoardItemErrorBoundary
+            title={t('webui.menu.MyResources')}
+            status="error"
+          >
             <MyResource
               fetchKey={fetchKey}
               refetching={isPendingIntervalRefetch}
             />
-          </BAIErrorBoundary>
+          </BAIBoardItemErrorBoundary>
         ),
       },
     },
@@ -154,12 +157,15 @@ const DashboardPage: React.FC = () => {
       },
       data: {
         content: (
-          <BAIErrorBoundary>
+          <BAIBoardItemErrorBoundary
+            title={t('webui.menu.MyResourcesInResourceGroup')}
+            status="error"
+          >
             <MyResourceWithinResourceGroup
               fetchKey={fetchKey}
               refetching={isPendingIntervalRefetch}
             />
-          </BAIErrorBoundary>
+          </BAIBoardItemErrorBoundary>
         ),
       },
     },

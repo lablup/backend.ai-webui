@@ -57,6 +57,9 @@
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
+  },
   "comp:BAIBulkEditFormItem": {
     "Clear": "Kosongkan",
     "KeepAsIs": "Kekalkan seperti semula",
