@@ -30,3 +30,7 @@ Backend.AI에서 `세션(session)`은 사용자가 할당된 자원을 사용하
 테이블 오른쪽 하단의 '설정' 버튼을 클릭하면 추가 컬럼을 표시하거나 특정 컬럼을 숨겨 뷰를 사용자화할 수 있습니다.
 
 ![](../images/session_table_settings.png)
+
+:::tip
+Backend.AI Manager v26.2.0부터 세션 상세 정보 패널에서 각 세션의 상세 스케줄링 기록을 확인할 수 있습니다. 이를 통해 스케줄링 결정, 지연, 실패 등을 파악할 수 있습니다. 자세한 내용은 [세션 스케줄링 기록](#session-scheduling-history)을 참고하세요.
+:::

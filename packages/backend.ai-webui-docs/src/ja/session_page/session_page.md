@@ -33,3 +33,7 @@ elapsed time, and for super 管理者s, agent and owner email.
 Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
 
 ![](../images/session_table_settings.png)
+
+:::tip
+Backend.AI Manager v26.2.0以降では、セッション詳細パネルから各セッションの詳細なスケジュール履歴を確認できます。これにより、スケジューリングの決定、遅延、失敗の原因を把握できます。詳細については、[セッションのスケジュール履歴](#session-scheduling-history)を参照してください。
+:::

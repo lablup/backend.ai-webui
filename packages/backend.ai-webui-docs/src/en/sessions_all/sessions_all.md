@@ -301,6 +301,88 @@ Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of t
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
 Click the 'Info' button to check the details when available.
 
+When using Backend.AI Manager v26.2.0 or later, a clock icon button appears next to the session status tag
+in the session detail panel. Clicking this icon opens the Session Scheduling History modal, which provides
+a detailed log of all scheduling decisions the system made for the session. For more information, refer to
+the [Session Scheduling History](#session-scheduling-history) section.
+
+![](../images/session_scheduling_history_button.png)
+
+<a id="session-scheduling-history"></a>
+
+### Session Scheduling History
+
+The Session Scheduling History modal provides transparency into the internal scheduling lifecycle of a
+compute session. It displays a detailed record of every scheduling phase the session went through,
+including status transitions, results, retry attempts, and any errors encountered. This is particularly
+useful for understanding why a session is delayed, stuck in `PENDING`, or has failed to start.
+
+![](../images/session_scheduling_history_modal.png)
+
+:::note
+This feature is available from Backend.AI Manager v26.2.0 onwards. If the history icon does not appear
+next to the session status, your Backend.AI Manager may not support this feature yet.
+:::
+
+#### Filter Bar
+
+At the top of the modal, a filter bar allows you to narrow down the scheduling history records. You can
+filter by the following properties:
+
+- **ID**: Filter by history record ID (UUID, exact match)
+- **Phase**: Filter by scheduling phase name
+- **Result**: Filter by result type (SUCCESS, FAILURE, STALE, NEED_RETRY, EXPIRED, GIVE_UP, SKIPPED)
+- **From Status**: Filter by the session status before the scheduling step
+- **To Status**: Filter by the session status after the scheduling step
+- **Error Code**: Filter by error code
+- **Message**: Filter by message content
+
+A refresh button is also available next to the filter bar to reload the scheduling history data.
+
+#### History Table
+
+The scheduling history table displays records with the following columns:
+
+- **Phase**: The name of the scheduling phase
+- **Result**: The outcome of this scheduling step, shown as a color-coded badge
+- **Status Transition (From / To)**: The session status before and after this scheduling step
+- **Attempts**: How many times this scheduling step was attempted
+- **Updated At**: When this record was last updated
+- **Created At**: When this record was created
+
+You can sort the table by the **Created At** or **Updated At** columns to view records in your
+preferred order.
+
+#### Expandable Sub-Steps
+
+Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
+on the left side of the row. Click it to reveal a nested table showing the individual sub-steps of
+that scheduling phase.
+
+![](../images/session_scheduling_history_substeps.png)
+
+The sub-steps table includes the following columns:
+
+- **Step**: The name of the sub-step
+- **Result**: The outcome of the sub-step, shown as a color-coded badge
+- **Message**: Detailed information or error description
+- **Error Code**: A specific error code if the step failed
+- **Started At**: When the sub-step began
+- **Ended At**: When the sub-step completed
+
+#### Result Badge Colors
+
+Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:
+
+| Result | Color | Meaning |
+|--------|-------|---------|
+| SUCCESS | Green | The step completed successfully |
+| FAILURE | Red | The step failed |
+| STALE | Gray | The record is stale or outdated |
+| NEED_RETRY | Yellow | The step needs to be retried |
+| EXPIRED | Red | The scheduling attempt expired |
+| GIVE_UP | Red | The system gave up on scheduling |
+| SKIPPED | Gray | The step was skipped |
 
 <a id="use_session"></a>
 

@@ -33,3 +33,7 @@ elapsed time, and for super ผู้ดูแลระบบs, agent and owner 
 Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
 
 ![](../images/session_table_settings.png)
+
+:::tip
+ตั้งแต่ Backend.AI Manager v26.2.0 คุณสามารถดูประวัติการจัดตารางโดยละเอียดสำหรับแต่ละเซสชันจากแผงรายละเอียดเซสชัน ฟีเจอร์นี้ช่วยให้คุณเข้าใจการตัดสินใจในการจัดตาราง ความล่าช้า และความล้มเหลว สำหรับรายละเอียดเพิ่มเติม โปรดดูที่[ประวัติการจัดตารางเซสชัน](#session-scheduling-history)
+:::
