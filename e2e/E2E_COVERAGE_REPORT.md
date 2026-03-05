@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-03
+> **Last Updated:** 2026-03-05 (updated: dashboard-no-project-user tests added)
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,13 +12,13 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 78 / 280 features covered (28%)**
+**Overall (in-scope routes): 88 / 283 features covered (31%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
 | Authentication | `/interactive-login` | 7 | 4 | 🔶 57% |
 | Start Page | `/start` | 8 | 0 | ❌ 0% |
-| Dashboard | `/dashboard` | 9 | 0 | ❌ 0% |
+| Dashboard | `/dashboard` | 12 | 10 | 🔶 83% |
 | Session List | `/session` | 19 | 11 | 🔶 58% |
 | Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **280** | **78** | **28%** |
+| **Total** | | **283** | **88** | **31%** |
 
 ---
 
@@ -100,21 +100,30 @@
 
 ### 3. Dashboard (`/dashboard`)
 
-**Test files:** None (visual regression only: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts))
+**Test files:** [`e2e/dashboard/dashboard-board-items.spec.ts`](dashboard/dashboard-board-items.spec.ts), [`e2e/dashboard/dashboard-error-boundary.spec.ts`](dashboard/dashboard-error-boundary.spec.ts), [`e2e/dashboard/dashboard-project-hook.spec.ts`](dashboard/dashboard-project-hook.spec.ts), [`e2e/dashboard/dashboard-no-project-user.spec.ts`](dashboard/dashboard-no-project-user.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Dashboard rendering | ❌ | - |
-| Session count cards | ❌ | - |
-| Resource usage display (MyResource) | ❌ | - |
-| Resource usage per resource group | ❌ | - |
-| Agent statistics (admin) | ❌ | - |
-| Active agents list (admin) | ❌ | - |
-| Recent sessions list | ❌ | - |
+| Dashboard rendering | ✅ | `Admin can see all expected board items on the dashboard` |
+| Session count cards | ✅ | `Admin can see session count data in the Active Sessions board item` |
+| Resource usage display (MyResource) | ✅ | `Admin can see all expected board items on the dashboard` |
+| Resource usage per resource group | ✅ | `Admin can see all expected board items on the dashboard` |
+| Agent statistics (admin) | ✅ | `Admin can see superadmin-only board items on the dashboard` |
+| Active agents list (admin) | ✅ | `Admin can see superadmin-only board items on the dashboard` |
+| Recent sessions list | ✅ | `Admin can see all expected board items on the dashboard` |
+| No-project user: dashboard loads without crash | ✅ | `User with no project sees the dashboard page load without full-page crash` |
+| No-project user: error boundaries activate for project-dependent items | ✅ | `Error boundaries activate for project-dependent board items for no-project user` |
+| No-project user: project-independent items still render | ✅ | `Project-independent board items still render correctly for no-project user` |
 | Auto-refresh (15s) | ❌ | - |
 | Dashboard item drag/resize | ❌ | - |
 
-**Coverage: ❌ 0/9 features**
+**Note:** Also covers error boundary behavior (FR-2044) and `useCurrentProjectValue` graceful null-handling (FR-2028):
+- Board item error boundary triggers correctly without full page crash
+- Navigation away and back preserves correct dashboard rendering
+- Project context initialization is stable without errors
+- Users with no project assignment can load the dashboard without a full-page crash (FR-2044)
+
+**Coverage: 🔶 10/12 features**
 
 ---
 
@@ -823,8 +832,8 @@ These are core user workflows that affect the largest number of users.
 |---|-------------|--------|---------------------|
 | 1 | **Serving - Create & Manage Model Service** (`/serving`, `/service/start`) | Core revenue feature. Zero coverage. Complete CRUD lifecycle needed. | High |
 | 2 | **Session Launcher - Advanced Options** (`/session/start`) | Resource allocation, VFolder mounting, and form validation are critical for correct session behavior. | Medium |
-| 3 | **Dashboard - Key Metrics** (`/dashboard`) | Landing page for most users. Session counts and resource usage display should be verified. | Low |
-| 4 | **Start Page - Quick Actions** (`/start`) | Primary entry point. Quick actions should correctly navigate to session launcher/service creator. | Low |
+| 3 | **Start Page - Quick Actions** (`/start`) | Primary entry point. Quick actions should correctly navigate to session launcher/service creator. | Low |
+| 4 | **Dashboard - Remaining Features** (`/dashboard`) | 7/9 features now covered. Remaining: auto-refresh (15s interval) and drag/resize. | Low |
 
 ### Priority 2: Important - Admin Features, Data Integrity
 
@@ -901,7 +910,7 @@ To efficiently build new E2E tests, these POMs should be created:
 |------------|:---:|:---:|:---:|
 | `/interactive-login` | 🔶 | ✅ | - |
 | `/start` | ❌ | ✅ | P1 |
-| `/dashboard` | ❌ | ✅ | P1 |
+| `/dashboard` | 🔶 | ✅ | P3 |
 | `/session` | ✅ | ✅ | P3 |
 | `/session/start` | 🔶 | ✅ | P1 |
 | `/serving` | ❌ | ✅ | **P1** |

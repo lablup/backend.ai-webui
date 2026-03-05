@@ -290,7 +290,7 @@ export class KeyPairModal {
   private readonly page: Page;
 
   constructor(page: Page) {
-    this.modal = page.getByRole('dialog', { name: /Key pair for new users/i });
+    this.modal = page.getByRole('dialog', { name: /Keypair for new users/i });
     this.page = page;
   }
 
