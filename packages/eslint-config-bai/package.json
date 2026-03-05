@@ -12,10 +12,10 @@
   ],
   "peerDependencies": {
     "eslint": "^9.0.0",
-    "@eslint/js": "^9.18.0",
-    "typescript-eslint": "^8.23.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-import": "^2.31.0"
+    "@eslint/js": "catalog:",
+    "typescript-eslint": "catalog:",
+    "eslint-plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-import": "catalog:"
   }
 }

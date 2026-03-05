@@ -31,7 +31,8 @@ describe('BAICard', () => {
         <BAICard style={{ backgroundColor: 'red' }}>Content</BAICard>,
       );
       const card = container.querySelector('.ant-card');
-      expect(card).toHaveStyle({ backgroundColor: 'red' });
+      expect(card).toBeTruthy();
+      expect(card?.getAttribute('style')).toContain('background-color: red');
     });
   });
 
