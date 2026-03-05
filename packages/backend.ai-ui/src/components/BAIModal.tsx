@@ -101,8 +101,12 @@ const useStyles = createStyles(
       .ant-modal-close {
         width: ${controlHeightSM}px;
         height: ${controlHeightSM}px;
-        top: 22px;
-        right: 18px;
+        top: calc(
+          (var(--general-modal-header-height, 69px) - ${controlHeightSM}px) / 2
+        );
+        right: calc(
+          (var(--general-modal-header-height, 69px) - ${controlHeightSM}px) / 2
+        );
         -webkit-app-region: no-drag;
       }
       .ant-modal-title {
@@ -171,8 +175,8 @@ const useStyles = createStyles(
       ${windowState === 'minimized'
         ? `
         &.ant-modal {
-          width: 320px !important;
-          max-width: 320px !important;
+          width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
+          max-width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
           position: fixed;
           padding: 0;
           margin: 0;
@@ -491,7 +495,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
           padding: `var(--general-modal-body-padding, 0 24px)`,
           maxHeight:
             windowState === 'default'
-              ? 'calc(100vh - 69px - 57px - 48px)'
+              ? `calc(100vh - var(--general-modal-header-height, 69px) - ${token.controlHeight + token.paddingSM * 2 + token.lineWidth}px - ${token.marginLG * 2}px)`
               : 'none',
           overflow: 'auto',
           paddingTop: token.paddingMD,
