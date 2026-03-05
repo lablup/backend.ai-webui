@@ -142,6 +142,15 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                     </Col>
                   );
                 } else if (parsedAvailableSlots[key]) {
+                  const roundLength =
+                    mergedResourceSlots?.[key]?.number_format?.round_length ||
+                    0;
+                  const formatSlotValue = (v: string | undefined | number) => {
+                    const str = String(v ?? 0);
+                    return roundLength > 0
+                      ? parseFloat(str).toFixed(roundLength)
+                      : str;
+                  };
                   return (
                     <Col xs={24} sm={12} key={key}>
                       <SimpleProgressWithLabel
@@ -158,7 +167,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                             _.toNumber(parsedAvailableSlots[key] ?? 1)) *
                             100,
                         ).toString()}
-                        description={`${parsedOccupiedSlots[key] ?? 0} / ${parsedAvailableSlots[key] ?? 0} ${mergedResourceSlots?.[key]?.display_unit}`}
+                        description={`${formatSlotValue(parsedOccupiedSlots[key])} / ${formatSlotValue(parsedAvailableSlots[key])} ${mergedResourceSlots?.[key]?.display_unit}`}
                       />
                     </Col>
                   );

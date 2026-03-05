@@ -103,6 +103,10 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
           const memStat = liveStat[statKey + '_mem'];
 
           const percentNumber = memStat?.pct ? parseFloat(memStat.pct) : 0;
+          const roundLength =
+            mergedResourceSlots?.[key]?.number_format?.round_length || 0;
+          const formattedValue =
+            roundLength > 0 ? parseFloat(value).toFixed(roundLength) : value;
           return (
             <BAIFlex
               direction="row"
@@ -121,7 +125,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
                       : ''),
                   placement: 'left',
                 }}
-                text={value}
+                text={formattedValue}
               />
               <Divider type="vertical" />
               <Typography.Text>
