@@ -72,8 +72,9 @@ Role (Node)
 ### 5. 시스템 역할 (SYSTEM source)
 
 - 역할 목록 테이블에 Source 컬럼으로 구분하여 표시 (Tag 컴포넌트)
-- 읽기 전용: 수정, 삭제, 퍼미션/할당 변경 불가
-- CUSTOM 역할만 편집 가능
+- 이름/설명 수정 불가 (읽기 전용)
+- 단, 사용자 할당/제거 및 퍼미션 추가/삭제는 SYSTEM 역할에서도 가능
+- CUSTOM 역할은 이름/설명을 포함한 모든 편집 가능
 
 ### 6. 상태 생명주기
 
@@ -88,7 +89,7 @@ INACTIVE ──삭제───→ DELETED
 DELETED ──purge───→ (영구 제거)
 ```
 
-- 활성화/비활성화: 백엔드 API 추가 필요 (`UpdateRoleInput`에 `status` 필드 부재, `TODO(needs-backend)`)
+- 활성화/비활성화: `adminUpdateRole` mutation의 `status` 필드 사용 (구현 완료)
 - 소프트 삭제: `adminDeleteRole` mutation
 - 완전 삭제: `adminPurgeRole` mutation
 
@@ -102,7 +103,10 @@ DELETED ──purge───→ (영구 제거)
 
 ```graphql
 enum RBACElementType {
-  # 스코프 계층 — scopeType에 사용 가능
+  # 스코프 계층 — scopeType에 사용 가능하며, 스코프 계층의 상위 레벨은
+  #   DOMAIN / PROJECT / USER 세 가지로 한정됨
+  #   (이후에 나오는 RESOURCE_GROUP, SESSION, AGENT 등 일부 값도 scopeType으로
+  #    사용 가능하지만, 계층 구조에는 포함되지 않음)
   DOMAIN
   PROJECT
   USER
@@ -336,7 +340,7 @@ type ScopeEntityCombination {
 | Mutation | Input | 반환 | 용도 |
 |----------|-------|------|------|
 | `adminCreateRole` | `CreateRoleInput(name!, description?, source?)` | `Role` | 역할 생성 |
-| `adminUpdateRole` | `UpdateRoleInput(id!, name?, description?)` | `Role` | 역할 수정 |
+| `adminUpdateRole` | `UpdateRoleInput(id!, name?, description?, status?)` | `Role` | 역할 수정 (상태 변경 포함) |
 | `adminDeleteRole` | `DeleteRoleInput(id!)` | `DeleteRolePayload(id)` | 소프트 삭제 |
 | `adminPurgeRole` | `PurgeRoleInput(id!)` | `PurgeRolePayload(id)` | 완전 삭제 |
 | `adminCreatePermission` | `CreatePermissionInput(roleId!, scopeType!, scopeId!, entityType!, operation!)` | `Permission` | 퍼미션 추가 |
@@ -352,8 +356,9 @@ type ScopeEntityCombination {
 - **`assignments_by_role_loader` DataLoader** (BA-4792): 역할 ID로 할당 데이터를 배치 로딩. Role 커넥션 내부에서 사용될 예정.
 
 **미지원 (TODO):**
-- **활성화/비활성화 Mutation**: 현재 `UpdateRoleInput`에 `status` 필드가 없음. 레포지토리 레이어(`RoleUpdaterSpec`)에서는 `status` 변경을 지원하지만 GraphQL Input에 노출되지 않음. 백엔드에 `status` 필드 추가 필요. 프론트엔드에서는 `TODO(needs-backend)` 마커로 표시하고, 해당 필드가 추가되면 연결한다.
 - **Role 하위 커넥션 (permissions, roleAssignments)**: `feature/rbac-role-permissions-field` 브랜치에서 개발 중 (BA-4785: permissions 필드, BA-4787: roleAssignments 필드). main 미머지 상태. 추가 전까지는 top-level 쿼리(`adminPermissions`, `adminRoleAssignments`)로 fallback한다.
+- **퍼미션 수정 Mutation**: 현재 퍼미션의 개별 필드(scopeType, scopeId, entityType, operation)를 수정하는 mutation이 없음. 백엔드에 `adminUpdatePermission` mutation 추가 필요. 추가 전까지는 삭제 후 재생성으로 대체한다.
+- **일괄 할당 Mutation**: 현재 `adminAssignRole`은 단일 사용자만 할당 가능. 복수 사용자 일괄 할당을 위한 배치 mutation이 없음. 백엔드에 배치 할당 mutation 추가 필요. 추가 전까지는 클라이언트에서 순차적으로 호출한다.
 
 ---
 
@@ -370,22 +375,22 @@ type ScopeEntityCombination {
 - [ ] Drawer에서 역할 상세 정보(메타데이터 + 할당 탭 + 퍼미션 탭)를 조회할 수 있다
 - [ ] Drawer의 할당/퍼미션 탭은 Role 노드의 하위 커넥션으로 데이터를 조회한다
 - [ ] Modal을 통해 CUSTOM 역할의 이름과 설명을 수정할 수 있다
-- [ ] SYSTEM 역할은 수정/삭제/퍼미션 변경/할당 변경이 불가능하다
+- [ ] SYSTEM 역할은 이름/설명 수정이 불가능하다 (할당/퍼미션 변경은 가능)
 - [ ] 역할을 소프트 삭제(DELETED 상태 전환)할 수 있다
 - [ ] DELETED 상태의 역할을 완전 삭제(purge)할 수 있다
-- [ ] 활성화/비활성화 토글을 통해 역할 상태를 전환할 수 있다 (백엔드 API 추가 필요)
+- [ ] 활성화/비활성화 토글을 통해 역할 상태를 전환할 수 있다
 - [ ] 할당 탭에서 역할에 할당된 사용자 목록을 조회할 수 있다
 - [ ] 할당 탭에서 사용자를 역할에 추가할 수 있다
 - [ ] 할당 탭에서 사용자를 역할에서 제거할 수 있다
 - [ ] 퍼미션 탭에서 플랫 테이블로 퍼미션 목록을 조회할 수 있다
 - [ ] 퍼미션 탭에서 새 퍼미션(scopeType, scopeId, entityType, operation)을 추가할 수 있다
 - [ ] 퍼미션 탭에서 개별 퍼미션을 삭제할 수 있다
+- [ ] 할당 탭에서 복수 사용자를 일괄 추가/제거할 수 있다
 
 ### 선택 (Nice to Have)
 
 - [ ] 역할 생성 Modal에 "Create another" 체크박스 (생성 후 Modal 유지, 폼 초기화)
 - [ ] 퍼미션 추가 시 한 번에 여러 operation을 선택하여 일괄 생성
-- [ ] 할당 탭에서 복수 사용자 일괄 추가/제거
 - [ ] 퍼미션 테이블의 scopeType, entityType 컬럼 필터링
 - [ ] 역할 목록 테이블에서 행 선택 후 일괄 삭제
 
@@ -418,17 +423,17 @@ type ScopeEntityCombination {
 - 전체 페이지 레이아웃
 - 상단: 페이지 제목 + 역할 생성 버튼 + 새로고침 버튼
 - Segmented 컨트롤: ACTIVE (기본) / INACTIVE / DELETED
-- 검색/필터 영역: 이름 검색 (BAIPropertyFilter), Source 필터(SYSTEM/CUSTOM/전체)
+- 검색/필터 영역: BAIPropertyFilter로 이름 검색 + Source 필터(SYSTEM/CUSTOM/전체) 통합 제공
 - 테이블 컬럼:
 
 | 컬럼 | 데이터 소스 | 정렬 | 비고 |
 |------|------------|------|------|
 | 이름 | `name` | O (`RoleOrderField.NAME`) | 클릭 시 역할 상세 Drawer 열림. `<Typography.Link>` 스타일. |
 | 설명 | `description` | X | 텍스트 말줄임 (`ellipsis`). 없을 경우 `-` 표시. |
-| Source | `source` | X | `Tag` 컴포넌트. SYSTEM=파란색, CUSTOM=녹색 등 시각적 구분. |
+| Source | `source` | X | `Tag` 컴포넌트. SYSTEM=기본색(회색), CUSTOM=녹색 등 시각적 구분. |
 | 생성일 | `createdAt` | O (`RoleOrderField.CREATED_AT`) | `dayjs(createdAt).format('lll')` |
 | 수정일 | `updatedAt` | O (`RoleOrderField.UPDATED_AT`) | `dayjs(updatedAt).format('lll')` |
-| 액션 | - | X | CUSTOM 역할: 수정/삭제 드롭다운. SYSTEM 역할: 액션 없음. |
+| 액션 | - | X | CUSTOM 역할: 수정/삭제 버튼 표시. SYSTEM 역할: 삭제 버튼만 표시 (수정 불가). |
 
 **데이터 조회 — GraphQL 쿼리 구조**:
 
@@ -464,7 +469,9 @@ fragment RoleNodesFragment on Role @relay(plural: true) {
   status
   createdAt
   updatedAt
-  ...RoleDetailDrawerContentFragment  # Drawer에 전달할 fragment
+  # NOTE: Drawer용 상세 데이터(permissions, roleAssignments 커넥션)는
+  # 목록 쿼리에 포함하지 않는다. Drawer 오픈 시 adminRole(id: ...) 별도 쿼리
+  # 또는 refetchable fragment로 조회하여 over-fetching을 방지한다.
 }
 ```
 
@@ -478,9 +485,9 @@ fragment RoleNodesFragment on Role @relay(plural: true) {
 **역할 이름 클릭 → Drawer 열기 흐름**:
 
 1. 사용자가 테이블에서 역할 이름을 클릭한다
-2. 해당 Role 노드의 fragment ref를 Drawer 컴포넌트에 전달한다
-3. Drawer가 열리면서 `useFragment`로 해당 Role의 메타데이터를 표시한다
-4. Drawer 내부의 탭 컴포넌트가 Role의 하위 커넥션 (`permissions`, `roleAssignments`)을 추가로 조회한다
+2. 선택된 역할의 ID를 Drawer 컴포넌트에 전달한다
+3. Drawer가 열리면서 `adminRole(id: ...)` 쿼리로 해당 Role의 상세 정보를 조회한다
+4. 역할 메타데이터와 함께 하위 커넥션(permissions, roleAssignments)이 탭에 표시된다
 
 **인수 조건**:
 - [ ] 페이지 진입 시 ACTIVE 상태의 역할 목록이 기본으로 표시된다
@@ -490,7 +497,7 @@ fragment RoleNodesFragment on Role @relay(plural: true) {
 - [ ] 컬럼 헤더 클릭으로 이름/생성일/수정일 기준 오름차순/내림차순 정렬이 가능하다
 - [ ] Relay 커서 기반 페이지네이션이 동작한다
 - [ ] 역할 이름 클릭 시 해당 역할의 상세 Drawer가 열린다
-- [ ] SYSTEM 역할 행의 액션 컬럼에는 수정/삭제 버튼이 표시되지 않는다
+- [ ] SYSTEM 역할 행의 액션 컬럼에는 수정 버튼이 표시되지 않는다 (삭제 버튼은 표시)
 - [ ] 테이블 로딩 중 Skeleton 또는 Spin이 표시된다
 - [ ] DELETED 세그먼트에서는 purge(완전 삭제) 버튼이 액션에 표시된다
 - [ ] 빈 상태 (역할이 없을 때) 적절한 Empty 컴포넌트가 표시된다
@@ -527,9 +534,11 @@ fragment RoleNodesFragment on Role @relay(plural: true) {
 
 - Modal 다이얼로그
 - 입력 필드:
-  - **이름** (필수): `Input` 컴포넌트. 빈 값이면 생성 버튼 비활성화.
+  - **이름** (필수): `Input` 컴포넌트.
   - **설명** (선택): `Input.TextArea` 컴포넌트. 빈 값 허용.
+  - **상태** (선택): `Select` 컴포넌트. ACTIVE(기본값) / INACTIVE 선택 가능.
 - 하단: 취소 / 생성 버튼 (`BAIButton` action prop 사용)
+- 생성/추가 버튼은 기본 활성화 상태이며, 클릭 시 validation 수행
 
 **Mutation**:
 
@@ -552,10 +561,10 @@ mutation AdminCreateRoleMutation($input: CreateRoleInput!) {
 
 **인수 조건**:
 - [ ] 역할 목록 페이지의 "역할 생성" 버튼 클릭 시 Modal이 열린다
-- [ ] 이름 필드는 필수 입력이며, 빈 값일 때 생성 버튼이 비활성화된다
+- [ ] 이름 필드는 필수 입력이며, 빈 값일 때 생성 버튼 클릭 시 validation 에러가 표시된다
 - [ ] `adminCreateRole` mutation을 호출하여 역할을 생성한다
 - [ ] 생성 성공 시 성공 알림 메시지(`message.success`)를 표시하고 Modal을 닫는다
-- [ ] 생성 성공 후 역할 목록이 자동으로 갱신된다 (Relay store update 또는 refetch)
+- [ ] 생성 성공 후 역할 목록이 자동으로 갱신된다 (refetch)
 - [ ] 중복 이름 등 mutation 에러 시 에러 메시지를 표시한다 (`message.error` 또는 폼 인라인 에러)
 - [ ] 생성 중 버튼에 로딩 상태가 표시된다 (`BAIButton` action prop 활용)
 - [ ] Modal 닫힘 시 폼이 초기화된다
@@ -603,11 +612,18 @@ mutation AdminCreateRoleMutation($input: CreateRoleInput!) {
   - **퍼미션 (Permission)** 탭: 퍼미션 테이블 (→ US-7)
   - 각 탭 레이블에 `Badge`로 `count` 표시 (커넥션의 `count` 필드 활용)
 
-**데이터 조회 — Role 커넥션 기반 Fragment 구조**:
+**데이터 조회 — Drawer 별도 쿼리 구조**:
 
-역할 목록에서 이름 클릭 시, 해당 Role 노드의 fragment ref가 Drawer에 전달된다. Drawer 내부에서 `useFragment`를 사용하여 Role 메타데이터와 하위 커넥션을 조회한다.
+역할 목록에서 이름 클릭 시, 해당 Role의 ID가 Drawer에 전달된다. Drawer 내부에서 `useLazyLoadQuery`로 `adminRole(id: ...)` 쿼리를 호출하여 Role 메타데이터와 하위 커넥션을 조회한다. 이렇게 목록 쿼리와 분리하여 over-fetching을 방지한다.
 
 ```graphql
+# Drawer에서 사용하는 별도 쿼리
+query RoleDetailDrawerQuery($id: UUID!) {
+  adminRole(id: $id) {
+    ...RoleDetailDrawerContentFragment
+  }
+}
+
 # Drawer 컨텐츠 컴포넌트의 fragment
 fragment RoleDetailDrawerContentFragment on Role {
   id
@@ -673,12 +689,12 @@ fragment RolePermissionTabFragment on Role {
 
 **데이터 흐름 상세**:
 
-1. 역할 목록 테이블의 `RoleNodesFragment`에 `...RoleDetailDrawerContentFragment`가 spread 되어 있다
-2. 역할 이름 클릭 → Drawer open state 변경 + 선택된 Role의 fragment ref를 Drawer에 전달
-3. Drawer 내부의 `RoleDetailDrawerContent` 컴포넌트가 `useFragment(RoleDetailDrawerContentFragment, roleFrgmt)`로 데이터를 읽는다
+1. 역할 목록 테이블에서 이름 클릭 → Drawer open state 변경 + 선택된 Role의 ID를 Drawer에 전달
+2. Drawer 내부에서 `useLazyLoadQuery(RoleDetailDrawerQuery, { id: roleId })`로 별도 쿼리를 호출한다
+3. 쿼리 결과의 fragment ref를 `RoleDetailDrawerContent` 컴포넌트에 전달하여 `useFragment`로 데이터를 읽는다
 4. 메타데이터 영역은 Role의 직접 필드로 렌더링
 5. 탭 컴포넌트는 각각 `RoleAssignmentTabFragment`, `RolePermissionTabFragment`를 별도의 `useFragment`로 읽어 하위 커넥션 데이터를 렌더링
-6. 각 탭의 커넥션은 `@connection` 디렉티브를 사용하므로 mutation 후 Relay store에서 자동 업데이트 가능
+6. Mutation 후에는 refetch로 테이블 데이터를 갱신한다
 
 > **Fallback 전략**: Role 하위 커넥션이 아직 백엔드에 없는 경우, 탭 컴포넌트에서 별도의 `useLazyLoadQuery`로 top-level 쿼리를 호출한다:
 > - 할당 탭: `adminRoleAssignments(filter: { roleId: $roleId })`
@@ -707,7 +723,8 @@ fragment RolePermissionTabFragment on Role {
 **화면 구성**:
 - Modal 다이얼로그 (생성 Modal과 동일한 형태)
 - 기존 값이 입력 필드에 미리 채워진 상태
-- 하단: 취소 / 저장 버튼
+- 상태(status) 필드 포함: ACTIVE / INACTIVE 선택 가능
+- 하단: 취소 / 저장 버튼 (기본 활성화, 클릭 시 validation)
 
 **Mutation**:
 
@@ -722,7 +739,7 @@ mutation AdminUpdateRoleMutation($input: UpdateRoleInput!) {
 }
 ```
 
-- `input`: `{ id: "<role_uuid>", name: "새 이름", description: "새 설명" }`
+- `input`: `{ id: "<role_uuid>", name: "새 이름", description: "새 설명", status: ACTIVE }`
 - 변경되지 않은 필드는 `null`로 전달하여 기존 값 유지
 
 **인수 조건**:
@@ -731,7 +748,7 @@ mutation AdminUpdateRoleMutation($input: UpdateRoleInput!) {
 - [ ] SYSTEM 역할에 대해서는 수정 Modal이 열리지 않는다 (버튼 자체가 없음)
 - [ ] `adminUpdateRole` mutation을 호출하여 역할을 수정한다
 - [ ] 수정 성공 시 성공 알림 메시지를 표시하고 Modal을 닫는다
-- [ ] 수정 성공 후 Drawer의 메타데이터와 목록 테이블이 자동으로 갱신된다 (Relay store update)
+- [ ] 수정 성공 후 Drawer의 메타데이터와 목록 테이블이 자동으로 갱신된다 (refetch)
 - [ ] 변경 사항이 없을 때 저장 버튼이 비활성화된다
 - [ ] 수정 중 버튼에 로딩 상태가 표시된다
 
@@ -745,18 +762,18 @@ mutation AdminUpdateRoleMutation($input: UpdateRoleInput!) {
 
 | 현재 상태 | 가능한 액션 | 결과 상태 | API | 확인 다이얼로그 |
 |-----------|-------------|-----------|-----|----------------|
-| ACTIVE | 비활성화 | INACTIVE | `TODO(needs-backend)` | 간단한 확인 |
+| ACTIVE | 비활성화 | INACTIVE | `adminUpdateRole(input: { id, status: INACTIVE })` | 간단한 확인 |
 | ACTIVE | 삭제 | DELETED | `adminDeleteRole` | 경고 확인 |
-| INACTIVE | 활성화 | ACTIVE | `TODO(needs-backend)` | 없음 |
+| INACTIVE | 활성화 | ACTIVE | `adminUpdateRole(input: { id, status: ACTIVE })` | 없음 |
 | INACTIVE | 삭제 | DELETED | `adminDeleteRole` | 경고 확인 |
 | DELETED | 완전 삭제 | (영구 제거) | `adminPurgeRole` | 강한 경고 확인 |
 
 **액션 위치**:
-- 역할 목록 테이블의 액션 컬럼 (드롭다운 메뉴)
-- 역할 상세 Drawer 상단 (버튼 또는 드롭다운)
+- 역할 목록 테이블의 액션 컬럼 (버튼으로 표시)
+- 역할 상세 Drawer 상단 (버튼으로 표시)
 
 **확인 다이얼로그 내용**:
-- **삭제**: "역할 '{name}'을(를) 삭제하시겠습니까? 이 역할에 할당된 사용자와 퍼미션은 유지되지만 역할이 비활성화됩니다."
+- **삭제**: "역할 '{name}'을(를) 삭제하시겠습니까? 이 역할에 할당된 사용자와 퍼미션 데이터는 유지되지만, 역할은 삭제(DELETED) 상태로 전환되어 더 이상 접근 권한을 부여하지 않으며 필요 시 복구만 가능합니다."
 - **완전 삭제 (purge)**: "역할 '{name}'을(를) 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없으며, 관련된 모든 할당과 퍼미션이 함께 삭제됩니다."
 
 **Mutation**:
@@ -774,13 +791,13 @@ mutation AdminPurgeRoleMutation($input: PurgeRoleInput!) {
 ```
 
 **인수 조건**:
-- [ ] ACTIVE 역할에 대해 "비활성화" 액션이 가능하다 (백엔드 API 추가 후 연결, 그 전까지 UI만 구현하고 비활성화 처리)
-- [ ] INACTIVE 역할에 대해 "활성화" 액션이 가능하다 (백엔드 API 추가 후 연결, 그 전까지 UI만 구현하고 비활성화 처리)
+- [ ] ACTIVE 역할에 대해 "비활성화" 액션이 가능하다 (`adminUpdateRole`의 `status` 필드 사용)
+- [ ] INACTIVE 역할에 대해 "활성화" 액션이 가능하다 (`adminUpdateRole`의 `status` 필드 사용)
 - [ ] ACTIVE/INACTIVE 역할에 대해 "삭제" 액션이 가능하다 (소프트 삭제)
 - [ ] DELETED 역할에 대해 "완전 삭제(purge)" 액션이 가능하다
 - [ ] 삭제/완전 삭제 실행 전 확인 다이얼로그가 표시된다
 - [ ] 완전 삭제(purge) 확인 다이얼로그에는 강한 경고 메시지가 포함된다
-- [ ] SYSTEM 역할에 대해서는 모든 상태 변경 액션이 비활성화된다
+- [ ] SYSTEM 역할에 대해서는 이름/설명 수정 액션만 비활성화된다 (상태 변경, 할당, 퍼미션 변경은 가능)
 - [ ] 상태 변경 후 목록이 자동으로 갱신된다 (현재 Segmented 상태에 해당 역할이 더 이상 없으면 목록에서 사라짐)
 - [ ] Drawer가 열린 상태에서 삭제 시 Drawer가 닫힌다
 
@@ -794,7 +811,7 @@ mutation AdminPurgeRoleMutation($input: PurgeRoleInput!) {
 
 ```
 ┌────────────────────────────────────────┐
-│  [+ 사용자 추가]                [새로고침] │
+│                      [새로고침] [+ 사용자 추가] │
 ├──────────┬──────┬──────┬──────┬───────┤
 │ 이메일    │ 이름  │ 할당자│ 할당일│ 액션  │
 ├──────────┼──────┼──────┼──────┼───────┤
@@ -805,7 +822,7 @@ mutation AdminPurgeRoleMutation($input: PurgeRoleInput!) {
 ```
 
 - 역할 상세 Drawer의 "할당" 탭
-- 상단: "사용자 추가" 버튼 (CUSTOM 역할만 활성화)
+- 상단 우측: "새로고침" 버튼 + "사용자 추가" 버튼 (주 액션인 "사용자 추가"가 가장 오른쪽)
 - 할당된 사용자 테이블 컬럼:
 
 | 컬럼 | 데이터 소스 | 비고 |
@@ -814,7 +831,7 @@ mutation AdminPurgeRoleMutation($input: PurgeRoleInput!) {
 | 이름 | `node.user.username` | `UserV2`의 `username` 필드 |
 | 할당자 | `node.grantedBy` | UUID. 가능한 경우 사용자 이름으로 resolve |
 | 할당일 | `node.grantedAt` | `dayjs(grantedAt).format('lll')` |
-| 액션 | - | "제거" 버튼 (CUSTOM 역할만 활성화) |
+| 액션 | - | "제거" 버튼 |
 
 **데이터 조회**:
 
@@ -866,11 +883,11 @@ fragment RoleAssignmentTabFragment on Role {
 └──────────────────────────────────┘
 ```
 
-- 사용자 검색: 이메일 또는 이름으로 서버사이드 검색
+- 사용자 검색: BAIPropertyFilter를 사용하여 이메일/이름으로 서버사이드 검색 (credential 페이지와 동일한 UX)
 - 사용자 선택: 체크박스로 복수 선택 가능
 - 이미 할당된 사용자는 목록에서 제외하거나 비활성화(disabled) 표시
 - 선택된 사용자 수 표시
-- "추가" 버튼: 선택된 사용자가 없으면 비활성화
+- "추가" 버튼: 기본 활성화 상태이며, 클릭 시 선택 여부를 validation
 
 **Mutation**:
 
@@ -897,9 +914,9 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 }
 ```
 
-- 복수 사용자 선택 시 각 사용자에 대해 `adminAssignRole` mutation을 순차적으로 호출
-- 할당 성공 후 커넥션에 새 edge 추가 (Relay store updater 사용)
-- 제거 성공 후 커넥션에서 해당 edge 제거 (Relay store updater 사용)
+- 복수 사용자 선택 시 각 사용자에 대해 `adminAssignRole` mutation을 순차적으로 호출 (배치 할당 mutation은 백엔드 미지원, TODO)
+- 할당 성공 후 테이블 refetch로 데이터 갱신
+- 제거 성공 후 테이블 refetch로 데이터 갱신
 
 **인수 조건**:
 - [ ] "할당" 탭 선택 시 해당 역할의 `roleAssignments` 커넥션 데이터가 표시된다
@@ -913,7 +930,7 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 - [ ] "제거" 버튼 클릭 시 확인 다이얼로그 후 `adminRevokeRole` mutation으로 사용자를 제거한다
 - [ ] 제거 성공 시 성공 메시지를 표시하고 할당 테이블이 갱신된다
 - [ ] 할당/제거 성공 시 Drawer 탭 레이블의 Badge 카운트가 갱신된다
-- [ ] SYSTEM 역할에서는 "사용자 추가" 버튼과 "제거" 버튼이 비활성화/숨김된다
+- [ ] SYSTEM 역할에서도 "사용자 추가" 및 "제거" 기능이 동일하게 사용 가능하다
 - [ ] 할당된 사용자가 없을 때 적절한 Empty 컴포넌트가 표시된다
 
 ---
@@ -926,7 +943,7 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│  [+ 퍼미션 추가]                                     [새로고침] │
+│  [필터...]                          [새로고침] [+ 퍼미션 추가] │
 ├───────────┬──────────────┬───────────┬───────────┬────────────┤
 │ 스코프 타입│ 스코프 ID     │ 엔티티 타입│ 오퍼레이션 │ 액션       │
 ├───────────┼──────────────┼───────────┼───────────┼────────────┤
@@ -939,7 +956,7 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 ```
 
 - 역할 상세 Drawer의 "퍼미션" 탭
-- 상단: "퍼미션 추가" 버튼 (CUSTOM 역할만 활성화)
+- 상단: 좌측에 필터 UI (선택 사항), 우측에 "새로고침" + "퍼미션 추가" 버튼 (주 액션인 "퍼미션 추가"가 가장 오른쪽)
 - 플랫 테이블 (한 행 = 하나의 Permission 레코드) 컬럼:
 
 | 컬럼 | 데이터 소스 | 비고 |
@@ -948,7 +965,7 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 | 스코프 ID | `node.scopeId` + `node.scope` | 기본적으로 `scopeId` 표시. `scope` union이 resolve 가능하면 이름으로 표시 (예: ProjectV2.name, DomainV2.name). resolve 실패 시 UUID 그대로 표시. |
 | 엔티티 타입 | `node.entityType` | `Tag` 컴포넌트로 표시 |
 | 오퍼레이션 | `node.operation` | `Tag` 컴포넌트로 표시 (색상으로 읽기/쓰기/삭제 구분) |
-| 액션 | - | "삭제" 버튼 (CUSTOM 역할만 활성화) |
+| 액션 | - | "삭제" 버튼 |
 
 **데이터 조회**:
 
@@ -1031,7 +1048,7 @@ fragment RolePermissionTabFragment on Role {
 - **오퍼레이션 선택** (`Select`): `OperationType` 값 단일 선택
   - Nice to Have: 복수 선택 후 일괄 생성
 
-- 모든 필드가 채워져야 "추가" 버튼 활성화
+- "추가" 버튼은 기본 활성화 상태이며, 클릭 시 필수 필드가 채워졌는지 validation 수행
 
 **Mutation**:
 
@@ -1057,8 +1074,8 @@ mutation AdminDeletePermissionMutation($input: DeletePermissionInput!) {
 }
 ```
 
-- 퍼미션 추가 성공 후 커넥션에 새 edge 추가 (Relay store updater 사용)
-- 퍼미션 삭제 성공 후 커넥션에서 해당 edge 제거 (Relay store updater 사용)
+- 퍼미션 추가 성공 후 테이블 refetch로 데이터 갱신
+- 퍼미션 삭제 성공 후 테이블 refetch로 데이터 갱신
 
 **scopeType-entityType 조합 조회 (퍼미션 추가 Modal 초기 로딩)**:
 
@@ -1091,14 +1108,14 @@ query RbacScopeEntityCombinationsQuery {
 - [ ] 스코프 타입 변경 시 스코프 ID 필드와 엔티티 타입 필드가 모두 초기화된다
 - [ ] 엔티티 타입 Select는 `rbacScopeEntityCombinations` 쿼리를 사용하여 선택된 scopeType에 해당하는 유효한 entityType만 표시한다
 - [ ] scopeType 선택 전에는 엔티티 타입 Select가 비활성화된다
-- [ ] 모든 필수 필드가 채워져야 "추가" 버튼이 활성화된다
+- [ ] "추가" 버튼은 기본 활성화 상태이며, 클릭 시 필수 필드가 채워졌는지 validation을 수행한다
 - [ ] `adminCreatePermission` mutation으로 퍼미션을 추가한다
 - [ ] 추가 성공 시 성공 메시지를 표시하고 퍼미션 테이블이 갱신된다
 - [ ] 중복 퍼미션 추가 시 에러 메시지가 표시된다
 - [ ] "삭제" 버튼 클릭 시 확인 다이얼로그 후 `adminDeletePermission` mutation으로 퍼미션을 삭제한다
 - [ ] 삭제 성공 시 성공 메시지를 표시하고 퍼미션 테이블이 갱신된다
 - [ ] 추가/삭제 성공 시 Drawer 탭 레이블의 Badge 카운트가 갱신된다
-- [ ] SYSTEM 역할에서는 "퍼미션 추가" 버튼과 "삭제" 버튼이 비활성화/숨김된다
+- [ ] SYSTEM 역할에서도 "퍼미션 추가" 및 "삭제" 기능이 동일하게 사용 가능하다
 - [ ] 퍼미션이 없을 때 적절한 Empty 컴포넌트가 표시된다
 - [ ] 퍼미션 테이블이 Relay 커서 기반 페이지네이션을 지원한다
 
@@ -1151,9 +1168,9 @@ query RbacScopeEntityCombinationsQuery {
 
 - Query orchestrator + Fragment component 아키텍처 사용
 - 역할 목록 페이지: `useLazyLoadQuery` (query orchestrator) + `useFragment` (RoleNodes fragment component)
-- 역할 상세 Drawer: 목록에서 fragment ref를 전달받아 `useFragment`로 데이터 조회
+- 역할 상세 Drawer: `adminRole(id: ...)` 별도 쿼리로 조회 (목록 쿼리와 분리하여 over-fetching 방지)
 - 하위 커넥션 (permissions, roleAssignments): 각 탭 컴포넌트에서 `useFragment` + `@connection` 디렉티브 사용
-- Mutation 후 Relay store updater로 커넥션에 edge 추가/제거하여 refetch 없이 UI 갱신
+- Mutation 후 refetch로 테이블 데이터 갱신 (테이블 UI에서 Relay store를 직접 다루면 테이블 사이즈 불일치 문제 발생. store 직접 업데이트는 무한 스크롤 UX에 적합)
 
 ### 컴포넌트 패턴 참고
 
