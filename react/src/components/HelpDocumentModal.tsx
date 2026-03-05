@@ -9,6 +9,7 @@ import { BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -77,6 +78,26 @@ const useStyles = createStyles(({ token, css }) => ({
     pre code {
       background: none;
       padding: 0;
+    }
+    ul,
+    ol {
+      padding-left: ${token.paddingLG + token.paddingXS}px;
+      margin: ${token.marginSM}px 0;
+    }
+    ul {
+      list-style-type: disc;
+    }
+    ol {
+      list-style-type: decimal;
+    }
+    ul ul {
+      list-style-type: circle;
+    }
+    ul ul ul {
+      list-style-type: square;
+    }
+    li {
+      margin-bottom: ${token.marginXXS}px;
     }
     a {
       color: ${token.colorLink};
@@ -185,6 +206,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
         <div className={styles.docsBody}>
           <Markdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
             urlTransform={(url) => {
               // Resolve relative image paths to the docs directory
               if (
@@ -198,6 +220,35 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                 return basePath + dirPath + url;
               }
               return url;
+            }}
+            components={{
+              a: ({ href, children, ...props }) => {
+                if (href?.startsWith('#')) {
+                  return (
+                    <a
+                      {...props}
+                      href={href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const target = document.getElementById(href.slice(1));
+                        target?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      {children}
+                    </a>
+                  );
+                }
+                return (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                );
+              },
             }}
           >
             {markdown}

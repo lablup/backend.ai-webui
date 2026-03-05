@@ -2408,6 +2408,7 @@
       "NewPasswordCannotBeSame": "Таны одоогийн нууц үгээс өөр нууц үг оруулна уу.",
       "NewPasswordMismatch": "Бичсэн 2 нууц үгнүүд тань таарахгүй байна.",
       "Notifications": "Мэдэгдэл",
+      "OpenExternalLink": "Шинэ табаар нээх",
       "OriginalPassword": "Одоо хэрэглэж буй нууц үг",
       "PasswordChangePlace": "Дээд талбар дээрх хүний дүрс дээр товшоод \"Миний данс\" цэс рүү очно уу.",
       "PasswordMismatch": "Нууц үг таарахгүй байна",

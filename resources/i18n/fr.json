@@ -2430,6 +2430,7 @@
       "NewPasswordCannotBeSame": "Veuillez saisir un mot de passe différent de votre mot de passe actuel.",
       "NewPasswordMismatch": "Les deux nouveaux mots de passe ne correspondent pas.",
       "Notifications": "Notifications",
+      "OpenExternalLink": "Ouvrir dans un nouvel onglet",
       "OriginalPassword": "Mot de passe d'origine",
       "PasswordChangePlace": "Cliquez sur l'icône de la personne dans la barre supérieure et accédez au menu \"Mon compte\".",
       "PasswordMismatch": "Non concordance des mots de passe",
