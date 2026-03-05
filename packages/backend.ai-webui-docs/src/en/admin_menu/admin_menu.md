@@ -577,7 +577,7 @@ which the session will be created once sufficient resources become available.
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
-<a id="manage-images"></a>
+<a id="fair-share-scheduler"></a>
 
 ## Fair Share Scheduler
 

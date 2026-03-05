@@ -585,7 +585,7 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 เช่นเดียวกับหน้า Session คุณสามารถคลิกชื่อเซสชันเพื่อเปิด drawer ที่แสดง
 ข้อมูลรายละเอียดเกี่ยวกับเซสชันได้
 
-<a id="manage-images"></a>
+<a id="fair-share-scheduler"></a>
 
 ## ตัวจัดตาราง Fair Share
 
