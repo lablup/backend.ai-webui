@@ -211,7 +211,7 @@ The default React dev server port is `9081`. To use a different port, create a `
 
 ```
 # .env.development.local
-BAI_WEBUI_DEV_PORT_OFFSET=10   # shifts React port to 9091, webdev port to 3091
+BAI_WEBUI_DEV_PORT_OFFSET=10   # shifts React port to 9091
 ```
 
 Port assignment is managed by `scripts/dev-config.js`. To inspect the current port configuration:

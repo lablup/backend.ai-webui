@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { off } = require("process");
 
 /**
  * Simplified development configuration for Backend.AI WebUI
@@ -20,7 +19,6 @@ class DevConfig {
     // Default ports
     this.basePorts = {
       react: 9081,
-      webdev: 3081,
     };
   }
 
@@ -61,7 +59,6 @@ class DevConfig {
     const offset = this.getPortOffset();
     return {
       react: this.basePorts.react + offset,
-      webdev: this.basePorts.webdev + offset,
     };
   }
 
@@ -83,7 +80,6 @@ class DevConfig {
 
     // Set environment variables for the current process
     process.env.BAI_WEBUI_DEV_REACT_PORT = config.ports.react.toString();
-    process.env.BAI_WEBUI_DEV_WEBDEV_PORT = config.ports.webdev.toString();
     process.env.BAI_WEBUI_DEV_HOST = config.host;
     config.themeColor &&
       (process.env.BAI_WEBUI_DEV_THEME_COLOR = config.themeColor);
@@ -97,12 +93,10 @@ class DevConfig {
     // Generate shell export commands
     const exports = [
       `export BAI_WEBUI_DEV_REACT_PORT=${config.ports.react}`,
-      `export BAI_WEBUI_DEV_WEBDEV_PORT=${config.ports.webdev}`,
       `export BAI_WEBUI_DEV_HOST=${config.host}`,
       `export BAI_WEBUI_DEV_THEME_COLOR="${config.themeColor}"`,
       config.themeColor &&
         `export REACT_APP_THEME_COLOR="${config.themeColor}"`,
-      `export BAI_WEBUI_DEV_PROXY=http://${config.host}:${config.ports.webdev}`,
     ];
 
     return exports.join("\n");
@@ -119,7 +113,6 @@ class DevConfig {
     }
     console.log(`📡 Ports`);
     console.log(`   React: ${config.ports.react}`);
-    console.log(`   WebDev: ${config.ports.webdev}`);
     console.log(`🔢 Port Offset: +${config.offset}`);
     console.log("");
   }

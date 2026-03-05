@@ -22,7 +22,7 @@ module.exports = {
   devServer: (devServerConfig, { env, paths }) => {
     // Serve static files from the root project directory so that
     // /resources/*, /config.toml, /manifest/*, /dist/* are available
-    // without a separate webdev server.
+    // without a separate static file server.
     const projectRoot = path.resolve(__dirname, '..');
     const existingStatic = devServerConfig.static
       ? Array.isArray(devServerConfig.static)

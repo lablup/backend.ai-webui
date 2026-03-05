@@ -51,12 +51,10 @@ node scripts/dev-config.js env
 
 ### Base Ports
 - React dev server: `9081`
-- WebDev server: `3081`
 
 ### With Port Offset
 When `BAI_WEBUI_DEV_PORT_OFFSET=20` is set:
 - React dev server: `9101` (9081 + 20)
-- WebDev server: `3101` (3081 + 20)
 
 ## 🎨 Theme Customization
 
@@ -92,10 +90,8 @@ HOST=192.168.1.100
 The system uses `BAI_WEBUI_DEV_*` prefixed environment variables internally:
 
 - `BAI_WEBUI_DEV_REACT_PORT` - React development server port
-- `BAI_WEBUI_DEV_WEBDEV_PORT` - WebDev server port  
 - `BAI_WEBUI_DEV_HOST` - Host address
 - `BAI_WEBUI_DEV_THEME_COLOR` - Theme color
-- `BAI_WEBUI_DEV_PROXY` - Proxy URL for React development server
 
 These are automatically generated from your configuration.
 
@@ -110,7 +106,6 @@ node scripts/dev-config.js show
 # 🌐 Host: localhost  
 # 📡 Ports:
 #    React: 9081
-#    WebDev: 3081
 # 🔢 Port Offset: +0
 ```
 
@@ -129,7 +124,6 @@ node scripts/dev-config.js show
 # 🎨 Theme Color: #9370DB [colored block]
 # 📡 Ports:
 #    React: 9111
-#    WebDev: 3111  
 # 🔢 Port Offset: +30
 ```
 
@@ -138,21 +132,21 @@ node scripts/dev-config.js show
 # Terminal 1: Default instance
 cd webui-ai
 pnpm run dev
-# → React: 9081, WebDev: 3081
+# → React: 9081
 
 # Terminal 2: Feature instance with offset
 cd webui-ai-feature  
 echo "BAI_WEBUI_DEV_PORT_OFFSET=10" > .env.development.local
 echo "THEME_HEADER_COLOR=#32CD32" >> .env.development.local
 pnpm run dev
-# → React: 9091, WebDev: 3091, Green header
+# → React: 9091, Green header
 
 # Terminal 3: Debug instance with different offset
 cd webui-ai-debug
 echo "BAI_WEBUI_DEV_PORT_OFFSET=20" > .env.development.local  
 echo "THEME_HEADER_COLOR=#DC143C" >> .env.development.local
 pnpm run dev
-# → React: 9101, WebDev: 3101, Red header
+# → React: 9101, Red header
 ```
 
 ## 🚨 Important Notes
