@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-03
+> **Last Updated:** 2026-03-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 78 / 280 features covered (28%)**
+**Overall (in-scope routes): 71 / 273 features covered (26%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -24,7 +24,7 @@
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
 | Endpoint Detail | `/serving/:serviceId` | 14 | 0 | ❌ 0% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
-| VFolder / Data | `/data` | 34 | 21 | 🔶 62% |
+| VFolder / Data | `/data` | 38 | 25 | 🔶 66% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **280** | **78** | **28%** |
+| **Total** | | **273** | **71** | **26%** |
 
 ---
 
@@ -247,7 +247,7 @@
 
 ### 9. Data / VFolder (`/data`)
 
-**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts)
+**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts)
 
 **Tabs:** Active | Deleted
 **Filter (Active tab):** all | general | pipeline | automount | model
@@ -280,6 +280,12 @@
 | Explorer modal (open/close) | ✅ | `User can open and close VFolder explorer modal` |
 | Explorer modal (file browser) | ✅ | `User can access File Browser from VFolder explorer` |
 | Explorer modal (details view) | ✅ | `User can view VFolder details in the explorer` |
+| File creation (Create File button) | ✅ | `User can see Create File button in file explorer` |
+| File creation (new file) | ✅ | `User can create a new file in the file explorer` |
+| File creation (yaml config) | ✅ | `User can create a yaml configuration file` |
+| File creation (empty name validation) | ✅ | `User cannot create a file with empty name` |
+| File creation (invalid chars validation) | ✅ | `User cannot create a file with invalid characters in name` |
+| File creation (read-only disabled) | 🚧 | Skipped: `User cannot create files in read-only VFolder` |
 | Active/Deleted tab switching | ❌ | - |
 | Usage mode filtering (general/pipeline/automount/model) | ❌ | - |
 | Property filtering (name, status, location) | ❌ | - |
@@ -294,7 +300,7 @@
 | File/folder rename | ❌ | - |
 | File/folder delete within explorer | ❌ | - |
 
-**Coverage: 🔶 21/34 features**
+**Coverage: 🔶 25/38 features (includes 1 skipped)**
 
 ---
 

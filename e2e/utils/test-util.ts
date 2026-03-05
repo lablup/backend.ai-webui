@@ -122,6 +122,15 @@ export async function login(
   });
 
   await page.goto(webuiEndpoint);
+  // Remove webpack-dev-server overlay iframe that can intercept pointer events
+  await page
+    .evaluate(() => {
+      const overlay = document.getElementById(
+        'webpack-dev-server-client-overlay',
+      );
+      if (overlay) overlay.remove();
+    })
+    .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Expand the endpoint section if it's not already visible
