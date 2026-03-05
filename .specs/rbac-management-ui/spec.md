@@ -358,7 +358,7 @@ type ScopeEntityCombination {
 **미지원 (TODO):**
 - **Role 하위 커넥션 (permissions, roleAssignments)**: `feature/rbac-role-permissions-field` 브랜치에서 개발 중 (BA-4785: permissions 필드, BA-4787: roleAssignments 필드). main 미머지 상태. 추가 전까지는 top-level 쿼리(`adminPermissions`, `adminRoleAssignments`)로 fallback한다.
 - **퍼미션 수정 Mutation**: 현재 퍼미션의 개별 필드(scopeType, scopeId, entityType, operation)를 수정하는 mutation이 없음. 백엔드에 `adminUpdatePermission` mutation 추가 필요. 추가 전까지는 삭제 후 재생성으로 대체한다.
-- **일괄 할당 Mutation**: 현재 `adminAssignRole`은 단일 사용자만 할당 가능. 복수 사용자 일괄 할당을 위한 배치 mutation이 없음. 백엔드에 배치 할당 mutation 추가 필요. 추가 전까지는 클라이언트에서 순차적으로 호출한다.
+- **일괄 할당/해제 Mutation**: 현재 `adminAssignRole`/`adminRevokeRole`은 단일 사용자만 처리 가능. 백엔드에서 배치 input 또는 병렬 처리를 지원하도록 변경 예정. 추가 전까지는 클라이언트에서 순차적으로 호출한다.
 
 ---
 
@@ -960,7 +960,7 @@ mutation AdminRevokeRoleMutation($input: RevokeRoleInput!) {
 }
 ```
 
-- 복수 사용자 선택 시 각 사용자에 대해 `adminAssignRole` mutation을 순차적으로 호출 (배치 할당 mutation은 백엔드 미지원, TODO)
+- 복수 사용자 선택 시: 백엔드에서 배치 input 지원이 추가되면 한 번의 호출로 처리. 추가 전까지는 각 사용자에 대해 `adminAssignRole`을 순차 호출
 - 할당 성공 후 테이블 refetch로 데이터 갱신
 - 제거 성공 후 테이블 refetch로 데이터 갱신
 
