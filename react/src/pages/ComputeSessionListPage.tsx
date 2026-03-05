@@ -77,6 +77,7 @@ const CARD_MIN_HEIGHT = 200;
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
+
   const userRole = useCurrentUserRole();
 
   const { t } = useTranslation();
@@ -147,7 +148,7 @@ const ComputeSessionListPage = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables: ComputeSessionListPageQuery$variables = {
-    projectId: currentProject.id,
+    scopeId: `project:${currentProject.id}`,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
@@ -160,14 +161,14 @@ const ComputeSessionListPage = () => {
   const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
     graphql`
         query ComputeSessionListPageQuery(
-          $projectId: UUID
+          $scopeId: ScopeField
           $first: Int = 20
           $offset: Int = 0
           $filter: String
           $order: String
         ) {
           computeSessionNodeResult: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: $first
             offset: $offset
             filter: $filter
@@ -184,7 +185,7 @@ const ComputeSessionListPage = () => {
             count
           }
           all: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
@@ -192,7 +193,7 @@ const ComputeSessionListPage = () => {
             count
           }
           interactive: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
@@ -200,7 +201,7 @@ const ComputeSessionListPage = () => {
             count
           }
           inference: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
@@ -208,7 +209,7 @@ const ComputeSessionListPage = () => {
             count
           }
           batch: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
@@ -216,7 +217,7 @@ const ComputeSessionListPage = () => {
             count
           }
           system: compute_session_nodes(
-            project_id: $projectId
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""

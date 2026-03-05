@@ -46,6 +46,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.name) {
+    throw new Error('Project name is required for ResourcePresetSettingModal');
+  }
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();

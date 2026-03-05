@@ -89,7 +89,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
       {
         project_quota_scope_id: addQuotaScopeTypePrefix(
           'project',
-          currentProject?.id,
+          currentProject?.id || '',
         ),
         user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
         storage_host_name: deferredSelectedVolumeInfo?.id || '',

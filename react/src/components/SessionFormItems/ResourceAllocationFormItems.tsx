@@ -112,6 +112,9 @@ const ResourceAllocationFormItems: React.FC<
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
   const currentProject = useCurrentProjectValue();
+  if (!currentProject.id || !currentProject.name) {
+    throw new Error('Project ID is required for ResourceAllocationFormItems');
+  }
   const currentResourceGroupInForm =
     Form.useWatch(['resourceGroup'], {
       form,
@@ -134,11 +137,9 @@ const ResourceAllocationFormItems: React.FC<
         projectID: currentProject.id,
       },
       {
-        fetchPolicy:
-          baiClient.supports('custom-accelerator-quantum-size') &&
-          currentProject.id
-            ? 'store-and-network'
-            : 'store-only', //to skip network request when accessible_scaling_groups is not available
+        fetchPolicy: baiClient.supports('custom-accelerator-quantum-size')
+          ? 'store-and-network'
+          : 'store-only', // to skip network request when accessible_scaling_groups is not available
       },
     );
 

@@ -19,7 +19,7 @@ import indexCss from '../index.css?raw';
 import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
-import { App, type AppProps, theme, Typography } from 'antd';
+import { App, type AppProps, theme } from 'antd';
 import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
@@ -130,16 +130,20 @@ i18n
     process: function (value: any, key: any, _options: any, _translator: any) {
       // @ts-ignore
       if (globalThis?.backendaiwebui?.debug || isDebugModeByParam) {
+        // key can be an array in i18next, convert to string for copy functionality
+        const keyString = Array.isArray(key) ? key[0] : String(key);
         return (
-          <Typography.Text
-            copyable={{
-              text: key,
-              tooltips: key,
-              icon: <GlobeIcon />,
-            }}
-          >
+          <>
             {value}
-          </Typography.Text>
+            <BAIText
+              style={{ marginLeft: 4 }}
+              copyable={{
+                text: keyString,
+                tooltips: [keyString, keyString],
+                icon: <GlobeIcon />,
+              }}
+            />
+          </>
         );
       } else {
         return value;
@@ -296,7 +300,7 @@ const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
                                   wordBreak: 'keep-all',
                                 }}
                               >
-                                {`(${t('general.Optional')})`}
+                                ({t('general.Optional')})
                               </BAIText>
                             )}
                           </>
@@ -426,7 +430,7 @@ export const DefaultProvidersForReactRoot: React.FC<
                           wordBreak: 'keep-all',
                         }}
                       >
-                        {`(${t('general.Optional')})`}
+                        ({t('general.Optional')})
                       </BAIText>
                     )}
                   </>

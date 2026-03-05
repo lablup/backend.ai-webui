@@ -137,9 +137,10 @@ const AgentSelect: React.FC<Props> = ({
     };
   });
 
-  const autoSelectIfMatch = t('session.launcher.AutoSelect')
-    .toLowerCase()
-    .includes(deferredSearchStr?.toLowerCase() ?? '')
+  const autoSelectIfMatch = _.includes(
+    _.toLower(t('session.launcher.AutoSelect')),
+    _.toLower(deferredSearchStr) ?? '',
+  )
     ? { label: t('session.launcher.AutoSelect'), value: 'auto' }
     : undefined;
 

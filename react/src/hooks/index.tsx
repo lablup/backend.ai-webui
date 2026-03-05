@@ -136,7 +136,7 @@ export type BackendAIClient = {
       cloneable?: boolean,
     ) => Promise<any>;
     list: (path: string) => Promise<any>;
-    list_hosts: () => Promise<any>;
+    list_hosts: (groupId?: string) => Promise<any>;
     list_all_hosts: () => Promise<any>;
     list_files: (path: string, id: string) => Promise<any>;
     list_allowed_types: () => Promise<string[]>;
