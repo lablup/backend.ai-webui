@@ -55,6 +55,28 @@ Parse the directory name to derive a slug for the GIF filename:
 - Replace spaces and special chars with `-`
 - Truncate to 60 chars
 
+## Uploading GIFs to GitHub PR
+
+**IMPORTANT**: GIF files must NEVER be committed to git. `e2e/recordings/` is in `.gitignore`.
+
+**Image upload MUST use Chrome DevTools MCP** — do NOT use `gh` CLI, GitHub releases, or any other method.
+
+**CRITICAL: GIF table MUST be added to the PR body (본문), NEVER as a PR comment.**
+
+The workflow:
+
+1. Navigate to the PR page via `mcp__chrome-devtools__navigate_page`
+2. Enter edit mode on the PR body (click "Show options" → "Edit comment")
+3. Upload GIFs via the "Attach files" button (`mcp__chrome-devtools__upload_file`) to get CDN URLs
+4. Extract CDN URLs (`github.com/user-attachments/assets/...`) from the textarea
+5. If uploads went to the comment textarea, extract URLs and clear it
+6. Set the PR body textarea content (preserve existing body + append GIF table) using `nativeInputValueSetter`
+7. Submit via the "Update comment" button on the PR body form
+
+This produces persistent GitHub CDN URLs that render correctly in markdown. The user must be logged into GitHub in Chrome for this to work.
+
+See `.claude/agents/playwright-e2e-pr-updater.md` for the full step-by-step Chrome DevTools upload workflow.
+
 ## Output Format
 
 Return a markdown table suitable for embedding in a PR description:
@@ -62,6 +84,6 @@ Return a markdown table suitable for embedding in a PR description:
 ```markdown
 | Test | Recording |
 |------|-----------|
-| Admin can see the BAIPropertyFilter | ![](e2e/recordings/.../test-name.gif) |
-| Admin can filter by name | ![](e2e/recordings/.../test-name.gif) |
+| Admin can see the BAIPropertyFilter | ![](https://github.com/user-attachments/assets/{uuid}) |
+| Admin can filter by name | ![](https://github.com/user-attachments/assets/{uuid}) |
 ```
