@@ -330,11 +330,13 @@ const BAIProjectTable = ({
       key: 'resource_policy',
       title: t('comp:BAIProjectTable.ResourcePolicy'),
       dataIndex: 'resource_policy',
+      exportKey: 'resource_policy_name',
       sorter: isEnableSorter('resource_policy'),
     },
     {
       key: 'allowed_vfolder_hosts',
       title: t('comp:BAIProjectTable.StorageNodes'),
+      exportKey: 'allowed_vfolder_hosts',
       render: (_value, row) => (
         <AllowedVfolderHostsWithPermission
           allowedHostPermissionFrgmtFromGroup={row}
@@ -345,11 +347,13 @@ const BAIProjectTable = ({
       key: 'scaling_groups',
       title: t('comp:BAIProjectTable.ScalingGroups'),
       dataIndex: 'scaling_groups',
+      exportKey: 'scaling_group_name',
       render: (value) => _.join(value, ', ') || '-',
     },
     {
       key: 'container_registry',
       title: t('comp:BAIProjectTable.ContainerRegistry'),
+      exportKey: 'container_registry',
       children: [
         {
           key: 'registry',
