@@ -125,6 +125,13 @@
     "SuccessFullyPulled": "Solicitud solicitada con éxito para las versiones {{count}}.",
     "Version": "Versión"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Se actualizará(n) la(s) siguiente(s) carpeta(s).",
     "ProjectResourcePolicy": "Política de recursos del proyecto",
