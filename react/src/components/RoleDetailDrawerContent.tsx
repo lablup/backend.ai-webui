@@ -3,19 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
-import { Badge, Descriptions, Tabs, Tag } from 'antd';
+import RoleAssignmentTab from './RoleAssignmentTab';
+import { Badge, Descriptions, Skeleton, Tabs, Tag } from 'antd';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
   roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
+  fetchKey: string;
   onTabReset?: () => void;
 }
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   roleDetailFrgmt,
+  fetchKey,
   onTabReset: _onTabReset,
 }) => {
   'use memo';
@@ -87,15 +90,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         items={[
           {
             key: 'assignments',
-            label: (
-              <>
-                {t('rbac.Assignments')}{' '}
-                <Badge count={0} showZero size="small" />
-              </>
-            ),
+            label: t('rbac.Assignments'),
             children: (
-              // TODO: Implement in ST-7 (FR-2225)
-              <div>{t('rbac.NoUsersAssigned')}</div>
+              <Suspense fallback={<Skeleton active />}>
+                <RoleAssignmentTab roleId={role.id} fetchKey={fetchKey} />
+              </Suspense>
             ),
           },
           {
