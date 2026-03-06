@@ -992,6 +992,7 @@
     "ShowUsageGraph": "Show Usage",
     "StorageProxies": "Storages",
     "TotalItems": "Total {{total}} items",
+    "UpdatedAt": "Updated At",
     "Username": "Username",
     "ValueRequired": "Please enter {{ name }}",
     "validation": {

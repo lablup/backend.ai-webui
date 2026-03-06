@@ -994,6 +994,7 @@
     "ShowUsageGraph": "사용량 확인",
     "StorageProxies": "스토리지",
     "TotalItems": "총 {{ total }}개",
+    "UpdatedAt": "수정일",
     "Username": "사용자 이름",
     "ValueRequired": "{{ name }} 값을 입력해 주세요",
     "validation": {
