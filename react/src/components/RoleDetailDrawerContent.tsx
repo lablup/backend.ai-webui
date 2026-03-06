@@ -4,7 +4,8 @@
  */
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
 import RoleAssignmentTab from './RoleAssignmentTab';
-import { Badge, Descriptions, Skeleton, Tabs, Tag } from 'antd';
+import RolePermissionTab from './RolePermissionTab';
+import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -99,15 +100,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
           },
           {
             key: 'permissions',
-            label: (
-              <>
-                {t('rbac.Permissions')}{' '}
-                <Badge count={0} showZero size="small" />
-              </>
-            ),
+            label: t('rbac.Permissions'),
             children: (
-              // TODO: Implement in ST-8 (FR-2226)
-              <div>{t('rbac.NoPermissionsToDisplay')}</div>
+              <Suspense fallback={<Skeleton active />}>
+                <RolePermissionTab roleId={role.id} fetchKey={fetchKey} />
+              </Suspense>
             ),
           },
         ]}
