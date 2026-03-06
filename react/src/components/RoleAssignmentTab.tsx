@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabAssignMutation } from '../__generated__/RoleAssignmentTabAssignMutation.graphql';
+import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssignmentTabBulkAssignMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleAssignmentTabRevokeMutation } from '../__generated__/RoleAssignmentTabRevokeMutation.graphql';
 import AssignRoleModal from './AssignRoleModal';
@@ -59,14 +59,22 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const roleId = role.id;
 
-  const [commitAssignRole, isInFlightAssign] =
-    useMutation<RoleAssignmentTabAssignMutation>(graphql`
-      mutation RoleAssignmentTabAssignMutation($input: AssignRoleInput!) {
-        adminAssignRole(input: $input) {
-          id
-          userId
-          grantedBy
-          grantedAt
+  const [commitBulkAssignRole, isInFlightBulkAssign] =
+    useMutation<RoleAssignmentTabBulkAssignMutation>(graphql`
+      mutation RoleAssignmentTabBulkAssignMutation(
+        $input: BulkAssignRoleInput!
+      ) {
+        adminBulkAssignRole(input: $input) {
+          assigned {
+            id
+            userId
+            grantedBy
+            grantedAt
+          }
+          failed {
+            userId
+            message
+          }
         }
       }
     `);
@@ -83,15 +91,22 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const assignments = role.users?.edges?.map((edge) => edge?.node) ?? [];
 
-  const handleAssign = (userId: string) => {
-    commitAssignRole({
-      variables: { input: { userId, roleId } },
-      onCompleted: (_data, errors) => {
+  const handleBulkAssign = (userIds: string[]) => {
+    commitBulkAssignRole({
+      variables: { input: { userIds, roleId } },
+      onCompleted: (data, errors) => {
         if (errors && errors.length > 0) {
           message.error(errors[0]?.message || t('general.ErrorOccurred'));
           return;
         }
-        message.success(t('rbac.UserAssigned'));
+        const failed = data.adminBulkAssignRole?.failed ?? [];
+        if (failed.length > 0) {
+          message.warning(
+            t('rbac.BulkAssignPartialFailure', { count: failed.length }),
+          );
+        } else {
+          message.success(t('rbac.UsersAssigned'));
+        }
         setIsAssignModalOpen(false);
         onAssignmentChange?.();
       },
@@ -191,9 +206,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       />
       <AssignRoleModal
         open={isAssignModalOpen}
-        confirmLoading={isInFlightAssign}
+        confirmLoading={isInFlightBulkAssign}
         onCancel={() => setIsAssignModalOpen(false)}
-        onAssign={handleAssign}
+        onAssign={handleBulkAssign}
       />
     </>
   );
