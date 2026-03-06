@@ -26,6 +26,7 @@ import {
   InfoCircleOutlined,
   ApiOutlined,
   TeamOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
 import { type MenuProps, theme, Typography } from 'antd';
@@ -93,6 +94,7 @@ export type MenuKeys =
   | 'settings'
   | 'maintenance'
   | 'branding'
+  | 'rbac'
   | 'information';
 
 // Convert menu key to URL path
@@ -320,6 +322,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/project">{t('webui.menu.Projects')}</WebUILink>,
       icon: <TeamOutlined style={{ color: token.colorInfo }} />,
       key: 'project',
+    },
+    baiClient?.supports('rbac') && {
+      label: <WebUILink to="/rbac">{t('webui.menu.RBACManagement')}</WebUILink>,
+      icon: <SafetyCertificateOutlined style={{ color: token.colorInfo }} />,
+      key: 'rbac',
     },
     {
       label: (
