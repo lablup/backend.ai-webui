@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  UserSettingModalBulkCreateMutation,
+  UserRoleV2,
+  UserStatusV2,
+} from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
 import { UserSettingModalModifyMutation } from '../__generated__/UserSettingModalModifyMutation.graphql';
 import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
@@ -31,6 +36,7 @@ import {
   Checkbox,
   Skeleton,
   Tag,
+  Space,
 } from 'antd';
 import {
   BAIDomainSelect,
@@ -85,20 +91,42 @@ type FormValues = {
   container_gids?: number[];
 };
 
+type BulkFormValues = Omit<FormValues, 'email' | 'username' | 'full_name'> & {
+  email_prefix: string;
+  email_suffix: string;
+  user_count: number;
+};
+
+const statusToV2: Record<string, UserStatusV2> = {
+  active: 'ACTIVE',
+  inactive: 'INACTIVE',
+  'before-verification': 'BEFORE_VERIFICATION',
+  deleted: 'DELETED',
+};
+
+const roleToV2: Record<string, UserRoleV2> = {
+  user: 'USER',
+  admin: 'ADMIN',
+  superadmin: 'SUPERADMIN',
+  monitor: 'MONITOR',
+};
+
 interface UserSettingModalProps extends BAIModalProps {
   userEmail?: string | null;
+  bulkCreate?: boolean;
   onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
   userEmail = null,
+  bulkCreate = false,
   onRequestClose,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
-  const formRef = useRef<FormInstance<FormValues>>(null);
+  const formRef = useRef<FormInstance<FormValues | BulkFormValues>>(null);
   const { logger } = useBAILogger();
 
   const currentUserRole = useCurrentUserRole();
@@ -232,6 +260,25 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       }
     `);
 
+  const [commitBulkCreateUsers, isInFlightBulkCreateUsers] =
+    useMutation<UserSettingModalBulkCreateMutation>(graphql`
+      mutation UserSettingModalBulkCreateMutation(
+        $input: BulkCreateUserV2Input!
+      ) {
+        adminBulkCreateUsersV2(input: $input) {
+          createdUsers {
+            id
+          }
+          failed {
+            index
+            username
+            email
+            message
+          }
+        }
+      }
+    `);
+
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: (email: string) => {
       return baiClient.remove_totp(email);
@@ -242,17 +289,77 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     formRef.current
       ?.validateFields()
       .then(async (values) => {
+        if (bulkCreate) {
+          const bulkValues = values as BulkFormValues;
+          const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
+            email: `${bulkValues.email_prefix}${i}@${bulkValues.email_suffix}`,
+            username: `${bulkValues.email_prefix}${i}`,
+            password: bulkValues.password as string,
+            domainName: bulkValues.domain_name,
+            needPasswordChange: bulkValues.need_password_change || false,
+            status: statusToV2[bulkValues.status] || 'ACTIVE',
+            role: roleToV2[bulkValues.role] || 'USER',
+            description: bulkValues.description || null,
+            groupIds: bulkValues.group_ids || null,
+            allowedClientIp: bulkValues.allowed_client_ip || null,
+            resourcePolicy: bulkValues.resource_policy || 'default',
+            sudoSessionEnabled: bulkValues.sudo_session_enabled || false,
+          }));
+
+          commitBulkCreateUsers({
+            variables: {
+              input: { users },
+            },
+            onCompleted: (res, errors) => {
+              if (errors?.[0]) {
+                message.error(errors[0].message || t('error.UnknownError'));
+                logger.error(errors);
+                return;
+              }
+
+              const createdCount =
+                res.adminBulkCreateUsersV2?.createdUsers?.length ?? 0;
+              const failedList = res.adminBulkCreateUsersV2?.failed ?? [];
+
+              if (failedList.length > 0) {
+                message.warning(
+                  t('credential.BulkCreateUserPartialFailure', {
+                    successCount: createdCount,
+                    failCount: failedList.length,
+                  }),
+                );
+                logger.error('Bulk create partial failures:', failedList);
+              } else {
+                message.success(
+                  t('credential.BulkCreateUserSuccess', {
+                    count: createdCount,
+                  }),
+                );
+              }
+              onRequestClose(true);
+            },
+            onError: (err) => {
+              message.error(t('dialog.ErrorOccurred'));
+              logger.error(err);
+            },
+          });
+          return;
+        }
+
+        const formValues = values as FormValues;
         const mutationProps = {
-          ..._.omit(values, 'email', 'password_confirm'),
+          ..._.omit(formValues, 'email', 'password_confirm'),
           // Convert container_gids from string[] to number[]
-          container_gids: _.map(values.container_gids, (v) => _.toNumber(v)),
-          need_password_change: values.need_password_change || false,
+          container_gids: _.map(formValues.container_gids, (v) =>
+            _.toNumber(v),
+          ),
+          need_password_change: formValues.need_password_change || false,
         };
 
         if (user) {
           commitModifyUserSetting({
             variables: {
-              email: values?.email || '',
+              email: formValues?.email || '',
               props: mutationProps,
               isNotSupportTotp: !isTOTPSupported,
             },
@@ -282,11 +389,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         } else {
           commitCreateUser({
             variables: {
-              email: values?.email || '',
+              email: formValues?.email || '',
               props: {
                 ...mutationProps,
                 // In create user, password is required field
-                password: values.password as string,
+                password: formValues.password as string,
               },
               isNotSupportTotp: !isTOTPSupported,
             },
@@ -338,12 +445,18 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     <BAIModal
       centered
       title={
-        user ? t('credential.ModifyUserDetail') : t('credential.CreateUser')
+        user
+          ? t('credential.ModifyUserDetail')
+          : bulkCreate
+            ? t('credential.BulkCreateUser')
+            : t('credential.CreateUser')
       }
       destroyOnHidden
       onOk={handleOk}
       confirmLoading={
-        isInFlightCommitModifyUserSetting || isInFlightCommitCreateUser
+        isInFlightCommitModifyUserSetting ||
+        isInFlightCommitCreateUser ||
+        isInFlightBulkCreateUsers
       }
       onCancel={() => onRequestClose(false)}
       loading={deferredOpen !== baiModalProps.open}
@@ -364,7 +477,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     : undefined,
                 }
               : ({
-                  need_password_change: false,
+                  need_password_change: bulkCreate ? true : false,
+                  user_count: 1,
                   status: 'active',
                   domain_name: currentDomainName,
                   role: 'user',
@@ -374,44 +488,91 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           }
           layout="vertical"
         >
-          <Form.Item
-            name="email"
-            label={t('general.E-Mail')}
-            rules={[{ required: !user }, { type: 'email' }]}
-          >
-            <Input disabled={!!user} />
-          </Form.Item>
-          <Form.Item
-            name="username"
-            label={t('credential.UserName')}
-            rules={[
-              {
-                max: 64,
-              },
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input placeholder={t('maxLength.64chars')} />
-          </Form.Item>
-          <Form.Item
-            name="full_name"
-            label={t('credential.FullName')}
-            rules={[
-              {
-                max: 64,
-              },
-            ]}
-          >
-            <Input placeholder={t('maxLength.64chars')} />
-          </Form.Item>
+          {bulkCreate ? (
+            <>
+              <Space.Compact style={{ width: '100%' }}>
+                <Form.Item
+                  name="email_prefix"
+                  label={t('credential.EmailPrefix')}
+                  style={{ flex: 1 }}
+                  rules={[
+                    { required: true },
+                    {
+                      pattern: /^[a-zA-Z0-9._-]+$/,
+                      message: t('credential.WrongEmail'),
+                    },
+                    { max: 30 },
+                  ]}
+                >
+                  <Input placeholder={t('maxLength.30chars')} />
+                </Form.Item>
+                <Form.Item
+                  name="email_suffix"
+                  label={t('credential.EmailSuffix')}
+                  style={{ flex: 1 }}
+                  rules={[
+                    { required: true },
+                    {
+                      pattern:
+                        /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/,
+                      message: t('credential.WrongEmail'),
+                    },
+                    { max: 30 },
+                  ]}
+                >
+                  <Input prefix="@" placeholder={t('maxLength.30chars')} />
+                </Form.Item>
+              </Space.Compact>
+              <Form.Item
+                name="user_count"
+                label={t('credential.UserCount')}
+                rules={[{ required: true }]}
+              >
+                <InputNumber style={{ width: '100%' }} min={1} max={100} />
+              </Form.Item>
+            </>
+          ) : (
+            <>
+              <Form.Item
+                name="email"
+                label={t('general.E-Mail')}
+                rules={[{ required: !user }, { type: 'email' }]}
+              >
+                <Input disabled={!!user} />
+              </Form.Item>
+              <Form.Item
+                name="username"
+                label={t('credential.UserName')}
+                rules={[
+                  {
+                    max: 64,
+                  },
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input placeholder={t('maxLength.64chars')} />
+              </Form.Item>
+              <Form.Item
+                name="full_name"
+                label={t('credential.FullName')}
+                rules={[
+                  {
+                    max: 64,
+                  },
+                ]}
+              >
+                <Input placeholder={t('maxLength.64chars')} />
+              </Form.Item>
+            </>
+          )}
           <Form.Item
             name="password"
             label={user ? t('general.NewPassword') : t('general.Password')}
             rules={[
               {
-                required: !user,
+                required: !user || bulkCreate,
               },
               {
                 pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
@@ -431,7 +592,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             }
             rules={[
               {
-                required: !user,
+                required: !user || bulkCreate,
                 message: '',
               },
               ({ getFieldValue }) => ({
@@ -513,7 +674,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           >
             <Checkbox>{t('general.Allow')}</Checkbox>
           </Form.Item>
-          {!!isTOTPSupported && (
+          {!!isTOTPSupported && !bulkCreate && (
             <Form.Item
               name="totp_activated"
               label={t('webui.menu.TotpActivated')}
@@ -621,6 +782,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     mode="multiple"
                     domain={getFieldValue('domain_name')}
                     disableDefaultFilter
+                    lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
                   />
                 </Form.Item>
               )}
@@ -667,113 +829,121 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             />
           </Form.Item>
 
-          <Form.Item
-            name="container_uid"
-            label={t('credential.ContainerUID')}
-            tooltip={t('credential.ContainerUIDTooltip')}
-            rules={[
-              {
-                type: 'number',
-                min: 1,
-                message: t('credential.validation.PleaseEnterPositiveInteger'),
-              },
-            ]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              max={SIGNED_32BIT_MAX_INT}
-              min={1}
-            />
-          </Form.Item>
-          <Form.Item
-            name="container_main_gid"
-            label={t('credential.ContainerGID')}
-            tooltip={t('credential.ContainerGIDTooltip')}
-            rules={[
-              {
-                type: 'number',
-                min: 1,
-                message: t('credential.validation.PleaseEnterPositiveInteger'),
-              },
-            ]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              max={SIGNED_32BIT_MAX_INT}
-              min={1}
-            />
-          </Form.Item>
-          <Form.Item
-            name="container_gids"
-            label={t('credential.ContainerSupplementaryGIDs')}
-            tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
-            rules={[
-              () => ({
-                validator(_rule, values) {
-                  if (
-                    _.isEmpty(values) ||
-                    _.every(values, (v) => {
-                      const num = _.toNumber(v);
-                      return num > 0 && num <= SIGNED_32BIT_MAX_INT;
-                    })
-                  ) {
-                    return Promise.resolve();
-                  } else {
-                    return Promise.reject(
-                      new Error(
-                        t(
-                          'credential.validation.PleaseEnterPositiveAndUnder2_31',
-                        ),
-                      ),
-                    );
-                  }
-                },
-              }),
-              () => ({
-                validator(_rule, values) {
-                  if (
-                    _.isEmpty(values) ||
-                    _.every(values, (v) => {
-                      return _.isInteger(_.toNumber(v));
-                    })
-                  ) {
-                    return Promise.resolve();
-                  } else {
-                    return Promise.reject(
-                      new Error(
-                        t('credential.validation.PleaseEnterValidNumber'),
-                      ),
-                    );
-                  }
-                },
-              }),
-              () => ({
-                validator(_rule, values) {
-                  if (
-                    _.isEmpty(values) ||
-                    _.uniq(values).length === values.length
-                  ) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      t('credential.validation.PleaseEnterUniqueNumbers'),
+          {!bulkCreate && (
+            <>
+              <Form.Item
+                name="container_uid"
+                label={t('credential.ContainerUID')}
+                tooltip={t('credential.ContainerUIDTooltip')}
+                rules={[
+                  {
+                    type: 'number',
+                    min: 1,
+                    message: t(
+                      'credential.validation.PleaseEnterPositiveInteger',
                     ),
-                  );
-                },
-              }),
-            ]}
-          >
-            <BAISelect
-              mode="tags"
-              tokenSeparators={[',', ' ']}
-              open={false}
-              suffixIcon={null}
-              placeholder={t(
-                'credential.ContainerSupplementaryGIDsPlaceholder',
-              )}
-            />
-          </Form.Item>
+                  },
+                ]}
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  max={SIGNED_32BIT_MAX_INT}
+                  min={1}
+                />
+              </Form.Item>
+              <Form.Item
+                name="container_main_gid"
+                label={t('credential.ContainerGID')}
+                tooltip={t('credential.ContainerGIDTooltip')}
+                rules={[
+                  {
+                    type: 'number',
+                    min: 1,
+                    message: t(
+                      'credential.validation.PleaseEnterPositiveInteger',
+                    ),
+                  },
+                ]}
+              >
+                <InputNumber
+                  style={{ width: '100%' }}
+                  max={SIGNED_32BIT_MAX_INT}
+                  min={1}
+                />
+              </Form.Item>
+              <Form.Item
+                name="container_gids"
+                label={t('credential.ContainerSupplementaryGIDs')}
+                tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
+                rules={[
+                  () => ({
+                    validator(_rule, values) {
+                      if (
+                        _.isEmpty(values) ||
+                        _.every(values, (v) => {
+                          const num = _.toNumber(v);
+                          return num > 0 && num <= SIGNED_32BIT_MAX_INT;
+                        })
+                      ) {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject(
+                          new Error(
+                            t(
+                              'credential.validation.PleaseEnterPositiveAndUnder2_31',
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  }),
+                  () => ({
+                    validator(_rule, values) {
+                      if (
+                        _.isEmpty(values) ||
+                        _.every(values, (v) => {
+                          return _.isInteger(_.toNumber(v));
+                        })
+                      ) {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject(
+                          new Error(
+                            t('credential.validation.PleaseEnterValidNumber'),
+                          ),
+                        );
+                      }
+                    },
+                  }),
+                  () => ({
+                    validator(_rule, values) {
+                      if (
+                        _.isEmpty(values) ||
+                        _.uniq(values).length === values.length
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(
+                          t('credential.validation.PleaseEnterUniqueNumbers'),
+                        ),
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <BAISelect
+                  mode="tags"
+                  tokenSeparators={[',', ' ']}
+                  open={false}
+                  suffixIcon={null}
+                  placeholder={t(
+                    'credential.ContainerSupplementaryGIDsPlaceholder',
+                  )}
+                />
+              </Form.Item>
+            </>
+          )}
           {!!user && userEmail && (
             <Suspense
               fallback={
@@ -791,7 +961,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             </Suspense>
           )}
         </Form>
-        {!!isTOTPSupported && (
+        {!!isTOTPSupported && !bulkCreate && (
           <TOTPActivateModal
             userFrgmt={user}
             open={isOpenTOTPActivateModal}
