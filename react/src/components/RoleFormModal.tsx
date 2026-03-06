@@ -3,14 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
+import type { RoleFormModalFragment$key as _RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { App, Form, Input } from 'antd';
-import {
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
@@ -26,7 +21,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { logger } = useBAILogger();
+  const { logger: _logger } = useBAILogger();
   const [form] = Form.useForm();
 
   const editingRole = useFragment(
@@ -70,7 +65,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
     } else {
       formRef.current?.resetFields();
     }
-  }, [baiModalProps.open]);
+  }, [baiModalProps.open, editingRole]);
 
   const handleOk = () => {
     return form.validateFields().then((values) => {

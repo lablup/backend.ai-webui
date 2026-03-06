@@ -1453,6 +1453,7 @@
     "RoleCreated": "Role created successfully.",
     "RoleDeleted": "Role deleted successfully.",
     "RoleDescription": "Description",
+    "RoleDetailInfo": "Role Detail",
     "RoleName": "Role Name",
     "RoleNotFound": "Role not found.",
     "RolePurged": "Role permanently removed.",
