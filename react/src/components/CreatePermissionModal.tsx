@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { CreatePermissionModalMutation } from '../__generated__/CreatePermissionModalMutation.graphql';
+import { CreatePermissionModalCreateMutation } from '../__generated__/CreatePermissionModalCreateMutation.graphql';
+import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePermissionModalUpdateMutation.graphql';
 import { App, Form, type FormInstance, Select } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
 
@@ -52,13 +53,23 @@ const OPERATION_TYPES = [
   'GRANT_HARD_DELETE',
 ] as const;
 
+interface EditingPermission {
+  id: string;
+  scopeType: string;
+  scopeId: string;
+  entityType: string;
+  operation: string;
+}
+
 interface CreatePermissionModalProps extends BAIModalProps {
   roleId: string;
+  editingPermission?: EditingPermission | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   roleId,
+  editingPermission,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -66,11 +77,40 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
+  const isEditMode = !!editingPermission;
 
-  const [commitCreatePermission, isInFlight] =
-    useMutation<CreatePermissionModalMutation>(graphql`
-      mutation CreatePermissionModalMutation($input: CreatePermissionInput!) {
+  useEffect(() => {
+    if (baiModalProps.open && editingPermission) {
+      formRef.current?.setFieldsValue({
+        scopeType: editingPermission.scopeType,
+        scopeId: editingPermission.scopeId,
+        entityType: editingPermission.entityType,
+        operation: editingPermission.operation,
+      });
+    }
+  }, [baiModalProps.open, editingPermission]);
+
+  const [commitCreatePermission, isCreateInFlight] =
+    useMutation<CreatePermissionModalCreateMutation>(graphql`
+      mutation CreatePermissionModalCreateMutation(
+        $input: CreatePermissionInput!
+      ) {
         adminCreatePermission(input: $input) {
+          id
+          scopeType
+          scopeId
+          entityType
+          operation
+        }
+      }
+    `);
+
+  const [commitUpdatePermission, isUpdateInFlight] =
+    useMutation<CreatePermissionModalUpdateMutation>(graphql`
+      mutation CreatePermissionModalUpdateMutation(
+        $input: UpdatePermissionInput!
+      ) {
+        adminUpdatePermission(input: $input) {
           id
           scopeType
           scopeId
@@ -91,52 +131,80 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const handleOk = () => {
     return formRef.current?.validateFields().then((values) => {
       return new Promise<void>((resolve, reject) => {
-        commitCreatePermission({
-          variables: {
-            input: {
-              roleId,
-              scopeType: values.scopeType,
-              scopeId: values.scopeId,
-              entityType: values.entityType,
-              operation: values.operation,
+        if (isEditMode) {
+          commitUpdatePermission({
+            variables: {
+              input: {
+                id: editingPermission.id,
+                scopeType: values.scopeType,
+                scopeId: values.scopeId,
+                entityType: values.entityType,
+                operation: values.operation,
+              },
             },
-          },
-          onCompleted: (_data, errors) => {
-            if (errors && errors.length > 0) {
-              const errorMessage = errors[0]?.message || '';
-              if (isDuplicateError(errorMessage)) {
-                message.error(t('rbac.DuplicatePermission'));
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
                 reject();
                 return;
               }
-              message.error(errorMessage || t('general.ErrorOccurred'));
+              message.success(t('rbac.PermissionUpdated'));
+              onRequestClose(true);
+              resolve();
+            },
+            onError: (error) => {
+              message.error(error?.message || t('general.ErrorOccurred'));
               reject();
-              return;
-            }
-            message.success(t('rbac.PermissionCreated'));
-            onRequestClose(true);
-            resolve();
-          },
-          onError: (error) => {
-            const errorMessage = error?.message || '';
-            if (isDuplicateError(errorMessage)) {
-              message.error(t('rbac.DuplicatePermission'));
-            } else {
-              message.error(errorMessage || t('general.ErrorOccurred'));
-            }
-            reject();
-          },
-        });
+            },
+          });
+        } else {
+          commitCreatePermission({
+            variables: {
+              input: {
+                roleId,
+                scopeType: values.scopeType,
+                scopeId: values.scopeId,
+                entityType: values.entityType,
+                operation: values.operation,
+              },
+            },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMessage = errors[0]?.message || '';
+                if (isDuplicateError(errorMessage)) {
+                  message.error(t('rbac.DuplicatePermission'));
+                  reject();
+                  return;
+                }
+                message.error(errorMessage || t('general.ErrorOccurred'));
+                reject();
+                return;
+              }
+              message.success(t('rbac.PermissionCreated'));
+              onRequestClose(true);
+              resolve();
+            },
+            onError: (error) => {
+              const errorMessage = error?.message || '';
+              if (isDuplicateError(errorMessage)) {
+                message.error(t('rbac.DuplicatePermission'));
+              } else {
+                message.error(errorMessage || t('general.ErrorOccurred'));
+              }
+              reject();
+            },
+          });
+        }
       });
     });
   };
 
   return (
     <BAIModal
-      title={t('rbac.CreatePermission')}
+      title={isEditMode ? t('rbac.EditPermission') : t('rbac.CreatePermission')}
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
-      confirmLoading={isInFlight}
+      confirmLoading={isCreateInFlight || isUpdateInFlight}
       destroyOnClose
       {...baiModalProps}
     >

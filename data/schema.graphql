@@ -2494,6 +2494,17 @@ input CreatePermissionInput
   operation: OperationType!
 }
 
+"""Added in 26.3.0. Input for updating a scoped permission"""
+input UpdatePermissionInput
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUID!
+  scopeType: RBACElementType
+  scopeId: String
+  entityType: RBACElementType
+  operation: OperationType
+}
+
 type CreateProjectResourcePolicy
   @join__type(graph: GRAPHENE)
 {
@@ -7546,6 +7557,9 @@ type Mutation
 
   """Added in 26.3.0. Create a scoped permission (admin only)."""
   adminCreatePermission(input: CreatePermissionInput!): Permission! @join__field(graph: STRAWBERRY)
+
+  """Added in 26.3.0. Update a scoped permission (admin only)."""
+  adminUpdatePermission(input: UpdatePermissionInput!): Permission! @join__field(graph: STRAWBERRY)
 
   """Added in 26.3.0. Delete a scoped permission (admin only)."""
   adminDeletePermission(input: DeletePermissionInput!): DeletePermissionPayload! @join__field(graph: STRAWBERRY)
