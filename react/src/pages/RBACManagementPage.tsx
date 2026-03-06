@@ -12,8 +12,10 @@ import {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal from '../components/RoleFormModal';
-import RoleNodes from '../components/RoleNodes';
-import type { RoleNodeInList } from '../components/RoleNodes';
+import RoleNodes, {
+  type RoleNodeInList,
+  availableRoleSorterValues,
+} from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { App, Skeleton } from 'antd';
@@ -30,7 +32,12 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -56,7 +63,8 @@ const RBACManagementPage: React.FC = () => {
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
       source: parseAsStringLiteral(sourceFilterValues).withDefault('all'),
-      order: parseAsString,
+      order: parseAsStringLiteral(availableRoleSorterValues),
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
     },
     {
       history: 'replace',
@@ -64,7 +72,6 @@ const RBACManagementPage: React.FC = () => {
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [filter, setFilter] = useState<GraphQLFilter>();
 
   const sourceFilter =
     queryParams.source === 'all' ? null : [queryParams.source];
@@ -73,7 +80,7 @@ const RBACManagementPage: React.FC = () => {
     filter: {
       status: [queryParams.status],
       ...(sourceFilter ? { source: sourceFilter } : {}),
-      ...filter,
+      ...queryParams.filter,
     },
     orderBy: convertToOrderBy<RoleOrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
@@ -277,9 +284,9 @@ const RBACManagementPage: React.FC = () => {
                   type: 'string',
                 },
               ]}
-              value={filter}
+              value={queryParams.filter ?? undefined}
               onChange={(value) => {
-                setFilter(value);
+                setQueryParams({ filter: value ?? null });
                 setTablePaginationOption({ current: 1 });
               }}
             />
@@ -310,9 +317,9 @@ const RBACManagementPage: React.FC = () => {
             statusFilter={deferredQueryVariables.filter.status?.[0]}
             loading={deferredQueryVariables !== queryVariables}
             order={queryParams.order}
-            onChangeOrder={(newOrder) =>
-              setQueryParams({ order: newOrder })
-            }
+            onChangeOrder={(order) => {
+              setQueryParams({ order });
+            }}
             onClickRoleName={(role) =>
               setRoleDetailParam({ roleDetail: role.id })
             }

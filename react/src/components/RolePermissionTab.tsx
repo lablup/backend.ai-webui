@@ -7,9 +7,10 @@ import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTa
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import CreatePermissionModal from './CreatePermissionModal';
-import { App, Tag } from 'antd';
+import { App, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
+  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAITable,
@@ -19,6 +20,12 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import { EditIcon, PlusIcon } from 'lucide-react';
+import {
+  parseAsInteger,
+  parseAsJson,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
@@ -30,6 +37,8 @@ interface EditingPermission {
   entityType: string;
   operation: string;
 }
+
+const permissionOrderValues = ['ENTITY_TYPE_ASC', 'ENTITY_TYPE_DESC'] as const;
 
 interface RolePermissionTabProps {
   queryRef: RolePermissionTabFragment$key;
@@ -44,14 +53,35 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] =
     useState<EditingPermission | null>(null);
-  const [filter, setFilter] = useState<GraphQLFilter>();
-  const [order, setOrder] = useState<string | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      current: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(10),
+      order: parseAsStringLiteral(permissionOrderValues),
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+    },
+    {
+      history: 'replace',
+      urlKeys: {
+        current: 'pCurrent',
+        pageSize: 'pPageSize',
+        order: 'pOrder',
+        filter: 'pFilter',
+      },
+    },
+  );
+
+  const limit = queryParams.pageSize;
+  const offset =
+    queryParams.current > 1 ? (queryParams.current - 1) * limit : 0;
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
@@ -59,9 +89,16 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       @argumentDefinitions(
         filter: { type: "PermissionFilter" }
         orderBy: { type: "[PermissionOrderBy!]" }
+        limit: { type: "Int" }
+        offset: { type: "Int" }
       )
       @refetchable(queryName: "RolePermissionTabRefetchQuery") {
-        adminPermissions(filter: $filter, orderBy: $orderBy, limit: 100) {
+        adminPermissions(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) {
           count
           edges {
             node {
@@ -91,35 +128,41 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const permissions =
     data.adminPermissions?.edges?.map((edge) => edge?.node) ?? [];
 
-  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
-    setFilter(newFilter);
+  const doRefetch = (overrides?: {
+    filter?: GraphQLFilter | null;
+    order?: string | null;
+    limit?: number;
+    offset?: number;
+  }) => {
     startRefetchTransition(() => {
       refetch(
         {
           filter: {
             roleId,
-            ...newFilter,
+            ...(overrides?.filter !== undefined
+              ? overrides.filter
+              : queryParams.filter),
           },
-          orderBy: convertToOrderBy<PermissionOrderBy>(order),
+          orderBy: convertToOrderBy<PermissionOrderBy>(
+            overrides?.order !== undefined
+              ? overrides.order
+              : queryParams.order,
+          ),
+          limit: overrides?.limit ?? limit,
+          offset: overrides?.offset ?? offset,
         },
         { fetchPolicy: 'network-only' },
       );
     });
   };
 
+  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+    setQueryParams({ filter: newFilter ?? null, current: 1 });
+    doRefetch({ filter: newFilter ?? null, offset: 0 });
+  };
+
   const handleRefresh = () => {
-    startRefetchTransition(() => {
-      refetch(
-        {
-          filter: {
-            roleId,
-            ...filter,
-          },
-          orderBy: convertToOrderBy<PermissionOrderBy>(order),
-        },
-        { fetchPolicy: 'network-only' },
-      );
-    });
+    doRefetch();
   };
 
   const handleEdit = (record: {
@@ -187,15 +230,18 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               type: 'enum',
               valueMode: 'scalar',
               options: [
-                { label: 'DOMAIN', value: 'DOMAIN' },
-                { label: 'PROJECT', value: 'PROJECT' },
-                { label: 'USER', value: 'USER' },
-                { label: 'SESSION', value: 'SESSION' },
-                { label: 'VFOLDER', value: 'VFOLDER' },
-                { label: 'DEPLOYMENT', value: 'DEPLOYMENT' },
-                { label: 'RESOURCE_GROUP', value: 'RESOURCE_GROUP' },
-                { label: 'IMAGE', value: 'IMAGE' },
-              ],
+                'DOMAIN',
+                'PROJECT',
+                'USER',
+                'SESSION',
+                'VFOLDER',
+                'DEPLOYMENT',
+                'RESOURCE_GROUP',
+                'IMAGE',
+              ].map((type) => ({
+                label: t(`rbac.types.${type}`, { defaultValue: type }),
+                value: type,
+              })),
               strictSelection: true,
             },
             {
@@ -204,76 +250,100 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               type: 'enum',
               valueMode: 'scalar',
               options: [
-                { label: 'DOMAIN', value: 'DOMAIN' },
-                { label: 'PROJECT', value: 'PROJECT' },
-                { label: 'USER', value: 'USER' },
-                { label: 'SESSION', value: 'SESSION' },
-                { label: 'VFOLDER', value: 'VFOLDER' },
-                { label: 'DEPLOYMENT', value: 'DEPLOYMENT' },
-                { label: 'RESOURCE_GROUP', value: 'RESOURCE_GROUP' },
-                { label: 'IMAGE', value: 'IMAGE' },
-              ],
+                'DOMAIN',
+                'PROJECT',
+                'USER',
+                'SESSION',
+                'VFOLDER',
+                'DEPLOYMENT',
+                'RESOURCE_GROUP',
+                'IMAGE',
+              ].map((type) => ({
+                label: t(`rbac.types.${type}`, { defaultValue: type }),
+                value: type,
+              })),
               strictSelection: true,
             },
           ]}
-          value={filter}
+          value={queryParams.filter ?? undefined}
           onChange={handleFilterChange}
         />
-        <BAIButton
-          type="primary"
-          icon={<PlusIcon />}
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          {t('rbac.CreatePermission')}
-        </BAIButton>
+        <BAIFlex gap="xs">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={() => handleRefresh()}
+          />
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            {t('rbac.CreatePermission')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
       <BAITable
         rowKey="id"
         dataSource={permissions}
         loading={isPendingRefetch}
         size="small"
-        pagination={false}
-        order={order}
+        pagination={{
+          pageSize: queryParams.pageSize,
+          current: queryParams.current,
+          total: data.adminPermissions?.count ?? 0,
+          onChange: (current, pageSize) => {
+            setQueryParams({ current, pageSize });
+            const newOffset = current > 1 ? (current - 1) * pageSize : 0;
+            doRefetch({ limit: pageSize, offset: newOffset });
+          },
+        }}
+        order={queryParams.order}
         onChangeOrder={(newOrder) => {
-          setOrder(newOrder ?? null);
-          startRefetchTransition(() => {
-            refetch(
-              {
-                filter: {
-                  roleId,
-                  ...filter,
-                },
-                orderBy: convertToOrderBy<PermissionOrderBy>(newOrder ?? null),
-              },
-              { fetchPolicy: 'network-only' },
-            );
+          setQueryParams({
+            order: (newOrder as (typeof permissionOrderValues)[number]) ?? null,
           });
+          doRefetch({ order: newOrder ?? null });
         }}
         columns={[
           {
             key: 'scopeType',
             title: t('rbac.ScopeType'),
             dataIndex: 'scopeType',
-            render: (value: string) => <Tag>{value}</Tag>,
+            render: (value: string) => (
+              <Tag>{t(`rbac.types.${value}`, { defaultValue: value })}</Tag>
+            ),
           },
           {
             key: 'scopeId',
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeId',
-            ellipsis: true,
+            render: (value: string) => (
+              <Tooltip title={value} placement="topLeft">
+                <Typography.Text ellipsis style={{ maxWidth: 200 }}>
+                  {value ?? '-'}
+                </Typography.Text>
+              </Tooltip>
+            ),
           },
           {
             key: 'entityType',
             dataIndex: 'entityType',
             title: t('rbac.EntityType'),
             sorter: true,
-            render: (value: string) => <Tag>{value}</Tag>,
+            render: (value: string) => (
+              <Tag>{t(`rbac.types.${value}`, { defaultValue: value })}</Tag>
+            ),
           },
           {
             key: 'operation',
             title: t('rbac.Operation'),
             dataIndex: 'operation',
-            render: (value: string) => <Tag color="blue">{value}</Tag>,
+            render: (value: string) => (
+              <Tag color="blue">
+                {t(`rbac.operations.${value}`, { defaultValue: value })}
+              </Tag>
+            ),
           },
           {
             key: 'control',
@@ -283,7 +353,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               <BAIFlex gap="xxs">
                 <BAIButton
                   type="text"
-                  icon={<EditIcon />}
+                  icon={<EditIcon style={{ color: token.colorInfo }} />}
                   size="small"
                   onClick={() => handleEdit(record)}
                 />
