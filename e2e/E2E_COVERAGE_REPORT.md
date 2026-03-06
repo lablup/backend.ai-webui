@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-04
+> **Last Updated:** 2026-03-06
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,11 +12,11 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 71 / 273 features covered (26%)**
+**Overall (in-scope routes): 76 / 278 features covered (27%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 7 | 4 | 🔶 57% |
+| Authentication | `/interactive-login` | 12 | 9 | 🔶 75% |
 | Start Page | `/start` | 8 | 0 | ❌ 0% |
 | Dashboard | `/dashboard` | 9 | 0 | ❌ 0% |
 | Session List | `/session` | 19 | 11 | 🔶 58% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **71** | **26%** |
+| **Total** | | **278** | **76** | **27%** |
 
 ---
 
@@ -61,7 +61,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -69,11 +69,16 @@
 | Successful login & redirect | ✅ | `should redirect to the Summary` |
 | Invalid email error | ✅ | `should display error message for non-existent email` |
 | Invalid password error | ✅ | `should display error message for incorrect password` |
+| Password expiry modal display | ✅ | `user sees the password change modal when their password has expired` |
+| Password expiry modal not blocked by login | ✅ | `the login modal does not block the password change modal when password has expired` |
+| Password expiry modal cancel | ✅ | `user can cancel the password change modal and return to the login form` |
+| Password change empty validation | ✅ | `password change form shows a validation error when submitted empty` |
+| Password change same-password rejection | ✅ | `password change form rejects a new password that is the same as the current one` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 | Account switching | ❌ | - |
 
-**Coverage: 🔶 4/7 features**
+**Coverage: 🔶 9/12 features**
 
 ---
 
