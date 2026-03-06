@@ -3,29 +3,35 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
-import { RolePermissionTabQuery } from '../__generated__/RolePermissionTabQuery.graphql';
+import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
+import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
+import { convertToOrderBy } from '../helper';
 import CreatePermissionModal from './CreatePermissionModal';
-import { App, Button, Table, Tag, Typography } from 'antd';
+import { App, Tag } from 'antd';
 import {
+  BAIButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
+  BAITable,
   BAITrashBinIcon,
+  type GraphQLFilter,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
 
 interface RolePermissionTabProps {
+  queryRef: RolePermissionTabFragment$key;
   roleId: string;
-  fetchKey: string;
   onPermissionChange?: () => void;
 }
 
 const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
+  queryRef,
   roleId,
-  fetchKey,
   onPermissionChange,
 }) => {
   'use memo';
@@ -33,11 +39,19 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [filter, setFilter] = useState<GraphQLFilter>();
+  const [order, setOrder] = useState<string | null>(null);
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const data = useLazyLoadQuery<RolePermissionTabQuery>(
+  const [data, refetch] = useRefetchableFragment(
     graphql`
-      query RolePermissionTabQuery($filter: PermissionFilter) {
-        adminPermissions(filter: $filter) {
+      fragment RolePermissionTabFragment on Query
+      @argumentDefinitions(
+        filter: { type: "PermissionFilter" }
+        orderBy: { type: "[PermissionOrderBy!]" }
+      )
+      @refetchable(queryName: "RolePermissionTabRefetchQuery") {
+        adminPermissions(filter: $filter, orderBy: $orderBy, limit: 100) {
           count
           edges {
             node {
@@ -51,8 +65,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
         }
       }
     `,
-    { filter: { roleId } },
-    { fetchPolicy: 'network-only', fetchKey },
+    queryRef,
   );
 
   const [commitDeletePermission] = useMutation<RolePermissionTabDeleteMutation>(
@@ -68,6 +81,37 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const permissions =
     data.adminPermissions?.edges?.map((edge) => edge?.node) ?? [];
 
+  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+    setFilter(newFilter);
+    startRefetchTransition(() => {
+      refetch(
+        {
+          filter: {
+            roleId,
+            ...newFilter,
+          },
+          orderBy: convertToOrderBy<PermissionOrderBy>(order),
+        },
+        { fetchPolicy: 'network-only' },
+      );
+    });
+  };
+
+  const handleRefresh = () => {
+    startRefetchTransition(() => {
+      refetch(
+        {
+          filter: {
+            roleId,
+            ...filter,
+          },
+          orderBy: convertToOrderBy<PermissionOrderBy>(order),
+        },
+        { fetchPolicy: 'network-only' },
+      );
+    });
+  };
+
   const handleDelete = (permissionId: string) => {
     modal.confirm({
       title: t('rbac.DeletePermission'),
@@ -77,7 +121,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       onOk: () =>
         new Promise<void>((resolve, reject) => {
           commitDeletePermission({
-            variables: { input: { id: toLocalId(permissionId) } },
+            variables: { input: { id: permissionId } },
             onCompleted: (_data, errors) => {
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);
@@ -86,6 +130,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                 return;
               }
               message.success(t('rbac.PermissionDeleted'));
+              handleRefresh();
               onPermissionChange?.();
               resolve();
             },
@@ -101,34 +146,88 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 
   return (
     <>
-      <BAIFlex justify="end" style={{ marginBottom: 12 }}>
-        <Button
+      <BAIFlex
+        justify="between"
+        align="start"
+        gap="sm"
+        wrap="wrap"
+        style={{ marginBottom: 12 }}
+      >
+        <BAIGraphQLPropertyFilter
+          filterProperties={[
+            {
+              key: 'scopeType',
+              propertyLabel: t('rbac.ScopeType'),
+              type: 'enum',
+              valueMode: 'scalar',
+              options: [
+                { label: 'DOMAIN', value: 'DOMAIN' },
+                { label: 'PROJECT', value: 'PROJECT' },
+                { label: 'USER', value: 'USER' },
+                { label: 'SESSION', value: 'SESSION' },
+                { label: 'VFOLDER', value: 'VFOLDER' },
+                { label: 'DEPLOYMENT', value: 'DEPLOYMENT' },
+                { label: 'RESOURCE_GROUP', value: 'RESOURCE_GROUP' },
+                { label: 'IMAGE', value: 'IMAGE' },
+              ],
+              strictSelection: true,
+            },
+            {
+              key: 'entityType',
+              propertyLabel: t('rbac.EntityType'),
+              type: 'enum',
+              valueMode: 'scalar',
+              options: [
+                { label: 'DOMAIN', value: 'DOMAIN' },
+                { label: 'PROJECT', value: 'PROJECT' },
+                { label: 'USER', value: 'USER' },
+                { label: 'SESSION', value: 'SESSION' },
+                { label: 'VFOLDER', value: 'VFOLDER' },
+                { label: 'DEPLOYMENT', value: 'DEPLOYMENT' },
+                { label: 'RESOURCE_GROUP', value: 'RESOURCE_GROUP' },
+                { label: 'IMAGE', value: 'IMAGE' },
+              ],
+              strictSelection: true,
+            },
+          ]}
+          value={filter}
+          onChange={handleFilterChange}
+        />
+        <BAIButton
           type="primary"
           icon={<PlusIcon />}
           onClick={() => setIsCreateModalOpen(true)}
         >
           {t('rbac.CreatePermission')}
-        </Button>
+        </BAIButton>
       </BAIFlex>
-      <Table
+      <BAITable
         rowKey="id"
         dataSource={permissions}
+        loading={isPendingRefetch}
         size="small"
         pagination={false}
-        locale={{
-          emptyText: (
-            <Typography.Text type="secondary">
-              {t('rbac.NoPermissionsToDisplay')}
-            </Typography.Text>
-          ),
+        order={order}
+        onChangeOrder={(newOrder) => {
+          setOrder(newOrder ?? null);
+          startRefetchTransition(() => {
+            refetch(
+              {
+                filter: {
+                  roleId,
+                  ...filter,
+                },
+                orderBy: convertToOrderBy<PermissionOrderBy>(newOrder ?? null),
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          });
         }}
         columns={[
           {
             key: 'scopeType',
             title: t('rbac.ScopeType'),
             dataIndex: 'scopeType',
-            sorter: (a, b) =>
-              (a?.scopeType || '').localeCompare(b?.scopeType || ''),
             render: (value: string) => <Tag>{value}</Tag>,
           },
           {
@@ -136,23 +235,18 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeId',
             ellipsis: true,
-            sorter: (a, b) =>
-              (a?.scopeId || '').localeCompare(b?.scopeId || ''),
           },
           {
             key: 'entityType',
-            title: t('rbac.EntityType'),
             dataIndex: 'entityType',
-            sorter: (a, b) =>
-              (a?.entityType || '').localeCompare(b?.entityType || ''),
+            title: t('rbac.EntityType'),
+            sorter: true,
             render: (value: string) => <Tag>{value}</Tag>,
           },
           {
             key: 'operation',
             title: t('rbac.Operation'),
             dataIndex: 'operation',
-            sorter: (a, b) =>
-              (a?.operation || '').localeCompare(b?.operation || ''),
             render: (value: string) => <Tag color="blue">{value}</Tag>,
           },
           {
@@ -160,13 +254,13 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             title: t('general.Control'),
             width: 60,
             render: (_, record) => (
-              <Button
+              <BAIButton
                 type="text"
                 danger
                 icon={<BAITrashBinIcon />}
                 size="small"
                 title={t('rbac.DeletePermission')}
-                onClick={() => handleDelete(record?.id)}
+                onClick={() => handleDelete(toLocalId(record?.id))}
               />
             ),
           },
@@ -178,6 +272,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);
           if (success) {
+            handleRefresh();
             onPermissionChange?.();
           }
         }}
