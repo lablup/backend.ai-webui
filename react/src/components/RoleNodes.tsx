@@ -6,7 +6,7 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
-import { Popconfirm, Tag, theme } from 'antd';
+import { Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
   BAIColumnType,
@@ -176,7 +176,13 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'description',
       title: t('rbac.RoleDescription'),
       dataIndex: 'description',
-      ellipsis: true,
+      render: (description: string) => (
+        <Tooltip title={description} placement="topLeft">
+          <Typography.Text ellipsis style={{ maxWidth: 200 }}>
+            {description ?? '-'}
+          </Typography.Text>
+        </Tooltip>
+      ),
     },
     {
       key: 'source',

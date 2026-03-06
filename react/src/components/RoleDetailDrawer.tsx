@@ -88,20 +88,38 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
         $id: UUID!
         $assignmentFilter: RoleAssignmentFilter
         $permissionFilter: PermissionFilter
+        $assignmentLimit: Int
+        $assignmentOffset: Int
+        $permissionLimit: Int
+        $permissionOffset: Int
       ) {
         adminRole(id: $id) {
           name
           source
           ...RoleDetailDrawerContentFragment
         }
-        ...RoleAssignmentTabFragment @arguments(filter: $assignmentFilter)
-        ...RolePermissionTabFragment @arguments(filter: $permissionFilter)
+        ...RoleAssignmentTabFragment
+          @arguments(
+            filter: $assignmentFilter
+            limit: $assignmentLimit
+            offset: $assignmentOffset
+          )
+        ...RolePermissionTabFragment
+          @arguments(
+            filter: $permissionFilter
+            limit: $permissionLimit
+            offset: $permissionOffset
+          )
       }
     `,
     {
       id: localRoleId,
       assignmentFilter: { roleId: localRoleId },
       permissionFilter: { roleId: localRoleId },
+      assignmentLimit: 10,
+      assignmentOffset: 0,
+      permissionLimit: 10,
+      permissionOffset: 0,
     },
     {
       fetchPolicy: 'network-only',
