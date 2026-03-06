@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RBACManagementPageDeleteRoleMutation } from '../__generated__/RBACManagementPageDeleteRoleMutation.graphql';
+import { RBACManagementPageActivateRoleMutation } from '../__generated__/RBACManagementPageActivateRoleMutation.graphql';
+import { RBACManagementPageDeactivateRoleMutation } from '../__generated__/RBACManagementPageDeactivateRoleMutation.graphql';
 import { RBACManagementPagePurgeRoleMutation } from '../__generated__/RBACManagementPagePurgeRoleMutation.graphql';
 import {
   RBACManagementPageQuery,
@@ -34,7 +35,7 @@ import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-const statusFilterValues = ['ACTIVE', 'INACTIVE', 'DELETED'] as const;
+const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
 const sourceFilterValues = ['all', 'SYSTEM', 'CUSTOM'] as const;
 
 const RBACManagementPage: React.FC = () => {
@@ -48,7 +49,7 @@ const RBACManagementPage: React.FC = () => {
     setTablePaginationOption,
   } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
-    pageSize: 20,
+    pageSize: 10,
   });
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -101,6 +102,7 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
+              ...RoleFormModalFragment
             }
           }
         }
@@ -119,15 +121,28 @@ const RBACManagementPage: React.FC = () => {
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
 
-  const [commitDeleteRole] = useMutation<RBACManagementPageDeleteRoleMutation>(
-    graphql`
-      mutation RBACManagementPageDeleteRoleMutation($input: DeleteRoleInput!) {
+  const [commitDeactivateRole] =
+    useMutation<RBACManagementPageDeactivateRoleMutation>(graphql`
+      mutation RBACManagementPageDeactivateRoleMutation(
+        $input: DeleteRoleInput!
+      ) {
         adminDeleteRole(input: $input) {
           id
         }
       }
-    `,
-  );
+    `);
+
+  const [commitActivateRole] =
+    useMutation<RBACManagementPageActivateRoleMutation>(graphql`
+      mutation RBACManagementPageActivateRoleMutation(
+        $input: UpdateRoleInput!
+      ) {
+        adminUpdateRole(input: $input) {
+          id
+          status
+        }
+      }
+    `);
 
   const [commitPurgeRole] = useMutation<RBACManagementPagePurgeRoleMutation>(
     graphql`
@@ -151,34 +166,43 @@ const RBACManagementPage: React.FC = () => {
   const [selectedRoleForEdit, setSelectedRoleForEdit] =
     useState<RoleNodeInList | null>(null);
 
-  const handleDeleteRole = (role: RoleNodeInList) => {
-    modal.confirm({
-      title: t('rbac.DeleteRole'),
-      content: t('rbac.ConfirmDelete', { name: role.name }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        new Promise<void>((resolve, reject) => {
-          commitDeleteRole({
-            variables: { input: { id: toLocalId(role.id) } },
-            onCompleted: (_data, errors) => {
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                message.error(errors[0]?.message || t('general.ErrorOccurred'));
-                reject();
-                return;
-              }
-              message.success(t('rbac.RoleDeleted'));
-              updateFetchKey();
-              resolve();
-            },
-            onError: (error) => {
-              logger.error(error);
-              message.error(error?.message || t('general.ErrorOccurred'));
-              reject();
-            },
-          });
-        }),
+  const handleDeactivateRole = (role: RoleNodeInList) => {
+    commitDeactivateRole({
+      variables: { input: { id: toLocalId(role.id) } },
+      onCompleted: (_data, errors) => {
+        if (errors && errors.length > 0) {
+          logger.error(errors[0]);
+          message.error(errors[0]?.message || t('general.ErrorOccurred'));
+          return;
+        }
+        message.success(t('rbac.RoleDeactivated'));
+        updateFetchKey();
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(error?.message || t('general.ErrorOccurred'));
+      },
+    });
+  };
+
+  const handleActivateRole = (role: RoleNodeInList) => {
+    commitActivateRole({
+      variables: {
+        input: { id: toLocalId(role.id), status: 'ACTIVE' },
+      },
+      onCompleted: (_data, errors) => {
+        if (errors && errors.length > 0) {
+          logger.error(errors[0]);
+          message.error(errors[0]?.message || t('general.ErrorOccurred'));
+          return;
+        }
+        message.success(t('rbac.RoleActivated'));
+        updateFetchKey();
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(error?.message || t('general.ErrorOccurred'));
+      },
     });
   };
 
@@ -186,7 +210,7 @@ const RBACManagementPage: React.FC = () => {
     modal.confirm({
       title: t('rbac.PurgeRole'),
       content: t('rbac.ConfirmPurge', { name: role.name }),
-      okText: t('rbac.PurgeRole'),
+      okText: t('button.Delete'),
       okButtonProps: { danger: true, type: 'primary' },
       onOk: () =>
         new Promise<void>((resolve, reject) => {
@@ -217,16 +241,13 @@ const RBACManagementPage: React.FC = () => {
 
   return (
     <BAICard
-      variant="borderless"
-      title={t('webui.menu.RBACManagement')}
-      styles={{
-        header: {
-          borderBottom: 'none',
+      activeTabKey="roles"
+      tabList={[
+        {
+          key: 'roles',
+          label: t('webui.menu.RBACManagement'),
         },
-        body: {
-          paddingTop: 0,
-        },
-      }}
+      ]}
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
@@ -245,8 +266,7 @@ const RBACManagementPage: React.FC = () => {
               }}
               options={[
                 { label: t('rbac.Active'), value: 'ACTIVE' },
-                { label: t('rbac.Inactive'), value: 'INACTIVE' },
-                { label: t('rbac.Deleted'), value: 'DELETED' },
+                { label: t('rbac.Inactive'), value: 'DELETED' },
               ]}
             />
             <BAIGraphQLPropertyFilter
@@ -297,7 +317,8 @@ const RBACManagementPage: React.FC = () => {
               setRoleDetailParam({ roleDetail: role.id })
             }
             onClickEdit={(role) => setSelectedRoleForEdit(role)}
-            onClickDelete={handleDeleteRole}
+            onClickDeactivate={handleDeactivateRole}
+            onClickActivate={handleActivateRole}
             onClickPurge={handlePurgeRole}
             pagination={{
               pageSize: tablePaginationOption.pageSize,
@@ -340,7 +361,6 @@ const RBACManagementPage: React.FC = () => {
                 | RoleNodeInList
                 | undefined) ?? null,
             );
-            setRoleDetailParam({ roleDetail: null });
           }
         }}
       />

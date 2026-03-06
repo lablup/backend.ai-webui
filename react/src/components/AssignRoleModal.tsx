@@ -4,7 +4,7 @@
  */
 import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { Select } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, toLocalId } from 'backend.ai-ui';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -79,7 +79,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           filterOption: false,
         }}
         options={users.map((user) => ({
-          value: user?.id,
+          value: user?.id ? toLocalId(user.id) : undefined,
           label: user?.basicInfo?.email || user?.id,
           description: user?.basicInfo?.fullName,
         }))}
