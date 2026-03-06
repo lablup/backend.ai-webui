@@ -4,14 +4,20 @@
 
 ### 1. Current Phase
 All 8 sub-tasks (ST-1 through ST-8) implemented and submitted as a Graphite PR stack.
+Backend integration branches (3 additional) created on top of the stack.
 
-### 2. Next Action
-- Review PRs and update descriptions with `Resolves #XXXX(FR-XXXX)` format
-- Run `/fw:i18n` to fill missing translations for other languages
+### 2. Backend Integration Branches
+
+| Branch | Feature | Backend Dependency | Status |
+|--------|---------|-------------------|--------|
+| `03-06-feat_migrate_rbac_tabs_to_role_sub_connections` | Role sub-connections (fragments) | `main` (PR #9518 merged) | Committed |
+| `03-06-feat_add_bulk_role_assignment_mutations` | Bulk assign/revoke | `feat/BA-4877-bulk-role-gql` | Committed |
+| `03-06-feat_add_permission_update_mutation` | Permission update + edit mode | `feat/BA-4876-permission-update-gql` | Committed |
+
+### 3. Next Action
+- Submit PRs for the 3 new backend integration branches
+- Run `/fw:i18n` to verify translations across all languages
 - Assign Jira issues and move to active sprint
-
-### 3. Current Goal
-Complete RBAC Management UI feature (FR-2207) with all sub-tasks implemented.
 
 ### 4. Lessons Learned
 - `gpt-tokenizer` has pre-existing TypeScript errors in node_modules — ignore these
@@ -20,6 +26,7 @@ Complete RBAC Management UI feature (FR-2207) with all sub-tasks implemented.
 - `UserV2` uses nested `basicInfo { email, fullName }` structure, not flat fields
 - `RoleAssignmentFilter` only supports `roleId` filter (no userId filter)
 - `PermissionFilter` supports `roleId`, `scopeType`, `entityType`
+- Features depending on different backend branches should be in separate frontend branches for testing ease
 
 ### 5. Completed Work
 | Issue | Title | PR | Status |
