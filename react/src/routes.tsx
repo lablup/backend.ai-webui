@@ -97,6 +97,9 @@ const ReservoirArtifactDetailPage = React.lazy(
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
+const RBACManagementPage = React.lazy(
+  () => import('./pages/RBACManagementPage'),
+);
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
@@ -454,6 +457,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/diagnostics',
     element: <DiagnosticsPage />,
     handle: { labelKey: 'webui.menu.Diagnostics' },
+  },
+  {
+    path: '/rbac',
+    handle: { labelKey: 'webui.menu.RBACManagement' },
+    Component: () => {
+      const baiClient = useSuspendedBackendaiClient();
+      return baiClient?.supports('rbac') ? (
+        <Suspense fallback={<Skeleton active />}>
+          <RBACManagementPage />
+        </Suspense>
+      ) : (
+        <WebUINavigate to={'/error'} replace />
+      );
+    },
   },
   {
     path: '/branding',
