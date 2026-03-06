@@ -10340,6 +10340,12 @@ type Role implements Node
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+
+  """Added in 26.3.0. Permissions associated with this role."""
+  permissions(filter: PermissionFilter = null, orderBy: [PermissionOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): PermissionConnection!
+
+  """Added in 26.3.0. Users assigned to this role."""
+  users(filter: RoleAssignmentFilter = null, orderBy: [RoleAssignmentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RoleAssignmentConnection!
 }
 
 """Added in 26.3.0. RBAC role assignment (user-role association)"""
@@ -10395,6 +10401,35 @@ input RoleAssignmentFilter
   @join__type(graph: STRAWBERRY)
 {
   roleId: UUID = null
+  role: RoleAssignmentRoleNestedFilter = null
+  username: StringFilter = null
+  email: StringFilter = null
+}
+
+"""Added in 26.3.0. Nested filter for roles within a role assignment."""
+input RoleAssignmentRoleNestedFilter
+  @join__type(graph: STRAWBERRY)
+{
+  name: StringFilter = null
+  source: [RoleSource!] = null
+  status: [RoleStatus!] = null
+}
+
+"""Added in 26.3.0. Order by specification for role assignments"""
+input RoleAssignmentOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: RoleAssignmentOrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""Added in 26.3.0. Role assignment ordering field"""
+enum RoleAssignmentOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  USERNAME @join__enumValue(graph: STRAWBERRY)
+  EMAIL @join__enumValue(graph: STRAWBERRY)
+  GRANTED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
 """Added in 26.3.0. Role connection"""

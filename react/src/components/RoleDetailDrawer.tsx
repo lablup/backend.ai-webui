@@ -52,6 +52,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
             roleId={roleId}
             fetchKey={fetchKey}
             onClickEdit={onClickEdit}
+            onDataChange={() => updateFetchKey()}
           />
         )}
       </Suspense>
@@ -63,12 +64,14 @@ interface RoleDetailDrawerInnerProps {
   roleId: string;
   fetchKey: string;
   onClickEdit?: () => void;
+  onDataChange?: () => void;
 }
 
 const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
   roleId,
   fetchKey,
   onClickEdit,
+  onDataChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -107,6 +110,7 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
       <RoleDetailDrawerContent
         roleDetailFrgmt={data.adminRole}
         fetchKey={fetchKey}
+        onDataChange={onDataChange}
       />
     </>
   );
