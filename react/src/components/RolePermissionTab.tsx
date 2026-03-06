@@ -18,10 +18,18 @@ import {
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
+import { EditIcon, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+
+interface EditingPermission {
+  id: string;
+  scopeType: string;
+  scopeId: string;
+  entityType: string;
+  operation: string;
+}
 
 interface RolePermissionTabProps {
   queryRef: RolePermissionTabFragment$key;
@@ -39,6 +47,8 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingPermission, setEditingPermission] =
+    useState<EditingPermission | null>(null);
   const [filter, setFilter] = useState<GraphQLFilter>();
   const [order, setOrder] = useState<string | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -109,6 +119,22 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
         },
         { fetchPolicy: 'network-only' },
       );
+    });
+  };
+
+  const handleEdit = (record: {
+    id: string;
+    scopeType: string;
+    scopeId: string;
+    entityType: string;
+    operation: string;
+  }) => {
+    setEditingPermission({
+      id: toLocalId(record.id),
+      scopeType: record.scopeType,
+      scopeId: record.scopeId,
+      entityType: record.entityType,
+      operation: record.operation,
     });
   };
 
@@ -252,25 +278,35 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
           {
             key: 'control',
             title: t('general.Control'),
-            width: 60,
+            width: 90,
             render: (_, record) => (
-              <BAIButton
-                type="text"
-                danger
-                icon={<BAITrashBinIcon />}
-                size="small"
-                title={t('rbac.DeletePermission')}
-                onClick={() => handleDelete(toLocalId(record?.id))}
-              />
+              <BAIFlex gap="xxs">
+                <BAIButton
+                  type="text"
+                  icon={<EditIcon />}
+                  size="small"
+                  onClick={() => handleEdit(record)}
+                />
+                <BAIButton
+                  type="text"
+                  danger
+                  icon={<BAITrashBinIcon />}
+                  size="small"
+                  title={t('rbac.DeletePermission')}
+                  onClick={() => handleDelete(toLocalId(record?.id))}
+                />
+              </BAIFlex>
             ),
           },
         ]}
       />
       <CreatePermissionModal
-        open={isCreateModalOpen}
+        open={isCreateModalOpen || !!editingPermission}
         roleId={roleId}
+        editingPermission={editingPermission}
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);
+          setEditingPermission(null);
           if (success) {
             handleRefresh();
             onPermissionChange?.();
