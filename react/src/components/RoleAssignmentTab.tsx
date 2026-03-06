@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabAssignMutation } from '../__generated__/RoleAssignmentTabAssignMutation.graphql';
+import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssignmentTabBulkAssignMutation.graphql';
+import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
-import { RoleAssignmentTabRevokeMutation } from '../__generated__/RoleAssignmentTabRevokeMutation.graphql';
 import { convertToOrderBy } from '../helper';
 import AssignRoleModal from './AssignRoleModal';
 import { App } from 'antd';
@@ -40,6 +40,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [filter, setFilter] = useState<GraphQLFilter>();
   const [order, setOrder] = useState<string | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -75,27 +76,42 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     queryRef,
   );
 
-  const [commitAssignRole, isInFlightAssign] =
-    useMutation<RoleAssignmentTabAssignMutation>(graphql`
-      mutation RoleAssignmentTabAssignMutation($input: AssignRoleInput!) {
-        adminAssignRole(input: $input) {
-          id
-          userId
-          grantedBy
-          grantedAt
+  const [commitBulkAssignRole, isInFlightBulkAssign] =
+    useMutation<RoleAssignmentTabBulkAssignMutation>(graphql`
+      mutation RoleAssignmentTabBulkAssignMutation(
+        $input: BulkAssignRoleInput!
+      ) {
+        adminBulkAssignRole(input: $input) {
+          assigned {
+            id
+            userId
+            grantedBy
+            grantedAt
+          }
+          failed {
+            userId
+            message
+          }
         }
       }
     `);
 
-  const [commitRevokeRole] = useMutation<RoleAssignmentTabRevokeMutation>(
-    graphql`
-      mutation RoleAssignmentTabRevokeMutation($input: RevokeRoleInput!) {
-        adminRevokeRole(input: $input) {
-          id
+  const [commitBulkRevokeRole, isInFlightBulkRevoke] =
+    useMutation<RoleAssignmentTabBulkRevokeMutation>(graphql`
+      mutation RoleAssignmentTabBulkRevokeMutation(
+        $input: BulkRevokeRoleInput!
+      ) {
+        adminBulkRevokeRole(input: $input) {
+          revoked {
+            id
+          }
+          failed {
+            userId
+            message
+          }
         }
       }
-    `,
-  );
+    `);
 
   const assignments =
     data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
@@ -131,16 +147,23 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     });
   };
 
-  const handleAssign = (userId: string) => {
-    commitAssignRole({
-      variables: { input: { userId, roleId } },
-      onCompleted: (_data, errors) => {
+  const handleBulkAssign = (userIds: string[]) => {
+    commitBulkAssignRole({
+      variables: { input: { userIds, roleId } },
+      onCompleted: (data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
           message.error(errors[0]?.message || t('general.ErrorOccurred'));
           return;
         }
-        message.success(t('rbac.UserAssigned'));
+        const failed = data.adminBulkAssignRole?.failed ?? [];
+        if (failed.length > 0) {
+          message.warning(
+            t('rbac.BulkAssignPartialFailure', { count: failed.length }),
+          );
+        } else {
+          message.success(t('rbac.UsersAssigned'));
+        }
         setIsAssignModalOpen(false);
         handleRefresh();
         onAssignmentChange?.();
@@ -152,24 +175,37 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     });
   };
 
-  const handleRevoke = (userId: string) => {
+  const handleBulkRevoke = (userIds: string[]) => {
     modal.confirm({
       title: t('rbac.RevokeUser'),
-      content: t('rbac.ConfirmRevoke'),
+      content:
+        userIds.length > 1
+          ? t('rbac.ConfirmBulkRevoke', { count: userIds.length })
+          : t('rbac.ConfirmRevoke'),
       okText: t('rbac.RevokeUser'),
       okButtonProps: { danger: true, type: 'primary' },
       onOk: () =>
         new Promise<void>((resolve, reject) => {
-          commitRevokeRole({
-            variables: { input: { userId, roleId } },
-            onCompleted: (_data, errors) => {
+          commitBulkRevokeRole({
+            variables: { input: { userIds, roleId } },
+            onCompleted: (data, errors) => {
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);
                 message.error(errors[0]?.message || t('general.ErrorOccurred'));
                 reject();
                 return;
               }
-              message.success(t('rbac.UserRevoked'));
+              const failed = data.adminBulkRevokeRole?.failed ?? [];
+              if (failed.length > 0) {
+                message.warning(
+                  t('rbac.BulkRevokePartialFailure', {
+                    count: failed.length,
+                  }),
+                );
+              } else {
+                message.success(t('rbac.UserRevoked'));
+              }
+              setSelectedRowKeys([]);
               handleRefresh();
               onAssignmentChange?.();
               resolve();
@@ -209,13 +245,31 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           value={filter}
           onChange={handleFilterChange}
         />
-        <BAIButton
-          type="primary"
-          icon={<PlusIcon />}
-          onClick={() => setIsAssignModalOpen(true)}
-        >
-          {t('rbac.AssignUser')}
-        </BAIButton>
+        <BAIFlex gap="xs">
+          {selectedRowKeys.length > 0 && (
+            <BAIButton
+              danger
+              icon={<BAITrashBinIcon />}
+              loading={isInFlightBulkRevoke}
+              onClick={() => {
+                const userIds = assignments
+                  .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
+                  .map((a) => a?.userId)
+                  .filter(Boolean) as string[];
+                handleBulkRevoke(userIds);
+              }}
+            >
+              {t('rbac.RevokeUser')} ({selectedRowKeys.length})
+            </BAIButton>
+          )}
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => setIsAssignModalOpen(true)}
+          >
+            {t('rbac.AssignUser')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
       <BAITable
         rowKey="id"
@@ -223,6 +277,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         loading={isPendingRefetch}
         size="small"
         pagination={false}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys,
+          onChange: (keys) => setSelectedRowKeys(keys),
+        }}
         order={order}
         onChangeOrder={(newOrder) => {
           setOrder(newOrder ?? null);
@@ -277,7 +336,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 icon={<BAITrashBinIcon />}
                 size="small"
                 title={t('rbac.RevokeUser')}
-                onClick={() => handleRevoke(record?.userId)}
+                onClick={() => handleBulkRevoke([record?.userId])}
               />
             ),
           },
@@ -285,9 +344,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       />
       <AssignRoleModal
         open={isAssignModalOpen}
-        confirmLoading={isInFlightAssign}
+        confirmLoading={isInFlightBulkAssign}
         onCancel={() => setIsAssignModalOpen(false)}
-        onAssign={handleAssign}
+        onAssign={handleBulkAssign}
       />
     </>
   );
