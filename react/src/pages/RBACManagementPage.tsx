@@ -6,6 +6,7 @@ import { RBACManagementPageQuery } from '../__generated__/RBACManagementPageQuer
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal from '../components/RoleFormModal';
+import type { EditingRole } from '../components/RoleFormModal';
 import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -105,8 +106,9 @@ const RBACManagementPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRoleForDetail, setSelectedRoleForDetail] =
     useState<RoleNodeInList | null>(null);
+  const [selectedRoleForEdit, setSelectedRoleForEdit] =
+    useState<EditingRole | null>(null);
   // State for modals (wired in later sub-tasks)
-  const [, setSelectedRoleForEdit] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForPurge] = useState<RoleNodeInList | null>(null);
 
@@ -182,7 +184,13 @@ const RBACManagementPage: React.FC = () => {
             statusFilter={queryParams.status}
             loading={deferredQueryVariables !== queryVariables}
             onClickRoleName={(role) => setSelectedRoleForDetail(role)}
-            onClickEdit={(role) => setSelectedRoleForEdit(role)}
+            onClickEdit={(role) =>
+              setSelectedRoleForEdit({
+                id: role.id,
+                name: role.name,
+                description: role.description,
+              })
+            }
             onClickDelete={(role) => setSelectedRoleForDelete(role)}
             onClickPurge={(role) => setSelectedRoleForPurge(role)}
             pagination={{
@@ -205,13 +213,28 @@ const RBACManagementPage: React.FC = () => {
           }
         }}
       />
+      <RoleFormModal
+        open={!!selectedRoleForEdit}
+        editingRole={selectedRoleForEdit}
+        onRequestClose={(success) => {
+          setSelectedRoleForEdit(null);
+          if (success) {
+            updateFetchKey();
+          }
+        }}
+      />
       <RoleDetailDrawer
         open={!!selectedRoleForDetail}
         roleId={selectedRoleForDetail?.id}
         onClose={() => setSelectedRoleForDetail(null)}
         onClickEdit={() => {
           if (selectedRoleForDetail) {
-            setSelectedRoleForEdit(selectedRoleForDetail);
+            setSelectedRoleForEdit({
+              id: selectedRoleForDetail.id,
+              name: selectedRoleForDetail.name,
+              description: selectedRoleForDetail.description,
+            });
+            setSelectedRoleForDetail(null);
           }
         }}
       />
