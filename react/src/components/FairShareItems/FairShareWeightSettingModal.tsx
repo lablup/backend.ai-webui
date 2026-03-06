@@ -142,7 +142,6 @@ const FairShareWeightSettingModal: React.FC<
         spec {
           weight
         }
-        ...UserResourceGroupAlertFragment
       }
     `,
     userFairShareFrgmt,
@@ -541,7 +540,6 @@ const FairShareWeightSettingModal: React.FC<
         )}
         {!isBulkEdit && userFairShares?.[0] && (
           <UserResourceGroupAlert
-            userFairShareFrgmt={userFairShares[0]}
             isModalOpen={modalProps?.open ?? false}
             style={{ marginBottom: token.marginMD }}
           />
