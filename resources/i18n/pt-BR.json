@@ -1335,6 +1335,7 @@
   },
   "registry": {
     "AddRegistry": "Adicionar registro",
+    "AllowedProjects": "Projetos Permitidos",
     "ConfirmNoUserName": "Utilizador e palavra-passe não especificados, pretende guardar?",
     "DescExtraJsonFormat": "Insira JSON formatado de forma válida",
     "DescHostnameIsEmpty": "O nome do host está vazio",
@@ -1346,6 +1347,8 @@
     "HarborProject": "Projeto Porto",
     "Hostname": "nome de anfitrião",
     "HostnameDoesNotMatch": "O nome do host não corresponde!",
+    "IsGlobal": "Definir como registro global",
+    "IsGlobalDescription": "Permitir acesso a todos os projetos",
     "ModifyRegistry": "Modificar o registo",
     "NoRegistryToDisplay": "Não há registos a apresentar",
     "Password": "Senha",
