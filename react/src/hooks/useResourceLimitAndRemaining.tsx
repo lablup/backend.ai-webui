@@ -329,10 +329,19 @@ export const useResourceLimitAndRemaining = ({
     accelerators: _.reduce(
       acceleratorSlots,
       (result, _value, key) => {
-        const perContainerLimit =
-          _.find(perContainerConfigs, (_configValue, configName) => {
+        const matchedPerContainerLimit = _.find(
+          perContainerConfigs,
+          (_configValue, configName) => {
             return isMatchingMaxPerContainer(configName, key);
-          }) ?? baiClient._config.maxCUDADevicesPerContainer; // NOTE: Fallback to maxCUDADevicesPerContainer if no specific config found
+          },
+        );
+        // Fallback to maxCUDADevicesPerContainer for device-type accelerators only.
+        // Memory-type accelerators (e.g., cuda.mem) should not use device count fallback.
+        const perContainerLimit =
+          matchedPerContainerLimit ??
+          (_.endsWith(key, '.mem')
+            ? undefined
+            : baiClient._config.maxCUDADevicesPerContainer);
 
         result[key] = {
           min: parseInt(
