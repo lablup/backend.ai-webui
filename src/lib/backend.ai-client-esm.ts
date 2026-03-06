@@ -888,6 +888,9 @@ class Client {
       this._features['fair-share-scheduling'] = true;
       this._features['session-scheduling-history'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.3.0')) {
+      this._features['rbac'] = true;
+    }
   }
 
   /**
