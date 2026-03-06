@@ -127,6 +127,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
     title: string;
     content: string;
   } | null>(null);
+  const [showChangePasswordEmail, setShowChangePasswordEmail] = useState(false);
 
   // Derive effective help panel visibility: hidden when modal is closed
   const effectiveHelpPanel = isOpen ? helpPanel : null;
@@ -409,12 +410,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   </Typography.Text>
                   <Typography.Link
                     style={{ fontSize: 'inherit' }}
-                    onClick={() =>
-                      setHelpPanel({
-                        title: t('login.SendChangePasswordEmail'),
-                        content: t('login.DescChangePasswordEmail'),
-                      })
-                    }
+                    onClick={() => setShowChangePasswordEmail(true)}
                   >
                     {t('login.ChangePassword')}
                   </Typography.Link>
@@ -488,6 +484,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           onSetNeedsOtpRegistration(false);
           onSetOtpRequired(true);
         }}
+      />
+
+      <SendChangePasswordEmailModal
+        open={showChangePasswordEmail}
+        apiEndpoint={apiEndpoint}
+        onCancel={() => setShowChangePasswordEmail(false)}
       />
 
       {/* Signup Modal */}
@@ -754,6 +756,96 @@ const TOTPActivateInline: React.FC<{
         />
       )}
     </BAIModal>
+  );
+};
+
+/**
+ * Modal for sending a password change email (anonymous / forgot-password flow).
+ */
+const SendChangePasswordEmailModal: React.FC<{
+  open: boolean;
+  apiEndpoint: string;
+  onCancel: () => void;
+}> = ({ open, apiEndpoint, onCancel }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const [form] = Form.useForm<{ email: string }>();
+  const anonymousBaiClient = useAnonymousBackendaiClient({
+    api_endpoint: apiEndpoint,
+  });
+
+  useEffect(() => {
+    if (open) {
+      form.resetFields();
+    }
+  }, [open, form]);
+
+  const mutation = useTanMutation({
+    mutationFn: (body: { email: string }) => {
+      return baiSignedRequestWithPromise({
+        method: 'POST',
+        url: '/cloud/send-password-change-email',
+        body,
+        client: anonymousBaiClient,
+      });
+    },
+  });
+
+  const onSubmit = () => {
+    form.validateFields().then((values) => {
+      mutation.mutate(
+        { email: values.email },
+        {
+          onSuccess() {
+            message.success(t('login.EmailSent'));
+            onCancel();
+          },
+        },
+      );
+    });
+  };
+
+  return (
+    <Modal
+      open={open}
+      centered
+      onCancel={onCancel}
+      footer={null}
+      width={450}
+      destroyOnHidden
+      zIndex={1002}
+      getContainer={false}
+    >
+      <BAIFlex
+        direction="column"
+        justify="start"
+        align="stretch"
+        gap="md"
+        style={{
+          paddingTop: token.paddingMD,
+          paddingBottom: token.paddingMD,
+        }}
+      >
+        <Typography.Title level={4} style={{ margin: 0 }}>
+          {t('login.SendChangePasswordEmail')}
+        </Typography.Title>
+        <Typography.Text>{t('login.DescChangePasswordEmail')}</Typography.Text>
+        <Form form={form} layout="vertical" disabled={mutation.isPending}>
+          <Form.Item name="email" rules={[{ required: true, type: 'email' }]}>
+            <Input
+              prefix={<MailOutlined />}
+              placeholder={t('login.E-mailOrUsername')}
+              onPressEnter={onSubmit}
+            />
+          </Form.Item>
+        </Form>
+        <Button type="primary" onClick={onSubmit} loading={mutation.isPending}>
+          {t('login.EmailSendButton')}
+        </Button>
+      </BAIFlex>
+    </Modal>
   );
 };
 
