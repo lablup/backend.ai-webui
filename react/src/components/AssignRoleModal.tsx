@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface AssignRoleModalProps extends BAIModalProps {
-  onAssign: (userId: string) => void;
+  onAssign: (userIds: string[]) => void;
 }
 
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
@@ -19,7 +19,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
 
@@ -55,23 +55,24 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       title={t('rbac.AssignUser')}
       okText={t('rbac.Assign')}
       onOk={() => {
-        if (selectedUserId) {
-          onAssign(selectedUserId);
+        if (selectedUserIds.length > 0) {
+          onAssign(selectedUserIds);
         }
       }}
-      okButtonProps={{ disabled: !selectedUserId }}
+      okButtonProps={{ disabled: selectedUserIds.length === 0 }}
       destroyOnClose
       afterClose={() => {
-        setSelectedUserId(null);
+        setSelectedUserIds([]);
         setSearch('');
       }}
       {...baiModalProps}
     >
       <Select
+        mode="multiple"
         style={{ width: '100%' }}
-        placeholder={t('rbac.SelectUser')}
-        value={selectedUserId}
-        onChange={(value) => setSelectedUserId(value)}
+        placeholder={t('rbac.SelectUsers')}
+        value={selectedUserIds}
+        onChange={(value) => setSelectedUserIds(value)}
         loading={deferredSearch !== search}
         showSearch={{
           searchValue: search,
