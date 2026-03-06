@@ -6,12 +6,14 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import StorageSelect from './StorageSelect';
 import {
   App,
+  Checkbox,
   Form,
   FormInstance,
   FormProps,
   Input,
   message,
   Radio,
+  Tooltip,
 } from 'antd';
 import {
   BAIButton,
@@ -36,6 +38,7 @@ interface ImportFromURLFormValues {
   storageHost: string;
   gitlabBranch?: string;
   vfolder_usage_mode?: VFolderUsageModeForImport;
+  launchInteractiveAfterImport?: boolean;
 }
 
 interface ImportFromURLFormProps extends FormProps {
@@ -262,6 +265,46 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
       if (results.fulfilled && results.fulfilled.length > 0) {
         // Handle successful result
         upsertSessionNotification(results.fulfilled);
+
+        // Launch interactive session with dependency if option is enabled
+        if (
+          values.launchInteractiveAfterImport &&
+          baiClient.supports('session-dependency')
+        ) {
+          const batchSessionId = results.fulfilled[0].value?.sessionId;
+          if (batchSessionId) {
+            const interactiveValue: StartSessionWithDefaultValue = {
+              sessionName: `interactive-${folderName}`,
+              environments: {
+                version: baiClient._config.default_import_environment,
+              },
+              sessionType: 'interactive',
+              mount_ids: [vfolderInfo.id],
+              dependencies: [batchSessionId],
+            };
+
+            const interactiveResults =
+              await startSessionWithDefault(interactiveValue);
+
+            if (
+              interactiveResults.fulfilled &&
+              interactiveResults.fulfilled.length > 0
+            ) {
+              upsertSessionNotification(interactiveResults.fulfilled);
+            }
+            if (
+              interactiveResults?.rejected &&
+              interactiveResults.rejected.length > 0
+            ) {
+              const error = interactiveResults.rejected[0].reason;
+              app.modal.error({
+                title: error?.title,
+                content: getErrorMessage(error),
+              });
+            }
+          }
+        }
+
         formRef.current?.resetFields();
       }
 
@@ -345,6 +388,13 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           </Radio>
         </Radio.Group>
       </Form.Item>
+      {baiClient.supports('session-dependency') && (
+        <Form.Item name="launchInteractiveAfterImport" valuePropName="checked">
+          <Tooltip title={t('import.LaunchInteractiveAfterImportDesc')}>
+            <Checkbox>{t('import.LaunchInteractiveAfterImport')}</Checkbox>
+          </Tooltip>
+        </Form.Item>
+      )}
       <Form.Item>
         <BAIButton
           icon={<FolderInput />}

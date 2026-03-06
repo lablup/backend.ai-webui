@@ -14,6 +14,7 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
+import SessionDependencySelect from '../components/SessionDependencySelect';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
@@ -84,6 +85,7 @@ import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import _ from 'lodash';
 import React, {
+  Suspense,
   useEffect,
   useEffectEvent,
   useLayoutEffect,
@@ -104,7 +106,7 @@ import {
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-  'autoMountedFolderNames' | 'mounts'
+  'autoMountedFolderNames' | 'mounts' | 'dependencies'
 >;
 
 export interface SessionResources {
@@ -120,6 +122,7 @@ export interface SessionResources {
   owner_access_key?: string;
   enqueueOnly?: boolean;
   reuseIfExists?: boolean;
+  dependencies?: string[];
   config?: {
     resources?: {
       cpu: number;
@@ -162,6 +165,7 @@ interface SessionLauncherValue {
   };
   bootstrap_script?: string;
   reuseIfExists?: boolean;
+  dependencies?: string[];
 }
 
 export type SessionLauncherFormValue = SessionLauncherValue &
@@ -862,6 +866,37 @@ const SessionLauncherPage = () => {
                         }}
                       </Form.Item>
                     ) : null}
+                  </Card>
+                )}
+
+                {baiClient.supports('session-dependency') && (
+                  <Card
+                    title={t('session.launcher.Dependencies')}
+                    style={{
+                      display:
+                        currentStepKey === 'sessionType' ? 'block' : 'none',
+                    }}
+                  >
+                    <Form.Item
+                      name="dependencies"
+                      label={t('session.launcher.DependOnOtherSessions')}
+                      tooltip={t('session.launcher.DependencyDesc')}
+                    >
+                      <Suspense
+                        fallback={
+                          <Select
+                            mode="multiple"
+                            loading
+                            disabled
+                            placeholder={t(
+                              'session.launcher.SelectDependencySessions',
+                            )}
+                          />
+                        }
+                      >
+                        <SessionDependencySelect />
+                      </Suspense>
+                    </Form.Item>
                   </Card>
                 )}
 
