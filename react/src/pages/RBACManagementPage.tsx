@@ -7,6 +7,7 @@ import {
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
+import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
@@ -112,8 +113,15 @@ const RBACManagementPage: React.FC = () => {
   );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  // State for drawer/modals (wired in later sub-tasks)
-  const [, setSelectedRoleForDetail] = useState<RoleNodeInList | null>(null);
+  const [{ roleDetail: selectedRoleId }, setRoleDetailParam] = useQueryStates(
+    {
+      roleDetail: parseAsString,
+    },
+    {
+      history: 'push',
+    },
+  );
+  // State for modals (wired in later sub-tasks)
   const [, setSelectedRoleForEdit] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForPurge] = useState<RoleNodeInList | null>(null);
@@ -198,7 +206,9 @@ const RBACManagementPage: React.FC = () => {
             onChangeOrder={(newOrder) =>
               setQueryParams({ order: newOrder })
             }
-            onClickRoleName={(role) => setSelectedRoleForDetail(role)}
+            onClickRoleName={(role) =>
+              setRoleDetailParam({ roleDetail: role.id })
+            }
             onClickEdit={(role) => setSelectedRoleForEdit(role)}
             onClickDelete={(role) => setSelectedRoleForDelete(role)}
             onClickPurge={(role) => setSelectedRoleForPurge(role)}
@@ -219,6 +229,21 @@ const RBACManagementPage: React.FC = () => {
           setIsCreateModalOpen(false);
           if (success) {
             updateFetchKey();
+          }
+        }}
+      />
+      <RoleDetailDrawer
+        open={!!selectedRoleId}
+        roleId={selectedRoleId || undefined}
+        onClose={() => setRoleDetailParam({ roleDetail: null })}
+        onClickEdit={() => {
+          if (selectedRoleId) {
+            setSelectedRoleForEdit(
+              (roleNodes.find((r) => r?.id === selectedRoleId) as
+                | RoleNodeInList
+                | undefined) ?? null,
+            );
+            setRoleDetailParam({ roleDetail: null });
           }
         }}
       />

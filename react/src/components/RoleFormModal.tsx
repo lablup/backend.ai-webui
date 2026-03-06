@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
+import type { RoleFormModalFragment$key as _RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { App, Form, Input } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React from 'react';
