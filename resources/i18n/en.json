@@ -1424,6 +1424,7 @@
   },
   "rbac": {
     "Active": "Active",
+    "Assign": "Assign",
     "AssignUser": "Add User",
     "Assignments": "Assignments",
     "ConfirmDelete": "Are you sure you want to delete role \"{{name}}\"? This will soft-delete the role.",
@@ -1440,6 +1441,7 @@
     "EditRole": "Edit Role",
     "EntityType": "Entity Type",
     "FKConstraintViolation": "Cannot purge this role. Please remove all assignments and permissions first.",
+    "GrantedAt": "Granted At",
     "Inactive": "Inactive",
     "NoPermissionsToDisplay": "No permissions to display",
     "NoRolesToDisplay": "No roles to display",
@@ -1461,6 +1463,7 @@
     "Roles": "Roles",
     "ScopeId": "Scope ID",
     "ScopeType": "Scope Type",
+    "SelectUser": "Search and select a user",
     "Source": "Source",
     "Status": "Status",
     "System": "System",
