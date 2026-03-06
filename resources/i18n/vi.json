@@ -2282,6 +2282,7 @@
     "ExperimentalFeatures": "Các tính năng thử nghiệm",
     "ExperimentalFeaturesDesc": "Truy cập sớm các tính năng thử nghiệm mới—những tính năng này có thể thay đổi hoặc bị xóa trong các bản cập nhật tương lai.",
     "FailedToLoadDefaultThemeConfig": "Không thể thực hiện thay đổi vì cấu hình chủ đề mặc định bị thiếu.",
+    "Font": "Phông chữ",
     "General": "Chung",
     "InvalidPortNumber": "Số cổng phải là số dương trong khoảng 1025 ~ 65534",
     "KeepLoginSessionInformation": "Giữ thông tin phiên đăng nhập trong khi đăng xuất",
@@ -2312,6 +2313,11 @@
     "UseCompactSidebar": "Đặt Thanh bên Gọn gàng làm Mặc định",
     "UseSystemSetting": "Sử dụng cài đặt hệ thống",
     "UserConfigScript": "Tập lệnh cấu hình người dùng",
+    "font": {
+      "FontCustomizationDesc": "Đặt phông chữ cho WebUI. Phông chữ phải được cài đặt trên hệ thống cục bộ của bạn để có thể hiển thị trong bản xem trước.",
+      "FontFamily": "Phông chữ",
+      "FontFamilyDesc": "Phông chữ được áp dụng cho WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Kích thước logo khi thanh bên thu gọn",
       "CollapsedLogoSizeDesc": "Kích thước ảnh logo cho khu vực trên cùng của thanh bên thu gọn có thể cấu hình. Kích thước tối đa được hỗ trợ là 74px (W) × 60px (H), kích thước khuyến nghị là 35px (W) × 35px (H).",

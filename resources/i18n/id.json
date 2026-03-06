@@ -2281,6 +2281,7 @@
     "ExperimentalFeatures": "Fitur eksperimental",
     "ExperimentalFeaturesDesc": "Akses fitur eksperimental baru lebih awal—ini dapat berubah atau dihapus dalam pembaruan mendatang.",
     "FailedToLoadDefaultThemeConfig": "Perubahan tidak tersedia karena konfigurasi tema default tidak ditemukan.",
+    "Font": "Jenis huruf",
     "General": "Umum",
     "InvalidPortNumber": "Nomor port harus berupa angka positif antara 1025~65534",
     "KeepLoginSessionInformation": "Simpan Informasi Login saat Keluar",
@@ -2311,6 +2312,11 @@
     "UseCompactSidebar": "Atur Sidebar Kompak sebagai Default",
     "UseSystemSetting": "Gunakan Pengaturan Sistem",
     "UserConfigScript": "Skrip konfigurasi pengguna",
+    "font": {
+      "FontCustomizationDesc": "Atur font yang akan digunakan di WebUI. Font harus terpasang di sistem lokal Anda agar dapat ditampilkan dalam pratinjau.",
+      "FontFamily": "Jenis huruf",
+      "FontFamilyDesc": "Font yang diterapkan pada WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Ukuran Logo Saat Sidebar Diperkecil",
       "CollapsedLogoSizeDesc": "Ukuran gambar logo untuk area atas sidebar kompak dapat dikonfigurasi. Ukuran maksimum yang didukung adalah 74px (W) × 60px (H), dan ukuran yang disarankan adalah 35px (W) × 35px (H).",

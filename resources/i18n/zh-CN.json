@@ -2282,6 +2282,7 @@
     "ExperimentalFeatures": "实验特点",
     "ExperimentalFeaturesDesc": "抢先体验新的实验性功能——这些功能可能在未来更新中发生变化或被移除。",
     "FailedToLoadDefaultThemeConfig": "更改不可用，因为缺少默认主题配置。",
+    "Font": "字体",
     "General": "一般的",
     "InvalidPortNumber": "端口号应为 1025~65534 之间的正数",
     "KeepLoginSessionInformation": "注销时保留登录会话信息",
@@ -2312,6 +2313,11 @@
     "UseCompactSidebar": "将紧凑侧边栏设为默认",
     "UseSystemSetting": "使用系统设置",
     "UserConfigScript": "用户配置脚本",
+    "font": {
+      "FontCustomizationDesc": "设置用于 WebUI 的字体。字体必须安装在本地系统上才能在预览中显示。",
+      "FontFamily": "字体系列",
+      "FontFamilyDesc": "应用于 WebUI 的字体。"
+    },
     "logo": {
       "CollapsedLogoSize": "收起侧边栏徽标大小",
       "CollapsedLogoSizeDesc": "紧凑侧边栏顶部区域的 Logo 图片大小可配置。最大支持尺寸为 74px（宽）× 60px（高），推荐尺寸为 35px（宽）× 35px（高）。",

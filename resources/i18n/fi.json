@@ -2279,6 +2279,7 @@
     "ExperimentalFeatures": "Kokeelliset ominaisuudet",
     "ExperimentalFeaturesDesc": "Käytä uusia kokeellisia ominaisuuksia aikaisin—nämä voivat muuttua tai poistua tulevissa päivityksissä.",
     "FailedToLoadDefaultThemeConfig": "Muutoksia ei voi tehdä, koska oletusteeman määritys puuttuu.",
+    "Font": "Fontti",
     "General": "Yleistä",
     "InvalidPortNumber": "Portin numeron on oltava positiivinen numero välillä 1025~65534.",
     "KeepLoginSessionInformation": "Pidä kirjautumisistunnon tiedot uloskirjautumisen aikana",
@@ -2309,6 +2310,11 @@
     "UseCompactSidebar": "Aseta Kompakti Sivupalkki Oletukseksi",
     "UseSystemSetting": "Käytä järjestelmäasetuksia",
     "UserConfigScript": "Käyttäjän määrityskomentosarja",
+    "font": {
+      "FontCustomizationDesc": "Aseta WebUI:ssä käytettävä fontti. Fontin on oltava asennettuna paikalliselle järjestelmällesi, jotta se näkyy esikatselussa.",
+      "FontFamily": "Kirjasinperhe",
+      "FontFamilyDesc": "WebUI:hin käytetty fontti."
+    },
     "logo": {
       "CollapsedLogoSize": "Kutistetun sivupalkin logon koko",
       "CollapsedLogoSizeDesc": "Kompaktin sivupalkin yläalueen logokuvan kokoa voidaan määrittää. Suurin tuettu koko on 74px (W) × 60px (H) ja suositeltu koko 35px (W) × 35px (H).",

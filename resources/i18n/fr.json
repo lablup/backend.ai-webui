@@ -2280,6 +2280,7 @@
     "ExperimentalFeatures": "Caractéristiques expérimentales",
     "ExperimentalFeaturesDesc": "Accédez tôt aux nouvelles fonctionnalités expérimentales—celles-ci peuvent changer ou être supprimées dans de futures mises à jour.",
     "FailedToLoadDefaultThemeConfig": "Impossible d'appliquer les modifications : la configuration du thème par défaut est manquante.",
+    "Font": "Police",
     "General": "Général",
     "InvalidPortNumber": "Le numéro de port doit être un nombre positif compris entre 1025 et 65534",
     "KeepLoginSessionInformation": "Conserver les informations de session de connexion pendant la déconnexion",
@@ -2310,6 +2311,11 @@
     "UseCompactSidebar": "Utiliser la barre latérale compacte",
     "UseSystemSetting": "Utiliser les paramètres du système",
     "UserConfigScript": "Script de configuration utilisateur",
+    "font": {
+      "FontCustomizationDesc": "Définissez la police à utiliser dans le WebUI. Les polices doivent être installées sur votre système local pour être affichées dans l'aperçu.",
+      "FontFamily": "Famille de polices",
+      "FontFamilyDesc": "La police appliquée à l'interface WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Taille du logo (barre latérale réduite)",
       "CollapsedLogoSizeDesc": "La taille de l'image du logo dans la partie supérieure de la barre latérale compacte est configurable. La taille maximale prise en charge est de 74px (L) × 60px (H), la taille recommandée est de 35px (L) × 35px (H).",

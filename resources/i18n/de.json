@@ -2280,6 +2280,7 @@
     "ExperimentalFeatures": "Experimentelle Merkmale",
     "ExperimentalFeaturesDesc": "Greifen Sie frühzeitig auf neue experimentelle Funktionen zu—diese können sich in zukünftigen Updates ändern oder entfernt werden.",
     "FailedToLoadDefaultThemeConfig": "Änderungen sind nicht verfügbar, da die Standard-Theme-Konfiguration fehlt.",
+    "Font": "Schriftart",
     "General": "Allgemeines",
     "InvalidPortNumber": "Die Portnummer sollte eine positive Zahl zwischen 1025 und 65534 sein",
     "KeepLoginSessionInformation": "Behalten Sie die Informationen zur Anmeldesitzung beim Abmelden bei",
@@ -2310,6 +2311,11 @@
     "UseCompactSidebar": "Kompakte Seitenleiste als Standard festlegen",
     "UseSystemSetting": "Verwenden Sie die Systemeinstellungen",
     "UserConfigScript": "Benutzerkonfigurationsskript",
+    "font": {
+      "FontCustomizationDesc": "Legen Sie die im WebUI zu verwendende Schriftart fest. Die Schriftarten müssen auf Ihrem lokalen System installiert sein, damit sie in der Vorschau angezeigt werden.",
+      "FontFamily": "Schriftfamilie",
+      "FontFamilyDesc": "Die für die WebUI verwendete Schriftart."
+    },
     "logo": {
       "CollapsedLogoSize": "Logo-Größe in der eingeklappten Seitenleiste",
       "CollapsedLogoSizeDesc": "Die Größe des Logo-Bildes für den oberen Bereich der kompakten Seitenleiste lässt sich konfigurieren. Die maximal unterstützte Größe beträgt 74px (B) × 60px (H), empfohlen sind 35px (B) × 35px (H).",

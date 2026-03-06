@@ -33,6 +33,7 @@ export type BrandingConfig = {
   brandName?: string;
 };
 export type CustomThemeConfig = {
+  fontFamily?: string;
   light: ThemeConfig;
   dark: ThemeConfig;
   logo: LogoConfig;
@@ -114,23 +115,24 @@ export const loadCustomThemeConfig = () => {
         );
       }
 
-      // Auto-load font CSS based on fontFamily in theme config
+      // Propagate top-level fontFamily into light/dark tokens so Ant Design receives it
       if (_customTheme) {
-        const fontFamilies: string[] = [];
-        const lightFontFamily = _.get(
-          _customTheme,
-          'light.token.fontFamily',
-        ) as string | undefined;
-        const darkFontFamily = _.get(_customTheme, 'dark.token.fontFamily') as
-          | string
-          | undefined;
-        if (lightFontFamily) {
-          fontFamilies.push(...parseFontFamilies(lightFontFamily));
+        const topLevelFont = _customTheme.fontFamily;
+        if (topLevelFont) {
+          _.set(_customTheme, 'light.token.fontFamily', topLevelFont);
+          _.set(_customTheme, 'dark.token.fontFamily', topLevelFont);
         }
-        if (darkFontFamily) {
-          fontFamilies.push(...parseFontFamilies(darkFontFamily));
+
+        // Auto-load font CSS based on fontFamily in theme config
+        const fontFamily =
+          topLevelFont ??
+          (_.get(_customTheme, 'light.token.fontFamily') as
+            | string
+            | undefined) ??
+          (_.get(_customTheme, 'dark.token.fontFamily') as string | undefined);
+        if (fontFamily) {
+          injectFontCSS(parseFontFamilies(fontFamily));
         }
-        injectFontCSS(fontFamilies);
       }
 
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));

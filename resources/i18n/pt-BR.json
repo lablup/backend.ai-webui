@@ -2280,6 +2280,7 @@
     "ExperimentalFeatures": "Caraterísticas experimentais",
     "ExperimentalFeaturesDesc": "Acesse recursos experimentais novos antecipadamente—estes podem mudar ou ser removidos em atualizações futuras.",
     "FailedToLoadDefaultThemeConfig": "As alterações não estão disponíveis porque a configuração do tema padrão está ausente.",
+    "Font": "Fonte",
     "General": "Em geral",
     "InvalidPortNumber": "O número da porta deve ser um número positivo entre 1025 ~ 65534",
     "KeepLoginSessionInformation": "Manter as informações da sessão de login durante o logout",
@@ -2310,6 +2311,11 @@
     "UseCompactSidebar": "Definir Barra Lateral Compacta como Padrão",
     "UseSystemSetting": "Usar configuração do sistema",
     "UserConfigScript": "Script de configuração do usuário",
+    "font": {
+      "FontCustomizationDesc": "Defina a fonte a ser usada na WebUI. As fontes devem estar instaladas no seu sistema local para serem exibidas na pré-visualização.",
+      "FontFamily": "Família de fontes",
+      "FontFamilyDesc": "A fonte aplicada à WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Tamanho do logo da barra lateral colapsada",
       "CollapsedLogoSizeDesc": "O tamanho da imagem do logotipo para a área superior da barra lateral compacta pode ser configurado. O tamanho máximo suportado é 74px (L) × 60px (A), e o recomendado é 35px (L) × 35px (A).",

@@ -2280,6 +2280,7 @@
     "ExperimentalFeatures": "実験的特徴",
     "ExperimentalFeaturesDesc": "新しい実験的機能に早期アクセス—これらは将来のアップデートで変更または削除される可能性があります。",
     "FailedToLoadDefaultThemeConfig": "デフォルトのテーマ設定が見つからないため、変更できません。",
+    "Font": "フォント",
     "General": "一般",
     "InvalidPortNumber": "ポート番号は1025〜65534の正の数である必要があります",
     "KeepLoginSessionInformation": "ログアウト中はログインセッション情報を保持する",
@@ -2310,6 +2311,11 @@
     "UseCompactSidebar": "コンパクトサイドバーをデフォルトに設定",
     "UseSystemSetting": "システム設定を使用する",
     "UserConfigScript": "ユーザー構成スクリプト",
+    "font": {
+      "FontCustomizationDesc": "WebUIで使用するフォントを設定します。プレビューに表示するには、フォントがローカルシステムにインストールされている必要があります。",
+      "FontFamily": "フォントファミリー",
+      "FontFamilyDesc": "WebUI に適用されるフォント。"
+    },
     "logo": {
       "CollapsedLogoSize": "サイドバー折りたたみ時のロゴサイズ",
       "CollapsedLogoSizeDesc": "コンパクトサイドバーの上部領域に表示するロゴ画像のサイズは設定できます。最大対応サイズは74px（W）×60px（H）、推奨サイズは35px（W）×35px（H）です。",

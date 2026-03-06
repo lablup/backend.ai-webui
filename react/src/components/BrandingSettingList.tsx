@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
 } from './BrandingSettingItems/LogoPreviewer';
@@ -65,6 +66,21 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         themeConfig?.logo,
         logoType === 'wide' ? 'size' : 'sizeCollapsed',
       ) ?? undefined,
+    );
+  };
+
+  const resetFontFamilyConfig = () => {
+    updateUserCustomThemeConfig(
+      'fontFamily',
+      themeConfig?.fontFamily ?? undefined,
+    );
+    updateUserCustomThemeConfig(
+      'light.token.fontFamily',
+      themeConfig?.fontFamily ?? undefined,
+    );
+    updateUserCustomThemeConfig(
+      'dark.token.fontFamily',
+      themeConfig?.fontFamily ?? undefined,
     );
   };
 
@@ -195,6 +211,22 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           children: <LogoPreviewer mode="darkCollapsed" />,
           onReset: () => {
             resetLogoThemeConfig('darkCollapsed');
+          },
+        },
+      ],
+    },
+    {
+      'data-testid': 'group-font-customization',
+      title: t('userSettings.Font'),
+      description: t('userSettings.font.FontCustomizationDesc'),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('userSettings.font.FontFamily'),
+          description: t('userSettings.font.FontFamilyDesc'),
+          children: <FontFamilySettingItem />,
+          onReset: () => {
+            resetFontFamilyConfig();
           },
         },
       ],

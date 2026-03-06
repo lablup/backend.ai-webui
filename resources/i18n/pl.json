@@ -2279,6 +2279,7 @@
     "ExperimentalFeatures": "Cechy eksperymentalne",
     "ExperimentalFeaturesDesc": "Uzyskaj wcześniejszy dostęp do nowych funkcji eksperymentalnych—mogą one zostać zmienione lub usunięte w przyszłych aktualizacjach.",
     "FailedToLoadDefaultThemeConfig": "Zmiany są niedostępne, ponieważ brakuje domyślnej konfiguracji motywu.",
+    "Font": "Czcionka",
     "General": "Generał",
     "InvalidPortNumber": "Numer portu powinien być liczbą dodatnią z zakresu 1025~65534",
     "KeepLoginSessionInformation": "Zachowaj informacje o sesji logowania podczas wylogowania",
@@ -2309,6 +2310,11 @@
     "UseCompactSidebar": "Ustaw Kompaktowy Pasek Boczny jako Domyślny",
     "UseSystemSetting": "Użyj ustawień systemowych",
     "UserConfigScript": "Skrypt konfiguracji użytkownika",
+    "font": {
+      "FontCustomizationDesc": "Ustaw czcionkę używaną w WebUI. Czcionki muszą być zainstalowane w systemie lokalnym, aby wyświetlały się w podglądzie.",
+      "FontFamily": "Rodzina czcionek",
+      "FontFamilyDesc": "Czcionka zastosowana w interfejsie WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Rozmiar logo w zwiniętym pasku bocznym",
       "CollapsedLogoSizeDesc": "Rozmiar obrazu logo w górnej części kompaktowego paska bocznego można skonfigurować. Maksymalny obsługiwany rozmiar to 74px (szer.) × 60px (wys.), a zalecany rozmiar to 35px (szer.) × 35px (wys.).",

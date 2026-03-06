@@ -2289,6 +2289,7 @@
     "ExperimentalFeatures": "Experimental features",
     "ExperimentalFeaturesDesc": "Access new experimental features early—these may change or be removed in future updates.",
     "FailedToLoadDefaultThemeConfig": "Changes are unavailable because the default theme configuration is missing.",
+    "Font": "Font",
     "General": "General",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
@@ -2319,6 +2320,11 @@
     "UseCompactSidebar": "Set Compact Sidebar as Default",
     "UseSystemSetting": "Use System Setting",
     "UserConfigScript": "User Config Script",
+    "font": {
+      "FontCustomizationDesc": "Set the font to be used in the WebUI. The fonts must be installed on your local system to be displayed in the preview.",
+      "FontFamily": "Font Family",
+      "FontFamilyDesc": "The font applied to the WebUI."
+    },
     "logo": {
       "CollapsedLogoSize": "Collapsed Sider Logo Size",
       "CollapsedLogoSizeDesc": "The logo image size for the top area of the compact sidebar can be configured. The maximum supported size is 74px (W) × 60px (H), and the recommended size is 35px (W) × 35px (H).",
