@@ -104,7 +104,10 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
           </Button>
         </BAIFlex>
       )}
-      <RoleDetailDrawerContent roleDetailFrgmt={data.adminRole} />
+      <RoleDetailDrawerContent
+        roleDetailFrgmt={data.adminRole}
+        fetchKey={fetchKey}
+      />
     </>
   );
 };

@@ -1,0 +1,201 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { RoleAssignmentTabAssignMutation } from '../__generated__/RoleAssignmentTabAssignMutation.graphql';
+import { RoleAssignmentTabQuery } from '../__generated__/RoleAssignmentTabQuery.graphql';
+import { RoleAssignmentTabRevokeMutation } from '../__generated__/RoleAssignmentTabRevokeMutation.graphql';
+import AssignRoleModal from './AssignRoleModal';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { App, Button, Table, Typography } from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+interface RoleAssignmentTabProps {
+  roleId: string;
+  fetchKey: string;
+  onAssignmentChange?: () => void;
+}
+
+const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
+  roleId,
+  fetchKey,
+  onAssignmentChange,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { modal, message } = App.useApp();
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+
+  const data = useLazyLoadQuery<RoleAssignmentTabQuery>(
+    graphql`
+      query RoleAssignmentTabQuery($filter: RoleAssignmentFilter) {
+        adminRoleAssignments(filter: $filter) {
+          count
+          edges {
+            node {
+              id
+              userId
+              grantedBy
+              grantedAt
+              user {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    { filter: { roleId } },
+    { fetchPolicy: 'network-only', fetchKey },
+  );
+
+  const [commitAssignRole, isInFlightAssign] =
+    useMutation<RoleAssignmentTabAssignMutation>(graphql`
+      mutation RoleAssignmentTabAssignMutation($input: AssignRoleInput!) {
+        adminAssignRole(input: $input) {
+          id
+          userId
+          grantedBy
+          grantedAt
+        }
+      }
+    `);
+
+  const [commitRevokeRole] = useMutation<RoleAssignmentTabRevokeMutation>(
+    graphql`
+      mutation RoleAssignmentTabRevokeMutation($input: RevokeRoleInput!) {
+        adminRevokeRole(input: $input) {
+          id
+        }
+      }
+    `,
+  );
+
+  const assignments =
+    data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
+
+  const handleAssign = (userId: string) => {
+    commitAssignRole({
+      variables: { input: { userId, roleId } },
+      onCompleted: (_data, errors) => {
+        if (errors && errors.length > 0) {
+          message.error(errors[0]?.message || t('general.ErrorOccurred'));
+          return;
+        }
+        message.success(t('rbac.UserAssigned'));
+        setIsAssignModalOpen(false);
+        onAssignmentChange?.();
+      },
+      onError: (error) => {
+        message.error(error?.message || t('general.ErrorOccurred'));
+      },
+    });
+  };
+
+  const handleRevoke = (userId: string) => {
+    modal.confirm({
+      title: t('rbac.RevokeUser'),
+      content: t('rbac.ConfirmRevoke'),
+      okText: t('rbac.RevokeUser'),
+      okButtonProps: { danger: true, type: 'primary' },
+      onOk: () =>
+        new Promise<void>((resolve, reject) => {
+          commitRevokeRole({
+            variables: { input: { userId, roleId } },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
+                reject();
+                return;
+              }
+              message.success(t('rbac.UserRevoked'));
+              onAssignmentChange?.();
+              resolve();
+            },
+            onError: (error) => {
+              message.error(error?.message || t('general.ErrorOccurred'));
+              reject();
+            },
+          });
+        }),
+    });
+  };
+
+  return (
+    <>
+      <BAIFlex justify="end" style={{ marginBottom: 12 }}>
+        <Button
+          type="primary"
+          size="small"
+          icon={<PlusOutlined />}
+          onClick={() => setIsAssignModalOpen(true)}
+        >
+          {t('rbac.AssignUser')}
+        </Button>
+      </BAIFlex>
+      <Table
+        rowKey="id"
+        dataSource={assignments}
+        size="small"
+        pagination={false}
+        locale={{
+          emptyText: (
+            <Typography.Text type="secondary">
+              {t('rbac.NoUsersAssigned')}
+            </Typography.Text>
+          ),
+        }}
+        columns={[
+          {
+            key: 'email',
+            title: t('credential.UserID'),
+            render: (_, record) => record?.user?.basicInfo?.email || '-',
+          },
+          {
+            key: 'fullName',
+            title: t('credential.FullName'),
+            render: (_, record) => record?.user?.basicInfo?.fullName || '-',
+          },
+          {
+            key: 'grantedAt',
+            title: t('rbac.GrantedAt'),
+            render: (_, record) =>
+              record?.grantedAt
+                ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
+                : '-',
+          },
+          {
+            key: 'actions',
+            title: '',
+            width: 60,
+            render: (_, record) => (
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                size="small"
+                onClick={() => handleRevoke(record?.userId)}
+              />
+            ),
+          },
+        ]}
+      />
+      <AssignRoleModal
+        open={isAssignModalOpen}
+        confirmLoading={isInFlightAssign}
+        onCancel={() => setIsAssignModalOpen(false)}
+        onAssign={handleAssign}
+      />
+    </>
+  );
+};
+
+export default RoleAssignmentTab;
