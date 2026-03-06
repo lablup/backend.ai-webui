@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { RBACManagementPageDeleteRoleMutation } from '../__generated__/RBACManagementPageDeleteRoleMutation.graphql';
+import { RBACManagementPagePurgeRoleMutation } from '../__generated__/RBACManagementPagePurgeRoleMutation.graphql';
 import { RBACManagementPageQuery } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
@@ -11,7 +13,7 @@ import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Skeleton } from 'antd';
+import { App, Button, Skeleton } from 'antd';
 import {
   BAICard,
   BAIFetchKeyButton,
@@ -23,7 +25,7 @@ import {
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'INACTIVE', 'DELETED'] as const;
 const sourceFilterValues = ['all', 'SYSTEM', 'CUSTOM'] as const;
@@ -103,14 +105,91 @@ const RBACManagementPage: React.FC = () => {
     },
   );
 
+  const { modal, message } = App.useApp();
+
+  const [commitDeleteRole] = useMutation<RBACManagementPageDeleteRoleMutation>(
+    graphql`
+      mutation RBACManagementPageDeleteRoleMutation($input: DeleteRoleInput!) {
+        adminDeleteRole(input: $input) {
+          id
+        }
+      }
+    `,
+  );
+
+  const [commitPurgeRole] = useMutation<RBACManagementPagePurgeRoleMutation>(
+    graphql`
+      mutation RBACManagementPagePurgeRoleMutation($input: PurgeRoleInput!) {
+        adminPurgeRole(input: $input) {
+          id
+        }
+      }
+    `,
+  );
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRoleForDetail, setSelectedRoleForDetail] =
     useState<RoleNodeInList | null>(null);
   const [selectedRoleForEdit, setSelectedRoleForEdit] =
     useState<EditingRole | null>(null);
-  // State for modals (wired in later sub-tasks)
-  const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
-  const [, setSelectedRoleForPurge] = useState<RoleNodeInList | null>(null);
+
+  const handleDeleteRole = (role: RoleNodeInList) => {
+    modal.confirm({
+      title: t('rbac.DeleteRole'),
+      content: t('rbac.ConfirmDelete', { name: role.name }),
+      okText: t('button.Delete'),
+      okButtonProps: { danger: true, type: 'primary' },
+      onOk: () =>
+        new Promise<void>((resolve, reject) => {
+          commitDeleteRole({
+            variables: { input: { id: role.id } },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
+                reject();
+                return;
+              }
+              message.success(t('rbac.RoleDeleted'));
+              updateFetchKey();
+              resolve();
+            },
+            onError: (error) => {
+              message.error(error?.message || t('general.ErrorOccurred'));
+              reject();
+            },
+          });
+        }),
+    });
+  };
+
+  const handlePurgeRole = (role: RoleNodeInList) => {
+    modal.confirm({
+      title: t('rbac.PurgeRole'),
+      content: t('rbac.ConfirmPurge', { name: role.name }),
+      okText: t('rbac.PurgeRole'),
+      okButtonProps: { danger: true, type: 'primary' },
+      onOk: () =>
+        new Promise<void>((resolve, reject) => {
+          commitPurgeRole({
+            variables: { input: { id: role.id } },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
+                reject();
+                return;
+              }
+              message.success(t('rbac.RolePurged'));
+              updateFetchKey();
+              resolve();
+            },
+            onError: (error) => {
+              message.error(error?.message || t('general.ErrorOccurred'));
+              reject();
+            },
+          });
+        }),
+    });
+  };
 
   const roleNodes = queryRef.adminRoles?.edges?.map((edge) => edge?.node) ?? [];
 
@@ -191,8 +270,8 @@ const RBACManagementPage: React.FC = () => {
                 description: role.description,
               })
             }
-            onClickDelete={(role) => setSelectedRoleForDelete(role)}
-            onClickPurge={(role) => setSelectedRoleForPurge(role)}
+            onClickDelete={handleDeleteRole}
+            onClickPurge={handlePurgeRole}
             pagination={{
               pageSize: tablePaginationOption.pageSize,
               current: tablePaginationOption.current,
