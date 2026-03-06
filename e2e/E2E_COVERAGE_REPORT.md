@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-04
+> **Last Updated:** 2026-03-06
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 71 / 273 features covered (26%)**
+**Overall (in-scope routes): 82 / 284 features covered (29%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -42,7 +42,8 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **71** | **26%** |
+| Plugin System | (config-based) | 11 | 11 | ✅ 100% |
+| **Total** | | **284** | **82** | **29%** |
 
 ---
 
@@ -793,6 +794,30 @@
 
 ---
 
+### 27. Plugin System (config-based)
+
+**Test files:** [`e2e/plugin/plugin-system.spec.ts`](plugin/plugin-system.spec.ts)
+
+**Plugin fixtures:** `test-plugin.js`, `admin-test-plugin.js`, `plugin-a.js`, `plugin-b.js`
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Admin sees user-permission plugin in sidebar | ✅ | `Admin can see user-permission plugin menu item in sidebar` |
+| User sees user-permission plugin in sidebar | ✅ | `User can see user-permission plugin menu item in sidebar` |
+| Admin sees admin-permission plugin in Admin Settings | ✅ | `Admin can see admin-permission plugin in Admin Settings panel` |
+| No plugin menu without config | ✅ | `Admin cannot see extra plugin menu when plugin.page is not set` |
+| No plugin menu when JS returns 404 | ✅ | `Admin cannot see plugin menu when plugin JS file returns 404` |
+| Plugin menu click opens new tab | ✅ | `Admin can open external link plugin in new tab` |
+| User cannot see admin-permission plugin | ✅ | `User cannot see admin-permission plugin menu item` |
+| Blocklisted plugin is hidden | ✅ | `Admin cannot see plugin that is in the blocklist` |
+| Non-blocklisted plugin visible alongside blocklist | ✅ | `Admin can see plugin that is not in the blocklist while blocked item is hidden` |
+| Multiple plugins visible simultaneously | ✅ | `Admin can see multiple plugin menu items when multiple plugins are configured` |
+| Valid plugin visible when sibling fails to load | ✅ | `Admin can see valid plugin when one of multiple plugins fails to load` |
+
+**Coverage: ✅ 11/11 features**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -934,6 +959,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/chat/:id?` | ❌ | ❌ | P3 |
 | `/information` | ❌ | ✅ | P3 |
 | App Launcher (modal) | 🔶 | ❌ | - |
+| Plugin System (config-based) | ✅ | ❌ | - |
 
 ---
 
