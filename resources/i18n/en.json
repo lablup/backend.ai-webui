@@ -1429,6 +1429,9 @@
     "Assign": "Assign",
     "AssignUser": "Add User",
     "Assignments": "Assignments",
+    "BulkAssignPartialFailure": "{{count}} user(s) failed to be assigned.",
+    "BulkRevokePartialFailure": "{{count}} user(s) failed to be revoked.",
+    "ConfirmBulkRevoke": "Are you sure you want to remove {{count}} user(s) from the role?",
     "ConfirmDelete": "Are you sure you want to delete role \"{{name}}\"? This will soft-delete the role.",
     "ConfirmDeletePermission": "Are you sure you want to delete this permission?",
     "ConfirmPurge": "Are you sure you want to permanently remove role \"{{name}}\"? This action cannot be undone.",
@@ -1473,13 +1476,15 @@
     "ScopeId": "Scope ID",
     "ScopeType": "Scope Type",
     "SelectUser": "Search and select a user",
+    "SelectUsers": "Search and select users",
     "Source": "Source",
     "Status": "Status",
     "System": "System",
     "UserAlreadyAssigned": "User is already assigned to this role.",
     "UserAssigned": "User assigned to role successfully.",
     "UserNotAssigned": "User is not assigned to this role.",
-    "UserRevoked": "User removed from role successfully."
+    "UserRevoked": "User removed from role successfully.",
+    "UsersAssigned": "Users assigned to role successfully."
   },
   "registry": {
     "AddRegistry": "Add Registry",
