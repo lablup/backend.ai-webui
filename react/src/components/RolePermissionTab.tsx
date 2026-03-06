@@ -5,12 +5,20 @@
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import CreatePermissionModal from './CreatePermissionModal';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { App, Button, Table, Tag, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+
+interface EditingPermission {
+  id: string;
+  scopeType: string;
+  scopeId: string;
+  entityType: string;
+  operation: string;
+}
 
 interface RolePermissionTabProps {
   roleFrgmt: RolePermissionTabFragment$key;
@@ -27,6 +35,8 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const { t } = useTranslation();
   const { modal, message } = App.useApp();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingPermission, setEditingPermission] =
+    useState<EditingPermission | null>(null);
 
   const role = useFragment(
     graphql`
@@ -62,6 +72,22 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   );
 
   const permissions = role.permissions?.edges?.map((edge) => edge?.node) ?? [];
+
+  const handleEdit = (record: {
+    id: string;
+    scopeType: string;
+    scopeId: string;
+    entityType: string;
+    operation: string;
+  }) => {
+    setEditingPermission({
+      id: record.id,
+      scopeType: record.scopeType,
+      scopeId: record.scopeId,
+      entityType: record.entityType,
+      operation: record.operation,
+    });
+  };
 
   const handleDelete = (permissionId: string) => {
     modal.confirm({
@@ -144,24 +170,34 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
           {
             key: 'actions',
             title: '',
-            width: 60,
+            width: 90,
             render: (_, record) => (
-              <Button
-                type="text"
-                danger
-                icon={<DeleteOutlined />}
-                size="small"
-                onClick={() => handleDelete(record?.id)}
-              />
+              <BAIFlex gap="xxs">
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  size="small"
+                  onClick={() => handleEdit(record)}
+                />
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  onClick={() => handleDelete(record?.id)}
+                />
+              </BAIFlex>
             ),
           },
         ]}
       />
       <CreatePermissionModal
-        open={isCreateModalOpen}
+        open={isCreateModalOpen || !!editingPermission}
         roleId={roleId}
+        editingPermission={editingPermission}
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);
+          setEditingPermission(null);
           if (success) {
             onPermissionChange?.();
           }
