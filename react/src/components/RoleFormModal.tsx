@@ -3,25 +3,28 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import type { RoleFormModalFragment$key as _RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
+import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
+import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App, Form, Input } from 'antd';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, toLocalId, useBAILogger } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface RoleFormModalProps extends BAIModalProps {
+  editingRoleFrgmt?: RoleFormModalFragment$key | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const RoleFormModal: React.FC<RoleFormModalProps> = ({
+  editingRoleFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { logger: _logger } = useBAILogger();
+  const { logger } = useBAILogger();
   const [form] = Form.useForm();
 
   const editingRole = useFragment(
@@ -34,6 +37,8 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
     `,
     editingRoleFrgmt ?? null,
   );
+
+  const isEditMode = !!editingRole;
 
   const [commitCreateRole, isInFlightCreateRole] =
     useMutation<RoleFormModalCreateMutation>(graphql`
@@ -50,87 +55,137 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       }
     `);
 
-  useEffect(() => {
-    if (baiModalProps.open) {
-      // Auto-focus name field after modal animation completes
-      setTimeout(() => {
-        if (editingRole) {
-          formRef.current?.setFieldsValue({
-            name: editingRole.name,
-            description: editingRole.description || '',
-          });
+  const [commitUpdateRole, isInFlightUpdateRole] =
+    useMutation<RoleFormModalUpdateMutation>(graphql`
+      mutation RoleFormModalUpdateMutation($input: UpdateRoleInput!) {
+        adminUpdateRole(input: $input) {
+          id
+          name
+          description
+          updatedAt
         }
-        formRef.current?.getFieldInstance('name')?.focus();
-      }, 100);
-    } else {
-      formRef.current?.resetFields();
-    }
-  }, [baiModalProps.open, editingRole]);
+      }
+    `);
+
+  const isDuplicateError = (errorMessage: string) => {
+    return (
+      errorMessage.includes('409') ||
+      errorMessage.toLowerCase().includes('duplicate') ||
+      errorMessage.toLowerCase().includes('already exists')
+    );
+  };
 
   const handleOk = () => {
     return form.validateFields().then((values) => {
       return new Promise<void>((resolve, reject) => {
-        commitCreateRole({
-          variables: {
-            input: {
-              name: values.name,
-              description: values.description || null,
+        if (isEditMode && editingRole) {
+          const changedFields: { name?: string; description?: string | null } =
+            {};
+          if (values.name !== editingRole.name) {
+            changedFields.name = values.name;
+          }
+          if (
+            (values.description || null) !== (editingRole.description || null)
+          ) {
+            changedFields.description = values.description || null;
+          }
+
+          if (Object.keys(changedFields).length === 0) {
+            onRequestClose(false);
+            resolve();
+            return;
+          }
+
+          commitUpdateRole({
+            variables: {
+              input: {
+                id: toLocalId(editingRole.id),
+                ...changedFields,
+              },
             },
-          },
-          onCompleted: (_data, errors) => {
-            if (errors && errors.length > 0) {
-              const errorMessage = errors[0]?.message || '';
-              if (
-                errorMessage.includes('409') ||
-                errorMessage.toLowerCase().includes('duplicate') ||
-                errorMessage.toLowerCase().includes('already exists')
-              ) {
-                form.setFields([
-                  {
-                    name: 'name',
-                    errors: [t('rbac.DuplicateRoleName')],
-                  },
-                ]);
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMessage = errors[0]?.message || '';
+                if (isDuplicateError(errorMessage)) {
+                  form.setFields([
+                    { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                  ]);
+                  reject();
+                  return;
+                }
+                logger.error(errors[0]);
+                message.error(errorMessage || t('general.ErrorOccurred'));
                 reject();
                 return;
               }
-              message.error(errorMessage);
+              message.success(t('rbac.RoleUpdated'));
+              onRequestClose(true);
+              resolve();
+            },
+            onError: (error) => {
+              const errorMessage = error?.message || '';
+              if (isDuplicateError(errorMessage)) {
+                form.setFields([
+                  { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                ]);
+              } else {
+                logger.error(error);
+                message.error(errorMessage || t('general.ErrorOccurred'));
+              }
               reject();
-              return;
-            }
-            message.success(t('rbac.RoleCreated'));
-            onRequestClose(true);
-            resolve();
-          },
-          onError: (error) => {
-            const errorMessage = error?.message || '';
-            if (
-              errorMessage.includes('409') ||
-              errorMessage.toLowerCase().includes('duplicate') ||
-              errorMessage.toLowerCase().includes('already exists')
-            ) {
-              formRef.current?.setFields([
-                {
-                  name: 'name',
-                  errors: [t('rbac.DuplicateRoleName')],
-                },
-              ]);
-            } else {
-              message.error(errorMessage || t('general.ErrorOccurred'));
-            }
-            reject();
-          },
-        });
+            },
+          });
+        } else {
+          commitCreateRole({
+            variables: {
+              input: {
+                name: values.name,
+                description: values.description || null,
+              },
+            },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMessage = errors[0]?.message || '';
+                if (isDuplicateError(errorMessage)) {
+                  form.setFields([
+                    { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                  ]);
+                  reject();
+                  return;
+                }
+                logger.error(errors[0]);
+                message.error(errorMessage || t('general.ErrorOccurred'));
+                reject();
+                return;
+              }
+              message.success(t('rbac.RoleCreated'));
+              onRequestClose(true);
+              resolve();
+            },
+            onError: (error) => {
+              const errorMessage = error?.message || '';
+              if (isDuplicateError(errorMessage)) {
+                form.setFields([
+                  { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                ]);
+              } else {
+                logger.error(error);
+                message.error(errorMessage || t('general.ErrorOccurred'));
+              }
+              reject();
+            },
+          });
+        }
       });
     });
   };
 
   return (
     <BAIModal
-      title={t('rbac.CreateRole')}
+      title={isEditMode ? t('rbac.EditRole') : t('rbac.CreateRole')}
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
-      confirmLoading={isInFlightCreateRole}
+      confirmLoading={isInFlightCreateRole || isInFlightUpdateRole}
       destroyOnClose
       {...baiModalProps}
     >
