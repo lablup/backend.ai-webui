@@ -30,8 +30,10 @@ import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
   loginPluginState,
+  loginConfigState,
 } from '../hooks/useWebUIConfig';
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
+import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 import { Button, Form, type MenuProps } from 'antd';
 import { BAIModal, BAIFlex } from 'backend.ai-ui';
@@ -278,7 +280,11 @@ const LoginView: React.FC = () => {
 
   const doGQLConnect = useCallback(
     async (client: ReturnType<typeof createBackendAIClient>['client']) => {
-      const cfg = configRef.current;
+      // Read directly from Jotai store to get the latest config synchronously,
+      // including any merged webserver config from loadConfigFromWebServer().
+      // Using configRef.current here would return stale config because React
+      // hasn't re-rendered yet after the Jotai atom update.
+      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
       const currentTime = Math.floor(Date.now() / 1000);
 
       (globalThis as any).backendaioptions.set(
@@ -297,8 +303,15 @@ const LoginView: React.FC = () => {
       document.dispatchEvent(event);
       close();
       clearSavedLoginInfo();
-      localStorage.setItem('backendaiwebui.api_endpoint', apiEndpoint);
-      setPluginApiEndpoint(apiEndpoint);
+      // Read the endpoint from the connected client to avoid stale closure
+      // values. When handleLogin calls setApiEndpoint(ep) then immediately
+      // invokes connectUsingSession, the doGQLConnect closure still captures
+      // the OLD apiEndpoint (often "" on first launch). The client object
+      // always has the correct endpoint that was used for the connection.
+      const connectedEndpoint =
+        (globalThis as any).backendaiclient?._config?.endpoint || apiEndpoint;
+      localStorage.setItem('backendaiwebui.api_endpoint', connectedEndpoint);
+      setPluginApiEndpoint(connectedEndpoint);
     },
     [endpoints, close, clearSavedLoginInfo, apiEndpoint, setPluginApiEndpoint],
   );
@@ -562,6 +575,10 @@ const LoginView: React.FC = () => {
 
     setIsLoading(true);
 
+    if ((globalThis as Record<string, unknown>).isElectron) {
+      await loadConfigFromWebServer(ep);
+    }
+
     if (connectionMode === 'SESSION') {
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
@@ -622,10 +639,10 @@ const LoginView: React.FC = () => {
   const login = useCallback(
     async (showError = true) => {
       const ep = resolveEndpoint();
+      if ((globalThis as Record<string, unknown>).isElectron) {
+        await loadConfigFromWebServer(ep);
+      }
       if (connectionMode === 'SESSION') {
-        if ((globalThis as Record<string, unknown>).isElectron) {
-          await loadConfigFromWebServer(ep);
-        }
         await connectUsingSession(showError, ep);
       } else if (connectionMode === 'API') {
         await connectUsingAPI(showError, ep);
@@ -646,10 +663,10 @@ const LoginView: React.FC = () => {
   // Used by the orchestration hook as `onCheckLogin`.
   const checkLogin = useCallback(async (): Promise<boolean> => {
     const ep = resolveEndpoint();
+    if ((globalThis as Record<string, unknown>).isElectron) {
+      await loadConfigFromWebServer(ep);
+    }
     if (connectionMode === 'SESSION') {
-      if ((globalThis as Record<string, unknown>).isElectron) {
-        await loadConfigFromWebServer(ep);
-      }
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
