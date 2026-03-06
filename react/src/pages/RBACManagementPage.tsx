@@ -4,6 +4,7 @@
  */
 import { RBACManagementPageQuery } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
+import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
@@ -102,8 +103,9 @@ const RBACManagementPage: React.FC = () => {
   );
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  // State for drawer/modals (wired in later sub-tasks)
-  const [, setSelectedRoleForDetail] = useState<RoleNodeInList | null>(null);
+  const [selectedRoleForDetail, setSelectedRoleForDetail] =
+    useState<RoleNodeInList | null>(null);
+  // State for modals (wired in later sub-tasks)
   const [, setSelectedRoleForEdit] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForPurge] = useState<RoleNodeInList | null>(null);
@@ -200,6 +202,16 @@ const RBACManagementPage: React.FC = () => {
           setIsCreateModalOpen(false);
           if (success) {
             updateFetchKey();
+          }
+        }}
+      />
+      <RoleDetailDrawer
+        open={!!selectedRoleForDetail}
+        roleId={selectedRoleForDetail?.id}
+        onClose={() => setSelectedRoleForDetail(null)}
+        onClickEdit={() => {
+          if (selectedRoleForDetail) {
+            setSelectedRoleForEdit(selectedRoleForDetail);
           }
         }}
       />
