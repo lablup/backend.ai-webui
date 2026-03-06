@@ -3,24 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
-import { RolePermissionTabQuery } from '../__generated__/RolePermissionTabQuery.graphql';
+import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import CreatePermissionModal from './CreatePermissionModal';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { App, Button, Table, Tag, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface RolePermissionTabProps {
-  roleId: string;
+  roleFrgmt: RolePermissionTabFragment$key;
   fetchKey: string;
   onPermissionChange?: () => void;
 }
 
 const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
-  roleId,
-  fetchKey,
+  roleFrgmt,
+  fetchKey: _fetchKey,
   onPermissionChange,
 }) => {
   'use memo';
@@ -28,10 +28,11 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const { modal, message } = App.useApp();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const data = useLazyLoadQuery<RolePermissionTabQuery>(
+  const role = useFragment(
     graphql`
-      query RolePermissionTabQuery($filter: PermissionFilter) {
-        adminPermissions(filter: $filter) {
+      fragment RolePermissionTabFragment on Role {
+        id
+        permissions(first: 100) {
           count
           edges {
             node {
@@ -45,9 +46,10 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
         }
       }
     `,
-    { filter: { roleId } },
-    { fetchPolicy: 'network-only', fetchKey },
+    roleFrgmt,
   );
+
+  const roleId = role.id;
 
   const [commitDeletePermission] = useMutation<RolePermissionTabDeleteMutation>(
     graphql`
@@ -59,8 +61,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     `,
   );
 
-  const permissions =
-    data.adminPermissions?.edges?.map((edge) => edge?.node) ?? [];
+  const permissions = role.permissions?.edges?.map((edge) => edge?.node) ?? [];
 
   const handleDelete = (permissionId: string) => {
     modal.confirm({

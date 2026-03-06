@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleAssignmentTabAssignMutation } from '../__generated__/RoleAssignmentTabAssignMutation.graphql';
-import { RoleAssignmentTabQuery } from '../__generated__/RoleAssignmentTabQuery.graphql';
+import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleAssignmentTabRevokeMutation } from '../__generated__/RoleAssignmentTabRevokeMutation.graphql';
 import AssignRoleModal from './AssignRoleModal';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,17 +12,17 @@ import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface RoleAssignmentTabProps {
-  roleId: string;
+  roleFrgmt: RoleAssignmentTabFragment$key;
   fetchKey: string;
   onAssignmentChange?: () => void;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
-  roleId,
-  fetchKey,
+  roleFrgmt,
+  fetchKey: _fetchKey,
   onAssignmentChange,
 }) => {
   'use memo';
@@ -30,10 +30,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const { modal, message } = App.useApp();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
 
-  const data = useLazyLoadQuery<RoleAssignmentTabQuery>(
+  const role = useFragment(
     graphql`
-      query RoleAssignmentTabQuery($filter: RoleAssignmentFilter) {
-        adminRoleAssignments(filter: $filter) {
+      fragment RoleAssignmentTabFragment on Role {
+        id
+        users(first: 100) {
           count
           edges {
             node {
@@ -53,9 +54,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
       }
     `,
-    { filter: { roleId } },
-    { fetchPolicy: 'network-only', fetchKey },
+    roleFrgmt,
   );
+
+  const roleId = role.id;
 
   const [commitAssignRole, isInFlightAssign] =
     useMutation<RoleAssignmentTabAssignMutation>(graphql`
@@ -79,8 +81,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     `,
   );
 
-  const assignments =
-    data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
+  const assignments = role.users?.edges?.map((edge) => edge?.node) ?? [];
 
   const handleAssign = (userId: string) => {
     commitAssignRole({

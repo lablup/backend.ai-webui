@@ -15,12 +15,14 @@ interface RoleDetailDrawerContentProps {
   roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
   fetchKey: string;
   onTabReset?: () => void;
+  onDataChange?: () => void;
 }
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   roleDetailFrgmt,
   fetchKey,
   onTabReset: _onTabReset,
+  onDataChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -37,6 +39,8 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         createdAt
         updatedAt
         deletedAt
+        ...RoleAssignmentTabFragment
+        ...RolePermissionTabFragment
       }
     `,
     roleDetailFrgmt,
@@ -94,7 +98,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.Assignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab roleId={role.id} fetchKey={fetchKey} />
+                <RoleAssignmentTab
+                  roleFrgmt={role}
+                  fetchKey={fetchKey}
+                  onAssignmentChange={onDataChange}
+                />
               </Suspense>
             ),
           },
@@ -103,7 +111,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.Permissions'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RolePermissionTab roleId={role.id} fetchKey={fetchKey} />
+                <RolePermissionTab
+                  roleFrgmt={role}
+                  fetchKey={fetchKey}
+                  onPermissionChange={onDataChange}
+                />
               </Suspense>
             ),
           },
