@@ -29,8 +29,10 @@ module.exports = {
         ? devServerConfig.static
         : [devServerConfig.static]
       : [];
+    // Project root comes first so that config.toml, resources/, manifest/,
+    // etc. are resolved from the canonical location even if react/public/
+    // happens to contain a stale copy.
     devServerConfig.static = [
-      ...existingStatic,
       {
         directory: projectRoot,
         publicPath: '/',
@@ -39,6 +41,7 @@ module.exports = {
         // HMR handles React component updates; static files are served as-is.
         watch: false,
       },
+      ...existingStatic,
     ];
 
     // Enable HMR explicitly and disable liveReload to prevent full page reloads
