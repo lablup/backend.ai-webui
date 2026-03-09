@@ -219,10 +219,11 @@ export const useStartSession = () => {
             resources: {
               cpu: values?.resource?.cpu,
               mem: values?.resource?.mem,
-              // Add accelerator only if specified
+              // Add accelerator only if specified (supports both number and string values for memory-type accelerators)
               ...(values.resource?.acceleratorType &&
               values.resource?.accelerator &&
-              values.resource?.accelerator > 0
+              (_.isString(values.resource.accelerator) ||
+                values.resource.accelerator > 0)
                 ? {
                     [values.resource.acceleratorType]:
                       values.resource.accelerator,

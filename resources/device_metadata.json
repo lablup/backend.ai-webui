@@ -45,6 +45,17 @@
       },
       "display_icon": "nvidia"
     },
+    "cuda.mem": {
+      "slot_name": "cuda.mem",
+      "human_readable_name": "GPU Memory",
+      "description": "CUDA-capable GPU (memory)",
+      "display_unit": "GiB",
+      "number_format": {
+        "binary": true,
+        "round_length": 0
+      },
+      "display_icon": "nvidia"
+    },
     "rocm.device": {
       "slot_name": "rocm.device",
       "human_readable_name": "GPU",

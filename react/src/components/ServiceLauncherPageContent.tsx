@@ -457,7 +457,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             mem: values.resource.mem,
             ...(values.resource?.acceleratorType &&
             values.resource?.accelerator &&
-            values.resource.accelerator > 0
+            (_.isString(values.resource.accelerator) ||
+              values.resource.accelerator > 0)
               ? {
                   [values.resource.acceleratorType]:
                     // FIXME: manually convert to string since server-side only allows [str,str] tuple
@@ -611,7 +612,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   mem: values.resource.mem,
                   ...(values.resource?.acceleratorType &&
                   values.resource?.accelerator &&
-                  values.resource.accelerator > 0
+                  (_.isString(values.resource.accelerator) ||
+                    values.resource.accelerator > 0)
                     ? {
                         [values.resource.acceleratorType]:
                           values.resource.accelerator,
@@ -735,6 +737,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       return undefined;
     }
     const keyName: string = Object.keys(resourceSlot)[0];
+    // Memory-type accelerators (e.g., cuda.mem) keep string values (GiB notation)
+    if (_.endsWith(keyName, '.mem')) {
+      return {
+        acceleratorType: keyName,
+        accelerator:
+          convertToBinaryUnit(resourceSlot[keyName], 'g', 2)?.value || '0g',
+      };
+    }
     return {
       acceleratorType: keyName,
       // FIXME: temporally convert to number if the typeof accelerator is string
