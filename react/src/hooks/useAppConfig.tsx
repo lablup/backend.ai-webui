@@ -23,6 +23,9 @@ export interface AppConfigExtra {
   desktop_notification?: boolean;
   preserve_login?: boolean;
   auto_logout?: boolean;
+  automatic_update_check?: boolean;
+  experimental_ai_agents?: boolean;
+  max_concurrent_uploads?: number;
   beta_feature?: boolean;
   resource_panel_type?:
     | 'MyResource'

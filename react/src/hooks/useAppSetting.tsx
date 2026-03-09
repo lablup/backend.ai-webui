@@ -9,7 +9,7 @@ import {
   useUserAppConfig,
 } from './useAppConfig';
 import { useBAISettingUserState } from './useBAISetting';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 /**
  * Keys in `AppConfigExtra` that have a matching key in `UserSettings` (localStorage).
@@ -22,6 +22,9 @@ type MigratableSettingKey = Extract<
   | 'desktop_notification'
   | 'preserve_login'
   | 'auto_logout'
+  | 'automatic_update_check'
+  | 'experimental_ai_agents'
+  | 'max_concurrent_uploads'
   | 'beta_feature'
   | 'resource_panel_type'
 >;
@@ -45,30 +48,61 @@ export const useAppSetting = <K extends MigratableSettingKey>(
   'use memo';
 
   // Server-synced config (merged domain + user)
-  const [mergedConfig] = useAppConfig();
+  const [mergedConfig, { refresh: refreshMerged }] = useAppConfig();
   // User-only config (needed for partial updates since backend does full replacement)
-  const [userConfig] = useUserAppConfig();
+  const [userConfig, { refresh: refreshUser }] = useUserAppConfig();
   // localStorage fallback
   const [localValue, setLocalValue] = useBAISettingUserState(key);
   // Mutation
   const [upsertConfig] = useUpsertUserAppConfig();
 
+  // Optimistic local state for immediate UI feedback
+  const [optimisticValue, setOptimisticValue] = useState<
+    AppConfigExtra[K] | null
+  >(null);
+
   // Server value takes priority; fall back to localStorage
   const serverValue = mergedConfig[key];
-  const value = serverValue !== undefined ? serverValue : localValue;
+  const baseValue = serverValue !== undefined ? serverValue : localValue;
+  // Optimistic value takes highest priority for immediate UI response
+  const value = optimisticValue !== null ? optimisticValue : baseValue;
 
   const setValue = useCallback(
     (newValue: AppConfigExtra[K]) => {
+      // Optimistically update UI immediately
+      setOptimisticValue(newValue);
+
       // Write to localStorage for backward compatibility
       setLocalValue(newValue as any);
 
       // Write to server (full replacement — merge with existing user config)
-      upsertConfig({
-        ...(userConfig ?? {}),
-        [key]: newValue,
-      });
+      upsertConfig(
+        {
+          ...(userConfig ?? {}),
+          [key]: newValue,
+        },
+        {
+          onCompleted: () => {
+            // Clear optimistic state and refresh queries so Relay cache is up-to-date
+            setOptimisticValue(null);
+            refreshMerged();
+            refreshUser();
+          },
+          onError: () => {
+            setOptimisticValue(null);
+          },
+        },
+      );
     },
-    [key, setLocalValue, upsertConfig, userConfig],
+    [
+      key,
+      setLocalValue,
+      setOptimisticValue,
+      upsertConfig,
+      userConfig,
+      refreshMerged,
+      refreshUser,
+    ],
   );
 
   return [value as AppConfigExtra[K], setValue];

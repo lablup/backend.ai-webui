@@ -8,10 +8,7 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import { useAppSetting } from '../hooks/useAppSetting';
-import {
-  useBAISettingGeneralState,
-  useBAISettingUserState,
-} from '../hooks/useBAISetting';
+import { useBAISettingGeneralState } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
@@ -42,8 +39,9 @@ const UserPreferencesPage = () => {
   const [selectedLanguage, setSelectedLanguage] =
     useAppSetting('selected_language');
   const [, setLanguage] = useBAISettingGeneralState('language');
-  const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
-    useBAISettingUserState('automatic_update_check');
+  const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] = useAppSetting(
+    'automatic_update_check',
+  );
   const [autoLogout, setAutoLogout] = useAppSetting('auto_logout');
   const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
     useToggle(false);
@@ -52,12 +50,13 @@ const UserPreferencesPage = () => {
     { toggle: toggleSSHKeypairManagementModal },
   ] = useToggle(false);
   const [preserveLogin, setPreserveLogin] = useAppSetting('preserve_login');
-  const [experimentalAIAgents, setExperimentalAIAgents] =
-    useBAISettingUserState('experimental_ai_agents');
+  const [experimentalAIAgents, setExperimentalAIAgents] = useAppSetting(
+    'experimental_ai_agents',
+  );
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
-  const [maxConcurrentUpload, setMaxConcurrentUpload] = useBAISettingUserState(
+  const [maxConcurrentUpload, setMaxConcurrentUpload] = useAppSetting(
     'max_concurrent_uploads',
   );
 
