@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-06
+> **Last Updated:** 2026-03-09
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 88 / 273 features covered (32%)**
+**Overall (in-scope routes): 91 / 273 features covered (33%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -27,12 +27,12 @@
 | VFolder / Data | `/data` | 38 | 25 | 🔶 66% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
-| My Environment | `/my-environment` | 2 | 0 | ❌ 0% |
+| My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
 | Environment | `/environment` | 24 | 18 | 🔶 75% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
 | Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
-| User Credentials | `/credential` | 16 | 6 | 🔶 38% |
+| User Credentials | `/credential` | 16 | 9 | 🔶 56% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
 | Project | `/project` | 6 | 5 | 🔶 83% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **88** | **32%** |
+| **Total** | | **273** | **91** | **33%** |
 
 ---
 
@@ -339,14 +339,14 @@
 
 ### 12. My Environment (`/my-environment`)
 
-**Test files:** None (visual regression only)
+**Test files:** [`e2e/my-environment/my-environment.spec.ts`](my-environment/my-environment.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Custom image list | ❌ | - |
-| Image management | ❌ | - |
+| Custom image list | ✅ | `User can see custom image list with expected columns` |
+| Image management | ✅ | `User can search custom images` |
 
-**Coverage: ❌ 0/2 features**
+**Coverage: ✅ 2/2 features**
 
 ---
 
@@ -543,14 +543,15 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Keypair list rendering | ❌ | - |
+| Keypair list rendering | ✅ | `Admin can see Credential list with expected columns` |
 | Create keypair → KeypairSettingModal | ❌ | - |
-| Keypair name click → KeypairInfoModal | ❌ | - |
+| Keypair name click → KeypairInfoModal | ✅ | `Admin can view Keypair info modal` |
 | Edit keypair → KeypairSettingModal | ❌ | - |
 | SSH key management → SSHKeypairManagementModal | ❌ | - |
 | Delete keypair → Popconfirm | ❌ | - |
+| Active/Inactive filter | ✅ | `Admin can see Active/Inactive radio filter` |
 
-**Coverage: 🔶 6/16 features**
+**Coverage: 🔶 9/16 features**
 
 ---
 
@@ -917,7 +918,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/data` | ✅ | ✅ | P2 |
 | `/model-store` | ❌ | ❌ | P3 |
 | `/storage-settings/:hostname` | ❌ | ❌ | P3 |
-| `/my-environment` | ❌ | ✅ | P3 |
+| `/my-environment` | ✅ | ✅ | - |
 | `/environment` | 🔶 | ✅ | P3 |
 | `/settings` (config) | ✅ | ✅ | - |
 | `/agent-summary` | 🔶 | ✅ | P3 |
