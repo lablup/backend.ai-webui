@@ -50,6 +50,7 @@ import {
   Card,
   Descriptions,
   Popconfirm,
+  Segmented,
   Spin,
   Table,
   Tag,
@@ -73,7 +74,7 @@ import {
   CircleArrowDownIcon,
   CircleArrowUpIcon,
 } from 'lucide-react';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -138,6 +139,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
+  const [routeViewType, setRouteViewType] = useState<'active' | 'terminated'>(
+    'active',
+  );
   const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
@@ -345,6 +349,18 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       case 'UNHEALTHY':
         color = 'warning';
         break;
+      case 'DEGRADED':
+        color = 'warning';
+        break;
+      case 'TERMINATING':
+        color = 'default';
+        break;
+      case 'TERMINATED':
+        color = 'default';
+        break;
+      case 'FAILED_TO_START':
+        color = 'error';
+        break;
     }
     return color;
   };
@@ -352,6 +368,15 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const autoScalingRules = _.map(endpoint_auto_scaling_rules?.edges, (edge) => {
     return edge?.node;
   });
+
+  const filteredRoutings = useMemo(() => {
+    const routings = endpoint?.routings as Routing[];
+    if (!routings) return [];
+    if (routeViewType === 'terminated') {
+      return routings.filter((r) => r.status?.toUpperCase() === 'TERMINATED');
+    }
+    return routings.filter((r) => r.status?.toUpperCase() !== 'TERMINATED');
+  }, [endpoint?.routings, routeViewType]);
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
 
@@ -905,33 +930,52 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Card
         title={t('modelService.RoutesInfo')}
         extra={
-          endpoint?.endpoint_id ? (
-            <Button
-              icon={<SyncOutlined />}
-              loading={mutationToSyncRoutes.isPending}
-              disabled={isEndpointInDestroyingCategory(endpoint)}
-              onClick={() => {
-                endpoint?.endpoint_id &&
-                  mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
-                    onSuccess: (data) => {
-                      if (data?.success) {
-                        message.success(t('modelService.SyncRoutesRequested'));
-                        startRefetchTransition(() => {
-                          updateFetchKey();
-                        });
-                      } else {
+          <BAIFlex gap="sm">
+            <Segmented
+              size="small"
+              value={routeViewType}
+              options={[
+                {
+                  label: t('modelService.ActiveRoutes'),
+                  value: 'active',
+                },
+                {
+                  label: t('modelService.TerminatedRoutes'),
+                  value: 'terminated',
+                },
+              ]}
+              onChange={setRouteViewType}
+            />
+            {endpoint?.endpoint_id ? (
+              <Button
+                icon={<SyncOutlined />}
+                loading={mutationToSyncRoutes.isPending}
+                disabled={isEndpointInDestroyingCategory(endpoint)}
+                onClick={() => {
+                  endpoint?.endpoint_id &&
+                    mutationToSyncRoutes.mutateAsync(endpoint?.endpoint_id, {
+                      onSuccess: (data) => {
+                        if (data?.success) {
+                          message.success(
+                            t('modelService.SyncRoutesRequested'),
+                          );
+                          startRefetchTransition(() => {
+                            updateFetchKey();
+                          });
+                        } else {
+                          message.error(t('modelService.SyncRoutesFailed'));
+                        }
+                      },
+                      onError: () => {
                         message.error(t('modelService.SyncRoutesFailed'));
-                      }
-                    },
-                    onError: () => {
-                      message.error(t('modelService.SyncRoutesFailed'));
-                    },
-                  });
-              }}
-            >
-              {t('modelService.SyncRoutes')}
-            </Button>
-          ) : null
+                      },
+                    });
+                }}
+              >
+                {t('modelService.SyncRoutes')}
+              </Button>
+            ) : null}
+          </BAIFlex>
         }
       >
         <Table
@@ -1014,7 +1058,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             },
           ]}
           pagination={false}
-          dataSource={endpoint?.routings as Routing[]}
+          dataSource={filteredRoutings}
           rowKey={'routing_id'}
           bordered
         />
