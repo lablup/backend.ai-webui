@@ -1627,6 +1627,7 @@
     "MaxUsage": "Max",
     "Message": "Wiadomość",
     "ModifyArguments": "Modyfikuj argumenty",
+    "MultiNode": "Sesja wielowęzłowa ({{count}} węzłów)",
     "MySessions": "Moje sesje",
     "NetworkIdleTimeout": "Czas bezczynności sieci",
     "NetworkIdleTimeoutDesc": "Wymuś zakończenie sesji, które nie wymieniają danych z użytkownikiem (przeglądarką lub aplikacją internetową) po tym czasie. Ruch między użytkownikiem a sesją obliczeniową odbywa się w sposób ciągły, gdy użytkownik wchodzi w interakcję z aplikacją, taką jak terminal lub Jupyter, poprzez wprowadzanie danych z klawiatury, tworzenie komórek Jupyter itp. Tworzenie komórek Jupyter itp. Jeśli przez pewien czas nie będzie żadnej interakcji, spełniony zostanie warunek odśmiecania. Nawet jeśli istnieje proces wykonujący zadanie w sesji obliczeniowej, podlega on zakończeniu, jeśli nie ma interakcji użytkownika.",

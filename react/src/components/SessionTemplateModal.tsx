@@ -22,6 +22,7 @@ import {
   BAITable,
   BAIFlex,
   BAILink,
+  BAITag,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -176,35 +177,53 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               dataIndex: 'name',
               render: (name, record) => {
                 const displayName = name || record.id.split('-')[0];
+                const isMultiNode =
+                  record.cluster_mode === 'multi-node' &&
+                  Number.isFinite(record.cluster_size) &&
+                  record.cluster_size > 1;
                 return (
-                  <Typography.Text
-                    className={styles.fixEditableVerticalAlign}
-                    editable={{
-                      onChange(value) {
-                        if (!_.isEmpty(value)) {
-                          updateSessionHistory(record.id, value);
-                          record.pinned &&
-                            updatePinnedHistory(record.id, value);
-                        }
-                      },
-                      text: displayName,
-                    }}
-                  >
-                    <BAILink
-                      type="hover"
-                      onClick={() => {
-                        modalProps.onRequestClose?.(
-                          JSON.parse(
-                            new URLSearchParams(record.params || '').get(
-                              'formValues',
-                            ) || '{}',
-                          ),
-                        );
+                  <BAIFlex align="center" gap="xs">
+                    <Typography.Text
+                      className={styles.fixEditableVerticalAlign}
+                      editable={{
+                        onChange(value) {
+                          if (!_.isEmpty(value)) {
+                            updateSessionHistory(record.id, value);
+                            record.pinned &&
+                              updatePinnedHistory(record.id, value);
+                          }
+                        },
+                        text: displayName,
                       }}
                     >
-                      {displayName}
-                    </BAILink>
-                  </Typography.Text>
+                      <BAILink
+                        type="hover"
+                        onClick={() => {
+                          modalProps.onRequestClose?.(
+                            JSON.parse(
+                              new URLSearchParams(record.params || '').get(
+                                'formValues',
+                              ) || '{}',
+                            ),
+                          );
+                        }}
+                      >
+                        {displayName}
+                      </BAILink>
+                    </Typography.Text>
+                    {isMultiNode && (
+                      <Tooltip
+                        title={t('session.MultiNode', {
+                          count: record.cluster_size,
+                        })}
+                      >
+                        <BAITag>
+                          {t('session.launcher.MultiNode')} ×
+                          {record.cluster_size}
+                        </BAITag>
+                      </Tooltip>
+                    )}
+                  </BAIFlex>
                 );
               },
             },

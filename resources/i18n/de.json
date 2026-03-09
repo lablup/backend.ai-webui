@@ -1628,6 +1628,7 @@
     "MaxUsage": "Max",
     "Message": "Nachricht",
     "ModifyArguments": "Argumente ändern",
+    "MultiNode": "Sitzung mit mehreren Knoten ({{count}} Knoten)",
     "MySessions": "Meine Sitzungen",
     "NetworkIdleTimeout": "Zeitüberschreitung im Leerlauf des Netzwerks",
     "NetworkIdleTimeoutDesc": "Erzwungene Beendigung von Sitzungen, die nach dieser Zeit keine Daten mit dem Benutzer (Browser oder Webanwendung) austauschen. Der Datenverkehr zwischen dem Benutzer und der Berechnungssitzung findet ständig statt, wenn der Benutzer mit einer Anwendung wie Terminal oder Jupyter durch Tastatureingaben, die Erstellung von Jupyter-Zellen usw. interagiert. Erstellung von Jupyter-Zellen, etc. Wenn über einen bestimmten Zeitraum keine Interaktion stattfindet, wird die Bedingung der Garbage Collection erfüllt. Selbst wenn ein Prozess einen Auftrag in der Compute-Sitzung ausführt, wird er beendet, wenn keine Benutzerinteraktion stattfindet.",
