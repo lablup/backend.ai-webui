@@ -72,6 +72,7 @@ const AdminDashboardPage: React.FC = () => {
             agentNodeFilter: $agentNodeFilter
           )
         ...AgentStatsFragment @skip(if: $skipAgentStats) @alias
+        ...ActiveAgentsFragment @alias
       }
     `,
     {
@@ -179,10 +180,12 @@ const AdminDashboardPage: React.FC = () => {
               <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
-            <ActiveAgents
-              fetchKey={fetchKey}
-              onChangeFetchKey={() => updateFetchKey()}
-            />
+            {queryRef.ActiveAgentsFragment && (
+              <ActiveAgents
+                queryRef={queryRef.ActiveAgentsFragment}
+                isRefetching={isPendingIntervalRefetch}
+              />
+            )}
           </Suspense>
         ),
       },

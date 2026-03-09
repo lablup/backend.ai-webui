@@ -74,6 +74,7 @@ const DashboardPage: React.FC = () => {
             agentNodeFilter: $agentNodeFilter
           )
         ...AgentStatsFragment @include(if: $isSuperAdmin) @alias
+        ...ActiveAgentsFragment @include(if: $isSuperAdmin) @alias
       }
     `,
     {
@@ -229,10 +230,12 @@ const DashboardPage: React.FC = () => {
               <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
-            <ActiveAgents
-              fetchKey={fetchKey}
-              onChangeFetchKey={() => updateFetchKey()}
-            />
+            {queryRef.ActiveAgentsFragment && (
+              <ActiveAgents
+                queryRef={queryRef.ActiveAgentsFragment}
+                isRefetching={isPendingIntervalRefetch}
+              />
+            )}
           </Suspense>
         ),
       },
