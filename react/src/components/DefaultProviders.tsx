@@ -121,6 +121,12 @@ if (process.env.NODE_ENV === 'development') {
   isDebugModeByParam = urlParams.get('debug') === 'true';
 }
 
+if (typeof window !== 'undefined') {
+  window.switchLanguage = (lang: string) => {
+    window.dispatchEvent(new CustomEvent('langChanged', { detail: { lang } }));
+  };
+}
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .use(Backend)
