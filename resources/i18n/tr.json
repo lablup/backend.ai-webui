@@ -1335,6 +1335,7 @@
   },
   "registry": {
     "AddRegistry": "Kayıt Ekle",
+    "AllowedProjects": "İzin Verilen Projeler",
     "ConfirmNoUserName": "Kullanıcı ve şifre belirtilmemiş, kaydetmek ister misiniz?",
     "DescExtraJsonFormat": "Lütfen geçerli olarak biçimlendirilmiş JSON girin",
     "DescHostnameIsEmpty": "Ana bilgisayar adı boş",
@@ -1346,6 +1347,8 @@
     "HarborProject": "Liman Projesi",
     "Hostname": "ana bilgisayar adı",
     "HostnameDoesNotMatch": "Ana bilgisayar adı eşleşmiyor!",
+    "IsGlobal": "Küresel kayıt deposu olarak ayarla",
+    "IsGlobalDescription": "Tüm projelerden erişime izin ver",
     "ModifyRegistry": "Kayıt Defterini Değiştir",
     "NoRegistryToDisplay": "Görüntülenecek Kayıt Yok",
     "Password": "Parola",

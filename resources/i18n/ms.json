@@ -1334,6 +1334,7 @@
   },
   "registry": {
     "AddRegistry": "Tambah Pendaftaran",
+    "AllowedProjects": "Projek Dibenarkan",
     "ConfirmNoUserName": "Pengguna dan kata laluan tidak dinyatakan, adakah anda ingin menyimpan?",
     "DescExtraJsonFormat": "Sila masukkan JSON yang diformatkan dengan sah",
     "DescHostnameIsEmpty": "Nama hos kosong",
@@ -1345,6 +1346,8 @@
     "HarborProject": "Projek Pelabuhan",
     "Hostname": "Nama Hos",
     "HostnameDoesNotMatch": "Nama hos tidak sepadan!",
+    "IsGlobal": "Tetapkan sebagai Registry Global",
+    "IsGlobalDescription": "Benarkan akses daripada semua projek",
     "ModifyRegistry": "Ubah suai Pendaftaran",
     "NoRegistryToDisplay": "Tiada Pendaftaran untuk dipaparkan",
     "Password": "Kata Laluan",
