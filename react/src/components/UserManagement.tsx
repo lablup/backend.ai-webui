@@ -43,6 +43,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
+import { useCSVExport } from 'src/hooks/useCSVExport';
 
 interface UserManagementProps {}
 
@@ -113,6 +114,8 @@ const UserManagement: React.FC<UserManagementProps> = () => {
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.UserManagement',
   );
+
+  const { supportedFields, exportCSV } = useCSVExport('users');
 
   const { user_nodes } = useLazyLoadQuery<UserManagementQuery>(
     graphql`
@@ -462,6 +465,21 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
+        exportSettings={
+          !_.isEmpty(supportedFields)
+            ? {
+                supportedFields,
+                onExport: async (selectedExportKeys) => {
+                  await exportCSV(selectedExportKeys, {
+                    status: [queryParams.status],
+                  }).catch((err) => {
+                    message.error(t('general.ErrorOccurred'));
+                    logger.error(err);
+                  });
+                },
+              }
+            : undefined
+        }
       />
       <UserInfoModal
         userEmail={emailForInfoModal || ''}

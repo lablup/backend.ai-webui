@@ -881,6 +881,7 @@
     "Enabled": "Activado",
     "ErrorOccurred": "Algo salió mal. \nVuelva a intentarlo más tarde.",
     "ExtendLoginSession": "Prolongar una sesión de inicio de sesión",
+    "FailedToExportCSV": "Error al exportar CSV",
     "Folder": "Carpeta",
     "Folders": "Carpetas",
     "General": "General",
