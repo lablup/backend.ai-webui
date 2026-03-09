@@ -94,8 +94,7 @@ navigation:
         - title: TypeScript SDK
           path: backend.ai-sdk/client-sdk-for-typescript.md
 editScope: packages/backend.ai-guide/src
-hiddenPaths:
-  - dist
+hiddenPaths: []
 readOnlyPaths: []
 repoUrl: https://github.com/lablup/backend.ai-webui
 subdirectory: packages/backend.ai-guide
@@ -104,4 +103,4 @@ virtualRoot: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide/
 branch: docs/backend.ai-guide
 selectedBranches:
   - docs/backend.ai-guide
-emoji: 🎨
+emoji: 📄
