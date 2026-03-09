@@ -3,9 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { EndpointStatusTagFragment$key } from '../__generated__/EndpointStatusTagFragment.graphql';
-import { Tag } from 'antd';
+import { BAITag, SemanticColor, useSemanticColorMap } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
+
+const endpointStatusSemanticMap: Record<string, SemanticColor> = {
+  RUNNING: 'success',
+  HEALTHY: 'success',
+  PROVISIONING: 'info',
+  UNHEALTHY: 'warning',
+};
 
 interface EndpointStatusTagProps {
   endpointFrgmt: EndpointStatusTagFragment$key | null | undefined;
@@ -22,19 +29,16 @@ const EndpointStatusTag: React.FC<EndpointStatusTagProps> = ({
     `,
     endpointFrgmt,
   );
-  let color = 'default';
-  switch (endpoint?.status?.toUpperCase()) {
-    case 'RUNNING':
-    case 'HEALTHY':
-      color = 'success';
-      break;
+  const semanticColorMap = useSemanticColorMap();
+  const status = endpoint?.status?.toUpperCase() ?? '';
 
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-
-  return <Tag color={color}>{endpoint?.status}</Tag>;
+  return (
+    <BAITag
+      color={semanticColorMap[endpointStatusSemanticMap[status] ?? 'default']}
+    >
+      {endpoint?.status}
+    </BAITag>
+  );
 };
 
 export default EndpointStatusTag;

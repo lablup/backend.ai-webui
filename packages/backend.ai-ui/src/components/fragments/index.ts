@@ -92,6 +92,8 @@ export type {
   BAIHuggingFaceRegistrySettingModalProps,
   BAIHuggingFaceRegistrySettingModalFragmentKey,
 } from './BAIHuggingFaceRegistrySettingModal';
+export { default as BAIRouteNodes } from './BAIRouteNodes';
+export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
 export type {
   BAISchedulingHistoryNodesProps,

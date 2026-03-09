@@ -1352,6 +1352,7 @@
     "TokenGenerated": "Токен үүсгэсэн",
     "TokenGenerationFailed": "Токен үүсгэх амжилтгүй болсон. \nдахин оролдоно уу.",
     "TrafficRatio": "Замын хөдөлгөөний харьцаа",
+    "TrafficStatus": "Трафикийн байдал",
     "UpdateService": "Үйлчилгээг шинэчлэх",
     "UseExistingFolderConfirm": "Одоо байгаа {{folderName}} хавтас ашиглан үйлчилгээг эхлүүлэхийг хүсч байна уу?",
     "Validate": "Баталгаажуулах",

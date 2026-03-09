@@ -1353,6 +1353,7 @@
     "TokenGenerated": "สร้างโทเคนแล้ว",
     "TokenGenerationFailed": "การสร้างโทเคนล้มเหลว กรุณาลองอีกครั้ง",
     "TrafficRatio": "สัดส่วนการจราจร",
+    "TrafficStatus": "สถานะการรับส่งข้อมูล",
     "UpdateService": "อัปเดตบริการ",
     "UseExistingFolderConfirm": "คุณต้องการเริ่มบริการโดยใช้โฟลเดอร์ {{folderName}} ที่มีอยู่หรือไม่?",
     "Validate": "ตรวจสอบ",

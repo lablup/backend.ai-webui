@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Үүсгэсэн огноо",
+    "RouteId": "Маршрутын ID",
+    "SessionId": "Сессийн ID",
+    "Status": "Төлөв",
+    "TrafficRatio": "Трафикийн харьцаа",
+    "TrafficStatus": "Трафикийн төлөв"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Оролдлого",
     "CreatedAt": "Үүссэн огноо",

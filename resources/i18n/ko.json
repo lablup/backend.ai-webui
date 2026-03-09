@@ -1353,6 +1353,7 @@
     "TokenGenerated": "토큰 생성이 완료되었습니다.",
     "TokenGenerationFailed": "토큰 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.",
     "TrafficRatio": "트래픽 비율",
+    "TrafficStatus": "트래픽 상태",
     "UpdateService": "서비스 업데이트",
     "UseExistingFolderConfirm": "이미 존재하는 {{ folderName }} 폴더를 이용해서 서비스를 시작할까요?",
     "Validate": "유효성 검사",

@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "생성일",
+    "RouteId": "라우트 ID",
+    "SessionId": "세션 ID",
+    "Status": "상태",
+    "TrafficRatio": "트래픽 비율",
+    "TrafficStatus": "트래픽 상태"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "시도 횟수",
     "CreatedAt": "생성일",

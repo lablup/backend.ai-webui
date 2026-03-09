@@ -1355,6 +1355,7 @@
     "TokenGenerated": "生成的令牌",
     "TokenGenerationFailed": "令牌生成失败，请重试。",
     "TrafficRatio": "交通比率",
+    "TrafficStatus": "流量狀態",
     "UpdateService": "更新服務",
     "UseExistingFolderConfirm": "您想使用現有{{folderName}}文件夾啟動服務嗎？",
     "Validate": "證實",

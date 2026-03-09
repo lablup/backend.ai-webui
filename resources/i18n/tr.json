@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Token oluşturuldu",
     "TokenGenerationFailed": "Jeton üretimi başarısız oldu. lütfen tekrar deneyin.",
     "TrafficRatio": "Trafik Oranı",
+    "TrafficStatus": "Trafik Durumu",
     "UpdateService": "Güncelleme Hizmeti",
     "UseExistingFolderConfirm": "Hizmeti mevcut {{folderName}} klasörünü kullanarak başlatmak ister misiniz?",
     "Validate": "Doğrula",

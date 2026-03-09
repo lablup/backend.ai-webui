@@ -1353,6 +1353,7 @@
     "TokenGenerated": "Token erzeugt",
     "TokenGenerationFailed": "Token-Generierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "TrafficRatio": "Verkehrsdichte",
+    "TrafficStatus": "Traffic-Status",
     "UpdateService": "Update-Service",
     "UseExistingFolderConfirm": "Möchten Sie den Dienst mit dem vorhandenen Ordner {{folderName}} starten?",
     "Validate": "Bestätigen",

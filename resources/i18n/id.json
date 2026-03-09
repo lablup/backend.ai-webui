@@ -1353,6 +1353,7 @@
     "TokenGenerated": "Token yang dihasilkan",
     "TokenGenerationFailed": "Pembuatan token gagal. silakan coba lagi.",
     "TrafficRatio": "Rasio Lalu Lintas",
+    "TrafficStatus": "Status Trafik",
     "UpdateService": "Layanan Pembaruan",
     "UseExistingFolderConfirm": "Apakah Anda ingin memulai layanan menggunakan folder {{folderName}} yang ada?",
     "Validate": "Mengesahkan",

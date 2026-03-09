@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Дата создания",
+    "RouteId": "ID маршрута",
+    "SessionId": "ID сессии",
+    "Status": "Статус",
+    "TrafficRatio": "Доля трафика",
+    "TrafficStatus": "Состояние трафика"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Попытки",
     "CreatedAt": "Дата создания",

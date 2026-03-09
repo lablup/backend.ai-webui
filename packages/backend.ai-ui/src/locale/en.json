@@ -202,6 +202,14 @@
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Created At",
+    "RouteId": "Route ID",
+    "SessionId": "Session ID",
+    "Status": "Status",
+    "TrafficRatio": "Traffic Ratio",
+    "TrafficStatus": "Traffic Status"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Attempts",
     "CreatedAt": "Created At",
