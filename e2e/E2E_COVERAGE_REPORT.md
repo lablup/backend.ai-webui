@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 91 / 273 features covered (33%)**
+**Overall (in-scope routes): 95 / 273 features covered (35%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -30,19 +30,19 @@
 | My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
 | Environment | `/environment` | 24 | 18 | 🔶 75% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
-| Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
+| Resources | `/agent-summary`, `/agent` | 8 | 3 | 🔶 38% |
 | Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
 | User Credentials | `/credential` | 16 | 9 | 🔶 56% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
 | Project | `/project` | 6 | 5 | 🔶 83% |
-| Statistics | `/statistics` | 2 | 0 | ❌ 0% |
+| Statistics | `/statistics` | 2 | 2 | ✅ 100% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
 | Reservoir | `/reservoir`, `/reservoir/:artifactId` | 18 | 0 | ❌ 0% |
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **91** | **33%** |
+| **Total** | | **273** | **95** | **35%** |
 
 ---
 
@@ -431,9 +431,16 @@
 
 ### 15. Resources (`/agent-summary`, `/agent`)
 
-**Test files:** [`e2e/agent/agent.spec.ts`](agent/agent.spec.ts)
+**Test files:** [`e2e/agent/agent.spec.ts`](agent/agent.spec.ts), `e2e/agent-summary/agent-summary.spec.ts`
 
 **Tabs:** Agents | Storage Proxies | Resource Groups
+
+#### Agent Summary (`/agent-summary`)
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Agent Summary list with columns | ✅ | `Admin can see Agent Summary page with expected columns` |
+| Connected/Terminated filter switching | ✅ | `Admin can switch between Connected and Terminated agents` |
 
 #### Agents Tab
 **Table link:** Agent name → `AgentDetailDrawer`
@@ -462,7 +469,7 @@
 | Edit resource group → ResourceGroupSettingModal | ❌ | - |
 | Delete resource group → Popconfirm | ❌ | - |
 
-**Coverage: 🔶 1/8 features**
+**Coverage: 🔶 3/8 features**
 
 ---
 
@@ -623,16 +630,16 @@
 
 ### 21. Statistics (`/statistics`)
 
-**Test files:** None
+**Test files:** `e2e/statistics/statistics.spec.ts`
 
 **Tabs:** Usage History | User Session History (conditional)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Allocation history tab | ❌ | - |
-| User session history tab | ❌ | - |
+| Allocation history tab | ✅ | `Admin can see Statistics page with Allocation History tab` |
+| User session history tab | ✅ | `Admin can switch to User Session History tab` |
 
-**Coverage: ❌ 0/2 features**
+**Coverage: ✅ 2/2 features**
 
 ---
 
@@ -923,17 +930,17 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/settings` (config) | ✅ | ✅ | - |
 | `/agent-summary` | 🔶 | ✅ | P3 |
 | `/agent` | 🔶 | ✅ | P3 |
-| `/resource-policy` | ❌ | ✅ | **P2** |
+| `/resource-policy` | 🔶 | ✅ | P2 |
 | `/credential` | 🔶 | ✅ | P2 |
 | `/maintenance` | 🔶 | ✅ | - |
-| `/project` | ❌ | ❌ | **P2** |
-| `/statistics` | ❌ | ❌ | P3 |
+| `/project` | 🔶 | ❌ | P2 |
+| `/statistics` | ✅ | ❌ | - |
 | `/usersettings` | ❌ | ❌ | **P2** |
 | `/scheduler` | ❌ | ❌ | P3 |
 | `/reservoir` | ❌ | ❌ | P3 |
 | `/branding` | ❌ | ❌ | P3 |
 | `/chat/:id?` | ❌ | ❌ | P3 |
-| `/information` | ❌ | ✅ | P3 |
+| `/information` | 🔶 | ✅ | P3 |
 | App Launcher (modal) | 🔶 | ❌ | - |
 
 ---
