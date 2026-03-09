@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-04
+> **Last Updated:** 2026-03-06
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 71 / 273 features covered (26%)**
+**Overall (in-scope routes): 75 / 273 features covered (27%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -28,7 +28,7 @@
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 0 | ❌ 0% |
-| Environment | `/environment` | 24 | 14 | 🔶 58% |
+| Environment | `/environment` | 24 | 18 | 🔶 75% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
 | Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **71** | **26%** |
+| **Total** | | **273** | **75** | **27%** |
 
 ---
 
@@ -352,7 +352,7 @@
 
 ### 13. Environment / Images (`/environment`)
 
-**Test files:** [`e2e/environment/environment.spec.ts`](environment/environment.spec.ts)
+**Test files:** [`e2e/environment/environment.spec.ts`](environment/environment.spec.ts), [`e2e/environment/registry.spec.ts`](environment/registry.spec.ts)
 
 **Tabs:** Images | Resource Presets | Container Registries (superadmin)
 
@@ -397,12 +397,12 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Registry list rendering | ❌ | - |
-| Create registry → ContainerRegistryEditorModal | ❌ | - |
-| Edit registry → ContainerRegistryEditorModal | ❌ | - |
-| Delete registry → Popconfirm | ❌ | - |
+| Registry list rendering | ✅ | `Admin can see the registry table with all expected columns` |
+| Create registry → ContainerRegistryEditorModal | ✅ | `Admin can add a new registry with required fields only` |
+| Edit registry → ContainerRegistryEditorModal | ✅ | `Admin can edit the registry URL and project name` |
+| Delete registry → Popconfirm | ✅ | `Admin can delete the registry with correct name confirmation` |
 
-**Coverage: 🔶 14/24 features**
+**Coverage: 🔶 18/24 features**
 
 ---
 
