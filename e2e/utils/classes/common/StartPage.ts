@@ -32,7 +32,28 @@ export class StartPage {
   getModelServiceCard() {
     return this.getCardByTitle('Start Model Service');
   }
+  getStartFromURLCard() {
+    return this.getCardByTitle('Start From URL');
+  }
   getStartButtonFromCard(card: Locator) {
     return card.getByRole('button', { name: 'Start' });
+  }
+  getCreateFolderButton(card: Locator) {
+    return card.getByRole('button', { name: 'Create Folder' });
+  }
+  getStartNowButton(card: Locator) {
+    return card.getByRole('button', { name: 'Start Now' });
+  }
+  getStartSessionButton(card: Locator) {
+    return card.getByRole('button', { name: 'Start Session' });
+  }
+  getStartServiceButton(card: Locator) {
+    return card.getByRole('button', { name: 'Start Service' });
+  }
+  getBoardItems() {
+    return this.page.locator('.bai_grid_item');
+  }
+  getDragHandles() {
+    return this.page.locator('.bai_board_handle');
   }
 }

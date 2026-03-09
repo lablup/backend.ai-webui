@@ -12,13 +12,13 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 75 / 273 features covered (27%)**
+**Overall (in-scope routes): 88 / 273 features covered (32%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
 | Authentication | `/interactive-login` | 7 | 4 | 🔶 57% |
-| Start Page | `/start` | 8 | 0 | ❌ 0% |
-| Dashboard | `/dashboard` | 9 | 0 | ❌ 0% |
+| Start Page | `/start` | 8 | 6 | 🔶 75% |
+| Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 19 | 11 | 🔶 58% |
 | Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
@@ -42,7 +42,7 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **75** | **27%** |
+| **Total** | | **273** | **88** | **32%** |
 
 ---
 
@@ -79,42 +79,42 @@
 
 ### 2. Start Page (`/start`)
 
-**Test files:** None (visual regression only: [`e2e/visual_regression/start/start_page.test.ts`](visual_regression/start/start_page.test.ts))
+**Test files:** [`e2e/start/start-page.spec.ts`](start/start-page.spec.ts), visual regression: [`e2e/visual_regression/start/start_page.test.ts`](visual_regression/start/start_page.test.ts)
 
 **Modals:** `FolderCreateModal`, `StartFromURLModal`
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Board layout rendering | ❌ | - |
-| Quick action: Create folder → FolderCreateModal | ❌ | - |
-| Quick action: Start interactive session → `/session/start` | ❌ | - |
-| Quick action: Start batch session → `/session/start` | ❌ | - |
-| Quick action: Start model service → `/service/start` | ❌ | - |
-| Quick action: Import from URL → StartFromURLModal | ❌ | - |
+| Board layout rendering | ✅ | `Admin can see draggable cards` |
+| Quick action: Create folder → FolderCreateModal | ✅ | `Admin can open/create folder` |
+| Quick action: Start interactive session → `/session/start` | ✅ | `Admin can navigate to Session Launcher` |
+| Quick action: Start batch session → `/session/start` | ✅ | `Admin can navigate in batch mode` |
+| Quick action: Start model service → `/service/start` | ✅ | `Admin can navigate to Model Service` |
+| Quick action: Import from URL → StartFromURLModal | ✅ | `Admin can open Start From URL modal` |
 | Board item drag & reorder | ❌ | - |
 | VFolder invitation notifications | ❌ | - |
 
-**Coverage: ❌ 0/8 features**
+**Coverage: 🔶 6/8 features**
 
 ---
 
 ### 3. Dashboard (`/dashboard`)
 
-**Test files:** None (visual regression only: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts))
+**Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Dashboard rendering | ❌ | - |
-| Session count cards | ❌ | - |
-| Resource usage display (MyResource) | ❌ | - |
-| Resource usage per resource group | ❌ | - |
-| Agent statistics (admin) | ❌ | - |
+| Dashboard rendering | ✅ | `Admin can see all expected dashboard widgets` |
+| Session count cards | ✅ | `Admin can see session type breakdown` |
+| Resource usage display (MyResource) | ✅ | `Admin can view CPU and Memory usage` |
+| Resource usage per resource group | ✅ | `Admin can view resource usage per group` |
+| Agent statistics (admin) | ✅ | `Admin can view Agent Stats widget` |
 | Active agents list (admin) | ❌ | - |
-| Recent sessions list | ❌ | - |
+| Recent sessions list | ✅ | `Admin can view recently created sessions` |
 | Auto-refresh (15s) | ❌ | - |
-| Dashboard item drag/resize | ❌ | - |
+| Dashboard item drag/resize | ✅ | `Admin can see resizable widgets` |
 
-**Coverage: ❌ 0/9 features**
+**Coverage: 🔶 7/9 features**
 
 ---
 
@@ -906,8 +906,8 @@ To efficiently build new E2E tests, these POMs should be created:
 | Page Route | Functional Tests | Visual Tests | Priority |
 |------------|:---:|:---:|:---:|
 | `/interactive-login` | 🔶 | ✅ | - |
-| `/start` | ❌ | ✅ | P1 |
-| `/dashboard` | ❌ | ✅ | P1 |
+| `/start` | 🔶 | ✅ | - |
+| `/dashboard` | 🔶 | ✅ | - |
 | `/session` | ✅ | ✅ | P3 |
 | `/session/start` | 🔶 | ✅ | P1 |
 | `/serving` | ❌ | ✅ | **P1** |
