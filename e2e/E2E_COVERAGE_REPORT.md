@@ -35,7 +35,7 @@
 | User Credentials | `/credential` | 16 | 6 | 🔶 38% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
-| Project | `/project` | 6 | 0 | ❌ 0% |
+| Project | `/project` | 6 | 5 | 🔶 83% |
 | Statistics | `/statistics` | 2 | 0 | ❌ 0% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
 | Reservoir | `/reservoir`, `/reservoir/:artifactId` | 18 | 0 | ❌ 0% |
@@ -601,7 +601,7 @@
 
 ### 20. Project (`/project`)
 
-**Test files:** None
+**Test files:** `e2e/project/project-crud.spec.ts`
 
 **Primary action:** "Create Project" → `BAIProjectSettingModal`
 **Table link:** Project name → `BAIProjectSettingModal` (edit mode)
@@ -609,14 +609,14 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Project list rendering | ❌ | - |
-| Create project → BAIProjectSettingModal | ❌ | - |
-| Project name click → BAIProjectSettingModal (edit) | ❌ | - |
-| Project filtering | ❌ | - |
+| Project list rendering | ✅ | `Admin can see project list with expected columns` |
+| Create project → BAIProjectSettingModal | ✅ | `Admin can create a new project` |
+| Project name click → BAIProjectSettingModal (edit) | ✅ | `Admin can edit a project name` |
+| Project filtering | ✅ | `Admin can filter projects by name` |
 | Bulk edit → BAIProjectBulkEditModal | ❌ | - |
-| Delete project | ❌ | - |
+| Delete project | ✅ | `Admin can delete a project` |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: 🔶 5/6 features**
 
 ---
 
