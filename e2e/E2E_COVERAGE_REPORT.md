@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-12
+> **Last Updated:** 2026-03-23
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -16,29 +16,28 @@
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 16 | 14 | 🔶 88% |
-| Start Page | `/start` | 8 | 6 | 🔶 75% |
-| Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
-| Session List | `/session` | 20 | 12 | 🔶 60% |
-| Session Launcher | `/session/start` | 12 | 2 | 🔶 17% |
+| Authentication | `/interactive-login` | 7 | 4 | 🔶 57% |
+| Start Page | `/start` | 8 | 0 | ❌ 0% |
+| Dashboard | `/dashboard` | 9 | 5 | 🔶 56% |
+| Session List | `/session` | 19 | 11 | 🔶 58% |
+| Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
-| Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
+| Endpoint Detail | `/serving/:serviceId` | 14 | 0 | ❌ 0% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
 | VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
-| My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
-| Environment | `/environment` | 27 | 21 | 🔶 78% |
+| My Environment | `/my-environment` | 2 | 0 | ❌ 0% |
+| Environment | `/environment` | 24 | 18 | 🔶 75% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
-| Resources | `/agent-summary`, `/agent` | 10 | 3 | 🔶 30% |
-| Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
-| User Credentials | `/credential` | 16 | 9 | 🔶 56% |
+| Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
+| Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
+| User Credentials | `/credential` | 16 | 6 | 🔶 38% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
-| Project | `/project` | 6 | 5 | 🔶 83% |
-| Statistics | `/statistics` | 2 | 2 | ✅ 100% |
+| Project | `/project` | 6 | 0 | ❌ 0% |
+| Statistics | `/statistics` | 2 | 0 | ❌ 0% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
-| Information | `/information` | 2 | 2 | ✅ 100% |
 | Reservoir | `/reservoir`, `/reservoir/:artifactId` | 18 | 0 | ❌ 0% |
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
@@ -52,18 +51,18 @@
 
 ### Legend
 
-| Symbol | Meaning                 |
-| ------ | ----------------------- |
-| ✅     | Covered by E2E test     |
-| 🔶     | Partially covered       |
-| ❌     | Not covered             |
-| 🚧     | Skipped/WIP test exists |
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Covered by E2E test |
+| 🔶 | Partially covered |
+| ❌ | Not covered |
+| 🚧 | Skipped/WIP test exists |
 
 ---
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -71,85 +70,76 @@
 | Successful login & redirect | ✅ | `should redirect to the Summary` |
 | Invalid email error | ✅ | `should display error message for non-existent email` |
 | Invalid password error | ✅ | `should display error message for incorrect password` |
-| Endpoint URL normalization (trailing slash) | ✅ | `user can login with endpoint that has a single trailing slash` |
-| Endpoint URL normalization (multiple slashes) | ✅ | `user can login with endpoint that has multiple trailing slashes` |
-| Endpoint URL normalization (double-slash prevention) | ✅ | `API requests do not contain double-slash after endpoint normalization` |
-| Password expiry modal display | ✅ | `user sees the password change modal when their password has expired` |
-| Password expiry modal not blocked by login | ✅ | `the login modal does not block the password change modal when password has expired` |
-| Password expiry modal cancel | ✅ | `user can cancel the password change modal and return to the login form` |
-| Password change empty validation | ✅ | `password change form shows a validation error when submitted empty` |
-| Password change same-password rejection | ✅ | `password change form rejects a new password that is the same as the current one` |
-| Full password change flow (real account) | ✅ | `user can complete the password change flow with a real account and re-login is attempted` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
+| Account switching | ❌ | - |
 
-**Coverage: 🔶 14/16 features**
+**Coverage: 🔶 4/7 features**
 
 ---
 
 ### 2. Start Page (`/start`)
 
-**Test files:** [`e2e/start/start-page.spec.ts`](start/start-page.spec.ts), visual regression: [`e2e/visual_regression/start/start_page.test.ts`](visual_regression/start/start_page.test.ts)
+**Test files:** None (visual regression only: [`e2e/visual_regression/start/start_page.test.ts`](visual_regression/start/start_page.test.ts))
 
 **Modals:** `FolderCreateModal`, `StartFromURLModal`
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Board layout rendering | ✅ | `Admin can see draggable cards on the Start page board` |
-| Quick action: Create folder → FolderCreateModal | ✅ | `Admin can open the Create Folder modal from the Start page` / `Admin can create a folder from the Start page` |
-| Quick action: Start interactive session → `/session/start` | ✅ | `Admin can navigate to the Session Launcher from the "Start Interactive Session" card` |
-| Quick action: Start batch session → `/session/start` | ✅ | `Admin can navigate to the Session Launcher in batch mode` |
-| Quick action: Start model service → `/service/start` | ✅ | `Admin can navigate to the Model Service creation page` |
-| Quick action: Import from URL → StartFromURLModal | ✅ | `Admin can open the "Start From URL" modal from the Start page` |
+| Board layout rendering | ❌ | - |
+| Quick action: Create folder → FolderCreateModal | ❌ | - |
+| Quick action: Start interactive session → `/session/start` | ❌ | - |
+| Quick action: Start batch session → `/session/start` | ❌ | - |
+| Quick action: Start model service → `/service/start` | ❌ | - |
+| Quick action: Import from URL → StartFromURLModal | ❌ | - |
 | Board item drag & reorder | ❌ | - |
 | VFolder invitation notifications | ❌ | - |
 
-**Coverage: 🔶 6/8 features**
+**Coverage: ❌ 0/8 features**
 
 ---
 
 ### 3. Dashboard (`/dashboard`)
 
-**Test files:** [`e2e/dashboard/dashboard.spec.ts`](dashboard/dashboard.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
+**Test files:** [`e2e/agent/active-agents.spec.ts`](agent/active-agents.spec.ts), visual regression: [`e2e/visual_regression/dashboard/dashboard_page.test.ts`](visual_regression/dashboard/dashboard_page.test.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Dashboard rendering | ✅ | `Admin can see all expected dashboard widgets` |
-| Session count cards | ✅ | `Admin can see session type breakdown in the session count widget` |
-| Resource usage display (MyResource) | ✅ | `Admin can view CPU and Memory usage in the My Resources widget` |
-| Resource usage per resource group | ✅ | `Admin can view resource usage scoped to the current resource group` |
-| Agent statistics (admin) | ✅ | `Admin can view cluster-level resource statistics in the Agent Stats widget` |
-| Active agents list (admin) | ❌ | - |
-| Recent sessions list | ✅ | `Admin can view the recently created sessions list on the Dashboard` |
+| Dashboard rendering | ✅ | `active-agents.spec.ts` (widget visibility) |
+| Session count cards | ❌ | - |
+| Resource usage display (MyResource) | ❌ | - |
+| Resource usage per resource group | ❌ | - |
+| Agent statistics (admin) | ❌ | - |
+| Active agents list (admin) | ✅ | `active-agents.spec.ts` (table, detail drawer, refresh, pagination, column sorting) |
+| Recent sessions list | ❌ | - |
 | Auto-refresh (15s) | ❌ | - |
-| Dashboard item drag/resize | ✅ | `Admin can see resizable and movable widgets on the Dashboard` |
+| Dashboard item drag/resize | ❌ | - |
 
-**Coverage: 🔶 7/9 features**
+**Coverage: 🔶 5/9 features**
 
 ---
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
-**Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click), `SessionSchedulingHistoryModal`
+**Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click)
 
 | Feature | Status | Test |
-| ---------------------------------------------------- | ------ | ---------------------------------------------------------- |
+|---------|--------|------|
 | Create interactive session (Start page) | ✅ | `User can create interactive session on the Start page` |
 | Create batch session (Start page) | ✅ | `User can create batch session on the Start page` |
-| Create interactive session (Session page) | ✅ | `User can create interactive session from the quick-action card` |
-| Create batch session (Session page) | ✅ | Via session creation tests |
+| Create interactive session (Session page) | ✅ | `User can create interactive session on the Sessions page` |
+| Create batch session (Session page) | ✅ | `User can create batch session on the Sessions page` |
 | Session lifecycle (create/monitor/terminate) | ✅ | `Create, monitor, and terminate interactive session` |
-| Batch session auto-completion | ✅ | `Create and wait for batch session completion` |
+| Batch session auto-completion | ✅ | `Batch session completes automatically` |
 | View container logs | ✅ | `View session container logs` |
 | Monitor resource usage | ✅ | `Monitor session resource usage` |
 | Status transitions | ✅ | `Session status transitions are correct` |
 | Bulk terminate disabled for terminated | ✅ | `Cannot select terminated sessions for bulk operations` |
 | Sensitive env vars cleared on reload | ✅ | `Sensitive environment variables are cleared` |
-| Scheduling history modal | ✅ | `Session Scheduling History Modal` (via mocked GraphQL) |
 | Session type filtering (interactive/batch/inference) | ❌ | - |
 | Running/Finished status toggle | ❌ | - |
 | Property filtering (name, resource group, agent) | ❌ | - |
@@ -157,22 +147,21 @@
 | Pagination | ❌ | - |
 | Batch terminate → TerminateSessionModal | ❌ | - |
 | Session name click → SessionDetailDrawer | ❌ | - |
-| Scheduling history modal → SessionSchedulingHistoryModal | ✅ | `Admin can see the scheduling history button` + 18 more tests |
 | Resource policy warnings | 🚧 | Skipped: `superadmin to modify keypair resource policy` |
 
-**Coverage: 🔶 12/20 features**
+**Coverage: 🔶 11/19 features**
 
 ---
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts)
+**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
 
 | Feature | Status | Test |
-| -------------------------------------- | ------ | -------------------------------- |
+|---------|--------|------|
 | Basic session creation | ✅ | Via session creation tests |
 | Multi-step form navigation (5 steps) | ❌ | - |
 | Environment/image selection | 🔶 | Partial (used in creation tests) |
@@ -184,9 +173,9 @@
 | Batch schedule/timeout options | ❌ | - |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
-| Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
+| Session history → SessionTemplateModal | ❌ | - |
 
-**Coverage: 🔶 2/12 features (most only indirectly tested)**
+**Coverage: 🔶 1/12 features (most only indirectly tested)**
 
 ---
 
@@ -200,7 +189,7 @@
 **Row actions:** Edit → `/service/update/:endpointId`, Delete → confirm modal
 
 | Feature | Status | Test |
-| --------------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Endpoint list rendering | ❌ | - |
 | "Start Service" → navigate to `/service/start` | ❌ | - |
 | Endpoint name click → EndpointDetailPage | ❌ | - |
@@ -215,14 +204,13 @@
 
 ### 7. Endpoint Detail (`/serving/:serviceId`)
 
-**Test files:** [`e2e/serving/endpoint-route-table.spec.ts`](serving/endpoint-route-table.spec.ts)
+**Test files:** None
 
 **Cards:** ServiceInfo, AutoScalingRules, GeneratedTokens, Routes
 **Modals:** `AutoScalingRuleEditorModal`, `EndpointTokenGenerationModal`, `BAIJSONViewerModal`, `SessionDetailDrawer`, `InferenceSessionErrorModal`
-**Mocks:** [`e2e/serving/mocking/endpoint-detail-mock.ts`](serving/mocking/endpoint-detail-mock.ts), [`e2e/serving/mocking/endpoint-list-mock.ts`](serving/mocking/endpoint-list-mock.ts)
 
 | Feature | Status | Test |
-| ------------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Service info display | ❌ | - |
 | Edit button → navigate to `/service/update/:endpointId` | ❌ | - |
 | "Add Rules" → AutoScalingRuleEditorModal (create) | ❌ | - |
@@ -230,21 +218,15 @@
 | Delete scaling rule → Popconfirm | ❌ | - |
 | "Generate Token" → EndpointTokenGenerationModal | ❌ | - |
 | Token list display | ❌ | - |
-| Feature flag: route-node table toggle | ✅ | `1.1 Admin sees the new BAIRouteNodes table when route-node flag is enabled`, `1.2 Admin sees the legacy route table when route-node flag is disabled` |
-| Routes table display (columns, tags, values) | ✅ | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash) |
-| Route category toggle (Running/Finished) | ✅ | `2.1`–`2.3` (default Running, switch to Finished, switch back) |
-| Route property filtering (Traffic Status) | ✅ | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter) |
-| Route table sorting | ✅ | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter) |
-| Route table pagination | ✅ | `6.1`–`6.2` (total count display, navigate to page 2) |
-| Route empty state | ✅ | `9.1`–`9.2` (empty Running, empty Finished) |
-| Route error → BAIJSONViewerModal | ✅ | `5.1`–`5.3` (error icon, open modal with JSON, close modal) |
+| Routes table display | ❌ | - |
+| Route error → BAIJSONViewerModal | ❌ | - |
 | Route session ID click → SessionDetailDrawer | ❌ | - |
 | Session error → InferenceSessionErrorModal | ❌ | - |
-| "Sync Routes" action | ✅ | `8.1`–`8.3` (button visible, success notification, error notification) |
+| "Sync Routes" action | ❌ | - |
 | "Clear Errors" action | ❌ | - |
 | Chat test link | ❌ | - |
 
-**Coverage: 🔶 9/20 features**
+**Coverage: ❌ 0/14 features**
 
 ---
 
@@ -253,7 +235,7 @@
 **Test files:** None
 
 | Feature | Status | Test |
-| ----------------------- | ------ | ---- |
+|---------|--------|------|
 | Create model service | ❌ | - |
 | Update existing service | ❌ | - |
 | Resource configuration | ❌ | - |
@@ -277,7 +259,7 @@
 **Row actions:** Share → `InviteFolderSettingModal`, Permission info → `SharedFolderPermissionInfoModal`
 
 | Feature | Status | Test |
-| ---------------------------------------------------------- | ------ | ----------------------------------------------------------------- |
+|---------|--------|------|
 | Create folder (default) → FolderCreateModal | ✅ | `User can create default vFolder` |
 | Create folder (specific location) → FolderCreateModal | ✅ | `User can create a vFolder by selecting a specific location` |
 | Create model folder → FolderCreateModal | ✅ | `User can create Model vFolder` |
@@ -323,6 +305,8 @@
 | Invitation notifications | ❌ | - |
 | Shared folder permission → SharedFolderPermissionInfoModal | ❌ | - |
 | File download | ❌ | - |
+| File/folder rename | ❌ | - |
+| File/folder delete within explorer | ❌ | - |
 
 **Coverage: 🔶 32/45 features (includes 1 skipped)**
 
@@ -335,7 +319,7 @@
 **Modal:** `ModelCardModal` (card click)
 
 | Feature | Status | Test |
-| --------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Model card list rendering | ❌ | - |
 | Search by title/description | ❌ | - |
 | Category filtering | ❌ | - |
@@ -352,7 +336,7 @@
 **Test files:** None
 
 | Feature | Status | Test |
-| -------------------- | ------ | ---- |
+|---------|--------|------|
 | Storage host details | ❌ | - |
 | Resource panel | ❌ | - |
 | Quota settings | ❌ | - |
@@ -363,14 +347,14 @@
 
 ### 12. My Environment (`/my-environment`)
 
-**Test files:** [`e2e/my-environment/my-environment.spec.ts`](my-environment/my-environment.spec.ts)
+**Test files:** None (visual regression only)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Custom image list | ✅ | `User can see custom image list with expected columns` |
-| Image management (search) | ✅ | `User can search custom images` |
+| Custom image list | ❌ | - |
+| Image management | ❌ | - |
 
-**Coverage: ✅ 2/2 features**
+**Coverage: ❌ 0/2 features**
 
 ---
 
@@ -381,12 +365,11 @@
 **Tabs:** Images | Resource Presets | Container Registries (superadmin)
 
 #### Images Tab
-
 **Row actions:** `ImageInstallModal`, `ManageAppsModal`, `ManageImageResourceLimitModal`
 **Filter:** `BAIPropertyFilter` (Name, Architecture, Status, Type, Registry)
 
 | Feature | Status | Test |
-| ---------------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+|---------|--------|------|
 | Image list rendering | ✅ | `Rendering Image List` |
 | Image resource limit → ManageImageResourceLimitModal | ✅ | `user can modify image resource limit` |
 | Image app management → ManageAppsModal | ✅ | `user can manage apps` |
@@ -406,32 +389,28 @@
 | Table column settings → TableColumnsSettingModal | ❌ | - |
 
 #### Resource Presets Tab
-
 **Primary action:** "+" → `ResourcePresetSettingModal`
 **Row actions:** Edit → `ResourcePresetSettingModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
-| ------------------------------------------ | ------ | ---- |
+|---------|--------|------|
 | Preset list rendering | ❌ | - |
 | Create preset → ResourcePresetSettingModal | ❌ | - |
 | Edit preset → ResourcePresetSettingModal | ❌ | - |
 | Delete preset → Popconfirm | ❌ | - |
 
 #### Container Registries Tab (superadmin)
-
 **Primary action:** "+" → `ContainerRegistryEditorModal`
-**Row actions:** Edit → `ContainerRegistryEditorModal`, Delete → Popconfirm, Enable/Disable toggle
+**Row actions:** Edit → `ContainerRegistryEditorModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
-| ---------------------------------------------- | ------ | -------------------------------------------------------------- |
+|---------|--------|------|
 | Registry list rendering | ✅ | `Admin can see the registry table with all expected columns` |
 | Create registry → ContainerRegistryEditorModal | ✅ | `Admin can add a new registry with required fields only` |
 | Edit registry → ContainerRegistryEditorModal | ✅ | `Admin can edit the registry URL and project name` |
 | Delete registry → Popconfirm | ✅ | `Admin can delete the registry with correct name confirmation` |
-| Enable/disable registry toggle | ✅ | `Registry Control Operations` suite |
-| Registry filtering / search | ✅ | `Registry Filtering` suite |
 
-**Coverage: 🔶 21/27 features**
+**Coverage: 🔶 18/24 features**
 
 ---
 
@@ -442,7 +421,7 @@
 **Modals:** `OverlayNetworkSettingModal`, `SchedulerSettingModal`
 
 | Feature | Status | Test |
-| ---------------------------------------------------- | ------ | ------------------------------------------- |
+|---------|--------|------|
 | Block list menu hiding | ✅ | `block list` |
 | Inactive list menu disabling | ✅ | `inactiveList` |
 | 404 for blocked pages | ✅ | `404 page when accessing blocklisted pages` |
@@ -460,113 +439,100 @@
 
 ### 15. Resources (`/agent-summary`, `/agent`)
 
-**Test files:** [`e2e/agent/agent.spec.ts`](agent/agent.spec.ts), [`e2e/agent-summary/agent-summary.spec.ts`](agent-summary/agent-summary.spec.ts)
+**Test files:** [`e2e/agent/agent.spec.ts`](agent/agent.spec.ts)
 
 **Tabs:** Agents | Storage Proxies | Resource Groups
 
-#### Agent Summary (`/agent-summary`)
-
-| Feature | Status | Test |
-|---------|--------|------|
-| Agent Summary list with columns | ✅ | `Admin can see Agent Summary page with expected columns` |
-| Connected/Terminated filter switching | ✅ | `Admin can switch between Connected and Terminated agents` |
-
 #### Agents Tab
-
 **Table link:** Agent name → `AgentDetailDrawer`
 
 | Feature | Status | Test |
-| ------------------------------------ | ------ | ------------------------------------------ |
+|---------|--------|------|
 | Agent list with connected agents | ✅ | `should have at least one connected agent` |
 | Agent name click → AgentDetailDrawer | ❌ | - |
 
 #### Storage Proxies Tab
 
 | Feature | Status | Test |
-| ---------------------------- | ------ | ---- |
+|---------|--------|------|
 | Storage proxy list rendering | ❌ | - |
 
 #### Resource Groups Tab
-
 **Primary action:** "+" → `ResourceGroupSettingModal`
 **Table link:** Name → `ResourceGroupInfoModal`
 **Row actions:** Edit → `ResourceGroupSettingModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
-| -------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Resource group list rendering | ❌ | - |
 | Create resource group → ResourceGroupSettingModal | ❌ | - |
 | Resource group name click → ResourceGroupInfoModal | ❌ | - |
 | Edit resource group → ResourceGroupSettingModal | ❌ | - |
 | Delete resource group → Popconfirm | ❌ | - |
 
-**Coverage: 🔶 3/10 features**
+**Coverage: 🔶 1/8 features**
 
 ---
 
 ### 16. Resource Policy (`/resource-policy`)
 
-**Test files:** [`e2e/resource-policy/resource-policy.spec.ts`](resource-policy/resource-policy.spec.ts)
+**Test files:** None (visual regression only)
 
 **Tabs:** Keypair Policies | User Policies | Project Policies
 
 #### Keypair Policies Tab
-
 **Primary action:** "+" → `KeypairResourcePolicySettingModal`
 **Table link:** Info icon → `KeypairResourcePolicyInfoModal`
 **Row actions:** Edit → `KeypairResourcePolicySettingModal`, Delete → mutation
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Keypair policy list rendering | ✅ | `Admin can see Keypair policy list with expected columns` |
-| Create keypair policy → KeypairResourcePolicySettingModal | ✅ | `Admin can create a Keypair policy` |
+| Keypair policy list rendering | ❌ | - |
+| Create keypair policy → KeypairResourcePolicySettingModal | ❌ | - |
 | View keypair policy → KeypairResourcePolicyInfoModal | ❌ | - |
-| Edit keypair policy → KeypairResourcePolicySettingModal | ✅ | `Admin can edit a Keypair policy` |
-| Delete keypair policy | ✅ | `Admin can delete a Keypair policy` |
+| Edit keypair policy → KeypairResourcePolicySettingModal | ❌ | - |
+| Delete keypair policy | ❌ | - |
 
 #### User Policies Tab
-
 **Primary action:** "+" → `UserResourcePolicySettingModal`
 **Row actions:** Edit → `UserResourcePolicySettingModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
 |---------|--------|------|
-| User policy list rendering | ✅ | `Admin can see User policy list` |
-| Create user policy → UserResourcePolicySettingModal | ✅ | `Admin can create a User policy` |
+| User policy list rendering | ❌ | - |
+| Create user policy → UserResourcePolicySettingModal | ❌ | - |
 | Edit user policy → UserResourcePolicySettingModal | ❌ | - |
-| Delete user policy → Popconfirm | ✅ | `Admin can delete a User policy` |
+| Delete user policy → Popconfirm | ❌ | - |
 
 #### Project Policies Tab
-
 **Primary action:** "+" → `ProjectResourcePolicySettingModal`
 **Row actions:** Edit → `ProjectResourcePolicySettingModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Project policy list rendering | ✅ | `Admin can see Project policy list` |
-| Create project policy → ProjectResourcePolicySettingModal | ✅ | `Admin can create a Project policy` |
+| Project policy list rendering | ❌ | - |
+| Create project policy → ProjectResourcePolicySettingModal | ❌ | - |
 | Edit project policy → ProjectResourcePolicySettingModal | ❌ | - |
-| Delete project policy → Popconfirm | ✅ | `Admin can delete a Project policy` |
+| Delete project policy → Popconfirm | ❌ | - |
 
-**Coverage: 🔶 10/13 features**
+**Coverage: ❌ 0/13 features**
 
 ---
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts)
 
 **Tabs:** Users | Credentials
 
 #### Users Tab
-
 **Primary action:** "+" → `UserSettingModal`
 **Table link:** User name → `UserInfoModal`
 **Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm
 **Bulk actions:** Bulk edit → `UpdateUsersModal`, Bulk delete → `PurgeUsersModal`
 
 | Feature | Status | Test |
-| ------------------------------- | ------ | --------------------------------------------- |
+|---------|--------|------|
 | Create user → UserSettingModal | ✅ | `Admin can create a new user` |
 | Update user → UserSettingModal | ✅ | `Admin can update user information` |
 | Deactivate user | ✅ | `Admin can deactivate a user` |
@@ -579,21 +545,20 @@
 | User table sorting | ❌ | - |
 
 #### Credentials Tab
-
 **Primary action:** "+" → `KeypairSettingModal`
 **Table link:** Keypair name → `KeypairInfoModal`
 **Row actions:** Edit → `KeypairSettingModal`, SSH → `SSHKeypairManagementModal`, Delete → Popconfirm
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Keypair list rendering | ✅ | `Admin can see Credential list with expected columns` |
-| Keypair name click → KeypairInfoModal | ✅ | `Admin can view Keypair info modal` |
-| Active/Inactive filter | ✅ | `Admin can see Active/Inactive radio filter` |
+| Keypair list rendering | ❌ | - |
 | Create keypair → KeypairSettingModal | ❌ | - |
+| Keypair name click → KeypairInfoModal | ❌ | - |
 | Edit keypair → KeypairSettingModal | ❌ | - |
 | SSH key management → SSHKeypairManagementModal | ❌ | - |
+| Delete keypair → Popconfirm | ❌ | - |
 
-**Coverage: 🔶 9/16 features**
+**Coverage: 🔶 6/16 features**
 
 ---
 
@@ -602,7 +567,7 @@
 **Test files:** [`e2e/maintenance/maintenance.spec.ts`](maintenance/maintenance.spec.ts)
 
 | Feature | Status | Test |
-| ------------------------- | ------ | ------------------------------------ |
+|---------|--------|------|
 | Recalculate usage | ✅ | `click the Recalculate Usage button` |
 | Rescan images | ✅ | `click the Rescan Images button` |
 | Other maintenance actions | ❌ | - |
@@ -618,11 +583,10 @@
 **Tabs:** General | Logs
 
 #### General Tab
-
 **Modals:** `MyKeypairInfoModal`, `SSHKeypairManagementModal`, `ShellScriptEditModal`
 
 | Feature | Status | Test |
-| -------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Language selection | ❌ | - |
 | Desktop notifications toggle | ❌ | - |
 | Compact sidebar toggle | ❌ | - |
@@ -636,7 +600,7 @@
 #### Logs Tab
 
 | Feature | Status | Test |
-| ----------------- | ------ | ---- |
+|---------|--------|------|
 | Error log viewing | ❌ | - |
 
 **Coverage: ❌ 0/10 features**
@@ -645,7 +609,7 @@
 
 ### 20. Project (`/project`)
 
-**Test files:** [`e2e/project/project-crud.spec.ts`](project/project-crud.spec.ts)
+**Test files:** None
 
 **Primary action:** "Create Project" → `BAIProjectSettingModal`
 **Table link:** Project name → `BAIProjectSettingModal` (edit mode)
@@ -653,29 +617,29 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Project list rendering | ✅ | `Admin can see project list with expected columns` |
-| Create project → BAIProjectSettingModal | ✅ | `Admin can create a new project` |
-| Project name click → BAIProjectSettingModal (edit) | ✅ | `Admin can edit project` |
-| Project filtering | ✅ | `Admin can filter projects by name` |
+| Project list rendering | ❌ | - |
+| Create project → BAIProjectSettingModal | ❌ | - |
+| Project name click → BAIProjectSettingModal (edit) | ❌ | - |
+| Project filtering | ❌ | - |
 | Bulk edit → BAIProjectBulkEditModal | ❌ | - |
-| Delete project | ✅ | `Admin can delete a project` |
+| Delete project | ❌ | - |
 
-**Coverage: 🔶 5/6 features**
+**Coverage: ❌ 0/6 features**
 
 ---
 
 ### 21. Statistics (`/statistics`)
 
-**Test files:** [`e2e/statistics/statistics.spec.ts`](statistics/statistics.spec.ts)
+**Test files:** None
 
 **Tabs:** Usage History | User Session History (conditional)
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Allocation history tab | ✅ | `Admin can see Statistics page with Allocation History tab` |
-| User session history tab | ✅ | `Admin can switch to User Session History tab` |
+| Allocation history tab | ❌ | - |
+| User session history tab | ❌ | - |
 
-**Coverage: ✅ 2/2 features**
+**Coverage: ❌ 0/2 features**
 
 ---
 
@@ -688,7 +652,7 @@
 **Table link:** Session name → `SessionDetailAndContainerLogOpenerLegacy` drawer
 
 | Feature | Status | Test |
-| ----------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Pending session list rendering | ❌ | - |
 | Resource group filtering | ❌ | - |
 | Session name click → SessionDetail drawer | ❌ | - |
@@ -700,20 +664,7 @@
 
 ---
 
-### 23. Information (`/information`)
-
-**Test files:** [`e2e/information/information.spec.ts`](information/information.spec.ts)
-
-| Feature | Status | Test |
-|---------|--------|------|
-| Information page rendering | ✅ | `Admin can see Information page with server details` |
-| Server / cluster details display | ✅ | `Admin can see Information page with server details` |
-
-**Coverage: ✅ 2/2 features**
-
----
-
-### 24. Reservoir (`/reservoir`, `/reservoir/:artifactId`)
+### 23. Reservoir (`/reservoir`, `/reservoir/:artifactId`)
 
 **Test files:** None
 
@@ -726,7 +677,7 @@
 #### Main Page (`/reservoir`)
 
 | Feature | Status | Test |
-| -------------------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Artifact list rendering | ❌ | - |
 | Mode toggle (Active/Inactive) | ❌ | - |
 | Artifact filtering (name, source, registry, type) | ❌ | - |
@@ -745,7 +696,7 @@
 **Bulk actions:** Pull selected, Import to folder, Delete selected
 
 | Feature | Status | Test |
-| ------------------------------------------------------------------ | ------ | ---- |
+|---------|--------|------|
 | Artifact info display | ❌ | - |
 | Revision list rendering | ❌ | - |
 | Revision filtering (status, version, size) | ❌ | - |
@@ -760,7 +711,7 @@
 
 ---
 
-### 25. Branding (`/branding`)
+### 24. Branding (`/branding`)
 
 **Test files:** None
 
@@ -770,7 +721,7 @@
 #### Theme Customization
 
 | Feature | Status | Test |
-| -------------------------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Primary color picker | ❌ | - |
 | Header background color picker | ❌ | - |
 | Link / Info / Error / Success / Text color pickers | ❌ | - |
@@ -779,7 +730,7 @@
 #### Logo Customization
 
 | Feature | Status | Test |
-| ------------------------------------------ | ------ | ---- |
+|---------|--------|------|
 | Wide logo size configuration | ❌ | - |
 | Collapsed logo size configuration | ❌ | - |
 | Light/Dark mode logo upload & preview | ❌ | - |
@@ -789,7 +740,7 @@
 #### General
 
 | Feature | Status | Test |
-| ------------------------------------------ | ------ | ---- |
+|---------|--------|------|
 | Preview in new window | ❌ | - |
 | JSON config editing → ThemeJsonConfigModal | ❌ | - |
 | Reset all to defaults | ❌ | - |
@@ -800,14 +751,14 @@
 
 ---
 
-### 26. App Launcher (modal from Session page)
+### 25. App Launcher (modal from Session page)
 
 **Test files:** [`e2e/app-launcher/app-launcher-basic.spec.ts`](app-launcher/app-launcher-basic.spec.ts), [`e2e/app-launcher/app-launcher-launch.spec.ts`](app-launcher/app-launcher-launch.spec.ts)
 
 **Sub-modals:** `SFTPConnectionInfoModal`, `VNCConnectionInfoModal`, `XRDPConnectionInfoModal`, `VSCodeDesktopConnectionModal`, `TensorboardPathModal`, `AppLaunchConfirmationModal`, `TCPConnectionInfoModal`
 
 | Feature | Status | Test |
-| -------------------------------------------------- | ------ | -------------------------------------------- |
+|---------|--------|------|
 | Open modal from session actions | ✅ | `User can open app launcher modal` |
 | Apps grouped by category | ✅ | `User sees apps grouped by category` |
 | App icons and titles correct | ✅ | `User sees correct app icons and titles` |
@@ -831,14 +782,14 @@
 
 ---
 
-### 27. Chat (`/chat/:id?`)
+### 26. Chat (`/chat/:id?`)
 
 **Test files:** [`e2e/chat/chat.spec.ts`](chat/chat.spec.ts), [`e2e/chat/chat-sync.spec.ts`](chat/chat-sync.spec.ts)
 
 **Drawer:** `ChatHistoryDrawer`
 
 | Feature | Status | Test |
-| -------------------------------- | ------ | ---- |
+|---------|--------|------|
 | Chat card interface | ✅ | `User can see the chat page with endpoint and model selectors` |
 | Chat history → ChatHistoryDrawer | ✅ | `User can see chat history drawer after sending a message` |
 | New chat creation | ✅ | `User can rename a chat session from the page title` |
@@ -850,54 +801,29 @@
 
 ---
 
-### 27. Plugin System (config-based)
-
-**Test files:** [`e2e/plugin/plugin-system.spec.ts`](plugin/plugin-system.spec.ts)
-
-**Plugin fixtures:** `test-plugin.js`, `admin-test-plugin.js`, `plugin-a.js`, `plugin-b.js`
-
-| Feature | Status | Test |
-|---------|--------|------|
-| Admin sees user-permission plugin in sidebar | ✅ | `Admin can see user-permission plugin menu item in sidebar` |
-| User sees user-permission plugin in sidebar | ✅ | `User can see user-permission plugin menu item in sidebar` |
-| Admin sees admin-permission plugin in Admin Settings | ✅ | `Admin can see admin-permission plugin in Admin Settings panel` |
-| No plugin menu without config | ✅ | `Admin cannot see extra plugin menu when plugin.page is not set` |
-| No plugin menu when JS returns 404 | ✅ | `Admin cannot see plugin menu when plugin JS file returns 404` |
-| Plugin menu click opens new tab | ✅ | `Admin can open external link plugin in new tab` |
-| User cannot see admin-permission plugin | ✅ | `User cannot see admin-permission plugin menu item` |
-| Blocklisted plugin is hidden | ✅ | `Admin cannot see plugin that is in the blocklist` |
-| Non-blocklisted plugin visible alongside blocklist | ✅ | `Admin can see plugin that is not in the blocklist while blocked item is hidden` |
-| Multiple plugins visible simultaneously | ✅ | `Admin can see multiple plugin menu items when multiple plugins are configured` |
-| Valid plugin visible when sibling fails to load | ✅ | `Admin can see valid plugin when one of multiple plugins fails to load` |
-| Plugin state persists after page reload | ✅ | `Admin can see plugin menu item after page reload` |
-
-**Coverage: ✅ 12/12 features**
-
----
-
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
 
-| Page              | Visual Test |
-| ----------------- | ----------- |
-| Login             | ✅          |
-| Start             | ✅          |
-| Summary/Dashboard | ✅          |
-| Session           | ✅          |
-| Serving           | ✅          |
-| VFolder/Data      | ✅          |
-| Environments      | ✅          |
-| My Environments   | ✅          |
-| Resources         | ✅          |
-| Resource Policy   | ✅          |
-| Users/Credentials | ✅          |
-| Configurations    | ✅          |
-| Maintenance       | ✅          |
-| Information       | ✅          |
-| AI Agents         | ✅          |
-| Import            | ✅          |
-| Dashboard         | ✅          |
+| Page | Visual Test |
+|------|------------|
+| Login | ✅ |
+| Start | ✅ |
+| Summary/Dashboard | ✅ |
+| Session | ✅ |
+| Serving | ✅ |
+| VFolder/Data | ✅ |
+| Environments | ✅ |
+| My Environments | ✅ |
+| Resources | ✅ |
+| Resource Policy | ✅ |
+| Users/Credentials | ✅ |
+| Configurations | ✅ |
+| Maintenance | ✅ |
+| Information | ✅ |
+| AI Agents | ✅ |
+| Import | ✅ |
+| Dashboard | ✅ |
 
 ---
 
@@ -908,23 +834,27 @@ Visual regression tests exist for most pages but only capture screenshots, not f
 These are core user workflows that affect the largest number of users.
 
 | # | Page/Feature | Reason | Estimated Complexity |
-| --- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------- |
+|---|-------------|--------|---------------------|
 | 1 | **Serving - Create & Manage Model Service** (`/serving`, `/service/start`) | Core revenue feature. Zero coverage. Complete CRUD lifecycle needed. | High |
 | 2 | **Session Launcher - Advanced Options** (`/session/start`) | Resource allocation, VFolder mounting, and form validation are critical for correct session behavior. | Medium |
+| 3 | **Dashboard - Key Metrics** (`/dashboard`) | Landing page for most users. Session counts and resource usage display should be verified. | Low |
+| 4 | **Start Page - Quick Actions** (`/start`) | Primary entry point. Quick actions should correctly navigate to session launcher/service creator. | Low |
 
 ### Priority 2: Important - Admin Features, Data Integrity
 
 | # | Page/Feature | Reason | Estimated Complexity |
-| --- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------- |
-| 3 | **User Settings Persistence** (`/usersettings`) | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly. | Low |
-| 4 | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but table interactions and bulk modals (DeleteVFolderModal, RestoreVFolderModal) untested. | Low |
-| 5 | **Credential - Keypairs Tab** (`/credential`) | API access keys (3 uncovered features). Security-critical. | Medium |
-| 6 | **Reservoir - Artifact Management** (`/reservoir`) | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations. | High |
+|---|-------------|--------|---------------------|
+| 5 | **Resource Policy CRUD** (`/resource-policy`) | 3 tabs with 13 features. Affects resource allocation for all users. Misconfiguration can block sessions. | Medium |
+| 6 | **Project CRUD** (`/project`) | Multi-tenancy management. Projects control user access and resource isolation. Includes bulk edit. | Medium |
+| 7 | **User Settings Persistence** (`/usersettings`) | 2 tabs, 4 modals. Language, auto-logout, SSH keys, shell scripts must persist correctly. | Low |
+| 8 | **VFolder - Filtering, Sorting, Bulk ops** (`/data`) | Data page has good CRUD but table interactions and bulk modals (DeleteVFolderModal, RestoreVFolderModal) untested. | Low |
+| 9 | **Credential - Keypairs Tab** (`/credential`) | API access keys (6 uncovered features). Security-critical. Only Users tab is tested. | Medium |
+| 10 | **Reservoir - Artifact Management** (`/reservoir`) | 18 features across main and detail pages. HuggingFace import, revision management, bulk operations. | High |
 
 ### Priority 3: Nice to Have - Edge Cases, Admin Tools
 
 | # | Page/Feature | Reason | Estimated Complexity |
-| --- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
+|---|-------------|--------|---------------------|
 | 7 | **Endpoint Detail - Auto-scaling & Tokens** (`/serving/:serviceId`) | 14 features with 5 modals. Complex admin feature, but lower user count. | High |
 | 8 | **Session - Filtering, Drawer** (`/session`) | Session list already has creation/lifecycle coverage. SessionDetailDrawer is significant. | Low |
 | 9 | **Environment - Presets** (`/environment`) | 4 uncovered features for Resource Presets tab. Each with CRUD modals. | Medium |
@@ -942,7 +872,7 @@ These are core user workflows that affect the largest number of users.
 ### Existing Page Object Models
 
 | Class | Location | Purpose |
-| --------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------ |
+|-------|----------|---------|
 | `BasePage` | [`e2e/utils/classes/base/BasePage.ts`](utils/classes/base/BasePage.ts) | Base page class |
 | `BaseModal` | [`e2e/utils/classes/base/BaseModal.ts`](utils/classes/base/BaseModal.ts) | Base modal class |
 | `StartPage` | [`e2e/utils/classes/common/StartPage.ts`](utils/classes/common/StartPage.ts) | Start page helpers |
@@ -958,7 +888,7 @@ These are core user workflows that affect the largest number of users.
 ### Shared Utilities
 
 | Utility | Location | Purpose |
-| ------------------- | -------------------------------------------------------- | ---------------------------------------- |
+|---------|----------|---------|
 | `test-util.ts` | [`e2e/utils/test-util.ts`](utils/test-util.ts) | Login, config modification, TOML helpers |
 | `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts) | Ant Design component interaction helpers |
 
@@ -967,11 +897,13 @@ These are core user workflows that affect the largest number of users.
 To efficiently build new E2E tests, these POMs should be created:
 
 | POM | For Page | Priority |
-| --------------------- | --------------------- | -------- |
+|-----|----------|----------|
 | `ServingPage` | `/serving` | P1 |
 | `ServiceLauncherPage` | `/service/start` | P1 |
 | `EndpointDetailPage` | `/serving/:serviceId` | P3 |
-| `ResourcePolicyPage` | `/resource-policy` | - |
+| `DashboardPage` | `/dashboard` | P1 |
+| `ResourcePolicyPage` | `/resource-policy` | P2 |
+| `ProjectPage` | `/project` | P2 |
 | `UserSettingsPage` | `/usersettings` | P2 |
 
 ---
@@ -981,35 +913,33 @@ To efficiently build new E2E tests, these POMs should be created:
 | Page Route | Functional Tests | Visual Tests | Priority |
 |------------|:---:|:---:|:---:|
 | `/interactive-login` | 🔶 | ✅ | - |
-| `/start` | 🔶 | ✅ | - |
-| `/dashboard` | 🔶 | ✅ | - |
-| `/session` | 🔶 | ✅ | P3 |
+| `/start` | ❌ | ✅ | P1 |
+| `/dashboard` | 🔶 | ✅ | P1 |
+| `/session` | ✅ | ✅ | P3 |
 | `/session/start` | 🔶 | ✅ | P1 |
 | `/serving` | ❌ | ✅ | **P1** |
-| `/serving/:serviceId` | 🔶 | ❌ | P3 |
+| `/serving/:serviceId` | ❌ | ❌ | P3 |
 | `/service/start` | ❌ | ❌ | **P1** |
 | `/service/update/:endpointId` | ❌ | ❌ | P3 |
-| `/data` | 🔶 | ✅ | P2 |
+| `/data` | ✅ | ✅ | P2 |
 | `/model-store` | ❌ | ❌ | P3 |
 | `/storage-settings/:hostname` | ❌ | ❌ | P3 |
-| `/my-environment` | ✅ | ✅ | - |
+| `/my-environment` | ❌ | ✅ | P3 |
 | `/environment` | 🔶 | ✅ | P3 |
-| `/settings` (config) | 🔶 | ✅ | - |
+| `/settings` (config) | ✅ | ✅ | - |
 | `/agent-summary` | 🔶 | ✅ | P3 |
 | `/agent` | 🔶 | ✅ | P3 |
-| `/resource-policy` | 🔶 | ✅ | - |
+| `/resource-policy` | ❌ | ✅ | **P2** |
 | `/credential` | 🔶 | ✅ | P2 |
 | `/maintenance` | 🔶 | ✅ | - |
-| `/project` | 🔶 | ❌ | - |
-| `/statistics` | ✅ | ❌ | - |
+| `/project` | ❌ | ❌ | **P2** |
+| `/statistics` | ❌ | ❌ | P3 |
 | `/usersettings` | ❌ | ❌ | **P2** |
 | `/scheduler` | ❌ | ❌ | P3 |
-| `/information` | ✅ | ✅ | - |
-| `/reservoir` | ❌ | ❌ | P2 |
+| `/reservoir` | ❌ | ❌ | P3 |
 | `/branding` | ❌ | ❌ | P3 |
 | `/chat/:id?` | ✅ | ✅ | - |
 | App Launcher (modal) | 🔶 | ❌ | - |
-| Plugin System (config-based) | ✅ | ❌ | - |
 
 ---
 
