@@ -31,7 +31,7 @@
 | Environment | `/environment` | 24 | 18 | 🔶 75% |
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 8 | 1 | 🔶 13% |
-| Resource Policy | `/resource-policy` | 13 | 0 | ❌ 0% |
+| Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
 | User Credentials | `/credential` | 16 | 6 | 🔶 38% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
@@ -468,7 +468,7 @@
 
 ### 16. Resource Policy (`/resource-policy`)
 
-**Test files:** None (visual regression only)
+**Test files:** `e2e/resource-policy/resource-policy.spec.ts`
 
 **Tabs:** Keypair Policies | User Policies | Project Policies
 
@@ -479,11 +479,11 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Keypair policy list rendering | ❌ | - |
-| Create keypair policy → KeypairResourcePolicySettingModal | ❌ | - |
+| Keypair policy list rendering | ✅ | `Admin can see Keypair policy list with expected columns` |
+| Create keypair policy → KeypairResourcePolicySettingModal | ✅ | `Admin can create a Keypair policy` |
 | View keypair policy → KeypairResourcePolicyInfoModal | ❌ | - |
-| Edit keypair policy → KeypairResourcePolicySettingModal | ❌ | - |
-| Delete keypair policy | ❌ | - |
+| Edit keypair policy → KeypairResourcePolicySettingModal | ✅ | `Admin can edit a Keypair policy` |
+| Delete keypair policy | ✅ | `Admin can delete a Keypair policy` |
 
 #### User Policies Tab
 **Primary action:** "+" → `UserResourcePolicySettingModal`
@@ -491,10 +491,10 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| User policy list rendering | ❌ | - |
-| Create user policy → UserResourcePolicySettingModal | ❌ | - |
+| User policy list rendering | ✅ | `Admin can see User policy list` |
+| Create user policy → UserResourcePolicySettingModal | ✅ | `Admin can create a User policy` |
 | Edit user policy → UserResourcePolicySettingModal | ❌ | - |
-| Delete user policy → Popconfirm | ❌ | - |
+| Delete user policy → Popconfirm | ✅ | `Admin can delete a User policy` |
 
 #### Project Policies Tab
 **Primary action:** "+" → `ProjectResourcePolicySettingModal`
@@ -502,12 +502,12 @@
 
 | Feature | Status | Test |
 |---------|--------|------|
-| Project policy list rendering | ❌ | - |
-| Create project policy → ProjectResourcePolicySettingModal | ❌ | - |
+| Project policy list rendering | ✅ | `Admin can see Project policy list` |
+| Create project policy → ProjectResourcePolicySettingModal | ✅ | `Admin can create a Project policy` |
 | Edit project policy → ProjectResourcePolicySettingModal | ❌ | - |
-| Delete project policy → Popconfirm | ❌ | - |
+| Delete project policy → Popconfirm | ✅ | `Admin can delete a Project policy` |
 
-**Coverage: ❌ 0/13 features**
+**Coverage: 🔶 10/13 features**
 
 ---
 
