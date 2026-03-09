@@ -66,6 +66,7 @@ import {
   useErrorMessageResolver,
   useBAILogger,
   BAIResourceNumberWithIcon,
+  BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
@@ -606,21 +607,25 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             {
               endpoint_id: endpoint?.endpoint_id || '',
               props: {
-                resource_slots: JSON.stringify({
-                  cpu: values.resource.cpu,
-                  mem: values.resource.mem,
-                  ...(values.resource?.acceleratorType &&
-                  values.resource?.accelerator &&
-                  values.resource.accelerator > 0
-                    ? {
-                        [values.resource.acceleratorType]:
-                          values.resource.accelerator,
-                      }
-                    : undefined),
-                }),
-                resource_opts: JSON.stringify({
-                  shmem: values.resource.shmem,
-                }),
+                resource_slots: wantToChangeResource
+                  ? JSON.stringify({
+                      cpu: values.resource.cpu,
+                      mem: values.resource.mem,
+                      ...(values.resource?.acceleratorType &&
+                      values.resource?.accelerator &&
+                      values.resource.accelerator > 0
+                        ? {
+                            [values.resource.acceleratorType]:
+                              values.resource.accelerator,
+                          }
+                        : undefined),
+                    })
+                  : endpoint.resource_slots,
+                resource_opts: wantToChangeResource
+                  ? JSON.stringify({
+                      shmem: values.resource.shmem,
+                    })
+                  : endpoint.resource_opts,
                 // FIXME: temporarily convert cluster mode string according to server-side type
                 cluster_mode:
                   'single-node' === values.cluster_mode
@@ -1171,62 +1176,50 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         //   });
                         // }}
                         />
-                        {endpoint &&
-                          !wantToChangeResource &&
-                          !baiClient._config.allowCustomResourceAllocation && (
-                            <Form.Item
-                              label={
-                                <>
-                                  {t('modelService.Resources')}
-                                  <Button
-                                    type="link"
-                                    onClick={() => {
-                                      form.setFieldsValue({
-                                        allocationPreset: 'auto-select',
-                                      });
-                                      setWantToChangeResource(true);
-                                    }}
-                                  >
-                                    {t('general.Change')}
-                                  </Button>
-                                </>
-                              }
-                              required
-                            >
-                              <BAIFlex gap={'xs'}>
-                                <Tooltip title={t('session.ResourceGroup')}>
-                                  <Tag>{endpoint?.resource_group}</Tag>
-                                </Tooltip>
-                                {_.map(
-                                  JSON.parse(endpoint?.resource_slots || '{}'),
-                                  (value: string, type) => {
-                                    return (
-                                      <BAIResourceNumberWithIcon
-                                        key={type}
-                                        type={type}
-                                        value={value}
-                                        opts={JSON.parse(
-                                          endpoint?.resource_opts || '{}',
-                                        )}
-                                      />
-                                    );
-                                  },
-                                )}
-                              </BAIFlex>
-                            </Form.Item>
-                          )}
-                        <div
-                          style={{
-                            display:
-                              endpoint &&
-                              !wantToChangeResource &&
-                              !baiClient._config.allowCustomResourceAllocation
-                                ? 'none'
-                                : 'block',
-                          }}
-                        >
+                        {endpoint && !wantToChangeResource ? (
+                          <Form.Item
+                            label={
+                              <>
+                                {t('modelService.Resources')}
+                                <BAIButton
+                                  type="link"
+                                  action={async () => {
+                                    form.setFieldsValue({
+                                      allocationPreset: 'auto-select',
+                                    });
+                                    setWantToChangeResource(true);
+                                  }}
+                                >
+                                  {t('general.Change')}
+                                </BAIButton>
+                              </>
+                            }
+                            required
+                          >
+                            <BAIFlex gap={'xs'}>
+                              <Tooltip title={t('session.ResourceGroup')}>
+                                <Tag>{endpoint?.resource_group}</Tag>
+                              </Tooltip>
+                              {_.map(
+                                JSON.parse(endpoint?.resource_slots || '{}'),
+                                (value: string, type) => {
+                                  return (
+                                    <BAIResourceNumberWithIcon
+                                      key={type}
+                                      type={type}
+                                      value={value}
+                                      opts={JSON.parse(
+                                        endpoint?.resource_opts || '{}',
+                                      )}
+                                    />
+                                  );
+                                },
+                              )}
+                            </BAIFlex>
+                          </Form.Item>
+                        ) : (
                           <ResourceAllocationFormItems enableResourcePresets />
-                        </div>
+                        )}
                       </>
                     )}
                   </Card>
