@@ -98,9 +98,11 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         baiRequestWithPromise({
           method: 'GET',
           url: '/user-config/bootstrap-script',
-        }) as Promise<string>
-      ).then((response: string) => {
-        setScript(response);
+        }) as Promise<string | Record<string, any>>
+      ).then((response) => {
+        // API may return a plain string (text/plain) or a JSON object
+        const raw = typeof response === 'string' ? response : response?.script;
+        setScript(typeof raw === 'string' ? raw : '');
       });
     }
     if (shellInfo === 'userconfig') {
@@ -108,11 +110,17 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
         baiRequestWithPromise({
           method: 'GET',
           url: '/user-config/dotfiles',
-        }) as Promise<Array<UserConfigScript>>
+        }) as Promise<Array<UserConfigScript> | Record<string, any>>
       ).then((response) => {
-        const defaultScript = _.find(response, { path: rcfileNames });
+        // API may return the array directly or wrapped in an object
+        const dotfiles = Array.isArray(response)
+          ? response
+          : Array.isArray((response as any)?.dotfiles)
+            ? (response as any).dotfiles
+            : [];
+        const defaultScript = _.find(dotfiles, { path: rcfileNames });
         setScript(defaultScript?.data || '');
-        setUserConfigScript(response);
+        setUserConfigScript(dotfiles);
       });
     }
   };
