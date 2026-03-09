@@ -11,8 +11,9 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Tag, Typography } from 'antd';
+import { Tag } from 'antd';
 import {
+  BAIButton,
   BAIColumnType,
   BAILink,
   BAITable,
@@ -113,7 +114,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         return (
           <>
             {isDeletedFilter ? (
-              <Button
+              <BAIButton
                 type="text"
                 danger
                 icon={<ExclamationCircleOutlined />}
@@ -122,14 +123,14 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
               />
             ) : (
               <>
-                <Button
+                <BAIButton
                   type="text"
                   icon={<EditOutlined />}
                   size="small"
                   disabled={isSystem}
                   onClick={() => onClickEdit?.(role)}
                 />
-                <Button
+                <BAIButton
                   type="text"
                   danger
                   icon={<DeleteOutlined />}
@@ -189,13 +190,6 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         onChangeOrder?.(
           (order as (typeof availableRoleSorterValues)[number]) || null,
         );
-      }}
-      locale={{
-        emptyText: (
-          <Typography.Text type="secondary">
-            {t('rbac.NoRolesToDisplay')}
-          </Typography.Text>
-        ),
       }}
       {...tableProps}
     />
