@@ -11,19 +11,18 @@ import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Skeleton } from 'antd';
+import { Skeleton } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
-  toLocalId,
-  useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -85,7 +84,12 @@ const RBACManagementPage: React.FC = () => {
         $limit: Int
         $offset: Int
       ) {
-        adminRoles(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {
+        adminRoles(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) {
           count
           edges {
             node {
@@ -130,7 +134,12 @@ const RBACManagementPage: React.FC = () => {
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-          <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIFlex
+            gap={'sm'}
+            align="start"
+            wrap="wrap"
+            style={{ flexShrink: 1 }}
+          >
             <BAIRadioGroup
               optionType="button"
               value={queryParams.status}
@@ -170,19 +179,19 @@ const RBACManagementPage: React.FC = () => {
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button
+            <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               onClick={() => setIsCreateModalOpen(true)}
             >
               {t('rbac.CreateRole')}
-            </Button>
+            </BAIButton>
           </BAIFlex>
         </BAIFlex>
         <Suspense fallback={<Skeleton active />}>
           <RoleNodes
             rolesFrgmt={roleNodes}
-            statusFilter={queryParams.status}
+            statusFilter={deferredQueryVariables.filter.status?.[0]}
             loading={deferredQueryVariables !== queryVariables}
             order={order}
             onChangeOrder={setOrder}
