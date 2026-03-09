@@ -1,9 +1,9 @@
-id: backend-ai-guide
+id: backend.ai-guide
 title: |
   Backend.AI
   Complete Guide
 description: Comprehensive guide for Backend.AI platform by Lablup Inc.
-type: document
+type: monorepo
 languages:
   - en
   - ko
@@ -11,91 +11,97 @@ languages:
   - th
 navigation:
   en:
-    - title: "Backend.AI Overview"
+    - title: Backend.AI Overview
       children:
-        - title: "Introduction"
-          path: "introduction.md"
-        - title: "Architecture"
+        - title: Introduction
+          path: introduction.md
+        - title: Architecture
           children:
-            - title: "Service Components"
-              path: "backend.ai-overview/backend.ai-architecture/service-components/service-components-overview.md"
-            - title: "Computing"
-              path: "backend.ai-overview/backend.ai-architecture/computing.md"
-            - title: "Storage Management"
-              path: "backend.ai-overview/backend.ai-architecture/storage-management.md"
-        - title: "Enterprise Applications"
+            - title: Service Components
+              path: backend.ai-overview/backend.ai-architecture/service-components/service-components-overview.md
+            - title: Computing
+              path: backend.ai-overview/backend.ai-architecture/computing.md
+            - title: Storage Management
+              path: backend.ai-overview/backend.ai-architecture/storage-management.md
+        - title: Enterprise Applications
           children:
-            - title: "FastTrack MLOps"
-              path: "backend.ai-overview/enterprise-applicatioins/fasttrack-mlops.md"
-            - title: "Control Panel"
-              path: "backend.ai-overview/enterprise-applicatioins/control-panel.md"
-        - title: "FAQ"
-          path: "backend.ai-overview/faq/frequently-asked-questions.md"
-
-    - title: "Install and Run"
+            - title: FastTrack MLOps
+              path: backend.ai-overview/enterprise-applicatioins/fasttrack-mlops.md
+            - title: Control Panel
+              path: backend.ai-overview/enterprise-applicatioins/control-panel.md
+        - title: FAQ
+          path: backend.ai-overview/faq/frequently-asked-questions.md
+    - title: Install and Run
       children:
-        - title: "Supported Environments"
-          path: "install-and-run/support-environments.md"
-        - title: "Single-node Installation"
+        - title: Supported Environments
+          path: install-and-run/support-environments.md
+        - title: Single-node Installation
           children:
-            - title: "Install from Binary"
-              path: "install-and-run/single-node-all-in-one/install-from-binary/binary-installation-guide.md"
-            - title: "Install from Source"
-              path: "install-and-run/single-node-all-in-one/install-from-source-code.md"
-        - title: "Cloud Deployments"
+            - title: Install from Binary
+              path: install-and-run/single-node-all-in-one/install-from-binary/binary-installation-guide.md
+            - title: Install from Source
+              path: install-and-run/single-node-all-in-one/install-from-source-code.md
+        - title: Cloud Deployments
           children:
-            - title: "AWS Deployment"
-              path: "install-and-run/install-on-cloud-services/install-on-aws.md"
-            - title: "Azure Deployment"
-              path: "install-and-run/install-on-cloud-services/install-on-azure.md"
-            - title: "GCP Deployment"
-              path: "install-and-run/install-on-cloud-services/install-on-gcp.md"
-
-    - title: "Get Started"
+            - title: AWS Deployment
+              path: install-and-run/install-on-cloud-services/install-on-aws.md
+            - title: Azure Deployment
+              path: install-and-run/install-on-cloud-services/install-on-azure.md
+            - title: GCP Deployment
+              path: install-and-run/install-on-cloud-services/install-on-gcp.md
+    - title: Get Started
       children:
-        - title: "Signup and Login"
-          path: "get-started/signup-and-login.md"
-        - title: "Create Storage Folder"
-          path: "get-started/create-storage-folder.md"
-        - title: "Start a New Session"
-          path: "get-started/start-a-new-session.md"
-        - title: "Model Serving"
-          path: "get-started/model-serving.md"
-
-    - title: "Backend.AI Usage Guide"
+        - title: Signup and Login
+          path: get-started/signup-and-login.md
+        - title: Create Storage Folder
+          path: get-started/create-storage-folder.md
+        - title: Start a New Session
+          path: get-started/start-a-new-session.md
+        - title: Model Serving
+          path: get-started/model-serving.md
+    - title: Backend.AI Usage Guide
       children:
-        - title: "Storage"
+        - title: Storage
           children:
-            - title: "Data Management"
-              path: "backend.ai-usage-guide/storage/data/data-management-guide.md"
-            - title: "Folder Operations"
-              path: "backend.ai-usage-guide/storage/data/how-to-create-rename-update-delete-storage-folders.md"
-        - title: "Workload"
+            - title: Data Management
+              path: backend.ai-usage-guide/storage/data/data-management-guide.md
+            - title: Folder Operations
+              path: backend.ai-usage-guide/storage/data/how-to-create-rename-update-delete-storage-folders.md
+        - title: Workload
           children:
-            - title: "Sessions"
-              path: "backend.ai-usage-guide/workload/sessions/session-management.md"
-            - title: "Import & Run"
-              path: "backend.ai-usage-guide/workload/import-and-run/import-and-run-guide.md"
-        - title: "CLI"
+            - title: Sessions
+              path: backend.ai-usage-guide/workload/sessions/session-management.md
+            - title: Import & Run
+              path: backend.ai-usage-guide/workload/import-and-run/import-and-run-guide.md
+        - title: CLI
           children:
-            - title: "User CLI"
-              path: "cli-user/user-cli-guide.md"
-            - title: "Admin CLI"
-              path: "cli-admin/admin-cli-guide.md"
-
-    - title: "Administration"
+            - title: User CLI
+              path: cli-user/user-cli-guide.md
+            - title: Admin CLI
+              path: cli-admin/admin-cli-guide.md
+    - title: Administration
       children:
-        - title: "User Settings"
-          path: "administration/user-settings.md"
-        - title: "Environments"
-          path: "administration/environments.md"
-        - title: "Resources"
-          path: "administration/resources.md"
-
-    - title: "Backend.AI SDK"
+        - title: User Settings
+          path: administration/user-settings.md
+        - title: Environments
+          path: administration/environments.md
+        - title: Resources
+          path: administration/resources.md
+    - title: Backend.AI SDK
       children:
-        - title: "Python SDK"
-          path: "backend.ai-sdk/client-sdk-for-python.md"
-        - title: "TypeScript SDK"
-          path: "backend.ai-sdk/client-sdk-for-typescript.md"
-
+        - title: Python SDK
+          path: backend.ai-sdk/client-sdk-for-python.md
+        - title: TypeScript SDK
+          path: backend.ai-sdk/client-sdk-for-typescript.md
+editScope: packages/backend.ai-guide/src
+hiddenPaths:
+  - dist
+readOnlyPaths: []
+repoUrl: https://github.com/lablup/backend.ai-webui
+subdirectory: packages/backend.ai-guide
+localPath: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide
+virtualRoot: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide/packages/backend.ai-guide/src
+branch: docs/backend.ai-guide
+selectedBranches:
+  - docs/backend.ai-guide
+emoji: 🎨
