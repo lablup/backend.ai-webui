@@ -618,7 +618,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                 title: t('autoScalingRule.ScalingType'),
                 fixed: 'left',
                 render: (_text, row) =>
-                  (row?.step_size || 0) > 0 ? 'Up' : 'Down',
+                  (row?.step_size || 0) > 0
+                    ? t('autoScalingRule.ScaleOut')
+                    : t('autoScalingRule.ScaleIn'),
               },
               {
                 title: t('autoScalingRule.MetricSource'),
