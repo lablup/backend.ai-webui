@@ -1,14 +1,17 @@
 import useControllableState_deprecated from '../../../../react/src/hooks/useControllableState';
 import { useUpdatableState } from '../hooks';
-import { InputNumber, InputNumberProps } from 'antd';
+import { InputNumber, InputNumberProps, Space } from 'antd';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 
-export interface BAIDynamicStepInputNumberProps
-  extends Omit<InputNumberProps, 'step' | 'value' | 'onChange'> {
+export interface BAIDynamicStepInputNumberProps extends Omit<
+  InputNumberProps,
+  'step' | 'value' | 'onChange'
+> {
   dynamicSteps?: number[];
   value: number;
   onChange: (value: number) => void;
+  addonSuffix?: React.ReactNode;
 }
 
 const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
@@ -17,6 +20,7 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
     0, 0.0625, 0.125, 0.25, 0.5, 0.75, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
     1024, 2048, 4096, 8192, 16384, 32768, 65536,
   ],
+  addonSuffix,
   // value,
   // onChange,
   ...inputNumberProps
@@ -37,7 +41,7 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  const inputNode = (
     <InputNumber
       {...inputNumberProps}
       key={key}
@@ -77,6 +81,23 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
       }}
     />
   );
+
+  if (addonSuffix) {
+    return (
+      <Space.Compact
+        size={inputNumberProps?.size}
+        block
+        style={{ display: 'flex' }}
+      >
+        {inputNode}
+        <Space.Addon style={{ background: 'transparent' }}>
+          {addonSuffix}
+        </Space.Addon>
+      </Space.Compact>
+    );
+  }
+
+  return inputNode;
 };
 
 export default BAIDynamicStepInputNumber;
