@@ -242,6 +242,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Select Container Registry"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Select User"
   },

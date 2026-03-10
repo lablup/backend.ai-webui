@@ -239,6 +239,9 @@
   "comp:BAITestButton": {
     "Test": "테스트"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"
   },

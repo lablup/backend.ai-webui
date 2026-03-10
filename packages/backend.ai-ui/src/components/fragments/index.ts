@@ -87,6 +87,12 @@ export type {
   ProjectNode,
   BAIProjectSelectRef,
 } from './BAIProjectSelect';
+export { default as BAIContainerRegistrySelect } from './BAIContainerRegistrySelect';
+export type {
+  BAIContainerRegistrySelectProps,
+  ContainerRegistryNode,
+  BAIContainerRegistrySelectRef,
+} from './BAIContainerRegistrySelect';
 export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
 export type {
   BAIHuggingFaceRegistrySettingModalProps,
