@@ -391,6 +391,7 @@ module.exports = {
             skipWaiting: true,
             clientsClaim: true,
             exclude: [/\.map$/, /asset-manifest\.json$/],
+            maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
           }),
         );
       }
