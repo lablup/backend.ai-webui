@@ -65,6 +65,9 @@
     "KeepAsIs": "그대로 유지",
     "UndoChanges": "변경 취소"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}를 비활성화 하시겠습니까?",
     "AreYouSureYouWantToDeactivateSome": "{{count}}개의 아티팩트를 비활성화 하시겠습니까?",
@@ -199,6 +202,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIResourcePresetSelect": {
+    "SelectResourcePreset": "리소스 프리셋을 선택해주세요"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",
     "RouteId": "라우트 ID",
@@ -238,9 +244,6 @@
   },
   "comp:BAITestButton": {
     "Test": "테스트"
-  },
-  "comp:BAIContainerRegistrySelect": {
-    "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"

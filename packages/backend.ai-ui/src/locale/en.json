@@ -65,6 +65,9 @@
     "KeepAsIs": "Keep as is",
     "UndoChanges": "Undo changes"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Select Container Registry"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Are you sure you want to deactivate {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Are you sure you want to deactivate {{count}} artifacts?",
@@ -199,6 +202,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Select Resource Group"
   },
+  "comp:BAIResourcePresetSelect": {
+    "SelectResourcePreset": "Select Resource Preset"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
@@ -241,9 +247,6 @@
   },
   "comp:BAITestButton": {
     "Test": "Test"
-  },
-  "comp:BAIContainerRegistrySelect": {
-    "SelectContainerRegistry": "Select Container Registry"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Select User"
