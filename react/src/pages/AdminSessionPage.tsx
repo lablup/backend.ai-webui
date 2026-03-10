@@ -5,12 +5,15 @@
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { parseAsString, useQueryStates } from 'nuqs';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
 import SessionDetailAndContainerLogOpenerLegacy from 'src/components/SessionDetailAndContainerLogOpenerLegacy';
+import SessionTemplateList from 'src/components/SessionTemplateList';
+import SessionTemplateSettingModal from 'src/components/SessionTemplateSettingModal';
 import { useWebUINavigate } from 'src/hooks';
+import { SessionTemplate } from 'src/hooks/useSessionTemplates';
 
 const AdminSessionPage: React.FC = () => {
   'use memo';
@@ -23,6 +26,10 @@ const AdminSessionPage: React.FC = () => {
     { history: 'push' },
   );
   const webUINavigate = useWebUINavigate();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] =
+    useState<SessionTemplate | null>(null);
 
   return (
     <BAICard
@@ -48,6 +55,10 @@ const AdminSessionPage: React.FC = () => {
           key: 'pending-sessions',
           label: t('adminSession.PendingSessions'),
         },
+        {
+          key: 'session-templates',
+          label: t('sessionTemplate.SessionTemplates'),
+        },
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
@@ -55,6 +66,32 @@ const AdminSessionPage: React.FC = () => {
           <BAIErrorBoundary>
             <PendingSessionNodeList />
             <SessionDetailAndContainerLogOpenerLegacy />
+          </BAIErrorBoundary>
+        )}
+        {queryParam.tab === 'session-templates' && (
+          <BAIErrorBoundary>
+            <SessionTemplateList
+              onCreate={() => {
+                setEditingTemplate(null);
+                setModalOpen(true);
+              }}
+              onEdit={(template) => {
+                setEditingTemplate(template);
+                setModalOpen(true);
+              }}
+            />
+            <SessionTemplateSettingModal
+              open={modalOpen}
+              editingTemplate={editingTemplate}
+              onClose={() => {
+                setModalOpen(false);
+                setEditingTemplate(null);
+              }}
+              onSuccess={() => {
+                setModalOpen(false);
+                setEditingTemplate(null);
+              }}
+            />
           </BAIErrorBoundary>
         )}
       </Suspense>
