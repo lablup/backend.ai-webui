@@ -530,7 +530,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         ) {
           endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
             endpoint: $endpoint_id
-          ) @skipOnClient(if: $skipAutoScalingRules) {
+          ) @skipOnClient(if: $skipAutoScalingRules) @since(version: "25.1.0") {
             count
           }
         }
@@ -1155,50 +1155,40 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   <Card>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
-                        <Tooltip
-                          title={
-                            hasAutoScalingRules
-                              ? t(
-                                  'modelService.ReplicaCountDisabledByAutoScalingRules',
-                                )
-                              : undefined
-                          }
-                        >
-                          <Form.Item
-                            label={t('modelService.NumberOfReplicas')}
-                            name={'replicas'}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                              {
-                                type: 'number',
-                                min: 0,
-                              },
-                              {
-                                type: 'number',
-                                max:
-                                  user_resource_policy?.max_session_count_per_model_session ??
-                                  0,
-                              },
-                            ]}
-                          >
-                            <InputNumberWithSlider
-                              inputContainerMinWidth={190}
-                              min={0}
-                              max={
+                        <Form.Item
+                          label={t('modelService.NumberOfReplicas')}
+                          name={'replicas'}
+                          rules={[
+                            {
+                              required: true,
+                            },
+                            {
+                              type: 'number',
+                              min: 0,
+                            },
+                            {
+                              type: 'number',
+                              max:
                                 user_resource_policy?.max_session_count_per_model_session ??
-                                0
-                              }
-                              inputNumberProps={{
-                                //TODO: change unit based on resource limit
-                                suffix: '#',
-                              }}
-                              step={1}
-                              disabled={hasAutoScalingRules}
-                            />
-                          </Form.Item>
-                        </Tooltip>
+                                0,
+                            },
+                          ]}
+                        >
+                          <InputNumberWithSlider
+                            inputContainerMinWidth={190}
+                            min={0}
+                            max={
+                              user_resource_policy?.max_session_count_per_model_session ??
+                              0
+                            }
+                            inputNumberProps={{
+                              //TODO: change unit based on resource limit
+                              suffix: '#',
+                            }}
+                            step={1}
+                            disabled={hasAutoScalingRules}
+                          />
+                        </Form.Item>
                         {hasAutoScalingRules && (
                           <Alert
                             type="info"
