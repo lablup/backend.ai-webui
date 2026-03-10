@@ -154,6 +154,9 @@
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
   },
+  "comp:BAIProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Select Project Resource Policy"
+  },
   "comp:BAIProjectSelect": {
     "SelectProject": "Select Project"
   },
