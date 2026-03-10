@@ -38,6 +38,12 @@ export type {
   BAIArtifactSelectRef,
   ArtifactNode,
 } from './BAIArtifactSelect';
+export { default as BAIArtifactRevisionSelect } from './BAIArtifactRevisionSelect';
+export type {
+  BAIArtifactRevisionSelectProps,
+  BAIArtifactRevisionSelectRef,
+  ArtifactRevisionNode,
+} from './BAIArtifactRevisionSelect';
 export { default as BAIArtifactRevisionDownloadButton } from './BAIArtifactRevisionDownloadButton';
 export type { BAIArtifactRevisionDownloadButtonProps } from './BAIArtifactRevisionDownloadButton';
 export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisionDeleteButton';

@@ -41,6 +41,9 @@
     "Source": "Source",
     "Type": "Type"
   },
+  "comp:BAIArtifactRevisionSelect": {
+    "SelectArtifactRevision": "Select Artifact Revision"
+  },
   "comp:BAIArtifactRevisionTable": {
     "Control": "Control",
     "LatestVersion": "Latest Version",

@@ -41,6 +41,9 @@
     "Source": "소스",
     "Type": "유형"
   },
+  "comp:BAIArtifactRevisionSelect": {
+    "SelectArtifactRevision": "아티팩트 리비전을 선택해주세요"
+  },
   "comp:BAIArtifactRevisionTable": {
     "Control": "제어",
     "LatestVersion": "최신 버전",
