@@ -110,3 +110,9 @@ export type {
   BAISessionHistorySubStepNodesProps,
   SubStepInList,
 } from './BAISessionHistorySubStepNodes';
+export { default as BAIArtifactRevisionSelect } from './BAIArtifactRevisionSelect';
+export type {
+  BAIArtifactRevisionSelectProps,
+  ArtifactRevisionNode,
+  BAIArtifactRevisionSelectRef,
+} from './BAIArtifactRevisionSelect';

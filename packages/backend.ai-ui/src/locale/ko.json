@@ -35,6 +35,9 @@
     "Source": "소스",
     "Type": "유형"
   },
+  "comp:BAIArtifactRevisionSelect": {
+    "SelectArtifactRevision": "아티팩트 리비전을 선택해주세요"
+  },
   "comp:BAIArtifactRevisionTable": {
     "Control": "제어",
     "LatestVersion": "최신 버전",
@@ -64,6 +67,9 @@
     "Clear": "지우기",
     "KeepAsIs": "그대로 유지",
     "UndoChanges": "변경 취소"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}를 비활성화 하시겠습니까?",
@@ -238,9 +244,6 @@
   },
   "comp:BAITestButton": {
     "Test": "테스트"
-  },
-  "comp:BAIContainerRegistrySelect": {
-    "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"

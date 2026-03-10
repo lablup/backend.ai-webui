@@ -35,6 +35,9 @@
     "Source": "Source",
     "Type": "Type"
   },
+  "comp:BAIArtifactRevisionSelect": {
+    "SelectArtifactRevision": "Select Artifact Revision"
+  },
   "comp:BAIArtifactRevisionTable": {
     "Control": "Control",
     "LatestVersion": "Latest Version",
@@ -64,6 +67,9 @@
     "Clear": "Clear",
     "KeepAsIs": "Keep as is",
     "UndoChanges": "Undo changes"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Select Container Registry"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Are you sure you want to deactivate {{name}}?",
@@ -241,9 +247,6 @@
   },
   "comp:BAITestButton": {
     "Test": "Test"
-  },
-  "comp:BAIContainerRegistrySelect": {
-    "SelectContainerRegistry": "Select Container Registry"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Select User"

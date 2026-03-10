@@ -13,6 +13,7 @@ import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePerm
 import { App, Form, Select, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
+  BAIArtifactRevisionSelect,
   BAIContainerRegistrySelect,
   BAIModal,
   BAIModalProps,
@@ -33,6 +34,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'VFOLDER',
   'RESOURCE_GROUP',
   'CONTAINER_REGISTRY',
+  'ARTIFACT_REVISION',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'SESSION',
   // 'DEPLOYMENT',
@@ -42,7 +44,6 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   // 'IMAGE',
   // 'ARTIFACT',
   // 'ARTIFACT_REGISTRY',
-  // 'ARTIFACT_REVISION',
   // 'RESOURCE_PRESET',
   // 'USER_RESOURCE_POLICY',
   // 'KEYPAIR_RESOURCE_POLICY',
@@ -176,6 +177,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIContainerRegistrySelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'ARTIFACT_REVISION') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIArtifactRevisionSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}
