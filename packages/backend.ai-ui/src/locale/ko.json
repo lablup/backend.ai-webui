@@ -205,6 +205,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIRoleSelect": {
+    "SelectRole": "역할을 선택해주세요"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",
     "RouteId": "라우트 ID",

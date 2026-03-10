@@ -208,6 +208,9 @@
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
+  "comp:BAIRoleSelect": {
+    "SelectRole": "Select Role"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Created At",
     "RouteId": "Route ID",

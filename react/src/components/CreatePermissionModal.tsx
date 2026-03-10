@@ -18,6 +18,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIProjectSelect,
+  BAIRoleSelect,
   BAIUserSelect,
   BAIVFolderSelect,
   useBAILogger,
@@ -35,6 +36,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'RESOURCE_GROUP',
   'CONTAINER_REGISTRY',
   'ARTIFACT_REVISION',
+  'ROLE',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'SESSION',
   // 'DEPLOYMENT',
@@ -48,7 +50,6 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   // 'USER_RESOURCE_POLICY',
   // 'KEYPAIR_RESOURCE_POLICY',
   // 'PROJECT_RESOURCE_POLICY',
-  // 'ROLE',
   // TODO: No management UI in WebUI yet
   // 'NOTIFICATION_CHANNEL',
   // 'NETWORK',
@@ -188,6 +189,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIArtifactRevisionSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'ROLE') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIRoleSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}

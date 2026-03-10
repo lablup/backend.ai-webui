@@ -116,3 +116,9 @@ export type {
   ArtifactRevisionNode,
   BAIArtifactRevisionSelectRef,
 } from './BAIArtifactRevisionSelect';
+export { default as BAIRoleSelect } from './BAIRoleSelect';
+export type {
+  BAIRoleSelectProps,
+  RoleNode,
+  BAIRoleSelectRef,
+} from './BAIRoleSelect';
