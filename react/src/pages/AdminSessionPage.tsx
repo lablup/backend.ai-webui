@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Skeleton } from 'antd';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, BAIUnmountAfterClose, filterOutEmpty } from 'backend.ai-ui';
 import { parseAsString, useQueryStates } from 'nuqs';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -80,14 +80,16 @@ const AdminSessionPage: React.FC = () => {
                 setModalOpen(true);
               }}
             />
-            <SessionTemplateSettingModal
-              open={modalOpen}
-              editingTemplate={editingTemplate}
-              onRequestClose={() => {
-                setModalOpen(false);
-                setEditingTemplate(null);
-              }}
-            />
+            <BAIUnmountAfterClose>
+              <SessionTemplateSettingModal
+                open={modalOpen}
+                editingTemplate={editingTemplate}
+                onRequestClose={() => {
+                  setModalOpen(false);
+                  setEditingTemplate(null);
+                }}
+              />
+            </BAIUnmountAfterClose>
           </BAIErrorBoundary>
         )}
       </Suspense>
