@@ -117,6 +117,12 @@ export type {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
+export { default as BAIStorageHostSelect } from './BAIStorageHostSelect';
+export type {
+  BAIStorageHostSelectProps,
+  BAIStorageHostSelectRef,
+  StorageHostNode,
+} from './BAIStorageHostSelect';
 export { default as BAISessionHistorySubStepNodes } from './BAISessionHistorySubStepNodes';
 export type {
   BAISessionHistorySubStepNodesProps,

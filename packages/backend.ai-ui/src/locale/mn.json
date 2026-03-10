@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Хязгааргүй"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Хадгалах хост сонгох"
+  },
   "comp:BAITable": {
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",

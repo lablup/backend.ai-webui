@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "ไม่ จำกัด"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
+  },
   "comp:BAITable": {
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",

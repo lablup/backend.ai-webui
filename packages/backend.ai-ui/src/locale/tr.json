@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Sınırsız"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Depolama Sunucusu Seç"
+  },
   "comp:BAITable": {
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",

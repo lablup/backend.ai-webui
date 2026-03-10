@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "無限"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "選擇儲存主機"
+  },
   "comp:BAITable": {
     "Export": "匯出",
     "ExportCSV": "匯出 CSV",

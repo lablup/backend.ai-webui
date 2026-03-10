@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "無制限"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "ストレージホストを選択"
+  },
   "comp:BAITable": {
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",

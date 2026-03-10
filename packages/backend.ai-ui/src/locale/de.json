@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Unbegrenzt"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Speicher-Host auswählen"
+  },
   "comp:BAITable": {
     "Export": "Exportieren",
     "ExportCSV": "Als CSV exportieren",
