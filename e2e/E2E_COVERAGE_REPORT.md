@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 151 / 313 features covered (48%)**
+**Overall (in-scope routes): 160 / 319 features covered (50%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -22,7 +22,7 @@
 | Session List | `/session` | 20 | 12 | 🔶 60% |
 | Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
-| Endpoint Detail | `/serving/:serviceId` | 14 | 0 | ❌ 0% |
+| Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
 | VFolder / Data | `/data` | 38 | 25 | 🔶 66% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
@@ -44,7 +44,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **313** | **151** | **48%** |
+| **Total** | | **319** | **160** | **50%** |
 
 ---
 
@@ -215,10 +215,11 @@
 
 ### 7. Endpoint Detail (`/serving/:serviceId`)
 
-**Test files:** None
+**Test files:** [`e2e/serving/endpoint-route-table.spec.ts`](serving/endpoint-route-table.spec.ts)
 
 **Cards:** ServiceInfo, AutoScalingRules, GeneratedTokens, Routes
 **Modals:** `AutoScalingRuleEditorModal`, `EndpointTokenGenerationModal`, `BAIJSONViewerModal`, `SessionDetailDrawer`, `InferenceSessionErrorModal`
+**Mocks:** [`e2e/serving/mocking/endpoint-detail-mock.ts`](serving/mocking/endpoint-detail-mock.ts), [`e2e/serving/mocking/endpoint-list-mock.ts`](serving/mocking/endpoint-list-mock.ts)
 
 | Feature | Status | Test |
 | ------------------------------------------------------- | ------ | ---- |
@@ -229,15 +230,21 @@
 | Delete scaling rule → Popconfirm | ❌ | - |
 | "Generate Token" → EndpointTokenGenerationModal | ❌ | - |
 | Token list display | ❌ | - |
-| Routes table display | ❌ | - |
-| Route error → BAIJSONViewerModal | ❌ | - |
+| Feature flag: route-node table toggle | ✅ | `1.1 Admin sees the new BAIRouteNodes table when route-node flag is enabled`, `1.2 Admin sees the legacy route table when route-node flag is disabled` |
+| Routes table display (columns, tags, values) | ✅ | `4.1`–`4.7` (column headers, status tags, traffic tags, traffic ratio, session ID dash) |
+| Route category toggle (Running/Finished) | ✅ | `2.1`–`2.3` (default Running, switch to Finished, switch back) |
+| Route property filtering (Traffic Status) | ✅ | `3.1`–`3.4` (filter selector, filter by trafficStatus ACTIVE, filter by trafficStatus INACTIVE, remove filter) |
+| Route table sorting | ✅ | `7.1`–`7.3` (sort by Status, sort by Traffic Ratio, Session ID no sorter) |
+| Route table pagination | ✅ | `6.1`–`6.2` (total count display, navigate to page 2) |
+| Route empty state | ✅ | `9.1`–`9.2` (empty Running, empty Finished) |
+| Route error → BAIJSONViewerModal | ✅ | `5.1`–`5.3` (error icon, open modal with JSON, close modal) |
 | Route session ID click → SessionDetailDrawer | ❌ | - |
 | Session error → InferenceSessionErrorModal | ❌ | - |
-| "Sync Routes" action | ❌ | - |
+| "Sync Routes" action | ✅ | `8.1`–`8.3` (button visible, success notification, error notification) |
 | "Clear Errors" action | ❌ | - |
 | Chat test link | ❌ | - |
 
-**Coverage: ❌ 0/14 features**
+**Coverage: 🔶 9/20 features**
 
 ---
 
@@ -972,7 +979,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/session` | 🔶 | ✅ | P3 |
 | `/session/start` | 🔶 | ✅ | P1 |
 | `/serving` | ❌ | ✅ | **P1** |
-| `/serving/:serviceId` | ❌ | ❌ | P3 |
+| `/serving/:serviceId` | 🔶 | ❌ | P3 |
 | `/service/start` | ❌ | ❌ | **P1** |
 | `/service/update/:endpointId` | ❌ | ❌ | P3 |
 | `/data` | 🔶 | ✅ | P2 |
