@@ -220,6 +220,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Select Resource Group"
   },
+  "comp:BAIResourcePresetSelect": {
+    "SelectResourcePreset": "Select Resource Preset"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
