@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Pilih Deployment"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
   },

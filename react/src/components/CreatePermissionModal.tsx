@@ -41,10 +41,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'CONTAINER_REGISTRY',
   'STORAGE_HOST',
   // TODO: Scope ID select to be implemented in separate stacks
-  // 'DEPLOYMENT',
   // 'KEYPAIR',
-  // 'CONTAINER_REGISTRY',
-  // 'STORAGE_HOST',
   // 'IMAGE',
   // 'ARTIFACT',
   // 'ARTIFACT_REGISTRY',
@@ -55,6 +52,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   // 'PROJECT_RESOURCE_POLICY',
   // 'ROLE',
   // TODO: No management UI in WebUI yet
+  // 'DEPLOYMENT',
   // 'NOTIFICATION_CHANNEL',
   // 'NETWORK',
   // 'SESSION_TEMPLATE',

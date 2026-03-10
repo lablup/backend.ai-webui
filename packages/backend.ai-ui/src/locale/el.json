@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Επιλέξτε ανάπτυξη"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Επιλέξτε τομέα"
   },

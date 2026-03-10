@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Dağıtım seçin"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
   },

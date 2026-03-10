@@ -117,6 +117,12 @@ export type {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
+export { default as BAIDeploymentSelect } from './BAIDeploymentSelect';
+export type {
+  BAIDeploymentSelectProps,
+  BAIDeploymentSelectRef,
+  DeploymentNode,
+} from './BAIDeploymentSelect';
 export { default as BAIStorageHostSelect } from './BAIStorageHostSelect';
 export type {
   BAIStorageHostSelectProps,

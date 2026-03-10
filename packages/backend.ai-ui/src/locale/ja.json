@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "デプロイメントを選択"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "ドメインを選択"
   },

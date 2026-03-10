@@ -91,6 +91,9 @@
     "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Select Deployment"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
   },

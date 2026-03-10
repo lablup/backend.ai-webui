@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Выберите развёртывание"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
   },
