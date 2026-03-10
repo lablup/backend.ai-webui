@@ -41,7 +41,7 @@
 | Information | `/information` | 2 | 2 | ✅ 100% |
 | Reservoir | `/reservoir`, `/reservoir/:artifactId` | 18 | 0 | ❌ 0% |
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
-| Admin Session | `/admin-session` | 6 | 6 | ✅ 100% |
+| Admin Session | `/admin-session` | 7 | 7 | ✅ 100% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
@@ -949,7 +949,7 @@
 | Delete session template | ✅ | `Admin can delete a session template` |
 | Form validation (required fields) | ✅ | `Create modal shows validation error when required fields are empty` |
 
-**Coverage: ✅ 6/6 features** (Filtering test: 🔶 partial via `Admin can search for a specific session template by name in table`)
+**Coverage: ✅ 7/7 features** (Filtering test: 🔶 partial via `Admin can search for a specific session template by name in table`)
 
 ---
 
