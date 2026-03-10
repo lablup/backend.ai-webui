@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 167 / 326 features covered (51%)**
+**Overall (in-scope routes): 174 / 333 features covered (52%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -41,10 +41,11 @@
 | Information | `/information` | 2 | 2 | ✅ 100% |
 | Reservoir | `/reservoir`, `/reservoir/:artifactId` | 18 | 0 | ❌ 0% |
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
+| Admin Session | `/admin-session` | 6 | 6 | ✅ 100% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **373** | **216** | **58%** |
+| **Total** | | **333** | **174** | **52%** |
 
 ---
 
@@ -934,6 +935,24 @@
 
 ---
 
+### 28. Admin Session (`/admin-session`)
+
+**Test files:** [`e2e/session-template/session-template.spec.ts`](session-template/session-template.spec.ts)
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Navigate to session template tab | ✅ | `Admin can navigate to session template tab and see the table` |
+| Table renders with expected columns | ✅ | `Admin can navigate to session template tab and see the table` |
+| Create session template | ✅ | `Admin can create a new session template via the UI` |
+| API verification after create | ✅ | `Template created via UI actually exists in the backend API` |
+| Edit session template | ✅ | `Admin can edit an existing session template` |
+| Delete session template | ✅ | `Admin can delete a session template` |
+| Form validation (required fields) | ✅ | `Create modal shows validation error when required fields are empty` |
+
+**Coverage: ✅ 6/6 features** (Filtering test: 🔶 partial via `Admin can search for a specific session template by name in table`)
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1067,6 +1086,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/reservoir` | ❌ | ❌ | P2 |
 | `/branding` | ❌ | ❌ | P3 |
 | `/chat/:id?` | ❌ | ❌ | P3 |
+| `/admin-session` | ✅ | ❌ | - |
 | App Launcher (modal) | 🔶 | ❌ | - |
 | Plugin System (config-based) | ✅ | ❌ | - |
 
