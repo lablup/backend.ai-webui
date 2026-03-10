@@ -70,28 +70,46 @@ async function createSessionTemplateInUI(
     inference: 'Inference',
   };
   const sessionTypeLabel = sessionTypeLabels[options.sessionType];
-  await modal.getByRole('combobox', { name: 'Session Type' }).click();
-  await page.waitForSelector('.ant-select-dropdown', {
-    state: 'visible',
-    timeout: 5000,
+  const sessionTypeCombobox = modal.getByRole('combobox', {
+    name: 'Session Type',
   });
-  await page.getByRole('option', { name: sessionTypeLabel }).click();
+  await sessionTypeCombobox.click();
+  // Wait for and click the visible dropdown item
+  // Ant Design Select renders visible items as .ant-select-item-option elements
+  // (the role="option" elements are hidden accessibility-only nodes)
+  const sessionTypeOption = page
+    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .locator('.ant-select-item-option', { hasText: sessionTypeLabel })
+    .first();
+  await expect(sessionTypeOption).toBeVisible({ timeout: 5000 });
+  await sessionTypeOption.click();
 
   // Fill in image
   await modal.getByRole('textbox', { name: 'Image' }).fill(options.image);
 
   // Add a resource row — CPU
-  // The first resource row is already present
-  const firstResourceRow = modal.locator('.ant-form-list-item').first();
-  await firstResourceRow.locator('.ant-select-selector').first().click();
-  await page.waitForSelector('.ant-select-dropdown', {
-    state: 'visible',
-    timeout: 5000,
-  });
-  await page.getByRole('option', { name: 'CPU' }).click();
-  await firstResourceRow
-    .getByRole('textbox', { name: 'Allocation' })
-    .fill('4');
+  // The first resource row is already present; select Resource Type via its combobox
+  // Click the resource type Select trigger in the first resource row
+  // Find the resource type selector with "Resource Type" placeholder
+  const resourceTypeSelector = modal
+    .locator('.ant-select-selector', {
+      has: modal.locator(
+        '[title="Resource Type"], [placeholder="Resource Type"]',
+      ),
+    })
+    .first();
+  await resourceTypeSelector.click();
+  const cpuOption = page
+    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .locator('.ant-select-item-option', { hasText: 'CPU' })
+    .first();
+  await expect(cpuOption).toBeVisible({ timeout: 5000 });
+  await cpuOption.click();
+
+  // After selecting CPU, a BAIDynamicStepInputNumber appears for the allocation
+  // It's an ant-input-number input; fill it with the value
+  const cpuInput = modal.locator('.ant-input-number-input').last();
+  await cpuInput.fill('4');
 
   // Submit
   await modal.getByRole('button', { name: 'OK' }).click();
