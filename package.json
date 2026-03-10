@@ -39,6 +39,7 @@
     "dotenv": "^16.6.1",
     "https-proxy-agent": "^7.0.6",
     "mime-types": "^2.1.35",
+    "octokit": "^5.0.5",
     "utf-8-validate": "^6.0.6",
     "winston": "^3.19.0"
   },
