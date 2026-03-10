@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '.';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useTanMutation, useTanQuery } from './reactQueryAlias';
-import { useQueryClient } from '@tanstack/react-query';
 import { useUpdatableState } from 'backend.ai-ui';
 
 // ---------------------------------------------------------------------------
@@ -29,7 +28,7 @@ export interface SessionTemplateKernelSpec {
 
 export interface SessionTemplateResourceSpec {
   cpu?: string;
-  /** Memory in bytes */
+  /** Memory resource slot string (e.g. "4g", "1024m") */
   mem?: string;
   'cuda.device'?: string;
   'cuda.shares'?: string;
@@ -100,7 +99,6 @@ export const useSessionTemplates = (
   'use memo';
 
   const baiClient = useSuspendedBackendaiClient();
-  const queryClient = useQueryClient();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
   // -------------------------------------------------------------------------
@@ -136,9 +134,6 @@ export const useSessionTemplates = (
   // -------------------------------------------------------------------------
   const refresh = () => {
     updateFetchKey();
-    queryClient.invalidateQueries({
-      queryKey: [SESSION_TEMPLATE_QUERY_KEY],
-    });
   };
 
   // -------------------------------------------------------------------------
@@ -146,7 +141,7 @@ export const useSessionTemplates = (
   // -------------------------------------------------------------------------
   const mutationToCreate = useTanMutation<
     SessionTemplate,
-    Error,
+    unknown,
     CreateSessionTemplatePayload
   >({
     mutationFn: (payload: CreateSessionTemplatePayload) => {
@@ -179,7 +174,7 @@ export const useSessionTemplates = (
   // -------------------------------------------------------------------------
   const mutationToUpdate = useTanMutation<
     SessionTemplate,
-    Error,
+    unknown,
     { id: string } & UpdateSessionTemplatePayload
   >({
     mutationFn: ({ id, template }) => {
@@ -205,7 +200,7 @@ export const useSessionTemplates = (
   // -------------------------------------------------------------------------
   // Delete mutation
   // -------------------------------------------------------------------------
-  const mutationToDelete = useTanMutation<void, Error, string>({
+  const mutationToDelete = useTanMutation<void, unknown, string>({
     mutationFn: (id: string) => {
       return baiSignedRequestWithPromise({
         method: 'DELETE',
