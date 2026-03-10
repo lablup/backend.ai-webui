@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Chọn dịch vụ mô hình"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },

@@ -93,6 +93,12 @@ export type {
   ProjectNode,
   BAIProjectSelectRef,
 } from './BAIProjectSelect';
+export { default as BAIAdminModelServiceSelect } from './BAIAdminModelServiceSelect';
+export type {
+  BAIAdminModelServiceSelectProps,
+  BAIAdminModelServiceSelectRef,
+  ModelServiceNode,
+} from './BAIAdminModelServiceSelect';
 export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
 export type {
   BAIHuggingFaceRegistrySettingModalProps,

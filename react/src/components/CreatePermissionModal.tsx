@@ -14,6 +14,7 @@ import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePerm
 import { App, Form, Select, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
+  BAIAdminModelServiceSelect,
   BAIModal,
   BAIModalProps,
   BAIProjectSelect,
@@ -34,9 +35,9 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'VFOLDER',
   'RESOURCE_GROUP',
   'SESSION',
+  'MODEL_DEPLOYMENT',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'DEPLOYMENT',
-  // 'MODEL_DEPLOYMENT',
   // 'KEYPAIR',
   // 'CONTAINER_REGISTRY',
   // 'STORAGE_HOST',
@@ -96,11 +97,9 @@ const DomainScopeIdSelect: React.FC<SelectProps> = (props) => {
     <Select
       showSearch
       {...props}
-      options={[
-        { value: '*', label: '* (All)' },
-        ...(domains?.map((d) => ({ value: d?.name ?? '', label: d?.name })) ??
-          []),
-      ]}
+      options={
+        domains?.map((d) => ({ value: d?.name ?? '', label: d?.name })) ?? []
+      }
     />
   );
 };
@@ -177,6 +176,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
       </Suspense>
     );
   }
+  if (scopeType === 'MODEL_DEPLOYMENT') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIAdminModelServiceSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
   if (scopeType === 'RESOURCE_GROUP') {
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
@@ -189,7 +199,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
       showSearch
       {...selectProps}
       disabled={!scopeType || selectProps.disabled}
-      options={[{ value: '*', label: '* (All)' }]}
+      options={[]}
     />
   );
 };

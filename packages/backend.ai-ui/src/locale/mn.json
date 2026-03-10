@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Моделийн үйлчилгээ сонгох"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },

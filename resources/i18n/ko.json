@@ -1531,7 +1531,7 @@
       "KERNEL": "커널",
       "KEYPAIR": "키페어",
       "KEYPAIR_RESOURCE_POLICY": "키페어 자원 정책",
-      "MODEL_DEPLOYMENT": "모델 배포",
+      "MODEL_DEPLOYMENT": "모델 서비스",
       "NETWORK": "네트워크",
       "NOTIFICATION_CHANNEL": "알림 채널",
       "NOTIFICATION_RULE": "알림 규칙",

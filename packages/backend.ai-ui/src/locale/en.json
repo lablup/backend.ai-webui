@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Failed to activate artifacts.",
     "SuccessfullyActivated": "Successfully activated artifacts."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Select Model Service"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Select resource group"
   },

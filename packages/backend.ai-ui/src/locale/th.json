@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "ไม่สามารถเปิดใช้งานสิ่งประดิษฐ์ได้",
     "SuccessfullyActivated": "สิ่งประดิษฐ์ที่เปิดใช้งานสำเร็จ"
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "เลือกบริการโมเดล"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "เลือกกลุ่มทรัพยากร"
   },

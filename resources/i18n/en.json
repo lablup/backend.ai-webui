@@ -1529,7 +1529,7 @@
       "KERNEL": "Kernel",
       "KEYPAIR": "Keypair",
       "KEYPAIR_RESOURCE_POLICY": "Keypair Resource Policy",
-      "MODEL_DEPLOYMENT": "Model Deployment",
+      "MODEL_DEPLOYMENT": "Model Service",
       "NETWORK": "Network",
       "NOTIFICATION_CHANNEL": "Notification Channel",
       "NOTIFICATION_RULE": "Notification Rule",

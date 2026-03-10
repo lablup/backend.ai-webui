@@ -1523,7 +1523,7 @@
       "KERNEL": "核心",
       "KEYPAIR": "密钥对",
       "KEYPAIR_RESOURCE_POLICY": "密钥对资源策略",
-      "MODEL_DEPLOYMENT": "模型部署",
+      "MODEL_DEPLOYMENT": "模型服务",
       "NETWORK": "网络",
       "NOTIFICATION_CHANNEL": "通知渠道",
       "NOTIFICATION_RULE": "通知规则",

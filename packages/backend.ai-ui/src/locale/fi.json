@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Artefaktien aktivointi epäonnistui.",
     "SuccessfullyActivated": "Onnistuneesti aktivoidut esineet."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Valitse mallipalvelu"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Valitse resurssiryhmä"
   },

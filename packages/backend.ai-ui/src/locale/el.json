@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
     "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Επιλέξτε Υπηρεσία Μοντέλου"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Επιλέξτε ομάδα πόρων"
   },
