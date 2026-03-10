@@ -223,7 +223,7 @@ const FairShareList: React.FC = () => {
 
   const {
     resourceGroups,
-    domains,
+    domainFairShares,
     projectFairShares,
     userFairShares,
     project,
@@ -268,13 +268,16 @@ const FairShareList: React.FC = () => {
             }
           }
         }
-        domains: rgDomainFairShares(
+        domainFairShares: rgDomainFairShares(
           scope: { resourceGroupName: $resourceGroupName }
           filter: $domainFilter
           orderBy: $domainOrder
           limit: $limit
           offset: $offset
-        ) @skip(if: $skipDomain) {
+        )
+          # FIXME: @required(action: THROW) can detect invalid URL params, but cannot distinguish other errors that cause null.
+          @skip(if: $skipDomain)
+          @required(action: THROW) {
           count
           edges {
             node {
@@ -291,7 +294,10 @@ const FairShareList: React.FC = () => {
           orderBy: $projectOrder
           limit: $limit
           offset: $offset
-        ) @skip(if: $skipProject) {
+        )
+          # FIXME: @required(action: THROW) can detect invalid URL params, but cannot distinguish other errors that cause null.
+          @skip(if: $skipProject)
+          @required(action: THROW) {
           count
           edges {
             node {
@@ -309,12 +315,14 @@ const FairShareList: React.FC = () => {
           orderBy: $userOrder
           limit: $limit
           offset: $offset
-        ) @skip(if: $skipUser) {
+        )
+          # FIXME: @required(action: THROW) can detect invalid URL params, but cannot distinguish other errors that cause null.
+          @skip(if: $skipUser)
+          @required(action: THROW) {
           count
           edges {
             node {
               ...UserFairShareTableFragment
-              ...UserResourceGroupAlertFragment
             }
           }
         }
@@ -526,11 +534,9 @@ const FairShareList: React.FC = () => {
               : undefined,
         }}
       />
-      {currentStep === 'user' && userFairShares?.edges?.[0]?.node && (
+      {currentStep === 'user' && (
         <Suspense fallback={null}>
-          <UserResourceGroupAlert
-            userFairShareFrgmt={userFairShares.edges[0].node}
-          />
+          <UserResourceGroupAlert />
         </Suspense>
       )}
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
@@ -696,7 +702,7 @@ const FairShareList: React.FC = () => {
           {currentStep === 'domain' && (
             <DomainFairShareTable
               domainFairShareNodeFragment={
-                domains?.edges?.map((edge) => edge?.node) || null
+                domainFairShares?.edges?.map((edge) => edge?.node) || null
               }
               loading={
                 GQLQueryVariables !== deferredGQLQueryVariables ||
@@ -727,7 +733,7 @@ const FairShareList: React.FC = () => {
               }}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
-                total: domains?.count || 0,
+                total: domainFairShares?.count || 0,
                 current: tablePaginationOption.current,
                 style: {
                   marginRight: token.marginXS,

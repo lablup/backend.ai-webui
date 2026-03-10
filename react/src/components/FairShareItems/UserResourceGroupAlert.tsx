@@ -1,18 +1,15 @@
 import { Alert, AlertProps } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { UserResourceGroupAlertFragment$key } from 'src/__generated__/UserResourceGroupAlertFragment.graphql';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 import type { UserResourceGroupAlertQuery } from 'src/__generated__/UserResourceGroupAlertQuery.graphql';
 
 interface UserResourceGroupAlertProps extends AlertProps {
-  userFairShareFrgmt: UserResourceGroupAlertFragment$key;
   isModalOpen?: boolean;
 }
 
 const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
-  userFairShareFrgmt,
   isModalOpen,
   ...alertProps
 }) => {
@@ -20,28 +17,11 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
 
   const { t } = useTranslation();
 
-  const { projectId, domainName, resourceGroupName, user } = useFragment(
-    graphql`
-      fragment UserResourceGroupAlertFragment on UserFairShare {
-        projectId
-        domainName
-        resourceGroupName
-        user {
-          projects {
-            edges {
-              node {
-                id
-                basicInfo {
-                  name
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    userFairShareFrgmt,
-  );
+  const [stepQueryParams] = useQueryStates({
+    resourceGroup: parseAsString.withDefault(''),
+    domain: parseAsString.withDefault(''),
+    project: parseAsString.withDefault(''),
+  });
 
   const { domain, group } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
@@ -53,11 +33,12 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
           scaling_groups
         }
         group(id: $projectId, domain_name: $domainName) {
+          name
           scaling_groups
         }
       }
     `,
-    { projectId, domainName },
+    { projectId: stepQueryParams.project, domainName: stepQueryParams.domain },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -67,12 +48,9 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
+  const resourceGroupName = stepQueryParams.resourceGroup;
   const domainScalingGroups = domain?.scaling_groups ?? [];
   const projectScalingGroups = group?.scaling_groups ?? [];
-  const selectedProjectNames = _.find(
-    user?.projects?.edges,
-    (edge) => toLocalId(edge?.node?.id) === projectId,
-  )?.node?.basicInfo?.name;
 
   if (
     !resourceGroupName ||
@@ -86,7 +64,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     <Alert
       type="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
-        project: selectedProjectNames,
+        project: group?.name,
         resourceGroup: resourceGroupName,
       })}
       showIcon
