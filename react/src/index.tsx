@@ -23,7 +23,14 @@ import ReactDOM from 'react-dom/client';
 // This can cause Relay to show "Warning: RelayResponseNormalizer: Payload did not contain a value for field" in the browser console during development.
 // It's advisable to ignore these frequent logs in development mode.
 if (process.env.NODE_ENV === 'development') {
-  import('react-grab');
+  // Enable react-grab for AI agent element inspection during development
+  import('react-grab').catch((error) => {
+    // eslint-disable-next-line no-console
+    console.warn(
+      'Failed to load react-grab devtool. AI agent element inspection will be disabled.',
+      error,
+    );
+  });
 
   // eslint-disable-next-line no-console
   const originalConsoleError = console.error;
