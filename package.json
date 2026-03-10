@@ -118,7 +118,7 @@
       "pnpm run --prefix ./packages/backend.ai-ui lint --cache",
       "prettier --write"
     ],
-    "e2e/**/*.{js,ts}": [
+    "e2e/**/*.ts": [
       "eslint --config e2e/eslint.config.mjs --max-warnings=0 --cache",
       "prettier --write"
     ],

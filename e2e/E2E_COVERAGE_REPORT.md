@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-09
+> **Last Updated:** 2026-03-10
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 95 / 273 features covered (35%)**
+**Overall (in-scope routes): 111 / 289 features covered (38%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 7 | 4 | 🔶 57% |
+| Authentication | `/interactive-login` | 10 | 7 | 🔶 70% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
-| Session List | `/session` | 19 | 11 | 🔶 58% |
+| Session List | `/session` | 20 | 12 | 🔶 60% |
 | Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
 | Endpoint Detail | `/serving/:serviceId` | 14 | 0 | ❌ 0% |
@@ -42,7 +42,8 @@
 | Branding | `/branding` | 14 | 0 | ❌ 0% |
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
-| **Total** | | **273** | **95** | **35%** |
+| Plugin System | (config-based) | 12 | 12 | ✅ 100% |
+| **Total** | | **289** | **111** | **38%** |
 
 ---
 
@@ -69,11 +70,14 @@
 | Successful login & redirect | ✅ | `should redirect to the Summary` |
 | Invalid email error | ✅ | `should display error message for non-existent email` |
 | Invalid password error | ✅ | `should display error message for incorrect password` |
+| Endpoint URL normalization (trailing slash) | ✅ | `user can login with endpoint that has a single trailing slash` |
+| Endpoint URL normalization (multiple slashes) | ✅ | `user can login with endpoint that has multiple trailing slashes` |
+| Endpoint URL normalization (double-slash prevention) | ✅ | `API requests do not contain double-slash after endpoint normalization` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 | Account switching | ❌ | - |
 
-**Coverage: 🔶 4/7 features**
+**Coverage: 🔶 7/10 features**
 
 ---
 
@@ -120,11 +124,11 @@
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
-**Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click)
+**Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click), `SessionSchedulingHistoryModal`
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -146,9 +150,10 @@
 | Pagination | ❌ | - |
 | Batch terminate → TerminateSessionModal | ❌ | - |
 | Session name click → SessionDetailDrawer | ❌ | - |
+| Scheduling history modal → SessionSchedulingHistoryModal | ✅ | `Admin can see the scheduling history button` + 18 more tests |
 | Resource policy warnings | 🚧 | Skipped: `superadmin to modify keypair resource policy` |
 
-**Coverage: 🔶 11/19 features**
+**Coverage: 🔶 12/20 features**
 
 ---
 
@@ -801,6 +806,31 @@
 
 ---
 
+### 27. Plugin System (config-based)
+
+**Test files:** [`e2e/plugin/plugin-system.spec.ts`](plugin/plugin-system.spec.ts)
+
+**Plugin fixtures:** `test-plugin.js`, `admin-test-plugin.js`, `plugin-a.js`, `plugin-b.js`
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Admin sees user-permission plugin in sidebar | ✅ | `Admin can see user-permission plugin menu item in sidebar` |
+| User sees user-permission plugin in sidebar | ✅ | `User can see user-permission plugin menu item in sidebar` |
+| Admin sees admin-permission plugin in Admin Settings | ✅ | `Admin can see admin-permission plugin in Admin Settings panel` |
+| No plugin menu without config | ✅ | `Admin cannot see extra plugin menu when plugin.page is not set` |
+| No plugin menu when JS returns 404 | ✅ | `Admin cannot see plugin menu when plugin JS file returns 404` |
+| Plugin menu click opens new tab | ✅ | `Admin can open external link plugin in new tab` |
+| User cannot see admin-permission plugin | ✅ | `User cannot see admin-permission plugin menu item` |
+| Blocklisted plugin is hidden | ✅ | `Admin cannot see plugin that is in the blocklist` |
+| Non-blocklisted plugin visible alongside blocklist | ✅ | `Admin can see plugin that is not in the blocklist while blocked item is hidden` |
+| Multiple plugins visible simultaneously | ✅ | `Admin can see multiple plugin menu items when multiple plugins are configured` |
+| Valid plugin visible when sibling fails to load | ✅ | `Admin can see valid plugin when one of multiple plugins fails to load` |
+| Plugin state persists after page reload | ✅ | `Admin can see plugin menu item after page reload` |
+
+**Coverage: ✅ 12/12 features**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -942,6 +972,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/chat/:id?` | ❌ | ❌ | P3 |
 | `/information` | 🔶 | ✅ | P3 |
 | App Launcher (modal) | 🔶 | ❌ | - |
+| Plugin System (config-based) | ✅ | ❌ | - |
 
 ---
 
