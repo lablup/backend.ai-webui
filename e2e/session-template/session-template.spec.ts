@@ -136,10 +136,15 @@ async function deleteTemplateByNameInUI(
     .filter({ has: page.locator('[data-icon="delete"]') })
     .click();
 
-  // Confirm the modal dialog
-  const confirmModal = page.locator('.ant-modal-confirm');
+  // BAIConfirmModalWithInput requires typing the template name to confirm
+  const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 5000 });
-  await confirmModal.getByRole('button', { name: 'Delete' }).click();
+
+  // Type the template name in the confirmation input
+  await confirmModal.getByRole('textbox').fill(templateName);
+
+  // Click the OK/Delete button (now enabled after typing correct text)
+  await confirmModal.getByRole('button', { name: 'OK' }).click();
 
   // Wait for row to disappear
   await expect(row).toBeHidden({ timeout: 10000 });
@@ -292,10 +297,11 @@ test.describe(
           .filter({ has: page.locator('[data-icon="delete"]') })
           .click();
 
-        // Confirm deletion in modal dialog
-        const confirmModal = page.locator('.ant-modal-confirm');
+        // BAIConfirmModalWithInput: type template name to confirm deletion
+        const confirmModal = page.getByRole('dialog');
         await expect(confirmModal).toBeVisible({ timeout: 5000 });
-        await confirmModal.getByRole('button', { name: 'Delete' }).click();
+        await confirmModal.getByRole('textbox').fill(TEST_TEMPLATE_NAME_EDITED);
+        await confirmModal.getByRole('button', { name: 'OK' }).click();
 
         // Verify the template is removed from the table
         await expect(
@@ -409,13 +415,20 @@ test.describe(
     test.describe.serial('Session Template Filtering', () => {
       const FILTER_TEMPLATE_NAME = `${TEST_TEMPLATE_PREFIX}filter-${TEST_RUN_ID}`;
 
-      test.afterAll(async ({ page, request }) => {
+      test.afterAll(async ({ browser }) => {
         // Cleanup: remove the filter test template if it exists
-        await loginAsAdmin(page, request);
-        await navigateToSessionTemplateTab(page);
-        await deleteTemplateByNameInUI(page, FILTER_TEMPLATE_NAME).catch(
-          () => {},
-        );
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        const request = context.request;
+        try {
+          await loginAsAdmin(page, request);
+          await navigateToSessionTemplateTab(page);
+          await deleteTemplateByNameInUI(page, FILTER_TEMPLATE_NAME).catch(
+            () => {},
+          );
+        } finally {
+          await context.close();
+        }
       });
 
       test('Admin can search for a specific session template by name in table', async ({
