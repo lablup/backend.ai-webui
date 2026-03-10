@@ -1715,6 +1715,7 @@
     "MaxUsage": "Max",
     "Message": "Message",
     "ModifyArguments": "Modify arguments",
+    "MultiNode": "Multi-node session ({{count}} nodes)",
     "MySessions": "My Sessions",
     "NetworkIdleTimeout": "Network Idle Timeout",
     "NetworkIdleTimeoutDesc": "Force-terminate sessions that do not exchange data with the user (browser or web app) after this time. Traffic between the user and the compute session continuously occurs when the user interacts with an app, like terminal or Jupyter, by keyboard input, Jupyter cell creation, etc. Jupyter cell creation, etc. If there is no interaction for a certain period, the condition of garbage collection will be met. Even if there is a process executing a job in the compute session, it is subject to termination if there is no user interaction.",
