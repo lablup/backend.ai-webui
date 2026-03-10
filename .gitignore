@@ -177,6 +177,7 @@ scripts/temp-releases/
 
 # ignore documentation agent working files
 packages/backend.ai-webui-docs/.agent-output/
+e2e/.agent-output/
 
 
 e2e/recordings/
