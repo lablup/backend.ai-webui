@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Kumpulan Sumber"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Dicipta pada",
+    "RouteId": "ID Laluan",
+    "SessionId": "ID Sesi",
+    "Status": "Status",
+    "TrafficRatio": "Nisbah Trafik",
+    "TrafficStatus": "Status Trafik"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percubaan",
     "CreatedAt": "Dicipta pada",

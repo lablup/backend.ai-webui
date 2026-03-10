@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Token generated",
     "TokenGenerationFailed": "Token generation failed. please try again.",
     "TrafficRatio": "Traffic Ratio",
+    "TrafficStatus": "Traffic Status",
     "UpdateService": "Update Service",
     "UseExistingFolderConfirm": "Would you like to start the service using the existing {{folderName}} folder?",
     "Validate": "Validate",

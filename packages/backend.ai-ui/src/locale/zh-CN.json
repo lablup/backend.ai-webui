@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "选择资源组"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "创建时间",
+    "RouteId": "路由 ID",
+    "SessionId": "会话 ID",
+    "Status": "状态",
+    "TrafficRatio": "流量比例",
+    "TrafficStatus": "流量状态"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "尝试次数",
     "CreatedAt": "创建时间",

@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Ngày tạo",
+    "RouteId": "ID tuyến",
+    "SessionId": "ID phiên",
+    "Status": "Trạng thái",
+    "TrafficRatio": "Tỷ lệ lưu lượng",
+    "TrafficStatus": "Trạng thái lưu lượng"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Số lần thử",
     "CreatedAt": "Ngày tạo",

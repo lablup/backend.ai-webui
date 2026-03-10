@@ -878,6 +878,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.18.2')) {
       this._features['allow-only-ro-permission-for-model-project-folder'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.19.0')) {
+      this._features['route-node'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['model-try-content-button'] = true;
     }

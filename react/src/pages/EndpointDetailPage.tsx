@@ -7,12 +7,14 @@ import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated_
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
+  RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import AutoScalingRuleEditorModal, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModal';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
+import BAIRadioGroup from '../components/BAIRadioGroup';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
 import EndpointOwnerInfo from '../components/EndpointOwnerInfo';
 import EndpointStatusTag from '../components/EndpointStatusTag';
@@ -23,7 +25,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyView from '../components/VFolderLazyView';
-import { baiSignedRequestWithPromise } from '../helper';
+import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -61,10 +63,18 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   filterOutNullAndUndefined,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAIUnmountAfterClose,
   BAIText,
   BAIResourceNumberWithIcon,
-  useUpdatableState,
+  BAIRouteNodes,
+  BAITag,
+  GraphQLFilter,
+  SemanticColor,
+  toGlobalId,
+  useFetchKey,
+  useSemanticColorMap,
+  BAITable,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -73,7 +83,12 @@ import {
   CircleArrowDownIcon,
   CircleArrowUpIcon,
 } from 'lucide-react';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -114,10 +129,24 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     current: 1,
     pageSize: 100,
   });
+  const [routePagination, setRoutePagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+  const [routeOrder, setRouteOrder] = useState<string | null>(null);
+  const [routeStatusCategory, setRouteStatusCategory] = useState<
+    'running' | 'finished'
+  >('running');
+  const [routePropertyFilter, setRoutePropertyFilter] =
+    useState<GraphQLFilter>();
+  const deferredRoutePagination = useDeferredValue(routePagination);
+  const deferredRouteOrder = useDeferredValue(routeOrder);
+  const deferredRouteStatusCategory = useDeferredValue(routeStatusCategory);
+  const deferredRoutePropertyFilter = useDeferredValue(routePropertyFilter);
   const { serviceId } = useParams<{
     serviceId: string;
   }>();
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [fetchKey, updateFetchKey, INITIAL_FETCH_KEY] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
@@ -138,7 +167,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
-  const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules } =
+  const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules, routes } =
     useLazyLoadQuery<EndpointDetailPageQuery>(
       graphql`
         query EndpointDetailPageQuery(
@@ -154,6 +183,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           $autoScalingRules_first: Int
           $autoScalingRules_last: Int
           $skipScalingRules: Boolean!
+          $deploymentId: ID!
+          $routeFilter: RouteFilter
+          $routeOrderBy: [RouteOrderBy!]
+          $routeLimit: Int
+          $routeOffset: Int
+          $skipRouteNodes: Boolean!
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
@@ -267,6 +302,20 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               }
             }
           }
+          routes(
+            deploymentId: $deploymentId
+            filter: $routeFilter
+            orderBy: $routeOrderBy
+            limit: $routeLimit
+            offset: $routeOffset
+          ) @skipOnClient(if: $skipRouteNodes) {
+            edges {
+              node {
+                ...BAIRouteNodesFragment
+              }
+            }
+            count
+          }
         }
       `,
       {
@@ -281,10 +330,36 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         autoScalingRules_first: undefined,
         autoScalingRules_last: undefined,
         skipScalingRules: !isSupportAutoScalingRule,
+        deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
+        routeFilter: {
+          status:
+            deferredRouteStatusCategory === 'running'
+              ? [
+                  'PROVISIONING',
+                  'HEALTHY',
+                  'UNHEALTHY',
+                  'DEGRADED',
+                  'TERMINATING',
+                ]
+              : ['TERMINATED', 'FAILED_TO_START'],
+          ...(deferredRoutePropertyFilter?.trafficStatus
+            ? {
+                trafficStatus: [
+                  deferredRoutePropertyFilter.trafficStatus as RouteTrafficStatus,
+                ],
+              }
+            : {}),
+        },
+        routeOrderBy: convertToOrderBy(deferredRouteOrder) ?? undefined,
+        routeLimit: deferredRoutePagination.pageSize,
+        routeOffset:
+          (deferredRoutePagination.current - 1) *
+          deferredRoutePagination.pageSize,
+        skipRouteNodes: !baiClient.supports('route-node'),
       },
       {
         fetchPolicy:
-          fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
         fetchKey,
       },
     );
@@ -332,22 +407,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     }
   `);
 
-  // return color of tag by status
-  const applyStatusColor = (status: string = '') => {
-    let color = 'default';
-    switch (status.toUpperCase()) {
-      case 'HEALTHY':
-        color = 'success';
-        break;
-      case 'PROVISIONING':
-        color = 'processing';
-        break;
-      case 'UNHEALTHY':
-        color = 'warning';
-        break;
-    }
-    return color;
+  const legacyRouteStatusSemanticMap: Record<string, SemanticColor> = {
+    HEALTHY: 'success',
+    PROVISIONING: 'info',
+    UNHEALTHY: 'warning',
   };
+  const semanticColorMap = useSemanticColorMap();
 
   const autoScalingRules = _.map(endpoint_auto_scaling_rules?.edges, (edge) => {
     return edge?.node;
@@ -480,7 +545,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     {
       label: t('session.launcher.EnvironmentVariable'),
       children: (
-        <Typography.Text style={{ fontFamily: 'monospace' }}>
+        <Typography.Text
+          style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
+        >
           {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
             ? '-'
             : endpoint?.environ}
@@ -610,7 +677,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             </Button>
           }
         >
-          <Table
+          <BAITable
             scroll={{ x: 'max-content' }}
             rowKey={'id'}
             columns={[
@@ -824,8 +891,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             pagination={false}
             showSorterTooltip={false}
             dataSource={autoScalingRules}
-            bordered
-          ></Table>
+          ></BAITable>
         </Card>
       )}
       <Card
@@ -843,7 +909,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           </Button>
         }
       >
-        <Table
+        <BAITable
           scroll={{ x: 'max-content' }}
           rowKey={'token'}
           columns={[
@@ -899,8 +965,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           showSorterTooltip={false}
           pagination={false}
           dataSource={filterOutNullAndUndefined(endpoint_token_list?.items)}
-          bordered
-        ></Table>
+        ></BAITable>
       </Card>
       <Card
         title={t('modelService.RoutesInfo')}
@@ -934,90 +999,179 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ) : null
         }
       >
-        <Table
-          scroll={{ x: 'max-content' }}
-          columns={[
-            {
-              title: t('modelService.RouteId'),
-              dataIndex: 'routing_id',
-              fixed: 'left',
-              render: (_text, row) => (
-                <BAIText ellipsis>
-                  {row.routing_id}
-                  {!_.isEmpty(row.error_data) && (
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<ExclamationCircleOutlined />}
-                      style={{ color: token.colorError }}
-                      onClick={() => {
-                        setErrorDataForJSONModal(row?.error_data || ' ');
-                      }}
-                    />
-                  )}
-                </BAIText>
-              ),
-            },
-            {
-              title: t('modelService.SessionId'),
-              dataIndex: 'session',
-              render: (sessionId) => {
-                const matchedSessionError = endpoint?.errors?.find(
-                  (sessionError) => sessionError.session_id === sessionId,
-                );
-                return (
-                  <>
-                    {baiClient.supports('session-node') ? (
-                      <Typography.Link
-                        onClick={() => {
-                          setSelectedSessionId(sessionId);
-                        }}
-                      >
-                        {sessionId}
-                      </Typography.Link>
-                    ) : (
-                      <Typography.Text>{sessionId}</Typography.Text>
-                    )}
-                    {matchedSessionError && (
+        {baiClient.supports('route-node') ? (
+          <BAIFlex direction="column" align="stretch" gap="sm">
+            <BAIFlex
+              gap={'sm'}
+              align="start"
+              style={{ flexShrink: 1 }}
+              wrap="wrap"
+            >
+              <BAIRadioGroup
+                optionType="button"
+                value={routeStatusCategory}
+                onChange={(e) => {
+                  setRouteStatusCategory(e.target.value);
+                  setRoutePagination({ current: 1, pageSize: 10 });
+                }}
+                options={[
+                  {
+                    label: t('session.Running'),
+                    value: 'running',
+                  },
+                  {
+                    label: t('session.Finished'),
+                    value: 'finished',
+                  },
+                ]}
+              />
+              <BAIGraphQLPropertyFilter
+                value={routePropertyFilter}
+                onChange={(value) => {
+                  setRoutePropertyFilter(value ?? undefined);
+                  setRoutePagination({ current: 1, pageSize: 10 });
+                }}
+                filterProperties={[
+                  {
+                    key: 'trafficStatus',
+                    propertyLabel: t('modelService.TrafficStatus'),
+                    type: 'enum',
+                    valueMode: 'scalar',
+                    fixedOperator: 'equals',
+                    strictSelection: true,
+                    options: [
+                      { label: 'ACTIVE', value: 'ACTIVE' },
+                      { label: 'INACTIVE', value: 'INACTIVE' },
+                    ],
+                  },
+                ]}
+              />
+            </BAIFlex>
+            <BAIRouteNodes
+              routesFrgmt={filterOutNullAndUndefined(
+                routes?.edges?.map((edge) => edge?.node),
+              )}
+              order={routeOrder}
+              onChangeOrder={setRouteOrder}
+              loading={
+                mutationToSyncRoutes.isPending ||
+                deferredRoutePagination !== routePagination ||
+                deferredRouteOrder !== routeOrder ||
+                deferredRouteStatusCategory !== routeStatusCategory ||
+                deferredRoutePropertyFilter !== routePropertyFilter
+              }
+              onClickSessionId={setSelectedSessionId}
+              onClickErrorData={(errorData) =>
+                setErrorDataForJSONModal(
+                  typeof errorData === 'string'
+                    ? errorData
+                    : JSON.stringify(errorData),
+                )
+              }
+              pagination={{
+                ...routePagination,
+                total: routes?.count,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  setRoutePagination({ current: page, pageSize });
+                },
+              }}
+            />
+          </BAIFlex>
+        ) : (
+          <Table
+            scroll={{ x: 'max-content' }}
+            columns={[
+              {
+                title: t('modelService.RouteId'),
+                dataIndex: 'routing_id',
+                fixed: 'left',
+                render: (_text, row) => (
+                  <BAIText ellipsis>
+                    {row.routing_id}
+                    {!_.isEmpty(row.error_data) && (
                       <Button
                         size="small"
                         type="text"
                         icon={<ExclamationCircleOutlined />}
                         style={{ color: token.colorError }}
                         onClick={() => {
-                          setSelectedSessionErrorForModal(matchedSessionError);
+                          setErrorDataForJSONModal(row?.error_data || ' ');
                         }}
                       />
                     )}
-                  </>
-                );
-              },
-            },
-            {
-              title: t('modelService.Status'),
-              render: (_text, row) =>
-                row.status && (
-                  <>
-                    <Tag
-                      color={applyStatusColor(row?.status)}
-                      key={row?.status}
-                      style={{ marginRight: 0 }}
-                    >
-                      {row.status.toUpperCase()}
-                    </Tag>
-                  </>
+                  </BAIText>
                 ),
-            },
-            {
-              title: t('modelService.TrafficRatio'),
-              dataIndex: 'traffic_ratio',
-            },
-          ]}
-          pagination={false}
-          dataSource={endpoint?.routings as Routing[]}
-          rowKey={'routing_id'}
-          bordered
-        />
+              },
+              {
+                title: t('modelService.SessionId'),
+                dataIndex: 'session',
+                render: (sessionId) => {
+                  const matchedSessionError = endpoint?.errors?.find(
+                    (sessionError) => sessionError.session_id === sessionId,
+                  );
+                  return (
+                    <>
+                      {baiClient.supports('session-node') ? (
+                        <Typography.Link
+                          onClick={() => {
+                            setSelectedSessionId(sessionId);
+                          }}
+                        >
+                          {sessionId}
+                        </Typography.Link>
+                      ) : (
+                        <Typography.Text>{sessionId}</Typography.Text>
+                      )}
+                      {matchedSessionError && (
+                        <Button
+                          size="small"
+                          type="text"
+                          icon={<ExclamationCircleOutlined />}
+                          style={{ color: token.colorError }}
+                          onClick={() => {
+                            setSelectedSessionErrorForModal(
+                              matchedSessionError,
+                            );
+                          }}
+                        />
+                      )}
+                    </>
+                  );
+                },
+              },
+              {
+                title: t('modelService.Status'),
+                render: (_text, row) =>
+                  row.status && (
+                    <>
+                      <BAITag
+                        color={
+                          semanticColorMap[
+                            legacyRouteStatusSemanticMap[
+                              row?.status?.toUpperCase() ?? ''
+                            ] ?? 'default'
+                          ]
+                        }
+                        key={row?.status}
+                        style={{ marginRight: 0 }}
+                      >
+                        {row.status.toUpperCase()}
+                      </BAITag>
+                    </>
+                  ),
+              },
+              {
+                title: t('modelService.TrafficRatio'),
+                dataIndex: 'traffic_ratio',
+              },
+            ]}
+            pagination={false}
+            dataSource={endpoint?.routings as Routing[]}
+            rowKey={'routing_id'}
+            bordered
+          />
+        )}
       </Card>
       <InferenceSessionErrorModal
         open={!!selectedSessionErrorForModal}

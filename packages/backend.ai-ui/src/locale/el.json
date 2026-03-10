@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Δημιουργήθηκε",
+    "RouteId": "ID διαδρομής",
+    "SessionId": "ID συνεδρίας",
+    "Status": "Κατάσταση",
+    "TrafficRatio": "Αναλογία κυκλοφορίας",
+    "TrafficStatus": "Κατάσταση δικτύου"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Προσπάθειες",
     "CreatedAt": "Δημιουργήθηκε στις",

@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Tuotettu merkki",
     "TokenGenerationFailed": "Tokenin luominen epäonnistui. yritä uudelleen.",
     "TrafficRatio": "Liikennesuhde",
+    "TrafficStatus": "Verkkoliikenteen tila",
     "UpdateService": "Päivityspalvelu",
     "UseExistingFolderConfirm": "Haluatko aloittaa palvelun käyttämällä olemassa olevaa {{folderName}} -kansiota?",
     "Validate": "Vahvista",

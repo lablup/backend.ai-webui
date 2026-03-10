@@ -1353,6 +1353,7 @@
     "TokenGenerated": "Mã thông báo được tạo",
     "TokenGenerationFailed": "Tạo mã thông báo không thành công. \nvui lòng thử lại.",
     "TrafficRatio": "Tỷ lệ lưu lượng truy cập",
+    "TrafficStatus": "Trạng thái lưu lượng",
     "UpdateService": "Dịch vụ cập nhật",
     "UseExistingFolderConfirm": "Bạn có muốn bắt đầu dịch vụ bằng thư mục {{folderName}} hiện có không?",
     "Validate": "Xác thực",

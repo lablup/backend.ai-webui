@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Сгенерированный токен",
     "TokenGenerationFailed": "Не удалось сгенерировать токен. Пожалуйста, попробуйте еще раз.",
     "TrafficRatio": "Коэффициент трафика",
+    "TrafficStatus": "Состояние трафика",
     "UpdateService": "Служба обновлений",
     "UseExistingFolderConfirm": "Хотели бы вы запустить службу, используя существующую папку {{folderName}}?",
     "Validate": "Подтвердить",

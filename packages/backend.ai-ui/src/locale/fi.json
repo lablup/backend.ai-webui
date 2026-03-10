@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Luotu",
+    "RouteId": "Reitti-ID",
+    "SessionId": "Istunnon tunnus",
+    "Status": "Tila",
+    "TrafficRatio": "Liikenteen suhde",
+    "TrafficStatus": "Liikenteen tila"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Yritykset",
     "CreatedAt": "Luotu",

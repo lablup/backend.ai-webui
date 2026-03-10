@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "作成日時",
+    "RouteId": "ルートID",
+    "SessionId": "セッションID",
+    "Status": "ステータス",
+    "TrafficRatio": "トラフィック比率",
+    "TrafficStatus": "トラフィック状況"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "試行回数",
     "CreatedAt": "作成日時",

@@ -1353,6 +1353,7 @@
     "TokenGenerated": "トークン生成が完了しました。",
     "TokenGenerationFailed": "トークン生成に失敗しました。しばらくしてから再試行してください。",
     "TrafficRatio": "トラフィック率",
+    "TrafficStatus": "トラフィック状況",
     "UpdateService": "アップデートサービス",
     "UseExistingFolderConfirm": "既存の{{folderName}}フォルダーを使用してサービスを開始しますか？",
     "Validate": "確認",

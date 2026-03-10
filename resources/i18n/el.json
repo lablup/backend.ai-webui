@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Παραγόμενο Token",
     "TokenGenerationFailed": "Η δημιουργία του Token απέτυχε. παρακαλώ προσπαθήστε ξανά.",
     "TrafficRatio": "Αναλογία κυκλοφορίας",
+    "TrafficStatus": "Κατάσταση δικτυακής κίνησης",
     "UpdateService": "Υπηρεσία ενημέρωσης",
     "UseExistingFolderConfirm": "Θα θέλατε να ξεκινήσετε την υπηρεσία χρησιμοποιώντας το υπάρχον φάκελο {{folderName}};",
     "Validate": "Επικυρώνω",

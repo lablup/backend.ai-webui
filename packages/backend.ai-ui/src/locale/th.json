@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "สร้างเมื่อ",
+    "RouteId": "รหัสเส้นทาง",
+    "SessionId": "รหัสเซสชัน",
+    "Status": "สถานะ",
+    "TrafficRatio": "สัดส่วนทราฟฟิก",
+    "TrafficStatus": "สถานะการรับส่งข้อมูล"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "จำนวนครั้งที่ลอง",
     "CreatedAt": "สร้างเมื่อ",

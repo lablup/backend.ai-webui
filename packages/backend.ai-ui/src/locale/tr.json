@@ -199,6 +199,14 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Kaynak Grubu Seç"
   },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Oluşturulma tarihi",
+    "RouteId": "Rota Kimliği",
+    "SessionId": "Oturum Kimliği",
+    "Status": "Durum",
+    "TrafficRatio": "Trafik Oranı",
+    "TrafficStatus": "Trafik Durumu"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Denemeler",
     "CreatedAt": "Oluşturulma Tarihi",

@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Gettone generato",
     "TokenGenerationFailed": "La generazione del token non è riuscita. Riprovare.",
     "TrafficRatio": "Rapporto di traffico",
+    "TrafficStatus": "Stato del traffico",
     "UpdateService": "Servizio di aggiornamento",
     "UseExistingFolderConfirm": "Vorresti avviare il servizio utilizzando la cartella {{folderName}} esistente?",
     "Validate": "Convalidare",

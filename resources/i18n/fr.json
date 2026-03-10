@@ -1351,6 +1351,7 @@
     "TokenGenerated": "Jeton généré",
     "TokenGenerationFailed": "La génération de jetons a échoué. Veuillez réessayer.",
     "TrafficRatio": "Ratio de trafic",
+    "TrafficStatus": "État du trafic",
     "UpdateService": "Service de mise à jour",
     "UseExistingFolderConfirm": "Souhaitez-vous démarrer le service en utilisant le dossier {{folderName}} existant?",
     "Validate": "Valider",
