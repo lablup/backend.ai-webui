@@ -32,6 +32,12 @@ export { default as BAIArtifactStatusTag } from './BAIArtifactStatusTag';
 export type { BAIArtifactStatusTagProps } from './BAIArtifactStatusTag';
 export { default as BAIArtifactDescriptions } from './BAIArtifactDescriptions';
 export type { BAIArtifactDescriptionsProps } from './BAIArtifactDescriptions';
+export { default as BAIArtifactSelect } from './BAIArtifactSelect';
+export type {
+  BAIArtifactSelectProps,
+  BAIArtifactSelectRef,
+  ArtifactNode,
+} from './BAIArtifactSelect';
 export { default as BAIArtifactRevisionDownloadButton } from './BAIArtifactRevisionDownloadButton';
 export type { BAIArtifactRevisionDownloadButtonProps } from './BAIArtifactRevisionDownloadButton';
 export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisionDeleteButton';

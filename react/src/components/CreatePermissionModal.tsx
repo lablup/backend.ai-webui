@@ -15,6 +15,7 @@ import { App, Form, Select, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIAdminContainerRegistrySelect,
+  BAIArtifactSelect,
   BAIAdminModelServiceSelect,
   BAIKeypairSelect,
   BAIModal,
@@ -41,10 +42,10 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'MODEL_DEPLOYMENT',
   'CONTAINER_REGISTRY',
   'STORAGE_HOST',
+  'ARTIFACT',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'KEYPAIR',
   // 'IMAGE',
-  // 'ARTIFACT',
   // 'ARTIFACT_REGISTRY',
   // 'ARTIFACT_REVISION',
   // 'RESOURCE_PRESET',
@@ -206,6 +207,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIStorageHostSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'ARTIFACT') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIArtifactSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}

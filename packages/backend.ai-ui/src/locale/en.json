@@ -50,6 +50,9 @@
     "Updated": "Updated",
     "Version": "Version"
   },
+  "comp:BAIArtifactSelect": {
+    "SelectArtifact": "Select Artifact"
+  },
   "comp:BAIArtifactTable": {
     "Action": "Action",
     "Activate": "Activate",
