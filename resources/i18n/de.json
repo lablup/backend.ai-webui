@@ -1301,6 +1301,7 @@
     "Processing": "Wird bearbeitet...",
     "Public": "Öffentlich",
     "Ready": "Bereit",
+    "ReplicaCountDisabledByAutoScalingRules": "Die Anzahl der Replikate kann nicht manuell geändert werden, solange Autoskalierungsregeln aktiv sind.",
     "Resources": "Ressourcen",
     "Result": "Ergebnis",
     "RouteError": "Routenfehler",

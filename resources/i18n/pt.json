@@ -1301,6 +1301,7 @@
     "Processing": "Em processamento...",
     "Public": "Público",
     "Ready": "Preparar",
+    "ReplicaCountDisabledByAutoScalingRules": "O número de réplicas não pode ser alterado manualmente enquanto as regras de dimensionamento automático estiverem ativas.",
     "Resources": "Recursos",
     "Result": "Resultado",
     "RouteError": "Erro de rota",

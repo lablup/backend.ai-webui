@@ -1301,6 +1301,7 @@
     "Processing": "Pengolahan...",
     "Public": "Publik",
     "Ready": "Siap",
+    "ReplicaCountDisabledByAutoScalingRules": "Jumlah replika tidak dapat diubah secara manual saat aturan penskalaan otomatis aktif.",
     "Resources": "Sumber daya",
     "Result": "Hasil",
     "RouteError": "Kesalahan Rute",

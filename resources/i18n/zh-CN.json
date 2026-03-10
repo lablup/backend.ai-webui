@@ -1301,6 +1301,7 @@
     "Processing": "加工...",
     "Public": "公众",
     "Ready": "准备好",
+    "ReplicaCountDisabledByAutoScalingRules": "当自动扩缩容规则处于活动状态时，无法手动更改副本数量。",
     "Resources": "资源",
     "Result": "结果",
     "RouteError": "路线错误",

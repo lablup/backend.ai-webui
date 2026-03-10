@@ -1299,6 +1299,7 @@
     "Processing": "Przetwarzanie...",
     "Public": "Publiczny",
     "Ready": "Gotowy",
+    "ReplicaCountDisabledByAutoScalingRules": "Liczba replik nie może być zmieniona ręcznie, gdy zasady automatycznego skalowania są aktywne.",
     "Resources": "Zasoby",
     "Result": "Wynik",
     "RouteError": "Błąd trasy",
