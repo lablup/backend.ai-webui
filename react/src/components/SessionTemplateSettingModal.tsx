@@ -30,8 +30,7 @@ interface SessionTemplateSettingModalProps extends Omit<
   'onOk' | 'onCancel' | 'onClose'
 > {
   editingTemplate?: SessionTemplate | null;
-  onClose: () => void;
-  onSuccess?: () => void;
+  onRequestClose?: (success: boolean) => void;
 }
 
 type ResourceRow = {
@@ -189,7 +188,7 @@ const ResourceRowField: React.FC<ResourceRowFieldProps> = ({
 
 const SessionTemplateSettingModal: React.FC<
   SessionTemplateSettingModalProps
-> = ({ editingTemplate, onClose, onSuccess, ...baiModalProps }) => {
+> = ({ editingTemplate, onRequestClose, ...baiModalProps }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -409,8 +408,7 @@ const SessionTemplateSettingModal: React.FC<
             });
             message.success(t('sessionTemplate.SuccessfullyCreated'));
           }
-          onSuccess?.();
-          onClose();
+          onRequestClose?.(true);
         } catch (err) {
           logger.error('Session template save error:', err);
           const errorMessage = err instanceof Error ? err.message : String(err);
@@ -427,7 +425,7 @@ const SessionTemplateSettingModal: React.FC<
   };
 
   const handleCancel = () => {
-    onClose();
+    onRequestClose?.(false);
   };
 
   // -------------------------------------------------------------------------
@@ -479,6 +477,7 @@ const SessionTemplateSettingModal: React.FC<
         >
           <Select
             showSearch
+            disabled={isEditMode}
             placeholder={t('sessionTemplate.SelectDomain')}
             options={(domainsData ?? []).map((d: { name: string }) => ({
               label: d.name,
@@ -488,11 +487,11 @@ const SessionTemplateSettingModal: React.FC<
         </Form.Item>
 
         {/* Project/Group */}
-        <Form.Item label={t('sessionTemplate.ProjectName')} name="group_name">
+        <Form.Item label={t('sessionTemplate.Project')} name="group_name">
           <Select
             showSearch
             allowClear
-            disabled={!domainName}
+            disabled={isEditMode || !domainName}
             placeholder={
               domainName
                 ? t('sessionTemplate.SelectProject')
