@@ -20,7 +20,7 @@
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 20 | 12 | 🔶 60% |
-| Session Launcher | `/session/start` | 12 | 1 | 🔶 8% |
+| Session Launcher | `/session/start` | 12 | 2 | 🔶 17% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
@@ -166,7 +166,7 @@
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts)
+**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
@@ -184,9 +184,9 @@
 | Batch schedule/timeout options | ❌ | - |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
-| Session history → SessionTemplateModal | ❌ | - |
+| Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
 
-**Coverage: 🔶 1/12 features (most only indirectly tested)**
+**Coverage: 🔶 2/12 features (most only indirectly tested)**
 
 ---
 
