@@ -239,6 +239,9 @@
   "comp:BAITestButton": {
     "Test": "테스트"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "키페어를 선택해주세요"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"
   },

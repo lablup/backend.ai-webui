@@ -75,6 +75,12 @@ export type {
   VFolderNode,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIKeypairSelect } from './BAIKeypairSelect';
+export type {
+  BAIKeypairSelectProps,
+  KeypairNode,
+  BAIKeypairSelectRef,
+} from './BAIKeypairSelect';
 export { default as BAIUserSelect } from './BAIUserSelect';
 export type {
   BAIUserSelectProps,

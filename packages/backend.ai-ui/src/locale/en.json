@@ -242,6 +242,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Select Keypair"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Select User"
   },
