@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Select resource group"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Select Session"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Description",
     "Name": "Name",

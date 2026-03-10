@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "เลือกเซสชัน"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "คำอธิบาย",
     "Name": "ชื่อ",

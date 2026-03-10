@@ -17,6 +17,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIProjectSelect,
+  BAIAdminSessionSelect,
   BAIUserSelect,
   BAIVFolderSelect,
   useBAILogger,
@@ -32,8 +33,8 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'USER',
   'VFOLDER',
   'RESOURCE_GROUP',
+  'SESSION',
   // TODO: Scope ID select to be implemented in separate stacks
-  // 'SESSION',
   // 'DEPLOYMENT',
   // 'MODEL_DEPLOYMENT',
   // 'KEYPAIR',
@@ -158,6 +159,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIVFolderSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'SESSION') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIAdminSessionSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}

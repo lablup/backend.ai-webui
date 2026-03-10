@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Chọn phiên"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Sự miêu tả",
     "Name": "Tên",

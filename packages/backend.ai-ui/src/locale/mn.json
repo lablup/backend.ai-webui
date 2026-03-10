@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Сесс сонгох"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Тодорхойлолт / төрөл анги",
     "Name": "Нэр",

@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Valitse resurssiryhmä"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Valitse istunto"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Kuvaus",
     "Name": "Nimi",
