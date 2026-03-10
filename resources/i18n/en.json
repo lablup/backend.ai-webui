@@ -812,7 +812,6 @@
   "error": {
     "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
-    "AllowPositiveIntegerOnly": "",
     "AllowsPositiveNumberOnly": "Allow positive number only.",
     "AuthenticationFailed": "Authentication failed. Check information and manager status.",
     "CannotChangeVirtualFolderOption": "You cannot change the options of a vfolder that is not owned by myself.",
