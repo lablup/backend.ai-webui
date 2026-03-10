@@ -36,19 +36,6 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ~/.pnpm-store
-      # - name: Get pnpm store directory
-      #   shell: bash
-      #   run: |
-      #     echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      # - uses: actions/cache@v4
-      #   name: Setup pnpm cache
-      #   with:
-      #     path: ${{ env.STORE_PATH }}
-      #     key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-pnpm-store-
       - name: Install Dependencies
         # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
         # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
