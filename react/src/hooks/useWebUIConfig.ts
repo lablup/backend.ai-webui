@@ -17,10 +17,6 @@ import {
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
-import {
-  pluginConfigStringState,
-  pluginLoadedState,
-} from './useWebUIPluginState';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import toml from 'markty-toml';
 import { useCallback, useEffect } from 'react';
@@ -91,6 +87,12 @@ export const proxyUrlState = atom<string>('');
  */
 export const loginPluginState = atom<string>('');
 
+/**
+ * Module-level flag to ensure config.toml is fetched only once,
+ * even when multiple component instances call useInitializeConfig.
+ */
+let configInitialized = false;
+
 // ---------------------------------------------------------------------------
 // TOML fetching and preprocessing
 // ---------------------------------------------------------------------------
@@ -148,7 +150,6 @@ function processConfig(config: RawTomlConfig): {
   autoLogout: boolean;
   proxyUrl: string;
   loginPlugin: string;
-  pluginPages: string;
   loginConfig: LoginConfigState;
 } {
   // Auto-logout setting
@@ -198,12 +199,6 @@ function processConfig(config: RawTomlConfig): {
     loginPlugin = config.plugin.login ?? '';
   }
 
-  // Plugin pages
-  const pluginPages =
-    config.plugin !== undefined && 'page' in config.plugin
-      ? (config.plugin.page ?? '')
-      : '';
-
   // Derive the full LoginConfigState from the raw config
   const loginConfig = refreshConfigFromToml(config);
 
@@ -211,7 +206,6 @@ function processConfig(config: RawTomlConfig): {
     autoLogout,
     proxyUrl,
     loginPlugin,
-    pluginPages,
     loginConfig,
   };
 }
@@ -227,10 +221,6 @@ function processConfig(config: RawTomlConfig): {
  *
  * This replaces the Lit shell's _parseConfig() + loadConfig() flow.
  */
-// Module-level guard so the config fetch runs at most once across all
-// component instances (LoginView + LoginViewLazy share the same module).
-let configInitStarted = false;
-
 export function useInitializeConfig(): {
   isLoaded: boolean;
   rawConfig: RawTomlConfig | null;
@@ -243,16 +233,18 @@ export function useInitializeConfig(): {
   const setAutoLogout = useSetAtom(autoLogoutState);
   const setProxyUrl = useSetAtom(proxyUrlState);
   const setLoginPlugin = useSetAtom(loginPluginState);
-  const setPluginConfigString = useSetAtom(pluginConfigStringState);
-  const setPluginLoaded = useSetAtom(pluginLoadedState);
 
   const isLoaded = useAtomValue(configLoadedState);
   const rawConfig = useAtomValue(rawConfigState);
   const currentLoginConfig = useAtomValue(loginConfigState);
 
   const loadConfig = useCallback(async () => {
-    if (configInitStarted) return;
-    configInitStarted = true;
+    // Use a module-level flag to prevent multiple LoginView instances
+    // (eager + lazy) from fetching config.toml more than once.
+    // A per-instance useRef is insufficient because each component
+    // instance gets its own ref.
+    if (configInitialized) return;
+    configInitialized = true;
 
     // Electron uses es6:// protocol which resolves from app/ directory
     // Web uses relative path from the HTML location
@@ -269,7 +261,6 @@ export function useInitializeConfig(): {
       setLoginConfig(defaultConfig);
       setProxyUrl(defaultConfig.proxy_url);
       setAutoLogout(false);
-      setPluginLoaded(true);
       setConfigLoaded(true);
 
       // Ensure config-derived globals are set even when config.toml is missing,
@@ -289,20 +280,13 @@ export function useInitializeConfig(): {
 
     setRawConfig(parsed);
 
-    const { autoLogout, proxyUrl, loginPlugin, pluginPages, loginConfig } =
+    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
       processConfig(parsed);
 
     setLoginConfig(loginConfig);
     setAutoLogout(autoLogout);
     setProxyUrl(proxyUrl);
     setLoginPlugin(loginPlugin);
-
-    // Set plugin config directly into plugin atoms (replaces CustomEvent bridge)
-    if (pluginPages) {
-      setPluginConfigString(pluginPages);
-    } else {
-      setPluginLoaded(true);
-    }
 
     setConfigLoaded(true);
   }, [
@@ -312,8 +296,6 @@ export function useInitializeConfig(): {
     setAutoLogout,
     setProxyUrl,
     setLoginPlugin,
-    setPluginConfigString,
-    setPluginLoaded,
   ]);
 
   return {
