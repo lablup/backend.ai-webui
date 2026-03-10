@@ -137,6 +137,9 @@
     "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
     "Version": "버전"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "키페어를 선택해주세요"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",

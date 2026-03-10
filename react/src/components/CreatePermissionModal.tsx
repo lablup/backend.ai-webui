@@ -16,6 +16,7 @@ import {
   BAIAdminResourceGroupSelect,
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
+  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAIStorageHostSelect,
