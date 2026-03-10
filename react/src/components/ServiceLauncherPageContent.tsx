@@ -521,23 +521,27 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     );
 
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
+  const shouldFetchAutoScalingRules = !!endpoint && isSupportAutoScalingRule;
   const { endpoint_auto_scaling_rules } =
     useLazyLoadQuery<ServiceLauncherPageContent_AutoScalingRulesQuery>(
       graphql`
         query ServiceLauncherPageContent_AutoScalingRulesQuery(
           $endpoint_id: String!
-          $skipAutoScalingRules: Boolean!
         ) {
           endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
             endpoint: $endpoint_id
-          ) @skipOnClient(if: $skipAutoScalingRules) @since(version: "25.1.0") {
+          ) @since(version: "25.1.0") {
             count
           }
         }
       `,
       {
         endpoint_id: endpoint?.endpoint_id ?? '',
-        skipAutoScalingRules: !endpoint || !isSupportAutoScalingRule,
+      },
+      {
+        fetchPolicy: shouldFetchAutoScalingRules
+          ? 'store-and-network'
+          : 'store-only',
       },
     );
   const hasAutoScalingRules = (endpoint_auto_scaling_rules?.count ?? 0) > 0;
