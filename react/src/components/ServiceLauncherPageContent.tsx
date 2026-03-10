@@ -4,6 +4,7 @@
  */
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
+import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
@@ -518,6 +519,28 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         user_RP_name: user?.resource_policy,
       },
     );
+
+  const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
+  const { endpoint_auto_scaling_rules } =
+    useLazyLoadQuery<ServiceLauncherPageContent_AutoScalingRulesQuery>(
+      graphql`
+        query ServiceLauncherPageContent_AutoScalingRulesQuery(
+          $endpoint_id: String!
+          $skipAutoScalingRules: Boolean!
+        ) {
+          endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
+            endpoint: $endpoint_id
+          ) @skipOnClient(if: $skipAutoScalingRules) {
+            count
+          }
+        }
+      `,
+      {
+        endpoint_id: endpoint?.endpoint_id ?? '',
+        skipAutoScalingRules: !endpoint || !isSupportAutoScalingRule,
+      },
+    );
+  const hasAutoScalingRules = (endpoint_auto_scaling_rules?.count ?? 0) > 0;
 
   const [
     commitModifyEndpoint,
@@ -1132,39 +1155,60 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   <Card>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
-                        <Form.Item
-                          label={t('modelService.NumberOfReplicas')}
-                          name={'replicas'}
-                          rules={[
-                            {
-                              required: true,
-                            },
-                            {
-                              type: 'number',
-                              min: 0,
-                            },
-                            {
-                              type: 'number',
-                              max:
-                                user_resource_policy?.max_session_count_per_model_session ??
-                                0,
-                            },
-                          ]}
+                        <Tooltip
+                          title={
+                            hasAutoScalingRules
+                              ? t(
+                                  'modelService.ReplicaCountDisabledByAutoScalingRules',
+                                )
+                              : undefined
+                          }
                         >
-                          <InputNumberWithSlider
-                            inputContainerMinWidth={190}
-                            min={0}
-                            max={
-                              user_resource_policy?.max_session_count_per_model_session ??
-                              0
-                            }
-                            inputNumberProps={{
-                              //TODO: change unit based on resource limit
-                              suffix: '#',
-                            }}
-                            step={1}
+                          <Form.Item
+                            label={t('modelService.NumberOfReplicas')}
+                            name={'replicas'}
+                            rules={[
+                              {
+                                required: true,
+                              },
+                              {
+                                type: 'number',
+                                min: 0,
+                              },
+                              {
+                                type: 'number',
+                                max:
+                                  user_resource_policy?.max_session_count_per_model_session ??
+                                  0,
+                              },
+                            ]}
+                          >
+                            <InputNumberWithSlider
+                              inputContainerMinWidth={190}
+                              min={0}
+                              max={
+                                user_resource_policy?.max_session_count_per_model_session ??
+                                0
+                              }
+                              inputNumberProps={{
+                                //TODO: change unit based on resource limit
+                                suffix: '#',
+                              }}
+                              step={1}
+                              disabled={hasAutoScalingRules}
+                            />
+                          </Form.Item>
+                        </Tooltip>
+                        {hasAutoScalingRules && (
+                          <Alert
+                            type="info"
+                            showIcon
+                            message={t(
+                              'modelService.ReplicaCountDisabledByAutoScalingRules',
+                            )}
+                            style={{ marginBottom: token.marginMD }}
                           />
-                        </Form.Item>
+                        )}
                         <ImageEnvironmentSelectFormItems
                         // //TODO: test with real inference images
                         // filter={(image) => {
