@@ -21,7 +21,7 @@ test.describe(
     let sessionLauncher: SessionLauncher;
 
     test.beforeAll(async ({ browser, request }, testInfo) => {
-      testInfo.setTimeout(300000); // 5 minutes timeout for session creation + modal opening
+      testInfo.setTimeout(600000); // 10 minutes: cleanup (up to 5min) + session creation (up to 3min) + modal opening
 
       // Create shared context and page for all tests
       sharedContext = await browser.newContext();
@@ -29,43 +29,26 @@ test.describe(
 
       await loginAsUser(sharedPage, request);
 
+      // Clean up any leftover e2e-app-launcher sessions from previous test runs
+      // that may be blocking resources (stuck in PENDING state).
+      const cleanupLauncher = new SessionLauncher(sharedPage);
+      await cleanupLauncher
+        .terminateAllByPrefix('e2e-app-launcher-')
+        .catch((err) =>
+          console.log('Cleanup of leftover sessions failed (non-fatal):', err),
+        );
+
       // Initialize SessionLauncher with a unique session name
       sessionLauncher = new SessionLauncher(sharedPage).withSessionName(
         `e2e-app-launcher-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
       );
 
+      // Mark session as needing cleanup as soon as we have a session name,
+      // so afterAll will attempt termination even if create() throws mid-way.
+      sessionCreated = true;
+
       // Create session using SessionLauncher
-      // Session creation requires an available Backend.AI agent. If none are available,
-      // the session will stay PENDING and the create() call will time out. We catch that
-      // case here so the individual tests can be skipped gracefully via the sessionCreated flag.
-      try {
-        await sessionLauncher.create();
-        sessionCreated = true;
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : String(error ?? '');
-        const isAgentUnavailableError =
-          /timeout/i.test(message) ||
-          /pending/i.test(message) ||
-          /no agent/i.test(message);
-
-        if (isAgentUnavailableError) {
-          console.log(
-            `Session creation failed (likely no agent available): ${message}`,
-          );
-          // Best-effort cleanup: session row may exist even if create() timed out
-          try {
-            await sessionLauncher.terminate();
-          } catch {
-            // Ignore cleanup failures
-          }
-          // sessionCreated remains false - all tests will be skipped via test.skip(!sessionCreated)
-          return;
-        }
-
-        // For unexpected errors, rethrow so CI fails on genuine breakages.
-        throw error;
-      }
+      await sessionLauncher.create();
 
       // Open app launcher modal once for all tests
       appLauncherModal = await AppLauncherModal.openFromSession(
@@ -76,7 +59,7 @@ test.describe(
 
     // Cleanup: Terminate the session and close context after all tests
     test.afterAll(async ({}, testInfo) => {
-      testInfo.setTimeout(120000);
+      testInfo.setTimeout(120000); // 2 minutes timeout for session cleanup
       if (sessionCreated && sharedPage) {
         // Close the modal first if it's still open
         if (appLauncherModal) {

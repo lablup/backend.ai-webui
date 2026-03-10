@@ -774,12 +774,22 @@
     "EmptyProject": "EmptyProject",
     "FindingSessionTemplate": "Finding session template ...",
     "FoundExistingComputeSession": "Found existing compute session",
+    "LaunchFailed": "Launch Failed",
+    "MissingSToken": "Missing authentication token (sToken)",
     "NoSessionTemplate": "No appropriate session templates",
     "PleaseReload": "Please reload after some time.",
     "QueryingExistingComputeSession": "Querying existing compute session ...",
+    "Retry": "Retry",
     "SessionStatusIs": "Session status is",
     "SessionStatusIsWithReload": "Session status is {{status}}. Please reload after some time.",
-    "SessionStillPreparing": "Session is still in preparing. Reload after a while"
+    "SessionStillPreparing": "Session is still in preparing. Reload after a while",
+    "StepAuthenticating": "Authenticating...",
+    "StepAuthentication": "Authentication",
+    "StepCreatingSession": "Creating session...",
+    "StepFindingSession": "Finding session...",
+    "StepLaunch": "Launch",
+    "StepLaunchingApp": "Launching {{app}}...",
+    "StepSession": "Session"
   },
   "environment": {
     "Action": "Action",

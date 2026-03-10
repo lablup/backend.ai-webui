@@ -2,28 +2,39 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import AppLauncherFlow from '../components/AppLauncherFlow';
 import {
   CSSTokenVariables,
   NotificationForAnonymous,
 } from '../components/MainLayout/MainLayout';
-import { useApiEndpoint } from '../hooks/useApiEndpoint';
+import { useAppLauncherParams } from '../hooks/useAppLauncherParams';
+import { Spin } from 'antd';
 import React, { Suspense } from 'react';
 
-const EduAppLauncherLazy = React.lazy(
-  () => import('../components/EduAppLauncher'),
+const CenteredSpin: React.FC = () => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+    }}
+  >
+    <Spin size="large" />
+  </div>
 );
 
 /**
  * Standalone page for education app launcher.
  * Renders outside MainLayout (no sidebar).
- * Gets apiEndpoint from localStorage or config.
+ * Parses URL params and passes them to AppLauncherFlow.
  */
 const EduAppLauncherPage: React.FC = () => {
   return (
     <>
       <CSSTokenVariables />
       <NotificationForAnonymous />
-      <Suspense fallback={null}>
+      <Suspense fallback={<CenteredSpin />}>
         <EduAppLauncherPageContent />
       </Suspense>
     </>
@@ -32,9 +43,8 @@ const EduAppLauncherPage: React.FC = () => {
 
 const EduAppLauncherPageContent: React.FC = () => {
   'use memo';
-  const apiEndpoint = useApiEndpoint();
-
-  return <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={true} />;
+  const params = useAppLauncherParams();
+  return <AppLauncherFlow params={params} />;
 };
 
 export default EduAppLauncherPage;

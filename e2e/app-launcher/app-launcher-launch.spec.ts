@@ -13,38 +13,52 @@ import { test, expect, Page, BrowserContext } from '@playwright/test';
  * Retries multiple times if needed.
  * @param page - The page to handle errors for
  */
-const handleProxyError = async (page: Page): Promise<void> => {
-  const maxRetries = 5;
-  let retryCount = 0;
+/**
+ * Waits for a ttyd terminal page to be fully loaded by polling for the .xterm element.
+ * Reloads the page on each failed attempt to recover from proxy errors (502, loading, etc.).
+ * Uses expect.poll() for reliable async polling without fixed sleep delays.
+ *
+ * @param page - The new tab page to wait for
+ * @param timeout - Total time to wait in ms (default: 120000 = 2 minutes)
+ */
+const waitForTtydTerminal = async (
+  page: Page,
+  timeout: number = 120000,
+): Promise<void> => {
+  await expect
+    .poll(
+      async () => {
+        // Wait for the page to finish loading
+        await page
+          .waitForLoadState('domcontentloaded', { timeout: 10000 })
+          .catch(() => {});
 
-  while (retryCount < maxRetries) {
-    // Wait for the page to load (DOM content loaded is sufficient)
-    await page
-      .waitForLoadState('domcontentloaded', { timeout: 15000 })
-      .catch(() => {
-        // If page load fails or times out, continue - we'll check for 502 error
-      });
+        // Check if xterm container is present in the DOM
+        const xtermCount = await page.locator('.xterm').count();
+        if (xtermCount > 0) {
+          const isVisible = await page
+            .locator('.xterm')
+            .first()
+            .isVisible({ timeout: 1000 })
+            .catch(() => false);
+          if (isVisible) return true;
+        }
 
-    // Check if we got a 502 Bad Gateway error
+        // Reload to recover from proxy errors (502, loading states, etc.)
+        await page
+          .reload({ waitUntil: 'domcontentloaded', timeout: 15000 })
+          .catch(() => {});
 
-    const is502Page =
-      (await page
-        .locator('h1')
-        .filter({ hasText: /502\s+bad\s+gateway/i })
-        .count()) > 0;
-
-    if (is502Page) {
-      retryCount++;
-      if (retryCount < maxRetries) {
-        // Wait longer with each retry (3s, 5s, 7s)
-        await page.waitForTimeout(3000 + retryCount * 2000);
-        await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 });
-      }
-    } else {
-      // No error, break out of retry loop
-      break;
-    }
-  }
+        return false;
+      },
+      {
+        message:
+          'Waiting for ttyd terminal (.xterm) to appear in new browser tab',
+        timeout,
+        intervals: [3000, 5000, 8000, 10000],
+      },
+    )
+    .toBe(true);
 };
 
 test.describe.configure({ mode: 'serial' });
@@ -63,7 +77,7 @@ test.describe(
     let sessionLauncher: SessionLauncher;
 
     test.beforeAll(async ({ browser, request }, testInfo) => {
-      testInfo.setTimeout(300000); // 5 minutes timeout for session creation + modal opening
+      testInfo.setTimeout(600000); // 10 minutes: cleanup (up to 5min) + session creation (up to 3min) + modal opening
 
       // Create shared context and page for all tests
       sharedContext = await browser.newContext();
@@ -78,44 +92,30 @@ test.describe(
 
       await loginAsUser(sharedPage, request);
 
-      // Initialize SessionLauncher with a unique session name
-      // NOTE: No specific image is set to use the default available image in the test environment.
+      // Clean up any leftover e2e-app-launch sessions from previous test runs
+      // that may be blocking resources (stuck in PENDING state).
+      const cleanupLauncher = new SessionLauncher(sharedPage);
+      await cleanupLauncher
+        .terminateAllByPrefix('e2e-app-launch-')
+        .catch((err) =>
+          console.log('Cleanup of leftover sessions failed (non-fatal):', err),
+        );
+
+      // Initialize SessionLauncher with a unique session name.
+      // We use the default image (no explicit .withImage()) so the test works
+      // across different environments regardless of which images are installed.
+      // Tests that require specific app features (jupyter, vscode, etc.) use
+      // test.skip(!appVisible) to skip gracefully if the app is not available.
       sessionLauncher = new SessionLauncher(sharedPage).withSessionName(
         `e2e-app-launch-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
       );
 
+      // Mark session as needing cleanup as soon as we have a session name,
+      // so afterAll will attempt termination even if create() throws mid-way.
+      sessionCreated = true;
+
       // Create session using SessionLauncher
-      // Session creation requires an available Backend.AI agent. If none are available,
-      // the session will stay PENDING and the create() call will time out. We catch that
-      // case here so the individual tests can be skipped gracefully via the sessionCreated flag.
-      try {
-        await sessionLauncher.create();
-        sessionCreated = true;
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : String(error ?? '');
-        const isAgentUnavailableError =
-          /timeout/i.test(message) ||
-          /pending/i.test(message) ||
-          /no agent/i.test(message);
-
-        if (isAgentUnavailableError) {
-          console.log(
-            `Session creation failed (likely no agent available): ${message}`,
-          );
-          // Best-effort cleanup: session row may exist even if create() timed out
-          try {
-            await sessionLauncher.terminate();
-          } catch {
-            // Ignore cleanup failures
-          }
-          // sessionCreated remains false - all tests will be skipped via test.skip(!sessionCreated)
-          return;
-        }
-
-        // For unexpected errors, rethrow so CI fails on genuine breakages.
-        throw error;
-      }
+      await sessionLauncher.create();
 
       // Open app launcher modal once for all tests
       appLauncherModal = await AppLauncherModal.openFromSession(
@@ -126,7 +126,7 @@ test.describe(
 
     // Cleanup: Terminate the session and close context after all tests
     test.afterAll(async ({}, testInfo) => {
-      testInfo.setTimeout(120000); // 2 minutes for session termination
+      testInfo.setTimeout(120000); // 2 minutes timeout for session cleanup
       if (sessionCreated && sharedPage) {
         // Close the modal first if it's still open
         if (appLauncherModal) {
@@ -169,7 +169,7 @@ test.describe(
     });
 
     test('User can launch Console (Terminal/ttyd) app in new browser tab', async ({}, testInfo) => {
-      testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
+      testInfo.setTimeout(180000); // 3 minutes timeout for app initialization (proxy can be slow)
       test.skip(!sessionCreated, 'Session was not created successfully');
 
       // Modal is already opened in beforeAll, verify it's visible
@@ -211,13 +211,11 @@ test.describe(
       const newPage = await newPagePromise;
       await expect(newPage).toBeTruthy();
 
-      // TODO: Remove this error handling when proxy is stable
-      await handleProxyError(newPage);
-
-      // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
-      // in some environments, which is acceptable - we verify the tab was opened)
-      await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
-      expect(newPage.url()).toBeTruthy();
+      // Wait for ttyd terminal to be ready.
+      // Polls for .xterm element, reloading on each failed attempt to recover
+      // from proxy errors (502 Bad Gateway, loading states, etc.).
+      // Proxy initialization can be slow depending on backend load.
+      await waitForTtydTerminal(newPage, 120000);
 
       // Close the new tab
       await newPage.close();
@@ -288,11 +286,7 @@ test.describe(
       const newPage = await newPagePromise;
       await expect(newPage).toBeTruthy();
 
-      // TODO: Remove this error handling when proxy is stable
-      await handleProxyError(newPage);
-
-      // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
-      // in some environments, which is acceptable - we verify the tab was opened)
+      // Wait for the new tab to finish loading
       await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
       expect(newPage.url()).toBeTruthy();
 
@@ -360,11 +354,7 @@ test.describe(
       const newPage = await newPagePromise;
       await expect(newPage).toBeTruthy();
 
-      // TODO: Remove this error handling when proxy is stable
-      await handleProxyError(newPage);
-
-      // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
-      // in some environments, which is acceptable - we verify the tab was opened)
+      // Wait for the new tab to finish loading
       await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
       expect(newPage.url()).toBeTruthy();
 
@@ -441,11 +431,7 @@ test.describe(
       const newPage = await newPagePromise;
       expect(newPage).toBeTruthy();
 
-      // TODO: Remove this error handling when proxy is stable
-      await handleProxyError(newPage);
-
-      // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
-      // in some environments, which is acceptable - we verify the tab was opened)
+      // Wait for the new tab to finish loading
       await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
       expect(newPage.url()).toBeTruthy();
 
