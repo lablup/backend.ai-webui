@@ -6,32 +6,21 @@ import {
   SessionTemplate,
   useSessionTemplates,
 } from '../hooks/useSessionTemplates';
+import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, theme } from 'antd';
+import { Tag, Tooltip, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
+  BAIButton,
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAITable,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-const BYTES_PER_GIB = 1024 ** 3;
-
-const bytesToGiB = (bytes: string | undefined): string | null => {
-  'use memo';
-  if (!bytes) return null;
-  const num = parseFloat(bytes);
-  if (isNaN(num)) return null;
-  return (num / BYTES_PER_GIB).toFixed(1);
-};
 
 // ---------------------------------------------------------------------------
 // Types
@@ -54,9 +43,10 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
+  const [deletingTemplate, setDeletingTemplate] =
+    useState<SessionTemplate | null>(null);
 
-  const { sessionTemplates, isLoading, refresh, deleteTemplate, isDeleting } =
+  const { sessionTemplates, isLoading, refresh, deleteTemplate } =
     useSessionTemplates(true);
 
   const columns: ColumnsType<SessionTemplate> = [
@@ -100,47 +90,30 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
         const resources = record.template?.spec?.resources;
         if (!resources) return '-';
 
-        const tags: React.ReactNode[] = [];
+        const acceleratorType = resources['cuda.shares']
+          ? 'cuda.shares'
+          : resources['cuda.device']
+            ? 'cuda.device'
+            : undefined;
+        const acceleratorValue = acceleratorType
+          ? Number(resources[acceleratorType])
+          : undefined;
 
-        if (resources.cpu) {
-          tags.push(
-            <Tag key="cpu" color="orange">
-              CPU: {resources.cpu}
-            </Tag>,
-          );
-        }
-
-        const memGiB = bytesToGiB(resources.mem);
-        if (memGiB) {
-          tags.push(
-            <Tag key="mem" color="purple">
-              MEM: {memGiB} GiB
-            </Tag>,
-          );
-        }
-
-        if (resources['cuda.device']) {
-          tags.push(
-            <Tag key="gpu" color="volcano">
-              GPU: {resources['cuda.device']}
-            </Tag>,
-          );
-        }
-
-        if (resources['cuda.shares']) {
-          tags.push(
-            <Tag key="fgpu" color="magenta">
-              fGPU: {resources['cuda.shares']}
-            </Tag>,
-          );
-        }
-
-        return tags.length > 0 ? (
+        return (
           <BAIFlex gap="xxs" wrap="wrap">
-            {tags}
+            <ResourceNumbersOfSession
+              resource={{
+                cpu: Number(resources.cpu ?? 0),
+                mem: resources.mem ?? '0',
+                ...(acceleratorType && acceleratorValue
+                  ? {
+                      acceleratorType,
+                      accelerator: acceleratorValue,
+                    }
+                  : {}),
+              }}
+            />
           </BAIFlex>
-        ) : (
-          '-'
         );
       },
     },
@@ -177,7 +150,7 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
         return (
           <BAIFlex>
             <Tooltip title={t('button.Edit')}>
-              <Button
+              <BAIButton
                 type="text"
                 icon={<EditOutlined style={{ color: token.colorInfo }} />}
                 onClick={() => {
@@ -186,24 +159,12 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
               />
             </Tooltip>
             <Tooltip title={t('button.Delete')}>
-              <Button
+              <BAIButton
                 type="text"
                 danger
                 icon={<DeleteOutlined />}
-                loading={isDeleting}
                 onClick={() => {
-                  modal.confirm({
-                    title: t('dialog.ask.DoYouWantToDeleteSomething', {
-                      name: record.name ?? record.id,
-                    }),
-                    content: t('dialog.warning.CannotBeUndone'),
-                    okText: t('button.Delete'),
-                    okButtonProps: {
-                      danger: true,
-                      type: 'primary',
-                    },
-                    onOk: () => deleteTemplate(record.id),
-                  });
+                  setDeletingTemplate(record);
                 }}
               />
             </Tooltip>
@@ -223,7 +184,7 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
             refresh();
           }}
         />
-        <Button
+        <BAIButton
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
@@ -231,7 +192,7 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
           }}
         >
           {t('button.Create')}
-        </Button>
+        </BAIButton>
       </BAIFlex>
 
       <BAITable
@@ -242,6 +203,25 @@ const SessionTemplateList: React.FC<SessionTemplateListProps> = ({
         columns={columns}
         dataSource={filterOutNullAndUndefined(sessionTemplates)}
         loading={isLoading}
+      />
+
+      <BAIConfirmModalWithInput
+        open={!!deletingTemplate}
+        title={t('dialog.ask.DoYouWantToDeleteSomething', {
+          name: deletingTemplate?.name ?? deletingTemplate?.id ?? '',
+        })}
+        content={t('dialog.warning.CannotBeUndone')}
+        confirmText={deletingTemplate?.name ?? deletingTemplate?.id ?? ''}
+        okText={t('button.Delete')}
+        onOk={async () => {
+          if (!deletingTemplate) return;
+          try {
+            await deleteTemplate(deletingTemplate.id);
+          } finally {
+            setDeletingTemplate(null);
+          }
+        }}
+        onCancel={() => setDeletingTemplate(null)}
       />
     </BAIFlex>
   );
