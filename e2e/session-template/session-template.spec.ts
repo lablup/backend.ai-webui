@@ -25,6 +25,82 @@ async function navigateToSessionTemplateTab(page: Page) {
 }
 
 /**
+ * Open the Create Session Template modal, fill in all required fields,
+ * and submit. Returns after the modal has closed.
+ */
+async function createSessionTemplateInUI(
+  page: Page,
+  options: {
+    name: string;
+    sessionType: 'interactive' | 'batch' | 'inference';
+    image: string;
+  },
+) {
+  // Open create modal
+  await page.getByRole('button', { name: 'Create' }).click();
+
+  const modal = page.getByRole('dialog', {
+    name: 'Create Session Template',
+  });
+  await expect(modal).toBeVisible({ timeout: 5000 });
+
+  // Fill in the name (optional field)
+  await modal.getByRole('textbox', { name: 'Name' }).fill(options.name);
+
+  // Select domain — wait for the dropdown options to load
+  await modal.getByRole('combobox', { name: 'Domain Name' }).click();
+  await page.waitForSelector('.ant-select-dropdown', {
+    state: 'visible',
+    timeout: 5000,
+  });
+  // Pick the first domain option
+  await page
+    .locator('.ant-select-dropdown')
+    .locator('.ant-select-item-option')
+    .first()
+    .click();
+
+  // Select session type
+  const sessionTypeLabels: Record<
+    'interactive' | 'batch' | 'inference',
+    string
+  > = {
+    interactive: 'Interactive',
+    batch: 'Batch',
+    inference: 'Inference',
+  };
+  const sessionTypeLabel = sessionTypeLabels[options.sessionType];
+  await modal.getByRole('combobox', { name: 'Session Type' }).click();
+  await page.waitForSelector('.ant-select-dropdown', {
+    state: 'visible',
+    timeout: 5000,
+  });
+  await page.getByRole('option', { name: sessionTypeLabel }).click();
+
+  // Fill in image
+  await modal.getByRole('textbox', { name: 'Image' }).fill(options.image);
+
+  // Add a resource row — CPU
+  // The first resource row is already present
+  const firstResourceRow = modal.locator('.ant-form-list-item').first();
+  await firstResourceRow.locator('.ant-select-selector').first().click();
+  await page.waitForSelector('.ant-select-dropdown', {
+    state: 'visible',
+    timeout: 5000,
+  });
+  await page.getByRole('option', { name: 'CPU' }).click();
+  await firstResourceRow
+    .getByRole('textbox', { name: 'Allocation' })
+    .fill('4');
+
+  // Submit
+  await modal.getByRole('button', { name: 'OK' }).click();
+
+  // Modal should close
+  await expect(modal).toBeHidden({ timeout: 15000 });
+}
+
+/**
  * Delete a template row from the UI table by name.
  * Returns true if the template was found and deleted, false if not found.
  */
@@ -98,59 +174,11 @@ test.describe(
         await loginAsAdmin(page, request);
         await navigateToSessionTemplateTab(page);
 
-        // Open create modal
-        await page.getByRole('button', { name: 'Create' }).click();
-
-        const modal = page.getByRole('dialog', {
-          name: 'Create Session Template',
+        await createSessionTemplateInUI(page, {
+          name: TEST_TEMPLATE_NAME,
+          sessionType: 'interactive',
+          image: TEST_IMAGE,
         });
-        await expect(modal).toBeVisible({ timeout: 5000 });
-
-        // Fill in the name (optional field)
-        await modal
-          .getByRole('textbox', { name: 'Name' })
-          .fill(TEST_TEMPLATE_NAME);
-
-        // Select domain — wait for the dropdown options to load
-        await modal.getByRole('combobox', { name: 'Domain Name' }).click();
-        await page.waitForSelector('.ant-select-dropdown', {
-          state: 'visible',
-          timeout: 5000,
-        });
-        // Pick the first domain option
-        await page
-          .locator('.ant-select-dropdown')
-          .locator('.ant-select-item-option')
-          .first()
-          .click();
-
-        // Select session type (defaults to interactive)
-        // It already defaults, so we just verify it's set
-        await expect(
-          modal.getByRole('combobox', { name: 'Session Type' }),
-        ).toBeVisible();
-
-        // Fill in image
-        await modal.getByRole('textbox', { name: 'Image' }).fill(TEST_IMAGE);
-
-        // Add a resource row — CPU
-        // The first resource row is already present
-        const firstResourceRow = modal.locator('.ant-form-list-item').first();
-        await firstResourceRow.locator('.ant-select-selector').first().click();
-        await page.waitForSelector('.ant-select-dropdown', {
-          state: 'visible',
-          timeout: 5000,
-        });
-        await page.getByRole('option', { name: 'CPU' }).click();
-        await firstResourceRow
-          .getByRole('textbox', { name: 'Allocation' })
-          .fill('4');
-
-        // Submit
-        await modal.getByRole('button', { name: 'OK' }).click();
-
-        // Modal should close
-        await expect(modal).toBeHidden({ timeout: 15000 });
 
         // Verify new template appears in the table
         await expect(
@@ -292,6 +320,74 @@ test.describe(
       });
     });
 
+    // -------------------------------------------------------------------------
+    // Parameterized tests: one describe block per session type
+    // Each block creates a template with the given session type, verifies it
+    // appears in the list with the correct session type label, then cleans up.
+    // -------------------------------------------------------------------------
+    const SESSION_TYPE_CASES: Array<{
+      sessionType: 'interactive' | 'batch' | 'inference';
+      label: string;
+    }> = [
+      { sessionType: 'interactive', label: 'Interactive' },
+      { sessionType: 'batch', label: 'Batch' },
+      { sessionType: 'inference', label: 'Inference' },
+    ];
+
+    for (const { sessionType, label } of SESSION_TYPE_CASES) {
+      test.describe(`Session Template - ${label} type`, () => {
+        const templateName = `${TEST_TEMPLATE_PREFIX}${sessionType}-${TEST_RUN_ID}`;
+
+        test.afterAll(async ({ browser }) => {
+          // Cleanup: delete the template created by this describe block
+          const context = await browser.newContext();
+          const page = await context.newPage();
+          const request = context.request;
+          try {
+            await loginAsAdmin(page, request);
+            await navigateToSessionTemplateTab(page);
+            await deleteTemplateByNameInUI(page, templateName).catch(() => {});
+          } finally {
+            await context.close();
+          }
+        });
+
+        test(`Admin can create a session template with session type: ${label}`, async ({
+          page,
+          request,
+        }) => {
+          await loginAsAdmin(page, request);
+          await navigateToSessionTemplateTab(page);
+
+          await createSessionTemplateInUI(page, {
+            name: templateName,
+            sessionType,
+            image: TEST_IMAGE,
+          });
+
+          // Verify new template appears in the table
+          await expect(
+            page.getByRole('cell', { name: templateName, exact: true }),
+          ).toBeVisible({ timeout: 10000 });
+        });
+
+        test(`Template with session type ${label} shows correct session type in the list`, async ({
+          page,
+          request,
+        }) => {
+          await loginAsAdmin(page, request);
+          await navigateToSessionTemplateTab(page);
+
+          // Find the template row and verify it contains the expected session type label
+          const templateRow = page
+            .getByRole('row')
+            .filter({ hasText: templateName });
+          await expect(templateRow).toBeVisible({ timeout: 10000 });
+          await expect(templateRow).toContainText(label);
+        });
+      });
+    }
+
     test.describe.serial('Session Template Filtering', () => {
       const FILTER_TEMPLATE_NAME = `${TEST_TEMPLATE_PREFIX}filter-${TEST_RUN_ID}`;
 
@@ -312,31 +408,11 @@ test.describe(
         await navigateToSessionTemplateTab(page);
 
         // First create a template to filter
-        await page.getByRole('button', { name: 'Create' }).click();
-        const modal = page.getByRole('dialog', {
-          name: 'Create Session Template',
+        await createSessionTemplateInUI(page, {
+          name: FILTER_TEMPLATE_NAME,
+          sessionType: 'interactive',
+          image: TEST_IMAGE,
         });
-        await expect(modal).toBeVisible({ timeout: 5000 });
-
-        await modal
-          .getByRole('textbox', { name: 'Name' })
-          .fill(FILTER_TEMPLATE_NAME);
-
-        await modal.getByRole('combobox', { name: 'Domain Name' }).click();
-        await page.waitForSelector('.ant-select-dropdown', {
-          state: 'visible',
-          timeout: 5000,
-        });
-        await page
-          .locator('.ant-select-dropdown')
-          .locator('.ant-select-item-option')
-          .first()
-          .click();
-
-        await modal.getByRole('textbox', { name: 'Image' }).fill(TEST_IMAGE);
-
-        await modal.getByRole('button', { name: 'OK' }).click();
-        await expect(modal).toBeHidden({ timeout: 15000 });
 
         // Verify the template is in the table
         await expect(
