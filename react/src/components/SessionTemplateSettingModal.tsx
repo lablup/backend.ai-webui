@@ -10,8 +10,9 @@ import {
   useSessionTemplates,
 } from '../hooks/useSessionTemplates';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { App, Button, Form, Input, Select, theme } from 'antd';
+import { App, Form, Input, Select, theme } from 'antd';
 import {
+  BAIButton,
   BAIDynamicStepInputNumber,
   BAIDynamicUnitInputNumber,
   BAIFlex,
@@ -50,13 +51,22 @@ type SessionTemplateFormValues = {
 // Base resource slots always shown (cpu, mem are fundamental)
 const BASE_RESOURCE_SLOTS = ['cpu', 'mem'];
 
-const CPU_STEPS = [0, 1, 2, 4, 8, 16, 32, 64, 128];
-const GPU_STEPS = [0, 1, 2, 4, 8];
-const FGPU_STEPS = [0, 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8];
+/**
+ * Generate dynamic step values based on server-provided round_length.
+ * round_length=0 → integer steps (1, 2, 4, 8, ...)
+ * round_length=1 → 0.1 precision (0.1, 0.5, 1, 2, 4, ...)
+ * round_length>=2 → fine precision (0.01, 0.05, 0.1, 0.5, 1, ...)
+ */
+const generateDynamicSteps = (roundLength: number): number[] => {
+  if (roundLength <= 0) return [0, 1, 2, 4, 8, 16, 32, 64, 128];
+  if (roundLength === 1) return [0, 0.1, 0.2, 0.5, 1, 2, 4, 8];
+  return [0, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 4];
+};
 
 interface ResourceAllocationInputProps {
   resourceType: string | undefined;
   displayUnit?: string;
+  roundLength?: number;
   value?: string | number;
   onChange?: (value: string | number | undefined) => void;
 }
@@ -64,11 +74,10 @@ interface ResourceAllocationInputProps {
 const ResourceAllocationInput: React.FC<ResourceAllocationInputProps> = ({
   resourceType,
   displayUnit,
+  roundLength = 0,
   value,
   onChange,
 }) => {
-  const { t } = useTranslation();
-
   if (resourceType === 'mem') {
     return (
       <BAIDynamicUnitInputNumber
@@ -85,28 +94,15 @@ const ResourceAllocationInput: React.FC<ResourceAllocationInputProps> = ({
   const numValue = typeof value === 'number' ? value : Number(value ?? 0);
   const handleChange = (v: number) => onChange?.(String(v));
 
-  const unitLabel = (() => {
-    if (resourceType === 'cuda.device') return displayUnit || 'GPU';
-    if (resourceType === 'cuda.shares') return displayUnit || 'fGPU';
-    if (resourceType === 'cpu')
-      return displayUnit || t('session.launcher.Core');
-    return displayUnit || '';
-  })();
-
-  const steps = (() => {
-    if (resourceType === 'cpu') return CPU_STEPS;
-    if (resourceType === 'cuda.device') return GPU_STEPS;
-    if (resourceType === 'cuda.shares') return FGPU_STEPS;
-    return undefined;
-  })();
+  const dynamicSteps = generateDynamicSteps(roundLength);
 
   return (
     <BAIDynamicStepInputNumber
-      {...(steps ? { dynamicSteps: steps } : {})}
+      dynamicSteps={dynamicSteps}
       min={0}
       value={numValue}
       onChange={handleChange}
-      addonSuffix={unitLabel || undefined}
+      addonSuffix={displayUnit || undefined}
       style={{ width: '100%' }}
     />
   );
@@ -119,7 +115,12 @@ interface ResourceRowFieldProps {
   resourceTypeOptions: Array<{ label: string; value: string }>;
   mergedResourceSlots: Record<
     string,
-    { human_readable_name?: string; display_unit?: string } | undefined
+    | {
+        human_readable_name?: string;
+        display_unit?: string;
+        number_format?: { binary: boolean; round_length: number };
+      }
+    | undefined
   >;
 }
 
@@ -134,8 +135,8 @@ const ResourceRowField: React.FC<ResourceRowFieldProps> = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionTemplateFormValues>();
   const resourceType = Form.useWatch(['resources', fieldName, 'type'], form);
-  const displayUnit = resourceType
-    ? mergedResourceSlots?.[resourceType]?.display_unit
+  const slotDetail = resourceType
+    ? mergedResourceSlots?.[resourceType]
     : undefined;
 
   return (
@@ -170,11 +171,12 @@ const ResourceRowField: React.FC<ResourceRowFieldProps> = ({
       >
         <ResourceAllocationInput
           resourceType={resourceType}
-          displayUnit={displayUnit}
+          displayUnit={slotDetail?.display_unit}
+          roundLength={slotDetail?.number_format?.round_length}
         />
       </Form.Item>
       {showRemove && (
-        <Button
+        <BAIButton
           type="text"
           icon={<MinusCircleOutlined />}
           onClick={() => onRemove(fieldName)}
@@ -559,7 +561,7 @@ const SessionTemplateSettingModal: React.FC<
                   />
                 ))}
                 <Form.Item noStyle>
-                  <Button
+                  <BAIButton
                     type="dashed"
                     icon={<PlusOutlined />}
                     block
@@ -568,7 +570,7 @@ const SessionTemplateSettingModal: React.FC<
                     }
                   >
                     {t('button.Add')}
-                  </Button>
+                  </BAIButton>
                 </Form.Item>
               </BAIFlex>
             )}
