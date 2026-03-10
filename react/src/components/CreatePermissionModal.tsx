@@ -25,6 +25,7 @@ import {
   BAIStorageHostSelect,
   BAIProjectSelect,
   BAIAdminSessionSelect,
+  BAIUserResourcePolicySelect,
   BAIUserSelect,
   BAIVFolderSelect,
   useBAILogger,
@@ -47,11 +48,11 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'ARTIFACT',
   'ARTIFACT_REVISION',
   'RESOURCE_PRESET',
+  'USER_RESOURCE_POLICY',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'KEYPAIR',
   // 'IMAGE',
   // 'ARTIFACT_REGISTRY',
-  // 'USER_RESOURCE_POLICY',
   // 'KEYPAIR_RESOURCE_POLICY',
   // 'PROJECT_RESOURCE_POLICY',
   // 'ROLE',
@@ -242,6 +243,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIResourcePresetSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value}
+          onChange={selectProps.onChange}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'USER_RESOURCE_POLICY') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIUserResourcePolicySelect
           placeholder={selectProps.placeholder}
           value={selectProps.value}
           onChange={selectProps.onChange}
