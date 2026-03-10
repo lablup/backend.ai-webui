@@ -83,11 +83,7 @@ const AdminSessionPage: React.FC = () => {
             <SessionTemplateSettingModal
               open={modalOpen}
               editingTemplate={editingTemplate}
-              onClose={() => {
-                setModalOpen(false);
-                setEditingTemplate(null);
-              }}
-              onSuccess={() => {
+              onRequestClose={() => {
                 setModalOpen(false);
                 setEditingTemplate(null);
               }}
