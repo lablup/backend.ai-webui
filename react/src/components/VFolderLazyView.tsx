@@ -5,7 +5,7 @@
 import { useWebUINavigate } from '../hooks';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { Typography } from 'antd';
-import { BAIFlex, toLocalId } from 'backend.ai-ui';
+import { BAIFlex, toGlobalId, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -33,7 +33,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
         }
       }
     `,
-    { id: uuid },
+    { id: toGlobalId('VirtualFolderNode', uuid) },
   );
 
   return (
