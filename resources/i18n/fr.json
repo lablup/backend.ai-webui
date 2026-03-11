@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Un dossier avec un nom similaire existe déjà",
     "Active": "Actif",
-    "Active/Total": "Actif/Total",
     "AddRules": "Ajouter des règles",
     "AdditionalMounts": "Supports supplémentaires",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
@@ -1306,7 +1305,6 @@
     "RouteId": "ID de l'itinéraire",
     "RoutesInfo": "Informations sur les itinéraires",
     "RoutingInfo": "Informations sur le routage",
-    "RoutingsCount": "Nombre d'itinéraires",
     "RunThisModel": "Exécuter ce modèle",
     "RuntimeVariant": "Variante d'exécution de l'inférence",
     "SeeContainerLogs": "Voir les journaux de conteneur",

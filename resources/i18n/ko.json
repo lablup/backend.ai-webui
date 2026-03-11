@@ -1247,7 +1247,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "비슷한 이름의 폴더가 존재합니다",
     "Active": "실행중",
-    "Active/Total": "활성/전체",
     "AddRules": "규칙 추가",
     "AdditionalMounts": "추가 마운트",
     "AutoScalingRules": "오토스케일링 규칙",
@@ -1308,7 +1307,6 @@
     "RouteId": "라우트 ID",
     "RoutesInfo": "라우트 정보",
     "RoutingInfo": "라우팅 정보",
-    "RoutingsCount": "라우팅 수",
     "RunThisModel": "이 모델로 서비스 만들기",
     "RuntimeVariant": "인퍼런스 런타임 종류",
     "SeeContainerLogs": "컨테이너 로그 보기",

@@ -189,6 +189,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           $routeLimit: Int
           $routeOffset: Int
           $skipRouteNodes: Boolean!
+          $skipRoutings: Boolean!
         ) {
           endpoint(endpoint_id: $endpointId) {
             name
@@ -240,7 +241,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             resource_group
             resource_slots
             resource_opts
-            routings {
+            routings @skipOnClient(if: $skipRoutings) {
               routing_id
               session
               traffic_ratio
@@ -356,6 +357,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           (deferredRoutePagination.current - 1) *
           deferredRoutePagination.pageSize,
         skipRouteNodes: !baiClient.supports('route-node'),
+        skipRoutings: baiClient.supports('route-node'),
       },
       {
         fetchPolicy:

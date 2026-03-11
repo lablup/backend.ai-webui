@@ -18,14 +18,7 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  Typography,
-  theme,
-  App,
-  TablePaginationConfig,
-  Tooltip,
-} from 'antd';
+import { Button, Typography, theme, App, TablePaginationConfig } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
@@ -36,7 +29,6 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { InfoIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -96,9 +88,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
         created_at
         replicas @since(version: "24.12.0")
         desired_session_count
-        routings {
-          status
-        }
         created_user_email
         ...EndpointOwnerInfoFragment
         ...EndpointStatusTagFragment
@@ -280,30 +269,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
       key: 'desiredSessionCount',
       render: (desired_session_count: number) => {
         return desired_session_count < 0 ? '-' : desired_session_count;
-      },
-    },
-    {
-      title: (
-        <BAIFlex direction="row" align="center" gap={'xs'}>
-          {t('modelService.RoutingsCount')}
-          <Tooltip title={t('modelService.Active/Total')}>
-            <InfoIcon />
-          </Tooltip>
-          {/* <br />
-          <Typography.Text type="secondary" style={{ fontWeight: 'normal' }}>
-            ({t('modelService.Active/Total')})
-          </Typography.Text> */}
-        </BAIFlex>
-      ),
-      // dataIndex: "active_route_count",
-      key: 'routingCount',
-      render: (_text, row) => {
-        return (
-          _.filter(row.routings, (r) => r?.status === 'HEALTHY').length +
-          ' / ' +
-          row.routings?.length
-        );
-        // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
       },
     },
     {

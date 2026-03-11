@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Υπάρχει ήδη ένας φάκελος με παρόμοιο όνομα",
     "Active": "Ενεργός",
-    "Active/Total": "Ενεργό/Σύνολο",
     "AddRules": "Προσθέστε κανόνες",
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
@@ -1306,7 +1305,6 @@
     "RouteId": "Αναγνωριστικό διαδρομής",
     "RoutesInfo": "Πληροφορίες διαδρομών",
     "RoutingInfo": "Πληροφορίες δρομολόγησης",
-    "RoutingsCount": "Αριθμός δρομολογίων",
     "RunThisModel": "Εκτελέστε αυτό το μοντέλο",
     "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης εξαγωγής συμπερασμάτων",
     "SeeContainerLogs": "Βλέπε αρχεία καταγραφής κοντέινερ",

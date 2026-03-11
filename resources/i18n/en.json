@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "A folder with a similar name already exists",
     "Active": "Active",
-    "Active/Total": "Active/Total",
     "AddRules": "Add Rules",
     "AdditionalMounts": "Additional Mounts",
     "AutoScalingRules": "Auto Scaling Rules",
@@ -1306,7 +1305,6 @@
     "RouteId": "Route ID",
     "RoutesInfo": "Routes Info",
     "RoutingInfo": "Routing Info",
-    "RoutingsCount": "Routings Count",
     "RunThisModel": "Run this model",
     "RuntimeVariant": "Inference Runtime Variant",
     "SeeContainerLogs": "See Container Logs",

@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Benzer bir isme sahip bir klasör zaten var",
     "Active": "Aktif",
-    "Active/Total": "Aktif/Toplam",
     "AddRules": "Kurallar Ekle",
     "AdditionalMounts": "Ek Montajlar",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
@@ -1306,7 +1305,6 @@
     "RouteId": "Rota Kimliği",
     "RoutesInfo": "Güzergah Bilgileri",
     "RoutingInfo": "Yönlendirme Bilgisi",
-    "RoutingsCount": "Güzergah Sayısı",
     "RunThisModel": "Bu modeli çalıştır",
     "RuntimeVariant": "Çıkarım Çalışma Zamanı Varyantı",
     "SeeContainerLogs": "Konteyner Günlüklerini görün",

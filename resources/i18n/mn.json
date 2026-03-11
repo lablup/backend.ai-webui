@@ -1246,7 +1246,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Үүнтэй ижил нэртэй хавтас аль хэдийн байна",
     "Active": "Идэвхтэй",
-    "Active/Total": "Идэвхтэй/Нийт",
     "AddRules": "Дүрмийг нэмэх",
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
     "AutoScalingRules": "Автомат масштабын дүрэм",
@@ -1307,7 +1306,6 @@
     "RouteId": "Маршрутын ID",
     "RoutesInfo": "Маршрутын мэдээлэл",
     "RoutingInfo": "Чиглүүлэлтийн мэдээлэл",
-    "RoutingsCount": "Чиглүүлэлтийн тоо",
     "RunThisModel": "Энэ загварыг ажиллуул",
     "RuntimeVariant": "Дүгнэлт Runtime Variant",
     "SeeContainerLogs": "Контейнерийн бүртгэлийг үзнэ үү",

@@ -1247,7 +1247,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "同様の名前のフォルダーがすでに存在しています",
     "Active": "アクティブ",
-    "Active/Total": "アクティブ/全体",
     "AddRules": "ルールを追加します",
     "AdditionalMounts": "追加のマウント",
     "AutoScalingRules": "自動スケーリングルール",
@@ -1308,7 +1307,6 @@
     "RouteId": "ルートID",
     "RoutesInfo": "ルート情報",
     "RoutingInfo": "ルーティング情報",
-    "RoutingsCount": "ルーティング数",
     "RunThisModel": "このモデルを実行します",
     "RuntimeVariant": "推論ランタイム・バリアント",
     "SeeContainerLogs": "コンテナログを参照",

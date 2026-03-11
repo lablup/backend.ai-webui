@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Folder dengan nama yang serupa sudah ada",
     "Active": "Aktif",
-    "Active/Total": "Aktif/Jumlah",
     "AddRules": "Tambah peraturan",
     "AdditionalMounts": "Lekapan Tambahan",
     "AutoScalingRules": "Peraturan penskalaan automatik",
@@ -1306,7 +1305,6 @@
     "RouteId": "ID Laluan",
     "RoutesInfo": "Maklumat Laluan",
     "RoutingInfo": "Maklumat Laluan",
-    "RoutingsCount": "Kiraan Laluan",
     "RunThisModel": "Jalankan model ini",
     "RuntimeVariant": "Varian Masa Jalan Inferens",
     "SeeContainerLogs": "Lihat Log Bekas",

@@ -1245,7 +1245,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "Папка с аналогичным именем уже существует",
     "Active": "Активный",
-    "Active/Total": "Активный/Всего",
     "AddRules": "Добавить правила",
     "AdditionalMounts": "Дополнительные крепления",
     "AutoScalingRules": "Автоматические правила",
@@ -1306,7 +1305,6 @@
     "RouteId": "Идентификатор маршрута",
     "RoutesInfo": "Информация о маршрутах",
     "RoutingInfo": "Маршрутная информация",
-    "RoutingsCount": "Количество маршрутов",
     "RunThisModel": "Запустите эту модель",
     "RuntimeVariant": "Вариант времени выполнения вывода",
     "SeeContainerLogs": "См. журналы контейнеров",

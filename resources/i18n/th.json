@@ -1247,7 +1247,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "โฟลเดอร์ที่มีชื่อคล้ายกันอยู่แล้ว",
     "Active": "คล่องแคล่ว",
-    "Active/Total": "ใช้งาน/ทั้งหมด",
     "AddRules": "เพิ่มกฎ",
     "AdditionalMounts": "การเมาท์เพิ่มเติม",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
@@ -1308,7 +1307,6 @@
     "RouteId": "รหัสเส้นทาง",
     "RoutesInfo": "ข้อมูลเส้นทาง",
     "RoutingInfo": "ข้อมูลการกำหนดเส้นทาง",
-    "RoutingsCount": "จำนวนการกำหนดเส้นทาง",
     "RunThisModel": "เรียกใช้รุ่นนี้",
     "RuntimeVariant": "ตัวแปรรันไทม์การอนุมาน",
     "SeeContainerLogs": "ดูบันทึกคอนเทนเนอร์",

@@ -1247,7 +1247,6 @@
   "modelService": {
     "AFolderWithSimilarNameExists": "一个具有相似名称的文件夹已经存在",
     "Active": "积极的",
-    "Active/Total": "活动/总数",
     "AddRules": "添加规则",
     "AdditionalMounts": "附加安装座",
     "AutoScalingRules": "自动缩放规则",
@@ -1308,7 +1307,6 @@
     "RouteId": "路线 ID",
     "RoutesInfo": "路线信息",
     "RoutingInfo": "路由信息",
-    "RoutingsCount": "路由计数",
     "RunThisModel": "运行此模型",
     "RuntimeVariant": "推理运行时变量",
     "SeeContainerLogs": "查看容器日志",
