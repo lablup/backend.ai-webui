@@ -51,8 +51,14 @@
     "lucide-react": "catalog:",
     "markdown-to-jsx": "^7.7.17",
     "marked": "catalog:",
+<<<<<<< HEAD
     "nanoid": "^5.1.6",
     "nuqs": "^2.8.9",
+=======
+    "markty-toml": "catalog:",
+    "nanoid": "^5.1.6",
+    "nuqs": "^2.8.6",
+>>>>>>> 08d2ddf7b (feat(FR-2218): integrate react-grab for AI agent element inspection (#5887))
     "p-queue": "^8.1.1",
     "prettier": "catalog:",
     "prism-react-renderer": "^2.4.1",
