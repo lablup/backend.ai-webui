@@ -1301,6 +1301,7 @@
     "Processing": "Xử lý...",
     "Public": "Công cộng",
     "Ready": "Sẵn sàng",
+    "ReplicaCountDisabledByAutoScalingRules": "Không thể thay đổi số lượng bản sao thủ công khi các quy tắc tự động mở rộng đang hoạt động.",
     "Resources": "Tài nguyên",
     "Result": "Kết quả",
     "RouteError": "Lỗi tuyến đường",

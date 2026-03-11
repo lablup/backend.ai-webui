@@ -1299,6 +1299,7 @@
     "Processing": "Procesando...",
     "Public": "Público",
     "Ready": "Listo",
+    "ReplicaCountDisabledByAutoScalingRules": "El número de réplicas no se puede cambiar manualmente mientras las reglas de autoescalado estén activas.",
     "Resources": "Recursos",
     "Result": "Resultado",
     "RouteError": "Error de ruta",

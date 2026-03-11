@@ -1299,6 +1299,7 @@
     "Processing": "İşleme...",
     "Public": "Kamu",
     "Ready": "Hazır",
+    "ReplicaCountDisabledByAutoScalingRules": "Otomatik ölçeklendirme kuralları etkinken kopya sayısı manuel olarak değiştirilemez.",
     "Resources": "Kaynaklar",
     "Result": "Sonuç",
     "RouteError": "Rota Hatası",

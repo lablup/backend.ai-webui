@@ -1301,6 +1301,7 @@
     "Processing": "확인 중...",
     "Public": "공개",
     "Ready": "준비",
+    "ReplicaCountDisabledByAutoScalingRules": "오토스케일링 규칙이 활성화되어 있어 복제본 수를 임의로 변경할 수 없습니다.",
     "Resources": "자원",
     "Result": "실행 결과",
     "RouteError": "라우트 에러",

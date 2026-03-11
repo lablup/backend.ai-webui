@@ -1299,6 +1299,7 @@
     "Processing": "Processing...",
     "Public": "Public",
     "Ready": "Ready",
+    "ReplicaCountDisabledByAutoScalingRules": "Replica count cannot be changed manually while autoscaling rules are active.",
     "Resources": "Resources",
     "Result": "Result",
     "RouteError": "Route Error",

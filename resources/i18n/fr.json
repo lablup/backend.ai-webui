@@ -1299,6 +1299,7 @@
     "Processing": "Traitement...",
     "Public": "Public",
     "Ready": "Prêt",
+    "ReplicaCountDisabledByAutoScalingRules": "Le nombre de répliques ne peut pas être modifié manuellement lorsque des règles de mise à l'échelle automatique sont actives.",
     "Resources": "Ressources",
     "Result": "Résultat",
     "RouteError": "Erreur d'itinéraire",

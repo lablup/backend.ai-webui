@@ -1301,6 +1301,7 @@
     "Processing": "処理...",
     "Public": "公開",
     "Ready": "準備ができて",
+    "ReplicaCountDisabledByAutoScalingRules": "オートスケーリングルールが有効な間は、レプリカ数を手動で変更できません。",
     "Resources": "リソース",
     "Result": "結果",
     "RouteError": "ルートエラー",

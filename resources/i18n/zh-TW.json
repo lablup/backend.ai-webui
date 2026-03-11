@@ -1303,6 +1303,7 @@
     "Processing": "加工...",
     "Public": "公众",
     "Ready": "準備好",
+    "ReplicaCountDisabledByAutoScalingRules": "當自動擴縮容規則處於活動狀態時，無法手動更改副本數量。",
     "Resources": "资源",
     "Result": "結果",
     "RouteError": "路线错误",

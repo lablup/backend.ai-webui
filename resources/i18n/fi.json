@@ -1299,6 +1299,7 @@
     "Processing": "Käsitellään...",
     "Public": "Julkinen",
     "Ready": "Valmis",
+    "ReplicaCountDisabledByAutoScalingRules": "Kopioiden määrää ei voi muuttaa manuaalisesti, kun automaattisen skaalauksen säännöt ovat aktiivisia.",
     "Resources": "Resurssit",
     "Result": "Tulos",
     "RouteError": "Reittivirhe",
