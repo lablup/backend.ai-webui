@@ -522,6 +522,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const shouldFetchAutoScalingRules = !!endpoint && isSupportAutoScalingRule;
+  // Use `first: 1` with edges instead of `count` to check existence.
+  // The `count` field is unreliable — it ignores the endpoint filter and returns
+  // the total row count across all endpoints. See: https://lablup.atlassian.net/browse/BA-5009
   const { endpoint_auto_scaling_rules } =
     useLazyLoadQuery<ServiceLauncherPageContent_AutoScalingRulesQuery>(
       graphql`
@@ -530,8 +533,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         ) {
           endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
             endpoint: $endpoint_id
+            first: 1
           ) @since(version: "25.1.0") {
-            count
+            edges {
+              node {
+                id
+              }
+            }
           }
         }
       `,
@@ -544,7 +552,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           : 'store-only',
       },
     );
-  const hasAutoScalingRules = (endpoint_auto_scaling_rules?.count ?? 0) > 0;
+  const hasAutoScalingRules =
+    (endpoint_auto_scaling_rules?.edges?.length ?? 0) > 0;
 
   const [
     commitModifyEndpoint,
@@ -1162,6 +1171,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item
                           label={t('modelService.NumberOfReplicas')}
                           name={'replicas'}
+                          extra={
+                            hasAutoScalingRules
+                              ? t(
+                                  'modelService.ReplicaCountDisabledByAutoScalingRules',
+                                )
+                              : undefined
+                          }
                           rules={[
                             {
                               required: true,
@@ -1193,16 +1209,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             disabled={hasAutoScalingRules}
                           />
                         </Form.Item>
-                        {hasAutoScalingRules && (
-                          <Alert
-                            type="info"
-                            showIcon
-                            message={t(
-                              'modelService.ReplicaCountDisabledByAutoScalingRules',
-                            )}
-                            style={{ marginBottom: token.marginMD }}
-                          />
-                        )}
                         <ImageEnvironmentSelectFormItems
                         // //TODO: test with real inference images
                         // filter={(image) => {
