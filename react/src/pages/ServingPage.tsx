@@ -208,7 +208,10 @@ const ServingPage: React.FC = () => {
                 },
               }}
               order={queryParams.order}
-              loading={deferredQueryVariables !== queryVariables}
+              loading={
+                deferredQueryVariables !== queryVariables ||
+                deferredFetchKey !== fetchKey
+              }
               onChangeOrder={(order) => {
                 setQuery({ order }, 'replaceIn');
               }}

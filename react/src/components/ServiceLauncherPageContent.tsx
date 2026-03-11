@@ -4,6 +4,7 @@
  */
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
+import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
@@ -518,6 +519,41 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         user_RP_name: user?.resource_policy,
       },
     );
+
+  const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
+  const shouldFetchAutoScalingRules = !!endpoint && isSupportAutoScalingRule;
+  // Use `first: 1` with edges instead of `count` to check existence.
+  // The `count` field is unreliable — it ignores the endpoint filter and returns
+  // the total row count across all endpoints. See: https://lablup.atlassian.net/browse/BA-5009
+  const { endpoint_auto_scaling_rules } =
+    useLazyLoadQuery<ServiceLauncherPageContent_AutoScalingRulesQuery>(
+      graphql`
+        query ServiceLauncherPageContent_AutoScalingRulesQuery(
+          $endpoint_id: String!
+        ) {
+          endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
+            endpoint: $endpoint_id
+            first: 1
+          ) @since(version: "25.1.0") {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+      {
+        endpoint_id: endpoint?.endpoint_id ?? '',
+      },
+      {
+        fetchPolicy: shouldFetchAutoScalingRules
+          ? 'store-and-network'
+          : 'store-only',
+      },
+    );
+  const hasAutoScalingRules =
+    (endpoint_auto_scaling_rules?.edges?.length ?? 0) > 0;
 
   const [
     commitModifyEndpoint,
@@ -1135,6 +1171,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item
                           label={t('modelService.NumberOfReplicas')}
                           name={'replicas'}
+                          extra={
+                            hasAutoScalingRules
+                              ? t(
+                                  'modelService.ReplicaCountDisabledByAutoScalingRules',
+                                )
+                              : undefined
+                          }
                           rules={[
                             {
                               required: true,
@@ -1163,6 +1206,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               suffix: '#',
                             }}
                             step={1}
+                            disabled={hasAutoScalingRules}
                           />
                         </Form.Item>
                         <ImageEnvironmentSelectFormItems
