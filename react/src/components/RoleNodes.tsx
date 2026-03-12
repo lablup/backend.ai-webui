@@ -11,28 +11,27 @@ import {
   EditOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { Tag } from 'antd';
 import {
   BAIButton,
   BAIColumnType,
   BAILink,
   BAITable,
   BAITableProps,
+  BAITag,
   filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type RoleNodeInList = NonNullable<RoleNodesFragment$data[number]>;
 
-const availableRoleSorterKeys = ['NAME', 'CREATED_AT', 'UPDATED_AT'] as const;
+const availableRoleSorterKeys = ['name', 'created_at', 'updated_at'] as const;
 
 export const availableRoleSorterValues = [
-  ...availableRoleSorterKeys.map((key) => `${key}_ASC` as const),
-  ...availableRoleSorterKeys.map((key) => `${key}_DESC` as const),
+  ...availableRoleSorterKeys,
+  ...availableRoleSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 
 interface RoleNodesProps extends Omit<
@@ -155,9 +154,9 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       dataIndex: 'source',
       render: (source: string) => {
         return (
-          <Tag color={source === 'SYSTEM' ? 'default' : 'green'}>
+          <BAITag color={source === 'SYSTEM' ? 'default' : 'green'}>
             {source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
-          </Tag>
+          </BAITag>
         );
       },
     },

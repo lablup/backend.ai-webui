@@ -23,7 +23,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import { parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -49,6 +49,7 @@ const RBACManagementPage: React.FC = () => {
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
       source: parseAsStringLiteral(sourceFilterValues).withDefault('all'),
+      order: parseAsString,
     },
     {
       history: 'replace',
@@ -57,7 +58,6 @@ const RBACManagementPage: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<GraphQLFilter>();
-  const [order, setOrder] = useState<string | null>(null);
 
   const sourceFilter =
     queryParams.source === 'all' ? null : [queryParams.source];
@@ -68,7 +68,7 @@ const RBACManagementPage: React.FC = () => {
       ...(sourceFilter ? { source: sourceFilter } : {}),
       ...filter,
     },
-    orderBy: convertToOrderBy<RoleOrderBy>(order),
+    orderBy: convertToOrderBy<RoleOrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -193,8 +193,10 @@ const RBACManagementPage: React.FC = () => {
             rolesFrgmt={roleNodes}
             statusFilter={deferredQueryVariables.filter.status?.[0]}
             loading={deferredQueryVariables !== queryVariables}
-            order={order}
-            onChangeOrder={setOrder}
+            order={queryParams.order}
+            onChangeOrder={(newOrder) =>
+              setQueryParams({ order: newOrder })
+            }
             onClickRoleName={(role) => setSelectedRoleForDetail(role)}
             onClickEdit={(role) => setSelectedRoleForEdit(role)}
             onClickDelete={(role) => setSelectedRoleForDelete(role)}
