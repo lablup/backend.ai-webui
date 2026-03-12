@@ -1,3 +1,4 @@
+import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserRole } from './backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import {
@@ -28,16 +29,24 @@ export const useCSVExport = (nodeKey: SupportedNodeKeys) => {
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
   const { getErrorMessage } = useErrorMessageResolver();
   const userRole = useCurrentUserRole();
 
   const isAdmin = userRole === 'superadmin' || userRole === 'admin';
+  const isExportCSVSupported = baiClient.supports('export-csv');
 
   const { data: supportedFields } = useSuspenseTanQuery<Array<string>>({
-    queryKey: ['CSVExport', 'supportedFields', nodeKey, isAdmin],
+    queryKey: [
+      'CSVExport',
+      'supportedFields',
+      nodeKey,
+      isAdmin,
+      isExportCSVSupported,
+    ],
     queryFn: () => {
-      if (!isAdmin) return [];
+      if (!isAdmin || !isExportCSVSupported) return [];
       return baiRequestWithPromise({
         method: 'GET',
         url: `/export/reports/${nodeKey}`,
