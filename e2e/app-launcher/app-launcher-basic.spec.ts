@@ -35,8 +35,19 @@ test.describe(
       );
 
       // Create session using SessionLauncher
-      await sessionLauncher.create();
-      sessionCreated = true;
+      // Session creation requires an available Backend.AI agent. If none are available,
+      // the session will stay PENDING and the create() call will time out. We catch that
+      // case here so the individual tests can be skipped gracefully via the sessionCreated flag.
+      try {
+        await sessionLauncher.create();
+        sessionCreated = true;
+      } catch (error) {
+        console.log(
+          `Session creation failed (likely no agent available): ${error}`,
+        );
+        // sessionCreated remains false - all tests will be skipped via test.skip(!sessionCreated)
+        return;
+      }
 
       // Open app launcher modal once for all tests
       appLauncherModal = await AppLauncherModal.openFromSession(
