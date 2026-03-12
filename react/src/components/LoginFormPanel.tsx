@@ -148,7 +148,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         footer={null}
         width={modalWidth}
         getContainer={false}
-        mask={!needToResetPassword}
         title={
           <div style={{ textAlign: 'center' }}>
             <img
@@ -161,14 +160,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         styles={{
           header: { borderBottom: 'none', paddingBottom: 0 },
           body: { padding: token.paddingLG, paddingTop: token.paddingSM },
-          // When needToResetPassword is true, hide the login modal wrapper via
-          // display:none while keeping open={true}. This preserves the Form
-          // instance (and its field values) that child modals depend on.
-          // Trade-off: screen readers may announce two open dialogs. A future
-          // refactor should decouple form state from modal lifecycle.
-          ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
-        destroyOnHidden
+        destroyOnHidden={false}
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (

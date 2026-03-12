@@ -106,6 +106,10 @@ const LoginView: React.FC = () => {
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
   const blockTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  // Track previous values to detect true -> false transitions for re-opening
+  // the login panel after child modals are dismissed.
+  const prevNeedsOtpRegistrationRef = useRef(false);
+  const prevNeedToResetPasswordRef = useRef(false);
 
   // Trigger config loading on mount
   useEffect(() => {
@@ -240,6 +244,27 @@ const LoginView: React.FC = () => {
       setShowSignupModal(true);
     }
   }, [loginConfig.signup_support, apiEndpoint]);
+
+  // Re-open the login panel when needsOtpRegistration transitions from true
+  // to false (i.e., after the TOTP registration modal is dismissed), so the
+  // user can enter their OTP code. Using useEffect + ref keeps the setter
+  // callback a pure state setter and avoids accidental re-opens from
+  // non-dismissal code paths.
+  useEffect(() => {
+    if (prevNeedsOtpRegistrationRef.current && !needsOtpRegistration) {
+      open();
+    }
+    prevNeedsOtpRegistrationRef.current = needsOtpRegistration;
+  }, [needsOtpRegistration, open]);
+
+  // Re-open the login panel when needToResetPassword transitions from true to
+  // false (i.e., after the password reset modal is cancelled or completed).
+  useEffect(() => {
+    if (prevNeedToResetPasswordRef.current && !needToResetPassword) {
+      open();
+    }
+    prevNeedToResetPasswordRef.current = needToResetPassword;
+  }, [needToResetPassword, open]);
 
   const close = useCallback(() => {
     // Cancel any pending block timer so a delayed timer from block()
@@ -404,12 +429,11 @@ const LoginView: React.FC = () => {
             showError,
           );
           if (!shouldOpenLoginPanel) {
-            // Don't close the login panel — its BAIModal uses destroyOnHidden,
-            // which would destroy the Form and clear field values needed by
-            // child modals (e.g., ResetPasswordRequiredInline reads username
-            // and currentPassword from form). Just dismiss the block overlay
-            // and let the child modal (zIndex=1002) appear above the login
-            // panel (zIndex=1001).
+            // Close the login panel so its form fields are inaccessible while
+            // the child modal (password reset or TOTP) is shown. The BAIModal
+            // uses destroyOnHidden={false}, which keeps the Form instance alive
+            // so form.setFieldValue() still works after the child modal completes
+            // and triggers re-login.
             //
             // Capture credentials explicitly for the password reset modal.
             // Reading form values via form.getFieldValue() at render time is
@@ -419,6 +443,7 @@ const LoginView: React.FC = () => {
               username: userId,
               password,
             };
+            setIsLoginPanelOpen(false);
             setIsBlockPanelOpen(false);
             setIsLoading(false);
             return;
@@ -875,8 +900,8 @@ const LoginView: React.FC = () => {
         onSetOtpRequired={setOtpRequired}
         onSetNeedsOtpRegistration={setNeedsOtpRegistration}
         onSetNeedToResetPassword={(v: boolean) => {
-          setNeedToResetPassword(v);
           if (!v) expiredCredentialsRef.current = null;
+          setNeedToResetPassword(v);
         }}
         onSetShowSignupModal={setShowSignupModal}
       />
