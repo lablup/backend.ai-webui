@@ -291,7 +291,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               ]}
             >
-              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+              <InputNumber min={1} step={1} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
@@ -312,6 +312,8 @@ const ResourceGroupFairShareSettingModal: React.FC<
           >
             <Row gutter={[24, 16]}>
               {_.map(resourceGroup?.fairShareSpec?.resourceWeights, (entry) => {
+                const isSharesType = _.endsWith(entry?.resourceType, 'shares');
+                const step = isSharesType ? 0.1 : 1;
                 return (
                   <Col
                     span={12}
@@ -328,7 +330,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                     >
                       <InputNumber
                         min={1}
-                        step={0.1}
+                        step={step}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>
