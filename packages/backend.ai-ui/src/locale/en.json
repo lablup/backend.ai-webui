@@ -271,6 +271,7 @@
     "FolderCreatedSuccessfully": "Folder created successfully.",
     "FolderName": "Folder Name",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\).",
+    "InvalidFolderNameCharacters": "Folder name must not contain path separators (/ or \\).",
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Folder name must be 255 characters or less.",
     "ModifiedAt": "Modified At",

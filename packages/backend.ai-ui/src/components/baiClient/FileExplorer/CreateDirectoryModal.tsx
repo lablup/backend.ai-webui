@@ -37,9 +37,13 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
     formRef.current
       ?.validateFields()
       .then((values) => {
+        const path =
+          currentPath === '.'
+            ? values.folderName
+            : `${currentPath}/${values.folderName}`;
         createDirectoryMutation
           .mutateAsync({
-            path: [currentPath, values.folderName].join('/'),
+            path,
             name: targetVFolderId,
           })
           .then(() => {
@@ -79,6 +83,18 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
             {
               max: 255,
               message: t('comp:FileExplorer.MaxFolderNameLength'),
+            },
+            {
+              validator: (_, value) => {
+                if (value && (value.includes('/') || value.includes('\\'))) {
+                  return Promise.reject(
+                    new Error(
+                      t('comp:FileExplorer.InvalidFolderNameCharacters'),
+                    ),
+                  );
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
