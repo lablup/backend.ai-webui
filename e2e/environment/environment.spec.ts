@@ -287,8 +287,14 @@ async function applyImageFilter(
   propertyLabel: string,
   value: string,
 ) {
-  // Open the property selector combobox via its stable aria-label
-  await page.getByLabel('Filter property selector').click();
+  // Scroll the filter selector into view (center of viewport) so it is not
+  // obscured by the sticky header at the top of the scrollable content area,
+  // then click the ant-select wrapper div to open the dropdown.
+  const filterSelector = page.locator(
+    '.ant-select.ant-select-compact-first-item',
+  );
+  await filterSelector.scrollIntoViewIfNeeded();
+  await filterSelector.click();
   await page.getByRole('option', { name: propertyLabel, exact: true }).click();
 
   const valueInput = page.locator('[aria-label="Filter value search"]');
@@ -612,7 +618,11 @@ test.describe(
       page,
     }) => {
       // 1. Check total row count to determine if there are enough images for page 2
-      const paginationTotal = page.locator('.ant-pagination-total-text');
+      // Use the visible standalone pagination (ant-pagination-end); the built-in
+      // ant-table-pagination is hidden on this page.
+      const paginationTotal = page
+        .locator('.ant-pagination-end')
+        .locator('.ant-pagination-total-text');
       const totalText = await paginationTotal.textContent().catch(() => '');
       const totalMatch = totalText?.match(/of\s+(\d+)/);
       const total = totalMatch ? parseInt(totalMatch[1], 10) : 0;
@@ -623,8 +633,13 @@ test.describe(
         return;
       }
 
+      // Use the standalone visible pagination (ant-pagination-end) which is the
+      // actual pagination rendered for the image list. The ant-table-pagination
+      // built into the table is hidden (display:none) on this page.
+      const visiblePagination = page.locator('.ant-pagination-end');
+
       // 2. Navigate to page 2 by clicking the page 2 button in pagination
-      await page
+      await visiblePagination
         .locator('.ant-pagination-item')
         .filter({ hasText: '2' })
         .click();
@@ -634,7 +649,9 @@ test.describe(
         .catch(() => {});
 
       // 3. Verify we are on page 2
-      await expect(page.locator('.ant-pagination-item-active')).toHaveText('2');
+      await expect(
+        visiblePagination.locator('.ant-pagination-item-active'),
+      ).toHaveText('2');
 
       // 4. Apply a Name filter with value "python"
       await applyImageFilter(page, 'Name', 'python');
@@ -645,7 +662,9 @@ test.describe(
       await expect(nameTag).toBeVisible();
 
       // 5. Verify pagination has reset to page 1
-      await expect(page.locator('.ant-pagination-item-active')).toHaveText('1');
+      await expect(
+        visiblePagination.locator('.ant-pagination-item-active'),
+      ).toHaveText('1');
 
       // 6. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Name: python');
@@ -657,7 +676,11 @@ test.describe(
       page,
     }) => {
       // 1. Select "Architecture" as the filter property
-      await page.getByLabel('Filter property selector').click();
+      const filterSelector = page.locator(
+        '.ant-select.ant-select-compact-first-item',
+      );
+      await filterSelector.scrollIntoViewIfNeeded();
+      await filterSelector.click();
       await page
         .getByRole('option', { name: 'Architecture', exact: true })
         .click();
