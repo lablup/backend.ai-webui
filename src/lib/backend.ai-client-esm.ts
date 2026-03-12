@@ -2133,13 +2133,17 @@ class VFolder {
    * Get allowed types of folders
    *
    */
-  async list_allowed_types(): Promise<any> {
+  async list_allowed_types(): Promise<string[]> {
     let rqst = this.client.newSignedRequest(
       'GET',
       `${this.urlPrefix}/_/allowed_types`,
       null,
     );
-    return this.client._wrapWithPromise(rqst);
+    return this.client
+      ._wrapWithPromise(rqst)
+      .then((res: string[] | { type: string[] }) =>
+        Array.isArray(res) ? res : (res?.type ?? []),
+      );
   }
 
   /**
