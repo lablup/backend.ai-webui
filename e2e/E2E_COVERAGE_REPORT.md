@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-10
+> **Last Updated:** 2026-03-12
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,11 +12,11 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 160 / 319 features covered (50%)**
+**Overall (in-scope routes): 162 / 322 features covered (50%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 16 | 14 | 🔶 88% |
+| Authentication | `/interactive-login` | 19 | 16 | 🔶 84% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 20 | 12 | 🔶 60% |
@@ -44,7 +44,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **319** | **160** | **50%** |
+| **Total** | | **322** | **162** | **50%** |
 
 ---
 
@@ -63,7 +63,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/signup.spec.ts`](auth/signup.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -80,10 +80,13 @@
 | Password change empty validation | ✅ | `password change form shows a validation error when submitted empty` |
 | Password change same-password rejection | ✅ | `password change form rejects a new password that is the same as the current one` |
 | Full password change flow (real account) | ✅ | `user can complete the password change flow with a real account and re-login is attempted` |
+| Self-service signup (success path) | ✅ | `user can open the signup modal and sign up successfully` |
+| Self-service signup (duplicate email error) | ✅ | `signup with an already-registered email shows an error` |
+| Login after self-service signup | 🚧 | `user can log in with newly signed-up credentials` (fixme: blocked by FR-2268) |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 
-**Coverage: 🔶 14/16 features**
+**Coverage: 🔶 16/19 features**
 
 ---
 
