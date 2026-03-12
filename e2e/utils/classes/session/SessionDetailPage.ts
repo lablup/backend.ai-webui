@@ -53,13 +53,9 @@ export class SessionDetailPage extends BasePage {
       // Try finished category first (sessions might have terminated)
       try {
         await this.filterByStatusCategory('finished');
-        // Wait for table to update by waiting for network idle
-        await this.page.waitForLoadState('networkidle');
       } catch {
         // If that fails, try running category
         await this.filterByStatusCategory('running');
-        // Wait for table to update by waiting for network idle
-        await this.page.waitForLoadState('networkidle');
       }
     }
 
@@ -273,8 +269,8 @@ export class SessionDetailPage extends BasePage {
     const filterLabel = this.page.getByText(displayCategory, { exact: true });
     await filterLabel.click();
 
-    // Wait for table to update by checking for loading state
-    await this.page.waitForLoadState('domcontentloaded');
+    // Wait for table to update by waiting for the table to be visible
+    await this.page.locator('table').first().waitFor({ state: 'visible' });
   }
 
   /**
