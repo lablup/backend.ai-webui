@@ -5,17 +5,24 @@
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { App, Form, Input } from 'antd';
-import {
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
 
-interface RoleFormModalProps extends BAIModalProps {
+// Fragment used by RoleNodes to pre-fetch data for edit mode (wired in PR #5770)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _RoleFormModalFragment = graphql`
+  fragment RoleFormModalFragment on Role {
+    id
+    name
+    description
+  }
+`;
+
+export type { RoleFormModalFragment$key };
+
+export interface RoleFormModalProps extends BAIModalProps {
   onRequestClose: (success: boolean) => void;
 }
 
@@ -26,19 +33,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { logger } = useBAILogger();
   const [form] = Form.useForm();
-
-  const editingRole = useFragment(
-    graphql`
-      fragment RoleFormModalFragment on Role {
-        id
-        name
-        description
-      }
-    `,
-    editingRoleFrgmt ?? null,
-  );
 
   const [commitCreateRole, isInFlightCreateRole] =
     useMutation<RoleFormModalCreateMutation>(graphql`
@@ -55,36 +50,45 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       }
     `);
 
-  useEffect(() => {
-    if (baiModalProps.open) {
-      // Auto-focus name field after modal animation completes
-      setTimeout(() => {
-        if (editingRole) {
-          formRef.current?.setFieldsValue({
-            name: editingRole.name,
-            description: editingRole.description || '',
-          });
-        }
-        formRef.current?.getFieldInstance('name')?.focus();
-      }, 100);
-    } else {
-      formRef.current?.resetFields();
-    }
-  }, [baiModalProps.open]);
-
   const handleOk = () => {
-    return form.validateFields().then((values) => {
-      return new Promise<void>((resolve, reject) => {
-        commitCreateRole({
-          variables: {
-            input: {
-              name: values.name,
-              description: values.description || null,
+    return form
+      .validateFields()
+      .then((values) => {
+        return new Promise<void>((resolve, reject) => {
+          commitCreateRole({
+            variables: {
+              input: {
+                name: values.name,
+                description: values.description || null,
+              },
             },
-          },
-          onCompleted: (_data, errors) => {
-            if (errors && errors.length > 0) {
-              const errorMessage = errors[0]?.message || '';
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMessage = errors[0]?.message || '';
+                if (
+                  errorMessage.includes('409') ||
+                  errorMessage.toLowerCase().includes('duplicate') ||
+                  errorMessage.toLowerCase().includes('already exists')
+                ) {
+                  form.setFields([
+                    {
+                      name: 'name',
+                      errors: [t('rbac.DuplicateRoleName')],
+                    },
+                  ]);
+                  reject();
+                  return;
+                }
+                message.error(errorMessage);
+                reject();
+                return;
+              }
+              message.success(t('rbac.RoleCreated'));
+              onRequestClose(true);
+              resolve();
+            },
+            onError: (error) => {
+              const errorMessage = error?.message || '';
               if (
                 errorMessage.includes('409') ||
                 errorMessage.toLowerCase().includes('duplicate') ||
@@ -96,38 +100,15 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                     errors: [t('rbac.DuplicateRoleName')],
                   },
                 ]);
-                reject();
-                return;
+              } else {
+                message.error(errorMessage || t('general.ErrorOccurred'));
               }
-              message.error(errorMessage);
               reject();
-              return;
-            }
-            message.success(t('rbac.RoleCreated'));
-            onRequestClose(true);
-            resolve();
-          },
-          onError: (error) => {
-            const errorMessage = error?.message || '';
-            if (
-              errorMessage.includes('409') ||
-              errorMessage.toLowerCase().includes('duplicate') ||
-              errorMessage.toLowerCase().includes('already exists')
-            ) {
-              formRef.current?.setFields([
-                {
-                  name: 'name',
-                  errors: [t('rbac.DuplicateRoleName')],
-                },
-              ]);
-            } else {
-              message.error(errorMessage || t('general.ErrorOccurred'));
-            }
-            reject();
-          },
+            },
+          });
         });
-      });
-    });
+      })
+      .catch(() => {});
   };
 
   return (
@@ -136,7 +117,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightCreateRole}
-      destroyOnClose
+      destroyOnHidden
       {...baiModalProps}
     >
       <Form
@@ -144,10 +125,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         layout="vertical"
         requiredMark="optional"
         preserve={false}
-        initialValues={{
-          name: editingRole?.name ?? '',
-          description: editingRole?.description ?? '',
-        }}
       >
         <Form.Item
           name="name"
