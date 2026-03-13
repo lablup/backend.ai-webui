@@ -95,6 +95,8 @@ export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
 export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
 export { default as BAIAgentTable } from './BAIAgentTable';
 export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
+export { default as BAIUserResourcePolicySelect } from './BAIUserResourcePolicySelect';
+export type { BAIUserResourcePolicySelectProps } from './BAIUserResourcePolicySelect';
 export { default as BAIVFolderSelect } from './BAIVFolderSelect';
 export type {
   BAIVFolderSelectProps,

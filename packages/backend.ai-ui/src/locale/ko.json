@@ -266,6 +266,9 @@
   "comp:BAITestButton": {
     "Test": "테스트"
   },
+  "comp:BAIUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "사용자 리소스 정책을 선택해주세요"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"
   },
