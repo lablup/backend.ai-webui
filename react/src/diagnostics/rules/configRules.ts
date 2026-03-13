@@ -63,6 +63,56 @@ export function checkPlaceholderValues(
 }
 
 // ---------------------------------------------------------------------------
+// SSL/TLS mismatch  (API endpoint vs proxy URL protocol)
+// ---------------------------------------------------------------------------
+
+/**
+ * Check for SSL/TLS protocol mismatch between API endpoint and proxy URL.
+ * e.g., API endpoint uses HTTPS but proxy uses HTTP (or vice versa).
+ */
+export function checkSslMismatch(
+  apiEndpoint: string,
+  proxyUrl: string,
+): DiagnosticResult | null {
+  if (!apiEndpoint || !proxyUrl) return null;
+
+  let apiProtocol: string;
+  let proxyProtocol: string;
+
+  try {
+    apiProtocol = new URL(apiEndpoint).protocol;
+  } catch {
+    return null;
+  }
+
+  try {
+    proxyProtocol = new URL(proxyUrl).protocol;
+  } catch {
+    return null;
+  }
+
+  const apiIsSecure = apiProtocol === 'https:' || apiProtocol === 'wss:';
+  const proxyIsSecure = proxyProtocol === 'https:' || proxyProtocol === 'wss:';
+
+  if (apiIsSecure !== proxyIsSecure) {
+    return {
+      id: 'ssl-mismatch',
+      severity: 'warning',
+      category: 'config',
+      titleKey: 'diagnostics.SslMismatch',
+      descriptionKey: 'diagnostics.SslMismatchDesc',
+      remediationKey: 'diagnostics.SslMismatchFix',
+      interpolationValues: {
+        apiProtocol,
+        proxyProtocol,
+      },
+    };
+  }
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // Blocklist
 // ---------------------------------------------------------------------------
 
