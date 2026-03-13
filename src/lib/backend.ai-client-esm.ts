@@ -896,6 +896,7 @@ class Client {
       this._features['session-scheduling-history'] = true;
       this._features['rbac'] = true;
       this._features['export-csv'] = true;
+      this._features['bulk-create-user'] = true;
     }
   }
 

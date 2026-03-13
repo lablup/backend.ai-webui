@@ -112,25 +112,6 @@ const roleToV2: Record<string, UserRoleV2> = {
   monitor: 'MONITOR',
 };
 
-const formatBulkEmail = (
-  prefix: string,
-  suffix: string,
-  index: number,
-  totalCount: number,
-) => {
-  const padLength = String(totalCount).length;
-  return `${prefix}${String(index).padStart(padLength, '0')}@${suffix}`;
-};
-
-const formatBulkUsername = (
-  prefix: string,
-  index: number,
-  totalCount: number,
-) => {
-  const padLength = String(totalCount).length;
-  return `${prefix}${String(index).padStart(padLength, '0')}`;
-};
-
 interface UserSettingModalProps extends BAIModalProps {
   userEmail?: string | null;
   bulkCreate?: boolean;
@@ -311,18 +292,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       .then(async (values) => {
         if (bulkCreate) {
           const bulkValues = values as BulkFormValues;
+          const padLength = String(bulkValues.user_count).length;
           const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
-            email: formatBulkEmail(
-              bulkValues.email_prefix,
-              bulkValues.email_suffix,
-              i,
-              bulkValues.user_count,
-            ),
-            username: formatBulkUsername(
-              bulkValues.email_prefix,
-              i,
-              bulkValues.user_count,
-            ),
+            email: `${bulkValues.email_prefix}${String(i).padStart(padLength, '0')}@${bulkValues.email_suffix}`,
+            username: `${bulkValues.email_prefix}${String(i).padStart(padLength, '0')}`,
             password: bulkValues.password as string,
             domainName: bulkValues.domain_name,
             needPasswordChange: bulkValues.need_password_change || false,
@@ -562,64 +535,44 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               <Form.Item
                 name="user_count"
                 label={t('credential.UserCount')}
-                rules={[
-                  { required: true },
-                  {
-                    type: 'number',
-                    max: 100,
-                    message: t('credential.validation.MaxUserCount', {
-                      count: 100,
-                    }),
-                  },
-                ]}
-                extra={
-                  <Form.Item
-                    noStyle
-                    dependencies={[
-                      'email_prefix',
-                      'email_suffix',
-                      'user_count',
-                    ]}
-                  >
-                    {({ getFieldValue }) => {
-                      const prefix = getFieldValue('email_prefix');
-                      const suffix = getFieldValue('email_suffix');
-                      const count = getFieldValue('user_count');
-                      if (!prefix || !suffix || !count) return null;
-                      const previewCount = Math.min(count, 100);
-                      const previewEmails: string[] = [];
-                      if (previewCount <= 4) {
-                        for (let i = 1; i <= previewCount; i++) {
-                          previewEmails.push(
-                            formatBulkEmail(prefix, suffix, i, previewCount),
-                          );
-                        }
-                      } else {
-                        previewEmails.push(
-                          formatBulkEmail(prefix, suffix, 1, previewCount),
-                          formatBulkEmail(prefix, suffix, 2, previewCount),
-                        );
-                      }
-                      const lastEmail =
-                        previewCount > 4
-                          ? formatBulkEmail(
-                              prefix,
-                              suffix,
-                              previewCount,
-                              previewCount,
-                            )
-                          : undefined;
-                      return (
-                        <Typography.Text type="secondary">
-                          {previewEmails.join(', ')}
-                          {lastEmail && ` … ${lastEmail}`}
-                        </Typography.Text>
-                      );
-                    }}
-                  </Form.Item>
-                }
+                rules={[{ required: true }]}
               >
-                <InputNumber style={{ width: '100%' }} min={1} />
+                <InputNumber style={{ width: '100%' }} min={1} max={100} />
+              </Form.Item>
+              <Form.Item
+                noStyle
+                dependencies={['email_prefix', 'email_suffix', 'user_count']}
+              >
+                {({ getFieldValue }) => {
+                  const prefix = getFieldValue('email_prefix');
+                  const suffix = getFieldValue('email_suffix');
+                  const count = getFieldValue('user_count');
+                  if (!prefix || !suffix || !count) return null;
+                  const padLength = String(count).length;
+                  const formatEmail = (i: number) =>
+                    `${prefix}${String(i).padStart(padLength, '0')}@${suffix}`;
+                  const previewLines: string[] = [];
+                  if (count <= 3) {
+                    for (let i = 1; i <= count; i++) {
+                      previewLines.push(formatEmail(i));
+                    }
+                  } else {
+                    previewLines.push(formatEmail(1));
+                    previewLines.push(formatEmail(2));
+                    previewLines.push('...');
+                    previewLines.push(formatEmail(count));
+                  }
+                  return (
+                    <Form.Item label={t('credential.BulkCreateEmailPreview')}>
+                      <Typography.Text
+                        type="secondary"
+                        style={{ whiteSpace: 'pre-line' }}
+                      >
+                        {previewLines.join('\n')}
+                      </Typography.Text>
+                    </Form.Item>
+                  );
+                }}
               </Form.Item>
             </>
           ) : (
