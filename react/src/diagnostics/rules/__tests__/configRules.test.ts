@@ -31,6 +31,7 @@ const validMenuKeys = [
   'information',
 ];
 
+<<<<<<< HEAD
 // ---------------------------------------------------------------------------
 // checkPlaceholderValues
 // ---------------------------------------------------------------------------
@@ -114,6 +115,8 @@ describe('checkPlaceholderValues', () => {
 // checkSslMismatch
 // ---------------------------------------------------------------------------
 
+=======
+>>>>>>> 9c700ab36 (refactor(FR-2300): move checkSslMismatch to configRules)
 describe('checkSslMismatch', () => {
   it('should return null when inputs are empty', () => {
     expect(checkSslMismatch('', 'http://proxy.example.com')).toBeNull();
@@ -140,7 +143,11 @@ describe('checkSslMismatch', () => {
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
     expect(result?.category).toBe('config');
+<<<<<<< HEAD
     expect(result?.id).toBe('config-ssl-mismatch');
+=======
+    expect(result?.id).toBe('ssl-mismatch');
+>>>>>>> 9c700ab36 (refactor(FR-2300): move checkSslMismatch to configRules)
   });
 
   it('should return warning when API is HTTP but proxy is HTTPS', () => {
@@ -158,6 +165,7 @@ describe('checkSslMismatch', () => {
     ).toBeNull();
     expect(checkSslMismatch('https://api.example.com', 'not-a-url')).toBeNull();
   });
+<<<<<<< HEAD
 
   it('should include protocol interpolation values', () => {
     const result = checkSslMismatch(
@@ -188,6 +196,10 @@ describe('checkSslMismatch', () => {
 // checkBlocklistValidity
 // ---------------------------------------------------------------------------
 
+=======
+});
+
+>>>>>>> 9c700ab36 (refactor(FR-2300): move checkSslMismatch to configRules)
 describe('checkBlocklistValidity', () => {
   it('should return null when blocklist is empty', () => {
     expect(checkBlocklistValidity([], validMenuKeys)).toBeNull();
