@@ -718,6 +718,7 @@
     "ResourceLimitOutOfRangeFix": "Review the {{section}} section in config.toml and set {{field}} to a value between {{min}} and {{max}}.",
     "ResourceLimitsPassed": "Resource Limits OK",
     "ResourceLimitsPassedDesc": "All resource limit configurations are within reasonable ranges.",
+    "ShowPassed": "Show passed",
     "StorageHealthPassed": "Storage Volume Usage OK",
     "StorageHealthPassedDesc": "All {{count}} volume(s) are within normal capacity.",
     "StorageNoVolumes": "No Storage Volumes",

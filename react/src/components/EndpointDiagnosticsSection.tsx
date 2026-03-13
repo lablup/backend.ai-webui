@@ -5,12 +5,24 @@
 import { useEndpointDiagnostics } from '../hooks/useEndpointDiagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
 
-const EndpointDiagnosticsSection: React.FC = () => {
+interface EndpointDiagnosticsSectionProps {
+  hidePassed?: boolean;
+}
+
+const EndpointDiagnosticsSection: React.FC<EndpointDiagnosticsSectionProps> = ({
+  hidePassed = false,
+}) => {
   'use memo';
 
   const { results, isLoading } = useEndpointDiagnostics();
 
-  return <DiagnosticResultList results={results} loading={isLoading} />;
+  return (
+    <DiagnosticResultList
+      results={results}
+      loading={isLoading}
+      hidePassed={hidePassed}
+    />
+  );
 };
 
 export default EndpointDiagnosticsSection;

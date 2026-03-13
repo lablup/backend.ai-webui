@@ -7,7 +7,7 @@ import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Collapse, Skeleton } from 'antd';
+import { Collapse, Skeleton, Switch, Typography } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ const DiagnosticsPage = () => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isPending, startTransition] = useTransition();
+  const [showPassed, setShowPassed] = useState(true);
 
   const handleRefresh = () => {
     startTransition(() => {
@@ -43,13 +44,17 @@ const DiagnosticsPage = () => {
         },
       ]}
       tabBarExtraContent={
-        <BAIButton
-          icon={<ReloadOutlined spin={isPending} />}
-          onClick={handleRefresh}
-          loading={isPending}
-        >
-          {t('diagnostics.Refresh')}
-        </BAIButton>
+        <BAIFlex gap="sm" align="center">
+          <Switch size="small" checked={showPassed} onChange={setShowPassed} />
+          <Typography.Text>{t('diagnostics.ShowPassed')}</Typography.Text>
+          <BAIButton
+            icon={<ReloadOutlined spin={isPending} />}
+            onClick={handleRefresh}
+            loading={isPending}
+          >
+            {t('diagnostics.Refresh')}
+          </BAIButton>
+        </BAIFlex>
       }
     >
       {curTabKey === 'diagnostics' && (
@@ -64,7 +69,7 @@ const DiagnosticsPage = () => {
                 children: (
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={<Skeleton active />}>
-                      <CspDiagnosticsSection />
+                      <CspDiagnosticsSection hidePassed={!showPassed} />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 ),
@@ -75,7 +80,9 @@ const DiagnosticsPage = () => {
                 children: (
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={<Skeleton active />}>
-                      <StorageProxyDiagnosticsSection />
+                      <StorageProxyDiagnosticsSection
+                        hidePassed={!showPassed}
+                      />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 ),
@@ -86,7 +93,7 @@ const DiagnosticsPage = () => {
                 children: (
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={<Skeleton active />}>
-                      <EndpointDiagnosticsSection />
+                      <EndpointDiagnosticsSection hidePassed={!showPassed} />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 ),
@@ -97,7 +104,9 @@ const DiagnosticsPage = () => {
                 children: (
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={<Skeleton active />}>
-                      <WebServerConfigDiagnosticsSection />
+                      <WebServerConfigDiagnosticsSection
+                        hidePassed={!showPassed}
+                      />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 ),

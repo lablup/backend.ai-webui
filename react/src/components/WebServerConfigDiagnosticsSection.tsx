@@ -5,12 +5,18 @@
 import { useWebServerConfigDiagnostics } from '../hooks/useWebServerConfigDiagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
 
-const WebServerConfigDiagnosticsSection: React.FC = () => {
+interface WebServerConfigDiagnosticsSectionProps {
+  hidePassed?: boolean;
+}
+
+const WebServerConfigDiagnosticsSection: React.FC<
+  WebServerConfigDiagnosticsSectionProps
+> = ({ hidePassed = false }) => {
   'use memo';
 
   const results = useWebServerConfigDiagnostics();
 
-  return <DiagnosticResultList results={results} />;
+  return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };
 
 export default WebServerConfigDiagnosticsSection;
