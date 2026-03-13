@@ -6,8 +6,23 @@ import type { useStorageProxyDiagnosticsQuery } from '../__generated__/useStorag
 import { checkStorageVolumeHealth } from '../diagnostics/rules/storageProxyRules';
 import type { StorageVolumeInfo } from '../diagnostics/rules/storageProxyRules';
 import type { DiagnosticResult } from '../types/diagnostics';
+import { useRawConfig } from './useWebUIConfig';
 import { useMemo } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+const DEFAULT_STORAGE_WARNING_THRESHOLD = 90;
+
+/**
+ * Parse and validate the storageWarningThreshold config value.
+ * Returns a number between 0-100, or the default (90) if invalid.
+ */
+function parseStorageWarningThreshold(raw: unknown): number {
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0 || value > 100) {
+    return DEFAULT_STORAGE_WARNING_THRESHOLD;
+  }
+  return value;
+}
 
 /**
  * Hook that checks storage volume health.
@@ -15,6 +30,11 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export function useStorageProxyDiagnostics(): DiagnosticResult[] {
   'use memo';
+
+  const rawConfig = useRawConfig();
+  const storageWarningThreshold = parseStorageWarningThreshold(
+    rawConfig?.resources?.storageWarningThreshold,
+  );
 
   const { storage_volume_list: storageVolumeList } =
     useLazyLoadQuery<useStorageProxyDiagnosticsQuery>(
@@ -77,7 +97,10 @@ export function useStorageProxyDiagnostics(): DiagnosticResult[] {
         usage: usageInfo,
       };
 
-      const healthCheck = checkStorageVolumeHealth(volumeInfo);
+      const healthCheck = checkStorageVolumeHealth(
+        volumeInfo,
+        storageWarningThreshold,
+      );
       if (healthCheck) {
         results.push(healthCheck);
         healthIssueCount++;
@@ -96,5 +119,5 @@ export function useStorageProxyDiagnostics(): DiagnosticResult[] {
     }
 
     return results;
-  }, [storageVolumeList?.items]);
+  }, [storageVolumeList?.items, storageWarningThreshold]);
 }
