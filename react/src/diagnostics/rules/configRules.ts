@@ -96,7 +96,7 @@ export function checkSslMismatch(
 
   if (apiIsSecure !== proxyIsSecure) {
     return {
-      id: 'ssl-mismatch',
+      id: 'config-ssl-mismatch',
       severity: 'warning',
       category: 'config',
       titleKey: 'diagnostics.SslMismatch',
