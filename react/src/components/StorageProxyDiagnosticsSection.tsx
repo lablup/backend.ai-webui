@@ -9,16 +9,17 @@ import { useEffect } from 'react';
 
 interface StorageProxyDiagnosticsSectionProps {
   hidePassed?: boolean;
+  fetchKey?: number;
   onHasIssues?: (hasIssues: boolean) => void;
-  onResults?: (results: DiagnosticResult[]) => void;
+  onResultsChange?: (results: DiagnosticResult[]) => void;
 }
 
 const StorageProxyDiagnosticsSection: React.FC<
   StorageProxyDiagnosticsSectionProps
-> = ({ hidePassed = false, onHasIssues, onResults }) => {
+> = ({ hidePassed = false, fetchKey, onHasIssues, onResultsChange }) => {
   'use memo';
 
-  const results = useStorageProxyDiagnostics();
+  const results = useStorageProxyDiagnostics(fetchKey);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
   useEffect(() => {
@@ -26,8 +27,8 @@ const StorageProxyDiagnosticsSection: React.FC<
   }, [hasIssues, onHasIssues]);
 
   useEffect(() => {
-    onResults?.(results);
-  }, [results, onResults]);
+    onResultsChange?.(results);
+  }, [results, onResultsChange]);
 
   return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };

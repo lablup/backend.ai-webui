@@ -707,6 +707,7 @@
     "MissingProxyUrl": "Proxy URL Not Configured",
     "MissingProxyUrlDesc": "No wsproxy.proxyURL is set in config.toml. WebSocket proxy features may not work correctly.",
     "NoIssuesFound": "No issues found. All checks passed.",
+    "NoResultsToExport": "No diagnostics results available to export. Please wait for the diagnostics to complete.",
     "PlaceholderValue": "Placeholder Value Not Replaced",
     "PlaceholderValueDesc": "{{section}} {{field}} is set to \"{{value}}\" which looks like an unreplaced placeholder from config.toml.sample.",
     "PlaceholderValueFix": "Replace the placeholder value for {{field}} in the {{section}} section of config.toml with the actual value for your environment.",

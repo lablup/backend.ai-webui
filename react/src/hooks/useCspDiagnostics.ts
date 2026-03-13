@@ -19,7 +19,7 @@ import { useMemo } from 'react';
  * Hook that checks CSP directives: connect-src, script-src, style-src.
  * Synchronous — no suspense needed.
  */
-export function useCspDiagnostics(): DiagnosticResult[] {
+export function useCspDiagnostics(fetchKey?: number): DiagnosticResult[] {
   'use memo';
 
   const baiClient = useSuspendedBackendaiClient();
@@ -131,5 +131,6 @@ export function useCspDiagnostics(): DiagnosticResult[] {
     }
 
     return results;
-  }, [baiClient?._config?.endpoint, proxyUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baiClient?._config?.endpoint, proxyUrl, fetchKey]);
 }

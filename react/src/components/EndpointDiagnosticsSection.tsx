@@ -9,18 +9,20 @@ import { useEffect } from 'react';
 
 interface EndpointDiagnosticsSectionProps {
   hidePassed?: boolean;
+  fetchKey?: number;
   onHasIssues?: (hasIssues: boolean) => void;
-  onResults?: (results: DiagnosticResult[]) => void;
+  onResultsChange?: (results: DiagnosticResult[]) => void;
 }
 
 const EndpointDiagnosticsSection: React.FC<EndpointDiagnosticsSectionProps> = ({
   hidePassed = false,
+  fetchKey,
   onHasIssues,
-  onResults,
+  onResultsChange,
 }) => {
   'use memo';
 
-  const { results, isLoading } = useEndpointDiagnostics();
+  const { results, isLoading } = useEndpointDiagnostics(fetchKey);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
   useEffect(() => {
@@ -30,8 +32,8 @@ const EndpointDiagnosticsSection: React.FC<EndpointDiagnosticsSectionProps> = ({
   }, [hasIssues, isLoading, onHasIssues]);
 
   useEffect(() => {
-    onResults?.(results);
-  }, [results, onResults]);
+    onResultsChange?.(results);
+  }, [results, onResultsChange]);
 
   return (
     <DiagnosticResultList

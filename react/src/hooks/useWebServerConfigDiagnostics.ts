@@ -25,7 +25,9 @@ import { useMemo } from 'react';
  * Compares raw TOML config values against the running client config.
  * Synchronous — no suspense needed.
  */
-export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
+export function useWebServerConfigDiagnostics(
+  fetchKey?: number,
+): DiagnosticResult[] {
   'use memo';
 
   const baiClient = useSuspendedBackendaiClient();
@@ -222,11 +224,13 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
     }
 
     return results;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     baiClient?._config?.endpoint,
     baiClient?._config?.blockList,
     baiClient?._config?.connectionMode,
     proxyUrl,
     rawConfig,
+    fetchKey,
   ]);
 }

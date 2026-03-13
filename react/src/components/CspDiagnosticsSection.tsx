@@ -9,18 +9,20 @@ import { useEffect } from 'react';
 
 interface CspDiagnosticsSectionProps {
   hidePassed?: boolean;
+  fetchKey?: number;
   onHasIssues?: (hasIssues: boolean) => void;
-  onResults?: (results: DiagnosticResult[]) => void;
+  onResultsChange?: (results: DiagnosticResult[]) => void;
 }
 
 const CspDiagnosticsSection: React.FC<CspDiagnosticsSectionProps> = ({
   hidePassed = false,
+  fetchKey,
   onHasIssues,
-  onResults,
+  onResultsChange,
 }) => {
   'use memo';
 
-  const results = useCspDiagnostics();
+  const results = useCspDiagnostics(fetchKey);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
   useEffect(() => {
@@ -28,8 +30,8 @@ const CspDiagnosticsSection: React.FC<CspDiagnosticsSectionProps> = ({
   }, [hasIssues, onHasIssues]);
 
   useEffect(() => {
-    onResults?.(results);
-  }, [results, onResults]);
+    onResultsChange?.(results);
+  }, [results, onResultsChange]);
 
   return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };

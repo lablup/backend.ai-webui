@@ -6,9 +6,10 @@ import CspDiagnosticsSection from '../components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
+import { downloadBlob } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Collapse, Skeleton, Switch, Tooltip, Typography } from 'antd';
+import { Collapse, Skeleton, Switch, Tooltip, Typography, message } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { Suspense, useCallback, useMemo, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +26,7 @@ const DiagnosticsPage = () => {
 
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [fetchKey, setFetchKey] = useState(0);
   const [isPending, startTransition] = useTransition();
   const [showOnlyFailed, setShowOnlyFailed] = useState(false);
   const [sectionsWithIssues, setSectionsWithIssues] = useState<
@@ -48,18 +49,16 @@ const DiagnosticsPage = () => {
     endpoint: [],
     config: [],
   });
-  const [hasAnyResults, setHasAnyResults] = useState(false);
 
   const handleRefresh = () => {
     startTransition(() => {
-      setRefreshKey((prev) => prev + 1);
+      setFetchKey((prev) => prev + 1);
       sectionResultsRef.current = {
         csp: [],
         storage: [],
         endpoint: [],
         config: [],
       };
-      setHasAnyResults(false);
     });
   };
 
@@ -73,16 +72,18 @@ const DiagnosticsPage = () => {
     [],
   );
 
-  const makeOnResults = useCallback(
-    (key: keyof typeof sectionResultsRef.current) =>
-      (results: DiagnosticResult[]) => {
-        sectionResultsRef.current[key] = results;
-        if (results.length > 0) {
-          setHasAnyResults(true);
-        }
-      },
-    [],
-  );
+  const onCspResultsChange = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.csp = results;
+  }, []);
+  const onStorageResultsChange = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.storage = results;
+  }, []);
+  const onEndpointResultsChange = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.endpoint = results;
+  }, []);
+  const onConfigResultsChange = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.config = results;
+  }, []);
 
   const handleExport = () => {
     const allResults = [
@@ -91,6 +92,11 @@ const DiagnosticsPage = () => {
       ...sectionResultsRef.current.endpoint,
       ...sectionResultsRef.current.config,
     ];
+
+    if (allResults.length === 0) {
+      message.info(t('diagnostics.NoResultsToExport'));
+      return;
+    }
 
     const exportData = {
       exportedAt: new Date().toISOString(),
@@ -114,13 +120,8 @@ const DiagnosticsPage = () => {
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
       type: 'application/json',
     });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
     const today = new Date().toISOString().slice(0, 10);
-    anchor.href = url;
-    anchor.download = `diagnostics-${today}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `diagnostics-${today}.json`);
   };
 
   const allItems = useMemo(
@@ -133,8 +134,9 @@ const DiagnosticsPage = () => {
             <Suspense fallback={<Skeleton active />}>
               <CspDiagnosticsSection
                 hidePassed={showOnlyFailed}
+                fetchKey={fetchKey}
                 onHasIssues={createHasIssuesCallback('csp')}
-                onResults={makeOnResults('csp')}
+                onResultsChange={onCspResultsChange}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -148,8 +150,9 @@ const DiagnosticsPage = () => {
             <Suspense fallback={<Skeleton active />}>
               <StorageProxyDiagnosticsSection
                 hidePassed={showOnlyFailed}
+                fetchKey={fetchKey}
                 onHasIssues={createHasIssuesCallback('storage')}
-                onResults={makeOnResults('storage')}
+                onResultsChange={onStorageResultsChange}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -163,8 +166,9 @@ const DiagnosticsPage = () => {
             <Suspense fallback={<Skeleton active />}>
               <EndpointDiagnosticsSection
                 hidePassed={showOnlyFailed}
+                fetchKey={fetchKey}
                 onHasIssues={createHasIssuesCallback('endpoint')}
-                onResults={makeOnResults('endpoint')}
+                onResultsChange={onEndpointResultsChange}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -178,15 +182,25 @@ const DiagnosticsPage = () => {
             <Suspense fallback={<Skeleton active />}>
               <WebServerConfigDiagnosticsSection
                 hidePassed={showOnlyFailed}
+                fetchKey={fetchKey}
                 onHasIssues={createHasIssuesCallback('config')}
-                onResults={makeOnResults('config')}
+                onResultsChange={onConfigResultsChange}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
         ),
       },
     ],
-    [t, showOnlyFailed, createHasIssuesCallback, makeOnResults],
+    [
+      t,
+      showOnlyFailed,
+      fetchKey,
+      createHasIssuesCallback,
+      onCspResultsChange,
+      onStorageResultsChange,
+      onEndpointResultsChange,
+      onConfigResultsChange,
+    ],
   );
 
   const visibleItems = showOnlyFailed
@@ -221,11 +235,7 @@ const DiagnosticsPage = () => {
             {t('diagnostics.Refresh')}
           </BAIButton>
           <Tooltip title={t('diagnostics.ExportTooltip')}>
-            <BAIButton
-              icon={<DownloadOutlined />}
-              onClick={handleExport}
-              disabled={!hasAnyResults}
-            >
+            <BAIButton icon={<DownloadOutlined />} onClick={handleExport}>
               {t('diagnostics.Export')}
             </BAIButton>
           </Tooltip>
@@ -235,7 +245,6 @@ const DiagnosticsPage = () => {
       {curTabKey === 'diagnostics' && (
         <BAIFlex direction="column" align="stretch" gap="md">
           <Collapse
-            key={refreshKey}
             defaultActiveKey={['csp', 'storage', 'endpoint', 'config']}
             items={visibleItems}
           />

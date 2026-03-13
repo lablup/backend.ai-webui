@@ -9,16 +9,17 @@ import { useEffect } from 'react';
 
 interface WebServerConfigDiagnosticsSectionProps {
   hidePassed?: boolean;
+  fetchKey?: number;
   onHasIssues?: (hasIssues: boolean) => void;
-  onResults?: (results: DiagnosticResult[]) => void;
+  onResultsChange?: (results: DiagnosticResult[]) => void;
 }
 
 const WebServerConfigDiagnosticsSection: React.FC<
   WebServerConfigDiagnosticsSectionProps
-> = ({ hidePassed = false, onHasIssues, onResults }) => {
+> = ({ hidePassed = false, fetchKey, onHasIssues, onResultsChange }) => {
   'use memo';
 
-  const results = useWebServerConfigDiagnostics();
+  const results = useWebServerConfigDiagnostics(fetchKey);
   const hasIssues = results.some((r) => r.severity !== 'passed');
 
   useEffect(() => {
@@ -26,8 +27,8 @@ const WebServerConfigDiagnosticsSection: React.FC<
   }, [hasIssues, onHasIssues]);
 
   useEffect(() => {
-    onResults?.(results);
-  }, [results, onResults]);
+    onResultsChange?.(results);
+  }, [results, onResultsChange]);
 
   return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };
