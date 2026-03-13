@@ -196,7 +196,9 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'totalUsage',
       dataIndex: ['calculationSnapshot', 'averageDailyDecayedUsage', 'entries'],
       render: (entries) => {
-        return _.isEmpty(entries) ? (
+        const hasData =
+          !_.isEmpty(entries) && _.some(entries, (e) => e.quantity > 0);
+        return !hasData ? (
           '-'
         ) : (
           <BAIFlex wrap="wrap" gap="sm" align="center">
