@@ -22,6 +22,7 @@ import {
   BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
+  BAIProjectResourcePolicySelect,
   BAIResourcePresetSelect,
   BAIStorageHostSelect,
   BAIProjectSelect,
@@ -51,11 +52,11 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'RESOURCE_PRESET',
   'USER_RESOURCE_POLICY',
   'KEYPAIR_RESOURCE_POLICY',
+  'PROJECT_RESOURCE_POLICY',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'KEYPAIR',
   // 'IMAGE',
   // 'ARTIFACT_REGISTRY',
-  // 'PROJECT_RESOURCE_POLICY',
   // 'ROLE',
   // TODO: No management UI in WebUI yet
   // 'DEPLOYMENT',
@@ -266,6 +267,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIKeypairResourcePolicySelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value}
+          onChange={selectProps.onChange}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'PROJECT_RESOURCE_POLICY') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIProjectResourcePolicySelect
           placeholder={selectProps.placeholder}
           value={selectProps.value}
           onChange={selectProps.onChange}
