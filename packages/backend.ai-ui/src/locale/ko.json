@@ -50,6 +50,9 @@
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIArtifactSelect": {
+    "SelectArtifact": "아티팩트를 선택해주세요"
+  },
   "comp:BAIArtifactTable": {
     "Action": "행동",
     "Activate": "활성화",
