@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 interface DiagnosticResultListProps {
   results: DiagnosticResult[];
   loading?: boolean;
+  hidePassed?: boolean;
 }
 
 const severityToAlertType = {
@@ -23,6 +24,7 @@ const severityToAlertType = {
 const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   results,
   loading = false,
+  hidePassed = false,
 }) => {
   'use memo';
 
@@ -35,7 +37,9 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
 
   // Separate issues from passed checks for visual grouping
   const issues = results.filter((r) => r.severity !== 'passed');
-  const passed = results.filter((r) => r.severity === 'passed');
+  const passed = hidePassed
+    ? []
+    : results.filter((r) => r.severity === 'passed');
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
