@@ -134,7 +134,7 @@ const BAIRouteNodes = ({
               <BAILink
                 ellipsis
                 onClick={() => {
-                  onClickSessionId(sessionId);
+                  onClickSessionId(toLocalId(sessionId));
                 }}
               >
                 {toLocalId(sessionId)}
