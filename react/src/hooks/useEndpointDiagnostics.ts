@@ -46,7 +46,7 @@ export function useEndpointDiagnostics(): {
       }
     },
     enabled: !!apiEndpoint && !isApiPlaceholder,
-    staleTime: 60_000,
+    staleTime: 0,
     retry: 1,
   });
 

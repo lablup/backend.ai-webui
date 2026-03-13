@@ -48,10 +48,10 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
     if (sslCheck) {
       results.push({
         ...sslCheck,
-        id: 'config-ssl-mismatch',
         category: 'config',
         titleKey: 'diagnostics.ConfigSslMismatch',
         descriptionKey: 'diagnostics.ConfigSslMismatchDesc',
+        remediationKey: 'diagnostics.ConfigSslMismatchFix',
       });
     } else if (apiEndpoint && proxyUrl) {
       results.push({
