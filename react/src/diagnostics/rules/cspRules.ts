@@ -139,6 +139,7 @@ export function checkCspConnectSrc(
     return {
       id: 'csp-connect-src-api',
       severity: 'critical',
+      category: 'csp',
       titleKey: 'diagnostics.CspApiEndpointBlocked',
       descriptionKey: 'diagnostics.CspApiEndpointBlockedDesc',
       remediationKey: 'diagnostics.CspApiEndpointBlockedFix',
@@ -179,6 +180,7 @@ export function checkCspWsConnectSrc(
     return {
       id: 'csp-connect-src-ws',
       severity: 'critical',
+      category: 'csp',
       titleKey: 'diagnostics.CspWsProxyBlocked',
       descriptionKey: 'diagnostics.CspWsProxyBlockedDesc',
       remediationKey: 'diagnostics.CspWsProxyBlockedFix',
@@ -216,6 +218,7 @@ export function checkCspScriptSrc(
     return {
       id: 'csp-script-src-blocked',
       severity: 'critical',
+      category: 'csp',
       titleKey: 'diagnostics.CspScriptSrcBlocked',
       descriptionKey: 'diagnostics.CspScriptSrcBlockedDesc',
       remediationKey: 'diagnostics.CspScriptSrcBlockedFix',
@@ -252,6 +255,7 @@ export function checkCspStyleSrc(
     return {
       id: 'csp-style-src-no-inline',
       severity: 'warning',
+      category: 'csp',
       titleKey: 'diagnostics.CspStyleSrcNoInline',
       descriptionKey: 'diagnostics.CspStyleSrcNoInlineDesc',
       remediationKey: 'diagnostics.CspStyleSrcNoInlineFix',

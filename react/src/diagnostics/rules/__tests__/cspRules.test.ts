@@ -76,6 +76,7 @@ describe('checkCspConnectSrc', () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe('csp-connect-src-api');
     expect(result?.severity).toBe('critical');
+    expect(result?.category).toBe('csp');
     expect(result?.interpolationValues?.endpoint).toBe(
       'https://api.example.com',
     );
@@ -175,6 +176,7 @@ describe('checkCspWsConnectSrc', () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe('csp-connect-src-ws');
     expect(result?.severity).toBe('critical');
+    expect(result?.category).toBe('csp');
   });
 
   it('should return null for invalid proxy URL', () => {
@@ -254,6 +256,7 @@ describe('checkCspScriptSrc', () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe('csp-script-src-blocked');
     expect(result?.severity).toBe('critical');
+    expect(result?.category).toBe('csp');
   });
 
   it('should accept nonce-based policies as allowing scripts', () => {
@@ -296,6 +299,7 @@ describe('checkCspStyleSrc', () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe('csp-style-src-no-inline');
     expect(result?.severity).toBe('warning');
+    expect(result?.category).toBe('csp');
   });
 
   it('should accept nonce-based policies as allowing inline styles', () => {

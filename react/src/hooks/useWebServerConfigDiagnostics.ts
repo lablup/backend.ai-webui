@@ -49,6 +49,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         ...sslCheck,
         id: 'config-ssl-mismatch',
+        category: 'config',
         titleKey: 'diagnostics.ConfigSslMismatch',
         descriptionKey: 'diagnostics.ConfigSslMismatchDesc',
       });
@@ -56,6 +57,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-ssl-match-passed',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.ConfigSslMatchPassed',
         descriptionKey: 'diagnostics.ConfigSslMatchPassedDesc',
       });
@@ -67,6 +69,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-missing-proxy-url',
         severity: 'info',
+        category: 'config',
         titleKey: 'diagnostics.MissingProxyUrl',
         descriptionKey: 'diagnostics.MissingProxyUrlDesc',
       });
@@ -74,6 +77,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-proxy-url-passed',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.ProxyUrlConfigured',
         descriptionKey: 'diagnostics.ProxyUrlConfiguredDesc',
         interpolationValues: { proxyUrl },
@@ -88,6 +92,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-blocklist-valid',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.BlocklistValid',
         descriptionKey: 'diagnostics.BlocklistValidDesc',
         interpolationValues: { count: String(blockList.length) },
@@ -115,6 +120,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-connection-mode-consistent',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.ConnectionModeConsistent',
         descriptionKey: 'diagnostics.ConnectionModeConsistentDesc',
         interpolationValues: { connectionMode: connectionMode.toUpperCase() },
@@ -130,6 +136,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
         results.push({
           id: 'config-urls-valid',
           severity: 'passed',
+          category: 'config',
           titleKey: 'diagnostics.ConfigUrlsValid',
           descriptionKey: 'diagnostics.ConfigUrlsValidDesc',
         });
@@ -151,6 +158,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-resource-limits-passed',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.ResourceLimitsPassed',
         descriptionKey: 'diagnostics.ResourceLimitsPassedDesc',
       });
@@ -181,6 +189,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
         results.push({
           id: 'config-image-references-passed',
           severity: 'passed',
+          category: 'config',
           titleKey: 'diagnostics.ImageReferencesPassed',
           descriptionKey: 'diagnostics.ImageReferencesPassedDesc',
         });
@@ -205,6 +214,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'config-plugin-valid',
         severity: 'passed',
+        category: 'config',
         titleKey: 'diagnostics.PluginConfigValid',
         descriptionKey: 'diagnostics.PluginConfigValidDesc',
         interpolationValues: { plugins: pluginNames },
