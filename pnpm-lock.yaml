@@ -138,9 +138,6 @@ catalogs:
     marked:
       specifier: ^16.4.2
       version: 16.4.2
-    markty-toml:
-      specifier: 0.1.1
-      version: 0.1.1
     prettier:
       specifier: ^3.8.1
       version: 3.8.1
@@ -174,6 +171,9 @@ catalogs:
     relay-test-utils:
       specifier: ^20.1.1
       version: 20.1.1
+    smol-toml:
+      specifier: ^1.6.0
+      version: 1.6.0
     ts-jest:
       specifier: ^29.4.6
       version: 29.4.6
@@ -830,9 +830,6 @@ importers:
       marked:
         specifier: 'catalog:'
         version: 16.4.2
-      markty-toml:
-        specifier: 'catalog:'
-        version: 0.1.1
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
@@ -893,6 +890,9 @@ importers:
       shiki:
         specifier: ^3.21.0
         version: 3.21.0
+      smol-toml:
+        specifier: 'catalog:'
+        version: 1.6.0
       swr:
         specifier: ^2.3.8
         version: 2.3.8(react@19.2.3)
@@ -10248,12 +10248,6 @@ packages:
     engines: {node: '>= 20'}
     hasBin: true
 
-  markty-toml@0.1.1:
-    resolution: {integrity: sha512-no+RbxQ+CbFpHMW7bQOzsR/6BO1fLvgZ7+I+pHoIPfyt3fz8ULFNgl5rXf+J4vFLRj67omgpDCxOwTLXhmWDYw==}
-
-  markty@0.0.4:
-    resolution: {integrity: sha512-V2g+PRfySY9zKL0n4NHuE2rK2daHuVrcdRaJ8Gfhy4IYwEb2NywCSqCrxrn2LSJQ+dXf2Gubqw9+kU5m7fXUJw==}
-
   matcher@3.0.0:
     resolution: {integrity: sha512-OkeDaAZ/bQCxeFAozM55PKcKU0yJMPGifLwV4Qgjitu+5MoAfSQN4lsLJeXZ1b8w0x+/Emda6MZgXS1jvsapng==}
     engines: {node: '>=10'}
@@ -12734,6 +12728,10 @@ packages:
 
   smob@1.5.0:
     resolution: {integrity: sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==}
+
+  smol-toml@1.6.0:
+    resolution: {integrity: sha512-4zemZi0HvTnYwLfrpk/CF9LOd9Lt87kAt50GnqhMpyF9U3poDAP2+iukq2bZsO/ufegbYehBkqINbsWxj4l4cw==}
+    engines: {node: '>= 18'}
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
@@ -26272,12 +26270,6 @@ snapshots:
 
   marked@17.0.1: {}
 
-  markty-toml@0.1.1:
-    dependencies:
-      markty: 0.0.4
-
-  markty@0.0.4: {}
-
   matcher@3.0.0:
     dependencies:
       escape-string-regexp: 4.0.0
@@ -29431,6 +29423,8 @@ snapshots:
       is-fullwidth-code-point: 5.0.0
 
   smob@1.5.0: {}
+
+  smol-toml@1.6.0: {}
 
   snake-case@3.0.4:
     dependencies:
