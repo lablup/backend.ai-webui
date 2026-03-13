@@ -27,6 +27,7 @@ export function useEndpointDiagnostics(): {
 
   const { data: healthCheck, isLoading: isEndpointLoading } = useTanQuery<{
     isReachable: boolean;
+    statusCode?: number;
     error?: string;
   }>({
     queryKey: ['diagnostics', 'endpoint-health', apiEndpoint],
@@ -37,7 +38,10 @@ export function useEndpointDiagnostics(): {
           method: 'GET',
           signal: AbortSignal.timeout(10000),
         });
-        return { isReachable: response.ok || response.status < 500 };
+        return {
+          isReachable: response.status < 500,
+          statusCode: response.status,
+        };
       } catch (e) {
         return {
           isReachable: false,
@@ -58,6 +62,7 @@ export function useEndpointDiagnostics(): {
         apiEndpoint,
         healthCheck.isReachable,
         healthCheck.error,
+        healthCheck.statusCode,
       );
       if (reachCheck) {
         diagnostics.push(reachCheck);
