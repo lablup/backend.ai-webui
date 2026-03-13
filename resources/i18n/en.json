@@ -627,6 +627,8 @@
     "PermissionDenied": "You've denied notification access. To use alerts, please allow it in your browser settings."
   },
   "diagnostics": {
+    "AutoDiagnosticsDesc": "Critical configuration issues were found. Click to view diagnostics.",
+    "AutoDiagnosticsTitle": "Diagnostics Issues Detected",
     "BlocklistValid": "Blocklist Entries Valid",
     "BlocklistValidDesc": "All {{count}} blocklist entry(ies) match known menu keys.",
     "ConfigSslMatchPassed": "Config SSL Protocol Consistent",
@@ -721,6 +723,9 @@
     "ResourceLimitsPassed": "Resource Limits OK",
     "ResourceLimitsPassedDesc": "All resource limit configurations are within reasonable ranges.",
     "ShowPassed": "Show passed",
+    "SslMismatch": "SSL Protocol Mismatch",
+    "SslMismatchDesc": "The API endpoint ({{apiProtocol}}) and proxy URL ({{proxyProtocol}}) use different SSL/TLS settings.",
+    "SslMismatchFix": "Ensure both the API endpoint and proxy URL use the same protocol (both HTTPS or both HTTP) in config.toml.",
     "StorageHealthPassed": "Storage Volume Usage OK",
     "StorageHealthPassedDesc": "All {{count}} volume(s) are within normal capacity.",
     "StorageNoVolumes": "No Storage Volumes",
@@ -734,6 +739,7 @@
     "StorageVolumeHighUsage": "Storage Volume High Usage",
     "StorageVolumeHighUsageDesc": "Storage volume {{volumeId}} ({{backend}}) is at {{percentage}}% capacity.",
     "StorageVolumeHighUsageFix": "Consider expanding the storage volume or cleaning up unused data.",
+    "ViewDiagnostics": "View Diagnostics",
     "WebServerConfig": "Web Server Configuration"
   },
   "dialog": {
