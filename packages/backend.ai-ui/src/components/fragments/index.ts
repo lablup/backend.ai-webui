@@ -134,6 +134,12 @@ export type {
   BAIHuggingFaceRegistrySettingModalProps,
   BAIHuggingFaceRegistrySettingModalFragmentKey,
 } from './BAIHuggingFaceRegistrySettingModal';
+export { default as BAIRoleSelect } from './BAIRoleSelect';
+export type {
+  BAIRoleSelectProps,
+  BAIRoleSelectRef,
+  RoleNode,
+} from './BAIRoleSelect';
 export { default as BAIRouteNodes } from './BAIRouteNodes';
 export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
