@@ -4,6 +4,7 @@
  */
 import {
   checkCspConnectSrc,
+  checkCspFrameSrc,
   checkCspScriptSrc,
   checkCspStyleSrc,
   checkCspWsConnectSrc,
@@ -318,5 +319,81 @@ describe('checkCspStyleSrc', () => {
     const result = checkCspStyleSrc("default-src 'self'");
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
+  });
+});
+
+describe('checkCspFrameSrc', () => {
+  it('should return null when CSP content is empty', () => {
+    expect(checkCspFrameSrc(null, 'https://api.example.com')).toBeNull();
+    expect(checkCspFrameSrc('', 'https://api.example.com')).toBeNull();
+  });
+
+  it('should return null when endpoint is empty', () => {
+    expect(
+      checkCspFrameSrc('frame-src https://api.example.com', ''),
+    ).toBeNull();
+  });
+
+  it('should return null when neither frame-src nor default-src exists', () => {
+    expect(
+      checkCspFrameSrc("script-src 'self'", 'https://api.example.com'),
+    ).toBeNull();
+  });
+
+  it('should return null when frame-src allows the endpoint origin', () => {
+    expect(
+      checkCspFrameSrc(
+        'frame-src https://api.example.com',
+        'https://api.example.com',
+      ),
+    ).toBeNull();
+  });
+
+  it('should return warning diagnostic when frame-src blocks the endpoint', () => {
+    const result = checkCspFrameSrc(
+      'frame-src https://other.example.com',
+      'https://api.example.com',
+    );
+    expect(result).not.toBeNull();
+    expect(result?.id).toBe('csp-frame-src-blocked');
+    expect(result?.severity).toBe('warning');
+    expect(result?.category).toBe('csp');
+    expect(result?.interpolationValues?.endpoint).toBe(
+      'https://api.example.com',
+    );
+  });
+
+  it('should fall back to default-src when frame-src is absent', () => {
+    // default-src allows the endpoint — should pass
+    expect(
+      checkCspFrameSrc(
+        'default-src https://api.example.com',
+        'https://api.example.com',
+      ),
+    ).toBeNull();
+
+    // default-src blocks the endpoint — should warn
+    const result = checkCspFrameSrc(
+      'default-src https://other.example.com',
+      'https://api.example.com',
+    );
+    expect(result).not.toBeNull();
+    expect(result?.severity).toBe('warning');
+  });
+
+  it('should return null when no CSP header at all (no frame-src, no default-src)', () => {
+    // A CSP string with only unrelated directives — no frame-src or default-src
+    expect(
+      checkCspFrameSrc(
+        "connect-src 'self'; script-src 'self'",
+        'https://api.example.com',
+      ),
+    ).toBeNull();
+  });
+
+  it('should return null when wildcard * is present in frame-src', () => {
+    expect(
+      checkCspFrameSrc('frame-src *', 'https://api.example.com'),
+    ).toBeNull();
   });
 });
