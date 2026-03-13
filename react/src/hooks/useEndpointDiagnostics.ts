@@ -48,7 +48,7 @@ export function useEndpointDiagnostics(): {
       } catch (e) {
         return {
           isReachable: false,
-          error: e instanceof Error ? e.message : 'Unknown error',
+          error: e instanceof Error ? e.message : undefined,
         };
       }
     },
@@ -74,18 +74,33 @@ export function useEndpointDiagnostics(): {
         return { allowed: true };
       } catch (e) {
         if (e instanceof TypeError) {
-          // TypeError from fetch in 'cors' mode typically indicates a CORS block
-          return { allowed: false };
+          // TypeError from fetch in 'cors' mode can be CORS block or network failure.
+          // Retry with 'no-cors' to disambiguate: if it also fails, it's a network issue.
+          try {
+            await fetch(apiEndpoint, {
+              method: 'GET',
+              mode: 'no-cors',
+              signal: AbortSignal.timeout(5000),
+            });
+            // no-cors succeeded — endpoint is reachable, so original failure was CORS
+            return { allowed: false };
+          } catch {
+            // no-cors also failed — network issue, not CORS
+            return {
+              allowed: true,
+              error: e instanceof Error ? e.message : undefined,
+            };
+          }
         }
         // Other errors (e.g., AbortError) are network issues, not CORS issues
         return {
           allowed: true,
-          error: e instanceof Error ? e.message : 'Unknown error',
+          error: e instanceof Error ? e.message : undefined,
         };
       }
     },
     enabled: !!apiEndpoint && !isApiPlaceholder,
-    staleTime: 60_000,
+    staleTime: 0,
     retry: 1,
   });
 
