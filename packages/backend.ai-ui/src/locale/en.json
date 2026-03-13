@@ -143,6 +143,9 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Select Keypair Resource Policy"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Select Keypair"
   },

@@ -115,6 +115,8 @@ export type {
   ProjectNode,
   BAIProjectSelectRef,
 } from './BAIProjectSelect';
+export { default as BAIKeypairResourcePolicySelect } from './BAIKeypairResourcePolicySelect';
+export type { BAIKeypairResourcePolicySelectProps } from './BAIKeypairResourcePolicySelect';
 export { default as BAIKeypairSelect } from './BAIKeypairSelect';
 export type {
   BAIKeypairSelectProps,
