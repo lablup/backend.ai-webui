@@ -114,7 +114,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
   - GitHub PR content starts with `Resolves #1234(FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number
 
 - **Tool Requirements**:
-  - **Jira**: Use `fw-jira` CLI (fw plugin). See `jira-workflow` skill for full usage. Project config in `.jira.config`.
+  - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
     - Do NOT use `git commit`, `git push`, `git checkout -b` directly
