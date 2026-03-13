@@ -18,7 +18,7 @@ import {
   mapAgentParamsToChatParams,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
 import {
   convertToModelMessages,
@@ -278,8 +278,9 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       fetch: useEventNotStable(async (input, init) => {
         // For custom models or client-side fetching, handle directly
         if (fetchOnClient || modelId === 'custom' || agentEndpointUrl) {
-          const provider = createOpenAI({
-            baseURL: baseURL,
+          const provider = createOpenAICompatible({
+            name: 'backend-ai',
+            baseURL: baseURL ?? '',
             apiKey: effectiveApiKey || 'dummy',
           });
 
@@ -288,7 +289,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             const result = streamText({
               abortSignal: init?.signal || undefined,
               model: wrapLanguageModel({
-                model: provider.chat(modelId),
+                model: provider.chatModel(modelId),
                 middleware: extractReasoningMiddleware({
                   tagName: 'think',
                 }),
