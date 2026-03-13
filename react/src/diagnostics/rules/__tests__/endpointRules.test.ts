@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { checkEndpointReachability } from '../endpointRules';
+import { checkEndpointReachability, checkSslMismatch } from '../endpointRules';
 import { describe, expect, it } from '@jest/globals';
 
 describe('checkEndpointReachability', () => {
