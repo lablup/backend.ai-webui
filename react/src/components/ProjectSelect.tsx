@@ -8,7 +8,7 @@ import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { BAISelect, BAISelectProps } from 'backend.ai-ui';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -24,12 +24,14 @@ export interface ProjectSelectProps extends BAISelectProps {
   domain: string;
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
+  lockedProjectTypes?: string[];
 }
 
 const ProjectSelect: React.FC<ProjectSelectProps> = ({
   onSelectProject,
   domain,
   disableDefaultFilter,
+  lockedProjectTypes,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -82,6 +84,30 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         user?.groups?.map((group) => group?.id).includes(project?.id),
       );
 
+  const lockedProjectIds = !lockedProjectTypes?.length
+    ? []
+    : (_.chain(accessibleProjects)
+        .filter((p) => lockedProjectTypes.includes(p?.type ?? ''))
+        .map('id')
+        .compact()
+        .value() as string[]);
+
+  // Auto-select locked projects when they become available
+  const autoSelectLockedProjects = useEffectEvent(() => {
+    if (lockedProjectIds.length > 0) {
+      const currentVal = _.isArray(value) ? (value as string[]) : [];
+      const missing = lockedProjectIds.filter((id) => !currentVal.includes(id));
+      if (missing.length > 0) {
+        setValue([...currentVal, ...missing]);
+      }
+    }
+  });
+
+  const lockedProjectIdsKey = lockedProjectIds.join(',');
+  useEffect(() => {
+    autoSelectLockedProjects();
+  }, [lockedProjectIdsKey]);
+
   const getLabel = (key: string) =>
     ({
       GENERAL: t('general.General'),
@@ -103,6 +129,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
               projectId: project?.id,
               projectResourcePolicy: project?.resource_policy,
               projectName: project?.name,
+              disabled: lockedProjectIds.includes(project?.id ?? ''),
             };
           })
           .value(),
