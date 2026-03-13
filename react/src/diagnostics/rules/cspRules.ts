@@ -264,3 +264,44 @@ export function checkCspStyleSrc(
 
   return null;
 }
+
+/**
+ * Check if the API endpoint origin is allowed by CSP frame-src.
+ * Falls back to default-src if frame-src is absent (per CSP spec).
+ * @param pageOrigin - The page's origin for resolving 'self'
+ */
+export function checkCspFrameSrc(
+  cspContent: string | null | undefined,
+  apiEndpoint: string,
+  pageOrigin?: string,
+): DiagnosticResult | null {
+  if (!cspContent || !apiEndpoint) return null;
+
+  const sources = getEffectiveSources(cspContent, 'frame-src');
+  if (!sources) return null;
+
+  let endpointUrl: URL;
+  try {
+    endpointUrl = new URL(apiEndpoint);
+  } catch {
+    return null;
+  }
+
+  const isAllowed = sources.some((source) =>
+    matchesCspSource(source, endpointUrl, pageOrigin),
+  );
+
+  if (!isAllowed) {
+    return {
+      id: 'csp-frame-src-blocked',
+      severity: 'warning',
+      category: 'csp',
+      titleKey: 'diagnostics.CspFrameSrcBlocked',
+      descriptionKey: 'diagnostics.CspFrameSrcBlockedDesc',
+      remediationKey: 'diagnostics.CspFrameSrcBlockedFix',
+      interpolationValues: { endpoint: apiEndpoint },
+    };
+  }
+
+  return null;
+}
