@@ -39,6 +39,7 @@ describe('checkBlocklistValidity', () => {
     );
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
+    expect(result?.category).toBe('config');
     expect(result?.id).toBe('config-invalid-blocklist');
     expect(result?.interpolationValues?.entries).toBe(
       'nonexistent-menu, another-bad',

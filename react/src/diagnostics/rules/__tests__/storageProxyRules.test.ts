@@ -30,6 +30,7 @@ describe('checkStorageVolumeHealth', () => {
     const result = checkStorageVolumeHealth(volume);
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
+    expect(result?.category).toBe('storage');
     expect(result?.interpolationValues?.percentage).toBe('95');
   });
 

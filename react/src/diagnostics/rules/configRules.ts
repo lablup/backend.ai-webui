@@ -45,6 +45,7 @@ export function checkPlaceholderValues(
         results.push({
           id: `config-placeholder-${section}-${field}`,
           severity: 'warning',
+          category: 'config',
           titleKey: 'diagnostics.PlaceholderValue',
           descriptionKey: 'diagnostics.PlaceholderValueDesc',
           remediationKey: 'diagnostics.PlaceholderValueFix',
@@ -84,6 +85,7 @@ export function checkBlocklistValidity(
     return {
       id: 'config-invalid-blocklist',
       severity: 'warning',
+      category: 'config',
       titleKey: 'diagnostics.InvalidBlocklistEntries',
       descriptionKey: 'diagnostics.InvalidBlocklistEntriesDesc',
       remediationKey: 'diagnostics.InvalidBlocklistEntriesFix',
@@ -122,6 +124,7 @@ export function checkConnectionMode(
     results.push({
       id: 'config-invalid-connection-mode',
       severity: 'warning',
+      category: 'config',
       titleKey: 'diagnostics.InvalidConnectionMode',
       descriptionKey: 'diagnostics.InvalidConnectionModeDesc',
       remediationKey: 'diagnostics.InvalidConnectionModeFix',
@@ -142,6 +145,7 @@ export function checkConnectionMode(
       results.push({
         id: 'config-connection-mode-mismatch',
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.ConnectionModeMismatch',
         descriptionKey: 'diagnostics.ConnectionModeMismatchDesc',
         remediationKey: 'diagnostics.ConnectionModeMismatchFix',
@@ -209,6 +213,7 @@ export function checkUrlFields(rawConfig: Record<string, unknown>): {
       issues.push({
         id: `config-invalid-url-${section}-${field}`,
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.InvalidConfigUrl',
         descriptionKey: 'diagnostics.InvalidConfigUrlDesc',
         remediationKey: 'diagnostics.InvalidConfigUrlFix',
@@ -374,6 +379,7 @@ function checkNumericRanges(
       results.push({
         id: `config-${section}-${range.field}`,
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.ResourceLimitOutOfRange',
         descriptionKey: 'diagnostics.ResourceLimitOutOfRangeDesc',
         remediationKey: 'diagnostics.ResourceLimitOutOfRangeFix',
@@ -425,6 +431,7 @@ export function checkImageReferences(
       results.push({
         id: `config-invalid-image-ref-${field}`,
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.InvalidImageReference',
         descriptionKey: 'diagnostics.InvalidImageReferenceDesc',
         remediationKey: 'diagnostics.InvalidImageReferenceFix',
@@ -472,6 +479,7 @@ export function checkPluginConfiguration(
       results.push({
         id: 'config-invalid-plugin-names',
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.InvalidPluginNames',
         descriptionKey: 'diagnostics.InvalidPluginNamesDesc',
         remediationKey: 'diagnostics.InvalidPluginNamesFix',
@@ -498,6 +506,7 @@ export function checkPluginConfiguration(
       results.push({
         id: `config-invalid-plugin-${key}`,
         severity: 'warning',
+        category: 'config',
         titleKey: 'diagnostics.InvalidPluginFilename',
         descriptionKey: 'diagnostics.InvalidPluginFilenameDesc',
         remediationKey: 'diagnostics.InvalidPluginFilenameFix',

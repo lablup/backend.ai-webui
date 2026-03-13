@@ -37,6 +37,7 @@ export function useCspDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'csp-not-set',
         severity: 'passed',
+        category: 'csp',
         titleKey: 'diagnostics.CspNotSet',
         descriptionKey: 'diagnostics.CspNotSetDesc',
       });
@@ -54,6 +55,7 @@ export function useCspDiagnostics(): DiagnosticResult[] {
         results.push({
           id: 'csp-connect-src-api-passed',
           severity: 'passed',
+          category: 'csp',
           titleKey: 'diagnostics.CspApiEndpointAllowed',
           descriptionKey: 'diagnostics.CspApiEndpointAllowedDesc',
           interpolationValues: { endpoint: apiEndpoint },
@@ -70,6 +72,7 @@ export function useCspDiagnostics(): DiagnosticResult[] {
         results.push({
           id: 'csp-connect-src-ws-passed',
           severity: 'passed',
+          category: 'csp',
           titleKey: 'diagnostics.CspWsProxyAllowed',
           descriptionKey: 'diagnostics.CspWsProxyAllowedDesc',
           interpolationValues: { proxyUrl },
@@ -85,6 +88,7 @@ export function useCspDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'csp-script-src-passed',
         severity: 'passed',
+        category: 'csp',
         titleKey: 'diagnostics.CspScriptSrcPassed',
         descriptionKey: 'diagnostics.CspScriptSrcPassedDesc',
       });
@@ -98,6 +102,7 @@ export function useCspDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'csp-style-src-passed',
         severity: 'passed',
+        category: 'csp',
         titleKey: 'diagnostics.CspStyleSrcPassed',
         descriptionKey: 'diagnostics.CspStyleSrcPassedDesc',
       });

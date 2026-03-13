@@ -41,6 +41,7 @@ export function useStorageProxyDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'storage-no-volumes',
         severity: 'passed',
+        category: 'storage',
         titleKey: 'diagnostics.StorageNoVolumes',
         descriptionKey: 'diagnostics.StorageNoVolumesDesc',
       });
@@ -87,6 +88,7 @@ export function useStorageProxyDiagnostics(): DiagnosticResult[] {
       results.push({
         id: 'storage-health-passed',
         severity: 'passed',
+        category: 'storage',
         titleKey: 'diagnostics.StorageHealthPassed',
         descriptionKey: 'diagnostics.StorageHealthPassedDesc',
         interpolationValues: { count: String(items.length) },
