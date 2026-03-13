@@ -23,7 +23,7 @@ catalog:
   classnames: ^2.5.1
   react-copy-to-clipboard: ^5.1.0
   lucide-react: ^0.552.0
-  markty-toml: 0.1.1
+  smol-toml: ^1.6.0
   marked: ^16.4.2
   uuid: ^13.0.0
 

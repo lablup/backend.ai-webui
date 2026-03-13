@@ -202,8 +202,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               >
                 <Input
                   prefix={<MailOutlined />}
-                  placeholder={t('login.E-mailOrUsername')}
-                  aria-label="Email or Username"
+                  placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
+                  aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
                   maxLength={64}
                   autoComplete="username"
                   disabled={isLoading}
@@ -215,8 +215,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               >
                 <Input.Password
                   prefix={<KeyOutlined />}
-                  placeholder={t('login.Password')}
-                  aria-label="Password"
+                  placeholder={t('login.Password', { postProcess: [] })}
+                  aria-label={t('login.Password', { postProcess: [] })}
                   autoComplete="current-password"
                   disabled={isLoading}
                 />
@@ -225,7 +225,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <Form.Item name="otp" style={{ marginBottom: token.marginSM }}>
                   <Input
                     prefix={<LockOutlined />}
-                    placeholder={t('totp.OTP')}
+                    placeholder={t('totp.OTP', { postProcess: [] })}
                     disabled={isLoading}
                     autoFocus
                   />
@@ -243,7 +243,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               >
                 <Input
                   prefix={<LockOutlined />}
-                  placeholder={t('login.APIKey')}
+                  placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
                   disabled={isLoading}
                 />
@@ -254,7 +254,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               >
                 <Input.Password
                   prefix={<KeyOutlined />}
-                  placeholder={t('login.SecretKey')}
+                  placeholder={t('login.SecretKey', { postProcess: [] })}
                   maxLength={40}
                   disabled={isLoading}
                 />
@@ -284,7 +284,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               block
               onClick={onLogin}
               loading={isLoading}
-              aria-label="Login"
+              aria-label={t('login.Login', { postProcess: [] })}
             >
               {t('login.Login')}
             </Button>
@@ -353,8 +353,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                     ]}
                   >
                     <Input
-                      placeholder={t('login.Endpoint')}
-                      aria-label="Endpoint"
+                      placeholder={t('login.Endpoint', { postProcess: [] })}
+                      aria-label={t('login.Endpoint', { postProcess: [] })}
                       maxLength={2048}
                       disabled={isEndpointDisabled || isLoading}
                       onChange={(e) => onSetApiEndpoint(e.target.value)}

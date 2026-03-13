@@ -6,7 +6,7 @@
  * WebUI Config - React-based config.toml parsing and state management.
  *
  * This module replaces the Lit shell's _parseConfig() and loadConfig() methods.
- * It fetches config.toml, parses it with markty-toml, preprocesses values,
+ * It fetches config.toml, parses it with smol-toml, preprocesses values,
  * and provides the parsed config to React components via Jotai atoms.
  *
  * Config values are also set on globalThis for backward compatibility with
@@ -18,8 +18,8 @@ import {
   type LoginConfigState,
 } from '../helper/loginConfig';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import toml from 'markty-toml';
 import { useCallback, useEffect } from 'react';
+import { parse as toml } from 'smol-toml';
 
 // ---------------------------------------------------------------------------
 // Types

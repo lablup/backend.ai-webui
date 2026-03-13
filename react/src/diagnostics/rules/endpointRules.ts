@@ -76,31 +76,3 @@ export function checkEndpointReachability(
 
   return null;
 }
-
-/**
- * Check storage proxy reachability by inspecting a fetch result.
- * This is a pure function that evaluates a pre-fetched result.
- */
-export function checkProxyReachability(
-  proxyUrl: string,
-  isReachable: boolean,
-  errorMessage?: string,
-): DiagnosticResult | null {
-  if (!proxyUrl) return null;
-
-  if (!isReachable) {
-    return {
-      id: 'proxy-unreachable',
-      severity: 'critical',
-      titleKey: 'diagnostics.ProxyUnreachable',
-      descriptionKey: 'diagnostics.ProxyUnreachableDesc',
-      remediationKey: 'diagnostics.ProxyUnreachableFix',
-      interpolationValues: {
-        proxyUrl,
-        error: errorMessage || 'Unknown error',
-      },
-    };
-  }
-
-  return null;
-}
