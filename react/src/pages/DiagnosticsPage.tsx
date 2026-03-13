@@ -6,6 +6,7 @@ import CspDiagnosticsSection from '../components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
+import { downloadBlob } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Collapse, Skeleton, Switch, Tooltip, Typography } from 'antd';
@@ -54,16 +55,22 @@ const DiagnosticsPage = () => {
     });
   };
 
-  const makeOnResults = useCallback(
-    (key: keyof typeof sectionResultsRef.current) =>
-      (results: DiagnosticResult[]) => {
-        sectionResultsRef.current[key] = results;
-        if (results.length > 0) {
-          setHasAnyResults(true);
-        }
-      },
-    [],
-  );
+  const onCspResults = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.csp = results;
+    if (results.length > 0) setHasAnyResults(true);
+  }, []);
+  const onStorageResults = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.storage = results;
+    if (results.length > 0) setHasAnyResults(true);
+  }, []);
+  const onEndpointResults = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.endpoint = results;
+    if (results.length > 0) setHasAnyResults(true);
+  }, []);
+  const onConfigResults = useCallback((results: DiagnosticResult[]) => {
+    sectionResultsRef.current.config = results;
+    if (results.length > 0) setHasAnyResults(true);
+  }, []);
 
   const handleExport = () => {
     const allResults = [
@@ -95,13 +102,8 @@ const DiagnosticsPage = () => {
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
       type: 'application/json',
     });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
     const today = new Date().toISOString().slice(0, 10);
-    anchor.href = url;
-    anchor.download = `diagnostics-${today}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `diagnostics-${today}.json`);
   };
 
   return (
@@ -151,7 +153,7 @@ const DiagnosticsPage = () => {
                     <Suspense fallback={<Skeleton active />}>
                       <CspDiagnosticsSection
                         hidePassed={!showPassed}
-                        onResults={makeOnResults('csp')}
+                        onResults={onCspResults}
                       />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
@@ -165,7 +167,7 @@ const DiagnosticsPage = () => {
                     <Suspense fallback={<Skeleton active />}>
                       <StorageProxyDiagnosticsSection
                         hidePassed={!showPassed}
-                        onResults={makeOnResults('storage')}
+                        onResults={onStorageResults}
                       />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
@@ -179,7 +181,7 @@ const DiagnosticsPage = () => {
                     <Suspense fallback={<Skeleton active />}>
                       <EndpointDiagnosticsSection
                         hidePassed={!showPassed}
-                        onResults={makeOnResults('endpoint')}
+                        onResults={onEndpointResults}
                       />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
@@ -193,7 +195,7 @@ const DiagnosticsPage = () => {
                     <Suspense fallback={<Skeleton active />}>
                       <WebServerConfigDiagnosticsSection
                         hidePassed={!showPassed}
-                        onResults={makeOnResults('config')}
+                        onResults={onConfigResults}
                       />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
