@@ -11,10 +11,10 @@ import {
   checkPlaceholderValues,
   checkPluginConfiguration,
   checkResourceLimits,
+  checkSslMismatch,
   checkUrlFields,
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
-import { checkSslMismatch } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useProxyUrl, useRawConfig } from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
