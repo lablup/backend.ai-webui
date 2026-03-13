@@ -87,6 +87,8 @@ export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
 export { default as BAIProjectResourcePolicySelect } from './BAIProjectResourcePolicySelect';
 export type { BAIProjectResourcePolicySelectProps } from './BAIProjectResourcePolicySelect';
+export { default as BAIResourcePresetSelect } from './BAIResourcePresetSelect';
+export type { BAIResourcePresetSelectProps } from './BAIResourcePresetSelect';
 export { default as BAIResourceGroupSelect } from './BAIResourceGroupSelect';
 export type { BAIResourceGroupSelectProps } from './BAIResourceGroupSelect';
 export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';

@@ -21,6 +21,7 @@ import {
   BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
+  BAIResourcePresetSelect,
   BAIStorageHostSelect,
   BAIProjectSelect,
   BAIAdminSessionSelect,
@@ -45,11 +46,11 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'STORAGE_HOST',
   'ARTIFACT',
   'ARTIFACT_REVISION',
+  'RESOURCE_PRESET',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'KEYPAIR',
   // 'IMAGE',
   // 'ARTIFACT_REGISTRY',
-  // 'RESOURCE_PRESET',
   // 'USER_RESOURCE_POLICY',
   // 'KEYPAIR_RESOURCE_POLICY',
   // 'PROJECT_RESOURCE_POLICY',
@@ -233,6 +234,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'RESOURCE_PRESET') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIResourcePresetSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value}
+          onChange={selectProps.onChange}
         />
       </Suspense>
     );

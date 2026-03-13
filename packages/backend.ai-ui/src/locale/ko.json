@@ -220,6 +220,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIResourcePresetSelect": {
+    "SelectResourcePreset": "리소스 프리셋을 선택해주세요"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",
     "RouteId": "라우트 ID",
