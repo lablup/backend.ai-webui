@@ -682,6 +682,8 @@
     "EndpointUnreachable": "API Endpoint Unreachable",
     "EndpointUnreachableDesc": "The API endpoint ({{endpoint}}) could not be reached: {{error}}.",
     "EndpointUnreachableFix": "Verify the API endpoint URL is correct and the backend server is running.",
+    "Export": "Export",
+    "ExportTooltip": "Export diagnostics results as JSON",
     "ImageReferencesPassed": "Image References OK",
     "ImageReferencesPassedDesc": "System image references (SSH, file browser) have valid formats.",
     "InvalidBlocklistEntries": "Invalid Blocklist Entries",
