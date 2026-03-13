@@ -6,10 +6,11 @@ import CspDiagnosticsSection from '../components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Collapse, Skeleton, Switch, Typography } from 'antd';
+import { DiagnosticResult } from '../types/diagnostics';
+import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Collapse, Skeleton, Switch, Tooltip, Typography } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
-import { Suspense, useCallback, useMemo, useState, useTransition } from 'react';
+import { Suspense, useCallback, useMemo, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -36,9 +37,29 @@ const DiagnosticsPage = () => {
     config: true,
   });
 
+  const sectionResultsRef = useRef<{
+    csp: DiagnosticResult[];
+    storage: DiagnosticResult[];
+    endpoint: DiagnosticResult[];
+    config: DiagnosticResult[];
+  }>({
+    csp: [],
+    storage: [],
+    endpoint: [],
+    config: [],
+  });
+  const [hasAnyResults, setHasAnyResults] = useState(false);
+
   const handleRefresh = () => {
     startTransition(() => {
       setRefreshKey((prev) => prev + 1);
+      sectionResultsRef.current = {
+        csp: [],
+        storage: [],
+        endpoint: [],
+        config: [],
+      };
+      setHasAnyResults(false);
     });
   };
 
@@ -52,6 +73,56 @@ const DiagnosticsPage = () => {
     [],
   );
 
+  const makeOnResults = useCallback(
+    (key: keyof typeof sectionResultsRef.current) =>
+      (results: DiagnosticResult[]) => {
+        sectionResultsRef.current[key] = results;
+        if (results.length > 0) {
+          setHasAnyResults(true);
+        }
+      },
+    [],
+  );
+
+  const handleExport = () => {
+    const allResults = [
+      ...sectionResultsRef.current.csp,
+      ...sectionResultsRef.current.storage,
+      ...sectionResultsRef.current.endpoint,
+      ...sectionResultsRef.current.config,
+    ];
+
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      results: allResults.map((result) => ({
+        id: result.id,
+        severity: result.severity,
+        category: result.category,
+        title: t(result.titleKey, result.interpolationValues ?? {}),
+        description: t(result.descriptionKey, result.interpolationValues ?? {}),
+        ...(result.remediationKey
+          ? {
+              remediation: t(
+                result.remediationKey,
+                result.interpolationValues ?? {},
+              ),
+            }
+          : {}),
+      })),
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    const today = new Date().toISOString().slice(0, 10);
+    anchor.href = url;
+    anchor.download = `diagnostics-${today}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
   const allItems = useMemo(
     () => [
       {
@@ -63,6 +134,7 @@ const DiagnosticsPage = () => {
               <CspDiagnosticsSection
                 hidePassed={showOnlyFailed}
                 onHasIssues={createHasIssuesCallback('csp')}
+                onResults={makeOnResults('csp')}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -77,6 +149,7 @@ const DiagnosticsPage = () => {
               <StorageProxyDiagnosticsSection
                 hidePassed={showOnlyFailed}
                 onHasIssues={createHasIssuesCallback('storage')}
+                onResults={makeOnResults('storage')}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -91,6 +164,7 @@ const DiagnosticsPage = () => {
               <EndpointDiagnosticsSection
                 hidePassed={showOnlyFailed}
                 onHasIssues={createHasIssuesCallback('endpoint')}
+                onResults={makeOnResults('endpoint')}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
@@ -105,13 +179,14 @@ const DiagnosticsPage = () => {
               <WebServerConfigDiagnosticsSection
                 hidePassed={showOnlyFailed}
                 onHasIssues={createHasIssuesCallback('config')}
+                onResults={makeOnResults('config')}
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
         ),
       },
     ],
-    [t, showOnlyFailed, createHasIssuesCallback],
+    [t, showOnlyFailed, createHasIssuesCallback, makeOnResults],
   );
 
   const visibleItems = showOnlyFailed
@@ -145,6 +220,15 @@ const DiagnosticsPage = () => {
           >
             {t('diagnostics.Refresh')}
           </BAIButton>
+          <Tooltip title={t('diagnostics.ExportTooltip')}>
+            <BAIButton
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+              disabled={!hasAnyResults}
+            >
+              {t('diagnostics.Export')}
+            </BAIButton>
+          </Tooltip>
         </BAIFlex>
       }
     >
