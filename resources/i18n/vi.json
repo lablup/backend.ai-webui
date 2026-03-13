@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Hiển thị tổng quan at-a-glance của tất cả các tác nhân hiện đang chạy trong hệ thống."
   },
   "adminSession": {
-    "PendingSessions": "Phiên đang chờ"
+    "PendingSessions": "Phiên đang chờ",
+    "PendingSessionsScopedToResourceGroup": "Đang hiển thị các phiên đang chờ chỉ cho nhóm tài nguyên đã chọn. Chuyển đổi nhóm tài nguyên để xem các phiên trong các nhóm khác."
   },
   "agent": {
     "AcceleratorAllocations": "Phân bổ thiết bị tăng tốc",

@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "แสดงภาพรวม at-a-glance ของตัวแทนทั้งหมดที่ทำงานอยู่ในระบบ"
   },
   "adminSession": {
-    "PendingSessions": "เซสชันที่รอดำเนินการ"
+    "PendingSessions": "เซสชันที่รอดำเนินการ",
+    "PendingSessionsScopedToResourceGroup": "แสดงเซสชันที่รอดำเนินการสำหรับกลุ่มทรัพยากรที่เลือกเท่านั้น สลับกลุ่มทรัพยากรเพื่อดูเซสชันในกลุ่มอื่น"
   },
   "agent": {
     "AcceleratorAllocations": "การจัดสรรตัวเร่งความเร็ว",

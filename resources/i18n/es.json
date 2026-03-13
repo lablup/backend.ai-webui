@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Muestra una descripción general de un vistazo de todos los agentes que actualmente se ejecutan en el sistema."
   },
   "adminSession": {
-    "PendingSessions": "Sesiones pendientes"
+    "PendingSessions": "Sesiones pendientes",
+    "PendingSessionsScopedToResourceGroup": "Se muestran solo las sesiones pendientes del grupo de recursos seleccionado. Cambie de grupo de recursos para ver sesiones en otros grupos."
   },
   "agent": {
     "AcceleratorAllocations": "Asignaciones de aceleradores",

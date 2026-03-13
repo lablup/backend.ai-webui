@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "顯示了當前在系統中運行的所有代理的一目了然的概述。"
   },
   "adminSession": {
-    "PendingSessions": "待處理工作階段"
+    "PendingSessions": "待處理工作階段",
+    "PendingSessionsScopedToResourceGroup": "僅顯示所選資源組的待處理工作階段。切換資源組以查看其他組中的工作階段。"
   },
   "agent": {
     "AcceleratorAllocations": "加速器分配",

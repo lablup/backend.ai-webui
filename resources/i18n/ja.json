@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "現在システムで実行されているすべてのエージェントの概要を示しています。"
   },
   "adminSession": {
-    "PendingSessions": "保留中のセッション"
+    "PendingSessions": "保留中のセッション",
+    "PendingSessionsScopedToResourceGroup": "選択したリソースグループの保留中のセッションのみを表示しています。他のグループのセッションを表示するにはリソースグループを切り替えてください。"
   },
   "agent": {
     "AcceleratorAllocations": "アクセラレータの割り当て",

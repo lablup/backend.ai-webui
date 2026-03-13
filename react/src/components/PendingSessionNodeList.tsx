@@ -6,6 +6,7 @@ import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Form } from 'antd';
 import {
+  BAIAlert,
   BAIFlex,
   filterOutNullAndUndefined,
   BAIFetchKeyButton,
@@ -52,7 +53,7 @@ const PendingSessionNodeList: React.FC = () => {
 
   const queryVariables: PendingSessionNodeListQuery$variables = useMemo(
     () => ({
-      resource_group_id: deferredCurrentResourceGroup || 'default',
+      resource_group_id: deferredCurrentResourceGroup ?? '',
       first: baiPaginationOption.first,
       offset: baiPaginationOption.offset,
     }),
@@ -95,6 +96,11 @@ const PendingSessionNodeList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIAlert
+        type="info"
+        showIcon
+        description={t('adminSession.PendingSessionsScopedToResourceGroup')}
+      />
       <BAIFlex align="stretch" justify="between">
         <Form.Item
           label={t('session.ResourceGroup')}

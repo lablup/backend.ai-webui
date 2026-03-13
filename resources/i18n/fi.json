@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
   },
   "adminSession": {
-    "PendingSessions": "Odotuksessa olevat istunnot"
+    "PendingSessions": "Odotuksessa olevat istunnot",
+    "PendingSessionsScopedToResourceGroup": "Näytetään vain valitun resurssiryhmän odottavat istunnot. Vaihda resurssiryhmää nähdäksesi istunnot muissa ryhmissä."
   },
   "agent": {
     "AcceleratorAllocations": "Kiihdyttimien varaukset",

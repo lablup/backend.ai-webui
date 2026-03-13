@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."
   },
   "adminSession": {
-    "PendingSessions": "Bekleyen Oturumlar"
+    "PendingSessions": "Bekleyen Oturumlar",
+    "PendingSessionsScopedToResourceGroup": "Yalnızca seçili kaynak grubuna ait bekleyen oturumlar gösterilmektedir. Diğer gruplardaki oturumları görüntülemek için kaynak gruplarını değiştirin."
   },
   "agent": {
     "AcceleratorAllocations": "Hızlandırıcı Tahsisleri",

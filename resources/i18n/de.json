@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Zeigt einen Überblick auf einen Blick über alle im System ausgeführten Agenten."
   },
   "adminSession": {
-    "PendingSessions": "Ausstehende Sitzungen"
+    "PendingSessions": "Ausstehende Sitzungen",
+    "PendingSessionsScopedToResourceGroup": "Es werden nur ausstehende Sitzungen für die ausgewählte Ressourcengruppe angezeigt. Wechseln Sie die Ressourcengruppe, um Sitzungen in anderen Gruppen anzuzeigen."
   },
   "agent": {
     "AcceleratorAllocations": "Beschleunigerzuweisungen",

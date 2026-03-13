@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的一目了然概述。"
   },
   "adminSession": {
-    "PendingSessions": "待处理会话"
+    "PendingSessions": "待处理会话",
+    "PendingSessionsScopedToResourceGroup": "仅显示所选资源组的待处理会话。切换资源组以查看其他组中的会话。"
   },
   "agent": {
     "AcceleratorAllocations": "加速器分配",

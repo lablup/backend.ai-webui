@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."
   },
   "adminSession": {
-    "PendingSessions": "대기 세션"
+    "PendingSessions": "대기 세션",
+    "PendingSessionsScopedToResourceGroup": "선택한 자원 그룹의 대기 세션만 표시하고 있습니다. 다른 그룹의 세션을 보려면 자원 그룹을 전환하세요."
   },
   "agent": {
     "AcceleratorAllocations": "가속기 할당",

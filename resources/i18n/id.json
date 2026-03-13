@@ -5,7 +5,8 @@
     "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
   },
   "adminSession": {
-    "PendingSessions": "Sesi Tertunda"
+    "PendingSessions": "Sesi Tertunda",
+    "PendingSessionsScopedToResourceGroup": "Menampilkan sesi tertunda hanya untuk grup sumber daya yang dipilih. Alihkan grup sumber daya untuk melihat sesi di grup lain."
   },
   "agent": {
     "AcceleratorAllocations": "Alokasi Akselerator",
