@@ -11,9 +11,10 @@ import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useTanQuery } from './reactQueryAlias';
 import { useProxyUrl, useRawConfig } from './useWebUIConfig';
-import { App } from 'antd';
-import { useEffect, useMemo, useRef } from 'react';
+import { App, Button } from 'antd';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const AUTO_DIAGNOSTICS_DISMISSED_KEY = 'bai-auto-diagnostics-dismissed';
 
@@ -30,6 +31,7 @@ export function useAutoDiagnostics(): void {
 
   const { t } = useTranslation();
   const { notification } = App.useApp();
+  const navigate = useNavigate();
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
   const proxyUrl = useProxyUrl();
@@ -59,7 +61,7 @@ export function useAutoDiagnostics(): void {
       } catch (e) {
         return {
           isReachable: false,
-          error: e instanceof Error ? e.message : 'Unknown error',
+          error: e instanceof Error ? e.message : undefined,
         };
       }
     },
@@ -90,7 +92,10 @@ export function useAutoDiagnostics(): void {
     // SSL mismatch check (warning severity; include as it's a config issue)
     if (rawConfig && apiEndpoint && proxyUrl && !isApiPlaceholder) {
       const sslResult = checkSslMismatch(apiEndpoint, proxyUrl);
-      if (sslResult && sslResult.severity === 'critical') {
+      if (
+        sslResult &&
+        (sslResult.severity === 'critical' || sslResult.severity === 'warning')
+      ) {
         results.push(sslResult);
       }
     }
@@ -117,7 +122,8 @@ export function useAutoDiagnostics(): void {
     try {
       if (sessionStorage.getItem(AUTO_DIAGNOSTICS_DISMISSED_KEY)) return;
     } catch {
-      // sessionStorage may be unavailable in some environments
+      // sessionStorage may be unavailable (e.g., iframe sandbox)
+      return;
     }
 
     notificationShownRef.current = true;
@@ -128,13 +134,25 @@ export function useAutoDiagnostics(): void {
       description: t('diagnostics.AutoDiagnosticsDesc'),
       duration: 0,
       placement: 'bottomRight',
+      btn: React.createElement(
+        Button,
+        {
+          type: 'primary',
+          size: 'small',
+          onClick: () => {
+            notification.destroy('auto-diagnostics-warning');
+            navigate('/diagnostics');
+          },
+        },
+        t('diagnostics.ViewDiagnostics'),
+      ),
       onClose: () => {
         try {
           sessionStorage.setItem(AUTO_DIAGNOSTICS_DISMISSED_KEY, '1');
         } catch {
-          // ignore
+          // sessionStorage write may fail in restrictive environments
         }
       },
     });
-  }, [isSuperAdmin, criticalResults, notification, t]);
+  }, [isSuperAdmin, criticalResults, notification, navigate, t]);
 }
