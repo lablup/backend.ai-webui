@@ -9,7 +9,7 @@ import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiag
 import { downloadBlob } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Collapse, Skeleton, Switch, Tooltip, Typography } from 'antd';
+import { Collapse, Skeleton, Switch, Typography } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -127,15 +127,13 @@ const DiagnosticsPage = () => {
           >
             {t('diagnostics.Refresh')}
           </BAIButton>
-          <Tooltip title={t('diagnostics.ExportTooltip')}>
-            <BAIButton
-              icon={<DownloadOutlined />}
-              onClick={handleExport}
-              disabled={!hasAnyResults}
-            >
-              {t('diagnostics.Export')}
-            </BAIButton>
-          </Tooltip>
+          <BAIButton
+            icon={<DownloadOutlined />}
+            onClick={handleExport}
+            disabled={!hasAnyResults}
+          >
+            {t('diagnostics.Export')}
+          </BAIButton>
         </BAIFlex>
       }
     >
