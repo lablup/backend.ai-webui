@@ -646,7 +646,7 @@
     "CspApiEndpointBlocked": "API Endpoint Blocked by CSP",
     "CspApiEndpointBlockedDesc": "The API endpoint ({{endpoint}}) is not included in the Content-Security-Policy connect-src directive.",
     "CspApiEndpointBlockedFix": "Add {{endpoint}} to the connect-src directive in your CSP meta tag or server headers.",
-    "CspFrameSrcBlocked": "API Endpoint Blocked from iframe Embedding by CSP",
+    "CspFrameSrcBlocked": "API Endpoint Blocked from Iframe Embedding by CSP",
     "CspFrameSrcBlockedDesc": "The API endpoint ({{endpoint}}) is not included in the Content-Security-Policy frame-src directive. Iframe-based features may not work correctly.",
     "CspFrameSrcBlockedFix": "Add {{endpoint}} to the frame-src directive in your CSP meta tag or server headers.",
     "CspFrameSrcPassed": "CSP frame-src OK",
