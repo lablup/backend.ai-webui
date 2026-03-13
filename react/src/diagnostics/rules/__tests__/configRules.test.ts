@@ -114,6 +114,7 @@ describe('checkPlaceholderValues', () => {
 // checkSslMismatch
 // ---------------------------------------------------------------------------
 
+
 describe('checkSslMismatch', () => {
   it('should return null when inputs are empty', () => {
     expect(checkSslMismatch('', 'http://proxy.example.com')).toBeNull();
@@ -187,6 +188,7 @@ describe('checkSslMismatch', () => {
 // ---------------------------------------------------------------------------
 // checkBlocklistValidity
 // ---------------------------------------------------------------------------
+
 
 describe('checkBlocklistValidity', () => {
   it('should return null when blocklist is empty', () => {
