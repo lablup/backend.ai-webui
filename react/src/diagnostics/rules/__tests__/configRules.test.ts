@@ -47,7 +47,7 @@ describe('checkSslMismatch', () => {
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
     expect(result?.category).toBe('config');
-    expect(result?.id).toBe('ssl-mismatch');
+    expect(result?.id).toBe('config-ssl-mismatch');
   });
 
   it('should return warning when API is HTTP but proxy is HTTPS', () => {
