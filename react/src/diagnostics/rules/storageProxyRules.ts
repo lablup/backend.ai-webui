@@ -35,6 +35,7 @@ export function checkStorageVolumeHealth(
     return {
       id: `storage-volume-health-${volume.id}`,
       severity: 'warning',
+      category: 'storage',
       titleKey: 'diagnostics.StorageVolumeHighUsage',
       descriptionKey: 'diagnostics.StorageVolumeHighUsageDesc',
       remediationKey: 'diagnostics.StorageVolumeHighUsageFix',

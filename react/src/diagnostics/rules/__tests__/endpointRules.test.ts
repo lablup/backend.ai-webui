@@ -30,6 +30,7 @@ describe('checkSslMismatch', () => {
     );
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('warning');
+    expect(result?.category).toBe('endpoint');
     expect(result?.id).toBe('ssl-mismatch');
   });
 
@@ -69,6 +70,7 @@ describe('checkEndpointReachability', () => {
     );
     expect(result).not.toBeNull();
     expect(result?.severity).toBe('critical');
+    expect(result?.category).toBe('endpoint');
     expect(result?.id).toBe('endpoint-unreachable');
     expect(result?.interpolationValues?.error).toBe('Connection refused');
   });
