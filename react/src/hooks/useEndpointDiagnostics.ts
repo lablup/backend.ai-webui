@@ -4,7 +4,10 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { isPlaceholder } from '../diagnostics/rules/configRules';
-import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
+import {
+  checkCorsHeaders,
+  checkEndpointReachability,
+} from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useTanQuery } from './reactQueryAlias';
 import { useMemo } from 'react';
@@ -54,6 +57,38 @@ export function useEndpointDiagnostics(): {
     retry: 1,
   });
 
+  const { data: corsCheck, isLoading: isCorsLoading } = useTanQuery<{
+    allowed: boolean;
+    error?: string;
+  }>({
+    queryKey: ['diagnostics', 'cors-check', apiEndpoint],
+    queryFn: async () => {
+      if (!apiEndpoint) return { allowed: true };
+      try {
+        await fetch(apiEndpoint, {
+          method: 'GET',
+          mode: 'cors',
+          signal: AbortSignal.timeout(10000),
+        });
+        // Fetch succeeded with mode 'cors' — CORS is properly configured
+        return { allowed: true };
+      } catch (e) {
+        if (e instanceof TypeError) {
+          // TypeError from fetch in 'cors' mode typically indicates a CORS block
+          return { allowed: false };
+        }
+        // Other errors (e.g., AbortError) are network issues, not CORS issues
+        return {
+          allowed: true,
+          error: e instanceof Error ? e.message : 'Unknown error',
+        };
+      }
+    },
+    enabled: !!apiEndpoint && !isApiPlaceholder,
+    staleTime: 60_000,
+    retry: 1,
+  });
+
   const results = useMemo(() => {
     const diagnostics: DiagnosticResult[] = [];
 
@@ -78,8 +113,24 @@ export function useEndpointDiagnostics(): {
       }
     }
 
-    return diagnostics;
-  }, [apiEndpoint, healthCheck, isApiPlaceholder]);
+    if (corsCheck && !isApiPlaceholder) {
+      const corsResult = checkCorsHeaders(apiEndpoint, corsCheck);
+      if (corsResult) {
+        diagnostics.push(corsResult);
+      } else if (apiEndpoint) {
+        diagnostics.push({
+          id: 'cors-passed',
+          severity: 'passed',
+          category: 'endpoint',
+          titleKey: 'diagnostics.CorsPassed',
+          descriptionKey: 'diagnostics.CorsPassedDesc',
+          interpolationValues: { endpoint: apiEndpoint },
+        });
+      }
+    }
 
-  return { results, isLoading: isEndpointLoading };
+    return diagnostics;
+  }, [apiEndpoint, corsCheck, healthCheck, isApiPlaceholder]);
+
+  return { results, isLoading: isEndpointLoading || isCorsLoading };
 }
