@@ -3,17 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import {
-  checkSslMismatch,
-  isPlaceholder,
-} from '../diagnostics/rules/configRules';
-import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { useTanQuery } from './reactQueryAlias';
-import { useProxyUrl, useRawConfig } from './useWebUIConfig';
-import { App } from 'antd';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCspDiagnostics } from './useCspDiagnostics';
+import { useEndpointDiagnostics } from './useEndpointDiagnostics';
+import { useStorageProxyDiagnostics } from './useStorageProxyDiagnostics';
+import { useWebServerConfigDiagnostics } from './useWebServerConfigDiagnostics';
+import { App, Button } from 'antd';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const AUTO_DIAGNOSTICS_DISMISSED_KEY = 'bai-auto-diagnostics-dismissed';
 
@@ -24,85 +22,44 @@ const AUTO_DIAGNOSTICS_DISMISSED_KEY = 'bai-auto-diagnostics-dismissed';
  * - Only runs for superadmin users.
  * - Uses sessionStorage to avoid re-showing the notification within the same session.
  * - Runs asynchronously and does NOT block the login flow.
+ * - Reuses the existing diagnostics hooks for consistency with the diagnostics page.
  */
 export function useAutoDiagnostics(): void {
   'use memo';
 
   const { t } = useTranslation();
   const { notification } = App.useApp();
+  const navigate = useNavigate();
   const baiClient = useSuspendedBackendaiClient();
-  const rawConfig = useRawConfig();
-  const proxyUrl = useProxyUrl();
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
-  const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
-  const isApiPlaceholder = isPlaceholder(apiEndpoint);
 
-  // Fetch endpoint reachability
-  const { data: healthCheck } = useTanQuery<{
-    isReachable: boolean;
-    statusCode?: number;
-    error?: string;
-  }>({
-    queryKey: ['auto-diagnostics', 'endpoint-health', apiEndpoint],
-    queryFn: async () => {
-      if (!apiEndpoint) return { isReachable: true };
-      try {
-        const response = await fetch(apiEndpoint, {
-          method: 'GET',
-          signal: AbortSignal.timeout(10000),
-        });
-        return {
-          isReachable: response.status < 500,
-          statusCode: response.status,
-        };
-      } catch (e) {
-        return {
-          isReachable: false,
-          error: e instanceof Error ? e.message : 'Unknown error',
-        };
-      }
-    },
-    enabled: isSuperAdmin && !!apiEndpoint && !isApiPlaceholder,
-    staleTime: 60_000,
-    retry: 1,
-  });
+  // Reuse existing diagnostics hooks to avoid duplicating API requests
+  const { results: endpointResults } = useEndpointDiagnostics();
+  const cspResults = useCspDiagnostics();
+  const configResults = useWebServerConfigDiagnostics();
+  const storageResults = useStorageProxyDiagnostics();
 
-  // Compute critical results synchronously from the fetched data
+  // Compute critical results by filtering results from the shared hooks
   const criticalResults = useMemo<DiagnosticResult[]>(() => {
     if (!isSuperAdmin) return [];
 
-    const results: DiagnosticResult[] = [];
+    const allResults: DiagnosticResult[] = [
+      ...endpointResults,
+      ...cspResults,
+      ...configResults,
+      ...storageResults,
+    ];
 
-    // Endpoint reachability check (critical only)
-    if (healthCheck && !isApiPlaceholder && apiEndpoint) {
-      const reachCheck = checkEndpointReachability(
-        apiEndpoint,
-        healthCheck.isReachable,
-        healthCheck.error,
-        healthCheck.statusCode,
-      );
-      if (reachCheck && reachCheck.severity === 'critical') {
-        results.push(reachCheck);
-      }
-    }
-
-    // SSL mismatch check (warning severity; include as it's a config issue)
-    if (rawConfig && apiEndpoint && proxyUrl && !isApiPlaceholder) {
-      const sslResult = checkSslMismatch(apiEndpoint, proxyUrl);
-      if (sslResult && sslResult.severity === 'critical') {
-        results.push(sslResult);
-      }
-    }
-
-    return results;
+    return allResults.filter(
+      (r) => r.severity === 'critical' || r.severity === 'warning',
+    );
   }, [
     isSuperAdmin,
-    healthCheck,
-    isApiPlaceholder,
-    apiEndpoint,
-    rawConfig,
-    proxyUrl,
+    endpointResults,
+    cspResults,
+    configResults,
+    storageResults,
   ]);
 
   // Track whether we have already shown the notification in this session
@@ -117,7 +74,8 @@ export function useAutoDiagnostics(): void {
     try {
       if (sessionStorage.getItem(AUTO_DIAGNOSTICS_DISMISSED_KEY)) return;
     } catch {
-      // sessionStorage may be unavailable in some environments
+      // sessionStorage may be unavailable (e.g., iframe sandbox)
+      return;
     }
 
     notificationShownRef.current = true;
@@ -128,13 +86,25 @@ export function useAutoDiagnostics(): void {
       description: t('diagnostics.AutoDiagnosticsDesc'),
       duration: 0,
       placement: 'bottomRight',
+      btn: React.createElement(
+        Button,
+        {
+          type: 'primary',
+          size: 'small',
+          onClick: () => {
+            notification.destroy('auto-diagnostics-warning');
+            navigate('/diagnostics');
+          },
+        },
+        t('diagnostics.ViewDiagnostics'),
+      ),
       onClose: () => {
         try {
           sessionStorage.setItem(AUTO_DIAGNOSTICS_DISMISSED_KEY, '1');
         } catch {
-          // ignore
+          // sessionStorage write may fail in restrictive environments
         }
       },
     });
-  }, [isSuperAdmin, criticalResults, notification, t]);
+  }, [isSuperAdmin, criticalResults, notification, navigate, t]);
 }

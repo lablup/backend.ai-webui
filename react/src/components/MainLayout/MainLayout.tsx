@@ -38,7 +38,6 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
-import { useAutoDiagnostics } from 'src/hooks/useAutoDiagnostics';
 import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
@@ -144,11 +143,6 @@ function MainLayout() {
     <LayoutWithPageTestId>
       <LoadingCurtain />
       <CSSTokenVariables />
-      <ErrorBoundaryWithNullFallback>
-        <Suspense fallback={null}>
-          <AutoDiagnosticsEffect />
-        </Suspense>
-      </ErrorBoundaryWithNullFallback>
       <style>
         {`
           /* Scrollbar stylings */
@@ -408,16 +402,6 @@ export const NotificationForAnonymous = () => {
       document.removeEventListener('add-bai-notification', handler);
     };
   }, [app.notification]);
-  return null;
-};
-
-/**
- * Component that runs auto-diagnostics checks after login and shows
- * a notification if any critical issues are detected.
- * Wraps the hook in a Suspense boundary so it won't block rendering.
- */
-const AutoDiagnosticsEffect = () => {
-  useAutoDiagnostics();
   return null;
 };
 
