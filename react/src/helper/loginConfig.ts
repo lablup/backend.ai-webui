@@ -21,13 +21,18 @@ function getConfigValueByExists(
   parentsKey: unknown,
   valueObj: ConfigValueObject,
 ): boolean | number | string | Array<string> {
+  const isPlaceholder =
+    typeof valueObj.value === 'string' &&
+    valueObj.value.startsWith('[') &&
+    valueObj.value.endsWith(']');
   const defaultConditions: boolean =
     parentsKey === undefined ||
     valueObj.value === undefined ||
     typeof valueObj.value === 'undefined' ||
     valueObj.value === '' ||
     valueObj.value === '""' ||
-    valueObj.value === null;
+    valueObj.value === null ||
+    isPlaceholder;
   let extraConditions;
   switch (typeof valueObj.defaultValue) {
     case 'number':
@@ -356,13 +361,13 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     state.connection_mode =
       storedConnectionMode === 'SESSION' ? 'SESSION' : 'API';
   } else {
-    state.connection_mode = getConfigValueByExists(g, {
-      valueType: 'boolean',
-      defaultValue: 'SESSION',
-      value: ((g?.connectionMode ?? 'SESSION') as string).toUpperCase() as
-        | 'SESSION'
-        | 'API',
-    }) as 'SESSION' | 'API';
+    const connectionModeValue = g?.connectionMode;
+    const rawMode =
+      typeof connectionModeValue === 'string'
+        ? connectionModeValue.toUpperCase()
+        : '';
+    state.connection_mode =
+      rawMode === 'SESSION' || rawMode === 'API' ? rawMode : 'SESSION';
   }
 
   state.directoryBasedUsage = getConfigValueByExists(g, {

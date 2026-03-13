@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { isPlaceholder } from '../diagnostics/rules/configRules';
 import {
   checkCspConnectSrc,
   checkCspScriptSrc,
@@ -44,32 +45,36 @@ export function useCspDiagnostics(): DiagnosticResult[] {
 
     const pageOrigin = globalThis.location?.origin;
 
-    // Check connect-src for API endpoint
-    const apiCheck = checkCspConnectSrc(cspContent, apiEndpoint, pageOrigin);
-    if (apiCheck) {
-      results.push(apiCheck);
-    } else if (apiEndpoint) {
-      results.push({
-        id: 'csp-connect-src-api-passed',
-        severity: 'passed',
-        titleKey: 'diagnostics.CspApiEndpointAllowed',
-        descriptionKey: 'diagnostics.CspApiEndpointAllowedDesc',
-        interpolationValues: { endpoint: apiEndpoint },
-      });
+    // Check connect-src for API endpoint (skip placeholders)
+    if (!isPlaceholder(apiEndpoint)) {
+      const apiCheck = checkCspConnectSrc(cspContent, apiEndpoint, pageOrigin);
+      if (apiCheck) {
+        results.push(apiCheck);
+      } else if (apiEndpoint) {
+        results.push({
+          id: 'csp-connect-src-api-passed',
+          severity: 'passed',
+          titleKey: 'diagnostics.CspApiEndpointAllowed',
+          descriptionKey: 'diagnostics.CspApiEndpointAllowedDesc',
+          interpolationValues: { endpoint: apiEndpoint },
+        });
+      }
     }
 
-    // Check connect-src for WebSocket proxy
-    const wsCheck = checkCspWsConnectSrc(cspContent, proxyUrl, pageOrigin);
-    if (wsCheck) {
-      results.push(wsCheck);
-    } else if (proxyUrl) {
-      results.push({
-        id: 'csp-connect-src-ws-passed',
-        severity: 'passed',
-        titleKey: 'diagnostics.CspWsProxyAllowed',
-        descriptionKey: 'diagnostics.CspWsProxyAllowedDesc',
-        interpolationValues: { proxyUrl },
-      });
+    // Check connect-src for WebSocket proxy (skip placeholders)
+    if (!isPlaceholder(proxyUrl)) {
+      const wsCheck = checkCspWsConnectSrc(cspContent, proxyUrl, pageOrigin);
+      if (wsCheck) {
+        results.push(wsCheck);
+      } else if (proxyUrl) {
+        results.push({
+          id: 'csp-connect-src-ws-passed',
+          severity: 'passed',
+          titleKey: 'diagnostics.CspWsProxyAllowed',
+          descriptionKey: 'diagnostics.CspWsProxyAllowedDesc',
+          interpolationValues: { proxyUrl },
+        });
+      }
     }
 
     // Check script-src allows loading app scripts

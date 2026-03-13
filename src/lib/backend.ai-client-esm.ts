@@ -890,6 +890,8 @@ class Client {
     if (this.isManagerVersionCompatibleWith('26.2.0')) {
       this._features['fair-share-scheduling'] = true;
       this._features['session-scheduling-history'] = true;
+      this._features['export-csv'] = true;
+      this._features['bulk-create-user'] = true;
     }
   }
 

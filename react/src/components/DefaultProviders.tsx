@@ -115,12 +115,6 @@ export interface DefaultProvidersProps extends ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
-let isDebugModeByParam = false;
-if (process.env.NODE_ENV === 'development') {
-  const urlParams = new URLSearchParams(window.location.search);
-  isDebugModeByParam = urlParams.get('debug') === 'true';
-}
-
 if (typeof window !== 'undefined') {
   window.switchLanguage = (lang: string) => {
     window.dispatchEvent(new CustomEvent('langChanged', { detail: { lang } }));
@@ -134,8 +128,11 @@ i18n
     type: 'postProcessor',
     name: 'copyableI18nKey',
     process: function (value: any, key: any, _options: any, _translator: any) {
+      const isDebugByUrlParam =
+        process.env.NODE_ENV === 'development' &&
+        new URLSearchParams(window.location.search).get('debug') === 'true';
       // @ts-ignore
-      if (globalThis?.backendaiwebui?.debug || isDebugModeByParam) {
+      if (globalThis?.backendaiwebui?.debug === true || isDebugByUrlParam) {
         // key can be an array in i18next, convert to string for copy functionality
         const keyString = Array.isArray(key) ? key[0] : String(key);
         return (

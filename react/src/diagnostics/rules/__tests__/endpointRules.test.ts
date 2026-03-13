@@ -2,11 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  checkEndpointReachability,
-  checkProxyReachability,
-  checkSslMismatch,
-} from '../endpointRules';
+import { checkEndpointReachability, checkSslMismatch } from '../endpointRules';
 import { describe, expect, it } from '@jest/globals';
 
 describe('checkSslMismatch', () => {
@@ -79,33 +75,6 @@ describe('checkEndpointReachability', () => {
 
   it('should use default error message when none provided', () => {
     const result = checkEndpointReachability('https://api.example.com', false);
-    expect(result?.interpolationValues?.error).toBe('Unknown error');
-  });
-});
-
-describe('checkProxyReachability', () => {
-  it('should return null when proxy URL is empty', () => {
-    expect(checkProxyReachability('', false)).toBeNull();
-  });
-
-  it('should return null when proxy is reachable', () => {
-    expect(checkProxyReachability('http://proxy.example.com', true)).toBeNull();
-  });
-
-  it('should return critical when proxy is unreachable', () => {
-    const result = checkProxyReachability(
-      'http://proxy.example.com',
-      false,
-      'Connection refused',
-    );
-    expect(result).not.toBeNull();
-    expect(result?.severity).toBe('critical');
-    expect(result?.id).toBe('proxy-unreachable');
-    expect(result?.interpolationValues?.error).toBe('Connection refused');
-  });
-
-  it('should use default error message when none provided', () => {
-    const result = checkProxyReachability('http://proxy.example.com', false);
     expect(result?.interpolationValues?.error).toBe('Unknown error');
   });
 });
