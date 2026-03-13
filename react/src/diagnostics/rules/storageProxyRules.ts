@@ -4,6 +4,8 @@
  */
 import type { DiagnosticResult } from '../../types/diagnostics';
 
+export const DEFAULT_STORAGE_WARNING_THRESHOLD = 90;
+
 export interface StorageVolumeInfo {
   id: string;
   backend: string;
@@ -18,7 +20,7 @@ export interface StorageVolumeInfo {
  */
 export function checkStorageVolumeHealth(
   volume: StorageVolumeInfo,
-  threshold = 90,
+  threshold = DEFAULT_STORAGE_WARNING_THRESHOLD,
 ): DiagnosticResult | null {
   if (
     !volume.usage ||
