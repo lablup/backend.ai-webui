@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { isPlaceholder } from '../diagnostics/rules/configRules';
 import {
   checkCspConnectSrc,
+  checkCspFrameSrc,
   checkCspScriptSrc,
   checkCspStyleSrc,
   checkCspWsConnectSrc,
@@ -106,6 +107,27 @@ export function useCspDiagnostics(): DiagnosticResult[] {
         titleKey: 'diagnostics.CspStyleSrcPassed',
         descriptionKey: 'diagnostics.CspStyleSrcPassedDesc',
       });
+    }
+
+    // Check frame-src allows API endpoint for iframe embedding (skip placeholders)
+    if (!isPlaceholder(apiEndpoint)) {
+      const frameSrcCheck = checkCspFrameSrc(
+        cspContent,
+        apiEndpoint,
+        pageOrigin,
+      );
+      if (frameSrcCheck) {
+        results.push(frameSrcCheck);
+      } else if (apiEndpoint) {
+        results.push({
+          id: 'csp-frame-src-passed',
+          severity: 'passed',
+          category: 'csp',
+          titleKey: 'diagnostics.CspFrameSrcPassed',
+          descriptionKey: 'diagnostics.CspFrameSrcPassedDesc',
+          interpolationValues: { endpoint: apiEndpoint },
+        });
+      }
     }
 
     return results;
