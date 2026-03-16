@@ -44,7 +44,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 0 | ❌ 0% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **319** | **160** | **50%** |
+| **Total** | | **319** | **163** | **51%** |
 
 ---
 

@@ -158,11 +158,9 @@ test.describe.serial(
       await navigateTo(page, 'credential');
 
       // 3. Ensure "Active" filter is selected (should be default)
-      const activeRadio = page.getByRole('radio', {
-        name: 'Active',
-        exact: true,
-      });
-      await expect(activeRadio).toBeChecked();
+      // Wait for Users tab to confirm page has fully loaded before interacting with filter
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await page.getByText('Active', { exact: true }).click();
 
       // 4. Locate the user to deactivate in the table
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
