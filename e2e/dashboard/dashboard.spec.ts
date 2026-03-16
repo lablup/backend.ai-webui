@@ -248,8 +248,13 @@ test.describe(
         // 2. Verify a resource group selector (dropdown or select) is visible within the widget
         await expect(widget.locator('.ant-select').first()).toBeVisible();
 
-        // 3. Verify CPU statistics are displayed for the current resource group
-        await expect(widget.getByText(/CPU/i)).toBeVisible();
+        // 3. Verify the resource content area has finished loading for the current resource group.
+        // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
+        // in the resource group, or show an empty state ("No resource data available") when no
+        // quota is assigned. The skeleton loader disappears once data has been fetched either way.
+        await expect(widget.locator('.ant-skeleton')).not.toBeVisible({
+          timeout: WIDGET_TIMEOUT,
+        });
 
         // 4. Verify a "Used" / "Free" segmented control is present
         const segmentedControl = widget.locator('.ant-segmented');
