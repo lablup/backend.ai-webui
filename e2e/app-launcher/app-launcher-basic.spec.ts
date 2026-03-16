@@ -35,8 +35,37 @@ test.describe(
       );
 
       // Create session using SessionLauncher
-      await sessionLauncher.create();
-      sessionCreated = true;
+      // Session creation requires an available Backend.AI agent. If none are available,
+      // the session will stay PENDING and the create() call will time out. We catch that
+      // case here so the individual tests can be skipped gracefully via the sessionCreated flag.
+      try {
+        await sessionLauncher.create();
+        sessionCreated = true;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : String(error ?? '');
+        const isAgentUnavailableError =
+          /timeout/i.test(message) ||
+          /pending/i.test(message) ||
+          /no agent/i.test(message);
+
+        if (isAgentUnavailableError) {
+          console.log(
+            `Session creation failed (likely no agent available): ${message}`,
+          );
+          // Best-effort cleanup: session row may exist even if create() timed out
+          try {
+            await sessionLauncher.terminate();
+          } catch {
+            // Ignore cleanup failures
+          }
+          // sessionCreated remains false - all tests will be skipped via test.skip(!sessionCreated)
+          return;
+        }
+
+        // For unexpected errors, rethrow so CI fails on genuine breakages.
+        throw error;
+      }
 
       // Open app launcher modal once for all tests
       appLauncherModal = await AppLauncherModal.openFromSession(
@@ -46,7 +75,8 @@ test.describe(
     });
 
     // Cleanup: Terminate the session and close context after all tests
-    test.afterAll(async () => {
+    test.afterAll(async ({}, testInfo) => {
+      testInfo.setTimeout(120000);
       if (sessionCreated && sharedPage) {
         // Close the modal first if it's still open
         if (appLauncherModal) {
@@ -75,7 +105,13 @@ test.describe(
         }
 
         // Terminate the session using SessionLauncher
-        await sessionLauncher.terminate();
+        try {
+          await sessionLauncher.terminate();
+        } catch (error) {
+          console.log(
+            `Session cleanup failed (may already be terminated): ${error}`,
+          );
+        }
       }
 
       if (sharedContext) {

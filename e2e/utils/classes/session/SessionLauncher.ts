@@ -42,7 +42,7 @@ export interface SessionLauncherOptions {
 const DEFAULT_OPTIONS: Required<SessionLauncherOptions> = {
   sessionName: '',
   sessionType: 'interactive',
-  image: '',
+  image: process.env.E2E_DEFAULT_IMAGE || '',
   resourceGroup: 'default',
   resourcePreset: 'minimum',
   batchCommand: '',
@@ -430,12 +430,15 @@ export class SessionLauncher {
     // Step 7: Close the drawer
     await this.closeDrawer(sessionDetailDrawer);
 
-    // Step 8: Wait for TERMINATED status
+    // Step 8: Wait for session row to disappear from the current (Running) view.
+    // After termination is initiated, the session transitions to TERMINATING/TERMINATED
+    // and is moved to the "Finished" tab, so it will no longer be visible in the
+    // "Running" tab. Waiting for the row to be hidden is more reliable than checking
+    // for a specific status text that may appear on a different tab.
     const updatedSessionRow = this.page
       .locator('tr')
       .filter({ hasText: this.options.sessionName });
-    const terminatedStatus = updatedSessionRow.getByText('TERMINATED');
-    await expect(terminatedStatus).toBeVisible({ timeout: 20000 });
+    await expect(updatedSessionRow).not.toBeVisible({ timeout: 60000 });
   }
 
   /**
@@ -528,18 +531,73 @@ export class SessionLauncher {
 
   /**
    * Select the container image
+   *
+   * The image selection UI has two separate dropdowns:
+   * 1. Environment dropdown (combobox "Environments / Version"): options show display name
+   *    e.g., "Python" (standard namespaces like 'stable', 'lablup', 'cloud' are not shown as tags)
+   *    e.g., "Python [multiarch]" (non-standard namespaces are shown as purple tags)
+   * 2. Version dropdown (#environments_version): options show "3.9 | x86_64 | Ubuntu 20.04"
+   *
+   * For image strings like 'cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64':
+   * - imageKey: 'python' (last segment before ':')
+   * - namespacePrefix: 'stable' (segments between registry and imageKey)
+   * - versionMajorMinor: '3.13' (tag before first '-')
+   *
+   * Note: Standard namespaces ('lablup', 'cloud', 'stable') are not shown in the option text.
+   * Non-standard namespaces are shown as purple tags.
    */
   private async selectImage(): Promise<void> {
+    const colonIndex = this.options.image.lastIndexOf(':');
+    const environmentPath =
+      colonIndex >= 0
+        ? this.options.image.substring(0, colonIndex)
+        : this.options.image;
+    const imageTag =
+      colonIndex >= 0 ? this.options.image.substring(colonIndex + 1) : '';
+
+    const pathSegments = environmentPath.split('/');
+    const imageKey = pathSegments[pathSegments.length - 1]; // e.g., 'python'
+    const namespacePrefix =
+      pathSegments.length > 2
+        ? pathSegments.slice(1, pathSegments.length - 1).join('/')
+        : '';
+
+    // Standard namespaces that are hidden from option display text
+    const hiddenNamespaces = ['lablup', 'cloud', 'stable'];
+    const isNamespaceHidden =
+      !namespacePrefix || hiddenNamespaces.includes(namespacePrefix);
+
+    // Step 1: Select the environment from the first dropdown
+    // The combobox label is "Environments / Version" with a Copy button appended
     const environmentsSelect = this.page
       .getByRole('combobox', { name: 'Environments' })
       .first();
     await environmentsSelect.click();
-    await environmentsSelect.fill(this.options.image);
+    await environmentsSelect.fill(imageKey);
 
-    const imageOption = this.page
+    // For standard/hidden namespaces, options show only displayName (e.g., "Python")
+    // For non-standard namespaces, options show displayName + namespace tag (e.g., "Python [multiarch]")
+    const envOption = this.page
       .getByRole('option')
-      .filter({ hasText: this.options.image });
-    await imageOption.click();
+      .filter({
+        hasText: new RegExp(
+          isNamespaceHidden ? imageKey : namespacePrefix,
+          'i',
+        ),
+      })
+      .first();
+    await envOption.click();
+
+    // Step 2: Select the version from the second dropdown
+    const versionMajorMinor = imageTag.split('-')[0]; // e.g., '3.13'
+    if (versionMajorMinor) {
+      await this.page.locator('#environments_version').click();
+      const versionOption = this.page
+        .getByRole('option')
+        .filter({ hasText: versionMajorMinor })
+        .first();
+      await versionOption.click();
+    }
   }
 
   /**
