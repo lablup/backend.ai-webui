@@ -216,7 +216,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
         }}
         onOpenChange={(open) => {
           // A null or undefined value doesn't have a unit info, so we need to set the value before setting the unit.
-          if ((open && value === null) || value === undefined) {
+          if (open && (value === null || value === undefined)) {
             setValue(`0${unit}`);
           }
         }}
