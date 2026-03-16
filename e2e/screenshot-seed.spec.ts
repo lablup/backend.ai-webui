@@ -3,7 +3,7 @@
 import { loginAsAdmin } from './utils/test-util';
 import { test } from '@playwright/test';
 
-test.describe.skip('Screenshot seed', () => {
+test.describe('Screenshot seed', () => {
   test.beforeEach(async ({ page, request }) => {
     await loginAsAdmin(page, request);
   });
