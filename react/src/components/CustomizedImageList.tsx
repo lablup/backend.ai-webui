@@ -13,13 +13,16 @@ import { getImageFullName, localeCompare } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
+  useWebUINavigate,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import {
   DeleteOutlined,
+  PlayCircleOutlined,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -50,6 +53,7 @@ const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
@@ -243,6 +247,22 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
+          <Button
+            type="text"
+            icon={<PlayCircleOutlined />}
+            title={t('start.button.StartSession')}
+            onClick={() => {
+              const launcherValue: DeepPartial<SessionLauncherFormValue> = {
+                environments: {
+                  version: getImageFullName(row) || '',
+                },
+              };
+              const params = new URLSearchParams();
+              params.set('step', '0');
+              params.set('formValues', JSON.stringify(launcherValue));
+              webuiNavigate(`/session/start?${params.toString()}`);
+            }}
+          />
           <Button
             type="text"
             icon={<DeleteOutlined />}
