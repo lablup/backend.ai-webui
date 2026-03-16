@@ -82,7 +82,7 @@
     "zod": "^4.3.6"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "NODE_OPTIONS='--max-old-space-size=4096' craco start",
     "build": "pnpm run build:only && cp -r ./build/* ../build/web/",
     "build:only": "pnpm run relay && craco build",
     "test": "NODE_OPTIONS='$NODE_OPTIONS --no-deprecation --experimental-vm-modules' jest",
