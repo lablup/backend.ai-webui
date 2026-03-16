@@ -2548,6 +2548,7 @@
       "Logs": "Nhật ký",
       "LogsErrors": "Nhật ký / Lỗi",
       "Maintenance": "Bảo trì",
+      "MatchCount": "{{current}} / {{total}} kết quả",
       "Matches": "kết quả",
       "MyAccount": "Thay đổi thông tin người dùng",
       "MyAccountInformation": "Thay đổi thông tin người dùng",

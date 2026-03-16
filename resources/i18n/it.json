@@ -2546,6 +2546,7 @@
       "Logs": "Registri",
       "LogsErrors": "Registri/Errori",
       "Maintenance": "Manutenzione",
+      "MatchCount": "{{current}} / {{total}} corrispondenze",
       "Matches": "corrispondenze",
       "MyAccount": "Modifica informazioni utente",
       "MyAccountInformation": "Modifica informazioni utente User",

@@ -2550,6 +2550,7 @@
       "Logs": "日誌",
       "LogsErrors": "日誌/錯誤",
       "Maintenance": "維護",
+      "MatchCount": "{{current}} / {{total}} 個符合",
       "Matches": "個符合",
       "MyAccount": "更改用戶信息",
       "MyAccountInformation": "更改用戶信息",

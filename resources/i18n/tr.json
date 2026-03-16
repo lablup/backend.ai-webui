@@ -2546,6 +2546,7 @@
       "Logs": "Kütükler",
       "LogsErrors": "Günlükler / Hatalar",
       "Maintenance": "Bakım",
+      "MatchCount": "{{current}} / {{total}} eşleşme",
       "Matches": "eşleşme",
       "MyAccount": "Kullanıcı Bilgilerini Değiştir",
       "MyAccountInformation": "Kullanıcı Bilgilerini Değiştir",

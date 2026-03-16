@@ -2550,6 +2550,7 @@
       "Logs": "로그",
       "LogsErrors": "로그 / 에러기록",
       "Maintenance": "관리",
+      "MatchCount": "{{current}} / {{total}}개 일치",
       "Matches": "개 일치",
       "MyAccount": "사용자 정보 변경",
       "MyAccountInformation": "사용자 정보 변경",

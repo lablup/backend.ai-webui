@@ -16,7 +16,7 @@ import {
   UpOutlined,
 } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
-import { Button, Input, Spin, Tooltip, theme } from 'antd';
+import { Button, Input, type InputRef, Spin, Tooltip, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import React, {
@@ -134,8 +134,6 @@ function rehypeSearchHighlight(query: string) {
               tagName: 'mark',
               properties: {
                 'data-search-match': String(matchCounter.value),
-                style:
-                  'background-color: #fde68a; border-radius: 2px; padding: 0 1px;',
               },
               children: [
                 { type: 'text', value: text.slice(idx, idx + query.length) },
@@ -290,6 +288,13 @@ const useStyles = createStyles(({ token, css }) => ({
     }
     mark[data-search-match] {
       scroll-margin-top: ${token.marginLG}px;
+      background-color: ${token.colorWarningBg};
+      border-radius: ${token.borderRadiusXS}px;
+      padding: 0 1px;
+    }
+    mark[data-search-match].active-match {
+      background-color: ${token.colorWarning};
+      color: ${token.colorWhite};
     }
   `,
   tocSidebar: css`
@@ -440,7 +445,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
   const docsBodyRef = useRef<HTMLDivElement>(null);
   const tocActiveRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const floatingSearchInputRef = useRef<HTMLInputElement>(null);
+  const floatingSearchInputRef = useRef<InputRef>(null);
 
   const { navItems, currentIndex, prevItem, nextItem } = useDocNavigation(
     docLang,
@@ -567,14 +572,9 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
 
     const marks = container.querySelectorAll('mark[data-search-match]');
     marks.forEach((mark, i) => {
-      const el = mark as HTMLElement;
+      mark.classList.toggle('active-match', i === activeMatchIndex);
       if (i === activeMatchIndex) {
-        el.style.backgroundColor = '#f97316';
-        el.style.color = 'white';
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        el.style.backgroundColor = '#fde68a';
-        el.style.color = 'inherit';
+        mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
   }, [
@@ -621,7 +621,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
         setShowFloatingSearch(true);
         requestAnimationFrame(() => {
           floatingSearchInputRef.current?.focus();
-          floatingSearchInputRef.current?.select();
+          floatingSearchInputRef.current?.select?.();
         });
         return;
       }
@@ -742,6 +742,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             styles.tocSidebar,
             tocCollapsed && styles.tocSidebarCollapsed,
           )}
+          inert={tocCollapsed || undefined}
         >
           {/* Fixed search area */}
           <div className={styles.tocSearchArea}>
@@ -891,7 +892,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
           {showFloatingSearch ? (
             <div className={styles.floatingSearchBar}>
               <Input
-                ref={floatingSearchInputRef as React.Ref<any>}
+                ref={floatingSearchInputRef}
                 placeholder={t('webui.menu.SearchDocs')}
                 prefix={<SearchOutlined />}
                 size="small"
@@ -904,7 +905,10 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                 <>
                   <span className={styles.matchNavInfo}>
                     {currentDocMatchCount > 0
-                      ? `${activeMatchIndex + 1}/${currentDocMatchCount}`
+                      ? t('webui.menu.MatchCount', {
+                          current: activeMatchIndex + 1,
+                          total: currentDocMatchCount,
+                        })
                       : t('webui.menu.NoSearchResults')}
                   </span>
                   <Button
@@ -1017,10 +1021,9 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                         ? filePath.substring(0, filePath.lastIndexOf('/') + 1)
                         : '';
                       // Normalize the path (handle ../ and ./)
-                      const resolvedPath = new URL(
-                        href,
-                        `http://d/${currentDir}`,
-                      ).pathname.slice(1); // strip leading /
+                      const parsed = new URL(href, `http://d/${currentDir}`);
+                      const resolvedPath =
+                        parsed.pathname.slice(1) + (parsed.hash || ''); // preserve #anchor
                       return (
                         <a
                           {...props}
@@ -1068,7 +1071,10 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             >
               <span className={styles.matchNavInfo}>
                 {currentDocMatchCount > 0
-                  ? `${activeMatchIndex + 1} / ${currentDocMatchCount} ${t('webui.menu.Matches')}`
+                  ? t('webui.menu.MatchCount', {
+                      current: activeMatchIndex + 1,
+                      total: currentDocMatchCount,
+                    })
                   : t('webui.menu.NoSearchResults')}
               </span>
               <Button

@@ -2546,6 +2546,7 @@
       "Logs": "Lokit",
       "LogsErrors": "Lokit / virheet",
       "Maintenance": "Huolto",
+      "MatchCount": "{{current}} / {{total}} osumaa",
       "Matches": "osumaa",
       "MyAccount": "Oma tili",
       "MyAccountInformation": "Tilini tiedot",

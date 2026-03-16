@@ -2546,6 +2546,7 @@
       "Logs": "Κούτσουρα",
       "LogsErrors": "Αρχεία καταγραφής / σφάλματα",
       "Maintenance": "Συντήρηση",
+      "MatchCount": "{{current}} / {{total}} αντιστοιχίες",
       "Matches": "αντιστοιχίες",
       "MyAccount": "Αλλαγή πληροφοριών χρήστη",
       "MyAccountInformation": "Αλλαγή πληροφοριών χρήστη",

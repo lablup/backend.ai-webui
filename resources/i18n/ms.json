@@ -2546,6 +2546,7 @@
       "Logs": "Log",
       "LogsErrors": "Log / Kesalahan",
       "Maintenance": "Penyelenggaraan",
+      "MatchCount": "{{current}} / {{total}} padanan",
       "Matches": "padanan",
       "MyAccount": "Tukar Maklumat Pengguna",
       "MyAccountInformation": "Tukar Maklumat Pengguna",

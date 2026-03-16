@@ -2548,6 +2548,7 @@
       "Logs": "Бүртгэл",
       "LogsErrors": "Лог / Алдаа",
       "Maintenance": "Техникийн дэмжлэг",
+      "MatchCount": "{{current}} / {{total}} тохирсон",
       "Matches": "тохирсон",
       "MyAccount": "Хэрэглэгчийн мэдээллийг өөрчлөх",
       "MyAccountInformation": "Хэрэглэгчийн мэдээллийг өөрчлөх",

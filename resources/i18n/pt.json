@@ -2548,6 +2548,7 @@
       "Logs": "Histórico",
       "LogsErrors": "Logs / erros",
       "Maintenance": "Manutenção",
+      "MatchCount": "{{current}} / {{total}} correspondências",
       "Matches": "correspondências",
       "MyAccount": "Alterar informações do usuário",
       "MyAccountInformation": "Alterar as informações do usuário",

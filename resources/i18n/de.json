@@ -2548,6 +2548,7 @@
       "Logs": "Protokolle",
       "LogsErrors": "Protokolle / Fehler",
       "Maintenance": "Instandhaltung",
+      "MatchCount": "{{current}} / {{total}} Treffer",
       "Matches": "Treffer",
       "MyAccount": "Benutzerinformationen ändern",
       "MyAccountInformation": "Benutzerinformationen ändern",

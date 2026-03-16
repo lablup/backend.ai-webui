@@ -72,8 +72,7 @@ async function fetchWithConcurrencyLimit(
 
 /**
  * Find the doc path containing a given anchor ID (e.g., "set-preopen-ports").
- * Searches the module-level raw-markdown cache for `<a id="anchorId">` or
- * headings that would produce the given slug.
+ * Searches the module-level raw-markdown cache for `<a id="anchorId">` tags.
  */
 export function findDocPathByAnchor(anchorId: string): string | null {
   const pattern = new RegExp(
@@ -101,6 +100,7 @@ export function useDocSearch(
   const [rawQuery, setRawQuery] = useState('');
   const [query, setQuery] = useState('');
   const [indexing, setIndexing] = useState(false);
+  const [cacheRevision, setCacheRevision] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefetchingRef = useRef(false);
@@ -148,13 +148,14 @@ export function useDocSearch(
             const text = await res.text();
             docCache.set(item.path, cleanMarkdown(text));
           } catch {
-            // Skip documents that fail to fetch
+            // Failed to fetch this document — skip indexing it
           }
         });
 
       fetchWithConcurrencyLimit(tasks, CONCURRENT_FETCHES).finally(() => {
         setIndexing(false);
         prefetchingRef.current = false;
+        setCacheRevision((prev) => prev + 1);
       });
     }, PREFETCH_DELAY_MS);
 
@@ -199,7 +200,8 @@ export function useDocSearch(
     }
 
     return searchResults;
-  }, [query, modalOpen, navItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, modalOpen, navItems, cacheRevision]);
 
   const totalMatches = results.reduce((sum, r) => sum + r.matchCount, 0);
 

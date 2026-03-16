@@ -2546,6 +2546,7 @@
       "Logs": "Журналы",
       "LogsErrors": "Журналы / ошибки",
       "Maintenance": "Обслуживание",
+      "MatchCount": "{{current}} / {{total}} совпадений",
       "Matches": "совпадений",
       "MyAccount": "Изменить информацию о пользователе",
       "MyAccountInformation": "Изменить информацию о пользователе",

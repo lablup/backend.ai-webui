@@ -2546,6 +2546,7 @@
       "Logs": "Dzienniki",
       "LogsErrors": "Dzienniki / Błędy",
       "Maintenance": "Konserwacja",
+      "MatchCount": "{{current}} / {{total}} dopasowań",
       "Matches": "dopasowań",
       "MyAccount": "Zmień informacje o użytkowniku",
       "MyAccountInformation": "Zmień informacje o użytkowniku",

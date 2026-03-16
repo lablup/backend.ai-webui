@@ -2547,6 +2547,7 @@
       "Logs": "Logs",
       "LogsErrors": "Logs / Errors",
       "Maintenance": "Maintenance",
+      "MatchCount": "{{current}} / {{total}} matches",
       "Matches": "matches",
       "MyAccount": "My Account",
       "MyAccountInformation": "My Account Information",

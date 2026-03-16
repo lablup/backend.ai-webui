@@ -2549,6 +2549,7 @@
       "Logs": "Log",
       "LogsErrors": "Log / Galat",
       "Maintenance": "Pemeliharaan",
+      "MatchCount": "{{current}} / {{total}} kecocokan",
       "Matches": "kecocokan",
       "MyAccount": "Akun Saya",
       "MyAccountInformation": "Informasi Akun Saya",

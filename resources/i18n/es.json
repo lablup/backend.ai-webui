@@ -2546,6 +2546,7 @@
       "Logs": "Registros",
       "LogsErrors": "Registros / Errores",
       "Maintenance": "Mantenimiento",
+      "MatchCount": "{{current}} / {{total}} coincidencias",
       "Matches": "coincidencias",
       "MyAccount": "Mi cuenta",
       "MyAccountInformation": "Información de mi cuenta",
