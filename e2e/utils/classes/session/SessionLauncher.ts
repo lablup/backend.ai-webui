@@ -1,4 +1,4 @@
-import { navigateTo } from '../../test-util';
+import { navigateTo, readConfigToml } from '../../test-util';
 import { getMenuItem } from '../../test-util-antd';
 import { Page, Locator, expect } from '@playwright/test';
 
@@ -42,7 +42,7 @@ export interface SessionLauncherOptions {
 const DEFAULT_OPTIONS: Required<SessionLauncherOptions> = {
   sessionName: '',
   sessionType: 'interactive',
-  image: process.env.E2E_DEFAULT_IMAGE || '',
+  image: '',
   resourceGroup: 'default',
   resourcePreset: 'minimum',
   batchCommand: '',
@@ -269,6 +269,16 @@ export class SessionLauncher {
     // Generate session name if not provided
     if (!this.options.sessionName) {
       this.options.sessionName = this.generateSessionName();
+    }
+
+    // Read default image from config.toml if not explicitly set
+    if (!this.options.image) {
+      try {
+        const config = await readConfigToml(this.page);
+        this.options.image = config?.general?.defaultSessionEnvironment || '';
+      } catch {
+        // config.toml read failed — proceed without default image
+      }
     }
 
     // Step 1: Navigate to session launcher page

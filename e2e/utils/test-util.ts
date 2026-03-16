@@ -789,6 +789,58 @@ export async function modifyConfigToml(
 }
 
 /**
+ * Read and parse the webui config.toml file from the server.
+ * Uses the same caching mechanism as modifyConfigToml.
+ *
+ * @param page - The Playwright page instance
+ * @returns The parsed config.toml object
+ */
+export async function readConfigToml(page: Page): Promise<any> {
+  let config = configCache.get(page);
+  if (config) return config;
+
+  const browser = page.context().browser();
+  if (!browser) {
+    throw new Error('Browser instance not available');
+  }
+
+  const tempContext = await browser.newContext();
+  const tempPage = await tempContext.newPage();
+
+  const maxRetries = 3;
+  let lastError: unknown = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await tempPage.goto(webuiEndpoint, { waitUntil: 'commit' });
+      const configToml = await tempPage.evaluate(async () => {
+        const res = await fetch('/config.toml', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      });
+      config = TOML.parse(configToml);
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        await tempPage.waitForTimeout(500);
+      }
+    }
+  }
+
+  await tempContext.close();
+
+  if (!config) {
+    throw new Error(
+      `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
+    );
+  }
+
+  configCache.set(page, config);
+  return config;
+}
+
+/**
  * Modify specific properties in the webui theme.json file
  *
  * @param page - The Playwright page instance
