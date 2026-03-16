@@ -200,6 +200,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   ]}
                 >
                   <BAIDynamicUnitInputNumber
+                    defaultUnit="g"
                     min={min}
                     size="small"
                     addonPrefix={'SHM'}

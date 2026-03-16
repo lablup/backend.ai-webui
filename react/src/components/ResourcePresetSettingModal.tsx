@@ -365,7 +365,10 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     ]}
                   >
                     {_.includes(resourceSlotKey, 'mem') ? (
-                      <BAIDynamicUnitInputNumber style={{ width: '100%' }} />
+                      <BAIDynamicUnitInputNumber
+                        style={{ width: '100%' }}
+                        defaultUnit="g"
+                      />
                     ) : (
                       <InputNumber
                         stringMode
@@ -408,7 +411,11 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               }),
             ]}
           >
-            <BAIDynamicUnitInputNumber max="7.999p" style={{ width: '100%' }} />
+            <BAIDynamicUnitInputNumber
+              max="7.999p"
+              style={{ width: '100%' }}
+              defaultUnit="g"
+            />
           </Form.Item>
         </Form.Item>
       </Form>

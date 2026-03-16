@@ -10,11 +10,10 @@ import {
 import _ from 'lodash';
 import React, { RefObject, useEffect, useRef } from 'react';
 
-export interface BAIDynamicUnitInputNumberProps
-  extends Omit<
-    InputNumberProps,
-    'step' | 'max' | 'min' | 'value' | 'onChange'
-  > {
+export interface BAIDynamicUnitInputNumberProps extends Omit<
+  InputNumberProps,
+  'step' | 'max' | 'min' | 'value' | 'onChange'
+> {
   dynamicSteps?: number[];
   disableAutoUnit?: boolean;
   max?: string;
@@ -25,6 +24,7 @@ export interface BAIDynamicUnitInputNumberProps
   onChange?: (value: string) => void;
   addonPrefix?: React.ReactNode;
   addonSuffix?: React.ReactNode;
+  defaultUnit?: string;
   ref?: RefObject<HTMLInputElement | null>;
 }
 
@@ -37,12 +37,13 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   roundStep,
   addonPrefix,
   addonSuffix,
+  defaultUnit,
   ...inputNumberProps
 }) => {
   const [value, setValue] = useControllableValue<string | null | undefined>(
     inputNumberProps,
     {
-      defaultValue: '0g',
+      defaultValue: undefined,
     },
   );
   const [numValue, _unitFromValue] =
@@ -50,7 +51,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       ? [null, null]
       : parseValueWithUnit(value);
   const previousUnit = usePrevious(_unitFromValue);
-  const unit = _unitFromValue || previousUnit || units[0];
+  const unit = _unitFromValue || previousUnit || defaultUnit || units[0];
 
   const [minNumValue, minUnit] = parseValueWithUnit(min);
   const [maxNumValue, maxUnit] = parseValueWithUnit(max);

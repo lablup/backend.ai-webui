@@ -14,8 +14,7 @@ import type { SliderMarks } from 'antd/es/slider';
 import _ from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 
-export interface BAIDynamicUnitInputNumberWithSliderProps
-  extends BAIDynamicUnitInputNumberProps {
+export interface BAIDynamicUnitInputNumberWithSliderProps extends BAIDynamicUnitInputNumberProps {
   extraMarks?: SliderMarks;
   hideSlider?: boolean;
   warn?: string;
@@ -36,12 +35,13 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
   step = 0.05,
   addonPrefix,
   addonSuffix,
+  defaultUnit,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableValue<string | undefined | null>(
     otherProps,
     {
-      defaultValue: '0g',
+      defaultValue: undefined,
     },
   );
   const { token } = theme.useToken();
@@ -90,6 +90,7 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
           min={min}
           max={max}
           units={units}
+          defaultUnit={defaultUnit}
           // set value to 0mib when min value overs max value
           value={value}
           onChange={(nextValue) => {
