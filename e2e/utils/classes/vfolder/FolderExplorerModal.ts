@@ -108,6 +108,32 @@ export class FolderExplorerModal {
     return closeButton;
   }
 
+  async changePermission(
+    targetLabel: 'Read only' | 'Read & Write',
+  ): Promise<void> {
+    // Find the Description row that contains "Mount Permission" label,
+    // then locate the Select within that row
+    const permissionRow = this.modal
+      .locator('.ant-descriptions-row')
+      .filter({ hasText: 'Mount Permission' });
+    await expect(permissionRow).toBeVisible({ timeout: 10000 });
+
+    const permissionSelect = permissionRow.locator('.ant-select');
+    await permissionSelect.click();
+
+    // Wait for dropdown to appear and select the target option
+    const dropdown = this.page.locator('.ant-select-dropdown').last();
+    await expect(dropdown).toBeVisible();
+    await dropdown.getByText(targetLabel, { exact: true }).click();
+
+    // Verify success message
+    const notification = this.page.getByRole('alert').filter({
+      hasText: /Permission updated/i,
+    });
+    await expect(notification).toBeVisible({ timeout: 10000 });
+    await expect(notification).toBeHidden({ timeout: 10000 });
+  }
+
   async verifyFileVisible(fileName: string): Promise<void> {
     await expect(
       this.modal.getByRole('cell').filter({ hasText: fileName }),

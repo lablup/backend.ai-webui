@@ -291,7 +291,10 @@
 | File upload (button) | ✅ | `User can upload a single/multiple files via Upload button` |
 | File upload (drag & drop) | ✅ | `User can upload a file via drag and drop` |
 | File upload (duplicate handling) | ✅ | `User sees duplicate confirmation` / `User can cancel duplicate` |
-| File upload (permissions) | ✅ | `User cannot upload files to read-only VFolder` |
+| File upload (permissions - RW create) | ✅ | `User can create RW folder and verify permission` |
+| File upload (permissions - RO create) | ✅ | `User can create RO folder and verify permission` |
+| File upload (permissions - RW→RO change) | 🚧 | FIXME: `User can change permission from RW to RO` |
+| File upload (permissions - RO→RW change) | 🚧 | FIXME: `User can change permission from RO to RW` |
 | File upload (subdirectory) | ✅ | `User can upload a file to a subdirectory` |
 | Explorer modal (CRUD) | ✅ | `User can create folders and upload files` |
 | Explorer modal (read-only) | ✅ | `User can view files but cannot upload to read-only` |
