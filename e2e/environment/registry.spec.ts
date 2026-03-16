@@ -551,10 +551,11 @@ test.describe(
       await confirmDialog.getByRole('button', { name: 'Cancel' }).click();
       await expect(confirmDialog).toBeHidden();
 
-      // Registry row is still present
+      // Registry row is still present (use first() since multiple rows may share the same registry name)
       const rowAfterCancel = page
         .locator('.ant-table-tbody .ant-table-row')
-        .filter({ hasText: registryName! });
+        .filter({ hasText: registryName! })
+        .first();
       await expect(rowAfterCancel).toBeVisible();
     });
 
