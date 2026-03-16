@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-10
+> **Last Updated:** 2026-03-13
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -1019,3 +1019,12 @@ When adding new E2E tests:
 4. Update the "Coverage Matrix" quick reference
 5. Remove completed items from "Priority Recommendations"
 6. Update the "Last Updated" date at the top
+
+---
+
+## Changelog
+
+| Date | Change |
+| ---------- | ------ |
+| 2026-03-13 | Fix strict mode violation in `session-scheduling-history-modal.spec.ts`: scope history button locator to Session Info drawer with `exact: true` to avoid matching React Grab toolbar buttons |
+| 2026-03-10 | Initial report creation |

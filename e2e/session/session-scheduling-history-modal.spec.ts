@@ -83,7 +83,13 @@ test.describe(
      * Returns the modal locator.
      */
     async function openSchedulingHistoryModal(page: Page) {
-      const historyButton = page.getByRole('button', { name: 'history' });
+      // Scope to the Session Info drawer to avoid strict mode violation with the
+      // React Grab toolbar buttons ("Open history", "Copy all history items").
+      const drawer = page.getByRole('dialog', { name: 'Session Info' });
+      const historyButton = drawer.getByRole('button', {
+        name: 'history',
+        exact: true,
+      });
       await expect(historyButton).toBeVisible({ timeout: 5000 });
       await historyButton.click();
       const modal = page.getByRole('dialog', {
@@ -107,8 +113,13 @@ test.describe(
       const statusRow = page.getByRole('row', { name: /Status/ });
       await expect(statusRow).toBeVisible();
 
-      // 3. Verify the "history" button (HistoryOutlined icon) is visible next to the status tag
-      const historyButton = page.getByRole('button', { name: 'history' });
+      // 3. Verify the "history" button (HistoryOutlined icon) is visible next to the status tag.
+      // Scope to the drawer to avoid strict mode violation with React Grab toolbar buttons.
+      const drawer = page.getByRole('dialog', { name: 'Session Info' });
+      const historyButton = drawer.getByRole('button', {
+        name: 'history',
+        exact: true,
+      });
       await expect(historyButton).toBeVisible();
     });
 
