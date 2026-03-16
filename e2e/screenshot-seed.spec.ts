@@ -1,5 +1,5 @@
 // Seed file for Playwright MCP screenshot capture (admin login).
-// It is not an actual E2E test and should be skipped in test runs.
+// It is not an actual E2E test; it provides an authenticated session for Playwright MCP screenshot capture.
 import { loginAsAdmin } from './utils/test-util';
 import { test } from '@playwright/test';
 
