@@ -3,18 +3,30 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDocNavigation } from '../hooks/useDocNavigation';
+import { findDocPathByAnchor, useDocSearch } from '../hooks/useDocSearch';
 import {
+  CloseOutlined,
+  DownOutlined,
   ExportOutlined,
   LeftOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   RightOutlined,
+  SearchOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
-import { Button, Spin, Tooltip, theme } from 'antd';
+import { Button, Input, Spin, Tooltip, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, type BAIModalProps } from 'backend.ai-ui';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
@@ -59,6 +71,131 @@ function parseAdminSubSections(markdownText: string): AdminSubSection[] {
     }
   }
   return sections;
+}
+
+// Minimal HAST node types (inline to avoid dependency on @types/hast)
+interface HastText {
+  type: 'text';
+  value: string;
+}
+interface HastElement {
+  type: 'element';
+  tagName: string;
+  properties?: Record<string, unknown>;
+  children: HastNode[];
+}
+interface HastRoot {
+  type: 'root';
+  children: HastNode[];
+}
+type HastNode = HastText | HastElement | HastRoot | { type: string };
+
+const SKIP_TAGS = new Set(['pre', 'code', 'mark']);
+
+/**
+ * Rehype plugin that wraps matching text in <mark> elements.
+ * Operates on the HAST (HTML AST) so React manages all DOM nodes — no
+ * direct DOM manipulation that would conflict with React's reconciler.
+ */
+function rehypeSearchHighlight(query: string) {
+  const lowerQuery = query.toLowerCase();
+
+  function processNode(node: HastNode, matchCounter: { value: number }): void {
+    if (node.type === 'element') {
+      const el = node as HastElement;
+      if (SKIP_TAGS.has(el.tagName)) return;
+
+      const newChildren: HastNode[] = [];
+      for (const child of el.children) {
+        if (child.type === 'text') {
+          const textNode = child as HastText;
+          const text = textNode.value;
+          const lowerText = text.toLowerCase();
+
+          if (!lowerText.includes(lowerQuery)) {
+            newChildren.push(child);
+            continue;
+          }
+
+          let lastIdx = 0;
+          let searchFrom = 0;
+          while (searchFrom < lowerText.length) {
+            const idx = lowerText.indexOf(lowerQuery, searchFrom);
+            if (idx === -1) break;
+
+            if (idx > lastIdx) {
+              newChildren.push({
+                type: 'text',
+                value: text.slice(lastIdx, idx),
+              });
+            }
+            newChildren.push({
+              type: 'element',
+              tagName: 'mark',
+              properties: {
+                'data-search-match': String(matchCounter.value),
+                style:
+                  'background-color: #fde68a; border-radius: 2px; padding: 0 1px;',
+              },
+              children: [
+                { type: 'text', value: text.slice(idx, idx + query.length) },
+              ],
+            });
+            matchCounter.value++;
+            lastIdx = idx + query.length;
+            searchFrom = idx + 1;
+          }
+          if (lastIdx < text.length) {
+            newChildren.push({ type: 'text', value: text.slice(lastIdx) });
+          }
+        } else {
+          processNode(child, matchCounter);
+          newChildren.push(child);
+        }
+      }
+      el.children = newChildren;
+    } else if (node.type === 'root') {
+      const root = node as HastRoot;
+      for (const child of root.children) {
+        processNode(child, { value: 0 });
+      }
+    }
+  }
+
+  return () => (tree: HastRoot) => {
+    if (!query || query.length < 2) return;
+    const counter = { value: 0 };
+    for (const child of tree.children) {
+      processNode(child, counter);
+    }
+  };
+}
+
+/**
+ * Count the number of case-insensitive substring matches in the rendered markdown.
+ * Used to track currentDocMatchCount for the match navigation bar.
+ */
+function countMatchesInMarkdown(markdown: string, query: string): number {
+  if (!query || query.length < 2) return 0;
+  const lowerQuery = query.toLowerCase();
+  // Strip markdown syntax to approximate the rendered text, matching what rehype processes
+  const text = markdown
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/```[\s\S]*?```/g, '') // skip code blocks
+    .replace(/`[^`]*`/g, '') // skip inline code
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
+    .replace(/<[^>]+>/g, '') // strip HTML tags
+    .toLowerCase();
+  let count = 0;
+  let searchFrom = 0;
+  while (searchFrom < text.length) {
+    const idx = text.indexOf(lowerQuery, searchFrom);
+    if (idx === -1) break;
+    count++;
+    searchFrom = idx + 1;
+  }
+  return count;
 }
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -151,22 +288,35 @@ const useStyles = createStyles(({ token, css }) => ({
     a {
       color: ${token.colorLink};
     }
+    mark[data-search-match] {
+      scroll-margin-top: ${token.marginLG}px;
+    }
   `,
   tocSidebar: css`
     width: ${TOC_WIDTH}px;
     min-width: ${TOC_WIDTH}px;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     border-right: ${token.lineWidth}px solid ${token.colorBorderSecondary};
     background: ${token.colorBgLayout};
-    padding: ${token.paddingSM}px 0;
     transition: all ${token.motionDurationMid};
+    overflow: hidden;
   `,
   tocSidebarCollapsed: css`
     width: 0;
     min-width: 0;
-    padding: 0;
-    overflow: hidden;
     border-right: none;
+  `,
+  tocSearchArea: css`
+    flex-shrink: 0;
+    padding: ${token.paddingSM}px ${token.paddingSM}px 0;
+    border-bottom: ${token.lineWidth}px solid ${token.colorBorderSecondary};
+    background: ${token.colorBgLayout};
+  `,
+  tocList: css`
+    flex: 1;
+    overflow-y: auto;
+    padding: ${token.paddingXS}px 0;
   `,
   tocItem: css`
     display: block;
@@ -217,6 +367,41 @@ const useStyles = createStyles(({ token, css }) => ({
     background: ${token.colorBgElevated};
     flex-shrink: 0;
   `,
+  tocSearchInput: css`
+    margin-bottom: ${token.marginSM}px;
+  `,
+  tocItemDimmed: css`
+    opacity: 0.4;
+  `,
+  matchBadge: css`
+    margin-left: ${token.marginXXS}px;
+    font-size: ${token.fontSizeSM}px;
+    color: ${token.colorTextSecondary};
+  `,
+  floatingSearchBar: css`
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: ${token.marginXS}px;
+    padding: ${token.paddingXS}px ${token.paddingSM}px;
+    background: ${token.colorBgElevated};
+    border: ${token.lineWidth}px solid ${token.colorBorderSecondary};
+    border-top: none;
+    border-radius: 0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px;
+    box-shadow: ${token.boxShadowSecondary};
+    max-width: calc(100% - ${token.paddingMD * 2}px);
+  `,
+  matchNavInfo: css`
+    font-size: ${token.fontSizeSM}px;
+    color: ${token.colorTextSecondary};
+    white-space: nowrap;
+    min-width: 48px;
+    text-align: center;
+  `,
 }));
 
 interface HelpDocumentModalProps extends Omit<
@@ -249,13 +434,52 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
   const [adminSubSections, setAdminSubSections] = useState<AdminSubSection[]>(
     [],
   );
+  const [showFloatingSearch, setShowFloatingSearch] = useState(false);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [activeMatchIndex, setActiveMatchIndex] = useState(0);
   const docsBodyRef = useRef<HTMLDivElement>(null);
   const tocActiveRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const floatingSearchInputRef = useRef<HTMLInputElement>(null);
 
   const { navItems, currentIndex, prevItem, nextItem } = useDocNavigation(
     docLang,
     activeDocPath,
+  );
+
+  const {
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    results: searchResults,
+    getMatchCount,
+  } = useDocSearch(docLang, !!modalProps.open, navItems);
+
+  // Input updates immediately, search query is deferred for smooth typing
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const hasActiveSearch = deferredSearchQuery.length >= 2;
+
+  // Compute current doc match count from markdown text (not DOM)
+  const currentDocMatchCount = useMemo(
+    () => countMatchesInMarkdown(markdown, deferredSearchQuery),
+    [markdown, deferredSearchQuery],
+  );
+
+  // Build the rehype highlight plugin, memoized on deferred query
+  const rehypePlugins = useMemo(
+    () =>
+      hasActiveSearch
+        ? [rehypeRaw, rehypeSearchHighlight(deferredSearchQuery)]
+        : [rehypeRaw],
+    [hasActiveSearch, deferredSearchQuery],
+  );
+
+  // Sync search input value with the hook's query (for controlled input)
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchInputValue(value);
+      setSearchQuery(value);
+    },
+    [setSearchQuery],
   );
 
   // Sync activeDocPath when initial docPath prop changes (route change)
@@ -334,6 +558,97 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
     }
   }, [activeDocPath, modalProps.open, mdURL, anchor, filePath, fetchMarkdown]);
 
+  // Scroll to active match when activeMatchIndex changes
+  useEffect(() => {
+    if (!hasActiveSearch || currentDocMatchCount === 0) return;
+
+    const container = docsBodyRef.current;
+    if (!container) return;
+
+    const marks = container.querySelectorAll('mark[data-search-match]');
+    marks.forEach((mark, i) => {
+      const el = mark as HTMLElement;
+      if (i === activeMatchIndex) {
+        el.style.backgroundColor = '#f97316';
+        el.style.color = 'white';
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        el.style.backgroundColor = '#fde68a';
+        el.style.color = 'inherit';
+      }
+    });
+  }, [
+    activeMatchIndex,
+    hasActiveSearch,
+    currentDocMatchCount,
+    deferredSearchQuery,
+    markdown,
+  ]);
+
+  const navigateMatch = useCallback(
+    (direction: 'next' | 'prev') => {
+      if (currentDocMatchCount === 0) return;
+      setActiveMatchIndex((prev) => {
+        if (direction === 'next') {
+          return (prev + 1) % currentDocMatchCount;
+        }
+        return (prev - 1 + currentDocMatchCount) % currentDocMatchCount;
+      });
+    },
+    [currentDocMatchCount],
+  );
+
+  // Reset active match when query or document changes
+  useEffect(() => {
+    setActiveMatchIndex(0);
+  }, [deferredSearchQuery, activeDocPath]);
+
+  const clearSearch = useCallback(() => {
+    handleSearchChange('');
+    setShowFloatingSearch(false);
+    setActiveMatchIndex(0);
+  }, [handleSearchChange]);
+
+  // Keyboard handler for Ctrl+F and search navigation
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !modalProps.open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowFloatingSearch(true);
+        requestAnimationFrame(() => {
+          floatingSearchInputRef.current?.focus();
+          floatingSearchInputRef.current?.select();
+        });
+        return;
+      }
+      if (e.key === 'Escape' && (showFloatingSearch || hasActiveSearch)) {
+        e.preventDefault();
+        e.stopPropagation();
+        clearSearch();
+        return;
+      }
+      if (showFloatingSearch || hasActiveSearch) {
+        if (e.key === 'Enter' || e.key === 'F3') {
+          e.preventDefault();
+          navigateMatch(e.shiftKey ? 'prev' : 'next');
+        }
+      }
+    };
+
+    container.addEventListener('keydown', handleKeyDown);
+    return () => container.removeEventListener('keydown', handleKeyDown);
+  }, [
+    modalProps.open,
+    showFloatingSearch,
+    hasActiveSearch,
+    navigateMatch,
+    clearSearch,
+  ]);
+
   // Auto-scroll TOC to keep active item visible
   useEffect(() => {
     tocActiveRef.current?.scrollIntoView({ block: 'nearest' });
@@ -341,6 +656,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
 
   const handleNavigate = useCallback((path: string) => {
     setActiveDocPath(path);
+    setActiveMatchIndex(0);
   }, []);
 
   // Compute image base path for url transforms
@@ -389,8 +705,13 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             openFilePath,
           );
           fetchAdminSubSections();
+          // Focus container so Cmd+F is intercepted instead of browser search
+          requestAnimationFrame(() => {
+            containerRef.current?.focus();
+          });
         } else {
           setMarkdown('');
+          clearSearch();
         }
       }}
       styles={{
@@ -407,7 +728,13 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
     >
       <div
         ref={containerRef}
-        style={{ display: 'flex', flex: 1, overflow: 'hidden' }}
+        tabIndex={-1}
+        style={{
+          display: 'flex',
+          flex: 1,
+          overflow: 'hidden',
+          outline: 'none',
+        }}
       >
         {/* TOC Sidebar */}
         <div
@@ -416,93 +743,138 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             tocCollapsed && styles.tocSidebarCollapsed,
           )}
         >
-          {navItems.map((item, idx) => {
-            const isAdminDoc = item.path === ADMIN_DOC_PATH;
+          {/* Fixed search area */}
+          <div className={styles.tocSearchArea}>
+            <Input
+              className={styles.tocSearchInput}
+              placeholder={t('webui.menu.SearchDocs')}
+              prefix={<SearchOutlined />}
+              size="small"
+              allowClear
+              value={searchInputValue}
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+          </div>
+          {/* Scrollable TOC list */}
+          <div className={styles.tocList}>
+            {hasActiveSearch && searchResults.length === 0 ? (
+              <div
+                style={{
+                  padding: `${token.paddingXS}px ${token.paddingMD}px`,
+                  color: token.colorTextSecondary,
+                  fontSize: token.fontSizeSM,
+                }}
+              >
+                {t('webui.menu.NoSearchResults')}
+              </div>
+            ) : null}
+            {navItems.map((item, idx) => {
+              const isAdminDoc = item.path === ADMIN_DOC_PATH;
+              const itemMatchCount = getMatchCount(item.path);
+              const isDimmed = hasActiveSearch && itemMatchCount === 0;
 
-            // Skip admin_menu entry itself — replaced by section header + sub-items
-            if (isAdminDoc) {
-              return (
-                <React.Fragment key={item.path}>
-                  {/* Admin section header */}
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className={styles.tocSectionHeader}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleNavigate(ADMIN_DOC_PATH)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleNavigate(ADMIN_DOC_PATH);
-                      }
-                    }}
-                  >
-                    {t('webui.menu.Administration')}
-                  </div>
-                  {/* Admin sub-sections */}
-                  {adminSubSections.map((sub) => (
+              // Skip admin_menu entry itself — replaced by section header + sub-items
+              if (isAdminDoc) {
+                return (
+                  <React.Fragment key={item.path}>
+                    {/* Admin section header */}
                     <div
-                      key={sub.anchor}
                       role="button"
                       tabIndex={0}
-                      ref={
-                        isInAdminDoc && activeAnchor === sub.anchor
-                          ? tocActiveRef
-                          : undefined
-                      }
                       className={cx(
-                        styles.tocItem,
-                        styles.tocSubItem,
-                        isInAdminDoc &&
-                          activeAnchor === sub.anchor &&
-                          styles.tocItemActive,
+                        styles.tocSectionHeader,
+                        isDimmed && styles.tocItemDimmed,
                       )}
-                      onClick={() =>
-                        handleNavigate(`${ADMIN_DOC_PATH}#${sub.anchor}`)
-                      }
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleNavigate(ADMIN_DOC_PATH)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
-                          handleNavigate(`${ADMIN_DOC_PATH}#${sub.anchor}`);
+                          handleNavigate(ADMIN_DOC_PATH);
                         }
                       }}
-                      title={sub.title}
                     >
-                      {sub.title}
+                      {t('webui.menu.Administration')}
+                      {hasActiveSearch && itemMatchCount > 0 ? (
+                        <span className={styles.matchBadge}>
+                          ({itemMatchCount})
+                        </span>
+                      ) : null}
                     </div>
-                  ))}
-                </React.Fragment>
-              );
-            }
+                    {/* Admin sub-sections */}
+                    {adminSubSections.map((sub) => (
+                      <div
+                        key={sub.anchor}
+                        role="button"
+                        tabIndex={0}
+                        ref={
+                          isInAdminDoc && activeAnchor === sub.anchor
+                            ? tocActiveRef
+                            : undefined
+                        }
+                        className={cx(
+                          styles.tocItem,
+                          styles.tocSubItem,
+                          isInAdminDoc &&
+                            activeAnchor === sub.anchor &&
+                            styles.tocItemActive,
+                          isDimmed && styles.tocItemDimmed,
+                        )}
+                        onClick={() =>
+                          handleNavigate(`${ADMIN_DOC_PATH}#${sub.anchor}`)
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleNavigate(`${ADMIN_DOC_PATH}#${sub.anchor}`);
+                          }
+                        }}
+                        title={sub.title}
+                      >
+                        {sub.title}
+                      </div>
+                    ))}
+                  </React.Fragment>
+                );
+              }
 
-            // For post-admin items, no special treatment — they render normally
-            return (
-              <div
-                key={item.path}
-                role="button"
-                tabIndex={0}
-                ref={
-                  idx === currentIndex && !isInAdminDoc
-                    ? tocActiveRef
-                    : undefined
-                }
-                className={cx(
-                  styles.tocItem,
-                  idx === currentIndex && !isInAdminDoc && styles.tocItemActive,
-                )}
-                onClick={() => handleNavigate(item.path)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleNavigate(item.path);
+              // For post-admin items, no special treatment — they render normally
+              return (
+                <div
+                  key={item.path}
+                  role="button"
+                  tabIndex={0}
+                  ref={
+                    idx === currentIndex && !isInAdminDoc
+                      ? tocActiveRef
+                      : undefined
                   }
-                }}
-                title={item.title}
-              >
-                {item.title}
-              </div>
-            );
-          })}
+                  className={cx(
+                    styles.tocItem,
+                    idx === currentIndex &&
+                      !isInAdminDoc &&
+                      styles.tocItemActive,
+                    isDimmed && styles.tocItemDimmed,
+                  )}
+                  onClick={() => handleNavigate(item.path)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleNavigate(item.path);
+                    }
+                  }}
+                  title={item.title}
+                >
+                  {item.title}
+                  {hasActiveSearch && itemMatchCount > 0 ? (
+                    <span className={styles.matchBadge}>
+                      ({itemMatchCount})
+                    </span>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Content area */}
@@ -515,6 +887,53 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             position: 'relative',
           }}
         >
+          {/* Floating search bar (Ctrl+F / Cmd+F) */}
+          {showFloatingSearch ? (
+            <div className={styles.floatingSearchBar}>
+              <Input
+                ref={floatingSearchInputRef as React.Ref<any>}
+                placeholder={t('webui.menu.SearchDocs')}
+                prefix={<SearchOutlined />}
+                size="small"
+                allowClear
+                value={searchInputValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                style={{ minWidth: 140, flex: 1 }}
+              />
+              {hasActiveSearch ? (
+                <>
+                  <span className={styles.matchNavInfo}>
+                    {currentDocMatchCount > 0
+                      ? `${activeMatchIndex + 1}/${currentDocMatchCount}`
+                      : t('webui.menu.NoSearchResults')}
+                  </span>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<UpOutlined />}
+                    disabled={currentDocMatchCount === 0}
+                    onClick={() => navigateMatch('prev')}
+                  />
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<DownOutlined />}
+                    disabled={currentDocMatchCount === 0}
+                    onClick={() => navigateMatch('next')}
+                  />
+                </>
+              ) : null}
+              <Button
+                type="text"
+                size="small"
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  clearSearch();
+                }}
+              />
+            </div>
+          ) : null}
+
           {/* TOC toggle button */}
           <Button
             type="text"
@@ -551,7 +970,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
             <div ref={docsBodyRef} className={styles.docsBody}>
               <Markdown
                 remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={rehypePlugins}
                 urlTransform={(url) => {
                   if (
                     url.startsWith('images/') ||
@@ -564,6 +983,7 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                 }}
                 components={{
                   a: ({ href, children, ...props }) => {
+                    // Same-page anchor link (#id) — fall back to cross-doc lookup
                     if (href?.startsWith('#')) {
                       return (
                         <a
@@ -571,10 +991,43 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
                           href={href}
                           onClick={(e) => {
                             e.preventDefault();
-                            const target = document.getElementById(
-                              href.slice(1),
+                            const anchorId = href.slice(1);
+                            const target = docsBodyRef.current?.querySelector(
+                              `[id="${CSS.escape(anchorId)}"]`,
                             );
-                            target?.scrollIntoView({ behavior: 'smooth' });
+                            if (target) {
+                              target.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                              // Anchor not in current doc — search cached docs
+                              const docPath = findDocPathByAnchor(anchorId);
+                              if (docPath) {
+                                handleNavigate(`${docPath}#${anchorId}`);
+                              }
+                            }
+                          }}
+                        >
+                          {children}
+                        </a>
+                      );
+                    }
+                    // Internal doc link (*.md or *.md#anchor)
+                    if (href && /\.md(#|$)/.test(href)) {
+                      // Resolve relative paths against the current doc directory
+                      const currentDir = filePath.includes('/')
+                        ? filePath.substring(0, filePath.lastIndexOf('/') + 1)
+                        : '';
+                      // Normalize the path (handle ../ and ./)
+                      const resolvedPath = new URL(
+                        href,
+                        `http://d/${currentDir}`,
+                      ).pathname.slice(1); // strip leading /
+                      return (
+                        <a
+                          {...props}
+                          href={href}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleNavigate(resolvedPath);
                           }}
                         >
                           {children}
@@ -598,6 +1051,42 @@ const HelpDocumentModal: React.FC<HelpDocumentModalProps> = ({
               </Markdown>
             </div>
           )}
+
+          {/* Match navigation bar (for TOC sidebar search) */}
+          {hasActiveSearch && !showFloatingSearch && !loading ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: token.marginXS,
+                padding: `${token.paddingXXS}px ${token.paddingMD}px`,
+                borderTop: `${token.lineWidth}px solid ${token.colorBorderSecondary}`,
+                background: token.colorBgLayout,
+                flexShrink: 0,
+              }}
+            >
+              <span className={styles.matchNavInfo}>
+                {currentDocMatchCount > 0
+                  ? `${activeMatchIndex + 1} / ${currentDocMatchCount} ${t('webui.menu.Matches')}`
+                  : t('webui.menu.NoSearchResults')}
+              </span>
+              <Button
+                type="text"
+                size="small"
+                icon={<UpOutlined />}
+                disabled={currentDocMatchCount === 0}
+                onClick={() => navigateMatch('prev')}
+              />
+              <Button
+                type="text"
+                size="small"
+                icon={<DownOutlined />}
+                disabled={currentDocMatchCount === 0}
+                onClick={() => navigateMatch('next')}
+              />
+            </div>
+          ) : null}
 
           {/* Prev/Next navigation bar */}
           {(prevItem || nextItem) && !loading ? (
