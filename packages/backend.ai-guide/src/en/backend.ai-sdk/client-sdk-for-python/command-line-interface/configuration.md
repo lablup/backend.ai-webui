@@ -10,7 +10,7 @@ order: 181
 Please consult the detailed usage in the help of each command (use `-h` or `--help` argument to display the manual).
 :::
 
-Check out [the client configuration](https://app.gitbook.com/o/DZ0LV3oABLR290D4vEUg/s/T9nLdgwFqB2cJBBxXNxU/~/changes/54/backend.ai-sdk/client-sdk-for-python/client-configuration) for configurations via environment variables.
+Check out the [Client Configuration](../client-configuration.md) section for configurations via environment variables.
 
 ## Session Mode
 

@@ -13,10 +13,10 @@ There are two ways to set the configuration:
 
 The list of configurable environment variables are:
 
-* `BACKEND_ENDPOINT`
-* `BACKEND_ENDPOINT_TYPE`
-* `BACKEND_ACCESS_KEY`
-* `BACKEND_SECRET_KEY`
-* `BACKEND_VFOLDER_MOUNTS`
+- `BACKEND_ENDPOINT`
+- `BACKEND_ENDPOINT_TYPE`
+- `BACKEND_ACCESS_KEY`
+- `BACKEND_SECRET_KEY`
+- `BACKEND_VFOLDER_MOUNTS`
 
 Please refer the parameter descriptions of [`APIConfig`](https://docs.backend.ai/en/latest/client/func/config.html#ai.backend.client.config.APIConfig)’s constructor for what each environment variable means and what value format should be used.
