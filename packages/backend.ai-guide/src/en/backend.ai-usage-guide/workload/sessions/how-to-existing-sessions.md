@@ -1,6 +1,6 @@
 ---
-title: How to  existing sessions
+title: How to Manage Existing Sessions
 order: 68
 ---
-# How to manage existing sessions
+# How to Manage Existing Sessions
 
