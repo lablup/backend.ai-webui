@@ -45,7 +45,7 @@
     "handlebars": "^4.7.8",
     "marked": "^12.0.2",
     "pdf-lib": "^1.17.1",
-    "yaml": "^2.7.0"
+    "yaml": "^2.8.2"
   },
   "peerDependencies": {
     "playwright": "^1.40.0"
@@ -56,8 +56,8 @@
     }
   },
   "devDependencies": {
-    "tsx": "^4.19.0",
-    "typescript": "~5.5.4",
-    "playwright": "^1.58.0"
+    "playwright": "^1.58.2",
+    "tsx": "^4.21.0",
+    "typescript": "~5.5.4"
   }
 }

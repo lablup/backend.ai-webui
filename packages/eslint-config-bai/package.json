@@ -11,7 +11,7 @@
     "*.js"
   ],
   "peerDependencies": {
-    "eslint": "^9.0.0",
+    "eslint": "catalog:",
     "@eslint/js": "catalog:",
     "typescript-eslint": "catalog:",
     "eslint-plugin-react": "catalog:",
