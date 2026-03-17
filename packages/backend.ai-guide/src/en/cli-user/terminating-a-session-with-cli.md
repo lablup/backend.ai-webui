@@ -6,15 +6,20 @@ order: 100
 
 ## Terminating a Session
 
-To end the created session, use the command below.
+To terminate a running compute session, use the `session destroy` command:
 
-```python
-$ ./backend.ai-client destroy <session-ID>
+```shell
+$ backend.ai session destroy SESSION_ID_OR_NAME
 ```
 
-### Examples
+### Example
 
-```python
-$ ## Example
-$ ./backend.ai-client destroy ldvnpdQ4-session
+```shell
+$ backend.ai session destroy ldvnpdQ4-session
 ```
+
+This terminates the session named `ldvnpdQ4-session` and releases all allocated resources.
+
+:::warning
+When you terminate a session, all data not saved to a mounted storage folder is lost. Make sure to save your work to a storage folder before ending the session.
+:::
