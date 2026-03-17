@@ -4,20 +4,31 @@ order: 48
 ---
 # Create Storage Folder
 
-## Create storage folder
+Backend.AI provides dedicated storage to preserve user files. Since the files and directories of a compute session are deleted upon session termination, it is recommended to save important data in a storage folder (also known as a *virtual folder* or *vfolder*).
 
-You can create a storage folder with the desired name by clicking the 'Create Folder' button. Enter the name of the folder to be created in Folder name, and select one of User / Project for Type. (Depending on the server settings, only one of User or Project may be selectable.) If you selected a project folder, the select project field will appear. The project folder will be bound to the project specified in the Project field, and only users belonging to the project can mount and use the project folder. After setting the values as desired, you can create a folder by clicking the 'CREATE' button.
+## Create a Storage Folder
 
-[![Folder creation dialog](https://webui.docs.backend.ai/en/latest/_images/vfolder_create_modal.png)](https://webui.docs.backend.ai/en/latest/_images/vfolder_create_modal.png)
+To create a new folder, click the **Create Folder** button on the **Data** page. Fill in the fields in the creation dialog as follows:
 
-The meaning of each fields that can be selected in the creation dialog is as follows.
+![](../images/vfolder_create_modal.png)
 
-* Folder name: The name of the folder. You can enter up to 64 characters.
-* Location: NFS host to create folder. You can choose one if you have multiple NFS hosts. You can check whether the selected host has enough capacity remaining through the indicator.
-* Usage Mode: You can set the purpose of the folder. There are three types of mode: General, Data, and Model. It is classified for the development of exclusive functions for Data & Model Stores in the future and currently there is no difference in UI depending on the purpose.
-* Type: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-* Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
-* Permission: Set permission of a project folder for project members. If this is set to "Read-Only", project members cannot write to this folder inside their compute session.
-* Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **Usage Mode**: Set the purpose of the folder.
+   * General: A folder for storing various data in a general-purpose manner.
+   * Models: A folder specialized for model serving and management. If this mode is selected, you can also toggle the folder's cloneability.
+   * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot (`.`).
+- **Folder name**: The name of the folder (up to 64 characters).
+- **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator shows whether there is enough available space.
+- **Type**: Determines the type of folder to be created.
+   * User: A folder that you can create and use individually.
+   * Project: A folder created by an administrator and shared by users in the project.
+- **Project**: Shown only when you select the Project type. Designates the project to which the folder belongs.
+- **Permission**: Set permission of a project folder for project members. If set to `Read-Only`, project members cannot write to this folder inside their compute session.
+- **Cloneable**: Shown only when you select `Models` as the usage mode. Determines whether the folder can be cloned.
 
-The folders created here can be [mounted](https://webui.docs.backend.ai/en/latest/mount_vfolder/mount_vfolder.html#session-mounts) when creating a compute session. Folders are mounted under the user's default working directory, `/home/work/`, and the file stored in the mounted directory will not be deleted when the compute session is terminated. (If you delete the folder, the file will also be deleted.)
+After entering the required information, click the **Create** button to create the folder.
+
+The folders created here can be mounted when creating a compute session. Folders are mounted under the user's default working directory, `/home/work/`, and files stored in the mounted directory will not be deleted when the session is terminated. However, if you delete the folder itself, the files will also be permanently removed.
+
+:::note
+For detailed information on managing storage folders (exploring, renaming, deleting, sharing), refer to the [Data Management Guide](../backend.ai-usage-guide/storage/data/data-management-guide.md).
+:::

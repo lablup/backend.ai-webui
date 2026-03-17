@@ -4,94 +4,70 @@ order: 46
 ---
 # Signup and Login
 
+When you launch the Backend.AI WebUI, the login dialog appears. If you do not have an account yet, you can sign up first before logging in.
+
 ## Signup
 
+If you have not signed up yet, click the **Sign Up** button on the login dialog.
 
+![](../images/login_dialog.png)
 
-access cloud.backend.ai / appropriate access to sign up.
+Enter the required information such as email address, username, and password. Read and agree to the Terms of Service and Privacy Policy, then click the **Sign Up** button. Depending on system settings, an invitation token may be required to complete the registration. A verification email may be sent to confirm ownership of the provided email address. In that case, you must follow the verification link in the email before logging in.
 
-<figure><img src="../images/login_page.png" alt=""><figcaption></figcaption></figure>
+![](../images/signup_dialog.png)
 
-
-
-
-
-
-
-<figure><img src="../images/signup_page.png" alt=""><figcaption></figcaption></figure>
-
-:::info
-**Notes**
-
-Depending on internal policies, server configurations, or plugin settings, registration via 'Sign Up' button may be unavailable. In such cases, a separate invitation token may be required, or an administrator approval may be necessary. If registration is not possible, contact the system administrator for further assistance.
+:::note
+Depending on the server configuration and plugin settings, signing up by anonymous users may not be allowed. In that case, contact your system administrator.
 :::
 
-To signup, enter information such as email address, username, and password, then read and agree to the Terms of Service and Privacy Policy before clicking the "Sign Up" button. Depending on system settings, an invitation token may be required to complete the registration process. Additionally, a verification email may be sent to confirm ownership of the provided email address. In such cases, registration must be completed by following the verification link in the email before logging in with the new account.
-
-
-
-The following password requirements apply to Backend.AI accounts. To enhance security and prevent unauthorized access, passwords must be at least eight characters long and include at least one letter, one number, and one special character.
-
-
-
-:::info
-### About Our Security
-
-Backend.AI securely stores user passwords using one-way hashing. The system utilizes BCrypt, the default password hashing algorithm for BSD, ensuring that even server administrators cannot access user passwords.
+:::note
+To prevent unauthorized access, passwords must be at least 8 characters long and include at least one letter, one number, and one special character.
 :::
 
-###
-
-
-
-
-
-
+:::info
+Backend.AI securely stores user passwords using one-way hashing with BCrypt, the default password hashing algorithm for BSD. Even server administrators cannot access user passwords.
+:::
 
 ## Login
 
-<figure><img src="../images/login_form_detail.png" alt="" width="375"><figcaption></figcaption></figure>
+Enter your email (or username) and password, then click the **Login** button. In the **API Endpoint** field, the URL of the Backend.AI Webserver should be entered.
 
-**Email or Username**: By default, user authentication is performed using the registered email address. Username-based login is available only when a dedicated plugin is applied. For other login methods, refer to the internal policies and configuration settings of the organization.
+![](../images/login_form_detail.png)
 
-**Password**: Use the password set during Backend.AI account creation to login. If the password is forgotten, a new password can be issued by clicking the "Forgot Password?" button below. \
-(Availability may vary depending on organizational policies.)
+- **Email or Username**: By default, user authentication is performed using the registered email address. Username-based login is available only when a dedicated plugin is applied.
+- **Password**: Use the password set during account creation.
+- **Click to use IAM**: (Optional) Identity and Access Management (IAM) login is available for users with valid Access Key (AK) and Secret Key (SK) credentials.
 
-**Click to use IAM**: (Optional) Identity and Access Management (IAM) login is available for users possessing valid Access Key (AK) and Secret Key (SK) credentials.
-
-:::info
-**Notes**
-
-The IAM login option is available only when IAM authentication is enabled. If this feature is not activated in the environment, the corresponding button will not be displayed and IAM login will not be accessible.
+:::note
+Depending on the installation and setup environment of the Webserver, the endpoint might be pinned and not configurable.
 :::
 
 :::warning
-**Warning**
-
-For security reasons, if more than 10 consecutive login failures occur, further login attempts will be restricted for 20 minutes. If the restriction persists after 20 minutes, contact the system administrator for assistance.
+For security reasons, if more than 10 consecutive login failures occur, further login attempts will be restricted for 20 minutes. If the restriction persists, contact your system administrator.
 :::
+
+After logging in, you can check the current resource usage in the Summary tab.
 
 ## Logout
 
-Backend.AI의 사용을 마친 경우에는 Backend.AI 페이지에서 로그아웃 할 수 있습니다.&#x20;
+When you are finished using Backend.AI, you can log out by clicking the user icon in the upper-right corner and selecting **Log Out** from the sub menu.
 
-##
-
-##
-
-##
+![](../images/signout_button.png)
 
 ## Troubleshooting
 
 ### Reset Password
 
-Backend.AI의 비밀번호를 잊어버린 경우에는 로그인 패널에서 Forgot Password? - CHANGE 버튼을 눌러 비밀번호 변경 링크를 이메일로 보낼 수 있습니다. 수신한 이메일에서 안내되는 절차에 따라 비밀번호를 변경할 수 있습니다. 단, 서버 설정에 따라 관리자에 의해 비밀번호 변경 기능이 비활성화 되어 있을 수 있습니다. 만약 비밀번호 변경 버튼이 나타나지 않거나 비밀번호 찾기 기능이 동작하지 않는다면, 시스템 관리자에게 문의하세요.
+If you have forgotten your password, click the **Forgot Password?** button on the login panel. A link to change your password will be sent to your email. Follow the instructions in the email to set a new password.
 
+![](../images/forgot_password_panel.png)
 
+:::note
+The password change feature is modular. Depending on server settings, it may not be available. If the feature is disabled, contact your system administrator.
+:::
 
+## Sidebar Menus
 
+You can change the size of the sidebar using the toggle button on the sidebar. Click it to reduce the sidebar width for a wider content view. Click again to restore the original width. You can also use the shortcut key (`[`) to toggle the sidebar width.
 
-
-
-
-
+![](../images/menu_collapse.png)
