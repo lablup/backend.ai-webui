@@ -51,7 +51,9 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       ? [null, null]
       : parseValueWithUnit(value);
   const previousUnit = usePrevious(_unitFromValue);
-  const unit = _unitFromValue || previousUnit || defaultUnit || units[0];
+  const validDefaultUnit =
+    defaultUnit && units.includes(defaultUnit) ? defaultUnit : undefined;
+  const unit = _unitFromValue || previousUnit || validDefaultUnit || units[0];
 
   const [minNumValue, minUnit] = parseValueWithUnit(min);
   const [maxNumValue, maxUnit] = parseValueWithUnit(max);
