@@ -27,11 +27,44 @@ describe('checkEndpointReachability', () => {
     expect(result?.category).toBe('endpoint');
     expect(result?.id).toBe('endpoint-unreachable');
     expect(result?.interpolationValues?.error).toBe('Connection refused');
+    expect(result?.interpolationValues?.endpoint).toBe(
+      'https://api.example.com',
+    );
   });
 
   it('should use default error message when none provided', () => {
     const result = checkEndpointReachability('https://api.example.com', false);
     expect(result?.interpolationValues?.error).toBe('Unknown error');
+  });
+
+  it('should fall back to default error when empty string is provided', () => {
+    const result = checkEndpointReachability(
+      'https://api.example.com',
+      false,
+      '',
+    );
+    expect(result?.interpolationValues?.error).toBe('Unknown error');
+  });
+
+  it('should include endpoint in interpolation values', () => {
+    const result = checkEndpointReachability(
+      'https://my-backend.example.com:8090',
+      false,
+    );
+    expect(result?.interpolationValues?.endpoint).toBe(
+      'https://my-backend.example.com:8090',
+    );
+  });
+
+  it('should include correct i18n keys', () => {
+    const result = checkEndpointReachability(
+      'https://api.example.com',
+      false,
+      'timeout',
+    );
+    expect(result?.titleKey).toBe('diagnostics.EndpointUnreachable');
+    expect(result?.descriptionKey).toBe('diagnostics.EndpointUnreachableDesc');
+    expect(result?.remediationKey).toBe('diagnostics.EndpointUnreachableFix');
   });
 });
 
@@ -68,6 +101,15 @@ describe('checkCorsHeaders', () => {
     );
   });
 
+  it('should include correct i18n keys for CORS misconfigured', () => {
+    const result = checkCorsHeaders('https://api.example.com', {
+      allowed: false,
+    });
+    expect(result?.titleKey).toBe('diagnostics.CorsMisconfigured');
+    expect(result?.descriptionKey).toBe('diagnostics.CorsMisconfiguredDesc');
+    expect(result?.remediationKey).toBe('diagnostics.CorsMisconfiguredFix');
+  });
+
   it('should return info when there is a network error', () => {
     const result = checkCorsHeaders('https://api.example.com', {
       allowed: false,
@@ -90,5 +132,31 @@ describe('checkCorsHeaders', () => {
     });
     expect(result?.id).toBe('cors-check-failed');
     expect(result?.severity).toBe('info');
+  });
+
+  it('should treat error with allowed=true as info', () => {
+    const result = checkCorsHeaders('https://api.example.com', {
+      allowed: true,
+      error: 'AbortError: signal timed out',
+    });
+    expect(result?.id).toBe('cors-check-failed');
+    expect(result?.severity).toBe('info');
+  });
+
+  it('should not have remediationKey for cors-check-failed', () => {
+    const result = checkCorsHeaders('https://api.example.com', {
+      allowed: false,
+      error: 'Network error',
+    });
+    expect(result?.remediationKey).toBeUndefined();
+  });
+
+  it('should include correct i18n keys for CORS check failed', () => {
+    const result = checkCorsHeaders('https://api.example.com', {
+      allowed: false,
+      error: 'TypeError: Failed to fetch',
+    });
+    expect(result?.titleKey).toBe('diagnostics.CorsCheckFailed');
+    expect(result?.descriptionKey).toBe('diagnostics.CorsCheckFailedDesc');
   });
 });

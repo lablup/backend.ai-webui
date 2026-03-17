@@ -16,6 +16,25 @@ export interface StorageVolumeInfo {
 }
 
 /**
+ * Parse and validate the storageWarningThreshold config value.
+ * Returns a number between 0-100, or the default (90) if invalid.
+ * Only accepts numeric types or non-empty numeric strings.
+ */
+export function parseStorageWarningThreshold(raw: unknown): number {
+  if (
+    typeof raw !== 'number' &&
+    (typeof raw !== 'string' || raw.trim() === '')
+  ) {
+    return DEFAULT_STORAGE_WARNING_THRESHOLD;
+  }
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0 || value > 100) {
+    return DEFAULT_STORAGE_WARNING_THRESHOLD;
+  }
+  return value;
+}
+
+/**
  * Check if a storage volume is above the capacity threshold (default 90%).
  */
 export function checkStorageVolumeHealth(
