@@ -100,7 +100,17 @@ const SessionSchedulingHistoryModal = ({
           height: '100vh',
         },
       }}
-      footer={<BAIButton onClick={onCancel}>{t('button.Close')}</BAIButton>}
+      footer={
+        <BAIButton
+          onClick={(e) =>
+            onCancel?.(
+              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
+            )
+          }
+        >
+          {t('button.Close')}
+        </BAIButton>
+      }
       onCancel={onCancel}
       {...modalProps}
     >

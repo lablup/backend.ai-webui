@@ -29,8 +29,10 @@ export type BAIImportArtifactModalArtifactFragmentKey =
 export type BAIImportArtifactModalArtifactRevisionFragmentKey =
   BAIImportArtifactModalArtifactRevisionFragment$key;
 
-export interface BAIImportArtifactModalProps
-  extends Omit<ModalProps, 'onOk' | 'onCancel'> {
+export interface BAIImportArtifactModalProps extends Omit<
+  ModalProps,
+  'onOk' | 'onCancel'
+> {
   selectedArtifactFrgmt: BAIImportArtifactModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIImportArtifactModalArtifactRevisionFragment$key;
   onOk: (
@@ -44,7 +46,7 @@ export interface BAIImportArtifactModalProps
       };
     }[],
   ) => void;
-  onCancel: (e: React.MouseEvent<HTMLElement>) => void;
+  onCancel: NonNullable<ModalProps['onCancel']>;
   connectionIds?: string[];
 }
 
