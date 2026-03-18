@@ -472,9 +472,9 @@ hiddenPaths: []
 readOnlyPaths: []
 repoUrl: https://github.com/lablup/backend.ai-webui
 subdirectory: packages/backend.ai-guide
-localPath: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide
-virtualRoot: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide/packages/backend.ai-guide/src
+localPath: /Users/jihyunkang/lablup/baidocs/content/backend.ai-guide
+virtualRoot: /Users/jihyunkang/lablup/baidocs/content/backend.ai-guide/packages/backend.ai-guide/src
 branch: docs/backend.ai-guide
 selectedBranches:
   - docs/backend.ai-guide
-emoji: "\U0001F4C4"
+emoji: 📚
