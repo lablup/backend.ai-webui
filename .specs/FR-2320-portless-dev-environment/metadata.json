@@ -1,0 +1,9 @@
+{
+  "epicKey": "FR-2320",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2320",
+  "slug": "portless-dev-environment",
+  "specTaskKey": "FR-2321",
+  "stories": [],
+  "sourceIssues": ["FR-2304"],
+  "createdAt": "2026-03-18T00:00:00.000Z"
+}
