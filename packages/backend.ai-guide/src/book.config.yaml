@@ -50,10 +50,61 @@ navigation:
               path: backend.ai-overview/enterprise-applicatioins/enterprise-applications-overview.md
             - title: FastTrack MLOps
               path: backend.ai-overview/enterprise-applicatioins/fasttrack-mlops.md
+              children:
+                - title: Key Concepts
+                  path: fasttrack-2-mlops/fasttrack-key-concept.md
+                - title: Structure
+                  path: fasttrack-2-mlops/structure.md
+                - title: Getting Started
+                  children:
+                    - title: Starting FastTrack 2
+                      path: fasttrack-2-mlops/starting-fasttrack-2/fasttrack-getting-started.md
+                    - title: Registering and Logging In
+                      path: fasttrack-2-mlops/starting-fasttrack-2/registering-account-and-logging-in.md
+                - title: Pipelines
+                  children:
+                    - title: Pipeline Overview
+                      path: fasttrack-2-mlops/pipelines/pipeline-overview.md
+                    - title: Creating and Editing a Pipeline
+                      path: fasttrack-2-mlops/pipelines/creating-and-editing-a-new-pipeline.md
+                    - title: Adding Tasks
+                      path: fasttrack-2-mlops/pipelines/adding-tasks-within-a-pipeline.md
+                    - title: Creating Task Dependencies
+                      path: fasttrack-2-mlops/pipelines/creating-dependencies-between-tasks.md
+                    - title: Editing a Pipeline
+                      path: fasttrack-2-mlops/pipelines/editing-the-created-pipeline.md
+                    - title: Importing a Pipeline
+                      path: fasttrack-2-mlops/pipelines/importing-a-pipeline.md
+                    - title: Skipping a Task
+                      path: fasttrack-2-mlops/pipelines/skipping-a-task.md
+                    - title: Reverting Pipeline Version
+                      path: fasttrack-2-mlops/pipelines/reverting-pipeline-version.md
+                - title: Pipeline Jobs
+                  children:
+                    - title: Pipeline Jobs Guide
+                      path: fasttrack-2-mlops/pipeline-jobs/pipeline-jobs-guide.md
+                    - title: Creating a Pipeline Job
+                      path: fasttrack-2-mlops/pipeline-jobs/creating-a-pipeline-job.md
+                    - title: Scheduling a Pipeline Job
+                      path: fasttrack-2-mlops/pipeline-jobs/scheduling-a-pipeline-job.md
+                    - title: Tracking a Running Pipeline Job
+                      path: fasttrack-2-mlops/pipeline-jobs/tracking-the-running-pipeline-job.md
             - title: Control Panel
               path: backend.ai-overview/enterprise-applicatioins/control-panel.md
+              children:
+                - title: Key Concepts
+                  path: control-panel/control-panel-key-concepts.md
+                - title: Getting Started
+                  path: control-panel/getting-started.md
+                - title: Dashboard
+                  path: control-panel/dashboard.md
+                - title: Management
+                  path: control-panel/management.md
             - title: Reservoir
               path: backend.ai-overview/enterprise-applicatioins/reservoir.md
+              children:
+                - title: Key Concepts
+                  path: reservoir/reservoir-key-concept.md
             - title: Monitoring
               path: backend.ai-overview/enterprise-applicatioins/monitoring.md
         - title: FAQ
@@ -119,6 +170,20 @@ navigation:
               path: install-and-run/advanced-installation/multi-node-installation.md
         - title: Upgrading a Cluster
           path: upgrade-a-backend.ai-cluster.md
+        - title: Migration Guide
+          children:
+            - title: Upgrading from 20.x to 24.x
+              path: migration-guide/upgrading-from-20.x-to-24.x.md
+            - title: Migrating from Docker Hub
+              path: migration-guide/migrating-from-the-docker-hub-to-cr.backend.ai.md
+        - title: Developer Guide
+          children:
+            - title: Development Setup
+              path: developer-guide/development-setup.md
+            - title: Daily Development Workflows
+              path: developer-guide/daily-development-workflows.md
+            - title: Version Numbering
+              path: developer-guide/version-numbering.md
     - title: Get Started
       children:
         - title: Quickstart
@@ -141,8 +206,6 @@ navigation:
               path: get-started/run-applications/web-terminal.md
         - title: Model Serving
           path: get-started/model-serving.md
-        - title: Model Service
-          path: get-started/model-service.md
     - title: Backend.AI Usage Guide
       children:
         - title: Start Page
@@ -189,7 +252,7 @@ navigation:
               path: backend.ai-usage-guide/workload/sessions/sftp-to-container.md
             - title: Installing Packages in Sessions
               path: backend.ai-usage-guide/workload/sessions/ssh-sftp-connection-to-a-compute-session.md
-            - title: Import & Run (Start Page)
+            - title: Import & Run
               path: backend.ai-usage-guide/workload/import-and-run/import-and-run-guide.md
             - title: Importing Notebooks and Git Repositories
               path: backend.ai-usage-guide/workload/import-and-run/how-to-import-notebooks-and-web-based-git-repositories.md
@@ -211,6 +274,8 @@ navigation:
               path: backend.ai-usage-guide/serving/model-store/how-to-download-a-model-to-my-environment.md
             - title: How to Fine-Tune a Model
               path: backend.ai-usage-guide/serving/model-store/how-to-fine-tune-the-uploaded-model.md
+            - title: Model Service Runtime Variant
+              path: get-started/model-service.md
         - title: Playground
           children:
             - title: Playground Overview
@@ -242,6 +307,56 @@ navigation:
               path: backend.ai-usage-guide/data-and-storage/how-to-customize-theme-and-logo.md
             - title: View Logs and Errors
               path: backend.ai-usage-guide/data-and-storage/how-to-view-logs-and-errors.md
+        - title: CLI
+          children:
+            - title: User CLI Guide
+              path: cli-user/user-cli-guide.md
+              children:
+                - title: Getting Started
+                  path: cli-user/how-to-begin-with-cli-user.md
+                - title: Starting a Session
+                  path: cli-user/starting-a-session-with-cli.md
+                - title: Committing a Session
+                  path: cli-user/commiting-a-session-with-cli.md
+                - title: Downloading Files
+                  path: cli-user/downloading-files-from-session-with-cli.md
+                - title: Terminating a Session
+                  path: cli-user/terminating-a-session-with-cli.md
+                - title: SSH in a Session
+                  path: cli-user/using-ssh-in-a-compute-session.md
+                - title: Creating a Model Service
+                  path: cli-user/creating-a-model-service.md
+                - title: Updating a Model Service
+                  path: cli-user/updating-a-model-service.md
+                - title: Deleting a Model Service
+                  path: cli-user/deleting-a-model-service.md
+                - title: CLI Troubleshooting
+                  path: cli-user/cli-troubleshooting.md
+            - title: Admin CLI Guide
+              path: cli-admin/admin-cli-guide.md
+              children:
+                - title: Getting Started
+                  path: cli-admin/how-to-begin-with-cli-admin.md
+                - title: Image Management
+                  path: cli-admin/image-management.md
+                - title: User Management
+                  path: cli-admin/user-management.md
+                - title: Resource Management
+                  path: cli-admin/resource-management.md
+                - title: Data Folder and Storage Management
+                  path: cli-admin/data-folder-and-storage-management.md
+                - title: Updating WebUI Announcements
+                  path: cli-admin/updating-webui-announcements.md
+            - title: Command Reference
+              children:
+                - title: Client CLI
+                  path: command-reference/client-cli.md
+                - title: Manager CLI
+                  path: command-reference/manager-cli.md
+                - title: Agent CLI
+                  path: command-reference/agent-cli.md
+                - title: Storage CLI
+                  path: command-reference/storage-cli.md
     - title: Administration
       children:
         - title: Environments
@@ -252,14 +367,6 @@ navigation:
           path: administration/resources.md
         - title: User Management
           path: administration/user-management.md
-        - title: Configurations
-          path: administration/configurations.md
-        - title: Maintenance
-          path: administration/maintenance.md
-        - title: Information
-          path: administration/information.md
-        - title: Agent Summary
-          path: administration/agent-summary.md
         - title: Admin Sessions
           path: administration/admin-session.md
         - title: Scheduler
@@ -268,62 +375,16 @@ navigation:
           path: administration/resource-policy.md
         - title: Project Management
           path: administration/project-management.md
+        - title: Configurations
+          path: administration/configurations.md
+        - title: Maintenance
+          path: administration/maintenance.md
+        - title: Information
+          path: administration/information.md
+        - title: Agent Summary
+          path: administration/agent-summary.md
         - title: Branding
           path: administration/branding.md
-    - title: FastTrack 2 MLOps
-      children:
-        - title: Key Concepts
-          path: fasttrack-2-mlops/fasttrack-key-concept.md
-        - title: Structure
-          path: fasttrack-2-mlops/structure.md
-        - title: Getting Started
-          children:
-            - title: Starting FastTrack 2
-              path: fasttrack-2-mlops/starting-fasttrack-2/fasttrack-getting-started.md
-            - title: Registering and Logging In
-              path: fasttrack-2-mlops/starting-fasttrack-2/registering-account-and-logging-in.md
-        - title: Pipelines
-          children:
-            - title: Pipeline Overview
-              path: fasttrack-2-mlops/pipelines/pipeline-overview.md
-            - title: Creating and Editing a Pipeline
-              path: fasttrack-2-mlops/pipelines/creating-and-editing-a-new-pipeline.md
-            - title: Adding Tasks
-              path: fasttrack-2-mlops/pipelines/adding-tasks-within-a-pipeline.md
-            - title: Creating Task Dependencies
-              path: fasttrack-2-mlops/pipelines/creating-dependencies-between-tasks.md
-            - title: Editing a Pipeline
-              path: fasttrack-2-mlops/pipelines/editing-the-created-pipeline.md
-            - title: Importing a Pipeline
-              path: fasttrack-2-mlops/pipelines/importing-a-pipeline.md
-            - title: Skipping a Task
-              path: fasttrack-2-mlops/pipelines/skipping-a-task.md
-            - title: Reverting Pipeline Version
-              path: fasttrack-2-mlops/pipelines/reverting-pipeline-version.md
-        - title: Pipeline Jobs
-          children:
-            - title: Pipeline Jobs Guide
-              path: fasttrack-2-mlops/pipeline-jobs/pipeline-jobs-guide.md
-            - title: Creating a Pipeline Job
-              path: fasttrack-2-mlops/pipeline-jobs/creating-a-pipeline-job.md
-            - title: Scheduling a Pipeline Job
-              path: fasttrack-2-mlops/pipeline-jobs/scheduling-a-pipeline-job.md
-            - title: Tracking a Running Pipeline Job
-              path: fasttrack-2-mlops/pipeline-jobs/tracking-the-running-pipeline-job.md
-    - title: Control Panel
-      children:
-        - title: Key Concepts
-          path: control-panel/control-panel-key-concepts.md
-        - title: Getting Started
-          path: control-panel/getting-started.md
-        - title: Dashboard
-          path: control-panel/dashboard.md
-        - title: Management
-          path: control-panel/management.md
-    - title: Reservoir
-      children:
-        - title: Key Concepts
-          path: reservoir/reservoir-key-concept.md
     - title: Backend.AI SDK
       children:
         - title: Python SDK
@@ -396,78 +457,16 @@ navigation:
           path: api-reference/agent-api-reference.md
         - title: Storage Proxy API
           path: api-reference/storage-proxy-reference.md
-    - title: CLI User Guide
+    - title: Appendix
       children:
-        - title: Overview
-          path: cli-user/user-cli-guide.md
-        - title: Getting Started
-          path: cli-user/how-to-begin-with-cli-user.md
-        - title: Starting a Session
-          path: cli-user/starting-a-session-with-cli.md
-        - title: Committing a Session
-          path: cli-user/commiting-a-session-with-cli.md
-        - title: Downloading Files
-          path: cli-user/downloading-files-from-session-with-cli.md
-        - title: Terminating a Session
-          path: cli-user/terminating-a-session-with-cli.md
-        - title: SSH in a Session
-          path: cli-user/using-ssh-in-a-compute-session.md
-        - title: Creating a Model Service
-          path: cli-user/creating-a-model-service.md
-        - title: Updating a Model Service
-          path: cli-user/updating-a-model-service.md
-        - title: Deleting a Model Service
-          path: cli-user/deleting-a-model-service.md
-        - title: CLI Troubleshooting
-          path: cli-user/cli-troubleshooting.md
-    - title: CLI Admin Guide
-      children:
-        - title: Overview
-          path: cli-admin/admin-cli-guide.md
-        - title: Getting Started
-          path: cli-admin/how-to-begin-with-cli-admin.md
-        - title: Image Management
-          path: cli-admin/image-management.md
-        - title: User Management
-          path: cli-admin/user-management.md
-        - title: Resource Management
-          path: cli-admin/resource-management.md
-        - title: Data Folder and Storage Management
-          path: cli-admin/data-folder-and-storage-management.md
-        - title: Updating WebUI Announcements
-          path: cli-admin/updating-webui-announcements.md
-    - title: Command Reference
-      children:
-        - title: Client CLI
-          path: command-reference/client-cli.md
-        - title: Manager CLI
-          path: command-reference/manager-cli.md
-        - title: Agent CLI
-          path: command-reference/agent-cli.md
-        - title: Storage CLI
-          path: command-reference/storage-cli.md
-    - title: Developer Guide
-      children:
-        - title: Development Setup
-          path: developer-guide/development-setup.md
-        - title: Daily Development Workflows
-          path: developer-guide/daily-development-workflows.md
-        - title: Version Numbering
-          path: developer-guide/version-numbering.md
-    - title: Migration Guide
-      children:
-        - title: Upgrading from 20.x to 24.x
-          path: migration-guide/upgrading-from-20.x-to-24.x.md
-        - title: Migrating from Docker Hub
-          path: migration-guide/migrating-from-the-docker-hub-to-cr.backend.ai.md
-    - title: References
-      path: references/references.md
-    - title: Settings
-      path: settings.md
-    - title: License Agreement
-      path: terms-of-license-agreement/backend.ai-license-software.md
-    - title: Disclaimer
-      path: disclaimer.md
+        - title: References
+          path: references/references.md
+        - title: Settings
+          path: settings.md
+        - title: License Agreement
+          path: terms-of-license-agreement/backend.ai-license-software.md
+        - title: Disclaimer
+          path: disclaimer.md
 editScope: packages/backend.ai-guide/src
 hiddenPaths: []
 readOnlyPaths: []
@@ -478,4 +477,4 @@ virtualRoot: /Users/kimjmin/git/claude-project/baidocs/content/backend.ai-guide/
 branch: docs/backend.ai-guide
 selectedBranches:
   - docs/backend.ai-guide
-emoji: 📄
+emoji: "\U0001F4C4"
