@@ -30,12 +30,14 @@ export type BAIDeleteArtifactRevisionsModalArtifactFragmentKey =
 export type BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey =
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
 
-export interface BAIDeleteArtifactRevisionsModalProps
-  extends Omit<ModalProps, 'onOk' | 'onCancel'> {
+export interface BAIDeleteArtifactRevisionsModalProps extends Omit<
+  ModalProps,
+  'onOk' | 'onCancel'
+> {
   selectedArtifactFrgmt: BAIDeleteArtifactRevisionsModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
-  onCancel: (e: React.MouseEvent<HTMLElement>) => void;
+  onCancel: NonNullable<ModalProps['onCancel']>;
 }
 
 const BAIDeleteArtifactRevisionsModal = ({
