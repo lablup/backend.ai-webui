@@ -23,15 +23,15 @@ The development of FastTrack was driven by the increasing complexity of recent A
 
 
 
-Backend.AI FastTrack2 는 AI 개발 및 운영을 위한 MLOps 파이프라인 플랫폼으로, 데이터 전처리부터 모델 학습, 검증, 배포, 추론에 이르는 전 과정을 하나의 파이프라인으로 구성하고 손쉽게 커스터마이징할 수 있도록 설계되었습니다. FastTrack 2는 Backend.AI가 설치된 클러스터에 호환되며, 사용자는 최적의 성능과 비용 효율을 동시에 누릴 수 있습니다.
+Backend.AI FastTrack 2 is an MLOps pipeline platform for AI development and operations, designed to organize and easily customize the entire process from data preprocessing to model training, validation, deployment, and inference into a single pipeline. FastTrack 2 is compatible with clusters where Backend.AI is installed, allowing you to achieve optimal performance and cost efficiency simultaneously.
 
-FastTrack이 개발된 배경에는 최근 AI와 머신러닝 프로젝트의 복잡성이 크게 증가하고, 데이터와 모델의 규모 역시 기하급수적으로 커지는 현실이 있습니다. 이에 따라 반복적이고 효율적인 워크플로우 관리의 필요성이 대두되었고, 기존의 오픈소스 MLOps 도구들만으로는 다양한 현장 요구를 모두 충족하기 어려웠습니다. 복잡한 파이프라인의 생성과 관리를 보다 간소화하고자, 래블업에서는 Backend.AI의 기존 파이프라인 기능을 한 단계 발전시켜, 독립적이면서도 Backend.AI와 긴밀히 연동되는 FastTrack을 출시하게 되었습니다.
+The development of FastTrack was driven by the significant increase in complexity of recent AI and machine learning projects, along with the exponential growth in the scale of data and models. As a result, the need for repetitive and efficient workflow management became pronounced, and existing open-source MLOps tools proved insufficient to meet the diverse requirements encountered in real-world scenarios. To simplify the creation and management of complex pipelines, Lablup advanced the existing pipeline features of Backend.AI and released FastTrack as an independent solution that maintains close integration with Backend.AI.
 
-FastTrack의 가장 큰 특징 중 하나는 드래그 앤 드롭 방식의 직관적인 GUI를 통해 누구나 손쉽게 파이프라인을 설계하고 수정할 수 있다는 점입니다. 모든 파이프라인은 DAG(Directed Acyclic Graph) 구조로 관리되어, 작업 간의 의존성과 실행 순서를 명확하게 정의할 수 있습니다. 사용자는 각 파이프라인을 여러 개의 작업 단위(Task)로 세분화하여 관리할 수 있으며, 각 작업마다 필요한 자원을 개별적으로 설정할 수 있습니다. 파이프라인이 실행되는 시점의 상태는 잡(Job)이라는 단위로 관리되어, 언제든지 동일한 환경에서 재현하거나 반복 실행이 가능합니다.
+One of the key features of FastTrack is its intuitive drag-and-drop GUI, which allows anyone to easily design and modify pipelines. All pipelines are managed in a DAG (Directed Acyclic Graph) structure, enabling you to clearly define dependencies and execution order between tasks. You can subdivide each pipeline into multiple task units and configure the required resources individually for each task. The state of a pipeline at the time of execution is managed as a unit called a Job, enabling reproducibility and repeated execution in the same environment at any time.
 
-또한 FastTrack은 파이프라인, 데이터, 코드, 실행 환경을 함께 관리함으로써 다양한 환경에 손쉽게 배포하거나 이식할 수 있는 높은 이식성과 재사용성을 제공합니다. YAML 파일 기반의 내보내기와 불러오기 기능을 통해 사용자 간에 파이프라인을 손쉽게 공유할 수 있고, GPU 및 AI 가속칩 지원, 연산 자원 최적화, 망분리와 같은 보안 환경 대응 등 엔터프라이즈 환경에 적합한 확장성과 보안성도 갖추고 있습니다. 파이프라인 실행 및 모델 학습 결과는 Slack 등 외부 시스템으로 자동 알림을 받을 수 있어 운영 효율을 크게 높일 수 있습니다.
+FastTrack also provides high portability and reusability by managing pipelines, data, code, and execution environments together, making it easy to deploy or migrate across different environments. Through YAML file-based export and import functionality, you can easily share pipelines between users. FastTrack is also equipped with enterprise-grade scalability and security features, including GPU and AI accelerator chip support, compute resource optimization, and support for air-gapped security environments. Pipeline execution and model training results can be automatically sent as notifications to external systems such as Slack, significantly improving operational efficiency.
 
-FastTrack을 도입함으로써 사용자는 반복적이고 복잡한 AI/ML 워크플로우를 자동화하여 개발 본연의 문제 해결에 더욱 집중할 수 있게 됩니다. GUI 기반의 노코드 환경과 파이프라인 템플릿, 그리고 공유 기능을 통해 팀 내외 협업이 한층 쉬워지며, 유휴 GPU 자원 최소화와 단계별 자원 설정, 효율적인 스케줄링을 통해 비용 효율성도 극대화할 수 있습니다. 다양한 조직 구조와 하드웨어 환경에 유연하게 적용할 수 있고, 프로젝트의 성장에 따라 손쉽게 확장할 수 있다는 점도 큰 장점입니다.
+By adopting FastTrack, you can automate repetitive and complex AI/ML workflows, allowing you to focus more on core development challenges. The GUI-based no-code environment, pipeline templates, and sharing capabilities make collaboration within and across teams much easier. Cost efficiency is maximized through idle GPU resource minimization, per-stage resource configuration, and efficient scheduling. FastTrack can be flexibly applied to diverse organizational structures and hardware environments, and it scales easily as your project grows.
 
 
 
@@ -43,9 +43,9 @@ FastTrack을 도입함으로써 사용자는 반복적이고 복잡한 AI/ML 워
 
 ## Emergence of MLOps
 
-MLOps의 대두: 인공지능/HPC 기술의 폭발적 성장 ...
+The rise of MLOps: Explosive growth in AI/HPC technology...
 
-MLOps 플랫폼에 대한 수요 증가​
+Increasing demand for MLOps platforms
 
 ## Fast Track Features
 

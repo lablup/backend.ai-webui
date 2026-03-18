@@ -20,11 +20,11 @@ To create a new pipeline, click the `+ New Pipeline` button on the left top of t
 
 00000
 
-* Name (Required): 파이프라인을 다른 파이프라인과 구분하기 위한 이름입니다.
-* Description: 해당 파이프라인에 대한 설명입니다. 필수 입력값이 아닙니다.
-* Pipeline Scope (Required): 파이프라인의 범위를 설정합니다.&#x20;
-  * Personal: 파이프라인을 개인 용도로 사용하고 별도로 공유하지 않는 경우 선택합니다.
-  * Project: 파이프라인을 프로젝트 내에서 공유할 경우 선택합니다.
+* Name (Required): The name used to distinguish this pipeline from other pipelines.
+* Description: A description of the pipeline. This field is optional.
+* Pipeline Scope (Required): Set the scope of the pipeline.
+  * Personal: Select this option when the pipeline is for personal use and will not be shared.
+  * Project: Select this option when the pipeline will be shared within a project.
 * Folder Location (Required): Select the NFS host where the pipeline folder will be created. If multiple NFS hosts are available, one can be chosen from the list.
 * Environment Variables:
 * Initialization Variables:

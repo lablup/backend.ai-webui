@@ -73,7 +73,7 @@ For security reasons, if more than 10 consecutive login failures occur, further 
 
 ## Logout
 
-Backend.AI의 사용을 마친 경우에는 Backend.AI 페이지에서 로그아웃 할 수 있습니다.&#x20;
+When you are done using Backend.AI, you can log out from the Backend.AI page.
 
 ##
 
@@ -85,7 +85,7 @@ Backend.AI의 사용을 마친 경우에는 Backend.AI 페이지에서 로그아
 
 ### Reset Password
 
-Backend.AI의 비밀번호를 잊어버린 경우에는 로그인 패널에서 Forgot Password? - CHANGE 버튼을 눌러 비밀번호 변경 링크를 이메일로 보낼 수 있습니다. 수신한 이메일에서 안내되는 절차에 따라 비밀번호를 변경할 수 있습니다. 단, 서버 설정에 따라 관리자에 의해 비밀번호 변경 기능이 비활성화 되어 있을 수 있습니다. 만약 비밀번호 변경 버튼이 나타나지 않거나 비밀번호 찾기 기능이 동작하지 않는다면, 시스템 관리자에게 문의하세요.
+If you have forgotten your Backend.AI password, you can send a password reset link to your email by clicking `Forgot Password?` and then the `CHANGE` button on the login panel. Follow the instructions in the received email to change your password. Depending on server settings, the password reset feature may be disabled by the administrator. If the password reset button does not appear or the password recovery feature does not work, contact your system administrator.
 
 
 
