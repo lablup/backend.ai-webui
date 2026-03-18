@@ -17,82 +17,457 @@ navigation:
           path: introduction.md
         - title: Architecture
           children:
+            - title: Architecture Overview
+              path: backend.ai-overview/backend.ai-architecture/architecture-overview.md
             - title: Service Components
               path: backend.ai-overview/backend.ai-architecture/service-components/service-components-overview.md
+              children:
+                - title: Manager and Webserver
+                  path: backend.ai-overview/backend.ai-architecture/service-components/manager-and-webserver.md
+                - title: Storage Proxy
+                  path: backend.ai-overview/backend.ai-architecture/service-components/storage-proxy.md
+                - title: App Proxy
+                  path: backend.ai-overview/backend.ai-architecture/service-components/app-proxy.md
+                - title: Container Registry
+                  path: backend.ai-overview/backend.ai-architecture/service-components/container-registry.md
+                - title: Sokovan Orchestrator
+                  path: backend.ai-overview/backend.ai-architecture/service-components/sokovan-orchestrator.md
             - title: Computing
               path: backend.ai-overview/backend.ai-architecture/computing.md
             - title: Storage Management
               path: backend.ai-overview/backend.ai-architecture/storage-management.md
+            - title: Resource Management
+              path: backend.ai-overview/backend.ai-architecture/resource-management.md
+            - title: Cluster Networking
+              path: backend.ai-overview/backend.ai-architecture/cluster-networking.md
+            - title: Configuration
+              path: backend.ai-overview/backend.ai-architecture/configuration.md
+        - title: Backend.AI Cloud
+          path: backend.ai-overview/backend.ai-cloud.md
         - title: Enterprise Applications
           children:
+            - title: Overview
+              path: backend.ai-overview/enterprise-applicatioins/enterprise-applications-overview.md
             - title: FastTrack MLOps
               path: backend.ai-overview/enterprise-applicatioins/fasttrack-mlops.md
             - title: Control Panel
               path: backend.ai-overview/enterprise-applicatioins/control-panel.md
+            - title: Reservoir
+              path: backend.ai-overview/enterprise-applicatioins/reservoir.md
+            - title: Monitoring
+              path: backend.ai-overview/enterprise-applicatioins/monitoring.md
         - title: FAQ
-          path: backend.ai-overview/faq/frequently-asked-questions.md
+          children:
+            - title: Frequently Asked Questions
+              path: backend.ai-overview/faq/frequently-asked-questions.md
+            - title: Key Concepts
+              path: backend.ai-overview/faq/concepts.md
+            - title: Troubleshooting
+              path: backend.ai-overview/faq/troubleshooting.md
+        - title: Disclaimer
+          path: backend.ai-overview/disclaimer.md
     - title: Install and Run
       children:
         - title: Supported Environments
           path: install-and-run/support-environments.md
+        - title: Prerequisites
+          children:
+            - title: Installation Prerequisites
+              path: install-and-run/prerequisites/installation-prerequisites.md
+            - title: Setup OS Environment
+              path: install-and-run/prerequisites/setup-os-environment.md
+            - title: Install Database
+              path: install-and-run/prerequisites/install-database.md
+            - title: Configure WSL
+              path: install-and-run/prerequisites/configurate-wsl.md
         - title: Single-node Installation
           children:
+            - title: Overview
+              path: install-and-run/single-node-all-in-one/single-node-installation.md
             - title: Install from Binary
               path: install-and-run/single-node-all-in-one/install-from-binary/binary-installation-guide.md
+              children:
+                - title: Manual Installation
+                  path: install-and-run/single-node-all-in-one/install-from-binary/manual-installation.md
             - title: Install from Source
               path: install-and-run/single-node-all-in-one/install-from-source-code.md
+            - title: Install from PyPI
+              path: install-and-run/single-node-all-in-one/install-from-pypi-package.md
+        - title: Install from Packages
+          children:
+            - title: Package Installation Guide
+              path: install-and-run/install-from-packages/package-installation-guide.md
+            - title: Install Backend.AI Manager
+              path: install-and-run/install-from-packages/install-backend.ai-manager.md
         - title: Cloud Deployments
           children:
+            - title: Cloud Deployment Guide
+              path: install-and-run/install-on-cloud-services/cloud-deployment-guide.md
             - title: AWS Deployment
               path: install-and-run/install-on-cloud-services/install-on-aws.md
             - title: Azure Deployment
               path: install-and-run/install-on-cloud-services/install-on-azure.md
             - title: GCP Deployment
               path: install-and-run/install-on-cloud-services/install-on-gcp.md
+            - title: Naver Cloud Deployment
+              path: install-and-run/install-on-cloud-services/install-on-naver-cloud.md
+        - title: Multi-node Installation
+          children:
+            - title: Multi-node Setup
+              path: install-and-run/advanced-installation/multi-node-setup.md
+            - title: Advanced Multi-node Installation
+              path: install-and-run/advanced-installation/multi-node-installation.md
+        - title: Upgrading a Cluster
+          path: upgrade-a-backend.ai-cluster.md
     - title: Get Started
       children:
+        - title: Quickstart
+          path: get-started/quickstart.md
+        - title: General Interface
+          path: get-started/general-interface.md
         - title: Signup and Login
           path: get-started/signup-and-login.md
         - title: Create Storage Folder
           path: get-started/create-storage-folder.md
         - title: Start a New Session
           path: get-started/start-a-new-session.md
+        - title: Run Applications
+          children:
+            - title: Running Applications
+              path: get-started/run-applications/application-running-guide.md
+            - title: Jupyter Notebook
+              path: get-started/run-applications/jupyter-notebook.md
+            - title: Web Terminal
+              path: get-started/run-applications/web-terminal.md
         - title: Model Serving
           path: get-started/model-serving.md
+        - title: Model Service
+          path: get-started/model-service.md
     - title: Backend.AI Usage Guide
       children:
+        - title: Start Page
+          path: backend.ai-usage-guide/start.md
+        - title: Dashboard
+          path: backend.ai-usage-guide/dashboard.md
+        - title: Header
+          path: backend.ai-usage-guide/header.md
         - title: Storage
           children:
+            - title: Storage Overview
+              path: backend.ai-usage-guide/storage/storage-overview.md
             - title: Data Management
               path: backend.ai-usage-guide/storage/data/data-management-guide.md
             - title: Folder Operations
               path: backend.ai-usage-guide/storage/data/how-to-create-rename-update-delete-storage-folders.md
+            - title: Upload Files and Folders
+              path: backend.ai-usage-guide/storage/data/how-to-upload-a-files-folders-to-your-folder.md
+            - title: Share Folders
+              path: backend.ai-usage-guide/storage/data/how-to-share-folders.md
+            - title: Accept and Reject Invitations
+              path: backend.ai-usage-guide/summary/how-to-accept-reject-invitations.md
         - title: Workload
           children:
-            - title: Sessions
+            - title: Workload Overview
+              path: backend.ai-usage-guide/workload/workload-overview.md
+            - title: Session Management
               path: backend.ai-usage-guide/workload/sessions/session-management.md
-            - title: Import & Run
+            - title: Starting and Terminating Sessions
+              path: backend.ai-usage-guide/workload/sessions/how-to-start-terminate-a-session.md
+            - title: Managing Existing Sessions
+              path: backend.ai-usage-guide/workload/sessions/how-to-existing-sessions.md
+            - title: Mounting Folders to Sessions
+              path: backend.ai-usage-guide/workload/sessions/mounting-folders-to-a-compute-session.md
+            - title: Optional Session Settings
+              path: backend.ai-usage-guide/workload/sessions/optional-settings-when-creating-a-session.md
+            - title: Cluster Sessions
+              path: backend.ai-usage-guide/workload/sessions/cluster-session.md
+            - title: Using Cluster Sessions
+              path: backend.ai-usage-guide/workload/sessions/how-to-use-backend.ai-cluster-session.md
+            - title: Accelerated Computing Optimization
+              path: backend.ai-usage-guide/workload/sessions/how-to-optimize-accelerated-computing.md
+            - title: SFTP to Container
+              path: backend.ai-usage-guide/workload/sessions/sftp-to-container.md
+            - title: Installing Packages in Sessions
+              path: backend.ai-usage-guide/workload/sessions/ssh-sftp-connection-to-a-compute-session.md
+            - title: Import & Run (Start Page)
               path: backend.ai-usage-guide/workload/import-and-run/import-and-run-guide.md
-        - title: CLI
+            - title: Importing Notebooks and Git Repositories
+              path: backend.ai-usage-guide/workload/import-and-run/how-to-import-notebooks-and-web-based-git-repositories.md
+        - title: Serving
           children:
-            - title: User CLI
-              path: cli-user/user-cli-guide.md
-            - title: Admin CLI
-              path: cli-admin/admin-cli-guide.md
+            - title: Serving Overview
+              path: backend.ai-usage-guide/serving/model-serving-overview.md
+            - title: Serving Page
+              path: backend.ai-usage-guide/serving/serving/model-serving-guide.md
+            - title: How to Start a New Service
+              path: backend.ai-usage-guide/serving/serving/how-to-start-a-new-service.md
+            - title: How to Add Environment Variables
+              path: backend.ai-usage-guide/serving/serving/how-to-add-a-new-environment-variable-to-a-service.md
+            - title: Model Store
+              path: backend.ai-usage-guide/serving/model-store/model-store-guide.md
+            - title: How to Search a Model
+              path: backend.ai-usage-guide/serving/model-store/how-to-search-a-model.md
+            - title: How to Download a Model
+              path: backend.ai-usage-guide/serving/model-store/how-to-download-a-model-to-my-environment.md
+            - title: How to Fine-Tune a Model
+              path: backend.ai-usage-guide/serving/model-store/how-to-fine-tune-the-uploaded-model.md
+        - title: Playground
+          children:
+            - title: Playground Overview
+              path: backend.ai-usage-guide/playground/playground-overview.md
+            - title: Chat
+              path: backend.ai-usage-guide/playground/chat.md
+              children:
+                - title: Chat Interface Guide
+                  path: backend.ai-usage-guide/playground/chat/chat-interface-guide.md
+                - title: Multiple Chat Windows
+                  path: backend.ai-usage-guide/playground/chat/how-to-create-multiple-chat-windows.md
+            - title: AI Agents
+              path: backend.ai-usage-guide/playground/ai-agents.md
+        - title: Preferences
+          children:
+            - title: Statistics
+              path: backend.ai-usage-guide/preferences/statistics.md
+            - title: Metrics and Preferences
+              path: backend.ai-usage-guide/preferences/metrics-and-preferences.md
+        - title: Profile and Settings
+          children:
+            - title: User Settings
+              path: administration/user-settings.md
+            - title: Change Personal Information
+              path: backend.ai-usage-guide/data-and-storage/how-to-change-personal-informations.md
+            - title: Change System Settings
+              path: backend.ai-usage-guide/data-and-storage/how-to-change-system-settings.md
+            - title: Customize Theme and Logo
+              path: backend.ai-usage-guide/data-and-storage/how-to-customize-theme-and-logo.md
+            - title: View Logs and Errors
+              path: backend.ai-usage-guide/data-and-storage/how-to-view-logs-and-errors.md
     - title: Administration
       children:
-        - title: User Settings
-          path: administration/user-settings.md
         - title: Environments
           path: administration/environments.md
+        - title: My Environments
+          path: administration/my-environments.md
         - title: Resources
           path: administration/resources.md
+        - title: User Management
+          path: administration/user-management.md
+        - title: Configurations
+          path: administration/configurations.md
+        - title: Maintenance
+          path: administration/maintenance.md
+        - title: Information
+          path: administration/information.md
+        - title: Agent Summary
+          path: administration/agent-summary.md
+        - title: Admin Sessions
+          path: administration/admin-session.md
+        - title: Scheduler
+          path: administration/scheduler.md
+        - title: Resource Policies
+          path: administration/resource-policy.md
+        - title: Project Management
+          path: administration/project-management.md
+        - title: Branding
+          path: administration/branding.md
+    - title: FastTrack 2 MLOps
+      children:
+        - title: Key Concepts
+          path: fasttrack-2-mlops/fasttrack-key-concept.md
+        - title: Structure
+          path: fasttrack-2-mlops/structure.md
+        - title: Getting Started
+          children:
+            - title: Starting FastTrack 2
+              path: fasttrack-2-mlops/starting-fasttrack-2/fasttrack-getting-started.md
+            - title: Registering and Logging In
+              path: fasttrack-2-mlops/starting-fasttrack-2/registering-account-and-logging-in.md
+        - title: Pipelines
+          children:
+            - title: Pipeline Overview
+              path: fasttrack-2-mlops/pipelines/pipeline-overview.md
+            - title: Creating and Editing a Pipeline
+              path: fasttrack-2-mlops/pipelines/creating-and-editing-a-new-pipeline.md
+            - title: Adding Tasks
+              path: fasttrack-2-mlops/pipelines/adding-tasks-within-a-pipeline.md
+            - title: Creating Task Dependencies
+              path: fasttrack-2-mlops/pipelines/creating-dependencies-between-tasks.md
+            - title: Editing a Pipeline
+              path: fasttrack-2-mlops/pipelines/editing-the-created-pipeline.md
+            - title: Importing a Pipeline
+              path: fasttrack-2-mlops/pipelines/importing-a-pipeline.md
+            - title: Skipping a Task
+              path: fasttrack-2-mlops/pipelines/skipping-a-task.md
+            - title: Reverting Pipeline Version
+              path: fasttrack-2-mlops/pipelines/reverting-pipeline-version.md
+        - title: Pipeline Jobs
+          children:
+            - title: Pipeline Jobs Guide
+              path: fasttrack-2-mlops/pipeline-jobs/pipeline-jobs-guide.md
+            - title: Creating a Pipeline Job
+              path: fasttrack-2-mlops/pipeline-jobs/creating-a-pipeline-job.md
+            - title: Scheduling a Pipeline Job
+              path: fasttrack-2-mlops/pipeline-jobs/scheduling-a-pipeline-job.md
+            - title: Tracking a Running Pipeline Job
+              path: fasttrack-2-mlops/pipeline-jobs/tracking-the-running-pipeline-job.md
+    - title: Control Panel
+      children:
+        - title: Key Concepts
+          path: control-panel/control-panel-key-concepts.md
+        - title: Getting Started
+          path: control-panel/getting-started.md
+        - title: Dashboard
+          path: control-panel/dashboard.md
+        - title: Management
+          path: control-panel/management.md
+    - title: Reservoir
+      children:
+        - title: Key Concepts
+          path: reservoir/reservoir-key-concept.md
     - title: Backend.AI SDK
       children:
         - title: Python SDK
           path: backend.ai-sdk/client-sdk-for-python.md
+          children:
+            - title: Installation
+              path: backend.ai-sdk/client-sdk-for-python/installation.md
+            - title: Client Configuration
+              path: backend.ai-sdk/client-sdk-for-python/client-configuration.md
+            - title: High-Level Function Reference
+              path: backend.ai-sdk/client-sdk-for-python/high-level-function-reference.md
+            - title: Low-Level SDK Reference
+              path: backend.ai-sdk/client-sdk-for-python/low-level-sdk-reference.md
+            - title: CLI Reference
+              path: backend.ai-sdk/client-sdk-for-python/command-line-interface/python-sdk-cli-reference.md
+              children:
+                - title: Configuration
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/configuration.md
+                - title: Compute Sessions
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/compute-sessions.md
+                - title: Container Applications
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/container-applications.md
+                - title: Storage Management
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/storage-management.md
+                - title: Advanced Code Execution
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/advanced-code-execution.md
+                - title: Session Templates
+                  path: backend.ai-sdk/client-sdk-for-python/command-line-interface/session-templates.md
         - title: TypeScript SDK
           path: backend.ai-sdk/client-sdk-for-typescript.md
+    - title: API Reference
+      children:
+        - title: Manager API
+          children:
+            - title: Overview
+              path: api-reference/manager-api-reference/manager-api-overview.md
+            - title: Common Concepts
+              children:
+                - title: Overview
+                  path: api-reference/manager-api-reference/manager-api-common-concepts/api-common-concepts.md
+                - title: Authentication
+                  path: api-reference/manager-api-reference/manager-api-common-concepts/authentication.md
+                - title: Rate Limiting
+                  path: api-reference/manager-api-reference/manager-api-common-concepts/rate-limiting.md
+                - title: API Conventions
+                  path: api-reference/manager-api-reference/manager-api-common-concepts/api-and-document-conventions.md
+                - title: JSON Object References
+                  path: api-reference/manager-api-reference/manager-api-common-concepts/json-object-references.md
+            - title: REST API
+              children:
+                - title: Overview
+                  path: api-reference/manager-api-reference/manager-rest-api/rest-api-reference.md
+                - title: Session Management
+                  path: api-reference/manager-api-reference/manager-rest-api/session-management.md
+                - title: Virtual Folders
+                  path: api-reference/manager-api-reference/manager-rest-api/virtual-folders.md
+                - title: Resource Presets
+                  path: api-reference/manager-api-reference/manager-rest-api/resource-presets.md
+                - title: Service Ports
+                  path: api-reference/manager-api-reference/manager-rest-api/service-ports.md
+                - title: Event Monitoring
+                  path: api-reference/manager-api-reference/manager-rest-api/event-monitoring.md
+                - title: Code Execution (Query)
+                  path: api-reference/manager-api-reference/manager-rest-api/code-execution-query-mode.md
+                - title: Code Execution (Batch)
+                  path: api-reference/manager-api-reference/manager-rest-api/code-execution-batch-mode.md
+                - title: Code Execution (Streaming)
+                  path: api-reference/manager-api-reference/manager-rest-api/code-execution-streaming.md
+        - title: Agent API
+          path: api-reference/agent-api-reference.md
+        - title: Storage Proxy API
+          path: api-reference/storage-proxy-reference.md
+    - title: CLI User Guide
+      children:
+        - title: Overview
+          path: cli-user/user-cli-guide.md
+        - title: Getting Started
+          path: cli-user/how-to-begin-with-cli-user.md
+        - title: Starting a Session
+          path: cli-user/starting-a-session-with-cli.md
+        - title: Committing a Session
+          path: cli-user/commiting-a-session-with-cli.md
+        - title: Downloading Files
+          path: cli-user/downloading-files-from-session-with-cli.md
+        - title: Terminating a Session
+          path: cli-user/terminating-a-session-with-cli.md
+        - title: SSH in a Session
+          path: cli-user/using-ssh-in-a-compute-session.md
+        - title: Creating a Model Service
+          path: cli-user/creating-a-model-service.md
+        - title: Updating a Model Service
+          path: cli-user/updating-a-model-service.md
+        - title: Deleting a Model Service
+          path: cli-user/deleting-a-model-service.md
+        - title: CLI Troubleshooting
+          path: cli-user/cli-troubleshooting.md
+    - title: CLI Admin Guide
+      children:
+        - title: Overview
+          path: cli-admin/admin-cli-guide.md
+        - title: Getting Started
+          path: cli-admin/how-to-begin-with-cli-admin.md
+        - title: Image Management
+          path: cli-admin/image-management.md
+        - title: User Management
+          path: cli-admin/user-management.md
+        - title: Resource Management
+          path: cli-admin/resource-management.md
+        - title: Data Folder and Storage Management
+          path: cli-admin/data-folder-and-storage-management.md
+        - title: Updating WebUI Announcements
+          path: cli-admin/updating-webui-announcements.md
+    - title: Command Reference
+      children:
+        - title: Client CLI
+          path: command-reference/client-cli.md
+        - title: Manager CLI
+          path: command-reference/manager-cli.md
+        - title: Agent CLI
+          path: command-reference/agent-cli.md
+        - title: Storage CLI
+          path: command-reference/storage-cli.md
+    - title: Developer Guide
+      children:
+        - title: Development Setup
+          path: developer-guide/development-setup.md
+        - title: Daily Development Workflows
+          path: developer-guide/daily-development-workflows.md
+        - title: Version Numbering
+          path: developer-guide/version-numbering.md
+    - title: Migration Guide
+      children:
+        - title: Upgrading from 20.x to 24.x
+          path: migration-guide/upgrading-from-20.x-to-24.x.md
+        - title: Migrating from Docker Hub
+          path: migration-guide/migrating-from-the-docker-hub-to-cr.backend.ai.md
+    - title: References
+      path: references/references.md
+    - title: Settings
+      path: settings.md
+    - title: License Agreement
+      path: terms-of-license-agreement/backend.ai-license-software.md
+    - title: Disclaimer
+      path: disclaimer.md
 editScope: packages/backend.ai-guide/src
 hiddenPaths: []
 readOnlyPaths: []
