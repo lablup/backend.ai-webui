@@ -28,7 +28,7 @@
     "copyconfig": "./scripts/copy-config.js && cp version.json build/web && cp manifest.json build/web",
     "copyindex": "cp index.html build/web",
     "prepare": "husky",
-    "theme-schema:update": "pnpm dlx typescript-json-schema \"./react/node_modules/antd/es/config-provider/context.d.ts\" ThemeConfig -o ./resources/antdThemeConfig.schema.json --esModuleInterop",
+    "theme-schema:update": "node scripts/gen-theme-schema.cjs",
     "dev:config": "node scripts/dev-config.js show",
     "dev:setup": "node scripts/dev-config.js update"
   },
