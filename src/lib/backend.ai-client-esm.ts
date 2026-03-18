@@ -895,8 +895,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;
       this._features['rbac'] = true;
-      this._features['export-csv'] = true;
-      this._features['bulk-create-user'] = true;
+      this._features['session-scheduling-history'] = true;
     }
   }
 
