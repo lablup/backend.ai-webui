@@ -90,6 +90,7 @@
     "Refresh": "更新"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "日付と時刻を選択",
     "operator": {
       "After": "後",
       "Before": "前",

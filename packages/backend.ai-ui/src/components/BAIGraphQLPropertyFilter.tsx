@@ -2,10 +2,26 @@ import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { AutoComplete, Button, Input, Space, Tag, Tooltip, theme } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  DatePicker,
+  Input,
+  Space,
+  Tag,
+  Tooltip,
+  theme,
+} from 'antd';
 import type { AutoCompleteProps, GetRef } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 import _ from 'lodash';
-import React, { useMemo, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -455,6 +471,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   );
 
   const [search, setSearch] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<FilterProperty>(
     filterProperties[0],
   );
@@ -597,7 +614,9 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     const displayValue =
       condition.operator === 'in' || condition.operator === 'notIn'
         ? `[${condition.value}]`
-        : condition.value;
+        : condition.type === 'datetime' && dayjs(condition.value).isValid()
+          ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
+          : condition.value;
 
     return (
       <Tag
@@ -611,6 +630,19 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       </Tag>
     );
   };
+
+  const updateSelectedDateEvent = useEffectEvent((date: Dayjs) => {
+    if (date) {
+      addCondition(dayjs(date).toISOString());
+      setSelectedDate(null);
+    }
+  });
+
+  useEffect(() => {
+    if (selectedDate) {
+      updateSelectedDateEvent(selectedDate);
+    }
+  }, [selectedDate]);
 
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>
@@ -652,36 +684,46 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             onChange={setSelectedOperator}
           />
         )}
-        <Tooltip
-          title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
-          open={!isValid && isFocused}
-          color={token.colorError}
-        >
-          <AutoComplete
-            ref={autoCompleteRef}
-            value={search}
-            open={isOpenAutoComplete}
-            onOpenChange={setIsOpenAutoComplete}
-            onSelect={addCondition}
-            onChange={(value) => {
-              setIsValid(true);
-              setSearch(value);
-            }}
+        {selectedProperty?.type === 'datetime' ? (
+          <DatePicker
+            value={selectedDate}
+            showTime
             style={{ minWidth: 200 }}
-            options={effectiveOptions?.filter((option) =>
-              !search ? true : option.label?.toString().includes(search),
-            )}
-            placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
-            onBlur={() => setIsFocused(false)}
-            onFocus={() => setIsFocused(true)}
+            onChange={(date) => setSelectedDate(date)}
+            placeholder={t('comp:BAIGraphQLPropertyFilter.SelectDateTime')}
+          />
+        ) : (
+          <Tooltip
+            title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
+            open={!isValid && isFocused}
+            color={token.colorError}
           >
-            <Input.Search
-              onSearch={addCondition}
-              allowClear
-              status={!isValid && isFocused ? 'error' : undefined}
-            />
-          </AutoComplete>
-        </Tooltip>
+            <AutoComplete
+              ref={autoCompleteRef}
+              value={search}
+              open={isOpenAutoComplete}
+              onOpenChange={setIsOpenAutoComplete}
+              onSelect={addCondition}
+              onChange={(value) => {
+                setIsValid(true);
+                setSearch(value);
+              }}
+              style={{ minWidth: 200 }}
+              options={effectiveOptions?.filter((option) =>
+                !search ? true : option.label?.toString().includes(search),
+              )}
+              placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
+              onBlur={() => setIsFocused(false)}
+              onFocus={() => setIsFocused(true)}
+            >
+              <Input.Search
+                onSearch={addCondition}
+                allowClear
+                status={!isValid && isFocused ? 'error' : undefined}
+              />
+            </AutoComplete>
+          </Tooltip>
+        )}
       </Space.Compact>
 
       {conditions.length > 0 && (

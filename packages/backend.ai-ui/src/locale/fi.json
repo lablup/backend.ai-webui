@@ -90,6 +90,7 @@
     "Refresh": "Päivitä"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Valitse päivämäärä ja aika",
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",

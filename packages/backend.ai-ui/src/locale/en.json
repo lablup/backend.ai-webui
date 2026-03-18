@@ -90,6 +90,7 @@
     "Refresh": "Refresh"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Select date and time",
     "operator": {
       "After": "after",
       "Before": "before",

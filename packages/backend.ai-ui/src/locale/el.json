@@ -90,6 +90,7 @@
     "Refresh": "Ανανέωση"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Επιλέξτε ημερομηνία και ώρα",
     "operator": {
       "After": "μετά",
       "Before": "πριν",

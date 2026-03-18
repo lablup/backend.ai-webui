@@ -90,6 +90,7 @@
     "Refresh": "刷新"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "选择日期和时间",
     "operator": {
       "After": "之后",
       "Before": "之前",

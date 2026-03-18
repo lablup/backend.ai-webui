@@ -1804,6 +1804,7 @@
     "TotalRetries": "生成試行回数",
     "Traceback": "トレースバック",
     "TryPreferredPort": "優先ポートを試す",
+    "UpdatedAt": "更新日時",
     "Usage": "使用状況",
     "UseSubdomain": "サブドメインのアドレス入力",
     "UseThisArguments": "この引数を使用する",

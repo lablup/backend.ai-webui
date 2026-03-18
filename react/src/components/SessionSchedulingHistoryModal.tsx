@@ -6,7 +6,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAISchedulingHistoryNodes,
-  GraphQLFilter,
   useFetchKey,
 } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -14,6 +13,7 @@ import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
+  SessionSchedulingHistoryFilter,
   SessionSchedulingHistoryModalQuery,
   SessionSchedulingHistoryOrderBy,
 } from 'src/__generated__/SessionSchedulingHistoryModalQuery.graphql';
@@ -35,7 +35,7 @@ const SessionSchedulingHistoryModal = ({
 }: SessionSchedulingHistoryModalProps) => {
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [filter, setFilter] = useState<GraphQLFilter>();
+  const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
   const [order, setOrder] = useState<string | null>('createdAt');
 
   const deferredOpenValue = useDeferredValue(open);
@@ -66,17 +66,7 @@ const SessionSchedulingHistoryModal = ({
       scope: {
         sessionId: sessionId,
       },
-      filter: deferredFilter
-        ? _.pick(deferredFilter, [
-            'id',
-            'phase',
-            'result',
-            'fromStatus',
-            'toStatus',
-            'errorCode',
-            'message',
-          ])
-        : undefined,
+      filter: deferredFilter ?? undefined,
       orderBy: convertToOrderBy<SessionSchedulingHistoryOrderBy>(
         deferredOrder,
       ) ?? [{ field: 'CREATED_AT', direction: 'ASC' }],
@@ -97,7 +87,7 @@ const SessionSchedulingHistoryModal = ({
       }}
       styles={{
         body: {
-          height: '100vh',
+          minHeight: '80vh',
         },
       }}
       footer={
@@ -171,6 +161,18 @@ const SessionSchedulingHistoryModal = ({
                 propertyLabel: t('session.Message'),
                 type: 'string',
                 fixedOperator: 'contains',
+              },
+              {
+                key: 'createdAt',
+                propertyLabel: t('session.CreatedAt'),
+                type: 'datetime',
+                defaultOperator: 'after',
+              },
+              {
+                key: 'updatedAt',
+                propertyLabel: t('session.UpdatedAt'),
+                type: 'datetime',
+                defaultOperator: 'after',
               },
             ]}
           />

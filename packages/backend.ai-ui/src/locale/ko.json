@@ -90,6 +90,7 @@
     "Refresh": "새로고침"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "날짜 및 시간 선택",
     "operator": {
       "After": "이후",
       "Before": "이전",

@@ -90,6 +90,7 @@
     "Refresh": "Шинэчлэх"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Огноо болон цагийг сонгох",
     "operator": {
       "After": "дараа",
       "Before": "өмнө",

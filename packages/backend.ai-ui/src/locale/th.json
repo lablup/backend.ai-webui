@@ -90,6 +90,7 @@
     "Refresh": "รีเฟรช"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "เลือกวันที่และเวลา",
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",

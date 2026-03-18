@@ -90,6 +90,7 @@
     "Refresh": "Yenile"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Tarih ve saat seçin",
     "operator": {
       "After": "sonra",
       "Before": "önce",

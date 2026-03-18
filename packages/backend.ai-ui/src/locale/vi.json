@@ -90,6 +90,7 @@
     "Refresh": "Làm mới"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Chọn ngày và giờ",
     "operator": {
       "After": "sau",
       "Before": "trước",

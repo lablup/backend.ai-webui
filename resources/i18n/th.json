@@ -1804,6 +1804,7 @@
     "TotalRetries": "จำนวนครั้งที่ลองใหม่ทั้งหมด",
     "Traceback": "ร่องรอย",
     "TryPreferredPort": "ลองใช้พอร์ตที่ต้องการ",
+    "UpdatedAt": "อัปเดตเมื่อ",
     "Usage": "การใช้งาน",
     "UseSubdomain": "ใช้โดเมนย่อย",
     "UseThisArguments": "ใช้อาร์กิวเมนต์นี้",

@@ -13,13 +13,14 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
         component: `
 **BAIGraphQLPropertyFilter** is an advanced filtering component designed for GraphQL-based Backend.AI applications. It provides a sophisticated interface for constructing GraphQL filter objects with support for:
 
-- **GraphQL Filter Types**: Compatible with standard GraphQL filter schemas including StringFilter, IntFilter, BooleanFilter, and EnumFilter
+- **GraphQL Filter Types**: Compatible with standard GraphQL filter schemas including StringFilter, IntFilter, BooleanFilter, EnumFilter, and DateTimeFilter
 - **Flexible Combination Mode**: Choose between AND or OR operators to combine multiple filter conditions
 - **Rich Operator Set**: Case-insensitive string operators (iContains, iEquals, iStartsWith, iEndsWith, etc.) and comparison operators (greaterThan, greaterThanOrEqual, lessThan, lessThanOrEqual, in, notIn)
 - **Type-Safe Filtering**: Automatic type detection and operator suggestions based on property types
 - **Bidirectional Conversion**: Seamless conversion between UI conditions and GraphQL filter objects
 
 New in this version:
+- **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'eq') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -69,7 +70,7 @@ The component generates GraphQL-compatible filter objects that can be directly u
 FilterProperty = {
   key: string;              // Property key in the GraphQL schema
   propertyLabel: string;    // Display label for the property
-  type: 'string' | 'int' | 'boolean' | 'enum';
+  type: 'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime';
   operators?: FilterOperator[];  // Available operators for this property
   defaultOperator?: FilterOperator;
   options?: AutoCompleteProps['options'];  // Autocomplete suggestions
@@ -704,6 +705,86 @@ export const ToggleCombinationMode: Story = {
     ],
     combinationMode: 'AND',
     onChange: action('Filter changed with mode toggle'),
+  },
+};
+
+export const WithDateTimeFilters: Story = {
+  name: 'DateTime Filters',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates datetime filtering with a DatePicker UI. When a datetime property is selected, a date picker with time selection is rendered instead of a text input. Useful for filtering by created_at, updated_at, or other timestamp fields.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'created_at',
+        propertyLabel: 'Created At',
+        type: 'datetime',
+      },
+      {
+        key: 'updated_at',
+        propertyLabel: 'Updated At',
+        type: 'datetime',
+        defaultOperator: 'after',
+      },
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'iContains',
+      },
+      {
+        key: 'isActive',
+        propertyLabel: 'Active Status',
+        type: 'boolean',
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('DateTime filter changed'),
+  },
+};
+
+export const WithDateTimePrefiltered: Story = {
+  name: 'DateTime with Pre-applied Filters',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'DateTime filters with pre-applied conditions showing how datetime values are displayed in filter tags with a human-readable format (YYYY-MM-DD HH:mm).',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'created_at',
+        propertyLabel: 'Created At',
+        type: 'datetime',
+      },
+      {
+        key: 'updated_at',
+        propertyLabel: 'Updated At',
+        type: 'datetime',
+      },
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+      },
+    ],
+    combinationMode: 'AND',
+    value: {
+      AND: [
+        { created_at: { after: '2025-01-01T00:00:00.000Z' } },
+        { updated_at: { before: '2025-12-31T23:59:59.000Z' } },
+        { name: { iContains: 'test' } },
+      ],
+    },
+    onChange: action('DateTime pre-filtered changed'),
   },
 };
 

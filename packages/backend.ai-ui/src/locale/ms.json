@@ -90,6 +90,7 @@
     "Refresh": "Segarkan"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Pilih tarikh dan masa",
     "operator": {
       "After": "selepas",
       "Before": "sebelum",

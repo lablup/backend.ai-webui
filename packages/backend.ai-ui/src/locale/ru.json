@@ -90,6 +90,7 @@
     "Refresh": "Обновить"
   },
   "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Выберите дату и время",
     "operator": {
       "After": "после",
       "Before": "до",
