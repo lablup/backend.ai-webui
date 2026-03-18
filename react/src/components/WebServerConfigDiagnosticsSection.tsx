@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 interface WebServerConfigDiagnosticsSectionProps {
   hidePassed?: boolean;
-  fetchKey?: number;
+  fetchKey?: string;
   onHasIssues?: (hasIssues: boolean) => void;
   onResultsChange?: (results: DiagnosticResult[]) => void;
 }

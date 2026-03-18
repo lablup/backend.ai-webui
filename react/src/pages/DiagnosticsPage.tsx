@@ -9,9 +9,9 @@ import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiag
 import { downloadBlob } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Collapse, Skeleton, Switch, Tooltip, Typography, message } from 'antd';
-import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
-import { Suspense, useCallback, useMemo, useRef, useState, useTransition } from 'react';
+import { Collapse, Skeleton, Switch, Typography, message } from 'antd';
+import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
+import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -26,7 +26,7 @@ const DiagnosticsPage = () => {
 
   const { t } = useTranslation();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
-  const [fetchKey, setFetchKey] = useState(0);
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
   const [showOnlyFailed, setShowOnlyFailed] = useState(false);
   const [sectionsWithIssues, setSectionsWithIssues] = useState<
@@ -52,7 +52,7 @@ const DiagnosticsPage = () => {
 
   const handleRefresh = () => {
     startTransition(() => {
-      setFetchKey((prev) => prev + 1);
+      updateFetchKey();
       sectionResultsRef.current = {
         csp: [],
         storage: [],
@@ -124,84 +124,72 @@ const DiagnosticsPage = () => {
     downloadBlob(blob, `diagnostics-${today}.json`);
   };
 
-  const allItems = useMemo(
-    () => [
-      {
-        key: 'csp' as SectionKey,
-        label: t('diagnostics.ContentSecurityPolicy'),
-        children: (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<Skeleton active />}>
-              <CspDiagnosticsSection
-                hidePassed={showOnlyFailed}
-                fetchKey={fetchKey}
-                onHasIssues={createHasIssuesCallback('csp')}
-                onResultsChange={onCspResultsChange}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        ),
-      },
-      {
-        key: 'storage' as SectionKey,
-        label: t('diagnostics.StorageProxy'),
-        children: (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<Skeleton active />}>
-              <StorageProxyDiagnosticsSection
-                hidePassed={showOnlyFailed}
-                fetchKey={fetchKey}
-                onHasIssues={createHasIssuesCallback('storage')}
-                onResultsChange={onStorageResultsChange}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        ),
-      },
-      {
-        key: 'endpoint' as SectionKey,
-        label: t('diagnostics.EndpointConnectivity'),
-        children: (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<Skeleton active />}>
-              <EndpointDiagnosticsSection
-                hidePassed={showOnlyFailed}
-                fetchKey={fetchKey}
-                onHasIssues={createHasIssuesCallback('endpoint')}
-                onResultsChange={onEndpointResultsChange}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        ),
-      },
-      {
-        key: 'config' as SectionKey,
-        label: t('diagnostics.WebServerConfig'),
-        children: (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<Skeleton active />}>
-              <WebServerConfigDiagnosticsSection
-                hidePassed={showOnlyFailed}
-                fetchKey={fetchKey}
-                onHasIssues={createHasIssuesCallback('config')}
-                onResultsChange={onConfigResultsChange}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        ),
-      },
-    ],
-    [
-      t,
-      showOnlyFailed,
-      fetchKey,
-      createHasIssuesCallback,
-      onCspResultsChange,
-      onStorageResultsChange,
-      onEndpointResultsChange,
-      onConfigResultsChange,
-    ],
-  );
+  const allItems = [
+    {
+      key: 'csp' as SectionKey,
+      label: t('diagnostics.ContentSecurityPolicy'),
+      children: (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active />}>
+            <CspDiagnosticsSection
+              hidePassed={showOnlyFailed}
+              fetchKey={fetchKey}
+              onHasIssues={createHasIssuesCallback('csp')}
+              onResultsChange={onCspResultsChange}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ),
+    },
+    {
+      key: 'storage' as SectionKey,
+      label: t('diagnostics.StorageProxy'),
+      children: (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active />}>
+            <StorageProxyDiagnosticsSection
+              hidePassed={showOnlyFailed}
+              fetchKey={fetchKey}
+              onHasIssues={createHasIssuesCallback('storage')}
+              onResultsChange={onStorageResultsChange}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ),
+    },
+    {
+      key: 'endpoint' as SectionKey,
+      label: t('diagnostics.EndpointConnectivity'),
+      children: (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active />}>
+            <EndpointDiagnosticsSection
+              hidePassed={showOnlyFailed}
+              fetchKey={fetchKey}
+              onHasIssues={createHasIssuesCallback('endpoint')}
+              onResultsChange={onEndpointResultsChange}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ),
+    },
+    {
+      key: 'config' as SectionKey,
+      label: t('diagnostics.WebServerConfig'),
+      children: (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active />}>
+            <WebServerConfigDiagnosticsSection
+              hidePassed={showOnlyFailed}
+              fetchKey={fetchKey}
+              onHasIssues={createHasIssuesCallback('config')}
+              onResultsChange={onConfigResultsChange}
+            />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      ),
+    },
+  ];
 
   const visibleItems = showOnlyFailed
     ? allItems.filter((item) => sectionsWithIssues[item.key])
@@ -234,11 +222,9 @@ const DiagnosticsPage = () => {
           >
             {t('diagnostics.Refresh')}
           </BAIButton>
-          <Tooltip title={t('diagnostics.ExportTooltip')}>
-            <BAIButton icon={<DownloadOutlined />} onClick={handleExport}>
-              {t('diagnostics.Export')}
-            </BAIButton>
-          </Tooltip>
+          <BAIButton icon={<DownloadOutlined />} onClick={handleExport}>
+            {t('diagnostics.Export')}
+          </BAIButton>
         </BAIFlex>
       }
     >

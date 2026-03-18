@@ -16,7 +16,7 @@ import { useMemo } from 'react';
  * Hook that checks API endpoint reachability.
  * Uses TanStack Query to perform health check fetches.
  */
-export function useEndpointDiagnostics(fetchKey?: number): {
+export function useEndpointDiagnostics(fetchKey?: string): {
   results: DiagnosticResult[];
   isLoading: boolean;
 } {

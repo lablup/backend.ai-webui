@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 interface CspDiagnosticsSectionProps {
   hidePassed?: boolean;
-  fetchKey?: number;
+  fetchKey?: string;
   onHasIssues?: (hasIssues: boolean) => void;
   onResultsChange?: (results: DiagnosticResult[]) => void;
 }

@@ -36,7 +36,7 @@ function parseStorageWarningThreshold(raw: unknown): number {
  * Suspends while loading storage volume data via GraphQL.
  */
 export function useStorageProxyDiagnostics(
-  fetchKey?: number,
+  fetchKey?: string,
 ): DiagnosticResult[] {
   'use memo';
 
