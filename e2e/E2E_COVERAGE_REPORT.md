@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 216 / 373 features covered (58%)**
+**Overall (in-scope routes): 167 / 326 features covered (51%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -24,7 +24,7 @@
 | Serving | `/serving` | 14 | 7 | 🔶 50% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
-| VFolder / Data | `/data` | 38 | 26 | 🔶 68% |
+| VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
@@ -300,7 +300,7 @@
 
 ### 9. Data / VFolder (`/data`)
 
-**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts)
+**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts), [`e2e/vfolder/vfolder-type-selection.spec.ts`](vfolder/vfolder-type-selection.spec.ts)
 
 **Tabs:** Active | Deleted
 **Filter (Active tab):** all | general | pipeline | automount | model
@@ -340,6 +340,13 @@
 | File creation (empty name validation) | ✅ | `User cannot create a file with empty name` |
 | File creation (invalid chars validation) | ✅ | `User cannot create a file with invalid characters in name` |
 | File creation (read-only disabled) | 🚧 | Skipped: `User cannot create files in read-only VFolder` |
+| Type selection: User-type default | ✅ | `User can create a User-type vfolder with default selection` |
+| Type selection: Project-type (admin) | ✅ | `Admin can create a Project-type vfolder` |
+| Type selection: Project disabled for model mode | ✅ | `Project radio is disabled when usage mode is model (non-model-store project)` |
+| Type selection: Project disabled for automount | ✅ | `Project radio is disabled when usage mode is automount` |
+| Type selection: Project enabled for general | ✅ | `Project radio is enabled when usage mode is general` |
+| Type selection: User-only for regular user | ✅ | `Regular user sees only User-type radio (no Project radio)` |
+| Type selection: Both types for admin | ✅ | `Admin sees both User-type and Project-type radios` |
 | Active/Deleted tab switching | ❌ | - |
 | Usage mode filtering (general/pipeline/automount/model) | ❌ | - |
 | Property filtering (name, status, location) | ❌ | - |
@@ -352,7 +359,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal | ❌ | - |
 | File download | ❌ | - |
 
-**Coverage: 🔶 26/38 features (includes 1 skipped)**
+**Coverage: 🔶 32/45 features (includes 1 skipped)**
 
 ---
 
