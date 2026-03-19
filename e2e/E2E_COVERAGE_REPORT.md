@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 216 / 373 features covered (58%)**
+**Overall (in-scope routes): 167 / 326 features covered (51%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -24,7 +24,7 @@
 | Serving | `/serving` | 14 | 7 | 🔶 50% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
-| VFolder / Data | `/data` | 38 | 26 | 🔶 68% |
+| VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
 | Model Store | `/model-store` | 6 | 0 | ❌ 0% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
@@ -359,7 +359,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal | ❌ | - |
 | File download | ❌ | - |
 
-**Coverage: 🔶 26/38 features (includes 1 skipped)**
+**Coverage: 🔶 32/45 features (includes 1 skipped)**
 
 ---
 
