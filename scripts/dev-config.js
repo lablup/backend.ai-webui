@@ -56,6 +56,14 @@ class DevConfig {
   }
 
   getPorts() {
+    // If PORT is already set (e.g., by Portless), use it directly
+    const envPort = process.env.PORT || this.env.PORT;
+    if (envPort && !isNaN(envPort)) {
+      return {
+        react: parseInt(envPort),
+      };
+    }
+
     const offset = this.getPortOffset();
     return {
       react: this.basePorts.react + offset,
