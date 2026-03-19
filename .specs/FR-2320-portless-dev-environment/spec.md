@@ -1,98 +1,103 @@
-# Portless Integration for Dev Environment Spec
+# 개발 환경 Portless 통합 스펙
 
-> **Epic**: FR-2320 ([link](https://lablup.atlassian.net/browse/FR-2320))
+> **Epic**: FR-2320 ([링크](https://lablup.atlassian.net/browse/FR-2320))
 
-## Overview
+## 개요
 
-Replace the existing port-number-based local development configuration (`scripts/dev-config.js`, `BAI_WEBUI_DEV_PORT_OFFSET`, etc.) with [Portless](https://github.com/vercel-labs/portless), giving developers stable, human-readable `.localhost` URLs (e.g., `http://webui.localhost:1355`) instead of `http://localhost:9081`. This simplifies multi-instance development, eliminates manual port management, and provides a more production-like local experience.
+기존 포트 번호 기반 로컬 개발 설정(`scripts/dev-config.js`, `BAI_WEBUI_DEV_PORT_OFFSET` 등)을 [Portless](https://github.com/vercel-labs/portless)로 대체합니다. 이를 통해 개발자는 `http://localhost:9081` 대신 `http://webui.localhost:1355`와 같이 안정적이고 사람이 읽기 쉬운 `.localhost` URL을 사용할 수 있습니다. 이 변경으로 다중 인스턴스 개발이 간소화되고, 수동 포트 관리가 필요 없어지며, 프로덕션에 더 가까운 로컬 개발 환경을 제공합니다.
 
-## Problem Statement
+## 문제 정의
 
-The current development setup requires developers to:
+현재 개발 환경은 개발자에게 다음을 요구합니다:
 
-1. **Remember and manage port numbers** -- The React dev server defaults to port 9081, but when running multiple instances, developers must manually set `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local` to avoid port collisions.
-2. **Run a separate configuration step** -- The `dev` script evaluates `scripts/dev-config.js` to compute port offsets and export environment variables before starting the dev server.
-3. **Coordinate ports across services** -- The WebSocket proxy runs on port 5050, Storybook on 6006, and the React dev server on 9081+offset. Developers must know which port belongs to which service.
+1. **포트 번호 기억 및 관리** -- React dev 서버의 기본 포트는 9081이지만, 여러 인스턴스를 실행할 경우 포트 충돌을 피하기 위해 `.env.development.local`에서 `BAI_WEBUI_DEV_PORT_OFFSET`을 수동으로 설정해야 합니다.
+2. **별도 설정 단계 실행** -- `dev` 스크립트는 dev 서버를 시작하기 전에 `scripts/dev-config.js`를 실행하여 포트 오프셋을 계산하고 환경 변수를 내보냅니다.
+3. **서비스 간 포트 조율** -- WebSocket 프록시는 포트 5050, Storybook은 6006, React dev 서버는 9081+오프셋을 사용합니다. 개발자는 각 서비스에 해당하는 포트를 알고 있어야 합니다.
+4. **다중 클론 간 충돌** -- 여러 프로젝트 클론을 유지하는 개발자(예: 다른 브랜치용 클론 3개)는 포트 충돌을 피하기 위해 각 클론에 서로 다른 포트 오프셋을 수동으로 할당해야 합니다.
 
-Portless solves these problems by auto-assigning ephemeral ports behind named `.localhost` URLs, so developers never need to think about port numbers.
+Portless는 이름 붙여진 `.localhost` URL 뒤에서 임시 포트를 자동 할당하여 이 문제를 해결합니다. 개발자는 포트 번호를 신경 쓸 필요가 없으며, 각 클론은 디렉토리 이름에서 파생된 고유 URL을 자동으로 갖게 됩니다.
 
-## Requirements
+## 요구사항
 
-### Must Have
+### 필수 항목
 
-- [ ] `pnpm run dev` starts the React dev server behind a Portless-managed URL (e.g., `http://webui.localhost:1355`)
-- [ ] Portless is installed as a global tool requirement, documented in the project README and `DEV_ENVIRONMENT.md`
-- [ ] The `dev` script in `package.json` is updated to launch the React dev server via Portless (e.g., `portless webui <existing start command>`)
-- [ ] The `scripts/dev-config.js` port-offset system is removed or deprecated -- Portless handles port assignment automatically
-- [ ] Multi-instance development works without manual configuration: each git worktree or project clone automatically gets a unique URL via Portless worktree integration or distinct app names
-- [ ] The assigned Portless URL is clearly printed to the terminal when the dev server starts, so developers know where to access the app
-- [ ] Existing developer workflows (TypeScript watch, Relay watch, React dev server) continue to run concurrently as they do today
-- [ ] `PORTLESS=0 pnpm run dev` provides an escape hatch that bypasses Portless and falls back to a plain port-based setup
-- [ ] WebSocket proxy (`pnpm run wsproxy`) is also managed by Portless with a named URL (e.g., `http://wsproxy.webui.localhost:1355`)
-- [ ] Storybook (`pnpm run storybook` in `packages/backend.ai-ui/`) runs behind a Portless URL (e.g., `http://storybook.webui.localhost:1355`)
+- [ ] `pnpm run dev`를 실행하면 Portless가 관리하는 URL(예: `http://webui.localhost:1355`) 뒤에서 React dev 서버가 시작됩니다.
+- [ ] Portless는 전역 도구 요구사항으로 설치되며, 프로젝트 README와 `DEV_ENVIRONMENT.md`에 문서화됩니다.
+- [ ] `package.json`의 `dev` 스크립트가 Portless를 통해 React dev 서버를 실행하도록 업데이트됩니다(예: `portless webui <기존 시작 명령>`).
+- [ ] `scripts/dev-config.js`의 포트 오프셋 시스템이 제거되거나 deprecated됩니다. 포트 할당은 Portless가 자동으로 처리합니다.
+- [ ] 수동 설정 없이 다중 인스턴스 개발이 가능합니다. 각 git worktree 또는 프로젝트 클론은 고유 URL을 자동으로 갖습니다. 앱 이름은 프로젝트 디렉토리 이름에서 파생됩니다(예: 디렉토리 `webui` → `http://webui.localhost:1355`, 디렉토리 `webui-feature` → `http://webui-feature.localhost:1355`). 여러 클론을 실행하는 개발자는 추가 설정 없이 각자 고유 URL을 갖게 됩니다.
+- [ ] dev 서버가 시작될 때 할당된 Portless URL이 터미널에 명확히 출력되어 개발자가 접속 주소를 알 수 있습니다.
+- [ ] 기존 개발자 워크플로(TypeScript watch, Relay watch, React dev 서버)가 현재와 동일하게 동시에 실행됩니다.
+- [ ] `PORTLESS=0`을 설정하면 Portless를 우회하는 탈출구(escape hatch)를 제공합니다. `PORTLESS=0 pnpm run dev`는 기존 포트 기반 설정으로 폴백하고, `pnpm run wsproxy`는 포트 5050으로, Storybook은 포트 6006으로 각각 폴백합니다.
+- [ ] **[V1 프록시 전용]** WebSocket 프록시(`pnpm run wsproxy`)도 Portless로 관리되며 이름 붙여진 URL(예: `http://wsproxy.webui.localhost:1355`)을 갖습니다. 이 항목은 로컬 Node.js wsproxy(V1 프록시 모드)를 사용하는 경우에만 적용됩니다. Backend.AI 웹서버(V2 프록시 모드)를 실행하는 개발자는 로컬 wsproxy가 전혀 필요 없으며, 웹서버에 내장된 프록시가 세션 앱 연결을 직접 처리합니다.
+- [ ] Storybook(`packages/backend.ai-ui/`의 `pnpm run storybook`)이 Portless URL(예: `http://storybook.webui.localhost:1355`) 뒤에서 실행됩니다.
+- [ ] 테마 색상 구분(현재 `.env.development.local`의 `THEME_HEADER_COLOR`로 설정)이 Portless와 함께 계속 작동합니다. `scripts/dev-config.js`가 제거될 경우, 테마 색상 주입은 업데이트된 `dev` 스크립트나 간소화된 설정 헬퍼에서 처리되어야 합니다.
 
-- [ ] Theme color differentiation (currently via `THEME_HEADER_COLOR` in `.env.development.local`) continues to work alongside Portless -- if `scripts/dev-config.js` is removed, theme color injection must be handled by the updated `dev` script or a simplified config helper
+### 선택 항목
 
-### Nice to Have
+- [ ] 백엔드 엔드포인트가 HTTPS를 사용하는 시나리오를 위해 `portless proxy start --https`를 통한 HTTPS 모드를 지원합니다.
 
-- [ ] HTTPS mode is supported via `portless proxy start --https` for scenarios where the backend endpoint uses HTTPS
+## 사용자 스토리
 
-## User Stories
+- 개발자로서 `pnpm run dev`를 실행하면 `http://webui.localhost:1355`와 같이 기억하기 쉬운 URL로 앱에 접속하고 싶습니다. 포트 번호를 기억할 필요가 없도록 하기 위해서입니다.
+- 여러 브랜치를 동시에 작업하는 개발자로서(git worktree 사용 시), 각 worktree가 자동으로 고유 URL을 가지기를 원합니다. 설정 없이 여러 dev 서버를 실행하기 위해서입니다.
+- 개발자로서 단일 환경 변수(`PORTLESS=0`)로 Portless를 비활성화하고, 필요 시 기존 포트 기반 설정으로 돌아갈 수 있기를 원합니다.
+- 신규 팀원으로서 Portless 설치 및 시작에 대한 명확한 설정 가이드를 원합니다. 빠르게 개발 환경을 구성하기 위해서입니다.
+- V1 프록시 모드를 사용하는 개발자로서 WebSocket 프록시가 메인 앱과 함께 이름 붙여진 URL로 접근 가능하기를 원합니다. 각 서비스의 포트 번호를 별도로 기억할 필요가 없도록 하기 위해서입니다.
+- V2 프록시 모드(Backend.AI 웹서버)를 사용하는 개발자로서 로컬 wsproxy 없이 Portless가 동작하기를 원합니다. 웹서버가 프록시를 기본으로 처리하기 때문입니다.
 
-- As a developer, I want to run `pnpm run dev` and access the app at a memorable URL like `http://webui.localhost:1355` so that I do not need to remember port numbers.
-- As a developer working on multiple branches simultaneously (git worktrees), I want each worktree to automatically get a distinct URL so that I can run multiple dev servers without configuration.
-- As a developer, I want to disable Portless with a single environment variable (`PORTLESS=0`) so that I can fall back to the traditional port-based setup if needed.
-- As a new team member, I want clear setup instructions for installing and starting Portless so that I can get the dev environment running quickly.
-- As a developer, I want the WebSocket proxy and Storybook accessible at named URLs alongside the main app so that I do not need to remember separate port numbers for each service.
+## 인수 기준
 
-## Acceptance Criteria
+- [ ] `pnpm run dev`를 실행하면 React dev 서버가 시작되고 `http://webui.localhost:1355`(또는 설정된 Portless 프록시 포트)로 접근할 수 있습니다.
+- [ ] `portless list`를 실행하면 등록된 `webui` 앱과 해당 임시 포트가 표시됩니다.
+- [ ] 두 개의 dev 서버 인스턴스를 동시에 실행할 경우(예: 서로 다른 git worktree 또는 별도 프로젝트 클론), 각각 디렉토리 이름에서 파생된 고유 URL을 갖고 충돌이 없습니다.
+- [ ] `PORTLESS=0`을 설정한 상태로 `pnpm run dev`를 실행하면 Portless 없이 기존 포트(예: 9081)로 dev 서버가 시작됩니다. 동일한 탈출구가 `pnpm run wsproxy`(포트 5050으로 폴백)와 Storybook(포트 6006으로 폴백)에도 적용됩니다.
+- [ ] TypeScript watch(`tsc --watch`), Relay watch, React dev 서버가 기존과 동일하게 동시에 실행됩니다.
+- [ ] HMR(Hot Module Replacement)이 Portless 프록시를 통해 정상적으로 동작합니다.
+- [ ] **[V1 프록시 전용]** Portless를 통해 시작했을 때 WebSocket 프록시가 Portless URL로 접근 가능합니다. 참고: Portless는 wsproxy 리스너 포트(기본값 5050)만 관리합니다. wsproxy가 개별 세션 앱에 할당하는 동적 앱 포트(10000-30000)는 Portless가 관리하지 않으며 localhost에서 직접 접근 가능한 상태로 유지됩니다.
+- [ ] **[V2 프록시]** Backend.AI 웹서버를 사용하는 경우 로컬 wsproxy는 필요 없고, Portless가 이를 관리할 필요도 없습니다. 웹서버의 내장 프록시가 세션 앱 연결을 처리합니다.
+- [ ] Portless를 통해 시작했을 때 Storybook이 Portless URL로 접근 가능합니다.
+- [ ] `DEV_ENVIRONMENT.md`와 `README.md`가 Portless 설정 가이드(설치, 프록시 시작, 사용법)로 업데이트됩니다.
+- [ ] `scripts/dev-config.js`의 포트 오프셋 로직이 제거됩니다. 파일은 삭제되거나, 포트 관련 설정이 아닌 로직(예: 테마 색상)만 남도록 간소화됩니다.
+- [ ] `.env.development.local.sample`에서 `BAI_WEBUI_DEV_PORT_OFFSET`이 제거됩니다.
+- [ ] `dev` 스크립트 실행 시 Portless 프록시가 이미 실행 중이지 않으면 자동으로 시작됩니다. 개발자가 별도의 수동 단계를 실행할 필요가 없습니다.
 
-- [ ] Running `pnpm run dev` starts the React dev server and it is accessible at `http://webui.localhost:1355` (or the configured Portless proxy port)
-- [ ] Running `portless list` shows the registered `webui` app with its ephemeral port
-- [ ] Two simultaneous dev server instances (e.g., from different git worktrees) each get distinct URLs and do not conflict
-- [ ] Setting `PORTLESS=0` before `pnpm run dev` starts the dev server on a traditional port (e.g., 9081) without Portless; the same escape hatch applies to `pnpm run wsproxy` (falls back to port 5050) and Storybook (falls back to port 6006)
-- [ ] TypeScript watch (`tsc --watch`), Relay watch, and React dev server all run concurrently as before
-- [ ] HMR (Hot Module Replacement) works correctly through the Portless proxy
-- [ ] WebSocket proxy is accessible at `http://wsproxy.webui.localhost:1355` when started via Portless
-- [ ] Storybook is accessible at `http://storybook.webui.localhost:1355` when started via Portless
-- [ ] `DEV_ENVIRONMENT.md` and `README.md` are updated with Portless setup instructions (install, proxy start, usage)
-- [ ] `scripts/dev-config.js` port-offset logic is removed; the file is either deleted or simplified to only handle non-port configuration (e.g., theme color)
-- [ ] `.env.development.local.sample` is updated to remove `BAI_WEBUI_DEV_PORT_OFFSET`
-- [ ] The Portless proxy auto-starts when the `dev` script runs if it is not already running, so developers do not need a separate manual step
+## 범위 외
 
-## Out of Scope
+- 프로덕션 빌드 또는 CI/CD 파이프라인을 위한 Portless 통합 — Portless는 로컬 개발 도구 전용입니다.
+- Electron 앱 개발 워크플로를 위한 Portless 통합
+- 커스텀 TLD 지원(예: `.localhost` 대신 `.test`) — 기본 `.localhost`로 충분합니다.
+- postinstall 스크립트를 통한 Portless 자동 설치 — 개발자가 한 번만 전역으로 설치합니다.
 
-- Portless integration for the production build or CI/CD pipelines -- Portless is a local development tool only
-- Portless integration for the Electron app development workflow
-- Custom TLD support (e.g., `.test` instead of `.localhost`) -- the default `.localhost` is sufficient
-- Automatic Portless installation via postinstall scripts -- developers install it globally once
+## 의존성 및 제약사항
 
-## Dependencies and Constraints
+- **Portless는 Node.js 20+ 필요** -- 이 프로젝트는 Node 24(`.nvmrc`)를 사용하므로 요구사항을 충족합니다.
+- **Portless 프록시 자동 시작** -- `dev` 스크립트는 Portless 프록시가 아직 실행 중이지 않으면 자동으로 시작을 시도해야 합니다. 별도의 `portless proxy start` 단계가 필요 없어집니다. 자동 시작에 실패하면(예: Portless가 설치되지 않은 경우) 설치 안내가 담긴 명확한 오류 메시지를 출력해야 합니다.
+- **Safari 사용자**는 `.localhost` 서브도메인 해석을 위해 `sudo portless hosts sync`를 실행해야 할 수 있습니다. 이 사항은 문서화되어야 합니다.
+- **CRA/Craco dev 서버**는 Portless가 주입하는 `PORT` 환경 변수를 따라야 합니다. 현재 `dev` 스크립트가 `PORT=$BAI_WEBUI_DEV_REACT_PORT`를 전달하고 있으므로 이미 충족되어 있습니다.
+- **WebSocket 프록시**(`src/wsproxy/local_proxy.js`)는 `PORT`가 아닌 `PROXYBASEPORT` 환경 변수를 읽습니다. `wsproxy` 스크립트에서 Portless가 주입한 `PORT`를 `PROXYBASEPORT`로 매핑하거나(예: `PROXYBASEPORT=$PORT node ...`), `local_proxy.js`가 `PROXYBASEPORT`가 설정되지 않은 경우 `PORT`로 폴백하도록 수정해야 합니다.
+- **V1 vs V2 프록시 모드** -- 로컬 Node.js wsproxy(`src/wsproxy/`)는 V1 프록시 모드에서만 필요합니다. Backend.AI 웹서버(V2 프록시 모드)를 실행하는 경우, 웹서버에 내장된 프록시(`ai.backend.web.proxy`)가 세션 앱 연결을 기본으로 처리합니다. 따라서 wsproxy에 대한 Portless 통합은 V1 모드 사용자에게만 해당하며, V2 모드 사용자는 React dev 서버와 Storybook에만 Portless가 필요합니다.
+- **wsproxy 동적 포트** -- Portless가 wsproxy 리스너 포트(기본값 5050)를 관리하더라도, wsproxy가 개별 세션 앱에 할당하는 동적 앱 포트(10000-30000)는 Portless가 관리할 수 없습니다. 이 포트들은 localhost에서 직접 접근 가능한 상태로 유지됩니다. 이는 구조적 한계이며, Portless의 핵심 가치(dev 서버 URL 관리)에는 영향을 주지 않습니다.
+- **Portless는 사용자 단위 전역 도구** -- Portless는 머신당 단일 프록시 데몬을 포트 1355에서 실행하므로, 각 개발자가 독립적으로 설치하고 관리합니다. 이는 의도적인 설계입니다. 여러 클론을 실행하는 개발자는 단일 프록시가 디렉토리 이름 기반으로 모두 라우팅하는 방식의 혜택을 받습니다. `dev` 스크립트 변경 외에 프로젝트 수준의 Portless 설정은 필요하지 않습니다.
 
-- **Portless requires Node.js 20+** -- the project uses Node 24 (`.nvmrc`), which satisfies this requirement
-- **Portless proxy auto-start** -- the `dev` script should attempt to auto-start the Portless proxy if it is not already running, removing the need for a separate `portless proxy start` step; if auto-start fails (e.g., Portless not installed), the script should print a clear error with installation instructions
-- **Safari users** may need to run `sudo portless hosts sync` for `.localhost` subdomain resolution -- this should be documented
-- **CRA/Craco dev server** must respect the `PORT` environment variable injected by Portless -- this is already the case (the current `dev` script passes `PORT=$BAI_WEBUI_DEV_REACT_PORT`)
-- **WebSocket proxy** (`src/wsproxy/local_proxy.js`) reads `PROXYBASEPORT` from env (not `PORT`) -- the `wsproxy` script must either map Portless-injected `PORT` to `PROXYBASEPORT` (e.g., `PROXYBASEPORT=$PORT node ...`), or `local_proxy.js` must be updated to fall back to `PORT` when `PROXYBASEPORT` is not set
+## 영향 받는 파일
 
-## Files Affected
+다음 파일들이 이 작업의 일부로 수정되거나 제거될 예정입니다:
 
-The following files will be modified or removed as part of this work:
+| 파일 | 변경 내용 |
+|------|-----------|
+| `package.json` | `dev`와 `wsproxy` 스크립트를 Portless 실행 방식으로 업데이트(wsproxy는 **업데이트**, 제거 아님); `dev:config`와 `dev:setup` 스크립트 제거(진단/설정 전용으로 더 이상 필요 없음) |
+| `packages/backend.ai-ui/package.json` | `storybook` 스크립트를 Portless 사용 방식으로 업데이트 |
+| `scripts/dev-config.js` | 제거하거나 간소화(필요한 경우 테마 색상 로직만 유지) |
+| `scripts/dev-config.test.ts` | 포트 오프셋 로직에 대한 테스트 업데이트 또는 제거 |
+| `.env.development.local.sample` | `BAI_WEBUI_DEV_PORT_OFFSET` 제거; `THEME_HEADER_COLOR` 및 프리셋 유지 |
+| `src/wsproxy/local_proxy.js` | **[V1 프록시 전용]** `PROXYBASEPORT`가 설정되지 않은 경우 `PORT` 환경 변수로 폴백하도록 업데이트(Portless 호환성) |
+| `DEV_ENVIRONMENT.md` | Portless 기반 가이드로 전면 재작성 |
+| `README.md` | dev 설정 섹션 업데이트 |
+| `CLAUDE.md` | dev 명령어 및 포트 참조 업데이트 |
+| `AGENTS.md` | 포트 설정 참조 업데이트 |
 
-| File | Change |
-|------|--------|
-| `package.json` | Update `dev` and `wsproxy` scripts to launch via Portless (wsproxy is **updated**, not removed); remove `dev:config` and `dev:setup` scripts (diagnostic/setup-only, no longer needed) |
-| `packages/backend.ai-ui/package.json` | Update `storybook` script to use Portless |
-| `scripts/dev-config.js` | Remove or simplify (keep only theme color logic if needed) |
-| `scripts/dev-config.test.ts` | Update or remove tests for port-offset logic |
-| `.env.development.local.sample` | Remove `BAI_WEBUI_DEV_PORT_OFFSET`; keep `THEME_HEADER_COLOR` and its presets |
-| `src/wsproxy/local_proxy.js` | Update to fall back to `PORT` env var when `PROXYBASEPORT` is not set, for Portless compatibility |
-| `DEV_ENVIRONMENT.md` | Rewrite with Portless-based instructions |
-| `README.md` | Update dev setup section |
-| `CLAUDE.md` | Update dev commands and port references |
-| `AGENTS.md` | Update port configuration references |
+## 관련 이슈
 
-## Related Issues
-
-- FR-2304: Integrate Portless into WebUI development environment
-- GitHub #5986: Integrate Portless into WebUI development environment
+- FR-2304: WebUI 개발 환경에 Portless 통합
+- GitHub #5986: WebUI 개발 환경에 Portless 통합
