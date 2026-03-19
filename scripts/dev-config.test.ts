@@ -23,6 +23,7 @@ describe("DevConfig", () => {
   beforeEach(() => {
     delete process.env.BAI_WEBUI_DEV_PORT_OFFSET;
     delete process.env.HOST;
+    delete process.env.PORT;
     delete process.env.THEME_HEADER_COLOR;
     delete process.env.BAI_WEBUI_DEV_REACT_PORT;
     delete process.env.BAI_WEBUI_DEV_HOST;
@@ -68,6 +69,35 @@ describe("DevConfig", () => {
       const config = createIsolatedConfig();
       const ports = config.getPorts();
       expect(ports.react).toBe(9091);
+    });
+
+    it("should use PORT env variable when set (e.g., by Portless)", () => {
+      process.env.PORT = "3456";
+      const config = createIsolatedConfig();
+      const ports = config.getPorts();
+      expect(ports.react).toBe(3456);
+    });
+
+    it("should prefer PORT env over port offset", () => {
+      process.env.PORT = "3456";
+      process.env.BAI_WEBUI_DEV_PORT_OFFSET = "10";
+      const config = createIsolatedConfig();
+      const ports = config.getPorts();
+      expect(ports.react).toBe(3456);
+    });
+
+    it("should read PORT from env file", () => {
+      const config = createIsolatedConfig();
+      config.env = { PORT: "4567" };
+      const ports = config.getPorts();
+      expect(ports.react).toBe(4567);
+    });
+
+    it("should ignore non-numeric PORT", () => {
+      process.env.PORT = "abc";
+      const config = createIsolatedConfig();
+      const ports = config.getPorts();
+      expect(ports.react).toBe(9081);
     });
   });
 
