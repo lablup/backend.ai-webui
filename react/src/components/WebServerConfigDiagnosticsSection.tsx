@@ -4,13 +4,26 @@
  */
 import { useWebServerConfigDiagnostics } from '../hooks/useWebServerConfigDiagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
+import { useEffect } from 'react';
 
-const WebServerConfigDiagnosticsSection: React.FC = () => {
+interface WebServerConfigDiagnosticsSectionProps {
+  hidePassed?: boolean;
+  onHasIssues?: (hasIssues: boolean) => void;
+}
+
+const WebServerConfigDiagnosticsSection: React.FC<
+  WebServerConfigDiagnosticsSectionProps
+> = ({ hidePassed = false, onHasIssues }) => {
   'use memo';
 
   const results = useWebServerConfigDiagnostics();
+  const hasIssues = results.some((r) => r.severity !== 'passed');
 
-  return <DiagnosticResultList results={results} />;
+  useEffect(() => {
+    onHasIssues?.(hasIssues);
+  }, [hasIssues, onHasIssues]);
+
+  return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };
 
 export default WebServerConfigDiagnosticsSection;

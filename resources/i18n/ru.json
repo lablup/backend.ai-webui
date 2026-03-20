@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Проверьте раздел {{section}} в config.toml и установите {{field}} на значение между {{min}} и {{max}}.",
     "ResourceLimitsPassed": "Ограничения ресурсов OK",
     "ResourceLimitsPassedDesc": "Все конфигурации ограничений ресурсов находятся в разумных пределах.",
+    "ShowOnlyFailedItems": "Показать только неуспешные",
     "SslMismatch": "Несоответствие протокола SSL",
     "SslMismatchDesc": "Протокол конечной точки API ({{apiProtocol}}) и протокол URL прокси ({{proxyProtocol}}) используют разные настройки SSL.",
     "SslMismatchFix": "Убедитесь, что обе конечные точки используют один и тот же протокол (оба HTTPS или оба HTTP).",

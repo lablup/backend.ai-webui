@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Xem lại phần {{section}} trong config.toml và đặt {{field}} thành giá trị trong khoảng {{min}} đến {{max}}.",
     "ResourceLimitsPassed": "Giới hạn tài nguyên OK",
     "ResourceLimitsPassedDesc": "Tất cả cấu hình giới hạn tài nguyên đều trong phạm vi hợp lý.",
+    "ShowOnlyFailedItems": "Chỉ hiển thị mục lỗi",
     "SslMismatch": "Không khớp giao thức SSL",
     "SslMismatchDesc": "Giao thức của API endpoint ({{apiProtocol}}) và giao thức của proxy URL ({{proxyProtocol}}) sử dụng các cài đặt SSL khác nhau.",
     "SslMismatchFix": "Đảm bảo cả hai endpoint sử dụng cùng giao thức (cả hai đều HTTPS hoặc cả hai đều HTTP).",

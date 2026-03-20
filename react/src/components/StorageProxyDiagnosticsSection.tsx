@@ -4,13 +4,26 @@
  */
 import { useStorageProxyDiagnostics } from '../hooks/useStorageProxyDiagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
+import { useEffect } from 'react';
 
-const StorageProxyDiagnosticsSection: React.FC = () => {
+interface StorageProxyDiagnosticsSectionProps {
+  hidePassed?: boolean;
+  onHasIssues?: (hasIssues: boolean) => void;
+}
+
+const StorageProxyDiagnosticsSection: React.FC<
+  StorageProxyDiagnosticsSectionProps
+> = ({ hidePassed = false, onHasIssues }) => {
   'use memo';
 
   const results = useStorageProxyDiagnostics();
+  const hasIssues = results.some((r) => r.severity !== 'passed');
 
-  return <DiagnosticResultList results={results} />;
+  useEffect(() => {
+    onHasIssues?.(hasIssues);
+  }, [hasIssues, onHasIssues]);
+
+  return <DiagnosticResultList results={results} hidePassed={hidePassed} />;
 };
 
 export default StorageProxyDiagnosticsSection;

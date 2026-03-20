@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "config.tomlの{{section}}セクションを確認し、{{field}}を{{min}}から{{max}}の間の値に設定してください。",
     "ResourceLimitsPassed": "リソース制限 OK",
     "ResourceLimitsPassedDesc": "すべてのリソース制限設定が適切な範囲内です。",
+    "ShowOnlyFailedItems": "失敗した項目のみ表示",
     "SslMismatch": "SSLプロトコルの不一致",
     "SslMismatchDesc": "APIエンドポイントのプロトコル（{{apiProtocol}}）とプロキシURLのプロトコル（{{proxyProtocol}}）が異なるSSL設定を使用しています。",
     "SslMismatchFix": "両方のエンドポイントが同じプロトコルを使用していることを確認してください（両方ともHTTPSまたは両方ともHTTP）。",

@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "config.toml dosyasındaki {{section}} bölümünü inceleyin ve {{field}}'ı {{min}} ile {{max}} arasında bir değere ayarlayın.",
     "ResourceLimitsPassed": "Kaynak Sınırları Tamam",
     "ResourceLimitsPassedDesc": "Tüm kaynak sınırı yapılandırmaları makul aralıklarda.",
+    "ShowOnlyFailedItems": "Yalnızca başarısız öğeleri göster",
     "SslMismatch": "SSL Protokol Uyumsuzluğu",
     "SslMismatchDesc": "API uç noktası protokolü ({{apiProtocol}}) ve proxy URL protokolü ({{proxyProtocol}}) farklı SSL ayarları kullanıyor.",
     "SslMismatchFix": "Her iki uç noktanın da aynı protokolü kullandığından emin olun (her ikisi de HTTPS veya her ikisi de HTTP).",

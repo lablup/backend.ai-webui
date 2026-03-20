@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Tarkista {{section}}-osio config.toml-tiedostossa ja aseta {{field}} arvoksi väliltä {{min}} ja {{max}}.",
     "ResourceLimitsPassed": "Resurssirajat OK",
     "ResourceLimitsPassedDesc": "Kaikki resurssirajakokoonpanot ovat kohtuullisissa rajoissa.",
+    "ShowOnlyFailedItems": "Näytä vain epäonnistuneet",
     "SslMismatch": "SSL-protokollan ristiriita",
     "SslMismatchDesc": "API-päätepisteen protokolla ({{apiProtocol}}) ja välityspalvelimen URL-protokolla ({{proxyProtocol}}) käyttävät eri SSL-asetuksia.",
     "SslMismatchFix": "Varmista, että molemmat päätepisteet käyttävät samaa protokollaa (molemmat HTTPS tai molemmat HTTP).",

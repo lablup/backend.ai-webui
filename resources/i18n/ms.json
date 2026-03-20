@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Semak bahagian {{section}} dalam config.toml dan tetapkan {{field}} kepada nilai antara {{min}} dan {{max}}.",
     "ResourceLimitsPassed": "Had Sumber OK",
     "ResourceLimitsPassedDesc": "Semua konfigurasi had sumber berada dalam julat yang munasabah.",
+    "ShowOnlyFailedItems": "Tunjukkan item gagal sahaja",
     "SslMismatch": "Ketidakpadanan Protokol SSL",
     "SslMismatchDesc": "Protokol titik akhir API ({{apiProtocol}}) dan protokol URL proksi ({{proxyProtocol}}) menggunakan tetapan SSL yang berbeza.",
     "SslMismatchFix": "Pastikan kedua-dua titik akhir menggunakan protokol yang sama (kedua-duanya HTTPS atau kedua-duanya HTTP).",

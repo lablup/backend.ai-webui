@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "config.toml дахь {{section}} хэсгийг харж, {{field}}-ийг {{min}} ба {{max}} хооронд утганд тохируулна уу.",
     "ResourceLimitsPassed": "Нөөцийн хязгаар OK",
     "ResourceLimitsPassedDesc": "Бүх нөөцийн хязгаарын тохиргоо боломжийн хүрээнд байна.",
+    "ShowOnlyFailedItems": "Зөвхөн алдаатай зүйлсийг харуулах",
     "SslMismatch": "SSL протоколын зөрчил",
     "SslMismatchDesc": "API эндпойнтын протокол ({{apiProtocol}}) болон прокси URL-ийн протокол ({{proxyProtocol}}) өөр өөр SSL тохиргоо ашиглаж байна.",
     "SslMismatchFix": "Хоёр эндпойнт ижил протокол ашиглаж байгаа эсэхийг шалгаарай (хоёулаа HTTPS эсвэл хоёулаа HTTP).",

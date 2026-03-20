@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "检查 config.toml 中的 {{section}} 部分，将 {{field}} 设置为 {{min}} 到 {{max}} 之间的值。",
     "ResourceLimitsPassed": "资源限制正常",
     "ResourceLimitsPassedDesc": "所有资源限制配置均在合理范围内。",
+    "ShowOnlyFailedItems": "仅显示失败项",
     "SslMismatch": "SSL协议不匹配",
     "SslMismatchDesc": "API端点协议（{{apiProtocol}}）和代理URL协议（{{proxyProtocol}}）使用了不同的SSL设置。",
     "SslMismatchFix": "确保两个端点使用相同的协议（都使用HTTPS或都使用HTTP）。",

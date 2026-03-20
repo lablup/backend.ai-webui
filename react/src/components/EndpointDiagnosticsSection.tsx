@@ -4,13 +4,35 @@
  */
 import { useEndpointDiagnostics } from '../hooks/useEndpointDiagnostics';
 import DiagnosticResultList from './DiagnosticResultList';
+import { useEffect } from 'react';
 
-const EndpointDiagnosticsSection: React.FC = () => {
+interface EndpointDiagnosticsSectionProps {
+  hidePassed?: boolean;
+  onHasIssues?: (hasIssues: boolean) => void;
+}
+
+const EndpointDiagnosticsSection: React.FC<EndpointDiagnosticsSectionProps> = ({
+  hidePassed = false,
+  onHasIssues,
+}) => {
   'use memo';
 
   const { results, isLoading } = useEndpointDiagnostics();
+  const hasIssues = results.some((r) => r.severity !== 'passed');
 
-  return <DiagnosticResultList results={results} loading={isLoading} />;
+  useEffect(() => {
+    if (!isLoading) {
+      onHasIssues?.(hasIssues);
+    }
+  }, [hasIssues, isLoading, onHasIssues]);
+
+  return (
+    <DiagnosticResultList
+      results={results}
+      loading={isLoading}
+      hidePassed={hidePassed}
+    />
+  );
 };
 
 export default EndpointDiagnosticsSection;

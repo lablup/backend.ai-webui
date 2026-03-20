@@ -705,6 +705,7 @@
     "ResourceLimitOutOfRangeFix": "config.toml의 {{section}} 섹션을 검토하고 {{field}}를 {{min}}과 {{max}} 사이의 값으로 설정하세요.",
     "ResourceLimitsPassed": "리소스 제한 정상",
     "ResourceLimitsPassedDesc": "모든 리소스 제한 설정이 적절한 범위 내에 있습니다.",
+    "ShowOnlyFailedItems": "실패한 항목만 표시",
     "SslMismatch": "SSL 프로토콜 불일치",
     "SslMismatchDesc": "API 엔드포인트 프로토콜({{apiProtocol}})과 프록시 URL 프로토콜({{proxyProtocol}})이 서로 다른 SSL 설정을 사용합니다.",
     "SslMismatchFix": "두 엔드포인트가 동일한 프로토콜을 사용하도록 설정하세요(둘 다 HTTPS 또는 둘 다 HTTP).",

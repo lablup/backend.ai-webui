@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Ελέγξτε την ενότητα {{section}} στο config.toml και ορίστε το {{field}} σε τιμή μεταξύ {{min}} και {{max}}.",
     "ResourceLimitsPassed": "Όρια πόρων OK",
     "ResourceLimitsPassedDesc": "Όλες οι διαμορφώσεις ορίου πόρων είναι εντός λογικών εύρους.",
+    "ShowOnlyFailedItems": "Εμφάνιση μόνο αποτυχημένων",
     "SslMismatch": "Ασυμφωνία πρωτοκόλλου SSL",
     "SslMismatchDesc": "Το πρωτόκολλο του API endpoint ({{apiProtocol}}) και το πρωτόκολλο του proxy URL ({{proxyProtocol}}) χρησιμοποιούν διαφορετικές ρυθμίσεις SSL.",
     "SslMismatchFix": "Βεβαιωθείτε ότι και τα δύο endpoints χρησιμοποιούν το ίδιο πρωτόκολλο (και τα δύο HTTPS ή και τα δύο HTTP).",

@@ -704,6 +704,7 @@
     "ResourceLimitOutOfRangeFix": "Tinjau bagian {{section}} di config.toml dan atur {{field}} ke nilai antara {{min}} dan {{max}}.",
     "ResourceLimitsPassed": "Batas Sumber Daya OK",
     "ResourceLimitsPassedDesc": "Semua konfigurasi batas sumber daya berada dalam rentang yang wajar.",
+    "ShowOnlyFailedItems": "Tampilkan hanya item gagal",
     "SslMismatch": "Ketidakcocokan Protokol SSL",
     "SslMismatchDesc": "Protokol endpoint API ({{apiProtocol}}) dan protokol URL proxy ({{proxyProtocol}}) menggunakan pengaturan SSL yang berbeda.",
     "SslMismatchFix": "Pastikan kedua endpoint menggunakan protokol yang sama (keduanya HTTPS atau keduanya HTTP).",
