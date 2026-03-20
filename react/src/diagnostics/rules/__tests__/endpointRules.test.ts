@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { checkCorsHeaders, checkEndpointReachability } from '../endpointRules';
+import { checkEndpointReachability } from '../endpointRules';
 import { describe, expect, it } from '@jest/globals';
 
 describe('checkEndpointReachability', () => {
@@ -12,19 +12,34 @@ describe('checkEndpointReachability', () => {
 
   it('should return null when endpoint returns 200', () => {
     expect(
-      checkEndpointReachability('https://api.example.com', true, undefined, 200),
+      checkEndpointReachability(
+        'https://api.example.com',
+        true,
+        undefined,
+        200,
+      ),
     ).toBeNull();
   });
 
   it('should return null when endpoint returns 401', () => {
     expect(
-      checkEndpointReachability('https://api.example.com', true, undefined, 401),
+      checkEndpointReachability(
+        'https://api.example.com',
+        true,
+        undefined,
+        401,
+      ),
     ).toBeNull();
   });
 
   it('should return null when endpoint returns 403', () => {
     expect(
-      checkEndpointReachability('https://api.example.com', true, undefined, 403),
+      checkEndpointReachability(
+        'https://api.example.com',
+        true,
+        undefined,
+        403,
+      ),
     ).toBeNull();
   });
 
@@ -71,63 +86,5 @@ describe('checkEndpointReachability', () => {
   it('should use default error message when none provided', () => {
     const result = checkEndpointReachability('https://api.example.com', false);
     expect(result?.interpolationValues?.error).toBe('Unknown error');
-  });
-});
-
-describe('checkCorsHeaders', () => {
-  it('should return null when endpoint is empty', () => {
-    expect(checkCorsHeaders('', { allowed: false })).toBeNull();
-  });
-
-  it('should return null when CORS is allowed', () => {
-    expect(
-      checkCorsHeaders('https://api.example.com', { allowed: true }),
-    ).toBeNull();
-  });
-
-  it('should return null when CORS is allowed with allowOrigin header', () => {
-    expect(
-      checkCorsHeaders('https://api.example.com', {
-        allowed: true,
-        allowOrigin: '*',
-      }),
-    ).toBeNull();
-  });
-
-  it('should return warning when CORS is not allowed', () => {
-    const result = checkCorsHeaders('https://api.example.com', {
-      allowed: false,
-    });
-    expect(result).not.toBeNull();
-    expect(result?.severity).toBe('warning');
-    expect(result?.category).toBe('endpoint');
-    expect(result?.id).toBe('cors-misconfigured');
-    expect(result?.interpolationValues?.endpoint).toBe(
-      'https://api.example.com',
-    );
-  });
-
-  it('should return info when there is a network error', () => {
-    const result = checkCorsHeaders('https://api.example.com', {
-      allowed: false,
-      error: 'Failed to fetch',
-    });
-    expect(result).not.toBeNull();
-    expect(result?.severity).toBe('info');
-    expect(result?.category).toBe('endpoint');
-    expect(result?.id).toBe('cors-check-failed');
-    expect(result?.interpolationValues?.error).toBe('Failed to fetch');
-    expect(result?.interpolationValues?.endpoint).toBe(
-      'https://api.example.com',
-    );
-  });
-
-  it('should prioritize error over allowed=false', () => {
-    const result = checkCorsHeaders('https://api.example.com', {
-      allowed: false,
-      error: 'Connection timeout',
-    });
-    expect(result?.id).toBe('cors-check-failed');
-    expect(result?.severity).toBe('info');
   });
 });

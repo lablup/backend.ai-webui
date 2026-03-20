@@ -4,10 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { isPlaceholder } from '../diagnostics/rules/configRules';
-import {
-  checkCorsHeaders,
-  checkEndpointReachability,
-} from '../diagnostics/rules/endpointRules';
+import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useTanQuery } from './reactQueryAlias';
 import { useMemo } from 'react';
@@ -57,53 +54,6 @@ export function useEndpointDiagnostics(): {
     retry: 1,
   });
 
-  const { data: corsCheck, isLoading: isCorsLoading } = useTanQuery<{
-    allowed: boolean;
-    error?: string;
-  }>({
-    queryKey: ['diagnostics', 'cors-check', apiEndpoint],
-    queryFn: async () => {
-      if (!apiEndpoint) return { allowed: true };
-      try {
-        await fetch(apiEndpoint, {
-          method: 'GET',
-          mode: 'cors',
-          signal: AbortSignal.timeout(10000),
-        });
-        // Fetch succeeded with mode 'cors' — CORS is properly configured
-        return { allowed: true };
-      } catch (e) {
-        if (e instanceof TypeError) {
-          // TypeError from fetch in 'cors' mode can be CORS block or network failure.
-          // Retry with 'no-cors' to disambiguate: if it also fails, it's a network issue.
-          try {
-            await fetch(apiEndpoint, {
-              method: 'GET',
-              mode: 'no-cors',
-              signal: AbortSignal.timeout(5000),
-            });
-            // no-cors succeeded — endpoint is reachable, so original failure was CORS
-            return { allowed: false };
-          } catch {
-            // no-cors also failed — network issue, not CORS
-            return {
-              allowed: true,
-              error: e instanceof Error ? e.message : undefined,
-            };
-          }
-        }
-        // Other errors (e.g., AbortError) are network issues, not CORS issues
-        return {
-          allowed: true,
-          error: e instanceof Error ? e.message : undefined,
-        };
-      }
-    },
-    enabled: !!apiEndpoint && !isApiPlaceholder,
-    staleTime: 0,
-    retry: 1,
-  });
-
   const results = useMemo(() => {
     const diagnostics: DiagnosticResult[] = [];
 
@@ -128,24 +78,8 @@ export function useEndpointDiagnostics(): {
       }
     }
 
-    if (corsCheck && !isApiPlaceholder) {
-      const corsResult = checkCorsHeaders(apiEndpoint, corsCheck);
-      if (corsResult) {
-        diagnostics.push(corsResult);
-      } else if (apiEndpoint) {
-        diagnostics.push({
-          id: 'cors-passed',
-          severity: 'passed',
-          category: 'endpoint',
-          titleKey: 'diagnostics.CorsPassed',
-          descriptionKey: 'diagnostics.CorsPassedDesc',
-          interpolationValues: { endpoint: apiEndpoint },
-        });
-      }
-    }
-
     return diagnostics;
-  }, [apiEndpoint, corsCheck, healthCheck, isApiPlaceholder]);
+  }, [apiEndpoint, healthCheck, isApiPlaceholder]);
 
-  return { results, isLoading: isEndpointLoading || isCorsLoading };
+  return { results, isLoading: isEndpointLoading };
 }
