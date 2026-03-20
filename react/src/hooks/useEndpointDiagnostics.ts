@@ -8,6 +8,7 @@ import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useTanQuery } from './reactQueryAlias';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Hook that checks API endpoint reachability.
@@ -19,6 +20,7 @@ export function useEndpointDiagnostics(): {
 } {
   'use memo';
 
+  const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
 
@@ -27,6 +29,7 @@ export function useEndpointDiagnostics(): {
 
   const { data: healthCheck, isLoading: isEndpointLoading } = useTanQuery<{
     isReachable: boolean;
+    statusCode?: number;
     error?: string;
   }>({
     queryKey: ['diagnostics', 'endpoint-health', apiEndpoint],
@@ -37,16 +40,19 @@ export function useEndpointDiagnostics(): {
           method: 'GET',
           signal: AbortSignal.timeout(10000),
         });
-        return { isReachable: response.ok || response.status < 500 };
+        return {
+          isReachable: response.status < 500,
+          statusCode: response.status,
+        };
       } catch (e) {
         return {
           isReachable: false,
-          error: e instanceof Error ? e.message : 'Unknown error',
+          error: e instanceof Error ? e.message : t('error.UnknownError'),
         };
       }
     },
     enabled: !!apiEndpoint && !isApiPlaceholder,
-    staleTime: 60_000,
+    staleTime: 0,
     retry: 1,
   });
 
@@ -58,6 +64,7 @@ export function useEndpointDiagnostics(): {
         apiEndpoint,
         healthCheck.isReachable,
         healthCheck.error,
+        healthCheck.statusCode,
       );
       if (reachCheck) {
         diagnostics.push(reachCheck);

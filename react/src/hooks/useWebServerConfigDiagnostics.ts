@@ -51,6 +51,7 @@ export function useWebServerConfigDiagnostics(): DiagnosticResult[] {
         category: 'config',
         titleKey: 'diagnostics.ConfigSslMismatch',
         descriptionKey: 'diagnostics.ConfigSslMismatchDesc',
+        remediationKey: 'diagnostics.ConfigSslMismatchFix',
       });
     } else if (apiEndpoint && proxyUrl) {
       results.push({
