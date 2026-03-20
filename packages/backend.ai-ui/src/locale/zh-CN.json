@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "选择资源组"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "选择会话"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "描述",
     "Name": "姓名",

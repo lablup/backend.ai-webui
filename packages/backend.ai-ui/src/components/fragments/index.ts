@@ -38,6 +38,12 @@ export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisio
 export type { BAIArtifactRevisionDeleteButtonProps } from './BAIArtifactRevisionDeleteButton';
 export { default as BAIDeactivateArtifactsModal } from './BAIDeactivateArtifactsModal';
 export { default as BAISessionClusterMode } from './BAISessionClusterMode';
+export { default as BAIAdminSessionSelect } from './BAIAdminSessionSelect';
+export type {
+  BAIAdminSessionSelectProps,
+  BAIAdminSessionSelectRef,
+  SessionNode,
+} from './BAIAdminSessionSelect';
 export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,

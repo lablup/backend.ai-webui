@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Επιλέξτε συνεδρία"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Περιγραφή",
     "Name": "Ονομα",

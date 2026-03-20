@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih grup sumber daya"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Pilih sesi"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Keterangan",
     "Name": "Nama",

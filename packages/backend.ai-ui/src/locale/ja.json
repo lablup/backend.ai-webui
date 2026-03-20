@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "リソースグループを選択"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "セッションを選択"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "説明",
     "Name": "名前",

@@ -29,6 +29,9 @@
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Kaynak grubunu seçin"
   },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Oturum seçin"
+  },
   "comp:BAIArtifactDescriptions": {
     "Description": "Tanım",
     "Name": "İsim",
