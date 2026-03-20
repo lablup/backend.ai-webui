@@ -1,0 +1,12 @@
+models:
+  - name: "mock-openai"
+    model_path: "/models"
+    service:
+      start_command:
+        - python3
+        - /models/mock_openai_server.py
+      port: 8000
+      health_check:
+        path: /health
+        initial_delay: 5.0
+        max_retries: 10
