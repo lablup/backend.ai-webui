@@ -67,28 +67,42 @@ interface RoleDetailDrawerInnerProps {
   roleId: string;
   fetchKey: string;
   onClickEdit?: () => void;
+  onDataChange?: () => void;
 }
 
 const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
   roleId,
   fetchKey,
   onClickEdit,
+  onDataChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const localRoleId = toLocalId(roleId);
+
   const data = useLazyLoadQuery<RoleDetailDrawerQuery>(
     graphql`
-      query RoleDetailDrawerQuery($id: UUID!) {
+      query RoleDetailDrawerQuery(
+        $id: UUID!
+        $assignmentFilter: RoleAssignmentFilter
+        $permissionFilter: PermissionFilter
+      ) {
         adminRole(id: $id) {
           name
           source
           ...RoleDetailDrawerContentFragment
         }
+        ...RoleAssignmentTabFragment @arguments(filter: $assignmentFilter)
+        ...RolePermissionTabFragment @arguments(filter: $permissionFilter)
       }
     `,
-    { id: toLocalId(roleId) },
+    {
+      id: localRoleId,
+      assignmentFilter: { roleId: localRoleId },
+      permissionFilter: { roleId: localRoleId },
+    },
     {
       fetchPolicy: 'network-only',
       fetchKey,
@@ -129,7 +143,9 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
       </BAIFlex>
       <RoleDetailDrawerContent
         roleDetailFrgmt={data.adminRole}
-        fetchKey={fetchKey}
+        assignmentQueryRef={data}
+        permissionQueryRef={data}
+        onDataChange={onDataChange}
       />
     </BAIFlex>
   );

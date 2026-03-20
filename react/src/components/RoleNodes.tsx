@@ -6,21 +6,20 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import { Popconfirm, theme } from 'antd';
 import {
   BAIButton,
   BAIColumnType,
+  BAIFlex,
   BAILink,
   BAITable,
   BAITableProps,
   BAITag,
+  BAITrashBinIcon,
   filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { BanIcon, EditIcon, UndoIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -41,7 +40,8 @@ interface RoleNodesProps extends Omit<
   rolesFrgmt: RoleNodesFragment$key;
   onClickRoleName?: (role: RoleNodeInList) => void;
   onClickEdit?: (role: RoleNodeInList) => void;
-  onClickDelete?: (role: RoleNodeInList) => void;
+  onClickDeactivate?: (role: RoleNodeInList) => void;
+  onClickActivate?: (role: RoleNodeInList) => void;
   onClickPurge?: (role: RoleNodeInList) => void;
   statusFilter?: string;
   order?: string | null;
@@ -54,7 +54,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   rolesFrgmt,
   onClickRoleName,
   onClickEdit,
-  onClickDelete,
+  onClickDeactivate,
+  onClickActivate,
   onClickPurge,
   statusFilter,
   order,
@@ -63,6 +64,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const roles = useFragment(
     graphql`
@@ -105,40 +107,68 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       },
     },
     {
-      key: 'actions',
-      title: '',
+      key: 'control',
+      title: t('general.Control'),
+      fixed: true,
       width: 100,
       render: (_: unknown, role: RoleNodeInList) => {
         const isSystem = role.source === 'SYSTEM';
         return (
-          <>
+          <BAIFlex gap={token.marginXXS}>
             {isDeletedFilter ? (
-              <BAIButton
-                type="text"
-                danger
-                icon={<ExclamationCircleOutlined />}
-                size="small"
-                onClick={() => onClickPurge?.(role)}
-              />
+              <>
+                <Popconfirm
+                  title={t('rbac.ActivateRole')}
+                  description={role.name}
+                  okText={t('rbac.Activate')}
+                  placement="left"
+                  onConfirm={() => onClickActivate?.(role)}
+                >
+                  <BAIButton
+                    type="text"
+                    title={t('rbac.Activate')}
+                    icon={<UndoIcon />}
+                    size="small"
+                  />
+                </Popconfirm>
+                <BAIButton
+                  type="text"
+                  danger
+                  title={t('rbac.PurgeRole')}
+                  icon={<BAITrashBinIcon />}
+                  size="small"
+                  onClick={() => onClickPurge?.(role)}
+                />
+              </>
             ) : (
               <>
                 <BAIButton
                   type="text"
-                  icon={<EditOutlined />}
+                  title={t('button.Edit')}
+                  icon={<EditIcon style={{ color: token.colorInfo }} />}
                   size="small"
                   disabled={isSystem}
                   onClick={() => onClickEdit?.(role)}
                 />
-                <BAIButton
-                  type="text"
-                  danger
-                  icon={<DeleteOutlined />}
-                  size="small"
-                  onClick={() => onClickDelete?.(role)}
-                />
+                <Popconfirm
+                  title={t('rbac.DeactivateRole')}
+                  description={role.name}
+                  okType="danger"
+                  okText={t('rbac.Deactivate')}
+                  placement="left"
+                  onConfirm={() => onClickDeactivate?.(role)}
+                >
+                  <BAIButton
+                    type="text"
+                    danger
+                    title={t('rbac.Deactivate')}
+                    icon={<BanIcon />}
+                    size="small"
+                  />
+                </Popconfirm>
               </>
             )}
-          </>
+          </BAIFlex>
         );
       },
     },

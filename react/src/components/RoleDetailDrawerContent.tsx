@@ -2,10 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
+import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionTab from './RolePermissionTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
+import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,14 +16,18 @@ import { graphql, useFragment } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
   roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
-  fetchKey: string;
+  assignmentQueryRef: RoleAssignmentTabFragment$key;
+  permissionQueryRef: RolePermissionTabFragment$key;
   onTabReset?: () => void;
+  onDataChange?: () => void;
 }
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   roleDetailFrgmt,
-  fetchKey,
+  assignmentQueryRef,
+  permissionQueryRef,
   onTabReset: _onTabReset,
+  onDataChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -42,6 +49,8 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
     roleDetailFrgmt,
   );
 
+  const roleId = toLocalId(role.id);
+
   const sourceColor = role.source === 'SYSTEM' ? 'default' : 'green';
   const statusColorMap: Record<string, string> = {
     ACTIVE: 'green',
@@ -57,9 +66,6 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         size="small"
         style={{ marginBottom: 16 }}
       >
-        <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
-          {role.description || '-'}
-        </Descriptions.Item>
         <Descriptions.Item label={t('rbac.Source')}>
           <Tag color={sourceColor}>
             {role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
@@ -84,6 +90,9 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
         </Descriptions.Item>
+        <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
+          {role.description || '-'}
+        </Descriptions.Item>
       </Descriptions>
       <Tabs
         activeKey={activeTab}
@@ -91,10 +100,14 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         items={[
           {
             key: 'assignments',
-            label: t('rbac.Assignments'),
+            label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab roleId={role.id} fetchKey={fetchKey} />
+                <RoleAssignmentTab
+                  queryRef={assignmentQueryRef}
+                  roleId={roleId}
+                  onAssignmentChange={onDataChange}
+                />
               </Suspense>
             ),
           },
@@ -103,7 +116,11 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.Permissions'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RolePermissionTab roleId={role.id} fetchKey={fetchKey} />
+                <RolePermissionTab
+                  queryRef={permissionQueryRef}
+                  roleId={roleId}
+                  onPermissionChange={onDataChange}
+                />
               </Suspense>
             ),
           },

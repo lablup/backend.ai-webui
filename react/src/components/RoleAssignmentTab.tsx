@@ -3,31 +3,36 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleAssignmentTabAssignMutation } from '../__generated__/RoleAssignmentTabAssignMutation.graphql';
-import { RoleAssignmentTabQuery } from '../__generated__/RoleAssignmentTabQuery.graphql';
+import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
+import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { RoleAssignmentTabRevokeMutation } from '../__generated__/RoleAssignmentTabRevokeMutation.graphql';
+import { convertToOrderBy } from '../helper';
 import AssignRoleModal from './AssignRoleModal';
-import { App, Button, Table, Typography } from 'antd';
+import { App } from 'antd';
 import {
+  BAIButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
+  BAITable,
   BAITrashBinIcon,
-  toLocalId,
+  type GraphQLFilter,
   useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { PlusIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
 
 interface RoleAssignmentTabProps {
+  queryRef: RoleAssignmentTabFragment$key;
   roleId: string;
-  fetchKey: string;
   onAssignmentChange?: () => void;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
+  queryRef,
   roleId,
-  fetchKey,
   onAssignmentChange,
 }) => {
   'use memo';
@@ -35,11 +40,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [filter, setFilter] = useState<GraphQLFilter>();
+  const [order, setOrder] = useState<string | null>(null);
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const data = useLazyLoadQuery<RoleAssignmentTabQuery>(
+  const [data, refetch] = useRefetchableFragment(
     graphql`
-      query RoleAssignmentTabQuery($filter: RoleAssignmentFilter) {
-        adminRoleAssignments(filter: $filter) {
+      fragment RoleAssignmentTabFragment on Query
+      @argumentDefinitions(
+        filter: { type: "RoleAssignmentFilter" }
+        orderBy: { type: "[RoleAssignmentOrderBy!]" }
+      )
+      @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
+        adminRoleAssignments(filter: $filter, orderBy: $orderBy, limit: 100) {
           count
           edges {
             node {
@@ -59,8 +72,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
       }
     `,
-    { filter: { roleId } },
-    { fetchPolicy: 'network-only', fetchKey },
+    queryRef,
   );
 
   const [commitAssignRole, isInFlightAssign] =
@@ -88,9 +100,40 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const assignments =
     data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
 
+  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+    setFilter(newFilter);
+    startRefetchTransition(() => {
+      refetch(
+        {
+          filter: {
+            roleId,
+            ...newFilter,
+          },
+          orderBy: convertToOrderBy<RoleAssignmentOrderBy>(order),
+        },
+        { fetchPolicy: 'network-only' },
+      );
+    });
+  };
+
+  const handleRefresh = () => {
+    startRefetchTransition(() => {
+      refetch(
+        {
+          filter: {
+            roleId,
+            ...filter,
+          },
+          orderBy: convertToOrderBy<RoleAssignmentOrderBy>(order),
+        },
+        { fetchPolicy: 'network-only' },
+      );
+    });
+  };
+
   const handleAssign = (userId: string) => {
     commitAssignRole({
-      variables: { input: { userId: toLocalId(userId), roleId } },
+      variables: { input: { userId, roleId } },
       onCompleted: (_data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -99,6 +142,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
         message.success(t('rbac.UserAssigned'));
         setIsAssignModalOpen(false);
+        handleRefresh();
         onAssignmentChange?.();
       },
       onError: (error) => {
@@ -126,6 +170,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 return;
               }
               message.success(t('rbac.UserRevoked'));
+              handleRefresh();
               onAssignmentChange?.();
               resolve();
             },
@@ -141,62 +186,92 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   return (
     <>
-      <BAIFlex justify="end" style={{ marginBottom: 12 }}>
-        <Button
+      <BAIFlex
+        justify="between"
+        align="start"
+        gap="sm"
+        wrap="wrap"
+        style={{ marginBottom: 12 }}
+      >
+        <BAIGraphQLPropertyFilter
+          filterProperties={[
+            {
+              key: 'email',
+              propertyLabel: t('credential.UserID'),
+              type: 'string',
+            },
+            {
+              key: 'username',
+              propertyLabel: t('credential.FullName'),
+              type: 'string',
+            },
+          ]}
+          value={filter}
+          onChange={handleFilterChange}
+        />
+        <BAIButton
           type="primary"
           icon={<PlusIcon />}
           onClick={() => setIsAssignModalOpen(true)}
         >
           {t('rbac.AssignUser')}
-        </Button>
+        </BAIButton>
       </BAIFlex>
-      <Table
+      <BAITable
         rowKey="id"
         dataSource={assignments}
+        loading={isPendingRefetch}
         size="small"
         pagination={false}
-        locale={{
-          emptyText: (
-            <Typography.Text type="secondary">
-              {t('rbac.NoUsersAssigned')}
-            </Typography.Text>
-          ),
+        order={order}
+        onChangeOrder={(newOrder) => {
+          setOrder(newOrder ?? null);
+          startRefetchTransition(() => {
+            refetch(
+              {
+                filter: {
+                  roleId,
+                  ...filter,
+                },
+                orderBy: convertToOrderBy<RoleAssignmentOrderBy>(
+                  newOrder ?? null,
+                ),
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          });
         }}
         columns={[
           {
             key: 'email',
+            dataIndex: 'email',
             title: t('credential.UserID'),
             render: (_, record) => record?.user?.basicInfo?.email || '-',
-            sorter: (a, b) =>
-              (a?.user?.basicInfo?.email || '').localeCompare(
-                b?.user?.basicInfo?.email || '',
-              ),
+            sorter: true,
           },
           {
-            key: 'fullName',
+            key: 'username',
+            dataIndex: 'username',
             title: t('credential.FullName'),
             render: (_, record) => record?.user?.basicInfo?.fullName || '-',
-            sorter: (a, b) =>
-              (a?.user?.basicInfo?.fullName || '').localeCompare(
-                b?.user?.basicInfo?.fullName || '',
-              ),
+            sorter: true,
           },
           {
             key: 'grantedAt',
+            dataIndex: 'grantedAt',
             title: t('rbac.GrantedAt'),
             render: (_, record) =>
               record?.grantedAt
                 ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
                 : '-',
-            sorter: (a, b) =>
-              (a?.grantedAt || '').localeCompare(b?.grantedAt || ''),
+            sorter: true,
           },
           {
             key: 'control',
             title: t('general.Control'),
             width: 60,
             render: (_, record) => (
-              <Button
+              <BAIButton
                 type="text"
                 danger
                 icon={<BAITrashBinIcon />}
