@@ -233,6 +233,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Selecionar host de armazenamento"
+  },
   "comp:BAITable": {
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",

@@ -234,6 +234,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Неограниченный"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Выберите хост хранилища"
+  },
   "comp:BAITable": {
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",

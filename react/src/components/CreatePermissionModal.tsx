@@ -18,6 +18,7 @@ import {
   BAIAdminModelServiceSelect,
   BAIModal,
   BAIModalProps,
+  BAIStorageHostSelect,
   BAIProjectSelect,
   BAIAdminSessionSelect,
   BAIUserSelect,
@@ -38,6 +39,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'SESSION',
   'MODEL_DEPLOYMENT',
   'CONTAINER_REGISTRY',
+  'STORAGE_HOST',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'DEPLOYMENT',
   // 'KEYPAIR',
@@ -194,6 +196,17 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIAdminContainerRegistrySelect
           valuePropName="row_id"
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'STORAGE_HOST') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIStorageHostSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}

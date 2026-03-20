@@ -234,6 +234,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Απεριόριστος"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
+  },
   "comp:BAITable": {
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",

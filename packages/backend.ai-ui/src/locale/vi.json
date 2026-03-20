@@ -234,6 +234,9 @@
   "comp:BAIStatistic": {
     "Unlimited": "Không giới hạn"
   },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Chọn máy chủ lưu trữ"
+  },
   "comp:BAITable": {
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
