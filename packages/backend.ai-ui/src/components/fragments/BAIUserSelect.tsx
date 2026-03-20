@@ -301,8 +301,13 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
 
         setOptimisticValueWithLabel(valueWithOriginalLabel);
 
+        const isMultiple =
+          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
         const emailArray = valueArray.map((v) => _.toString(v.value));
-        setControllableValue(emailArray, option);
+        setControllableValue(
+          isMultiple ? emailArray : (emailArray[0] ?? undefined),
+          option,
+        );
       }}
       options={availableOptions}
       endReached={() => {

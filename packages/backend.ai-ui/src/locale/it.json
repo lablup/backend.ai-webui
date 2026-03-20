@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "Pullo correttamente richiesto per le versioni {{count}}.",
     "Version": "Versione"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Seleziona coppia di chiavi"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "La cartella o le cartelle seguenti verranno aggiornate.",
     "ProjectResourcePolicy": "Politica delle risorse del progetto",

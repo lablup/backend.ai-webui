@@ -1,5 +1,5 @@
-import { BAIAdminSessionSelectPaginatedQuery } from '../../__generated__/BAIAdminSessionSelectPaginatedQuery.graphql';
-import { BAIAdminSessionSelectValueQuery } from '../../__generated__/BAIAdminSessionSelectValueQuery.graphql';
+import { BAIAdminProjectSelectPaginatedQuery } from '../../__generated__/BAIAdminProjectSelectPaginatedQuery.graphql';
+import { BAIAdminProjectSelectValueQuery } from '../../__generated__/BAIAdminProjectSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
@@ -20,25 +20,24 @@ import {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type SessionNode = NonNullable<
+export type AdminProjectNode = NonNullable<
   NonNullable<
-    BAIAdminSessionSelectPaginatedQuery['response']['adminSessionsV2']
+    BAIAdminProjectSelectPaginatedQuery['response']['adminProjectsV2']
   >['edges'][number]
 >['node'];
 
-export interface BAIAdminSessionSelectRef {
+export interface BAIAdminProjectSelectRef {
   refetch: () => void;
 }
 
-export interface BAIAdminSessionSelectProps extends Omit<
+export interface BAIAdminProjectSelectProps extends Omit<
   BAISelectProps,
   'options' | 'labelInValue' | 'ref'
 > {
-  onChange?: (value: string | string[] | undefined, option: any) => void;
-  ref?: React.Ref<BAIAdminSessionSelectRef>;
+  ref?: React.Ref<BAIAdminProjectSelectRef>;
 }
 
-const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
+const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   loading,
   ref,
   ...selectProps
@@ -57,7 +56,6 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
       defaultValuePropName: 'defaultOpen',
     },
   );
-
   const deferredOpen = useDeferredValue(controllableOpen);
   const [searchStr, setSearchStr] = useState<string>();
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
@@ -67,43 +65,31 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during session selection
+  // Defer query refetch to prevent flickering during selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // Use adminSessionsV2 with UUIDFilter to resolve selected value labels
-  const { adminSessionsV2: selectedSessionNodes } =
-    useLazyLoadQuery<BAIAdminSessionSelectValueQuery>(
+  // Use single-node query to resolve selected value's label
+  const { projectV2: selectedProject } =
+    useLazyLoadQuery<BAIAdminProjectSelectValueQuery>(
       graphql`
-        query BAIAdminSessionSelectValueQuery(
-          $filter: SessionV2Filter
-          $first: Int!
+        query BAIAdminProjectSelectValueQuery(
+          $projectId: UUID!
           $skipSelected: Boolean!
         ) {
-          adminSessionsV2(filter: $filter, first: $first)
-            @skip(if: $skipSelected) {
-            edges {
-              node {
-                id
-                metadata {
-                  name
-                }
-              }
+          projectV2(projectId: $projectId) @skip(if: $skipSelected) {
+            id
+            basicInfo {
+              name
             }
           }
         }
       `,
       {
-        filter: !_.isEmpty(deferredControllableValue)
-          ? {
-              id: {
-                in: _.castArray(deferredControllableValue),
-              },
-              status: {
-                notIn: ['TERMINATING', 'TERMINATED', 'CANCELLED'],
-              },
-            }
-          : null,
-        first: _.castArray(deferredControllableValue).length,
+        projectId: !_.isEmpty(deferredControllableValue)
+          ? _.isArray(deferredControllableValue)
+            ? (deferredControllableValue[0] ?? '')
+            : (deferredControllableValue ?? '')
+          : '',
         skipSelected: _.isEmpty(deferredControllableValue),
       },
       {
@@ -115,19 +101,27 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIAdminSessionSelectPaginatedQuery, SessionNode>(
+    useLazyPaginatedQuery<
+      BAIAdminProjectSelectPaginatedQuery,
+      AdminProjectNode
+    >(
       graphql`
-        query BAIAdminSessionSelectPaginatedQuery(
+        query BAIAdminProjectSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
-          $filter: SessionV2Filter
+          $filter: ProjectV2Filter
         ) {
-          adminSessionsV2(offset: $offset, limit: $limit, filter: $filter) {
+          adminProjectsV2(
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: [{ field: NAME, direction: ASC }]
+          ) {
             count
             edges {
               node {
                 id
-                metadata {
+                basicInfo {
                   name
                 }
               }
@@ -137,24 +131,19 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
       `,
       { limit: 10 },
       {
-        filter: {
-          status: {
-            notIn: ['TERMINATING', 'TERMINATED', 'CANCELLED'],
-          },
-          ...(debouncedDeferredValue
-            ? { name: { contains: debouncedDeferredValue } }
-            : {}),
-        },
+        filter: debouncedDeferredValue
+          ? { name: { contains: debouncedDeferredValue } }
+          : null,
       },
       {
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.adminSessionsV2?.count ?? undefined,
+        getTotal: (result) => result.adminProjectsV2?.count ?? undefined,
         getItem: (result) =>
-          result.adminSessionsV2?.edges?.map((edge) => edge?.node),
-        getId: (item) => item?.id,
+          result.adminProjectsV2?.edges?.map((edge) => edge?.node),
+        getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
       },
     );
 
@@ -173,27 +162,17 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
 
   // Use raw UUID (toLocalId) as value instead of Relay global ID
   const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.metadata?.name,
+    label: item?.basicInfo?.name,
     value: item?.id ? toLocalId(item.id) : item?.id,
   }));
 
-  const controllableValueWithLabel = selectedSessionNodes?.edges
-    ? // Sort by deferredControllableValue order to maintain selection order
-      _.castArray(deferredControllableValue)
-        .map((value) => {
-          const edge = selectedSessionNodes.edges.find(
-            (edge) => edge?.node?.id && toLocalId(edge.node.id) === value,
-          );
-          return edge
-            ? {
-                label: edge.node?.metadata?.name,
-                value: value,
-              }
-            : null;
-        })
-        .filter(
-          (item): item is { label: string; value: string } => item !== null,
-        )
+  const controllableValueWithLabel = selectedProject
+    ? [
+        {
+          label: selectedProject.basicInfo?.name,
+          value: toLocalId(selectedProject.id),
+        },
+      ]
     : !_.isEmpty(deferredControllableValue)
       ? _.castArray(deferredControllableValue).map((value) => ({
           label: value,
@@ -208,7 +187,7 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
   return (
     <BAISelect
       ref={selectRef}
-      placeholder={t('comp:BAIAdminSessionSelect.SelectSession')}
+      placeholder={t('comp:BAIProjectSelect.SelectProject')}
       loading={
         loading ||
         controllableValue !== deferredControllableValue ||
@@ -240,11 +219,8 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
       }
       labelInValue
       onChange={(value, option) => {
-        // In multiple mode, when removing tags, value.label is a React element
-        // So we need to find the original label from availableOptions
         const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
         const valueWithOriginalLabel = castedValue.map((v) => {
-          // If label is string, use it directly; if React element, find from options
           const label = _.isString(v.label)
             ? v.label
             : (availableOptions.find((opt) => opt.value === v.value)?.label ??
@@ -275,11 +251,11 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
         ) : undefined
       }
       footer={
-        _.isNumber(result.adminSessionsV2?.count) &&
-        result.adminSessionsV2.count > 0 ? (
+        _.isNumber(result.adminProjectsV2?.count) &&
+        result.adminProjectsV2.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={result.adminSessionsV2.count}
+            total={result.adminProjectsV2.count}
           />
         ) : undefined
       }
@@ -287,4 +263,4 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
   );
 };
 
-export default BAIAdminSessionSelect;
+export default BAIAdminProjectSelect;

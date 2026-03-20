@@ -261,8 +261,11 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
           };
         });
         setOptimisticValueWithLabel(valueWithOriginalLabel);
+        const isMultiple =
+          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
+        const idArray = castedValue.map((v) => _.toString(v.value));
         setControllableValue(
-          castedValue.map((v) => _.toString(v.value)),
+          isMultiple ? idArray : (idArray[0] ?? undefined),
           option,
         );
       }}

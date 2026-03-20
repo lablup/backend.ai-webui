@@ -21,6 +21,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import { PlusIcon } from 'lucide-react';
 import {
   parseAsInteger,
@@ -31,6 +32,7 @@ import {
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 const assignmentOrderValues = [
   'EMAIL_ASC',
@@ -57,6 +59,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const { token } = theme.useToken();
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
+  const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -211,6 +214,13 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         if (failed.length > 0) {
           message.warning(
             t('rbac.BulkAssignPartialFailure', { count: failed.length }),
+          );
+          _.forEach(failed, (arr) =>
+            upsertNotification({
+              open: true,
+              duration: 0,
+              title: arr.message,
+            }),
           );
         } else {
           message.success(t('rbac.UsersAssigned'));

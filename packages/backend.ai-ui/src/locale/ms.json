@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Pilih Pasangan Kunci"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",

@@ -16,10 +16,11 @@ import {
   BAIAdminResourceGroupSelect,
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
+  BAIAdminProjectSelect,
+  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAIStorageHostSelect,
-  BAIProjectSelect,
   BAIAdminSessionSelect,
   BAIUserSelect,
   BAIVFolderSelect,
@@ -40,8 +41,8 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'MODEL_DEPLOYMENT',
   'CONTAINER_REGISTRY',
   'STORAGE_HOST',
+  'KEYPAIR',
   // TODO: Scope ID select to be implemented in separate stacks
-  // 'KEYPAIR',
   // 'IMAGE',
   // 'ARTIFACT',
   // 'ARTIFACT_REGISTRY',
@@ -137,10 +138,10 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIProjectSelect
+        <BAIAdminProjectSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -151,7 +152,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
         <BAIUserSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -162,7 +163,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
         <BAIVFolderSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -173,7 +174,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
         <BAIAdminSessionSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -184,7 +185,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
         <BAIAdminModelServiceSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -196,7 +197,7 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
           valuePropName="row_id"
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );
@@ -207,7 +208,18 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
         <BAIStorageHostSelect
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'KEYPAIR') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIKeypairSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val, option)}
         />
       </Suspense>
     );

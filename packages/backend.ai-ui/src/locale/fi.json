@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Valitse avainpari"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",

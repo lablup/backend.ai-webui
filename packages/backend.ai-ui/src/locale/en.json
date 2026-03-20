@@ -138,6 +138,9 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Select Keypair"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",

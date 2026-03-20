@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
     "Version": "版本"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "选择密钥对"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
     "ProjectResourcePolicy": "项目资源策略",

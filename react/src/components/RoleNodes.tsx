@@ -145,7 +145,15 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
                 <BAIButton
                   type="text"
                   title={t('button.Edit')}
-                  icon={<EditIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <EditIcon
+                      style={{
+                        color: isSystem
+                          ? token.colorTextDisabled
+                          : token.colorInfo,
+                      }}
+                    />
+                  }
                   size="small"
                   disabled={isSystem}
                   onClick={() => onClickEdit?.(role)}

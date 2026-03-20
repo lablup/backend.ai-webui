@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",

@@ -134,6 +134,9 @@
     "Source": "Fonte",
     "Type": "Tipo"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Selecionar par de chaves"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",

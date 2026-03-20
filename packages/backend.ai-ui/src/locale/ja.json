@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
     "Version": "バージョン"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "キーペアを選択"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",

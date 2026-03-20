@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
     "Version": "Версия"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Выберите пару ключей"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",

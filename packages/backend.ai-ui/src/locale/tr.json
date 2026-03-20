@@ -135,6 +135,9 @@
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
     "Version": "Versiyon"
   },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Anahtar Çifti Seçin"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",

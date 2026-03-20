@@ -107,6 +107,41 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               scopeId
               entityType
               operation
+              scope {
+                ... on DomainV2 {
+                  basicInfo {
+                    domainName: name
+                  }
+                }
+                ... on ProjectV2 {
+                  basicInfo {
+                    projectName: name
+                  }
+                }
+                ... on UserV2 {
+                  basicInfo {
+                    email
+                  }
+                }
+                ... on VirtualFolderNode {
+                  vfolderName: name
+                }
+                ... on ComputeSessionNode {
+                  sessionName: name
+                }
+                ... on ModelDeployment {
+                  metadata {
+                    deploymentName: name
+                  }
+                }
+                ... on ResourceGroup {
+                  resourceGroupName: name
+                }
+                ... on ContainerRegistryV2 {
+                  registryName
+                  project
+                }
+              }
             }
           }
         }
@@ -318,13 +353,48 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             key: 'scopeId',
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeId',
-            render: (value: string) => (
-              <Tooltip title={value} placement="topLeft">
-                <Typography.Text ellipsis style={{ maxWidth: 200 }}>
-                  {value ?? '-'}
-                </Typography.Text>
-              </Tooltip>
-            ),
+            render: (value: string, record) => {
+              const scope = record?.scope;
+              let label: string | null | undefined = null;
+              if (scope) {
+                switch (record.scopeType) {
+                  case 'DOMAIN':
+                    label = scope.basicInfo?.domainName;
+                    break;
+                  case 'PROJECT':
+                    label = scope.basicInfo?.projectName;
+                    break;
+                  case 'USER':
+                    label = scope.basicInfo?.email;
+                    break;
+                  case 'VFOLDER':
+                    label = scope.vfolderName;
+                    break;
+                  case 'SESSION':
+                    label = scope.sessionName;
+                    break;
+                  case 'MODEL_DEPLOYMENT':
+                    label = scope.metadata?.deploymentName;
+                    break;
+                  case 'RESOURCE_GROUP':
+                    label = scope.resourceGroupName;
+                    break;
+                  case 'CONTAINER_REGISTRY':
+                    label = scope.project
+                      ? `${scope.registryName} - ${scope.project}`
+                      : scope.registryName;
+                    break;
+                }
+              }
+              const displayValue = label || value || '-';
+              return (
+                <Tooltip title={displayValue} placement="topLeft">
+                  <Typography.Text ellipsis style={{ maxWidth: 200 }}>
+                    {displayValue}
+                  </Typography.Text>
+                </Tooltip>
+              );
+            },
           },
           {
             key: 'entityType',

@@ -99,6 +99,18 @@ export type {
   ProjectNode,
   BAIProjectSelectRef,
 } from './BAIProjectSelect';
+export { default as BAIKeypairSelect } from './BAIKeypairSelect';
+export type {
+  BAIKeypairSelectProps,
+  BAIKeypairSelectRef,
+  KeypairNode,
+} from './BAIKeypairSelect';
+export { default as BAIAdminProjectSelect } from './BAIAdminProjectSelect';
+export type {
+  BAIAdminProjectSelectProps,
+  BAIAdminProjectSelectRef,
+  AdminProjectNode,
+} from './BAIAdminProjectSelect';
 export { default as BAIAdminModelServiceSelect } from './BAIAdminModelServiceSelect';
 export type {
   BAIAdminModelServiceSelectProps,
