@@ -7,6 +7,7 @@ import {
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
+import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes from '../components/RoleNodes';
 import type { RoleNodeInList } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
@@ -110,8 +111,8 @@ const RBACManagementPage: React.FC = () => {
     },
   );
 
-  // State for modals/drawers (wired in later sub-tasks)
-  const [, setIsCreateModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  // State for drawer/modals (wired in later sub-tasks)
   const [, setSelectedRoleForDetail] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForEdit] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
@@ -212,6 +213,15 @@ const RBACManagementPage: React.FC = () => {
           />
         </Suspense>
       </BAIFlex>
+      <RoleFormModal
+        open={isCreateModalOpen}
+        onRequestClose={(success) => {
+          setIsCreateModalOpen(false);
+          if (success) {
+            updateFetchKey();
+          }
+        }}
+      />
     </BAICard>
   );
 };
