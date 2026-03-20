@@ -121,8 +121,9 @@ const RBACManagementPage: React.FC = () => {
       history: 'push',
     },
   );
+  const [selectedRoleForEdit, setSelectedRoleForEdit] =
+    useState<RoleNodeInList | null>(null);
   // State for modals (wired in later sub-tasks)
-  const [, setSelectedRoleForEdit] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForDelete] = useState<RoleNodeInList | null>(null);
   const [, setSelectedRoleForPurge] = useState<RoleNodeInList | null>(null);
 
@@ -227,6 +228,16 @@ const RBACManagementPage: React.FC = () => {
         open={isCreateModalOpen}
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);
+          if (success) {
+            updateFetchKey();
+          }
+        }}
+      />
+      <RoleFormModal
+        open={!!selectedRoleForEdit}
+        editingRoleFrgmt={selectedRoleForEdit}
+        onRequestClose={(success) => {
+          setSelectedRoleForEdit(null);
           if (success) {
             updateFetchKey();
           }
