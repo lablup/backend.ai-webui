@@ -36,6 +36,7 @@ export function checkSslMismatch(
     return {
       id: 'ssl-mismatch',
       severity: 'warning',
+      category: 'endpoint',
       titleKey: 'diagnostics.SslMismatch',
       descriptionKey: 'diagnostics.SslMismatchDesc',
       remediationKey: 'diagnostics.SslMismatchFix',
@@ -64,6 +65,7 @@ export function checkEndpointReachability(
     return {
       id: 'endpoint-unreachable',
       severity: 'critical',
+      category: 'endpoint',
       titleKey: 'diagnostics.EndpointUnreachable',
       descriptionKey: 'diagnostics.EndpointUnreachableDesc',
       remediationKey: 'diagnostics.EndpointUnreachableFix',

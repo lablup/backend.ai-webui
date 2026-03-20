@@ -65,6 +65,7 @@ export function useEndpointDiagnostics(): {
         diagnostics.push({
           id: 'endpoint-reachable-passed',
           severity: 'passed',
+          category: 'endpoint',
           titleKey: 'diagnostics.EndpointReachable',
           descriptionKey: 'diagnostics.EndpointReachableDesc',
           interpolationValues: { endpoint: apiEndpoint },
