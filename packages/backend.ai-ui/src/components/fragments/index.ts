@@ -64,6 +64,12 @@ export {
 export type { BAIProjectTableProps } from './BAIProjectTable';
 export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
 export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
+export { default as BAIAdminContainerRegistrySelect } from './BAIAdminContainerRegistrySelect';
+export type {
+  BAIAdminContainerRegistrySelectProps,
+  BAIAdminContainerRegistrySelectRef,
+  ContainerRegistryNode,
+} from './BAIAdminContainerRegistrySelect';
 export { default as BAIDomainSelect } from './BAIDomainSelect';
 export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';

@@ -71,6 +71,9 @@
     "KeepAsIs": "Keep as is",
     "UndoChanges": "Undo changes"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Select Container Registry"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Are you sure you want to deactivate {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Are you sure you want to deactivate {{count}} artifacts?",

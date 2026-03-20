@@ -14,6 +14,7 @@ import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePerm
 import { App, Form, Select, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
+  BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIModal,
   BAIModalProps,
@@ -36,6 +37,7 @@ const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   'RESOURCE_GROUP',
   'SESSION',
   'MODEL_DEPLOYMENT',
+  'CONTAINER_REGISTRY',
   // TODO: Scope ID select to be implemented in separate stacks
   // 'DEPLOYMENT',
   // 'KEYPAIR',
@@ -180,6 +182,18 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     return (
       <Suspense fallback={<Select {...selectProps} loading disabled />}>
         <BAIAdminModelServiceSelect
+          placeholder={selectProps.placeholder}
+          value={selectProps.value as string | undefined}
+          onChange={(val, option) => selectProps.onChange?.(val as any, option)}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'CONTAINER_REGISTRY') {
+    return (
+      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+        <BAIAdminContainerRegistrySelect
+          valuePropName="row_id"
           placeholder={selectProps.placeholder}
           value={selectProps.value as string | undefined}
           onChange={(val, option) => selectProps.onChange?.(val as any, option)}
