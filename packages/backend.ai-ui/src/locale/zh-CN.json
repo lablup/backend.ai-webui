@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "选择部署"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "选择域"
   },

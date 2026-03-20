@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Chọn triển khai"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
   },

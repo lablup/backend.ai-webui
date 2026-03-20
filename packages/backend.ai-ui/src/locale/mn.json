@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Байршуулалт сонгох"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
   },

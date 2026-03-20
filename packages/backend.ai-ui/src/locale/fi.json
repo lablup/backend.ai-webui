@@ -88,6 +88,9 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Valitse käyttöönotto"
+  },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
   },
