@@ -288,6 +288,13 @@ test.describe(
         page.getByRole('option', { name: 'Error Code' }),
       ).toBeVisible();
       await expect(page.getByRole('option', { name: 'Message' })).toBeVisible();
+      // Verify the newly added datetime filter options are also available
+      await expect(
+        page.getByRole('option', { name: 'Created At' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('option', { name: 'Updated At' }),
+      ).toBeVisible();
 
       // 4. Close the dropdown
       await page.keyboard.press('Escape');
@@ -377,7 +384,189 @@ test.describe(
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 5. Refresh Functionality
+    // 5. Datetime Filter — Created At and Updated At
+    // ─────────────────────────────────────────────────────────────────────────
+
+    test('Admin sees a DatePicker instead of text input when Created At filter property is selected', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Select "Created At" from the property selector dropdown
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Created At' }).click();
+
+      // 3. Verify the DatePicker input is visible for datetime type
+      const datePicker = modal
+        .locator('.ant-space-compact .ant-picker')
+        .first();
+      await expect(datePicker).toBeVisible();
+
+      // 4. Verify the regular text search input is NOT visible when datetime type is selected
+      const searchInput = modal.locator(
+        '[role="combobox"][placeholder="Search"]',
+      );
+      await expect(searchInput).not.toBeVisible();
+    });
+
+    test('Admin sees a DatePicker instead of text input when Updated At filter property is selected', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Select "Updated At" from the property selector dropdown
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Updated At' }).click();
+
+      // 3. Verify the DatePicker input is visible for datetime type
+      const datePicker = modal
+        .locator('.ant-space-compact .ant-picker')
+        .first();
+      await expect(datePicker).toBeVisible();
+
+      // 4. Verify the regular text search input is NOT visible when datetime type is selected
+      const searchInput = modal.locator(
+        '[role="combobox"][placeholder="Search"]',
+      );
+      await expect(searchInput).not.toBeVisible();
+    });
+
+    test('Admin can see datetime operator options (after, before) for Created At filter', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Select "Created At" from the property selector dropdown
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Created At' }).click();
+
+      // 3. Click the operator selector (second BAISelect in the compact group).
+      // For datetime type without fixedOperator, the operator selector is shown
+      // between the property selector and the DatePicker.
+      // Click the .ant-select container directly because the .ant-select-content-value
+      // overlay intercepts pointer events on the inner [role="combobox"] input.
+      const operatorSelect = modal
+        .locator('.ant-space-compact .ant-select')
+        .nth(1);
+      await operatorSelect.click();
+
+      // 4. Verify the datetime operator options are visible
+      // Labels come from i18n comp:BAIGraphQLPropertyFilter.operator.* keys
+      await expect(page.getByRole('option', { name: 'after' })).toBeVisible();
+      await expect(page.getByRole('option', { name: 'before' })).toBeVisible();
+
+      // 5. Close the dropdown
+      await page.keyboard.press('Escape');
+    });
+
+    test('Admin can apply a Created At datetime filter using the DatePicker and see the filter tag', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Select "Created At" from the property selector dropdown
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Created At' }).click();
+
+      // 3. Click the DatePicker to open the calendar
+      const datePicker = modal
+        .locator('.ant-space-compact .ant-picker')
+        .first();
+      await datePicker.click();
+
+      // 4. Select the first visible day in the calendar
+      const calendarPopup = page
+        .locator('.ant-picker-dropdown:not(.ant-picker-dropdown-hidden)')
+        .first();
+      await calendarPopup.locator('.ant-picker-cell-in-view').first().click();
+
+      // 5. Click the "OK" button to confirm the datetime selection (required for showTime)
+      await calendarPopup.getByRole('button', { name: 'OK' }).click();
+
+      // 6. Verify the filter tag for "Created At" appears with the applied condition
+      // The tag format is: "{propertyLabel} {operatorSymbol} {datetime}"
+      const filterTag = modal
+        .locator('.ant-tag', { hasText: 'Created At' })
+        .first();
+      await expect(filterTag).toBeVisible();
+    });
+
+    test('Admin can apply an Updated At datetime filter using the DatePicker and see the filter tag', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Select "Updated At" from the property selector dropdown
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Updated At' }).click();
+
+      // 3. Click the DatePicker to open the calendar
+      const datePicker = modal
+        .locator('.ant-space-compact .ant-picker')
+        .first();
+      await datePicker.click();
+
+      // 4. Select the first visible day in the calendar
+      const calendarPopup = page
+        .locator('.ant-picker-dropdown:not(.ant-picker-dropdown-hidden)')
+        .first();
+      await calendarPopup.locator('.ant-picker-cell-in-view').first().click();
+
+      // 5. Click the "OK" button to confirm the datetime selection (required for showTime)
+      await calendarPopup.getByRole('button', { name: 'OK' }).click();
+
+      // 6. Verify the filter tag for "Updated At" appears with the applied condition
+      const filterTag = modal
+        .locator('.ant-tag', { hasText: 'Updated At' })
+        .first();
+      await expect(filterTag).toBeVisible();
+    });
+
+    test('Admin can remove an applied Created At datetime filter tag', async ({
+      page,
+    }) => {
+      // 1. Open the Session Detail drawer and history modal
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. Apply a Created At datetime filter
+      await getPropertyFilterCombobox(modal).click();
+      await page.getByRole('option', { name: 'Created At' }).click();
+      const datePicker = modal
+        .locator('.ant-space-compact .ant-picker')
+        .first();
+      await datePicker.click();
+      const calendarPopup = page
+        .locator('.ant-picker-dropdown:not(.ant-picker-dropdown-hidden)')
+        .first();
+      await calendarPopup.locator('.ant-picker-cell-in-view').first().click();
+      await calendarPopup.getByRole('button', { name: 'OK' }).click();
+
+      // 3. Verify the filter tag is visible
+      const filterTag = modal
+        .locator('.ant-tag', { hasText: 'Created At' })
+        .first();
+      await expect(filterTag).toBeVisible();
+
+      // 4. Click the X (close) icon on the filter tag to remove it
+      await filterTag.getByLabel('close').click();
+
+      // 5. Verify the filter tag is no longer visible
+      await expect(filterTag).not.toBeVisible();
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 6. Refresh Functionality
     // ─────────────────────────────────────────────────────────────────────────
 
     test('Admin can manually refresh the scheduling history data using the refresh button', async ({
@@ -406,7 +595,7 @@ test.describe(
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 6. History Table — Data Display
+    // 7. History Table — Data Display
     // ─────────────────────────────────────────────────────────────────────────
 
     test('Admin can see history records displayed in the scheduling history table', async ({
@@ -460,7 +649,7 @@ test.describe(
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 7. Expandable Rows — Sub-Step Details
+    // 8. Expandable Rows — Sub-Step Details
     // ─────────────────────────────────────────────────────────────────────────
 
     test('Admin can expand a history row to view sub-step details when sub-steps exist', async ({
@@ -560,7 +749,7 @@ test.describe(
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 8. Sorting
+    // 9. Sorting
     // ─────────────────────────────────────────────────────────────────────────
 
     test('Admin can sort the history table by the CreatedAt column', async ({
@@ -624,7 +813,7 @@ test.describe(
     });
 
     // ─────────────────────────────────────────────────────────────────────────
-    // 9. Full End-to-End Workflow
+    // 10. Full End-to-End Workflow
     // ─────────────────────────────────────────────────────────────────────────
 
     test('Admin can open, view records, expand sub-steps, refresh, and close the scheduling history modal', async ({
