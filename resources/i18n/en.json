@@ -2405,6 +2405,7 @@
       "InvalidPortFormat": "The port number format is incorrect.",
       "Launch": "Launch",
       "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
+      "LaunchMultipleSessions": "Launch Multiple Sessions",
       "LaunchSessionWithAccessKey": "Launch session on behalf of the access key",
       "ManualImageName": "Image Name (Manual)",
       "Memory": "Memory",
