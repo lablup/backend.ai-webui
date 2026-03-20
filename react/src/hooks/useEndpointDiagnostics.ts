@@ -7,14 +7,13 @@ import { isPlaceholder } from '../diagnostics/rules/configRules';
 import { checkEndpointReachability } from '../diagnostics/rules/endpointRules';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useTanQuery } from './reactQueryAlias';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
  * Hook that checks API endpoint reachability.
  * Uses TanStack Query to perform health check fetches.
  */
-export function useEndpointDiagnostics(): {
+export function useEndpointDiagnostics(fetchKey?: string): {
   results: DiagnosticResult[];
   isLoading: boolean;
 } {
@@ -32,7 +31,7 @@ export function useEndpointDiagnostics(): {
     statusCode?: number;
     error?: string;
   }>({
-    queryKey: ['diagnostics', 'endpoint-health', apiEndpoint],
+    queryKey: ['diagnostics', 'endpoint-health', apiEndpoint, fetchKey],
     queryFn: async () => {
       if (!apiEndpoint) return { isReachable: true };
       try {
@@ -56,32 +55,28 @@ export function useEndpointDiagnostics(): {
     retry: 1,
   });
 
-  const results = useMemo(() => {
-    const diagnostics: DiagnosticResult[] = [];
+  const results: DiagnosticResult[] = [];
 
-    if (healthCheck && !isApiPlaceholder) {
-      const reachCheck = checkEndpointReachability(
-        apiEndpoint,
-        healthCheck.isReachable,
-        healthCheck.error,
-        healthCheck.statusCode,
-      );
-      if (reachCheck) {
-        diagnostics.push(reachCheck);
-      } else if (apiEndpoint) {
-        diagnostics.push({
-          id: 'endpoint-reachable-passed',
-          severity: 'passed',
-          category: 'endpoint',
-          titleKey: 'diagnostics.EndpointReachable',
-          descriptionKey: 'diagnostics.EndpointReachableDesc',
-          interpolationValues: { endpoint: apiEndpoint },
-        });
-      }
+  if (healthCheck && !isApiPlaceholder) {
+    const reachCheck = checkEndpointReachability(
+      apiEndpoint,
+      healthCheck.isReachable,
+      healthCheck.error,
+      healthCheck.statusCode,
+    );
+    if (reachCheck) {
+      results.push(reachCheck);
+    } else if (apiEndpoint) {
+      results.push({
+        id: 'endpoint-reachable-passed',
+        severity: 'passed',
+        category: 'endpoint',
+        titleKey: 'diagnostics.EndpointReachable',
+        descriptionKey: 'diagnostics.EndpointReachableDesc',
+        interpolationValues: { endpoint: apiEndpoint },
+      });
     }
-
-    return diagnostics;
-  }, [apiEndpoint, healthCheck, isApiPlaceholder]);
+  }
 
   return { results, isLoading: isEndpointLoading };
 }

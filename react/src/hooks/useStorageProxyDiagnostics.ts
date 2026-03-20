@@ -35,7 +35,9 @@ function parseStorageWarningThreshold(raw: unknown): number {
  * Hook that checks storage volume health.
  * Suspends while loading storage volume data via GraphQL.
  */
-export function useStorageProxyDiagnostics(): DiagnosticResult[] {
+export function useStorageProxyDiagnostics(
+  fetchKey?: string,
+): DiagnosticResult[] {
   'use memo';
 
   const rawConfig = useRawConfig();
@@ -57,7 +59,7 @@ export function useStorageProxyDiagnostics(): DiagnosticResult[] {
         }
       `,
       {},
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-and-network', fetchKey },
     );
 
   const results: DiagnosticResult[] = [];
