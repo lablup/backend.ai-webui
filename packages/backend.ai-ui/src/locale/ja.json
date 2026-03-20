@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
     "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "モデルサービスを選択"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "リソースグループを選択"
   },

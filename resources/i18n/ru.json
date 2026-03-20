@@ -1538,7 +1538,7 @@
       "KERNEL": "Ядро",
       "KEYPAIR": "Ключевая пара",
       "KEYPAIR_RESOURCE_POLICY": "Политика ресурсов ключевой пары",
-      "MODEL_DEPLOYMENT": "Развёртывание модели",
+      "MODEL_DEPLOYMENT": "Сервис модели",
       "NETWORK": "Сеть",
       "NOTIFICATION_CHANNEL": "Канал уведомлений",
       "NOTIFICATION_RULE": "Правило уведомлений",

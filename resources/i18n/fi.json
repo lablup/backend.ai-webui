@@ -1538,7 +1538,7 @@
       "KERNEL": "Ydin",
       "KEYPAIR": "Avainpari",
       "KEYPAIR_RESOURCE_POLICY": "Avainparin resurssikäytäntö",
-      "MODEL_DEPLOYMENT": "Mallin käyttöönotto",
+      "MODEL_DEPLOYMENT": "Mallipalvelu",
       "NETWORK": "Verkko",
       "NOTIFICATION_CHANNEL": "Ilmoituskanava",
       "NOTIFICATION_RULE": "Ilmoitussääntö",

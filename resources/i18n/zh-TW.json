@@ -1542,7 +1542,7 @@
       "KERNEL": "核心",
       "KEYPAIR": "金鑰組",
       "KEYPAIR_RESOURCE_POLICY": "金鑰組資源原則",
-      "MODEL_DEPLOYMENT": "模型部署",
+      "MODEL_DEPLOYMENT": "模型服務",
       "NETWORK": "網路",
       "NOTIFICATION_CHANNEL": "通知頻道",
       "NOTIFICATION_RULE": "通知規則",

@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "未能激活偽影。",
     "SuccessfullyActivated": "成功激活的工件。"
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "選擇模型服務"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "選擇資源群組"
   },

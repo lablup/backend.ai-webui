@@ -1540,7 +1540,7 @@
       "KERNEL": "เคอร์เนล",
       "KEYPAIR": "Keypair",
       "KEYPAIR_RESOURCE_POLICY": "นโยบายทรัพยากร Keypair",
-      "MODEL_DEPLOYMENT": "Model Deployment",
+      "MODEL_DEPLOYMENT": "บริการโมเดล",
       "NETWORK": "เครือข่าย",
       "NOTIFICATION_CHANNEL": "ช่องทางการแจ้งเตือน",
       "NOTIFICATION_RULE": "กฎการแจ้งเตือน",

@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
     "SuccessfullyActivated": "Успешно активированные артефакты."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Выберите сервис модели"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Выберите группу ресурсов"
   },

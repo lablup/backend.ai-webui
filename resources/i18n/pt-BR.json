@@ -1538,7 +1538,7 @@
       "KERNEL": "Kernel",
       "KEYPAIR": "Par de chaves",
       "KEYPAIR_RESOURCE_POLICY": "Política de recursos do par de chaves",
-      "MODEL_DEPLOYMENT": "Implantação de modelo",
+      "MODEL_DEPLOYMENT": "Serviço de modelo",
       "NETWORK": "Rede",
       "NOTIFICATION_CHANNEL": "Canal de notificação",
       "NOTIFICATION_RULE": "Regra de notificação",

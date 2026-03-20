@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Nie udało się aktywować artefaktów.",
     "SuccessfullyActivated": "Pomyślnie aktywowane artefakty."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Wybierz usługę modelu"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Wybierz grupę zasobów"
   },

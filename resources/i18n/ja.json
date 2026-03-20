@@ -1540,7 +1540,7 @@
       "KERNEL": "カーネル",
       "KEYPAIR": "キーペア",
       "KEYPAIR_RESOURCE_POLICY": "キーペアリソースポリシー",
-      "MODEL_DEPLOYMENT": "モデルデプロイメント",
+      "MODEL_DEPLOYMENT": "モデルサービス",
       "NETWORK": "ネットワーク",
       "NOTIFICATION_CHANNEL": "通知チャンネル",
       "NOTIFICATION_RULE": "通知ルール",

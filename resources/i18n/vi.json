@@ -1540,7 +1540,7 @@
       "KERNEL": "Kernel",
       "KEYPAIR": "Keypair",
       "KEYPAIR_RESOURCE_POLICY": "Chính sách tài nguyên Keypair",
-      "MODEL_DEPLOYMENT": "Triển khai mô hình",
+      "MODEL_DEPLOYMENT": "Dịch vụ mô hình",
       "NETWORK": "Mạng",
       "NOTIFICATION_CHANNEL": "Kênh thông báo",
       "NOTIFICATION_RULE": "Quy tắc thông báo",

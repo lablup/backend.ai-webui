@@ -1540,7 +1540,7 @@
       "KERNEL": "Inti",
       "KEYPAIR": "Keypair",
       "KEYPAIR_RESOURCE_POLICY": "Kebijakan Sumber Daya Keypair",
-      "MODEL_DEPLOYMENT": "Model Deployment",
+      "MODEL_DEPLOYMENT": "Layanan Model",
       "NETWORK": "Jaringan",
       "NOTIFICATION_CHANNEL": "Saluran Notifikasi",
       "NOTIFICATION_RULE": "Aturan Notifikasi",

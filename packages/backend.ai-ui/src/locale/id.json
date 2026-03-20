@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Pilih Layanan Model"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih grup sumber daya"
   },

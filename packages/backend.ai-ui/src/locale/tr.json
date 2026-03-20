@@ -26,6 +26,9 @@
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
   },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Model hizmeti seçin"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Kaynak grubunu seçin"
   },

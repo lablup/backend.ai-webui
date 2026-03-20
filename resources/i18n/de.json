@@ -1540,7 +1540,7 @@
       "KERNEL": "Kernel",
       "KEYPAIR": "Schlüsselpaar",
       "KEYPAIR_RESOURCE_POLICY": "Schlüsselpaar-Ressourcenrichtlinie",
-      "MODEL_DEPLOYMENT": "Modell-Deployment",
+      "MODEL_DEPLOYMENT": "Modell-Service",
       "NETWORK": "Netzwerk",
       "NOTIFICATION_CHANNEL": "Benachrichtigungskanal",
       "NOTIFICATION_RULE": "Benachrichtigungsregel",
