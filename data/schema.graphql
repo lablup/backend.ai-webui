@@ -1207,6 +1207,54 @@ input AssignRoleInput
   roleId: UUID!
 }
 
+"""Added in 26.3.0. Input for bulk assigning a role to multiple users"""
+input BulkAssignRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  roleId: UUID!
+  userIds: [UUID!]!
+}
+
+"""Added in 26.3.0. Payload for bulk role assignment mutation."""
+type BulkAssignRolePayload
+  @join__type(graph: STRAWBERRY)
+{
+  assigned: [RoleAssignment!]!
+  failed: [BulkAssignRoleError!]!
+}
+
+"""Added in 26.3.0. Error information for a failed user in bulk role assignment."""
+type BulkAssignRoleError
+  @join__type(graph: STRAWBERRY)
+{
+  userId: UUID!
+  message: String!
+}
+
+"""Added in 26.3.0. Input for bulk revoking a role from multiple users"""
+input BulkRevokeRoleInput
+  @join__type(graph: STRAWBERRY)
+{
+  roleId: UUID!
+  userIds: [UUID!]!
+}
+
+"""Added in 26.3.0. Payload for bulk role revocation mutation."""
+type BulkRevokeRolePayload
+  @join__type(graph: STRAWBERRY)
+{
+  revoked: [RoleAssignment!]!
+  failed: [BulkRevokeRoleError!]!
+}
+
+"""Added in 26.3.0. Error information for a failed user in bulk role revocation."""
+type BulkRevokeRoleError
+  @join__type(graph: STRAWBERRY)
+{
+  userId: UUID!
+  message: String!
+}
+
 """Added in 24.03.9."""
 type AssociateScalingGroupsWithDomain
   @join__type(graph: GRAPHENE)

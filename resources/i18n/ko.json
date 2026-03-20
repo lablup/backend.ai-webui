@@ -1458,6 +1458,9 @@
     "Assign": "할당",
     "AssignUser": "사용자 추가",
     "Assignments": "할당",
+    "BulkAssignPartialFailure": "{{count}}명의 사용자 할당에 실패했습니다.",
+    "BulkRevokePartialFailure": "{{count}}명의 사용자 권한 해제에 실패했습니다.",
+    "ConfirmBulkRevoke": "{{count}}명의 사용자를 권한에서 제거하시겠습니까?",
     "ConfirmDelete": "\"{{name}}\" 권한을 삭제하시겠습니까? 소프트 삭제됩니다.",
     "ConfirmDeletePermission": "이 세부 권한을 삭제하시겠습니까?",
     "ConfirmPurge": "\"{{name}}\" 권한을 영구적으로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
@@ -1502,13 +1505,15 @@
     "ScopeId": "범위 ID",
     "ScopeType": "범위 유형",
     "SelectUser": "사용자 검색 및 선택",
+    "SelectUsers": "사용자 검색 및 선택",
     "Source": "소스",
     "Status": "상태",
     "System": "시스템",
     "UserAlreadyAssigned": "사용자가 이미 이 권한에 할당되어 있습니다.",
     "UserAssigned": "사용자가 권한에 성공적으로 할당되었습니다.",
     "UserNotAssigned": "사용자가 이 권한에 할당되어 있지 않습니다.",
-    "UserRevoked": "사용자가 권한에서 성공적으로 제거되었습니다."
+    "UserRevoked": "사용자가 권한에서 성공적으로 제거되었습니다.",
+    "UsersAssigned": "사용자들이 역할에 성공적으로 할당되었습니다."
   },
   "registry": {
     "AddRegistry": "레지스트리 추가",
