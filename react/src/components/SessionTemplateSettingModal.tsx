@@ -25,10 +25,8 @@ import _ from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface SessionTemplateSettingModalProps extends Omit<
-  BAIModalProps,
-  'onOk' | 'onCancel' | 'onClose'
-> {
+interface SessionTemplateSettingModalProps
+  extends Omit<BAIModalProps, 'onOk' | 'onCancel' | 'onClose'> {
   editingTemplate?: SessionTemplate | null;
   onRequestClose?: (success: boolean) => void;
 }
