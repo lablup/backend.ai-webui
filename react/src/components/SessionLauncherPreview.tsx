@@ -425,15 +425,17 @@ const SessionLauncherPreview: React.FC<{
         }}
       >
         <BAIFlex direction="column" align="stretch">
-          {_.some(
+          {(_.some(
             form.getFieldValue('resource'),
             (_v, key: keyof SessionLauncherFormValue['resource']) => {
               return (
-                // @ts-ignore
-                form.getFieldWarning(['resource', key]).length > 0
+                (form.getFieldWarning(['resource', key] as any) as any[])
+                  .length > 0
               );
             },
-          ) && (
+          ) ||
+            (form.getFieldWarning(['cluster_size'] as any) as any[]).length >
+              0) && (
             <Alert
               type="warning"
               showIcon
