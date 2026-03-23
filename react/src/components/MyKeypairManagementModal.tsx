@@ -2,15 +2,27 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { MyKeypairManagementModalDeactivateMyKeypairMutation } from '../__generated__/MyKeypairManagementModalDeactivateMyKeypairMutation.graphql';
 import { MyKeypairManagementModalIssueMyKeypairMutation } from '../__generated__/MyKeypairManagementModalIssueMyKeypairMutation.graphql';
 import {
   MyKeypairManagementModalQuery,
   MyKeypairManagementModalQuery$data,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
+import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
+import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, App, Empty, Tag, theme } from 'antd';
+import {
+  Alert,
+  App,
+  Empty,
+  Popconfirm,
+  Tag,
+  theme,
+  Tooltip,
+} from 'antd';
 import {
   BAIButton,
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -26,10 +38,13 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
+  BanIcon,
   DownloadIcon,
   KeyRoundIcon,
   PlusIcon,
+  Trash2Icon,
   TriangleAlertIcon,
+  UndoIcon,
 } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +102,9 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [credentialResult, setCredentialResult] =
     useState<KeypairCredential | null>(null);
-  const [isCredentialModalOpen, setIsCredentialModalOpen] = useState(false);
+  const [deletingKeypairAccessKey, setDeletingKeypairAccessKey] = useState<
+    string | null
+  >(null);
 
   const [issueMyKeypair] =
     useMutation<MyKeypairManagementModalIssueMyKeypairMutation>(graphql`
@@ -98,6 +115,41 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             sshPublicKey
           }
           secretKey
+        }
+      }
+    `);
+
+  const [switchMainKey] =
+    useMutation<MyKeypairManagementModalSwitchMainKeyMutation>(graphql`
+      mutation MyKeypairManagementModalSwitchMainKeyMutation(
+        $input: SwitchMyMainAccessKeyInput!
+      ) {
+        switchMyMainAccessKey(input: $input) {
+          success
+        }
+      }
+    `);
+
+  const [updateMyKeypair] =
+    useMutation<MyKeypairManagementModalDeactivateMyKeypairMutation>(graphql`
+      mutation MyKeypairManagementModalDeactivateMyKeypairMutation(
+        $input: UpdateMyKeypairInput!
+      ) {
+        updateMyKeypair(input: $input) {
+          keypair {
+            isActive
+          }
+        }
+      }
+    `);
+
+  const [revokeKeypair] =
+    useMutation<MyKeypairManagementModalRevokeMyKeypairMutation>(graphql`
+      mutation MyKeypairManagementModalRevokeMyKeypairMutation(
+        $input: RevokeMyKeypairInput!
+      ) {
+        revokeMyKeypair(input: $input) {
+          success
         }
       }
     `);
@@ -166,7 +218,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
 
   const handleIssueKeypair = () => {
     issueMyKeypair({
-      variables: {},
       onCompleted: (
         result: MyKeypairManagementModalIssueMyKeypairMutation['response'],
       ) => {
@@ -176,7 +227,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           secretKey: payload.secretKey,
           sshPublicKey: payload.keypair.sshPublicKey ?? '',
         });
-        setIsCredentialModalOpen(true);
         setActiveFilter('active');
         updateFetchKey();
         message.success(t('credential.KeypairCreated'));
@@ -185,8 +235,72 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         logger.error(error);
         message.error(getErrorMessage(error));
       },
+      variables: {},
     });
   };
+
+  const handleSwitchMainKey = (accessKey: string) => {
+    switchMainKey({
+      variables: { input: { accessKey } },
+      onCompleted: () => {
+        updateFetchKey();
+        message.success(t('credential.MainKeyChanged'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
+  };
+
+  const handleDeactivateKeypair = (accessKey: string) => {
+    updateMyKeypair({
+      variables: {
+        input: { accessKey, isActive: false },
+      },
+      onCompleted: () => {
+        updateFetchKey();
+        message.success(t('credential.KeypairDeactivated'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
+  };
+
+  const handleActivateKeypair = (accessKey: string) => {
+    updateMyKeypair({
+      variables: {
+        input: { accessKey, isActive: true },
+      },
+      onCompleted: () => {
+        updateFetchKey();
+        message.success(t('credential.KeypairRestored'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
+  };
+
+  const handleDeleteKeypair = (accessKey: string) => {
+    revokeKeypair({
+      variables: {
+        input: { accessKey },
+      },
+      onCompleted: () => {
+        updateFetchKey();
+        message.success(t('credential.KeypairDeleted'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
+  };
+
 
   return (
     <>
@@ -196,7 +310,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         centered
         onCancel={onRequestClose}
         destroyOnHidden
-        width={900}
+        width={1100}
         footer={null}
       >
         <BAIFlex direction="column" align="stretch" gap="sm">
@@ -206,10 +320,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               showIcon
               icon={
                 <KeyRoundIcon
-                  style={{
-                    width: token.fontSizeLG,
-                    height: token.fontSizeLG,
-                  }}
+                  style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
                 />
               }
               title={
@@ -222,7 +333,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               }
             />
           )}
-          <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+          <BAIFlex
+            justify="between"
+            align="start"
+            gap="sm"
+            wrap="wrap"
+            style={{ marginBottom: token.marginSM }}
+          >
             <BAIRadioGroup
               value={activeFilter}
               onChange={(e) => {
@@ -309,8 +426,112 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.ModifiedAt'),
                 dataIndex: 'modifiedAt',
                 sorter: true,
+                defaultHidden: true,
                 render: (value: string) =>
                   value ? dayjs(value).format('lll') : '-',
+              },
+              {
+                key: 'actions',
+                title: t('credential.Controls'),
+                fixed: 'right' as const,
+                render: (_: unknown, record: KeypairNode) => {
+                  if (activeFilter === 'active') {
+                    const isMain = record.accessKey === mainAccessKey;
+                    return (
+                      <BAIFlex gap="xxs">
+                        {!isMain && (
+                          <Popconfirm
+                            title={t('credential.SetAsMain')}
+                            description={t('credential.SetAsMainConfirm')}
+                            okText={t('button.Confirm')}
+                            cancelText={t('button.Cancel')}
+                            placement="left"
+                            onConfirm={() =>
+                              handleSwitchMainKey(record.accessKey ?? '')
+                            }
+                          >
+                            <Tooltip title={t('credential.SetAsMain')}>
+                              <BAIButton
+                                type="text"
+                                icon={<KeyRoundIcon />}
+                                size="small"
+                              />
+                            </Tooltip>
+                          </Popconfirm>
+                        )}
+                        {isMain ? (
+                          <Tooltip
+                            title={t('credential.MainKeyCannotDeactivate')}
+                          >
+                            <BAIButton
+                              type="text"
+                              danger
+                              icon={<BanIcon />}
+                              size="small"
+                              disabled
+                            />
+                          </Tooltip>
+                        ) : (
+                          <Popconfirm
+                            title={t('credential.Deactivate')}
+                            description={t('credential.DeactivateConfirm')}
+                            okText={t('button.Confirm')}
+                            okType="danger"
+                            cancelText={t('button.Cancel')}
+                            placement="left"
+                            onConfirm={() =>
+                              handleDeactivateKeypair(record.accessKey ?? '')
+                            }
+                          >
+                            <Tooltip title={t('credential.Deactivate')}>
+                              <BAIButton
+                                type="text"
+                                danger
+                                icon={<BanIcon />}
+                                size="small"
+                              />
+                            </Tooltip>
+                          </Popconfirm>
+                        )}
+                      </BAIFlex>
+                    );
+                  }
+                  return (
+                    <BAIFlex gap="xxs">
+                      <Popconfirm
+                        title={t('credential.Restore')}
+                        description={t('credential.RestoreConfirm')}
+                        okText={t('button.Confirm')}
+                        cancelText={t('button.Cancel')}
+                        placement="left"
+                        onConfirm={() =>
+                          handleActivateKeypair(record.accessKey ?? '')
+                        }
+                      >
+                        <Tooltip title={t('credential.Restore')}>
+                          <BAIButton
+                            type="text"
+                            icon={<UndoIcon />}
+                            size="small"
+                          />
+                        </Tooltip>
+                      </Popconfirm>
+                      <Tooltip title={t('credential.DeleteKeypair')}>
+                        <BAIButton
+                          type="text"
+                          danger
+                          icon={<Trash2Icon />}
+                          size="small"
+                          onClick={() =>
+                            setDeletingKeypairAccessKey(
+                              record.accessKey ?? null,
+                            )
+                          }
+                        />
+                      </Tooltip>
+                    </BAIFlex>
+                  );
+                },
               },
             ])}
             showSorterTooltip={false}
@@ -334,13 +555,10 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         </BAIFlex>
       </BAIModal>
       <BAIModal
-        open={isCredentialModalOpen}
+        open={credentialResult !== null}
         title={t('credential.KeypairCredentialInfo')}
         keyboard={false}
-        onCancel={() => {
-          setIsCredentialModalOpen(false);
-          setCredentialResult(null);
-        }}
+        onCancel={() => setCredentialResult(null)}
         destroyOnHidden
         width={640}
         footer={
@@ -398,6 +616,35 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       </BAIModal>
+      <BAIConfirmModalWithInput
+        open={!!deletingKeypairAccessKey}
+        title={t('credential.DeleteKeypair')}
+        content={
+          <div style={{ marginBottom: token.marginSM }}>
+            {t('credential.DeleteKeypairWarning', {
+              accessKey: deletingKeypairAccessKey,
+            })}
+          </div>
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
+        okText={t('button.Delete')}
+        cancelText={t('button.Cancel')}
+        onOk={() => {
+          if (deletingKeypairAccessKey) {
+            handleDeleteKeypair(deletingKeypairAccessKey);
+          }
+          setDeletingKeypairAccessKey(null);
+        }}
+        onCancel={() => {
+          setDeletingKeypairAccessKey(null);
+        }}
+      />
     </>
   );
 };

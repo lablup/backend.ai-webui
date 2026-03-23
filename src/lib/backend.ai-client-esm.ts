@@ -896,7 +896,7 @@ class Client {
       this._features['session-scheduling-history'] = true;
       this._features['rbac'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('26.4.0')) {
+    if (this.isManagerVersionCompatibleWith('26.2.0')) {
       this._features['my-keypairs'] = true;
     }
   }
