@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Обнаружены проблемы диагностики",
     "BlocklistValid": "Записи списка блокировки действительны",
     "BlocklistValidDesc": "Все {{count}} записи списка блокировки соответствуют известным ключам меню.",
+    "ConfigParseError": "Ошибка разбора config.toml",
+    "ConfigParseErrorDesc": "Не удалось разобрать config.toml. Приложение запущено со значениями конфигурации по умолчанию.",
     "ConfigSslMatchPassed": "SSL-протокол конфигурации согласован",
     "ConfigSslMatchPassedDesc": "Конечная точка API и URL-адрес прокси используют один и тот же протокол.",
     "ConfigSslMismatch": "Несоответствие SSL-протокола конфигурации",

@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Masalah Diagnostik Terdeteksi",
     "BlocklistValid": "Entri Daftar Blokir Valid",
     "BlocklistValidDesc": "Semua {{count}} entri daftar blokir cocok dengan kunci menu yang diketahui.",
+    "ConfigParseError": "Kesalahan Parsing config.toml",
+    "ConfigParseErrorDesc": "Gagal mengurai config.toml. Aplikasi berjalan dengan nilai konfigurasi default.",
     "ConfigSslMatchPassed": "Protokol SSL Konfigurasi Konsisten",
     "ConfigSslMatchPassedDesc": "Endpoint API dan URL proksi menggunakan protokol yang sama.",
     "ConfigSslMismatch": "Ketidakcocokan Protokol SSL Konfigurasi",

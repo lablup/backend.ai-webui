@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "偵測到診斷問題",
     "BlocklistValid": "封鎖清單項目有效",
     "BlocklistValidDesc": "全部 {{count}} 條封鎖清單項目均與已知選單鍵匹配。",
+    "ConfigParseError": "config.toml 解析錯誤",
+    "ConfigParseErrorDesc": "解析 config.toml 失敗。應用程式正在使用預設設定值運行。",
     "ConfigSslMatchPassed": "配置 SSL 協議一致",
     "ConfigSslMatchPassedDesc": "API 端點和代理 URL 使用相同的協議。",
     "ConfigSslMismatch": "配置 SSL 協議不匹配",

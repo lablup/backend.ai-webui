@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Diagnostics Issues Detected",
     "BlocklistValid": "Blocklist Entries Valid",
     "BlocklistValidDesc": "All {{count}} blocklist entry(ies) match known menu keys.",
+    "ConfigParseError": "config.toml Parse Error",
+    "ConfigParseErrorDesc": "Failed to parse config.toml. The application is running with default configuration values.",
     "ConfigSslMatchPassed": "Config SSL Protocol Consistent",
     "ConfigSslMatchPassedDesc": "API endpoint and proxy URL use the same protocol.",
     "ConfigSslMismatch": "Config SSL Protocol Mismatch",

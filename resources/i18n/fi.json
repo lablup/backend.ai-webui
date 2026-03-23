@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Diagnostiikkaongelmia havaittu",
     "BlocklistValid": "Estolistamerkinnät kelvollisia",
     "BlocklistValidDesc": "Kaikki {{count}} estolistamerkintää vastaavat tunnettuja valikkoavaimia.",
+    "ConfigParseError": "config.toml-jäsennyksessä virhe",
+    "ConfigParseErrorDesc": "config.toml-tiedoston jäsentäminen epäonnistui. Sovellus käynnissä oletuskokoonpanon arvoilla.",
     "ConfigSslMatchPassed": "Kokoonpanon SSL-protokolla yhdenmukainen",
     "ConfigSslMatchPassedDesc": "API-päätepiste ja välityspalvelimen URL käyttävät samaa protokollaa.",
     "ConfigSslMismatch": "Kokoonpanon SSL-protokollaristiriita",

@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "ตรวจพบปัญหาการวินิจฉัย",
     "BlocklistValid": "รายการในรายการบล็อกถูกต้อง",
     "BlocklistValidDesc": "รายการในรายการบล็อกทั้ง {{count}} รายการตรงกับคีย์เมนูที่รู้จัก",
+    "ConfigParseError": "ข้อผิดพลาดในการแยกวิเคราะห์ config.toml",
+    "ConfigParseErrorDesc": "ไม่สามารถแยกวิเคราะห์ config.toml ได้. แอปพลิเคชันกำลังทำงานด้วยค่าการกำหนดค่าเริ่มต้น",
     "ConfigSslMatchPassed": "โปรโตคอล SSL ของการกำหนดค่าสอดคล้องกัน",
     "ConfigSslMatchPassedDesc": "จุดปลายทาง API และ URL พร็อกซีใช้โปรโตคอลเดียวกัน",
     "ConfigSslMismatch": "โปรโตคอล SSL ของการกำหนดค่าไม่ตรงกัน",
