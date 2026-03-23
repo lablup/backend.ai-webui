@@ -49,7 +49,6 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -97,6 +96,8 @@ const CARD_MIN_HEIGHT = 200;
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { lg } = Grid.useBreakpoint();
@@ -166,34 +167,23 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
-  const queryVariables: VFolderNodeListPageQuery$variables = useMemo(
-    () => ({
-      scopeId: `project:${currentProject.id}`,
-      offset: baiPaginationOption.offset,
-      first: baiPaginationOption.first,
-      filter: mergeFilterValues([
-        queryParams.statusCategory === 'active' ||
-        queryParams.statusCategory === undefined
-          ? FILTER_BY_STATUS_CATEGORY['active']
-          : FILTER_BY_STATUS_CATEGORY['deleted'],
-        queryParams.filter,
-        usageModeFilter,
-      ]),
-      order: queryParams.order,
-      permission: 'read_attribute',
-      filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
-      filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
-    }),
-    [
-      currentProject.id,
-      baiPaginationOption.offset,
-      baiPaginationOption.first,
-      queryParams.statusCategory,
+  const queryVariables: VFolderNodeListPageQuery$variables = {
+    scopeId: `project:${currentProject.id}`,
+    offset: baiPaginationOption.offset,
+    first: baiPaginationOption.first,
+    filter: mergeFilterValues([
+      queryParams.statusCategory === 'active' ||
+      queryParams.statusCategory === undefined
+        ? FILTER_BY_STATUS_CATEGORY['active']
+        : FILTER_BY_STATUS_CATEGORY['deleted'],
       queryParams.filter,
-      queryParams.order,
       usageModeFilter,
-    ],
-  );
+    ]),
+    order: queryParams.order,
+    permission: 'read_attribute',
+    filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
+    filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+  };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 

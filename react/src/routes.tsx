@@ -415,6 +415,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/admin-data',
     handle: { labelKey: 'webui.menu.Data' },
     Component: () => {
+      useSuspendedBackendaiClient();
       return (
         <Suspense fallback={<Skeleton active />}>
           <AdminVFolderNodeListPage />

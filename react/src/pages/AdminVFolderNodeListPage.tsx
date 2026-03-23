@@ -5,6 +5,7 @@
 import type {
   AdminVFolderNodeListPageQuery,
   AdminVFolderNodeListPageQuery$data,
+  AdminVFolderNodeListPageQuery$variables,
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
@@ -12,7 +13,8 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, Button, theme, Tooltip } from 'antd';
 import {
@@ -28,19 +30,12 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useDeferredValue, useMemo, useRef, useState } from 'react';
+import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
-
-export const isDeletedCategory = (status?: string | null) => {
-  return _.includes(
-    ['delete-pending', 'delete-ongoing', 'delete-complete', 'delete-error'],
-    status,
-  );
-};
 
 type VFolderNodesType = NonNullableNodeOnEdges<
   AdminVFolderNodeListPageQuery$data['vfolder_nodes']
@@ -58,22 +53,19 @@ const VFOLDER_STATUSES = [
   'DELETE_ERROR',
 ];
 
-interface AdminVFolderNodeListPageProps {}
-
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
-const AdminVFolderNodeListPage: React.FC<AdminVFolderNodeListPageProps> = ({
-  ...props
-}) => {
+const AdminVFolderNodeListPage: React.FC = (props) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const domainName = useCurrentDomainValue();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminVFolderNodeListPage',
@@ -105,6 +97,8 @@ const AdminVFolderNodeListPage: React.FC<AdminVFolderNodeListPageProps> = ({
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
+
+  // eslint-disable-next-line react-hooks/refs
   queryMapRef.current[queryParams.statusCategory] = {
     queryParams,
     tablePaginationOption,
@@ -129,31 +123,22 @@ const AdminVFolderNodeListPage: React.FC<AdminVFolderNodeListPageProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
-  const queryVariables = useMemo(
-    () => ({
-      offset: baiPaginationOption.offset,
-      first: baiPaginationOption.first,
-      filter: mergeFilterValues([
-        queryParams.statusCategory === 'active' ||
-        queryParams.statusCategory === undefined
-          ? FILTER_BY_STATUS_CATEGORY['active']
-          : FILTER_BY_STATUS_CATEGORY['deleted'],
-        queryParams.filter,
-        usageModeFilter,
-      ]),
-      order: queryParams.order,
-      filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
-      filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
-    }),
-    [
-      baiPaginationOption.offset,
-      baiPaginationOption.first,
-      queryParams.statusCategory,
+  const queryVariables: AdminVFolderNodeListPageQuery$variables = {
+    offset: baiPaginationOption.offset,
+    first: baiPaginationOption.first,
+    filter: mergeFilterValues([
+      queryParams.statusCategory === 'active' ||
+      queryParams.statusCategory === undefined
+        ? FILTER_BY_STATUS_CATEGORY['active']
+        : FILTER_BY_STATUS_CATEGORY['deleted'],
       queryParams.filter,
-      queryParams.order,
       usageModeFilter,
-    ],
-  );
+    ]),
+    order: queryParams.order,
+    filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
+    filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+    scope_id: `domain:${domainName}`,
+  };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
@@ -167,12 +152,14 @@ const AdminVFolderNodeListPage: React.FC<AdminVFolderNodeListPageProps> = ({
           $order: String
           $filterForActiveCount: String
           $filterForDeletedCount: String
+          $scope_id: ScopeField
         ) {
           vfolder_nodes(
             offset: $offset
             first: $first
             filter: $filter
             order: $order
+            scope_id: $scope_id
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
