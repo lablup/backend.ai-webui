@@ -1,0 +1,10 @@
+{
+  "epicKey": "FR-2338",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2338",
+  "slug": "model-store-improvement",
+  "specTaskKey": "FR-2351",
+  "stories": [],
+  "sourceIssues": ["FR-1927", "FR-389", "FR-1919", "FR-1926", "FR-1928", "FR-2078"],
+  "relatedEpics": ["FR-1368"],
+  "createdAt": "2026-03-23T00:00:00.000Z"
+}
