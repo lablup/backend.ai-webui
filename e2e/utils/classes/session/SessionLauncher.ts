@@ -338,7 +338,7 @@ export class SessionLauncher {
    * 4. Open session detail drawer
    * 5. Click terminate button
    * 6. Confirm termination
-   * 7. Wait for TERMINATED status
+   * 7. Wait for session row to leave "Running" view
    */
   async terminate(): Promise<void> {
     if (!this.options.sessionName) {
@@ -430,15 +430,221 @@ export class SessionLauncher {
     // Step 7: Close the drawer
     await this.closeDrawer(sessionDetailDrawer);
 
-    // Step 8: Wait for session row to disappear from the current (Running) view.
-    // After termination is initiated, the session transitions to TERMINATING/TERMINATED
-    // and is moved to the "Finished" tab, so it will no longer be visible in the
-    // "Running" tab. Waiting for the row to be hidden is more reliable than checking
-    // for a specific status text that may appear on a different tab.
-    const updatedSessionRow = this.page
+    // Step 8: Wait for session to leave "Running" view
+    // After termination is confirmed, the session moves from "Running" to "Finished" view
+    // (PENDING sessions become CANCELLED, RUNNING sessions become TERMINATED).
+    // We wait for the row to disappear from the current "Running" view as a reliable signal.
+    // Use a longer timeout (120s) to accommodate PENDING sessions that take time to cancel.
+    const runningSessionRow = this.page
       .locator('tr')
       .filter({ hasText: this.options.sessionName });
-    await expect(updatedSessionRow).not.toBeVisible({ timeout: 60000 });
+    await expect(runningSessionRow).not.toBeVisible({ timeout: 120000 });
+  }
+
+  /**
+   * Terminate all sessions matching a session name prefix (for test cleanup).
+   * Iterates through all visible sessions in the "Running" view and terminates
+   * any that match the given prefix. Useful for cleaning up leftover test sessions
+   * that are stuck in PENDING or RUNNING state and blocking resources.
+   *
+   * This method initiates termination for each session without waiting for each
+   * individual session to disappear, then waits for all of them to clear at the end.
+   *
+   * @param prefix - Session name prefix to match (e.g., 'e2e-app-launcher-')
+   */
+  async terminateAllByPrefix(prefix: string): Promise<void> {
+    await this.navigateToSessionList();
+
+    // Collect session names by finding table rows (excluding measure rows)
+    // that contain text matching the prefix. We collect all names first to
+    // avoid stale locator issues when navigating between terminations.
+    const allSessionNames: string[] = [];
+
+    // Scan the first page only to keep cleanup fast
+    const sessionRows = this.page
+      .locator('tbody tr:not(.ant-table-measure-row)')
+      .filter({ hasText: prefix });
+
+    const count = await sessionRows.count().catch(() => 0);
+
+    for (let i = 0; i < count; i++) {
+      const row = sessionRows.nth(i);
+      // Session name is in the second cell (index 1)
+      const nameCell = row.locator('td').nth(1);
+      const name = await nameCell
+        .textContent({ timeout: 3000 })
+        .catch(() => null);
+      if (name && name.trim().startsWith(prefix)) {
+        allSessionNames.push(name.trim());
+      }
+    }
+
+    // Also check page 2 if there are sessions (sessions table shows 10/page by default)
+    const nextPageButton = this.page.locator(
+      'li[title="Next Page"] button:not([disabled])',
+    );
+    const hasNextPage = await nextPageButton
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+
+    if (hasNextPage) {
+      await nextPageButton.click();
+      await this.page.locator('.ant-table').waitFor({ state: 'visible' });
+
+      const page2Rows = this.page
+        .locator('tbody tr:not(.ant-table-measure-row)')
+        .filter({ hasText: prefix });
+      const page2Count = await page2Rows.count().catch(() => 0);
+
+      for (let i = 0; i < page2Count; i++) {
+        const row = page2Rows.nth(i);
+        const nameCell = row.locator('td').nth(1);
+        const name = await nameCell
+          .textContent({ timeout: 3000 })
+          .catch(() => null);
+        if (name && name.trim().startsWith(prefix)) {
+          allSessionNames.push(name.trim());
+        }
+      }
+
+      // Go back to page 1
+      const prevPageButton = this.page.locator(
+        'li[title="Previous Page"] button:not([disabled])',
+      );
+      await prevPageButton.click();
+      await this.page.locator('.ant-table').waitFor({ state: 'visible' });
+    }
+
+    if (allSessionNames.length === 0) {
+      console.log(`No sessions with prefix "${prefix}" found to clean up`);
+      return;
+    }
+
+    console.log(
+      `Found ${allSessionNames.length} session(s) with prefix "${prefix}" to clean up`,
+    );
+
+    // Terminate each session: initiate termination without waiting for each to disappear.
+    // After initiating all terminations, we wait for all rows to be gone at the end.
+    const terminatedNames: string[] = [];
+    for (const sessionName of allSessionNames) {
+      try {
+        await this.initiateTermination(sessionName);
+        terminatedNames.push(sessionName);
+        console.log(`Initiated termination for session: ${sessionName}`);
+      } catch (error) {
+        console.log(
+          `Failed to initiate termination for session ${sessionName}:`,
+          error,
+        );
+      }
+      // Navigate back to session list for the next iteration
+      await this.navigateToSessionList();
+    }
+
+    // Wait for all terminated sessions to disappear from "Running" view
+    if (terminatedNames.length > 0) {
+      console.log(
+        `Waiting for ${terminatedNames.length} session(s) to disappear from Running view...`,
+      );
+      for (const sessionName of terminatedNames) {
+        const row = this.page.locator('tr').filter({ hasText: sessionName });
+        await expect(row)
+          .not.toBeVisible({ timeout: 120000 })
+          .catch((err) => {
+            console.log(
+              `Session ${sessionName} did not disappear within timeout: ${err}`,
+            );
+          });
+      }
+    }
+  }
+
+  /**
+   * Initiates termination for a session by name without waiting for it to disappear.
+   * Opens the session detail drawer, clicks terminate, and confirms the termination dialog.
+   * Use this when you want to start termination for multiple sessions and then wait for all.
+   *
+   * @param sessionName - Session name to terminate
+   */
+  private async initiateTermination(sessionName: string): Promise<void> {
+    const sessionRow = this.page.locator('tr').filter({ hasText: sessionName });
+
+    const sessionRowVisible = await sessionRow
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+
+    if (!sessionRowVisible) {
+      console.log(
+        `Session ${sessionName} not found in table, may already be terminated`,
+      );
+      return;
+    }
+
+    // Check if already terminated/terminating
+    const currentStatus = sessionRow
+      .locator('td')
+      .filter({ hasText: /TERMINATED|TERMINATING/ });
+    const isAlreadyTerminated = await currentStatus
+      .isVisible({ timeout: 1000 })
+      .catch(() => false);
+
+    if (isAlreadyTerminated) {
+      console.log(
+        `Session ${sessionName} is already terminated or terminating`,
+      );
+      return;
+    }
+
+    // Click session name to open drawer
+    const sessionNameLink = sessionRow.getByText(sessionName);
+    await sessionNameLink.click();
+
+    const sessionDetailDrawer = this.page
+      .locator('.ant-drawer')
+      .filter({ hasText: 'Session Info' });
+    await expect(sessionDetailDrawer).toBeVisible({ timeout: 10000 });
+
+    // Find the terminate button and check both visibility AND enabled state
+    const terminateButton = sessionDetailDrawer
+      .getByRole('button')
+      .filter({ has: this.page.getByLabel('terminate') });
+
+    const terminateButtonVisible = await terminateButton
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+
+    if (!terminateButtonVisible) {
+      await this.closeDrawer(sessionDetailDrawer);
+      return;
+    }
+
+    // Check if the terminate button is enabled (not disabled)
+    const isEnabled = await terminateButton
+      .isEnabled({ timeout: 1000 })
+      .catch(() => false);
+
+    if (!isEnabled) {
+      console.log(
+        `Terminate button is disabled for session ${sessionName}, may already be in terminal state`,
+      );
+      await this.closeDrawer(sessionDetailDrawer);
+      return;
+    }
+
+    // Click with a short timeout to avoid hanging if button becomes disabled mid-action
+    await terminateButton.click({ timeout: 5000 });
+
+    // Confirm termination
+    const confirmModal = this.page.getByRole('dialog', {
+      name: 'Terminate Session',
+    });
+    await expect(confirmModal).toBeVisible({ timeout: 5000 });
+    await confirmModal.getByRole('button', { name: 'Terminate' }).click();
+    await expect(confirmModal).not.toBeVisible({ timeout: 5000 });
+
+    // Close the drawer
+    await this.closeDrawer(sessionDetailDrawer);
   }
 
   /**
@@ -447,8 +653,41 @@ export class SessionLauncher {
    */
   async waitForRunning(timeout: number = 180000): Promise<void> {
     const sessionRow = this.getSessionRow();
-    const runningStatus = sessionRow.getByText('RUNNING');
-    await expect(runningStatus).toBeVisible({ timeout });
+
+    // Use expect.poll to check status and fail fast on terminal states
+    await expect
+      .poll(
+        async () => {
+          // Check for terminal/error states first to fail fast
+          const statusCell = sessionRow.locator('td').nth(2);
+          const statusText = await statusCell
+            .textContent({ timeout: 3000 })
+            .catch(() => '');
+
+          if (
+            statusText?.includes('CANCELLED') ||
+            statusText?.includes('TERMINATED') ||
+            statusText?.includes('ERROR')
+          ) {
+            throw new Error(
+              `Session "${this.options.sessionName}" entered terminal state: ${statusText?.trim()}`,
+            );
+          }
+
+          // Check if RUNNING
+          const runningText = await sessionRow
+            .getByText('RUNNING')
+            .isVisible({ timeout: 1000 })
+            .catch(() => false);
+          return runningText;
+        },
+        {
+          message: `Waiting for session "${this.options.sessionName}" to reach RUNNING status`,
+          timeout,
+          intervals: [2000, 3000, 5000],
+        },
+      )
+      .toBe(true);
   }
 
   /**
@@ -530,74 +769,48 @@ export class SessionLauncher {
   }
 
   /**
-   * Select the container image
+   * Select the container image.
    *
-   * The image selection UI has two separate dropdowns:
-   * 1. Environment dropdown (combobox "Environments / Version"): options show display name
-   *    e.g., "Python" (standard namespaces like 'stable', 'lablup', 'cloud' are not shown as tags)
-   *    e.g., "Python [multiarch]" (non-standard namespaces are shown as purple tags)
-   * 2. Version dropdown (#environments_version): options show "3.9 | x86_64 | Ubuntu 20.04"
-   *
-   * For image strings like 'cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64':
-   * - imageKey: 'python' (last segment before ':')
-   * - namespacePrefix: 'stable' (segments between registry and imageKey)
-   * - versionMajorMinor: '3.13' (tag before first '-')
-   *
-   * Note: Standard namespaces ('lablup', 'cloud', 'stable') are not shown in the option text.
-   * Non-standard namespaces are shown as purple tags.
+   * The environment select supports full-name search: typing the full image URL
+   * (e.g., "cr.backend.ai/stable/python:3.13-ubuntu24.04-amd64@x86_64") into
+   * the Environments combobox will match an option whose text contains the URL.
+   * We wait for the dropdown to appear with a short timeout and fail fast with a
+   * clear error if the image is not found.
    */
   private async selectImage(): Promise<void> {
-    const colonIndex = this.options.image.lastIndexOf(':');
-    const environmentPath =
-      colonIndex >= 0
-        ? this.options.image.substring(0, colonIndex)
-        : this.options.image;
-    const imageTag =
-      colonIndex >= 0 ? this.options.image.substring(colonIndex + 1) : '';
-
-    const pathSegments = environmentPath.split('/');
-    const imageKey = pathSegments[pathSegments.length - 1]; // e.g., 'python'
-    const namespacePrefix =
-      pathSegments.length > 2
-        ? pathSegments.slice(1, pathSegments.length - 1).join('/')
-        : '';
-
-    // Standard namespaces that are hidden from option display text
-    const hiddenNamespaces = ['lablup', 'cloud', 'stable'];
-    const isNamespaceHidden =
-      !namespacePrefix || hiddenNamespaces.includes(namespacePrefix);
-
-    // Step 1: Select the environment from the first dropdown
-    // The combobox label is "Environments / Version" with a Copy button appended
+    // Step 1: Select the environment from the first dropdown using full-name search
     const environmentsSelect = this.page
       .getByRole('combobox', { name: 'Environments' })
       .first();
     await environmentsSelect.click();
-    await environmentsSelect.fill(imageKey);
+    await environmentsSelect.fill(this.options.image);
 
-    // For standard/hidden namespaces, options show only displayName (e.g., "Python")
-    // For non-standard namespaces, options show displayName + namespace tag (e.g., "Python [multiarch]")
-    const envOption = this.page
+    // Wait for the dropdown to show options after filling
+    await this.page
+      .locator('.ant-select-dropdown')
+      .waitFor({ state: 'visible', timeout: 5000 });
+
+    // Look for the option that contains the image string with a reasonable timeout.
+    // If the image is not installed in the environment, no matching option appears.
+    const imageOption = this.page
       .getByRole('option')
-      .filter({
-        hasText: new RegExp(
-          isNamespaceHidden ? imageKey : namespacePrefix,
-          'i',
-        ),
-      })
-      .first();
-    await envOption.click();
+      .filter({ hasText: this.options.image });
 
-    // Step 2: Select the version from the second dropdown
-    const versionMajorMinor = imageTag.split('-')[0]; // e.g., '3.13'
-    if (versionMajorMinor) {
-      await this.page.locator('#environments_version').click();
-      const versionOption = this.page
-        .getByRole('option')
-        .filter({ hasText: versionMajorMinor })
-        .first();
-      await versionOption.click();
+    const optionVisible = await imageOption
+      .isVisible({ timeout: 10000 })
+      .catch(() => false);
+
+    if (!optionVisible) {
+      // Close the dropdown before throwing
+      await this.page.keyboard.press('Escape');
+      throw new Error(
+        `Image "${this.options.image}" not found in the environment dropdown. ` +
+          `The image may not be installed on this backend. ` +
+          `Available options did not match the requested image.`,
+      );
     }
+
+    await imageOption.click();
   }
 
   /**

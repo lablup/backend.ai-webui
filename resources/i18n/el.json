@@ -707,6 +707,8 @@
     "ResourceLimitsPassed": "Όρια πόρων OK",
     "ResourceLimitsPassedDesc": "Όλες οι διαμορφώσεις ορίου πόρων είναι εντός λογικών εύρους.",
     "ShowOnlyFailedItems": "Εμφάνιση μόνο αποτυχημένων",
+    "SslMatchPassed": "Συνεπές πρωτόκολλο SSL",
+    "SslMatchPassedDesc": "Το τελικό σημείο API και το URL του διακομιστή μεσολάβησης χρησιμοποιούν το ίδιο πρωτόκολλο.",
     "SslMismatch": "Ασυμφωνία πρωτοκόλλου SSL",
     "SslMismatchDesc": "Το πρωτόκολλο του API endpoint ({{apiProtocol}}) και το πρωτόκολλο του proxy URL ({{proxyProtocol}}) χρησιμοποιούν διαφορετικές ρυθμίσεις SSL.",
     "SslMismatchFix": "Βεβαιωθείτε ότι και τα δύο endpoints χρησιμοποιούν το ίδιο πρωτόκολλο (και τα δύο HTTPS ή και τα δύο HTTP).",

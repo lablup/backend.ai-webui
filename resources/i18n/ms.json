@@ -707,6 +707,8 @@
     "ResourceLimitsPassed": "Had Sumber OK",
     "ResourceLimitsPassedDesc": "Semua konfigurasi had sumber berada dalam julat yang munasabah.",
     "ShowOnlyFailedItems": "Tunjukkan item gagal sahaja",
+    "SslMatchPassed": "Protokol SSL Konsisten",
+    "SslMatchPassedDesc": "Titik akhir API dan URL proksi menggunakan protokol yang sama.",
     "SslMismatch": "Ketidakpadanan Protokol SSL",
     "SslMismatchDesc": "Protokol titik akhir API ({{apiProtocol}}) dan protokol URL proksi ({{proxyProtocol}}) menggunakan tetapan SSL yang berbeza.",
     "SslMismatchFix": "Pastikan kedua-dua titik akhir menggunakan protokol yang sama (kedua-duanya HTTPS atau kedua-duanya HTTP).",

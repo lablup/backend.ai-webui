@@ -707,6 +707,8 @@
     "ResourceLimitsPassed": "ขีดจำกัดทรัพยากรผ่าน",
     "ResourceLimitsPassedDesc": "การกำหนดค่าขีดจำกัดทรัพยากรทั้งหมดอยู่ในช่วงที่สมเหตุสมผล",
     "ShowOnlyFailedItems": "แสดงเฉพาะรายการที่ล้มเหลว",
+    "SslMatchPassed": "โปรโตคอล SSL สอดคล้องกัน",
+    "SslMatchPassedDesc": "API endpoint และ URL ของ Proxy ใช้โปรโตคอลเดียวกัน",
     "SslMismatch": "โปรโตคอล SSL ไม่ตรงกัน",
     "SslMismatchDesc": "โปรโตคอลของ API endpoint ({{apiProtocol}}) และโปรโตคอลของ proxy URL ({{proxyProtocol}}) ใช้การตั้งค่า SSL ที่แตกต่างกัน",
     "SslMismatchFix": "ตรวจสอบให้แน่ใจว่าทั้งสอง endpoint ใช้โปรโตคอลเดียวกัน (ทั้งสอง HTTPS หรือทั้งสอง HTTP)",
