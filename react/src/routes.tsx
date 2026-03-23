@@ -14,6 +14,7 @@ import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
 import WebUINavigate from './components/WebUINavigate';
 import { useSuspendedBackendaiClient } from './hooks';
+import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
@@ -557,6 +558,16 @@ export const mainLayoutChildRoutes: RouteObject[] = [
 ];
 
 /**
+ * Component that runs auto-diagnostics checks after login and shows
+ * a notification if any critical issues are detected.
+ * Wraps the hook in a Suspense boundary so it won't block rendering.
+ */
+const AutoDiagnosticsEffect = () => {
+  useAutoDiagnostics();
+  return null;
+};
+
+/**
  * Root routes configuration
  */
 export const routes: RouteObject[] = [
@@ -630,6 +641,11 @@ export const routes: RouteObject[] = [
           <ErrorBoundaryWithNullFallback>
             <RoutingEventHandler />
           </ErrorBoundaryWithNullFallback>
+          <Suspense>
+            <ErrorBoundaryWithNullFallback>
+              <AutoDiagnosticsEffect />
+            </ErrorBoundaryWithNullFallback>
+          </Suspense>
           <Suspense>
             <ErrorBoundaryWithNullFallback>
               <LoginViewLazy />
