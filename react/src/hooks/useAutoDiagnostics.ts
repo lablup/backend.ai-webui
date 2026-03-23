@@ -64,7 +64,7 @@ export function useAutoDiagnostics(): void {
       duration: 0,
       open: true,
       to: '/diagnostics',
-      toTextKey: 'diagnostics.ViewDiagnostics',
+      toTextKey: t('diagnostics.ViewDiagnostics'),
     });
     try {
       sessionStorage.setItem(AUTO_DIAGNOSTICS_DISMISSED_KEY, '1');
