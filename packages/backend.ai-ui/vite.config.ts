@@ -40,13 +40,11 @@ export default defineConfig(({ mode }) => {
           'react',
           'react-dom',
           'react-router-dom',
-          'i18next',
-          'react-i18next',
           'relay-runtime',
           'antd',
           'antd-style',
           'graphql',
-          // implementation deps are bundled
+          // i18next and react-i18next are bundled to isolate BUI's i18n instance from the host app
         ],
       },
       sourcemap: true,
