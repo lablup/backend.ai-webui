@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 167 / 326 features covered (51%)**
+**Overall (in-scope routes): 215 / 372 features covered (58%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -32,7 +32,7 @@
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 10 | 3 | 🔶 30% |
 | Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
-| User Credentials | `/credential` | 16 | 9 | 🔶 56% |
+| User Credentials | `/credential` | 19 | 12 | 🔶 63% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
 | Project | `/project` | 6 | 5 | 🔶 83% |
@@ -554,13 +554,14 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts)
 
 **Tabs:** Users | Credentials
 
 #### Users Tab
 
 **Primary action:** "+" → `UserSettingModal`
+**Dropdown action:** "Bulk Create Users" → `UserSettingModal` (bulk mode)
 **Table link:** User name → `UserInfoModal`
 **Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm
 **Bulk actions:** Bulk edit → `UpdateUsersModal`, Bulk delete → `PurgeUsersModal`
@@ -568,6 +569,9 @@
 | Feature | Status | Test |
 | ------------------------------- | ------ | --------------------------------------------- |
 | Create user → UserSettingModal | ✅ | `Admin can create a new user` |
+| Bulk create users → UserSettingModal | ✅ | `Admin can bulk create multiple users` |
+| Bulk create single user | ✅ | `Admin can bulk create a single user` |
+| Bulk create modal open/cancel | ✅ | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation` |
 | Update user → UserSettingModal | ✅ | `Admin can update user information` |
 | Deactivate user | ✅ | `Admin can deactivate a user` |
 | Reactivate user | ✅ | `Admin can reactivate an inactive user` |
@@ -593,7 +597,7 @@
 | Edit keypair → KeypairSettingModal | ❌ | - |
 | SSH key management → SSHKeypairManagementModal | ❌ | - |
 
-**Coverage: 🔶 9/16 features**
+**Coverage: 🔶 12/19 features**
 
 ---
 
