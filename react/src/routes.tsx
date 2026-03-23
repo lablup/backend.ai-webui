@@ -105,6 +105,9 @@ const AdminSessionPage = React.lazy(
   () => import('./pages/AdminSessionPage'),
 );
 const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
+const AdminVFolderNodeListPage = React.lazy(
+  () => import('./pages/AdminVFolderNodeListPage'),
+);
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
@@ -407,6 +410,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: { labelKey: 'modelService.RoutingInfo' },
       },
     ],
+  },
+  {
+    path: '/admin-data',
+    handle: { labelKey: 'webui.menu.Data' },
+    Component: () => {
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <AdminVFolderNodeListPage />
+        </Suspense>
+      );
+    },
   },
   {
     path: '/environment',
