@@ -13,6 +13,7 @@ import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useThemeMode } from '../hooks/useThemeMode';
 import SignupModal from './SignupModal';
 import {
   TOTPActivateForm,
@@ -119,6 +120,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
@@ -152,7 +154,11 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         title={
           <div style={{ textAlign: 'center' }}>
             <img
-              src="manifest/backend.ai-text.svg"
+              src={
+                isDarkMode
+                  ? 'manifest/backend.ai-text-bgdark.svg'
+                  : 'manifest/backend.ai-text.svg'
+              }
               alt="backend.ai"
               style={{ height: 35 }}
             />
