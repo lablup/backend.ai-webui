@@ -44,10 +44,17 @@ const AdminServingPage: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
+  const allowedLifecycleStages = ['active', 'destroyed'] as const;
+  const lifecycleStage = allowedLifecycleStages.includes(
+    queryParams.lifecycleStage as (typeof allowedLifecycleStages)[number],
+  )
+    ? queryParams.lifecycleStage
+    : 'active';
+
   const lifecycleStageFilter =
-    queryParams.lifecycleStage === 'active'
+    lifecycleStage === 'active'
       ? `lifecycle_stage != "destroyed"`
-      : `lifecycle_stage == "${queryParams.lifecycleStage}"`;
+      : `lifecycle_stage == "destroyed"`;
 
   const queryVariables = useMemo(
     () => ({
@@ -131,7 +138,7 @@ const AdminServingPage: React.FC = () => {
               style={{ flexShrink: 1 }}
             >
               <BAIRadioGroup
-                value={queryParams.lifecycleStage}
+                value={lifecycleStage}
                 onChange={(e) => {
                   setQuery({ lifecycleStage: e.target.value }, 'replaceIn');
                   setTablePaginationOption({ current: 1 });

@@ -92,6 +92,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
         created_at
         replicas @since(version: "24.12.0")
         desired_session_count
+        project
         created_user_email
         ...EndpointOwnerInfoFragment
         ...EndpointStatusTagFragment
@@ -121,9 +122,19 @@ const EndpointList: React.FC<EndpointListProps> = ({
       dataIndex: 'name',
       fixed: 'left',
       render: (name, row) => (
-        <Link to={'/serving/' + row.endpoint_id}>{name}</Link>
+        <Link
+          to={(isAdminMode ? '/admin-serving/' : '/serving/') + row.endpoint_id}
+        >
+          {name}
+        </Link>
       ),
       sorter: true,
+    },
+    {
+      title: t('data.Project'),
+      dataIndex: 'project',
+      key: 'project',
+      defaultHidden: !isAdminMode,
     },
     {
       title: t('modelService.EndpointId'),

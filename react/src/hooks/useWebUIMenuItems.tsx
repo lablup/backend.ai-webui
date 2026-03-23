@@ -88,13 +88,13 @@ export const VALID_MENU_KEYS = [
   'pipeline',
   // adminMenu keys
   'admin-session',
-  'admin-serving',
   'credential',
   'environment',
   'scheduler',
   'resource-policy',
   'reservoir',
   // superAdminMenu keys
+  'admin-serving',
   'admin-dashboard',
   'agent',
   'settings',
@@ -287,13 +287,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       key: 'admin-session',
     },
     {
-      label: (
-        <WebUILink to="/admin-serving">{t('webui.menu.Serving')}</WebUILink>
-      ),
-      icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
-      key: 'admin-serving',
-    },
-    {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
       key: 'credential',
@@ -330,6 +323,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   ]);
 
   const superAdminMenu: MenuProps['items'] = filterOutEmpty([
+    {
+      label: (
+        <WebUILink to="/admin-serving">{t('webui.menu.Serving')}</WebUILink>
+      ),
+      icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+      key: 'admin-serving',
+    },
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,

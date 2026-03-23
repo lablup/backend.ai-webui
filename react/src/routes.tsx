@@ -381,16 +381,32 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/admin-serving',
     handle: { labelKey: 'webui.menu.Serving' },
-    Component: () => {
-      const { t } = useTranslation();
-      return (
-        <BAIErrorBoundary>
-          <Suspense fallback={<BAICard title={t('webui.menu.Serving')} loading />}>
-            <AdminServingPage />
+    children: [
+      {
+        index: true,
+        Component: () => {
+          const { t } = useTranslation();
+          return (
+            <BAIErrorBoundary>
+              <Suspense
+                fallback={<BAICard title={t('webui.menu.Serving')} loading />}
+              >
+                <AdminServingPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: ':serviceId',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <EndpointDetailPage />
           </Suspense>
-        </BAIErrorBoundary>
-      );
-    },
+        ),
+        handle: { labelKey: 'modelService.RoutingInfo' },
+      },
+    ],
   },
   {
     path: '/environment',
