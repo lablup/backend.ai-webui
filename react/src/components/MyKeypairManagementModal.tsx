@@ -19,6 +19,7 @@ import {
   Tag,
   theme,
   Tooltip,
+  Typography,
 } from 'antd';
 import {
   BAIButton,
@@ -620,11 +621,11 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         open={!!deletingKeypairAccessKey}
         title={t('credential.DeleteKeypair')}
         content={
-          <div style={{ marginBottom: token.marginSM }}>
+          <Typography.Text style={{ marginBottom: token.marginSM }}>
             {t('credential.DeleteKeypairWarning', {
               accessKey: deletingKeypairAccessKey,
             })}
-          </div>
+          </Typography.Text>
         }
         confirmText={t('credential.PermanentlyDelete')}
         inputLabel={t('credential.TypePermanentlyDelete', {
