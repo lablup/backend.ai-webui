@@ -1,28 +1,24 @@
 # App Launcher React Rewrite Progress
 
-## Last Session: 2026-03-10 18:40
+## Last Session: 2026-03-19 00:00
 
 ### 1. Current Phase
-All 5 issues implemented + E2E tests added. PR submitted.
+Implementation complete (Sub-tasks 1-5). E2E testing phase next.
 
 ### 2. Next Action
-Review PR #5862, run E2E tests against a live cluster to validate.
+Implement E2E tests for the full Edu App Launcher flow (Sub-task 6) on branch `03-10-feat_rewrite_eduapplauncher_with_step-based_ui_and_decomposed_hooks`.
 
 ### 3. Current Goal
-App Launcher rewrite is complete and ready for review.
+Add E2E tests that exercise the complete `/applauncher` flow: sToken auth → session creation/resolution → app launch → redirect.
 
 ### 4. Lessons Learned
-- Worktree isolation means sequential dependencies can't import from previous waves. Integration was done manually in the main repo.
-- Wave 4/5 agents inlined logic instead of using hooks from Wave 2/3 due to isolation. Final integration properly wired hooks into AppLauncherFlow.
-- The /applauncher page doesn't require login (handles own sToken auth), so E2E tests can navigate directly without loginAsAdmin.
-- Lint-staged runs e2e eslint separately from react eslint.
+- sToken generation requires double-HMAC (HMAC(secret, date) → signingKey, then HMAC(signingKey, hostname))
+- Session creation from template can take 30s-3min; tests need generous timeouts
+- Existing e2e test patterns (SessionLauncher, AppLauncherModal) work well for modal-based tests but the edu flow needs its own helpers for sToken generation and direct URL navigation
 
 ### 5. Completed Work
-- #5832: useAppLauncherParams hook (URL param parsing with useSearchParams)
-- #5833: useTokenAuth hook (sToken auth flow)
-- #5834: useSessionResolver hook (session find/create/launch)
-- #5835: AppLauncherFlow component (step-based UI with Ant Design Steps)
-- #5836: EduAppLauncherPage rewrite + EduAppLauncher.tsx deleted
-- E2E tests: e2e/app-launcher/app-launcher-page.spec.ts
-- i18n keys added: eduapi.Step*, eduapi.LaunchFailed, eduapi.Retry, eduapi.MissingSToken
-- PR #5862: https://github.com/lablup/backend.ai-webui/pull/5862
+- Spec created and updated with E2E testing strategy
+- Dev plan created and updated with Sub-task 6
+- Implementation complete: useAppLauncherParams, useTokenAuth, useSessionResolver, AppLauncherFlow, EduAppLauncherPage rewrite
+- Tier 1 E2E tests (UI-only) implemented in app-launcher-page.spec.ts
+- 5 issues completed (#5832 through #5836)
