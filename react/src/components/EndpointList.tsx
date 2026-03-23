@@ -44,6 +44,9 @@ interface EndpointListProps extends Omit<
   loading?: boolean;
   pagination: TablePaginationConfig;
   onDeleted?: (endpoint: Endpoint) => void;
+  /** Controls UI-level button visibility for admin users.
+   * Backend enforces actual authorization on service modification endpoints. */
+  isAdminMode?: boolean;
 }
 
 export const isEndpointInDestroyingCategory = (
@@ -67,6 +70,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
   // onPaginationChange,
   // onOrderChange,
   onDeleted,
+  isAdminMode = false,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -154,7 +158,8 @@ const EndpointList: React.FC<EndpointListProps> = ({
             icon={<SettingOutlined />}
             style={
               isEndpointInDestroyingCategory(row) ||
-              (!!row.created_user_email &&
+              (!isAdminMode &&
+                !!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
                 ? {
                     color: token.colorTextDisabled,
@@ -165,7 +170,8 @@ const EndpointList: React.FC<EndpointListProps> = ({
             }
             disabled={
               isEndpointInDestroyingCategory(row) ||
-              (!!row.created_user_email &&
+              (!isAdminMode &&
+                !!row.created_user_email &&
                 row.created_user_email !== currentUser.email)
             }
             onClick={() => {

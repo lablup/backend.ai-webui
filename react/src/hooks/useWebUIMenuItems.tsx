@@ -88,6 +88,7 @@ export const VALID_MENU_KEYS = [
   'pipeline',
   // adminMenu keys
   'admin-session',
+  'admin-serving',
   'credential',
   'environment',
   'scheduler',
@@ -284,6 +285,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-session',
+    },
+    {
+      label: (
+        <WebUILink to="/admin-serving">{t('webui.menu.Serving')}</WebUILink>
+      ),
+      icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+      key: 'admin-serving',
     },
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,

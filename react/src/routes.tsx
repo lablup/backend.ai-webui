@@ -104,6 +104,7 @@ const RBACManagementPage = React.lazy(
 const AdminSessionPage = React.lazy(
   () => import('./pages/AdminSessionPage'),
 );
+const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
@@ -376,6 +377,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/admin-session',
     handle: { labelKey: 'webui.menu.Sessions' },
     Component: AdminSessionPage,
+  },
+  {
+    path: '/admin-serving',
+    handle: { labelKey: 'webui.menu.Serving' },
+    Component: () => {
+      const { t } = useTranslation();
+      return (
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAICard title={t('webui.menu.Serving')} loading />}>
+            <AdminServingPage />
+          </Suspense>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/environment',
