@@ -59,7 +59,7 @@ jobs:
         if: github.ref_type == 'branch'
         run: |
           cd packages/backend.ai-ui
-          npm publish --tag canary --access public --no-git-checks
+          pnpm publish --tag canary --access public --no-git-checks
 
       - name: Determine npm tag and publish strategy
         if: github.ref_type == 'tag'
@@ -83,4 +83,4 @@ jobs:
         if: github.ref_type == 'tag' && steps.determine-tag.outputs.should_publish == 'true'
         run: |
           cd packages/backend.ai-ui
-          npm publish --tag ${{ steps.determine-tag.outputs.npm_tag }} --access public --no-git-checks
+          pnpm publish --tag ${{ steps.determine-tag.outputs.npm_tag }} --access public --no-git-checks
