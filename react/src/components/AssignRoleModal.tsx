@@ -3,11 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
-import { Form, Select, Tooltip, Typography } from 'antd';
+import { Form, Tooltip, Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -16,11 +17,11 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface AssignRoleModalProps extends BAIModalProps {
-  onAssign: (userIds: string[]) => void;
+  onRequestClose: (userIds?: string[]) => void;
 }
 
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
-  onAssign,
+  onRequestClose,
   ...baiModalProps
 }) => {
   'use memo';
@@ -62,17 +63,19 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     <BAIModal
       title={t('rbac.AssignUser')}
       okText={t('rbac.Assign')}
+      maskClosable={false}
       onOk={() => {
         return form
           .validateFields()
           .then(() => {
-            onAssign(selectedUserIds);
+            onRequestClose(selectedUserIds);
           })
           .catch((e) => {
             logger.debug(e);
           });
       }}
-      destroyOnClose
+      onCancel={() => onRequestClose()}
+      destroyOnHidden
       afterClose={() => {
         setSelectedUserIds([]);
         setSearch('');
@@ -86,11 +89,14 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           label={t('credential.Users')}
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <Select
+          <BAISelect
             mode="multiple"
             style={{ width: '100%' }}
             placeholder={t('rbac.SelectUsers')}
-            onChange={(value) => setSelectedUserIds(value)}
+            onChange={(value) => {
+              setSelectedUserIds(value);
+              setSearch('');
+            }}
             loading={deferredSearch !== search}
             maxTagCount="responsive"
             allowClear

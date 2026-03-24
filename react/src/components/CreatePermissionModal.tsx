@@ -11,7 +11,7 @@ import {
 import { CreatePermissionModalDomainQuery } from '../__generated__/CreatePermissionModalDomainQuery.graphql';
 import { CreatePermissionModalResourceGroupQuery } from '../__generated__/CreatePermissionModalResourceGroupQuery.graphql';
 import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePermissionModalUpdateMutation.graphql';
-import { App, Form, Select, type SelectProps } from 'antd';
+import { App, Form, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIAdminContainerRegistrySelect,
@@ -20,6 +20,7 @@ import {
   BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   BAIStorageHostSelect,
   BAIAdminSessionSelect,
   BAIUserSelect,
@@ -97,7 +98,7 @@ const DomainScopeIdSelect: React.FC<SelectProps> = (props) => {
     { fetchPolicy: 'store-and-network' },
   );
   return (
-    <Select
+    <BAISelect
       showSearch
       {...props}
       options={
@@ -130,109 +131,79 @@ const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   'use memo';
   if (scopeType === 'DOMAIN') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
         <DomainScopeIdSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'PROJECT') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIAdminProjectSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIAdminProjectSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'USER') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIUserSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIUserSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'VFOLDER') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIVFolderSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIVFolderSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'SESSION') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIAdminSessionSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIAdminSessionSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'MODEL_DEPLOYMENT') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIAdminModelServiceSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIAdminModelServiceSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'CONTAINER_REGISTRY') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
         <BAIAdminContainerRegistrySelect
           valuePropName="row_id"
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
+          {...selectProps}
         />
       </Suspense>
     );
   }
   if (scopeType === 'STORAGE_HOST') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIStorageHostSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIStorageHostSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'KEYPAIR') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
-        <BAIKeypairSelect
-          placeholder={selectProps.placeholder}
-          value={selectProps.value as string | undefined}
-          onChange={(val, option) => selectProps.onChange?.(val, option)}
-        />
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
+        <BAIKeypairSelect {...selectProps} />
       </Suspense>
     );
   }
   if (scopeType === 'RESOURCE_GROUP') {
     return (
-      <Suspense fallback={<Select {...selectProps} loading disabled />}>
+      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
         <ResourceGroupScopeIdSelect {...selectProps} />
       </Suspense>
     );
   }
   return (
-    <Select
+    <BAISelect
       showSearch
       {...selectProps}
       disabled={!scopeType || selectProps.disabled}
@@ -339,71 +310,67 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
     return form
       .validateFields()
       .then((values) => {
-        return new Promise<void>(() => {
-          if (isEditMode) {
-            commitUpdatePermission({
-              variables: {
-                input: {
-                  id: editingPermission.id,
-                  scopeType: values.scopeType,
-                  scopeId: values.scopeId,
-                  entityType: values.entityType,
-                  operation: values.operation,
-                },
+        if (isEditMode) {
+          commitUpdatePermission({
+            variables: {
+              input: {
+                id: editingPermission.id,
+                scopeType: values.scopeType,
+                scopeId: values.scopeId,
+                entityType: values.entityType,
+                operation: values.operation,
               },
-              onCompleted: (_data, errors) => {
-                if (errors && errors.length > 0) {
-                  logger.error(errors[0]);
-                  message.error(
-                    errors[0]?.message || t('general.ErrorOccurred'),
-                  );
-                  return;
-                }
-                message.success(t('rbac.PermissionUpdated'));
-                onRequestClose(true);
+            },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                logger.error(errors[0]);
+                message.error(errors[0]?.message || t('general.ErrorOccurred'));
+                return;
+              }
+              message.success(t('rbac.PermissionUpdated'));
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              logger.error(error);
+              message.error(error?.message || t('general.ErrorOccurred'));
+            },
+          });
+        } else {
+          commitCreatePermission({
+            variables: {
+              input: {
+                roleId,
+                scopeType: values.scopeType,
+                scopeId: values.scopeId,
+                entityType: values.entityType,
+                operation: values.operation,
               },
-              onError: (error) => {
-                logger.error(error);
-                message.error(error?.message || t('general.ErrorOccurred'));
-              },
-            });
-          } else {
-            commitCreatePermission({
-              variables: {
-                input: {
-                  roleId,
-                  scopeType: values.scopeType,
-                  scopeId: values.scopeId,
-                  entityType: values.entityType,
-                  operation: values.operation,
-                },
-              },
-              onCompleted: (_data, errors) => {
-                if (errors && errors.length > 0) {
-                  const errorMessage = errors[0]?.message || '';
-                  if (isDuplicateError(errorMessage)) {
-                    message.error(t('rbac.DuplicatePermission'));
-                    return;
-                  }
-                  logger.error(errors[0]);
-                  message.error(errorMessage || t('general.ErrorOccurred'));
-                  return;
-                }
-                message.success(t('rbac.PermissionCreated'));
-                onRequestClose(true);
-              },
-              onError: (error) => {
-                const errorMessage = error?.message || '';
+            },
+            onCompleted: (_data, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMessage = errors[0]?.message || '';
                 if (isDuplicateError(errorMessage)) {
                   message.error(t('rbac.DuplicatePermission'));
-                } else {
-                  logger.error(error);
-                  message.error(errorMessage || t('general.ErrorOccurred'));
+                  return;
                 }
-              },
-            });
-          }
-        });
+                logger.error(errors[0]);
+                message.error(errorMessage || t('general.ErrorOccurred'));
+                return;
+              }
+              message.success(t('rbac.PermissionCreated'));
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              const errorMessage = error?.message || '';
+              if (isDuplicateError(errorMessage)) {
+                message.error(t('rbac.DuplicatePermission'));
+              } else {
+                logger.error(error);
+                message.error(errorMessage || t('general.ErrorOccurred'));
+              }
+            },
+          });
+        }
       })
       .catch((err) => logger.error('Validation Failed:', err));
   };
@@ -415,6 +382,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isCreateInFlight || isUpdateInFlight}
+      maskClosable={false}
       destroyOnHidden
       {...baiModalProps}
     >
@@ -462,7 +430,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             },
           ]}
         >
-          <Select
+          <BAISelect
             showSearch
             placeholder={t('rbac.ScopeType')}
             options={availableScopeTypes.map((type) => ({
@@ -498,7 +466,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             },
           ]}
         >
-          <Select
+          <BAISelect
             showSearch
             disabled={!watchedScopeId}
             placeholder={t('rbac.EntityType')}
@@ -520,7 +488,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             },
           ]}
         >
-          <Select
+          <BAISelect
             showSearch
             disabled={!watchedEntityType}
             placeholder={t('rbac.Operation')}

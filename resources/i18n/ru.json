@@ -1496,7 +1496,6 @@
     "RevokeUser": "Удалить пользователя",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Роль успешно создана.",
-    "RoleDeleted": "Роль успешно удалена.",
     "RoleDescription": "Описание",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Название роли",

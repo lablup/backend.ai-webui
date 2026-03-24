@@ -6,20 +6,15 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
-import { Popconfirm, Tooltip, Typography, theme } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import {
-  BAIButton,
   BAIColumnType,
-  BAIFlex,
-  BAILink,
   BAITable,
   BAITableProps,
   BAITag,
-  BAITrashBinIcon,
   filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { BanIcon, EditIcon, UndoIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -38,13 +33,9 @@ interface RoleNodesProps extends Omit<
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   rolesFrgmt: RoleNodesFragment$key;
-  onClickRoleName?: (role: RoleNodeInList) => void;
-  onClickEdit?: (role: RoleNodeInList) => void;
-  onClickDeactivate?: (role: RoleNodeInList) => void;
-  onClickActivate?: (role: RoleNodeInList) => void;
-  onClickPurge?: (role: RoleNodeInList) => void;
-  statusFilter?: string;
-  order?: string | null;
+  customizeColumns?: (
+    baseColumns: BAIColumnType<RoleNodeInList>[],
+  ) => BAIColumnType<RoleNodeInList>[];
   onChangeOrder?: (
     order: (typeof availableRoleSorterValues)[number] | null,
   ) => void;
@@ -52,19 +43,12 @@ interface RoleNodesProps extends Omit<
 
 const RoleNodes: React.FC<RoleNodesProps> = ({
   rolesFrgmt,
-  onClickRoleName,
-  onClickEdit,
-  onClickDeactivate,
-  onClickActivate,
-  onClickPurge,
-  statusFilter,
-  order,
+  customizeColumns,
   onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const roles = useFragment(
     graphql`
@@ -76,13 +60,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         status
         createdAt
         updatedAt
-        ...RoleFormModalFragment
       }
     `,
     rolesFrgmt,
   );
-
-  const isDeletedFilter = statusFilter === 'DELETED';
 
   const columns: BAIColumnType<RoleNodeInList>[] = filterOutEmpty([
     {
@@ -91,94 +72,6 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       dataIndex: 'name',
       sorter: true,
       fixed: 'left' as const,
-      render: (name: string, role: RoleNodeInList) => {
-        return onClickRoleName ? (
-          <BAILink
-            type="hover"
-            onClick={() => {
-              onClickRoleName(role);
-            }}
-          >
-            {name}
-          </BAILink>
-        ) : (
-          name
-        );
-      },
-    },
-    {
-      key: 'control',
-      title: t('general.Control'),
-      fixed: true,
-      width: 100,
-      render: (_: unknown, role: RoleNodeInList) => {
-        const isSystem = role.source === 'SYSTEM';
-        return (
-          <BAIFlex gap={token.marginXXS}>
-            {isDeletedFilter ? (
-              <>
-                <Popconfirm
-                  title={t('rbac.ActivateRole')}
-                  description={role.name}
-                  okText={t('rbac.Activate')}
-                  placement="left"
-                  onConfirm={() => onClickActivate?.(role)}
-                >
-                  <BAIButton
-                    type="text"
-                    title={t('rbac.Activate')}
-                    icon={<UndoIcon />}
-                    size="small"
-                  />
-                </Popconfirm>
-                <BAIButton
-                  type="text"
-                  danger
-                  title={t('rbac.PurgeRole')}
-                  icon={<BAITrashBinIcon />}
-                  size="small"
-                  onClick={() => onClickPurge?.(role)}
-                />
-              </>
-            ) : (
-              <>
-                <BAIButton
-                  type="text"
-                  title={t('button.Edit')}
-                  icon={
-                    <EditIcon
-                      style={{
-                        color: isSystem
-                          ? token.colorTextDisabled
-                          : token.colorInfo,
-                      }}
-                    />
-                  }
-                  size="small"
-                  disabled={isSystem}
-                  onClick={() => onClickEdit?.(role)}
-                />
-                <Popconfirm
-                  title={t('rbac.DeactivateRole')}
-                  description={role.name}
-                  okType="danger"
-                  okText={t('rbac.Deactivate')}
-                  placement="left"
-                  onConfirm={() => onClickDeactivate?.(role)}
-                >
-                  <BAIButton
-                    type="text"
-                    danger
-                    title={t('rbac.Deactivate')}
-                    icon={<BanIcon />}
-                    size="small"
-                  />
-                </Popconfirm>
-              </>
-            )}
-          </BAIFlex>
-        );
-      },
     },
     {
       key: 'description',
@@ -222,19 +115,20 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
     },
   ]);
 
+  const allColumns = customizeColumns ? customizeColumns(columns) : columns;
+
   return (
     <BAITable<RoleNodeInList>
       rowKey="id"
       dataSource={roles as RoleNodeInList[]}
-      columns={columns}
+      columns={allColumns}
       scroll={{ x: 'max-content' }}
-      order={order}
+      {...tableProps}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRoleSorterValues)[number]) || null,
         );
       }}
-      {...tableProps}
     />
   );
 };

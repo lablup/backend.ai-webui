@@ -1496,7 +1496,6 @@
     "RevokeUser": "Usuń użytkownika",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Rola została pomyślnie utworzona.",
-    "RoleDeleted": "Rola została pomyślnie usunięta.",
     "RoleDescription": "Opis",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Nazwa roli",

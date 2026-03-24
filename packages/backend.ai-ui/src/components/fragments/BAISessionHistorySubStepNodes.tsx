@@ -55,7 +55,7 @@ const BAISessionHistorySubStepNodes = ({
 
   const subSteps = useFragment<BAISessionHistorySubStepNodesFragment$key>(
     graphql`
-      fragment BAISessionHistorySubStepNodesFragment on SubStepResultGQL
+      fragment BAISessionHistorySubStepNodesFragment on SubStepResult
       @relay(plural: true) {
         step
         result

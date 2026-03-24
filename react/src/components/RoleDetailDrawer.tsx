@@ -4,7 +4,8 @@
  */
 import { RoleDetailDrawerQuery } from '../__generated__/RoleDetailDrawerQuery.graphql';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
-import { Drawer, Skeleton, Tooltip, Typography, theme } from 'antd';
+import RoleFormModal from './RoleFormModal';
+import { Alert, Drawer, Skeleton, Tooltip, Typography, theme } from 'antd';
 import { DrawerProps } from 'antd/lib';
 import {
   BAIButton,
@@ -14,18 +15,16 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import { EditIcon } from 'lucide-react';
-import React, { Suspense, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface RoleDetailDrawerProps extends DrawerProps {
   roleId?: string;
-  onClickEdit?: () => void;
 }
 
 const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   roleId,
-  onClickEdit,
   ...drawerProps
 }) => {
   'use memo';
@@ -36,7 +35,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   return (
     <Drawer
       title={t('rbac.RoleDetailInfo')}
-      width={800}
+      size="large"
       extra={
         <BAIFetchKeyButton
           loading={isPendingReload}
@@ -52,11 +51,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
     >
       <Suspense fallback={<Skeleton active />}>
         {roleId && (
-          <RoleDetailDrawerInner
-            roleId={roleId}
-            fetchKey={fetchKey}
-            onClickEdit={onClickEdit}
-          />
+          <RoleDetailDrawerInner roleId={roleId} fetchKey={fetchKey} />
         )}
       </Suspense>
     </Drawer>
@@ -66,19 +61,18 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
 interface RoleDetailDrawerInnerProps {
   roleId: string;
   fetchKey: string;
-  onClickEdit?: () => void;
   onDataChange?: () => void;
 }
 
 const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
   roleId,
   fetchKey,
-  onClickEdit,
   onDataChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const localRoleId = toLocalId(roleId);
 
@@ -97,6 +91,7 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
           name
           source
           ...RoleDetailDrawerContentFragment
+          ...RoleFormModalFragment
         }
         ...RoleAssignmentTabFragment
           @arguments(
@@ -128,7 +123,9 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
   );
 
   if (!data.adminRole) {
-    return null;
+    return (
+      <Alert type="warning" showIcon message={t('general.ErrorOccurred')} />
+    );
   }
 
   const isCustom = data.adminRole.source === 'CUSTOM';
@@ -149,12 +146,12 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
         >
           {data.adminRole.name}
         </Typography.Title>
-        {isCustom && onClickEdit && (
+        {isCustom && (
           <Tooltip title={t('rbac.EditRole')}>
             <BAIButton
               size="large"
               icon={<EditIcon style={{ color: token.colorInfo }} />}
-              onClick={onClickEdit}
+              onClick={() => setIsEditModalOpen(true)}
             />
           </Tooltip>
         )}
@@ -164,6 +161,16 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
         assignmentQueryRef={data}
         permissionQueryRef={data}
         onDataChange={onDataChange}
+      />
+      <RoleFormModal
+        open={isEditModalOpen}
+        editingRoleFrgmt={data.adminRole}
+        onRequestClose={(success) => {
+          setIsEditModalOpen(false);
+          if (success) {
+            onDataChange?.();
+          }
+        }}
       />
     </BAIFlex>
   );

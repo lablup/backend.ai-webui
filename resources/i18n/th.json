@@ -1498,7 +1498,6 @@
     "RevokeUser": "ลบผู้ใช้",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "สร้างบทบาทเรียบร้อยแล้ว",
-    "RoleDeleted": "ลบบทบาทเรียบร้อยแล้ว",
     "RoleDescription": "คำอธิบาย",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "ชื่อบทบาท",

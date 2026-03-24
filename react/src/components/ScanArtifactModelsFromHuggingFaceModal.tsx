@@ -45,7 +45,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
         $input: ScanArtifactModelsInput!
       ) {
         scanArtifactModels(input: $input) {
-          artifactRevision {
+          artifactRevisions {
             count
             edges {
               node {
@@ -100,7 +100,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
                     return;
                   }
                   const artifactEdges =
-                    res.scanArtifactModels.artifactRevision?.edges ?? [];
+                    res.scanArtifactModels.artifactRevisions?.edges ?? [];
                   const artifactId =
                     artifactEdges[0]?.node?.artifact?.id ?? null;
                   if (!artifactId) {

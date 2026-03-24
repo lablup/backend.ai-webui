@@ -1498,7 +1498,6 @@
     "RevokeUser": "Xóa người dùng",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Vai trò đã được tạo thành công.",
-    "RoleDeleted": "Vai trò đã được xóa thành công.",
     "RoleDescription": "Mô tả",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Tên vai trò",

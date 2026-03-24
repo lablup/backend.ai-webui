@@ -51,7 +51,9 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
 
   const roleId = toLocalId(role.id);
 
-  const sourceColor = role.source === 'SYSTEM' ? 'default' : 'green';
+  const source = role.source ?? 'CUSTOM';
+  const status = role.status ?? 'ACTIVE';
+  const sourceColor = source === 'SYSTEM' ? 'default' : 'green';
   const statusColorMap: Record<string, string> = {
     ACTIVE: 'green',
     INACTIVE: 'orange',
@@ -68,16 +70,18 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
       >
         <Descriptions.Item label={t('rbac.Source')}>
           <Tag color={sourceColor}>
-            {role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
+            {source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
           </Tag>
         </Descriptions.Item>
         <Descriptions.Item label={t('rbac.Status')}>
-          <Tag color={statusColorMap[role.status] || 'default'}>
-            {role.status === 'ACTIVE'
+          <Tag color={statusColorMap[status] || 'default'}>
+            {status === 'ACTIVE'
               ? t('rbac.Active')
-              : role.status === 'INACTIVE'
+              : status === 'INACTIVE'
                 ? t('rbac.Inactive')
-                : t('rbac.Deleted')}
+                : // The backend does not use INACTIVE status; DELETED serves as a
+                  // soft-delete and is displayed as Inactive in the UI.
+                  t('rbac.Inactive')}
           </Tag>
         </Descriptions.Item>
         <Descriptions.Item label={t('general.CreatedAt')}>

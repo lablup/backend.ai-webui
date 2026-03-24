@@ -67,39 +67,36 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
   // Defer query refetch to prevent flickering during selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // NOTE: DeploymentFilter does not support filtering by id. The ValueQuery
-  // is always skipped; labels are preserved through the optimistic state.
-  useLazyLoadQuery<BAIDeploymentSelectValueQuery>(
-    graphql`
-      query BAIDeploymentSelectValueQuery(
-        $filter: DeploymentFilter
-        $first: Int!
-        $skipSelected: Boolean!
-      ) {
-        deployments(filter: $filter, first: $first) @skip(if: $skipSelected) {
-          edges {
-            node {
-              id
-              metadata {
-                name
-              }
+  // Use the deployment(id:) single-item query to look up the name when
+  // a value (id) is already set (e.g., editing an existing permission).
+  // TODO: This single-item lookup does not work in multi-select mode.
+  //       Multi-select support is pending backend deployment API implementation.
+  const skipSelected = _.isEmpty(deferredControllableValue);
+  const selectedId = skipSelected
+    ? undefined
+    : _.castArray(deferredControllableValue)[0];
+
+  const { deployment: selectedDeployment } =
+    useLazyLoadQuery<BAIDeploymentSelectValueQuery>(
+      graphql`
+        query BAIDeploymentSelectValueQuery($id: ID!, $skipSelected: Boolean!) {
+          deployment(id: $id) @skip(if: $skipSelected) {
+            id
+            metadata {
+              name
             }
           }
         }
-      }
-    `,
-    {
-      filter: null,
-      first: 1,
-      // Always skip: DeploymentFilter has no id field, so id-based lookup
-      // is not possible. Labels are maintained via optimistic state.
-      skipSelected: true,
-    },
-    {
-      fetchPolicy: 'store-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
+      `,
+      {
+        id: selectedId ?? '',
+        skipSelected,
+      },
+      {
+        fetchPolicy: !skipSelected ? 'store-or-network' : 'store-only',
+        fetchKey: deferredFetchKey,
+      },
+    );
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIDeploymentSelectPaginatedQuery, DeploymentNode>(
@@ -158,11 +155,13 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
     value: item?.id,
   }));
 
-  // Since the ValueQuery is always skipped, derive label from optimistic state
-  // or fall back to showing the value (id) as the label.
+  // Use the fetched deployment name as label, or fall back to the id.
   const controllableValueWithLabel = !_.isEmpty(deferredControllableValue)
     ? _.castArray(deferredControllableValue).map((value) => ({
-        label: value,
+        label:
+          selectedDeployment?.id === value
+            ? (selectedDeployment?.metadata?.name ?? value)
+            : value,
         value: value,
       }))
     : undefined;

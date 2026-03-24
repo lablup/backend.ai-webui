@@ -18,37 +18,39 @@ import RoleNodes, {
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { App, Skeleton } from 'antd';
+import { App, Popconfirm, theme } from 'antd';
 import {
   BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAILink,
+  BAITrashBinIcon,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { Suspense, useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
-const sourceFilterValues = ['all', 'SYSTEM', 'CUSTOM'] as const;
 
 const RBACManagementPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const {
     baiPaginationOption,
@@ -62,7 +64,6 @@ const RBACManagementPage: React.FC = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
-      source: parseAsStringLiteral(sourceFilterValues).withDefault('all'),
       order: parseAsStringLiteral(availableRoleSorterValues),
       filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
     },
@@ -73,13 +74,9 @@ const RBACManagementPage: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const sourceFilter =
-    queryParams.source === 'all' ? null : [queryParams.source];
-
   const queryVariables = {
     filter: {
-      status: [queryParams.status],
-      ...(sourceFilter ? { source: sourceFilter } : {}),
+      status: { in: [queryParams.status] },
       ...queryParams.filter,
     },
     orderBy: convertToOrderBy<RoleOrderBy>(queryParams.order),
@@ -109,7 +106,6 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
-              ...RoleFormModalFragment
             }
           }
         }
@@ -170,9 +166,6 @@ const RBACManagementPage: React.FC = () => {
       history: 'push',
     },
   );
-  const [selectedRoleForEdit, setSelectedRoleForEdit] =
-    useState<RoleNodeInList | null>(null);
-
   const handleDeactivateRole = (role: RoleNodeInList) => {
     commitDeactivateRole({
       variables: { input: { id: toLocalId(role.id) } },
@@ -219,28 +212,24 @@ const RBACManagementPage: React.FC = () => {
       content: t('rbac.ConfirmPurge', { name: role.name }),
       okText: t('button.Delete'),
       okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        new Promise<void>((resolve, reject) => {
-          commitPurgeRole({
-            variables: { input: { id: toLocalId(role.id) } },
-            onCompleted: (_data, errors) => {
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                message.error(errors[0]?.message || t('general.ErrorOccurred'));
-                reject();
-                return;
-              }
-              message.success(t('rbac.RolePurged'));
-              updateFetchKey();
-              resolve();
-            },
-            onError: (error) => {
-              logger.error(error);
-              message.error(error?.message || t('general.ErrorOccurred'));
-              reject();
-            },
-          });
-        }),
+      onOk: () => {
+        commitPurgeRole({
+          variables: { input: { id: toLocalId(role.id) } },
+          onCompleted: (_data, errors) => {
+            if (errors && errors.length > 0) {
+              logger.error(errors[0]);
+              message.error(errors[0]?.message || t('general.ErrorOccurred'));
+              return;
+            }
+            message.success(t('rbac.RolePurged'));
+            updateFetchKey();
+          },
+          onError: (error) => {
+            logger.error(error);
+            message.error(error?.message || t('general.ErrorOccurred'));
+          },
+        });
+      },
     });
   };
 
@@ -283,6 +272,17 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.RoleName'),
                   type: 'string',
                 },
+                {
+                  key: 'source',
+                  propertyLabel: t('rbac.Source'),
+                  type: 'enum',
+                  valueMode: 'scalar',
+                  options: [
+                    { label: t('rbac.System'), value: 'SYSTEM' },
+                    { label: t('rbac.Custom'), value: 'CUSTOM' },
+                  ],
+                  strictSelection: true,
+                },
               ]}
               value={queryParams.filter ?? undefined}
               onChange={(value) => {
@@ -311,32 +311,98 @@ const RBACManagementPage: React.FC = () => {
             </BAIButton>
           </BAIFlex>
         </BAIFlex>
-        <Suspense fallback={<Skeleton active />}>
-          <RoleNodes
-            rolesFrgmt={roleNodes}
-            statusFilter={deferredQueryVariables.filter.status?.[0]}
-            loading={deferredQueryVariables !== queryVariables}
-            order={queryParams.order}
-            onChangeOrder={(order) => {
-              setQueryParams({ order });
-            }}
-            onClickRoleName={(role) =>
-              setRoleDetailParam({ roleDetail: role.id })
-            }
-            onClickEdit={(role) => setSelectedRoleForEdit(role)}
-            onClickDeactivate={handleDeactivateRole}
-            onClickActivate={handleActivateRole}
-            onClickPurge={handlePurgeRole}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: queryRef.adminRoles?.count ?? 0,
-              onChange: (current, pageSize) => {
-                setTablePaginationOption({ current, pageSize });
+        <RoleNodes
+          rolesFrgmt={roleNodes}
+          loading={deferredQueryVariables !== queryVariables}
+          order={queryParams.order}
+          onChangeOrder={(order) => {
+            setQueryParams({ order });
+          }}
+          customizeColumns={(columns) => {
+            const isDeletedFilter =
+              deferredQueryVariables.filter.status?.in?.[0] === 'DELETED';
+            return [
+              ...columns.map((col) =>
+                col.key === 'name'
+                  ? {
+                      ...col,
+                      render: (name: string, role: RoleNodeInList) => (
+                        <BAILink
+                          type="hover"
+                          onClick={() =>
+                            setRoleDetailParam({ roleDetail: role.id })
+                          }
+                        >
+                          {name}
+                        </BAILink>
+                      ),
+                    }
+                  : col,
+              ),
+              {
+                key: 'control',
+                title: t('general.Control'),
+                fixed: 'left',
+                width: 100,
+                render: (_: unknown, role: RoleNodeInList) => (
+                  <BAIFlex gap={token.marginXXS}>
+                    {isDeletedFilter ? (
+                      <>
+                        <Popconfirm
+                          title={t('rbac.ActivateRole')}
+                          description={role.name}
+                          okText={t('rbac.Activate')}
+                          placement="left"
+                          onConfirm={() => handleActivateRole(role)}
+                        >
+                          <BAIButton
+                            type="text"
+                            title={t('rbac.Activate')}
+                            icon={<UndoIcon />}
+                            size="small"
+                          />
+                        </Popconfirm>
+                        <BAIButton
+                          type="text"
+                          danger
+                          title={t('rbac.PurgeRole')}
+                          icon={<BAITrashBinIcon />}
+                          size="small"
+                          onClick={() => handlePurgeRole(role)}
+                        />
+                      </>
+                    ) : (
+                      <Popconfirm
+                        title={t('rbac.DeactivateRole')}
+                        description={role.name}
+                        okType="danger"
+                        okText={t('rbac.Deactivate')}
+                        placement="left"
+                        onConfirm={() => handleDeactivateRole(role)}
+                      >
+                        <BAIButton
+                          type="text"
+                          danger
+                          title={t('rbac.Deactivate')}
+                          icon={<BanIcon />}
+                          size="small"
+                        />
+                      </Popconfirm>
+                    )}
+                  </BAIFlex>
+                ),
               },
-            }}
-          />
-        </Suspense>
+            ];
+          }}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: queryRef.adminRoles?.count ?? 0,
+            onChange: (current, pageSize) => {
+              setTablePaginationOption({ current, pageSize });
+            },
+          }}
+        />
       </BAIFlex>
       <RoleFormModal
         open={isCreateModalOpen}
@@ -347,29 +413,10 @@ const RBACManagementPage: React.FC = () => {
           }
         }}
       />
-      <RoleFormModal
-        open={!!selectedRoleForEdit}
-        editingRoleFrgmt={selectedRoleForEdit}
-        onRequestClose={(success) => {
-          setSelectedRoleForEdit(null);
-          if (success) {
-            updateFetchKey();
-          }
-        }}
-      />
       <RoleDetailDrawer
         open={!!selectedRoleId}
         roleId={selectedRoleId || undefined}
         onClose={() => setRoleDetailParam({ roleDetail: null })}
-        onClickEdit={() => {
-          if (selectedRoleId) {
-            setSelectedRoleForEdit(
-              (roleNodes.find((r) => r?.id === selectedRoleId) as
-                | RoleNodeInList
-                | undefined) ?? null,
-            );
-          }
-        }}
       />
     </BAICard>
   );

@@ -1496,7 +1496,6 @@
     "RevokeUser": "Poista käyttäjä",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Rooli luotu onnistuneesti.",
-    "RoleDeleted": "Rooli poistettu onnistuneesti.",
     "RoleDescription": "Kuvaus",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Roolin nimi",

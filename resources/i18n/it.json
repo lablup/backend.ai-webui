@@ -736,7 +736,7 @@
     "PleaseTypeToConfirm": "Si prega di digitare {{confirmText}} per confermare.",
     "ask": {
       "DoYouWantToDelete": "Sei sicuro di voler eliminare?",
-      "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ nome }}\"?",
+      "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ name }}\"?",
       "DoYouWantToProceed": "Vuoi procedere?",
       "DoYouWantToResetChanges": "Vuoi ripristinare le modifiche?"
     },
@@ -1011,7 +1011,7 @@
     "InvalidJSONFormat": "Formato JSON non valido.",
     "LastUpdated": "Ultimo aggiornamento",
     "Manual": "Manuale",
-    "MaxValueNotification": "{{nome}} deve essere massimo {{max}}",
+    "MaxValueNotification": "{{name}} deve essere massimo {{max}}",
     "ModifiedAt": "Ultima modifica",
     "NSelected": "{{count}} selezionato",
     "NavigateToDetailPage": "Vai alla pagina dei dettagli",
@@ -1026,10 +1026,10 @@
     "Session": "Sessione",
     "ShowUsageGraph": "Mostra utilizzo",
     "StorageProxies": "Depositi",
-    "TotalItems": "Totale articoli {{totale}}",
+    "TotalItems": "Totale articoli {{total}}",
     "UpdatedAt": "Aggiornato il",
     "Username": "Nome utente",
-    "ValueRequired": "Inserisci {{ nome }}",
+    "ValueRequired": "Inserisci {{ name }}",
     "validation": {
       "InvalidEmailAddress": "Indirizzo e -mail non valido.",
       "LetterNumber-_dot": "Consente lettere, numeri e -_.",
@@ -1496,7 +1496,6 @@
     "RevokeUser": "Rimuovi utente",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Ruolo creato con successo.",
-    "RoleDeleted": "Ruolo eliminato con successo.",
     "RoleDescription": "Descrizione",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Nome del ruolo",

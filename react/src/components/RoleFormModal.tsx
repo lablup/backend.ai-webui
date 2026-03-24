@@ -6,7 +6,12 @@ import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreat
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App, Form, Input } from 'antd';
-import { BAIModal, BAIModalProps, toLocalId, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  toLocalId,
+  useBAILogger,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -76,11 +81,14 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   };
 
   const handleOk = () => {
-    return form.validateFields().then((values) => {
-      return new Promise<void>((resolve, reject) => {
+    return form
+      .validateFields()
+      .then((values) => {
         if (isEditMode && editingRole) {
-          const changedFields: { name?: string; description?: string | null } =
-            {};
+          const changedFields: {
+            name?: string;
+            description?: string | null;
+          } = {};
           if (values.name !== editingRole.name) {
             changedFields.name = values.name;
           }
@@ -92,7 +100,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
 
           if (Object.keys(changedFields).length === 0) {
             onRequestClose(false);
-            resolve();
             return;
           }
 
@@ -108,19 +115,19 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 const errorMessage = errors[0]?.message || '';
                 if (isDuplicateError(errorMessage)) {
                   form.setFields([
-                    { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                    {
+                      name: 'name',
+                      errors: [t('rbac.DuplicateRoleName')],
+                    },
                   ]);
-                  reject();
                   return;
                 }
                 logger.error(errors[0]);
                 message.error(errorMessage || t('general.ErrorOccurred'));
-                reject();
                 return;
               }
               message.success(t('rbac.RoleUpdated'));
               onRequestClose(true);
-              resolve();
             },
             onError: (error) => {
               const errorMessage = error?.message || '';
@@ -132,7 +139,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 logger.error(error);
                 message.error(errorMessage || t('general.ErrorOccurred'));
               }
-              reject();
             },
           });
         } else {
@@ -148,19 +154,19 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 const errorMessage = errors[0]?.message || '';
                 if (isDuplicateError(errorMessage)) {
                   form.setFields([
-                    { name: 'name', errors: [t('rbac.DuplicateRoleName')] },
+                    {
+                      name: 'name',
+                      errors: [t('rbac.DuplicateRoleName')],
+                    },
                   ]);
-                  reject();
                   return;
                 }
                 logger.error(errors[0]);
                 message.error(errorMessage || t('general.ErrorOccurred'));
-                reject();
                 return;
               }
               message.success(t('rbac.RoleCreated'));
               onRequestClose(true);
-              resolve();
             },
             onError: (error) => {
               const errorMessage = error?.message || '';
@@ -172,12 +178,11 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 logger.error(error);
                 message.error(errorMessage || t('general.ErrorOccurred'));
               }
-              reject();
             },
           });
         }
-      });
-    });
+      })
+      .catch((err) => logger.error('Validation Failed:', err));
   };
 
   return (
@@ -186,6 +191,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightCreateRole || isInFlightUpdateRole}
+      maskClosable={false}
       destroyOnHidden
       {...baiModalProps}
     >

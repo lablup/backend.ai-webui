@@ -1496,7 +1496,6 @@
     "RevokeUser": "Αφαίρεση χρήστη",
     "RoleAssignments": "Role Assignments",
     "RoleCreated": "Ο ρόλος δημιουργήθηκε επιτυχώς.",
-    "RoleDeleted": "Ο ρόλος διαγράφηκε επιτυχώς.",
     "RoleDescription": "Περιγραφή",
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Όνομα ρόλου",

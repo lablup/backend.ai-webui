@@ -18,6 +18,7 @@ import {
   type GraphQLFilter,
   toLocalId,
   useBAILogger,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import { EditIcon, PlusIcon } from 'lucide-react';
 import {
@@ -28,7 +29,7 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
 interface EditingPermission {
   id: string;
@@ -126,8 +127,10 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                 ... on VirtualFolderNode {
                   vfolderName: name
                 }
-                ... on ComputeSessionNode {
-                  sessionName: name
+                ... on SessionV2 {
+                  metadata {
+                    sessionName: name
+                  }
                 }
                 ... on ModelDeployment {
                   metadata {
@@ -150,15 +153,14 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     queryRef,
   );
 
-  const [commitDeletePermission] = useMutation<RolePermissionTabDeleteMutation>(
-    graphql`
+  const mutateDeletePermission =
+    useMutationWithPromise<RolePermissionTabDeleteMutation>(graphql`
       mutation RolePermissionTabDeleteMutation($input: DeletePermissionInput!) {
         adminDeletePermission(input: $input) {
           id
         }
       }
-    `,
-  );
+    `);
 
   const permissions =
     data.adminPermissions?.edges?.map((edge) => edge?.node) ?? [];
@@ -223,28 +225,16 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       okText: t('button.Delete'),
       okButtonProps: { danger: true, type: 'primary' },
       onOk: () =>
-        new Promise<void>((resolve, reject) => {
-          commitDeletePermission({
-            variables: { input: { id: permissionId } },
-            onCompleted: (_data, errors) => {
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                message.error(errors[0]?.message || t('general.ErrorOccurred'));
-                reject();
-                return;
-              }
-              message.success(t('rbac.PermissionDeleted'));
-              handleRefresh();
-              onPermissionChange?.();
-              resolve();
-            },
-            onError: (error) => {
-              logger.error(error);
-              message.error(error?.message || t('general.ErrorOccurred'));
-              reject();
-            },
-          });
-        }),
+        mutateDeletePermission({ input: { id: permissionId } })
+          .then(() => {
+            message.success(t('rbac.PermissionDeleted'));
+            handleRefresh();
+            onPermissionChange?.();
+          })
+          .catch((error) => {
+            logger.error('Failed to delete permission', error);
+            message.error(error?.message || t('general.ErrorOccurred'));
+          }),
     });
   };
 
@@ -371,7 +361,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                     label = scope.vfolderName;
                     break;
                   case 'SESSION':
-                    label = scope.sessionName;
+                    label = scope.metadata?.sessionName;
                     break;
                   case 'MODEL_DEPLOYMENT':
                     label = scope.metadata?.deploymentName;
