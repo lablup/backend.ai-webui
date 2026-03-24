@@ -117,7 +117,6 @@ const ImportArtifactRevisionToFolderModal = ({
             artifactRevision {
               id
               version
-              size
               artifact {
                 id
                 name
@@ -185,13 +184,7 @@ const ImportArtifactRevisionToFolderModal = ({
                     return;
                   }
 
-                  if (
-                    res.importArtifacts.artifactRevisions?.count > 0 &&
-                    !_.some(
-                      res.importArtifacts.tasks,
-                      (task) => _.toNumber(task?.artifactRevision?.size) === 0,
-                    )
-                  ) {
+                  if (res.importArtifacts.artifactRevisions?.count > 0) {
                     message.success(
                       t(
                         'importArtifactRevisionToFolderModal.SuccessfullyImported',
