@@ -265,6 +265,13 @@ const BAITable = <RecordType extends object = any>({
       defaultValue: {},
     },
   );
+  // Merge defaultColumnOverrides with columnOverrides so that defaults apply
+  // for columns not explicitly overridden by the user.
+  const effectiveColumnOverrides = useMemo(() => {
+    const defaults = tableSettings?.defaultColumnOverrides ?? {};
+    const overrides = columnOverrides ?? {};
+    return { ...defaults, ...overrides };
+  }, [tableSettings, columnOverrides]);
   const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
     useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -293,7 +300,7 @@ const BAITable = <RecordType extends object = any>({
       processedColumns = columns?.filter((column) => {
         const columnKey = column.key?.toString();
         if (!columnKey) return true;
-        return isColumnVisible(column, columnKey, columnOverrides);
+        return isColumnVisible(column, columnKey, effectiveColumnOverrides);
       });
     }
 
@@ -353,7 +360,7 @@ const BAITable = <RecordType extends object = any>({
     resizedColumnWidths,
     order,
     tableSettings,
-    columnOverrides,
+    effectiveColumnOverrides,
   ]);
 
   const isValidPageNumber = () => {
@@ -544,7 +551,7 @@ const BAITable = <RecordType extends object = any>({
               }
             }}
             columns={columns || []}
-            columnOverrides={columnOverrides}
+            columnOverrides={effectiveColumnOverrides}
             disableSorter
           />
         </BAIUnmountAfterClose>
