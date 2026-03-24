@@ -268,8 +268,9 @@ const BAITable = <RecordType extends object = any>({
   // Merge defaultColumnOverrides with columnOverrides so that defaults apply
   // for columns not explicitly overridden by the user.
   const effectiveColumnOverrides = useMemo(() => {
-    const defaults = tableSettings?.defaultColumnOverrides;
-    return defaults ? { ...defaults, ...columnOverrides } : columnOverrides;
+    const defaults = tableSettings?.defaultColumnOverrides ?? {};
+    const overrides = columnOverrides ?? {};
+    return { ...defaults, ...overrides };
   }, [tableSettings, columnOverrides]);
   const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
     useState(false);
