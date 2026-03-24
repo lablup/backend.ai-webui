@@ -65,9 +65,13 @@ else
     rm "${DOWNLOAD_PATH}"
 fi
 
-echo "Overwriting config.toml and plugins to extracted folder..."
+echo "Overwriting config.toml to extracted folder..."
 cp "${PROJECT_ROOT}/config.toml" "${EXTRACTED_FOLDER}/"
-cp -r "${PROJECT_ROOT}/dist/plugins" "${EXTRACTED_FOLDER}/dist/"
+if [ -d "${PROJECT_ROOT}/dist/plugins" ]; then
+    echo "Copying plugins to extracted folder..."
+    mkdir -p "${EXTRACTED_FOLDER}/dist/"
+    cp -r "${PROJECT_ROOT}/dist/plugins" "${EXTRACTED_FOLDER}/dist/"
+fi
 
 echo "Starting server in ${EXTRACTED_FOLDER}..."
 cd "${EXTRACTED_FOLDER}"
