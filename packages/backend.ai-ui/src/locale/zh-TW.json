@@ -269,6 +269,7 @@
     "SelectFolder": "選擇資料夾"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "{{count}} 個項目的下載已開始。",
     "ChangeFileExtension": "更改文件擴展名",
     "ChangeFileExtensionDesc": "更改文件擴展名可能會導致文件變得無法使用或不正確打開。你想繼續嗎？",
     "Controls": "控件",
@@ -279,6 +280,7 @@
     "CreatedAt": "創建在",
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
+    "DownloadSelected": "下載",
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
     "DragAndDropDesc": "將文件拖到此區域上傳。",
     "DuplicatedFiles": "覆蓋確認",

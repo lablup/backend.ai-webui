@@ -269,6 +269,7 @@
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Ξεκίνησε η λήψη {{count}} στοιχείων.",
     "ChangeFileExtension": "Αλλαγή επέκτασης αρχείου",
     "ChangeFileExtensionDesc": "Η αλλαγή της επέκτασης του αρχείου μπορεί να προκαλέσει λανθασμένα το αρχείο. \nΘέλετε να προχωρήσετε;",
     "Controls": "Χειριστήρια",
@@ -279,6 +280,7 @@
     "CreatedAt": "Δημιουργήθηκε στο",
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
+    "DownloadSelected": "Λήψη",
     "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
     "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",

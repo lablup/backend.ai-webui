@@ -269,6 +269,7 @@
     "SelectFolder": "Ordner auswählen"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Der Download von {{count}} Element(en) wurde gestartet.",
     "ChangeFileExtension": "Dateierweiterung ändern",
     "ChangeFileExtensionDesc": "Das Ändern der Dateierweiterung kann dazu führen, dass die Datei unbrauchbar oder falsch geöffnet wird. \nMöchten Sie fortfahren?",
     "Controls": "Kontrollen",
@@ -279,6 +280,7 @@
     "CreatedAt": "Erstellt at",
     "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
     "DeleteSelectedItemsDialog": "Bestätigung löschen",
+    "DownloadSelected": "Herunterladen",
     "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
     "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
     "DuplicatedFiles": "Überschreibung der Bestätigung",
