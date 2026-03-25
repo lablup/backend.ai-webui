@@ -101,6 +101,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         }
         created_at
         scaling_group
+        project_id
         owner @since(version: "25.13.0") {
           email
         }
@@ -247,6 +248,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         defaultHidden: true,
         sorter: isEnableSorter('created_at'),
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
+      },
+      // The method of directly fetching project name is currently not possible through GraphQL's query. Until backend work is completed, id will be displayed.
+      {
+        key: 'project_id',
+        dataIndex: 'project_id',
+        title: t('data.Project'),
+        defaultHidden: true,
+        render: (project_id: string) => project_id || '-',
       },
       (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
         key: 'agent',

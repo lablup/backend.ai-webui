@@ -101,7 +101,9 @@ const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
-const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const AdminSessionPage = React.lazy(
+  () => import('./pages/AdminSessionPage'),
+);
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
