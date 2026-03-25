@@ -37,6 +37,7 @@ const NetworkStatusBanner = () => {
     };
     const successHandler = () => {
       setShowSoftTimeoutAlert(false);
+      setDismissSoftTimeoutAlert(false);
     };
     document.addEventListener('backend-ai-network-soft-time-out', softHandler);
     document.addEventListener(
