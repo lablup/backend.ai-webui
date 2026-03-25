@@ -98,6 +98,7 @@ export const VALID_MENU_KEYS = [
   'admin-dashboard',
   'admin-data',
   'agent',
+  'project',
   'settings',
   'maintenance',
   'diagnostics',
@@ -107,6 +108,16 @@ export const VALID_MENU_KEYS = [
 ] as const;
 
 export type MenuKeys = (typeof VALID_MENU_KEYS)[number];
+
+/**
+ * Paths that are restricted to superadmin only but are not shown in the
+ * superAdminMenu (e.g., pages still under development or accessible only
+ * through internal navigation). These paths are included in the authorization
+ * check to prevent admin-role users from accessing them via direct URL.
+ */
+export const SUPERADMIN_ONLY_HIDDEN_PATHS = new Set([
+  'admin-dashboard',
+]);
 
 // Convert menu key to URL path
 // Most keys map directly to /${key}, with exceptions for backward compatibility
@@ -607,7 +618,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     if (currentPathKey === '') return false;
 
     const isAdminOnlyPage = adminOnlyPageKeys.has(currentMenuKey);
-    const isSuperAdminOnlyPage = superAdminOnlyPageKeys.has(currentMenuKey);
+    // A page is superadmin-only if it appears in the superAdminMenu items
+    // OR if it is listed in SUPERADMIN_ONLY_HIDDEN_PATHS (pages that are
+    // restricted to superadmin but intentionally omitted from the visible menu).
+    const isSuperAdminOnlyPage =
+      superAdminOnlyPageKeys.has(currentMenuKey) ||
+      SUPERADMIN_ONLY_HIDDEN_PATHS.has(currentMenuKey);
 
     // Regular users (not admin, not superadmin) cannot access admin or superadmin pages
     if (
