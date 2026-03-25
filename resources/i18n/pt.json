@@ -2724,7 +2724,12 @@
         "Playground": "Parque infantil",
         "Service": "Serviço",
         "Storage": "Armazenamento",
-        "Workload": "Carga de trabalho"
+        "Workload": "Carga de trabalho",
+        "superadmin": {
+          "Infrastructure": "Infraestrutura",
+          "Operations": "Operações",
+          "System": "Sistema"
+        }
       }
     }
   }

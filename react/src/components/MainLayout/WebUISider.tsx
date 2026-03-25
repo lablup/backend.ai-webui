@@ -24,6 +24,7 @@ import {
   Grid,
   Tooltip,
   Button,
+  type MenuProps,
 } from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
@@ -69,8 +70,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const {
     groupedGeneralMenu,
-    adminMenu,
-    superAdminMenu,
+    groupedAdminMenu,
     isSelectedAdminCategoryMenu,
     isCurrentPageUnauthorized,
     defaultMenuPath,
@@ -216,7 +216,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               hasAdminCategoryRole && {
                 // Go to first page of admin setting pages.
                 label: (
-                  <WebUILink to="/admin-session">
+                  <WebUILink to="/credential">
                     {t('webui.menu.AdminSettings')}
                   </WebUILink>
                 ),
@@ -244,10 +244,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   ? 'agent'
                   : location.pathname.split('/')[1],
               ]}
-              items={[
-                ...adminMenu,
-                ...(currentUserRole === 'superadmin' ? superAdminMenu : []),
-              ]}
+              items={groupedAdminMenu as MenuProps['items']}
             />
           </ConfigProvider>
         )}

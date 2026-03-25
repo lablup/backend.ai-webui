@@ -2722,7 +2722,12 @@
         "Playground": "Parque infantil",
         "Service": "Servicio",
         "Storage": "Almacenamiento",
-        "Workload": "Carga de trabajo"
+        "Workload": "Carga de trabajo",
+        "superadmin": {
+          "Infrastructure": "Infraestructura",
+          "Operations": "Operaciones",
+          "System": "Sistema"
+        }
       }
     }
   }

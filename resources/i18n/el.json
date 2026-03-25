@@ -2722,7 +2722,12 @@
         "Playground": "Παιδική χαρά",
         "Service": "Υπηρεσία",
         "Storage": "Αποθήκευση",
-        "Workload": "Φόρτος εργασίας"
+        "Workload": "Φόρτος εργασίας",
+        "superadmin": {
+          "Infrastructure": "Υποδομή",
+          "Operations": "Λειτουργίες",
+          "System": "Σύστημα"
+        }
       }
     }
   }

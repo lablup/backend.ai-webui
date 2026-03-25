@@ -2724,7 +2724,12 @@
         "Playground": "Spielplatz",
         "Service": "Dienst",
         "Storage": "Lagerung",
-        "Workload": "Arbeitsbelastung"
+        "Workload": "Arbeitsbelastung",
+        "superadmin": {
+          "Infrastructure": "Infrastruktur",
+          "Operations": "Betrieb",
+          "System": "System"
+        }
       }
     }
   }

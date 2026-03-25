@@ -2722,7 +2722,12 @@
         "Playground": "Oyun Alanı",
         "Service": "Hizmet",
         "Storage": "Depolama",
-        "Workload": "İş Yükü"
+        "Workload": "İş Yükü",
+        "superadmin": {
+          "Infrastructure": "Altyapı",
+          "Operations": "Operasyonlar",
+          "System": "Sistem"
+        }
       }
     }
   }

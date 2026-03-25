@@ -2723,7 +2723,12 @@
         "Playground": "Leikkipaikka",
         "Service": "Palvelu",
         "Storage": "Varastointi",
-        "Workload": "Työmäärä"
+        "Workload": "Työmäärä",
+        "superadmin": {
+          "Infrastructure": "Infrastruktuuri",
+          "Operations": "Toiminnot",
+          "System": "Järjestelmä"
+        }
       }
     }
   }
