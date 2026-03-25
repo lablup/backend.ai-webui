@@ -961,7 +961,10 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
-                        dependencies={[['resource', 'acceleratorType']]}
+                        dependencies={[
+                          ['resource', 'acceleratorType'],
+                          'cluster_size',
+                        ]}
                         rules={[
                           {
                             required:
