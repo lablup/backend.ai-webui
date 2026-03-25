@@ -2543,7 +2543,7 @@
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
     "SSHKeypairGeneration": "SSH товчлуурын үе",
-    "SSHKeypairGenerationWarning": "Та хувийн түлхүүрийг дахин авах боломжгүй. Шаардлагатай бол локал диск дээрээ хадгална уу.",
+    "SSHKeypairGenerationWarning": "Тухтай байхын тулд хувийн түлхүүрийг одоо хадгалахыг зөвлөж байна. Сессийг эхлүүлсний дараа /home/work/id_container файлаас дараа нь авах боломжтой.",
     "SSHKeypairManagement": "SSH товчлуурын менежмент",
     "SessionTerminationDialog": "Session дуусахыг цуцлах боломжгүй. Та хуралдааныг зогсоохыг хүсч байна уу?",
     "ShellEnvironments": "Shell Environments",

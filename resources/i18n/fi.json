@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "SSH-avainpari",
     "SSHKeypairEnterManuallyFinished": "SSH-avainpari on rekisteröity onnistuneesti.",
     "SSHKeypairGeneration": "SSH-avainparin luominen",
-    "SSHKeypairGenerationWarning": "Et voi saada yksityistä avainta uudelleen. Tallenna tarvittaessa paikalliselle levylle.",
+    "SSHKeypairGenerationWarning": "Suosittelemme tallentamaan yksityisen avaimen nyt mukavuuden vuoksi. Voit hakea sen myöhemmin osoitteesta /home/work/id_container istunnon käynnistämisen jälkeen.",
     "SSHKeypairManagement": "SSH-avainparin hallinta",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",

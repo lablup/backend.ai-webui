@@ -2543,7 +2543,7 @@
     "SSHKeypairEnterManually": "Cặp khóa SSH",
     "SSHKeypairEnterManuallyFinished": "Cặp khóa SSH đã được đăng ký thành công.",
     "SSHKeypairGeneration": "SSH Keypair Generation",
-    "SSHKeypairGenerationWarning": "Bạn không thể lấy lại khóa cá nhân. Lưu trữ trên đĩa cục bộ của bạn nếu cần.",
+    "SSHKeypairGenerationWarning": "Chúng tôi khuyên bạn nên lưu khóa riêng tư ngay bây giờ để thuận tiện. Bạn có thể lấy lại sau từ /home/work/id_container sau khi khởi động phiên.",
     "SSHKeypairManagement": "Quản lý cặp khóa SSH",
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",

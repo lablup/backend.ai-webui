@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "Couple de clés SSH",
     "SSHKeypairEnterManuallyFinished": "La paire de clés SSH a été enregistrée avec succès.",
     "SSHKeypairGeneration": "Génération de paires de clés SSH",
-    "SSHKeypairGenerationWarning": "Vous ne pouvez plus obtenir de clé privée. Stockez sur votre disque local si nécessaire.",
+    "SSHKeypairGenerationWarning": "Nous vous recommandons de sauvegarder la clé privée maintenant pour plus de commodité. Vous pourrez la récupérer ultérieurement depuis /home/work/id_container après avoir démarré une session.",
     "SSHKeypairManagement": "Gestion des paires de clés SSH",
     "SessionTerminationDialog": "L'arrêt de la session ne peut pas être annulé. Voulez-vous continuer pour terminer la session ?",
     "ShellEnvironments": "Environnements Shell",

@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "SSH Anahtar Çifti",
     "SSHKeypairEnterManuallyFinished": "SSH Anahtar Çifti başarıyla kaydedildi.",
     "SSHKeypairGeneration": "SSH Anahtar Çifti Oluşturma",
-    "SSHKeypairGenerationWarning": "Özel anahtarı tekrar alamazsınız. Gerekirse yerel diskinizde saklayın.",
+    "SSHKeypairGenerationWarning": "Kolaylık açısından özel anahtarı şimdi kaydetmenizi öneririz. Daha sonra bir oturum başlattıktan sonra /home/work/id_container dosyasından alabilirsiniz.",
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",

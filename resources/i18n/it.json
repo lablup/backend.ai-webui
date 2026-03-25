@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "Coppia di chiavi SSH",
     "SSHKeypairEnterManuallyFinished": "La coppia di chiavi SSH è stata registrata con successo.",
     "SSHKeypairGeneration": "Generazione di coppie di chiavi SSH",
-    "SSHKeypairGenerationWarning": "Non puoi ottenere di nuovo la chiave privata. Memorizzare sul disco locale, se necessario.",
+    "SSHKeypairGenerationWarning": "Si consiglia di salvare la chiave privata ora per comodità. È possibile recuperarla in seguito da /home/work/id_container dopo aver avviato una sessione.",
     "SSHKeypairManagement": "Gestione delle coppie di chiavi SSH",
     "SessionTerminationDialog": "La chiusura della sessione non può essere annullata. Vuoi procedere per terminare la sessione?",
     "ShellEnvironments": "Ambienti shell",

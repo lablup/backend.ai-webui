@@ -2543,7 +2543,7 @@
     "SSHKeypairEnterManually": "SSH-Schlüsselpaar",
     "SSHKeypairEnterManuallyFinished": "SSH-Keypair wurde erfolgreich registriert.",
     "SSHKeypairGeneration": "SSH-Schlüsselpaargenerierung",
-    "SSHKeypairGenerationWarning": "Sie können den privaten Schlüssel nicht erneut abrufen. Bei Bedarf auf Ihrer lokalen Festplatte speichern.",
+    "SSHKeypairGenerationWarning": "Wir empfehlen, den privaten Schlüssel jetzt der Einfachheit halber zu speichern. Sie können ihn später nach dem Starten einer Sitzung unter /home/work/id_container abrufen.",
     "SSHKeypairManagement": "SSH-Schlüsselpaarverwaltung",
     "SessionTerminationDialog": "Die Beendigung der Sitzung kann nicht rückgängig gemacht werden. Möchten Sie fortfahren, um die Sitzung zu beenden?",
     "ShellEnvironments": "Shell-Umgebungen",
