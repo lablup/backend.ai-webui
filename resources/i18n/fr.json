@@ -112,6 +112,7 @@
     "Threshold": "Seuil"
   },
   "button": {
+    "Action": "Action",
     "Add": "Ajouter",
     "Apply": "Appliquer",
     "AutoRefresh": "Actualisation automatique",
