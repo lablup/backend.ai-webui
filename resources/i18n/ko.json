@@ -1331,6 +1331,7 @@
     "NotInProject": "이 모델 서비스는 다른 프로젝트에 속해 있습니다. 해당 프로젝트로 이동 후 수정해 주세요.",
     "NumberOfReplicas": "복제본 수",
     "OnlyAllowsNonNegativeIntegers": "0 이상을 입력해 주세요.",
+    "OnlyVllmCompatibleEnvironmentsShown": "선택한 런타임에 대해 vLLM 호환 환경만 표시됩니다.",
     "OpenToPublic": "앱을 외부에 공개",
     "Owner": "소유자",
     "PlayYourModelNow": "모델을 바로 사용해보세요!",

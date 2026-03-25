@@ -1329,6 +1329,7 @@
     "NotInProject": "This model service belongs to a different project. Please switch to the corresponding project to edit this service.",
     "NumberOfReplicas": "Number of replicas",
     "OnlyAllowsNonNegativeIntegers": "Only allows non-negative integers",
+    "OnlyVllmCompatibleEnvironmentsShown": "Only vLLM-compatible environments are shown for the selected runtime.",
     "OpenToPublic": "Open To Public",
     "Owner": "Owner",
     "PlayYourModelNow": "Play your model now!",
