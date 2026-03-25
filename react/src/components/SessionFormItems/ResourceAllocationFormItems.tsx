@@ -25,12 +25,8 @@ import {
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-import {
-  CaretDownOutlined,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
+import { CaretDownOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, Form, Radio, Row, theme } from 'antd';
 import {
   useResourceSlotsDetails,
   BAIFlex,
@@ -55,7 +51,7 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAlloca
       accelerator: 0,
     },
     num_of_sessions: 1,
-    cluster_mode: 'multi-node',
+    cluster_mode: 'single-node',
     cluster_size: 1,
     enabledAutomaticShmem: true,
     agent: ['auto'],
@@ -1334,6 +1330,15 @@ const ResourceAllocationFormItems: React.FC<
       )}
       <Form.Item
         label={t('session.launcher.ClusterMode')}
+        tooltip={
+          <BAIFlex direction="column" align="start">
+            {t('session.launcher.SingleNode')}
+            <Trans i18nKey={'session.launcher.DescSingleNode'} />
+            <Divider style={{ backgroundColor: token.colorBorder }} />
+            {t('session.launcher.MultiNode')}
+            <Trans i18nKey={'session.launcher.DescMultiNode'} />
+          </BAIFlex>
+        }
         required
         dependencies={['agent']}
       >
@@ -1359,31 +1364,11 @@ const ResourceAllocationFormItems: React.FC<
                         ])
                       }
                     >
-                      <Radio.Button value="multi-node">
-                        {t('session.launcher.MultiNode')}
-                        <Tooltip
-                          title={
-                            <Trans i18nKey={'session.launcher.DescMultiNode'} />
-                          }
-                        >
-                          <InfoCircleOutlined
-                            style={{ marginLeft: token.marginXXS }}
-                          />
-                        </Tooltip>
-                      </Radio.Button>
                       <Radio.Button value="single-node">
                         {t('session.launcher.SingleNode')}
-                        <Tooltip
-                          title={
-                            <Trans
-                              i18nKey={'session.launcher.DescSingleNode'}
-                            />
-                          }
-                        >
-                          <InfoCircleOutlined
-                            style={{ marginLeft: token.marginXXS }}
-                          />
-                        </Tooltip>
+                      </Radio.Button>
+                      <Radio.Button value="multi-node">
+                        {t('session.launcher.MultiNode')}
                       </Radio.Button>
                     </Radio.Group>
                   </Form.Item>

@@ -278,6 +278,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     allValues: ServiceLauncherFormValue,
   ) => {
     if (changedValues.runtimeVariant) {
+      // Reset environment selection when runtime variant changes
+      // as the previous selection may not be compatible with the new runtime
+      form.setFieldsValue({
+        environments: {
+          environment: undefined,
+          version: undefined,
+          image: undefined,
+          customizedTag: undefined,
+        },
+      });
       setEnvironmentVariablesForRuntimeVariant(
         changedValues.runtimeVariant,
         allValues,
