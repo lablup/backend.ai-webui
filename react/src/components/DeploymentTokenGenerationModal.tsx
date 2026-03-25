@@ -1,21 +1,27 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import { DatePicker, Form, FormInstance, message, Select } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
 import { DeploymentTokenGenerationModalMutation } from 'src/__generated__/DeploymentTokenGenerationModalMutation.graphql';
 
-interface DeploymentTokenGenerationModalProps
-  extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
+interface DeploymentTokenGenerationModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onClose'
+> {
   deploymentId: string;
   onRequestClose: (success?: boolean) => void;
 }
 
 const DeploymentTokenGenerationModal: React.FC<
   DeploymentTokenGenerationModalProps
-> = ({ onRequestClose, onCancel, deploymentId, ...baiModalProps }) => {
+> = ({
+  onRequestClose,
+  onCancel: _onCancel,
+  deploymentId,
+  ...baiModalProps
+}) => {
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
   // expiryOption은 Form.Item에서 관리
@@ -76,7 +82,6 @@ const DeploymentTokenGenerationModal: React.FC<
               return;
             } else {
               message.error(t('deployment.TokenGenerationFailed'));
-              console.log(err);
             }
           },
         });

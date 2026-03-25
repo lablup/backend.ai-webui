@@ -1,5 +1,4 @@
 import AccessTokenList from '../components/AccessTokenList';
-import BAIConfirmModalWithInput from '../components/BAIConfirmModalWithInput';
 import DeploymentRevisionList from '../components/DeploymentRevisionList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import {
@@ -22,10 +21,12 @@ import {
 } from 'antd';
 import type { DescriptionsProps } from 'antd';
 import {
+  BAIConfirmModalWithInput,
   BAICard,
   BAIFlex,
   filterOutNullAndUndefined,
   toLocalId,
+  useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -48,7 +49,6 @@ import DeploymentModifyModal from 'src/components/DeploymentModifyModal';
 import DeploymentTokenGenerationModal from 'src/components/DeploymentTokenGenerationModal';
 import ReplicaList from 'src/components/ReplicaList';
 import RevisionCreationModal from 'src/components/RevisionCreationModal';
-import { useFetchKey } from 'src/hooks';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'revisionHistory');
@@ -57,11 +57,9 @@ type RevisionNodeType = NonNullableNodeOnEdges<
   NonNullable<DeploymentDetailPageQuery$data['deployment']>['revisionHistory']
 >;
 
-type AutoScalingRuleNodeType = NonNullable<
-  NonNullable<
-    NonNullable<DeploymentDetailPageQuery$data['deployment']>['scalingRule']
-  >['autoScalingRules']
->[number];
+type AutoScalingRuleNodeType = NonNullableNodeOnEdges<
+  NonNullable<DeploymentDetailPageQuery$data['deployment']>['autoScalingRules']
+>;
 
 const DeploymentDetailPage: React.FC = () => {
   const { t } = useTranslation();
@@ -100,11 +98,11 @@ const DeploymentDetailPage: React.FC = () => {
           networkAccess {
             endpointUrl
             openToPublic
-            accessTokens {
-              edges {
-                node {
-                  ...AccessTokenListFragment
-                }
+          }
+          accessTokens @since(version: "25.19.0") {
+            edges {
+              node {
+                ...AccessTokenListFragment
               }
             }
           }
@@ -113,12 +111,12 @@ const DeploymentDetailPage: React.FC = () => {
           }
           replicaState {
             desiredReplicaCount
-            replicas {
-              edges {
-                node {
-                  id
-                  ...ReplicaListFragment
-                }
+          }
+          replicas @since(version: "25.19.0") {
+            edges {
+              node {
+                id
+                ...ReplicaListFragment
               }
             }
           }
@@ -138,11 +136,13 @@ const DeploymentDetailPage: React.FC = () => {
           createdUser {
             email
           }
-          scalingRule {
-            autoScalingRules {
-              id
-              ...AutoScalingRuleListFragment
-              ...AutoScalingRuleSettingModalFragment
+          autoScalingRules @since(version: "25.19.0") {
+            edges {
+              node {
+                id
+                ...AutoScalingRuleListFragment
+                ...AutoScalingRuleSettingModalFragment
+              }
             }
           }
           ...DeploymentModifyModalFragment
@@ -156,7 +156,7 @@ const DeploymentDetailPage: React.FC = () => {
   const [commitSetCurrentRevision, isInFlightSetCurrentRevision] =
     useMutation<DeploymentDetailPageSetActiveRevisionMutation>(graphql`
       mutation DeploymentDetailPageSetActiveRevisionMutation(
-        $input: UpdateModelDeploymentInput!
+        $input: UpdateDeploymentInput!
       ) {
         updateModelDeployment(input: $input) {
           deployment {
@@ -184,12 +184,10 @@ const DeploymentDetailPage: React.FC = () => {
   const [commitDeleteDeployment, isInFlightDeleteDeployment] =
     useMutation<DeploymentDetailPageDeleteMutation>(graphql`
       mutation DeploymentDetailPageDeleteMutation(
-        $input: DeleteModelDeploymentInput!
+        $input: DeleteDeploymentInput!
       ) {
         deleteModelDeployment(input: $input) {
-          deployment {
-            id
-          }
+          id
         }
       }
     `);
@@ -502,10 +500,7 @@ const DeploymentDetailPage: React.FC = () => {
               <BAIFlex direction="column" align="stretch" gap="sm">
                 <AccessTokenList
                   accessTokensFrgmt={filterOutNullAndUndefined(
-                    _.map(
-                      deployment?.networkAccess?.accessTokens?.edges,
-                      (edge) => edge.node,
-                    ),
+                    _.map(deployment?.accessTokens?.edges, (edge) => edge.node),
                   )}
                 />
               </BAIFlex>
@@ -513,15 +508,17 @@ const DeploymentDetailPage: React.FC = () => {
           )}
           {curTabKey === 'autoScalingRules' && (
             <AutoScalingRuleList
-              autoScalingRulesFrgmt={deployment?.scalingRule?.autoScalingRules}
+              autoScalingRulesFrgmt={filterOutNullAndUndefined(
+                _.map(deployment?.autoScalingRules?.edges, (edge) => edge.node),
+              )}
               onRequestSettingAutoScalingRule={(record) => {
                 if (record) {
-                  setSelectedAutoScalingRule(
+                  const foundNode =
                     _.find(
-                      deployment?.scalingRule?.autoScalingRules,
-                      (rule) => rule.id === record.id,
-                    ) || null,
-                  );
+                      deployment?.autoScalingRules?.edges,
+                      (edge) => edge.node.id === record.id,
+                    )?.node || null;
+                  setSelectedAutoScalingRule(foundNode);
                 }
                 toggleSetAutoScalingRuleModal();
               }}
@@ -642,10 +639,7 @@ const DeploymentDetailPage: React.FC = () => {
               <BAIFlex direction="column" align="stretch" gap="sm">
                 <ReplicaList
                   replicasFrgmt={filterOutNullAndUndefined(
-                    _.map(
-                      deployment?.replicaState?.replicas?.edges,
-                      (edge) => edge.node,
-                    ),
+                    _.map(deployment?.replicas?.edges, (edge) => edge.node),
                   )}
                 />
               </BAIFlex>
@@ -722,7 +716,7 @@ const DeploymentDetailPage: React.FC = () => {
               },
             },
             onCompleted: (res, errors) => {
-              if (!res?.deleteModelDeployment?.deployment?.id) {
+              if (!res?.deleteModelDeployment?.id) {
                 message.error(
                   t('message.FailedToDelete', {
                     name: t('deployment.AutoScalingRule'),

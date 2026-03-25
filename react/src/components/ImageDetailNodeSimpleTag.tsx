@@ -5,10 +5,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import CopyableCodeText from './CopyableCodeText';
-import DoubleTag from './DoubleTag';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Divider, Tag, Typography, theme } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDoubleTag as DoubleTag, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -29,8 +28,8 @@ const ImageDetailNodeSimpleTag: React.FC<ImageDetailNodeSimpleTagProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const image = useFragment(
     graphql`
-      fragment ImageDetailNodeSimpleTagFragment on ImageDetail {
-        baseImageName
+      fragment ImageDetailNodeSimpleTagFragment on ImageNode {
+        base_image_name
         version
         architecture
         name
@@ -64,7 +63,7 @@ const ImageDetailNodeSimpleTag: React.FC<ImageDetailNodeSimpleTagProps> = ({
           marginRight: token.marginXS,
         }}
       />
-      <Typography.Text>{tagAlias(image.baseImageName || '')}</Typography.Text>
+      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
       <Divider type="vertical" />
       <Typography.Text>{image.version}</Typography.Text>
       <Divider type="vertical" />

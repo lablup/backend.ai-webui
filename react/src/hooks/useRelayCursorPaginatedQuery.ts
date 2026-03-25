@@ -78,7 +78,6 @@ export function useRelayCursorPaginatedQuery<T extends OperationType, ItemType>(
       previousResult.current = [];
       setCursor(undefined);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNewOtherVariables]);
 
   return {

@@ -26,19 +26,17 @@ const DeploymentCreatePage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (values: DeploymentCreateFormValues) => {
+  const handleSubmit = async (_values: DeploymentCreateFormValues) => {
     setIsSubmitting(true);
     try {
       // Mock API call - replace with actual implementation
-      console.log('Creating deployment:', values);
 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Navigate to deployment detail page after creation
       webuiNavigate(`/deployment/mock-id`);
-    } catch (error) {
-      console.error('Failed to create deployment:', error);
+    } catch {
     } finally {
       setIsSubmitting(false);
     }

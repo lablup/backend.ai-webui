@@ -46,11 +46,14 @@ const ReplicaList: React.FC<ReplicaListProps> = ({ replicasFrgmt }) => {
           id
           name
         }
-        sessionId
+        session {
+          id
+        }
         readinessStatus
         livenessStatus
         weight
-        detail
+        # TODO: 'detail' field does not exist on ModelReplica in the current schema
+        # detail
         createdAt
       }
     `,
@@ -75,7 +78,7 @@ const ReplicaList: React.FC<ReplicaListProps> = ({ replicasFrgmt }) => {
   };
 
   const parsedDetails = _.map(filteredReplicas, (row) => {
-    const parsedDetail = JSON.parse(row?.detail || '{}');
+    const parsedDetail = JSON.parse((row as any)?.detail || '{}');
     return {
       parsedDetail,
       hasError:
@@ -89,7 +92,7 @@ const ReplicaList: React.FC<ReplicaListProps> = ({ replicasFrgmt }) => {
       key: 'id',
       title: t('deployment.ReplicaID'),
       dataIndex: 'id',
-      render: (id, row, idx) => {
+      render: (id, _row, idx) => {
         const { parsedDetail, hasError, hasNonErrorLog } =
           parsedDetails[idx] || {};
         return (
@@ -118,9 +121,9 @@ const ReplicaList: React.FC<ReplicaListProps> = ({ replicasFrgmt }) => {
       },
     },
     {
-      key: 'sessionId',
+      key: 'session',
       title: t('deployment.SessionID'),
-      dataIndex: 'sessionId',
+      dataIndex: ['session', 'id'],
       render: (sessionId) => (
         <Typography.Link onClick={() => setSelectedSessionId(sessionId)}>
           {sessionId}

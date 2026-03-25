@@ -96,6 +96,15 @@ const ReservoirArtifactDetailPage = React.lazy(
   () => import('./pages/ReservoirArtifactDetailPage'),
 );
 
+const DeploymentListPage = React.lazy(
+  () => import('./pages/DeploymentListPage'),
+);
+const DeploymentDetailPage = React.lazy(
+  () => import('./pages/DeploymentDetailPage'),
+);
+const DeploymentLauncherPage = React.lazy(
+  () => import('./pages/DeploymentLauncherPage'),
+);
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
@@ -301,6 +310,62 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             <ServiceLauncherUpdatePage />
           </Suspense>
         ),
+      },
+    ],
+  },
+  {
+    path: '/deployment',
+    handle: { labelKey: 'webui.menu.Deployment' },
+    children: [
+      {
+        path: '',
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('deployment') ? (
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentListPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
+          );
+        },
+      },
+      {
+        path: '/deployment/start',
+        handle: { labelKey: 'deployment.CreateDeployment' },
+        Component: () => {
+          const { token } = theme.useToken();
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('deployment') ? (
+            <BAIFlex
+              direction="column"
+              gap={token.paddingContentVerticalLG}
+              align="stretch"
+              style={{ paddingBottom: token.paddingContentVerticalLG }}
+            >
+              <LocationStateBreadCrumb />
+              <Suspense fallback={<Skeleton active />}>
+                <DeploymentLauncherPage />
+              </Suspense>
+            </BAIFlex>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
+          );
+        },
+      },
+      {
+        path: '/deployment/:deploymentId',
+        handle: { labelKey: 'deployment.DeploymentDetail' },
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('deployment') ? (
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentDetailPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
+          );
+        },
       },
     ],
   },

@@ -53,8 +53,18 @@ const DeploymentRevisionList: React.FC<DeploymentRevisionListProps> = ({
           size
         }
         resourceConfig {
-          resourceSlots
-          resourceOpts
+          resourceSlots {
+            entries {
+              resourceType
+              quantity
+            }
+          }
+          resourceOpts {
+            entries {
+              name
+              value
+            }
+          }
         }
         modelRuntimeConfig {
           runtimeVariant
@@ -109,7 +119,10 @@ const DeploymentRevisionList: React.FC<DeploymentRevisionListProps> = ({
       title: t('deployment.launcher.ResourceAllocation'),
       dataIndex: ['resourceConfig', 'resourceSlots'],
       render: (resourceSlots, row) => {
-        const resourceSlotsObj = JSON.parse(resourceSlots || '{}');
+        // Convert entries array to key-value object for compatibility
+        const resourceSlotsObj = _.fromPairs(
+          _.map(resourceSlots?.entries, (e) => [e.resourceType, e.quantity]),
+        );
         const processedResource = _.mapValues(
           _.pick(resourceSlotsObj, ['cpu', 'mem']),
           (value, key) =>
@@ -117,8 +130,12 @@ const DeploymentRevisionList: React.FC<DeploymentRevisionListProps> = ({
               ? _.toInteger(value) || 0
               : convertToBinaryUnit(value, 'g', 3, true)?.value || '0g',
         );
+        const shmemEntry = _.find(
+          row?.resourceConfig?.resourceOpts?.entries,
+          (e) => e.name === 'shmem',
+        );
         const shmem = convertToBinaryUnit(
-          JSON.parse(row?.resourceConfig?.resourceOpts || '{}')?.shmem,
+          shmemEntry?.value,
           'g',
           3,
           true,
@@ -160,7 +177,7 @@ const DeploymentRevisionList: React.FC<DeploymentRevisionListProps> = ({
       key: 'control',
       width: 40,
       fixed: 'right',
-      render: (value, row) => (
+      render: (_value, row) => (
         <BAIFlex gap={'xxs'}>
           <Dropdown
             menu={{

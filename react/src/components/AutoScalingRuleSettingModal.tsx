@@ -1,4 +1,3 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import {
   Form,
   Input,
@@ -8,7 +7,7 @@ import {
   App,
   Card,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -73,7 +72,7 @@ const AutoScalingRuleSettingModal: React.FC<
         $input: CreateAutoScalingRuleInput!
       ) {
         createAutoScalingRule(input: $input) {
-          autoScalingRule {
+          rule {
             id
           }
         }
@@ -86,7 +85,7 @@ const AutoScalingRuleSettingModal: React.FC<
         $input: UpdateAutoScalingRuleInput!
       ) {
         updateAutoScalingRule(input: $input) {
-          autoScalingRule {
+          rule {
             id
           }
         }
@@ -105,7 +104,7 @@ const AutoScalingRuleSettingModal: React.FC<
           commitUpdateAutoScalingRule({
             variables: { input: updateInput },
             onCompleted: (res, errors) => {
-              if (_.isEmpty(res?.updateAutoScalingRule?.autoScalingRule?.id)) {
+              if (_.isEmpty(res?.updateAutoScalingRule?.rule?.id)) {
                 message.error(
                   t('message.FailedToDelete', {
                     name: t('deployment.AutoScalingRule'),
@@ -153,7 +152,7 @@ const AutoScalingRuleSettingModal: React.FC<
               input: createInput,
             },
             onCompleted: (res, errors) => {
-              if (_.isEmpty(res?.createAutoScalingRule?.autoScalingRule?.id)) {
+              if (_.isEmpty(res?.createAutoScalingRule?.rule?.id)) {
                 message.error(t('deployment.AutoScalingRuleCreationFailed'));
                 return;
               }
