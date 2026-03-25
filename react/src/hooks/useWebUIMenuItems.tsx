@@ -96,6 +96,7 @@ export const VALID_MENU_KEYS = [
   // superAdminMenu keys
   'admin-serving',
   'admin-dashboard',
+  'admin-data',
   'agent',
   'settings',
   'maintenance',
@@ -329,6 +330,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-serving',
+    },
+    {
+      label: <WebUILink to="/admin-data">{t('webui.menu.Data')}</WebUILink>,
+      icon: <CloudUploadOutlined style={{ color: token.colorInfo }} />,
+      key: 'admin-data',
     },
     {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,

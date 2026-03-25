@@ -10,7 +10,6 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -18,7 +17,7 @@ import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import {
   Alert,
   App,
@@ -81,7 +80,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
   const [hoveredColumn, setHoveredColumn] = useState<string | null>();
@@ -106,7 +104,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         host
         ownership_type
         user
+        user_email
         group
+        group_name
         usage_mode
         permissions @since(version: "24.09.0")
         ...VFolderPermissionCellFragment
@@ -422,6 +422,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             sorter: true,
           },
           {
+            key: 'permissions',
+            title: t('data.folders.MountPermission'),
+            render: (_perm: string, vfolder) => {
+              return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
+            },
+          },
+          {
             key: 'ownership_type',
             title: t('data.folders.Type'),
             dataIndex: 'ownership_type',
@@ -442,23 +449,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             },
             sorter: true,
           },
-          {
-            key: 'permissions',
-            title: t('data.folders.MountPermission'),
-            render: (_perm: string, vfolder) => {
-              return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
-            },
-          },
+
           {
             key: 'owner',
             title: t('data.folders.Owner'),
             render: (__, vfolder) =>
-              vfolder?.user === currentUser?.uuid ||
-              (vfolder?.group === currentProject?.id && baiClient.is_admin) ? (
-                <BAIFlex justify="center">
-                  <CheckCircleOutlined />
-                </BAIFlex>
-              ) : null,
+              vfolder.ownership_type === 'user'
+                ? vfolder?.user_email
+                : vfolder?.group_name,
           },
         ]}
         {...tableProps}

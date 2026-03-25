@@ -2,40 +2,25 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  VFolderNodeListPageQuery,
-  VFolderNodeListPageQuery$data,
-  VFolderNodeListPageQuery$variables,
-} from '../__generated__/VFolderNodeListPageQuery.graphql';
-import ActionItemContent from '../components/ActionItemContent';
+import type {
+  AdminVFolderNodeListPageQuery,
+  AdminVFolderNodeListPageQuery$data,
+  AdminVFolderNodeListPageQuery$variables,
+} from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
-import FolderCreateModal from '../components/FolderCreateModal';
-import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
-import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
+import { Badge, Button, theme, Tooltip } from 'antd';
 import {
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import {
-  BAIAlertIconWithTooltip,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
-  BAINewFolderIcon,
   BAIPropertyFilter,
   BAIRestoreIcon,
   BAIVFolderDeleteButton,
@@ -45,30 +30,15 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
-export const isDeletedCategory = (status?: string | null) => {
-  return _.includes(
-    ['delete-pending', 'delete-ongoing', 'delete-complete', 'delete-error'],
-    status,
-  );
-};
-
 type VFolderNodesType = NonNullableNodeOnEdges<
-  VFolderNodeListPageQuery$data['vfolder_nodes']
+  AdminVFolderNodeListPageQuery$data['vfolder_nodes']
 >;
 
 const VFOLDER_STATUSES = [
@@ -83,44 +53,28 @@ const VFOLDER_STATUSES = [
   'DELETE_ERROR',
 ];
 
-interface VFolderNodeListPageProps {}
-
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
-const CARD_MIN_HEIGHT = 200;
-
-const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
-  ...props
-}) => {
+const AdminVFolderNodeListPage: React.FC = (props) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
-  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
-  const webuiNavigate = useWebUINavigate();
-  const [invitations] = useVFolderInvitations();
+  const domainName = useCurrentDomainValue();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.VFolderNodeListPage',
+    'table_column_overrides.AdminVFolderNodeListPage',
   );
 
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
 
-  useEffect(() => {
-    setSelectedFolderList([]);
-
-    // Reset selectedRowKeys when currentProject changes
-  }, [currentProject.id]);
-
-  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -143,6 +97,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
+
+  // eslint-disable-next-line react-hooks/refs
   queryMapRef.current[queryParams.statusCategory] = {
     queryParams,
     tablePaginationOption,
@@ -167,8 +123,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
-  const queryVariables: VFolderNodeListPageQuery$variables = {
-    scopeId: `project:${currentProject.id}`,
+  const queryVariables: AdminVFolderNodeListPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: mergeFilterValues([
@@ -180,39 +135,31 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       usageModeFilter,
     ]),
     order: queryParams.order,
-    permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+    scope_id: `domain:${domainName}`,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  useEffect(() => {
-    updateFetchKey();
-    // Update fetchKey when invitation count changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invitations.length]);
-
   const { vfolder_nodes, ...folderCounts } =
-    useLazyLoadQuery<VFolderNodeListPageQuery>(
+    useLazyLoadQuery<AdminVFolderNodeListPageQuery>(
       graphql`
-        query VFolderNodeListPageQuery(
-          $scopeId: ScopeField
+        query AdminVFolderNodeListPageQuery(
           $offset: Int
           $first: Int
           $filter: String
           $order: String
-          $permission: VFolderPermissionValueField
           $filterForActiveCount: String
           $filterForDeletedCount: String
+          $scope_id: ScopeField
         ) {
           vfolder_nodes(
-            scope_id: $scopeId
             offset: $offset
             first: $first
             filter: $filter
             order: $order
-            permission: $permission
+            scope_id: $scope_id
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
@@ -231,20 +178,16 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             count
           }
           active: vfolder_nodes(
-            scope_id: $scopeId
             first: 0
             offset: 0
             filter: $filterForActiveCount
-            permission: $permission
           ) {
             count
           }
           deleted: vfolder_nodes(
-            scope_id: $scopeId
             first: 0
             offset: 0
             filter: $filterForDeletedCount
-            permission: $permission
           ) {
             count
           }
@@ -263,133 +206,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
-      <Row
-        gutter={[16, 16]}
-        align={'stretch'}
-        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
-      >
-        <Col xs={24} md={8} xl={4} style={{ display: 'flex' }}>
-          <BAICard
-            style={{
-              width: '100%',
-              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-            }}
-          >
-            <ActionItemContent
-              title={
-                <Typography.Text
-                  style={{
-                    maxWidth: lg ? 120 : undefined,
-                    wordBreak: 'keep-all',
-                    overflowWrap: 'break-word',
-                  }}
-                >
-                  {t('data.CreateFolderAndUploadFiles')}
-                </Typography.Text>
-              }
-              buttonText={t('data.CreateFolder')}
-              icon={<BAINewFolderIcon />}
-              type="simple"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-              style={{
-                height: '100%',
-              }}
-            />
-          </BAICard>
-        </Col>
-        <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  loading
-                />
-              }
-            >
-              <StorageStatusPanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-                fetchKey={deferredFetchKey}
-                onRequestBadgeClick={() => {
-                  webuiNavigate({
-                    search: new URLSearchParams({
-                      invitation: 'true',
-                    }).toString(),
-                  });
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-        <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  loading
-                />
-              }
-            >
-              <QuotaPerStorageVolumePanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-      </Row>
       <BAICard
         variant="borderless"
         title={t('data.Folders')}
@@ -406,14 +222,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 updateFetchKey(newFetchKey);
               }}
             />
-            <Button
-              type="primary"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-            >
-              {t('data.CreateFolder')}
-            </Button>
           </BAIFlex>
         }
         styles={{
@@ -689,23 +497,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           />
         </BAIFlex>
       </BAICard>
-      <FolderCreateModal
-        open={isOpenCreateModal}
-        initialValues={{
-          usage_mode:
-            queryParams.mode === 'model'
-              ? 'model'
-              : queryParams.mode === 'automount'
-                ? 'automount'
-                : 'general',
-        }}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-          }
-          toggleCreateModal();
-        }}
-      />
       <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
@@ -732,4 +523,4 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   );
 };
 
-export default VFolderNodeListPage;
+export default AdminVFolderNodeListPage;
