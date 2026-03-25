@@ -4,12 +4,10 @@ import {
   DeploymentFilter,
 } from '../../__generated__/DeploymentSelectQuery.graphql';
 import { DeploymentSelectValueQuery } from '../../__generated__/DeploymentSelectValueQuery.graphql';
-import BAILink from '../BAILink';
-import BAISelect from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, SelectProps, Skeleton, Tooltip } from 'antd';
-import { BAIFlex, toLocalId } from 'backend.ai-ui';
+import { BAILink, BAISelect, BAIFlex, toLocalId } from 'backend.ai-ui';
 import _ from 'lodash';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -21,8 +19,10 @@ export type Deployment = NonNullableNodeOnEdges<
   DeploymentSelectQuery$data['deployments']
 >;
 
-export interface DeploymentSelectProps
-  extends Omit<SelectProps, 'options' | 'labelInValue'> {
+export interface DeploymentSelectProps extends Omit<
+  SelectProps,
+  'options' | 'labelInValue'
+> {
   fetchKey?: string;
   filter?: DeploymentFilter;
 }

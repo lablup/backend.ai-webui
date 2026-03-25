@@ -63,8 +63,18 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             size
           }
           resourceConfig {
-            resourceSlots
-            resourceOpts
+            resourceSlots {
+              entries {
+                resourceType
+                quantity
+              }
+            }
+            resourceOpts {
+              entries {
+                name
+                value
+              }
+            }
           }
         }
         replicaState {
@@ -150,8 +160,12 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         key: 'resourceSlots',
         render: (resourceSlots) => (
           <BAIFlex direction="row" gap="xs">
-            {_.map(JSON.parse(resourceSlots || '{}'), (value, key) => (
-              <ResourceNumber key={key} type={key} value={value.toString()} />
+            {_.map(resourceSlots?.entries, (entry) => (
+              <ResourceNumber
+                key={entry.resourceType}
+                type={entry.resourceType}
+                value={entry.quantity.toString()}
+              />
             ))}
           </BAIFlex>
         ),

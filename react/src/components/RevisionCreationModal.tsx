@@ -1,4 +1,3 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import DeploymentRevisionRuntimeAndMountFormItem from './DeploymentRevisionRuntimeAndMountFormItem';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
@@ -7,10 +6,15 @@ import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
-} from './ResourceAllocationFormItems';
+} from './SessionFormItems/ResourceAllocationFormItems';
 import { VFolderTableFormValues } from './VFolderTableFormItem';
 import { Form, Input, FormInstance, App } from 'antd';
-import { compareNumberWithUnits, convertToBinaryUnit } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  compareNumberWithUnits,
+  convertToBinaryUnit,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +26,6 @@ import {
 } from 'src/__generated__/RevisionCreationModalMutation.graphql';
 import {
   getAIAcceleratorWithStringifiedKey,
-  getImageFullName,
   parseModelRuntimeConfig,
   serializeModelRuntimeConfig,
 } from 'src/helper';
@@ -67,8 +70,18 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
           size
         }
         resourceConfig {
-          resourceSlots
-          resourceOpts
+          resourceSlots {
+            entries {
+              resourceType
+              quantity
+            }
+          }
+          resourceOpts {
+            entries {
+              name
+              value
+            }
+          }
           resourceGroup {
             name
           }
@@ -76,7 +89,12 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
         modelRuntimeConfig {
           runtimeVariant
           inferenceRuntimeConfig
-          environ
+          environ {
+            entries {
+              name
+              value
+            }
+          }
         }
         modelMountConfig {
           vfolder {
@@ -86,13 +104,9 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
           mountDestination
           definitionPath
         }
-        extraMounts {
-          edges {
-            node {
-              id
-              mountDestination
-            }
-          }
+        extraMounts @since(version: "25.19.0") {
+          vfolderId
+          mountDestination
         }
         image {
           id
@@ -118,35 +132,37 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
             ? 'multi-node'
             : 'single-node',
         cluster_size: revision.clusterConfig?.size || 1,
-        resource: {
-          cpu:
-            parseInt(
-              JSON.parse(revision?.resourceConfig?.resourceSlots || '{}')
-                ?.cpu || '0',
-            ) || 0,
-          mem:
-            convertToBinaryUnit(
-              JSON.parse(revision?.resourceConfig?.resourceSlots || '{}')
-                ?.mem || '0g',
-              'g',
-              3,
-              true,
-            )?.value || '0g',
-          shmem:
-            convertToBinaryUnit(
-              JSON.parse(revision?.resourceConfig?.resourceOpts || '{}')
-                ?.shmem || AUTOMATIC_DEFAULT_SHMEM,
-              'g',
-              3,
-              true,
-            )?.value || AUTOMATIC_DEFAULT_SHMEM,
-          ...getAIAcceleratorWithStringifiedKey(
-            _.omit(
-              JSON.parse(revision?.resourceConfig?.resourceSlots || '{}'),
-              ['cpu', 'mem'],
+        resource: (() => {
+          // Convert entries arrays to key-value objects for compatibility
+          const slotsObj = _.fromPairs(
+            _.map(revision?.resourceConfig?.resourceSlots?.entries, (e) => [
+              e.resourceType,
+              e.quantity,
+            ]),
+          );
+          const optsObj = _.fromPairs(
+            _.map(revision?.resourceConfig?.resourceOpts?.entries, (e) => [
+              e.name,
+              e.value,
+            ]),
+          );
+          return {
+            cpu: parseInt(slotsObj?.cpu || '0') || 0,
+            mem:
+              convertToBinaryUnit(slotsObj?.mem || '0g', 'g', 3, true)?.value ||
+              '0g',
+            shmem:
+              convertToBinaryUnit(
+                optsObj?.shmem || AUTOMATIC_DEFAULT_SHMEM,
+                'g',
+                3,
+                true,
+              )?.value || AUTOMATIC_DEFAULT_SHMEM,
+            ...getAIAcceleratorWithStringifiedKey(
+              _.omit(slotsObj, ['cpu', 'mem']),
             ),
-          ),
-        },
+          };
+        })(),
         mount_ids: [],
         mount_id_map: {},
         environments: revision?.image
@@ -173,7 +189,13 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
                   revision?.modelRuntimeConfig?.inferenceRuntimeConfig,
                 ),
                 environ: serializeModelRuntimeConfig(
-                  revision?.modelRuntimeConfig?.environ,
+                  // Convert EnvironmentVariables entries to key-value object
+                  _.fromPairs(
+                    _.map(
+                      revision?.modelRuntimeConfig?.environ?.entries,
+                      (e) => [e.name, e.value],
+                    ),
+                  ) as any,
                 ),
               },
               modelMountConfig: revision.modelMountConfig,
@@ -198,7 +220,7 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
 
   const [commitAddRevision, isInFlightAddRevision] =
     useMutation<RevisionCreationModalMutation>(graphql`
-      mutation RevisionCreationModalMutation($input: AddModelRevisionInput!) {
+      mutation RevisionCreationModalMutation($input: AddRevisionInput!) {
         addModelRevision(input: $input) {
           revision {
             id
@@ -217,23 +239,27 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
               name: values.name,
               deploymentId: deploymentId,
               image: {
-                name:
-                  values.environments.manual ||
-                  getImageFullName(values.environments.image) ||
-                  values.image.name,
-                architecture:
-                  values.environments.image?.architecture ||
-                  values.image.architecture ||
-                  'x86_64',
+                id: values.environments.image?.id || '',
               },
               modelRuntimeConfig: {
                 runtimeVariant: values.modelRuntimeConfig.runtimeVariant,
                 inferenceRuntimeConfig: serializeModelRuntimeConfig(
                   values.modelRuntimeConfig?.inferenceRuntimeConfig,
                 ),
-                environ: serializeModelRuntimeConfig(
-                  values.modelRuntimeConfig?.environ,
-                ),
+                environ: (() => {
+                  const environValue = values.modelRuntimeConfig?.environ;
+                  if (!environValue) return undefined;
+                  const rawEntries = environValue as unknown as Array<{
+                    variable: string;
+                    value: string;
+                  }>;
+                  if (!_.isArray(rawEntries)) return undefined;
+                  const entries = _.map(rawEntries, (v) => ({
+                    name: v.variable,
+                    value: v.value,
+                  }));
+                  return entries.length > 0 ? { entries } : undefined;
+                })(),
               },
               modelMountConfig: {
                 ...values.modelMountConfig,
@@ -261,24 +287,45 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
                 resourceGroup: {
                   name: values.resourceGroup,
                 },
-                resourceSlots: JSON.stringify({
-                  cpu: values.resource.cpu,
-                  mem: values.resource.mem,
-                  ...(values.resource.accelerator > 0
-                    ? {
-                        [values.resource.acceleratorType]:
-                          values.resource.accelerator,
-                      }
-                    : undefined),
-                }),
+                resourceSlots: {
+                  entries: [
+                    {
+                      resourceType: 'cpu',
+                      quantity: String(values.resource.cpu),
+                    },
+                    {
+                      resourceType: 'mem',
+                      quantity: String(values.resource.mem),
+                    },
+                    ...((values.resource.accelerator ?? 0) > 0
+                      ? [
+                          {
+                            resourceType: String(
+                              values.resource.acceleratorType,
+                            ),
+                            quantity: String(values.resource.accelerator),
+                          },
+                        ]
+                      : []),
+                  ],
+                },
                 resourceOpts: values.resource.shmem
-                  ? JSON.stringify({
-                      shmem:
-                        compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-                        compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                          ? '1g'
-                          : values.resource.shmem,
-                    })
+                  ? {
+                      entries: [
+                        {
+                          name: 'shmem',
+                          value:
+                            compareNumberWithUnits(values.resource.mem, '4g') >
+                              0 &&
+                            compareNumberWithUnits(
+                              values.resource.shmem,
+                              '1g',
+                            ) < 0
+                              ? '1g'
+                              : values.resource.shmem,
+                        },
+                      ],
+                    }
                   : undefined,
               },
             },
@@ -305,9 +352,7 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
           },
         });
       })
-      .catch((error) => {
-        console.error('Validation failed:', error);
-      });
+      .catch(() => {});
   };
 
   return (
@@ -335,7 +380,7 @@ const RevisionCreationModal: React.FC<RevisionCreationModalProps> = ({
         </Form.Item>
         <ImageEnvironmentSelectFormItems showPrivate />
         <DeploymentRevisionRuntimeAndMountFormItem
-          initialVfolderId={revision?.modelMountConfig.vfolder.id}
+          initialVfolderId={revision?.modelMountConfig?.vfolder?.id}
         />
         <ResourceAllocationFormItems enableResourcePresets />
       </Form>

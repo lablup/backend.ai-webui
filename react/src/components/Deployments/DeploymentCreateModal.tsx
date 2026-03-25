@@ -30,11 +30,10 @@ const DeploymentCreateModal: React.FC<DeploymentCreateModalProps> = ({
     'success' | 'error' | undefined
   >();
 
-  const handleSubmit = async (values: DeploymentCreateFormValues) => {
+  const handleSubmit = async (_values: DeploymentCreateFormValues) => {
     setIsSubmitting(true);
     try {
       // Mock API call - replace with actual implementation
-      console.log('Creating deployment:', values);
 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -50,8 +49,7 @@ const DeploymentCreateModal: React.FC<DeploymentCreateModalProps> = ({
 
       // Navigate to deployment detail page after creation
       webuiNavigate(`/deployment/mock-id`);
-    } catch (error) {
-      console.error('Failed to create deployment:', error);
+    } catch {
     } finally {
       setIsSubmitting(false);
     }

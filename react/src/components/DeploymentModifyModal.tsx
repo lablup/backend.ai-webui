@@ -1,9 +1,8 @@
-import BAIModal, { BAIModalProps } from './BAIModal';
 import DeploymentMetadataFormItem from './DeploymentMetadataFormItem';
 import DeploymentNetworkAccessFormItem from './DeploymentNetworkAccessFormItem';
 import DeploymentStrategyFormItem from './DeploymentStrategyFormItem';
 import { App, Form, FormInstance } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, toLocalId } from 'backend.ai-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -53,9 +52,7 @@ const DeploymentModifyModal: React.FC<DeploymentModifyModalProps> = ({
 
   const [commitUpdateDeployment, isInFlightUpdateDeployment] =
     useMutation<DeploymentModifyModalMutation>(graphql`
-      mutation DeploymentModifyModalMutation(
-        $input: UpdateModelDeploymentInput!
-      ) {
+      mutation DeploymentModifyModalMutation($input: UpdateDeploymentInput!) {
         updateModelDeployment(input: $input) {
           deployment {
             id

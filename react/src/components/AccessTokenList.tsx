@@ -54,7 +54,7 @@ const AccessTokenList: React.FC<AccessTokenListProps> = ({
     },
     {
       title: t('modelService.Status'),
-      render: (text, row) => {
+      render: (_text, row) => {
         const isExpired = dayjs.utc(row.validUntil).isBefore();
         return (
           <Tag color={isExpired ? 'red' : 'green'}>

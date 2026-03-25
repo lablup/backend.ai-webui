@@ -8,7 +8,7 @@ import {
   ResourceAllocationFormValue,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import { VFolderTableFormValues } from '../components/VFolderTableFormItem';
-import { getImageFullName, serializeModelRuntimeConfig } from '../helper';
+import { serializeModelRuntimeConfig } from '../helper';
 import { useWebUINavigate, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
@@ -26,7 +26,6 @@ import {
   Form,
   Grid,
   Steps,
-  StepsProps,
   theme,
   Popconfirm,
   Tooltip,
@@ -200,8 +199,8 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
                   )
                     ? currentValue?.initialRevision?.modelRuntimeConfig?.environ
                     : JSON.parse(
-                        currentValue?.initialRevision?.modelRuntimeConfig
-                          ?.environ || '{}',
+                        (currentValue?.initialRevision?.modelRuntimeConfig
+                          ?.environ as unknown as string) || '{}',
                       ),
                 ),
             },
@@ -233,7 +232,7 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
 
   // Validate form fields on mount
   useEffect(() => {
-    form.validateFields().catch((e) => {});
+    form.validateFields().catch((_e) => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -298,9 +297,21 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
                   values.initialRevision.modelRuntimeConfig
                     ?.inferenceRuntimeConfig,
                 ),
-                environ: serializeModelRuntimeConfig(
-                  values.initialRevision.modelRuntimeConfig?.environ,
-                ),
+                environ: (() => {
+                  const environValue =
+                    values.initialRevision.modelRuntimeConfig?.environ;
+                  if (!environValue) return undefined;
+                  const entries = _.isArray(environValue)
+                    ? _.map(
+                        environValue as unknown as Array<{
+                          variable: string;
+                          value: string;
+                        }>,
+                        (v) => ({ name: v.variable, value: v.value }),
+                      )
+                    : [];
+                  return entries.length > 0 ? { entries } : undefined;
+                })(),
               },
               modelMountConfig: {
                 ...values.initialRevision.modelMountConfig,
@@ -329,28 +340,44 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
                 resourceGroup: {
                   name: values.resourceGroup,
                 },
-                resourceSlots: JSON.stringify({
-                  cpu: values.resource.cpu,
-                  mem: values.resource.mem,
-                  ...((values.resource.accelerator ?? 0) > 0
-                    ? {
-                        ...(typeof values.resource.acceleratorType === 'string'
-                          ? {
-                              [values.resource.acceleratorType]:
-                                values.resource.accelerator,
-                            }
-                          : {}),
-                      }
-                    : undefined),
-                }),
+                resourceSlots: {
+                  entries: [
+                    {
+                      resourceType: 'cpu',
+                      quantity: String(values.resource.cpu),
+                    },
+                    {
+                      resourceType: 'mem',
+                      quantity: String(values.resource.mem),
+                    },
+                    ...((values.resource.accelerator ?? 0) > 0 &&
+                    typeof values.resource.acceleratorType === 'string'
+                      ? [
+                          {
+                            resourceType: values.resource.acceleratorType,
+                            quantity: String(values.resource.accelerator),
+                          },
+                        ]
+                      : []),
+                  ],
+                },
                 resourceOpts: values.resource.shmem
-                  ? JSON.stringify({
-                      shmem:
-                        compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-                        compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                          ? '1g'
-                          : values.resource.shmem,
-                    })
+                  ? {
+                      entries: [
+                        {
+                          name: 'shmem',
+                          value:
+                            compareNumberWithUnits(values.resource.mem, '4g') >
+                              0 &&
+                            compareNumberWithUnits(
+                              values.resource.shmem,
+                              '1g',
+                            ) < 0
+                              ? '1g'
+                              : values.resource.shmem,
+                        },
+                      ],
+                    }
                   : undefined,
               },
             },
@@ -402,7 +429,6 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
             }
           },
           onError: (err) => {
-            console.error('Failed to create deployment:', err);
             upsertNotification({
               key: DEPLOYMENT_LAUNCHER_NOTI_PREFIX + deploymentName,
               message: t('deployment.launcher.DeploymentFailed'),
@@ -461,7 +487,7 @@ const DeploymentLauncherPage: React.FC<DeploymentLauncherPageProps> = ({
           </BAIFlex>
 
           <Form.Provider
-            onFormChange={(name, info) => {
+            onFormChange={(_name, _info) => {
               syncFormToURLWithDebounce();
             }}
           >

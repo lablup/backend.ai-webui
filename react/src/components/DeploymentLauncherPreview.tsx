@@ -3,12 +3,12 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useThemeMode } from '../hooks/useThemeMode';
 import {
   DeploymentLauncherFormValue,
   DeploymentLauncherStepKey,
 } from '../pages/DeploymentLauncherPage';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import VFolderLazyView from './VFolderLazyView';
@@ -28,15 +28,12 @@ import { BAICard, BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const DeploymentLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: DeploymentLauncherStepKey) => void;
 }> = ({ onClickEditStep }) => {
   const { t } = useTranslation();
   const form = Form.useFormInstance<DeploymentLauncherFormValue>();
-  const { isDarkMode } = useThemeMode();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo =
@@ -192,7 +189,7 @@ const DeploymentLauncherPreview: React.FC<{
               'modelRuntimeConfig',
               'inferenceRuntimeConfig',
             ]) as Array<{ variable: string; value: string }>,
-            (v, idx) => {
+            (_v, idx) => {
               return (
                 form.getFieldError([
                   'initialRevision',
@@ -221,7 +218,7 @@ const DeploymentLauncherPreview: React.FC<{
               'modelRuntimeConfig',
               'environ',
             ]) as Array<{ variable: string; value: string }>,
-            (v, idx) => {
+            (_v, idx) => {
               return (
                 form.getFieldError([
                   'initialRevision',
@@ -590,13 +587,7 @@ const DeploymentLauncherPreview: React.FC<{
                     key: 'inferenceRuntimeConfig',
                     label: t('deployment.launcher.InferenceRuntimeConfig'),
                     children: (
-                      <SyntaxHighlighter
-                        style={isDarkMode ? dark : undefined}
-                        customStyle={{
-                          margin: 0,
-                          width: '100%',
-                        }}
-                      >
+                      <SyntaxHighlighter language="bash">
                         {_.map(
                           form.getFieldValue([
                             'initialRevision',
@@ -621,13 +612,7 @@ const DeploymentLauncherPreview: React.FC<{
                     key: 'environmentVariables',
                     label: t('deployment.launcher.EnvironmentVariables'),
                     children: (
-                      <SyntaxHighlighter
-                        style={isDarkMode ? dark : undefined}
-                        customStyle={{
-                          margin: 0,
-                          width: '100%',
-                        }}
-                      >
+                      <SyntaxHighlighter language="bash">
                         {_.map(
                           form.getFieldValue([
                             'initialRevision',
