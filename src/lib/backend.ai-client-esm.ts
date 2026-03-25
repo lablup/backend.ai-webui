@@ -860,6 +860,10 @@ class Client {
     if (this.isManagerVersionCompatibleWith('25.13.2')) {
       this._features['copy-on-terminal'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('25.14.0')) {
+      this._features['reservoir'] = true;
+      this._features['deployment'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('25.15.0')) {
       this._features['agent-stats'] = true;
     }
