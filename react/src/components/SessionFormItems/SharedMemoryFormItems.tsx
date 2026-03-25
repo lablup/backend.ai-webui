@@ -136,7 +136,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   noStyle
                   name={['resource', 'shmem']}
                   hidden={getFieldValue('enabledAutomaticShmem')}
-                  dependencies={[['resource', 'mem']]}
+                  dependencies={[['resource', 'mem'], 'enabledAutomaticShmem']}
                   rules={[
                     {
                       required: true,
