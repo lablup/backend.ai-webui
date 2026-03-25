@@ -47,8 +47,10 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableAgentSorterKeys, key);
 };
 
-export interface BAIAgentTableProps
-  extends Omit<BAITableProps<any>, 'dataSource' | 'columns' | 'onChangeOrder'> {
+export interface BAIAgentTableProps extends Omit<
+  BAITableProps<any>,
+  'dataSource' | 'columns' | 'onChangeOrder'
+> {
   agentsFragment: BAIAgentTableFragment$key;
   onClickAgentName?: (agent: AgentNodeInList) => void;
   onChangeOrder?: (
@@ -187,7 +189,8 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                     <BAIFlex
                       key={key}
                       justify="between"
-                      style={{ minWidth: 220 }}
+                      style={{ width: '100%' }}
+                      gap={'xs'}
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
@@ -233,7 +236,8 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                     <BAIFlex
                       key={'mem'}
                       justify="between"
-                      style={{ minWidth: 220 }}
+                      style={{ width: '100%' }}
+                      gap={'xs'}
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
@@ -275,8 +279,8 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                     <BAIFlex
                       key={key}
                       justify="between"
-                      style={{ minWidth: 220 }}
-                      gap="xxs"
+                      gap={'xs'}
+                      style={{ width: '100%' }}
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />

@@ -272,6 +272,7 @@ const AgentList: React.FC<AgentListProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAIAgentTable
+        resizable
         agentsFragment={filterOutEmpty(
           agent_nodes?.edges.map((e) => e?.node) ?? [],
         )}
