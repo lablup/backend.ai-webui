@@ -7,7 +7,7 @@ import {
   MyKeypairManagementModalQuery$data,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, Empty, Tag } from 'antd';
+import { Alert, Empty, Tag, theme } from 'antd';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -43,6 +43,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('active');
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -90,7 +91,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           count
         }
         user {
-          main_access_key @since(version: "23.09.7")
+          main_access_key
         }
       }
     `,
@@ -124,7 +125,11 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           <Alert
             type="info"
             showIcon
-            icon={<KeyRoundIcon style={{ width: 16, height: 16 }} />}
+            icon={
+              <KeyRoundIcon
+                style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
+              />
+            }
             title={
               <BAIFlex gap="xs" align="center">
                 <BAIText>{t('credential.MainAccessKey')}:</BAIText>
