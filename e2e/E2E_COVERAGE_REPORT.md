@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-12
+> **Last Updated:** 2026-03-24
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,11 +12,12 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 215 / 372 features covered (58%)**
+**Overall (in-scope routes): 231 / 388 features covered (60%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 16 | 14 | 🔶 88% |
+| Authentication | `/interactive-login` | 23 | 21 | 🔶 91% |
+| Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 20 | 12 | 🔶 60% |
@@ -44,7 +45,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **319** | **166** | **52%** |
+| **Total** | | **335** | **182** | **54%** |
 
 ---
 
@@ -63,7 +64,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -80,10 +81,36 @@
 | Password change empty validation | ✅ | `password change form shows a validation error when submitted empty` |
 | Password change same-password rejection | ✅ | `password change form rejects a new password that is the same as the current one` |
 | Full password change flow (real account) | ✅ | `user can complete the password change flow with a real account and re-login is attempted` |
+| Forgot password modal open/close | ✅ | `User can open the forgot password modal from login page`, `User can close the modal and return to login form` |
+| Forgot password email send success | ✅ | `User can send a password change email successfully` |
+| Forgot password email send error | ✅ | `User sees an error when email sending fails` |
+| Forgot password form validation (empty) | ✅ | `User cannot submit without email` |
+| Forgot password form validation (invalid email) | ✅ | `User cannot submit with invalid email format` |
+| Forgot password link config-driven visibility | ✅ | `"Forgot password?" link is hidden when config is disabled` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 
-**Coverage: 🔶 14/16 features**
+**Coverage: 🔶 21/23 features**
+
+---
+
+### 1b. Change Password (`/change-password`)
+
+**Test files:** [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts)
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Display password change form with valid token | ✅ | `User sees the password change form with a valid token` |
+| Successful password change | ✅ | `User can successfully change password with valid token` |
+| Redirect to login after success | ✅ | `User is redirected to login page after closing the success modal` |
+| Invalid token view (no token) | ✅ | `User sees invalid token view when accessing the page without a token` |
+| Invalid token view (server rejection) | ✅ | `User sees invalid token view when server rejects the token` |
+| Email mismatch error | ✅ | `User sees email mismatch error when email does not match the token` |
+| Form validation (empty fields) | ✅ | `User cannot submit with empty fields` |
+| Form validation (weak password) | ✅ | `User cannot submit with a weak password` |
+| Form validation (password mismatch) | ✅ | `User cannot submit when passwords do not match` |
+
+**Coverage: ✅ 9/9 features**
 
 ---
 
@@ -985,6 +1012,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | Page Route | Functional Tests | Visual Tests | Priority |
 |------------|:---:|:---:|:---:|
 | `/interactive-login` | 🔶 | ✅ | - |
+| `/change-password` | ✅ | ❌ | - |
 | `/start` | 🔶 | ✅ | - |
 | `/dashboard` | 🔶 | ✅ | - |
 | `/session` | 🔶 | ✅ | P3 |
