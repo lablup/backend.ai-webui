@@ -40,9 +40,19 @@
 <body>
   <script nonce="{{nonce}}">
     //To avoid flickering when first loading the page, we add a class to the body to indicate the theme.
-    const userPrefersDark = localStorage.getItem('backendaiwebui.settings.isDarkMode');
+    const storedThemeMode = localStorage.getItem('backendaiwebui.settings.themeMode');
     const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    globalThis.isDarkMode = userPrefersDark === null || userPrefersDark === undefined ? systemPrefersDark : userPrefersDark === 'true';
+    // ahooks stores JSON-serialized values, so parse the stored themeMode
+    let parsedThemeMode;
+    try { parsedThemeMode = storedThemeMode ? JSON.parse(storedThemeMode) : null; } catch(e) { parsedThemeMode = null; }
+    if (parsedThemeMode === 'dark') {
+      globalThis.isDarkMode = true;
+    } else if (parsedThemeMode === 'light') {
+      globalThis.isDarkMode = false;
+    } else {
+      // 'system' or unset: use system preference
+      globalThis.isDarkMode = systemPrefersDark;
+    }
     if (globalThis.isDarkMode) {
       document.body.classList.add('dark-theme');
     }

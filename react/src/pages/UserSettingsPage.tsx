@@ -11,6 +11,7 @@ import {
   useBAISettingGeneralState,
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
+import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
@@ -33,6 +34,8 @@ const UserPreferencesPage = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+
+  const { themeMode, setThemeMode } = useThemeMode();
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
@@ -100,6 +103,35 @@ const UserPreferencesPage = () => {
       'data-testid': 'group-preferences',
       title: t('userSettings.Preferences'),
       settingItems: filterOutEmpty([
+        {
+          'data-testid': 'items-theme-mode',
+          type: 'select',
+          title: t('userSettings.ThemeMode'),
+          description: t('userSettings.DescThemeMode'),
+          selectProps: {
+            options: [
+              {
+                label: t('userSettings.FollowSystem'),
+                value: 'system',
+              },
+              {
+                label: t('userSettings.LightTheme'),
+                value: 'light',
+              },
+              {
+                label: t('userSettings.DarkTheme'),
+                value: 'dark',
+              },
+            ],
+          },
+          defaultValue: 'system',
+          value: themeMode,
+          onChange: (value: string | number | undefined) => {
+            if (value === 'system' || value === 'light' || value === 'dark') {
+              setThemeMode(value);
+            }
+          },
+        },
         {
           'data-testid': 'items-desktop-notification',
           type: 'checkbox',

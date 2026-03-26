@@ -6,10 +6,9 @@ import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import {
   PropsWithChildren,
   createContext,
-  useCallback,
   useContext,
   useEffect,
-  useMemo,
+  useState,
 } from 'react';
 
 type themeModeValue = 'system' | 'dark' | 'light';
@@ -20,14 +19,13 @@ type themeModeValue = 'system' | 'dark' | 'light';
  * For styles before React rendering, please refer to the index.html related to `dark-theme` class name of body.
  * This hook only takes effect after React rendering.
  *
- * @returns An object containing the current theme mode, whether it is dark mode or not,
- * and a function to set the theme mode.
+ * Only `themeMode` is persisted to localStorage. `isDarkMode` is derived from
+ * `themeMode` and the OS media query preference — never stored separately.
  */
 
 type ThemeModeContextType = {
   themeMode: themeModeValue;
   isDarkMode: boolean;
-  setIsDarkMode: (value: boolean) => void;
   setThemeMode: (value: themeModeValue) => void;
 };
 
@@ -38,58 +36,53 @@ const ThemeModeContext = createContext<ThemeModeContextType | undefined>(
 export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const [themeMode, setThemeMode] = useLocalStorageGlobalState<themeModeValue>(
-    'backendaiwebui.settings.themeMode',
-    'system',
+  'use memo';
+
+  const [rawThemeMode, setThemeMode] =
+    useLocalStorageGlobalState<themeModeValue>(
+      'backendaiwebui.settings.themeMode',
+      'system',
+    );
+  const themeMode: themeModeValue = rawThemeMode ?? 'system';
+
+  const [systemIsDark, setSystemIsDark] = useState(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
   );
 
-  const [isDarkMode, _setIsDarkMode] = useLocalStorageGlobalState<boolean>(
-    'backendaiwebui.settings.isDarkMode',
-    window.matchMedia('(prefers-color-scheme: dark)').matches,
-  );
-
-  const setIsDarkMode = useCallback(
-    (value: boolean) => {
-      _setIsDarkMode(value);
-      if (value) {
-        document.body.classList.add('dark-theme');
-      } else {
-        document.body.classList.remove('dark-theme');
-      }
-      globalThis.isDarkMode = value;
-
-      document.dispatchEvent(
-        new CustomEvent('change:backendaiwebui.setting.isDarkMode', {
-          detail: value,
-        }),
-      );
-    },
-    [_setIsDarkMode],
-  );
   useEffect(() => {
-    if (themeMode === 'system') {
-      // set current system theme mode if isDarkMode is not set
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      // listen for changes
-      const handler = (event: any) => {
-        setIsDarkMode(event.matches);
-      };
-      mediaQuery.addEventListener('change', handler);
-      return () => mediaQuery.removeEventListener('change', handler);
-    } else {
-      const nextIsDarkMode = themeMode === 'dark';
-      setIsDarkMode(nextIsDarkMode);
-    }
-  }, [themeMode, setIsDarkMode]);
+    if (themeMode !== 'system') return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (event: MediaQueryListEvent) => {
+      setSystemIsDark(event.matches);
+    };
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, [themeMode]);
 
-  const value = useMemo(() => {
-    return {
-      themeMode,
-      setThemeMode,
-      isDarkMode,
-      setIsDarkMode,
-    } as ThemeModeContextType;
-  }, [themeMode, setThemeMode, isDarkMode, setIsDarkMode]);
+  const isDarkMode =
+    themeMode === 'dark' ? true : themeMode === 'light' ? false : systemIsDark;
+
+  // Apply side effects whenever isDarkMode changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+    globalThis.isDarkMode = isDarkMode;
+    document.dispatchEvent(
+      new CustomEvent('change:backendaiwebui.setting.isDarkMode', {
+        detail: isDarkMode,
+      }),
+    );
+  }, [isDarkMode]);
+
+  const value: ThemeModeContextType = {
+    themeMode,
+    isDarkMode,
+    setThemeMode,
+  };
+
   return (
     <ThemeModeContext.Provider value={value}>
       {children}
