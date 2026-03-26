@@ -587,6 +587,7 @@ export function useMultiStepNotification(
   }, [multiStepState.overallStatus, config.steps.length, runFromStep]);
 
   const retry = useCallback(() => {
+    // Retry is only valid from a failed state; cancelled sequences must use start()
     if (multiStepState.overallStatus !== 'failed') return;
 
     const firstFailedIndex = _.findIndex(
@@ -624,15 +625,40 @@ export function useMultiStepNotification(
     abortControllerRef.current?.abort();
     sseCleanupRef.current?.();
 
-    const { key, message, onCancelled } = config;
+    // Mark any pending steps as cancelled
+    for (let i = 0; i < stepStatesRef.current.length; i++) {
+      if (stepStatesRef.current[i]?.status === 'pending') {
+        stepStatesRef.current[i] = { status: 'cancelled' };
+      }
+    }
+
+    // Clear eager results and mark any pending eager steps as cancelled
+    eagerResultsRef.current.forEach((_, idx) => {
+      if (stepStatesRef.current[idx]?.status === 'pending') {
+        stepStatesRef.current[idx] = { status: 'cancelled' };
+      }
+    });
+    eagerResultsRef.current.clear();
+
+    const { key, message, steps, onCancelled } = config;
     const cancelledMessage = onCancelled?.message ?? message;
+    const currentStepDef = steps[multiStepState.currentStep];
+    const cancelledActionButton = currentStepDef?.actionButtons?.cancelled;
 
     upsertNotification({
       key,
       message: cancelledMessage,
       backgroundTask: { status: 'rejected' },
+      description: onCancelled?.message,
       open: true,
       duration: CLOSING_DURATION,
+      ...(cancelledActionButton
+        ? {
+            extraData: {
+              actionButton: cancelledActionButton,
+            },
+          }
+        : {}),
     });
 
     syncState('cancelled', multiStepState.currentStep);
