@@ -431,6 +431,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                       >
                         {_.includes(resourceSlotKey, 'mem') ? (
                           <BAIDynamicUnitInputNumber
+                            defaultUnit="g"
                             style={{ width: '100%' }}
                           />
                         ) : (

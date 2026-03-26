@@ -218,6 +218,7 @@ const ManageImageResourceLimitModal: React.FC<
                       >
                         {key === 'mem' ? (
                           <BAIDynamicUnitInputNumber
+                            defaultUnit="g"
                             min={DEFAULT_MIN_MEMORY}
                             style={{ width: '100%' }}
                           />

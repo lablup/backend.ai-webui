@@ -35,8 +35,10 @@ import {
   useMutation,
 } from 'react-relay';
 
-export interface BAIProjectSettingModalProps
-  extends Omit<BAIModalProps, 'title' | 'loading'> {
+export interface BAIProjectSettingModalProps extends Omit<
+  BAIModalProps,
+  'title' | 'loading'
+> {
   projectFragment: BAIProjectSettingModalFragment$key | null;
 }
 
@@ -507,6 +509,7 @@ const BAIProjectSettingModal = ({
               >
                 {_.includes(resourceSlotKey, 'mem') ? (
                   <BAIDynamicUnitInputNumber
+                    defaultUnit="g"
                     max="300p"
                     style={{ width: '100%' }}
                   />
