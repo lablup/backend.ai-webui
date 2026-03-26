@@ -138,6 +138,13 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Sélectionner une paire de clés"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Le(s) dossier(s) suivant(s) sera(ont) mis à jour.",
     "ProjectResourcePolicy": "Politique de ressources du projet",

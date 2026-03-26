@@ -141,6 +141,13 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "키페어를 선택해주세요"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "전체 화면 종료",
+    "Fullscreen": "전체 화면",
+    "Maximize": "최대화",
+    "Minimize": "최소화",
+    "Restore": "복원"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",

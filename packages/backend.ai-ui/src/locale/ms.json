@@ -138,6 +138,13 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Pasangan Kunci"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",

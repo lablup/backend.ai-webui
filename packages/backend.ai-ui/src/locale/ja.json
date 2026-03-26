@@ -138,6 +138,13 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "キーペアを選択"
   },
+  "comp:BAIModal": {
+    "ExitFullscreen": "全画面終了",
+    "Fullscreen": "全画面",
+    "Maximize": "最大化",
+    "Minimize": "最小化",
+    "Restore": "復元"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
