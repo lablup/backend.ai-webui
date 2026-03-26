@@ -295,6 +295,12 @@ export function useMultiStepNotification(
   );
   const abortControllerRef = useRef<AbortController | null>(null);
   const sseCleanupRef = useRef<(() => void) | null>(null);
+  /**
+   * Cache of eagerly-started promises for steps with `dependsOn === false`.
+   * Keyed by step index. Entries are deleted once the step is resolved/rejected
+   * in the sequential display loop.
+   */
+  const eagerResultsRef = useRef<Map<number, Promise<unknown>>>(new Map());
 
   const [multiStepState, setMultiStepState] = useState<MultiStepState>({
     currentStep: 0,
@@ -346,6 +352,54 @@ export function useMultiStepNotification(
         }
       }
 
+      // Fire eager (independent) steps immediately in parallel before entering
+      // the sequential display loop. Steps with `dependsOn === false` do not
+      // need a previous result so they can start right away.
+      for (let i = startIndex; i < total; i++) {
+        const step = steps[i];
+        if (
+          step.dependsOn === false &&
+          stepStatesRef.current[i]?.status !== 'resolved'
+        ) {
+          stepStatesRef.current[i] = { status: 'pending' };
+          const eagerPromise = (async () => {
+            const executorResult = step.executor(undefined as never, signal);
+            if (executorResult instanceof Promise) {
+              return executorResult;
+            }
+            // SSE eager step – wrap in a promise identical to the sequential path
+            const sseResult = executorResult as { taskId: string };
+            return new Promise<unknown>((resolve, reject) => {
+              const cleanup = listenToBackgroundTask(sseResult.taskId, {
+                onUpdated: _.throttle(
+                  () => {
+                    // Progress updates for eager SSE steps are intentionally
+                    // suppressed here; the sequential display loop will reflect
+                    // progress once the display catches up to this step index.
+                  },
+                  100,
+                  { leading: true, trailing: false },
+                ),
+                onDone: () => {
+                  resolve(sseResult);
+                },
+                onTaskFailed: (data: any) => {
+                  reject(new Error(data?.message || 'Background task failed'));
+                },
+                onFailed: (data: any) => {
+                  reject(new Error(data?.message || 'Background task failed'));
+                },
+                onTaskCancelled: () => {
+                  reject(new Error('Background task cancelled'));
+                },
+              });
+              sseCleanupRef.current = cleanup;
+            });
+          })();
+          eagerResultsRef.current.set(i, eagerPromise);
+        }
+      }
+
       for (let i = startIndex; i < total; i++) {
         const step = steps[i];
 
@@ -373,61 +427,78 @@ export function useMultiStepNotification(
         });
 
         try {
-          const executorInput =
-            step.dependsOn === false ? undefined : prevResult;
-          const executorResult = step.executor(executorInput as never, signal);
-
-          if (executorResult instanceof Promise) {
-            const result = await executorResult;
+          if (eagerResultsRef.current.has(i)) {
+            // This step was eagerly started – await its cached promise.
+            // If it already resolved the await returns immediately; if still
+            // pending we wait here just as in the normal sequential path.
+            const result = await eagerResultsRef.current.get(i)!;
+            eagerResultsRef.current.delete(i);
             stepStatesRef.current[i] = { status: 'resolved', result };
             prevResult = result;
           } else {
-            // SSE step - listen to background task via SSE
-            const sseResult = executorResult as { taskId: string };
-            const result = await new Promise<unknown>((resolve, reject) => {
-              const cleanup = listenToBackgroundTask(sseResult.taskId, {
-                onUpdated: _.throttle(
-                  (data: any) => {
-                    const ratio = data.current_progress / data.total_progress;
-                    stepStatesRef.current[i] = {
-                      ...stepStatesRef.current[i],
-                      status: 'pending',
-                      progress: ratio * 100,
-                    };
-                    syncState('running', i);
-                    upsertNotification({
-                      key,
-                      message,
-                      backgroundTask: {
+            const executorInput =
+              step.dependsOn === false ? undefined : prevResult;
+            const executorResult = step.executor(
+              executorInput as never,
+              signal,
+            );
+
+            if (executorResult instanceof Promise) {
+              const result = await executorResult;
+              stepStatesRef.current[i] = { status: 'resolved', result };
+              prevResult = result;
+            } else {
+              // SSE step - listen to background task via SSE
+              const sseResult = executorResult as { taskId: string };
+              const result = await new Promise<unknown>((resolve, reject) => {
+                const cleanup = listenToBackgroundTask(sseResult.taskId, {
+                  onUpdated: _.throttle(
+                    (data: any) => {
+                      const ratio = data.current_progress / data.total_progress;
+                      stepStatesRef.current[i] = {
+                        ...stepStatesRef.current[i],
                         status: 'pending',
-                        percent: ratio * 100,
-                      },
-                      description: stepPendingDescription,
-                      open: true,
-                      duration: 0,
-                      skipDesktopNotification: true,
-                    });
+                        progress: ratio * 100,
+                      };
+                      syncState('running', i);
+                      upsertNotification({
+                        key,
+                        message,
+                        backgroundTask: {
+                          status: 'pending',
+                          percent: ratio * 100,
+                        },
+                        description: stepPendingDescription,
+                        open: true,
+                        duration: 0,
+                        skipDesktopNotification: true,
+                      });
+                    },
+                    100,
+                    { leading: true, trailing: false },
+                  ),
+                  onDone: () => {
+                    resolve(sseResult);
                   },
-                  100,
-                  { leading: true, trailing: false },
-                ),
-                onDone: () => {
-                  resolve(sseResult);
-                },
-                onTaskFailed: (data: any) => {
-                  reject(new Error(data?.message || 'Background task failed'));
-                },
-                onFailed: (data: any) => {
-                  reject(new Error(data?.message || 'Background task failed'));
-                },
-                onTaskCancelled: () => {
-                  reject(new Error('Background task cancelled'));
-                },
+                  onTaskFailed: (data: any) => {
+                    reject(
+                      new Error(data?.message || 'Background task failed'),
+                    );
+                  },
+                  onFailed: (data: any) => {
+                    reject(
+                      new Error(data?.message || 'Background task failed'),
+                    );
+                  },
+                  onTaskCancelled: () => {
+                    reject(new Error('Background task cancelled'));
+                  },
+                });
+                sseCleanupRef.current = cleanup;
               });
-              sseCleanupRef.current = cleanup;
-            });
-            stepStatesRef.current[i] = { status: 'resolved', result };
-            prevResult = result;
+              stepStatesRef.current[i] = { status: 'resolved', result };
+              prevResult = result;
+            }
           }
 
           // Update description after step resolved (intermediate steps skip desktop notification)
@@ -456,6 +527,8 @@ export function useMultiStepNotification(
         } catch (err) {
           const error = err instanceof Error ? err : new Error(String(err));
           stepStatesRef.current[i] = { status: 'rejected', error };
+          // Remove the cached eager promise for this step so retry re-executes it
+          eagerResultsRef.current.delete(i);
 
           const stepRejectedDescription =
             step.onChange?.rejected ?? error.message;
@@ -506,8 +579,9 @@ export function useMultiStepNotification(
   const start = useCallback(() => {
     if (multiStepState.overallStatus === 'running') return;
 
-    // Reset all step states
+    // Reset all step states and clear any cached eager promises
     stepStatesRef.current = createInitialStepStates(config.steps.length);
+    eagerResultsRef.current.clear();
 
     runFromStep(0);
   }, [multiStepState.overallStatus, config.steps.length, runFromStep]);
@@ -522,13 +596,27 @@ export function useMultiStepNotification(
 
     if (firstFailedIndex < 0) return;
 
-    // Reset failed and subsequent steps to idle
+    // Reset failed and subsequent steps to idle.
+    // Preserve already-resolved eager steps so they are not re-executed.
     for (let i = firstFailedIndex; i < stepStatesRef.current.length; i++) {
-      stepStatesRef.current[i] = { status: 'idle' };
+      const step = config.steps[i];
+      const isEagerResolved =
+        step?.dependsOn === false &&
+        stepStatesRef.current[i]?.status === 'resolved';
+      if (!isEagerResolved) {
+        stepStatesRef.current[i] = { status: 'idle' };
+      }
     }
 
+    // Clear any stale eager promises for steps that were not yet resolved
+    eagerResultsRef.current.forEach((_, idx) => {
+      if (stepStatesRef.current[idx]?.status !== 'resolved') {
+        eagerResultsRef.current.delete(idx);
+      }
+    });
+
     runFromStep(firstFailedIndex);
-  }, [multiStepState.overallStatus, runFromStep]);
+  }, [multiStepState.overallStatus, config.steps, runFromStep]);
 
   const cancel = useCallback(() => {
     if (multiStepState.overallStatus !== 'running') return;
