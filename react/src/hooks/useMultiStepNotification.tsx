@@ -312,7 +312,7 @@ export function useMultiStepNotification(
     createInitialStepStates(config.steps.length),
   );
   const abortControllerRef = useRef<AbortController | null>(null);
-  const sseCleanupRef = useRef<(() => void) | null>(null);
+  const sseCleanupMapRef = useRef<Map<number, () => void>>(new Map());
   /**
    * Cache of eagerly-started promises for steps with `dependsOn === false`.
    * Keyed by step index. Entries are deleted once the step is resolved/rejected
@@ -386,6 +386,7 @@ export function useMultiStepNotification(
           stepStatesRef.current[i]?.status !== 'resolved'
         ) {
           stepStatesRef.current[i] = { status: 'pending' };
+          const eagerStepIndex = i;
           const eagerPromise = (async () => {
             const executorResult = step.executor(undefined as never, signal);
             if (executorResult instanceof Promise) {
@@ -417,7 +418,7 @@ export function useMultiStepNotification(
                   reject(new Error('Background task cancelled'));
                 },
               });
-              sseCleanupRef.current = cleanup;
+              sseCleanupMapRef.current.set(eagerStepIndex, cleanup);
             });
           })();
           eagerResultsRef.current.set(i, eagerPromise);
@@ -425,6 +426,9 @@ export function useMultiStepNotification(
       }
 
       for (let i = startIndex; i < total; i++) {
+        // Stop the loop if cancel() was called between steps
+        if (signal.aborted) return;
+
         const step = steps[i];
 
         // Update step to pending
@@ -484,7 +488,10 @@ export function useMultiStepNotification(
                 const cleanup = listenToBackgroundTask(sseResult.taskId, {
                   onUpdated: _.throttle(
                     (data: any) => {
-                      const ratio = data.current_progress / data.total_progress;
+                      const ratio =
+                        data.total_progress > 0
+                          ? data.current_progress / data.total_progress
+                          : 0;
                       stepStatesRef.current[i] = {
                         ...stepStatesRef.current[i],
                         status: 'pending',
@@ -530,7 +537,7 @@ export function useMultiStepNotification(
                     reject(new Error('Background task cancelled'));
                   },
                 });
-                sseCleanupRef.current = cleanup;
+                sseCleanupMapRef.current.set(i, cleanup);
               });
               stepStatesRef.current[i] = { status: 'resolved', result };
               prevResult = result;
@@ -677,7 +684,9 @@ export function useMultiStepNotification(
     if (multiStepState.overallStatus !== 'running') return;
 
     abortControllerRef.current?.abort();
-    sseCleanupRef.current?.();
+    // Clean up all active SSE connections
+    sseCleanupMapRef.current.forEach((cleanup) => cleanup());
+    sseCleanupMapRef.current.clear();
 
     // Mark any pending steps as cancelled
     for (let i = 0; i < stepStatesRef.current.length; i++) {
