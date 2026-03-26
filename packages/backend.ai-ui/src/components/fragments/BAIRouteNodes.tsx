@@ -181,12 +181,13 @@ const BAIRouteNodes = ({
             </BAITag>
           ) : null,
       },
-      {
-        title: t('comp:BAIRouteNodes.TrafficRatio'),
-        dataIndex: 'trafficRatio',
-        key: 'trafficRatio',
-        sorter: isEnableSorter('trafficRatio'),
-      },
+      // TODO(needs-backend): Uncomment when the backend supports traffic ratio for routes
+      // {
+      //   title: t('comp:BAIRouteNodes.TrafficRatio'),
+      //   dataIndex: 'trafficRatio',
+      //   key: 'trafficRatio',
+      //   sorter: isEnableSorter('trafficRatio'),
+      // },
       {
         title: t('comp:BAIRouteNodes.CreatedAt'),
         dataIndex: 'createdAt',
