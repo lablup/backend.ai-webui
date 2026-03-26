@@ -44,7 +44,12 @@ import {
   type FormInstance,
   type MenuProps,
 } from 'antd';
-import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIFlex,
+  useBAILogger,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -129,6 +134,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
     title: string;
     content: string;
   } | null>(null);
+  const [showChangePasswordEmailModal, setShowChangePasswordEmailModal] =
+    useState(false);
 
   // Derive effective help panel visibility: hidden when modal is closed
   const effectiveHelpPanel = isOpen ? helpPanel : null;
@@ -145,12 +152,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       <BAIModal
         open={isOpen}
         closable={false}
-        maskClosable={false}
+        mask={!needToResetPassword}
         keyboard={false}
+        maskClosable={false}
         footer={null}
         width={modalWidth}
         getContainer={false}
-        mask={!needToResetPassword}
         title={
           <div style={{ textAlign: 'center' }}>
             <img
@@ -420,12 +427,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   </Typography.Text>
                   <Typography.Link
                     style={{ fontSize: 'inherit' }}
-                    onClick={() =>
-                      setHelpPanel({
-                        title: t('login.SendChangePasswordEmail'),
-                        content: t('login.DescChangePasswordEmail'),
-                      })
-                    }
+                    onClick={() => setShowChangePasswordEmailModal(true)}
                   >
                     {t('login.ChangePassword')}
                   </Typography.Link>
@@ -515,6 +517,15 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         preloadedToken={signupPreloadedToken}
         onRequestClose={() => onSetShowSignupModal(false)}
       />
+
+      {/* Change Password Email Modal */}
+      <BAIUnmountAfterClose>
+        <ChangePasswordEmailModal
+          open={showChangePasswordEmailModal}
+          apiEndpoint={apiEndpoint}
+          onClose={() => setShowChangePasswordEmailModal(false)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
@@ -593,7 +604,7 @@ const ResetPasswordRequiredInline: React.FC<{
       centered
       onCancel={onCancel}
       keyboard={false}
-      maskClosable={false}
+      mask={{ closable: false }}
       footer={null}
       width={450}
       destroyOnHidden
@@ -750,7 +761,7 @@ const TOTPActivateInline: React.FC<{
   return (
     <BAIModal
       title={t('webui.menu.SetupTotp')}
-      maskClosable={false}
+      mask={{ closable: false }}
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
@@ -768,6 +779,93 @@ const TOTPActivateInline: React.FC<{
           totp_key={initializedTotp.totp_key}
         />
       )}
+    </BAIModal>
+  );
+};
+
+/**
+ * Modal for sending a password change email (forgot password flow).
+ */
+const ChangePasswordEmailModal: React.FC<{
+  open: boolean;
+  apiEndpoint: string;
+  onClose: () => void;
+}> = ({ open, apiEndpoint, onClose }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const form = useRef<FormInstance>(null);
+  const anonymousBaiClient = useAnonymousBackendaiClient({
+    api_endpoint: apiEndpoint,
+  });
+
+  const mutation = useTanMutation({
+    mutationFn: (email: string) => {
+      return anonymousBaiClient.cloud.send_password_change_email(email);
+    },
+  });
+
+  const handleSend = () => {
+    form.current
+      ?.validateFields()
+      .then((values) => {
+        mutation.mutate(values.email, {
+          onSuccess() {
+            message.success({
+              content: t('signUp.PasswordChangeEmailSent'),
+            });
+            onClose();
+          },
+          onError(error: any) {
+            message.error({
+              content:
+                error?.statusCode === 400
+                  ? t('signUp.EmailNotRegistered')
+                  : t('signUp.SendError'),
+            });
+          },
+        });
+      })
+      .catch((e) => {
+        logger.error('Validation failed for change password email form', e);
+      });
+  };
+
+  return (
+    <BAIModal
+      title={t('login.SendChangePasswordEmail')}
+      open={open}
+      onCancel={onClose}
+      onOk={handleSend}
+      confirmLoading={mutation.isPending}
+      okText={t('login.EmailSendButton')}
+      destroyOnHidden
+      getContainer={false}
+    >
+      <Typography.Paragraph>
+        {t('login.DescChangePasswordEmail')}
+      </Typography.Paragraph>
+      <Form ref={form} layout="vertical" disabled={mutation.isPending}>
+        <Form.Item
+          name="email"
+          label={t('signUp.E-mail')}
+          rules={[
+            { required: true, message: t('signUp.EmailInputRequired') },
+            {
+              pattern: /^[A-Z0-9a-z#\-_]+@.+\..+$/,
+              message: t('signUp.InvalidEmail'),
+            },
+          ]}
+        >
+          <Input
+            type="email"
+            maxLength={64}
+            autoFocus
+            onPressEnter={handleSend}
+          />
+        </Form.Item>
+      </Form>
     </BAIModal>
   );
 };

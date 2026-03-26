@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",
     "DescEndpoint": "<p>W API ENDPOINT należy wpisać adres URL serwera Backend.AI, który przekazuje żądanie do Managera.</p><p>np. http://127.0.0.1:8090/</p>.",
     "E-mailOrUsername": "Email lub nazwa użytkownika",
+    "EmailMismatch": "Adres e-mail nie zgadza się z adresem użytym w żądaniu zmiany hasła.",
     "EmailSendButton": "Wysłać",
     "Endpoint": "Punkt końcowy",
     "EndpointHistory": "Historia punktów końcowych",
@@ -1227,7 +1228,6 @@
     "SignUp": "Zapisz się",
     "SignoutFinished": "Wylogowanie zakończone.",
     "TooManyAttempt": "Zbyt wiele prób logowania. Próby logowania zostały na jakiś czas zablokowane.",
-    "UpdatePasswordMessage": "Wpisz swój adres e-mail i nowe hasło, a następnie naciśnij przycisk Aktualizuj.",
     "singleSignOn": {
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}.",
       "LoginWithSAML": "Logowanie za pomocą SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "Adres e-mail jest wymagany.",
+    "EmailNotRegistered": "Ten adres e-mail nie jest zarejestrowany. Skontaktuj się z administratorem.",
     "EmailSent": "E-mail wysłany",
     "EmailVerificationFailed": "Weryfikacja adresu e-mail nie powiodła się",
     "EmailVerificationFailedMessage": "Nie możemy zweryfikować Twojego adresu e-mail. Twój token może być nieprawidłowy lub wygasł. Wpisz swój adres e-mail i kliknij przycisk wyślij, aby otrzymać nowy kod weryfikacyjny.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Token zaproszenia",
     "Password": "Hasło",
     "PasswordAgain": "Hasło ponownie)",
+    "PasswordChangeEmailSent": "Wysłano wiadomość e-mail weryfikacyjną.",
     "PasswordInputRequired": "Wymagane jest hasło.",
     "PasswordInvalid": "Użyj 8 lub więcej znaków z mieszanką liter, cyfr i symboli.",
     "PasswordNotMatched": "Te hasła się nie zgadzały. Spróbuj ponownie.",

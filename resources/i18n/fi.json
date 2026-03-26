@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Vahvistaaksesi, kirjoita sähköpostiosoitteesi ja salasanasi uudelleen.",
     "DescEndpoint": "<p>API ENDPOINT -kenttään tulee syöttää Backend.AI-verkkopalvelimen URL-osoite, joka välittää pyynnön Managerille.</p><p>esim. http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "Sähköpostiosoite tai käyttäjätunnus",
+    "EmailMismatch": "Sähköpostiosoite ei vastaa salasanan vaihtopyynnössä käytettyä osoitetta.",
     "EmailSendButton": "Lähetä",
     "Endpoint": "Loppupiste",
     "EndpointHistory": "Loppupisteen historia",
@@ -1227,7 +1228,6 @@
     "SignUp": "Rekisteröidy",
     "SignoutFinished": "Kirjautuminen päättyi.",
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
-    "UpdatePasswordMessage": "Kirjoita sähköpostiosoitteesi ja uusi salasana ja paina sitten Päivitä-painiketta.",
     "singleSignOn": {
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
       "LoginWithSAML": "Kirjautuminen SAML:llä"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "Sähköposti",
     "EmailInputRequired": "Sähköpostiosoite vaaditaan.",
+    "EmailNotRegistered": "Tätä sähköpostiosoitetta ei ole rekisteröity. Ota yhteyttä järjestelmänvalvojaan.",
     "EmailSent": "Lähetetty sähköposti",
     "EmailVerificationFailed": "Sähköpostivarmennus epäonnistui",
     "EmailVerificationFailedMessage": "Emme pysty vahvistamaan sähköpostiosoitettasi. Tunnuksesi voi olla virheellinen tai vanhentunut. Kirjoita sähköpostiosoitteesi ja napsauta Lähetä-painiketta saadaksesi uuden vahvistuskoodin.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Kutsumerkki",
     "Password": "Salasana",
     "PasswordAgain": "Salasana (uudelleen)",
+    "PasswordChangeEmailSent": "Vahvistussähköposti on lähetetty.",
     "PasswordInputRequired": "Salasana vaaditaan.",
     "PasswordInvalid": "Käytä vähintään 8 merkkiä, joissa on kirjaimia, numeroita ja symboleja.",
     "PasswordNotMatched": "Salasanat eivät vastanneet toisiaan. Kokeile uudelleen.",

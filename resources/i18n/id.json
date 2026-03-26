@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "Untuk konfirmasi, silakan ketik kembali e-mail dan password Anda.",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL server Web Backend.AI, yang meneruskan permintaan ke Manajer, harus dimasukkan.</p> <p>misalnya, http://127.0.0.1:8090/</p> <p>",
     "E-mailOrUsername": "Email atau nama pengguna",
+    "EmailMismatch": "Alamat email tidak cocok dengan yang digunakan untuk permintaan perubahan kata sandi.",
     "EmailSendButton": "Kirim",
     "Endpoint": "Titik akhir",
     "EndpointHistory": "Sejarah Titik Akhir",
@@ -1229,7 +1230,6 @@
     "SignUp": "Daftar",
     "SignoutFinished": "Keluar selesai.",
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
-    "UpdatePasswordMessage": "Ketik email Anda dan kata sandi baru, lalu tekan tombol Perbarui.",
     "singleSignOn": {
       "LoginWithRealm": "Masuk dengan {{ namaRealm }}",
       "LoginWithSAML": "Masuk dengan SAML"
@@ -2254,6 +2254,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "Alamat email wajib diisi.",
+    "EmailNotRegistered": "Alamat email ini tidak terdaftar. Silakan hubungi administrator Anda.",
     "EmailSent": "Email terkirim",
     "EmailVerificationFailed": "Verifikasi email gagal",
     "EmailVerificationFailedMessage": "Kami tidak dapat memverifikasi email Anda. Token Anda mungkin tidak valid atau kadaluwarsa. Tulis alamat email Anda dan klik tombol kirim untuk mendapatkan kode verifikasi baru.",
@@ -2263,6 +2264,7 @@
     "InvitationToken": "Token Undangan",
     "Password": "Kata sandi",
     "PasswordAgain": "Kata sandi (lagi)",
+    "PasswordChangeEmailSent": "Email verifikasi telah dikirim.",
     "PasswordInputRequired": "Kata sandi dibutuhkan.",
     "PasswordInvalid": "Gunakan 8 karakter atau lebih dengan campuran huruf, angka & simbol.",
     "PasswordNotMatched": "Kata sandi tersebut tidak cocok. Mohon coba lagi.",

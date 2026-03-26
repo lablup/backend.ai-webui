@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "Bitte geben Sie zur Bestätigung Ihre E-Mail und Ihr Passwort erneut ein.",
     "DescEndpoint": "<p>In API ENDPOINT ist die URL des Backend.AI Webservers, der die Anfrage an den Manager weiterleitet, einzutragen.</p><p>Z.B. http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "E-Mail Adresse oder Benutzername",
+    "EmailMismatch": "Die E-Mail-Adresse stimmt nicht mit der bei der Passwortänderung angegebenen Adresse überein.",
     "EmailSendButton": "Senden",
     "Endpoint": "Endpunkt",
     "EndpointHistory": "Endpunktverlauf",
@@ -1229,7 +1230,6 @@
     "SignUp": "Anmelden",
     "SignoutFinished": "Abmeldung abgeschlossen.",
     "TooManyAttempt": "Es gab zu viele Anmeldeversuche. Anmeldeversuche sind seit einiger Zeit blockiert.",
-    "UpdatePasswordMessage": "Geben Sie Ihre E-Mail-Adresse und ein neues Passwort ein und klicken Sie dann auf die Schaltfläche Aktualisieren.",
     "singleSignOn": {
       "LoginWithRealm": "Anmeldung mit {{ realmName }}",
       "LoginWithSAML": "Anmeldung mit SAML"
@@ -2253,6 +2253,7 @@
   "signUp": {
     "E-mail": "Email",
     "EmailInputRequired": "E-Mailadresse wird benötigt.",
+    "EmailNotRegistered": "Diese E-Mail-Adresse ist nicht registriert. Bitte kontaktieren Sie Ihren Administrator.",
     "EmailSent": "E-Mail gesendet",
     "EmailVerificationFailed": "E-Mail-Bestätigung fehlgeschlagen",
     "EmailVerificationFailedMessage": "Wir können Ihre E-Mail nicht bestätigen. Ihr Token ist möglicherweise ungültig oder abgelaufen. Geben Sie Ihre E-Mail-Adresse ein und klicken Sie auf die Schaltfläche Senden, um einen neuen Bestätigungscode zu erhalten.",
@@ -2262,6 +2263,7 @@
     "InvitationToken": "Einladungsmarke",
     "Password": "Passwort",
     "PasswordAgain": "Passwort erneut)",
+    "PasswordChangeEmailSent": "Eine Bestätigungs-E-Mail wurde gesendet.",
     "PasswordInputRequired": "Passwort wird benötigt.",
     "PasswordInvalid": "Verwenden Sie 8 oder mehr Zeichen mit einer Mischung aus Buchstaben, Zahlen und Symbolen.",
     "PasswordNotMatched": "Diese Passwörter stimmten nicht überein. Versuchen Sie es erneut.",

@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "要确认，请再次输入您的电子邮件和密码。",
     "DescEndpoint": "<p>在 API ENDPOINT 中，应输入将请求转发给管理器的 Backend.AI Web 服务器的 URL。</p><p>例如，http://127.0.0.1:8090/</p>。",
     "E-mailOrUsername": "电子邮件或用户名",
+    "EmailMismatch": "该电子邮件地址与用于密码更改请求的地址不匹配。",
     "EmailSendButton": "发送",
     "Endpoint": "端点",
     "EndpointHistory": "端点历史",
@@ -1229,7 +1230,6 @@
     "SignUp": "注册",
     "SignoutFinished": "注销完毕。",
     "TooManyAttempt": "登录尝试次数过多。登录尝试已被阻止一段时间。",
-    "UpdatePasswordMessage": "输入您的电子邮件和新密码，然后按更新按钮。",
     "singleSignOn": {
       "LoginWithRealm": "使用 {{ realmName }} 登录",
       "LoginWithSAML": "使用 SAML 登录"
@@ -2253,6 +2253,7 @@
   "signUp": {
     "E-mail": "电子邮件",
     "EmailInputRequired": "电子邮件地址是必需的。",
+    "EmailNotRegistered": "此电子邮件地址未注册。请联系您的管理员。",
     "EmailSent": "邮件已发送",
     "EmailVerificationFailed": "邮箱验证失败",
     "EmailVerificationFailedMessage": "我们无法验证您的电子邮件。您的令牌可能无效或已过期。写下您的电子邮件地址，然后单击发送按钮以获取新的验证码。",
@@ -2262,6 +2263,7 @@
     "InvitationToken": "邀请令牌",
     "Password": "密码",
     "PasswordAgain": "密码（再次）",
+    "PasswordChangeEmailSent": "验证邮件已发送。",
     "PasswordInputRequired": "密码是必需的。",
     "PasswordInvalid": "使用 8 个或更多字符，混合使用字母、数字和符号。",
     "PasswordNotMatched": "这些密码不匹配。再试一次。",

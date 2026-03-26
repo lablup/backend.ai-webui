@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Per confermare, digita nuovamente la tua e-mail e la password.",
     "DescEndpoint": "<p>In API ENDPOINT, si deve inserire l'URL del server Web Backend.AI, che inoltra la richiesta al Manager.</p><p>Ad esempio, http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "Email o nome utente",
+    "EmailMismatch": "L'indirizzo email non corrisponde a quello utilizzato per la richiesta di cambio password.",
     "EmailSendButton": "Spedire",
     "Endpoint": "Endpoint",
     "EndpointHistory": "Cronologia degli endpoint",
@@ -1227,7 +1228,6 @@
     "SignUp": "Iscriviti",
     "SignoutFinished": "Disconnessione completata.",
     "TooManyAttempt": "Ci sono stati troppi tentativi di accesso. I tentativi di accesso sono stati bloccati per un po'.",
-    "UpdatePasswordMessage": "Digita la tua email e una nuova password, quindi premi il pulsante Aggiorna.",
     "singleSignOn": {
       "LoginWithRealm": "Accesso con {{ realmName }}",
       "LoginWithSAML": "Accesso con SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "L'indirizzo e-mail è obbligatorio.",
+    "EmailNotRegistered": "Questo indirizzo email non è registrato. Contatta l'amministratore.",
     "EmailSent": "Email inviata",
     "EmailVerificationFailed": "Verifica e-mail non riuscita",
     "EmailVerificationFailedMessage": "Non siamo in grado di verificare la tua email. Il tuo token potrebbe non essere valido o essere scaduto. Scrivi il tuo indirizzo e-mail e fai clic sul pulsante Invia per ottenere il nuovo codice di verifica.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Gettone di invito",
     "Password": "Parola d'ordine",
     "PasswordAgain": "Password (di nuovo)",
+    "PasswordChangeEmailSent": "È stata inviata un'email di verifica.",
     "PasswordInputRequired": "E 'richiesta la password.",
     "PasswordInvalid": "Usa 8 o più caratteri con un mix di lettere, numeri e simboli.",
     "PasswordNotMatched": "Quelle password non corrispondevano. Ritenta.",

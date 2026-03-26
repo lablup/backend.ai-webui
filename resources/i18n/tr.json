@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar giriniz.",
     "DescEndpoint": "<p>API ENDPOINT kısmına, isteği Yöneticiye ileten Backend.AI Web sunucusunun URL'si girilmelidir.</p><p>örneğin, http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "E-posta ya da kullanıcı adı",
+    "EmailMismatch": "E-posta adresi, parola değiştirme talebi için kullanılan adresle eşleşmiyor.",
     "EmailSendButton": "gönder",
     "Endpoint": "uç nokta",
     "EndpointHistory": "Uç Nokta Geçmişi",
@@ -1227,7 +1228,6 @@
     "SignUp": "kaydol",
     "SignoutFinished": "Oturum kapatma işlemi tamamlandı.",
     "TooManyAttempt": "Çok fazla giriş denemesi oldu. Giriş denemeleri bir süreliğine engellendi.",
-    "UpdatePasswordMessage": "E-posta adresinizi ve yeni bir parola yazın ve ardından Güncelle düğmesine basın.",
     "singleSignOn": {
       "LoginWithRealm": "{{realmName }} ile giriş yapın",
       "LoginWithSAML": "SAML ile Oturum Açma"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "e-posta",
     "EmailInputRequired": "E-posta adresi gerekli.",
+    "EmailNotRegistered": "Bu e-posta adresi kayıtlı değil. Lütfen yöneticinizle iletişime geçin.",
     "EmailSent": "E-posta gönderildi",
     "EmailVerificationFailed": "E-posta doğrulaması başarısız oldu",
     "EmailVerificationFailedMessage": "E-postanızı doğrulayamıyoruz. Simgeniz geçersiz veya süresi dolmuş olabilir. Yeni doğrulama kodunu almak için e-posta adresinizi yazın ve gönder düğmesine tıklayın.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Davet Simgesi",
     "Password": "Parola",
     "PasswordAgain": "Şifre Tekrar)",
+    "PasswordChangeEmailSent": "Doğrulama e-postası gönderildi.",
     "PasswordInputRequired": "Şifre gereklidir.",
     "PasswordInvalid": "Harf, sayı ve simge karışımıyla 8 veya daha fazla karakter kullanın.",
     "PasswordNotMatched": "Bu şifreler eşleşmedi. Tekrar dene.",

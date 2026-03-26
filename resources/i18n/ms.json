@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Untuk mengesahkan, sila taipkan E-mel dan kata laluan anda sekali lagi.",
     "DescEndpoint": "<p>Dalam API ENDPOINT, URL Backend.AI Webserver, yang menyampaikan permintaan kepada Pengurus, harus dimasukkan.</p><p>cth., http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "E-mel atau Nama pengguna",
+    "EmailMismatch": "Alamat e-mel tidak sepadan dengan yang digunakan untuk permintaan penukaran kata laluan.",
     "EmailSendButton": "Hantar",
     "Endpoint": "Titik Akhir",
     "EndpointHistory": "Sejarah Titik Akhir",
@@ -1227,7 +1228,6 @@
     "SignUp": "Mendaftar",
     "SignoutFinished": "Log keluar selesai.",
     "TooManyAttempt": "Terlalu banyak percubaan log masuk. Percubaan masuk telah disekat sebentar.",
-    "UpdatePasswordMessage": "Ketik e-mel anda dan kata laluan baru, dan kemudian tekan butang Kemas kini.",
     "singleSignOn": {
       "LoginWithRealm": "Log masuk dengan {{ realmName }}",
       "LoginWithSAML": "Log masuk dengan SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "E-mel",
     "EmailInputRequired": "Alamat e-mel diperlukan.",
+    "EmailNotRegistered": "Alamat emel ini tidak berdaftar. Sila hubungi pentadbir anda.",
     "EmailSent": "Emel dihantar",
     "EmailVerificationFailed": "Pengesahan e-mel gagal",
     "EmailVerificationFailedMessage": "Kami tidak dapat mengesahkan e-mel anda. Token anda mungkin tidak sah atau tamat tempoh. Tulis alamat e-mel anda dan klik butang kirim untuk mendapatkan kod pengesahan baru.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Token Jemputan",
     "Password": "Kata Laluan",
     "PasswordAgain": "Kata laluan sekali lagi)",
+    "PasswordChangeEmailSent": "E-mel pengesahan telah dihantar.",
     "PasswordInputRequired": "Kata laluan diperlukan.",
     "PasswordInvalid": "Gunakan 8 atau lebih aksara dengan gabungan huruf, nombor & simbol.",
     "PasswordNotMatched": "Kata laluan tersebut tidak sepadan. Cuba lagi.",

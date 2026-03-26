@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Pour confirmer, veuillez saisir à nouveau votre e-mail et votre mot de passe.",
     "DescEndpoint": "Dans API ENDPOINT, l'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie. </p><p>par exemple, http://127.0.0.1:8090/</p> <p>L'URL du serveur web Backend.AI, qui transmet la demande au gestionnaire, doit être saisie.",
     "E-mailOrUsername": "E-mail ou nom d'utilisateur",
+    "EmailMismatch": "L'adresse e-mail ne correspond pas à celle utilisée pour la demande de changement de mot de passe.",
     "EmailSendButton": "Envoyer",
     "Endpoint": "Point de terminaison",
     "EndpointHistory": "Historique des points de terminaison",
@@ -1227,7 +1228,6 @@
     "SignUp": "S'inscrire",
     "SignoutFinished": "Déconnexion terminée.",
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
-    "UpdatePasswordMessage": "Tapez votre e-mail et un nouveau mot de passe, puis appuyez sur le bouton Mettre à jour.",
     "singleSignOn": {
       "LoginWithRealm": "Se connecter avec {{ realmName }}",
       "LoginWithSAML": "Se connecter avec SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "Adresse e-mail est nécessaire.",
+    "EmailNotRegistered": "Cette adresse e-mail n'est pas enregistrée. Veuillez contacter votre administrateur.",
     "EmailSent": "Email envoyé",
     "EmailVerificationFailed": "Échec de la vérification de l'e-mail",
     "EmailVerificationFailedMessage": "Nous ne sommes pas en mesure de vérifier votre e-mail. Votre jeton peut être invalide ou expiré. Écrivez votre adresse e-mail et cliquez sur le bouton Envoyer pour obtenir un nouveau code de vérification.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Jeton d'invitation",
     "Password": "Mot de passe",
     "PasswordAgain": "Mot de passe (encore)",
+    "PasswordChangeEmailSent": "Un e-mail de vérification a été envoyé.",
     "PasswordInputRequired": "Mot de passe requis.",
     "PasswordInvalid": "Utilisez 8 caractères ou plus avec un mélange de lettres, de chiffres et de symboles.",
     "PasswordNotMatched": "Ces mots de passe ne correspondaient pas. Essayez à nouveau.",

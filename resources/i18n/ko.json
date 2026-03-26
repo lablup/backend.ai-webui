@@ -1204,6 +1204,7 @@
     "DescConfirmLeave": "확인을 위해 이메일 및 비밀번호를 다시 입력해 주세요.",
     "DescEndpoint": "<p>엔트포인트에는 Manager로의 연결을 중계하는 Backend.AI Webserver가 작동하고 있는 URL을 작성해 주시면 됩니다.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "이메일 또는 사용자 이름",
+    "EmailMismatch": "입력하신 이메일 주소가 비밀번호 변경 요청 시 사용된 이메일과 일치하지 않습니다.",
     "EmailSendButton": "이메일 보내기",
     "Endpoint": "엔드포인트",
     "EndpointHistory": "엔드포인트 기록",
@@ -1230,7 +1231,6 @@
     "SignUp": "가입하기",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
-    "UpdatePasswordMessage": "사용하고 있는 이메일과 새로운 비밀번호를 입력하세요.",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }} 로그인",
       "LoginWithSAML": "SAML 로그인"
@@ -2264,6 +2264,7 @@
   "signUp": {
     "E-mail": "이메일",
     "EmailInputRequired": "이메일 주소는 필수 입력입니다.",
+    "EmailNotRegistered": "등록되지 않은 이메일 주소입니다. 관리자에게 문의해주세요. ",
     "EmailSent": "이메일을 보냈습니다",
     "EmailVerificationFailed": "이메일 인증에 실패했습니다",
     "EmailVerificationFailedMessage": "이메일을 인증할 수 없습니다. 인증 토큰에 문제가 있거나 만료되었을 가능성이 있습니다. 이메일을 입력하고 버튼을 클릭하면 새로운 인증 링크를 받을 수 있습니다.",
@@ -2273,6 +2274,7 @@
     "InvitationToken": "초대 토큰",
     "Password": " 비밀번호",
     "PasswordAgain": "비밀번호 (다시입력)",
+    "PasswordChangeEmailSent": "이메일 변경 안내 메일이 발송되었습니다.",
     "PasswordInputRequired": "비밀번호는 필수 입력입니다.",
     "PasswordInvalid": "비밀번호는 최소 8자 이상, 영문 및 숫자와 특수문자를 최소 1자 이상 포함해야 합니다.",
     "PasswordNotMatched": "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.",

@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "เพื่อยืนยัน กรุณาพิมพ์อีเมลและรหัสผ่านของคุณอีกครั้ง",
     "DescEndpoint": "<p>ใน API ENDPOINT ควรใส่ URL ของเว็บเซิร์ฟเวอร์ Backend.AI ซึ่งส่งต่อคำขอไปยังผู้จัดการ</p><p>เช่น http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "อีเมลหรือชื่อผู้ใช้",
+    "EmailMismatch": "ที่อยู่อีเมลไม่ตรงกับที่ใช้ในการขอเปลี่ยนรหัสผ่าน",
     "EmailSendButton": "ส่ง",
     "Endpoint": "จุดสิ้นสุด",
     "EndpointHistory": "ประวัติจุดสิ้นสุด",
@@ -1229,7 +1230,6 @@
     "SignUp": "ลงทะเบียน",
     "SignoutFinished": "ออกจากระบบเสร็จสิ้น",
     "TooManyAttempt": "มีความพยายามเข้าสู่ระบบมากเกินไป การพยายามเข้าสู่ระบบถูกบล็อกชั่วคราว",
-    "UpdatePasswordMessage": "พิมพ์อีเมลและรหัสผ่านใหม่ของคุณ จากนั้นกดปุ่ม อัปเดต",
     "singleSignOn": {
       "LoginWithRealm": "เข้าสู่ระบบด้วย {{ realmName }}",
       "LoginWithSAML": "เข้าสู่ระบบด้วย SAML"
@@ -2253,6 +2253,7 @@
   "signUp": {
     "E-mail": "อีเมล",
     "EmailInputRequired": "ต้องระบุที่อยู่อีเมล",
+    "EmailNotRegistered": "อีเมลนี้ยังไม่ได้ลงทะเบียน กรุณาติดต่อผู้ดูแลระบบของคุณ",
     "EmailSent": "ส่งอีเมลแล้ว",
     "EmailVerificationFailed": "การยืนยันอีเมลล้มเหลว",
     "EmailVerificationFailedMessage": "เราไม่สามารถยืนยันอีเมลของคุณได้ โทเคนของคุณอาจไม่ถูกต้องหรือหมดอายุ เขียนที่อยู่อีเมลของคุณและคลิกปุ่มส่งเพื่อรับรหัสยืนยันใหม่",
@@ -2262,6 +2263,7 @@
     "InvitationToken": "โทเคนคำเชิญ",
     "Password": "รหัสผ่าน",
     "PasswordAgain": "รหัสผ่าน (อีกครั้ง)",
+    "PasswordChangeEmailSent": "อีเมลยืนยันถูกส่งแล้ว",
     "PasswordInputRequired": "ต้องระบุรหัสผ่าน",
     "PasswordInvalid": "ใช้ 8 ตัวอักษรขึ้นไปโดยผสมตัวอักษร ตัวเลข และสัญลักษณ์",
     "PasswordNotMatched": "รหัสผ่านไม่ตรงกัน ลองอีกครั้ง",

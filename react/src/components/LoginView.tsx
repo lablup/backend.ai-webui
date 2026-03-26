@@ -35,8 +35,8 @@ import {
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
-import { Button, Form, type MenuProps } from 'antd';
-import { BAIModal, BAIFlex } from 'backend.ai-ui';
+import { App, Button, Form, type MenuProps } from 'antd';
+import { BAIModal, BAIFlex, BAIConfigProvider } from 'backend.ai-ui';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -834,78 +834,90 @@ const LoginView: React.FC = () => {
   // Zero-sized so it doesn't intercept pointer events. Child modals use
   // position:fixed internally so they are visible and interactive.
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: 0,
-        height: 0,
-        zIndex: 10000,
-        overflow: 'visible',
+    // ConfigProvider is needed to override Message z-index for error notifications
+    // so they appear above the block panel (z-index 10000) instead of behind it.
+    <BAIConfigProvider
+      theme={{
+        components: {
+          Message: { zIndexPopup: 10001 },
+        },
       }}
     >
-      <LoginFormPanel
-        isOpen={isLoginPanelOpen}
-        isLoading={isLoading}
-        loginError={loginError}
-        onClearLoginError={() => setLoginError(null)}
-        connectionMode={connectionMode}
-        loginConfig={loginConfig}
-        apiEndpoint={apiEndpoint}
-        otpRequired={otpRequired}
-        needsOtpRegistration={needsOtpRegistration}
-        totpRegistrationToken={totpRegistrationToken}
-        needToResetPassword={needToResetPassword}
-        expiredCredentials={expiredCredentialsRef.current}
-        showSignupModal={showSignupModal}
-        signupPreloadedToken={signupPreloadedToken}
-        showEndpointInput={showEndpointInput}
-        isEndpointDisabled={isEndpointDisabled}
-        form={form}
-        endpointMenuItems={endpointMenuItems}
-        onEndpointMenuClick={handleEndpointMenuClick}
-        onKeyDown={handleKeyDown}
-        onLogin={handleLogin}
-        onConnectionModeChange={handleConnectionModeChange}
-        onShowSignupDialog={showSignupDialog}
-        onSAMLLogin={handleSAMLLogin}
-        onOpenIDLogin={handleOpenIDLogin}
-        onSetApiEndpoint={setApiEndpoint}
-        onSetOtpRequired={setOtpRequired}
-        onSetNeedsOtpRegistration={setNeedsOtpRegistration}
-        onSetNeedToResetPassword={(v: boolean) => {
-          setNeedToResetPassword(v);
-          if (!v) expiredCredentialsRef.current = null;
-        }}
-        onSetShowSignupModal={setShowSignupModal}
-      />
-
-      {/* Block/Error Panel */}
-      <BAIModal
-        open={isBlockPanelOpen && blockMessage !== ''}
-        title={blockType || undefined}
-        footer={
-          <Button
-            block
-            onClick={() => {
-              setIsBlockPanelOpen(false);
-              open();
+      <App>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 0,
+            height: 0,
+            zIndex: 10000,
+            overflow: 'visible',
+          }}
+        >
+          <LoginFormPanel
+            isOpen={isLoginPanelOpen}
+            isLoading={isLoading}
+            loginError={loginError}
+            onClearLoginError={() => setLoginError(null)}
+            connectionMode={connectionMode}
+            loginConfig={loginConfig}
+            apiEndpoint={apiEndpoint}
+            otpRequired={otpRequired}
+            needsOtpRegistration={needsOtpRegistration}
+            totpRegistrationToken={totpRegistrationToken}
+            needToResetPassword={needToResetPassword}
+            expiredCredentials={expiredCredentialsRef.current}
+            showSignupModal={showSignupModal}
+            signupPreloadedToken={signupPreloadedToken}
+            showEndpointInput={showEndpointInput}
+            isEndpointDisabled={isEndpointDisabled}
+            form={form}
+            endpointMenuItems={endpointMenuItems}
+            onEndpointMenuClick={handleEndpointMenuClick}
+            onKeyDown={handleKeyDown}
+            onLogin={handleLogin}
+            onConnectionModeChange={handleConnectionModeChange}
+            onShowSignupDialog={showSignupDialog}
+            onSAMLLogin={handleSAMLLogin}
+            onOpenIDLogin={handleOpenIDLogin}
+            onSetApiEndpoint={setApiEndpoint}
+            onSetOtpRequired={setOtpRequired}
+            onSetNeedsOtpRegistration={setNeedsOtpRegistration}
+            onSetNeedToResetPassword={(v: boolean) => {
+              setNeedToResetPassword(v);
+              if (!v) expiredCredentialsRef.current = null;
             }}
+            onSetShowSignupModal={setShowSignupModal}
+          />
+
+          {/* Block/Error Panel */}
+          <BAIModal
+            open={isBlockPanelOpen && blockMessage !== ''}
+            title={blockType || undefined}
+            footer={
+              <Button
+                block
+                onClick={() => {
+                  setIsBlockPanelOpen(false);
+                  open();
+                }}
+              >
+                {t('login.CancelLogin')}
+              </Button>
+            }
+            closable={false}
+            mask={{ closable: false }}
+            getContainer={false}
+            destroyOnHidden
           >
-            {t('login.CancelLogin')}
-          </Button>
-        }
-        closable={false}
-        maskClosable={false}
-        getContainer={false}
-        destroyOnHidden
-      >
-        <div style={{ textAlign: 'center', paddingTop: 15 }}>
-          {blockMessage}
+            <div style={{ textAlign: 'center', paddingTop: 15 }}>
+              {blockMessage}
+            </div>
+          </BAIModal>
         </div>
-      </BAIModal>
-    </div>
+      </App>
+    </BAIConfigProvider>
   );
 };
 

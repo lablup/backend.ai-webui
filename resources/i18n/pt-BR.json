@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Para confirmar, digite seu e-mail e senha novamente.",
     "DescEndpoint": "<p>No ENDPOINT da API, deve ser introduzido o URL do Backend.AI Webserver, que retransmite o pedido ao Manager.</p><p>Por exemplo, http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "Email ou nome de usuário",
+    "EmailMismatch": "O endereço de e-mail não corresponde ao utilizado na solicitação de alteração de senha.",
     "EmailSendButton": "Mandar",
     "Endpoint": "Endpoint",
     "EndpointHistory": "Histórico de endpoint",
@@ -1227,7 +1228,6 @@
     "SignUp": "Inscrever-se",
     "SignoutFinished": "Desconexão concluída.",
     "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",
-    "UpdatePasswordMessage": "Digite seu e-mail e uma nova senha e pressione o botão Atualizar.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
       "LoginWithSAML": "Iniciar sessão com SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "É necessário um endereço de e-mail.",
+    "EmailNotRegistered": "Este endereço de e-mail não está registrado. Entre em contato com o seu administrador.",
     "EmailSent": "Email enviado",
     "EmailVerificationFailed": "A verificação do email falhou",
     "EmailVerificationFailedMessage": "Não foi possível verificar seu e-mail. Seu token pode ser inválido ou expirado. Escreva seu endereço de e-mail e clique no botão enviar para obter um novo código de verificação.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Token de convite",
     "Password": "Senha",
     "PasswordAgain": "Senha novamente)",
+    "PasswordChangeEmailSent": "Um e-mail de verificação foi enviado.",
     "PasswordInputRequired": "Senha requerida.",
     "PasswordInvalid": "Use 8 ou mais caracteres com uma mistura de letras, números e símbolos.",
     "PasswordNotMatched": "Essas senhas não coincidem. Tente de novo.",

@@ -1201,6 +1201,7 @@
     "DescConfirmLeave": "Para confirmar, escriba de nuevo su e-mail y contraseña.",
     "DescEndpoint": "<p>En API ENDPOINT, se debe ingresar la URL del Servidor Web Backend.AI, que retransmite la solicitud al Administrador.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "Correo electrónico o nombre de usuario",
+    "EmailMismatch": "La dirección de correo electrónico no coincide con la utilizada en la solicitud de cambio de contraseña.",
     "EmailSendButton": "Enviar",
     "Endpoint": "Punto final",
     "EndpointHistory": "Historial de puntos finales",
@@ -1227,7 +1228,6 @@
     "SignUp": "Inscríbete",
     "SignoutFinished": "Firma terminada.",
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",
-    "UpdatePasswordMessage": "Escribe tu correo electrónico y una nueva contraseña, y pulsa el botón Actualizar.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sesión con {{ realmName }}",
       "LoginWithSAML": "Inicio de sesión con SAML"
@@ -2251,6 +2251,7 @@
   "signUp": {
     "E-mail": "Correo electrónico",
     "EmailInputRequired": "La dirección de correo electrónico es obligatoria.",
+    "EmailNotRegistered": "Esta dirección de correo electrónico no está registrada. Por favor, póngase en contacto con su administrador.",
     "EmailSent": "Correo electrónico enviado",
     "EmailVerificationFailed": "Error en la verificación del correo electrónico",
     "EmailVerificationFailedMessage": "No podemos verificar tu correo electrónico. Puede que tu token no sea válido o haya caducado. Escribe tu dirección de correo electrónico y haz clic en el botón Enviar para obtener un nuevo código de verificación.",
@@ -2260,6 +2261,7 @@
     "InvitationToken": "Invitación",
     "Password": "Contraseña",
     "PasswordAgain": "Contraseña (otra vez)",
+    "PasswordChangeEmailSent": "Se ha enviado un correo de verificación.",
     "PasswordInputRequired": "Se requiere contraseña.",
     "PasswordInvalid": "Utilice 8 o más caracteres con una mezcla de letras, números y símbolos.",
     "PasswordNotMatched": "Esas contraseñas no coinciden. Inténtalo de nuevo.",

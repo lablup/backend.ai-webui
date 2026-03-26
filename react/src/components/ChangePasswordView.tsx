@@ -3,12 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useAnonymousBackendaiClient } from '../hooks';
-import { App, Form, Input } from 'antd';
-import { BAIButton, BAIFlex, BAIModal } from 'backend.ai-ui';
+import { CheckCircleOutlined } from '@ant-design/icons';
+import { App, Form, Input, theme, Typography } from 'antd';
+import {
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  ESMClientErrorResponse,
+} from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type ViewState = 'change-password' | 'invalid-token';
+type ViewState = 'change-password' | 'invalid-token' | 'changed-success';
 
 interface ChangePasswordViewProps {
   apiEndpoint: string;
@@ -34,11 +40,12 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { token } = theme.useToken();
   const [form] = Form.useForm<ChangePasswordFormValues>();
 
   // token is derived from URL params which are stable for the lifetime of this page
   const [initialToken] = useState(readTokenFromUrl);
-  const token = useRef(initialToken);
+  const initialTokenRef = useRef(initialToken);
 
   const [viewState, setViewState] = useState<ViewState>(
     initialToken ? 'change-password' : 'invalid-token',
@@ -65,17 +72,21 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
       await anonBaiClient.cloud.change_password(
         values.email,
         values.password1,
-        token.current,
+        initialTokenRef.current,
       );
-      message.success(t('login.PasswordChanged'));
-      setTimeout(() => {
-        redirectToLoginPage();
-      }, 2000);
+      setViewState('changed-success');
     } catch (e: unknown) {
-      const errorMessage =
-        e instanceof Error ? e.message : t('error.UpdateError');
-      message.error(errorMessage);
-      setViewState('invalid-token');
+      const error = e as ESMClientErrorResponse;
+      if (error?.response?.msg === 'Email mismatch') {
+        form.setFields([
+          {
+            name: 'email',
+            errors: [t('login.EmailMismatch')],
+          },
+        ]);
+      } else {
+        setViewState('invalid-token');
+      }
     }
   };
 
@@ -88,6 +99,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
       <BAIModal
         open={viewState === 'change-password'}
         title={t('webui.menu.ChangePassword')}
+        width={420}
         footer={
           <BAIButton
             type="primary"
@@ -100,18 +112,21 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
           </BAIButton>
         }
         closable={false}
-        maskClosable={false}
-        afterClose={redirectToLoginPage}
+        mask={{ closable: false }}
       >
         <BAIFlex direction="column" gap="sm">
-          <p style={{ width: 350 }}>{t('login.UpdatePasswordMessage')}</p>
-          <Form form={form} layout="vertical" preserve={false}>
+          <Form
+            form={form}
+            layout="vertical"
+            preserve={false}
+            style={{ width: '100%' }}
+          >
             <Form.Item
               name="email"
+              label={t('data.explorer.EnterEmailAddress')}
               rules={[
                 {
                   required: true,
-                  type: 'email',
                   message: t('signUp.InvalidEmail'),
                 },
                 {
@@ -124,14 +139,11 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input
-                placeholder={t('data.explorer.EnterEmailAddress')}
-                autoFocus
-                maxLength={64}
-              />
+              <Input autoFocus maxLength={64} />
             </Form.Item>
             <Form.Item
               name="password1"
+              label={t('webui.menu.NewPassword')}
               rules={[
                 {
                   required: true,
@@ -147,13 +159,11 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input.Password
-                placeholder={t('webui.menu.NewPassword')}
-                maxLength={64}
-              />
+              <Input.Password maxLength={64} />
             </Form.Item>
             <Form.Item
               name="password2"
+              label={t('webui.menu.NewPasswordAgain')}
               rules={[
                 {
                   required: true,
@@ -169,31 +179,47 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input.Password
-                placeholder={t('webui.menu.NewPasswordAgain')}
-                maxLength={64}
-              />
+              <Input.Password maxLength={64} />
             </Form.Item>
           </Form>
         </BAIFlex>
       </BAIModal>
 
       <BAIModal
-        open={viewState === 'invalid-token'}
-        title={t('login.InvalidChangePasswordToken')}
+        open={viewState === 'changed-success'}
+        title={t('webui.menu.ChangePassword')}
+        width={420}
         footer={
           <BAIButton type="primary" block onClick={redirectToLoginPage}>
             {t('button.Close')}
           </BAIButton>
         }
         closable={false}
-        maskClosable={false}
+        mask={{ closable: false }}
+      >
+        <BAIFlex gap="xs" align="center">
+          <CheckCircleOutlined
+            style={{ color: token.colorSuccess, fontSize: token.fontSizeLG }}
+          />
+          <Typography.Text>{t('login.PasswordChanged')}</Typography.Text>
+        </BAIFlex>
+      </BAIModal>
+
+      <BAIModal
+        open={viewState === 'invalid-token'}
+        title={t('login.InvalidChangePasswordToken')}
+        width={420}
+        footer={
+          <BAIButton type="primary" block onClick={redirectToLoginPage}>
+            {t('button.Close')}
+          </BAIButton>
+        }
+        closable={false}
+        mask={{ closable: false }}
         afterClose={redirectToLoginPage}
       >
         <BAIFlex direction="column" gap="sm">
-          <p style={{ width: 350 }}>
-            {t('login.InvalidChangePasswordTokenMessage')}
-          </p>
+          <p>{t('login.InvalidChangePasswordTokenMessage')}</p>
         </BAIFlex>
       </BAIModal>
     </>

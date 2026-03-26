@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",
     "DescEndpoint": "<p>Trong API ENDPOINT, phải nhập URL của Máy chủ web Backend.AI chuyển tiếp yêu cầu đến Người quản lý.</p><p>ví dụ: http://127.0.0.1:8090/</p>",
     "E-mailOrUsername": "Thư điện tử hoặc tên người dùng",
+    "EmailMismatch": "Địa chỉ email không khớp với email đã dùng để yêu cầu đổi mật khẩu.",
     "EmailSendButton": "Gửi",
     "Endpoint": "Điểm cuối",
     "EndpointHistory": "Lịch sử điểm cuối",
@@ -1229,7 +1230,6 @@
     "SignUp": "Đăng ký",
     "SignoutFinished": "Đã kết thúc đăng ký.",
     "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",
-    "UpdatePasswordMessage": "Nhập email của bạn và mật khẩu mới, sau đó nhấn nút Cập nhật.",
     "singleSignOn": {
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}",
       "LoginWithSAML": "Đăng nhập bằng SAML"
@@ -2253,6 +2253,7 @@
   "signUp": {
     "E-mail": "E-mail",
     "EmailInputRequired": "Địa chỉ e-mail là bắt buộc.",
+    "EmailNotRegistered": "Địa chỉ email này chưa được đăng ký. Vui lòng liên hệ với quản trị viên của bạn.",
     "EmailSent": "Đã gửi email",
     "EmailVerificationFailed": "Xác minh email không thành công",
     "EmailVerificationFailedMessage": "Chúng tôi không thể xác minh email của bạn. Mã thông báo của bạn có thể không hợp lệ hoặc hết hạn. Viết địa chỉ email của bạn và nhấp vào nút gửi để nhận mã xác minh mới.",
@@ -2262,6 +2263,7 @@
     "InvitationToken": "Mã thông báo mời",
     "Password": "Mật khẩu",
     "PasswordAgain": "Nhập lại mật khẩu)",
+    "PasswordChangeEmailSent": "Email xác thực đã được gửi.",
     "PasswordInputRequired": "Mật khẩu là bắt buộc.",
     "PasswordInvalid": "Sử dụng 8 ký tự trở lên với sự kết hợp của các chữ cái, số và ký hiệu.",
     "PasswordNotMatched": "Những mật khẩu đó không khớp. Thử lại lần nữa.",

@@ -1203,6 +1203,7 @@
     "DescConfirmLeave": "確認するには、メールアドレスとパスワードをもう一度入力してください。",
     "DescEndpoint": "<p>エンドポイントには、Managerへの接続を中継するBackend.AI Webserverが動作しているURLを記述してください</p><p><p>e.g., http://127.0.0.1:8090/</p></p>",
     "E-mailOrUsername": "メールアドレスまたはユーザ名",
+    "EmailMismatch": "入力されたメールアドレスはパスワード変更の申請で使用したものと一致しません。",
     "EmailSendButton": "送信",
     "Endpoint": "終点",
     "EndpointHistory": "エンドポイント履歴",
@@ -1229,7 +1230,6 @@
     "SignUp": "サインアップ",
     "SignoutFinished": "サインアウトが終了しました。",
     "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",
-    "UpdatePasswordMessage": "メールアドレスと新しいパスワードを入力し、[更新]ボタンを押します。",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }}ログイン",
       "LoginWithSAML": "SAMLログイン"
@@ -2253,6 +2253,7 @@
   "signUp": {
     "E-mail": "Eメール",
     "EmailInputRequired": "メールアドレスが必要です。",
+    "EmailNotRegistered": "このメールアドレスは登録されていません。管理者にお問い合わせください。",
     "EmailSent": "送信された電子メール",
     "EmailVerificationFailed": "メールの確認に失敗しました",
     "EmailVerificationFailedMessage": "メールアドレスを確認できません。トークンが無効または期限切れになっている可能性があります。メールアドレスを入力し、送信ボタンをクリックして新しい確認コードを取得します。",
@@ -2262,6 +2263,7 @@
     "InvitationToken": "招待トークン",
     "Password": "パスワード",
     "PasswordAgain": "パスワード（再び）",
+    "PasswordChangeEmailSent": "確認メールを送信しました。",
     "PasswordInputRequired": "パスワードが必要です。",
     "PasswordInvalid": "文字、数字、記号を組み合わせた8文字以上を使用してください。",
     "PasswordNotMatched": "それらのパスワードは一致しませんでした。もう一度やってみる。",

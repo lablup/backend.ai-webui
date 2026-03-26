@@ -23,6 +23,7 @@ export type ESMClientErrorResponse = {
   description: string;
   error_code?: string;
   traceback?: string;
+  response?: ErrorResponse;
 };
 
 const useErrorMessageResolver = () => {
