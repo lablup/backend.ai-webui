@@ -1482,21 +1482,22 @@ const ResourceAllocationFormItems: React.FC<
                             ['resource', 'accelerator'],
                             ['resource', 'acceleratorType'],
                           ]}
-                          extra={
-                            form.getFieldValue('cluster_mode') ===
-                              'multi-node' &&
-                            form.getFieldValue('cluster_size') === 1 ? (
-                              <span style={{ color: token.colorWarning }}>
-                                {t(
-                                  'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
-                                )}
-                              </span>
-                            ) : undefined
-                          }
                           rules={[
                             {
                               warningOnly: true,
                               validator: async (_rule, value: number) => {
+                                // Warn when multi-node x1 will be converted to single-node (FR-2381)
+                                if (
+                                  form.getFieldValue('cluster_mode') ===
+                                    'multi-node' &&
+                                  value === 1
+                                ) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
+                                    ),
+                                  );
+                                }
                                 if (showRemainingWarning && value > 1) {
                                   // Only show cluster-specific warning when at least 1 cluster
                                   // can start immediately. When maxImmediateClusterSize is 0,
