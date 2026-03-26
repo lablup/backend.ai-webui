@@ -1439,7 +1439,8 @@
     "Initializing": "Αρχικοποίηση ...",
     "NoNotification": "Καμία ειδοποίηση.",
     "Notifications": "Ειδοποιήσεις",
-    "SeeDetail": "Δείτε Λεπτομέρεια",
+    "SeeDetail": "Εμφάνιση λεπτομερειών",
+    "SeeSummary": "Απόκρυψη λεπτομερειών",
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη"
   },

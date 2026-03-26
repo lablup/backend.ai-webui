@@ -1442,6 +1442,7 @@
     "NoNotification": "通知はありません。",
     "Notifications": "通知",
     "SeeDetail": "詳細を見る",
+    "SeeSummary": "詳細を隠す",
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"
   },

@@ -93,7 +93,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                         toggleShowExtraDescription();
                       }}
                     >
-                      {t('notification.SeeDetail')}
+                      {showExtraDescription
+                        ? t('notification.SeeSummary')
+                        : t('notification.SeeDetail')}
                     </Typography.Link>
                   </BAIFlex>
                 ) : null}

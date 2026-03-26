@@ -1443,6 +1443,7 @@
     "NoNotification": "알림이 없습니다.",
     "Notifications": "알림",
     "SeeDetail": "상세보기",
+    "SeeSummary": "접기",
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"
   },

@@ -107,7 +107,9 @@ const BAIGeneralNotificationItem: React.FC<{
                 >
                   {notification.toTextKey
                     ? t(notification.toTextKey)
-                    : t('notification.SeeDetail')}
+                    : showExtraDescription
+                      ? t('notification.SeeSummary')
+                      : t('notification.SeeDetail')}
                 </Typography.Link>
               </BAIFlex>
             ) : null}

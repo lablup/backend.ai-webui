@@ -1440,7 +1440,8 @@
     "Initializing": "Initializing...",
     "NoNotification": "No Notification.",
     "Notifications": "Notifications",
-    "SeeDetail": "See Detail",
+    "SeeDetail": "See Details",
+    "SeeSummary": "Hide Details",
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"
   },

@@ -1440,7 +1440,8 @@
     "Initializing": "Эхлүүлж байна ...",
     "NoNotification": "Мэдэгдэл байхгүй.",
     "Notifications": "Мэдэгдэл",
-    "SeeDetail": "Дэлгэрэнгүйг үзнэ үү",
+    "SeeDetail": "Дэлгэрэнгүйг үзэх",
+    "SeeSummary": "Дэлгэрэнгүйг нуух",
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },

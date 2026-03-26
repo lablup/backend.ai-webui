@@ -1439,7 +1439,8 @@
     "Initializing": "Inicializando...",
     "NoNotification": "Sin notificación.",
     "Notifications": "Notificaciones",
-    "SeeDetail": "Ver detalle",
+    "SeeDetail": "Ver detalles",
+    "SeeSummary": "Ocultar detalles",
     "SuccessfullyUpdated": "Actualizado con éxito",
     "Visit": "Visite"
   },

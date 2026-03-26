@@ -1439,7 +1439,8 @@
     "Initializing": "Инициализация ...",
     "NoNotification": "Нет уведомлений.",
     "Notifications": "Уведомления",
-    "SeeDetail": "См детали",
+    "SeeDetail": "Подробнее",
+    "SeeSummary": "Скрыть подробности",
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },
