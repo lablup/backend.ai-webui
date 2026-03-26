@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "Ζεύγος κλειδιών SSH",
     "SSHKeypairEnterManuallyFinished": "Το ζεύγος κλειδιών SSH καταχωρήθηκε με επιτυχία.",
     "SSHKeypairGeneration": "Δημιουργία SSH Keypair",
-    "SSHKeypairGenerationWarning": "Δεν μπορείτε να πάρετε ξανά ιδιωτικό κλειδί. Αποθηκεύστε στον τοπικό σας δίσκο εάν χρειάζεται.",
+    "SSHKeypairGenerationWarning": "Συνιστούμε να αποθηκεύσετε το ιδιωτικό κλειδί τώρα για ευκολία. Μπορείτε να το ανακτήσετε αργότερα από /home/work/id_container μετά την εκκίνηση μιας συνεδρίας.",
     "SSHKeypairManagement": "Διαχείριση SSH Keypair",
     "SessionTerminationDialog": "Δεν είναι δυνατή η αναίρεση του τερματισμού περιόδου σύνδεσης. Θέλετε να συνεχίσετε για να τερματίσετε τη συνεδρία;",
     "ShellEnvironments": "Περιβάλλον Shell",

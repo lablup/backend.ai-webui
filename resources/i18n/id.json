@@ -2544,7 +2544,7 @@
     "SSHKeypairEnterManually": "SSH Keypair",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berhasil didaftarkan.",
     "SSHKeypairGeneration": "Pembuatan Pasangan Kunci SSH",
-    "SSHKeypairGenerationWarning": "Anda tidak bisa mendapatkan kunci pribadi lagi. Simpan di disk lokal Anda jika diperlukan.",
+    "SSHKeypairGenerationWarning": "Kami sarankan untuk menyimpan kunci pribadi sekarang demi kemudahan. Anda dapat mengambilnya nanti dari /home/work/id_container setelah memulai sesi.",
     "SSHKeypairManagement": "Manajemen Pasangan Kunci SSH",
     "SessionTerminationDialog": "Penghentian sesi tidak dapat diurungkan. Apakah Anda ingin melanjutkan untuk mengakhiri sesi?",
     "ShellEnvironments": "Lingkungan Shell",

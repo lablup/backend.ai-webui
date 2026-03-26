@@ -2541,7 +2541,7 @@
     "SSHKeypairEnterManually": "SSH Keypair",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair telah berjaya didaftarkan.",
     "SSHKeypairGeneration": "Penjanaan Keypair SSH",
-    "SSHKeypairGenerationWarning": "Anda tidak boleh mendapatkan kunci peribadi lagi. Simpan pada cakera tempatan anda jika diperlukan.",
+    "SSHKeypairGenerationWarning": "Kami mengesyorkan anda menyimpan kunci peribadi sekarang untuk kemudahan. Anda boleh mendapatkannya kemudian dari /home/work/id_container selepas memulakan sesi.",
     "SSHKeypairManagement": "Pengurusan Keypair SSH",
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",

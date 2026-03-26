@@ -2543,7 +2543,7 @@
     "SSHKeypairEnterManually": "SSH 密钥对",
     "SSHKeypairEnterManuallyFinished": "SSH 密钥对已成功注册。",
     "SSHKeypairGeneration": "SSH 密钥对生成",
-    "SSHKeypairGenerationWarning": "您无法再次获取私钥。如果需要，存储在本地磁盘上。",
+    "SSHKeypairGenerationWarning": "建议您现在保存私钥以便使用。之后可以在启动会话后从 /home/work/id_container 获取。",
     "SSHKeypairManagement": "SSH 密钥对管理",
     "SessionTerminationDialog": "会话终止无法撤消。您要继续终止会话吗？",
     "ShellEnvironments": "外壳环境",

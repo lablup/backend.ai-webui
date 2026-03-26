@@ -2543,7 +2543,7 @@
     "SSHKeypairEnterManually": "SSHキーペア入力",
     "SSHKeypairEnterManuallyFinished": "SSHキーフェア登録が正常に完了しました。",
     "SSHKeypairGeneration": "SSHキーペアの生成",
-    "SSHKeypairGenerationWarning": "秘密鍵を再度取得することはできません。必要に応じてローカルディスクに保存します。",
+    "SSHKeypairGenerationWarning": "秘密鍵は利便性のために今すぐ保存することをお勧めします。後からセッション起動後に /home/work/id_container で確認できます。",
     "SSHKeypairManagement": "SSHキーペア管理",
     "SessionTerminationDialog": "セッションの終了は元に戻せません。セッションの終了に進みますか？",
     "ShellEnvironments": "シェル環境",
