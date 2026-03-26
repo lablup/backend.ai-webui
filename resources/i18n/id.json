@@ -2725,7 +2725,12 @@
         "Playground": "Taman bermain",
         "Service": "Layanan",
         "Storage": "Penyimpanan",
-        "Workload": "Beban kerja"
+        "Workload": "Beban kerja",
+        "superadmin": {
+          "Infrastructure": "Infrastruktur",
+          "Operations": "Operasi",
+          "System": "Sistem"
+        }
       }
     }
   }

@@ -2724,7 +2724,12 @@
         "Playground": "สนามเด็กเล่น",
         "Service": "บริการ",
         "Storage": "พื้นที่จัดเก็บ",
-        "Workload": "ภาระงาน"
+        "Workload": "ภาระงาน",
+        "superadmin": {
+          "Infrastructure": "โครงสร้างพื้นฐาน",
+          "Operations": "การดำเนินงาน",
+          "System": "ระบบ"
+        }
       }
     }
   }

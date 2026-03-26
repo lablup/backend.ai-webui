@@ -2722,7 +2722,12 @@
         "Playground": "Игровая площадка",
         "Service": "Сервис",
         "Storage": "Хранение",
-        "Workload": "Рабочая нагрузка"
+        "Workload": "Рабочая нагрузка",
+        "superadmin": {
+          "Infrastructure": "Инфраструктура",
+          "Operations": "Операции",
+          "System": "Система"
+        }
       }
     }
   }

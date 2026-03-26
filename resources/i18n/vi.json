@@ -2724,7 +2724,12 @@
         "Playground": "Sân chơi",
         "Service": "Dịch vụ",
         "Storage": "Kho",
-        "Workload": "Khối lượng công việc"
+        "Workload": "Khối lượng công việc",
+        "superadmin": {
+          "Infrastructure": "Cơ sở hạ tầng",
+          "Operations": "Vận hành",
+          "System": "Hệ thống"
+        }
       }
     }
   }

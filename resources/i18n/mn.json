@@ -2724,7 +2724,12 @@
         "Playground": "Тоглоомын талбай",
         "Service": "Үйлчилгээ",
         "Storage": "Агуулах",
-        "Workload": "Ажлын ачаалал"
+        "Workload": "Ажлын ачаалал",
+        "superadmin": {
+          "Infrastructure": "Дэд бүтэц",
+          "Operations": "Үйл ажиллагаа",
+          "System": "Систем"
+        }
       }
     }
   }

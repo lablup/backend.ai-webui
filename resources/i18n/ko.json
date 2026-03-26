@@ -2735,7 +2735,12 @@
         "Playground": "플레이그라운드",
         "Service": "서비스",
         "Storage": "스토리지",
-        "Workload": "워크로드"
+        "Workload": "워크로드",
+        "superadmin": {
+          "Infrastructure": "인프라",
+          "Operations": "운영",
+          "System": "시스템"
+        }
       }
     }
   }

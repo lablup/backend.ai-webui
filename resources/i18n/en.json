@@ -2731,7 +2731,12 @@
         "Playground": "Playground",
         "Service": "Service",
         "Storage": "Storage",
-        "Workload": "Workload"
+        "Workload": "Workload",
+        "superadmin": {
+          "Infrastructure": "Infrastructure",
+          "Operations": "Operations",
+          "System": "System"
+        }
       }
     }
   }

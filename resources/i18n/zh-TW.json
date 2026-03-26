@@ -2726,7 +2726,12 @@
         "Playground": "游乐场",
         "Service": "服务",
         "Storage": "存储",
-        "Workload": "工作量"
+        "Workload": "工作量",
+        "superadmin": {
+          "Infrastructure": "基礎設施",
+          "Operations": "營運",
+          "System": "系統"
+        }
       }
     }
   }

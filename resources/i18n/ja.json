@@ -2724,7 +2724,12 @@
         "Playground": "遊び場",
         "Service": "サービス",
         "Storage": "ストレージ",
-        "Workload": "ワークロード"
+        "Workload": "ワークロード",
+        "superadmin": {
+          "Infrastructure": "インフラ",
+          "Operations": "運用",
+          "System": "システム"
+        }
       }
     }
   }
