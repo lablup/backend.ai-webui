@@ -193,7 +193,7 @@
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts)
+**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
@@ -211,9 +211,10 @@
 | Batch schedule/timeout options | ❌ | - |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
+| Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (11 tests: 2 pass, 7 fixme pending FR-2381, 2 skip) |
 | Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
 
-**Coverage: 🔶 2/12 features (most only indirectly tested)**
+**Coverage: 🔶 3/13 features (most only indirectly tested)**
 
 ---
 

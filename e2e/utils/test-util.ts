@@ -279,6 +279,15 @@ export async function navigateTo(page: Page, path: string) {
   //merge the base url with the path
   const url = new URL(path, webuiEndpoint);
   await page.goto(url.toString());
+  // Remove webpack-dev-server overlay iframe that can intercept pointer events
+  await page
+    .evaluate(() => {
+      const overlay = document.getElementById(
+        'webpack-dev-server-client-overlay',
+      );
+      if (overlay) overlay.remove();
+    })
+    .catch(() => {});
 }
 
 export async function fillOutVaadinGridCellFilter(
