@@ -12,7 +12,9 @@ const endpointStatusSemanticMap: Record<string, SemanticColor> = {
   HEALTHY: 'success',
   PROVISIONING: 'info',
   UNHEALTHY: 'warning',
-};
+  DEGRADED: 'warning',
+  FAILED_TO_START: 'error',
+} as const;
 
 interface EndpointStatusTagProps {
   endpointFrgmt: EndpointStatusTagFragment$key | null | undefined;

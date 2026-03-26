@@ -413,6 +413,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     HEALTHY: 'success',
     PROVISIONING: 'info',
     UNHEALTHY: 'warning',
+    DEGRADED: 'warning',
+    FAILED_TO_START: 'error',
   };
   const semanticColorMap = useSemanticColorMap();
 
