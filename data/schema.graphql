@@ -148,6 +148,7 @@ input AddRevisionInput
   image: ImageInput!
   modelRuntimeConfig: ModelRuntimeConfigInput!
   modelMountConfig: ModelMountConfigInput!
+  modelDefinition: ModelDefinitionInput!
   extraMounts: [ExtraVFolderMountInput!]
 }
 
@@ -1995,7 +1996,7 @@ type ComputePluginEntry
   pluginName: String!
 
   """
-  Plugin value string containing plugin-specific information. The content varies by plugin type and may include version or configuration details.
+  Plugin value as a JSON-encoded string containing plugin-specific information. The content varies by plugin type and may include version or configuration details.
   """
   value: String!
 }
@@ -2522,6 +2523,26 @@ type CreateDomain
   domain: Domain
 }
 
+"""Added in UNRELEASED. Input for creating a new domain."""
+input CreateDomainInputGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Domain name. Must be unique across the system."""
+  name: String!
+
+  """Optional description."""
+  description: String = null
+
+  """Whether the domain is active."""
+  isActive: Boolean! = true
+
+  """Allowed Docker registry URLs."""
+  allowedDockerRegistries: [String!] = null
+
+  """External integration identifier."""
+  integrationId: String = null
+}
+
 """Added in 24.12.0."""
 type CreateDomainNode
   @join__type(graph: GRAPHENE)
@@ -2699,6 +2720,26 @@ input CreatePermissionInput
   operation: OperationType!
 }
 
+"""Added in UNRELEASED. Input for creating a new project."""
+input CreateProjectInputGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Project name. Must be unique within the domain."""
+  name: String!
+
+  """Name of the domain this project belongs to."""
+  domainName: String!
+
+  """Optional description."""
+  description: String = null
+
+  """External integration identifier."""
+  integrationId: String = null
+
+  """Name of the resource policy to apply."""
+  resourcePolicy: String = null
+}
+
 type CreateProjectResourcePolicy
   @join__type(graph: GRAPHENE)
 {
@@ -2815,7 +2856,7 @@ input CreateRoleInput
 {
   name: String!
   description: String = null
-  source: RoleSource = null
+  source: RoleSource! = CUSTOM
 }
 
 type CreateScalingGroup
@@ -3203,6 +3244,14 @@ type DeleteDomainConfigPayload
   deleted: Boolean!
 }
 
+"""Added in UNRELEASED. Payload for domain deletion mutation."""
+type DeleteDomainPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the deletion was successful."""
+  deleted: Boolean!
+}
+
 """Added in 25.1.0."""
 type DeleteEndpointAutoScalingRuleNode
   @join__type(graph: GRAPHENE)
@@ -3314,6 +3363,14 @@ type DeletePermissionPayload
 {
   """ID of the deleted permission"""
   id: UUID!
+}
+
+"""Added in UNRELEASED. Payload for project deletion mutation."""
+type DeleteProjectPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the deletion was successful."""
+  deleted: Boolean!
 }
 
 type DeleteProjectResourcePolicy
@@ -3966,6 +4023,14 @@ type DomainNode implements Node
   dotfiles: Bytes @join__field(graph: GRAPHENE)
   integration_id: String @join__field(graph: GRAPHENE)
   scaling_groups(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ScalingGroupConnection @join__field(graph: GRAPHENE)
+}
+
+"""Added in UNRELEASED. Payload for domain mutation responses."""
+type DomainPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """The domain entity."""
+  domain: DomainV2!
 }
 
 """
@@ -6334,6 +6399,35 @@ type ModelCardEdge
 }
 
 """
+Added in 26.4.0. Configuration for a single model within a model definition.
+"""
+input ModelConfigInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Name of the model."""
+  name: String!
+
+  """Path to the model file."""
+  modelPath: String!
+
+  """Configuration for the model service."""
+  service: ModelServiceConfigInput = null
+
+  """Metadata about the model."""
+  metadata: ModelMetadataInput = null
+}
+
+"""
+Added in 26.4.0. Model definition containing a list of model configurations.
+"""
+input ModelDefinitionInput
+  @join__type(graph: STRAWBERRY)
+{
+  """List of models in the model definition."""
+  models: [ModelConfigInput!]!
+}
+
+"""
 Added in 25.19.0. Represents a model deployment in Backend.AI. A deployment is a long-running inference service that exposes a trained model via HTTP endpoints. Deployments manage the lifecycle of model replicas, handle traffic routing, and provide auto-scaling capabilities based on configured rules.
 """
 type ModelDeployment implements Node
@@ -6438,6 +6532,75 @@ input ModelDeploymentNetworkAccessInput
 {
   preferredDomainName: String = null
   openToPublic: Boolean! = false
+}
+
+"""Added in 26.4.0. Health check configuration for a model service."""
+input ModelHealthCheckInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Interval in seconds between health checks."""
+  interval: Float! = 10
+
+  """Path to check for health status."""
+  path: String!
+
+  """Maximum number of retries for health check."""
+  maxRetries: Int! = 10
+
+  """Maximum time in seconds to wait for a health check response."""
+  maxWaitTime: Float! = 15
+
+  """Expected HTTP status code for a healthy response."""
+  expectedStatusCode: Int! = 200
+
+  """Initial delay in seconds before the first health check."""
+  initialDelay: Float! = 60
+}
+
+"""
+Added in 26.4.0. Metadata about a model such as author, title, and resource requirements.
+"""
+input ModelMetadataInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Author of the model."""
+  author: String = null
+
+  """Title of the model."""
+  title: String = null
+
+  """Version of the model."""
+  version: String = null
+
+  """Creation date of the model."""
+  created: String = null
+
+  """Last modified date of the model."""
+  lastModified: String = null
+
+  """Description of the model."""
+  description: String = null
+
+  """Task type of the model."""
+  task: String = null
+
+  """Category of the model."""
+  category: String = null
+
+  """Architecture of the model."""
+  architecture: String = null
+
+  """Frameworks used by the model."""
+  framework: [String!] = null
+
+  """Labels for the model."""
+  label: [String!] = null
+
+  """License of the model."""
+  license: String = null
+
+  """Minimum resource requirements for the model."""
+  minResource: JSON = null
 }
 
 """
@@ -6629,6 +6792,30 @@ input ModelRuntimeConfigInput
 
   """Environment variables for the service."""
   environ: EnvironmentVariablesInput = null
+}
+
+"""
+Added in 26.4.0. Service configuration for a model, including startup command and health check.
+"""
+input ModelServiceConfigInput
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  List of pre-start actions to execute before starting the model service.
+  """
+  preStartActions: [PreStartActionInput!]!
+
+  """Command to start the model service."""
+  startCommand: JSON!
+
+  """Shell to use if start_command is a string."""
+  shell: String! = "/bin/bash"
+
+  """Port number for the model service. Must be greater than 1."""
+  port: Int!
+
+  """Health check configuration for the model service."""
+  healthCheck: ModelHealthCheckInput = null
 }
 
 """
@@ -7810,6 +7997,46 @@ type Mutation
   updateResourceGroupFairShareSpec(input: UpdateResourceGroupFairShareSpecInput!): UpdateResourceGroupFairShareSpecPayload! @join__field(graph: STRAWBERRY) @deprecated(reason: "Use admin_update_resource_group_fair_share_spec instead. This API will be removed after v26.3.0. See BEP-1041 for migration guide.")
 
   """
+  Added in UNRELEASED. Create a new domain (admin only). Requires superadmin privileges.
+  """
+  adminCreateDomainV2(input: CreateDomainInputGQL!): DomainPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Update a domain (admin only). Requires superadmin privileges. Only provided fields will be updated.
+  """
+  adminUpdateDomainV2(domainName: String!, input: UpdateDomainInputGQL!): DomainPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Soft-delete a domain (admin only). Requires superadmin privileges.
+  """
+  adminDeleteDomainV2(domainName: String!): DeleteDomainPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Permanently purge a domain and all associated data (admin only). Requires superadmin privileges.
+  """
+  adminPurgeDomainV2(domainName: String!): PurgeDomainPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Create a new project (admin only). Requires superadmin privileges.
+  """
+  adminCreateProjectV2(input: CreateProjectInputGQL!): ProjectPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Update a project (admin only). Requires superadmin privileges. Only provided fields will be updated.
+  """
+  adminUpdateProjectV2(projectId: UUID!, input: UpdateProjectInputGQL!): ProjectPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Soft-delete a project (admin only). Requires superadmin privileges.
+  """
+  adminDeleteProjectV2(projectId: UUID!): DeleteProjectPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Permanently purge a project and all associated data (admin only). Requires superadmin privileges.
+  """
+  adminPurgeProjectV2(projectId: UUID!): PurgeProjectPayloadGQL! @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.2.0. Create a new user (admin only). Requires superadmin privileges. Automatically creates a default keypair for the user
   """
   adminCreateUserV2(input: CreateUserV2Input!): CreateUserV2Payload! @join__field(graph: STRAWBERRY)
@@ -7920,6 +8147,16 @@ type Mutation
 
   """Added in 26.3.0. Bulk revoke a role from multiple users (admin only)."""
   adminBulkRevokeRole(input: BulkRevokeRoleInput!): BulkRevokeRolePayload! @join__field(graph: STRAWBERRY)
+}
+
+"""
+Added in UNRELEASED. Query result returning the current client's IP address.
+"""
+type MyClientIp
+  @join__type(graph: STRAWBERRY)
+{
+  """The client's IP address as seen by the server"""
+  clientIp: String!
 }
 
 """Added in 24.12.0."""
@@ -8304,6 +8541,7 @@ type Permission implements Node
   scopeId: String!
   entityType: RBACElementType!
   operation: OperationType!
+  createdAt: DateTime!
 
   """The role this permission belongs to."""
   role: Role
@@ -8342,9 +8580,25 @@ input PermissionFilter
   roleId: UUID = null
   scopeType: RBACElementType = null
   entityType: RBACElementType = null
+  createdAt: DateTimeFilter = null
   AND: [PermissionFilter!] = null
   OR: [PermissionFilter!] = null
   NOT: [PermissionFilter!] = null
+}
+
+"""
+Added in 26.4.0. Nested filter for permissions within a role assignment. Filters assignments where the assigned role has permissions matching all specified conditions.
+"""
+input PermissionNestedFilter
+  @join__type(graph: STRAWBERRY)
+{
+  scopeId: String = null
+  scopeType: RBACElementType = null
+  entityType: RBACElementType = null
+  operation: OperationType = null
+  AND: [PermissionNestedFilter!] = null
+  OR: [PermissionNestedFilter!] = null
+  NOT: [PermissionNestedFilter!] = null
 }
 
 """Added in 26.3.0. Order by specification for permissions"""
@@ -8361,6 +8615,7 @@ enum PermissionOrderField
 {
   ID @join__enumValue(graph: STRAWBERRY)
   ENTITY_TYPE @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
 type PredefinedAtomicPermission
@@ -8425,6 +8680,19 @@ type PreloadImage
   ok: Boolean
   msg: String
   task_id: String
+}
+
+"""
+Added in 26.4.0. Input for a pre-start action to execute before starting the model service.
+"""
+input PreStartActionInput
+  @join__type(graph: STRAWBERRY)
+{
+  """The name of the pre-start action to execute."""
+  action: String!
+
+  """Arguments for the pre-start action."""
+  args: JSON!
 }
 
 """
@@ -8683,6 +8951,14 @@ type ProjectOrganizationInfo
 
   """Name of the project resource policy applied to this project."""
   resourcePolicy: String!
+}
+
+"""Added in UNRELEASED. Payload for project mutation responses."""
+type ProjectPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """The project entity."""
+  project: ProjectV2!
 }
 
 type ProjectResourcePolicy
@@ -9061,6 +9337,14 @@ type PurgeDomain
   msg: String
 }
 
+"""Added in UNRELEASED. Payload for domain permanent deletion mutation."""
+type PurgeDomainPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the purge was successful."""
+  purged: Boolean!
+}
+
 """
 Completely deletes a group from DB.
 
@@ -9120,6 +9404,14 @@ type PurgeImagesPayload
   task_id: String
 }
 
+"""Added in UNRELEASED. Payload for project permanent deletion mutation."""
+type PurgeProjectPayloadGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the purge was successful."""
+  purged: Boolean!
+}
+
 """Added in 26.3.0. Input for purging a role"""
 input PurgeRoleInput
   @join__type(graph: STRAWBERRY)
@@ -9175,6 +9467,22 @@ input PurgeUserV2Input
 {
   """UUID of the user to purge."""
   userId: UUID!
+
+  """Added in UNRELEASED. Options for the purge operation."""
+  options: PurgeUserV2Options = null
+}
+
+"""Added in UNRELEASED. Options for single user purge operation."""
+input PurgeUserV2Options
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  If true, migrate shared virtual folders to the admin user before purging.
+  """
+  purgeSharedVfolders: Boolean! = false
+
+  """If true, delegate endpoint ownership to the admin user before purging."""
+  delegateEndpointOwnership: Boolean! = false
 }
 
 """Added in 26.2.0. Payload for single user permanent deletion mutation."""
@@ -9950,6 +10258,11 @@ type Query
   Added in 26.2.0. List users within a specific domain. Requires domain admin privileges or higher.
   """
   domainUsersV2(scope: DomainUserV2Scope!, filter: UserV2Filter = null, orderBy: [UserV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): UserV2Connection @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Get the current client's IP address as seen by the server. Useful for configuring IP allowlists.
+  """
+  myClientIp: MyClientIp! @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.2.0. Get the current authenticated user's information. Returns the user associated with the current session. Returns an error if not authenticated.
@@ -11112,6 +11425,7 @@ input RoleAssignmentFilter
 {
   roleId: UUID = null
   role: RoleAssignmentRoleNestedFilter = null
+  permission: PermissionNestedFilter = null
   username: StringFilter = null
   email: StringFilter = null
   AND: [RoleAssignmentFilter!] = null
@@ -11620,7 +11934,7 @@ type ScanArtifactModelsPayload
   @join__type(graph: STRAWBERRY)
 {
   """Artifact revisions discovered during model scanning."""
-  artifactRevisions: ArtifactRevisionConnection!
+  artifactRevision: ArtifactRevisionConnection!
 }
 
 """
@@ -12752,6 +13066,28 @@ type UpdateDeploymentPolicyPayload
   deploymentPolicy: DeploymentPolicy!
 }
 
+"""
+Added in UNRELEASED. Input for updating domain information. All fields optional.
+"""
+input UpdateDomainInputGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """New domain name."""
+  name: String = null
+
+  """New description."""
+  description: String = null
+
+  """Updated active status."""
+  isActive: Boolean = null
+
+  """New allowed Docker registry URLs."""
+  allowedDockerRegistries: [String!] = null
+
+  """New external integration identifier."""
+  integrationId: String = null
+}
+
 """Added in 25.14.0. """
 input UpdateHuggingFaceRegistryInput
   @join__type(graph: STRAWBERRY)
@@ -12888,6 +13224,28 @@ input UpdatePermissionInput
   scopeId: String = null
   entityType: RBACElementType = null
   operation: OperationType = null
+}
+
+"""
+Added in UNRELEASED. Input for updating project information. All fields optional.
+"""
+input UpdateProjectInputGQL
+  @join__type(graph: STRAWBERRY)
+{
+  """New project name."""
+  name: String = null
+
+  """New description."""
+  description: String = null
+
+  """Updated active status."""
+  isActive: Boolean = null
+
+  """New external integration identifier."""
+  integrationId: String = null
+
+  """New resource policy name."""
+  resourcePolicy: String = null
 }
 
 """Added in 25.14.0. """
