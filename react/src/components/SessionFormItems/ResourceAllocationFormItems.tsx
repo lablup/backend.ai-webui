@@ -1397,6 +1397,7 @@ const ResourceAllocationFormItems: React.FC<
                     noStyle
                     shouldUpdate={(prev, next) =>
                       prev.cluster_mode !== next.cluster_mode ||
+                      prev.cluster_size !== next.cluster_size ||
                       prev.resource?.cpu !== next.resource?.cpu ||
                       prev.resource?.mem !== next.resource?.mem ||
                       prev.resource?.accelerator !==
@@ -1481,6 +1482,15 @@ const ResourceAllocationFormItems: React.FC<
                             ['resource', 'accelerator'],
                             ['resource', 'acceleratorType'],
                           ]}
+                          extra={
+                            form.getFieldValue('cluster_mode') ===
+                              'multi-node' &&
+                            form.getFieldValue('cluster_size') === 1
+                              ? t(
+                                  'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
+                                )
+                              : undefined
+                          }
                           rules={[
                             {
                               warningOnly: true,
