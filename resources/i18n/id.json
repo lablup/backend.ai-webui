@@ -150,6 +150,7 @@
     "Refresh": "Segarkan",
     "RefreshModelInformation": "Menyegarkan Informasi Model",
     "Reset": "Atur Ulang",
+    "Retry": "Coba lagi",
     "Save": "Simpan",
     "SaveAndClose": "Simpan dan Tutup",
     "SaveChanges": "Simpan Perubahan",
@@ -1443,6 +1444,7 @@
     "Notifications": "Pemberitahuan",
     "SeeDetail": "Lihat Detail",
     "SeeSummary": "Sembunyikan Detail",
+    "Step": "Langkah",
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
   },

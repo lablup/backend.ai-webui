@@ -150,6 +150,7 @@
     "Refresh": "刷新",
     "RefreshModelInformation": "刷新机型信息",
     "Reset": "重置",
+    "Retry": "重试",
     "Save": "保存",
     "SaveAndClose": "保存并关闭",
     "SaveChanges": "保存更改",
@@ -1443,6 +1444,7 @@
     "Notifications": "通知",
     "SeeDetail": "查看详情",
     "SeeSummary": "隐藏详情",
+    "Step": "步骤",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "访问"
   },

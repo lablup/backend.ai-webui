@@ -150,6 +150,7 @@
     "Refresh": "Сэргээх",
     "RefreshModelInformation": "Загварын мэдээллийг шинэчлэх",
     "Reset": "Дахин тохируулах",
+    "Retry": "Дахин оролдох",
     "Save": "Хадгалах",
     "SaveAndClose": "Хадгалах, хаах",
     "SaveChanges": "Өөрчлөлтүүдийг хадгалах",
@@ -1442,6 +1443,7 @@
     "Notifications": "Мэдэгдэл",
     "SeeDetail": "Дэлгэрэнгүйг үзэх",
     "SeeSummary": "Дэлгэрэнгүйг нуух",
+    "Step": "Алхам",
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },

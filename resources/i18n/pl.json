@@ -150,6 +150,7 @@
     "Refresh": "Odświeżać",
     "RefreshModelInformation": "Odświeżanie informacji o modelu",
     "Reset": "Reset",
+    "Retry": "Ponów",
     "Save": "Zapisać",
     "SaveAndClose": "Zapisz i zamknij",
     "SaveChanges": "Zapisz zmiany",
@@ -1441,6 +1442,7 @@
     "Notifications": "Powiadomienia",
     "SeeDetail": "Zobacz szczegóły",
     "SeeSummary": "Ukryj szczegóły",
+    "Step": "Krok",
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
     "Visit": "Wizyta"
   },

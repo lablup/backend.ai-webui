@@ -4,6 +4,7 @@
  */
 import { useWebUINavigate } from '.';
 import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
+import BAIMultiStepNotificationItem from '../components/BAIMultiStepNotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
 import { App } from 'antd';
@@ -77,6 +78,16 @@ export interface NotificationState<T = any> extends Omit<
   onCancel?: (() => void) | null;
   skipDesktopNotification?: boolean;
   extraData: any;
+  multiStep?: {
+    currentStep: number;
+    totalSteps: number;
+    steps: Array<{
+      label: string;
+      status: 'idle' | 'pending' | 'resolved' | 'rejected' | 'cancelled';
+      progress?: number;
+    }>;
+    overallStatus: 'idle' | 'running' | 'completed' | 'failed' | 'cancelled';
+  };
 }
 
 interface NotificationOptions {
@@ -436,6 +447,8 @@ export const useSetBAINotification = () => {
                 notification={newNotification}
                 nodeFrgmt={newNotification.node}
               />
+            ) : newNotification.multiStep ? (
+              <BAIMultiStepNotificationItem notification={newNotification} />
             ) : (
               <BAIGeneralNotificationItem
                 notification={newNotification}

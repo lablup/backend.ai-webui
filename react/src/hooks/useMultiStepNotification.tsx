@@ -252,6 +252,24 @@ function createInitialStepStates(count: number): StepState[] {
   }));
 }
 
+function buildMultiStepData(
+  steps: StepDefinition[],
+  stepStates: StepState[],
+  currentStep: number,
+  overallStatus: OverallStatus,
+) {
+  return {
+    currentStep,
+    totalSteps: steps.length,
+    steps: steps.map((step, idx) => ({
+      label: step.label,
+      status: stepStates[idx]?.status ?? ('idle' as StepStatus),
+      progress: stepStates[idx]?.progress,
+    })),
+    overallStatus,
+  };
+}
+
 /**
  * Hook for managing multi-step async notification sequences.
  *
@@ -338,6 +356,12 @@ export function useMultiStepNotification(
         description: `Step ${startIndex + 1}/${total}: ${steps[startIndex]?.label ?? ''}`,
         open: true,
         duration: 0,
+        multiStep: buildMultiStepData(
+          steps,
+          stepStatesRef.current,
+          startIndex,
+          'running',
+        ),
       });
 
       syncState('running', startIndex);
@@ -417,6 +441,12 @@ export function useMultiStepNotification(
           description: stepPendingDescription,
           open: true,
           duration: 0,
+          multiStep: buildMultiStepData(
+            steps,
+            stepStatesRef.current,
+            i,
+            'running',
+          ),
           ...(step.actionButtons?.pending
             ? {
                 extraData: {
@@ -472,6 +502,12 @@ export function useMultiStepNotification(
                         open: true,
                         duration: 0,
                         skipDesktopNotification: true,
+                        multiStep: buildMultiStepData(
+                          steps,
+                          stepStatesRef.current,
+                          i,
+                          'running',
+                        ),
                       });
                     },
                     100,
@@ -514,6 +550,12 @@ export function useMultiStepNotification(
             open: true,
             duration: 0,
             skipDesktopNotification: !isLastStep,
+            multiStep: buildMultiStepData(
+              steps,
+              stepStatesRef.current,
+              i,
+              'running',
+            ),
             ...(step.actionButtons?.resolved
               ? {
                   extraData: {
@@ -540,6 +582,12 @@ export function useMultiStepNotification(
             description: stepRejectedDescription,
             open: true,
             duration: CLOSING_DURATION,
+            multiStep: buildMultiStepData(
+              steps,
+              stepStatesRef.current,
+              i,
+              'failed',
+            ),
             ...(step.actionButtons?.rejected
               ? {
                   extraData: {
@@ -562,6 +610,12 @@ export function useMultiStepNotification(
         backgroundTask: { status: 'resolved' },
         open: true,
         duration: CLOSING_DURATION,
+        multiStep: buildMultiStepData(
+          steps,
+          stepStatesRef.current,
+          total - 1,
+          'completed',
+        ),
         ...(onAllCompleted?.actionButtons?.primary
           ? {
               extraData: {
@@ -652,6 +706,12 @@ export function useMultiStepNotification(
       description: onCancelled?.message,
       open: true,
       duration: CLOSING_DURATION,
+      multiStep: buildMultiStepData(
+        steps,
+        stepStatesRef.current,
+        multiStepState.currentStep,
+        'cancelled',
+      ),
       ...(cancelledActionButton
         ? {
             extraData: {

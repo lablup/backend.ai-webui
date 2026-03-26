@@ -150,6 +150,7 @@
     "Refresh": "Segarkan",
     "RefreshModelInformation": "Refresh Model Maklumat",
     "Reset": "Tetapkan semula",
+    "Retry": "Cuba semula",
     "Save": "Jimat",
     "SaveAndClose": "Simpan dan tutup",
     "SaveChanges": "Simpan Perubahan",
@@ -1441,6 +1442,7 @@
     "Notifications": "Pemberitahuan",
     "SeeDetail": "Lihat Perincian",
     "SeeSummary": "Sembunyikan Perincian",
+    "Step": "Langkah",
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati"
   },

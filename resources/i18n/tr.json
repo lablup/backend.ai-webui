@@ -150,6 +150,7 @@
     "Refresh": "Yenile",
     "RefreshModelInformation": "Model Bilgilerini Yenile",
     "Reset": "Sıfırla",
+    "Retry": "Yeniden Dene",
     "Save": "Kayıt etmek",
     "SaveAndClose": "Kaydet ve kapat",
     "SaveChanges": "Değişiklikleri Kaydet",
@@ -1441,6 +1442,7 @@
     "Notifications": "Bildirimler",
     "SeeDetail": "Ayrıntıları gör",
     "SeeSummary": "Ayrıntıları gizle",
+    "Step": "Adım",
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
   },

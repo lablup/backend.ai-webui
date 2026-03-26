@@ -150,6 +150,7 @@
     "Refresh": "รีเฟรช",
     "RefreshModelInformation": "รีเฟรชข้อมูลโมเดล",
     "Reset": "รีเซ็ต",
+    "Retry": "ลองใหม่",
     "Save": "บันทึก",
     "SaveAndClose": "บันทึกและปิด",
     "SaveChanges": "บันทึกการเปลี่ยนแปลง",
@@ -1443,6 +1444,7 @@
     "Notifications": "การแจ้งเตือน",
     "SeeDetail": "ดูรายละเอียด",
     "SeeSummary": "ซ่อนรายละเอียด",
+    "Step": "ขั้นตอน",
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
   },

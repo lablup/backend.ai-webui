@@ -150,6 +150,7 @@
     "Refresh": "Atualizar",
     "RefreshModelInformation": "Atualizar informações sobre o modelo",
     "Reset": "Reiniciar",
+    "Retry": "Tentar novamente",
     "Save": "Salve ",
     "SaveAndClose": "Salvar e fechar",
     "SaveChanges": "Salvar alterações",
@@ -1441,6 +1442,7 @@
     "Notifications": "Notificações",
     "SeeDetail": "Ver detalhes",
     "SeeSummary": "Ocultar detalhes",
+    "Step": "Etapa",
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita"
   },

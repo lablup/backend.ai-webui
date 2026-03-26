@@ -150,6 +150,7 @@
     "Refresh": "Обновить",
     "RefreshModelInformation": "Обновить информацию о модели",
     "Reset": "Перезагрузить",
+    "Retry": "Повторить",
     "Save": "Сохранить",
     "SaveAndClose": "Сохрани и закрой",
     "SaveChanges": "Сохранить изменения",
@@ -1441,6 +1442,7 @@
     "Notifications": "Уведомления",
     "SeeDetail": "Подробнее",
     "SeeSummary": "Скрыть подробности",
+    "Step": "Шаг",
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },

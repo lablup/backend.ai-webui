@@ -150,6 +150,7 @@
     "Refresh": "Aktualisierung",
     "RefreshModelInformation": "Modellinformationen aktualisieren",
     "Reset": "Zurücksetzen",
+    "Retry": "Wiederholen",
     "Save": "speichern",
     "SaveAndClose": "Speichern und schließen",
     "SaveChanges": "Änderungen speichern",
@@ -1443,6 +1444,7 @@
     "Notifications": "Benachrichtigungen",
     "SeeDetail": "Details anzeigen",
     "SeeSummary": "Details ausblenden",
+    "Step": "Schritt",
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
     "Visit": "Besuch"
   },

@@ -150,6 +150,7 @@
     "Refresh": "Làm tươi",
     "RefreshModelInformation": "Làm mới thông tin mô hình",
     "Reset": "Cài lại",
+    "Retry": "Thử lại",
     "Save": "Tiết kiệm",
     "SaveAndClose": "Lưu và đóng",
     "SaveChanges": "Lưu thay đổi",
@@ -1443,6 +1444,7 @@
     "Notifications": "Thông báo",
     "SeeDetail": "Xem chi tiết",
     "SeeSummary": "Ẩn chi tiết",
+    "Step": "Bước",
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm"
   },

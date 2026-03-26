@@ -150,6 +150,7 @@
     "Refresh": "Refresh",
     "RefreshModelInformation": "Refresh Model Information",
     "Reset": "Reset",
+    "Retry": "Retry",
     "Save": "Save",
     "SaveAndClose": "Save And Close",
     "SaveChanges": "Save Changes",
@@ -1442,6 +1443,7 @@
     "Notifications": "Notifications",
     "SeeDetail": "See Details",
     "SeeSummary": "Hide Details",
+    "Step": "Step",
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"
   },

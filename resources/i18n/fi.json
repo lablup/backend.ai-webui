@@ -150,6 +150,7 @@
     "Refresh": "Päivitä",
     "RefreshModelInformation": "Päivitä mallin tiedot",
     "Reset": "Nollaa",
+    "Retry": "Yritä uudelleen",
     "Save": "Tallenna",
     "SaveAndClose": "Tallenna ja sulje",
     "SaveChanges": "Tallenna muutokset",
@@ -1441,6 +1442,7 @@
     "Notifications": "Ilmoitukset",
     "SeeDetail": "Näytä tiedot",
     "SeeSummary": "Piilota tiedot",
+    "Step": "Vaihe",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
   },

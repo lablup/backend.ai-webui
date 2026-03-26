@@ -150,6 +150,7 @@
     "Refresh": "更新",
     "RefreshModelInformation": "モデル情報の更新",
     "Reset": "初期化",
+    "Retry": "再試行",
     "Save": "セーブ",
     "SaveAndClose": "保存して閉じます",
     "SaveChanges": "変更内容を保存",
@@ -1443,6 +1444,7 @@
     "Notifications": "通知",
     "SeeDetail": "詳細を見る",
     "SeeSummary": "詳細を隠す",
+    "Step": "ステップ",
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"
   },
