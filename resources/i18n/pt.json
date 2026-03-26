@@ -1981,6 +1981,7 @@
       "ClusterMode": "Modo de cluster",
       "ClusterSize": "Tamanho do cluster",
       "ClusterSizeExceedsImmediateCapacity": "Com os recursos selecionados, até {{maxClusterSize}} {{unit}}(s) podem iniciar imediatamente. A sessão pode ficar pendente.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Multinó com tamanho 1 será criado como uma sessão de nó único.",
       "ConfirmAndLaunch": "Confirmar e lançar",
       "Container": "Recipiente",
       "Core": "Testemunho",

@@ -1485,11 +1485,13 @@ const ResourceAllocationFormItems: React.FC<
                           extra={
                             form.getFieldValue('cluster_mode') ===
                               'multi-node' &&
-                            form.getFieldValue('cluster_size') === 1
-                              ? t(
+                            form.getFieldValue('cluster_size') === 1 ? (
+                              <span style={{ color: token.colorWarning }}>
+                                {t(
                                   'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
-                                )
-                              : undefined
+                                )}
+                              </span>
+                            ) : undefined
                           }
                           rules={[
                             {

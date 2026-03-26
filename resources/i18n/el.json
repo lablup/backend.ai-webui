@@ -1979,6 +1979,7 @@
       "ClusterMode": "Λειτουργία συμπλέγματος",
       "ClusterSize": "Μέγεθος συμπλέγματος",
       "ClusterSizeExceedsImmediateCapacity": "Με τους επιλεγμένους πόρους, έως και {{maxClusterSize}} {{unit}} μπορούν να ξεκινήσουν αμέσως. Η συνεδρία ενδέχεται να βρίσκεται σε αναμονή.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Η λειτουργία πολλαπλών κόμβων με μέγεθος 1 θα δημιουργηθεί ως συνεδρία μονού κόμβου.",
       "ConfirmAndLaunch": "Επιβεβαίωση και εκκίνηση",
       "Container": "Δοχείο",
       "Core": "Πυρήνας",

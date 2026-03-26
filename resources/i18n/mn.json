@@ -1980,6 +1980,7 @@
       "ClusterMode": "Кластер горим",
       "ClusterSize": "Кластерийн хэмжээ",
       "ClusterSizeExceedsImmediateCapacity": "Сонгосон нөөцөөр дээд тал нь {{maxClusterSize}} {{unit}} шууд эхлэх боломжтой. Сессия хүлээлтийн төлөвт орж болзошгүй.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Олон зангилаа хэмжээ 1-ээр ганц зангилаат сесс үүсгэнэ.",
       "ConfirmAndLaunch": "Шалгасан тул эхлүүлж болно",
       "Container": "Контейнер",
       "Core": "Цөм",

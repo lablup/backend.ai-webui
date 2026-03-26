@@ -1979,6 +1979,7 @@
       "ClusterMode": "küme modu",
       "ClusterSize": "Küme boyutu",
       "ClusterSizeExceedsImmediateCapacity": "Seçilen kaynaklarla en fazla {{maxClusterSize}} {{unit}} hemen başlatılabilir. Oturum bekleme durumuna geçebilir.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Çoklu düğüm boyutu 1 ile tek düğüm oturumu olarak oluşturulacaktır.",
       "ConfirmAndLaunch": "Onaylayın ve Başlatın",
       "Container": "Konteyner",
       "Core": "çekirdek",

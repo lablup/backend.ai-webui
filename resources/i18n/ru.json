@@ -1979,6 +1979,7 @@
       "ClusterMode": "Кластерный режим",
       "ClusterSize": "Размер кластера",
       "ClusterSizeExceedsImmediateCapacity": "При выбранных ресурсах немедленно может запуститься до {{maxClusterSize}} {{unit}}. Сессия может перейти в состояние ожидания.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Многоузловой режим с размером 1 будет создан как одноузловая сессия.",
       "ConfirmAndLaunch": "Подтверждение и запуск",
       "Container": "Контейнер",
       "Core": "Ядро",

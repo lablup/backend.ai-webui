@@ -1981,6 +1981,7 @@
       "ClusterMode": "Chế độ cụm",
       "ClusterSize": "Kích thước cụm",
       "ClusterSizeExceedsImmediateCapacity": "Với các tài nguyên đã chọn, tối đa {{maxClusterSize}} {{unit}} có thể khởi động ngay lập tức. Phiên có thể ở trạng thái chờ.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Đa nút với kích thước 1 sẽ được tạo dưới dạng phiên nút đơn.",
       "ConfirmAndLaunch": "Xác nhận và khởi chạy",
       "Container": "Thùng đựng hàng",
       "Core": "Cốt lõi",
