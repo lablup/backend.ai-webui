@@ -8,7 +8,7 @@ import {
   MyKeypairManagementModalQuery$data,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, App, Empty, Tag, Typography, theme } from 'antd';
+import { Alert, App, Empty, Tag, theme } from 'antd';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -23,7 +23,6 @@ import {
   useBAILogger,
   useErrorMessageResolver,
   useFetchKey,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
@@ -34,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ActiveFilter = 'active' | 'inactive';
 
@@ -88,21 +87,20 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [credentialResult, setCredentialResult] =
     useState<KeypairCredential | null>(null);
+  const [isCredentialModalOpen, setIsCredentialModalOpen] = useState(false);
 
-  const issueMyKeypair =
-    useMutationWithPromise<MyKeypairManagementModalIssueMyKeypairMutation>(
-      graphql`
-        mutation MyKeypairManagementModalIssueMyKeypairMutation {
-          issueMyKeypair @since(version: "26.4.0") {
-            keypair {
-              accessKey
-              sshPublicKey
-            }
-            secretKey
+  const [issueMyKeypair] =
+    useMutation<MyKeypairManagementModalIssueMyKeypairMutation>(graphql`
+      mutation MyKeypairManagementModalIssueMyKeypairMutation {
+        issueMyKeypair {
+          keypair {
+            accessKey
+            sshPublicKey
           }
+          secretKey
         }
-      `,
-    );
+      }
+    `);
 
   const queryVariables = {
     filter: {
@@ -128,7 +126,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) @since(version: "26.4.0") {
+        ) {
           edges {
             node {
               id
@@ -166,22 +164,28 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     data.myKeypairs?.edges?.map((edge) => edge?.node),
   );
 
-  const handleIssueKeypair = async () => {
-    try {
-      const result = await issueMyKeypair({});
-      const payload = result.issueMyKeypair;
-      setCredentialResult({
-        accessKey: payload.keypair.accessKey,
-        secretKey: payload.secretKey,
-        sshPublicKey: payload.keypair.sshPublicKey,
-      });
-      setActiveFilter('active');
-      updateFetchKey();
-      message.success(t('credential.KeypairCreated'));
-    } catch (e) {
-      logger.error(e);
-      message.error(getErrorMessage(e));
-    }
+  const handleIssueKeypair = () => {
+    issueMyKeypair({
+      variables: {},
+      onCompleted: (
+        result: MyKeypairManagementModalIssueMyKeypairMutation['response'],
+      ) => {
+        const payload = result.issueMyKeypair;
+        setCredentialResult({
+          accessKey: payload.keypair.accessKey,
+          secretKey: payload.secretKey,
+          sshPublicKey: payload.keypair.sshPublicKey ?? '',
+        });
+        setIsCredentialModalOpen(true);
+        setActiveFilter('active');
+        updateFetchKey();
+        message.success(t('credential.KeypairCreated'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
   };
 
   return (
@@ -240,7 +244,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               <BAIButton
                 type="primary"
                 icon={<PlusIcon />}
-                action={handleIssueKeypair}
+                onClick={handleIssueKeypair}
               >
                 {t('credential.IssueNewKeypair')}
               </BAIButton>
@@ -330,12 +334,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         </BAIFlex>
       </BAIModal>
       <BAIModal
-        open={credentialResult !== null}
+        open={isCredentialModalOpen}
         title={t('credential.KeypairCredentialInfo')}
-        maskClosable={false}
-        closable
         keyboard={false}
-        onCancel={() => setCredentialResult(null)}
+        onCancel={() => {
+          setIsCredentialModalOpen(false);
+          setCredentialResult(null);
+        }}
         destroyOnHidden
         width={640}
         footer={
@@ -367,24 +372,29 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             }
             title={t('credential.CannotViewAgainWarning')}
+            style={{ width: '100%' }}
           />
           <BAIFlex direction="column" gap="xs">
             <BAIText type="secondary">{t('credential.AccessKey')}</BAIText>
-            <Typography.Text copyable code>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
               {credentialResult?.accessKey}
-            </Typography.Text>
+            </BAIText>
           </BAIFlex>
           <BAIFlex direction="column" gap="xs">
             <BAIText type="secondary">{t('credential.SecretKey')}</BAIText>
-            <Typography.Text copyable code>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
               {credentialResult?.secretKey}
-            </Typography.Text>
+            </BAIText>
           </BAIFlex>
-          <BAIFlex direction="column" gap="xs">
+          <BAIFlex
+            direction="column"
+            gap="xs"
+            style={{ overflow: 'hidden', width: '100%' }}
+          >
             <BAIText type="secondary">{t('credential.SSHPublicKey')}</BAIText>
-            <Typography.Text copyable code ellipsis={{ tooltip: true }}>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
               {credentialResult?.sshPublicKey}
-            </Typography.Text>
+            </BAIText>
           </BAIFlex>
         </BAIFlex>
       </BAIModal>
