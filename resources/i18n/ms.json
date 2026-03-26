@@ -1979,6 +1979,7 @@
       "ClusterMode": "Mod kluster",
       "ClusterSize": "Saiz kluster",
       "ClusterSizeExceedsImmediateCapacity": "Dengan sumber yang dipilih, sehingga {{maxClusterSize}} {{unit}} boleh dimulakan dengan segera. Sesi mungkin berada dalam keadaan menunggu.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Berbilang nod dengan saiz 1 akan dicipta sebagai sesi nod tunggal.",
       "ConfirmAndLaunch": "Sahkan dan Lancarkan",
       "Container": "Bekas",
       "Core": "Teras",

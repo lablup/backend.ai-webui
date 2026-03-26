@@ -1979,6 +1979,7 @@
       "ClusterMode": "Tryb klastra",
       "ClusterSize": "Wielkość klastra",
       "ClusterSizeExceedsImmediateCapacity": "Przy wybranych zasobach do {{maxClusterSize}} {{unit}} może uruchomić się natychmiast. Sesja może przejść w stan oczekiwania.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Tryb wielowęzłowy z rozmiarem 1 zostanie utworzony jako sesja jednowęzłowa.",
       "ConfirmAndLaunch": "Potwierdź i uruchom",
       "Container": "Pojemnik",
       "Core": "Rdzeń",

@@ -1397,6 +1397,7 @@ const ResourceAllocationFormItems: React.FC<
                     noStyle
                     shouldUpdate={(prev, next) =>
                       prev.cluster_mode !== next.cluster_mode ||
+                      prev.cluster_size !== next.cluster_size ||
                       prev.resource?.cpu !== next.resource?.cpu ||
                       prev.resource?.mem !== next.resource?.mem ||
                       prev.resource?.accelerator !==
@@ -1485,10 +1486,24 @@ const ResourceAllocationFormItems: React.FC<
                             {
                               warningOnly: true,
                               validator: async (_rule, value: number) => {
+                                if (
+                                  form.getFieldValue('cluster_mode') ===
+                                    'multi-node' &&
+                                  value === 1
+                                ) {
+                                  return Promise.reject(
+                                    t(
+                                      'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
+                                    ),
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                            {
+                              warningOnly: true,
+                              validator: async (_rule, value: number) => {
                                 if (showRemainingWarning && value > 1) {
-                                  // Only show cluster-specific warning when at least 1 cluster
-                                  // can start immediately. When maxImmediateClusterSize is 0,
-                                  // per-resource warnings already cover the situation.
                                   if (
                                     _.isNumber(maxImmediateClusterSize) &&
                                     maxImmediateClusterSize >= 1 &&

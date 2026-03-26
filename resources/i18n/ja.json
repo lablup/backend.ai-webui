@@ -1981,6 +1981,7 @@
       "ClusterMode": "クラスターモード",
       "ClusterSize": "クラスターサイズ",
       "ClusterSizeExceedsImmediateCapacity": "選択したリソースでは、最大 {{maxClusterSize}} 個の{{unit}}をすぐに起動できます。セッションが保留状態になる可能性があります。",
+      "ClusterSizeOneMultiNodeConvertInfo": "マルチノードでサイズ1を選択すると、シングルノードセッションとして作成されます。",
       "ConfirmAndLaunch": "レビューと開始",
       "Container": "コンテナ",
       "Core": "芯",

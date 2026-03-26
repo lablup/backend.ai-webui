@@ -1981,6 +1981,7 @@
       "ClusterMode": "Modus klaster",
       "ClusterSize": "Ukuran klaster",
       "ClusterSizeExceedsImmediateCapacity": "Dengan sumber daya yang dipilih, hingga {{maxClusterSize}} {{unit}} dapat langsung dimulai. Sesi mungkin akan berada dalam status tertunda.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Multi-node dengan ukuran 1 akan dibuat sebagai sesi node tunggal.",
       "ConfirmAndLaunch": "Konfirmasi dan luncurkan",
       "Container": "Kontainer",
       "Core": "Core",

@@ -1979,6 +1979,7 @@
       "ClusterMode": "Modalità cluster",
       "ClusterSize": "Dimensione del cluster",
       "ClusterSizeExceedsImmediateCapacity": "Con le risorse selezionate, fino a {{maxClusterSize}} {{unit}} possono avviarsi immediatamente. La sessione potrebbe essere in attesa.",
+      "ClusterSizeOneMultiNodeConvertInfo": "La modalità multi-nodo con dimensione 1 verrà creata come sessione a nodo singolo.",
       "ConfirmAndLaunch": "Confermare e lanciare",
       "Container": "Contenitore",
       "Core": "Nucleo",

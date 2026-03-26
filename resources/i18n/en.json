@@ -1989,6 +1989,7 @@
       "ClusterMode": "Cluster mode",
       "ClusterSize": "Cluster size",
       "ClusterSizeExceedsImmediateCapacity": "With the selected resources, up to {{maxClusterSize}} {{unit}}(s) can start immediately. The session may be pending.",
+      "ClusterSizeOneMultiNodeConvertInfo": "Multi-node with size 1 will be created as a single-node session.",
       "ConfirmAndLaunch": "Confirm and Launch",
       "Container": "Container",
       "Core": "Core",

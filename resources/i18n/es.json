@@ -1979,6 +1979,7 @@
       "ClusterMode": "Modo clúster",
       "ClusterSize": "Tamaño del grupo",
       "ClusterSizeExceedsImmediateCapacity": "Con los recursos seleccionados, hasta {{maxClusterSize}} {{unit}}(s) pueden iniciarse inmediatamente. La sesión puede quedar en estado pendiente.",
+      "ClusterSizeOneMultiNodeConvertInfo": "El modo multinodo con tamaño 1 se creará como una sesión de nodo único.",
       "ConfirmAndLaunch": "Confirmar y lanzar",
       "Container": "Contenedor",
       "Core": "Núcleo",
