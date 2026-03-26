@@ -1629,7 +1629,7 @@
     "Deactivate": "Deactivate",
     "Description": "Description",
     "FailedToPullArtifact": "Failed to pull artifact {{name}}: {{version}}",
-    "FromHuggingFace": "From Hugging Face",
+    "FromHuggingFace": "Import",
     "GoToArtifact": "Go to Artifact",
     "Inactive": "Inactive",
     "LastUpdated": "Last Updated",

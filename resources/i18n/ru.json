@@ -1619,7 +1619,7 @@
     "Deactivate": "Деактивировать",
     "Description": "Описание",
     "FailedToPullArtifact": "Не удалось вытащить артефакт {{name}}: {{version}}",
-    "FromHuggingFace": "От обнимающего лица",
+    "FromHuggingFace": "Импорт",
     "GoToArtifact": "Перейти к артефакту",
     "Inactive": "Неактивный",
     "LastUpdated": "Последнее обновлено",

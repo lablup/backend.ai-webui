@@ -1619,7 +1619,7 @@
     "Deactivate": "Menyahaktifkan",
     "Description": "Penerangan",
     "FailedToPullArtifact": "Gagal menarik artifak {{name}}: {{version}}",
-    "FromHuggingFace": "Dari memeluk muka",
+    "FromHuggingFace": "Import",
     "GoToArtifact": "Pergi ke Artifak",
     "Inactive": "Tidak aktif",
     "LastUpdated": "Dikemas kini terakhir",

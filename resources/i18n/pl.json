@@ -1619,7 +1619,7 @@
     "Deactivate": "Dezaktywować",
     "Description": "Opis",
     "FailedToPullArtifact": "Nie udało się wyciągnąć artefakt {{name}}: {{version}}",
-    "FromHuggingFace": "Od przytulania twarzy",
+    "FromHuggingFace": "Importuj",
     "GoToArtifact": "Idź do artefaktu",
     "Inactive": "Nieaktywny",
     "LastUpdated": "Ostatnia aktualizacja",

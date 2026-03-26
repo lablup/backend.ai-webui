@@ -1621,7 +1621,7 @@
     "Deactivate": "Deaktivieren",
     "Description": "Beschreibung",
     "FailedToPullArtifact": "Artefact fehlgeschlagen {{name}}: {{version}}",
-    "FromHuggingFace": "Vom umarmen Gesicht",
+    "FromHuggingFace": "Importieren",
     "GoToArtifact": "Gehen Sie zum Artefakt",
     "Inactive": "Inaktiv",
     "LastUpdated": "Zuletzt aktualisiert",

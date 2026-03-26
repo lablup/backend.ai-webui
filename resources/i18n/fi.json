@@ -1619,7 +1619,7 @@
     "Deactivate": "Deaktivoida",
     "Description": "Kuvaus",
     "FailedToPullArtifact": "Artefaktin {{name}}: {{version}} vetoa",
-    "FromHuggingFace": "Halaamasta kasvoista",
+    "FromHuggingFace": "Tuo",
     "GoToArtifact": "Mennä artefaktiin",
     "Inactive": "Passiivinen",
     "LastUpdated": "Viimeksi päivitetty",

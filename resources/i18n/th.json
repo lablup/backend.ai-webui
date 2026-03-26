@@ -1621,7 +1621,7 @@
     "Deactivate": "ปิดใช้งาน",
     "Description": "คำอธิบาย",
     "FailedToPullArtifact": "ล้มเหลวในการดึงสิ่งประดิษฐ์ {{name}}: {{version}}",
-    "FromHuggingFace": "จากการกอดใบหน้า",
+    "FromHuggingFace": "นำเข้า",
     "GoToArtifact": "ไปที่สิ่งประดิษฐ์",
     "Inactive": "ไม่ทำงาน",
     "LastUpdated": "อัปเดตล่าสุด",

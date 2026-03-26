@@ -1619,7 +1619,7 @@
     "Deactivate": "Désactiver",
     "Description": "Description",
     "FailedToPullArtifact": "Échec pour tirer l'artefact {{name}}: {{version}}",
-    "FromHuggingFace": "De l'étreinte",
+    "FromHuggingFace": "Importer",
     "GoToArtifact": "Aller à l'artefact",
     "Inactive": "Inactif",
     "LastUpdated": "Dernière mise à jour",

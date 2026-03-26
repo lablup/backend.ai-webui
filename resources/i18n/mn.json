@@ -1620,7 +1620,7 @@
     "Deactivate": "Идэвхгүй болгох",
     "Description": "Тодорхойлолт / төрөл анги",
     "FailedToPullArtifact": "Artifact {{name}}: {{version}}",
-    "FromHuggingFace": "Тэвэрч буй нүүрнээс",
+    "FromHuggingFace": "Импортлох",
     "GoToArtifact": "Олдвор руу оч",
     "Inactive": "Идэвхгүй",
     "LastUpdated": "Өнөөхээр нь онуулсан өдөр",

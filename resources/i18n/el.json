@@ -1619,7 +1619,7 @@
     "Deactivate": "Απενεργοποιούμαι",
     "Description": "Περιγραφή",
     "FailedToPullArtifact": "Αποτυχία να τραβήξει το Artifact {{name}}: {{version}}",
-    "FromHuggingFace": "Από το αγκάλιασμα",
+    "FromHuggingFace": "Εισαγωγή",
     "GoToArtifact": "Πηγαίνετε στο τεχνούργημα",
     "Inactive": "Αδρανής",
     "LastUpdated": "Τελευταία ενημερωμένη",

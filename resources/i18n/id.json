@@ -1621,7 +1621,7 @@
     "Deactivate": "Menonaktifkan",
     "Description": "Keterangan",
     "FailedToPullArtifact": "Gagal Menarik Artifact {{name}}: {{version}}",
-    "FromHuggingFace": "Dari wajah memeluk",
+    "FromHuggingFace": "Impor",
     "GoToArtifact": "Pergi ke artefak",
     "Inactive": "Tidak aktif",
     "LastUpdated": "Terakhir diperbarui",

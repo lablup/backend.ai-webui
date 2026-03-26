@@ -1623,7 +1623,7 @@
     "Deactivate": "停用",
     "Description": "描述",
     "FailedToPullArtifact": "無法拉動artifact {{name}}: {{version}}",
-    "FromHuggingFace": "從擁抱臉",
+    "FromHuggingFace": "匯入",
     "GoToArtifact": "去工件",
     "Inactive": "不活動",
     "LastUpdated": "最後更新",

@@ -1621,7 +1621,7 @@
     "Deactivate": "無効にします",
     "Description": "説明",
     "FailedToPullArtifact": "artifactを引くことができなかった{{name}}: {{version}}",
-    "FromHuggingFace": "顔を抱き締めることから",
+    "FromHuggingFace": "インポート",
     "GoToArtifact": "アーティファクトに移動します",
     "Inactive": "非アクティブ",
     "LastUpdated": "最後に更新されました",

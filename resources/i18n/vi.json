@@ -1621,7 +1621,7 @@
     "Deactivate": "Vô hiệu hóa",
     "Description": "Sự miêu tả",
     "FailedToPullArtifact": "Không thể kéo Artifact {{name}}: {{version}}",
-    "FromHuggingFace": "Từ khuôn mặt ôm",
+    "FromHuggingFace": "Nhập",
     "GoToArtifact": "Đi đến cổ vật",
     "Inactive": "Không hoạt động",
     "LastUpdated": "Cập nhật lần cuối",

@@ -1621,7 +1621,7 @@
     "Deactivate": "停用",
     "Description": "描述",
     "FailedToPullArtifact": "无法拉动artifact {{name}}: {{version}}",
-    "FromHuggingFace": "从拥抱脸",
+    "FromHuggingFace": "导入",
     "GoToArtifact": "去工件",
     "Inactive": "不活动",
     "LastUpdated": "最后更新",
