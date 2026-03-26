@@ -632,6 +632,32 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminGroupOrder,
   );
 
+  // Get the first available admin menu item (after blocklist filtering)
+  const firstAvailableAdminMenuItem = (() => {
+    for (const item of groupedAdminMenu) {
+      // Non-group item (direct menu item)
+      if (item && 'key' in item && item.key && !item.disabled) {
+        return item as WebUIAdminMenuItemType;
+      }
+      // Group item with children
+      if (
+        item &&
+        'type' in item &&
+        item.type === 'group' &&
+        'children' in item
+      ) {
+        const firstActiveChild = _.find(
+          item.children as Array<WebUIAdminMenuItemType>,
+          (child) => child?.key && !child.disabled,
+        );
+        if (firstActiveChild) {
+          return firstActiveChild;
+        }
+      }
+    }
+    return null;
+  })();
+
   const isSelectedAdminCategoryMenu =
     _.some(adminMenu, (item) => {
       if (item && 'key' in item) {
@@ -773,6 +799,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
     firstAvailableMenuItem,
+    firstAvailableAdminMenuItem,
     defaultMenuPath,
     isCurrentPageBlocked,
     isCurrentPageNotFound,

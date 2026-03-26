@@ -32,7 +32,10 @@ import { ArrowLeftIcon, SettingsIcon } from 'lucide-react';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from 'src/hooks/useWebUIMenuItems';
 
 interface WebUISiderProps extends Pick<
   BAISiderProps,
@@ -73,6 +76,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
     isCurrentPageUnauthorized,
+    firstAvailableAdminMenuItem,
     defaultMenuPath,
   } = useWebUIMenuItems({
     hideGroupName: props.collapsed,
@@ -213,16 +217,19 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             ]}
             // @ts-ignore
             items={filterOutEmpty([
-              hasAdminCategoryRole && {
-                // Go to first page of admin setting pages.
-                label: (
-                  <WebUILink to="/credential">
-                    {t('webui.menu.AdminSettings')}
-                  </WebUILink>
-                ),
-                icon: <SettingsIcon style={{ color: token.colorInfo }} />,
-                key: 'admin-settings',
-              },
+              hasAdminCategoryRole &&
+                firstAvailableAdminMenuItem && {
+                  // Go to first page of admin setting pages.
+                  label: (
+                    <WebUILink
+                      to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
+                    >
+                      {t('webui.menu.AdminSettings')}
+                    </WebUILink>
+                  ),
+                  icon: <SettingsIcon style={{ color: token.colorInfo }} />,
+                  key: 'admin-settings',
+                },
               ...groupedGeneralMenu,
             ])}
           />
