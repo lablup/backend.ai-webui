@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { listenToBackgroundTask } from '../helper';
 import { CLOSING_DURATION, useSetBAINotification } from './useBAINotification';
 import _ from 'lodash';
 import { useCallback, useRef, useState } from 'react';
@@ -293,6 +294,7 @@ export function useMultiStepNotification(
     createInitialStepStates(config.steps.length),
   );
   const abortControllerRef = useRef<AbortController | null>(null);
+  const sseCleanupRef = useRef<(() => void) | null>(null);
 
   const [multiStepState, setMultiStepState] = useState<MultiStepState>({
     currentStep: 0,
@@ -380,12 +382,52 @@ export function useMultiStepNotification(
             stepStatesRef.current[i] = { status: 'resolved', result };
             prevResult = result;
           } else {
-            // SSE step - placeholder for future SSE support
-            stepStatesRef.current[i] = {
-              status: 'resolved',
-              result: executorResult,
-            };
-            prevResult = executorResult;
+            // SSE step - listen to background task via SSE
+            const sseResult = executorResult as { taskId: string };
+            const result = await new Promise<unknown>((resolve, reject) => {
+              const cleanup = listenToBackgroundTask(sseResult.taskId, {
+                onUpdated: _.throttle(
+                  (data: any) => {
+                    const ratio = data.current_progress / data.total_progress;
+                    stepStatesRef.current[i] = {
+                      ...stepStatesRef.current[i],
+                      status: 'pending',
+                      progress: ratio * 100,
+                    };
+                    syncState('running', i);
+                    upsertNotification({
+                      key,
+                      message,
+                      backgroundTask: {
+                        status: 'pending',
+                        percent: ratio * 100,
+                      },
+                      description: stepPendingDescription,
+                      open: true,
+                      duration: 0,
+                      skipDesktopNotification: true,
+                    });
+                  },
+                  100,
+                  { leading: true, trailing: false },
+                ),
+                onDone: () => {
+                  resolve(sseResult);
+                },
+                onTaskFailed: (data: any) => {
+                  reject(new Error(data?.message || 'Background task failed'));
+                },
+                onFailed: (data: any) => {
+                  reject(new Error(data?.message || 'Background task failed'));
+                },
+                onTaskCancelled: () => {
+                  reject(new Error('Background task cancelled'));
+                },
+              });
+              sseCleanupRef.current = cleanup;
+            });
+            stepStatesRef.current[i] = { status: 'resolved', result };
+            prevResult = result;
           }
 
           // Update description after step resolved (intermediate steps skip desktop notification)
@@ -492,6 +534,7 @@ export function useMultiStepNotification(
     if (multiStepState.overallStatus !== 'running') return;
 
     abortControllerRef.current?.abort();
+    sseCleanupRef.current?.();
 
     const { key, message, onCancelled } = config;
     const cancelledMessage = onCancelled?.message ?? message;
