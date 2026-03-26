@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { CLOSING_DURATION, useSetBAINotification } from './useBAINotification';
+import _ from 'lodash';
+import { useCallback, useRef, useState } from 'react';
 
 /**
  * Lifecycle states for a single step in a multi-step notification sequence.
@@ -242,6 +245,12 @@ export interface MultiStepControls {
   state: MultiStepState;
 }
 
+function createInitialStepStates(count: number): StepState[] {
+  return Array.from({ length: count }, () => ({
+    status: 'idle' as StepStatus,
+  }));
+}
+
 /**
  * Hook for managing multi-step async notification sequences.
  *
@@ -249,7 +258,7 @@ export interface MultiStepControls {
  * sequentially, with optional eager execution via `dependsOn: false`.
  * The notification is updated at each step transition.
  *
- * @param _config - Configuration for the multi-step notification sequence.
+ * @param config - Configuration for the multi-step notification sequence.
  * @returns Controls and state for managing the sequence.
  *
  * @example
@@ -272,12 +281,242 @@ export interface MultiStepControls {
  *   onAllCompleted: { message: 'Workflow complete' },
  * });
  * ```
- *
- * @remarks
- * This is a placeholder. The implementation will be added in a follow-up task.
  */
 export function useMultiStepNotification(
-  _config: MultiStepNotificationConfig,
+  config: MultiStepNotificationConfig,
 ): MultiStepControls {
-  throw new Error('Not implemented yet');
+  'use memo';
+
+  const { upsertNotification } = useSetBAINotification();
+
+  const stepStatesRef = useRef<StepState[]>(
+    createInitialStepStates(config.steps.length),
+  );
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const [multiStepState, setMultiStepState] = useState<MultiStepState>({
+    currentStep: 0,
+    totalSteps: config.steps.length,
+    steps: createInitialStepStates(config.steps.length),
+    overallStatus: 'idle',
+  });
+
+  const syncState = useCallback(
+    (overallStatus: OverallStatus, currentStep: number) => {
+      const snapshot = _.cloneDeep(stepStatesRef.current);
+      setMultiStepState({
+        currentStep,
+        totalSteps: config.steps.length,
+        steps: snapshot,
+        overallStatus,
+      });
+    },
+    [config.steps.length],
+  );
+
+  const runFromStep = useCallback(
+    async (startIndex: number) => {
+      const { key, message, steps, onAllCompleted } = config;
+      const total = steps.length;
+
+      abortControllerRef.current = new AbortController();
+      const { signal } = abortControllerRef.current;
+
+      // Open notification as pending
+      upsertNotification({
+        key,
+        message,
+        backgroundTask: { status: 'pending' },
+        description: `Step ${startIndex + 1}/${total}: ${steps[startIndex]?.label ?? ''}`,
+        open: true,
+        duration: 0,
+      });
+
+      syncState('running', startIndex);
+
+      let prevResult: unknown = undefined;
+
+      // Preserve results from already-completed steps before startIndex
+      for (let i = 0; i < startIndex; i++) {
+        const existingState = stepStatesRef.current[i];
+        if (existingState?.status === 'resolved') {
+          prevResult = existingState.result;
+        }
+      }
+
+      for (let i = startIndex; i < total; i++) {
+        const step = steps[i];
+
+        // Update step to pending
+        stepStatesRef.current[i] = { status: 'pending' };
+        syncState('running', i);
+
+        const stepPendingDescription =
+          step.onChange?.pending ?? `Step ${i + 1}/${total}: ${step.label}`;
+
+        upsertNotification({
+          key,
+          message,
+          backgroundTask: { status: 'pending' },
+          description: stepPendingDescription,
+          open: true,
+          duration: 0,
+          ...(step.actionButtons?.pending
+            ? {
+                extraData: {
+                  actionButton: step.actionButtons.pending,
+                },
+              }
+            : {}),
+        });
+
+        try {
+          const executorInput =
+            step.dependsOn === false ? undefined : prevResult;
+          const executorResult = step.executor(executorInput as never, signal);
+
+          if (executorResult instanceof Promise) {
+            const result = await executorResult;
+            stepStatesRef.current[i] = { status: 'resolved', result };
+            prevResult = result;
+          } else {
+            // SSE step - placeholder for future SSE support
+            stepStatesRef.current[i] = {
+              status: 'resolved',
+              result: executorResult,
+            };
+            prevResult = executorResult;
+          }
+
+          // Update description after step resolved (intermediate steps skip desktop notification)
+          const isLastStep = i === total - 1;
+          const stepResolvedDescription =
+            step.onChange?.resolved ?? `Step ${i + 1}/${total}: ${step.label}`;
+
+          upsertNotification({
+            key,
+            message,
+            backgroundTask: { status: 'pending' },
+            description: stepResolvedDescription,
+            open: true,
+            duration: 0,
+            skipDesktopNotification: !isLastStep,
+            ...(step.actionButtons?.resolved
+              ? {
+                  extraData: {
+                    actionButton: step.actionButtons.resolved,
+                  },
+                }
+              : {}),
+          });
+
+          syncState('running', i);
+        } catch (err) {
+          const error = err instanceof Error ? err : new Error(String(err));
+          stepStatesRef.current[i] = { status: 'rejected', error };
+
+          const stepRejectedDescription =
+            step.onChange?.rejected ?? error.message;
+
+          upsertNotification({
+            key,
+            message,
+            backgroundTask: { status: 'rejected' },
+            description: stepRejectedDescription,
+            open: true,
+            duration: CLOSING_DURATION,
+            ...(step.actionButtons?.rejected
+              ? {
+                  extraData: {
+                    actionButton: step.actionButtons.rejected,
+                  },
+                }
+              : {}),
+          });
+
+          syncState('failed', i);
+          return;
+        }
+      }
+
+      // All steps completed
+      const completedMessage = onAllCompleted?.message ?? message;
+      upsertNotification({
+        key,
+        message: completedMessage,
+        backgroundTask: { status: 'resolved' },
+        open: true,
+        duration: CLOSING_DURATION,
+        ...(onAllCompleted?.actionButtons?.primary
+          ? {
+              extraData: {
+                actionButton: onAllCompleted.actionButtons.primary,
+              },
+            }
+          : {}),
+      });
+
+      syncState('completed', total - 1);
+    },
+    [config, upsertNotification, syncState],
+  );
+
+  const start = useCallback(() => {
+    if (multiStepState.overallStatus === 'running') return;
+
+    // Reset all step states
+    stepStatesRef.current = createInitialStepStates(config.steps.length);
+
+    runFromStep(0);
+  }, [multiStepState.overallStatus, config.steps.length, runFromStep]);
+
+  const retry = useCallback(() => {
+    if (multiStepState.overallStatus !== 'failed') return;
+
+    const firstFailedIndex = _.findIndex(
+      stepStatesRef.current,
+      (s) => s.status === 'rejected',
+    );
+
+    if (firstFailedIndex < 0) return;
+
+    // Reset failed and subsequent steps to idle
+    for (let i = firstFailedIndex; i < stepStatesRef.current.length; i++) {
+      stepStatesRef.current[i] = { status: 'idle' };
+    }
+
+    runFromStep(firstFailedIndex);
+  }, [multiStepState.overallStatus, runFromStep]);
+
+  const cancel = useCallback(() => {
+    if (multiStepState.overallStatus !== 'running') return;
+
+    abortControllerRef.current?.abort();
+
+    const { key, message, onCancelled } = config;
+    const cancelledMessage = onCancelled?.message ?? message;
+
+    upsertNotification({
+      key,
+      message: cancelledMessage,
+      backgroundTask: { status: 'rejected' },
+      open: true,
+      duration: CLOSING_DURATION,
+    });
+
+    syncState('cancelled', multiStepState.currentStep);
+  }, [
+    multiStepState.overallStatus,
+    multiStepState.currentStep,
+    config,
+    upsertNotification,
+    syncState,
+  ]);
+
+  return {
+    start,
+    retry,
+    cancel,
+    state: multiStepState,
+  };
 }
