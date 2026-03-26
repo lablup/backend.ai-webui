@@ -57,6 +57,7 @@ const LoginView: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { modal } = App.useApp();
 
   // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
   const {
@@ -116,6 +117,14 @@ const LoginView: React.FC = () => {
     useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
   const configRef = useRef<LoginConfigState>(loginConfig);
   const blockTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const connectUsingSessionRef =
+    useRef<(showError?: boolean, endpointOverride?: string) => Promise<void>>(
+      null,
+    );
+  // Remembers that the user approved force-login (concurrent session override).
+  // Persists across retries (e.g., TOTP expiration after force approval) so
+  // the next login attempt automatically includes force=true.
+  const forceLoginApprovedRef = useRef(false);
 
   // Trigger config loading on mount
   useEffect(() => {
@@ -318,6 +327,7 @@ const LoginView: React.FC = () => {
       });
       document.dispatchEvent(event);
       close();
+      forceLoginApprovedRef.current = false;
       clearSavedLoginInfo();
       // Read the endpoint from the connected client to avoid stale closure
       // values. When handleLogin calls setApiEndpoint(ep) then immediately
