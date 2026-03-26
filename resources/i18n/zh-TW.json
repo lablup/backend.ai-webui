@@ -1439,7 +1439,9 @@
     "Version": "版本"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "您確定清除所有通知嗎？",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "清除通知",
     "Initializing": "正在初始化...",
     "NoNotification": "無通知。",
@@ -1447,6 +1449,8 @@
     "SeeDetail": "查看詳情",
     "SeeSummary": "隱藏詳情",
     "Step": "步驟",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
   },

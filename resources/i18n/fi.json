@@ -1435,7 +1435,9 @@
     "Version": "Versio"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Tyhjennä ilmoitukset",
     "Initializing": "Aloitetaan...",
     "NoNotification": "Ei ilmoitusta.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Näytä tiedot",
     "SeeSummary": "Piilota tiedot",
     "Step": "Vaihe",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
   },

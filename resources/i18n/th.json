@@ -1437,7 +1437,9 @@
     "Version": "เวอร์ชัน"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "คุณแน่ใจหรือไม่ที่จะล้างการแจ้งเตือนทั้งหมด?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "ล้างการแจ้งเตือน",
     "Initializing": "กำลังเริ่มต้น...",
     "NoNotification": "ไม่มีการแจ้งเตือน",
@@ -1445,6 +1447,8 @@
     "SeeDetail": "ดูรายละเอียด",
     "SeeSummary": "ซ่อนรายละเอียด",
     "Step": "ขั้นตอน",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
   },

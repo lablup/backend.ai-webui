@@ -1437,7 +1437,9 @@
     "Version": "Versi: kapan"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Hapus Notifikasi",
     "Initializing": "Inisialisasi...",
     "NoNotification": "Tidak Ada Pemberitahuan.",
@@ -1445,6 +1447,8 @@
     "SeeDetail": "Lihat Detail",
     "SeeSummary": "Sembunyikan Detail",
     "Step": "Langkah",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
   },

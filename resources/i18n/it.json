@@ -1435,7 +1435,9 @@
     "Version": "Versione"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Sei sicuro di cancellare tutte le notifiche?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Notifiche chiare",
     "Initializing": "Inizializzazione in corso...",
     "NoNotification": "Nessuna notifica.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Vedi dettagli",
     "SeeSummary": "Nascondi dettagli",
     "Step": "Passaggio",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Aggiornato con successo",
     "Visit": "Visitare"
   },

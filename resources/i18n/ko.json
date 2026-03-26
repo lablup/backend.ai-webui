@@ -1438,7 +1438,9 @@
     "Version": "버전"
   },
   "notification": {
+    "AllStepsCompleted": "모든 단계 완료",
     "AreYouSureToClearAllNotifications": "모든 알림을 삭제하시겠습니까?",
+    "Cancelled": "취소됨",
     "ClearNotifications": "모든 알림 삭제",
     "Initializing": "초기화 중...",
     "NoNotification": "알림이 없습니다.",
@@ -1446,6 +1448,8 @@
     "SeeDetail": "상세보기",
     "SeeSummary": "접기",
     "Step": "단계",
+    "StepFailed": "단계 실패",
+    "StepProgress": "{{current}}/{{total}} 단계: {{label}}",
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"
   },

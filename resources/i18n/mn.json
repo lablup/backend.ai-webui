@@ -1436,7 +1436,9 @@
     "Version": "Хувилбар"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Мэдэгдлийг арилгах",
     "Initializing": "Эхлүүлж байна ...",
     "NoNotification": "Мэдэгдэл байхгүй.",
@@ -1444,6 +1446,8 @@
     "SeeDetail": "Дэлгэрэнгүйг үзэх",
     "SeeSummary": "Дэлгэрэнгүйг нуух",
     "Step": "Алхам",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },

@@ -1437,7 +1437,9 @@
     "Version": "Phiên bản"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Xóa thông báo",
     "Initializing": "Đang khởi tạo ...",
     "NoNotification": "Không có thông báo.",
@@ -1445,6 +1447,8 @@
     "SeeDetail": "Xem chi tiết",
     "SeeSummary": "Ẩn chi tiết",
     "Step": "Bước",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm"
   },

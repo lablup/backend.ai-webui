@@ -1435,7 +1435,9 @@
     "Version": "Sürüm"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Bildirimleri Temizle",
     "Initializing": "Başlatılıyor...",
     "NoNotification": "Bildirim yok.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Ayrıntıları gör",
     "SeeSummary": "Ayrıntıları gizle",
     "Step": "Adım",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
   },

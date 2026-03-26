@@ -1435,7 +1435,9 @@
     "Version": "Versi"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Adakah anda pasti mengosongkan semua pemberitahuan?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Kosongkan Pemberitahuan",
     "Initializing": "Memulakan ...",
     "NoNotification": "Tiada Pemberitahuan.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Lihat Perincian",
     "SeeSummary": "Sembunyikan Perincian",
     "Step": "Langkah",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati"
   },

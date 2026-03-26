@@ -44,9 +44,24 @@ const BAIMultiStepNotificationItem: React.FC<{
       <ClockCircleOutlined style={{ color: token.colorInfo }} />
     );
 
-  const stepLabel = currentStepDef
-    ? `${t('notification.Step')} ${currentStep + 1}/${totalSteps}: ${currentStepDef.label}`
-    : `${t('notification.Step')} ${currentStep + 1}/${totalSteps}`;
+  const stepLabel =
+    overallStatus === 'completed'
+      ? t('notification.AllStepsCompleted')
+      : overallStatus === 'failed'
+        ? t('notification.StepFailed')
+        : overallStatus === 'cancelled'
+          ? t('notification.Cancelled')
+          : currentStepDef
+            ? t('notification.StepProgress', {
+                current: currentStep + 1,
+                total: totalSteps,
+                label: currentStepDef.label,
+              })
+            : t('notification.StepProgress', {
+                current: currentStep + 1,
+                total: totalSteps,
+                label: '',
+              });
 
   const currentStepProgress = currentStepDef?.progress;
 

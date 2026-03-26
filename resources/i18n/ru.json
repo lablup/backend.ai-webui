@@ -1435,7 +1435,9 @@
     "Version": "Версия"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Очистить уведомления",
     "Initializing": "Инициализация ...",
     "NoNotification": "Нет уведомлений.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Подробнее",
     "SeeSummary": "Скрыть подробности",
     "Step": "Шаг",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },

@@ -1437,7 +1437,9 @@
     "Version": "バージョン"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "すべての通知をクリアしてもよろしいですか?",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "通知をクリアする",
     "Initializing": "初期化中...",
     "NoNotification": "通知はありません。",
@@ -1445,6 +1447,8 @@
     "SeeDetail": "詳細を見る",
     "SeeSummary": "詳細を隠す",
     "Step": "ステップ",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"
   },

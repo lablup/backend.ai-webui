@@ -1435,7 +1435,9 @@
     "Version": "Εκδοχή"
   },
   "notification": {
+    "AllStepsCompleted": "All steps completed",
     "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;",
+    "Cancelled": "Cancelled",
     "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
     "Initializing": "Αρχικοποίηση ...",
     "NoNotification": "Καμία ειδοποίηση.",
@@ -1443,6 +1445,8 @@
     "SeeDetail": "Εμφάνιση λεπτομερειών",
     "SeeSummary": "Απόκρυψη λεπτομερειών",
     "Step": "Βήμα",
+    "StepFailed": "Step failed",
+    "StepProgress": "Step {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη"
   },
