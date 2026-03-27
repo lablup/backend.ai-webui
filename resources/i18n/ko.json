@@ -1319,6 +1319,7 @@
     "GenerateNewToken": "새 토큰 생성하기",
     "GenerateToken": "토큰 생성",
     "GeneratedTokens": "생성된 토큰 목록",
+    "GoToFolder": "폴더로 이동",
     "GoToServiceDetailPage": "모델 서비스 상세 페이지로 이동",
     "Image": "이미지",
     "ModelDefinitionPath": "모델 정의 파일 경로",
