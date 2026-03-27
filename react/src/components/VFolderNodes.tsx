@@ -10,6 +10,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useModelServiceLauncher } from '../hooks/useModelServiceLauncher';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -41,6 +42,7 @@ import {
   BAIConfirmModalWithInput,
   BAIVFolderDeleteButton,
   BAITag,
+  useSearchVFolderFiles,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -63,6 +65,112 @@ export const statusTagColor = {
 };
 
 export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
+
+interface VFolderStartServiceButtonProps {
+  vfolder: VFolderNodeInList;
+}
+
+/**
+ * Button component for starting a model service from a model-type vfolder.
+ * Validates that model-definition.yaml and service-definition.toml exist
+ * before attempting to create the service.
+ */
+const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
+  vfolder,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { upsertNotification } = useSetBAINotification();
+  const {
+    mutationToCreateService,
+    createServiceNotificationMsg,
+    createServiceInput,
+  } = useModelServiceLauncher();
+
+  const vfolderId = toLocalId(vfolder.id ?? '');
+  const { files: folderFiles } = useSearchVFolderFiles(vfolderId);
+
+  const hasModelDefinition = _.some(
+    folderFiles?.items,
+    (file) =>
+      file?.name === 'model-definition.yaml' ||
+      file?.name === 'model-definition.yml',
+  );
+  const hasServiceDefinition = _.some(
+    folderFiles?.items,
+    (file) => file?.name === 'service-definition.toml',
+  );
+
+  const handleStartService = () => {
+    if (!hasModelDefinition) {
+      upsertNotification({
+        key: `vfolder-model-def-missing-${vfolder.id}`,
+        open: true,
+        message: t('modelService.StartService'),
+        description: t('modelService.ModelDefinitionRequired'),
+        type: 'error',
+        to: `/data?folder=${vfolderId}`,
+        toText: t('modelService.GoToFolder'),
+      });
+      return;
+    }
+
+    if (!hasServiceDefinition) {
+      upsertNotification({
+        key: `vfolder-service-def-missing-${vfolder.id}`,
+        open: true,
+        message: t('modelService.StartService'),
+        description: t('modelService.ServiceDefinitionRequired'),
+        type: 'warning',
+        to: `/serving/start?modelFolderID=${vfolderId}`,
+        toText: t('modelService.StartNewService'),
+      });
+      return;
+    }
+
+    const notificationKey = `start-service-${vfolder.id}-${Date.now()}`;
+    const serviceInput = createServiceInput(
+      vfolder.name ?? '',
+      vfolderId,
+      '',
+    );
+
+    mutationToCreateService.mutate(serviceInput, {
+      onSuccess: (result) => {
+        createServiceNotificationMsg(
+          result,
+          vfolder.name ?? '',
+          notificationKey,
+        );
+      },
+      onError: (error) => {
+        upsertNotification({
+          key: notificationKey,
+          open: true,
+          message: t('modelService.StartService'),
+          description:
+            (error as { message?: string })?.message ??
+            t('modelService.FailedToStartService'),
+          type: 'error',
+        });
+      },
+    });
+  };
+
+  return (
+    <Tooltip title={t('modelService.StartService')} placement="left">
+      <Button
+        size="small"
+        type="text"
+        loading={mutationToCreateService.isPending}
+        onClick={handleStartService}
+      >
+        {t('modelService.StartService')}
+      </Button>
+    </Tooltip>
+  );
+};
+
 interface VFolderNodesProps extends Omit<
   BAITableProps<VFolderNodeInList>,
   'dataSource' | 'columns'
@@ -215,12 +323,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Control'),
             render: (__, vfolder) => {
               const isPipelineFolder = vfolder?.usage_mode === 'data';
+              const isModelFolder = vfolder?.usage_mode === 'model';
               const hasDeletePermission = _.includes(
                 vfolder?.permissions,
                 'delete_vfolder',
               );
               return (
                 <BAIFlex gap={'xs'}>
+                  {/* Start Service (model folders only) */}
+                  {isModelFolder && !isDeletedCategory(vfolder?.status) && (
+                    <VFolderStartServiceButton vfolder={vfolder} />
+                  )}
                   {/* Share */}
                   {!isDeletedCategory(vfolder?.status) && (
                     <Tooltip title={t('button.Share')} placement="left">
