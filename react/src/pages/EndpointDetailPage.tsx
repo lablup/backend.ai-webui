@@ -40,7 +40,6 @@ import {
   FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
-  ReloadOutlined,
   SettingOutlined,
   SyncOutlined,
   WarningOutlined,
@@ -75,6 +74,7 @@ import {
   useFetchKey,
   useSemanticColorMap,
   BAITable,
+  BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -613,18 +613,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ) : (
             <></>
           )}
-          <Button
+          <BAIFetchKeyButton
             loading={isPendingRefetch}
-            icon={<ReloadOutlined />}
+            value={fetchKey}
+            autoUpdateDelay={10_000}
             disabled={isEndpointInDestroyingCategory(endpoint)}
-            onClick={() => {
+            onChange={() => {
               startRefetchTransition(() => {
                 updateFetchKey();
               });
             }}
           >
             {t('button.Refresh')}
-          </Button>
+          </BAIFetchKeyButton>
         </BAIFlex>
       </BAIFlex>
       {isProjectMismatch && endpoint?.project && (
