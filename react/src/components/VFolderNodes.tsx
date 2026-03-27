@@ -140,8 +140,9 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 
     if (!hasServiceDefinition) {
       message.warning(t('modelService.ServiceDefinitionMissing'));
-      const formValues = JSON.stringify({ vFolderID: vfolderId });
-      navigate(`/service/start?formValues=${formValues}`);
+      navigate(
+        `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderId }))}`,
+      );
       return;
     }
 
