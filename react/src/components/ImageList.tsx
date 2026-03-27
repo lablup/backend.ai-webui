@@ -8,6 +8,7 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { getImageFullName, localeCompare } from '../helper';
+import { isPrivateImage } from '../helper/image';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -160,12 +161,18 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       sorter: (a, b) => {
         return _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0);
       },
-      render: (_text, row) =>
-        row?.id && installingImages.includes(row.id) ? (
-          <Tag color="gold">{t('environment.Installing')}</Tag>
-        ) : row?.installed ? (
-          <Tag color="gold">{t('environment.Installed')}</Tag>
-        ) : null,
+      render: (_text, row) => (
+        <BAIFlex direction="row" gap="xxs" wrap="wrap">
+          {row?.id && installingImages.includes(row.id) ? (
+            <Tag color="gold">{t('environment.Installing')}</Tag>
+          ) : row?.installed ? (
+            <Tag color="gold">{t('environment.Installed')}</Tag>
+          ) : null}
+          {isPrivateImage(row) ? (
+            <Tag color="red">{t('environment.Private')}</Tag>
+          ) : null}
+        </BAIFlex>
+      ),
     },
     {
       title: t('environment.FullImagePath'),

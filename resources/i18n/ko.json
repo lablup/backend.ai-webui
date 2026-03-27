@@ -828,6 +828,7 @@
     "PortMustBeInRange": "포트는 0부터 65534까지의 번호여야 합니다",
     "PortMustBeUnique": "포트는 중복 사용이 불가능합니다",
     "PortReservedForInternalUse": "포트 2000부터 2003, 2200, 7681은 시스템 내부에서 사용 중입니다",
+    "Private": "비공개",
     "ProblemOccurred": "문제가 발생했습니다.",
     "Protocol": "프로토콜",
     "ProtocolMustBeOneOfSupported": "프로토콜은 'http', 'tcp', 'preopen', 'pty' 중 하나여야 합니다",

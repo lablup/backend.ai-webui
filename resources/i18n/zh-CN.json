@@ -827,6 +827,7 @@
     "PortMustBeInRange": "端口必须介于 0 到 65534 之间",
     "PortMustBeUnique": "每个应用程序的端口必须是唯一的",
     "PortReservedForInternalUse": "端口 2000 到 2003、2200 和 7681 保留供内部使用",
+    "Private": "私有",
     "ProblemOccurred": "出现问题",
     "Protocol": "协议",
     "ProtocolMustBeOneOfSupported": "协议必须是“http”、“tcp”、“preopen”和“pty”之一",

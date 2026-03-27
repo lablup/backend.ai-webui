@@ -827,6 +827,7 @@
     "PortMustBeInRange": "Порт нь 0-ээс 65534 хооронд байх ёстой",
     "PortMustBeUnique": "Порт нь програм бүрийн хувьд өвөрмөц байх ёстой",
     "PortReservedForInternalUse": "2000-2003, 2200, 7681 портууд нь дотоод хэрэгцээнд зориулагдсан байдаг",
+    "Private": "Хувийн",
     "ProblemOccurred": "Асуудал гарсан",
     "Protocol": "Протокол",
     "ProtocolMustBeOneOfSupported": "Протокол нь 'http', 'tcp', 'preopen' ба 'pty' -ийн нэг байх ёстой.",

@@ -827,6 +827,7 @@
     "PortMustBeInRange": "Порт должен быть от 0 до 65534",
     "PortMustBeUnique": "Порт должен быть уникальным для каждого приложения.",
     "PortReservedForInternalUse": "Порты с 2000 по 2003, 2200 и 7681 зарезервированы для внутреннего использования.",
+    "Private": "Приватный",
     "ProblemOccurred": "Возникла проблема",
     "Protocol": "Протокол",
     "ProtocolMustBeOneOfSupported": "Протокол должен быть одним из http, tcp, preopen и pty.",
