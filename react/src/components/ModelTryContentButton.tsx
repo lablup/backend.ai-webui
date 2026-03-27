@@ -4,89 +4,35 @@
  */
 import { ModelTryContentButtonVFolderFragment$key } from '../__generated__/ModelTryContentButtonVFolderFragment.graphql';
 import { ModelTryContentButtonVFolderNodeListQuery } from '../__generated__/ModelTryContentButtonVFolderNodeListQuery.graphql';
-import {
-  baiSignedRequestWithPromise,
-  useBaiSignedRequestWithPromise,
-} from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import {
-  useSetBAINotification,
-  useBAINotificationState,
-} from '../hooks/useBAINotification';
+import { useBaiSignedRequestWithPromise } from '../helper';
+import { useCurrentDomainValue } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import {
-  ServiceCreateType,
-  ServiceLauncherFormValue,
-} from './ServiceLauncherPageContent';
+  createServiceInput,
+  useModelServiceLauncher,
+} from '../hooks/useModelServiceLauncher';
+import { useMultiStepNotification } from '../hooks/useMultiStepNotification';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Tooltip } from 'antd';
 import {
   toLocalId,
-  ESMClientErrorResponse,
   generateRandomString,
   useSearchVFolderFiles,
   useUpdatableState,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useCurrentUserInfo, useCurrentUserRole } from 'src/hooks/backendai';
 
-interface ModelTryContentButtonProps {
-  vfolderNode: ModelTryContentButtonVFolderFragment$key | null;
-}
-
-interface CloneVFolderInput {
-  permission: string;
-  target_host?: string;
-  target_name: string;
-  usage_mode: string;
-  cloneable?: boolean;
-}
-
-interface CloneResponse {
-  bgtask_id: string;
-  id: string;
-}
-
-interface ServiceResult {
-  endpoint_id?: string;
-}
-
-type ModelTryFormValue = Omit<
-  ServiceLauncherFormValue,
-  'environments' | 'resource'
->;
-
 const MAX_RETRIES = 12; // 12 retries * 5 seconds = 1 minute max
 const RETRY_INTERVAL_MS = 5000;
 
-// Helper function to create service input
-// This will be overridden by service-definition.toml values where applicable
-// Set minimal default values
-function createServiceInput(
-  modelName: string,
-  vfolderID: string,
-  resourceGroup: string,
-): ModelTryFormValue {
-  return {
-    serviceName: `${modelName}-${generateRandomString(4)}`,
-    replicas: 1,
-    runtimeVariant: 'vllm',
-    cluster_size: 1,
-    cluster_mode: 'single-node',
-    openToPublic: true,
-    resourceGroup: resourceGroup,
-    vFolderID: vfolderID,
-    modelMountDestination: '/models',
-    modelDefinitionPath: '',
-    mount_id_map: {},
-    envvars: [],
-    enabledAutomaticShmem: false,
-  };
+interface ModelTryContentButtonProps {
+  vfolderNode: ModelTryContentButtonVFolderFragment$key | null;
 }
 
 const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
@@ -95,7 +41,6 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { modal } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
   const userRole = useCurrentUserRole();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
@@ -103,7 +48,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
   const [fetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const { upsertNotification } = useSetBAINotification();
-  const [notifications] = useBAINotificationState();
+
+  const { mutationToClone, mutationToCreateService, isPending } =
+    useModelServiceLauncher();
 
   const modelStoreVFolder =
     useFragment<ModelTryContentButtonVFolderFragment$key>(
@@ -120,214 +67,184 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
 
   const folderName = modelStoreVFolder?.name;
 
-  const mutationToCreateService = useTanMutation<
-    ServiceResult,
-    {
-      message?: string;
-      error_code?: string;
-    },
-    ModelTryFormValue
-  >({
-    mutationFn: (values) => {
-      const environ: { [key: string]: string } = {};
-      if (values.envvars) {
-        values.envvars.forEach((v) => (environ[v.variable] = v.value));
-      }
-      // These fields are replaced with contents from service-definition.toml
-      const body: ServiceCreateType = {
-        name: values.serviceName,
-        desired_session_count: values.replicas,
-        runtime_variant: values.runtimeVariant,
-        group: baiClient.current_group, // current Project Group,
-        domain: currentDomain, // current Domain Group,
-        cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
-        open_to_public: values.openToPublic,
-        config: {
-          model: values.vFolderID,
-          model_version: 1,
-          model_mount_destination: '/models',
-          environ,
-          scaling_group: currentResourceGroupByProject ?? '',
-          resources: {},
-        },
-      };
-      return baiSignedRequestWithPromise({
-        method: 'POST',
-        url: '/services',
-        body,
-        client: baiClient,
+  // Refs to pass runtime values into step executors
+  const cloneInputRef = useRef<{
+    name: string;
+    host: string;
+    targetName: string;
+  } | null>(null);
+  const clonedFolderIdRef = useRef<string>('');
+  const directFolderIdRef = useRef<string>('');
+  const endpointIdCloneRef = useRef<string>('');
+  const endpointIdDirectRef = useRef<string>('');
+  const modelIdRef = useRef<string>('vllm-model');
+
+  /**
+   * Polls service endpoint until active routes appear or max retries exceeded.
+   * Rejects if signal is aborted (user cancelled).
+   */
+  const pollServiceReady = async (endpointId: string, signal: AbortSignal) => {
+    for (let retryCount = 0; retryCount < MAX_RETRIES; retryCount++) {
+      if (signal.aborted) throw new Error('Cancelled');
+      const routingStatus = await baiRequestWithPromise({
+        method: 'GET',
+        url: `/services/${endpointId}`,
       });
+      if (routingStatus?.active_routes?.length > 0) {
+        return routingStatus;
+      }
+      if (retryCount < MAX_RETRIES - 1) {
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(resolve, RETRY_INTERVAL_MS);
+          signal.addEventListener(
+            'abort',
+            () => {
+              clearTimeout(timeout);
+              reject(new Error('Cancelled'));
+            },
+            { once: true },
+          );
+        });
+      }
+    }
+    throw new Error(t('modelService.ModelServiceFailedToStart'));
+  };
+
+  // ── Multi-step notification: clone path (4 steps) ─────────────────────────
+  // Step 1 (Promise): Trigger vfolder clone → returns { bgtask_id }
+  // Step 2 (SSE):     Listen to clone SSE progress
+  // Step 3 (Promise): Create service
+  // Step 4 (Promise): Poll until service has active routes
+  const cloneThenCreateMultiStep = useMultiStepNotification({
+    key: 'modelStore.try.clone',
+    message: t('modelService.RunThisModel'),
+    steps: [
+      {
+        label: t('modelService.CloningModelFolder'),
+        type: 'promise',
+        executor: async (_prevResult, _signal) => {
+          const input = cloneInputRef.current;
+          if (!input) throw new Error('Clone input not set');
+          const result = await mutationToClone.mutateAsync({
+            input: {
+              permission: 'rw',
+              target_host: input.host,
+              target_name: input.targetName,
+              usage_mode: 'model',
+            },
+            name: input.name,
+          });
+          clonedFolderIdRef.current = result.id;
+          return { bgtask_id: result.bgtask_id };
+        },
+      },
+      {
+        label: t('modelService.CloningModelFolder'),
+        type: 'sse',
+        executor: (prevResult) => ({
+          taskId: (prevResult as { bgtask_id: string }).bgtask_id,
+        }),
+      },
+      {
+        label: t('modelService.CreatingService'),
+        type: 'promise',
+        executor: async (_prevResult, _signal) => {
+          const serviceInput = createServiceInput(
+            folderName ?? '',
+            clonedFolderIdRef.current,
+            currentResourceGroupByProject as string,
+          );
+          const result =
+            await mutationToCreateService.mutateAsync(serviceInput);
+          endpointIdCloneRef.current = result.endpoint_id ?? '';
+          return result;
+        },
+      },
+      {
+        label: t('modelService.WaitingForServiceReady'),
+        type: 'promise',
+        executor: async (_prevResult, signal) => {
+          return pollServiceReady(endpointIdCloneRef.current, signal);
+        },
+        actionButtons: {
+          rejected: {
+            label: t('modelService.GoToServiceDetailPage'),
+            onClick: () => {
+              window.location.href = `/serving/${endpointIdCloneRef.current}`;
+            },
+          },
+        },
+      },
+    ],
+    onAllCompleted: {
+      message: t('modelService.StartingModelService'),
+      actionButtons: {
+        primary: {
+          label: t('modelService.PlayYourModelNow'),
+          onClick: () => {
+            window.location.href = `/chat?${new URLSearchParams({
+              endpointId: endpointIdCloneRef.current,
+              modelId: modelIdRef.current,
+            }).toString()}`;
+          },
+        },
+      },
     },
   });
 
-  // Helper function to create service notification
-  const createServiceNotificationMsg = (
-    result: ServiceResult,
-    modelId: string,
-    notificationKey: string,
-  ) => {
-    let interval: NodeJS.Timeout | null = null;
-
-    upsertNotification({
-      key: notificationKey,
-      open: true,
-      message: t('modelService.StartingModelService'),
-      description: null,
-      duration: 0,
-      backgroundTask: {
-        promise: new Promise<void>((resolve, reject) => {
-          let progress = 0;
-          let retryCount = 0;
-
-          // Service creation isn't handled via bgTask, so the client polls periodically.
-          // We use a fake progress value to indicate that the process is ongoing.
-          interval = setInterval(async () => {
-            try {
-              retryCount++;
-              progress += _.random(2, 5);
-              upsertNotification({
-                key: notificationKey,
-                backgroundTask: {
-                  status: 'pending',
-                  percent: progress > 100 ? 100 : progress,
-                },
-              });
-              const routingStatus = await baiRequestWithPromise({
-                method: 'GET',
-                url: `/services/${result?.endpoint_id}`,
-              });
-
-              // Success: service has active routes
-              if (routingStatus.active_routes?.length > 0) {
-                return resolve();
-              }
-
-              // Timeout: exceeded maximum retries
-              if (retryCount >= MAX_RETRIES) {
-                return reject(
-                  new Error(t('modelService.ModelServiceFailedToStart')),
-                );
-              }
-            } catch (error) {
-              return reject(error);
-            }
-          }, RETRY_INTERVAL_MS);
-        }).finally(() => {
-          // Cleanup interval regardless of promise outcome
-          if (interval) {
-            clearInterval(interval);
-            interval = null;
-          }
-        }),
-        onChange: {
-          pending: {
-            message: t('modelService.StartingModelService'),
-            description: null,
-          },
-          resolved: {
-            duration: 0,
-            open: true,
-            key: notificationKey,
-            backgroundTask: {
-              status: 'resolved',
-              percent: 100,
-            },
-            message: t('modelService.StartingModelService'),
-            description: null,
-            to: `/chat?${new URLSearchParams({
-              endpointId: result?.endpoint_id ?? '',
-              modelId: modelId,
-            }).toString()}`,
-            toText: t('modelService.PlayYourModelNow'),
-          },
-          rejected: {
-            duration: 0,
-            key: notificationKey,
-            backgroundTask: {
-              status: 'rejected',
-              percent: 99,
-            },
-            message: t('modelService.StartingModelService'),
-            description: null,
-            to: `/serving/${result?.endpoint_id}`,
-            toText: t('modelService.GoToServiceDetailPage'),
-          },
+  // ── Multi-step notification: direct path (2 steps, folder exists) ──────────
+  // Step 1 (Promise): Create service
+  // Step 2 (Promise): Poll until service has active routes
+  const directCreateMultiStep = useMultiStepNotification({
+    key: 'modelStore.try.direct',
+    message: t('modelService.RunThisModel'),
+    steps: [
+      {
+        label: t('modelService.CreatingService'),
+        type: 'promise',
+        executor: async (_prevResult, _signal) => {
+          const serviceInput = createServiceInput(
+            folderName ?? '',
+            directFolderIdRef.current,
+            currentResourceGroupByProject as string,
+          );
+          const result =
+            await mutationToCreateService.mutateAsync(serviceInput);
+          endpointIdDirectRef.current = result.endpoint_id ?? '';
+          return result;
         },
-        status: 'pending',
-        percent: 0,
       },
-    });
-  };
-
-  // Track clone completion to trigger service creation
-  const pendingCloneRef = useRef<{
-    randomTargetName: string;
-    clonedFolderId: string;
-    modelId: string;
-  } | null>(null);
-
-  // Listen to clone notification completion and start service creation
-  useEffect(() => {
-    // Skip if no pending clone or mutation is already running
-    if (!pendingCloneRef.current || mutationToCreateService.isPending) return;
-
-    const cloneNotificationKey = `modelStore.clone.${pendingCloneRef.current.randomTargetName}`;
-    const cloneNotification = _.find(notifications, {
-      key: cloneNotificationKey,
-    });
-
-    if (cloneNotification?.backgroundTask?.status === 'resolved') {
-      const { randomTargetName, clonedFolderId, modelId } =
-        pendingCloneRef.current;
-
-      // Clear the ref BEFORE starting mutation to prevent duplicate execution
-      pendingCloneRef.current = null;
-
-      // Start service creation
-      mutationToCreateService.mutate(
-        createServiceInput(
-          folderName ?? '',
-          clonedFolderId,
-          currentResourceGroupByProject as string,
-        ),
-        {
-          onSuccess: (result: ServiceResult) => {
-            // Close the clone notification
-            upsertNotification({
-              key: cloneNotificationKey,
-              open: false,
-            });
-            // Create service notification with different key
-            createServiceNotificationMsg(
-              result,
-              modelId,
-              `modelStore.create.${randomTargetName}`,
-            );
-          },
-          onError: (error) => {
-            // Close the clone notification
-            upsertNotification({
-              key: cloneNotificationKey,
-              open: false,
-            });
-            // Show service creation error with different key
-            upsertNotification({
-              key: `modelStore.create.${randomTargetName}`,
-              open: true,
-              message: t('modelService.ModelServiceFailedToStart'),
-              description: error?.message || null,
-              backgroundTask: {
-                status: 'rejected',
-                percent: 0,
-              },
-            });
+      {
+        label: t('modelService.WaitingForServiceReady'),
+        type: 'promise',
+        executor: async (_prevResult, signal) => {
+          return pollServiceReady(endpointIdDirectRef.current, signal);
+        },
+        actionButtons: {
+          rejected: {
+            label: t('modelService.GoToServiceDetailPage'),
+            onClick: () => {
+              window.location.href = `/serving/${endpointIdDirectRef.current}`;
+            },
           },
         },
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notifications, folderName, currentResourceGroupByProject]);
+      },
+    ],
+    onAllCompleted: {
+      message: t('modelService.StartingModelService'),
+      actionButtons: {
+        primary: {
+          label: t('modelService.PlayYourModelNow'),
+          onClick: () => {
+            window.location.href = `/chat?${new URLSearchParams({
+              endpointId: endpointIdDirectRef.current,
+              modelId: modelIdRef.current,
+            }).toString()}`;
+          },
+        },
+      },
+    },
+  });
 
   const { modelStoreFolderNodes, currentUserFolderNodes } =
     useLazyLoadQuery<ModelTryContentButtonVFolderNodeListQuery>(
@@ -446,25 +363,6 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   )?.host;
   */
 
-  const mutationToClone = useTanMutation<
-    CloneResponse,
-    ESMClientErrorResponse,
-    {
-      input: CloneVFolderInput;
-      name: string;
-    }
-  >({
-    mutationFn: ({
-      input,
-      name,
-    }: {
-      input: CloneVFolderInput;
-      name: string;
-    }) => {
-      return baiClient.vfolder.clone(input, name);
-    },
-  });
-
   // Main function to handle folder clone or service creation
   const cloneOrCreateModelService = async (runtimeVariant: string) => {
     // Validate modelName
@@ -491,6 +389,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         modelId = 'custom';
         break;
     }
+    modelIdRef.current = modelId;
 
     const randomTargetName = `${folderName}-${generateRandomString(4)}`;
 
@@ -509,84 +408,20 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
 
       if (!confirmed) return;
 
-      // Clone the model folder
-      mutationToClone.mutate(
-        {
-          input: {
-            permission: 'rw',
-            target_host: modelStoreVFolder?.host ?? '', // lowestUsageHost, // clone to accessible and lowest usage storage host
-            target_name: randomTargetName,
-            usage_mode: 'model',
-          },
-          name: modelStoreVFolder?.row_id ?? '', // TODO: set the name of the cloned folder
-        },
-        {
-          onSuccess: (data) => {
-            // Store clone info for service creation after completion
-            pendingCloneRef.current = {
-              randomTargetName,
-              clonedFolderId: data.id,
-              modelId,
-            };
+      // Set clone input for step executor
+      cloneInputRef.current = {
+        name: modelStoreVFolder?.row_id ?? '',
+        host: modelStoreVFolder?.host ?? '',
+        targetName: randomTargetName,
+      };
 
-            upsertNotification({
-              key: `modelStore.clone.${randomTargetName}`,
-              open: true,
-              message: t('data.folders.FolderClonePending'),
-              onClose: () => {
-                upsertNotification({
-                  key: `modelStore.clone.${randomTargetName}`,
-                  open: false,
-                  backgroundTask: {
-                    percent: 0,
-                    status: 'pending',
-                  },
-                  to: '',
-                  toText: '',
-                });
-              },
-              backgroundTask: {
-                status: 'pending',
-                percent: 50,
-                taskId: data.bgtask_id,
-                onChange: {
-                  pending: t('data.folders.FolderClonePending'),
-                  resolved: {
-                    key: `modelStore.clone.${randomTargetName}`,
-                    message: t('data.folders.FolderCloned'),
-                    description: null,
-                    open: true,
-                    duration: 0,
-                    backgroundTask: {
-                      status: 'resolved',
-                      percent: 100,
-                    },
-                    to: {
-                      search: new URLSearchParams({
-                        folder: data.id,
-                      }).toString(),
-                    },
-                    toText: t('data.folders.OpenAFolder'),
-                  },
-                  rejected: t('data.folders.FolderCloneFailed'),
-                },
-              },
-            });
-          },
-          onError: (error) => {
-            upsertNotification({
-              key: `modelStore.clone.${randomTargetName}`,
-              open: true,
-              message: t('data.folders.FolderCloneFailed'),
-              description: error?.message || null,
-              backgroundTask: {
-                status: 'rejected',
-                percent: 0,
-              },
-            });
-          },
-        },
-      );
+      // Wire cancel/retry handlers into the notification before starting
+      upsertNotification({
+        key: 'modelStore.try.clone',
+        onCancel: cloneThenCreateMultiStep.cancel,
+        onRetry: cloneThenCreateMultiStep.retry,
+      });
+      cloneThenCreateMultiStep.start();
     } else {
       // Similar folder exists - skip cloning and directly create service
       const confirmed = await modal.confirm({
@@ -600,35 +435,16 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         return;
       }
 
-      // Create service with existing folder (skip cloning)
-      mutationToCreateService.mutate(
-        createServiceInput(
-          folderName,
-          toLocalId(alreadyClonedFolder?.id) || '',
-          currentResourceGroupByProject as string,
-        ),
-        {
-          onSuccess: (result: ServiceResult) => {
-            createServiceNotificationMsg(
-              result,
-              modelId,
-              `modelStore.create.${randomTargetName}`,
-            );
-          },
-          onError: (error) => {
-            upsertNotification({
-              key: `modelStore.create.${randomTargetName}`,
-              open: true,
-              message: t('modelService.ModelServiceFailedToStart'),
-              description: error?.message || null,
-              backgroundTask: {
-                status: 'rejected',
-                percent: 0,
-              },
-            });
-          },
-        },
-      );
+      // Set folder ID for step executor
+      directFolderIdRef.current = toLocalId(alreadyClonedFolder?.id) || '';
+
+      // Wire cancel/retry handlers into the notification before starting
+      upsertNotification({
+        key: 'modelStore.try.direct',
+        onCancel: directCreateMultiStep.cancel,
+        onRetry: directCreateMultiStep.retry,
+      });
+      directCreateMultiStep.start();
     }
   };
 
@@ -648,10 +464,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         type="primary"
         disabled={
           !definitionFilesExist ||
-          mutationToClone.isPending ||
-          mutationToCreateService.isPending
+          isPending
         }
-        loading={mutationToClone.isPending || mutationToCreateService.isPending}
+        loading={isPending}
         onClick={() => cloneOrCreateModelService('vllm')}
         style={{
           width: 'auto',

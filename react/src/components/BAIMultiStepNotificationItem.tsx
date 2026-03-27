@@ -271,6 +271,19 @@ const BAIMultiStepNotificationItem: React.FC<{
           gap={'xxs'}
           className={isDetailView ? styles.expandToggle : undefined}
           onClick={isDetailView ? () => setExpanded((v) => !v) : undefined}
+          role={isDetailView && totalSteps > 1 ? 'button' : undefined}
+          tabIndex={isDetailView && totalSteps > 1 ? 0 : undefined}
+          aria-expanded={isDetailView && totalSteps > 1 ? expanded : undefined}
+          onKeyDown={
+            isDetailView
+              ? (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setExpanded((v) => !v);
+                  }
+                }
+              : undefined
+          }
         >
           <StepIcon
             status={

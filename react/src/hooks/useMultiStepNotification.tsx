@@ -383,16 +383,18 @@ export function useMultiStepNotification(
       upsertNotification({
         key,
         message,
-        backgroundTask: { status: 'pending' },
+        backgroundTask: { status: 'pending', percent: undefined },
         description: defaultStepDescription(startIndex),
         open: true,
         duration: 0,
+        skipDesktopNotification: true,
         multiStep: buildMultiStepData(
           steps,
           stepStatesRef.current,
           startIndex,
           'running',
         ),
+        extraData: { actionButton: undefined },
       });
 
       syncState('running', startIndex);
@@ -485,23 +487,20 @@ export function useMultiStepNotification(
         upsertNotification({
           key,
           message,
-          backgroundTask: { status: 'pending' },
+          backgroundTask: { status: 'pending', percent: undefined },
           description: stepPendingDescription,
           open: true,
           duration: 0,
+          skipDesktopNotification: true,
           multiStep: buildMultiStepData(
             steps,
             stepStatesRef.current,
             i,
             'running',
           ),
-          ...(step.actionButtons?.pending
-            ? {
-                extraData: {
-                  actionButton: step.actionButtons.pending,
-                },
-              }
-            : {}),
+          extraData: {
+            actionButton: step.actionButtons?.pending ?? undefined,
+          },
         });
 
         try {
@@ -618,7 +617,7 @@ export function useMultiStepNotification(
           upsertNotification({
             key,
             message,
-            backgroundTask: { status: 'pending' },
+            backgroundTask: { status: 'pending', percent: undefined },
             description: stepResolvedDescription,
             open: true,
             duration: 0,
@@ -629,13 +628,9 @@ export function useMultiStepNotification(
               i,
               'running',
             ),
-            ...(step.actionButtons?.resolved
-              ? {
-                  extraData: {
-                    actionButton: step.actionButtons.resolved,
-                  },
-                }
-              : {}),
+            extraData: {
+              actionButton: step.actionButtons?.resolved ?? undefined,
+            },
           });
 
           syncState('running', i);
@@ -655,7 +650,7 @@ export function useMultiStepNotification(
           upsertNotification({
             key,
             message,
-            backgroundTask: { status: 'rejected' },
+            backgroundTask: { status: 'rejected', percent: undefined },
             description: stepRejectedDescription,
             open: true,
             duration: CLOSING_DURATION,
@@ -665,13 +660,9 @@ export function useMultiStepNotification(
               i,
               'failed',
             ),
-            ...(step.actionButtons?.rejected
-              ? {
-                  extraData: {
-                    actionButton: step.actionButtons.rejected,
-                  },
-                }
-              : {}),
+            extraData: {
+              actionButton: step.actionButtons?.rejected ?? undefined,
+            },
           });
 
           syncState('failed', i);
@@ -684,7 +675,7 @@ export function useMultiStepNotification(
       upsertNotification({
         key,
         message: completedMessage,
-        backgroundTask: { status: 'resolved' },
+        backgroundTask: { status: 'resolved', percent: undefined },
         open: true,
         duration: CLOSING_DURATION,
         multiStep: buildMultiStepData(
@@ -693,13 +684,9 @@ export function useMultiStepNotification(
           total - 1,
           'completed',
         ),
-        ...(onAllCompleted?.actionButtons?.primary
-          ? {
-              extraData: {
-                actionButton: onAllCompleted.actionButtons.primary,
-              },
-            }
-          : {}),
+        extraData: {
+          actionButton: onAllCompleted?.actionButtons?.primary ?? undefined,
+        },
       });
 
       syncState('completed', total - 1);
@@ -776,8 +763,9 @@ export function useMultiStepNotification(
     upsertNotification({
       key,
       message: cancelledMessage,
-      backgroundTask: { status: 'rejected' },
-      description: cancelledMessage,
+      backgroundTask: { status: 'rejected', percent: undefined },
+      description: onCancelled?.message ?? t('notification.Cancelled'),
+      skipDesktopNotification: true,
       open: true,
       duration: CLOSING_DURATION,
       multiStep: buildMultiStepData(
@@ -802,6 +790,7 @@ export function useMultiStepNotification(
     config,
     upsertNotification,
     syncState,
+    t,
   ]);
 
   return {
