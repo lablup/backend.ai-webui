@@ -30,7 +30,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 :::note
 쿼터는 쿼터 설정을 제공하는 스토리지에서만 사용할 수 있습니다
 (예: XFS, CephFS, NetApp, Purestorage 등). 쿼터 설정에 대한 자세한 내용은
-[쿼터 설정 패널](../admin_menu/admin_menu.md#quota-setting-panel) 섹션을 참고하세요.
+[쿼터 설정 패널](#quota-setting-panel) 섹션을 참고하세요.
 :::
 
 <a id="create-storage-folder"></a>

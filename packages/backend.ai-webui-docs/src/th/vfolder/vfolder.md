@@ -37,7 +37,7 @@ The Storage Status and โควตาต่อปริมาตรการจ
 :::note
 Please remind that quota is only available in storage that provides quota setting
 (e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-to the [Quota Setting Panel](../admin_menu/admin_menu.md#quota-setting-panel) section.
+to the [Quota Setting Panel](#quota-setting-panel) section.
 :::
 
 <a id="create-storage-folder"></a>
