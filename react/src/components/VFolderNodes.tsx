@@ -80,7 +80,6 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
   const navigate = useWebUINavigate();
 
@@ -139,11 +138,17 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     }
 
     if (!hasServiceDefinition) {
-      message.warning(t('modelService.ServiceDefinitionMissing'));
       const vfolderIdNoDash = vfolderId.replaceAll('-', '');
       navigate(
         `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
       );
+      upsertNotification({
+        key: `vfolder-service-def-missing-${vfolder.id}`,
+        open: true,
+        message: t('modelService.StartService'),
+        description: t('modelService.ServiceDefinitionMissing'),
+        type: 'info',
+      });
       return;
     }
 
