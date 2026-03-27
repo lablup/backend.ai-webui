@@ -150,6 +150,7 @@
     "Refresh": "刷新",
     "RefreshModelInformation": "刷新机型信息",
     "Reset": "重置",
+    "Retry": "重試",
     "Save": "保存",
     "SaveAndClose": "保存並關閉",
     "SaveChanges": "保存更改",
@@ -1438,13 +1439,18 @@
     "Version": "版本"
   },
   "notification": {
+    "AllStepsCompleted": "所有步驟已完成",
     "AreYouSureToClearAllNotifications": "您確定清除所有通知嗎？",
+    "Cancelled": "已取消",
     "ClearNotifications": "清除通知",
     "Initializing": "正在初始化...",
     "NoNotification": "無通知。",
     "Notifications": "通知",
     "SeeDetail": "查看詳情",
     "SeeSummary": "隱藏詳情",
+    "Step": "步驟",
+    "StepFailed": "步驟失敗",
+    "StepProgress": "步驟 {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
   },

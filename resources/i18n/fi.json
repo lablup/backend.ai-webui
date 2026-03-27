@@ -150,6 +150,7 @@
     "Refresh": "Päivitä",
     "RefreshModelInformation": "Päivitä mallin tiedot",
     "Reset": "Nollaa",
+    "Retry": "Yritä uudelleen",
     "Save": "Tallenna",
     "SaveAndClose": "Tallenna ja sulje",
     "SaveChanges": "Tallenna muutokset",
@@ -1434,13 +1435,18 @@
     "Version": "Versio"
   },
   "notification": {
+    "AllStepsCompleted": "Kaikki vaiheet suoritettu",
     "AreYouSureToClearAllNotifications": "Oletko varma, että tyhjennät kaikki ilmoitukset?",
+    "Cancelled": "Peruutettu",
     "ClearNotifications": "Tyhjennä ilmoitukset",
     "Initializing": "Aloitetaan...",
     "NoNotification": "Ei ilmoitusta.",
     "Notifications": "Ilmoitukset",
     "SeeDetail": "Näytä tiedot",
     "SeeSummary": "Piilota tiedot",
+    "Step": "Vaihe",
+    "StepFailed": "Vaihe epäonnistui",
+    "StepProgress": "Vaihe {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
   },

@@ -5,6 +5,7 @@
 import { useWebUINavigate } from '../hooks';
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
+import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import { MoreOutlined } from '@ant-design/icons';
 import {
@@ -135,6 +136,13 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
             <BAINodeNotificationItem
               notification={item}
               nodeFrgmt={item.node || null}
+              showDate
+            />
+          ) : item.multiStep ? (
+            <BAIMultiStepNotificationItem
+              notification={item}
+              onRetry={item.onRetry ?? undefined}
+              onCancel={item.onCancel ?? undefined}
               showDate
             />
           ) : (

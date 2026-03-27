@@ -150,6 +150,7 @@
     "Refresh": "Làm tươi",
     "RefreshModelInformation": "Làm mới thông tin mô hình",
     "Reset": "Cài lại",
+    "Retry": "Thử lại",
     "Save": "Tiết kiệm",
     "SaveAndClose": "Lưu và đóng",
     "SaveChanges": "Lưu thay đổi",
@@ -1436,13 +1437,18 @@
     "Version": "Phiên bản"
   },
   "notification": {
+    "AllStepsCompleted": "Tất cả các bước đã hoàn thành",
     "AreYouSureToClearAllNotifications": "Bạn có chắc chắn xóa tất cả thông báo không?",
+    "Cancelled": "Đã hủy",
     "ClearNotifications": "Xóa thông báo",
     "Initializing": "Đang khởi tạo ...",
     "NoNotification": "Không có thông báo.",
     "Notifications": "Thông báo",
     "SeeDetail": "Xem chi tiết",
     "SeeSummary": "Ẩn chi tiết",
+    "Step": "Bước",
+    "StepFailed": "Bước thất bại",
+    "StepProgress": "Bước {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Cập nhật thành công",
     "Visit": "Chuyến thăm"
   },

@@ -150,6 +150,7 @@
     "Refresh": "Обновить",
     "RefreshModelInformation": "Обновить информацию о модели",
     "Reset": "Перезагрузить",
+    "Retry": "Повторить",
     "Save": "Сохранить",
     "SaveAndClose": "Сохрани и закрой",
     "SaveChanges": "Сохранить изменения",
@@ -1434,13 +1435,18 @@
     "Version": "Версия"
   },
   "notification": {
+    "AllStepsCompleted": "Все шаги завершены",
     "AreYouSureToClearAllNotifications": "Вы уверены, что удалите все уведомления?",
+    "Cancelled": "Отменено",
     "ClearNotifications": "Очистить уведомления",
     "Initializing": "Инициализация ...",
     "NoNotification": "Нет уведомлений.",
     "Notifications": "Уведомления",
     "SeeDetail": "Подробнее",
     "SeeSummary": "Скрыть подробности",
+    "Step": "Шаг",
+    "StepFailed": "Шаг не выполнен",
+    "StepProgress": "Шаг {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },

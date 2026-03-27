@@ -150,6 +150,7 @@
     "Refresh": "Yenile",
     "RefreshModelInformation": "Model Bilgilerini Yenile",
     "Reset": "Sıfırla",
+    "Retry": "Yeniden Dene",
     "Save": "Kayıt etmek",
     "SaveAndClose": "Kaydet ve kapat",
     "SaveChanges": "Değişiklikleri Kaydet",
@@ -1434,13 +1435,18 @@
     "Version": "Sürüm"
   },
   "notification": {
+    "AllStepsCompleted": "Tüm adımlar tamamlandı",
     "AreYouSureToClearAllNotifications": "Tüm bildirimleri temizlediğinizden emin misiniz?",
+    "Cancelled": "İptal edildi",
     "ClearNotifications": "Bildirimleri Temizle",
     "Initializing": "Başlatılıyor...",
     "NoNotification": "Bildirim yok.",
     "Notifications": "Bildirimler",
     "SeeDetail": "Ayrıntıları gör",
     "SeeSummary": "Ayrıntıları gizle",
+    "Step": "Adım",
+    "StepFailed": "Adım başarısız oldu",
+    "StepProgress": "Adım {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
   },
