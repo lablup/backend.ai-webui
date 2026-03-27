@@ -140,8 +140,9 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 
     if (!hasServiceDefinition) {
       message.warning(t('modelService.ServiceDefinitionMissing'));
+      const vfolderIdNoDash = vfolderId.replaceAll('-', '');
       navigate(
-        `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderId }))}`,
+        `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
       );
       return;
     }
