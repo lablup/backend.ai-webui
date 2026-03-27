@@ -122,7 +122,7 @@ const BAISessionHistorySubStepNodes = ({
         title: t('comp:SessionHistorySubStepNodes.StartedAt'),
         dataIndex: 'startedAt',
         render: (__, record) =>
-          record.startedAt ? dayjs(record.startedAt).format('lll') : '-',
+          record.startedAt ? dayjs(record.startedAt).format('ll LTS') : '-',
         sorter: isEnableSorter('startedAt'),
       },
       {
@@ -130,7 +130,7 @@ const BAISessionHistorySubStepNodes = ({
         title: t('comp:SessionHistorySubStepNodes.EndedAt'),
         dataIndex: 'endedAt',
         render: (__, record) =>
-          record.endedAt ? dayjs(record.endedAt).format('lll') : '-',
+          record.endedAt ? dayjs(record.endedAt).format('ll LTS') : '-',
         sorter: isEnableSorter('endedAt'),
       },
     ]),
