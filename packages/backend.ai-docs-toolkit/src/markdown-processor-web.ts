@@ -218,8 +218,16 @@ function rewriteCrossPageLinks(
   const reportedAnchors = new Set<string>();
   return html.replace(/href="#([^"]+)"/g, (fullMatch, anchorId: string) => {
     // Already a resolved ID (e.g., heading hash-links from the renderer) → skip
+    // But only if the ID belongs to the current chapter; otherwise fall through
+    // to cross-chapter resolution below.
     if (registry.resolvedIds.has(anchorId)) {
-      return fullMatch;
+      const entries = registry.anchors.get(anchorId);
+      const inCurrentChapter = entries?.some(
+        (e) => e.chapterSlug === currentChapterSlug,
+      );
+      if (inCurrentChapter || !entries) {
+        return fullMatch;
+      }
     }
 
     const entries = registry.anchors.get(anchorId);
