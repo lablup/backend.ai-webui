@@ -328,6 +328,7 @@
     "WrongEmail": "Alamat e-mel tidak sah",
     "YouAreAboutToDeleteCredential": "Anda akan memadamkan kelayakan pengguna ini:",
     "validation": {
+      "MaxUserCount": "Bilangan maksimum pengguna yang boleh dicipta sekaligus ialah {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Sila masukkan nilai positif kurang daripada 2^31",
       "PleaseEnterPositiveInteger": "Sila masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",

@@ -328,6 +328,7 @@
     "WrongEmail": "无效的电子邮件地址",
     "YouAreAboutToDeleteCredential": "您将要删除该用户的凭据：",
     "validation": {
+      "MaxUserCount": "一次最多可创建 {{count}} 个用户。",
       "PleaseEnterPositiveAndUnder2_31": "请输入小于 2^31 的正数",
       "PleaseEnterPositiveInteger": "请输入正数。",
       "PleaseEnterUniqueNumbers": "请输入不重复的数字",

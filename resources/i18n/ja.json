@@ -328,6 +328,7 @@
     "WrongEmail": "無効なメールアドレス",
     "YouAreAboutToDeleteCredential": "このユーザーの資格情報を削除しようとしています:",
     "validation": {
+      "MaxUserCount": "一度に作成できるユーザーの最大数は{{count}}人です。",
       "PleaseEnterPositiveAndUnder2_31": "2^31未満の正の値を入力してください。",
       "PleaseEnterPositiveInteger": "正の値を入力してください。",
       "PleaseEnterUniqueNumbers": "重複しない数値を入力してください",
