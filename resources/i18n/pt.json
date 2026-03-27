@@ -150,6 +150,7 @@
     "Refresh": "Atualizar",
     "RefreshModelInformation": "Atualizar informações sobre o modelo",
     "Reset": "Reiniciar",
+    "Retry": "Tentar novamente",
     "Save": "Salve ",
     "SaveAndClose": "Salvar e fechar",
     "SaveChanges": "Salvar alterações",
@@ -1436,13 +1437,18 @@
     "Version": "Versão"
   },
   "notification": {
+    "AllStepsCompleted": "Todas as etapas concluídas",
     "AreYouSureToClearAllNotifications": "Tem certeza de que deseja limpar todas as notificações?",
+    "Cancelled": "Cancelado",
     "ClearNotifications": "Limpar notificações",
     "Initializing": "Inicializando ...",
     "NoNotification": "Nenhuma notificação.",
     "Notifications": "Notificações",
     "SeeDetail": "Ver detalhes",
     "SeeSummary": "Ocultar detalhes",
+    "Step": "Etapa",
+    "StepFailed": "Etapa falhou",
+    "StepProgress": "Etapa {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Atualizado com sucesso",
     "Visit": "Visita"
   },

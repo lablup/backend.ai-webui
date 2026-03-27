@@ -150,6 +150,7 @@
     "Refresh": "Segarkan",
     "RefreshModelInformation": "Menyegarkan Informasi Model",
     "Reset": "Atur Ulang",
+    "Retry": "Coba lagi",
     "Save": "Simpan",
     "SaveAndClose": "Simpan dan Tutup",
     "SaveChanges": "Simpan Perubahan",
@@ -1436,13 +1437,18 @@
     "Version": "Versi: kapan"
   },
   "notification": {
+    "AllStepsCompleted": "Semua langkah selesai",
     "AreYouSureToClearAllNotifications": "Apakah Anda yakin untuk menghapus semua notifikasi?",
+    "Cancelled": "Dibatalkan",
     "ClearNotifications": "Hapus Notifikasi",
     "Initializing": "Inisialisasi...",
     "NoNotification": "Tidak Ada Pemberitahuan.",
     "Notifications": "Pemberitahuan",
     "SeeDetail": "Lihat Detail",
     "SeeSummary": "Sembunyikan Detail",
+    "Step": "Langkah",
+    "StepFailed": "Langkah gagal",
+    "StepProgress": "Langkah {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
   },

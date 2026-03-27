@@ -150,6 +150,7 @@
     "Refresh": "รีเฟรช",
     "RefreshModelInformation": "รีเฟรชข้อมูลโมเดล",
     "Reset": "รีเซ็ต",
+    "Retry": "ลองใหม่",
     "Save": "บันทึก",
     "SaveAndClose": "บันทึกและปิด",
     "SaveChanges": "บันทึกการเปลี่ยนแปลง",
@@ -1436,13 +1437,18 @@
     "Version": "เวอร์ชัน"
   },
   "notification": {
+    "AllStepsCompleted": "ขั้นตอนทั้งหมดเสร็จสมบูรณ์",
     "AreYouSureToClearAllNotifications": "คุณแน่ใจหรือไม่ที่จะล้างการแจ้งเตือนทั้งหมด?",
+    "Cancelled": "ยกเลิกแล้ว",
     "ClearNotifications": "ล้างการแจ้งเตือน",
     "Initializing": "กำลังเริ่มต้น...",
     "NoNotification": "ไม่มีการแจ้งเตือน",
     "Notifications": "การแจ้งเตือน",
     "SeeDetail": "ดูรายละเอียด",
     "SeeSummary": "ซ่อนรายละเอียด",
+    "Step": "ขั้นตอน",
+    "StepFailed": "ขั้นตอนล้มเหลว",
+    "StepProgress": "ขั้นตอน {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
   },

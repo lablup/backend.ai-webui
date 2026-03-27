@@ -150,6 +150,7 @@
     "Refresh": "Сэргээх",
     "RefreshModelInformation": "Загварын мэдээллийг шинэчлэх",
     "Reset": "Дахин тохируулах",
+    "Retry": "Дахин оролдох",
     "Save": "Хадгалах",
     "SaveAndClose": "Хадгалах, хаах",
     "SaveChanges": "Өөрчлөлтүүдийг хадгалах",
@@ -1435,13 +1436,18 @@
     "Version": "Хувилбар"
   },
   "notification": {
+    "AllStepsCompleted": "Бүх алхам дууссан",
     "AreYouSureToClearAllNotifications": "Та бүх мэдэгдлийг арилгахдаа итгэлтэй байна уу?",
+    "Cancelled": "Цуцлагдсан",
     "ClearNotifications": "Мэдэгдлийг арилгах",
     "Initializing": "Эхлүүлж байна ...",
     "NoNotification": "Мэдэгдэл байхгүй.",
     "Notifications": "Мэдэгдэл",
     "SeeDetail": "Дэлгэрэнгүйг үзэх",
     "SeeSummary": "Дэлгэрэнгүйг нуух",
+    "Step": "Алхам",
+    "StepFailed": "Алхам амжилтгүй",
+    "StepProgress": "Алхам {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },

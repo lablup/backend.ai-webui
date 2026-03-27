@@ -150,6 +150,7 @@
     "Refresh": "Φρεσκάρω",
     "RefreshModelInformation": "Ανανέωση πληροφοριών μοντέλου",
     "Reset": "Επαναφορά",
+    "Retry": "Επανάληψη",
     "Save": "Σώσει",
     "SaveAndClose": "Αποθήκευσε και κλείσε",
     "SaveChanges": "Αποθήκευσε τις αλλαγές",
@@ -1434,13 +1435,18 @@
     "Version": "Εκδοχή"
   },
   "notification": {
+    "AllStepsCompleted": "Όλα τα βήματα ολοκληρώθηκαν",
     "AreYouSureToClearAllNotifications": "Είστε βέβαιοι ότι θα διαγράψετε όλες τις ειδοποιήσεις;",
+    "Cancelled": "Ακυρώθηκε",
     "ClearNotifications": "Εκκαθάριση ειδοποιήσεων",
     "Initializing": "Αρχικοποίηση ...",
     "NoNotification": "Καμία ειδοποίηση.",
     "Notifications": "Ειδοποιήσεις",
     "SeeDetail": "Εμφάνιση λεπτομερειών",
     "SeeSummary": "Απόκρυψη λεπτομερειών",
+    "Step": "Βήμα",
+    "StepFailed": "Το βήμα απέτυχε",
+    "StepProgress": "Βήμα {{current}}/{{total}}: {{label}}",
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη"
   },
