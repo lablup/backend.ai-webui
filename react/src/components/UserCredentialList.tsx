@@ -73,6 +73,8 @@ const UserCredentialList: React.FC = () => {
     useTransition();
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
     useTransition();
+  const [selectedKeypairs, setSelectedKeypairs] = useState<Keypair[]>([]);
+  const [isBulkDeactivating, setIsBulkDeactivating] = useState(false);
 
   const {
     baiPaginationOption,
@@ -164,6 +166,73 @@ const UserCredentialList: React.FC = () => {
       }
     `);
 
+  const handleBulkDeactivate = () => {
+    modal.confirm({
+      title: t('credential.BulkDeactivateCredentials'),
+      content: (
+        <BAIFlex direction="column" align="stretch" gap={4}>
+          <Typography.Text>
+            {t('credential.BulkDeactivateCredentialsDescription', {
+              count: selectedKeypairs.length,
+            })}
+          </Typography.Text>
+          <Typography.Text type="danger">
+            {t('dialog.warning.CannotBeUndone')}
+          </Typography.Text>
+        </BAIFlex>
+      ),
+      okType: 'danger',
+      okText: t('credential.Deactivate'),
+      onOk: async () => {
+        setIsBulkDeactivating(true);
+        const results = await Promise.allSettled(
+          selectedKeypairs.map(
+            (keypair) =>
+              new Promise<void>((resolve, reject) => {
+                commitModifyKeypair({
+                  variables: {
+                    access_key: keypair.access_key ?? '',
+                    props: {
+                      is_active: false,
+                    },
+                  },
+                  onCompleted: (res, errors) => {
+                    if (!res?.modify_keypair?.ok || errors) {
+                      reject(new Error(res?.modify_keypair?.msg ?? ''));
+                      return;
+                    }
+                    resolve();
+                  },
+                  onError: (error) => {
+                    reject(error);
+                  },
+                });
+              }),
+          ),
+        );
+        setIsBulkDeactivating(false);
+        const failedCount = results.filter(
+          (r) => r.status === 'rejected',
+        ).length;
+        const successCount = results.length - failedCount;
+        if (failedCount > 0) {
+          message.error(
+            t('credential.BulkDeactivatePartialFailure', {
+              successCount,
+              failCount: failedCount,
+            }),
+          );
+        } else {
+          message.success(
+            t('credential.BulkDeactivateSuccess', { count: successCount }),
+          );
+        }
+        setSelectedKeypairs([]);
+        updateFetchKey();
+      },
+    });
+  };
+
   useEffect(() => {
     if (action === 'add') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -185,6 +254,7 @@ const UserCredentialList: React.FC = () => {
                 current: 1,
                 pageSize: tablePaginationOption.pageSize,
               });
+              setSelectedKeypairs([]);
             }}
             optionType="button"
             options={[
@@ -240,6 +310,21 @@ const UserCredentialList: React.FC = () => {
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
+          {queryParams.activeType === 'active' && selectedKeypairs.length > 0 && (
+            <BAIFlex gap={'xs'} align="center">
+              <BAIText>
+                {t('general.NSelected', { count: selectedKeypairs.length })}
+              </BAIText>
+              <Button
+                danger
+                icon={<BanIcon />}
+                loading={isBulkDeactivating}
+                onClick={handleBulkDeactivate}
+              >
+                {t('credential.Deactivate')}
+              </Button>
+            </BAIFlex>
+          )}
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={deferredFetchKey !== fetchKey}
@@ -265,6 +350,20 @@ const UserCredentialList: React.FC = () => {
         scroll={{ x: 'max-content' }}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
+        rowSelection={
+          queryParams.activeType === 'active'
+            ? {
+                type: 'checkbox',
+                selectedRowKeys: selectedKeypairs.map((kp) => kp.id),
+                onChange: (keys) => {
+                  const items = filterOutNullAndUndefined(keypair_list?.items);
+                  setSelectedKeypairs(
+                    items.filter((kp) => keys.includes(kp.id)),
+                  );
+                },
+              }
+            : undefined
+        }
         columns={filterOutEmpty([
           {
             key: 'accessKey',
@@ -553,11 +652,13 @@ const UserCredentialList: React.FC = () => {
                 current,
                 pageSize,
               });
+              setSelectedKeypairs([]);
             }
           },
         }}
         onChangeOrder={(nextOrder) => {
           setQueryParams({ order: nextOrder }, 'replaceIn');
+          setSelectedKeypairs([]);
         }}
       />
       <KeypairInfoModal
