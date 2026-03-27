@@ -10,7 +10,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useModelServiceLauncher } from '../hooks/useModelServiceLauncher';
+import { useStartServiceFromFolder } from '../hooks/useModelServiceLauncher';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -73,7 +73,7 @@ interface VFolderStartServiceButtonProps {
 /**
  * Button component for starting a model service from a model-type vfolder.
  * Validates that model-definition.yaml and service-definition.toml exist
- * before attempting to create the service.
+ * before attempting to create the service via multi-step notification.
  */
 const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
   vfolder,
@@ -81,11 +81,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
-  const {
-    mutationToCreateService,
-    createServiceNotificationMsg,
-    createServiceInput,
-  } = useModelServiceLauncher();
+  const navigate = useWebUINavigate();
 
   const vfolderId = toLocalId(vfolder.id ?? '');
   const { files: folderFiles, isLoading: isLoadingFiles } =
@@ -102,7 +98,26 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     (file) => file?.name === 'service-definition.toml',
   );
 
+  const { start, state } = useStartServiceFromFolder({
+    modelName: vfolder.name ?? '',
+    vfolderId,
+    navigate,
+  });
+
   const handleStartService = () => {
+    if (!hasModelDefinition && !hasServiceDefinition) {
+      upsertNotification({
+        key: `vfolder-def-missing-${vfolder.id}`,
+        open: true,
+        message: t('modelService.StartService'),
+        description: t('modelService.BothDefinitionFilesRequired'),
+        type: 'error',
+        to: `/data?folder=${vfolderId}`,
+        toText: t('modelService.GoToFolder'),
+      });
+      return;
+    }
+
     if (!hasModelDefinition) {
       upsertNotification({
         key: `vfolder-model-def-missing-${vfolder.id}`,
@@ -129,29 +144,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
       return;
     }
 
-    const notificationKey = `start-service-${vfolder.id}-${Date.now()}`;
-    const serviceInput = createServiceInput(vfolder.name ?? '', vfolderId, '');
-
-    mutationToCreateService.mutate(serviceInput, {
-      onSuccess: (result) => {
-        createServiceNotificationMsg(
-          result,
-          vfolder.name ?? '',
-          notificationKey,
-        );
-      },
-      onError: (error) => {
-        upsertNotification({
-          key: notificationKey,
-          open: true,
-          message: t('modelService.StartService'),
-          description:
-            (error as { message?: string })?.message ??
-            t('modelService.FailedToStartService'),
-          type: 'error',
-        });
-      },
-    });
+    start();
   };
 
   return (
@@ -159,7 +152,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
       <Button
         size="small"
         type="text"
-        loading={mutationToCreateService.isPending || isLoadingFiles}
+        loading={state.overallStatus === 'running' || isLoadingFiles}
         disabled={isLoadingFiles}
         onClick={handleStartService}
       >

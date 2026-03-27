@@ -1296,6 +1296,7 @@
     "CloneModelFolderConfirm": "To run the model service, the folder needs to be cloned. Would you like to clone it as <strong>\"{{folderName}}\"</strong> and start the service?",
     "Controls": "Controls",
     "CreatedAt": "Created At",
+    "CreatingService": "Creating service...",
     "CurrentTime": "Current time",
     "Custom": "Custom",
     "CustomExpirationDate": "Custom Expiration Date",
@@ -1399,7 +1400,8 @@
     "VllmModelName": "Model name (e.g., meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Pipeline parallel size (e.g., 2, 4)",
     "VllmQuantization": "e.g., awq, gptq, fp8",
-    "VllmTpSize": "Tensor parallel size (e.g., 2, 4, 8)"
+    "VllmTpSize": "Tensor parallel size (e.g., 2, 4, 8)",
+    "WaitingForServiceReady": "Waiting for service to be ready..."
   },
   "modelStore": {
     "Author": "Author",

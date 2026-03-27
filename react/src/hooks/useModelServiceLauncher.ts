@@ -14,8 +14,14 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import {
+  MultiStepNotificationConfig,
+  StepDefinition,
+  useMultiStepNotification,
+} from '../hooks/useMultiStepNotification';
 import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Re-export for consumers who need only these types
@@ -262,4 +268,153 @@ export function useModelServiceLauncher() {
     isClonePending: mutationToClone.isPending,
     isCreatePending: mutationToCreateService.isPending,
   };
+}
+
+/**
+ * Hook that provides a multi-step notification based service launch flow
+ * for starting a service directly from an existing model folder (no clone).
+ *
+ * Steps:
+ *   1. "Creating service..." — POST /services
+ *   2. "Waiting for service to be ready..." — poll GET /services/:id
+ *
+ * On completion: shows "Play your model now!" link to /chat
+ * On failure: shows "Go to service detail page" link
+ * Supports cancel and retry via useMultiStepNotification.
+ */
+export function useStartServiceFromFolder(options: {
+  modelName: string;
+  vfolderId: string;
+  navigate: (path: string) => void;
+}) {
+  'use memo';
+  const { modelName, vfolderId, navigate } = options;
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const currentDomain = useCurrentDomainValue();
+  const currentResourceGroupByProject = useCurrentResourceGroupValue();
+
+  // Store the endpoint_id from step 1 so step 2 and action buttons can reference it
+  const endpointIdRef = { current: '' };
+
+  const config: MultiStepNotificationConfig = useMemo(() => {
+    const steps: StepDefinition[] = [
+      {
+        label: t('modelService.CreatingService'),
+        type: 'promise',
+        executor: async () => {
+          const input = createServiceInput(
+            modelName,
+            vfolderId,
+            currentResourceGroupByProject ?? '',
+          );
+          const environ: { [key: string]: string } = {};
+          if (input.envvars) {
+            input.envvars.forEach((v) => (environ[v.variable] = v.value));
+          }
+          const body: ServiceCreateType = {
+            name: input.serviceName,
+            desired_session_count: input.replicas,
+            runtime_variant: input.runtimeVariant,
+            group: baiClient.current_group,
+            domain: currentDomain,
+            cluster_size: input.cluster_size,
+            cluster_mode: input.cluster_mode,
+            open_to_public: input.openToPublic,
+            config: {
+              model: input.vFolderID,
+              model_version: 1,
+              model_mount_destination: '/models',
+              environ,
+              scaling_group: currentResourceGroupByProject ?? '',
+              resources: {},
+            },
+          };
+          const result: ServiceResult = await baiSignedRequestWithPromise({
+            method: 'POST',
+            url: '/services',
+            body,
+            client: baiClient,
+          });
+          endpointIdRef.current = result?.endpoint_id ?? '';
+          return result;
+        },
+        onChange: {
+          rejected: t('modelService.FailedToStartService'),
+        },
+      },
+      {
+        label: t('modelService.WaitingForServiceReady'),
+        type: 'promise',
+        executor: async (prevResult, signal) => {
+          const prev = prevResult as ServiceResult | undefined;
+          const endpointId = prev?.endpoint_id ?? endpointIdRef.current;
+          let retryCount = 0;
+
+          while (!signal.aborted) {
+            retryCount++;
+            const routingStatus = await baiRequestWithPromise({
+              method: 'GET',
+              url: `/services/${endpointId}`,
+            });
+            if (routingStatus.active_routes?.length > 0) {
+              return routingStatus;
+            }
+            if (retryCount >= MAX_RETRIES) {
+              throw new Error(t('modelService.ModelServiceFailedToStart'));
+            }
+            await new Promise<void>((resolve, reject) => {
+              const timer = setTimeout(resolve, RETRY_INTERVAL_MS);
+              signal.addEventListener(
+                'abort',
+                () => {
+                  clearTimeout(timer);
+                  reject(new Error('Cancelled'));
+                },
+                { once: true },
+              );
+            });
+          }
+          throw new Error('Cancelled');
+        },
+        onChange: {
+          rejected: t('modelService.ModelServiceFailedToStart'),
+        },
+        actionButtons: {
+          rejected: {
+            label: t('modelService.GoToServiceDetailPage'),
+            onClick: () => {
+              navigate(`/serving/${endpointIdRef.current}`);
+            },
+          },
+        },
+      },
+    ];
+
+    return {
+      key: `start-service-${vfolderId}-${Date.now()}`,
+      message: t('modelService.StartService'),
+      steps,
+      onAllCompleted: {
+        message: t('modelService.StartingModelService'),
+        actionButtons: {
+          primary: {
+            label: t('modelService.PlayYourModelNow'),
+            onClick: () => {
+              navigate(
+                `/chat?${new URLSearchParams({
+                  endpointId: endpointIdRef.current,
+                  modelId: modelName,
+                }).toString()}`,
+              );
+            },
+          },
+        },
+      },
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelName, vfolderId]);
+
+  return useMultiStepNotification(config);
 }
