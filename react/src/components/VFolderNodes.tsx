@@ -45,7 +45,7 @@ import {
   useSearchVFolderFiles,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -80,6 +80,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const { upsertNotification } = useSetBAINotification();
   const navigate = useWebUINavigate();
 
@@ -98,11 +99,17 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     (file) => file?.name === 'service-definition.toml',
   );
 
-  const { start, state } = useStartServiceFromFolder({
+  const { start, state, endpointIdRef } = useStartServiceFromFolder({
     modelName: vfolder.name ?? '',
     vfolderId,
     navigate,
   });
+
+  useEffect(() => {
+    if (state.overallStatus === 'completed' && endpointIdRef.current) {
+      navigate(`/serving/${endpointIdRef.current}`);
+    }
+  }, [state.overallStatus, endpointIdRef, navigate]);
 
   const handleStartService = () => {
     if (!hasModelDefinition && !hasServiceDefinition) {
@@ -132,15 +139,8 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     }
 
     if (!hasServiceDefinition) {
-      upsertNotification({
-        key: `vfolder-service-def-missing-${vfolder.id}`,
-        open: true,
-        message: t('modelService.StartService'),
-        description: t('modelService.ServiceDefinitionRequired'),
-        type: 'warning',
-        to: `/serving/start?modelFolderID=${vfolderId}`,
-        toText: t('modelService.StartNewService'),
-      });
+      message.warning(t('modelService.ServiceDefinitionMissing'));
+      navigate(`/serving/start?modelFolderID=${vfolderId}`);
       return;
     }
 

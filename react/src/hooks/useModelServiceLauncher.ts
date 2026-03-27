@@ -400,14 +400,9 @@ export function useStartServiceFromFolder(options: {
         message: t('modelService.StartingModelService'),
         actionButtons: {
           primary: {
-            label: t('modelService.PlayYourModelNow'),
+            label: t('modelService.GoToServiceDetailPage'),
             onClick: () => {
-              navigate(
-                `/chat?${new URLSearchParams({
-                  endpointId: endpointIdRef.current,
-                  modelId: modelName,
-                }).toString()}`,
-              );
+              navigate(`/serving/${endpointIdRef.current}`);
             },
           },
         },
@@ -416,5 +411,10 @@ export function useStartServiceFromFolder(options: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelName, vfolderId]);
 
-  return useMultiStepNotification(config);
+  const controls = useMultiStepNotification(config);
+
+  return {
+    ...controls,
+    endpointIdRef,
+  };
 }
