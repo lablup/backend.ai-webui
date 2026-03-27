@@ -6,7 +6,6 @@ import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragm
 import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
-import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -54,7 +53,6 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const { styles } = useStyles();
-  const { models, sorting } = useModelCardMetadata();
 
   const [currentModelInfo, setCurrentModelInfo] =
     useState<ModelCardModalFragment$key | null>();
@@ -233,20 +231,6 @@ const ModelStoreListPage: React.FC = () => {
                   _.includes(selectedTasks, info?.task)) &&
                 passSearchFilter
               );
-            })
-            .sort((a, b) => {
-              const aIndex = sorting.indexOf(a?.name || '');
-              const bIndex = sorting.indexOf(b?.name || '');
-
-              if (aIndex !== -1 && bIndex !== -1) {
-                return aIndex - bIndex;
-              } else if (aIndex !== -1) {
-                return -1;
-              } else if (bIndex !== -1) {
-                return 1;
-              } else {
-                return 0;
-              }
             }) as Array<ModelCard>
         }
         renderItem={(item: ModelCard) => (
@@ -287,18 +271,7 @@ const ModelStoreListPage: React.FC = () => {
                   <Image
                     preview={false}
                     width={150}
-                    src={(() => {
-                      const found = _.find(
-                        models,
-                        (model) => model?.name === item?.name,
-                      );
-                      return found &&
-                        typeof found === 'object' &&
-                        'thumbnail' in found &&
-                        (found as any).thumbnail
-                        ? (found as any).thumbnail
-                        : '/resources/images/model-player/default.jpeg';
-                    })()}
+                    src="/resources/images/model-player/default.jpeg"
                   />
                   <Typography.Paragraph
                     ellipsis={{ rows: 3, expandable: false }}
