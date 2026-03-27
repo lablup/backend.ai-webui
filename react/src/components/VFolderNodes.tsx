@@ -140,7 +140,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 
     if (!hasServiceDefinition) {
       message.warning(t('modelService.ServiceDefinitionMissing'));
-      navigate(`/service/start?modelFolderID=${vfolderId}`);
+      navigate(`/service/start?model=${vfolderId}`);
       return;
     }
 
