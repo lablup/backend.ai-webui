@@ -52,7 +52,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     filter: {
       isActive: activeFilter === 'active',
     },
-    first: 100,
+    limit: 100,
     offset: 0,
   };
 
@@ -64,13 +64,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
       query MyKeypairManagementModalQuery(
         $filter: KeypairFilter
         $orderBy: [KeypairOrderBy!]
-        $first: Int
+        $limit: Int
         $offset: Int
       ) {
         myKeypairs(
           filter: $filter
           orderBy: $orderBy
-          first: $first
+          limit: $limit
           offset: $offset
         ) @since(version: "26.4.0") {
           edges {
