@@ -13,3 +13,8 @@ export {
   restoreColumnToDefault,
   restoreAllColumnsToDefault,
 } from './BAITable';
+export { default as BAINameActionCell } from './BAINameActionCell';
+export type {
+  BAINameActionCellProps,
+  BAINameActionCellAction,
+} from './BAINameActionCell';
