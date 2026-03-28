@@ -17,11 +17,12 @@ import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import {
   MultiStepNotificationConfig,
   StepDefinition,
+  StepWarning,
   useMultiStepNotification,
 } from '../hooks/useMultiStepNotification';
 import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Re-export for consumers who need only these types
@@ -297,12 +298,11 @@ export function useStartServiceFromFolder(options: {
   const { modelName, vfolderId, navigate } = options;
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentDomain = useCurrentDomainValue();
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
 
   // Store the endpoint_id from step 2 so step 3 and action buttons can reference it
-  const endpointIdRef = { current: '' };
+  const endpointIdRef = useRef('');
 
   const config: MultiStepNotificationConfig = useMemo(() => {
     const steps: StepDefinition[] = [
@@ -321,22 +321,18 @@ export function useStartServiceFromFolder(options: {
             (f) => f.name === 'service-definition.toml',
           );
 
-          if (!hasModelDefinition && !hasServiceDefinition) {
-            throw new Error(t('modelService.BothDefinitionFilesRequired'));
-          }
-
           if (!hasModelDefinition) {
             throw new Error(t('modelService.ModelDefinitionRequired'));
           }
 
           if (!hasServiceDefinition) {
-            throw new Error(t('modelService.ServiceDefinitionMissing'));
+            throw new StepWarning(t('modelService.ServiceDefinitionMissing'));
           }
 
           return { hasModelDefinition, hasServiceDefinition };
         },
         onRejected: (error) => {
-          if (error.message === t('modelService.ServiceDefinitionMissing')) {
+          if (error instanceof StepWarning) {
             const vfolderIdNoDash = vfolderId.replaceAll('-', '');
             navigate(
               `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
@@ -345,7 +341,7 @@ export function useStartServiceFromFolder(options: {
         },
         actionButtons: {
           rejected: {
-            label: t('modelService.GoToFolder'),
+            label: t('modelService.OpenFolder'),
             onClick: () => {
               navigate(`/data?folder=${vfolderId}`);
             },
@@ -396,57 +392,13 @@ export function useStartServiceFromFolder(options: {
           rejected: t('modelService.FailedToStartService'),
         },
       },
-      {
-        label: t('modelService.WaitingForServiceReady'),
-        type: 'promise',
-        executor: async (prevResult, signal) => {
-          const prev = prevResult as ServiceResult | undefined;
-          const endpointId = prev?.endpoint_id ?? endpointIdRef.current;
-          let retryCount = 0;
-
-          while (!signal.aborted) {
-            retryCount++;
-            const routingStatus = await baiRequestWithPromise({
-              method: 'GET',
-              url: `/services/${endpointId}`,
-            });
-            if (routingStatus.active_routes?.length > 0) {
-              return routingStatus;
-            }
-            if (retryCount >= MAX_RETRIES) {
-              throw new Error(t('modelService.ModelServiceFailedToStart'));
-            }
-            await new Promise<void>((resolve, reject) => {
-              const timer = setTimeout(resolve, RETRY_INTERVAL_MS);
-              signal.addEventListener(
-                'abort',
-                () => {
-                  clearTimeout(timer);
-                  reject(new Error('Cancelled'));
-                },
-                { once: true },
-              );
-            });
-          }
-          throw new Error('Cancelled');
-        },
-        onChange: {
-          rejected: t('modelService.ModelServiceFailedToStart'),
-        },
-        actionButtons: {
-          rejected: {
-            label: t('modelService.GoToServiceDetailPage'),
-            onClick: () => {
-              navigate(`/serving/${endpointIdRef.current}`);
-            },
-          },
-        },
-      },
     ];
 
     return {
       key: `start-service-${vfolderId}-${Date.now()}`,
-      message: t('modelService.StartService'),
+      message: t('modelService.StartModelServiceWithName', {
+        name: modelName,
+      }),
       steps,
       onAllCompleted: {
         message: t('modelService.StartingModelService'),
@@ -469,7 +421,7 @@ export function useStartServiceFromFolder(options: {
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelName, vfolderId]);
+  }, [modelName, vfolderId, currentResourceGroupByProject]);
 
   return useMultiStepNotification(config);
 }
