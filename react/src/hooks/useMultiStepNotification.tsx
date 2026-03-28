@@ -109,6 +109,16 @@ export interface StepDefinition<T = unknown, P = unknown> {
    * Per-status action button configurations for this step's notification.
    */
   actionButtons?: StepActionButtons;
+
+  /**
+   * Called when this step resolves successfully. Receives the step result.
+   */
+  onResolved?: (result: T) => void;
+
+  /**
+   * Called when this step fails. Receives the error.
+   */
+  onRejected?: (error: Error) => void;
 }
 
 /**
@@ -172,6 +182,10 @@ export interface MultiStepNotificationConfig {
   onAllCompleted?: {
     message: string;
     actionButtons?: FinalStateActionButtons;
+    /**
+     * Called after all steps complete successfully. Receives all step results.
+     */
+    callback?: (stepResults: unknown[]) => void;
   };
 
   /**
@@ -179,6 +193,20 @@ export interface MultiStepNotificationConfig {
    */
   onCancelled?: {
     message: string;
+    /**
+     * Called when the sequence is cancelled.
+     */
+    callback?: () => void;
+  };
+
+  /**
+   * Configuration for the notification state shown when a step fails.
+   */
+  onFailed?: {
+    /**
+     * Called when a step fails. Receives the error and the failing step index.
+     */
+    callback?: (error: Error, failedStepIndex: number) => void;
   };
 }
 
@@ -517,6 +545,7 @@ export function useMultiStepNotification(
 
             stepStatesRef.current[i] = { status: 'resolved', result };
             prevResult = result;
+            step.onResolved?.(result);
           } else {
             const executorInput =
               step.dependsOn === false ? undefined : prevResult;
@@ -533,6 +562,7 @@ export function useMultiStepNotification(
 
               stepStatesRef.current[i] = { status: 'resolved', result };
               prevResult = result;
+              step.onResolved?.(result);
             } else {
               // SSE step - listen to background task via SSE
               const sseResult = executorResult as { taskId: string };
@@ -607,6 +637,7 @@ export function useMultiStepNotification(
 
               stepStatesRef.current[i] = { status: 'resolved', result };
               prevResult = result;
+              step.onResolved?.(result);
             }
           }
 
@@ -646,6 +677,7 @@ export function useMultiStepNotification(
 
           const error = err instanceof Error ? err : new Error(String(err));
           stepStatesRef.current[i] = { status: 'rejected', error };
+          step.onRejected?.(error);
           // Remove the cached eager promise for this step so retry re-executes it
           eagerResultsRef.current.delete(i);
 
@@ -675,6 +707,7 @@ export function useMultiStepNotification(
           });
 
           syncState('failed', i);
+          config.onFailed?.callback?.(error, i);
           return;
         }
       }
@@ -703,6 +736,7 @@ export function useMultiStepNotification(
       });
 
       syncState('completed', total - 1);
+      onAllCompleted?.callback?.(stepStatesRef.current.map((s) => s.result));
     },
     [config, upsertNotification, syncState, t],
   );
@@ -796,6 +830,7 @@ export function useMultiStepNotification(
     });
 
     syncState('cancelled', multiStepState.currentStep);
+    config.onCancelled?.callback?.();
   }, [
     multiStepState.overallStatus,
     multiStepState.currentStep,

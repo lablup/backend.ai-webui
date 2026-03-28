@@ -406,15 +406,18 @@ export function useStartServiceFromFolder(options: {
             },
           },
         },
+        callback: (stepResults) => {
+          const serviceResult = stepResults[0] as ServiceResult | undefined;
+          const endpointId =
+            serviceResult?.endpoint_id ?? endpointIdRef.current;
+          if (endpointId) {
+            navigate(`/serving/${endpointId}`);
+          }
+        },
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelName, vfolderId]);
 
-  const controls = useMultiStepNotification(config);
-
-  return {
-    ...controls,
-    endpointIdRef,
-  };
+  return useMultiStepNotification(config);
 }

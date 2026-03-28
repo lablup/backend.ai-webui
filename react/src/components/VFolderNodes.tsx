@@ -45,7 +45,7 @@ import {
   useSearchVFolderFiles,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -98,17 +98,11 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     (file) => file?.name === 'service-definition.toml',
   );
 
-  const { start, state, endpointIdRef } = useStartServiceFromFolder({
+  const { start, state } = useStartServiceFromFolder({
     modelName: vfolder.name ?? '',
     vfolderId,
     navigate,
   });
-
-  useEffect(() => {
-    if (state.overallStatus === 'completed' && endpointIdRef.current) {
-      navigate(`/serving/${endpointIdRef.current}`);
-    }
-  }, [state.overallStatus, endpointIdRef, navigate]);
 
   const handleStartService = () => {
     if (!hasModelDefinition && !hasServiceDefinition) {
