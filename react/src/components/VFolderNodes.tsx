@@ -92,7 +92,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
   });
 
   return (
-    <Tooltip title={t('modelService.StartService')} placement="left">
+    <Tooltip title={t('modelService.StartModelService')} placement="left">
       <Button
         size="small"
         type="text"
@@ -273,7 +273,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   )}
                   {/* Share */}
                   {!isDeletedCategory(vfolder?.status) && (
-                    <Tooltip title={t('button.Share')} placement="left">
+                    <Tooltip title={t('button.Share')} placement="right">
                       <Button
                         size="small"
                         type="text"

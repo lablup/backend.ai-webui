@@ -84,10 +84,22 @@ export interface NotificationState<T = any> extends Omit<
     totalSteps: number;
     steps: Array<{
       label: string;
-      status: 'idle' | 'pending' | 'resolved' | 'rejected' | 'cancelled';
+      status:
+        | 'idle'
+        | 'pending'
+        | 'resolved'
+        | 'rejected'
+        | 'warned'
+        | 'cancelled';
       progress?: number;
     }>;
-    overallStatus: 'idle' | 'running' | 'completed' | 'failed' | 'cancelled';
+    overallStatus:
+      | 'idle'
+      | 'running'
+      | 'completed'
+      | 'failed'
+      | 'warned'
+      | 'cancelled';
   };
 }
 

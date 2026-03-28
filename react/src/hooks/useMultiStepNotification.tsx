@@ -21,7 +21,21 @@ export type StepStatus =
   | 'pending'
   | 'resolved'
   | 'rejected'
+  | 'warned'
   | 'cancelled';
+
+/**
+ * A non-fatal error that stops the step sequence but is displayed as a
+ * warning (amber) instead of an error (red). Throw this from a step executor
+ * when the situation is recoverable or informational (e.g. missing optional
+ * definition files that the user can provide via a different path).
+ */
+export class StepWarning extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'StepWarning';
+  }
+}
 
 /**
  * Type of async work a step performs.
@@ -220,6 +234,7 @@ export type OverallStatus =
   | 'running'
   | 'completed'
   | 'failed'
+  | 'warned'
   | 'cancelled';
 
 /**
@@ -678,28 +693,35 @@ export function useMultiStepNotification(
           if (signal.aborted) return;
 
           const error = err instanceof Error ? err : new Error(String(err));
-          stepStatesRef.current[i] = { status: 'rejected', error };
-          await step.onRejected?.(error);
+          const isWarning = err instanceof StepWarning;
+          const stepStatus: StepStatus = isWarning ? 'warned' : 'rejected';
+          const overallStatus: OverallStatus = isWarning ? 'warned' : 'failed';
+
+          stepStatesRef.current[i] = { status: stepStatus, error };
           // Remove the cached eager promise for this step so retry re-executes it
           eagerResultsRef.current.delete(i);
 
           const stepRejectedDescription =
             step.onChange?.rejected ?? error.message;
 
+          const WARNING_DURATION = 10; // seconds — longer for user to read
+
           upsertNotification({
             key,
             message,
-            backgroundTask: { status: 'rejected' },
+            backgroundTask: {
+              status: isWarning ? 'pending' : 'rejected',
+            },
             description: stepRejectedDescription,
             open: true,
-            duration: CLOSING_DURATION,
+            duration: isWarning ? WARNING_DURATION : CLOSING_DURATION,
             multiStep: buildMultiStepData(
               steps,
               stepStatesRef.current,
               i,
-              'failed',
+              overallStatus,
             ),
-            ...(step.actionButtons?.rejected
+            ...(!isWarning && step.actionButtons?.rejected
               ? {
                   extraData: {
                     actionButton: step.actionButtons.rejected,
@@ -708,7 +730,9 @@ export function useMultiStepNotification(
               : {}),
           });
 
-          syncState('failed', i);
+          syncState(overallStatus, i);
+          // Call onRejected after notification so it can override (e.g. remove action button)
+          await step.onRejected?.(error);
           config.onFailed?.callback?.(error, i);
           return;
         }
@@ -754,12 +778,16 @@ export function useMultiStepNotification(
   }, [multiStepState.overallStatus, config.steps.length, runFromStep]);
 
   const retry = useCallback(() => {
-    // Retry is only valid from a failed state; cancelled sequences must use start()
-    if (multiStepState.overallStatus !== 'failed') return;
+    // Retry is valid from failed or warned states; cancelled sequences must use start()
+    if (
+      multiStepState.overallStatus !== 'failed' &&
+      multiStepState.overallStatus !== 'warned'
+    )
+      return;
 
     const firstFailedIndex = _.findIndex(
       stepStatesRef.current,
-      (s) => s.status === 'rejected',
+      (s) => s.status === 'rejected' || s.status === 'warned',
     );
 
     if (firstFailedIndex < 0) return;
