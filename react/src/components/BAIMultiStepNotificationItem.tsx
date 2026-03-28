@@ -380,6 +380,21 @@ const BAIMultiStepNotificationItem: React.FC<{
           </div>
         )}
 
+        {/* Description: shown on failure/cancellation with detail message */}
+        {isTerminal && notification.description && (
+          <Typography.Text
+            style={{
+              fontSize: token.fontSizeSM,
+              color:
+                overallStatus === 'failed'
+                  ? token.colorError
+                  : token.colorTextSecondary,
+            }}
+          >
+            {notification.description}
+          </Typography.Text>
+        )}
+
         {/* Buttons: retry / cancel / action */}
         <BAIFlex direction="row" align="end" gap={'xxs'} justify="end">
           <BAIFlex gap={'xxs'}>
