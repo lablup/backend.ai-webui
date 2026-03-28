@@ -321,11 +321,12 @@ export function useStartServiceFromFolder(options: {
             (f) => f.name === 'service-definition.toml',
           );
 
+          if (!hasModelDefinition && !hasServiceDefinition) {
+            throw new Error(t('modelService.BothDefinitionFilesRequired'));
+          }
+
           if (!hasModelDefinition) {
-            const msg = !hasServiceDefinition
-              ? t('modelService.BothDefinitionFilesRequired')
-              : t('modelService.ModelDefinitionRequired');
-            throw new Error(msg);
+            throw new Error(t('modelService.ModelDefinitionRequired'));
           }
 
           if (!hasServiceDefinition) {
@@ -335,8 +336,7 @@ export function useStartServiceFromFolder(options: {
           return { hasModelDefinition, hasServiceDefinition };
         },
         onRejected: (error) => {
-          const msg = error.message;
-          if (msg === t('modelService.ServiceDefinitionMissing')) {
+          if (error.message === t('modelService.ServiceDefinitionMissing')) {
             const vfolderIdNoDash = vfolderId.replaceAll('-', '');
             navigate(
               `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
