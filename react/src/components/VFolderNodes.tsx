@@ -30,6 +30,7 @@ import {
 } from 'antd';
 import {
   filterOutNullAndUndefined,
+  BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
   BAIUserUnionIcon,
@@ -79,6 +80,7 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const navigate = useWebUINavigate();
 
   const vfolderId = toLocalId(vfolder.id ?? '');
@@ -94,11 +96,14 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
       <Button
         size="small"
         type="text"
+        icon={<BAIEndpointsIcon />}
+        style={{
+          color: token.colorInfo,
+          background: token.colorInfoBg,
+        }}
         loading={state.overallStatus === 'running'}
         onClick={() => start()}
-      >
-        {t('modelService.StartService')}
-      </Button>
+      />
     </Tooltip>
   );
 };
