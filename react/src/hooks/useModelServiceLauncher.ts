@@ -270,16 +270,22 @@ export function useModelServiceLauncher() {
   };
 }
 
+interface DefinitionCheckResult {
+  hasModelDefinition: boolean;
+  hasServiceDefinition: boolean;
+}
+
 /**
  * Hook that provides a multi-step notification based service launch flow
  * for starting a service directly from an existing model folder (no clone).
  *
  * Steps:
- *   1. "Creating service..." — POST /services
- *   2. "Waiting for service to be ready..." — poll GET /services/:id
+ *   1. "Checking definition files..." — validate model-definition.yaml & service-definition.toml
+ *   2. "Creating service..." — POST /services
+ *   3. "Waiting for service to be ready..." — poll GET /services/:id
  *
- * On completion: shows "Play your model now!" link to /chat
- * On failure: shows "Go to service detail page" link
+ * On completion: auto-navigates to service detail page
+ * On step 1 failure: navigates to folder page or service launcher depending on missing files
  * Supports cancel and retry via useMultiStepNotification.
  */
 export function useStartServiceFromFolder(options: {
@@ -295,11 +301,57 @@ export function useStartServiceFromFolder(options: {
   const currentDomain = useCurrentDomainValue();
   const currentResourceGroupByProject = useCurrentResourceGroupValue();
 
-  // Store the endpoint_id from step 1 so step 2 and action buttons can reference it
+  // Store the endpoint_id from step 2 so step 3 and action buttons can reference it
   const endpointIdRef = { current: '' };
 
   const config: MultiStepNotificationConfig = useMemo(() => {
     const steps: StepDefinition[] = [
+      {
+        label: t('modelService.CheckingDefinitionFiles'),
+        type: 'promise',
+        executor: async (): Promise<DefinitionCheckResult> => {
+          const res = await baiClient.vfolder.list_files('.', vfolderId);
+          const files: Array<{ name: string }> = res?.items ?? [];
+          const hasModelDefinition = files.some(
+            (f) =>
+              f.name === 'model-definition.yaml' ||
+              f.name === 'model-definition.yml',
+          );
+          const hasServiceDefinition = files.some(
+            (f) => f.name === 'service-definition.toml',
+          );
+
+          if (!hasModelDefinition) {
+            const msg = !hasServiceDefinition
+              ? t('modelService.BothDefinitionFilesRequired')
+              : t('modelService.ModelDefinitionRequired');
+            throw new Error(msg);
+          }
+
+          if (!hasServiceDefinition) {
+            throw new Error(t('modelService.ServiceDefinitionMissing'));
+          }
+
+          return { hasModelDefinition, hasServiceDefinition };
+        },
+        onRejected: (error) => {
+          const msg = error.message;
+          if (msg === t('modelService.ServiceDefinitionMissing')) {
+            const vfolderIdNoDash = vfolderId.replaceAll('-', '');
+            navigate(
+              `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
+            );
+          }
+        },
+        actionButtons: {
+          rejected: {
+            label: t('modelService.GoToFolder'),
+            onClick: () => {
+              navigate(`/data?folder=${vfolderId}`);
+            },
+          },
+        },
+      },
       {
         label: t('modelService.CreatingService'),
         type: 'promise',
@@ -407,7 +459,7 @@ export function useStartServiceFromFolder(options: {
           },
         },
         callback: (stepResults) => {
-          const serviceResult = stepResults[0] as ServiceResult | undefined;
+          const serviceResult = stepResults[1] as ServiceResult | undefined;
           const endpointId =
             serviceResult?.endpoint_id ?? endpointIdRef.current;
           if (endpointId) {

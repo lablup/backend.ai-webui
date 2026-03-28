@@ -1292,6 +1292,7 @@
     "Cancel": "Cancel",
     "CannotValidateNow": "Cannot validate service now. Please check resource allocation or other configurations.",
     "Chatting": "Chatting",
+    "CheckingDefinitionFiles": "Checking definition files...",
     "ClearErrors": "Clear error and retry",
     "CloneModelFolderConfirm": "To run the model service, the folder needs to be cloned. Would you like to clone it as <strong>\"{{folderName}}\"</strong> and start the service?",
     "Controls": "Controls",

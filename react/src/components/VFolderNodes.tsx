@@ -42,7 +42,6 @@ import {
   BAIConfirmModalWithInput,
   BAIVFolderDeleteButton,
   BAITag,
-  useSearchVFolderFiles,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
@@ -80,23 +79,9 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { upsertNotification } = useSetBAINotification();
   const navigate = useWebUINavigate();
 
   const vfolderId = toLocalId(vfolder.id ?? '');
-  const { files: folderFiles, isLoading: isLoadingFiles } =
-    useSearchVFolderFiles(vfolderId);
-
-  const hasModelDefinition = _.some(
-    folderFiles?.items,
-    (file) =>
-      file?.name === 'model-definition.yaml' ||
-      file?.name === 'model-definition.yml',
-  );
-  const hasServiceDefinition = _.some(
-    folderFiles?.items,
-    (file) => file?.name === 'service-definition.toml',
-  );
 
   const { start, state } = useStartServiceFromFolder({
     modelName: vfolder.name ?? '',
@@ -104,59 +89,13 @@ const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
     navigate,
   });
 
-  const handleStartService = () => {
-    if (!hasModelDefinition && !hasServiceDefinition) {
-      upsertNotification({
-        key: `vfolder-def-missing-${vfolder.id}`,
-        open: true,
-        message: t('modelService.StartService'),
-        description: t('modelService.BothDefinitionFilesRequired'),
-        type: 'error',
-        to: `/data?folder=${vfolderId}`,
-        toText: t('modelService.GoToFolder'),
-      });
-      return;
-    }
-
-    if (!hasModelDefinition) {
-      upsertNotification({
-        key: `vfolder-model-def-missing-${vfolder.id}`,
-        open: true,
-        message: t('modelService.StartService'),
-        description: t('modelService.ModelDefinitionRequired'),
-        type: 'error',
-        to: `/data?folder=${vfolderId}`,
-        toText: t('modelService.GoToFolder'),
-      });
-      return;
-    }
-
-    if (!hasServiceDefinition) {
-      const vfolderIdNoDash = vfolderId.replaceAll('-', '');
-      navigate(
-        `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
-      );
-      upsertNotification({
-        key: `vfolder-service-def-missing-${vfolder.id}`,
-        open: true,
-        message: t('modelService.StartService'),
-        description: t('modelService.ServiceDefinitionMissing'),
-        type: 'info',
-      });
-      return;
-    }
-
-    start();
-  };
-
   return (
     <Tooltip title={t('modelService.StartService')} placement="left">
       <Button
         size="small"
         type="text"
-        loading={state.overallStatus === 'running' || isLoadingFiles}
-        disabled={isLoadingFiles}
-        onClick={handleStartService}
+        loading={state.overallStatus === 'running'}
+        onClick={() => start()}
       >
         {t('modelService.StartService')}
       </Button>

@@ -112,13 +112,15 @@ export interface StepDefinition<T = unknown, P = unknown> {
 
   /**
    * Called when this step resolves successfully. Receives the step result.
+   * If it returns a Promise, the next step will wait for it to complete.
    */
-  onResolved?: (result: T) => void;
+  onResolved?: (result: T) => void | Promise<void>;
 
   /**
    * Called when this step fails. Receives the error.
+   * If it returns a Promise, the failure handling will wait for it to complete.
    */
-  onRejected?: (error: Error) => void;
+  onRejected?: (error: Error) => void | Promise<void>;
 }
 
 /**
@@ -545,7 +547,7 @@ export function useMultiStepNotification(
 
             stepStatesRef.current[i] = { status: 'resolved', result };
             prevResult = result;
-            step.onResolved?.(result);
+            await step.onResolved?.(result);
           } else {
             const executorInput =
               step.dependsOn === false ? undefined : prevResult;
@@ -562,7 +564,7 @@ export function useMultiStepNotification(
 
               stepStatesRef.current[i] = { status: 'resolved', result };
               prevResult = result;
-              step.onResolved?.(result);
+              await step.onResolved?.(result);
             } else {
               // SSE step - listen to background task via SSE
               const sseResult = executorResult as { taskId: string };
@@ -637,7 +639,7 @@ export function useMultiStepNotification(
 
               stepStatesRef.current[i] = { status: 'resolved', result };
               prevResult = result;
-              step.onResolved?.(result);
+              await step.onResolved?.(result);
             }
           }
 
@@ -677,7 +679,7 @@ export function useMultiStepNotification(
 
           const error = err instanceof Error ? err : new Error(String(err));
           stepStatesRef.current[i] = { status: 'rejected', error };
-          step.onRejected?.(error);
+          await step.onRejected?.(error);
           // Remove the cached eager promise for this step so retry re-executes it
           eagerResultsRef.current.delete(i);
 
