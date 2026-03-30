@@ -249,12 +249,12 @@ const UpdateUsersModal = ({
                   label: t('general.Inactive'),
                 },
                 {
-                  value: 'before-verification',
-                  label: t('credential.BeforeVerification'),
+                  value: 'deleted',
+                  label: t('credential.InactiveIncludeKeypair'),
                 },
                 {
-                  value: 'deleted',
-                  label: t('credential.Deleted'),
+                  value: 'before-verification',
+                  label: t('credential.BeforeVerification'),
                 },
               ]}
             />

@@ -84,6 +84,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
   const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
   const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
     useToggle(false);
+  const [purgeTargetId, setPurgeTargetId] = useState<string | null>(null);
   const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
     useToggle(false);
 
@@ -260,6 +261,20 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               }
             />
           </Popconfirm>
+          {!isActive && (
+            <Button
+              type="text"
+              danger
+              title={t('credential.PermanentlyDelete')}
+              aria-label={t('credential.PermanentlyDelete')}
+              icon={<BAITrashBinIcon />}
+              onClick={() => {
+                if (record?.id) {
+                  setPurgeTargetId(record.id);
+                }
+              }}
+            />
+          )}
         </BAIFlex>
       );
     },
@@ -543,6 +558,26 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             togglePurgeUsersModal();
           }}
           usersFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <PurgeUsersModal
+          open={!!purgeTargetId}
+          onOk={() => {
+            setSelectedUserList((prev) =>
+              prev.filter((user) => user?.node?.id !== purgeTargetId),
+            );
+            setPurgeTargetId(null);
+            updateFetchKey();
+          }}
+          onCancel={() => {
+            setPurgeTargetId(null);
+          }}
+          usersFrgmt={_.compact(
+            user_nodes?.edges
+              ?.filter((edge) => edge?.node?.id === purgeTargetId)
+              .map((edge) => edge?.node),
+          )}
         />
       </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
