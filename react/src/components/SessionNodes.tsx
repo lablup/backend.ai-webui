@@ -12,16 +12,19 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
+import { Tooltip } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIColumnType,
+  BAIFlex,
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
   BAILink,
   BAISessionTypeTag,
   BAISessionClusterMode,
+  BAITag,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -104,6 +107,24 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         project_id
         owner @since(version: "25.13.0") {
           email
+        }
+        dependees {
+          edges {
+            node {
+              row_id
+              name
+            }
+          }
+          count
+        }
+        dependents {
+          edges {
+            node {
+              row_id
+              name
+            }
+          }
+          count
         }
       }
     `,
@@ -240,6 +261,42 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         render: (__, session) => (
           <BAISessionClusterMode sessionFrgmt={session} />
         ),
+      },
+      {
+        key: 'dependencies',
+        title: t('session.launcher.Dependencies'),
+        defaultHidden: true,
+        render: (__, session) => {
+          const dependeeNodes = session.dependees?.edges
+            ?.map((edge) => edge?.node)
+            .filter(Boolean);
+          const dependentNodes = session.dependents?.edges
+            ?.map((edge) => edge?.node)
+            .filter(Boolean);
+          if (
+            (!dependeeNodes || dependeeNodes.length === 0) &&
+            (!dependentNodes || dependentNodes.length === 0)
+          ) {
+            return '-';
+          }
+          return (
+            <BAIFlex gap="xs" wrap="wrap">
+              {dependeeNodes?.map((node) => (
+                <Tooltip key={node?.row_id} title={t('session.DependsOn')}>
+                  <BAITag>→ {node?.name}</BAITag>
+                </Tooltip>
+              ))}
+              {dependentNodes?.map((node) => (
+                <Tooltip
+                  key={node?.row_id}
+                  title={t('session.DependedByOthers')}
+                >
+                  <BAITag>← {node?.name}</BAITag>
+                </Tooltip>
+              ))}
+            </BAIFlex>
+          );
+        },
       },
       {
         key: 'created_at',

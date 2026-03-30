@@ -50,6 +50,7 @@ import {
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   BAIFlex,
+  BAILink,
   BAISessionAgentIds,
   BAISessionClusterMode,
   INITIAL_FETCH_KEY,
@@ -59,6 +60,7 @@ import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 const SessionDetailContent: React.FC<{
   id: string;
@@ -68,6 +70,8 @@ const SessionDetailContent: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { md } = Grid.useBreakpoint();
+  const location = useLocation();
+
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
     throw new Error('Project ID is required for SessionDetailContent');
@@ -165,6 +169,29 @@ const SessionDetailContent: React.FC<{
               ...ConnectedKernelListFragment
             }
           }
+        }
+
+        dependees {
+          edges {
+            node {
+              id
+              row_id
+              name
+              status
+            }
+          }
+          count
+        }
+        dependents {
+          edges {
+            node {
+              id
+              row_id
+              name
+              status
+            }
+          }
+          count
         }
 
         ...SessionStatusTagFragment
@@ -424,6 +451,60 @@ const SessionDetailContent: React.FC<{
               displayTarget={usageMonitorDisplayTarget}
             />
           </Descriptions.Item>
+          {(session.dependees?.count ?? 0) > 0 && (
+            <Descriptions.Item label={t('session.DependsOn')} span={2}>
+              <BAIFlex gap="xs" wrap="wrap">
+                {session.dependees?.edges
+                  ?.map((edge) => edge?.node)
+                  .filter(Boolean)
+                  .map((node) => {
+                    const searchParams = new URLSearchParams(location.search);
+                    if (node?.row_id) {
+                      searchParams.set('sessionDetail', node.row_id);
+                    }
+                    return (
+                      <BAILink
+                        key={node?.row_id}
+                        type="hover"
+                        to={{
+                          pathname: location.pathname,
+                          search: searchParams.toString(),
+                        }}
+                      >
+                        {node?.name}
+                      </BAILink>
+                    );
+                  })}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
+          {(session.dependents?.count ?? 0) > 0 && (
+            <Descriptions.Item label={t('session.DependedByOthers')} span={2}>
+              <BAIFlex gap="xs" wrap="wrap">
+                {session.dependents?.edges
+                  ?.map((edge) => edge?.node)
+                  .filter(Boolean)
+                  .map((node) => {
+                    const searchParams = new URLSearchParams(location.search);
+                    if (node?.row_id) {
+                      searchParams.set('sessionDetail', node.row_id);
+                    }
+                    return (
+                      <BAILink
+                        key={node?.row_id}
+                        type="hover"
+                        to={{
+                          pathname: location.pathname,
+                          search: searchParams.toString(),
+                        }}
+                      >
+                        {node?.name}
+                      </BAILink>
+                    );
+                  })}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </BAIFlex>
       <Suspense fallback={<Skeleton active />}>

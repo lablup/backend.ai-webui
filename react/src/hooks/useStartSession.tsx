@@ -91,7 +91,9 @@ export type StartSessionWithDefaultValue = Omit<
       | SessionLauncherDefaultFields
       | keyof typeof RESOURCE_ALLOCATION_INITIAL_FORM_VALUES
     >
-  >;
+  > & {
+    dependencies?: string[];
+  };
 
 export type StartSessionResults = {
   fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
@@ -144,9 +146,13 @@ export const useStartSession = () => {
     minimumValues: StartSessionWithDefaultValue,
   ) => {
     const mergedValue = _.merge({}, defaultFormValues, minimumValues);
-    return startSession(mergedValue as SessionLauncherFormValue);
+    return startSession(
+      mergedValue as SessionLauncherFormValue & { dependencies?: string[] },
+    );
   };
-  const startSession = async (values: SessionLauncherFormValue) => {
+  const startSession = async (
+    values: SessionLauncherFormValue & { dependencies?: string[] },
+  ) => {
     // If manual image is selected, use it as kernelName
     const imageFullName =
       values.environments.manual || values.environments.version;
@@ -218,6 +224,11 @@ export const useStartSession = () => {
                 _.toString(values.batch.timeout) + values?.batch?.timeoutUnit,
             }
           : undefined),
+
+        // Session dependencies
+        ...(values.dependencies && values.dependencies.length > 0
+          ? { dependencies: values.dependencies }
+          : {}),
 
         config: {
           // Resource allocation

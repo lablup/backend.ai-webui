@@ -120,6 +120,7 @@ export interface SessionResources {
   owner_access_key?: string;
   enqueueOnly?: boolean;
   reuseIfExists?: boolean;
+  dependencies?: string[];
   config?: {
     resources?: {
       cpu: number;
