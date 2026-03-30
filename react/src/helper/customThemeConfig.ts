@@ -20,6 +20,19 @@ export type LogoConfig = {
     width?: number;
     height?: number;
   };
+  loginLogoSrc?: string;
+  loginLogoSrcDark?: string;
+  loginLogoSize?: {
+    width?: number;
+    height?: number;
+  };
+  aboutLogoSrc?: string;
+  aboutLogoSrcDark?: string;
+  aboutLogoSize?: {
+    width?: number;
+    height?: number;
+  };
+  /** @deprecated Use `aboutLogoSize` instead. */
   aboutModalSize?: {
     width?: number;
     height?: number;

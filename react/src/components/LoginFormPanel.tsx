@@ -13,6 +13,7 @@ import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import SignupModal from './SignupModal';
 import {
@@ -126,6 +127,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
+  const themeConfig = useCustomThemeConfig();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
@@ -163,11 +165,18 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <img
               src={
                 isDarkMode
-                  ? 'manifest/backend.ai-text-bgdark.svg'
-                  : 'manifest/backend.ai-text.svg'
+                  ? themeConfig?.logo?.loginLogoSrcDark ||
+                    themeConfig?.logo?.src ||
+                    'manifest/backend.ai-text-bgdark.svg'
+                  : themeConfig?.logo?.loginLogoSrc ||
+                    themeConfig?.logo?.srcDark ||
+                    'manifest/backend.ai-text.svg'
               }
-              alt="backend.ai"
-              style={{ height: 35 }}
+              alt={themeConfig?.logo?.alt || 'backend.ai'}
+              style={{
+                width: themeConfig?.logo?.loginLogoSize?.width,
+                height: themeConfig?.logo?.loginLogoSize?.height || 35,
+              }}
             />
           </div>
         }

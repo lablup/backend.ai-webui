@@ -23,8 +23,18 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
+export type LogoPreviewerMode =
+  | 'light'
+  | 'dark'
+  | 'lightCollapsed'
+  | 'darkCollapsed'
+  | 'loginLight'
+  | 'loginDark'
+  | 'aboutLight'
+  | 'aboutDark';
+
 interface LogoPreviewerProps {
-  mode: 'light' | 'dark' | 'lightCollapsed' | 'darkCollapsed';
+  mode: LogoPreviewerMode;
 }
 
 const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
@@ -37,7 +47,10 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const { getThemeValue, updateUserCustomThemeConfig } =
     useUserCustomThemeConfig();
   const logoThemeKey = getLogoThemeKey(mode);
-  const currentLogoPath = getThemeValue<string>(`logo.${logoThemeKey}`);
+  const fallbackKey = getLogoFallbackKey(mode);
+  const currentLogoPath =
+    getThemeValue<string>(`logo.${logoThemeKey}`) ??
+    (fallbackKey ? getThemeValue<string>(`logo.${fallbackKey}`) : undefined);
 
   return (
     <BAIFlex gap="sm" align="stretch" direction="column">
@@ -113,7 +126,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
 
 export default LogoPreviewer;
 
-export const getLogoThemeKey = (mode: LogoPreviewerProps['mode']) => {
+export const getLogoThemeKey = (mode: LogoPreviewerMode) => {
   switch (mode) {
     case 'light':
       return 'src';
@@ -123,5 +136,27 @@ export const getLogoThemeKey = (mode: LogoPreviewerProps['mode']) => {
       return 'srcCollapsed';
     case 'darkCollapsed':
       return 'srcCollapsedDark';
+    case 'loginLight':
+      return 'loginLogoSrc';
+    case 'loginDark':
+      return 'loginLogoSrcDark';
+    case 'aboutLight':
+      return 'aboutLogoSrc';
+    case 'aboutDark':
+      return 'aboutLogoSrcDark';
+  }
+};
+
+/** Returns the fallback theme key for modes that fall back to src/srcDark (inverted). */
+const getLogoFallbackKey = (mode: LogoPreviewerMode): string | undefined => {
+  switch (mode) {
+    case 'loginLight':
+    case 'aboutLight':
+      return 'srcDark';
+    case 'loginDark':
+    case 'aboutDark':
+      return 'src';
+    default:
+      return undefined;
   }
 };

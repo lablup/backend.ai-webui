@@ -5,6 +5,7 @@
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
+  type LogoPreviewerMode,
 } from './BrandingSettingItems/LogoPreviewer';
 import LogoSizeSettingItem from './BrandingSettingItems/LogoSizeSettingItem';
 import ThemeColorPicker, {
@@ -50,23 +51,33 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
     );
   };
 
-  const resetLogoThemeConfig = (
-    mode: 'light' | 'dark' | 'lightCollapsed' | 'darkCollapsed',
-  ) => {
+  const resetLogoThemeConfig = (mode: LogoPreviewerMode) => {
     updateUserCustomThemeConfig(
       'logo.' + getLogoThemeKey(mode),
       _.get(themeConfig?.logo, getLogoThemeKey(mode)) ?? undefined,
     );
   };
 
-  const resetLogoSizeConfig = (logoType: 'wide' | 'collapsed') => {
+  const resetLogoSizeConfig = (
+    logoType: 'wide' | 'collapsed' | 'login' | 'about',
+  ) => {
+    const keyMap = {
+      wide: 'size',
+      collapsed: 'sizeCollapsed',
+      login: 'loginLogoSize',
+      about: 'aboutLogoSize',
+    } as const;
+    const key = keyMap[logoType];
     updateUserCustomThemeConfig(
-      logoType === 'wide' ? 'logo.size' : 'logo.sizeCollapsed',
-      _.get(
-        themeConfig?.logo,
-        logoType === 'wide' ? 'size' : 'sizeCollapsed',
-      ) ?? undefined,
+      `logo.${key}`,
+      _.get(themeConfig?.logo, key) ?? undefined,
     );
+    if (logoType === 'about') {
+      updateUserCustomThemeConfig(
+        'logo.aboutModalSize',
+        _.get(themeConfig?.logo, 'aboutModalSize') ?? undefined,
+      );
+    }
   };
 
   const resetFontFamilyConfig = () => {
@@ -211,6 +222,67 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
           children: <LogoPreviewer mode="darkCollapsed" />,
           onReset: () => {
             resetLogoThemeConfig('darkCollapsed');
+          },
+        },
+      ],
+    },
+    {
+      'data-testid': 'group-detail-logo-customization',
+      title: t('userSettings.DetailLogo'),
+      description: t('userSettings.logo.DetailLogoCustomizationDesc'),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('userSettings.logo.LoginLogoSize'),
+          description: t('userSettings.logo.LoginLogoSizeDesc'),
+          children: <LogoSizeSettingItem logoType="login" />,
+          onReset: () => {
+            resetLogoSizeConfig('login');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.LoginLightModeLogo'),
+          description: t('userSettings.logo.LoginLightModeLogoDesc'),
+          children: <LogoPreviewer mode="loginLight" />,
+          onReset: () => {
+            resetLogoThemeConfig('loginLight');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.LoginDarkModeLogo'),
+          description: t('userSettings.logo.LoginDarkModeLogoDesc'),
+          children: <LogoPreviewer mode="loginDark" />,
+          onReset: () => {
+            resetLogoThemeConfig('loginDark');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.AboutLogoSize'),
+          description: t('userSettings.logo.AboutLogoSizeDesc'),
+          children: <LogoSizeSettingItem logoType="about" />,
+          onReset: () => {
+            resetLogoSizeConfig('about');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.AboutLightModeLogo'),
+          description: t('userSettings.logo.AboutLightModeLogoDesc'),
+          children: <LogoPreviewer mode="aboutLight" />,
+          onReset: () => {
+            resetLogoThemeConfig('aboutLight');
+          },
+        },
+        {
+          type: 'custom',
+          title: t('userSettings.logo.AboutDarkModeLogo'),
+          description: t('userSettings.logo.AboutDarkModeLogoDesc'),
+          children: <LogoPreviewer mode="aboutDark" />,
+          onReset: () => {
+            resetLogoThemeConfig('aboutDark');
           },
         },
       ],

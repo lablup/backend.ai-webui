@@ -5,11 +5,31 @@
 import { Col, Row, theme, Typography } from 'antd';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
+import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
 import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface LogoSizeSettingItemProps {
-  logoType?: 'wide' | 'collapsed';
+  logoType?: 'wide' | 'collapsed' | 'login' | 'about';
 }
+
+const LOGO_SIZE_CONFIG: Record<
+  NonNullable<LogoSizeSettingItemProps['logoType']>,
+  { key: string; defaultSize: { width?: number; height?: number } }
+> = {
+  wide: { key: 'logo.size', defaultSize: { width: 159, height: 24 } },
+  collapsed: {
+    key: 'logo.sizeCollapsed',
+    defaultSize: { width: 24, height: 24 },
+  },
+  login: {
+    key: 'logo.loginLogoSize',
+    defaultSize: { height: 35 },
+  },
+  about: {
+    key: 'logo.aboutLogoSize',
+    defaultSize: { width: 159, height: 24 },
+  },
+};
 
 const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
   logoType = 'wide',
@@ -21,13 +41,19 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
   const { getThemeValue, updateUserCustomThemeConfig } =
     useUserCustomThemeConfig();
 
-  const sizeKey = logoType === 'wide' ? 'logo.size' : 'logo.sizeCollapsed';
-  const defaultSize =
-    logoType === 'wide'
-      ? { width: 159, height: 24 }
-      : { width: 24, height: 24 };
-  const logoSizeConfig =
-    getThemeValue<{ width: number; height: number }>(sizeKey) ?? defaultSize;
+  const themeConfig = useCustomThemeConfig();
+  const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
+  const rawSize = getThemeValue<{ width?: number; height?: number }>(sizeKey);
+
+  // For about logo, fall back to deprecated aboutModalSize before defaults
+  const deprecatedAboutSize =
+    logoType === 'about' ? themeConfig?.logo?.aboutModalSize : undefined;
+
+  const logoSizeConfig = {
+    width: rawSize?.width ?? deprecatedAboutSize?.width ?? defaultSize.width,
+    height:
+      rawSize?.height ?? deprecatedAboutSize?.height ?? defaultSize.height,
+  };
 
   return (
     <BAIFlex align="stretch" direction="column" style={{ width: '100%' }}>
@@ -43,9 +69,12 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
             </Typography.Text>
             <BAIUncontrolledInput
               type="number"
-              defaultValue={logoSizeConfig.width.toString()}
+              defaultValue={logoSizeConfig.width?.toString() ?? ''}
               onCommit={(v) => {
-                updateUserCustomThemeConfig(`${sizeKey}.width`, Number(v));
+                updateUserCustomThemeConfig(
+                  `${sizeKey}.width`,
+                  v ? Number(v) : undefined,
+                );
               }}
               style={{ maxWidth: 150 }}
             />
@@ -62,9 +91,12 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
             </Typography.Text>
             <BAIUncontrolledInput
               type="number"
-              defaultValue={logoSizeConfig.height.toString()}
+              defaultValue={logoSizeConfig.height?.toString() ?? ''}
               onCommit={(v) => {
-                updateUserCustomThemeConfig(`${sizeKey}.height`, Number(v));
+                updateUserCustomThemeConfig(
+                  `${sizeKey}.height`,
+                  v ? Number(v) : undefined,
+                );
               }}
               style={{ maxWidth: 150 }}
             />

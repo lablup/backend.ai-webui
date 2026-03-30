@@ -42,8 +42,6 @@ import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
 
-const SplashModal = React.lazy(() => import('../SplashModal'));
-
 // Z-index for header in MainLayout. Should be higher than any other elements in the page content.
 // Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
 // we use a safe fixed value of 100. See: https://github.com/react-component/table/blob/master/src/utils/fixUtil.ts
@@ -112,18 +110,6 @@ function MainLayout() {
   // Register logout/app-close/beforeunload event listeners at the app level.
   // These were previously in the Lit shell (backend-ai-webui.ts).
   useLogoutEventListeners();
-
-  // Splash/About modal state - handles 'backend-ai-show-splash' event from Electron menu
-  const [isOpenSplashDialog, setIsOpenSplashDialog] = useState(false);
-  useEffect(() => {
-    const handleShowSplash = () => {
-      setIsOpenSplashDialog(true);
-    };
-    document.addEventListener('backend-ai-show-splash', handleShowSplash);
-    return () => {
-      document.removeEventListener('backend-ai-show-splash', handleShowSplash);
-    };
-  }, []);
 
   useLayoutEffect(() => {
     const handleNavigate = (e: Event) => {
@@ -303,12 +289,6 @@ function MainLayout() {
           </BAIFlex>
         </BAIContentWithDrawerArea>
       </Layout>
-      <Suspense fallback={null}>
-        <SplashModal
-          open={isOpenSplashDialog}
-          onRequestClose={() => setIsOpenSplashDialog(false)}
-        />
-      </Suspense>
     </LayoutWithPageTestId>
   );
 }

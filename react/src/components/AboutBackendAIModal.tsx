@@ -37,14 +37,23 @@ const AboutBackendAIModal = ({
           className="about-logo-img"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode && themeConfig?.logo?.srcDark
-              ? themeConfig?.logo?.src || '/manifest/backend.ai-white-text.svg'
-              : themeConfig?.logo?.srcDark ||
+            isDarkMode
+              ? themeConfig?.logo?.aboutLogoSrcDark ||
+                themeConfig?.logo?.src ||
+                '/manifest/backend.ai-white-text.svg'
+              : themeConfig?.logo?.aboutLogoSrc ||
+                themeConfig?.logo?.srcDark ||
                 '/manifest/backend.ai-white-text.svg'
           }
           style={{
-            width: themeConfig?.logo?.aboutModalSize?.width || 159,
-            height: themeConfig?.logo?.aboutModalSize?.height || 24,
+            width:
+              themeConfig?.logo?.aboutLogoSize?.width ??
+              themeConfig?.logo?.aboutModalSize?.width ??
+              159,
+            height:
+              themeConfig?.logo?.aboutLogoSize?.height ??
+              themeConfig?.logo?.aboutModalSize?.height ??
+              24,
             cursor: 'pointer',
           }}
         />
