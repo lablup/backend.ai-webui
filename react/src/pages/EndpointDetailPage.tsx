@@ -101,7 +101,6 @@ interface RoutingInfo {
 export interface ModelServiceInfo {
   endpoint_id: string;
   name: string;
-  desired_session_count?: number;
   replicas?: number;
   active_routes: RoutingInfo[];
   service_endpoint: string;
@@ -167,209 +166,221 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
-  const { endpoint, endpoint_token_list, endpoint_auto_scaling_rules, routes } =
-    useLazyLoadQuery<EndpointDetailPageQuery>(
-      graphql`
-        query EndpointDetailPageQuery(
-          $endpointId: UUID!
-          $tokenListOffset: Int!
-          $tokenListLimit: Int!
-          $autoScalingRules_endpointId: String!
-          $autoScalingRules_filter: String
-          $autoScalingRules_offset: Int
-          $autoScalingRules_order: String
-          $autoScalingRules_before: String
-          $autoScalingRules_after: String
-          $autoScalingRules_first: Int
-          $autoScalingRules_last: Int
-          $skipScalingRules: Boolean!
-          $deploymentId: ID!
-          $routeFilter: RouteFilter
-          $routeOrderBy: [RouteOrderBy!]
-          $routeLimit: Int
-          $routeOffset: Int
-          $skipRouteNodes: Boolean!
-          $skipRoutings: Boolean!
-        ) {
-          endpoint(endpoint_id: $endpointId) {
+  const {
+    endpoint,
+    endpoint_token_list,
+    endpoint_auto_scaling_rules,
+    routes,
+    healthyRoutes,
+  } = useLazyLoadQuery<EndpointDetailPageQuery>(
+    graphql`
+      query EndpointDetailPageQuery(
+        $endpointId: UUID!
+        $tokenListOffset: Int!
+        $tokenListLimit: Int!
+        $autoScalingRules_endpointId: String!
+        $autoScalingRules_filter: String
+        $autoScalingRules_offset: Int
+        $autoScalingRules_order: String
+        $autoScalingRules_before: String
+        $autoScalingRules_after: String
+        $autoScalingRules_first: Int
+        $autoScalingRules_last: Int
+        $skipScalingRules: Boolean!
+        $deploymentId: ID!
+        $routeFilter: RouteFilter
+        $routeOrderBy: [RouteOrderBy!]
+        $routeLimit: Int
+        $routeOffset: Int
+        $skipRouteNodes: Boolean!
+        $skipRoutings: Boolean!
+      ) {
+        endpoint(endpoint_id: $endpointId) {
+          name
+          status
+          endpoint_id
+          project
+          image_object {
+            namespace
+            humanized_name
+            tag
+            registry
+            architecture
+            is_local
+            digest
+            resource_limits {
+              key
+              min
+            }
+            labels {
+              key
+              value
+            }
+            size_bytes
+            supported_accelerators
+            ...ImageNodeSimpleTagFragment
+          }
+          replicas
+          url
+          open_to_public
+          errors {
+            session_id
+            ...InferenceSessionErrorModalFragment
+          }
+          retries
+          runtime_variant {
+            human_readable_name
+          }
+          model
+          model_mount_destination
+          model_definition_path
+          extra_mounts {
+            row_id
             name
+          }
+          environ
+          resource_group
+          resource_slots
+          resource_opts
+          routings @skipOnClient(if: $skipRoutings) {
+            routing_id
+            session
+            traffic_ratio
+            endpoint
             status
+            error_data
+          }
+          created_user_email
+          ...EndpointOwnerInfoFragment
+          ...EndpointStatusTagFragment
+          ...ServiceLauncherPageContentFragment
+        }
+        endpoint_token_list(
+          offset: $tokenListOffset
+          limit: $tokenListLimit
+          endpoint_id: $endpointId
+        ) {
+          total_count
+          items {
+            id
+            token
             endpoint_id
+            domain
             project
-            image_object @since(version: "23.09.9") {
-              name
-              namespace @since(version: "24.12.0")
-              humanized_name
-              tag
-              registry
-              architecture
-              is_local
-              digest
-              resource_limits {
-                key
-                min
-                max
-              }
-              labels {
-                key
-                value
-              }
-              size_bytes
-              supported_accelerators
-              ...ImageNodeSimpleTagFragment
-            }
-            desired_session_count @deprecatedSince(version: "24.12.0")
-            replicas @since(version: "24.12.0")
-            url
-            open_to_public
-            errors {
-              session_id
-              ...InferenceSessionErrorModalFragment
-            }
-            retries
-            runtime_variant @since(version: "24.03.5") {
-              human_readable_name
-            }
-            model
-            model_mount_destination @since(version: "24.03.4")
-            model_definition_path @since(version: "24.03.4")
-            extra_mounts @since(version: "24.03.4") {
-              row_id
-              name
-            }
-            environ
-            resource_group
-            resource_slots
-            resource_opts
-            routings @skipOnClient(if: $skipRoutings) {
-              routing_id
-              session
-              traffic_ratio
-              endpoint
-              status
-              error_data
-            }
-            created_user_email @since(version: "23.09.8")
-            ...EndpointOwnerInfoFragment
-            ...EndpointStatusTagFragment
-            ...ServiceLauncherPageContentFragment
-          }
-          endpoint_token_list(
-            offset: $tokenListOffset
-            limit: $tokenListLimit
-            endpoint_id: $endpointId
-          ) {
-            total_count
-            items {
-              id
-              token
-              endpoint_id
-              domain
-              project
-              session_owner
-              created_at
-              valid_until
-            }
-          }
-          endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
-            endpoint: $autoScalingRules_endpointId
-            filter: $autoScalingRules_filter
-            order: $autoScalingRules_order
-            offset: $autoScalingRules_offset
-            before: $autoScalingRules_before
-            after: $autoScalingRules_after
-            first: $autoScalingRules_first
-            last: $autoScalingRules_last
-          ) @skipOnClient(if: $skipScalingRules) {
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-            }
-            edges {
-              node {
-                id
-                endpoint
-                metric_name
-                metric_source
-                threshold
-                comparator
-                step_size
-                cooldown_seconds
-                min_replicas
-                max_replicas
-                created_at
-                last_triggered_at
-                ...AutoScalingRuleEditorModalFragment
-              }
-            }
-          }
-          routes(
-            deploymentId: $deploymentId
-            filter: $routeFilter
-            orderBy: $routeOrderBy
-            limit: $routeLimit
-            offset: $routeOffset
-          ) @skipOnClient(if: $skipRouteNodes) {
-            edges {
-              node {
-                ...BAIRouteNodesFragment
-              }
-            }
-            count
+            session_owner
+            created_at
+            valid_until
           }
         }
-      `,
-      {
-        tokenListOffset: baiPaginationOption.offset,
-        tokenListLimit: baiPaginationOption.limit,
-        endpointId: serviceId || '',
-        autoScalingRules_endpointId: serviceId as string,
-        autoScalingRules_filter: undefined,
-        autoScalingRules_offset: undefined,
-        autoScalingRules_before: undefined,
-        autoScalingRules_after: undefined,
-        autoScalingRules_first: undefined,
-        autoScalingRules_last: undefined,
-        skipScalingRules: !isSupportAutoScalingRule,
-        deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
-        routeFilter: {
-          status:
-            deferredRouteStatusCategory === 'running'
-              ? [
-                  'PROVISIONING',
-                  'HEALTHY',
-                  'UNHEALTHY',
-                  'DEGRADED',
-                  'TERMINATING',
-                ]
-              : ['TERMINATED', 'FAILED_TO_START'],
-          ...(deferredRoutePropertyFilter?.trafficStatus
-            ? {
-                trafficStatus: [
-                  deferredRoutePropertyFilter.trafficStatus as RouteTrafficStatus,
-                ],
-              }
-            : {}),
-        },
-        routeOrderBy: convertToOrderBy(deferredRouteOrder) ?? undefined,
-        routeLimit: deferredRoutePagination.pageSize,
-        routeOffset:
-          (deferredRoutePagination.current - 1) *
-          deferredRoutePagination.pageSize,
-        skipRouteNodes: !baiClient.supports('route-node'),
-        skipRoutings: baiClient.supports('route-node'),
+        endpoint_auto_scaling_rules: endpoint_auto_scaling_rule_nodes(
+          endpoint: $autoScalingRules_endpointId
+          filter: $autoScalingRules_filter
+          order: $autoScalingRules_order
+          offset: $autoScalingRules_offset
+          before: $autoScalingRules_before
+          after: $autoScalingRules_after
+          first: $autoScalingRules_first
+          last: $autoScalingRules_last
+        ) @skipOnClient(if: $skipScalingRules) {
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+          }
+          edges {
+            node {
+              id
+              endpoint
+              metric_name
+              metric_source
+              threshold
+              comparator
+              step_size
+              cooldown_seconds
+              min_replicas
+              max_replicas
+              created_at
+              last_triggered_at
+              ...AutoScalingRuleEditorModalFragment
+            }
+          }
+        }
+        routes(
+          deploymentId: $deploymentId
+          filter: $routeFilter
+          orderBy: $routeOrderBy
+          limit: $routeLimit
+          offset: $routeOffset
+        ) @skipOnClient(if: $skipRouteNodes) {
+          edges {
+            node {
+              ...BAIRouteNodesFragment
+            }
+          }
+          count
+        }
+        healthyRoutes: routes(
+          deploymentId: $deploymentId
+          filter: { status: [HEALTHY] }
+        ) @skipOnClient(if: $skipRouteNodes) {
+          count
+        }
+      }
+    `,
+    {
+      tokenListOffset: baiPaginationOption.offset,
+      tokenListLimit: baiPaginationOption.limit,
+      endpointId: serviceId || '',
+      autoScalingRules_endpointId: serviceId as string,
+      autoScalingRules_filter: undefined,
+      autoScalingRules_offset: undefined,
+      autoScalingRules_before: undefined,
+      autoScalingRules_after: undefined,
+      autoScalingRules_first: undefined,
+      autoScalingRules_last: undefined,
+      skipScalingRules: !isSupportAutoScalingRule,
+      deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
+      routeFilter: {
+        status:
+          deferredRouteStatusCategory === 'running'
+            ? [
+                'PROVISIONING',
+                'HEALTHY',
+                'UNHEALTHY',
+                'DEGRADED',
+                'TERMINATING',
+              ]
+            : ['TERMINATED', 'FAILED_TO_START'],
+        ...(deferredRoutePropertyFilter?.trafficStatus
+          ? {
+              trafficStatus: [
+                deferredRoutePropertyFilter.trafficStatus as RouteTrafficStatus,
+              ],
+            }
+          : {}),
       },
-      {
-        fetchPolicy:
-          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-        fetchKey,
-      },
-    );
+      routeOrderBy: convertToOrderBy(deferredRouteOrder) ?? undefined,
+      routeLimit: deferredRoutePagination.pageSize,
+      routeOffset:
+        (deferredRoutePagination.current - 1) *
+        deferredRoutePagination.pageSize,
+      skipRouteNodes: !baiClient.supports('route-node'),
+      skipRoutings: baiClient.supports('route-node'),
+    },
+    {
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+      fetchKey,
+    },
+  );
 
   // Check if the endpoint belongs to a different project than the currently selected one
   const isProjectMismatch = endpoint
     ? endpoint.project !== currentProject.id
     : false;
+
+  const hasAnyHealthyRoute = baiClient.supports('route-node')
+    ? (healthyRoutes?.count ?? 0) > 0
+    : endpoint?.status === 'HEALTHY';
 
   const mutationToClearError = useTanMutation({
     mutationFn: () => {
@@ -443,7 +454,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('modelService.NumberOfReplicas'),
-      children: endpoint?.replicas ?? endpoint?.desired_session_count,
+      children: endpoint?.replicas,
     },
     {
       label: t('modelService.ServiceEndpoint'),
@@ -463,7 +474,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     }).toString(),
                   });
                 }}
-                disabled={endpoint?.status !== 'HEALTHY'}
+                disabled={!hasAnyHealthyRoute}
               />
             </Tooltip>
           ) : null}

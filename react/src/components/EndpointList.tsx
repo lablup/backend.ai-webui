@@ -51,12 +51,11 @@ interface EndpointListProps extends Omit<
 
 export const isEndpointInDestroyingCategory = (
   endpoint?: {
-    desired_session_count: number | null | undefined;
     replicas: number | null | undefined;
     status: string | null | undefined;
   } | null,
 ) => {
-  const count = endpoint?.replicas ?? endpoint?.desired_session_count;
+  const count = endpoint?.replicas;
   const status = endpoint?.status;
   return (
     (count ?? 0) < 0 || _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
@@ -90,7 +89,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
         url
         open_to_public
         created_at
-        replicas @since(version: "24.12.0")
+        replicas
         desired_session_count
         project
         created_user_email
@@ -280,12 +279,10 @@ const EndpointList: React.FC<EndpointListProps> = ({
     },
     {
       title: t('modelService.NumberOfReplicas'),
-      dataIndex: baiClient.supports('replicas')
-        ? 'replicas'
-        : 'desired_session_count',
-      key: 'desiredSessionCount',
-      render: (desired_session_count: number) => {
-        return desired_session_count < 0 ? '-' : desired_session_count;
+      dataIndex: 'replicas',
+      key: 'replicas',
+      render: (replicas: number) => {
+        return replicas < 0 ? '-' : replicas;
       },
     },
     {
