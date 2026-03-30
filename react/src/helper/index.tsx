@@ -816,6 +816,45 @@ export function isValidIPOrCidr(value: string): boolean {
   return isValidIP(value) || isCidrRange(value);
 }
 
+/**
+ * Checks if a given IP address is contained within an IP or CIDR range.
+ * Supports both IPv4 addresses and CIDR notation.
+ * - If entry is a plain IP, checks exact match.
+ * - If entry is a CIDR range, checks if the IP falls within the range.
+ */
+export function isIpInRange(ip: string, entry: string): boolean {
+  if (!isValidIPv4(ip)) return false;
+
+  // Exact IP match
+  if (isValidIPv4(entry)) {
+    return ip === entry;
+  }
+
+  // CIDR range check
+  if (!isCidrRange(entry)) return false;
+  const [network, prefix] = entry.split('/');
+  const prefixLength = parseInt(prefix, 10);
+
+  const ipToInt = (addr: string): number => {
+    const octets = addr.split('.').map(Number);
+    let bits = 0;
+    for (let i = 0; i < 4; i++) {
+      bits = ((bits << 8) | octets[i]) >>> 0;
+    }
+    return bits;
+  };
+
+  const mask = prefixLength === 0 ? 0 : (~0 << (32 - prefixLength)) >>> 0;
+  return (ipToInt(ip) & mask) >>> 0 === (ipToInt(network) & mask) >>> 0;
+}
+
+/**
+ * Checks if a given IP address is included in any of the provided IP/CIDR entries.
+ */
+export function isIpIncludedInList(ip: string, entries: string[]): boolean {
+  return entries.some((entry) => isIpInRange(ip, entry));
+}
+
 type SSEHandlerKeys =
   | 'onUpdated'
   | 'onDone'

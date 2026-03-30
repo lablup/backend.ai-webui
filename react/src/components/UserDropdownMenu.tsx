@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
+import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserInfo,
@@ -12,7 +12,6 @@ import {
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DesktopAppDownloadModal from './DesktopAppDownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import { UserProfileQuery } from './UserProfileSettingModalQuery';
 import {
   UserOutlined,
   MailOutlined,
@@ -21,7 +20,6 @@ import {
   LockOutlined,
   FileTextOutlined,
   LogoutOutlined,
-  LoadingOutlined,
   SettingOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
@@ -35,11 +33,15 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAIUnmountAfterClose, filterOutEmpty } from 'backend.ai-ui';
+import {
+  BAIUnmountAfterClose,
+  filterOutEmpty,
+  useFetchKey,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryLoader } from 'react-relay';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
@@ -68,15 +70,49 @@ const UserDropdownMenu: React.FC<{
   const webuiNavigate = useWebUINavigate();
   const { isTOTPSupported } = useTOTPSupported();
 
-  const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
-  const [
-    isPendingInitializeSettingModal,
-    startInitializeSettingModalTransition,
-  ] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const [, startRefetchTransition] = useTransition();
+
+  const { user, myClientIp } = useLazyLoadQuery<UserDropdownMenuQuery>(
+    graphql`
+      query UserDropdownMenuQuery(
+        $email: String!
+        $isNotSupportTotp: Boolean!
+        $isNotSupportUpdateUserV2: Boolean!
+      ) {
+        user(email: $email) {
+          full_name
+          ...UserProfileSettingModalFragment
+        }
+        myClientIp @skipOnClient(if: $isNotSupportUpdateUserV2) {
+          clientIp
+        }
+      }
+    `,
+    {
+      email: baiClient.email,
+      isNotSupportTotp: !isTOTPSupported,
+      isNotSupportUpdateUserV2: !baiClient.supports('update-user-v2'),
+    },
+    {
+      fetchPolicy: 'store-and-network',
+      fetchKey,
+    },
+  );
+
+  const currentClientIp = baiClient.supports('update-user-v2')
+    ? myClientIp?.clientIp
+    : undefined;
+
+  const displayName =
+    _.trim(user?.full_name ?? '').length > 0
+      ? (user?.full_name ?? '')
+      : userInfo.email;
+
   const items: MenuProps['items'] = filterOutEmpty([
     {
       'data-testid': 'dropdown-user-name',
-      label: <Typography.Text>{userInfo.username}</Typography.Text>, //To display properly when the user name is too long.
+      label: <Typography.Text>{displayName}</Typography.Text>,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
@@ -124,26 +160,9 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-my-account',
       label: t('webui.menu.MyAccount'),
       key: 'userProfileSetting',
-      icon: isPendingInitializeSettingModal ? (
-        <LoadingOutlined spin />
-      ) : (
-        <LockOutlined />
-      ),
+      icon: <LockOutlined />,
       onClick: () => {
-        startInitializeSettingModalTransition(() => {
-          loadUserProfileSettingQuery(
-            {
-              email: userInfo.email,
-              isNotSupportTotp: !isTOTPSupported,
-            },
-            {
-              fetchPolicy: 'network-only',
-            },
-          );
-          setIsOpenUserSettingModal(true);
-        });
-        // e.domEvent.stopPropagation();
-        // e.domEvent.preventDefault();
+        setIsOpenUserSettingModal(true);
       },
     },
     {
@@ -192,9 +211,6 @@ const UserDropdownMenu: React.FC<{
     },
   ]);
 
-  const [userProfileSettingQueryRef, loadUserProfileSettingQuery] =
-    useQueryLoader<UserProfileSettingModalQuery>(UserProfileQuery);
-
   return (
     <>
       <Dropdown
@@ -234,33 +250,25 @@ const UserDropdownMenu: React.FC<{
               </Avatar>
             }
           >
-            {screens.lg && _.truncate(userInfo.username, { length: 30 })}
+            {screens.lg && _.truncate(displayName, { length: 30 })}
           </Button>,
         )}
       </Dropdown>
       <ErrorBoundaryWithNullFallback>
         <Suspense>
-          {userProfileSettingQueryRef && (
+          {isOpenUserSettingModal && (
             <BAIUnmountAfterClose>
               <UserProfileSettingModal
                 totpSupported={isTOTPSupported}
-                queryRef={userProfileSettingQueryRef}
+                userFrgmt={user}
+                currentClientIp={currentClientIp}
                 open={isOpenUserSettingModal}
                 onRequestClose={() => {
                   setIsOpenUserSettingModal(false);
                 }}
-                isRefreshModalPending={isPendingRefreshModal}
                 onRequestRefresh={() => {
-                  startRefreshModalTransition(() => {
-                    loadUserProfileSettingQuery(
-                      {
-                        email: userInfo.email,
-                        isNotSupportTotp: !isTOTPSupported,
-                      },
-                      {
-                        fetchPolicy: 'network-only',
-                      },
-                    );
+                  startRefetchTransition(() => {
+                    updateFetchKey();
                   });
                 }}
               />
