@@ -7,9 +7,12 @@ import { MyKeypairManagementModalIssueMyKeypairMutation } from '../__generated__
 import {
   MyKeypairManagementModalQuery,
   MyKeypairManagementModalQuery$data,
+  KeypairOrderBy,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
+import { convertToOrderBy } from '../helper';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import {
   Alert,
@@ -25,12 +28,14 @@ import {
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
   BAITable,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   useBAILogger,
   useErrorMessageResolver,
@@ -49,6 +54,7 @@ import {
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type ActiveFilter = 'active' | 'inactive';
 
@@ -65,6 +71,16 @@ interface KeypairCredential {
 interface MyKeypairManagementModalProps extends BAIModalProps {
   onRequestClose: () => void;
 }
+
+type KeypairSorterValue =
+  | 'accessKey'
+  | 'resourcePolicy'
+  | 'createdAt'
+  | 'lastUsed'
+  | '-accessKey'
+  | '-resourcePolicy'
+  | '-createdAt'
+  | '-lastUsed';
 
 const downloadCredentialCSV = (credential: KeypairCredential) => {
   const header = 'access_key,secret_key,ssh_public_key';
@@ -105,6 +121,22 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   const [deletingKeypairAccessKey, setDeletingKeypairAccessKey] = useState<
     string | null
   >(null);
+  const [order, setOrder] = useState<KeypairSorterValue | null>('-createdAt');
+  const [graphqlFilter, setGraphqlFilter] = useState<
+    GraphQLFilter | undefined
+  >();
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.MyKeypairManagementModal',
+  );
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({
+    current: 1,
+    pageSize: 10,
+  });
 
   const [issueMyKeypair] =
     useMutation<MyKeypairManagementModalIssueMyKeypairMutation>(graphql`
@@ -157,9 +189,11 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   const queryVariables = {
     filter: {
       isActive: activeFilter === 'active',
+      ...graphqlFilter,
     },
-    limit: 100,
-    offset: 0,
+    orderBy: convertToOrderBy<Required<KeypairOrderBy>>(order),
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -339,23 +373,45 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             wrap="wrap"
             style={{ marginBottom: token.marginSM }}
           >
-            <BAIRadioGroup
-              value={activeFilter}
-              onChange={(e) => {
-                setActiveFilter(e.target.value);
-              }}
-              optionType="button"
-              options={[
-                {
-                  label: t('general.Active'),
-                  value: 'active',
-                },
-                {
-                  label: t('general.Inactive'),
-                  value: 'inactive',
-                },
-              ]}
-            />
+            <BAIFlex gap="xs" align="start" wrap="wrap">
+              <BAIRadioGroup
+                value={activeFilter}
+                onChange={(e) => {
+                  setActiveFilter(e.target.value);
+                  setTablePaginationOption({ current: 1 });
+                }}
+                optionType="button"
+                options={[
+                  {
+                    label: t('general.Active'),
+                    value: 'active',
+                  },
+                  {
+                    label: t('general.Inactive'),
+                    value: 'inactive',
+                  },
+                ]}
+              />
+              <BAIGraphQLPropertyFilter
+                filterProperties={[
+                  {
+                    key: 'accessKey',
+                    propertyLabel: t('credential.AccessKey'),
+                    type: 'string',
+                  },
+                  {
+                    key: 'resourcePolicy',
+                    propertyLabel: t('credential.ResourcePolicy'),
+                    type: 'string',
+                  },
+                ]}
+                value={graphqlFilter}
+                onChange={(value) => {
+                  setGraphqlFilter(value ?? undefined);
+                  setTablePaginationOption({ current: 1 });
+                }}
+              />
+            </BAIFlex>
             <BAIFlex gap="xs">
               <BAIButton
                 type="primary"
@@ -381,6 +437,15 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             scroll={{ x: 'max-content' }}
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}
+            order={order}
+            onChangeOrder={(newOrder) => {
+              setOrder(newOrder as KeypairSorterValue);
+              setTablePaginationOption({ current: 1 });
+            }}
+            tableSettings={{
+              columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
+            }}
             columns={filterOutEmpty([
               {
                 key: 'accessKey',
@@ -401,37 +466,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     )}
                   </BAIFlex>
                 ),
-              },
-              {
-                key: 'resourcePolicy',
-                title: t('credential.ResourcePolicy'),
-                dataIndex: 'resourcePolicy',
-                sorter: true,
-              },
-              {
-                key: 'createdAt',
-                title: t('credential.CreatedAt'),
-                dataIndex: 'createdAt',
-                sorter: true,
-                render: (value: string) =>
-                  value ? dayjs(value).format('lll') : '-',
-              },
-              {
-                key: 'lastUsed',
-                title: t('credential.LastUsed'),
-                dataIndex: 'lastUsed',
-                sorter: true,
-                render: (value: string) =>
-                  value ? dayjs(value).format('lll') : '-',
-              },
-              {
-                key: 'modifiedAt',
-                title: t('credential.ModifiedAt'),
-                dataIndex: 'modifiedAt',
-                sorter: true,
-                defaultHidden: true,
-                render: (value: string) =>
-                  value ? dayjs(value).format('lll') : '-',
               },
               {
                 key: 'actions',
@@ -537,6 +571,36 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   );
                 },
               },
+              {
+                key: 'resourcePolicy',
+                title: t('credential.ResourcePolicy'),
+                dataIndex: 'resourcePolicy',
+                sorter: true,
+              },
+              {
+                key: 'createdAt',
+                title: t('credential.CreatedAt'),
+                dataIndex: 'createdAt',
+                sorter: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
+              {
+                key: 'lastUsed',
+                title: t('credential.LastUsed'),
+                dataIndex: 'lastUsed',
+                sorter: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
+              {
+                key: 'modifiedAt',
+                title: t('credential.ModifiedAt'),
+                dataIndex: 'modifiedAt',
+                defaultHidden: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
             ])}
             showSorterTooltip={false}
             locale={{
@@ -552,8 +616,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               ),
             }}
             pagination={{
-              pageSize: 10,
+              pageSize: tablePaginationOption.pageSize,
+              current: tablePaginationOption.current,
               total: data.myKeypairs?.count ?? 0,
+              onChange: (current, pageSize) => {
+                setTablePaginationOption({ current, pageSize });
+              },
             }}
           />
         </BAIFlex>
@@ -587,10 +655,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             showIcon
             icon={
               <TriangleAlertIcon
-                style={{
-                  width: token.fontSizeLG,
-                  height: token.fontSizeLG,
-                }}
+                style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
               />
             }
             title={t('credential.CannotViewAgainWarning')}
